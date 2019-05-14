@@ -220,13 +220,13 @@ function startDraft(sessionID) {
 			else
 				booster.push(pick_card(localCollection['rare']));
 		}
-/*
+
 		for(let i = 0; i < 3; ++i) // 3 Uncommons
 			booster.push(pick_card(localCollection['uncommon']));
 		
 		for(let i = 0; i < 10; ++i) // 10 Commons
 			booster.push(pick_card(localCollection['common']));
-*/
+
 		Sessions[sessionID].boosters.push(booster);
 	}
 	
