@@ -4,7 +4,12 @@
   "description": "MTGA Direct Challenge drafting environment",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Senryoku/MTGADraft"
   },
   "author": "Senryoku",
   "license": "MIT",
