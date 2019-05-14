@@ -36,3 +36,17 @@ const copyToClipboard = str => {
 		document.getSelection().addRange(selected); // Restore the original selection
 	}
 };
+
+function exportMTGA(arr, language) {
+	let str = "";
+	for(c of arr) {
+		let set = c.set.toUpperCase();
+		if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
+		let name = c.printed_name[language];
+		let idx = name.indexOf('//');
+		if(idx != -1)
+			name = name.substr(0, idx - 1);
+		str += `1 ${name} (${set}) ${c.collector_number}\n`
+	}
+	return str;
+}

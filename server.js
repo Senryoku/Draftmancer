@@ -6,8 +6,27 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cookieParser = require('cookie-parser');
 const uuidv1 = require('uuid/v1');
-  
+const fs = require('fs');
+
 app.use(cookieParser()); 
+
+function isEmpty(obj) {
+	return Object.entries(obj).length === 0 && obj.constructor === Object;
+}
+
+function arrayRemove(arr, value) {
+	return arr.filter(function(ele) {
+	   return ele != value;
+	});
+}
+
+function get_random(arr) {
+	return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function get_random_key(dict) {
+	return Object.keys(dict)[Math.floor(Math.random() * Object.keys(dict).length)];
+}
 
 function Session(id) {
 	this.id = id;
@@ -30,18 +49,28 @@ function Session(id) {
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
 	this.boosters = [];
+	this.round = 0;
+	this.pickedCardsThisRound = 0;
 }
 
 let Sessions = {};
 let Connections = {};
 
-function isEmpty(obj) {
-	return Object.entries(obj).length === 0 && obj.constructor === Object;
+let Cards = JSON.parse(fs.readFileSync("public/data/MTGACards.json"));
+for(let c in Cards) {
+	if(!('in_booster' in Cards[c]))
+		Cards[c].in_booster = true;
 }
 
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
 	log(`${query.userName} [${query.userID}] connected.`);
+	if(query.userID in Connections) {
+		log(`${query.userName} [${query.userID}] already connected.`, FgRed);
+		socket.emit('alreadyConnected');
+		socket.disconnect(true);
+		return;
+	}
 	
 	Connections[query.userID] = {
 		socket: socket,
@@ -59,9 +88,11 @@ io.on('connection', function(socket) {
 	
 	socket.on('disconnect', function() {
 		let userID = query.userID;
-		log(`${Connections[userID].userName} [${userID}] disconnected.`, FgRed);
-		removeUserFromSession(userID, Connections[userID].sessionID);
-		delete Connections[userID];
+		if(userID in Connections) {
+			log(`${Connections[userID].userName} [${userID}] disconnected.`, FgRed);
+			removeUserFromSession(userID, Connections[userID].sessionID);
+			delete Connections[userID];
+		}
 	});
 	
 	socket.on('setCollection', function(collection) {
@@ -98,11 +129,28 @@ io.on('connection', function(socket) {
 		}
 	});
 	
-	socket.on('pickCard', function(sessionID, cardID) {
+	// Removes picked card from corresponding booster and notify other players.
+	// Moves to next round when each player have picked a card.
+	socket.on('pickCard', function(sessionID, boosterIndex, cardID) {
 		let userID = query.userID;
-		log(`${Connections[userID].userName} [${userID}] picked card ${cardID}.`);
-		for(let user of Sessions[sessionID].users) {
+		
+		log(`${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
+		
+		// Removes the first occurence of cardID
+		for(let i = 0; i < Sessions[sessionID].boosters[boosterIndex].length; ++i) {
+			if(Sessions[sessionID].boosters[boosterIndex][i] == cardID) {
+				Sessions[sessionID].boosters[boosterIndex].splice(i, 1);
+				break;
+			}
+		}
+		
+		// Signal users
+		for(let user of Sessions[sessionID].users)
 			Connections[user].socket.emit('signalPick', userID);
+		
+		++Sessions[sessionID].pickedCardsThisRound;
+		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].users.size) {
+			nextBooster(sessionID);
 		}
 	});
 });
@@ -110,33 +158,140 @@ io.on('connection', function(socket) {
 function startDraft(sessionID) {
 	let sess = Sessions[sessionID];
 	sess.drafting = true;
-	let booster = [];
+	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
 	
+	// Getting intersection of players' collections
 	let collection = sess.collection();
+	// Order by rarity
+	let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
+	for(let c in collection) {
+		if(!(c in Cards)) {
+			log(`Warning: Card ${c} not in database.`, FgYellow);
+			continue;
+		}
+		localCollection[Cards[c].rarity][c] = collection[c];
+	}
+	
+	// Making sure we have enough cards of each rarity
+	const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+
+	let comm_count = count_cards(localCollection['common']);
+	if(comm_count < 10 * boosterQuantity) {
+		log(`Not enough cards (${comm_count}/${10 * this.boosterQuantity} commons) in collection.`, FgYellow);
+		return;
+	}
+	
+	let unco_count = count_cards(localCollection['uncommon']);
+	if(unco_count < 3 * boosterQuantity) {
+		log(`Not enough cards (${unco_count}/${3 * this.boosterQuantity} uncommons) in collection.`, FgYellow);
+		return;
+	}
+	
+	let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
+	if(rm_count < boosterQuantity) {
+		log(`Not enough cards (${rm_count}/${this.boosterQuantity} rares & mythics) in collection.`, FgYellow);
+		return;
+	}
+	
+	let pick_card = function (dict) {
+		let c = get_random_key(dict);
+		dict[c] -= 1;
+		if(dict[c] == 0)
+			delete dict[c];
+		return c;
+	};
 	
 	// Generate Boosters
-	for(let i = 0; i < sess.users.length * sess.boostersPerPlayer; ++i) {
+	Sessions[sessionID].boosters = [];
+	for(let i = 0; i < boosterQuantity; ++i) {
+		let booster = [];
+		
+		 // 1 Rare/Mythic
+		if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
+			alert("Not enough cards in collection.");
+			return;
+		} else if(isEmpty(localCollection['mythic'])) {
+			booster.push(pick_card(localCollection['rare']));
+		} else if(isEmpty(localCollection['rare'])) {
+			booster.push(pick_card(localCollection['mythic']));
+		} else {
+			if(Math.random() * 8 < 1)
+				booster.push(pick_card(localCollection['mythic']));
+			else
+				booster.push(pick_card(localCollection['rare']));
+		}
+/*
+		for(let i = 0; i < 3; ++i) // 3 Uncommons
+			booster.push(pick_card(localCollection['uncommon']));
+		
+		for(let i = 0; i < 10; ++i) // 10 Commons
+			booster.push(pick_card(localCollection['common']));
+*/
+		Sessions[sessionID].boosters.push(booster);
 	}
 	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('startDraft');
-		Connections[user].socket.emit('nextBooster', booster);
 	}
+	Sessions[sessionID].round = 0;
+	nextBooster(sessionID);
+}
+
+function nextBooster(sessionID) {
+	// Boosters are empty
+	if(Sessions[sessionID].boosters[0].length == 0) {
+		Sessions[sessionID].round = 0;
+		// Remove empty boosters
+		Sessions[sessionID].boosters.splice(0, Sessions[sessionID].users.size);
+	}
+	
+	// End draft if no more booster to distribute
+	if(Sessions[sessionID].boosters.length == 0) {
+		endDraft(sessionID);
+		return;
+	}
+	
+	let index = 0;
+	for(let user of Sessions[sessionID].users) {
+		let boosterIndex = (Sessions[sessionID].round + index) % Sessions[sessionID].users.size;
+		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
+		++index;
+	}
+	Sessions[sessionID].pickedCardsThisRound = 0;
+	++Sessions[sessionID].round;
+}
+
+function endDraft(sessionID) {
+	Sessions[sessionID].drafting = false;
+	for(let user of Sessions[sessionID].users) {
+		Connections[user].socket.emit('endDraft');
+	}
+	console.log(`Session ${sessionID} draft ended.`);
 }
 
 // Serve files in the public directory
 app.use(express.static(__dirname + '/public/'));
 
+///////////////////////////////////////////////////////////////////////////////
+// Endpoints
+
 app.get('/getUserID', (req, res) => {
-	if(!req.cookies.userID)
-		res.cookie("userID", uuidv1());
-	res.send(req.cookies.userID);
+	if(!req.cookies.userID) {
+		let userID = uuidv1();
+		res.cookie("userID", userID);
+		res.send(userID);
+	} else {
+		res.send(req.cookies.userID);
+	}
 });
 
 app.get('/getUserName', (req, res) => {
-	if(!req.cookies.userName)
-		res.cookie("userName", "Anon");
-	res.send(req.cookies.userName);
+	if(!req.cookies.userName) {
+		res.cookie("userName", "Anonymous");
+		res.send("Anonymous");
+	} else {
+		res.send(req.cookies.userName);
+	}
 });
 
 app.get('/setUserName/:userName', (req, res) => {
@@ -153,15 +308,23 @@ app.get('/setUserName/:userName', (req, res) => {
 });
 
 app.get('/getSession', (req, res) => {
-	if(!req.cookies.sessionID)
-		res.cookie("sessionID", uuidv1());
-	res.send(req.cookies.sessionID);
+	if(!req.cookies.sessionID) {
+		let sessionID = uuidv1();
+		res.cookie("sessionID", sessionID);
+		res.send(sessionID);
+	} else {
+		res.send(req.cookies.sessionID);
+	}
 });
 
 app.get('/setSession/:id', (req, res) => {
 	if(!req.params.id) {
 		res.sendStatus(400);
 	} else {
+		// TODO Handle this
+		if(Sessions[req.cookies.sessionID].drafting) {
+			res.sendStatus(400);
+		}
 		removeUserFromSession(getUserID(req, res), req.cookies.sessionID);
 		addUserToSession(getUserID(req, res), req.params.id);
 		res.cookie("sessionID", req.params.id);
@@ -195,6 +358,8 @@ http.listen(3000, (err) => {
 	console.log('listening on port 3000'); 
 }); 
 
+///////////////////////////////////////////////////////////////////////////////
+
 function getUserID(req, res) {
 	if(!req.cookies.userID) {
 		let ID = uuidv1();
@@ -208,6 +373,10 @@ function getUserID(req, res) {
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
+		if(Sessions[sessionID].drafting) {
+			// TODO Notify to stop drafting
+		}
+		
 		Sessions[sessionID].users.delete(userID);
 		if(Sessions[sessionID].users.size == 0)
 			delete Sessions[sessionID];

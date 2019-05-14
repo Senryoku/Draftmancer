@@ -8,8 +8,19 @@
 </head>
 <body>
 	<div id="main-vue">
-		<div id="controls" v-bind:class="{ disabled: drafting }">
+		<div v-show="cards == undefined">
+			<div class="loading"></div>
+			<span>Loading cards data...</span>
+		</div>
+		
+		<div id="view-controls">
 			<label>User Name</label><input type="text" id="user-name" v-model="userName" />
+			<label>Language</label>
+			<select v-model="language">
+				<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
+			</select>
+		</div>
+		<div id="controls" v-bind:class="{ disabled: drafting }">
 			<label>Session ID</label><input type="text" id="session-id" v-model="sessionID" />
 			<label>Boosters per Player</label><input type="number" id="boosters-per-player" v-model="boostersPerPlayer" />
 			<label>Collection</label><i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><input type="file" id="file-input" @change="parseMTGALog" />
@@ -17,7 +28,7 @@
 		</div>
 		<div>
 			Session Players:
-			<ul>
+			<ul class="player-list">
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
 					<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
@@ -30,15 +41,59 @@
 				</li>
 			</ul>
 		</div>
-		<div id="booster">
-			<input type="button" @click="pickCard" value="Test Pick" />
+		<div id="draft-container" v-if="drafting">
+			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
+				<h2>Your Booster</h2>
+				<div id="booster-controls">
+					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
+				</div>
+				<div class="booster">
+					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:selected="selectedCardId == card.id"></figure>
+				</div>
+			</div>
+			<div v-show="draftingState == 'waiting'">
+				Waiting for other players to pick...
+				<ul class="player-list">
+					<li v-for="user in sessionUsers" :title="user.userID">
+						{{ user.userName }}
+						<template v-if="user.pickedCard">
+							<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
+						</template>
+						<template v-else>
+							<i class="fas fa-ellipsis-h red" :title="user.userName + ' is thinking...'"></i>
+						</template>
+					</li>
+				</ul>
+			</div>
+			<div v-show="draftingState == 'brewing'" class="container">
+				<h2>Deck</h2>
+				<template v-if="deck.length == 0">
+				Click on your cards to add them to your deck.
+				</template>
+				<template v-else>
+				<div id="brewing-controls">
+					<button type="button" @click="exportDeck">Export Deck</button>
+				</div>
+				<div class="deck">
+					<div v-for="cmc_column in deckCMC" class="cmc-column">
+						<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
+					</div>
+				</div>
+				</template>
+			</div>
+			<div v-if="cardSelection != undefined && cardSelection.length > 0" id="card-pool-container" class="container">
+				<h2>Your cards</h2>
+				<div class="card-pool">
+					<figure is="card" v-for="(card, index) in cardSelection" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+				</div>
+			</div>
 		</div>
 	</div>
 	
 	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 	<script src="./socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/helper.js"></script>
 	<script type="text/javascript" src="js/draft.js"></script>
 </body>
 </html>
