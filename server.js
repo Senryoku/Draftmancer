@@ -1,5 +1,6 @@
 "use strict";
 
+const port = process.env.PORT || 3000
 const express = require('express'); 
 const app = express();
 const http = require('http').Server(app);
@@ -352,10 +353,10 @@ app.get('/getUsers/:sessionID', (req, res) => {
 	res.sendStatus(200);
 });
 
-http.listen(3000, (err) => { 
+http.listen(port, (err) => { 
 	if(err) 
 		throw err; 
-	console.log('listening on port 3000'); 
+	console.log('listening on port ' + port); 
 }); 
 
 ///////////////////////////////////////////////////////////////////////////////
