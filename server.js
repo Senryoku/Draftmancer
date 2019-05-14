@@ -34,18 +34,17 @@ function Session(id) {
 	this.users = new Set();
 	this.collection = function () {
 		// Compute collections intersection
-		let intersection = {};
-		for(let user of this.users) {
-			if(Connections[user].collection) {
-				for(let c in Connections[user].collection) {
-					if(c in intersection)
-						intersection[c] = Math.min(intersection[c], Connections[user].collection[c]);
-					else
-						intersection[c] = Connections[user].collection[c];
-				}
-			}
+		let user_list = [...this.users];
+		let intersection = Object.keys(Connections[user_list[0]].collection);
+		for(let i = 1; i < user_list.length; ++i)
+			intersection = intersection.filter(value => Object.keys(Connections[user_list[i]].collection).includes(value))
+		let collection = {};
+		for(let c of intersection) {
+			collection[c] = Connections[user_list[0]].collection[c];
+			for(let i = 1; i < user_list.length; ++i)
+				collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
 		}
-		return intersection;
+		return collection;
 	};
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
@@ -95,6 +94,25 @@ io.on('connection', function(socket) {
 			removeUserFromSession(userID, Connections[userID].sessionID);
 			delete Connections[userID];
 		}
+	});
+	
+	socket.on('setUserName', function(userName) {
+		let userID = query.userID;
+		Connections[userID].userName = userName;
+		notifyUserChange(Connections[userID].sessionID);
+	});
+
+	socket.on('setSession', function(sessionID) {
+		let userID = query.userID;
+		
+		if(sessionID == Connections[userID].sessionID)
+			return;
+		// TODO Handle this
+		if(sessionID in Sessions && Sessions[sessionID].drafting) {
+		}
+		
+		removeUserFromSession(userID, Connections[userID].sessionID);
+		addUserToSession(userID, sessionID);
 	});
 	
 	socket.on('setCollection', function(collection) {
@@ -285,63 +303,7 @@ app.use(express.static(__dirname + '/public/'));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints
-
-app.get('/getUserID', (req, res) => {
-	if(!req.cookies.userID) {
-		let userID = uuidv1();
-		res.cookie("userID", userID);
-		res.send(userID);
-	} else {
-		res.send(req.cookies.userID);
-	}
-});
-
-app.get('/getUserName', (req, res) => {
-	if(!req.cookies.userName) {
-		res.cookie("userName", "Anonymous");
-		res.send("Anonymous");
-	} else {
-		res.send(req.cookies.userName);
-	}
-});
-
-app.get('/setUserName/:userName', (req, res) => {
-	if(!req.params.userName) {
-		res.sendStatus(400);
-	} else {
-		log('New userName: '+req.params.userName);
-		Connections[req.cookies.userID].userName = req.params.userName;
-		res.cookie("userName", req.params.userName);
-		res.sendStatus(200);
-		
-		notifyUserChange(req.cookies.sessionID);
-	}
-});
-
-app.get('/getSessionID', (req, res) => {
-	if(!req.cookies.sessionID) {
-		let sessionID = uuidv1();
-		res.cookie("sessionID", sessionID);
-		res.send(sessionID);
-	} else {
-		res.send(req.cookies.sessionID);
-	}
-});
-
-app.get('/setSession/:id', (req, res) => {
-	if(!req.params.id) {
-		res.sendStatus(400);
-	} else {
-		// TODO Handle this
-		if(req.cookies.sessionID in Sessions && Sessions[req.cookies.sessionID].drafting) {
-			res.sendStatus(400);
-		}
-		removeUserFromSession(getUserID(req, res), req.cookies.sessionID);
-		addUserToSession(getUserID(req, res), req.params.id);
-		res.cookie("sessionID", req.params.id);
-		res.sendStatus(200);
-	}
-});
+// (TODO: Should be cleaned up)
 
 app.get('/getCollection', (req, res) => {
 	if(!req.cookies.sessionID)
@@ -389,6 +351,7 @@ function removeUserFromSession(userID, sessionID) {
 		}
 		
 		Sessions[sessionID].users.delete(userID);
+		Connections[userID].sessionID = undefined;
 		if(Sessions[sessionID].users.size == 0)
 			delete Sessions[sessionID];
 		else
@@ -403,6 +366,7 @@ function addUserToSession(userID, sessionID) {
 		Sessions[sessionID] = new Session(sessionID);
 		Sessions[sessionID].users.add(userID);
 	}
+	Connections[userID].sessionID = sessionID;
 	notifyUserChange(sessionID);
 }
 

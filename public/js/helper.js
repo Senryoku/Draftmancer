@@ -16,6 +16,15 @@ function arrayRemove(arr, value) {
 	});
 }
 
+function guid() {
+	function s4() {
+		return Math.floor((1 + Math.random()) * 0x10000)
+		  .toString(16)
+		  .substring(1);
+	}
+	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
 const copyToClipboard = str => {
 	const el = document.createElement('textarea');  // Create a <textarea> element

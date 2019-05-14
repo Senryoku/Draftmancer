@@ -13,8 +13,17 @@ function getCookie(cname, def = "") {
 			return c.substring(name.length, c.length);
 		}
 	}
-	console.log(def);
 	return def;
+}
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
 }
 
 Vue.component('card', {
@@ -28,14 +37,6 @@ Vue.component('card', {
 	props: ['card', 'language', 'selectcard', 'selected']
 });
 
-async function getUserID() {
-	return await fetch('/getUserID').then((data) => data.text());
-}
-
-async function getSessionID() {
-	return await fetch('/getSessionID').then((data) => data.text());
-}
-
 var app = new Vue({
 	el: '#main-vue',
 	data: {
@@ -43,13 +44,13 @@ var app = new Vue({
 		cards: undefined,
 		
 		// User Data
-		userID: getCookie("userID", getUserID()),
+		userID: getCookie("userID"),
 		userName: getCookie("userName", "Anonymous"),
 		collection: {},
 		socket: undefined,
 		
 		// Session status
-		sessionID: getCookie("sessionID", getSessionID()),
+		sessionID: getCookie("sessionID", guid()),
 		sessionUsers: [],
 		boostersPerPlayer: 3,
 		setRestriction: "",
@@ -158,7 +159,12 @@ var app = new Vue({
 			return a;
 		},
 	},
-	mounted: async function() {		
+	mounted: async function() {	
+		if(this.userID == "") {
+			this.userID = guid();
+			setCookie("userID", this.userID);
+		}
+		
 		// Socket Setup
 		this.socket = io({query: {
 			userID: this.userID, 
@@ -268,10 +274,12 @@ var app = new Vue({
 	},
 	watch: {
 		sessionID: function() {
-			fetch('/setSession/'+this.sessionID);
+			this.socket.emit('setSession', this.sessionID);
+			setCookie('sessionID', this.sessionID);
 		},
 		userName: function() {
-			fetch('/setUserName/'+this.userName);
+			this.socket.emit('setUserName', this.userName);
+			setCookie('userName', this.userName);
 		},
 		readyToDraft: function() {
 			this.socket.emit('readyToDraft', this.readyToDraft);
