@@ -1,10 +1,10 @@
 "use strict";
 
-function getCookie(cname) {
+function getCookie(cname, def = "") {
 	var name = cname + "=";
 	var decodedCookie = decodeURIComponent(document.cookie);
 	var ca = decodedCookie.split(';');
-	for(var i = 0; i <ca.length; i++) {
+	for(var i = 0; i < ca.length; i++) {
 		var c = ca[i];
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1);
@@ -13,7 +13,8 @@ function getCookie(cname) {
 			return c.substring(name.length, c.length);
 		}
 	}
-	return "";
+	console.log(def);
+	return def;
 }
 
 Vue.component('card', {
@@ -27,6 +28,14 @@ Vue.component('card', {
 	props: ['card', 'language', 'selectcard', 'selected']
 });
 
+async function getUserID() {
+	return await fetch('/getUserID').then((data) => data.text());
+}
+
+async function getSessionID() {
+	return await fetch('/getSessionID').then((data) => data.text());
+}
+
 var app = new Vue({
 	el: '#main-vue',
 	data: {
@@ -34,15 +43,16 @@ var app = new Vue({
 		cards: undefined,
 		
 		// User Data
-		userID: getCookie("userID"),
-		userName: getCookie("userName"),
+		userID: getCookie("userID", getUserID()),
+		userName: getCookie("userName", "Anonymous"),
 		collection: {},
-		socket: getCookie("sessionID"),
+		socket: undefined,
 		
 		// Session status
-		sessionID: undefined,
+		sessionID: getCookie("sessionID", getSessionID()),
 		sessionUsers: [],
 		boostersPerPlayer: 3,
+		setRestriction: "",
 		readyToDraft: false,
 		drafting: false,
 		booster: [],
@@ -62,6 +72,7 @@ var app = new Vue({
 			{code: 'zhs', name: 'Simplified Chinese'},
 			{code: 'zht', name: 'Traditional Chinese'}
 		],
+		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war"],
 		boosterIndex: undefined,
 		draftingState: undefined,
 		selectedCardId: undefined,
@@ -147,14 +158,7 @@ var app = new Vue({
 			return a;
 		},
 	},
-	mounted: async function() {
-		if(!this.userID)
-			this.userID = await fetch('/getUserID').then((data) => data.text());
-		
-		let inputSessionID = document.querySelector('#session-id');
-		if(!this.sessionID)
-			this.sessionID = await fetch('/getSession').then((data) => data.text());
-		
+	mounted: async function() {		
 		// Socket Setup
 		this.socket = io({query: {
 			userID: this.userID, 
@@ -190,6 +194,10 @@ var app = new Vue({
 		
 		this.socket.on('boostersPerPlayer', function(data) {
 			app.boostersPerPlayer = parseInt(data);
+		});
+		
+		this.socket.on('setRestriction', function(data) {
+			app.setRestriction = data;
 		});
 		
 		this.socket.on('startDraft', function(data) {
@@ -270,6 +278,9 @@ var app = new Vue({
 		},
 		boostersPerPlayer: function() {
 			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);
+		},
+		setRestriction: function() {
+			this.socket.emit('setRestriction', this.setRestriction);
 		}
 	}
 });

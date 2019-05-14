@@ -49,6 +49,7 @@ function Session(id) {
 	};
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
+	this.setRestriction = "";
 	this.boosters = [];
 	this.round = 0;
 	this.pickedCardsThisRound = 0;
@@ -111,6 +112,14 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('setRestriction', function(setRestriction) {
+		let sessionID = Connections[this.userID].sessionID;
+		Sessions[sessionID].setRestriction = setRestriction;
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('setRestriction', setRestriction);
+		}
+	});
+	
 	socket.on('readyToDraft', function(readyToDraft) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
@@ -170,7 +179,8 @@ function startDraft(sessionID) {
 			log(`Warning: Card ${c} not in database.`, FgYellow);
 			continue;
 		}
-		localCollection[Cards[c].rarity][c] = collection[c];
+		if(sess.setRestriction == "" || Cards[c].set == sess.setRestriction)
+			localCollection[Cards[c].rarity][c] = collection[c];
 	}
 	
 	// Making sure we have enough cards of each rarity
@@ -308,7 +318,7 @@ app.get('/setUserName/:userName', (req, res) => {
 	}
 });
 
-app.get('/getSession', (req, res) => {
+app.get('/getSessionID', (req, res) => {
 	if(!req.cookies.sessionID) {
 		let sessionID = uuidv1();
 		res.cookie("sessionID", sessionID);
@@ -323,7 +333,7 @@ app.get('/setSession/:id', (req, res) => {
 		res.sendStatus(400);
 	} else {
 		// TODO Handle this
-		if(Sessions[req.cookies.sessionID].drafting) {
+		if(req.cookies.sessionID in Sessions && Sessions[req.cookies.sessionID].drafting) {
 			res.sendStatus(400);
 		}
 		removeUserFromSession(getUserID(req, res), req.cookies.sessionID);

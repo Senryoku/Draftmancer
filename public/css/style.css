@@ -65,6 +65,10 @@ input[type="button"]:focus {
 	width: 18em;
 }
 
+#boosters-per-player {
+	width: 3em;
+}
+
 .player-list {
 	display: inline-block;
 	list-style: none;
@@ -80,15 +84,20 @@ input[type="button"]:focus {
 .container {
 }
 
-#booster-container h2 {
+.container h2 {
 	display: inline-block;
+	margin: 0;
+	font-variant: small-caps;
 }
 
 #booster-controls {
 	display: inline-block;
 }
 
-.booster {
+.container {
+}
+
+.booster, .card-pool {
 	display: flex;
 	flex-wrap: wrap;
 	background-color: #282828;
@@ -106,6 +115,8 @@ input[type="button"]:focus {
 	width: 200px;
 	transition: transform 0.1s ease-out;
 	transform-origin: bottom;
+	border-radius: 6px;
+	cursor: pointer;
 }
 
 .selected {
@@ -206,6 +217,31 @@ input[type="button"]:focus {
 
 /* ------------------------------------------------ */
 /*             Absolute Center Spinner              */
+
+.spinner {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  margin-left: 1.5em;
+}
+
+.spinner:not(:required):after {
+  --spinner-color: rgba(255, 255, 255, 0.75);
+  content: '';
+  display: inline-block;
+  font-size: 8px;
+  width: 1em;
+  height: 1em;
+  -webkit-animation: spinner 1500ms infinite linear;
+  -moz-animation: spinner 1500ms infinite linear;
+  -ms-animation: spinner 1500ms infinite linear;
+  -o-animation: spinner 1500ms infinite linear;
+  animation: spinner 1500ms infinite linear;
+  border-radius: 0.5em;
+  -webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+  box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0, var(--spinner-color) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+}
+
 .loading {
   position: fixed;
   z-index: 999;
