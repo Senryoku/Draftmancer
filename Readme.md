@@ -1,9 +1,11 @@
 # Todo
- * Handle server booster generation errors (not enough cards...)
+ * Handle server booster generation errors correctly (not enough cards...)
  * Replace all alerts
- * Restrict by set
  * Card Order (cardSelection)
  * Handle end draft (un-ready everyone? reset session? other?)
+ 
+# Check
+ * Set restriction
  
 # Bugs
  * Collection status not correctly updated
