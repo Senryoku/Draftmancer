@@ -1,0 +1,17 @@
+{
+  "name": "mtgadraft",
+  "version": "1.0.0",
+  "description": "MTGA Direct Challenge drafting environment",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Senryoku",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.4",
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0",
+    "uuid": "^3.3.2"
+  }
+}
