@@ -35,14 +35,40 @@ function Session(id) {
 	this.collection = function () {
 		// Compute collections intersection
 		let user_list = [...this.users];
-		let intersection = Object.keys(Connections[user_list[0]].collection);
-		for(let i = 1; i < user_list.length; ++i)
-			intersection = intersection.filter(value => Object.keys(Connections[user_list[i]].collection).includes(value))
+		let intersection = [];
 		let collection = {};
+		
+		// If none of the user has uploaded their collection/doesn't want to use it, return all cards.
+		let all_cards = true;
+		for(let i = 0; i < user_list.length; ++i)
+			all_cards = all_cards && (!Connections[user_list[i]].useCollection || Connections[user_list[i]].collection == {});
+		if(all_cards) {
+			for(let c of Object.keys(Cards))
+				if(Cards[c].in_booster)
+					collection[c] = 4;
+			return collection;
+		}
+		
+		// Start from the first user's collection, or the list of all cards if not available/used
+		if(!Connections[user_list[0]].useCollection || Connections[user_list[0]].collection == {})
+			intersection = Object.keys(Cards);
+		else
+			intersection = Object.keys(Connections[user_list[0]].collection);
+		
+		// Shave every useless card id
+		for(let i = 1; i < user_list.length; ++i)
+			if(Connections[user_list[i]].useCollection && Connections[user_list[i]].collection != {})
+				intersection = intersection.filter(value => Object.keys(Connections[user_list[i]].collection).includes(value))
+		
+		// Compute the minimum count of each remaining card
 		for(let c of intersection) {
-			collection[c] = Connections[user_list[0]].collection[c];
+			if(!Connections[user_list[0]].useCollection || Connections[user_list[0]].collection == {})
+				collection[c] = 4;
+			else
+				collection[c] = Connections[user_list[0]].collection[c];
 			for(let i = 1; i < user_list.length; ++i)
-				collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
+				if(Connections[user_list[i]].useCollection && Connections[user_list[i]].collection != {})
+					collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
 		}
 		return collection;
 	};
@@ -79,7 +105,8 @@ io.on('connection', function(socket) {
 		userName: query.userName,
 		sessionID: query.sessionID,
 		readyToDraft: false,
-		collection: {}
+		collection: {},
+		useCollection: true
 	};
 	addUserToSession(query.userID, query.sessionID);
 	
@@ -134,6 +161,17 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('useCollection', function(useCollection) {
+		let userID = query.userID;
+		let sessionID = Connections[userID].sessionID;
+
+		if(useCollection == Connections[userID].useCollection)
+			return;
+		
+		Connections[userID].useCollection = useCollection;
+		notifyUserChange(sessionID);
+	});
+	
 	socket.on('setRestriction', function(setRestriction) {
 		let sessionID = Connections[this.userID].sessionID;
 
@@ -160,7 +198,7 @@ io.on('connection', function(socket) {
 			}
 		}
 		
-		if(allReady) {
+		if(allReady && Sessions[sessionID].users.size >= 2) {
 			startDraft(sessionID);
 		}
 	});
@@ -357,7 +395,8 @@ function getUserID(req, res) {
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
-			// TODO Notify to stop drafting
+			// Clients should stop drafting automatically
+			Sessions[sessionID].drafting = false;
 		}
 		
 		Sessions[sessionID].users.delete(userID);

@@ -61,6 +61,7 @@ var app = new Vue({
 		// User Data
 		userID: getCookie("userID"),
 		userName: getCookie("userName", "Anonymous"),
+		useCollection: true,
 		collection: {},
 		socket: undefined,
 		
@@ -234,6 +235,12 @@ var app = new Vue({
 			for(let u of users) {
 				u.pickedCard = false;
 			}
+			
+			if(app.drafting && users.length < app.sessionUsers.length) {
+				alert('A user disconnected, canceling draft...');
+				app.drafting = false;
+			}
+			
 			app.sessionUsers = users;
 		});
 		
@@ -326,6 +333,9 @@ var app = new Vue({
 		},
 		boostersPerPlayer: function() {
 			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);
+		},
+		useCollection: function() {
+			this.socket.emit('useCollection', this.useCollection);
 		},
 		setRestriction: function() {
 			this.socket.emit('setRestriction', this.setRestriction);

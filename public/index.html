@@ -13,31 +13,44 @@
 			<span>Loading cards data...</span>
 		</div>
 		
-		<div id="view-controls">
+		<div id="view-controls" class="main-controls">
 			<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" />
+			<span class="v-separator"></span>
 			<label for="language">Language</label>
 			<select v-model="language" name="language">
 				<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
 			</select>
+			<span class="v-separator"></span>
 			<label for="card-order">Card Order</label>
 			<select v-model="cardOrder" name="card-order">
 				<option value=""></option>
 				<option value="CMC">CMC</option>
 				<option value="Color">Color</option>
 			</select>
+			<span class="v-separator"></span>
+			<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
 		</div>
-		<div id="controls" v-bind:class="{ disabled: drafting }">
-			<label forl="session-id">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
-			<label for="boosters-per-player">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-			<label for="set-restriction">Restrict Set</label>
-			<select id="set-restriction" v-model:value="setRestriction">
-				<option value=""></option>
-				<option v-for="set in sets" v-bind:value="set">
-				{{ set }}
-				</option>
-			</select>
-			<label for="file-input">Collection</label><i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><input type="file" id="file-input" @change="parseMTGALog" />
-			<input type="checkbox" v-model="readyToDraft">Ready to Draft</input>
+		<div class="generic-container">
+			<div id="draft-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
+				<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
+				<span class="v-separator"></span>
+				<label for="boosters-per-player">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+				<span class="v-separator"></span>
+				<label for="set-restriction">Restrict Set</label>
+				<select id="set-restriction" v-model:value="setRestriction">
+					<option value=""></option>
+					<option v-for="set in sets" v-bind:value="set">
+					{{ set }}
+					</option>
+				</select>
+				<span class="v-separator"></span>
+				<input type="checkbox" v-model="useCollection" title="Uncheck this to draft using every cards.">Restrict to Collection</input>
+				<span class="v-separator"></span>
+				<input type="checkbox" v-model="readyToDraft">Ready to Draft</input>
+			</div>
+			<div v-show="drafting" id="draft-in-progress">
+				Draft in progress!
+			</div>
 		</div>
 		<div>
 			Session Players:
@@ -53,6 +66,7 @@
 					<i v-if="user.readyToDraft" class="fas fa-check green" :title="user.userName + ' is ready to draft!'"></i>
 				</li>
 			</ul>
+			<small>(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
 		</div>
 		<div id="draft-container" v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
@@ -110,6 +124,11 @@
 					</template>
 				</div>
 			</div>
+		</div>
+		<div class="welcome" v-else>
+			<p>Welcome to MTGADraft!</p>
+			<p>Want to draft in MTGA with your friends for free? Good!</p>
+			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find it at <tt>C:/Users/YourName/AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
 		</div>
 	</div>
 	
