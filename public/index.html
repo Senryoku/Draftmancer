@@ -44,8 +44,10 @@
 						{{ set }}
 						</option>
 					</select>
-					<span class="v-separator"></span>
-					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+					<span v-show="Object.keys(collection).length > 0">
+						<span class="v-separator"></span>
+						<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+					</span>
 					<span class="v-separator"></span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
