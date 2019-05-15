@@ -203,6 +203,16 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('distributeSealed', function(boosterPerPlayer) {
+		let userID = query.userID;
+		let sessionID = Connections[userID].sessionID;
+		for(let user of Sessions[sessionID].users) {
+			generateBoosters(sessionID, boosterPerPlayer);
+			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
+		}
+		Sessions[sessionID].boosters = [];
+	});
+	
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	socket.on('pickCard', function(sessionID, boosterIndex, cardID) {
@@ -229,11 +239,8 @@ io.on('connection', function(socket) {
 	});
 });
 
-function startDraft(sessionID) {
+function generateBoosters(sessionID, boosterQuantity) {
 	let sess = Sessions[sessionID];
-	sess.drafting = true;
-	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
-	
 	// Getting intersection of players' collections
 	let collection = sess.collection();
 	// Order by rarity
@@ -306,6 +313,14 @@ function startDraft(sessionID) {
 
 		Sessions[sessionID].boosters.push(booster);
 	}
+}
+
+function startDraft(sessionID) {
+	let sess = Sessions[sessionID];
+	sess.drafting = true;
+	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
+	
+	generateBoosters(sessionID, boosterQuantity);
 	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('startDraft');

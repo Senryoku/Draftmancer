@@ -31,22 +31,28 @@
 			<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
 		</div>
 		<div class="generic-container">
-			<div id="draft-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
-				<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
-				<span class="v-separator"></span>
-				<label for="boosters-per-player">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-				<span class="v-separator"></span>
-				<label for="set-restriction">Restrict Set</label>
-				<select id="set-restriction" v-model:value="setRestriction">
-					<option value=""></option>
-					<option v-for="set in sets" v-bind:value="set">
-					{{ set }}
-					</option>
-				</select>
-				<span class="v-separator"></span>
-				<input type="checkbox" v-model="useCollection" title="Uncheck this to draft using every cards.">Restrict to Collection</input>
-				<span class="v-separator"></span>
-				<input type="checkbox" v-model="readyToDraft">Ready to Draft</input>
+			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
+				<span id="draft-controls">
+					<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
+					<span class="v-separator"></span>
+					<label for="boosters-per-player" class="booster-count">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+					<span class="v-separator"></span>
+					<label for="set-restriction">Restrict Set</label>
+					<select id="set-restriction" v-model:value="setRestriction">
+						<option value=""></option>
+						<option v-for="set in sets" v-bind:value="set">
+						{{ set }}
+						</option>
+					</select>
+					<span class="v-separator"></span>
+					<input type="checkbox" v-model="useCollection" title="Uncheck this to draft using every cards.">Restrict to Collection</input>
+					<span class="v-separator"></span>
+					<input type="checkbox" v-model="readyToDraft">Ready to Draft</input>
+				</span>
+				
+				<span id="sealed-controls">
+					<strong>Sealed</strong>: Booster per Player: <input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" /><input type="button" value="Distribute" @click="distributeSealed"/>
+				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
 				Draft in progress!
@@ -99,7 +105,7 @@
 						<div>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</div>
 					</template>
 					<template v-else>
-						<button type="button" @click="exportDeck">Export Deck</button>
+						<button type="button" @click="exportDeck">Export Deck to MTGA</button>
 					</template>
 				</div>
 				<div class="deck card-container">
@@ -111,6 +117,7 @@
 			<div v-if="cardSelection != undefined && cardSelection.length > 0" id="card-pool-container" class="container">
 				<div id="card-pool-controls" class="controls">
 					<h2>Your cards</h2>
+					<button type="button" @click="exportSelection">Export to MTGA</button>
 				</div>
 				<div class="card-pool card-container">
 					<template v-if="cardOrder == 'CMC'">
@@ -128,7 +135,15 @@
 		<div class="welcome" v-else>
 			<p>Welcome to MTGADraft!</p>
 			<p>Want to draft in MTGA with your friends for free? Good!</p>
-			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find it at <tt>C:/Users/YourName/AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
+			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
+			<p>Options:
+				<ul>
+					<li>Session ID: A unique identifier for your session, just make sure to use the same as your friends to play with them!</li>
+					<li>Boosters per Player: Shared by everyone in your session.</li>
+					<li>Restrict Set: Select a set to draft using only with cards from this set. Shared by everyone in your session.</li>
+					<li>Restrict to Collection: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
+				</ul>
+			</p>
 		</div>
 	</div>
 	

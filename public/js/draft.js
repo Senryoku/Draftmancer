@@ -74,6 +74,8 @@ var app = new Vue({
 		drafting: false,
 		booster: [],
 		
+		sealedBoosterPerPlayer: 6,
+		
 		// Front-end options & data
 		language: 'en',
 		languages: [
@@ -160,6 +162,26 @@ var app = new Vue({
 		exportDeck: function() {
 			copyToClipboard(exportMTGA(this.deck, this.language));
 			alert('Deck exported to clipboard!');
+		},
+		exportSelection: function() {
+			copyToClipboard(exportMTGA(this.cardSelection, this.language));
+			alert('Cards exported to clipboard!');
+		},
+		distributeSealed: function() {
+			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+		},
+		genCard: function(c) {
+			return {
+				id: c, 
+				name: this.cards[c].name, 
+				printed_name: this.cards[c].printed_name, 
+				image_uris: this.cards[c].image_uris, 
+				set: this.cards[c].set, 
+				cmc: this.cards[c].cmc, 
+				collector_number: this.cards[c].collector_number, 
+				color_identity: this.cards[c].color_identity, 
+				in_booster: this.cards[c].in_booster
+			};
 		}
 	},
 	computed: {
@@ -263,17 +285,7 @@ var app = new Vue({
 			app.boosterIndex = data.boosterIndex;
 			app.booster = [];
 			for(let c of data.booster) {
-				app.booster.push({
-					id: c, 
-					name: app.cards[c].name, 
-					printed_name: app.cards[c].printed_name, 
-					image_uris: app.cards[c].image_uris, 
-					set: app.cards[c].set, 
-					cmc: app.cards[c].cmc, 
-					collector_number: app.cards[c].collector_number, 
-					color_identity: app.cards[c].color_identity, 
-					in_booster: app.cards[c].in_booster
-				});
+				app.booster.push(app.genCard(c));
 			}
 			for(let u of app.sessionUsers) {
 				u.pickedCard = false;
@@ -283,6 +295,15 @@ var app = new Vue({
 		
 		this.socket.on('endDraft', function(data) {
 			alert('Done drafting!');
+			app.draftingState = 'brewing';
+		});
+		
+		this.socket.on('setCardSelection', function(data) {
+			app.cardSelection = [];
+			for(let c of data.flat()) {
+				app.cardSelection.push(app.genCard(c));
+			}
+			app.drafting = true;
 			app.draftingState = 'brewing';
 		});
 		

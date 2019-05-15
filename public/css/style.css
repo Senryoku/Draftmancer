@@ -97,11 +97,16 @@ label {
 	border-radius: 0.25em;
 }
 
+#limited-controls {
+	display: flex;
+	justify-content: space-between;
+}
+
 #session-id {
 	width: 18em;
 }
 
-#boosters-per-player {
+.booster-count {
 	width: 3em;
 }
 
