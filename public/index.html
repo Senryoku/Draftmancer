@@ -14,10 +14,16 @@
 		</div>
 		
 		<div id="view-controls">
-			<label>User Name</label><input type="text" id="user-name" v-model="userName" />
-			<label>Language</label>
-			<select v-model="language">
+			<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" />
+			<label for="language">Language</label>
+			<select v-model="language" name="language">
 				<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
+			</select>
+			<label for="card-order">Card Order</label>
+			<select v-model="cardOrder" name="card-order">
+				<option value=""></option>
+				<option value="CMC">CMC</option>
+				<option value="Color">Color</option>
 			</select>
 		</div>
 		<div id="controls" v-bind:class="{ disabled: drafting }">
@@ -50,11 +56,11 @@
 		</div>
 		<div id="draft-container" v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
-				<h2>Your Booster</h2>
-				<div id="booster-controls">
+				<div id="booster-controls" class="controls">
+					<h2>Your Booster</h2>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
-				<div class="booster">
+				<div class="booster card-container">
 					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:selected="selectedCardId == card.id"></figure>
 				</div>
 			</div>
@@ -73,25 +79,35 @@
 				</ul>
 			</div>
 			<div v-show="draftingState == 'brewing'" class="container">
-				<h2>Deck</h2>
-				<template v-if="deck.length == 0">
-				Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)
-				</template>
-				<template v-else>
-				<div id="brewing-controls">
-					<button type="button" @click="exportDeck">Export Deck</button>
+				<div id="brewing-controls" class="controls">
+					<h2>Deck</h2>
+					<template v-if="deck.length == 0">
+						<div>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</div>
+					</template>
+					<template v-else>
+						<button type="button" @click="exportDeck">Export Deck</button>
+					</template>
 				</div>
-				<div class="deck">
+				<div class="deck card-container">
 					<div v-for="cmc_column in deckCMC" class="cmc-column">
 						<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 					</div>
 				</div>
-				</template>
 			</div>
 			<div v-if="cardSelection != undefined && cardSelection.length > 0" id="card-pool-container" class="container">
-				<h2>Your cards</h2>
-				<div class="card-pool">
-					<figure is="card" v-for="(card, index) in cardSelection" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+				<div id="card-pool-controls" class="controls">
+					<h2>Your cards</h2>
+				</div>
+				<div class="card-pool card-container">
+					<template v-if="cardOrder == 'CMC'">
+						<figure is="card" v-for="(card, index) in selectionCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else-if="cardOrder == 'Color'">
+						<figure is="card" v-for="(card, index) in selectionColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else>
+						<figure is="card" v-for="(card, index) in cardSelection" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
 				</div>
 			</div>
 		</div>

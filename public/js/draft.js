@@ -1,5 +1,20 @@
 "use strict";
 
+const ColorOrder = {'W':0, 'U':1, 'B':2, 'R':3, 'G':4};
+function orderColor(lhs, rhs) {
+	if(!lhs || !rhs)
+		return 0;
+	if(lhs.length == 1 && rhs.length == 1)
+		return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
+	else if(lhs.length == 1)
+		return -1;
+	else if(rhs.length == 1)
+		return 1;
+	else
+		return String(lhs.flat()).localeCompare(String(rhs.flat()));
+}
+
+
 function getCookie(cname, def = "") {
 	var name = cname + "=";
 	var decodedCookie = decodeURIComponent(document.cookie);
@@ -73,6 +88,7 @@ var app = new Vue({
 			{code: 'zhs', name: 'Simplified Chinese'},
 			{code: 'zht', name: 'Traditional Chinese'}
 		],
+		cardOrder: "",
 		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war"],
 		boosterIndex: undefined,
 		draftingState: undefined,
@@ -158,6 +174,20 @@ var app = new Vue({
 			}, {});
 			return a;
 		},
+		selectionCMC: function() {
+			return [...this.cardSelection].sort(function (lhs, rhs) {
+				if(lhs.cmc == rhs.cmc)
+					return orderColor(lhs.color_identity, rhs.color_identity);
+				return lhs.cmc - rhs.cmc;
+			});
+		},
+		selectionColor: function() {
+			return [...this.cardSelection].sort(function (lhs, rhs) {
+				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
+					return lhs.cmc - rhs.cmc;
+				return orderColor(lhs.color_identity, rhs.color_identity);
+			});
+		}
 	},
 	mounted: async function() {	
 		if(this.userID == "") {
@@ -172,8 +202,17 @@ var app = new Vue({
 			userName: this.userName
 		}});
 		
-		this.socket.on('reconnect', (attemptNumber) => {
-			this.socket.emit('setCollection', app.collection);
+		
+		this.socket.on('disconnect', function() {
+			console.log('Disconnected from server.');
+		});
+		
+		this.socket.on('reconnect', function(attemptNumber) {
+			console.log(`Reconnected to server (attempt ${attemptNumber}).`);
+			app.socket.emit('setCollection', app.collection);
+			// TODO: Could this be avoided?
+			app.socket.emit('setSession', app.sessionID);
+			app.socket.emit('setName', app.userName);
 		});
 		
 		this.socket.on('alreadyConnected', function(data) {
@@ -208,6 +247,7 @@ var app = new Vue({
 		
 		this.socket.on('startDraft', function(data) {
 			app.drafting = true;
+			app.readyToDraft = false;
 			app.cardSelection = [];
 			alert('Everybody is ready!');
 		});
@@ -224,7 +264,7 @@ var app = new Vue({
 					set: app.cards[c].set, 
 					cmc: app.cards[c].cmc, 
 					collector_number: app.cards[c].collector_number, 
-					colors: app.cards[c].color_identity, 
+					color_identity: app.cards[c].color_identity, 
 					in_booster: app.cards[c].in_booster
 				});
 			}
@@ -239,7 +279,7 @@ var app = new Vue({
 			app.draftingState = 'brewing';
 		});
 		
-		// Look for a localy stored collection
+		// Look for a locally stored collection
 		let localStorageCollection = localStorage.getItem("Collection");
 		if(localStorageCollection) {
 			try {

@@ -65,7 +65,7 @@ for(let c in Cards) {
 
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
-	log(`${query.userName} [${query.userID}] connected.`);
+	log(`${query.userName} [${query.userID}] connected to session ${query.sessionID}.`);
 	if(query.userID in Connections) {
 		log(`${query.userName} [${query.userID}] already connected.`, FgRed);
 		socket.emit('alreadyConnected');
@@ -124,6 +124,10 @@ io.on('connection', function(socket) {
 	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
+
+		if(boostersPerPlayer == Sessions[sessionID].boostersPerPlayer)
+			return;
+		
 		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
 		for(let user of Sessions[sessionID].users) {
 			Connections[user].socket.emit('boostersPerPlayer', boostersPerPlayer);
@@ -132,6 +136,10 @@ io.on('connection', function(socket) {
 	
 	socket.on('setRestriction', function(setRestriction) {
 		let sessionID = Connections[this.userID].sessionID;
+
+		if(setRestriction == Sessions[sessionID].setRestriction)
+			return;
+		
 		Sessions[sessionID].setRestriction = setRestriction;
 		for(let user of Sessions[sessionID].users) {
 			Connections[user].socket.emit('setRestriction', setRestriction);
@@ -221,6 +229,8 @@ function startDraft(sessionID) {
 		log(`Not enough cards (${rm_count}/${this.boosterQuantity} rares & mythics) in collection.`, FgYellow);
 		return;
 	}
+	
+	// TODO: Prevent multiples?
 	
 	let pick_card = function (dict) {
 		let c = get_random_key(dict);
