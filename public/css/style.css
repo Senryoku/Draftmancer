@@ -11,7 +11,14 @@ body {
 	background: #282828 !important;
 }
 
-#main-vue select, #main-vue option, #main-vue input, #main-vue button {
+#main-vue select, 
+#main-vue option, 
+#main-vue input[type="text"], 
+#main-vue input[type="button"], 
+#main-vue input[type="number"], 
+#main-vue button, 
+.check-button + label 
+{
 	color: #DDD;
 	background: #555;
 	border-radius: 4px;
@@ -28,7 +35,8 @@ body {
 #main-vue button,
 #main-vue input[type="submit"],
 #main-vue input[type="reset"],
-#main-vue input[type="button"] {
+#main-vue input[type="button"],
+.check-button + label {
 	display: inline-block;
 	height: 28px;
 	padding: 0 15px;
@@ -46,6 +54,59 @@ body {
 	margin: 0.5em;
 }
 
+.check-button-container {
+	display: inline-block;
+	position: relative;
+	margin: 0;
+	padding: 0;
+}
+
+.check-button {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    vertical-align: middle;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='512px' height='512px' viewBox='0 0 32 32' style='enable-background:new 0 0 512 512;' xml:space='preserve'%3e%3cpath d='M448,71.9c-17.3-13.4-41.5-9.3-54.1,9.1L214,344.2l-99.1-107.3c-14.6-16.6-39.1-17.4-54.7-1.8 c-15.6,15.5-16.4,41.6-1.7,58.1c0,0,120.4,133.6,137.7,147c17.3,13.4,41.5,9.3,54.1-9.1l206.3-301.7 C469.2,110.9,465.3,85.2,448,71.9z'/%3e%3c/svg%3e");
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-color:transparent;
+    background-position:-10em -10em;
+    transition:.3s ease;
+    outline:0;
+}
+
+.check-button:focus + label{
+} 
+
+.check-button:active + label {
+    background-color: #888;
+}
+
+.check-button:checked + label {
+	box-shadow: 0 0 2px 1px green;
+}
+
+.check-button:checked:after {
+	font-family: "Font Awesome 5 Free";
+	content: "\f00c";
+	z-index: 3;
+	font-weight: 900;
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 2em;
+	color: green;
+}
+
 #main-vue button:disabled {
 	color: #555;
 	cursor: auto;
@@ -56,11 +117,13 @@ body {
 #main-vue input[type="submit"]:hover:enabled,
 #main-vue input[type="reset"]:hover:enabled,
 #main-vue input[type="button"]:hover:enabled,
+.check-button:hover:enabled + label,
 #main-vue .button:focus,
 #main-vue button:focus,
 #main-vue input[type="submit"]:focus,
 #main-vue input[type="reset"]:focus,
-#main-vue input[type="button"]:focus {
+#main-vue input[type="button"]:focus,
+.check-button + label:focus {
 	color: #FFF;
 	border-color: #BBB;
 	outline: 0;

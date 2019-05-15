@@ -45,9 +45,11 @@
 						</option>
 					</select>
 					<span class="v-separator"></span>
-					<input type="checkbox" v-model="useCollection" title="Uncheck this to draft using every cards.">Restrict to Collection</input>
+					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
 					<span class="v-separator"></span>
-					<input type="checkbox" v-model="readyToDraft">Ready to Draft</input>
+					<div class="check-button-container">
+						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
+					</div>
 				</span>
 				
 				<span id="sealed-controls">
