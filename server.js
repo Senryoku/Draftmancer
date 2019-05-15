@@ -40,8 +40,9 @@ function Session(id) {
 		
 		// If none of the user has uploaded their collection/doesn't want to use it, return all cards.
 		let all_cards = true;
-		for(let i = 0; i < user_list.length; ++i)
-			all_cards = all_cards && (!Connections[user_list[i]].useCollection || Connections[user_list[i]].collection == {});
+		for(let i = 0; i < user_list.length; ++i) {
+			all_cards = all_cards && (!Connections[user_list[i]].useCollection || isEmpty(Connections[user_list[i]].collection));
+		}
 		if(all_cards) {
 			for(let c of Object.keys(Cards))
 				if(Cards[c].in_booster)
@@ -50,24 +51,24 @@ function Session(id) {
 		}
 		
 		// Start from the first user's collection, or the list of all cards if not available/used
-		if(!Connections[user_list[0]].useCollection || Connections[user_list[0]].collection == {})
-			intersection = Object.keys(Cards);
+		if(!Connections[user_list[0]].useCollection || isEmpty(Connections[user_list[0]].collection))
+			intersection = Object.keys(Cards).filter(c => c in Cards && Cards[c].in_booster);
 		else
-			intersection = Object.keys(Connections[user_list[0]].collection);
+			intersection = Object.keys(Connections[user_list[0]].collection).filter(c => c in Cards && Cards[c].in_booster);
 		
 		// Shave every useless card id
 		for(let i = 1; i < user_list.length; ++i)
-			if(Connections[user_list[i]].useCollection && Connections[user_list[i]].collection != {})
+			if(Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection))
 				intersection = intersection.filter(value => Object.keys(Connections[user_list[i]].collection).includes(value))
 		
 		// Compute the minimum count of each remaining card
 		for(let c of intersection) {
-			if(!Connections[user_list[0]].useCollection || Connections[user_list[0]].collection == {})
+			if(!Connections[user_list[0]].useCollection || isEmpty(Connections[user_list[0]].collection))
 				collection[c] = 4;
 			else
 				collection[c] = Connections[user_list[0]].collection[c];
 			for(let i = 1; i < user_list.length; ++i)
-				if(Connections[user_list[i]].useCollection && Connections[user_list[i]].collection != {})
+				if(Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection))
 					collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
 		}
 		return collection;
@@ -259,19 +260,19 @@ function generateBoosters(sessionID, boosterQuantity) {
 
 	let comm_count = count_cards(localCollection['common']);
 	if(comm_count < 10 * boosterQuantity) {
-		log(`Not enough cards (${comm_count}/${10 * this.boosterQuantity} commons) in collection.`, FgYellow);
+		log(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`, FgYellow);
 		return;
 	}
 	
 	let unco_count = count_cards(localCollection['uncommon']);
 	if(unco_count < 3 * boosterQuantity) {
-		log(`Not enough cards (${unco_count}/${3 * this.boosterQuantity} uncommons) in collection.`, FgYellow);
+		log(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`, FgYellow);
 		return;
 	}
 	
 	let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
 	if(rm_count < boosterQuantity) {
-		log(`Not enough cards (${rm_count}/${this.boosterQuantity} rares & mythics) in collection.`, FgYellow);
+		log(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
 		return;
 	}
 	

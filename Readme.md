@@ -7,8 +7,9 @@
  * Set restriction
  * Handle end draft (un-ready everyone? reset session? other?)
  * Integrate sealed booster generation
+ * bug fixed?
+ * * Check collection upload (app crash?)
+ * * Crash when no collection?
  
 # Bugs
  * Collection status not correctly updated
- * Check collection upload (app crash?)
- 
