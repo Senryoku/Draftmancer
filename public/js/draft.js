@@ -152,7 +152,15 @@ var app = new Vue({
 					localStorage.setItem("Collection", collStr);
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
 					app.setCollection(JSON.parse(collStr));
-					alert("Ok");
+					Swal.fire({
+						position: 'top-end',
+						customClass: 'swal-container',
+						type: 'success',
+						title: 'Collection updated',
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+						showConfirmButton: false,
+						timer: 1500
+					});
 				} catch(e) {
 					alert(e);
 				}		
@@ -161,14 +169,47 @@ var app = new Vue({
 		},
 		exportDeck: function() {
 			copyToClipboard(exportMTGA(this.deck, this.language));
-			alert('Deck exported to clipboard!');
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'success',
+				title: 'Deck exported to clipboard!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
 		},
 		exportSelection: function() {
 			copyToClipboard(exportMTGA(this.cardSelection, this.language));
-			alert('Cards exported to clipboard!');
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'success',
+				title: 'Cards exported to clipboard!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
 		},
 		distributeSealed: function() {
-			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+			if(this.cardSelection.length > 0) {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "Distributing sealed boosters will reset everyone's cards/deck!",
+					type: 'warning',
+					showCancelButton: true,
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: "Yes, distribute!",
+				}).then((result) => {
+					if(result.value) {
+						this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+					}
+				});
+			} else {
+				this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+			}
 		},
 		genCard: function(c) {
 			return {
@@ -259,7 +300,14 @@ var app = new Vue({
 			}
 			
 			if(app.drafting && users.length < app.sessionUsers.length) {
-				alert('A user disconnected, canceling draft...');
+				Swal.fire({
+					position: 'center',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					type: 'error',
+					title: 'A user disconnected, canceling draft...',
+					showConfirmButton: false,
+					timer: 1500
+				});
 				app.drafting = false;
 			}
 			
@@ -278,7 +326,14 @@ var app = new Vue({
 			app.drafting = true;
 			app.readyToDraft = false;
 			app.cardSelection = [];
-			alert('Everybody is ready!');
+			Swal.fire({
+				position: 'center',
+				type: 'success',
+				title: 'Everybody is ready to draft!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
 		});
 		
 		this.socket.on('nextBooster', function(data) {
@@ -294,16 +349,24 @@ var app = new Vue({
 		});
 		
 		this.socket.on('endDraft', function(data) {
-			alert('Done drafting!');
+			Swal.fire({
+				position: 'top-end',
+				type: 'success',
+				title: 'Drafting done!',
+				showConfirmButton: false,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				timer: 1500
+			});
+			app.drafting = false;
 			app.draftingState = 'brewing';
 		});
 		
 		this.socket.on('setCardSelection', function(data) {
+			app.deck = [];
 			app.cardSelection = [];
 			for(let c of data.flat()) {
 				app.cardSelection.push(app.genCard(c));
 			}
-			app.drafting = true;
 			app.draftingState = 'brewing';
 		});
 		
@@ -350,7 +413,27 @@ var app = new Vue({
 			setCookie('userName', this.userName);
 		},
 		readyToDraft: function() {
-			this.socket.emit('readyToDraft', this.readyToDraft);
+			if(this.readyToDraft && this.cardSelection.length > 0) {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "Launching a draft will reset your cards/deck!",
+					type: 'warning',
+					showCancelButton: true,
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: "I'm ready to draft",
+				}).then((result) => {
+					if(result.value) {
+						this.socket.emit('readyToDraft', this.readyToDraft);
+					} else {
+						this.readyToDraft = false;
+						return;
+					}
+				});
+			} else {
+				this.socket.emit('readyToDraft', this.readyToDraft);
+			}
 		},
 		boostersPerPlayer: function() {
 			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);

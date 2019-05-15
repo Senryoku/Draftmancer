@@ -6,7 +6,12 @@ body {
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-select, option, input, button {
+.custom-swal-popup, .custom-swal-title, .custom-swal-content {
+	color: #DDD !important;
+	background: #282828 !important;
+}
+
+#main-vue select, #main-vue option, #main-vue input, #main-vue button {
 	color: #DDD;
 	background: #555;
 	border-radius: 4px;
@@ -15,11 +20,15 @@ select, option, input, button {
 	margin: 0.25em;
 }
 
-.button,
-button,
-input[type="submit"],
-input[type="reset"],
-input[type="button"] {
+#main-vue {
+	padding: 1em;
+}
+
+#main-vue .button,
+#main-vue button,
+#main-vue input[type="submit"],
+#main-vue input[type="reset"],
+#main-vue input[type="button"] {
 	display: inline-block;
 	height: 28px;
 	padding: 0 15px;
@@ -37,28 +46,24 @@ input[type="button"] {
 	margin: 0.5em;
 }
 
-button:disabled {
+#main-vue button:disabled {
 	color: #555;
 	cursor: auto;
 }
 
-.button:hover:enabled,
-button:hover:enabled,
-input[type="submit"]:hover:enabled,
-input[type="reset"]:hover:enabled,
-input[type="button"]:hover:enabled,
-.button:focus,
-button:focus,
-input[type="submit"]:focus,
-input[type="reset"]:focus,
-input[type="button"]:focus {
+#main-vue .button:hover:enabled,
+#main-vue button:hover:enabled,
+#main-vue input[type="submit"]:hover:enabled,
+#main-vue input[type="reset"]:hover:enabled,
+#main-vue input[type="button"]:hover:enabled,
+#main-vue .button:focus,
+#main-vue button:focus,
+#main-vue input[type="submit"]:focus,
+#main-vue input[type="reset"]:focus,
+#main-vue input[type="button"]:focus {
 	color: #FFF;
 	border-color: #BBB;
 	outline: 0;
-}
-
-#main-vue {
-	padding: 1em;
 }
 
 .welcome {
@@ -100,6 +105,7 @@ label {
 #limited-controls {
 	display: flex;
 	justify-content: space-between;
+	flex-wrap: wrap;
 }
 
 #session-id {
