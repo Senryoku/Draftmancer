@@ -59,7 +59,7 @@ var app = new Vue({
 		cards: undefined,
 		
 		// User Data
-		userID: getCookie("userID"),
+		userID: guid(),
 		userName: getCookie("userName", "Anonymous"),
 		useCollection: true,
 		collection: {},
@@ -253,20 +253,14 @@ var app = new Vue({
 			});
 		}
 	},
-	mounted: async function() {	
-		if(this.userID == "") {
-			this.userID = guid();
-			setCookie("userID", this.userID);
-		}
-		
+	mounted: async function() {
 		// Socket Setup
 		this.socket = io({query: {
 			userID: this.userID, 
 			sessionID: this.sessionID,
 			userName: this.userName
 		}});
-		
-		
+
 		this.socket.on('disconnect', function() {
 			console.log('Disconnected from server.');
 		});
@@ -280,8 +274,9 @@ var app = new Vue({
 		});
 		
 		this.socket.on('alreadyConnected', function(data) {
-			alert("You seem to already be connected on another window.");
-			throw new Error("You seem to already be connected on another window.");
+			app.userID = guid();
+			app.socket.query.useID = app.userID;
+			app.socket.connect();
 		});
 		
 		this.socket.on('signalPick', function(data) {
