@@ -4,11 +4,34 @@ body {
 	background-color: #222;
 	color: #DDD;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	
+	position: relative;
+	min-height: calc(100vh - 3em);
+	padding-bottom: 3em;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	padding: 1em;
+	text-align: right;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
 
 .custom-swal-popup, .custom-swal-title, .custom-swal-content {
 	color: #DDD !important;
 	background: #282828 !important;
+}
+
+a, a:visited {
+	color: #4286f4;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #72a7ff;
 }
 
 #main-vue select, 
@@ -143,6 +166,10 @@ label {
 	position: relative;
 }
 
+.container {
+	margin-top: 1em;
+}
+
 #draft-in-progress {
 	position: absolute;
 	top: 50%;
@@ -237,7 +264,6 @@ ul.player-list {
 	flex-wrap: wrap;
 	background-color: #282828;
 	border-radius: 10px;
-	margin-bottom: 1em;
 }
 
 .card {
@@ -265,6 +291,7 @@ ul.player-list {
 .deck {
 	justify-content: flex-start;
 	position: relative;
+	padding: 0.75em;
 }
 
 .cmc-column {

@@ -92,7 +92,7 @@ for(let c in Cards) {
 
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
-	log(`${query.userName} [${query.userID}] connected to session ${query.sessionID}.`);
+	log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
 	if(query.userID in Connections) {
 		log(`${query.userName} [${query.userID}] already connected.`, FgRed);
 		socket.emit('alreadyConnected');
@@ -125,7 +125,7 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		let userID = query.userID;
 		if(userID in Connections) {
-			log(`${Connections[userID].userName} [${userID}] disconnected.`, FgRed);
+			log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`, FgRed);
 			removeUserFromSession(userID, Connections[userID].sessionID);
 			delete Connections[userID];
 		}
