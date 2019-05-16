@@ -204,12 +204,24 @@ var app = new Vue({
 					confirmButtonText: "Yes, distribute!",
 				}).then((result) => {
 					if(result.value) {
-						this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+						this.doDistributeSealed();
 					}
 				});
 			} else {
-				this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+				this.doDistributeSealed();
 			}
+		},
+		doDistributeSealed: function() {
+			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'info',
+				title: 'Distributing boosters...',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1000
+			});
 		},
 		genCard: function(c) {
 			return {
@@ -335,7 +347,8 @@ var app = new Vue({
 			Swal.fire({
 				position: 'center',
 				type: 'success',
-				title: 'Everybody is ready to draft!',
+				title: 'Everybody is ready!',
+				text: 'Starting draft...',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500
