@@ -305,7 +305,7 @@ var app = new Vue({
 		});
 		
 		this.socket.on('sessionUsers', function(data) {
-			let users = JSON.parse(data);
+			let users = data;
 			for(let u of users) {
 				u.pickedCard = false;
 			}

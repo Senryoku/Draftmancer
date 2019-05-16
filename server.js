@@ -490,7 +490,7 @@ function notifyUserChange(sessionID) {
 	
 	// Send to all session users
 	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('sessionUsers', JSON.stringify(user_info));
+		Connections[user].socket.emit('sessionUsers', user_info);
 	}
 }
 
