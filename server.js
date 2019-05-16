@@ -109,6 +109,13 @@ io.on('connection', function(socket) {
 		collection: {},
 		useCollection: true
 	};
+	
+	if(query.sessionID in Sessions && Sessions[query.sessionID].drafting) {
+		socket.emit('message', {title: 'Cannot join session', text: `This session (${query.sessionID}) is currently drafting. Please wait for them to finish.`});
+		query.sessionID = uuidv1();
+		socket.emit('setSession', query.sessionID);
+	}
+	
 	addUserToSession(query.userID, query.sessionID);
 	
 	socket.userID = query.userID;
@@ -135,8 +142,11 @@ io.on('connection', function(socket) {
 		
 		if(sessionID == Connections[userID].sessionID)
 			return;
-		// TODO Handle this
+		
 		if(sessionID in Sessions && Sessions[sessionID].drafting) {
+			socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
+			socket.emit('setSession', Connections[userID].sessionID);
+			return;
 		}
 		
 		removeUserFromSession(userID, Connections[userID].sessionID);

@@ -291,6 +291,10 @@ var app = new Vue({
 			app.socket.connect();
 		});
 		
+		this.socket.on('setSession', function(data) {
+			app.sessionID = data;
+		});
+		
 		this.socket.on('signalPick', function(data) {
 			for(let u of app.sessionUsers) {
 				if(u.userID == data) {
