@@ -346,6 +346,12 @@ function emitMessage(sessionID, title, text) {
 	}
 }
 
+function syncSessionOptions(userID) {
+	let sessionID = Connections[userID].sessionID;
+	Connections[userID].socket.emit('setRestriction', Sessions[sessionID].setRestriction);
+	Connections[userID].socket.emit('boostersPerPlayer', Sessions[sessionID].boostersPerPlayer);
+}
+
 function startDraft(sessionID) {
 	let sess = Sessions[sessionID];
 	sess.drafting = true;
@@ -465,6 +471,7 @@ function addUserToSession(userID, sessionID) {
 		Sessions[sessionID].users.add(userID);
 	}
 	Connections[userID].sessionID = sessionID;
+	syncSessionOptions(userID);
 	notifyUserChange(sessionID);
 }
 
