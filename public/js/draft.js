@@ -213,15 +213,6 @@ var app = new Vue({
 		},
 		doDistributeSealed: function() {
 			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'info',
-				title: 'Distributing boosters...',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1000
-			});
 		},
 		genCard: function(c) {
 			return {
@@ -334,13 +325,18 @@ var app = new Vue({
 		});
 		
 		this.socket.on('message', function(data) {
+			if(data.showConfirmButton === undefined)
+				data.showConfirmButton = true;
+			else if(!data.showConfirmButton && data.timer === undefined)
+				data.timer = 1500;
 			Swal.fire({
 				position: 'center',
 				type: 'info',
 				title: data.title,
 				text: data.text,
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: true
+				showConfirmButton: data.showConfirmButton,
+				timer: data.timer
 			});
 		});
 		
@@ -351,8 +347,7 @@ var app = new Vue({
 			Swal.fire({
 				position: 'center',
 				type: 'success',
-				title: 'Everybody is ready!',
-				text: 'Starting draft...',
+				title: 'Now drafting!',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500

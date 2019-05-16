@@ -9,6 +9,8 @@ const cookieParser = require('cookie-parser');
 const uuidv1 = require('uuid/v1');
 const fs = require('fs');
 
+const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war"];
+
 app.use(cookieParser()); 
 
 function isEmpty(obj) {
@@ -155,6 +157,10 @@ io.on('connection', function(socket) {
 	
 	socket.on('setCollection', function(collection) {
 		let userID = query.userID;
+		
+		if(typeof collection !== 'object' || collection === null)
+			return;
+		
 		let sessionID = Connections[userID].sessionID;
 		Connections[userID].collection = collection;
 		notifyUserChange(sessionID);
@@ -162,6 +168,9 @@ io.on('connection', function(socket) {
 	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
+		
+		if(isNaN(boostersPerPlayer))
+			return;
 
 		if(boostersPerPlayer == Sessions[sessionID].boostersPerPlayer)
 			return;
@@ -175,6 +184,9 @@ io.on('connection', function(socket) {
 	socket.on('useCollection', function(useCollection) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
+		
+		if(typeof useCollection !== 'boolean')
+			return;
 
 		if(useCollection == Connections[userID].useCollection)
 			return;
@@ -185,6 +197,9 @@ io.on('connection', function(socket) {
 	
 	socket.on('setRestriction', function(setRestriction) {
 		let sessionID = Connections[this.userID].sessionID;
+		
+		if(setRestriction !== '' && MTGSets.indexOf(setRestriction) == -1)
+			return;
 
 		if(setRestriction == Sessions[sessionID].setRestriction)
 			return;
@@ -198,8 +213,11 @@ io.on('connection', function(socket) {
 	socket.on('readyToDraft', function(readyToDraft) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
+		
+		if(typeof readyToDraft !== 'boolean')
+			return;
+		
 		Connections[userID].readyToDraft = readyToDraft;
-		notifyUserChange(sessionID);
 		
 		let allReady = true;
 		for(let user of Sessions[sessionID].users) {
@@ -212,13 +230,21 @@ io.on('connection', function(socket) {
 		if(allReady && Sessions[sessionID].users.size >= 2) {
 			startDraft(sessionID);
 		}
+		
+		notifyUserChange(sessionID);
 	});
 	
-	socket.on('distributeSealed', function(boosterPerPlayer) {
+	socket.on('distributeSealed', function(boostersPerPlayer) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
+		
+		if(isNaN(boostersPerPlayer))
+			return;
+		
+		emitMessage(sessionID, 'Distributing sealed boosters...', '', false);
+		
 		for(let user of Sessions[sessionID].users) {
-			if(!generateBoosters(sessionID, boosterPerPlayer)) {
+			if(!generateBoosters(sessionID, boostersPerPlayer)) {
 				return;
 			}
 			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
@@ -231,7 +257,12 @@ io.on('connection', function(socket) {
 	socket.on('pickCard', function(sessionID, boosterIndex, cardID) {
 		let userID = query.userID;
 		
-		log(`${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
+		if(!(sessionID in Sessions) || 
+		   !(userID in Connections) || 
+		   boosterIndex > Sessions[sessionID].boosters.length)
+			return;
+		
+		log(`Session ${sessionID}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
 		
 		// Removes the first occurence of cardID
 		for(let i = 0; i < Sessions[sessionID].boosters[boosterIndex].length; ++i) {
@@ -340,9 +371,9 @@ function generateBoosters(sessionID, boosterQuantity) {
 	return true;
 }
 
-function emitMessage(sessionID, title, text) {
+function emitMessage(sessionID, title, text, showConfirmButton = true) {
 	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('message', {title: title, text: text});
+		Connections[user].socket.emit('message', {title: title, text: text, showConfirmButton: showConfirmButton});
 	}
 }
 
@@ -355,6 +386,8 @@ function syncSessionOptions(userID) {
 function startDraft(sessionID) {
 	let sess = Sessions[sessionID];
 	sess.drafting = true;
+	emitMessage(sessionID, 'Everybody is ready!', 'Your draft will start soon...');
+	
 	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
 	
 	if(!generateBoosters(sessionID, boosterQuantity)) {
