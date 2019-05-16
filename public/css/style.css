@@ -29,6 +29,7 @@ body {
 
 #main-vue {
 	padding: 1em;
+	padding-top: 0.5em;
 }
 
 #main-vue .button,
@@ -179,9 +180,15 @@ label {
 	width: 3em;
 }
 
-.player-list {
+.session-players {
+	background: #181818;
+	padding: 0.5em;
+}
+
+ul.player-list {
 	display: inline-block;
 	list-style: none;
+	margin: 0;
 }
 
 .player-list li {
@@ -192,7 +199,17 @@ label {
 	border-radius: 5px;
 }
 
-.container {
+.status-icons {
+	display: inline-flex;
+}
+
+.status-icons i {
+	margin-left: 0.5em;
+	font-size: 14px;
+}
+
+.pick-waiting {
+	padding: 2em;
 }
 
 .controls {

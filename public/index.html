@@ -62,21 +62,33 @@
 				Draft in progress!
 			</div>
 		</div>
-		<div>
+		<div class="main-controls session-players">
 			Session Players:
 			<ul class="player-list">
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
-					<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
-						<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
-					</template>
-					<template v-else>
-						<i class="fas fa-book green" :title="user.userName + ' has uploaded their collection.'"></i>
-					</template>
-					<i v-if="user.readyToDraft" class="fas fa-check green" :title="user.userName + ' is ready to draft!'"></i>
+					<div class="status-icons">
+						<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
+							<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
+						</template>
+						<template v-else>
+							<i class="fas fa-book green" :title="user.userName + ' has uploaded their collection.'"></i>
+						</template>
+						<template v-if="drafting">
+							<template v-if="user.pickedCard">
+								<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
+							</template>
+							<template v-else>
+								<i class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
+							</template>
+						</template>
+						<template v-else>
+							<i v-if="user.readyToDraft" class="fas fa-check green" :title="user.userName + ' is ready to draft!'"></i>
+						</template>
+					</div>
 				</li>
 			</ul>
-			<small>(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
+			<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
 		</div>
 		<template v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
@@ -88,19 +100,8 @@
 					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:selected="selectedCardId == card.id"></figure>
 				</div>
 			</div>
-			<div v-show="draftingState == 'waiting'">
+			<div v-show="draftingState == 'waiting'" class="pick-waiting">
 				<span class="spinner"></span>Waiting for other players to pick...
-				<ul class="player-list">
-					<li v-for="user in sessionUsers" :title="user.userID">
-						{{ user.userName }}
-						<template v-if="user.pickedCard">
-							<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
-						</template>
-						<template v-else>
-							<i class="fas fa-ellipsis-h red" :title="user.userName + ' is thinking...'"></i>
-						</template>
-					</li>
-				</ul>
 			</div>
 		</template>
 		<div v-show="draftingState == 'brewing'" class="container">
@@ -136,7 +137,7 @@
 				</template>
 			</div>
 		</div>
-		<div class="welcome" v-else>
+		<div class="welcome" v-if="!drafting && (cardSelection == undefined || cardSelection.length == 0)">
 			<p>Welcome to MTGADraft!</p>
 			<p>Want to draft in MTGA with your friends for free? Good!</p>
 			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
