@@ -281,10 +281,17 @@ function generateBoosters(sessionID, boosterQuantity) {
 		return false;
 	}
 	
-	// TODO: Prevent multiples?
+	// TODO: Prevent multiples by name?
 	
-	let pick_card = function (dict) {
+	let pick_card = function (dict, booster) {
 		let c = get_random_key(dict);
+		if(booster != undefined) {
+			let prevention_attempts = 0; // Fail safe-ish
+			while(booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
+				c = get_random_key(dict);
+				++prevention_attempts;
+			}
+		}
 		dict[c] -= 1;
 		if(dict[c] == 0)
 			delete dict[c];
@@ -312,10 +319,10 @@ function generateBoosters(sessionID, boosterQuantity) {
 		}
 
 		for(let i = 0; i < 3; ++i) // 3 Uncommons
-			booster.push(pick_card(localCollection['uncommon']));
+			booster.push(pick_card(localCollection['uncommon'], booster));
 		
 		for(let i = 0; i < 10; ++i) // 10 Commons
-			booster.push(pick_card(localCollection['common']));
+			booster.push(pick_card(localCollection['common'], booster));
 
 		Sessions[sessionID].boosters.push(booster);
 	}
