@@ -1,5 +1,4 @@
 # Todo
- * Handle server booster generation errors correctly (not enough cards...)
  * Prevent multiple copies of the same card in a single booster
  
 # Check
@@ -10,6 +9,7 @@
  * bug fixed?
  * * Check collection upload (app crash?)
  * * Crash when no collection?
+ * Handle server booster generation errors correctly (not enough cards...)
  
 # Bugs
  * Collection status not correctly updated

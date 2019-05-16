@@ -208,7 +208,9 @@ io.on('connection', function(socket) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
 		for(let user of Sessions[sessionID].users) {
-			generateBoosters(sessionID, boosterPerPlayer);
+			if(!generateBoosters(sessionID, boosterPerPlayer)) {
+				return;
+			}
 			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
 		}
 		Sessions[sessionID].boosters = [];
@@ -260,20 +262,23 @@ function generateBoosters(sessionID, boosterQuantity) {
 
 	let comm_count = count_cards(localCollection['common']);
 	if(comm_count < 10 * boosterQuantity) {
+		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
 		log(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`, FgYellow);
-		return;
+		return false;
 	}
 	
 	let unco_count = count_cards(localCollection['uncommon']);
 	if(unco_count < 3 * boosterQuantity) {
+		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
 		log(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`, FgYellow);
-		return;
+		return false;
 	}
 	
 	let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
 	if(rm_count < boosterQuantity) {
+		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
 		log(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
-		return;
+		return false;
 	}
 	
 	// TODO: Prevent multiples?
@@ -314,6 +319,14 @@ function generateBoosters(sessionID, boosterQuantity) {
 
 		Sessions[sessionID].boosters.push(booster);
 	}
+	
+	return true;
+}
+
+function emitMessage(sessionID, title, text) {
+	for(let user of Sessions[sessionID].users) {
+		Connections[user].socket.emit('message', {title: title, text: text});
+	}
 }
 
 function startDraft(sessionID) {
@@ -321,7 +334,10 @@ function startDraft(sessionID) {
 	sess.drafting = true;
 	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
 	
-	generateBoosters(sessionID, boosterQuantity);
+	if(!generateBoosters(sessionID, boosterQuantity)) {
+		sess.drafting = false;
+		return;
+	}
 	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('startDraft');

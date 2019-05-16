@@ -322,6 +322,17 @@ var app = new Vue({
 			app.setRestriction = data;
 		});
 		
+		this.socket.on('message', function(data) {
+			Swal.fire({
+				position: 'center',
+				type: 'info',
+				title: data.title,
+				text: data.text,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: true
+			});
+		});
+		
 		this.socket.on('startDraft', function(data) {
 			app.drafting = true;
 			app.readyToDraft = false;
