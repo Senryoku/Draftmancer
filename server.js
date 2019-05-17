@@ -461,6 +461,48 @@ app.get('/getUsers/:sessionID', (req, res) => {
 	res.sendStatus(200);
 });
 
+const secretKey = "b5d62b91-5f52-4512-b7fc-25626b9be37d";
+
+var express_json_cache = []; // Clear this before calling
+app.set('json replacer', function(key, value) {
+	// Deal with sets
+	if (typeof value === 'object' && value instanceof Set) {
+		return [...value];
+	}
+	// Deal with circular references
+	if (typeof value === 'object' && value !== null) {
+		if (express_json_cache.indexOf(value) !== -1) {
+			// Circular reference found, discard key
+			return;
+		}
+		// Store value in our collection
+		express_json_cache.push(value);
+	}
+	return value;
+});
+
+function returnJSON(res, data) {
+	express_json_cache = [];
+	res.json(data);
+	express_json_cache = null; // Enable garbage collection
+}
+
+app.get('/getSessions/:key', (req, res) => {
+	if(req.params.key ===  secretKey) {
+		returnJSON(res, Sessions);
+	} else {
+		res.sendStatus(401).end();
+	}
+});
+
+app.get('/getConnections/:key', (req, res) => {
+	if(req.params.key ===  secretKey) {
+		returnJSON(res, Connections);
+	} else {
+		res.sendStatus(401).end();
+	}
+});
+
 http.listen(port, (err) => { 
 	if(err) 
 		throw err; 
