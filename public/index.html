@@ -23,26 +23,45 @@
 		</div>
 		
 		<div id="view-controls" class="main-controls">
-			<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" />
-			<span class="v-separator"></span>
-			<label for="language">Language</label>
-			<select v-model="language" name="language">
-				<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
-			</select>
-			<span class="v-separator"></span>
-			<label for="card-order">Card Order</label>
-			<select v-model="cardOrder" name="card-order">
-				<option value=""></option>
-				<option value="CMC">CMC</option>
-				<option value="Color">Color</option>
-			</select>
-			<span class="v-separator"></span>
-			<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
+			<span>
+				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" />
+				<span class="v-separator"></span>
+				<label for="language">Language</label>
+				<select v-model="language" name="language">
+					<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
+				</select>
+				<span class="v-separator"></span>
+				<label for="card-order">Card Order</label>
+				<select v-model="cardOrder" name="card-order">
+					<option value=""></option>
+					<option value="CMC">CMC</option>
+					<option value="Color">Color</option>
+				</select>
+				<span class="v-separator"></span>
+				<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
+				
+				<span v-show="Object.keys(collection).length > 0">
+					<span class="v-separator"></span>
+					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+				</span>
+			</span>
+			
+			<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="session-controls">
+				<label for="public-sessions">Public sessions</label>
+				<select id="public-sessions" v-model:value="selectedPublicSession">
+					<option v-for="s in publicSessions" v-bind:value="s">
+					{{ s }}
+					</option>
+				</select>
+				<input type="button" value="Join" @click="joinPublicSession"/>
+			</span>
 		</div>
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="draft-controls">
 					<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
+					<span class="v-separator"></span>
+					<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
 					<span class="v-separator"></span>
 					<label for="boosters-per-player" class="booster-count">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 					<span class="v-separator"></span>
@@ -53,10 +72,6 @@
 						{{ set }}
 						</option>
 					</select>
-					<span v-show="Object.keys(collection).length > 0">
-						<span class="v-separator"></span>
-						<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
-					</span>
 					<span class="v-separator"></span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
@@ -152,7 +167,8 @@
 			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
 			<p>Options:
 				<ul>
-					<li>Session ID: A unique identifier for your session, just make sure to use the same as your friends to play with them!</li>
+					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
+					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
 					<li>Boosters per Player: MTGA doesn't currently allow to play in Direct Challenge with deck containing less than 60 cards, so you may want to adjust this. Shared by everyone in your session.</li>
 					<li>Restrict Set: Select a set to draft using only with cards from this set. Shared by everyone in your session.</li>
 					<li>Restrict to Collection: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>

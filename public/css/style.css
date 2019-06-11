@@ -193,14 +193,17 @@ label {
 	border-radius: 0.25em;
 }
 
-#limited-controls {
+#session-controls {
+}
+
+#limited-controls, #view-controls {
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
 
 #session-id {
-	width: 18em;
+	width: 12em;
 }
 
 .booster-count {

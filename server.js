@@ -33,6 +33,7 @@ function get_random_key(dict) {
 
 function Session(id) {
 	this.id = id;
+	this.isPublic = false;
 	this.users = new Set();
 	this.collection = function () {
 		// Compute collections intersection
@@ -92,6 +93,16 @@ for(let c in Cards) {
 		Cards[c].in_booster = true;
 }
 
+function getPublicSessions() {
+	let publicSessions = [];
+	for(let s in Sessions) {
+		if(Sessions[s].isPublic) {
+			publicSessions.push(s);
+		}
+	}
+	return publicSessions;
+}
+
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
 	log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
@@ -121,6 +132,8 @@ io.on('connection', function(socket) {
 	addUserToSession(query.userID, query.sessionID);
 	
 	socket.userID = query.userID;
+	
+	socket.emit('publicSessions', getPublicSessions());
 	
 	// Messages
 	
@@ -208,6 +221,17 @@ io.on('connection', function(socket) {
 		for(let user of Sessions[sessionID].users) {
 			Connections[user].socket.emit('setRestriction', setRestriction);
 		}
+	});
+	
+	socket.on('setPublic', function(isPublic) {
+		let sessionID = Connections[this.userID].sessionID;
+		
+		if(isPublic == Sessions[sessionID].isPublic)
+			return;
+		
+		Sessions[sessionID].isPublic = isPublic;	
+		// Update all clients
+		io.emit('publicSessions', getPublicSessions());
 	});
 	
 	socket.on('readyToDraft', function(readyToDraft) {
@@ -381,6 +405,7 @@ function syncSessionOptions(userID) {
 	let sessionID = Connections[userID].sessionID;
 	Connections[userID].socket.emit('setRestriction', Sessions[sessionID].setRestriction);
 	Connections[userID].socket.emit('boostersPerPlayer', Sessions[sessionID].boostersPerPlayer);
+	Connections[userID].socket.emit('isPublic', Sessions[sessionID].isPublic);
 }
 
 function startDraft(sessionID) {

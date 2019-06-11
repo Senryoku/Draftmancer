@@ -66,7 +66,8 @@ var app = new Vue({
 		socket: undefined,
 		
 		// Session status
-		sessionID: getCookie("sessionID", guid()),
+		sessionID: getCookie("sessionID", shortguid()),
+		isPublic: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
 		setRestriction: "",
@@ -75,6 +76,9 @@ var app = new Vue({
 		booster: [],
 		
 		sealedBoosterPerPlayer: 6,
+		
+		publicSessions: [],
+		selectedPublicSession: "",
 		
 		// Front-end options & data
 		language: 'en',
@@ -226,6 +230,9 @@ var app = new Vue({
 				color_identity: this.cards[c].color_identity, 
 				in_booster: this.cards[c].in_booster
 			};
+		},
+		joinPublicSession: function() {
+			this.sessionID = this.selectedPublicSession;
 		}
 	},
 	computed: {
@@ -281,6 +288,10 @@ var app = new Vue({
 			app.socket.query.useID = app.userID;
 			app.socket.connect();
 		});
+
+		this.socket.on('publicSessions', function(sessions) {
+			app.publicSessions = sessions;
+		});
 		
 		this.socket.on('setSession', function(data) {
 			app.sessionID = data;
@@ -314,6 +325,10 @@ var app = new Vue({
 			}
 			
 			app.sessionUsers = users;
+		});
+		
+		this.socket.on('isPublic', function(data) {
+			app.isPublic = data;
 		});
 		
 		this.socket.on('boostersPerPlayer', function(data) {
@@ -461,6 +476,9 @@ var app = new Vue({
 		},
 		setRestriction: function() {
 			this.socket.emit('setRestriction', this.setRestriction);
+		},
+		isPublic: function() {
+			this.socket.emit('setPublic', this.isPublic);
 		}
 	}
 });
