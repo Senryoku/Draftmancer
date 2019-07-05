@@ -8,7 +8,7 @@ import urllib
 import requests
 
 # Removed ana on purpose, this set is (mostly?) useless
-Sets = ['m19', 'xln', 'rix', 'dom', 'grn', 'rna', 'war']
+Sets = ['m19', 'xln', 'rix', 'dom', 'grn', 'rna', 'war', 'm20']
 Langs = ['es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'ru', 'zhs', 'zht']
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
@@ -17,10 +17,11 @@ BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'public/data/MTGACards.json'
 
 if not os.path.isfile(BulkDataPath):
-	# Toto: Auto
-	print("Please download {}".format(BulkDataURL))
+	print("Downloading {}...".format(BulkDataURL))
+	urllib.request.urlretrieve(BulkDataURL, BulkDataPath) 
 
 if not os.path.isfile(BulkDataArenaPath):
+	print("Extracting arena card to {}...".format(BulkDataArenaPath))
 	with open(BulkDataPath, 'r', encoding="utf8") as file:
 		objects = ijson.items(file, 'item')
 		arena_cards = (o for o in objects if 'arena' in o['games'])
@@ -31,17 +32,21 @@ if not os.path.isfile(BulkDataArenaPath):
 			json.dump(cards, outfile)
 
 # Tag non booster card as such
+print("Requesting non-booster cards list...")
 NonBoosterCards = []
 response = requests.get("https://api.scryfall.com/cards/search?{}".format(urllib.parse.urlencode({'q': 'game:arena -in:booster'})))
 data = json.loads(response.content)
 for c in data['data']:
-	NonBoosterCards.append(c['arena_id'])
+	if('arena_id' in c):
+		NonBoosterCards.append(c['arena_id'])
 while(data["has_more"]):
 	response = requests.get(data["next_page"])
 	data = json.loads(response.content)
 	for c in data['data']:
-		NonBoosterCards.append(c['arena_id'])
-			
+		if('arena_id' in c):
+			NonBoosterCards.append(c['arena_id'])
+
+print("Generating card data cache...")
 with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
 	cards = {}
 	translations = {}

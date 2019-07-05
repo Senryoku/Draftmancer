@@ -96,7 +96,7 @@ var app = new Vue({
 			{code: 'zht', name: 'Traditional Chinese'}
 		],
 		cardOrder: "",
-		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war"],
+		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20"],
 		boosterIndex: undefined,
 		draftingState: undefined,
 		selectedCardId: undefined,
