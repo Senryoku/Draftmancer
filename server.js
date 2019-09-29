@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const uuidv1 = require('uuid/v1');
 const fs = require('fs');
 
-const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20"];
+const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"];
 
 app.use(cookieParser()); 
 
@@ -190,7 +190,8 @@ io.on('connection', function(socket) {
 		
 		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
 		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('boostersPerPlayer', boostersPerPlayer);
+			if(user != this.userID)
+				Connections[user].socket.emit('boostersPerPlayer', boostersPerPlayer);
 		}
 	});
 	
@@ -219,7 +220,8 @@ io.on('connection', function(socket) {
 		
 		Sessions[sessionID].setRestriction = setRestriction;
 		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('setRestriction', setRestriction);
+			if(user != this.userID)
+				Connections[user].socket.emit('setRestriction', setRestriction);
 		}
 	});
 	

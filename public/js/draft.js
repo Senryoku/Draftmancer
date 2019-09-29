@@ -96,7 +96,7 @@ var app = new Vue({
 			{code: 'zht', name: 'Traditional Chinese'}
 		],
 		cardOrder: "",
-		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20"],
+		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"],
 		boosterIndex: undefined,
 		draftingState: undefined,
 		selectedCardId: undefined,
@@ -136,6 +136,8 @@ var app = new Vue({
 			this.cardSelection.push(c);
 		},
 		setCollection: function(json) {
+			if(this.collection == json)
+				return;
 			this.collection = json;
 			this.socket.emit('setCollection', this.collection);
 		},

@@ -6,9 +6,10 @@ import os
 import gzip
 import urllib
 import requests
+import sys
 
 # Removed ana on purpose, this set is (mostly?) useless
-Sets = ['m19', 'xln', 'rix', 'dom', 'grn', 'rna', 'war', 'm20']
+Sets = ['m19', 'xln', 'rix', 'dom', 'grn', 'rna', 'war', 'm20', 'eld']
 Langs = ['es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'ru', 'zhs', 'zht']
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
@@ -16,11 +17,13 @@ BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'public/data/MTGACards.json'
 
-if not os.path.isfile(BulkDataPath):
+ForceDownload = len(sys.argv) > 1 and sys.argv[1].lower() == "dl"
+
+if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
 	urllib.request.urlretrieve(BulkDataURL, BulkDataPath) 
 
-if not os.path.isfile(BulkDataArenaPath):
+if not os.path.isfile(BulkDataArenaPath) or ForceDownload:
 	print("Extracting arena card to {}...".format(BulkDataArenaPath))
 	with open(BulkDataPath, 'r', encoding="utf8") as file:
 		objects = ijson.items(file, 'item')
@@ -60,7 +63,7 @@ with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
 		if 'arena_id' not in c:
 			if 'printed_name' in c:
 				translations[c['name']][c['lang']] = c['printed_name']
-			elif 'card_faces' in c:
+			elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
 				translations[c['name']][c['lang']] = c['card_faces'][0]['printed_name']
 			if 'image_uris' in c and 'border_crop' in c['image_uris']:
 				translations_img[c['name']][c['lang']] = c['image_uris']['border_crop']
