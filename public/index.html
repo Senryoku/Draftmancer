@@ -65,8 +65,6 @@
 					<span class="v-separator"></span>
 					<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
 					<span class="v-separator"></span>
-					<label for="boosters-per-player" class="booster-count">Boosters per Player</label><input type="number" id="boosters-per-player" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-					<span class="v-separator"></span>
 					<label for="set-restriction">Restrict Set</label>
 					<select id="set-restriction" v-model:value="setRestriction">
 						<option value=""></option>
@@ -75,13 +73,15 @@
 						</option>
 					</select>
 					<span class="v-separator"></span>
+					<label for="boosters-per-player" class="booster-count">Boosters per Player</label><input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+					<span class="v-separator"></span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
 					</div>
 				</span>
 				
 				<span id="sealed-controls">
-					<strong>Sealed</strong>: Booster per Player: <input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" /><input type="button" value="Distribute" @click="distributeSealed"/>
+					<strong>Sealed</strong>: Boosters per Player: <input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" /><input type="button" value="Distribute" @click="distributeSealed"/>
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
