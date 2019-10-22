@@ -33,9 +33,10 @@
 				<span class="v-separator"></span>
 				<label for="card-order">Card Order</label>
 				<select v-model="cardOrder" name="card-order">
-					<option value=""></option>
+					<option value="">Booster</option>
 					<option value="CMC">CMC</option>
 					<option value="Color">Color</option>
+					<option value="Rarity">Rarity</option>
 				</select>
 				<span class="v-separator"></span>
 				<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
@@ -155,6 +156,9 @@
 				</template>
 				<template v-else-if="cardOrder == 'Color'">
 					<figure is="card" v-for="(card, index) in selectionColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+				</template>
+				<template v-else-if="cardOrder == 'Rarity'">
+					<figure is="card" v-for="(card, index) in selectionRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
 				</template>
 				<template v-else>
 					<figure is="card" v-for="(card, index) in cardSelection" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>

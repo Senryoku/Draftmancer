@@ -226,7 +226,8 @@ var app = new Vue({
 				name: this.cards[c].name, 
 				printed_name: this.cards[c].printed_name, 
 				image_uris: this.cards[c].image_uris, 
-				set: this.cards[c].set, 
+				set: this.cards[c].set,
+				rarity: this.cards[c].rarity, 
 				cmc: this.cards[c].cmc, 
 				collector_number: this.cards[c].collector_number, 
 				color_identity: this.cards[c].color_identity, 
@@ -262,6 +263,14 @@ var app = new Vue({
 				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
 					return lhs.cmc - rhs.cmc;
 				return orderColor(lhs.color_identity, rhs.color_identity);
+			});
+		},
+		selectionRarity: function() {
+			const order = {'mythic' : 0, 'rare' : 1, 'uncommon': 2, 'common': 3};
+			return [...this.cardSelection].sort(function (lhs, rhs) {
+				if(order[lhs.rarity] == order[rhs.rarity])
+					return lhs.cmc - rhs.cmc;
+				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		}
 	},
