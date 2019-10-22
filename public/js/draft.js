@@ -168,7 +168,14 @@ var app = new Vue({
 						timer: 1500
 					});
 				} catch(e) {
-					alert(e);
+					Swal.fire({
+						type: 'error',
+						title: 'Parsing Error',
+						text: 'An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.',
+						footer: 'Full error: ' + e,
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+					});
+					//alert(e);
 				}		
 			};
 			reader.readAsText(file);
@@ -236,6 +243,13 @@ var app = new Vue({
 		},
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;
+		},
+		showCollectionStats: function() {
+			Swal.fire({
+				title: 'Collection statistics',
+				text: 'Maybe one day!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+			});
 		}
 	},
 	computed: {

@@ -39,7 +39,8 @@
 					<option value="Rarity">Rarity</option>
 				</select>
 				<span class="v-separator"></span>
-				<i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i><label for="file-input">Upload MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" />
+				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
+				<!-- <button v-if="hasCollection" title="Stats." @click="showCollectionStats">Stats</button> -->
 				
 				<span v-show="Object.keys(collection).length > 0">
 					<span class="v-separator"></span>
@@ -167,8 +168,12 @@
 		</div>
 		<div class="welcome" v-if="!drafting && (cardSelection == undefined || cardSelection.length == 0)">
 			<p>Welcome to MTGADraft!</p>
-			<p>Want to draft in MTGA with your friends for free? Good!</p>
-			<p>Use the controls on the top of the page to enter your User Name and indicate your preferences. Upload your MTGA logs (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. Share your session ID with your friends (or join their own session) and click ready to start drafting!</p>
+			<p>Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!</p>
+			<ol>
+				<li>Use the controls on the top of the page to enter your User Name and indicate your preferences.</li>
+				<li><a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. <strong>Important Note</strong>: Detailed logs now have to be enabled in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.</li>
+				<li>Share your session ID with your friends (or join their own session) and click ready to start drafting!</li>
+			</ol>
 			<p>Options:
 				<ul>
 					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
