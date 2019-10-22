@@ -1,7 +1,9 @@
 body {
 	margin: 0;
 	margin-left: 0;
-	background-color: #222;
+	background-image: url('../img/eld_1080p_en.jpg'), radial-gradient(ellipse at 75% 30%, rgba(32,32,32,0.8), rgba(32,32,32,1) 50%);
+	background-blend-mode: saturation;
+	background-size: 100%;
 	color: #DDD;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	
@@ -26,7 +28,7 @@ footer {
 }
 
 a, a:visited {
-	color: #4286f4;
+	color: #3666b3;
 	text-decoration: none;
 }
 
