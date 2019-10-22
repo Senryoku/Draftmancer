@@ -133,14 +133,14 @@
 		<div v-show="draftingState == 'brewing'" class="container">
 			<div id="brewing-controls" class="controls">
 				<h2>Deck ({{deck.length}})</h2>
-				<template v-if="deck.length == 0">
-					<div>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</div>
-				</template>
-				<template v-else>
+				<template v-if="deck.length > 0">
 					<button type="button" @click="exportDeck">Export Deck to MTGA</button>
 				</template>
 			</div>
 			<div class="deck card-container">
+				<template v-if="deck.length == 0">
+					<div><h3>Your deck is currently empty!</h3><p>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</p></div>
+				</template>
 				<div v-for="cmc_column in deckCMC" class="cmc-column">
 					<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 				</div>
