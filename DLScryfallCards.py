@@ -7,10 +7,7 @@ import gzip
 import urllib
 import requests
 import sys
-
-# Removed ana on purpose, this set is (mostly?) useless
-Sets = ['m19', 'xln', 'rix', 'dom', 'grn', 'rna', 'war', 'm20', 'eld']
-Langs = ['es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'ru', 'zhs', 'zht']
+from itertools import groupby
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
@@ -23,14 +20,24 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
 	urllib.request.urlretrieve(BulkDataURL, BulkDataPath) 
 
-if not os.path.isfile(BulkDataArenaPath) or ForceDownload:
+if not os.path.isfile(BulkDataArenaPath) or ForceDownload or True:
 	print("Extracting arena card to {}...".format(BulkDataArenaPath))
 	with open(BulkDataPath, 'r', encoding="utf8") as file:
 		objects = ijson.items(file, 'item')
 		arena_cards = (o for o in objects if 'arena' in o['games'])
 		cards = []
+		
+		sys.stdout.write("Processing... ")
+		sys.stdout.flush()
+		copied = 0
 		for c in arena_cards:
 			cards.append(c)
+			copied += 1
+			sys.stdout.write("\b" * 100) # return to start of line
+			sys.stdout.write("Processing... " + str(copied) + " cards added...")
+		sys.stdout.write("\b" * 100)
+		sys.stdout.write(" " + str(copied) + " cards added.")
+		
 		with open(BulkDataArenaPath, 'w') as outfile:
 			json.dump(cards, outfile)
 
@@ -91,4 +98,13 @@ with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
 		json.dump(cards, outfile, ensure_ascii=False)
 	#with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
 	#	json.dump(cards, outfile, ensure_ascii=False)
-		
+
+print("Cards in database:")
+with open(FinalDataPath, 'r', encoding="utf8") as file:
+	data = json.loads(file.read())
+	array = []
+	for key, value in data.items():
+		array.append(value)
+	groups = groupby(array, lambda c: c['set'])
+	for set, group in groups:
+		print('\t', set, ": ", len(list(group)))
