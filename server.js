@@ -78,6 +78,7 @@ function Session(id) {
 	};
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
+	this.bots = 0;
 	this.setRestriction = "";
 	this.boosters = [];
 	this.round = 0;
@@ -195,6 +196,22 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('bots', function(bots) {
+		let sessionID = Connections[this.userID].sessionID;
+		
+		if(isNaN(bots))
+			return;
+
+		if(bots == Sessions[sessionID].bots)
+			return;
+		
+		Sessions[sessionID].bots = bots;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('bots', bots);
+		}
+	});
+	
 	socket.on('useCollection', function(useCollection) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
@@ -253,7 +270,7 @@ io.on('connection', function(socket) {
 			}
 		}
 		
-		if(allReady && Sessions[sessionID].users.size >= 2) {
+		if(allReady && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			startDraft(sessionID);
 		}
 		
@@ -407,6 +424,7 @@ function syncSessionOptions(userID) {
 	let sessionID = Connections[userID].sessionID;
 	Connections[userID].socket.emit('setRestriction', Sessions[sessionID].setRestriction);
 	Connections[userID].socket.emit('boostersPerPlayer', Sessions[sessionID].boostersPerPlayer);
+	Connections[userID].socket.emit('bots', Sessions[sessionID].bots);
 	Connections[userID].socket.emit('isPublic', Sessions[sessionID].isPublic);
 }
 
@@ -415,7 +433,18 @@ function startDraft(sessionID) {
 	sess.drafting = true;
 	emitMessage(sessionID, 'Everybody is ready!', 'Your draft will start soon...');
 	
-	let boosterQuantity = sess.users.size * sess.boostersPerPlayer;
+	// boostersPerPlayer works fine, what's the problem here?...
+	if(typeof sess.bots != "number") {
+		sess.bots = parseInt(sess.bots);
+	}
+	
+	let boosterQuantity = (sess.users.size + sess.bots) * sess.boostersPerPlayer;
+	
+	console.log("sess.users.size: " + sess.users.size);
+	console.log("sess.bots: " + sess.bots);
+	console.log("type: " + typeof sess.bots);
+	console.log("type boostersPerPlayer: " + typeof sess.boostersPerPlayer);
+	console.log("boosterQuantity: " + boosterQuantity);
 	
 	if(!generateBoosters(sessionID, boosterQuantity)) {
 		sess.drafting = false;
@@ -430,11 +459,13 @@ function startDraft(sessionID) {
 }
 
 function nextBooster(sessionID) {
+	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
+	
 	// Boosters are empty
 	if(Sessions[sessionID].boosters[0].length == 0) {
 		Sessions[sessionID].round = 0;
 		// Remove empty boosters
-		Sessions[sessionID].boosters.splice(0, Sessions[sessionID].users.size);
+		Sessions[sessionID].boosters.splice(0, totalVirtualPlayers);
 	}
 	
 	// End draft if no more booster to distribute
@@ -445,11 +476,19 @@ function nextBooster(sessionID) {
 	
 	let index = 0;
 	for(let user of Sessions[sessionID].users) {
-		let boosterIndex = (Sessions[sessionID].round + index) % Sessions[sessionID].users.size;
+		const boosterIndex = (Sessions[sessionID].round + index) % totalVirtualPlayers;
 		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
 		++index;
 	}
-	Sessions[sessionID].pickedCardsThisRound = 0;
+	Sessions[sessionID].pickedCardsThisRound = 0; // Only counting cards picked by human players
+	// Bots picks
+	for(let i = index; i < totalVirtualPlayers; ++i) {
+		const boosterIndex = (Sessions[sessionID].round + i) % totalVirtualPlayers;
+		const booster = Sessions[sessionID].boosters[boosterIndex];
+		// TODO: Picking at random 'cause we're lazy. Do better one day? :)
+		const removedIdx = Math.floor(Math.random() * booster.length);
+		Sessions[sessionID].boosters[boosterIndex].splice(removedIdx, 1);
+	}
 	++Sessions[sessionID].round;
 }
 

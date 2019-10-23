@@ -44,9 +44,9 @@ function setCookie(name, value, days) {
 Vue.component('card', {
 	template: `
 <figure class="card" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)">
-	<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  v-bind:class="{ selected: selected }"/>
+	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
 	<img v-else src="img/missing.svg">
-	<figcaption>{{ card.printed_name[language] }}</figcaption>
+	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
 </figure>
 	`,
 	props: ['card', 'language', 'selectcard', 'selected']
@@ -70,6 +70,7 @@ var app = new Vue({
 		isPublic: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
+		bots: 0,
 		setRestriction: "",
 		readyToDraft: false,
 		drafting: false,
@@ -360,6 +361,10 @@ var app = new Vue({
 			app.boostersPerPlayer = parseInt(data);
 		});
 		
+		this.socket.on('bots', function(data) {
+			app.bots = parseInt(data);
+		});
+		
 		this.socket.on('setRestriction', function(data) {
 			app.setRestriction = data;
 		});
@@ -495,6 +500,9 @@ var app = new Vue({
 		},
 		boostersPerPlayer: function() {
 			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);
+		},
+		bots: function() {
+			this.socket.emit('bots', this.bots);
 		},
 		useCollection: function() {
 			this.socket.emit('useCollection', this.useCollection);
