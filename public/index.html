@@ -40,7 +40,7 @@
 				</select>
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
-				<!-- <button v-if="hasCollection" title="Stats." @click="showCollectionStats">Stats</button> -->
+				<button v-if="hasCollection" title="Stats." @click="showCollectionStats">Stats</button>
 				
 				<span v-show="Object.keys(collection).length > 0">
 					<span class="v-separator"></span>

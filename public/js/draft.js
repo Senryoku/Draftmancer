@@ -229,6 +229,8 @@ var app = new Vue({
 			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
 		},
 		genCard: function(c) {
+			if(!(c in this.cards))
+				return undefined;
 			return {
 				id: c, 
 				name: this.cards[c].name, 
@@ -246,10 +248,52 @@ var app = new Vue({
 			this.sessionID = this.selectedPublicSession;
 		},
 		showCollectionStats: function() {
-			Swal.fire({
-				title: 'Collection statistics',
-				text: 'Maybe one day!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+			// Load set informations
+			fetch("data/SetsInfos.json").then(function (response) {
+				response.text().then(function (text) {
+					try {
+						let setsInfo = JSON.parse(text);
+						let sets = [];
+						for(let id in app.collection) {
+							let card = app.genCard(id);
+							if(card) {
+								card.count = app.collection[id];
+								if(!(card.set in sets))
+									sets[card.set] = {
+										name: card.set, 
+										cards: [],
+										cardCount: 0,
+										common : [], uncommon: [], rare: [], mythic: [],
+										commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0
+									};
+								sets[card.set].cards.push(card);
+								sets[card.set].cardCount += card.count;
+								sets[card.set][card.rarity].push(card);
+								sets[card.set][card.rarity + "Count"] += card.count;
+							}
+						}
+						let statsText = "(WIP!...)";
+						for(let key in sets) {
+							statsText += `<table>
+								<caption>${sets[key].name}</caption>
+								<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Missing Total</th></tr>
+								<tr><td>Total</td><td>${sets[key].cards.length}/${setsInfo[key].cardCount}</td><td>${sets[key].cardCount}/${4 * setsInfo[key].cardCount}</td><td>${4 * setsInfo[key].cardCount - sets[key].cardCount}</td></tr>`;
+							for(let r of ['common', 'uncommon', 'rare', 'mythic']) {
+								let tmp = setsInfo[key][r + 'Count'];
+								if(tmp && tmp > 0)
+									statsText += `<tr><td>${r}</td><td>${sets[key][r].length}/${tmp}</td><td>${sets[key][r + 'Count']}/${4 * tmp}</td><td>${4 * tmp - sets[key][r + 'Count']}</td></tr>`;
+							}
+							statsText += `</table>`;
+						}
+						Swal.fire({
+							title: 'Collection statistics',
+							html: statsText,
+							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+						});
+					} catch(e) {
+						alert(e);
+					}
+				});
 			});
 		}
 	},
