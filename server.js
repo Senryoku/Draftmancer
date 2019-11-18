@@ -183,6 +183,9 @@ io.on('connection', function(socket) {
 	socket.on('chatMessage', function(message) {
 		let sessionID = Connections[this.userID].sessionID;
 		
+		// Limits chat message length
+		message.text = message.text.substring(0, Math.min(255, message.text.length));
+		
 		for(let user of Sessions[sessionID].users) {
 			Connections[user].socket.emit('chatMessage', message);
 		}
