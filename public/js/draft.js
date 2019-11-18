@@ -56,6 +56,18 @@ Vue.component('card', {
 	props: ['card', 'language', 'selectcard', 'selected']
 });
 
+Vue.component('missingCard', {
+	template: `
+<figure class="card">
+	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
+	<img v-else src="img/missing.svg">
+	<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
+	<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
+</figure>
+	`,
+	props: ['card', 'language']
+});
+
 var app = new Vue({
 	el: '#main-vue',
 	data: {
@@ -109,7 +121,9 @@ var app = new Vue({
 		cardSelection: [],
 		deck: [],
 		
-		showModal: false,
+		showCollectionStats: false,
+		statsMissingRarity: "rare",
+		statsShowNonBooster: false,
 		statsSelectedSet: "eld",
 		
 		// Chat
@@ -279,10 +293,10 @@ var app = new Vue({
 			if(!this.hasCollection || !this.cards || !this.setsInfos) 
 				return undefined;
 			let stats = [];
-			for(let id in this.collection) {
+			for(let id in this.cards) {
 				let card = this.genCard(id);
 				if(card) {
-					card.count = this.collection[id];
+					card.count = this.collection[id] ? this.collection[id] : 0;
 					if(!(card.set in stats))
 						stats[card.set] = {
 							name: card.set, 

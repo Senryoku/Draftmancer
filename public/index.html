@@ -72,7 +72,7 @@
 				</select>
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
-				<button v-if="hasCollection" title="Stats." @click="showModal = true">Stats</button>
+				<button v-if="hasCollection" title="Stats." @click="showCollectionStats = true">Stats</button>
 				
 				<span v-show="Object.keys(collection).length > 0">
 					<span class="v-separator"></span>
@@ -101,7 +101,7 @@
 					<select id="set-restriction" v-model:value="setRestriction">
 						<option value=""></option>
 						<option v-for="set in sets" v-bind:value="set">
-						{{ set }}
+						{{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }}
 						</option>
 					</select>
 					<span class="v-separator"></span>
@@ -241,23 +241,30 @@
 				</ul>
 			</p>
 		</div>
-		<modal v-if="showModal" @close="showModal = false">
+		<modal v-if="showCollectionStats" @close="showCollectionStats = false">
 			<h3 slot="header">Collection Statistics</h3>
-			<h3 slot="body" v-if="collectionStats !== undefined">
+			<div slot="body" v-if="collectionStats !== undefined">
+				Select set:
 				<select v-model="statsSelectedSet">
 					<option v-for="set in sets" v-bind:value="set">{{ collectionStats[set].fullName }}</option>
 				</select>
-				<div v-for="set in sets" v-show="statsSelectedSet === set">
-					<table>
-						<caption>{{collectionStats[set].fullName}}</caption>
-						<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Missing Total</th></tr>
-						<tr><td>Total</td><td>{{collectionStats[set].cards.length}}/{{collectionStats[set].total.unique}}</td><td>{{collectionStats[set].cardCount}}/{{4 * collectionStats[set]['total']['unique']}}</td><td>{{4 * collectionStats[set]['total']['unique'] - collectionStats[set].cardCount}}</td></tr>
-						<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" v-if="collectionStats[set][r + 'Count'] && collectionStats[set]['total'][r + 'Count'] > 0">
-							<td>{{r}}</td><td>{{collectionStats[set][r].length}}/{{collectionStats[set]['total'][r + 'Count']}}</td><td>{{collectionStats[set][r + 'Count']}}/{{4 * collectionStats[set]['total'][r + 'Count']}}</td><td>{{4 * collectionStats[set]['total'][r + 'Count'] - collectionStats[set][r + 'Count']}}</td>
-						</tr>
-					</table>
+				<div class="set-stats">
+					<div v-for="set in sets" v-show="statsSelectedSet === set">
+						<table>
+							<caption>{{collectionStats[set].fullName}}</caption>
+							<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Total Missing</th></tr>
+							<tr><td>Total</td><td>{{collectionStats[set].cards.length}}/{{collectionStats[set].total.unique}}</td><td>{{collectionStats[set].cardCount}}/{{4 * collectionStats[set]['total']['unique']}}</td><td>{{4 * collectionStats[set]['total']['unique'] - collectionStats[set].cardCount}}</td></tr>
+							<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" v-if="collectionStats[set][r + 'Count'] && collectionStats[set]['total'][r + 'Count'] > 0">
+								<td>{{r}}</td><td>{{collectionStats[set][r].length}}/{{collectionStats[set]['total'][r + 'Count']}}</td><td>{{collectionStats[set][r + 'Count']}}/{{4 * collectionStats[set]['total'][r + 'Count']}}</td><td>{{4 * collectionStats[set]['total'][r + 'Count'] - collectionStats[set][r + 'Count']}}</td>
+							</tr>
+						</table>
+						<h3>Missing <select v-model="statsMissingRarity"><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" v-model="statsShowNonBooster">Show non-booster cards</input>
+						<div class="card-container">
+							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster)&& c.count < 4)" v-bind:key="index" v-bind:card="card" v-bind:language="language"></figure>
+						</div>
+					</div>
 				</div>
-			</h3>
+			</div>
 		</modal>
 	</div>
 	

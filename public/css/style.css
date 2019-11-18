@@ -393,6 +393,7 @@ ul.player-list {
 
 .card {
 	display: inline-block;
+	position: relative;
 	margin: 0.75em;
 	text-align: center;
 }
@@ -403,6 +404,29 @@ ul.player-list {
 	/*transform-origin: bottom;*/
 	border-radius: 6px;
 	cursor: pointer;
+}
+
+.card-count {
+	position: absolute;
+	right: 1em;
+	bottom: 1em;
+	background: rgba(0, 0, 0, 0.5);
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 0.75em;
+	line-height: 1.5em;
+	text-align: center;
+}
+
+.not-booster {
+	position: absolute;
+	left: 1em;
+	bottom: 1em;
+	font-size: 0.5em;
+	color: red;
+	background-color: rgba(255, 255, 255, 0.8);
+	padding: 0.2em;
+	border-radius: 0.2em;
 }
 
 .booster .card img:hover, 
@@ -656,4 +680,26 @@ ul.player-list {
     -o-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+
+/* Collection stats */
+.set-stats {
+	margin: 0.5em;
+}
+
+.set-stats table {
+	margin: auto;
+}
+
+.set-stats tr:nth-child(odd) {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.set-stats th,
+.set-stats td {
+	padding: 0.25em;
+}
+
+.set-stats td:not(:first-child) {
+	text-align: center;
 }
