@@ -41,6 +41,10 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
 }
 
+Vue.component('modal', {
+  template: '#modal-template'
+})
+
 Vue.component('card', {
 	template: `
 <figure class="card" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)">
@@ -98,16 +102,24 @@ var app = new Vue({
 		],
 		cardOrder: "",
 		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"],
+		setsInfos: undefined,
 		boosterIndex: undefined,
 		draftingState: undefined,
 		selectedCardId: undefined,
 		cardSelection: [],
-		deck: []
+		deck: [],
+		
+		showModal: false,
+		statsSelectedSet: "eld"
 	},
 	methods: {
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
 		},
+		// Chat Methods
+		sendChatMessage: function() {
+		},
+		// Draft Methods
 		pickCard: function() {
 			this.draftingState = "waiting";
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
@@ -136,6 +148,7 @@ var app = new Vue({
 			}
 			this.cardSelection.push(c);
 		},
+		// Collection management
 		setCollection: function(json) {
 			if(this.collection == json)
 				return;
@@ -246,58 +259,41 @@ var app = new Vue({
 		},
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;
-		},
-		showCollectionStats: function() {
-			// Load set informations
-			fetch("data/SetsInfos.json").then(function (response) {
-				response.text().then(function (text) {
-					try {
-						let setsInfo = JSON.parse(text);
-						let sets = [];
-						for(let id in app.collection) {
-							let card = app.genCard(id);
-							if(card) {
-								card.count = app.collection[id];
-								if(!(card.set in sets))
-									sets[card.set] = {
-										name: card.set, 
-										cards: [],
-										cardCount: 0,
-										common : [], uncommon: [], rare: [], mythic: [],
-										commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0
-									};
-								sets[card.set].cards.push(card);
-								sets[card.set].cardCount += card.count;
-								sets[card.set][card.rarity].push(card);
-								sets[card.set][card.rarity + "Count"] += card.count;
-							}
-						}
-						let statsText = "(WIP!...)";
-						for(let key in sets) {
-							statsText += `<table>
-								<caption>${sets[key].name}</caption>
-								<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Missing Total</th></tr>
-								<tr><td>Total</td><td>${sets[key].cards.length}/${setsInfo[key].cardCount}</td><td>${sets[key].cardCount}/${4 * setsInfo[key].cardCount}</td><td>${4 * setsInfo[key].cardCount - sets[key].cardCount}</td></tr>`;
-							for(let r of ['common', 'uncommon', 'rare', 'mythic']) {
-								let tmp = setsInfo[key][r + 'Count'];
-								if(tmp && tmp > 0)
-									statsText += `<tr><td>${r}</td><td>${sets[key][r].length}/${tmp}</td><td>${sets[key][r + 'Count']}/${4 * tmp}</td><td>${4 * tmp - sets[key][r + 'Count']}</td></tr>`;
-							}
-							statsText += `</table>`;
-						}
-						Swal.fire({
-							title: 'Collection statistics',
-							html: statsText,
-							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
-						});
-					} catch(e) {
-						alert(e);
-					}
-				});
-			});
 		}
 	},
 	computed: {
+		collectionStats: function () {
+			if(!app.hasCollection || !app.cards || !app.setsInfos) 
+				return undefined;
+			let stats = [];
+			for(let id in app.collection) {
+				let card = app.genCard(id);
+				if(card) {
+					card.count = app.collection[id];
+					if(!(card.set in stats))
+						stats[card.set] = {
+							name: card.set, 
+							fullName: app.setsInfos[card.set].fullName, 
+							cards: [],
+							cardCount: 0,
+							common : [], uncommon: [], rare: [], mythic: [],
+							commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0,
+							total: {
+								unique: app.setsInfos[card.set].cardCount,
+								commonCount : app.setsInfos[card.set]['commonCount'], 
+								uncommonCount: app.setsInfos[card.set]['uncommonCount'], 
+								rareCount: app.setsInfos[card.set]['rareCount'], 
+								mythicCount: app.setsInfos[card.set]['mythicCount']
+							}
+						};
+					stats[card.set].cards.push(card);
+					stats[card.set].cardCount += card.count;
+					stats[card.set][card.rarity].push(card);
+					stats[card.set][card.rarity + "Count"] += card.count;
+				}
+			}
+			return stats;
+		},
 		hasCollection: function() {
 			return !isEmpty(this.collection);
 		},
@@ -504,6 +500,17 @@ var app = new Vue({
 								app.cards[c]['image_uris'][l.code] = app.cards[c]['image_uris']['en'];
 						}
 					}
+				} catch(e) {
+					alert(e);
+				}
+			});
+		});
+		
+		// Load set informations
+		fetch("data/SetsInfos.json").then(function (response) {
+			response.text().then(function (text) {
+				try {
+					app.setsInfos = JSON.parse(text);
 				} catch(e) {
 					alert(e);
 				}

@@ -457,7 +457,33 @@ function startDraft(sessionID) {
 	Sessions[sessionID].round = 0;
 	nextBooster(sessionID);
 }
-
+/*
+// Concept only :)
+function Bot() {
+	this.cards = [];
+	this.pickedColors = {"W": 0, "U": 0, "R": 0, "B": 0, "G": 0};
+	this.pick = function(booster) {
+		let maxScore = 0;
+		let bestPick = 0;
+		for(let idx = 0; idx < booster.length; ++idx) {
+			let c = booster[idx];
+			// TODO: Rate cards
+			let score = c.rating;
+			for(let color of c.colors) {
+				score += 0.2 * pickedColor[color];
+			}
+			if(score > maxScore) {
+				maxScore = score;
+				bestPick = c;
+			}
+		}
+		for(let color of booster[bestPick].colors) {
+			pickedColors[color] += 1;
+		}
+		return bestPick;
+	}
+}
+*/
 function nextBooster(sessionID) {
 	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
 	

@@ -232,6 +232,19 @@ ul.player-list {
 	border-radius: 5px;
 }
 
+.chat {
+	display: inline-block;
+	float: right;
+}
+
+.chat > * {
+	display: inline-block;
+}
+
+.chat input {
+	width: 20em;
+}
+
 .status-icons {
 	display: inline-flex;
 }

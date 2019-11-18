@@ -102,6 +102,23 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 		#with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
 		#	json.dump(cards, outfile, ensure_ascii=False)
 
+setFullNames = {
+	"ana": "Arena",
+	"akh": "Amonkhet",
+	"hou": "Hour of Devastation",
+	"m19": "Core Set 2019",
+	"xln": "Ixalan",
+	"rix": "Rivals of Ixalan",
+	"dom": "Dominaria",
+	"grn": "Guilds of Ravnica",
+	"rna": "Ravnica Allegiance",
+	"war": "War of the Spark",
+	"m20": "Core Set 2020",
+	"eld": "Throne of Eldraine",
+	"thb": "Theros: Beyond Death",
+	"m21": "Core Set 2021",
+}
+
 print("Cards in database:")
 with open(FinalDataPath, 'r', encoding="utf8") as file:
 	data = json.loads(file.read())
@@ -114,6 +131,10 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 	for set, group in groups:
 		cardList = list(group)
 		setinfos[set] = {}
+		if set in setFullNames:
+			setinfos[set]["fullName"] = setFullNames[set]
+		else:
+			setinfos[set]["fullName"] = set
 		setinfos[set]["cardCount"] = len(cardList)
 		print('\t', set, ": ", len(cardList))
 		cardList.sort(key = lambda c: c['rarity'])

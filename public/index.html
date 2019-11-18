@@ -13,7 +13,39 @@
 	<meta property="og:site_name" content="MTGA Draft">
 	
 	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/modal.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+	<script type="text/x-template" id="modal-template">
+	  <transition name="modal">
+		<div class="modal-mask">
+		  <div class="modal-wrapper">
+			<div class="modal-container">
+
+			  <div class="modal-header">
+				<slot name="header">
+				  ???
+				</slot>
+			  </div>
+
+			  <div class="modal-body">
+				<slot name="body">
+				  Loading...
+				</slot>
+			  </div>
+
+			  <div class="modal-footer">
+				<slot name="footer">
+					<button class="modal-default-button" @click="$emit('close')">
+						Close
+					</button>
+				</slot>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </transition>
+	</script>
 </head>
 <body>
 	<div id="main-vue">
@@ -40,7 +72,7 @@
 				</select>
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
-				<button v-if="hasCollection" title="Stats." @click="showCollectionStats">Stats</button>
+				<button v-if="hasCollection" title="Stats." @click="showModal = true">Stats</button>
 				
 				<span v-show="Object.keys(collection).length > 0">
 					<span class="v-separator"></span>
@@ -74,6 +106,7 @@
 					</select>
 					<span class="v-separator"></span>
 					<label for="boosters-per-player">Boosters per Player</label><input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+					<span class="v-separator"></span>
 					<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
 					<span class="v-separator"></span>
 					<div class="check-button-container">
@@ -117,6 +150,12 @@
 			</ul>
 			<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
 			<small v-if="drafting && bots > 0">(...and {{bots}} bot(s) picking cards at random!)</small>
+			<div class="chat">
+				<button>Chat History</button>
+				<form @submit.prevent="sendChatMessage">
+					<input type="text" placeholder="Chat with players in your session." />
+				</form>
+			</div>
 		</div>
 		<template v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
@@ -187,6 +226,24 @@
 				</ul>
 			</p>
 		</div>
+		<modal v-if="showModal" @close="showModal = false">
+			<h3 slot="header">Collection Statistics</h3>
+			<h3 slot="body" v-if="collectionStats !== undefined">
+				<select v-model="statsSelectedSet">
+					<option v-for="set in sets" v-bind:value="set">{{ collectionStats[set].fullName }}</option>
+				</select>
+				<div v-for="set in sets" v-show="statsSelectedSet === set">
+					<table>
+						<caption>{{collectionStats[set].fullName}}</caption>
+						<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Missing Total</th></tr>
+						<tr><td>Total</td><td>{{collectionStats[set].cards.length}}/{{collectionStats[set].total.unique}}</td><td>{{collectionStats[set].cardCount}}/{{4 * collectionStats[set]['total']['unique']}}</td><td>{{4 * collectionStats[set]['total']['unique'] - collectionStats[set].cardCount}}</td></tr>
+						<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" v-if="collectionStats[set][r + 'Count'] && collectionStats[set]['total'][r + 'Count'] > 0">
+							<td>{{r}}</td><td>{{collectionStats[set][r].length}}/{{collectionStats[set]['total'][r + 'Count']}}</td><td>{{collectionStats[set][r + 'Count']}}/{{4 * collectionStats[set]['total'][r + 'Count']}}</td><td>{{4 * collectionStats[set]['total'][r + 'Count'] - collectionStats[set][r + 'Count']}}</td>
+						</tr>
+					</table>
+				</div>
+			</h3>
+		</modal>
 	</div>
 	
 	<footer>Made by <a href="http://senryoku.github.io/">Senryoku</a> - <a href="https://www.reddit.com/r/MagicArena/comments/bp5s4h/a_webapp_to_play_draft_with_friends_on_mtga/">Reddit Thread</a> - Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a></footer>
