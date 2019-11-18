@@ -110,14 +110,27 @@ var app = new Vue({
 		deck: [],
 		
 		showModal: false,
-		statsSelectedSet: "eld"
+		statsSelectedSet: "eld",
+		
+		// Chat
+		currentChatMessage: "",
+		displayChatHistory: false,
+		messagesHistory: []
 	},
 	methods: {
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
 		},
 		// Chat Methods
-		sendChatMessage: function() {
+		sendChatMessage: function(e) {
+			if(!this.currentChatMessage || this.currentChatMessage == "")
+				return;
+			this.socket.emit('chatMessage', {
+				'author': this.userID,
+				'timestamp': Date.now(),
+				'text': this.currentChatMessage
+			});
+			this.currentChatMessage = "";
 		},
 		// Draft Methods
 		pickCard: function() {
@@ -263,27 +276,27 @@ var app = new Vue({
 	},
 	computed: {
 		collectionStats: function () {
-			if(!app.hasCollection || !app.cards || !app.setsInfos) 
+			if(!this.hasCollection || !this.cards || !this.setsInfos) 
 				return undefined;
 			let stats = [];
-			for(let id in app.collection) {
-				let card = app.genCard(id);
+			for(let id in this.collection) {
+				let card = this.genCard(id);
 				if(card) {
-					card.count = app.collection[id];
+					card.count = this.collection[id];
 					if(!(card.set in stats))
 						stats[card.set] = {
 							name: card.set, 
-							fullName: app.setsInfos[card.set].fullName, 
+							fullName: this.setsInfos[card.set].fullName, 
 							cards: [],
 							cardCount: 0,
 							common : [], uncommon: [], rare: [], mythic: [],
 							commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0,
 							total: {
-								unique: app.setsInfos[card.set].cardCount,
-								commonCount : app.setsInfos[card.set]['commonCount'], 
-								uncommonCount: app.setsInfos[card.set]['uncommonCount'], 
-								rareCount: app.setsInfos[card.set]['rareCount'], 
-								mythicCount: app.setsInfos[card.set]['mythicCount']
+								unique: this.setsInfos[card.set].cardCount,
+								commonCount : this.setsInfos[card.set]['commonCount'], 
+								uncommonCount: this.setsInfos[card.set]['uncommonCount'], 
+								rareCount: this.setsInfos[card.set]['rareCount'], 
+								mythicCount: this.setsInfos[card.set]['mythicCount']
 							}
 						};
 					stats[card.set].cards.push(card);
@@ -327,6 +340,12 @@ var app = new Vue({
 					return lhs.cmc - rhs.cmc;
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
+		},
+		userByID: function() {
+			let r = {};
+			for(let u of this.sessionUsers)
+				r[u.userID] = u;
+			return r;
 		}
 	},
 	mounted: async function() {
@@ -395,6 +414,17 @@ var app = new Vue({
 		
 		this.socket.on('isPublic', function(data) {
 			app.isPublic = data;
+		});
+		
+		this.socket.on('chatMessage', function(message) {
+			app.messagesHistory.push(message);
+			// TODO: Cleanup this?
+			let bubble = document.querySelector('#chat-bubble-' + message.author);
+			bubble.innerText = message.text;
+			bubble.style.opacity = 1;
+			if(bubble.timeoutHandler)
+				clearTimeout(bubble.timeoutHandler);
+			bubble.timeoutHandler = window.setTimeout(() => bubble.style.opacity = 0, 5000);
 		});
 		
 		this.socket.on('boostersPerPlayer', function(data) {

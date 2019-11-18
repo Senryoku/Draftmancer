@@ -180,6 +180,14 @@ io.on('connection', function(socket) {
 		notifyUserChange(sessionID);
 	});
 	
+	socket.on('chatMessage', function(message) {
+		let sessionID = Connections[this.userID].sessionID;
+		
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('chatMessage', message);
+		}
+	});
+	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
 		

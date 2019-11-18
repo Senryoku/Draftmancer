@@ -56,7 +56,7 @@
 		
 		<div id="view-controls" class="main-controls">
 			<span>
-				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" />
+				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
 				<span class="v-separator"></span>
 				<label for="language">Language</label>
 				<select v-model="language" name="language">
@@ -146,15 +146,30 @@
 							<i v-if="user.readyToDraft" class="fas fa-check green" :title="user.userName + ' is ready to draft!'"></i>
 						</template>
 					</div>
+					<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
 				</li>
 			</ul>
-			<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
-			<small v-if="drafting && bots > 0">(...and {{bots}} bot(s) picking cards at random!)</small>
+			<div>
+				<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
+				<small v-if="drafting && bots > 0">(...and {{bots}} bot(s) picking cards at random!)</small>
+			</div>
 			<div class="chat">
-				<button>Chat History</button>
+				<button @click="displayChatHistory = !displayChatHistory">Chat History</button>
 				<form @submit.prevent="sendChatMessage">
-					<input type="text" placeholder="Chat with players in your session." />
+					<input type="text" v-model="currentChatMessage" placeholder="Chat with players in your session."  maxlength="255" />
 				</form>
+				<div class="chat-history" v-show="displayChatHistory">
+					<template v-if="messagesHistory && messagesHistory.length > 0">
+						<ol>
+							<li v-for="msg in messagesHistory.slice().reverse()" :title="new Date(msg.timestamp)">
+								<span class="chat-author">{{ msg.author in userByID ? userByID[msg.author].userName : "(Left)"}}</span><span class="chat-message">{{msg.text}}</span>
+							</li>
+						</ol>
+					</template>
+					<template v-else>
+						No messages in chat history.
+					</template>
+				</div>
 			</div>
 		</div>
 		<template v-if="drafting">
