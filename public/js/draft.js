@@ -295,7 +295,7 @@ var app = new Vue({
 			let stats = [];
 			for(let id in this.cards) {
 				let card = this.genCard(id);
-				if(card) {
+				if(card && !['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'].includes(card['name'])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					if(!(card.set in stats))
 						stats[card.set] = {

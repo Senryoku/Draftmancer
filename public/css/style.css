@@ -691,6 +691,10 @@ ul.player-list {
 	margin: auto;
 }
 
+.set-stats caption {
+	font-size: 1.25em;
+}
+
 .set-stats tr:nth-child(odd) {
 	background-color: rgba(0, 0, 0, 0.2);
 }
