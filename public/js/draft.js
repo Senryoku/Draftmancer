@@ -198,7 +198,6 @@ var app = new Vue({
 					let collStr = contents.slice(collection_start, collection_end + 1);
 					localStorage.setItem("Collection", collStr);
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					console.log(collStr);
 					app.setCollection(JSON.parse(collStr));
 					Swal.fire({
 						position: 'top-end',

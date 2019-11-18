@@ -634,9 +634,12 @@ function removeUserFromSession(userID, sessionID) {
 		
 		Sessions[sessionID].users.delete(userID);
 		Connections[userID].sessionID = undefined;
-		if(Sessions[sessionID].users.size == 0)
+		if(Sessions[sessionID].users.size == 0) {
+			let wasPublic = Session[sessionID].isPublic;
 			delete Sessions[sessionID];
-		else
+			if(wasPublic)
+				io.emit('publicSessions', getPublicSessions());
+		} else
 			notifyUserChange(sessionID);
 	}
 }
