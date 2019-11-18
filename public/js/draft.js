@@ -179,7 +179,7 @@ var app = new Vue({
 		setCollection: function(json) {
 			if(this.collection == json)
 				return;
-			this.collection = json;
+			this.collection = Object.freeze(json);
 			this.socket.emit('setCollection', this.collection);
 		},
 		parseMTGALog: function(e) {
@@ -533,17 +533,18 @@ var app = new Vue({
 		fetch("data/MTGACards.json").then(function (response) {
 			response.text().then(function (text) {
 				try {
-					app.cards = JSON.parse(text);
-					for(let c in app.cards) {
-						if(!('in_booster' in app.cards[c]))
-							app.cards[c].in_booster = true;
+					let parsed = JSON.parse(text);
+					for(let c in parsed) {
+						if(!('in_booster' in parsed[c]))
+							parsed[c].in_booster = true;
 						for(let l of app.languages) {
-							if(!(l.code in app.cards[c]['printed_name']))
-								app.cards[c]['printed_name'][l.code] = app.cards[c]['name'];
-							if(!(l.code in app.cards[c]['image_uris']))
-								app.cards[c]['image_uris'][l.code] = app.cards[c]['image_uris']['en'];
+							if(!(l.code in parsed[c]['printed_name']))
+								parsed[c]['printed_name'][l.code] = parsed[c]['name'];
+							if(!(l.code in parsed[c]['image_uris']))
+								parsed[c]['image_uris'][l.code] = parsed[c]['image_uris']['en'];
 						}
 					}
+					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
 				} catch(e) {
 					alert(e);
 				}
@@ -554,7 +555,7 @@ var app = new Vue({
 		fetch("data/SetsInfos.json").then(function (response) {
 			response.text().then(function (text) {
 				try {
-					app.setsInfos = JSON.parse(text);
+					app.setsInfos = Object.freeze(JSON.parse(text));
 				} catch(e) {
 					alert(e);
 				}
