@@ -7,6 +7,7 @@ import gzip
 import urllib
 import requests
 import sys
+import re
 from itertools import groupby
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
@@ -15,9 +16,36 @@ BulkDataArenaPath = 'data/BulkArena.json'
 CardDataPath = 'data/data_cards.json' # Card data directly from the devs
 FinalDataPath = 'public/data/MTGACards.json'
 SetsInfosPath = 'public/data/SetsInfos.json'
+RatingsSources = [
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR2.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR3.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR4.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR5.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR6.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR7.html',
+				'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR8.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M19.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M192.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M193.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M194.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M195.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M196.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M197.html',
+				'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M198.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN2.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN3.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN4.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN5.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN6.html',
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN7.html'
+]
+RatingsDest = 'data/ratings.json'
 
 ForceDownload = len(sys.argv) > 1 and sys.argv[1].lower() == "dl"
 ForceParse = len(sys.argv) > 1 and sys.argv[1].lower() == "parse"
+ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
@@ -43,6 +71,28 @@ if not os.path.isfile(BulkDataArenaPath) or ForceDownload:
 		
 		with open(BulkDataArenaPath, 'w') as outfile:
 			json.dump(cards, outfile)
+
+CardRatings = {}
+if not os.path.isfile(RatingsDest) or ForceRatings:
+	for path in RatingsSources:
+		with open(path, 'r', encoding="utf8") as file:
+			text = file.read()
+			text = text[text.find("table_card_rating_wrapper"):text.find("table_card_rating_previous")]
+			matches = re.findall("<b>([^<]*)<\/b>", text)
+			for i in range(0, len(matches), 2):
+				try:
+					matches[i+1] = float(matches[i+1])
+				except ValueError:
+					vals = matches[i+1].split(" // ")
+					matches[i+1] = (float(vals[0]) + float(vals[1]))/2
+				#print(matches[i] + " " + matches[i+1])
+				CardRatings[matches[i]] = matches[i+1]
+				
+	with open(RatingsDest, 'w') as outfile:
+		json.dump(CardRatings, outfile)
+else:
+	with open(RatingsDest, 'r', encoding="utf8") as file:
+		CardRatings = json.loads(file.read())
 
 if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 	# Tag non booster card as such
@@ -94,6 +144,10 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 					cards[c['arena_id']] = {}
 				if c['lang'] == 'en':
 					selection = {key:value for key,value in c.items() if key in {'name', 'set', 'cmc', 'rarity', 'collector_number', 'color_identity'}}
+					if selection['name'] in CardRatings:
+						selection['rating'] = CardRatings[selection['name']]
+					else:
+						selection['rating'] = 0
 					if c['arena_id'] in NonBoosterCards or 'Basic Land' in c['type_line']:
 						selection['in_booster'] = False;
 					if 'image_uris' in c and 'border_crop' in c['image_uris']:
