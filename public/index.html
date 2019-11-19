@@ -151,7 +151,7 @@
 			</ul>
 			<div>
 				<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
-				<small v-if="drafting && bots > 0">(...and {{bots}} bot(s) picking cards at random!)</small>
+				<small v-if="drafting && bots > 0">(...and {{bots}} bad bot(s)!)</small>
 			</div>
 			<div class="chat">
 				<button @click="displayChatHistory = !displayChatHistory">Chat History</button>
@@ -235,7 +235,7 @@
 					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
 					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
 					<li>Boosters per Player: MTGA doesn't currently allow to play in Direct Challenge with deck containing less than 60 cards, so you may want to adjust this. Shared by everyone in your session.</li>
-					<li>Bots (WIP!) : Adds virtual players to your draft. Right now they are <strong>very dumb</strong>, so their utility is limited, I may try to improve them in the futur.</li>
+					<li>Bots (WIP!) : Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
 					<li>Restrict Set: Select a set to draft using only with cards from this set. Shared by everyone in your session.</li>
 					<li>Restrict to Collection: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
 				</ul>

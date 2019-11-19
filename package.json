@@ -4,7 +4,8 @@
   "description": "MTGA Direct Challenge drafting environment",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+	"logs": "heroku logs --app mtgadraft -t"
   },
   "repository": {
     "type": "git",

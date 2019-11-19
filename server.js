@@ -479,12 +479,10 @@ function startDraft(sessionID) {
 	
 	let boosterQuantity = (sess.users.size + sess.bots) * sess.boostersPerPlayer;
 	
-	console.log("sess.users.size: " + sess.users.size);
-	console.log("sess.bots: " + sess.bots);
-	console.log("type: " + typeof sess.bots);
-	console.log("type boostersPerPlayer: " + typeof sess.boostersPerPlayer);
-	console.log("boosterQuantity: " + boosterQuantity);
+	console.log("Starting draft! Session status:");
+	console.log(sess);
 	
+	// Generate bots
 	sess.botsInstances = []
 	for(let i = 0; i < sess.bots; ++i)
 		sess.botsInstances.push(new Bot())
