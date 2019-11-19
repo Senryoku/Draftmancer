@@ -87,7 +87,6 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
 					matches[i+1] = (float(vals[0]) + float(vals[1]))/2
 				#print(matches[i] + " " + matches[i+1])
 				CardRatings[matches[i]] = matches[i+1]
-				
 	with open(RatingsDest, 'w') as outfile:
 		json.dump(CardRatings, outfile)
 else:

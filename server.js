@@ -439,6 +439,34 @@ function syncSessionOptions(userID) {
 	Connections[userID].socket.emit('isPublic', Sessions[sessionID].isPublic);
 }
 
+// Concept only :)
+function Bot() {
+	this.cards = []; // For debugging mostly.
+	this.pickedColors = {"W": 0, "U": 0, "R": 0, "B": 0, "G": 0};
+	this.pick = function(booster) {
+		let maxScore = 0;
+		let bestPick = 0;
+		for(let idx = 0; idx < booster.length; ++idx) {
+			let c = Cards[booster[idx]];
+			// TODO: Rate cards
+			let score = c.rating;
+			for(let color of c.color_identity) {
+				score += 0.35 * this.pickedColors[color];
+			}
+			if(score > maxScore) {
+				maxScore = score;
+				bestPick = idx;
+			}
+		}
+		for(let color of Cards[booster[bestPick]].color_identity) {
+			this.pickedColors[color] += 1;
+		}
+		//this.cards.push(Cards[booster[bestPick]]);
+		this.cards.push(Cards[booster[bestPick]].name);
+		return bestPick;
+	}
+}
+
 function startDraft(sessionID) {
 	let sess = Sessions[sessionID];
 	sess.drafting = true;
@@ -457,6 +485,10 @@ function startDraft(sessionID) {
 	console.log("type boostersPerPlayer: " + typeof sess.boostersPerPlayer);
 	console.log("boosterQuantity: " + boosterQuantity);
 	
+	sess.botsInstances = []
+	for(let i = 0; i < sess.bots; ++i)
+		sess.botsInstances.push(new Bot())
+	
 	if(!generateBoosters(sessionID, boosterQuantity)) {
 		sess.drafting = false;
 		return;
@@ -468,33 +500,7 @@ function startDraft(sessionID) {
 	Sessions[sessionID].round = 0;
 	nextBooster(sessionID);
 }
-/*
-// Concept only :)
-function Bot() {
-	this.cards = [];
-	this.pickedColors = {"W": 0, "U": 0, "R": 0, "B": 0, "G": 0};
-	this.pick = function(booster) {
-		let maxScore = 0;
-		let bestPick = 0;
-		for(let idx = 0; idx < booster.length; ++idx) {
-			let c = booster[idx];
-			// TODO: Rate cards
-			let score = c.rating;
-			for(let color of c.colors) {
-				score += 0.2 * pickedColor[color];
-			}
-			if(score > maxScore) {
-				maxScore = score;
-				bestPick = c;
-			}
-		}
-		for(let color of booster[bestPick].colors) {
-			pickedColors[color] += 1;
-		}
-		return bestPick;
-	}
-}
-*/
+
 function nextBooster(sessionID) {
 	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
 	
@@ -511,19 +517,25 @@ function nextBooster(sessionID) {
 		return;
 	}
 	
+	let negMod = function(m, n) {
+		return ((m%n)+n)%n;
+	};
+	
 	let index = 0;
+	let evenRound = ((Sessions[sessionID].boosters.length / totalVirtualPlayers) % 2) == 0;
+	let boosterOffset = evenRound ? -Sessions[sessionID].round : Sessions[sessionID].round;
 	for(let user of Sessions[sessionID].users) {
-		const boosterIndex = (Sessions[sessionID].round + index) % totalVirtualPlayers;
+		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
 		++index;
 	}
 	Sessions[sessionID].pickedCardsThisRound = 0; // Only counting cards picked by human players
 	// Bots picks
 	for(let i = index; i < totalVirtualPlayers; ++i) {
-		const boosterIndex = (Sessions[sessionID].round + i) % totalVirtualPlayers;
+		const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
 		const booster = Sessions[sessionID].boosters[boosterIndex];
-		// TODO: Picking at random 'cause we're lazy. Do better one day? :)
-		const removedIdx = Math.floor(Math.random() * booster.length);
+		const botIndex = i % Sessions[sessionID].bots; // ?
+		const removedIdx = Sessions[sessionID].botsInstances[botIndex].pick(booster);
 		Sessions[sessionID].boosters[boosterIndex].splice(removedIdx, 1);
 	}
 	++Sessions[sessionID].round;
@@ -535,6 +547,13 @@ function endDraft(sessionID) {
 		Connections[user].socket.emit('endDraft');
 	}
 	console.log(`Session ${sessionID} draft ended.`);
+	
+	// Bot logging
+	if(Sessions[sessionID].bots > 0) {
+		console.log("Bot picks:");
+		console.log(Sessions[sessionID].botsInstances);
+		Sessions[sessionID].botsInstances = [];
+	}
 }
 
 // Serve files in the public directory
