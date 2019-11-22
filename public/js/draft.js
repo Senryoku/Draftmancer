@@ -192,13 +192,13 @@ var app = new Vue({
 				let contents = e.target.result;
 				let call_idx = contents.lastIndexOf("PlayerInventory.GetPlayerCardsV3");
 				let collection_start = contents.indexOf('{', call_idx);
-				let collection_end = contents.indexOf('}', collection_start);
+				let collection_end = contents.indexOf('}}', collection_start) + 2;
 				
 				try {
-					let collStr = contents.slice(collection_start, collection_end + 1);
+					let collStr = contents.slice(collection_start, collection_end);
 					localStorage.setItem("Collection", collStr);
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					app.setCollection(JSON.parse(collStr));
+					app.setCollection(JSON.parse(collStr)['payload']);
 					Swal.fire({
 						position: 'top-end',
 						customClass: 'swal-container',
