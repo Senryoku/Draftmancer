@@ -196,9 +196,10 @@ var app = new Vue({
 				
 				try {
 					let collStr = contents.slice(collection_start, collection_end);
-					localStorage.setItem("Collection", collStr);
+					let collJson = JSON.parse(collStr)['payload'];
+					localStorage.setItem("Collection", JSON.stringify(collJson));
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					app.setCollection(JSON.parse(collStr)['payload']);
+					app.setCollection(collJson);
 					Swal.fire({
 						position: 'top-end',
 						customClass: 'swal-container',
