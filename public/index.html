@@ -80,7 +80,7 @@
 				</span>
 			</span>
 			
-			<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="session-controls">
+			<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="public-session-controls">
 				<label for="public-sessions">Public sessions</label>
 				<select id="public-sessions" v-model:value="selectedPublicSession">
 					<option v-for="s in publicSessions" v-bind:value="s">
@@ -92,30 +92,36 @@
 		</div>
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
-				<span id="draft-controls">
+				<span id="session-controls">
 					<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
 					<span class="v-separator"></span>
 					<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
 					<span class="v-separator"></span>
-					<label for="set-restriction">Restrict Set</label>
+					<label for="set-restriction">Set</label>
 					<select id="set-restriction" v-model:value="setRestriction">
-						<option value=""></option>
+						<option value="">All</option>
 						<option v-for="set in sets" v-bind:value="set">
 						{{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }}
 						</option>
 					</select>
-					<span class="v-separator"></span>
-					<label for="boosters-per-player">Boosters per Player</label><input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+				</span>
+				
+				<span id="draft-controls">
+					<strong>Draft:</strong>
+					<label for="boosters-per-player">Boosters per Player</label>
+					<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 					<span class="v-separator"></span>
 					<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
-					<span class="v-separator"></span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
 					</div>
 				</span>
 				
 				<span id="sealed-controls">
-					<strong>Sealed</strong>: Boosters per Player: <input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" /><input type="button" value="Distribute" @click="distributeSealed"/>
+					<strong>Sealed</strong>:
+					<label>Boosters per Player</label>
+					<input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" />
+					<input type="button" value="Distribute" @click="distributeSealed"/>
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
@@ -223,21 +229,33 @@
 			</div>
 		</div>
 		<div class="welcome" v-if="!drafting && (cardSelection == undefined || cardSelection.length == 0)">
-			<p>Welcome to MTGADraft!</p>
-			<p>Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!</p>
-			<ol>
-				<li>Use the controls on the top of the page to enter your User Name and indicate your preferences.</li>
-				<li><a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game. <strong>Important Note</strong>: Detailed logs now have to be enabled in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.</li>
-				<li>Share your session ID with your friends (or join their own session) and click ready to start drafting!</li>
-			</ol>
-			<p>Options:
+			<h1>Welcome to MTGADraft!</h1>
+			<p class="important">
+				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!
+				<ol class="important">
+					<li>Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.</li>
+					<li><a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game.</li>
+					<li>Use the controls on top of the page to enter your User Name and indicate your preferences.</li>
+					<li>Share your session ID with your friends (or join their own session) and click ready to start drafting!</li>
+				</ol>
+			</p>
+			<h2>Options</h2>
+			<p>
+				Personal options:
 				<ul>
-					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
-					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
-					<li>Boosters per Player: MTGA doesn't currently allow to play in Direct Challenge with deck containing less than 60 cards, so you may want to adjust this. Shared by everyone in your session.</li>
-					<li>Bots (WIP!) : Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
-					<li>Restrict Set: Select a set to draft using only with cards from this set. Shared by everyone in your session.</li>
+					<li>Language: Adjusts the display language of cards.</li>
+					<li>Card Order: Adjusts the order of cards within a sealed pool or your drafted cards.</li>
 					<li>Restrict to Collection: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
+					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
+				</ul>
+			</p>
+			<p>
+				Session options (Shared by everyone in your session):
+				<ul>
+					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
+					<li>Set: Select a set to draft using only with cards from this set.</li>
+					<li>Boosters per Player: MTGA doesn't currently allow to play in Direct Challenge with deck containing less than 60 cards, so you may want to adjust this.</li>
+					<li>Bots (WIP!) : Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
 				</ul>
 			</p>
 		</div>
@@ -278,7 +296,7 @@
 		</modal>
 	</div>
 	
-	<footer>Made by <a href="http://senryoku.github.io/">Senryoku</a> - <a href="https://www.reddit.com/r/MagicArena/comments/bp5s4h/a_webapp_to_play_draft_with_friends_on_mtga/">Reddit Thread</a> - Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a></footer>
+	<footer><span>Made by <a href="http://senryoku.github.io/">Senryoku</a></span><span><a href="mailto:mtgadraft@gmail.com">Contact</a></span><span>Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a></footer>
 	
 	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>

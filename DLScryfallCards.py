@@ -194,6 +194,16 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 	for set, group in groups:
 		cardList = list(group)
 		setinfos[set] = {}
+		# Get set icon
+		icon_path = "img/sets/{}.svg".format(set)
+		if not os.path.isfile("public/" + icon_path):
+			response = requests.get("https://api.scryfall.com/sets/{}".format(set))
+			scryfall_set_data = json.loads(response.content)
+			if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
+				urllib.request.urlretrieve(scryfall_set_data['icon_svg_uri'], "public/" + icon_path)
+				setinfos[set]["icon"] = icon_path
+		else:
+			setinfos[set]["icon"] = icon_path
 		if set in setFullNames:
 			setinfos[set]["fullName"] = setFullNames[set]
 		else:
