@@ -1,6 +1,7 @@
 "use strict";
 
 const port = process.env.PORT || 3000
+const compression = require('compression');
 const express = require('express'); 
 const app = express();
 const http = require('http').Server(app);
@@ -11,6 +12,7 @@ const fs = require('fs');
 
 const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"];
 
+app.use(compression());
 app.use(cookieParser()); 
 
 function isEmpty(obj) {
