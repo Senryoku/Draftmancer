@@ -39,13 +39,30 @@ RatingsSources = [
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN4.html',
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN5.html',
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN6.html',
-				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN7.html'
+				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN7.html',
+				'data/LimitedRatings/Limited Card Ratings_THB.html'
 ]
 RatingsDest = 'data/ratings.json'
 
 ForceDownload = len(sys.argv) > 1 and sys.argv[1].lower() == "dl"
 ForceParse = len(sys.argv) > 1 and sys.argv[1].lower() == "parse"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
+ForceUpdateMTGAData = len(sys.argv) > 1 and sys.argv[1].lower() == "mtga"
+
+MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_3bd5b82dadbd15fd73622330b3396c64.mtga"
+MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_7c6e2fd8116d32ea30df234867f770c8.mtga"
+MTGALocalization = {}
+#if not or ForceUpdateMTGAData:
+with open(MTGALocFile, 'r', encoding="utf8") as file:
+	locdata = json.load(file)
+	for o in locdata[0]['keys']:
+		MTGALocalization[o['id']] = o['text']
+
+NameToCardID = {}
+with open(MTGACardsFile, 'r', encoding="utf8") as file:
+	carddata = json.load(file)
+	for o in carddata:
+		NameToCardID[MTGALocalization[o['titleId']]] = o['grpid']
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
@@ -102,12 +119,16 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 	for c in data['data']:
 		if('arena_id' in c):
 			NonBoosterCards.append(c['arena_id'])
+		else:
+			NonBoosterCards.append(NameToCardID[c['name']])
 	while(data["has_more"]):
 		response = requests.get(data["next_page"])
 		data = json.loads(response.content)
 		for c in data['data']:
 			if('arena_id' in c):
 				NonBoosterCards.append(c['arena_id'])
+			else:
+				NonBoosterCards.append(NameToCardID[c['name']])
 
 	print("Generating card data cache...")
 	with open(CardDataPath, 'r', encoding="utf8") as devCardData:
@@ -127,15 +148,18 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 				if c['name'] not in translations_img:
 					translations_img[c['name']] = {}
 				if 'arena_id' not in c:
-					if 'printed_name' in c:
-						translations[c['name']][c['lang']] = c['printed_name']
-					elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-						translations[c['name']][c['lang']] = c['card_faces'][0]['printed_name']
-					if 'image_uris' in c and 'border_crop' in c['image_uris']:
-						translations_img[c['name']][c['lang']] = c['image_uris']['border_crop']
-					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-						translations_img[c['name']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
-					continue
+					if c['lang'] == 'en':
+						c['arena_id'] = NameToCardID[c['name']]
+					else:
+						if 'printed_name' in c:
+							translations[c['name']][c['lang']] = c['printed_name']
+						elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+							translations[c['name']][c['lang']] = c['card_faces'][0]['printed_name']
+						if 'image_uris' in c and 'border_crop' in c['image_uris']:
+							translations_img[c['name']][c['lang']] = c['image_uris']['border_crop']
+						elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+							translations_img[c['name']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
+						continue
 				if c['arena_id'] in adventuresIds:
 					print(str(c['arena_id']) + " " + c['name'] + " in an adventure, fixing it.")
 					c['arena_id'] = adventuresIds[c['arena_id']]

@@ -113,7 +113,7 @@ var app = new Vue({
 			{code: 'zht', name: 'Traditional Chinese'}
 		],
 		cardOrder: "",
-		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"],
+		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"],
 		setsInfos: undefined,
 		boosterIndex: undefined,
 		draftingState: undefined,
@@ -124,7 +124,7 @@ var app = new Vue({
 		showCollectionStats: false,
 		statsMissingRarity: "rare",
 		statsShowNonBooster: false,
-		statsSelectedSet: "eld",
+		statsSelectedSet: "thb",
 		
 		// Chat
 		currentChatMessage: "",

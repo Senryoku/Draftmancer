@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const uuidv1 = require('uuid/v1');
 const fs = require('fs');
 
-const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld"];
+const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"];
 
 app.use(compression());
 app.use(cookieParser()); 
