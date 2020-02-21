@@ -95,23 +95,27 @@
 				<span id="session-controls">
 					<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
 					<span class="v-separator"></span>
-					<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
-					<span class="v-separator"></span>
-					<label for="set-restriction">Set</label>
-					<select id="set-restriction" v-model:value="setRestriction">
-						<option value="">All</option>
-						<option v-for="set in sets" v-bind:value="set">
-						{{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }}
-						</option>
-					</select>
+					<span v-bind:class="{ disabled: sessionOwner != userID }">
+						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
+						<span class="v-separator"></span>
+						<label for="set-restriction">Set</label>
+						<select id="set-restriction" v-model:value="setRestriction">
+							<option value="">All</option>
+							<option v-for="set in sets" v-bind:value="set">
+							{{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }}
+							</option>
+						</select>
+					</span>
 				</span>
 				
 				<span id="draft-controls">
 					<strong>Draft:</strong>
-					<label for="boosters-per-player">Boosters per Player</label>
-					<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-					<span class="v-separator"></span>
-					<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
+					<span v-bind:class="{ disabled: sessionOwner != userID }">
+						<label for="boosters-per-player">Boosters per Player</label>
+						<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+						<span class="v-separator"></span>
+						<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
+					</span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
 					</div>
@@ -119,9 +123,11 @@
 				
 				<span id="sealed-controls">
 					<strong>Sealed</strong>:
-					<label>Boosters per Player</label>
-					<input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" />
-					<input type="button" value="Distribute" @click="distributeSealed"/>
+					<span v-bind:class="{ disabled: sessionOwner != userID }">
+						<label>Boosters per Player</label>
+						<input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" />
+						<input type="button" value="Distribute" @click="distributeSealed"/>
+					</span>
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
@@ -134,6 +140,7 @@
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
 					<div class="status-icons">
+						<i v-if="user.userID == sessionOwner" class="fas fa-crown" :title="user.userName + ' is the session\'s owner.'"></i>
 						<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
 							<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
 						</template>

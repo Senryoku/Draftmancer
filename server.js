@@ -33,8 +33,9 @@ function get_random_key(dict) {
 	return Object.keys(dict)[Math.floor(Math.random() * Object.keys(dict).length)];
 }
 
-function Session(id) {
+function Session(id, owner) {
 	this.id = id;
+	this.owner = owner;
 	this.isPublic = false;
 	this.users = new Set();
 	this.collection = function () {
@@ -149,6 +150,8 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	// Personnal options
+	
 	socket.on('setUserName', function(userName) {
 		let userID = query.userID;
 		Connections[userID].userName = userName;
@@ -182,49 +185,6 @@ io.on('connection', function(socket) {
 		notifyUserChange(sessionID);
 	});
 	
-	socket.on('chatMessage', function(message) {
-		let sessionID = Connections[this.userID].sessionID;
-		
-		// Limits chat message length
-		message.text = message.text.substring(0, Math.min(255, message.text.length));
-		
-		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('chatMessage', message);
-		}
-	});
-	
-	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
-		let sessionID = Connections[this.userID].sessionID;
-		
-		if(isNaN(boostersPerPlayer))
-			return;
-
-		if(boostersPerPlayer == Sessions[sessionID].boostersPerPlayer)
-			return;
-		
-		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
-		for(let user of Sessions[sessionID].users) {
-			if(user != this.userID)
-				Connections[user].socket.emit('boostersPerPlayer', boostersPerPlayer);
-		}
-	});
-	
-	socket.on('bots', function(bots) {
-		let sessionID = Connections[this.userID].sessionID;
-		
-		if(isNaN(bots))
-			return;
-
-		if(bots == Sessions[sessionID].bots)
-			return;
-		
-		Sessions[sessionID].bots = bots;
-		for(let user of Sessions[sessionID].users) {
-			if(user != this.userID)
-				Connections[user].socket.emit('bots', bots);
-		}
-	});
-	
 	socket.on('useCollection', function(useCollection) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
@@ -239,31 +199,15 @@ io.on('connection', function(socket) {
 		notifyUserChange(sessionID);
 	});
 	
-	socket.on('setRestriction', function(setRestriction) {
+	socket.on('chatMessage', function(message) {
 		let sessionID = Connections[this.userID].sessionID;
 		
-		if(setRestriction !== '' && MTGSets.indexOf(setRestriction) == -1)
-			return;
-
-		if(setRestriction == Sessions[sessionID].setRestriction)
-			return;
+		// Limits chat message length
+		message.text = message.text.substring(0, Math.min(255, message.text.length));
 		
-		Sessions[sessionID].setRestriction = setRestriction;
 		for(let user of Sessions[sessionID].users) {
-			if(user != this.userID)
-				Connections[user].socket.emit('setRestriction', setRestriction);
+			Connections[user].socket.emit('chatMessage', message);
 		}
-	});
-	
-	socket.on('setPublic', function(isPublic) {
-		let sessionID = Connections[this.userID].sessionID;
-		
-		if(isPublic == Sessions[sessionID].isPublic)
-			return;
-		
-		Sessions[sessionID].isPublic = isPublic;	
-		// Update all clients
-		io.emit('publicSessions', getPublicSessions());
 	});
 	
 	socket.on('readyToDraft', function(readyToDraft) {
@@ -288,24 +232,6 @@ io.on('connection', function(socket) {
 		}
 		
 		notifyUserChange(sessionID);
-	});
-	
-	socket.on('distributeSealed', function(boostersPerPlayer) {
-		let userID = query.userID;
-		let sessionID = Connections[userID].sessionID;
-		
-		if(isNaN(boostersPerPlayer))
-			return;
-		
-		emitMessage(sessionID, 'Distributing sealed boosters...', '', false);
-		
-		for(let user of Sessions[sessionID].users) {
-			if(!generateBoosters(sessionID, boostersPerPlayer)) {
-				return;
-			}
-			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
-		}
-		Sessions[sessionID].boosters = [];
 	});
 	
 	// Removes picked card from corresponding booster and notify other players.
@@ -336,6 +262,95 @@ io.on('connection', function(socket) {
 		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].users.size) {
 			nextBooster(sessionID);
 		}
+	});
+	
+	// Session options
+	
+	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(isNaN(boostersPerPlayer))
+			return;
+
+		if(boostersPerPlayer == Sessions[sessionID].boostersPerPlayer)
+			return;
+		
+		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('boostersPerPlayer', boostersPerPlayer);
+		}
+	});
+	
+	socket.on('bots', function(bots) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(isNaN(bots))
+			return;
+
+		if(bots == Sessions[sessionID].bots)
+			return;
+		
+		Sessions[sessionID].bots = bots;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('bots', bots);
+		}
+	});
+	
+	socket.on('setRestriction', function(setRestriction) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(setRestriction !== '' && MTGSets.indexOf(setRestriction) == -1)
+			return;
+
+		if(setRestriction == Sessions[sessionID].setRestriction)
+			return;
+		
+		Sessions[sessionID].setRestriction = setRestriction;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('setRestriction', setRestriction);
+		}
+	});
+	
+	socket.on('setPublic', function(isPublic) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(isPublic == Sessions[sessionID].isPublic)
+			return;
+		
+		Sessions[sessionID].isPublic = isPublic;	
+		// Update all clients
+		io.emit('publicSessions', getPublicSessions());
+	});
+	
+	socket.on('distributeSealed', function(boostersPerPlayer) {
+		let userID = query.userID;
+		let sessionID = Connections[userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(isNaN(boostersPerPlayer))
+			return;
+		
+		emitMessage(sessionID, 'Distributing sealed boosters...', '', false);
+		
+		for(let user of Sessions[sessionID].users) {
+			if(!generateBoosters(sessionID, boostersPerPlayer)) {
+				return;
+			}
+			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
+		}
+		Sessions[sessionID].boosters = [];
 	});
 });
 
@@ -402,7 +417,7 @@ function generateBoosters(sessionID, boosterQuantity) {
 		
 		 // 1 Rare/Mythic
 		if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
-			alert("Not enough cards in collection.");
+			alert("Not enough cards in collection."); // TODO: WTH is that?!
 			return;
 		} else if(isEmpty(localCollection['mythic'])) {
 			booster.push(pick_card(localCollection['rare']));
@@ -435,10 +450,12 @@ function emitMessage(sessionID, title, text, showConfirmButton = true) {
 
 function syncSessionOptions(userID) {
 	let sessionID = Connections[userID].sessionID;
+	// TODO: Merge these in a single call.
 	Connections[userID].socket.emit('setRestriction', Sessions[sessionID].setRestriction);
 	Connections[userID].socket.emit('boostersPerPlayer', Sessions[sessionID].boostersPerPlayer);
 	Connections[userID].socket.emit('bots', Sessions[sessionID].bots);
 	Connections[userID].socket.emit('isPublic', Sessions[sessionID].isPublic);
+	Connections[userID].socket.emit('sessionOwner', Sessions[sessionID].owner);
 }
 
 // Concept only :)
@@ -583,6 +600,8 @@ app.get('/getUsers/:sessionID', (req, res) => {
 	res.sendStatus(200);
 });
 
+// Debug endpoints
+
 const secretKey = "b5d62b91-5f52-4512-b7fc-25626b9be37d";
 
 var express_json_cache = []; // Clear this before calling
@@ -650,7 +669,7 @@ function removeUserFromSession(userID, sessionID) {
 			// Clients should stop drafting automatically
 			Sessions[sessionID].drafting = false;
 		}
-		
+
 		Sessions[sessionID].users.delete(userID);
 		Connections[userID].sessionID = undefined;
 		if(Sessions[sessionID].users.size == 0) {
@@ -658,8 +677,14 @@ function removeUserFromSession(userID, sessionID) {
 			delete Sessions[sessionID];
 			if(wasPublic)
 				io.emit('publicSessions', getPublicSessions());
-		} else
+		} else {
+			// User was the owner of the session, transfer ownership.
+			if(Sessions[sessionID].owner == userID) {
+				console.log(Sessions[sessionID].users.values().next().value);
+				Sessions[sessionID].owner = Sessions[sessionID].users.values().next().value;
+			}
 			notifyUserChange(sessionID);
+		}
 	}
 }
 
@@ -667,7 +692,7 @@ function addUserToSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		Sessions[sessionID].users.add(userID)
 	} else {
-		Sessions[sessionID] = new Session(sessionID);
+		Sessions[sessionID] = new Session(sessionID, userID);
 		Sessions[sessionID].users.add(userID);
 	}
 	Connections[userID].sessionID = sessionID;
@@ -691,6 +716,7 @@ function notifyUserChange(sessionID) {
 	// Send to all session users
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('sessionUsers', user_info);
+		Connections[user].socket.emit('sessionOwner', Sessions[sessionID].owner);
 	}
 }
 

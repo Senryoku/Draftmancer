@@ -83,6 +83,7 @@ var app = new Vue({
 		
 		// Session status
 		sessionID: getCookie("sessionID", shortguid()),
+		sessionOwner: null,
 		isPublic: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
@@ -425,6 +426,12 @@ var app = new Vue({
 			}
 			
 			app.sessionUsers = users;
+		});
+		
+		this.socket.on('sessionOwner', function(ownerID) {
+			// TODO: Validate OwnerID?
+			app.sessionOwner = ownerID;
+			console.log("SessionOwner: "+app.sessionOwner);
 		});
 		
 		this.socket.on('isPublic', function(data) {
