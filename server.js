@@ -328,7 +328,11 @@ io.on('connection', function(socket) {
 		if(isPublic == Sessions[sessionID].isPublic)
 			return;
 		
-		Sessions[sessionID].isPublic = isPublic;	
+		Sessions[sessionID].isPublic = isPublic;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('isPublic', Sessions[sessionID].isPublic);
+		}
 		// Update all clients
 		io.emit('publicSessions', getPublicSessions());
 	});
