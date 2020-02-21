@@ -684,7 +684,6 @@ function removeUserFromSession(userID, sessionID) {
 		} else {
 			// User was the owner of the session, transfer ownership.
 			if(Sessions[sessionID].owner == userID) {
-				console.log(Sessions[sessionID].users.values().next().value);
 				Sessions[sessionID].owner = Sessions[sessionID].users.values().next().value;
 			}
 			notifyUserChange(sessionID);

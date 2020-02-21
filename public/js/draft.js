@@ -432,7 +432,6 @@ var app = new Vue({
 		this.socket.on('sessionOwner', function(ownerID) {
 			// TODO: Validate OwnerID?
 			app.sessionOwner = ownerID;
-			console.log("SessionOwner: "+app.sessionOwner);
 		});
 		
 		this.socket.on('isPublic', function(data) {
