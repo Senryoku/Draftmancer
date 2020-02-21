@@ -50,6 +50,7 @@ a:hover {
 #main-vue select, 
 #main-vue option, 
 #main-vue input[type="text"], 
+#main-vue input[type="password"], 
 #main-vue input[type="button"], 
 #main-vue input[type="number"], 
 #main-vue button, 

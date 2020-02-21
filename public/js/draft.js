@@ -99,6 +99,7 @@ var app = new Vue({
 		selectedPublicSession: "",
 		
 		// Front-end options & data
+		hideSessionID: false,
 		language: 'en',
 		languages: [
 			{code: 'en',  name: 'English'},

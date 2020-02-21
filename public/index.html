@@ -93,7 +93,8 @@
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
-					<label for="session-id" title="Share it with your friends!">Session ID</label><input type="text" id="session-id" v-model="sessionID" />
+					<label for="session-id" title="Share it with your friends!">Session ID</label><input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
+					<i class="far fa-fw" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID"></i>
 					<span class="v-separator"></span>
 					<span v-bind:class="{ disabled: sessionOwner != userID }">
 						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
