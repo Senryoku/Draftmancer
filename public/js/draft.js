@@ -138,6 +138,241 @@ var app = new Vue({
 		messagesHistory: []
 	},
 	methods: {
+		initialize: function() {
+			let storedUserID = getCookie("userID", null);
+			if(storedUserID != null) {
+				this.userID = storedUserID;
+				// Server will handle the reconnect attempt if draft is still ongoing
+				console.log("storedUserID: " + storedUserID);
+			}
+			
+			// Socket Setup
+			this.socket = io({query: {
+				userID: this.userID, 
+				sessionID: this.sessionID,
+				userName: this.userName
+			}});
+
+			this.socket.on('disconnect', function() {
+				console.log('Disconnected from server.');
+			});
+			
+			this.socket.on('reconnect', function(attemptNumber) {
+				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
+				app.socket.emit('setCollection', app.collection);
+				// TODO: Could this be avoided?
+				app.socket.emit('setSession', app.sessionID);
+				app.socket.emit('setName', app.userName);
+			});
+			
+			this.socket.on('alreadyConnected', function(newID) {
+				app.userID = newID;
+			});
+
+			this.socket.on('publicSessions', function(sessions) {
+				app.publicSessions = sessions;
+			});
+			
+			this.socket.on('setSession', function(data) {
+				app.sessionID = data;
+			});
+			
+			this.socket.on('signalPick', function(data) {
+				for(let u of app.sessionUsers) {
+					if(u.userID == data) {
+						u.pickedCard = true;
+						break;
+					}
+				}
+			});
+			
+			this.socket.on('sessionUsers', function(data) {
+				let users = data;
+				for(let u of users) {
+					u.pickedCard = false;
+				}
+				
+				if(app.drafting && users.length < app.sessionUsers.length) {
+					if(app.userID == app.sessionOwner) {
+						Swal.fire({
+							position: 'center',
+							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+							type: 'error',
+							title: 'A user disconnected, wait for them, or...',
+							showConfirmButton: true,
+							confirmButtonText: "Replace with a bot"
+						}).then((result) => {
+							if (result.value)
+								app.socket.emit("replaceDisconnectedPlayers");
+						});
+					} else {
+						Swal.fire({
+							position: 'center',
+							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+							type: 'error',
+							title: 'A user disconnected, wait for them or for the owner to replace them.',
+							showConfirmButton: false
+						});
+					}
+				}
+				
+				app.sessionUsers = users;
+			});
+			
+			this.socket.on('sessionOwner', function(ownerID) {
+				// TODO: Validate OwnerID?
+				app.sessionOwner = ownerID;
+			});
+			
+			this.socket.on('isPublic', function(data) {
+				app.isPublic = data;
+			});
+			
+			this.socket.on('chatMessage', function(message) {
+				app.messagesHistory.push(message);
+				// TODO: Cleanup this?
+				let bubble = document.querySelector('#chat-bubble-' + message.author);
+				bubble.innerText = message.text;
+				bubble.style.opacity = 1;
+				if(bubble.timeoutHandler)
+					clearTimeout(bubble.timeoutHandler);
+				bubble.timeoutHandler = window.setTimeout(() => bubble.style.opacity = 0, 5000);
+			});
+			
+			this.socket.on('boostersPerPlayer', function(data) {
+				app.boostersPerPlayer = parseInt(data);
+			});
+			
+			this.socket.on('bots', function(data) {
+				app.bots = parseInt(data);
+			});
+			
+			this.socket.on('setRestriction', function(data) {
+				app.setRestriction = data;
+			});
+			
+			this.socket.on('message', function(data) {
+				if(data.title === undefined)
+					data.title = "[Missing Title]";
+				if(data.text === undefined)
+					data.text = "[Missing Text]";
+				
+				if(data.showConfirmButton === undefined)
+					data.showConfirmButton = true;
+				else if(!data.showConfirmButton && data.timer === undefined)
+					data.timer = 1500;
+				
+				Swal.fire({
+					position: 'center',
+					type: 'info',
+					title: data.title,
+					text: data.text,
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					showConfirmButton: data.showConfirmButton,
+					timer: data.timer
+				});
+			});
+			
+			this.socket.on('startDraft', function(data) {
+				app.drafting = true;
+				app.readyToDraft = false;
+				app.cardSelection = [];
+				Swal.fire({
+					position: 'center',
+					type: 'success',
+					title: 'Now drafting!',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					showConfirmButton: false,
+					timer: 1500
+				});
+			});
+			
+			this.socket.on('rejoinDraft', function(data) {
+				app.drafting = true;
+				app.readyToDraft = false;
+				
+				app.cardSelection = [];
+				for(let c of data.pickedCards)
+					app.cardSelection.push(app.cards[c]);
+				
+				app.boosterIndex = data.boosterIndex;
+				app.booster = [];
+				for(let c of data.booster) {
+					app.booster.push(app.genCard(c));
+				}
+				
+				app.pickedCard = data.pickedCard;
+				if(app.pickedCard)
+					app.draftingState = "waiting";
+				else
+					app.draftingState = "picking";
+				app.selectedCardId = undefined;
+				
+				Swal.fire({
+					position: 'center',
+					type: 'success',
+					title: 'Reconnected to the draft!',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					showConfirmButton: false,
+					timer: 1500
+				});
+			});
+			
+			this.socket.on('sessionOwner', function(ownerID) {
+				// TODO: Validate OwnerID?
+				app.sessionOwner = ownerID;
+			});
+			
+			this.socket.on('nextBooster', function(data) {
+				app.boosterIndex = data.boosterIndex;
+				app.booster = [];
+				for(let c of data.booster) {
+					app.booster.push(app.genCard(c));
+				}
+				for(let u of app.sessionUsers) {
+					u.pickedCard = false;
+				}
+				app.draftingState = "picking";
+			});
+			
+			this.socket.on('endDraft', function(data) {
+				Swal.fire({
+					position: 'center',
+					type: 'success',
+					title: 'Drafting done!',
+					showConfirmButton: false,
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					timer: 1500
+				});
+				app.drafting = false;
+				app.draftingState = 'brewing';
+				eraseCookie("userID");
+			});
+			
+			this.socket.on('setCardSelection', function(data) {
+				app.deck = [];
+				app.cardSelection = [];
+				for(let c of data.flat()) {
+					app.cardSelection.push(app.genCard(c));
+				}
+				app.draftingState = 'brewing';
+				// Hide waiting popup for sealed
+				if(Swal.isVisible())
+					Swal.close();
+			});
+			
+			// Look for a locally stored collection
+			let localStorageCollection = localStorage.getItem("Collection");
+			if(localStorageCollection) {
+				try {
+					let json = JSON.parse(localStorageCollection);
+					this.setCollection(json);
+					console.log("Loaded collection from local storage");
+				} catch(e) {
+					console.error(e);
+				}
+			}
+		},
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
 		},
@@ -369,199 +604,7 @@ var app = new Vue({
 			return r;
 		}
 	},
-	mounted: async function() {
-		let storedUserID = getCookie("userID", null);
-		if(storedUserID != null) {
-			this.userID = storedUserID;
-			// Server will handle the reconnect attempt if draft is still ongoing
-			console.log("storedUserID: " + storedUserID);
-		}
-		
-		// Socket Setup
-		this.socket = io({query: {
-			userID: this.userID, 
-			sessionID: this.sessionID,
-			userName: this.userName
-		}});
-
-		this.socket.on('disconnect', function() {
-			console.log('Disconnected from server.');
-		});
-		
-		this.socket.on('reconnect', function(attemptNumber) {
-			console.log(`Reconnected to server (attempt ${attemptNumber}).`);
-			app.socket.emit('setCollection', app.collection);
-			// TODO: Could this be avoided?
-			app.socket.emit('setSession', app.sessionID);
-			app.socket.emit('setName', app.userName);
-		});
-		
-		this.socket.on('alreadyConnected', function(newID) {
-			app.userID = newID;
-		});
-
-		this.socket.on('publicSessions', function(sessions) {
-			app.publicSessions = sessions;
-		});
-		
-		this.socket.on('setSession', function(data) {
-			app.sessionID = data;
-		});
-		
-		this.socket.on('signalPick', function(data) {
-			for(let u of app.sessionUsers) {
-				if(u.userID == data) {
-					u.pickedCard = true;
-					break;
-				}
-			}
-		});
-		
-		this.socket.on('sessionUsers', function(data) {
-			let users = data;
-			for(let u of users) {
-				u.pickedCard = false;
-			}
-			
-			if(app.drafting && users.length < app.sessionUsers.length) {
-				if(app.userID == app.sessionOwner) {
-					Swal.fire({
-						position: 'center',
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-						type: 'error',
-						title: 'A user disconnected, wait for them, or...',
-						showConfirmButton: true,
-						confirmButtonText: "Replace with a bot"
-					}).then((result) => {
-						if (result.value)
-							app.socket.emit("replaceDisconnectedPlayers");
-					});
-				} else {
-					Swal.fire({
-						position: 'center',
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-						type: 'error',
-						title: 'A user disconnected, wait for them or for the owner to replace them.',
-						showConfirmButton: false
-					});
-				}
-			}
-			
-			app.sessionUsers = users;
-		});
-		
-		this.socket.on('sessionOwner', function(ownerID) {
-			// TODO: Validate OwnerID?
-			app.sessionOwner = ownerID;
-		});
-		
-		this.socket.on('isPublic', function(data) {
-			app.isPublic = data;
-		});
-		
-		this.socket.on('chatMessage', function(message) {
-			app.messagesHistory.push(message);
-			// TODO: Cleanup this?
-			let bubble = document.querySelector('#chat-bubble-' + message.author);
-			bubble.innerText = message.text;
-			bubble.style.opacity = 1;
-			if(bubble.timeoutHandler)
-				clearTimeout(bubble.timeoutHandler);
-			bubble.timeoutHandler = window.setTimeout(() => bubble.style.opacity = 0, 5000);
-		});
-		
-		this.socket.on('boostersPerPlayer', function(data) {
-			app.boostersPerPlayer = parseInt(data);
-		});
-		
-		this.socket.on('bots', function(data) {
-			app.bots = parseInt(data);
-		});
-		
-		this.socket.on('setRestriction', function(data) {
-			app.setRestriction = data;
-		});
-		
-		this.socket.on('message', function(data) {
-			if(data.showConfirmButton === undefined)
-				data.showConfirmButton = true;
-			else if(!data.showConfirmButton && data.timer === undefined)
-				data.timer = 1500;
-			Swal.fire({
-				position: 'center',
-				type: 'info',
-				title: data.title,
-				text: data.text,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: data.showConfirmButton,
-				timer: data.timer
-			});
-		});
-		
-		this.socket.on('startDraft', function(data) {
-			// Save user ID in case of disconnect
-			setCookie("userID", app.userID);
-			
-			app.drafting = true;
-			app.readyToDraft = false;
-			app.cardSelection = [];
-			Swal.fire({
-				position: 'center',
-				type: 'success',
-				title: 'Now drafting!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
-			});
-		});
-		
-		this.socket.on('nextBooster', function(data) {
-			app.boosterIndex = data.boosterIndex;
-			app.booster = [];
-			for(let c of data.booster) {
-				app.booster.push(app.genCard(c));
-			}
-			for(let u of app.sessionUsers) {
-				u.pickedCard = false;
-			}
-			app.draftingState = "picking";
-		});
-		
-		this.socket.on('endDraft', function(data) {
-			Swal.fire({
-				position: 'center',
-				type: 'success',
-				title: 'Drafting done!',
-				showConfirmButton: false,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				timer: 1500
-			});
-			app.drafting = false;
-			app.draftingState = 'brewing';
-			eraseCookie("userID");
-		});
-		
-		this.socket.on('setCardSelection', function(data) {
-			app.deck = [];
-			app.cardSelection = [];
-			for(let c of data.flat()) {
-				app.cardSelection.push(app.genCard(c));
-			}
-			app.draftingState = 'brewing';
-		});
-		
-		// Look for a locally stored collection
-		let localStorageCollection = localStorage.getItem("Collection");
-		if(localStorageCollection) {
-			try {
-				let json = JSON.parse(localStorageCollection);
-				this.setCollection(json);
-				console.log("Loaded collection from local storage");
-			} catch(e) {
-				console.error(e);
-			}
-		}
-		
+	mounted: async function() {		
 		// Load all card informations
 		fetch("data/MTGACards.json").then(function (response) {
 			response.text().then(function (text) {
@@ -578,6 +621,8 @@ var app = new Vue({
 						}
 					}
 					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
+					
+					app.initialize();
 				} catch(e) {
 					alert(e);
 				}
@@ -597,6 +642,7 @@ var app = new Vue({
 	},
 	watch: {
 		sessionID: function() {
+			this.readyToDraft = false;
 			this.socket.emit('setSession', this.sessionID);
 			setCookie('sessionID', this.sessionID);
 		},

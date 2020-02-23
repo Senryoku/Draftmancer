@@ -130,16 +130,31 @@ io.on('connection', function(socket) {
 	};
 	
 	if(query.sessionID in Sessions && Sessions[query.sessionID].drafting) {
-		if(query.userID in Sessions[query.sessionID].disconnectedUsers) {
+		log(`${query.userID} wants to join drafting session; disconnectedUsers:`);
+		let sess = Sessions[query.sessionID];
+		console.log(sess.disconnectedUsers);
+		if(query.userID in sess.disconnectedUsers) {
 			addUserToSession(query.userID, query.sessionID);
-			Connections[query.userID].pickedCards = Sessions[query.sessionID].disconnectedUsers[query.userID].cards;
+			Connections[query.userID].pickedCards = sess.disconnectedUsers[query.userID].cards;
+			const playerIdx = Array.from(sess.users).sort().indexOf(query.userID);
+			
+			// FIXME: This will break with multiple disconnected players... (sess.users.size is wrong)
+			const totalVirtualPlayers = sess.users.size + sess.bots;
+			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
+			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
+			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
+		
+			const pickedCard = sess.disconnectedUsers[query.userID].cards.length == sess.round; // Has already pick a card this round
 			socket.emit('rejoinDraft', {
-				pickedCards: Sessions[query.sessionID].disconnectedUsers[query.userID].cards
+				pickedCard: pickedCard,
+				pickedCards: sess.disconnectedUsers[query.userID].cards,
+				boosterIndex: boosterIndex,
+				booster: sess.boosters[boosterIndex]
 			});
-			delete Sessions[query.sessionID].disconnectedUsers[query.userID];
+			delete sess.disconnectedUsers[query.userID];
 
-			if(Object.keys(Sessions[query.sessionID].disconnectedUsers).length == 0)
-				restartDraftRound(query.sessionID);
+			if(Object.keys(sess.disconnectedUsers).length == 0)
+				resumeDraft(query.sessionID);
 		} else {
 			socket.emit('message', {title: 'Cannot join session', text: `This session (${query.sessionID}) is currently drafting. Please wait for them to finish.`});
 			query.sessionID = uuidv1();
@@ -367,7 +382,7 @@ io.on('connection', function(socket) {
 		if(isNaN(boostersPerPlayer))
 			return;
 		
-		emitMessage(sessionID, 'Distributing sealed boosters...', '', false);
+		emitMessage(sessionID, 'Distributing sealed boosters...', '', false, 0);
 		
 		for(let user of Sessions[sessionID].users) {
 			if(!generateBoosters(sessionID, boostersPerPlayer)) {
@@ -467,9 +482,9 @@ function generateBoosters(sessionID, boosterQuantity) {
 	return true;
 }
 
-function emitMessage(sessionID, title, text, showConfirmButton = true) {
+function emitMessage(sessionID, title, text, showConfirmButton = true, timer = 1500) {
 	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('message', {title: title, text: text, showConfirmButton: showConfirmButton});
+		Connections[user].socket.emit('message', {title: title, text: text, showConfirmButton: showConfirmButton, timer: timer});
 	}
 }
 
@@ -514,7 +529,7 @@ function Bot() {
 function startDraft(sessionID) {
 	let sess = Sessions[sessionID];
 	sess.drafting = true;
-	emitMessage(sessionID, 'Everybody is ready!', 'Your draft will start soon...');
+	emitMessage(sessionID, 'Everybody is ready!', 'Your draft will start soon...', false, 0);
 	
 	// boostersPerPlayer works fine, what's the problem here?...
 	if(typeof sess.bots != "number") {
@@ -547,22 +562,6 @@ function startDraft(sessionID) {
 function negMod(m, n) {
 	return ((m%n)+n)%n;
 }
-
-// Returns the number of distributed boosters.
-function sendBoosters(sessionID) {
-	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
-
-	let index = 0;
-	const evenRound = ((Sessions[sessionID].boosters.length / totalVirtualPlayers) % 2) == 0;
-	const boosterOffset = evenRound ? -Sessions[sessionID].round : Sessions[sessionID].round;
-	for(let user of Sessions[sessionID].users) {
-		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
-		++index;
-	}
-	Sessions[sessionID].pickedCardsThisRound = 0; // Only counting cards picked by human players
-	return index;
-}
 	
 function nextBooster(sessionID) {
 	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
@@ -580,11 +579,18 @@ function nextBooster(sessionID) {
 		return;
 	}
 	
-	let index = sendBoosters(sessionID);
-	
-	// Bots picks
+	let index = 0;
 	const evenRound = ((Sessions[sessionID].boosters.length / totalVirtualPlayers) % 2) == 0;
 	const boosterOffset = evenRound ? -Sessions[sessionID].round : Sessions[sessionID].round;
+	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
+	for(let user of Array.from(Sessions[sessionID].users).sort()) {
+		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
+		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
+		++index;
+	}
+	Sessions[sessionID].pickedCardsThisRound = 0; // Only counting cards picked by human players
+	
+	// Bots picks
 	for(let i = index; i < totalVirtualPlayers; ++i) {
 		const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
 		const booster = Sessions[sessionID].boosters[boosterIndex];
@@ -595,11 +601,9 @@ function nextBooster(sessionID) {
 	++Sessions[sessionID].round;
 }
 
-// Redistribute this round's boosters (after a disconnection)
-function restartDraftRound(sessionID) {
+function resumeDraft(sessionID) {
 	log(`Restarting draft for session ${sessionID}.`, FgYellow);
-	sendBoosters(sessionID);
-	emitMessage(sessionID, {title: 'Player reconnected', text: `Restarting round...`});
+	emitMessage(sessionID, 'Player reconnected', `Resuming draft...`);
 }
 
 function endDraft(sessionID) {
