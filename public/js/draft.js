@@ -419,11 +419,10 @@ var app = new Vue({
 					position: 'center',
 					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 					type: 'error',
-					title: 'A user disconnected, canceling draft...',
+					title: 'A user disconnected, replacing with a bot...',
 					showConfirmButton: false,
 					timer: 1500
 				});
-				app.drafting = false;
 			}
 			
 			app.sessionUsers = users;

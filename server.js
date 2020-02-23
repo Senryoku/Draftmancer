@@ -670,10 +670,15 @@ function getUserID(req, res) {
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
-			// Clients should stop drafting automatically
-			Sessions[sessionID].drafting = false;
+			Sessions[sessionID].bots += 1;
+			if (!Sessions[sessionID].botsInstances) {
+				Sessions[sessionID].botsInstances = [];
+				Sessions[sessionID].botsInstances.push(new Bot());
+			} else {
+				Sessions[sessionID].botsInstances.push(new Bot());
+			}
 		}
-
+		
 		Sessions[sessionID].users.delete(userID);
 		Connections[userID].sessionID = undefined;
 		if(Sessions[sessionID].users.size == 0) {
