@@ -16,11 +16,11 @@ function orderColor(lhs, rhs) {
 
 
 function getCookie(cname, def = "") {
-	var name = cname + "=";
-	var decodedCookie = decodeURIComponent(document.cookie);
-	var ca = decodedCookie.split(';');
-	for(var i = 0; i < ca.length; i++) {
-		var c = ca[i];
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i < ca.length; i++) {
+		let c = ca[i];
 		while (c.charAt(0) == ' ') {
 			c = c.substring(1);
 		}
@@ -32,13 +32,17 @@ function getCookie(cname, def = "") {
 }
 
 function setCookie(name, value, days) {
-    var expires = "";
+    let expires = "";
     if (days) {
         var date = new Date();
         date.setTime(date.getTime() + (days*24*60*60*1000));
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
 }
 
 Vue.component('modal', {
@@ -366,6 +370,13 @@ var app = new Vue({
 		}
 	},
 	mounted: async function() {
+		let storedUserID = getCookie("userID", null);
+		if(storedUserID != null) {
+			this.userID = storedUserID;
+			// Server will handle the reconnect attempt if draft is still ongoing
+			console.log("storedUserID: " + storedUserID);
+		}
+		
 		// Socket Setup
 		this.socket = io({query: {
 			userID: this.userID, 
@@ -385,10 +396,8 @@ var app = new Vue({
 			app.socket.emit('setName', app.userName);
 		});
 		
-		this.socket.on('alreadyConnected', function(data) {
-			app.userID = guid();
-			app.socket.query.useID = app.userID;
-			app.socket.connect();
+		this.socket.on('alreadyConnected', function(newID) {
+			app.userID = newID;
 		});
 
 		this.socket.on('publicSessions', function(sessions) {
@@ -415,14 +424,27 @@ var app = new Vue({
 			}
 			
 			if(app.drafting && users.length < app.sessionUsers.length) {
-				Swal.fire({
-					position: 'center',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-					type: 'error',
-					title: 'A user disconnected, replacing with a bot...',
-					showConfirmButton: false,
-					timer: 1500
-				});
+				if(app.userID == app.sessionOwner) {
+					Swal.fire({
+						position: 'center',
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+						type: 'error',
+						title: 'A user disconnected, wait for them, or...',
+						showConfirmButton: true,
+						confirmButtonText: "Replace with a bot"
+					}).then((result) => {
+						if (result.value)
+							app.socket.emit("replaceDisconnectedPlayers");
+					});
+				} else {
+					Swal.fire({
+						position: 'center',
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+						type: 'error',
+						title: 'A user disconnected, wait for them or for the owner to replace them.',
+						showConfirmButton: false
+					});
+				}
 			}
 			
 			app.sessionUsers = users;
@@ -477,6 +499,9 @@ var app = new Vue({
 		});
 		
 		this.socket.on('startDraft', function(data) {
+			// Save user ID in case of disconnect
+			setCookie("userID", app.userID);
+			
 			app.drafting = true;
 			app.readyToDraft = false;
 			app.cardSelection = [];
@@ -504,7 +529,7 @@ var app = new Vue({
 		
 		this.socket.on('endDraft', function(data) {
 			Swal.fire({
-				position: 'top-end',
+				position: 'center',
 				type: 'success',
 				title: 'Drafting done!',
 				showConfirmButton: false,
@@ -513,6 +538,7 @@ var app = new Vue({
 			});
 			app.drafting = false;
 			app.draftingState = 'brewing';
+			eraseCookie("userID");
 		});
 		
 		this.socket.on('setCardSelection', function(data) {
