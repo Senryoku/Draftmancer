@@ -155,6 +155,12 @@ var app = new Vue({
 
 			this.socket.on('disconnect', function() {
 				console.log('Disconnected from server.');
+				Swal.fire({
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					type: 'error',
+					title: 'Disconnected!',
+					showConfirmButton: false
+				});
 			});
 			
 			this.socket.on('reconnect', function(attemptNumber) {
@@ -163,6 +169,13 @@ var app = new Vue({
 				// TODO: Could this be avoided?
 				app.socket.emit('setSession', app.sessionID);
 				app.socket.emit('setName', app.userName);
+				
+				Swal.fire({
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					type: 'warning',
+					title: 'Reconnected!',
+					timer: 1500
+				});
 			});
 			
 			this.socket.on('alreadyConnected', function(newID) {

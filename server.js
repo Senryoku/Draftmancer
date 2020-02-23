@@ -15,6 +15,10 @@ const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", 
 app.use(compression());
 app.use(cookieParser()); 
 
+function negMod(m, n) {
+	return ((m%n)+n)%n;
+}
+
 function isEmpty(obj) {
 	return Object.entries(obj).length === 0 && obj.constructor === Object;
 }
@@ -558,10 +562,6 @@ function startDraft(sessionID) {
 	Sessions[sessionID].round = 0;
 	nextBooster(sessionID);
 }
-
-function negMod(m, n) {
-	return ((m%n)+n)%n;
-}
 	
 function nextBooster(sessionID) {
 	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
@@ -717,6 +717,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 	
 	log("Replacing disconnected players with bots!", FgRed);
 	
+	// FIXME: Doing it this way modifies the draft order (bots always draft last)
 	Sessions[sessionID].bots += Object.keys(Sessions[sessionID].disconnectedUsers).length;
 	if (!Sessions[sessionID].botsInstances)
 		Sessions[sessionID].botsInstances = [];
@@ -732,16 +733,6 @@ function removeUserFromSession(userID, sessionID) {
 			Sessions[sessionID].disconnectedUsers[userID] = {
 				cards: Connections[userID].pickedCards
 			};
-
-			/*
-			Sessions[sessionID].bots += 1;
-			if (!Sessions[sessionID].botsInstances) {
-				Sessions[sessionID].botsInstances = [];
-				Sessions[sessionID].botsInstances.push(new Bot());
-			} else {
-				Sessions[sessionID].botsInstances.push(new Bot());
-			}
-			*/
 		}
 		
 		Sessions[sessionID].users.delete(userID);
