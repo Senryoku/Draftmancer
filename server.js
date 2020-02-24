@@ -753,7 +753,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 		if(!sess.disconnectedUsers[uid].pickedThisRound) {
 			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
 			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
-			const boosterOffset = evenRound ? -sess.round : sess.round;
+			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
 			const playerIdx = Array.from(sess.users).concat(Object.keys(sess.disconnectedUsers)).sort().indexOf(uid);
 			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
 			const pickIdx = sess.disconnectedUsers[uid].bot.pick(sess.boosters[boosterIndex]);
