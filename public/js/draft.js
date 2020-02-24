@@ -293,7 +293,6 @@ var app = new Vue({
 				app.drafting = true;
 				app.readyToDraft = false;
 				app.cardSelection = [];
-				setCookie(
 				Swal.fire({
 					position: 'center',
 					type: 'success',
