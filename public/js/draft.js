@@ -287,9 +287,13 @@ var app = new Vue({
 			});
 			
 			this.socket.on('startDraft', function(data) {
+				// Save user ID in case of disconnect
+				setCookie("userID", app.userID);
+			
 				app.drafting = true;
 				app.readyToDraft = false;
 				app.cardSelection = [];
+				setCookie(
 				Swal.fire({
 					position: 'center',
 					type: 'success',
