@@ -193,7 +193,7 @@ var app = new Vue({
 			this.socket.on('signalPick', function(data) {
 				for(let u of app.sessionUsers) {
 					if(u.userID == data) {
-						u.pickedCard = true;
+						u.pickedThisRound = true;
 						break;
 					}
 				}
@@ -202,7 +202,7 @@ var app = new Vue({
 			this.socket.on('sessionUsers', function(data) {
 				let users = data;
 				for(let u of users) {
-					u.pickedCard = false;
+					u.pickedThisRound = false;
 				}
 				
 				if(app.drafting && users.length < app.sessionUsers.length) {
@@ -314,8 +314,8 @@ var app = new Vue({
 					app.booster.push(app.genCard(c));
 				}
 				
-				app.pickedCard = data.pickedCard;
-				if(app.pickedCard)
+				app.pickedThisRound = data.pickedThisRound;
+				if(app.pickedThisRound)
 					app.draftingState = "waiting";
 				else
 					app.draftingState = "picking";
@@ -343,7 +343,7 @@ var app = new Vue({
 					app.booster.push(app.genCard(c));
 				}
 				for(let u of app.sessionUsers) {
-					u.pickedCard = false;
+					u.pickedThisRound = false;
 				}
 				app.draftingState = "picking";
 			});

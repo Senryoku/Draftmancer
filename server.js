@@ -91,6 +91,11 @@ function Session(id, owner) {
 	this.round = 0;
 	this.pickedCardsThisRound = 0;
 	this.disconnectedUsers = {};
+	
+	// Includes disconnected players!
+	this.humanPlayerCount = function() {
+		return this.users.size + Object.keys(this.disconnectedUsers).length;
+	};
 }
 
 let Sessions = {};
@@ -130,6 +135,7 @@ io.on('connection', function(socket) {
 		readyToDraft: false,
 		collection: {},
 		useCollection: true,
+		pickedThisRound: false,
 		pickedCards: []
 	};
 	
@@ -138,20 +144,19 @@ io.on('connection', function(socket) {
 		let sess = Sessions[query.sessionID];
 		console.log(sess.disconnectedUsers);
 		if(query.userID in sess.disconnectedUsers) {
-			addUserToSession(query.userID, query.sessionID);
-			Connections[query.userID].pickedCards = sess.disconnectedUsers[query.userID].cards;
-			const playerIdx = Array.from(sess.users).sort().indexOf(query.userID);
-			
-			// FIXME: This will break with multiple disconnected players... (sess.users.size is wrong)
-			const totalVirtualPlayers = sess.users.size + sess.bots;
+			const playerIdx = Array.from(sess.users).concat(sess.disconnectedUsers).sort().indexOf(query.userID);
+			const totalVirtualPlayers = getTotalVirtualPlayers(query.sessionID) - 1;
+			Connections[query.userID].pickedThisRound = sess.disconnectedUsers[query.userID].pickedThisRound;
+			Connections[query.userID].pickedCards = sess.disconnectedUsers[query.userID].pickedCards;
+
 			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
 			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
 			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
 		
-			const pickedCard = sess.disconnectedUsers[query.userID].cards.length == sess.round; // Has already pick a card this round
+			addUserToSession(query.userID, query.sessionID);
 			socket.emit('rejoinDraft', {
-				pickedCard: pickedCard,
-				pickedCards: sess.disconnectedUsers[query.userID].cards,
+				pickedThisRound: sess.disconnectedUsers[query.userID].pickedThisRound,
+				pickedCards: sess.disconnectedUsers[query.userID].pickedCards,
 				boosterIndex: boosterIndex,
 				booster: sess.boosters[boosterIndex]
 			});
@@ -168,7 +173,6 @@ io.on('connection', function(socket) {
 	} else {
 		addUserToSession(query.userID, query.sessionID);
 	}
-	
 	
 	socket.userID = query.userID;
 	
@@ -282,6 +286,7 @@ io.on('connection', function(socket) {
 		log(`Session ${sessionID}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
 		
 		Connections[userID].pickedCards.push(cardID);
+		Connections[userID].pickedThisRound = true;
 		// Removes the first occurence of cardID
 		for(let i = 0; i < Sessions[sessionID].boosters[boosterIndex].length; ++i) {
 			if(Sessions[sessionID].boosters[boosterIndex][i] == cardID) {
@@ -295,7 +300,7 @@ io.on('connection', function(socket) {
 			Connections[user].socket.emit('signalPick', userID);
 		
 		++Sessions[sessionID].pickedCardsThisRound;
-		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].users.size) {
+		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].humanPlayerCount()) {
 			nextBooster(sessionID);
 		}
 	});
@@ -524,8 +529,9 @@ function Bot() {
 		for(let color of Cards[booster[bestPick]].color_identity) {
 			this.pickedColors[color] += 1;
 		}
-		//this.cards.push(Cards[booster[bestPick]]);
 		this.cards.push(Cards[booster[bestPick]].name);
+		//log(`Bot pick: ${Cards[booster[bestPick]].name}`);
+		//console.log(this);
 		return bestPick;
 	}
 }
@@ -564,41 +570,58 @@ function startDraft(sessionID) {
 }
 	
 function nextBooster(sessionID) {
-	const totalVirtualPlayers = Sessions[sessionID].users.size + Sessions[sessionID].bots;
+	let sess = Sessions[sessionID];
+	const totalVirtualPlayers = getTotalVirtualPlayers(sessionID);
 	
 	// Boosters are empty
-	if(Sessions[sessionID].boosters[0].length == 0) {
-		Sessions[sessionID].round = 0;
+	if(sess.boosters[0].length == 0) {
+		sess.round = 0;
 		// Remove empty boosters
-		Sessions[sessionID].boosters.splice(0, totalVirtualPlayers);
+		sess.boosters.splice(0, totalVirtualPlayers);
 	}
 	
 	// End draft if no more booster to distribute
-	if(Sessions[sessionID].boosters.length == 0) {
+	if(sess.boosters.length == 0) {
 		endDraft(sessionID);
 		return;
 	}
 	
+	sess.pickedCardsThisRound = 0; // Only counting cards picked by human players
+	
 	let index = 0;
-	const evenRound = ((Sessions[sessionID].boosters.length / totalVirtualPlayers) % 2) == 0;
-	const boosterOffset = evenRound ? -Sessions[sessionID].round : Sessions[sessionID].round;
+	const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
+	const boosterOffset = evenRound ? -sess.round : sess.round;
 	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
-	for(let user of Array.from(Sessions[sessionID].users).sort()) {
+	const sortedPlayers = Array.from(sess.users).concat(Object.keys(sess.disconnectedUsers)).sort();
+	for(let userID of sortedPlayers) {
 		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-		Connections[user].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
+		if(userID in sess.disconnectedUsers) { // This user has been replaced by a bot
+			const pickIdx = sess.disconnectedUsers[userID].bot.pick(sess.boosters[boosterIndex]);
+			sess.disconnectedUsers[userID].pickedCards.push(sess.boosters[boosterIndex][pickIdx]);
+			sess.boosters[boosterIndex].splice(pickIdx, 1);
+			++sess.pickedCardsThisRound;
+		} else {
+			Connections[userID].pickedThisRound = false;
+			Connections[userID].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
+		}
 		++index;
 	}
-	Sessions[sessionID].pickedCardsThisRound = 0; // Only counting cards picked by human players
 	
 	// Bots picks
 	for(let i = index; i < totalVirtualPlayers; ++i) {
 		const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
-		const booster = Sessions[sessionID].boosters[boosterIndex];
-		const botIndex = i % Sessions[sessionID].bots; // ?
-		const removedIdx = Sessions[sessionID].botsInstances[botIndex].pick(booster);
-		Sessions[sessionID].boosters[boosterIndex].splice(removedIdx, 1);
+		const booster = sess.boosters[boosterIndex];
+		const botIndex = i % sess.bots; // ?
+		const removedIdx = sess.botsInstances[botIndex].pick(booster);
+		sess.boosters[boosterIndex].splice(removedIdx, 1);
 	}
-	++Sessions[sessionID].round;
+	++sess.round;
+	/*
+	// Sould not be possible :)
+	if(sess.pickedCardsThisRound == sess.humanPlayerCount()) {
+		nextBooster(sessionID);
+	}
+	*/
 }
 
 function resumeDraft(sessionID) {
@@ -716,14 +739,29 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 		return;
 	
 	log("Replacing disconnected players with bots!", FgRed);
-	
-	// FIXME: Doing it this way modifies the draft order (bots always draft last)
-	Sessions[sessionID].bots += Object.keys(Sessions[sessionID].disconnectedUsers).length;
-	if (!Sessions[sessionID].botsInstances)
-		Sessions[sessionID].botsInstances = [];
-	for(let i = 0; i < Object.keys(Sessions[sessionID].disconnectedUsers).length; ++i)
-		Sessions[sessionID].botsInstances.push(new Bot());
-	Sessions[sessionID].disconnectedUsers = {};
+
+	for(let uid in Sessions[sessionID].disconnectedUsers) {
+		Sessions[sessionID].disconnectedUsers[uid].bot = new Bot();
+		for(let c of Sessions[sessionID].disconnectedUsers[uid].pickedCards) {
+			Sessions[sessionID].disconnectedUsers[uid].bot.pick([c]);
+		}
+		
+		if(!sess.disconnectedUsers[uid].pickedThisRound) {
+			const totalVirtualPlayers = getTotalVirtualPlayers(sessionID);
+			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
+			const boosterOffset = evenRound ? -sess.round : sess.round;
+			const playerIdx = Array.from(sess.users).concat(sess.disconnectedUsers).sort().indexOf(uid);
+			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
+			const pickIdx = sess.disconnectedUsers[uid].bot.pick(sess.boosters[boosterIndex]);
+			sess.disconnectedUsers[uid].pickedCards.push(sess.boosters[boosterIndex][pickIdx]);
+			sess.boosters[boosterIndex].splice(pickIdx, 1);
+			sess.disconnectedUsers[uid].pickedThisRound = true;
+			++sess.pickedCardsThisRound;
+			if(sess.pickedCardsThisRound == sess.humanPlayerCount()) {
+				nextBooster(sessionID);
+			}
+		}
+	}
 }
 
 // Remove user from previous session and cleanup if empty
@@ -731,7 +769,8 @@ function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
 			Sessions[sessionID].disconnectedUsers[userID] = {
-				cards: Connections[userID].pickedCards
+				pickedThisRound: Connections[userID].pickedThisRound,
+				pickedCards: Connections[userID].pickedCards
 			};
 		}
 		

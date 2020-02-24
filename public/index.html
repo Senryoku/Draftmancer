@@ -149,7 +149,7 @@
 							<i class="fas fa-book green" :title="user.userName + ' has uploaded their collection.'"></i>
 						</template>
 						<template v-if="drafting">
-							<template v-if="user.pickedCard">
+							<template v-if="user.pickedThisRound">
 								<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
 							</template>
 							<template v-else>
