@@ -58,11 +58,11 @@ with open(MTGALocFile, 'r', encoding="utf8") as file:
 	for o in locdata[0]['keys']:
 		MTGALocalization[o['id']] = o['text']
 
-NameToCardID = {}
+NameSetToCardID = {}
 with open(MTGACardsFile, 'r', encoding="utf8") as file:
 	carddata = json.load(file)
 	for o in carddata:
-		NameToCardID[MTGALocalization[o['titleId']]] = o['grpid']
+		NameSetToCardID[(MTGALocalization[o['titleId']], o['set'].lower())] = o['grpid']
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
@@ -149,7 +149,7 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 					translations_img[c['name']] = {}
 				if 'arena_id' not in c:
 					if c['lang'] == 'en':
-						c['arena_id'] = NameToCardID[c['name']]
+						c['arena_id'] = NameSetToCardID[(['name'], c['set'].lower())]
 					else:
 						if 'printed_name' in c:
 							translations[c['name']][c['lang']] = c['printed_name']
