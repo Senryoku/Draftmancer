@@ -100,6 +100,7 @@ function Session(id, owner) {
 		this.resumeCountdown();
 	};
 	this.resumeCountdown = function() {
+		this.stopCountdown(); // Cleanup if one is still running
 		this.countdownInterval = setInterval(((sess) => {
 			return () => {
 				sess.countdown--;
@@ -593,7 +594,6 @@ function startDraft(sessionID) {
 		return;
 	}
 	
-	sess.startCountdown();
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].pickedCards = [];
 		Connections[user].socket.emit('startDraft');
@@ -604,6 +604,8 @@ function startDraft(sessionID) {
 	
 function nextBooster(sessionID) {
 	let sess = Sessions[sessionID];
+	sess.stopCountdown();
+	
 	const totalVirtualPlayers = sess.getTotalVirtualPlayers();
 	
 	// Boosters are empty
@@ -639,6 +641,8 @@ function nextBooster(sessionID) {
 		}
 		++index;
 	}
+	
+	sess.startCountdown(); // Starts countdown now that everyone has their booster
 	
 	// Bots picks
 	for(let i = index; i < totalVirtualPlayers; ++i) {
