@@ -200,7 +200,7 @@
 			</div>
 		</div>
 		<template v-if="drafting">
-			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
+			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
 					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
@@ -209,11 +209,11 @@
 					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:selected="selectedCardId == card.id"></figure>
 				</div>
 			</div>
-			<div v-show="draftingState == 'waiting'" class="pick-waiting">
+			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 		</template>
-		<div v-show="draftingState == 'brewing'" class="container">
+		<div v-show="draftingState == DraftState.Brewing" class="container">
 			<div id="brewing-controls" class="controls">
 				<h2>Deck ({{deck.length}})</h2>
 				<template v-if="deck.length > 0">

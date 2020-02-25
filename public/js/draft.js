@@ -72,6 +72,12 @@ Vue.component('missingCard', {
 	props: ['card', 'language']
 });
 
+const DraftState = {
+	Waiting: "Waiting",
+	Picking: "Picking",
+	Brewing: "Brewing"
+};
+
 var app = new Vue({
 	el: '#main-vue',
 	data: {
@@ -321,9 +327,9 @@ var app = new Vue({
 				
 				app.pickedThisRound = data.pickedThisRound;
 				if(app.pickedThisRound)
-					app.draftingState = "waiting";
+					app.draftingState = DraftState.Waiting;
 				else
-					app.draftingState = "picking";
+					app.draftingState = DraftState.Picking;
 				app.selectedCardId = undefined;
 				
 				Swal.fire({
@@ -350,7 +356,7 @@ var app = new Vue({
 				for(let u of app.sessionUsers) {
 					u.pickedThisRound = false;
 				}
-				app.draftingState = "picking";
+				app.draftingState = DraftState.Picking;
 			});
 			
 			this.socket.on('endDraft', function(data) {
@@ -363,7 +369,7 @@ var app = new Vue({
 					timer: 1500
 				});
 				app.drafting = false;
-				app.draftingState = 'brewing';
+				app.draftingState = DraftState.Brewing;
 				eraseCookie("userID");
 			});
 			
@@ -373,7 +379,7 @@ var app = new Vue({
 				for(let c of data.flat()) {
 					app.cardSelection.push(app.genCard(c));
 				}
-				app.draftingState = 'brewing';
+				app.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
 				if(Swal.isVisible())
 					Swal.close();
@@ -417,13 +423,13 @@ var app = new Vue({
 		},
 		// Draft Methods
 		pickCard: function() {
-			this.draftingState = "waiting";
+			this.draftingState = DraftState.Waiting;
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
 			this.cardSelection.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},
 		forcePick: function() {
-			if(this.draftingState != "picking")
+			if(this.draftingState != DraftState.Picking)
 				return;
 			// Forces a random card if none is selected
 			if (!this.selectedCardId) {
@@ -433,10 +439,10 @@ var app = new Vue({
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
 			this.cardSelection.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
-			this.draftingState = "waiting";
+			this.draftingState = DraftState.Waiting;
 		},
 		addToDeck: function(e, c) {
-			if(this.draftingState != "brewing")
+			if(this.draftingState != DraftState.Brewing)
 				return;
 			for(let i = 0; i < this.cardSelection.length; ++i) {
 				if(this.cardSelection[i] == c) {
@@ -447,7 +453,7 @@ var app = new Vue({
 			this.deck.push(c);
 		},
 		removeFromDeck: function(e, c) {
-			if(this.draftingState != "brewing")
+			if(this.draftingState != DraftState.Brewing)
 				return;
 			for(let i = 0; i < this.deck.length; ++i) {
 				if(this.deck[i] == c) {
