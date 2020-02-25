@@ -380,13 +380,9 @@ var app = new Vue({
 			});
 
 			this.socket.on('timer', function (data) {
-				if (data.countdown == 0) {
+				if (data.countdown == 0)
 					app.forcePick(app.booster);
-					app.socket.emit('reset');
-				} else {
-					app.pickTimer = data.countdown;
-				}
-
+				app.pickTimer = data.countdown;
 			});
 			
 			// Look for a locally stored collection

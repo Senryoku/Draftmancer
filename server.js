@@ -89,8 +89,29 @@ function Session(id, owner) {
 	this.setRestriction = "";
 	this.boosters = [];
 	this.round = 0;
-	this.pickedCardsThisRound = 0;
+	this.pickedCardsThisRound = 0; 
 	this.disconnectedUsers = {};
+	
+	this.countdown = 60;
+	this.maxTimer = 60;
+	this.countdownInterval = null;
+	this.startCountdown = function() {
+		this.countdown = this.maxTimer;
+		this.resumeCountdown();
+	};
+	this.resumeCountdown = function() {
+		this.countdownInterval = setInterval(((sess) => {
+			return () => {
+				sess.countdown--;
+				for(let user of sess.users) 
+					Connections[user].socket.emit('timer', { countdown: sess.countdown });
+			};
+		})(this), 1000);
+	};
+	this.stopCountdown = function() {
+		if(this.countdownInterval != null)
+			clearInterval(this.countdownInterval);
+	};
 	
 	// Includes disconnected players!
 	this.getHumanPlayerCount = function() {
@@ -104,8 +125,6 @@ function Session(id, owner) {
 
 let Sessions = {};
 let Connections = {};
-let countdown = 60;
-let maxTimer = 60;
 
 let Cards = JSON.parse(fs.readFileSync("public/data/MTGACards.json"));
 for(let c in Cards) {
@@ -409,11 +428,10 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('setPickTimer', function(timerValue) {
-		maxTimer = timerValue;
-	});
-
-	socket.on('reset', function (data) {
-		countdown = maxTimer;
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].maxTimer = timerValue;
 	});
 });
 
@@ -564,12 +582,6 @@ function startDraft(sessionID) {
 	
 	console.log("Starting draft! Session status:");
 	console.log(sess);
-	// start counter
-	countdown = maxTimer;
-	setInterval(function() {
-		countdown--;
-		io.sockets.emit('timer', { countdown: countdown });
-	}, 1000);
 	
 	// Generate bots
 	sess.botsInstances = []
@@ -581,6 +593,7 @@ function startDraft(sessionID) {
 		return;
 	}
 	
+	sess.startCountdown();
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].pickedCards = [];
 		Connections[user].socket.emit('startDraft');
@@ -636,21 +649,19 @@ function nextBooster(sessionID) {
 		sess.boosters[boosterIndex].splice(removedIdx, 1);
 	}
 	++sess.round;
-	/*
-	// Sould not be possible :)
-	if(sess.pickedCardsThisRound == sess.getHumanPlayerCount()) {
-		nextBooster(sessionID);
-	}
-	*/
 }
 
 function resumeDraft(sessionID) {
 	log(`Restarting draft for session ${sessionID}.`, FgYellow);
+	sess.resumeCountdown();
 	emitMessage(sessionID, 'Player reconnected', `Resuming draft...`);
 }
 
 function endDraft(sessionID) {
 	Sessions[sessionID].drafting = false;
+	
+	sess.stopCountdown();
+	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('endDraft');
 	}
@@ -788,6 +799,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
+			sess.stopCountdown();
 			Sessions[sessionID].disconnectedUsers[userID] = {
 				pickedThisRound: Connections[userID].pickedThisRound,
 				pickedCards: Connections[userID].pickedCards
