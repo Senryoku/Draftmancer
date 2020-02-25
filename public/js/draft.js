@@ -380,7 +380,7 @@ var app = new Vue({
 			});
 
 			this.socket.on('timer', function (data) {
-				if (data.countdown == 0)
+				if(data.countdown == 0)
 					app.forcePick(app.booster);
 				app.pickTimer = data.countdown;
 			});
@@ -418,19 +418,18 @@ var app = new Vue({
 			this.cardSelection.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},
-		forcePick: function(booster) {
-			this.draftingState = "waiting";
-			if (this.selectedCardId) {
-				this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
-				this.cardSelection.push(this.cards[this.selectedCardId]);
-				this.selectedCardId = undefined;
-			} else {
-				const randomIdx = Math.floor(Math.random() * booster.length)
-				const cardId = booster[randomIdx].id;
-				this.socket.emit('pickCard', this.sessionID, randomIdx, cardId);
-				this.cardSelection.push(this.cards[cardId]);
-				this.selectedCardId = undefined;
+		forcePick: function() {
+			if(this.draftingState != "picking")
+				return;
+			// Forces a random card if none is selected
+			if (!this.selectedCardId) {
+				const randomIdx = Math.floor(Math.random() * this.booster.length)
+				this.selectedCardId = this.booster[randomIdx].id;
 			}
+			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
+			this.cardSelection.push(this.cards[this.selectedCardId]);
+			this.selectedCardId = undefined;
+			this.draftingState = "waiting";
 		},
 		addToDeck: function(e, c) {
 			if(this.draftingState != "brewing")
