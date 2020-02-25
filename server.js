@@ -665,7 +665,7 @@ function nextBooster(sessionID) {
 
 function resumeDraft(sessionID) {
 	log(`Restarting draft for session ${sessionID}.`, FgYellow);
-	sess.resumeCountdown();
+	Sessions[sessionID].resumeCountdown();
 	emitMessage(sessionID, 'Player reconnected', `Resuming draft...`);
 }
 
