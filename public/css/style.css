@@ -66,6 +66,7 @@ a:hover {
 
 #main-vue .button,
 #main-vue button,
+#main-vue input[type="button"], 
 #main-vue input[type="submit"],
 #main-vue input[type="reset"],
 #main-vue input[type="button"],
@@ -84,7 +85,6 @@ a:hover {
 	background-color: transparent;
 	cursor: pointer;
 	box-sizing: border-box;
-	margin: 0.5em;
 }
 
 .check-button-container {
@@ -184,10 +184,24 @@ label {
 	margin-top: 1em;
 }
 
+.disable-warning {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 10;
+	transform: translate(-50%, -50%);
+	font-variant: small-caps;
+	white-space: nowrap;
+	font-size: 1em;
+	text-shadow: 0px 0px 10px black;
+}
+
 #draft-in-progress {
 	position: absolute;
 	top: 50%;
 	left: 50%;
+	z-index: 10;
+	white-space: nowrap;
 	transform: translate(-50%, -50%);
 	font-variant: small-caps;
 	font-size: 1.5em;
@@ -207,13 +221,14 @@ label {
 	border-radius: 0.25em;
 }
 
-#session-controls {
-}
-
 #limited-controls, #view-controls {
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	align-items: baseline;
+}
+
+#session-controls {
 }
 
 #session-id {
@@ -532,6 +547,7 @@ ul.player-list {
 }
 
 .disabled {
+	display: inline-block;
     pointer-events: none;
     opacity: 0.3;
 	background: repeating-linear-gradient(45deg, #282828, #282828 10px,   #383838 10px, #383838 20px);

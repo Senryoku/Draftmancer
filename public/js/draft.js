@@ -716,20 +716,29 @@ var app = new Vue({
 				this.socket.emit('readyToDraft', this.readyToDraft);
 			}
 		},
-		boostersPerPlayer: function() {
-			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);
-		},
-		bots: function() {
-			this.socket.emit('bots', this.bots);
-		},
 		useCollection: function() {
 			this.socket.emit('useCollection', this.useCollection);
 		},
+		// Session options
 		setRestriction: function() {
+			if(this.userID != this.sessionOwner)
+				return;
 			this.socket.emit('setRestriction', this.setRestriction);
 		},
 		isPublic: function() {
+			if(this.userID != this.sessionOwner)
+				return;
 			this.socket.emit('setPublic', this.isPublic);
+		},
+		boostersPerPlayer: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('boostersPerPlayer', this.boostersPerPlayer);
+		},
+		bots: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('bots', this.bots);
 		}
 	}
 });
