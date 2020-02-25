@@ -116,6 +116,8 @@
 						<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 						<span class="v-separator"></span>
 						<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
+						<span class="v-separator"></span>
+						<label for="timer" title="Zero means no timer.">Pick Timer</label><input type="number" id="timer" class="booster-count" min="0" max="60" step="1" v-model="maxTimer" />
 					</span>
 					<div class="check-button-container">
 						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
@@ -189,7 +191,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">
@@ -197,7 +199,7 @@
 				</div>
 			</div>
 			<div v-show="draftingState == 'waiting'" class="pick-waiting">
-				<span class="spinner"></span>Waiting for other players to pick...
+				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 		</template>
 		<div v-show="draftingState == 'brewing'" class="container">

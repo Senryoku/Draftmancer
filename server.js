@@ -89,8 +89,38 @@ function Session(id, owner) {
 	this.setRestriction = "";
 	this.boosters = [];
 	this.round = 0;
-	this.pickedCardsThisRound = 0;
+	this.pickedCardsThisRound = 0; 
 	this.disconnectedUsers = {};
+	
+	this.countdown = 60;
+	this.maxTimer = 60;
+	this.countdownInterval = null;
+	this.startCountdown = function() {
+		this.countdown = this.maxTimer;
+		this.resumeCountdown();
+	};
+	this.resumeCountdown = function() {
+		this.stopCountdown(); // Cleanup if one is still running
+		if(this.maxTimer <= 0) { // maxTimer <= 0 means no timer
+			for(let user of this.users)
+				Connections[user].socket.emit('disableTimer');
+		} else {
+			// Immediately propagate current state
+			for(let user of this.users)
+				Connections[user].socket.emit('timer', { countdown: this.countdown });
+			this.countdownInterval = setInterval(((sess) => {
+				return () => {
+					sess.countdown--;
+					for(let user of sess.users)
+						Connections[user].socket.emit('timer', { countdown: sess.countdown });
+				};
+			})(this), 1000);
+		}
+	};
+	this.stopCountdown = function() {
+		if(this.countdownInterval != null)
+			clearInterval(this.countdownInterval);
+	};
 	
 	// Includes disconnected players!
 	this.getHumanPlayerCount = function() {
@@ -405,6 +435,13 @@ io.on('connection', function(socket) {
 		}
 		Sessions[sessionID].boosters = [];
 	});
+
+	socket.on('setPickTimer', function(timerValue) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].maxTimer = timerValue;
+	});
 });
 
 function generateBoosters(sessionID, boosterQuantity) {
@@ -575,6 +612,8 @@ function startDraft(sessionID) {
 	
 function nextBooster(sessionID) {
 	let sess = Sessions[sessionID];
+	sess.stopCountdown();
+	
 	const totalVirtualPlayers = sess.getTotalVirtualPlayers();
 	
 	// Boosters are empty
@@ -611,6 +650,8 @@ function nextBooster(sessionID) {
 		++index;
 	}
 	
+	sess.startCountdown(); // Starts countdown now that everyone has their booster
+	
 	// Bots picks
 	for(let i = index; i < totalVirtualPlayers; ++i) {
 		const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
@@ -620,21 +661,19 @@ function nextBooster(sessionID) {
 		sess.boosters[boosterIndex].splice(removedIdx, 1);
 	}
 	++sess.round;
-	/*
-	// Sould not be possible :)
-	if(sess.pickedCardsThisRound == sess.getHumanPlayerCount()) {
-		nextBooster(sessionID);
-	}
-	*/
 }
 
 function resumeDraft(sessionID) {
 	log(`Restarting draft for session ${sessionID}.`, FgYellow);
+	Sessions[sessionID].resumeCountdown();
 	emitMessage(sessionID, 'Player reconnected', `Resuming draft...`);
 }
 
 function endDraft(sessionID) {
 	Sessions[sessionID].drafting = false;
+	
+	Sessions[sessionID].stopCountdown();
+	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('endDraft');
 	}
@@ -772,6 +811,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
+			Sessions[sessionID].stopCountdown();
 			Sessions[sessionID].disconnectedUsers[userID] = {
 				pickedThisRound: Connections[userID].pickedThisRound,
 				pickedCards: Connections[userID].pickedCards
