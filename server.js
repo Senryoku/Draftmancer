@@ -101,13 +101,21 @@ function Session(id, owner) {
 	};
 	this.resumeCountdown = function() {
 		this.stopCountdown(); // Cleanup if one is still running
-		this.countdownInterval = setInterval(((sess) => {
-			return () => {
-				sess.countdown--;
-				for(let user of sess.users) 
-					Connections[user].socket.emit('timer', { countdown: sess.countdown });
-			};
-		})(this), 1000);
+		if(this.maxTimer <= 0) { // maxTimer <= 0 means no timer
+			for(let user of this.users)
+				Connections[user].socket.emit('disableTimer');
+		} else {
+			// Immediately propagate current state
+			for(let user of this.users)
+				Connections[user].socket.emit('timer', { countdown: this.countdown });
+			this.countdownInterval = setInterval(((sess) => {
+				return () => {
+					sess.countdown--;
+					for(let user of sess.users)
+						Connections[user].socket.emit('timer', { countdown: sess.countdown });
+				};
+			})(this), 1000);
+		}
 	};
 	this.stopCountdown = function() {
 		if(this.countdownInterval != null)
@@ -664,7 +672,7 @@ function resumeDraft(sessionID) {
 function endDraft(sessionID) {
 	Sessions[sessionID].drafting = false;
 	
-	sess.stopCountdown();
+	Sessions[sessionID].stopCountdown();
 	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('endDraft');
@@ -803,7 +811,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
 		if(Sessions[sessionID].drafting) {
-			sess.stopCountdown();
+			Sessions[sessionID].stopCountdown();
 			Sessions[sessionID].disconnectedUsers[userID] = {
 				pickedThisRound: Connections[userID].pickedThisRound,
 				pickedCards: Connections[userID].pickedCards

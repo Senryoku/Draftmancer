@@ -191,7 +191,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == 'picking'" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span><span>Pick Timer: {{ pickTimer }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span><span v-show="pickTimer >= 0">Pick Timer: {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">

@@ -384,6 +384,10 @@ var app = new Vue({
 					app.forcePick(app.booster);
 				app.pickTimer = data.countdown;
 			});
+
+			this.socket.on('disableTimer', function () {
+				app.pickTimer = -1;
+			});
 			
 			// Look for a locally stored collection
 			let localStorageCollection = localStorage.getItem("Collection");
