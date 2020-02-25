@@ -96,6 +96,8 @@ var app = new Vue({
 		readyToDraft: false,
 		drafting: false,
 		booster: [],
+		maxTimer: 60,
+		pickTimer: 60,
 		
 		sealedBoosterPerPlayer: 6,
 		
@@ -376,6 +378,16 @@ var app = new Vue({
 				if(Swal.isVisible())
 					Swal.close();
 			});
+
+			this.socket.on('timer', function (data) {
+				if (data.countdown == 0) {
+					app.forcePick(app.booster);
+					app.socket.emit('reset');
+				} else {
+					app.pickTimer = data.countdown;
+				}
+
+			});
 			
 			// Look for a locally stored collection
 			let localStorageCollection = localStorage.getItem("Collection");
@@ -409,6 +421,20 @@ var app = new Vue({
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
 			this.cardSelection.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
+		},
+		forcePick: function(booster) {
+			this.draftingState = "waiting";
+			if (this.selectedCardId) {
+				this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
+				this.cardSelection.push(this.cards[this.selectedCardId]);
+				this.selectedCardId = undefined;
+			} else {
+				const randomIdx = Math.floor(Math.random() * booster.length)
+				const cardId = booster[randomIdx].id;
+				this.socket.emit('pickCard', this.sessionID, randomIdx, cardId);
+				this.cardSelection.push(this.cards[cardId]);
+				this.selectedCardId = undefined;
+			}
 		},
 		addToDeck: function(e, c) {
 			if(this.draftingState != "brewing")
@@ -679,6 +705,7 @@ var app = new Vue({
 					confirmButtonText: "I'm ready to draft",
 				}).then((result) => {
 					if(result.value) {
+						this.socket.emit('setPickTimer', this.maxTimer);
 						this.socket.emit('readyToDraft', this.readyToDraft);
 					} else {
 						this.readyToDraft = false;
@@ -686,6 +713,7 @@ var app = new Vue({
 					}
 				});
 			} else {
+				this.socket.emit('setPickTimer', this.maxTimer);
 				this.socket.emit('readyToDraft', this.readyToDraft);
 			}
 		},

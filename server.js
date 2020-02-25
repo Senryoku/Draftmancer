@@ -104,6 +104,8 @@ function Session(id, owner) {
 
 let Sessions = {};
 let Connections = {};
+let countdown = 60;
+let maxTimer = 60;
 
 let Cards = JSON.parse(fs.readFileSync("public/data/MTGACards.json"));
 for(let c in Cards) {
@@ -405,6 +407,14 @@ io.on('connection', function(socket) {
 		}
 		Sessions[sessionID].boosters = [];
 	});
+
+	socket.on('setPickTimer', function(timerValue) {
+		maxTimer = timerValue;
+	});
+
+	socket.on('reset', function (data) {
+		countdown = maxTimer;
+	});
 });
 
 function generateBoosters(sessionID, boosterQuantity) {
@@ -554,6 +564,12 @@ function startDraft(sessionID) {
 	
 	console.log("Starting draft! Session status:");
 	console.log(sess);
+	// start counter
+	countdown = maxTimer;
+	setInterval(function() {
+		countdown--;
+		io.sockets.emit('timer', { countdown: countdown });
+	}, 1000);
 	
 	// Generate bots
 	sess.botsInstances = []
