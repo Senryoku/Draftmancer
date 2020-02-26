@@ -104,6 +104,7 @@ var app = new Vue({
 		booster: [],
 		maxTimer: 60,
 		pickTimer: 60,
+		draftLog: undefined,
 		
 		sealedBoosterPerPlayer: 6,
 		
@@ -135,6 +136,10 @@ var app = new Vue({
 		cardSelection: [],
 		deck: [],
 		
+		// Draft Log Modal
+		displayDraftLog: false,
+		draftLogCardList: false,
+		// Collection Stats Modal
 		showCollectionStats: false,
 		statsMissingRarity: "rare",
 		statsShowNonBooster: false,
@@ -373,6 +378,10 @@ var app = new Vue({
 				eraseCookie("userID");
 			});
 			
+			this.socket.on('draftLog', function(draftLog) {
+				app.draftLog = draftLog;
+			});
+			
 			this.socket.on('setCardSelection', function(data) {
 				app.deck = [];
 				app.cardSelection = [];
@@ -529,6 +538,18 @@ var app = new Vue({
 				position: 'top-end',
 				type: 'success',
 				title: 'Cards exported to clipboard!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
+		},
+		exportLog: function() {
+			copyToClipboard(JSON.stringify(this.draftLog, null, "\t"));
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'success',
+				title: 'Draft log exported to clipboard!',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500

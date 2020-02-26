@@ -107,7 +107,8 @@ function Session(id, owner) {
 		} else {
 			// Immediately propagate current state
 			for(let user of this.users)
-				Connections[user].socket.emit('timer', { countdown: this.countdown });
+				Connections[user].socket.emit('timer', { countdown: this.countdown});
+				// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(((sess) => {
 				return () => {
 					sess.countdown--;
@@ -125,6 +126,12 @@ function Session(id, owner) {
 	// Includes disconnected players!
 	this.getHumanPlayerCount = function() {
 		return this.users.size + Object.keys(this.disconnectedUsers).length;
+	};
+	
+	// Includes disconnected players!
+	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
+	this.getSortedHumanPlayers = function() {
+		return Array.from(this.users).concat(Object.keys(this.disconnectedUsers)).sort();
 	};
 
 	this.getTotalVirtualPlayers = function() {
@@ -178,7 +185,7 @@ io.on('connection', function(socket) {
 		let sess = Sessions[query.sessionID];
 		console.log(sess.disconnectedUsers);
 		if(query.userID in sess.disconnectedUsers) {
-			const playerIdx = Array.from(sess.users).concat(Object.keys(sess.disconnectedUsers)).sort().indexOf(query.userID);
+			const playerIdx = sess.getSortedHumanPlayers().indexOf(query.userID);
 			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
 			Connections[query.userID].pickedThisRound = sess.disconnectedUsers[query.userID].pickedThisRound;
 			Connections[query.userID].pickedCards = sess.disconnectedUsers[query.userID].pickedCards;
@@ -570,7 +577,7 @@ function Bot() {
 		for(let color of Cards[booster[bestPick]].color_identity) {
 			this.pickedColors[color] += 1;
 		}
-		this.cards.push(Cards[booster[bestPick]].name);
+		this.cards.push(booster[bestPick]);
 		//log(`Bot pick: ${Cards[booster[bestPick]].name}`);
 		//console.log(this);
 		return bestPick;
@@ -634,8 +641,7 @@ function nextBooster(sessionID) {
 	let index = 0;
 	const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
 	const boosterOffset = evenRound ? -sess.round : sess.round;
-	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
-	const sortedPlayers = Array.from(sess.users).concat(Object.keys(sess.disconnectedUsers)).sort();
+	const sortedPlayers = sess.getSortedHumanPlayers();
 	for(let userID of sortedPlayers) {
 		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 		if(userID in sess.disconnectedUsers) { // This user has been replaced by a bot
@@ -674,17 +680,27 @@ function endDraft(sessionID) {
 	
 	Sessions[sessionID].stopCountdown();
 	
+	let draftLog = {};
+	for(let user of Sessions[sessionID].getSortedHumanPlayers()) {
+		draftLog[user] = {
+			userName: Connections[user].userName,
+			userID: user,
+			cards: Connections[user].pickedCards
+		};
+	}
+	for(let i = 0; i < Sessions[sessionID].bots; ++i) {
+		draftLog[`Bot #${i}`] = {
+			userName: `Bot #${i}`,
+			userID: 0,
+			cards: Sessions[sessionID].botsInstances[i].cards
+		};
+	}
+	
 	for(let user of Sessions[sessionID].users) {
 		Connections[user].socket.emit('endDraft');
+		Connections[user].socket.emit('draftLog', draftLog);
 	}
 	log(`Session ${sessionID} draft ended.`);
-	
-	// Bot logging
-	if(Sessions[sessionID].bots > 0) {
-		log("Bot picks:");
-		console.log(Sessions[sessionID].botsInstances);
-		Sessions[sessionID].botsInstances = [];
-	}
 }
 
 // Serve files in the public directory
@@ -793,7 +809,7 @@ function replaceDisconnectedPlayers(userID, sessionID) {
 			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
 			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
 			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
-			const playerIdx = Array.from(sess.users).concat(Object.keys(sess.disconnectedUsers)).sort().indexOf(uid);
+			const playerIdx = sess.getSortedHumanPlayers().indexOf(uid);
 			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
 			const pickIdx = sess.disconnectedUsers[uid].bot.pick(sess.boosters[boosterIndex]);
 			sess.disconnectedUsers[uid].pickedCards.push(sess.boosters[boosterIndex][pickIdx]);
