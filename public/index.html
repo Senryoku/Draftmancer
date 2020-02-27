@@ -112,7 +112,7 @@
 						<span>
 							<strong>Session options:</strong>
 							<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
-							<span class="v-separator"></span>
+							<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" title="Ignore players collection: Draft with all cards." /><label for="ignore-collections" title="Ignore players collection: Draft with all cards.">Ignore Collections</label>
 							<label for="set-restriction">Set</label>
 							<select id="set-restriction" v-model:value="setRestriction">
 								<option value="">All</option>
@@ -124,17 +124,15 @@
 						<span class="v-separator"></span>
 						<span>
 							<strong>Draft:</strong>
-							<label for="boosters-per-player">Boosters per Player</label>
+							<label for="boosters-per-player" title="Draft Boosters per Player">Boosters</label>
 							<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-							<span class="v-separator"></span>
 							<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
-							<span class="v-separator"></span>
-							<label for="timer" title="Zero means no timer.">Pick Timer</label><input type="number" id="timer" class="booster-count" min="0" max="120" step="1" v-model="maxTimer" />
+							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="booster-count" min="0" max="120" step="1" v-model="maxTimer" />
 						</span>
 						<span class="v-separator"></span>
 						<span>
 							<strong>Sealed:</strong>
-							<label>Boosters per Player</label>
+							<label title="Sealed Boosters per Player">Boosters</label>
 							<input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" />
 							<input type="button" value="Distribute" @click="distributeSealed"/>
 						</span>

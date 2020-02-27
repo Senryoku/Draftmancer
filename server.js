@@ -41,6 +41,7 @@ function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
 	this.isPublic = false;
+	this.ignoreCollections = false;
 	this.users = new Set();
 	this.collection = function () {
 		// Compute collections intersection
@@ -48,12 +49,12 @@ function Session(id, owner) {
 		let intersection = [];
 		let collection = {};
 		
-		// If none of the user has uploaded their collection/doesn't want to use it, return all cards.
+		// If none of the user has uploaded their collection/doesn't want to use it, or the ignoreCollections flag is set, return all cards.
 		let all_cards = true;
 		for(let i = 0; i < user_list.length; ++i) {
 			all_cards = all_cards && (!Connections[user_list[i]].useCollection || isEmpty(Connections[user_list[i]].collection));
 		}
-		if(all_cards) {
+		if(this.ignoreCollections || all_cards) {
 			for(let c of Object.keys(Cards))
 				if(Cards[c].in_booster)
 					collection[c] = 4;
@@ -399,6 +400,18 @@ io.on('connection', function(socket) {
 		for(let user of Sessions[sessionID].users) {
 			if(user != this.userID)
 				Connections[user].socket.emit('setRestriction', setRestriction);
+		}
+	});
+	
+	socket.on('ignoreCollections', function(ignoreCollections) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		Sessions[sessionID].ignoreCollections = ignoreCollections;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('ignoreCollections', Sessions[sessionID].ignoreCollections);
 		}
 	});
 	

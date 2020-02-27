@@ -95,6 +95,7 @@ var app = new Vue({
 		sessionID: getCookie("sessionID", shortguid()),
 		sessionOwner: null,
 		isPublic: false,
+		ignoreCollections: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
 		bots: 0,
@@ -252,6 +253,10 @@ var app = new Vue({
 			
 			this.socket.on('isPublic', function(data) {
 				app.isPublic = data;
+			});
+			
+			this.socket.on('ignoreCollections', function(ignoreCollections) {
+				app.ignoreCollections = ignoreCollections;
 			});
 			
 			this.socket.on('chatMessage', function(message) {
@@ -766,6 +771,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('bots', this.bots);
+		},
+		ignoreCollections: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('ignoreCollections', this.ignoreCollections);
 		}
 	}
 });
