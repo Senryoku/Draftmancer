@@ -398,6 +398,10 @@ var app = new Vue({
 				if(Swal.isVisible())
 					Swal.close();
 			});
+			
+			this.socket.on('setPickTimer', function (timer) {
+				app.maxTimer = timer;
+			});
 
 			this.socket.on('timer', function (data) {
 				if(data.countdown == 0)
@@ -736,7 +740,6 @@ var app = new Vue({
 					confirmButtonText: "I'm ready to draft",
 				}).then((result) => {
 					if(result.value) {
-						this.socket.emit('setPickTimer', this.maxTimer);
 						this.socket.emit('readyToDraft', this.readyToDraft);
 					} else {
 						this.readyToDraft = false;
@@ -744,7 +747,6 @@ var app = new Vue({
 					}
 				});
 			} else {
-				this.socket.emit('setPickTimer', this.maxTimer);
 				this.socket.emit('readyToDraft', this.readyToDraft);
 			}
 		},
@@ -771,6 +773,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('bots', this.bots);
+		},
+		maxTimer: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setPickTimer', this.maxTimer);
 		},
 		ignoreCollections: function() {
 			if(this.userID != this.sessionOwner)

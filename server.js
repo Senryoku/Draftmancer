@@ -414,6 +414,17 @@ io.on('connection', function(socket) {
 				Connections[user].socket.emit('ignoreCollections', Sessions[sessionID].ignoreCollections);
 		}
 	});
+
+	socket.on('setPickTimer', function(timerValue) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].maxTimer = timerValue;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('setPickTimer', timerValue);
+		}
+	});
 	
 	socket.on('setPublic', function(isPublic) {
 		let sessionID = Connections[this.userID].sessionID;
@@ -454,13 +465,6 @@ io.on('connection', function(socket) {
 			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
 		}
 		Sessions[sessionID].boosters = [];
-	});
-
-	socket.on('setPickTimer', function(timerValue) {
-		let sessionID = Connections[this.userID].sessionID;
-		if(Sessions[sessionID].owner != this.userID)
-			return;
-		Sessions[sessionID].maxTimer = timerValue;
 	});
 });
 
