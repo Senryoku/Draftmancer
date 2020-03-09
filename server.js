@@ -87,7 +87,7 @@ function Session(id, owner) {
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
 	this.bots = 0;
-	this.setRestriction = "";
+	this.setRestriction = [];
 	this.boosters = [];
 	this.round = 0;
 	this.pickedCardsThisRound = 0; 
@@ -390,10 +390,17 @@ io.on('connection', function(socket) {
 		if(Sessions[sessionID].owner != this.userID)
 			return;
 		
-		if(setRestriction !== '' && MTGSets.indexOf(setRestriction) == -1)
+		if(!Array.isArray(setRestriction))
 			return;
+		
+		if(setRestriction.length > 0) {
+			for(let s of setRestriction) {
+				if(MTGSets.indexOf(s) === -1)
+					return;
+			}
+		}
 
-		if(setRestriction == Sessions[sessionID].setRestriction)
+		if(setRestriction === Sessions[sessionID].setRestriction)
 			return;
 		
 		Sessions[sessionID].setRestriction = setRestriction;
@@ -479,7 +486,7 @@ function generateBoosters(sessionID, boosterQuantity) {
 			log(`Warning: Card ${c} not in database.`, FgYellow);
 			continue;
 		}
-		if(sess.setRestriction == "" || Cards[c].set == sess.setRestriction)
+		if(sess.setRestriction.length == 0 || sess.setRestriction.includes(Cards[c].set))
 			localCollection[Cards[c].rarity][c] = collection[c];
 	}
 	

@@ -1,5 +1,4 @@
 # Todo
- * Set Multiple Selection
  * Player limit?
  * Rarity selection
  * Multiple prevention is only done by ID, maybe we should check the card name?
@@ -7,10 +6,8 @@
  * Sealed Booster per Player option is not shared in the session.
  
 # Check
- * Handle end draft (un-ready everyone? reset session? other?)
- * Handle server booster generation errors correctly (not enough cards...)
+ * Set Multiple Selection
  * Prevent multiple copies of the same card in a single booster
- * Join while drafting protection
  
 # Bugs
  * Guildgates won't import in arena

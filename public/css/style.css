@@ -47,6 +47,83 @@ a:hover {
 	padding-top: 0.5em;
 }
 
+#main-vue .multiselect {
+	display: inline-block;
+	vertical-align: baseline;
+	width: 13em;
+	min-height: auto;
+}
+
+#main-vue .multiselect__tags, #main-vue .multiselect__single, #main-vue .multiselect__element, #main-vue .multiselect__content-wrapper {
+	color: #DDD;
+	background: #555;
+}
+
+#main-vue .multiselect__tags {
+	border-radius: 4px;
+	border: 1px solid #888;
+	margin: 0.25em;
+	height: 28px;
+	min-height: auto;
+	padding: 5px 5px;
+}
+
+#main-vue .multiselect__option {
+	font-size: 14px;
+	min-height: auto;
+	line-height: inherit;
+	padding: 5px;
+}
+
+#main-vue .multiselect__option::after {
+	line-height: 36px;
+	font-size: 10px;
+	padding-left: inherit;
+}
+
+#main-vue .multiselect__tag {
+	background: #333;
+}
+
+#main-vue .multiselect__placeholder {
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+#main-vue  .multiselect--active .multiselect__placeholder {
+	display: inline-block;
+}
+
+#main-vue .multiselect__single {
+	margin-bottom: 0;
+	line-height: inherit;
+	min-height: auto;
+	width: auto;
+	font-size: inherit;
+}
+
+#main-vue .multiselect__single_nooverflow {
+	overflow: hidden;
+	max-height: 1em;
+	max-width: 12em;
+}
+
+#main-vue .multiselect__single_nooverflow .set-icon {
+	margin-right: 0.2em;
+}
+
+#main-vue .set-icon {
+	display: inline-block;
+	height: 1em;
+	vertical-align: baseline;
+	filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(27deg) brightness(101%) contrast(99%);
+}
+
+#main-vue .multiselect__tag-icon {
+	color: #bf5d5d;
+}
+
 #main-vue select, 
 #main-vue option, 
 #main-vue input[type="text"], 

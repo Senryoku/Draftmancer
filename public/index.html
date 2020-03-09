@@ -11,10 +11,11 @@
 	<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/en/a/aa/Magic_the_gathering-card_back.jpg">
 	<meta property="og:description" content="Draft with your friends using your Magic Arena card collection.">
 	<meta property="og:site_name" content="MTGA Draft">
-	
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 	<link rel="stylesheet" href="css/style.css" />
 	<link rel="stylesheet" href="css/modal.css" />
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
 	<script type="text/x-template" id="modal-template">
 	  <transition name="modal">
@@ -114,12 +115,21 @@
 							<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
 							<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" title="Ignore players collection: Draft with all cards." /><label for="ignore-collections" title="Ignore players collection: Draft with all cards.">Ignore Collections</label>
 							<label for="set-restriction">Set</label>
-							<select id="set-restriction" v-model:value="setRestriction">
-								<option value="">All</option>
-								<option v-for="set in sets" v-bind:value="set">
-								{{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }}
-								</option>
-							</select>
+							<multiselect v-if="setsInfos" v-model="setRestriction" placeholder="All" :options="sets" :searchable="false" :allow-empty="true" :close-on-select="false" :multiple="true" select-label="" deselect-label="Remove">
+								<template slot="selection" slot-scope="{ values, search, isOpen }">
+									<span class="multiselect__single" v-if="values.length == 1"><img class="set-icon" :src="setsInfos[values[0]].icon"> {{ setsInfos[values[0]].fullName }}</span>
+									<span class="multiselect__single multiselect__single_nooverflow" v-if="values.length > 1">({{ values.length }})
+										<img v-for="v in values" class="set-icon" :src="setsInfos[v].icon">
+									</span>
+								</template>
+								<template slot="option" slot-scope="{ option , search  }"><span class="multiselect__option">{{ setsInfos[option].fullName }}</span></template>
+							</multiselect>
+							<!-- <select id="set-restriction" v-model:value="setRestriction"> -->
+								<!-- <option value="">All</option> -->
+								<!-- <option v-for="set in sets" v-bind:value="set"> -->
+								<!-- {{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }} -->
+								<!-- </option> -->
+							<!-- </select> -->
 						</span>
 						<span class="v-separator"></span>
 						<span>
@@ -345,6 +355,7 @@
 	<script src="socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="js/helper.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+	<script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
 	<script type="text/javascript" src="js/draft.js"></script>
 </body>
 </html>

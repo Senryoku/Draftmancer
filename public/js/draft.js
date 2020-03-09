@@ -80,6 +80,9 @@ const DraftState = {
 
 var app = new Vue({
 	el: '#main-vue',
+	components: {
+		Multiselect: window.VueMultiselect.default
+	},
 	data: {
 		// Card Data
 		cards: undefined,
@@ -608,6 +611,18 @@ var app = new Vue({
 		}
 	},
 	computed: {
+		displaySets: function() {
+			let dSets = [];
+			for(let s of this.sets) {
+				if(this.setsInfos && s in this.setsInfos)
+					dSets.push({
+						code: s, 
+						fullName: this.setsInfos[s].fullName,
+						icon: this.setsInfos[s].icon
+					});
+			}
+			return dSets;
+		},
 		collectionStats: function () {
 			if(!this.hasCollection || !this.cards || !this.setsInfos) 
 				return undefined;
@@ -757,6 +772,7 @@ var app = new Vue({
 		setRestriction: function() {
 			if(this.userID != this.sessionOwner)
 				return;
+			
 			this.socket.emit('setRestriction', this.setRestriction);
 		},
 		isPublic: function() {
