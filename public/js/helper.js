@@ -60,10 +60,9 @@ function exportMTGA(arr, language) {
 	for(c of arr) {
 		let set = c.set.toUpperCase();
 		if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
-		let name = c.printed_name[language];
-		let idx = name.indexOf('//');
-		if(idx != -1)
-			name = name.substr(0, idx - 1);
+		let name = c.name;
+		if(language != 'en')
+			name = c.printed_name[language]; // FIXME: This will probably not work with double faced cards
 		str += `1 ${name} (${set}) ${c.collector_number}\n`
 	}
 	return str;
