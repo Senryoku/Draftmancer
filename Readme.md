@@ -1,5 +1,5 @@
 # Todo
- * Test exporting ravnica dual cards in other languages
+ * Guildgates do not have localized names
  * Player limit?
  * Rarity selection
  * Multiple prevention is only done by ID, maybe we should check the card name?
