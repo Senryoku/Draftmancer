@@ -310,6 +310,7 @@ var app = new Vue({
 			
 				app.drafting = true;
 				app.readyToDraft = false;
+				app.deck = [];
 				app.cardSelection = [];
 				Swal.fire({
 					position: 'center',
@@ -325,6 +326,7 @@ var app = new Vue({
 				app.drafting = true;
 				app.readyToDraft = false;
 				
+				app.deck = [];
 				app.cardSelection = [];
 				for(let c of data.pickedCards)
 					app.cardSelection.push(app.cards[c]);
