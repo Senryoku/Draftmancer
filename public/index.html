@@ -277,12 +277,14 @@
 				<ul>
 					<li>Ignore Collections: Draft with all cards of the selected set(s), ignoring player collections and preferences. (Also affects sealed)</li>
 					<li>Set: Select a set to draft using only with cards from this set. (Also affects sealed)</li>
-					<li>Boosters per Player: Defaults to 3 in draft and 6 in sealed.</li>
-					<li>Bots: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
-					<li>Pick Timer: Maximum time in seconds allowed to pick a card in each booster. Default is 60 seconds, 0 means the timer is disabled.</li>
+				(Click <i class="fa-ellipsis-v fa"></i> for these additional options:)
 					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
 					<li>Maximum Players: Limits the number of players that can join your session.</li>
 					<li>Maximum Rarity: Limits the maximum rarity of card in your pool. (Default is Mythic, which means no restriction. Also affects sealed)</li>
+				(Draft options)
+					<li>Boosters per Player: Defaults to 3.</li>
+					<li>Bots: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
+					<li>Pick Timer: Maximum time in seconds allowed to pick a card in each booster. Default is 60 seconds, 0 means the timer is disabled.</li>
 				</ul>
 			</p>
 		</div>
@@ -346,20 +348,26 @@
 			<div slot="body" class="option-column">
 				<div class="line">
 					<label for="is-public" title="Share your session ID with everyone.">Public</label>
-					<input class="right" type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+					<div class="right">
+						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+					</div>
 				</div>
 				<div class="line">
 					<label for="max-players">Maximum Players</label>
-					<input class="booster-count" type="number" id="max-players" class="booster-count" min="1" max="16" step="1" v-model="maxPlayers" />
+					<div class="right">
+						<input class="booster-count" type="number" id="max-players" class="booster-count" min="1" max="16" step="1" v-model="maxPlayers" />
+					</div>
 				</div>
-				<div class="line">
-					<label for="maxRarity">Maximum Rarity</label>
-					<select class="right">
-						<option>Mythic</option>
-						<option>Rare</option>
-						<option>Uncommom</option>
-						<option>Common</option>
-					</select>
+				<div class="line disabled">
+					<label for="maxRarity">Maximum Rarity (WIP)</label>
+					<div class="right">
+						<select v-model="maxRarity">
+							<option>Mythic</option>
+							<option>Rare</option>
+							<option>Uncommom</option>
+							<option>Common</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</modal>

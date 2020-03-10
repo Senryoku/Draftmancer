@@ -102,6 +102,7 @@ var app = new Vue({
 		sessionUsers: [],
 		boostersPerPlayer: 3,
 		maxPlayers: 8,
+		maxRarity: "Mythic",
 		bots: 0,
 		setRestriction: "",
 		readyToDraft: false,
@@ -281,8 +282,16 @@ var app = new Vue({
 				app.bots = parseInt(data);
 			});
 			
-			this.socket.on('setRestriction', function(data) {
-				app.setRestriction = data;
+			this.socket.on('setMaxPlayers', function(maxPlayers) {
+				app.maxPlayers = parseInt(maxPlayers);
+			});
+			
+			this.socket.on('setMaxRarity', function(maxRarity) {
+				app.maxRarity = maxRarity;
+			});
+			
+			this.socket.on('setRestriction', function(setRestriction) {
+				app.setRestriction = setRestriction;
 			});
 			
 			this.socket.on('message', function(data) {
@@ -814,6 +823,16 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('bots', this.bots);
+		},
+		maxPlayers: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setMaxPlayers', this.maxPlayers);
+		},
+		maxRarity: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setMaxRarity', this.maxRarity);
 		},
 		maxTimer: function() {
 			if(this.userID != this.sessionOwner)

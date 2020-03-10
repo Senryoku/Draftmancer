@@ -87,6 +87,8 @@ function Session(id, owner) {
 	this.drafting = false;
 	this.boostersPerPlayer = 3;
 	this.bots = 0;
+	this.maxPlayers = 8;
+	this.maxRarity = 'Mythic';
 	this.setRestriction = [];
 	this.boosters = [];
 	this.round = 0;
@@ -159,6 +161,57 @@ function getPublicSessions() {
 	return publicSessions;
 }
 
+function joinSession(sessionID, userID) {
+	// Session exists and is drafting
+	if(sessionID in Sessions && Sessions[sessionID].drafting) {
+		log(`${userID} wants to join drafting session; disconnectedUsers:`);
+		let sess = Sessions[sessionID];
+		console.log(sess.disconnectedUsers);
+		if(userID in sess.disconnectedUsers) {
+			const playerIdx = sess.getSortedHumanPlayers().indexOf(userID);
+			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
+			Connections[userID].pickedThisRound = sess.disconnectedUsers[userID].pickedThisRound;
+			Connections[userID].pickedCards = sess.disconnectedUsers[userID].pickedCards;
+
+			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
+			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
+			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
+		
+			addUserToSession(userID, sessionID);
+			Connections[userID].socket.emit('rejoinDraft', {
+				pickedThisRound: sess.disconnectedUsers[userID].pickedThisRound,
+				pickedCards: sess.disconnectedUsers[userID].pickedCards,
+				boosterIndex: boosterIndex,
+				booster: sess.boosters[boosterIndex]
+			});
+			delete sess.disconnectedUsers[userID];
+
+			if(Object.keys(sess.disconnectedUsers).length == 0)
+				resumeDraft(sessionID);
+		} else {
+			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
+			// Fallback to previous session if possible, or generate a new one
+			if(!Connections[userID].sessionID)
+				sessionID = uuidv1();
+			else
+				sessionID = Connections[userID].sessionID;
+			Connections[userID].socket.emit('setSession', sessionID);
+			joinSession(sessionID, userID);
+		}
+	// Session exists and is full
+	} else if(sessionID in Sessions && Sessions[sessionID].users.size >= Sessions[sessionID].maxPlayers) {
+		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
+		if(!Connections[userID].sessionID)
+			sessionID = uuidv1();
+		else
+			sessionID = Connections[userID].sessionID;
+		Connections[userID].socket.emit('setSession', sessionID);
+		joinSession(sessionID, userID);
+	} else {
+		addUserToSession(userID, sessionID);
+	}
+}
+
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
 	log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
@@ -173,7 +226,7 @@ io.on('connection', function(socket) {
 		socket: socket,
 		userID: query.userID,
 		userName: query.userName,
-		sessionID: query.sessionID,
+		sessionID: null,
 		readyToDraft: false,
 		collection: {},
 		useCollection: true,
@@ -181,40 +234,7 @@ io.on('connection', function(socket) {
 		pickedCards: []
 	};
 	
-	if(query.sessionID in Sessions && Sessions[query.sessionID].drafting) {
-		log(`${query.userID} wants to join drafting session; disconnectedUsers:`);
-		let sess = Sessions[query.sessionID];
-		console.log(sess.disconnectedUsers);
-		if(query.userID in sess.disconnectedUsers) {
-			const playerIdx = sess.getSortedHumanPlayers().indexOf(query.userID);
-			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
-			Connections[query.userID].pickedThisRound = sess.disconnectedUsers[query.userID].pickedThisRound;
-			Connections[query.userID].pickedCards = sess.disconnectedUsers[query.userID].pickedCards;
-
-			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
-			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
-			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
-		
-			addUserToSession(query.userID, query.sessionID);
-			socket.emit('rejoinDraft', {
-				pickedThisRound: sess.disconnectedUsers[query.userID].pickedThisRound,
-				pickedCards: sess.disconnectedUsers[query.userID].pickedCards,
-				boosterIndex: boosterIndex,
-				booster: sess.boosters[boosterIndex]
-			});
-			delete sess.disconnectedUsers[query.userID];
-
-			if(Object.keys(sess.disconnectedUsers).length == 0)
-				resumeDraft(query.sessionID);
-		} else {
-			socket.emit('message', {title: 'Cannot join session', text: `This session (${query.sessionID}) is currently drafting. Please wait for them to finish.`});
-			query.sessionID = uuidv1();
-			socket.emit('setSession', query.sessionID);
-			addUserToSession(query.userID, query.sessionID);
-		}
-	} else {
-		addUserToSession(query.userID, query.sessionID);
-	}
+	joinSession(query.sessionID, query.userID);
 	
 	socket.userID = query.userID;
 	
@@ -245,14 +265,7 @@ io.on('connection', function(socket) {
 		if(sessionID == Connections[userID].sessionID)
 			return;
 		
-		if(sessionID in Sessions && Sessions[sessionID].drafting) {
-			socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
-			socket.emit('setSession', Connections[userID].sessionID);
-			return;
-		}
-		
-		removeUserFromSession(userID, Connections[userID].sessionID);
-		addUserToSession(userID, sessionID);
+		joinSession(sessionID, userID);
 	});
 	
 	socket.on('setCollection', function(collection) {
@@ -354,7 +367,9 @@ io.on('connection', function(socket) {
 		if(Sessions[sessionID].owner != this.userID)
 			return;
 		
-		if(isNaN(boostersPerPlayer))
+		if(!Number.isInteger(boostersPerPlayer))
+			boostersPerPlayer = parseInt(boostersPerPlayer);
+		if(!Number.isInteger(boostersPerPlayer))
 			return;
 
 		if(boostersPerPlayer == Sessions[sessionID].boostersPerPlayer)
@@ -372,7 +387,9 @@ io.on('connection', function(socket) {
 		if(Sessions[sessionID].owner != this.userID)
 			return;
 		
-		if(isNaN(bots))
+		if(!Number.isInteger(bots))
+			bots = parseInt(bots);
+		if(!Number.isInteger(bots))
 			return;
 
 		if(bots == Sessions[sessionID].bots)
@@ -426,10 +443,46 @@ io.on('connection', function(socket) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
 			return;
+		
+		if(!Number.isInteger(timerValue))
+			timerValue = parseInt(timerValue);
+		if(!Number.isInteger(timerValue) || timerValue < 0)
+			return;
+		
 		Sessions[sessionID].maxTimer = timerValue;
 		for(let user of Sessions[sessionID].users) {
 			if(user != this.userID)
 				Connections[user].socket.emit('setPickTimer', timerValue);
+		}
+	});
+
+	socket.on('setMaxPlayers', function(maxPlayers) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(!Number.isInteger(maxPlayers))
+			maxPlayers = parseInt(maxPlayers);
+		if(!Number.isInteger(maxPlayers) || maxPlayers < 0)
+			return;
+		
+		Sessions[sessionID].maxPlayers = maxPlayers;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('setMaxPlayers', maxPlayers);
+		}
+	});
+
+	socket.on('setMaxRarity', function(maxRarity) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		if(!['Mythic', 'Rare', 'Uncommon', 'Common'].includes(maxRarity))
+			return;
+		Sessions[sessionID].maxRarity = maxRarity;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('setMaxRarity', maxRarity);
 		}
 	});
 	
@@ -876,6 +929,9 @@ function removeUserFromSession(userID, sessionID) {
 }
 
 function addUserToSession(userID, sessionID) {
+	console.log(`Add ${userID} to ${sessionID}`);
+	if(Connections[userID].sessionID)
+		removeUserFromSession(userID, Connections[userID].sessionID);
 	if(sessionID in Sessions) {
 		Sessions[sessionID].users.add(userID)
 	} else {

@@ -42,10 +42,6 @@ a:hover {
 	color: #72a7ff;
 }
 
-.thicker {
-  font-weight: 900;
-}
-
 .clickable {
 	cursor: pointer;
 }
@@ -264,8 +260,13 @@ a:hover {
 
 .option-column .line label {
 	display: inline-block;
-	width: 10em;
+	width: 15em;
 	text-align: right;
+}
+
+.option-column .line .right {
+	display: inline-block;
+	width: 15em;
 }
 
 .welcome {
