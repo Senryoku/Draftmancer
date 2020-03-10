@@ -20,7 +20,7 @@
 	<script type="text/x-template" id="modal-template">
 	  <transition name="modal">
 		<div class="modal-mask">
-		  <div class="modal-wrapper">
+		  <div class="modal-wrapper" @click="if($event.target == $event.currentTarget) $emit('close')">
 			<div class="modal-container">
 
 			  <div class="modal-header">
@@ -110,9 +110,8 @@
 				</span>
 				<span class="generic-container">
 					<span v-bind:class="{ disabled: sessionOwner != userID }">
-						<span>
+						<span  class="generic-container">
 							<strong>Session options:</strong>
-							<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." /><label for="is-public" title="Share your session ID with everyone.">Public</label>
 							<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" title="Ignore players collection: Draft with all cards." /><label for="ignore-collections" title="Ignore players collection: Draft with all cards.">Ignore Collections</label>
 							<label for="set-restriction">Set</label>
 							<multiselect v-if="setsInfos" v-model="setRestriction" placeholder="All" :options="sets" :searchable="false" :allow-empty="true" :close-on-select="false" :multiple="true" select-label="" deselect-label="Remove">
@@ -124,27 +123,19 @@
 								</template>
 								<template slot="option" slot-scope="{ option , search  }"><span class="multiselect__option">{{ setsInfos[option].fullName }}</span></template>
 							</multiselect>
-							<!-- <select id="set-restriction" v-model:value="setRestriction"> -->
-								<!-- <option value="">All</option> -->
-								<!-- <option v-for="set in sets" v-bind:value="set"> -->
-								<!-- {{ (setsInfos && set in setsInfos) ? setsInfos[set].fullName : set }} -->
-								<!-- </option> -->
-							<!-- </select> -->
+							<i class="fas fa-ellipsis-v clickable" title="More options" @click="showSessionOptionsDialog = !showSessionOptionsDialog"></i>
 						</span>
 						<span class="v-separator"></span>
 						<span>
 							<strong>Draft:</strong>
 							<label for="boosters-per-player" title="Draft Boosters per Player">Boosters</label>
-							<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
+								<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 							<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
 							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="booster-count" min="0" max="120" step="1" v-model="maxTimer" />
 						</span>
 						<span class="v-separator"></span>
 						<span>
-							<strong>Sealed:</strong>
-							<label title="Sealed Boosters per Player">Boosters</label>
-							<input type="number" class="booster-count" v-model="sealedBoosterPerPlayer" min="1" max="25" step="1" />
-							<input type="button" value="Distribute" @click="distributeSealed"/>
+							<button @click="sealedDialog">Start Sealed</button>
 						</span>
 					</span>
 					<div v-show="sessionOwner != userID" class="disable-warning">
@@ -194,7 +185,7 @@
 				<form @submit.prevent="sendChatMessage">
 					<input type="text" v-model="currentChatMessage" placeholder="Chat with players in your session."  maxlength="255" />
 				</form>
-				<div class="chat-history" v-show="displayChatHistory">
+				<div class="chat-history" v-show="displayChatHistory" @focusout="displayChatHistory = false" tabindex="0">
 					<template v-if="messagesHistory && messagesHistory.length > 0">
 						<ol>
 							<li v-for="msg in messagesHistory.slice().reverse()" :title="new Date(msg.timestamp)">
@@ -263,10 +254,12 @@
 			<p class="important">
 				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!
 				<ol class="important">
-					<li>Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.</li>
-					<li><a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game.</li>
+					<li>
+						(Optional) Import your collection: Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.
+						<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game.
+					</li>
 					<li>Use the controls on top of the page to enter your User Name and indicate your preferences.</li>
-					<li>Share your session ID with your friends (or join their own session) and click ready to start drafting!</li>
+					<li>Share your session ID with your friends (or join their own session) and click <q>Ready to Draft</q>!</li>
 				</ol>
 			</p>
 			<h2>Options</h2>
@@ -280,14 +273,16 @@
 				</ul>
 			</p>
 			<p>
-				Session options (Shared by everyone in your session):
+				Session options (Only accessible to the session owner, shared by everyone in your session):
 				<ul>
-					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
-					<li>Ignore Collections: Draft with all cards of the selected set(s), ignoring player collections and preferences.</li>
-					<li>Set: Select a set to draft using only with cards from this set.</li>
+					<li>Ignore Collections: Draft with all cards of the selected set(s), ignoring player collections and preferences. (Also affects sealed)</li>
+					<li>Set: Select a set to draft using only with cards from this set. (Also affects sealed)</li>
 					<li>Boosters per Player: Defaults to 3 in draft and 6 in sealed.</li>
 					<li>Bots: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
 					<li>Pick Timer: Maximum time in seconds allowed to pick a card in each booster. Default is 60 seconds, 0 means the timer is disabled.</li>
+					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
+					<li>Maximum Players: Limits the number of players that can join your session.</li>
+					<li>Maximum Rarity: Limits the maximum rarity of card in your pool. (Default is Mythic, which means no restriction. Also affects sealed)</li>
 				</ul>
 			</p>
 		</div>
@@ -343,6 +338,28 @@
 							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster) && c.count < 4)" v-bind:key="index" v-bind:card="card" v-bind:language="language"></figure>
 						</div>
 					</div>
+				</div>
+			</div>
+		</modal>
+		<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
+			<h2 slot="header">Additional Session Options</h2>
+			<div slot="body" class="option-column">
+				<div class="line">
+					<label for="is-public" title="Share your session ID with everyone.">Public</label>
+					<input class="right" type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+				</div>
+				<div class="line">
+					<label for="max-players">Maximum Players</label>
+					<input class="booster-count" type="number" id="max-players" class="booster-count" min="1" max="16" step="1" v-model="maxPlayers" />
+				</div>
+				<div class="line">
+					<label for="maxRarity">Maximum Rarity</label>
+					<select class="right">
+						<option>Mythic</option>
+						<option>Rare</option>
+						<option>Uncommom</option>
+						<option>Common</option>
+					</select>
 				</div>
 			</div>
 		</modal>

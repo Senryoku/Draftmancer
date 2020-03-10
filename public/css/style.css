@@ -42,6 +42,18 @@ a:hover {
 	color: #72a7ff;
 }
 
+.thicker {
+  font-weight: 900;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.clickable:hover {
+	color: #FFF;
+}
+
 #main-vue {
 	padding: 1em;
 	padding-top: 0.5em;
@@ -239,6 +251,23 @@ a:hover {
 	outline: 0;
 }
 
+#session-more-options {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	background-color: #333;
+	border-radius: 4px;
+	border: 1px solid #888;
+	width: 20em;
+	padding: 1em;
+}
+
+.option-column .line label {
+	display: inline-block;
+	width: 10em;
+	text-align: right;
+}
+
 .welcome {
 	font-size: 1.1rem;
 	padding: 2em;
@@ -398,7 +427,7 @@ ul.player-list {
 	border-radius: 0.5em;
 	color: black;
 	width: 100%;
-	z-index: 99;
+	z-index: 1;
 }
 
 .chat-history:before {
@@ -506,7 +535,6 @@ ul.player-list {
 	transition: transform 0.08s ease-out;
 	/*transform-origin: bottom;*/
 	border-radius: 6px;
-	cursor: pointer;
 }
 
 .card-count {

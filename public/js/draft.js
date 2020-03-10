@@ -51,7 +51,7 @@ Vue.component('modal', {
 
 Vue.component('card', {
 	template: `
-<figure class="card" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)">
+<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)">
 	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
 	<img v-else src="img/missing.svg">
 	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
@@ -101,6 +101,7 @@ var app = new Vue({
 		ignoreCollections: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
+		maxPlayers: 8,
 		bots: 0,
 		setRestriction: "",
 		readyToDraft: false,
@@ -109,8 +110,6 @@ var app = new Vue({
 		maxTimer: 60,
 		pickTimer: 60,
 		draftLog: undefined,
-		
-		sealedBoosterPerPlayer: 6,
 		
 		publicSessions: [],
 		selectedPublicSession: "",
@@ -140,6 +139,7 @@ var app = new Vue({
 		cardSelection: [],
 		deck: [],
 		
+		showSessionOptionsDialog: false,
 		// Draft Log Modal
 		displayDraftLog: false,
 		draftLogCardList: false,
@@ -427,6 +427,8 @@ var app = new Vue({
 					console.error(e);
 				}
 			}
+			
+			window.addEventListener('click', this.handleAutoClosingWindows)
 		},
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
@@ -567,7 +569,7 @@ var app = new Vue({
 				timer: 1500
 			});
 		},
-		distributeSealed: function() {
+		distributeSealed: function(boosterCount) {
 			if(this.cardSelection.length > 0) {
 				Swal.fire({
 					title: 'Are you sure?',
@@ -580,15 +582,15 @@ var app = new Vue({
 					confirmButtonText: "Yes, distribute!",
 				}).then((result) => {
 					if(result.value) {
-						this.doDistributeSealed();
+						this.doDistributeSealed(boosterCount);
 					}
 				});
 			} else {
-				this.doDistributeSealed();
+				this.doDistributeSealed(boosterCount);
 			}
 		},
-		doDistributeSealed: function() {
-			this.socket.emit('distributeSealed', this.sealedBoosterPerPlayer);
+		doDistributeSealed: function(boosterCount) {
+			this.socket.emit('distributeSealed', boosterCount);
 		},
 		genCard: function(c) {
 			if(!(c in this.cards))
@@ -608,6 +610,29 @@ var app = new Vue({
 		},
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;
+		},
+		sealedDialog: async function() {
+			const { value: boosterCount } = await Swal.fire({
+				title: 'Start Sealed',
+				showCancelButton: true,
+				text: 'How many booster for each player?',
+				inputPlaceholder: 'Booster count',
+				input: 'range',
+				inputAttributes: {
+					min: 4,
+					max: 12,
+					step: 1
+				},
+				inputValue: 6,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: "Distribute boosters",
+			});
+			
+			if(boosterCount) {
+				this.distributeSealed(boosterCount);
+			}
 		}
 	},
 	computed: {
