@@ -87,7 +87,7 @@ function Session(id, owner) {
 	this.boostersPerPlayer = 3;
 	this.bots = 0;
 	this.maxPlayers = 8;
-	this.maxRarity = 'Mythic';
+	this.maxRarity = 'mythic';
 	this.setRestriction = [];
 	this.boosters = [];
 	this.round = 0;
@@ -476,7 +476,10 @@ io.on('connection', function(socket) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
 			return;
-		if(!['Mythic', 'Rare', 'Uncommon', 'Common'].includes(maxRarity))
+		if(typeof maxRarity !== 'string')
+			return;
+		maxRarity = maxRarity.toLowerCase();
+		if(!['mythic', 'rare', 'uncommon', 'common'].includes(maxRarity))
 			return;
 		Sessions[sessionID].maxRarity = maxRarity;
 		for(let user of Sessions[sessionID].users) {
@@ -544,23 +547,53 @@ function generateBoosters(sessionID, boosterQuantity) {
 	
 	// Making sure we have enough cards of each rarity
 	const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+	
+	let targets;
+	
+	switch(sess.maxRarity) {
+		case 'uncommon':
+			targets = {
+				'rare': 0,
+				'uncommon': 3,
+				'common': 11
+			};
+		break;
+		case 'common':
+			targets = {
+				'rare': 0,
+				'uncommon': 0,
+				'common': 14
+			};
+		break;
+		case 'mythic':
+		case 'rare':
+		default:
+			targets = {
+				'rare': 1,
+				'uncommon': 3,
+				'common': 10
+			};
+	}
+	
+	console.log(sess.maxRarity);
+	console.log(targets);
 
 	let comm_count = count_cards(localCollection['common']);
-	if(comm_count < 10 * boosterQuantity) {
+	if(comm_count < targets['common'] * boosterQuantity) {
 		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
 		log(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`, FgYellow);
 		return false;
 	}
 	
 	let unco_count = count_cards(localCollection['uncommon']);
-	if(unco_count < 3 * boosterQuantity) {
+	if(unco_count < targets['uncommon'] * boosterQuantity) {
 		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
 		log(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`, FgYellow);
 		return false;
 	}
 	
 	let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
-	if(rm_count < boosterQuantity) {
+	if(rm_count < targets['rare'] * boosterQuantity) {
 		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
 		log(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
 		return false;
@@ -588,25 +621,29 @@ function generateBoosters(sessionID, boosterQuantity) {
 	for(let i = 0; i < boosterQuantity; ++i) {
 		let booster = [];
 		
-		 // 1 Rare/Mythic
-		if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
-			alert("Not enough cards in collection."); // TODO: WTH is that?!
-			return;
-		} else if(isEmpty(localCollection['mythic'])) {
-			booster.push(pick_card(localCollection['rare']));
-		} else if(isEmpty(localCollection['rare'])) {
-			booster.push(pick_card(localCollection['mythic']));
-		} else {
-			if(Math.random() * 8 < 1)
-				booster.push(pick_card(localCollection['mythic']));
-			else
+		for(let i = 0; i < targets['rare']; ++i) {
+			// 1 Rare/Mythic
+			if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
+				// Should not happen, right?
+				emitMessage(sessionID, 'Error generating boosters', `Not enough rare or mythic cards in collection`);
+				console.error("Not enough cards in collection.");
+				return false;
+			} else if(isEmpty(localCollection['mythic'])) {
 				booster.push(pick_card(localCollection['rare']));
+			} else if(sess.maxRarity === 'mythic' && isEmpty(localCollection['rare'])) {
+				booster.push(pick_card(localCollection['mythic']));
+			} else {
+				if(sess.maxRarity === 'mythic' && Math.random() * 8 < 1)
+					booster.push(pick_card(localCollection['mythic']));
+				else
+					booster.push(pick_card(localCollection['rare']));
+			}
 		}
-
-		for(let i = 0; i < 3; ++i) // 3 Uncommons
+		
+		for(let i = 0; i < targets['uncommon']; ++i)
 			booster.push(pick_card(localCollection['uncommon'], booster));
 		
-		for(let i = 0; i < 10; ++i) // 10 Commons
+		for(let i = 0; i < targets['common']; ++i)
 			booster.push(pick_card(localCollection['common'], booster));
 
 		Sessions[sessionID].boosters.push(booster);
