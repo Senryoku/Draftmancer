@@ -553,12 +553,34 @@ var app = new Vue({
 			});
 		},
 		exportLog: function() {
-			copyToClipboard(JSON.stringify(this.draftLog, null, "\t"));
+			let draftLogFull = this.draftLog;
+			for(let e in this.draftLog) {
+				let cards = []
+				for(let c of this.draftLog[e].cards)
+					cards.push(this.cards[c]);
+				this.draftLog[e].exportString = exportMTGA(cards, this.language);
+			}
+			copyToClipboard(JSON.stringify(draftLogFull, null, "\t"));
 			Swal.fire({
 				toast: true,
 				position: 'top-end',
 				type: 'success',
 				title: 'Draft log exported to clipboard!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
+		},
+		exportSingleLog: function(id) {
+			let cards = []
+			for(let c of this.draftLog[id].cards)
+				cards.push(this.cards[c]);
+			copyToClipboard(exportMTGA(cards, this.language), null, "\t");
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'success',
+				title: 'Card list exported to clipboard!',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500

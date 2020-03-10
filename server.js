@@ -98,7 +98,8 @@ function Session(id, owner) {
 	this.maxTimer = 60;
 	this.countdownInterval = null;
 	this.startCountdown = function() {
-		this.countdown = this.maxTimer;
+		// this.countdown = this.maxTimer;
+		this.countdown = 0; // TODO: REMOVE
 		this.resumeCountdown();
 	};
 	this.resumeCountdown = function() {
@@ -574,9 +575,6 @@ function generateBoosters(sessionID, boosterQuantity) {
 				'common': 10
 			};
 	}
-	
-	console.log(sess.maxRarity);
-	console.log(targets);
 
 	let comm_count = count_cards(localCollection['common']);
 	if(comm_count < targets['common'] * boosterQuantity) {
