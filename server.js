@@ -98,8 +98,7 @@ function Session(id, owner) {
 	this.maxTimer = 60;
 	this.countdownInterval = null;
 	this.startCountdown = function() {
-		// this.countdown = this.maxTimer;
-		this.countdown = 0; // TODO: REMOVE
+		this.countdown = this.maxTimer;
 		this.resumeCountdown();
 	};
 	this.resumeCountdown = function() {
