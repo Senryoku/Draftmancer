@@ -9,8 +9,7 @@ const io = require('socket.io')(http);
 const cookieParser = require('cookie-parser');
 const uuidv1 = require('uuid/v1');
 const fs = require('fs');
-
-const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"];
+const constants = require('./public/js/constants'); 
 
 app.use(compression());
 app.use(cookieParser()); 
@@ -412,7 +411,7 @@ io.on('connection', function(socket) {
 		
 		if(setRestriction.length > 0) {
 			for(let s of setRestriction) {
-				if(MTGSets.indexOf(s) === -1)
+				if(constants.MTGSets.indexOf(s) === -1)
 					return;
 			}
 		}

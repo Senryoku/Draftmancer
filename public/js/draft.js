@@ -117,22 +117,10 @@ var app = new Vue({
 		
 		// Front-end options & data
 		hideSessionID: false,
+		languages: window.constants.Languages,
 		language: 'en',
-		languages: [
-			{code: 'en',  name: 'English'},
-			{code: 'es',  name: 'Spanish'},
-			{code: 'fr',  name: 'French'},
-			{code: 'de',  name: 'German'},
-			{code: 'it',  name: 'Italian'},
-			{code: 'pt',  name: 'Portuguese'},
-			{code: 'ja',  name: 'Japanese'},
-			{code: 'ko',  name: 'Korean'},
-			{code: 'ru',  name: 'Russian'},
-			{code: 'zhs', name: 'Simplified Chinese'},
-			{code: 'zht', name: 'Traditional Chinese'}
-		],
+		sets: window.constants.MTGSets,
 		cardOrder: "",
-		sets: ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"],
 		setsInfos: undefined,
 		boosterIndex: undefined,
 		draftingState: undefined,
@@ -385,7 +373,7 @@ var app = new Vue({
 				Swal.fire({
 					position: 'center',
 					type: 'success',
-					title: 'Drafting done!',
+					title: 'Done drafting!',
 					showConfirmButton: false,
 					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 					timer: 1500
@@ -436,8 +424,6 @@ var app = new Vue({
 					console.error(e);
 				}
 			}
-			
-			window.addEventListener('click', this.handleAutoClosingWindows)
 		},
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
