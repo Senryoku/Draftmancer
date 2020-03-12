@@ -13,6 +13,9 @@
 		{code: 'zht', name: 'Traditional Chinese'}
 	];
 	const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"];
+	
+	Object.freeze(Languages);
+	Object.freeze(MTGSets);
 
     exports.Languages = Languages;    
     exports.MTGSets = MTGSets;    
