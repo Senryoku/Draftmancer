@@ -39,9 +39,24 @@ function get_random_key(dict) {
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
+	this.users = new Set();
+	
+	// Options
+	this.setRestriction = [];
 	this.isPublic = false;
 	this.ignoreCollections = false;
-	this.users = new Set();
+	this.boostersPerPlayer = 3;
+	this.bots = 0;
+	this.maxPlayers = 8;
+	this.maxRarity = 'mythic';
+	
+	// Draft state
+	this.drafting = false;
+	this.boosters = [];
+	this.round = 0;
+	this.pickedCardsThisRound = 0; 
+	this.disconnectedUsers = {};
+	
 	this.collection = function () {
 		// Compute collections intersection
 		let user_list = [...this.users];
@@ -83,17 +98,306 @@ function Session(id, owner) {
 		}
 		return collection;
 	};
-	this.drafting = false;
-	this.boostersPerPlayer = 3;
-	this.bots = 0;
-	this.maxPlayers = 8;
-	this.maxRarity = 'mythic';
-	this.setRestriction = [];
-	this.boosters = [];
-	this.round = 0;
-	this.pickedCardsThisRound = 0; 
-	this.disconnectedUsers = {};
 	
+	
+	this.generateBoosters = function(boosterQuantity) {
+		let sess = this;
+		// Getting intersection of players' collections
+		let collection = sess.collection();
+		// Order by rarity
+		let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
+		for(let c in collection) {
+			if(!(c in Cards)) {
+				log(`Warning: Card ${c} not in database.`, FgYellow);
+				continue;
+			}
+			if(sess.setRestriction.length == 0 || sess.setRestriction.includes(Cards[c].set))
+				localCollection[Cards[c].rarity][c] = collection[c];
+		}
+		
+		// Making sure we have enough cards of each rarity
+		const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+		
+		let targets;
+		
+		switch(sess.maxRarity) {
+			case 'uncommon':
+				targets = {
+					'rare': 0,
+					'uncommon': 3,
+					'common': 11
+				};
+			break;
+			case 'common':
+				targets = {
+					'rare': 0,
+					'uncommon': 0,
+					'common': 14
+				};
+			break;
+			case 'mythic':
+			case 'rare':
+			default:
+				targets = {
+					'rare': 1,
+					'uncommon': 3,
+					'common': 10
+				};
+		}
+
+		let comm_count = count_cards(localCollection['common']);
+		if(comm_count < targets['common'] * boosterQuantity) {
+			this.emitMessage('Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
+			log(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`, FgYellow);
+			return false;
+		}
+		
+		let unco_count = count_cards(localCollection['uncommon']);
+		if(unco_count < targets['uncommon'] * boosterQuantity) {
+			this.emitMessage('Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
+			log(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`, FgYellow);
+			return false;
+		}
+		
+		let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
+		if(rm_count < targets['rare'] * boosterQuantity) {
+			this.emitMessage('Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
+			log(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
+			return false;
+		}
+		
+		// TODO: Prevent multiples by name?
+		
+		let pick_card = function (dict, booster) {
+			let c = get_random_key(dict);
+			if(booster != undefined) {
+				let prevention_attempts = 0; // Fail safe-ish
+				while(booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
+					c = get_random_key(dict);
+					++prevention_attempts;
+				}
+			}
+			dict[c] -= 1;
+			if(dict[c] == 0)
+				delete dict[c];
+			return c;
+		};
+		
+		// Generate Boosters
+		this.boosters = [];
+		for(let i = 0; i < boosterQuantity; ++i) {
+			let booster = [];
+			
+			for(let i = 0; i < targets['rare']; ++i) {
+				// 1 Rare/Mythic
+				if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
+					// Should not happen, right?
+					this.emitMessage('Error generating boosters', `Not enough rare or mythic cards in collection`);
+					console.error("Not enough cards in collection.");
+					return false;
+				} else if(isEmpty(localCollection['mythic'])) {
+					booster.push(pick_card(localCollection['rare']));
+				} else if(sess.maxRarity === 'mythic' && isEmpty(localCollection['rare'])) {
+					booster.push(pick_card(localCollection['mythic']));
+				} else {
+					if(sess.maxRarity === 'mythic' && Math.random() * 8 < 1)
+						booster.push(pick_card(localCollection['mythic']));
+					else
+						booster.push(pick_card(localCollection['rare']));
+				}
+			}
+			
+			for(let i = 0; i < targets['uncommon']; ++i)
+				booster.push(pick_card(localCollection['uncommon'], booster));
+			
+			for(let i = 0; i < targets['common']; ++i)
+				booster.push(pick_card(localCollection['common'], booster));
+
+			this.boosters.push(booster);
+		}
+		
+		return true;
+	}
+	
+	this.notifyUserChange = function() {
+		// Send only necessary data
+		let user_info = [];
+		for(let user of this.users) {
+			let u = Connections[user];
+			user_info.push({
+				userID: u.userID, 
+				userName: u.userName,
+				collection: u.collection,
+				readyToDraft: u.readyToDraft
+			});
+		}
+		
+		// Send to all session users
+		for(let user of this.users) {
+			Connections[user].socket.emit('sessionOwner', this.owner);
+			Connections[user].socket.emit('sessionUsers', user_info);
+		}
+	};
+	
+	this.startDraft = function() {
+		this.drafting = true;
+		this.emitMessage('Everybody is ready!', 'Your draft will start soon...', false, 0);
+		
+		// boostersPerPlayer works fine, what's the problem here?...
+		if(typeof this.bots != "number") {
+			this.bots = parseInt(this.bots);
+		}
+		
+		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
+		
+		console.log("Starting draft! Session status:");
+		console.log(this);
+		
+		// Generate bots
+		this.botsInstances = []
+		for(let i = 0; i < this.bots; ++i)
+			this.botsInstances.push(new Bot())
+		
+		if(!this.generateBoosters(boosterQuantity)) {
+			this.drafting = false;
+			return;
+		}
+		
+		for(let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit('startDraft');
+		}
+		this.round = 0;
+		this.nextBooster();
+	};
+		
+	this.nextBooster = function() {
+		this.stopCountdown();
+		
+		const totalVirtualPlayers = this.getTotalVirtualPlayers();
+		
+		// Boosters are empty
+		if(this.boosters[0].length == 0) {
+			this.round = 0;
+			// Remove empty boosters
+			this.boosters.splice(0, totalVirtualPlayers);
+		}
+		
+		// End draft if no more booster to distribute
+		if(this.boosters.length == 0) {
+			this.endDraft();
+			return;
+		}
+		
+		this.pickedCardsThisRound = 0; // Only counting cards picked by human players
+		
+		let index = 0;
+		const evenRound = ((this.boosters.length / totalVirtualPlayers) % 2) == 0;
+		const boosterOffset = evenRound ? -this.round : this.round;
+		const sortedPlayers = this.getSortedHumanPlayers();
+		for(let userID of sortedPlayers) {
+			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
+			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
+				const pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
+				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+				this.boosters[boosterIndex].splice(pickIdx, 1);
+				++this.pickedCardsThisRound;
+			} else {
+				Connections[userID].pickedThisRound = false;
+				Connections[userID].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: this.boosters[boosterIndex]});
+			}
+			++index;
+		}
+		
+		this.startCountdown(); // Starts countdown now that everyone has their booster
+		
+		// Bots picks
+		for(let i = index; i < totalVirtualPlayers; ++i) {
+			const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
+			const booster = this.boosters[boosterIndex];
+			const botIndex = i % this.bots; // ?
+			const removedIdx = this.botsInstances[botIndex].pick(booster);
+			this.boosters[boosterIndex].splice(removedIdx, 1);
+		}
+		++this.round;
+	};
+
+	this.resumeDraft = function() {
+		log(`Restarting draft for session ${this.id}.`, FgYellow);
+		this.resumeCountdown();
+		this.emitMessage('Player reconnected', `Resuming draft...`);
+	};
+
+	this.endDraft = function() {
+		this.drafting = false;
+		
+		this.stopCountdown();
+		
+		let draftLog = {};
+		for(let userID of this.getSortedHumanPlayers()) {
+			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
+				draftLog[userID] = {
+					userName: "(Bot)",
+					userID: userID,
+					cards: this.disconnectedUsers[userID].pickedCards
+				};
+			} else {
+				draftLog[userID] = {
+					userName: Connections[userID].userName,
+					userID: userID,
+					cards: Connections[userID].pickedCards
+				};
+			}
+		}
+		for(let i = 0; i < this.bots; ++i) {
+			draftLog[`Bot #${i}`] = {
+				userName: `Bot #${i}`,
+				userID: 0,
+				cards: this.botsInstances[i].cards
+			};
+		}
+		
+		for(let userID of this.users) {
+			Connections[userID].socket.emit('endDraft');
+			Connections[userID].socket.emit('draftLog', draftLog);
+		}
+		log(`Session ${this.id} draft ended.`);
+	};
+	
+	this.replaceDisconnectedPlayers = function() {
+		if(!this.drafting)
+			return;
+		
+		log("Replacing disconnected players with bots!", FgRed);
+
+		for(let uid in this.disconnectedUsers) {
+			this.disconnectedUsers[uid].bot = new Bot();
+			for(let c of this.disconnectedUsers[uid].pickedCards) {
+				this.disconnectedUsers[uid].bot.pick([c]);
+			}
+			
+			// Immediately pick cards
+			if(!this.disconnectedUsers[uid].pickedThisRound) {
+				const totalVirtualPlayers = this.getTotalVirtualPlayers();
+				const evenRound = ((this.boosters.length / totalVirtualPlayers) % 2) == 0;
+				const boosterOffset = evenRound ? -(this.round - 1) : (this.round - 1); // Round has already advanced (see nextBooster)
+				const playerIdx = this.getSortedHumanPlayers().indexOf(uid);
+				const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
+				const pickIdx = this.disconnectedUsers[uid].bot.pick(this.boosters[boosterIndex]);
+				this.disconnectedUsers[uid].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+				this.boosters[boosterIndex].splice(pickIdx, 1);
+				this.disconnectedUsers[uid].pickedThisRound = true;
+				++this.pickedCardsThisRound;
+				if(this.pickedCardsThisRound == this.getHumanPlayerCount()) {
+					this.nextBooster();
+				}
+			}
+		}
+		
+		this.resumeCountdown();
+		this.emitMessage('Resuming draft', `Disconnected player(s) has been replaced by bot(s).`);
+	};
+
 	this.countdown = 60;
 	this.maxTimer = 60;
 	this.countdownInterval = null;
@@ -139,6 +443,12 @@ function Session(id, owner) {
 	this.getTotalVirtualPlayers = function() {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots
 	}
+
+	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {
+		for(let user of this.users) {
+			Connections[user].socket.emit('message', {title: title, text: text, showConfirmButton: showConfirmButton, timer: timer});
+		}
+	}
 }
 
 let Sessions = {};
@@ -158,57 +468,6 @@ function getPublicSessions() {
 		}
 	}
 	return publicSessions;
-}
-
-function joinSession(sessionID, userID) {
-	// Session exists and is drafting
-	if(sessionID in Sessions && Sessions[sessionID].drafting) {
-		log(`${userID} wants to join drafting session; disconnectedUsers:`);
-		let sess = Sessions[sessionID];
-		console.log(sess.disconnectedUsers);
-		if(userID in sess.disconnectedUsers) {
-			const playerIdx = sess.getSortedHumanPlayers().indexOf(userID);
-			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
-			Connections[userID].pickedThisRound = sess.disconnectedUsers[userID].pickedThisRound;
-			Connections[userID].pickedCards = sess.disconnectedUsers[userID].pickedCards;
-
-			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
-			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
-			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
-		
-			addUserToSession(userID, sessionID);
-			Connections[userID].socket.emit('rejoinDraft', {
-				pickedThisRound: sess.disconnectedUsers[userID].pickedThisRound,
-				pickedCards: sess.disconnectedUsers[userID].pickedCards,
-				boosterIndex: boosterIndex,
-				booster: sess.boosters[boosterIndex]
-			});
-			delete sess.disconnectedUsers[userID];
-
-			if(Object.keys(sess.disconnectedUsers).length == 0)
-				resumeDraft(sessionID);
-		} else {
-			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
-			// Fallback to previous session if possible, or generate a new one
-			if(!Connections[userID].sessionID)
-				sessionID = uuidv1();
-			else
-				sessionID = Connections[userID].sessionID;
-			Connections[userID].socket.emit('setSession', sessionID);
-			joinSession(sessionID, userID);
-		}
-	// Session exists and is full
-	} else if(sessionID in Sessions && Sessions[sessionID].users.size >= Sessions[sessionID].maxPlayers) {
-		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
-		if(!Connections[userID].sessionID)
-			sessionID = uuidv1();
-		else
-			sessionID = Connections[userID].sessionID;
-		Connections[userID].socket.emit('setSession', sessionID);
-		joinSession(sessionID, userID);
-	} else {
-		addUserToSession(userID, sessionID);
-	}
 }
 
 io.on('connection', function(socket) {
@@ -255,7 +514,7 @@ io.on('connection', function(socket) {
 	socket.on('setUserName', function(userName) {
 		let userID = query.userID;
 		Connections[userID].userName = userName;
-		notifyUserChange(Connections[userID].sessionID);
+		Sessions[Connections[userID].sessionID].notifyUserChange();
 	});
 
 	socket.on('setSession', function(sessionID) {
@@ -275,7 +534,7 @@ io.on('connection', function(socket) {
 		
 		let sessionID = Connections[userID].sessionID;
 		Connections[userID].collection = collection;
-		notifyUserChange(sessionID);
+		Sessions[sessionID].notifyUserChange();
 	});
 	
 	socket.on('useCollection', function(useCollection) {
@@ -289,7 +548,7 @@ io.on('connection', function(socket) {
 			return;
 		
 		Connections[userID].useCollection = useCollection;
-		notifyUserChange(sessionID);
+		Sessions[sessionID].notifyUserChange();
 	});
 	
 	socket.on('chatMessage', function(message) {
@@ -321,10 +580,10 @@ io.on('connection', function(socket) {
 		}
 		
 		if(allReady && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
-			startDraft(sessionID);
+			Sessions[sessionID].startDraft();
 		}
 		
-		notifyUserChange(sessionID);
+		Sessions[sessionID].notifyUserChange();
 	});
 	
 	// Removes picked card from corresponding booster and notify other players.
@@ -355,7 +614,7 @@ io.on('connection', function(socket) {
 		
 		++Sessions[sessionID].pickedCardsThisRound;
 		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].getHumanPlayerCount()) {
-			nextBooster(sessionID);
+			Sessions[sessionID].nextBooster();
 		}
 	});
 	
@@ -506,7 +765,10 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('replaceDisconnectedPlayers', function() {
-		replaceDisconnectedPlayers(query.userID, Connections[query.userID].sessionID);
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].replaceDisconnectedPlayers();
 	});
 	
 	socket.on('distributeSealed', function(boostersPerPlayer) {
@@ -518,10 +780,10 @@ io.on('connection', function(socket) {
 		if(isNaN(boostersPerPlayer))
 			return;
 		
-		emitMessage(sessionID, 'Distributing sealed boosters...', '', false, 0);
+		Sessions[sessionID].emitMessage('Distributing sealed boosters...', '', false, 0);
 		
 		for(let user of Sessions[sessionID].users) {
-			if(!generateBoosters(sessionID, boostersPerPlayer)) {
+			if(!Sessions[sessionID].generateBoosters(boostersPerPlayer)) {
 				return;
 			}
 			Connections[user].socket.emit('setCardSelection', Sessions[sessionID].boosters);
@@ -529,131 +791,6 @@ io.on('connection', function(socket) {
 		Sessions[sessionID].boosters = [];
 	});
 });
-
-function generateBoosters(sessionID, boosterQuantity) {
-	let sess = Sessions[sessionID];
-	// Getting intersection of players' collections
-	let collection = sess.collection();
-	// Order by rarity
-	let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
-	for(let c in collection) {
-		if(!(c in Cards)) {
-			log(`Warning: Card ${c} not in database.`, FgYellow);
-			continue;
-		}
-		if(sess.setRestriction.length == 0 || sess.setRestriction.includes(Cards[c].set))
-			localCollection[Cards[c].rarity][c] = collection[c];
-	}
-	
-	// Making sure we have enough cards of each rarity
-	const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
-	
-	let targets;
-	
-	switch(sess.maxRarity) {
-		case 'uncommon':
-			targets = {
-				'rare': 0,
-				'uncommon': 3,
-				'common': 11
-			};
-		break;
-		case 'common':
-			targets = {
-				'rare': 0,
-				'uncommon': 0,
-				'common': 14
-			};
-		break;
-		case 'mythic':
-		case 'rare':
-		default:
-			targets = {
-				'rare': 1,
-				'uncommon': 3,
-				'common': 10
-			};
-	}
-
-	let comm_count = count_cards(localCollection['common']);
-	if(comm_count < targets['common'] * boosterQuantity) {
-		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
-		log(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`, FgYellow);
-		return false;
-	}
-	
-	let unco_count = count_cards(localCollection['uncommon']);
-	if(unco_count < targets['uncommon'] * boosterQuantity) {
-		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
-		log(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`, FgYellow);
-		return false;
-	}
-	
-	let rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
-	if(rm_count < targets['rare'] * boosterQuantity) {
-		emitMessage(sessionID, 'Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
-		log(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
-		return false;
-	}
-	
-	// TODO: Prevent multiples by name?
-	
-	let pick_card = function (dict, booster) {
-		let c = get_random_key(dict);
-		if(booster != undefined) {
-			let prevention_attempts = 0; // Fail safe-ish
-			while(booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
-				c = get_random_key(dict);
-				++prevention_attempts;
-			}
-		}
-		dict[c] -= 1;
-		if(dict[c] == 0)
-			delete dict[c];
-		return c;
-	};
-	
-	// Generate Boosters
-	Sessions[sessionID].boosters = [];
-	for(let i = 0; i < boosterQuantity; ++i) {
-		let booster = [];
-		
-		for(let i = 0; i < targets['rare']; ++i) {
-			// 1 Rare/Mythic
-			if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
-				// Should not happen, right?
-				emitMessage(sessionID, 'Error generating boosters', `Not enough rare or mythic cards in collection`);
-				console.error("Not enough cards in collection.");
-				return false;
-			} else if(isEmpty(localCollection['mythic'])) {
-				booster.push(pick_card(localCollection['rare']));
-			} else if(sess.maxRarity === 'mythic' && isEmpty(localCollection['rare'])) {
-				booster.push(pick_card(localCollection['mythic']));
-			} else {
-				if(sess.maxRarity === 'mythic' && Math.random() * 8 < 1)
-					booster.push(pick_card(localCollection['mythic']));
-				else
-					booster.push(pick_card(localCollection['rare']));
-			}
-		}
-		
-		for(let i = 0; i < targets['uncommon']; ++i)
-			booster.push(pick_card(localCollection['uncommon'], booster));
-		
-		for(let i = 0; i < targets['common']; ++i)
-			booster.push(pick_card(localCollection['common'], booster));
-
-		Sessions[sessionID].boosters.push(booster);
-	}
-	
-	return true;
-}
-
-function emitMessage(sessionID, title, text, showConfirmButton = true, timer = 1500) {
-	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('message', {title: title, text: text, showConfirmButton: showConfirmButton, timer: timer});
-	}
-}
 
 function syncSessionOptions(userID) {
 	let sessionID = Connections[userID].sessionID;
@@ -692,125 +829,6 @@ function Bot() {
 		//console.log(this);
 		return bestPick;
 	}
-}
-
-function startDraft(sessionID) {
-	let sess = Sessions[sessionID];
-	sess.drafting = true;
-	emitMessage(sessionID, 'Everybody is ready!', 'Your draft will start soon...', false, 0);
-	
-	// boostersPerPlayer works fine, what's the problem here?...
-	if(typeof sess.bots != "number") {
-		sess.bots = parseInt(sess.bots);
-	}
-	
-	let boosterQuantity = (sess.users.size + sess.bots) * sess.boostersPerPlayer;
-	
-	console.log("Starting draft! Session status:");
-	console.log(sess);
-	
-	// Generate bots
-	sess.botsInstances = []
-	for(let i = 0; i < sess.bots; ++i)
-		sess.botsInstances.push(new Bot())
-	
-	if(!generateBoosters(sessionID, boosterQuantity)) {
-		sess.drafting = false;
-		return;
-	}
-	
-	for(let user of Sessions[sessionID].users) {
-		Connections[user].pickedCards = [];
-		Connections[user].socket.emit('startDraft');
-	}
-	Sessions[sessionID].round = 0;
-	nextBooster(sessionID);
-}
-	
-function nextBooster(sessionID) {
-	let sess = Sessions[sessionID];
-	sess.stopCountdown();
-	
-	const totalVirtualPlayers = sess.getTotalVirtualPlayers();
-	
-	// Boosters are empty
-	if(sess.boosters[0].length == 0) {
-		sess.round = 0;
-		// Remove empty boosters
-		sess.boosters.splice(0, totalVirtualPlayers);
-	}
-	
-	// End draft if no more booster to distribute
-	if(sess.boosters.length == 0) {
-		endDraft(sessionID);
-		return;
-	}
-	
-	sess.pickedCardsThisRound = 0; // Only counting cards picked by human players
-	
-	let index = 0;
-	const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
-	const boosterOffset = evenRound ? -sess.round : sess.round;
-	const sortedPlayers = sess.getSortedHumanPlayers();
-	for(let userID of sortedPlayers) {
-		const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-		if(userID in sess.disconnectedUsers) { // This user has been replaced by a bot
-			const pickIdx = sess.disconnectedUsers[userID].bot.pick(sess.boosters[boosterIndex]);
-			sess.disconnectedUsers[userID].pickedCards.push(sess.boosters[boosterIndex][pickIdx]);
-			sess.boosters[boosterIndex].splice(pickIdx, 1);
-			++sess.pickedCardsThisRound;
-		} else {
-			Connections[userID].pickedThisRound = false;
-			Connections[userID].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: Sessions[sessionID].boosters[boosterIndex]});
-		}
-		++index;
-	}
-	
-	sess.startCountdown(); // Starts countdown now that everyone has their booster
-	
-	// Bots picks
-	for(let i = index; i < totalVirtualPlayers; ++i) {
-		const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
-		const booster = sess.boosters[boosterIndex];
-		const botIndex = i % sess.bots; // ?
-		const removedIdx = sess.botsInstances[botIndex].pick(booster);
-		sess.boosters[boosterIndex].splice(removedIdx, 1);
-	}
-	++sess.round;
-}
-
-function resumeDraft(sessionID) {
-	log(`Restarting draft for session ${sessionID}.`, FgYellow);
-	Sessions[sessionID].resumeCountdown();
-	emitMessage(sessionID, 'Player reconnected', `Resuming draft...`);
-}
-
-function endDraft(sessionID) {
-	Sessions[sessionID].drafting = false;
-	
-	Sessions[sessionID].stopCountdown();
-	
-	let draftLog = {};
-	for(let user of Sessions[sessionID].getSortedHumanPlayers()) {
-		draftLog[user] = {
-			userName: Connections[user].userName,
-			userID: user,
-			cards: Connections[user].pickedCards
-		};
-	}
-	for(let i = 0; i < Sessions[sessionID].bots; ++i) {
-		draftLog[`Bot #${i}`] = {
-			userName: `Bot #${i}`,
-			userID: 0,
-			cards: Sessions[sessionID].botsInstances[i].cards
-		};
-	}
-	
-	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('endDraft');
-		Connections[user].socket.emit('draftLog', draftLog);
-	}
-	log(`Session ${sessionID} draft ended.`);
 }
 
 // Serve files in the public directory
@@ -902,62 +920,83 @@ function getUserID(req, res) {
 	}
 }
 
-function replaceDisconnectedPlayers(userID, sessionID) {
-	let sess = Sessions[sessionID];
-	if(sess.owner != userID || !sess.drafting)
-		return;
-	
-	log("Replacing disconnected players with bots!", FgRed);
-
-	for(let uid in sess.disconnectedUsers) {
-		sess.disconnectedUsers[uid].bot = new Bot();
-		for(let c of sess.disconnectedUsers[uid].pickedCards) {
-			sess.disconnectedUsers[uid].bot.pick([c]);
-		}
-		
-		if(!sess.disconnectedUsers[uid].pickedThisRound) {
-			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
-			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
-			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
-			const playerIdx = sess.getSortedHumanPlayers().indexOf(uid);
-			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
-			const pickIdx = sess.disconnectedUsers[uid].bot.pick(sess.boosters[boosterIndex]);
-			sess.disconnectedUsers[uid].pickedCards.push(sess.boosters[boosterIndex][pickIdx]);
-			sess.boosters[boosterIndex].splice(pickIdx, 1);
-			sess.disconnectedUsers[uid].pickedThisRound = true;
-			++sess.pickedCardsThisRound;
-			if(sess.pickedCardsThisRound == sess.getHumanPlayerCount()) {
-				nextBooster(sessionID);
-			}
-		}
-	}
-}
-
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID, sessionID) {
 	if(sessionID in Sessions) {
-		if(Sessions[sessionID].drafting) {
-			Sessions[sessionID].stopCountdown();
-			Sessions[sessionID].disconnectedUsers[userID] = {
+		let sess = Sessions[sessionID];
+		if(sess.drafting) {
+			sess.stopCountdown();
+			sess.disconnectedUsers[userID] = {
 				pickedThisRound: Connections[userID].pickedThisRound,
 				pickedCards: Connections[userID].pickedCards
 			};
 		}
 		
-		Sessions[sessionID].users.delete(userID);
+		sess.users.delete(userID);
 		Connections[userID].sessionID = undefined;
-		if(Sessions[sessionID].users.size == 0) {
-			let wasPublic = Sessions[sessionID].isPublic;
+		if(sess.users.size == 0) {
+			let wasPublic = sess.isPublic;
 			delete Sessions[sessionID];
 			if(wasPublic)
 				io.emit('publicSessions', getPublicSessions());
 		} else {
 			// User was the owner of the session, transfer ownership.
-			if(Sessions[sessionID].owner == userID) {
-				Sessions[sessionID].owner = Sessions[sessionID].users.values().next().value;
+			if(sess.owner == userID) {
+				sess.owner = sess.users.values().next().value;
 			}
-			notifyUserChange(sessionID);
+			sess.notifyUserChange();
 		}
+	}
+}
+
+function joinSession(sessionID, userID) {
+	// Session exists and is drafting
+	if(sessionID in Sessions && Sessions[sessionID].drafting) {
+		log(`${userID} wants to join drafting session; disconnectedUsers:`);
+		let sess = Sessions[sessionID];
+		console.log(sess.disconnectedUsers);
+		if(userID in sess.disconnectedUsers) {
+			const playerIdx = sess.getSortedHumanPlayers().indexOf(userID);
+			const totalVirtualPlayers = sess.getTotalVirtualPlayers();
+			Connections[userID].pickedThisRound = sess.disconnectedUsers[userID].pickedThisRound;
+			Connections[userID].pickedCards = sess.disconnectedUsers[userID].pickedCards;
+
+			const evenRound = ((sess.boosters.length / totalVirtualPlayers) % 2) == 0;
+			const boosterOffset = evenRound ? -(sess.round - 1) : (sess.round - 1); // Round has already advanced (see nextBooster)
+			const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
+		
+			addUserToSession(userID, sessionID);
+			Connections[userID].socket.emit('rejoinDraft', {
+				pickedThisRound: sess.disconnectedUsers[userID].pickedThisRound,
+				pickedCards: sess.disconnectedUsers[userID].pickedCards,
+				boosterIndex: boosterIndex,
+				booster: sess.boosters[boosterIndex]
+			});
+			delete sess.disconnectedUsers[userID];
+
+			if(Object.keys(sess.disconnectedUsers).length == 0)
+				sess.resumeDraft();
+		} else {
+			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
+			// Fallback to previous session if possible, or generate a new one
+			if(!Connections[userID].sessionID)
+				sessionID = uuidv1();
+			else
+				sessionID = Connections[userID].sessionID;
+			Connections[userID].socket.emit('setSession', sessionID);
+			joinSession(sessionID, userID);
+		}
+	// Session exists and is full
+	} else if(sessionID in Sessions && Sessions[sessionID].users.size >= Sessions[sessionID].maxPlayers) {
+		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
+		if(!Connections[userID].sessionID)
+			sessionID = uuidv1();
+		else
+			sessionID = Connections[userID].sessionID;
+		Connections[userID].socket.emit('setSession', sessionID);
+		joinSession(sessionID, userID);
+	} else {
+		addUserToSession(userID, sessionID);
 	}
 }
 
@@ -972,27 +1011,7 @@ function addUserToSession(userID, sessionID) {
 	}
 	Connections[userID].sessionID = sessionID;
 	syncSessionOptions(userID);
-	notifyUserChange(sessionID);
-}
-
-function notifyUserChange(sessionID) {
-	// Send only necessary data
-	let user_info = [];
-	for(let user of Sessions[sessionID].users) {
-		let u = Connections[user];
-		user_info.push({
-			userID: u.userID, 
-			userName: u.userName,
-			collection: u.collection,
-			readyToDraft: u.readyToDraft
-		});
-	}
-	
-	// Send to all session users
-	for(let user of Sessions[sessionID].users) {
-		Connections[user].socket.emit('sessionOwner', Sessions[sessionID].owner);
-		Connections[user].socket.emit('sessionUsers', user_info);
-	}
+	Sessions[sessionID].notifyUserChange();
 }
 
 // Log helper
