@@ -962,7 +962,6 @@ function removeUserFromSession(userID, sessionID) {
 }
 
 function addUserToSession(userID, sessionID) {
-	console.log(`Add ${userID} to ${sessionID}`);
 	if(Connections[userID].sessionID)
 		removeUserFromSession(userID, Connections[userID].sessionID);
 	if(sessionID in Sessions) {

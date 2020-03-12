@@ -4,12 +4,13 @@ body {
 	background-image: url('../img/eld_1080p_en.jpg'), radial-gradient(ellipse at 75% 30%, rgba(32,32,32,0.8), rgba(32,32,32,1) 50%);
 	background-blend-mode: saturation;
 	background-size: 100%;
+	background-repeat: none;
 	color: #DDD;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	
 	position: relative;
-	min-height: calc(100vh - 3em);
-	padding-bottom: 3em;
+	min-height: calc(100vh - 2em);
+	padding-bottom: 2em;
 }
 
 footer {
