@@ -196,17 +196,7 @@ var app = new Vue({
 				app.sessionID = data;
 			});
 			
-			this.socket.on('signalPick', function(data) {
-				for(let u of app.sessionUsers) {
-					if(u.userID == data) {
-						u.pickedThisRound = true;
-						break;
-					}
-				}
-			});
-			
-			this.socket.on('sessionUsers', function(data) {
-				let users = data;
+			this.socket.on('sessionUsers', function(users) {
 				for(let u of users) {
 					u.pickedThisRound = false;
 				}
@@ -236,6 +226,16 @@ var app = new Vue({
 				}
 				
 				app.sessionUsers = users;
+			});
+			
+			this.socket.on('updateUser', function(data) {
+				let userIdx = app.sessionUsers.findIndex(u => u.userID == data.userID);
+				if(userIdx == -1)
+					return;
+				
+				for(let prop in data.updatedProperties) {
+					app.sessionUsers[userIdx][prop] = data.updatedProperties[prop];
+				}
 			});
 			
 			this.socket.on('sessionOwner', function(ownerID) {

@@ -513,8 +513,17 @@ io.on('connection', function(socket) {
 	
 	socket.on('setUserName', function(userName) {
 		let userID = query.userID;
+		let sessionID = Connections[userID].sessionID;
+		
 		Connections[userID].userName = userName;
-		Sessions[Connections[userID].sessionID].notifyUserChange();
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					userName: userName
+				}
+			});
+		}
 	});
 
 	socket.on('setSession', function(sessionID) {
@@ -528,13 +537,20 @@ io.on('connection', function(socket) {
 	
 	socket.on('setCollection', function(collection) {
 		let userID = query.userID;
+		let sessionID = Connections[userID].sessionID;
 		
 		if(typeof collection !== 'object' || collection === null)
 			return;
 		
-		let sessionID = Connections[userID].sessionID;
 		Connections[userID].collection = collection;
-		Sessions[sessionID].notifyUserChange();
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					collection: collection
+				}
+			});
+		}
 	});
 	
 	socket.on('useCollection', function(useCollection) {
@@ -548,7 +564,14 @@ io.on('connection', function(socket) {
 			return;
 		
 		Connections[userID].useCollection = useCollection;
-		Sessions[sessionID].notifyUserChange();
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					useCollection: useCollection
+				}
+			});
+		}
 	});
 	
 	socket.on('chatMessage', function(message) {
@@ -570,6 +593,14 @@ io.on('connection', function(socket) {
 			return;
 		
 		Connections[userID].readyToDraft = readyToDraft;
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					readyToDraft: readyToDraft
+				}
+			});
+		}
 		
 		let allReady = true;
 		for(let user of Sessions[sessionID].users) {
@@ -582,8 +613,6 @@ io.on('connection', function(socket) {
 		if(allReady && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			Sessions[sessionID].startDraft();
 		}
-		
-		Sessions[sessionID].notifyUserChange();
 	});
 	
 	// Removes picked card from corresponding booster and notify other players.
@@ -609,8 +638,14 @@ io.on('connection', function(socket) {
 		}
 		
 		// Signal users
-		for(let user of Sessions[sessionID].users)
-			Connections[user].socket.emit('signalPick', userID);
+		for(let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					pickedThisRound: true
+				}
+			});
+		}
 		
 		++Sessions[sessionID].pickedCardsThisRound;
 		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].getHumanPlayerCount()) {
