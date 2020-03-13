@@ -45,6 +45,14 @@ function eraseCookie(name) {
     document.cookie = name+'=; Max-Age=-99999999;';  
 }
 
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
 Vue.component('modal', {
   template: '#modal-template'
 })
@@ -426,6 +434,10 @@ var app = new Vue({
 					console.error(e);
 				}
 			}
+			
+			let urlParamSession = getUrlVars()['session'];
+			if(urlParamSession)
+				this.sessionID = decodeURI(urlParamSession);
 		},
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
@@ -583,6 +595,18 @@ var app = new Vue({
 				position: 'top-end',
 				type: 'success',
 				title: 'Card list exported to clipboard!',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
+		},
+		sessionURLToClipboard: function() {
+			copyToClipboard(`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(this.sessionID)}`);
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: 'success',
+				title: 'Session link copied to clipboard!',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500

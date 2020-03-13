@@ -106,7 +106,8 @@
 				<span id="session-controls">
 					<label for="session-id" title="Share it with your friends!">Session ID</label>
 					<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
-					<i class="far fa-fw" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID" title="Show/Hide your session ID."></i>
+					<i class="far fa-fw clickable" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID" title="Show/Hide your session ID."></i>
+					<i class="fas fa-share-square clickable" style="padding:4px" title="Share" @click="sessionURLToClipboard"></i>
 				</span>
 				<span class="generic-container">
 					<span v-bind:class="{ disabled: sessionOwner != userID }">
