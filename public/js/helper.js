@@ -55,15 +55,24 @@ const copyToClipboard = str => {
 	}
 };
 
-function exportMTGA(arr, language) {
+function cardToMTGAExport(c, language) {
+	let set = c.set.toUpperCase();
+	if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
+	let name = c.printed_name[language];
+	let idx = name.indexOf('//');
+	if(idx != -1)
+		name = name.substr(0, idx - 1);
+	return `1 ${name} (${set}) ${c.collector_number}\n`
+}
+
+function exportMTGA(deck, sideboard, language) {
 	let str = "";
-	for(c of arr) {
-		let set = c.set.toUpperCase();
-		if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
-		let name = c.name;
-		if(language != 'en')
-			name = c.printed_name[language];
-		str += `1 ${name} (${set}) ${c.collector_number}\n`
+	for(let c of deck)
+		str += cardToMTGAExport(c, language);
+	if(sideboard && sideboard.length > 0) {
+		str += '\n';
+		for(let c of sideboard)
+			str += cardToMTGAExport(c, language);
 	}
 	return str;
 }

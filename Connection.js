@@ -1,9 +1,7 @@
 'use strict'
 
 let Connections = {};
-
-module.exports.Connections = Connections; 
-module.exports.Connection = function(socket, userID, userName) {
+function Connection(socket, userID, userName) {
 	this.socket = socket;
 	this.userID = userID;
 	this.userName = userName;
@@ -15,3 +13,6 @@ module.exports.Connection = function(socket, userID, userName) {
 	this.pickedThisRound = false;
 	this.pickedCards = [];
 };
+
+module.exports.Connections = Connections; 
+module.exports.Connection = Connection;

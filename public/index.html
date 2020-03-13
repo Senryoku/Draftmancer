@@ -59,17 +59,9 @@
 			<span>
 				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
 				<span class="v-separator"></span>
-				<label for="language">Language</label>
+				<label for="language" title="Controls the display language of cards.">Language</label>
 				<select v-model="language" name="language">
 					<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
-				</select>
-				<span class="v-separator"></span>
-				<label for="card-order">Card Order</label>
-				<select v-model="cardOrder" name="card-order">
-					<option value="">Booster</option>
-					<option value="CMC">CMC</option>
-					<option value="Color">Color</option>
-					<option value="Rarity">Rarity</option>
 				</select>
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
@@ -177,7 +169,6 @@
 				</li>
 			</ul>
 			<div>
-				<small v-if="!drafting">(Draft will begin when the session has at least 2 players and everybody is ready.)</small>
 				<small v-if="drafting && bots > 0">(...and {{bots}} bad bot(s)!)</small>
 			</div>
 			<div class="chat">
@@ -203,7 +194,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ Math.floor(cardSelection.length/14) + 1 }}, Pick {{ (cardSelection.length % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ Math.floor((deck.length + sideboard.length)/14) + 1 }}, Pick {{ ((deck.length + sideboard.length) % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">
@@ -214,43 +205,74 @@
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 		</template>
-		<div v-show="draftingState == DraftState.Brewing" class="container">
+		<div class="container" v-show="(deck !== undefined && deck.length > 0) || draftingState == DraftState.Picking || this.draftingState == DraftState.Brewing">
 			<div id="brewing-controls" class="controls">
 				<h2>Deck ({{deck.length}})</h2>
-				<template v-if="deck.length > 0">
-					<button type="button" @click="exportDeck">Export Deck to MTGA</button>
-				</template>
+				<label for="card-order">Card Display</label>
+				<select v-model="cardOrder" name="card-order">
+					<option value="CMCColumns">CMC Columns</option>
+					<option value="">Pick Order</option>
+					<option value="CMC">Order by CMC</option>
+					<option value="Color">Order by Color</option>
+					<option value="Rarity">Order by Rarity</option>
+				</select>
+				<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
 			</div>
-			<div class="deck card-container">
+			<div class="card-container" :class="cardOrder == 'CMCColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="deck.length == 0">
 					<div><h3>Your deck is currently empty!</h3><p>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</p></div>
 				</template>
-				<div v-for="cmc_column in deckCMC" class="cmc-column">
-					<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-				</div>
+				<template v-else>
+					<template v-if="cardOrder == 'CMCColumns'">
+						<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
+							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
+						</div>
+					</template>
+					<template v-else-if="cardOrder == 'CMC'">
+						<figure is="card" v-for="(card, index) in deckCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else-if="cardOrder == 'Color'">
+						<figure is="card" v-for="(card, index) in deckColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else-if="cardOrder == 'Rarity'">
+						<figure is="card" v-for="(card, index) in deckRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else>
+						<figure is="card" v-for="(card, index) in deck" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+				</template>
 			</div>
 		</div>
-		<div v-if="cardSelection != undefined && cardSelection.length > 0" id="card-pool-container" class="container">
+		<div v-show="(sideboard != undefined && sideboard.length > 0) || draftingState == DraftState.Picking || this.draftingState == DraftState.Brewing" id="card-pool-container" class="container">
 			<div id="card-pool-controls" class="controls">
-				<h2>Your cards</h2>
-				<button type="button" @click="exportSelection">Export to MTGA</button>
+				<h2>Sideboard ({{sideboard.length}})</h2>
 			</div>
-			<div class="card-pool card-container">
-				<template v-if="cardOrder == 'CMC'">
-					<figure is="card" v-for="(card, index) in selectionCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-				</template>
-				<template v-else-if="cardOrder == 'Color'">
-					<figure is="card" v-for="(card, index) in selectionColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-				</template>
-				<template v-else-if="cardOrder == 'Rarity'">
-					<figure is="card" v-for="(card, index) in selectionRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+			<div class="card-container" :class="cardOrder == 'CMCColumns'? 'card-columns' : 'card-pool'">
+				<template v-if="sideboard.length == 0">
+					<div><h3>Your sideboard is currently empty!</h3></div>
 				</template>
 				<template v-else>
-					<figure is="card" v-for="(card, index) in cardSelection" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					<template v-if="cardOrder == 'CMCColumns'">
+						<div v-for="cmc_column in sideboardColumnCMC" class="cmc-column">
+							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						</div>
+					</template>
+					<template v-else-if="cardOrder == 'CMC'">
+						<figure is="card" v-for="(card, index) in sideboardCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else-if="cardOrder == 'Color'">
+						<figure is="card" v-for="(card, index) in sideboardColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else-if="cardOrder == 'Rarity'">
+						<figure is="card" v-for="(card, index) in sideboardRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
+					<template v-else>
+						<figure is="card" v-for="(card, index) in sideboard" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+					</template>
 				</template>
 			</div>
 		</div>
-		<div class="welcome" v-if="!drafting && (cardSelection == undefined || cardSelection.length == 0)">
+	<div class="welcome" v-if="!drafting && (deck == undefined || deck.length == 0)">
 			<h1>Welcome to MTGADraft!</h1>
 			<p class="important">
 				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!
@@ -264,30 +286,34 @@
 				</ol>
 			</p>
 			<h2>Options</h2>
-			<p>
-				Personal options:
-				<ul>
-					<li>Language: Adjusts the display language of cards.</li>
-					<li>Card Order: Adjusts the order of cards within a sealed pool or your drafted cards.</li>
-					<li>Restrict to Collection: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
-					<li>Session ID: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
-				</ul>
-			</p>
-			<p>
-				Session options (Only accessible to the session owner, shared by everyone in your session):
-				<ul>
-					<li>Ignore Collections: Draft with all cards of the selected set(s), ignoring player collections and preferences. (Also affects sealed)</li>
-					<li>Set: Select a set to draft using only with cards from this set. (Also affects sealed)</li>
-				(Click <i class="fa-ellipsis-v fa"></i> for these additional options:)
-					<li>Public: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
-					<li>Maximum Players: Limits the number of players that can join your session.</li>
-					<li>Maximum Rarity: Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)</li>
-				(Draft options)
-					<li>Boosters per Player: Defaults to 3.</li>
-					<li>Bots: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
-					<li>Pick Timer: Maximum time in seconds allowed to pick a card in each booster. Default is 60 seconds, 0 means the timer is disabled.</li>
-				</ul>
-			</p>
+			<div style="display: flex">
+				<div style="width: 50%">
+					Session options (Only accessible to the session owner, shared by everyone in your session):
+					<ul>
+						<li><span class="option-name">Ignore Collections</span>: Draft with all cards of the selected set(s), ignoring player collections and preferences. (Also affects sealed)</li>
+						<li><span class="option-name">Set</span>: Select a set to draft using only with cards from this set. (Also affects sealed)</li>
+					(Click <i class="fa-ellipsis-v fa"></i> for these additional options:)
+						<li><span class="option-name">Public</span>: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
+						<li><span class="option-name">Maximum Players</span>: Limits the number of players that can join your session.</li>
+						<li><span class="option-name">Maximum Rarity</span>: Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)</li>
+						<li><span class="option-name">Color Balance</span>: If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random. (Also affects sealed)</li>
+					(Draft options)
+						<li><span class="option-name">Boosters per Player</span>: Defaults to 3.</li>
+						<li><span class="option-name">Bots</span>: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
+						<li><span class="option-name">Pick Timer</span>: Maximum time in seconds allowed to pick a card in each booster. Default is 60 seconds, 0 means the timer is disabled.</li>
+					</ul>
+				</div>
+				<div style="width: 50%">
+					Personal options:
+					<ul>
+						<li><span class="option-name">Ready to Draft</span>: Signals to other players in your session that you are ready to start a draft. <strong>Draft will begin  automatically when the session has at least 2 players and everybody is ready.</strong></li>
+						<li><span class="option-name">Language</span>: Adjusts the display language of cards.</li>
+						<li><span class="option-name">Restrict to Collection</span>: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
+						<li><span class="option-name">Session ID</span>: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
+						<li><span class="option-name">Card Display</span>: Adjusts the order of cards within a sealed pool or your drafted cards.</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 		<modal v-if="displayDraftLog && draftLog" @close="displayDraftLog = false">
 			<h2 slot="header">Draft Log</h2>

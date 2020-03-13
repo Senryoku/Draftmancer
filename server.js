@@ -54,7 +54,7 @@ io.on('connection', function(socket) {
 		let userID = query.userID;
 		if(userID in Connections) {
 			console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
-			removeUserFromSession(userID, Connections[userID].sessionID);
+			removeUserFromSession(userID);
 			delete Connections[userID];
 		}
 	});
@@ -405,8 +405,9 @@ function getUserID(req, res) {
 }
 
 // Remove user from previous session and cleanup if empty
-function removeUserFromSession(userID, sessionID) {
-	if(sessionID in Sessions) {
+function removeUserFromSession(userID) {
+	let sessionID = Connections[userID].sessionID;
+	if(sessionID in Sessions && Sessions[sessionID].users.has(userID)) {
 		let sess = Sessions[sessionID];
 		if(sess.drafting) {
 			sess.stopCountdown();
@@ -449,17 +450,17 @@ function joinSession(sessionID, userID) {
 			else
 				sessionID = Connections[userID].sessionID;
 			Connections[userID].socket.emit('setSession', sessionID);
-			joinSession(sessionID, userID);
+			//joinSession(sessionID, userID);
 		}
 	// Session exists and is full
-	} else if(sessionID in Sessions && Sessions[sessionID].users.size >= Sessions[sessionID].maxPlayers) {
+	} else if(sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
 		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
 		if(!Connections[userID].sessionID)
 			sessionID = uuidv1();
 		else
 			sessionID = Connections[userID].sessionID;
 		Connections[userID].socket.emit('setSession', sessionID);
-		joinSession(sessionID, userID);
+		//joinSession(sessionID, userID);
 	} else {
 		addUserToSession(userID, sessionID);
 	}

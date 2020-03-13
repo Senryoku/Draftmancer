@@ -129,13 +129,13 @@ var app = new Vue({
 		languages: window.constants.Languages,
 		language: 'en',
 		sets: window.constants.MTGSets,
-		cardOrder: "",
+		cardOrder: "CMCColumns",
 		setsInfos: undefined,
 		boosterIndex: undefined,
 		draftingState: undefined,
 		selectedCardId: undefined,
-		cardSelection: [],
 		deck: [],
+		sideboard: [],
 		
 		showSessionOptionsDialog: false,
 		// Draft Log Modal
@@ -180,10 +180,6 @@ var app = new Vue({
 			
 			this.socket.on('reconnect', function(attemptNumber) {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
-				app.socket.emit('setCollection', app.collection);
-				// TODO: Could this be avoided?
-				app.socket.emit('setSession', app.sessionID);
-				app.socket.emit('setName', app.userName);
 				
 				Swal.fire({
 					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
@@ -320,8 +316,8 @@ var app = new Vue({
 			
 				app.drafting = true;
 				app.readyToDraft = false;
+				app.sideboard = [];
 				app.deck = [];
-				app.cardSelection = [];
 				Swal.fire({
 					position: 'center',
 					type: 'success',
@@ -336,10 +332,10 @@ var app = new Vue({
 				app.drafting = true;
 				app.readyToDraft = false;
 				
+				app.sideboard = [];
 				app.deck = [];
-				app.cardSelection = [];
 				for(let c of data.pickedCards)
-					app.cardSelection.push(app.cards[c]);
+					app.deck.push(app.cards[c]);
 				
 				app.boosterIndex = data.boosterIndex;
 				app.booster = [];
@@ -395,10 +391,10 @@ var app = new Vue({
 			});
 			
 			this.socket.on('setCardSelection', function(data) {
+				app.sideboard = [];
 				app.deck = [];
-				app.cardSelection = [];
 				for(let c of data.flat()) {
-					app.cardSelection.push(app.genCard(c));
+					app.deck.push(app.genCard(c));
 				}
 				app.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -450,7 +446,7 @@ var app = new Vue({
 		pickCard: function() {
 			this.draftingState = DraftState.Waiting;
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
-			this.cardSelection.push(this.cards[this.selectedCardId]);
+			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},
 		forcePick: function() {
@@ -462,23 +458,12 @@ var app = new Vue({
 				this.selectedCardId = this.booster[randomIdx].id;
 			}
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
-			this.cardSelection.push(this.cards[this.selectedCardId]);
+			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 			this.draftingState = DraftState.Waiting;
 		},
-		addToDeck: function(e, c) {
-			if(this.draftingState != DraftState.Brewing)
-				return;
-			for(let i = 0; i < this.cardSelection.length; ++i) {
-				if(this.cardSelection[i] == c) {
-					this.cardSelection.splice(i, 1);
-					break;
-				}
-			}
-			this.deck.push(c);
-		},
-		removeFromDeck: function(e, c) {
-			if(this.draftingState != DraftState.Brewing)
+		removeFromDeck: function(e, c) { // From deck to sideboard
+			if(this.draftingState != DraftState.Picking && this.draftingState != DraftState.Brewing)
 				return;
 			for(let i = 0; i < this.deck.length; ++i) {
 				if(this.deck[i] == c) {
@@ -486,7 +471,18 @@ var app = new Vue({
 					break;
 				}
 			}
-			this.cardSelection.push(c);
+			this.sideboard.push(c);
+		},
+		addToDeck: function(e, c) { // From sideboard to deck
+			if(this.draftingState != DraftState.Picking && this.draftingState != DraftState.Brewing)
+				return;
+			for(let i = 0; i < this.sideboard.length; ++i) {
+				if(this.sideboard[i] == c) {
+					this.sideboard.splice(i, 1);
+					break;
+				}
+			}
+			this.deck.push(c);
 		},
 		// Collection management
 		setCollection: function(json) {
@@ -536,24 +532,12 @@ var app = new Vue({
 			reader.readAsText(file);
 		},
 		exportDeck: function() {
-			copyToClipboard(exportMTGA(this.deck, this.language));
+			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language));
 			Swal.fire({
 				toast: true,
 				position: 'top-end',
 				type: 'success',
 				title: 'Deck exported to clipboard!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
-			});
-		},
-		exportSelection: function() {
-			copyToClipboard(exportMTGA(this.cardSelection, this.language));
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'success',
-				title: 'Cards exported to clipboard!',
 				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 				showConfirmButton: false,
 				timer: 1500
@@ -565,7 +549,7 @@ var app = new Vue({
 				let cards = []
 				for(let c of this.draftLog[e].cards)
 					cards.push(this.cards[c]);
-				this.draftLog[e].exportString = exportMTGA(cards, this.language);
+				this.draftLog[e].exportString = exportMTGA(cards, null, this.language);
 			}
 			copyToClipboard(JSON.stringify(draftLogFull, null, "\t"));
 			Swal.fire({
@@ -582,7 +566,7 @@ var app = new Vue({
 			let cards = []
 			for(let c of this.draftLog[id].cards)
 				cards.push(this.cards[c]);
-			copyToClipboard(exportMTGA(cards, this.language), null, "\t");
+			copyToClipboard(exportMTGA(cards, null, this.language), null, "\t");
 			Swal.fire({
 				toast: true,
 				position: 'top-end',
@@ -606,7 +590,7 @@ var app = new Vue({
 			});
 		},
 		distributeSealed: function(boosterCount) {
-			if(this.cardSelection.length > 0) {
+			if(this.deck.length > 0) {
 				Swal.fire({
 					title: 'Are you sure?',
 					text: "Distributing sealed boosters will reset everyone's cards/deck!",
@@ -669,7 +653,38 @@ var app = new Vue({
 			if(boosterCount) {
 				this.distributeSealed(boosterCount);
 			}
-		}
+		},
+		columnCMC: function(cards) {
+			let a = cards.reduce((acc, item) => {
+			  if (!acc[item.cmc])
+				acc[item.cmc] = [];
+			  acc[item.cmc].push(item);
+			  return acc;
+			}, {});
+			return a;
+		},
+		orderByCMC: function(cards) {
+			return [...cards].sort(function (lhs, rhs) {
+				if(lhs.cmc == rhs.cmc)
+					return orderColor(lhs.color_identity, rhs.color_identity);
+				return lhs.cmc - rhs.cmc;
+			});
+		},
+		orderByColor: function(cards) {
+			return [...cards].sort(function (lhs, rhs) {
+				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
+					return lhs.cmc - rhs.cmc;
+				return orderColor(lhs.color_identity, rhs.color_identity);
+			});
+		},
+		orderByRarity: function(cards) {
+			const order = {'mythic' : 0, 'rare' : 1, 'uncommon': 2, 'common': 3};
+			return [...cards].sort(function (lhs, rhs) {
+				if(order[lhs.rarity] == order[rhs.rarity])
+					return lhs.cmc - rhs.cmc;
+				return order[lhs.rarity] - order[rhs.rarity];
+			});
+		},
 	},
 	computed: {
 		displaySets: function() {
@@ -719,37 +734,33 @@ var app = new Vue({
 		hasCollection: function() {
 			return !isEmpty(this.collection);
 		},
+		
+		deckColumnCMC: function() {
+			return this.columnCMC(this.deck);
+		},
 		deckCMC: function() {
-			let a = this.deck.reduce((acc, item) => {
-			  if (!acc[item.cmc])
-				acc[item.cmc] = [];
-			  acc[item.cmc].push(item);
-			  return acc;
-			}, {});
-			return a;
+			return this.orderByCMC(this.deck);
 		},
-		selectionCMC: function() {
-			return [...this.cardSelection].sort(function (lhs, rhs) {
-				if(lhs.cmc == rhs.cmc)
-					return orderColor(lhs.color_identity, rhs.color_identity);
-				return lhs.cmc - rhs.cmc;
-			});
+		deckColor: function() {
+			return this.orderByColor(this.deck);
 		},
-		selectionColor: function() {
-			return [...this.cardSelection].sort(function (lhs, rhs) {
-				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					return lhs.cmc - rhs.cmc;
-				return orderColor(lhs.color_identity, rhs.color_identity);
-			});
+		deckRarity: function() {
+			return this.orderByRarity(this.deck);
 		},
-		selectionRarity: function() {
-			const order = {'mythic' : 0, 'rare' : 1, 'uncommon': 2, 'common': 3};
-			return [...this.cardSelection].sort(function (lhs, rhs) {
-				if(order[lhs.rarity] == order[rhs.rarity])
-					return lhs.cmc - rhs.cmc;
-				return order[lhs.rarity] - order[rhs.rarity];
-			});
+		
+		sideboardColumnCMC: function() {
+			return this.columnCMC(this.sideboard);
 		},
+		sideboardCMC: function() {
+			return this.orderByCMC(this.sideboard);
+		},
+		sideboardColor: function() {
+			return this.orderByColor(this.sideboard);
+		},
+		sideboardRarity: function() {
+			return this.orderByRarity(this.sideboard);
+		},
+		
 		userByID: function() {
 			let r = {};
 			for(let u of this.sessionUsers)
@@ -804,7 +815,7 @@ var app = new Vue({
 			setCookie('userName', this.userName);
 		},
 		readyToDraft: function() {
-			if(this.readyToDraft && this.cardSelection.length > 0) {
+			if(this.readyToDraft && this.deck.length > 0) {
 				Swal.fire({
 					title: 'Are you sure?',
 					text: "Launching a draft will reset your cards/deck!",

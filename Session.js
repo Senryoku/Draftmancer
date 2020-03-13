@@ -55,19 +55,21 @@ function Session(id, owner) {
 	this.addUser = function (userID) {
 		Connections[userID].sessionID = this.id;
 		this.users.add(userID);
-		this.syncSessionOptions(userID);
 		this.notifyUserChange();
+		this.syncSessionOptions(userID);
 	};
 
 	this.syncSessionOptions = function(userID) {
 		Connections[userID].socket.emit('sessionOptions', {
+			sessionOwner: this.owner,
 			setRestriction: this.setRestriction,
+			isPublic: this.isPublic,
+			ignoreCollections: this.ignoreCollections,
 			boostersPerPlayer: this.boostersPerPlayer,
 			bots: this.bots,
-			isPublic: this.isPublic,
-			sessionOwner: this.owner,
 			maxPlayers: this.maxPlayers,
-			maxRarity: this.maxRarity
+			maxRarity: this.maxRarity,
+			colorBalance: this.colorBalance
 		});
 	}
 	

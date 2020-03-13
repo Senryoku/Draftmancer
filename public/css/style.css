@@ -280,6 +280,10 @@ a:hover {
 	font-size: 1.4rem;
 }
 
+.option-name {
+	font-variant: small-caps;
+}
+
 label {
 	margin: 0.25em;
 }
@@ -576,7 +580,7 @@ ul.player-list {
 
 /* Deck display */
 
-.deck {
+.card-columns {
 	justify-content: flex-start;
 	position: relative;
 	padding: 0.75em;
