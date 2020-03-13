@@ -474,6 +474,7 @@ ul.player-list {
 	background: #444;
 	color: #DDD;
 	font-weight: bold;
+	word-wrap: anywhere;
 }
 
 .chat-history li .chat-message {
