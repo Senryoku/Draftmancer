@@ -49,8 +49,8 @@ ForceParse = len(sys.argv) > 1 and sys.argv[1].lower() == "parse"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
 ForceUpdateMTGAData = len(sys.argv) > 1 and sys.argv[1].lower() == "mtga"
 
-MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_3bd5b82dadbd15fd73622330b3396c64.mtga"
-MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_7c6e2fd8116d32ea30df234867f770c8.mtga"
+MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_c9f4f3eee920063a46a2d4a42654ab5b.mtga"
+MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_296741a1382e4e59c7e0e658f9ff376c.mtga"
 MTGALocalization = {}
 #if not or ForceUpdateMTGAData:
 with open(MTGALocFile, 'r', encoding="utf8") as file:

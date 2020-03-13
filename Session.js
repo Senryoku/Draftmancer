@@ -51,12 +51,15 @@ function Session(id, owner) {
 	};
 
 	this.syncSessionOptions = function(userID) {
-		// TODO: Merge these in a single call.
-		Connections[userID].socket.emit('setRestriction', this.setRestriction);
-		Connections[userID].socket.emit('boostersPerPlayer', this.boostersPerPlayer);
-		Connections[userID].socket.emit('bots', this.bots);
-		Connections[userID].socket.emit('isPublic', this.isPublic);
-		Connections[userID].socket.emit('sessionOwner', this.owner);
+		Connections[userID].socket.emit('sessionOptions', {
+			setRestriction: this.setRestriction,
+			boostersPerPlayer: this.boostersPerPlayer,
+			bots: this.bots,
+			isPublic: this.isPublic,
+			sessionOwner: this.owner,
+			maxPlayers: this.maxPlayers,
+			maxRarity: this.maxRarity
+		});
 	}
 	
 	this.collection = function () {

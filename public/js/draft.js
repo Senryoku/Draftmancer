@@ -195,6 +195,17 @@ var app = new Vue({
 			this.socket.on('alreadyConnected', function(newID) {
 				app.userID = newID;
 			});
+			
+			this.socket.on('chatMessage', function(message) {
+				app.messagesHistory.push(message);
+				// TODO: Cleanup this?
+				let bubble = document.querySelector('#chat-bubble-' + message.author);
+				bubble.innerText = message.text;
+				bubble.style.opacity = 1;
+				if(bubble.timeoutHandler)
+					clearTimeout(bubble.timeoutHandler);
+				bubble.timeoutHandler = window.setTimeout(() => bubble.style.opacity = 0, 5000);
+			});
 
 			this.socket.on('publicSessions', function(sessions) {
 				app.publicSessions = sessions;
@@ -246,48 +257,38 @@ var app = new Vue({
 				}
 			});
 			
+			this.socket.on('sessionOptions', function(sessionOptions) {				
+				for(let prop in sessionOptions) {
+					app[prop] = sessionOptions[prop];
+				}
+			});
 			this.socket.on('sessionOwner', function(ownerID) {
 				// TODO: Validate OwnerID?
 				app.sessionOwner = ownerID;
 			});
-			
 			this.socket.on('isPublic', function(data) {
 				app.isPublic = data;
 			});
-			
 			this.socket.on('ignoreCollections', function(ignoreCollections) {
 				app.ignoreCollections = ignoreCollections;
 			});
-			
-			this.socket.on('chatMessage', function(message) {
-				app.messagesHistory.push(message);
-				// TODO: Cleanup this?
-				let bubble = document.querySelector('#chat-bubble-' + message.author);
-				bubble.innerText = message.text;
-				bubble.style.opacity = 1;
-				if(bubble.timeoutHandler)
-					clearTimeout(bubble.timeoutHandler);
-				bubble.timeoutHandler = window.setTimeout(() => bubble.style.opacity = 0, 5000);
-			});
-			
 			this.socket.on('boostersPerPlayer', function(data) {
 				app.boostersPerPlayer = parseInt(data);
 			});
-			
 			this.socket.on('bots', function(data) {
 				app.bots = parseInt(data);
 			});
-			
 			this.socket.on('setMaxPlayers', function(maxPlayers) {
 				app.maxPlayers = parseInt(maxPlayers);
 			});
-			
 			this.socket.on('setMaxRarity', function(maxRarity) {
 				app.maxRarity = maxRarity;
 			});
-			
 			this.socket.on('setRestriction', function(setRestriction) {
 				app.setRestriction = setRestriction;
+			});
+			this.socket.on('setPickTimer', function (timer) {
+				app.maxTimer = timer;
 			});
 			
 			this.socket.on('message', function(data) {
@@ -362,11 +363,6 @@ var app = new Vue({
 				});
 			});
 			
-			this.socket.on('sessionOwner', function(ownerID) {
-				// TODO: Validate OwnerID?
-				app.sessionOwner = ownerID;
-			});
-			
 			this.socket.on('nextBooster', function(data) {
 				app.boosterIndex = data.boosterIndex;
 				app.booster = [];
@@ -407,10 +403,6 @@ var app = new Vue({
 				// Hide waiting popup for sealed
 				if(Swal.isVisible())
 					Swal.close();
-			});
-			
-			this.socket.on('setPickTimer', function (timer) {
-				app.maxTimer = timer;
 			});
 
 			this.socket.on('timer', function (data) {
