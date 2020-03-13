@@ -89,25 +89,26 @@ function Session(id, owner) {
 			return collection;
 		}
 		
+		let useCollection = [];
+		for(let i = 0; i < user_list.length; ++i)
+			useCollection[i] = Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection);
+		
 		// Start from the first user's collection, or the list of all cards if not available/used
-		if(!Connections[user_list[0]].useCollection || isEmpty(Connections[user_list[0]].collection))
-			intersection = Object.keys(Cards).filter(c => c in Cards && Cards[c].in_booster);
+		if(!useCollection[0])
+			intersection = Object.keys(Cards).filter(c => Cards[c].in_booster);
 		else
 			intersection = Object.keys(Connections[user_list[0]].collection).filter(c => c in Cards && Cards[c].in_booster);
 		
 		// Shave every useless card id
 		for(let i = 1; i < user_list.length; ++i)
-			if(Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection))
-				intersection = intersection.filter(value => Object.keys(Connections[user_list[i]].collection).includes(value))
-		
+			if(useCollection[i])
+				intersection = Object.keys(Connections[user_list[i]].collection).filter(value => intersection.includes(value))
+			
 		// Compute the minimum count of each remaining card
 		for(let c of intersection) {
-			if(!Connections[user_list[0]].useCollection || isEmpty(Connections[user_list[0]].collection))
-				collection[c] = 4;
-			else
-				collection[c] = Connections[user_list[0]].collection[c];
+			collection[c] = useCollection[0] ? Connections[user_list[0]].collection[c] : 4;
 			for(let i = 1; i < user_list.length; ++i)
-				if(Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection))
+				if(useCollection[i])
 					collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
 		}
 		return collection;
