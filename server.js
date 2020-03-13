@@ -332,6 +332,21 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('setColorBalance', function(colorBalance) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(colorBalance == Sessions[sessionID].colorBalance)
+			return;
+		
+		Sessions[sessionID].colorBalance = colorBalance;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('sessionOptions', {colorBalance: Sessions[sessionID].colorBalance});
+		}
+	});
+	
 	socket.on('setPublic', function(isPublic) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)

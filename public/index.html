@@ -347,8 +347,8 @@
 		<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
 			<h2 slot="header">Additional Session Options</h2>
 			<div slot="body" class="option-column">
-				<div class="line">
-					<label for="is-public" title="Share your session ID with everyone.">Public</label>
+				<div class="line" title="Share your session ID with everyone.">
+					<label for="is-public">Public</label>
 					<div class="right">
 						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
 					</div>
@@ -363,11 +363,17 @@
 					<label for="maxRarity">Maximum Rarity</label>
 					<div class="right">
 						<select v-model="maxRarity">
-							<option>Mythic</option>
-							<option>Rare</option>
-							<option>Uncommon</option>
-							<option>Common</option>
+							<option value="mythic">Mythic</option>
+							<option value="rare">Rare</option>
+							<option value="uncommon">Uncommon</option>
+							<option value="common">Common</option>
 						</select>
+					</div>
+				</div>
+				<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
+					<label for="colorBalance">Color Balance</label>
+					<div class="right">
+						<input type="checkbox" v-model="colorBalance">
 					</div>
 				</div>
 			</div>

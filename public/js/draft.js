@@ -111,6 +111,7 @@ var app = new Vue({
 		boostersPerPlayer: 3,
 		maxPlayers: 8,
 		maxRarity: "Mythic",
+		colorBalance: true,
 		bots: 0,
 		setRestriction: "",
 		readyToDraft: false,
