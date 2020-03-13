@@ -870,6 +870,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('ignoreCollections', this.ignoreCollections);
+		},
+		colorBalance: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setColorBalance', this.colorBalance);
 		}
 	}
 });
