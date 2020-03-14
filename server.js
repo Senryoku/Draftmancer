@@ -40,13 +40,8 @@ io.on('connection', function(socket) {
 		socket.emit('alreadyConnected', query.userID);
 	}
 	
-	Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
-	
-	joinSession(query.sessionID, query.userID);
-	
 	socket.userID = query.userID;
-	
-	socket.emit('publicSessions', getPublicSessions());
+	Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
 	
 	// Messages
 	
@@ -390,6 +385,9 @@ io.on('connection', function(socket) {
 		}
 		Sessions[sessionID].boosters = [];
 	});
+	
+	joinSession(query.sessionID, query.userID);
+	socket.emit('publicSessions', getPublicSessions());
 });
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -402,6 +400,47 @@ function getUserID(req, res) {
 	} else {
 		return req.cookies.userID;
 	}
+}
+
+function joinSession(sessionID, userID) {
+	// Session exists and is drafting
+	if(sessionID in Sessions && Sessions[sessionID].drafting) {
+		console.log(`${userID} wants to join drafting session; disconnectedUsers:`);
+		let sess = Sessions[sessionID];
+		console.log(sess.disconnectedUsers);
+		if(userID in sess.disconnectedUsers) {
+			sess.reconnectUser(userID);
+		} else {
+			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
+			// Fallback to previous session if possible, or generate a new one
+			if(Connections[userID].sessionID === null)
+				sessionID = uuidv1();
+			else
+				sessionID = Connections[userID].sessionID;
+			Connections[userID].socket.emit('setSession', sessionID);
+			//joinSession(sessionID, userID);
+		}
+	// Session exists and is full
+	} else if(sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
+		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
+		if(Connections[userID].sessionID === null)
+			sessionID = uuidv1();
+		else
+			sessionID = Connections[userID].sessionID;
+		Connections[userID].socket.emit('setSession', sessionID);
+		//joinSession(sessionID, userID);
+	} else {
+		addUserToSession(userID, sessionID);
+	}
+}
+
+function addUserToSession(userID, sessionID) {
+	if(Connections[userID].sessionID !== null)
+		removeUserFromSession(userID, Connections[userID].sessionID);
+	if(!(sessionID in Sessions))
+		Sessions[sessionID] = new Session(sessionID, userID);
+	
+	Sessions[sessionID].addUser(userID);
 }
 
 // Remove user from previous session and cleanup if empty
@@ -418,7 +457,7 @@ function removeUserFromSession(userID) {
 		}
 		
 		sess.users.delete(userID);
-		Connections[userID].sessionID = undefined;
+		Connections[userID].sessionID = null;
 		if(sess.users.size == 0) {
 			let wasPublic = sess.isPublic;
 			delete Sessions[sessionID];
@@ -432,47 +471,6 @@ function removeUserFromSession(userID) {
 			sess.notifyUserChange();
 		}
 	}
-}
-
-function joinSession(sessionID, userID) {
-	// Session exists and is drafting
-	if(sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(`${userID} wants to join drafting session; disconnectedUsers:`);
-		let sess = Sessions[sessionID];
-		console.log(sess.disconnectedUsers);
-		if(userID in sess.disconnectedUsers) {
-			sess.reconnectUser(userID);
-		} else {
-			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
-			// Fallback to previous session if possible, or generate a new one
-			if(!Connections[userID].sessionID)
-				sessionID = uuidv1();
-			else
-				sessionID = Connections[userID].sessionID;
-			Connections[userID].socket.emit('setSession', sessionID);
-			//joinSession(sessionID, userID);
-		}
-	// Session exists and is full
-	} else if(sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
-		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
-		if(!Connections[userID].sessionID)
-			sessionID = uuidv1();
-		else
-			sessionID = Connections[userID].sessionID;
-		Connections[userID].socket.emit('setSession', sessionID);
-		//joinSession(sessionID, userID);
-	} else {
-		addUserToSession(userID, sessionID);
-	}
-}
-
-function addUserToSession(userID, sessionID) {
-	if(Connections[userID].sessionID)
-		removeUserFromSession(userID, Connections[userID].sessionID);
-	if(!(sessionID in Sessions))
-		Sessions[sessionID] = new Session(sessionID, userID);
-	
-	Sessions[sessionID].addUser(userID);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
