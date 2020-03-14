@@ -229,16 +229,16 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMC'">
-						<figure is="card" v-for="(card, index) in deckCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						<figure is="card" v-for="(card, index) in deckCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 					</template>
 					<template v-else-if="cardOrder == 'Color'">
-						<figure is="card" v-for="(card, index) in deckColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						<figure is="card" v-for="(card, index) in deckColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 					</template>
 					<template v-else-if="cardOrder == 'Rarity'">
-						<figure is="card" v-for="(card, index) in deckRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						<figure is="card" v-for="(card, index) in deckRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 					</template>
 					<template v-else>
-						<figure is="card" v-for="(card, index) in deck" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						<figure is="card" v-for="(card, index) in deck" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 					</template>
 				</template>
 			</div>
