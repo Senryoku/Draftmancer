@@ -73,7 +73,7 @@
 				</span>
 				<span class="v-separator"></span>
 				
-				<div class="check-button-container" title="Signals you are ready to start the draft!">
+				<div class="check-button-container" title="Signals you are ready to start the draft!" :class="{disabled: drafting}">
 					<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
 				</div>
 			</span>

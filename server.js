@@ -139,7 +139,7 @@ io.on('connection', function(socket) {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
 		
-		if(typeof readyToDraft !== 'boolean')
+		if(typeof readyToDraft !== 'boolean' || Sessions[sessionID].drafting)
 			return;
 		
 		Connections[userID].readyToDraft = readyToDraft;
