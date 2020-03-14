@@ -463,26 +463,22 @@ var app = new Vue({
 			this.draftingState = DraftState.Waiting;
 		},
 		removeFromDeck: function(e, c) { // From deck to sideboard
-			if(this.draftingState != DraftState.Picking && this.draftingState != DraftState.Brewing)
-				return;
 			for(let i = 0; i < this.deck.length; ++i) {
 				if(this.deck[i] == c) {
 					this.deck.splice(i, 1);
+					this.sideboard.push(c);
 					break;
 				}
 			}
-			this.sideboard.push(c);
 		},
 		addToDeck: function(e, c) { // From sideboard to deck
-			if(this.draftingState != DraftState.Picking && this.draftingState != DraftState.Brewing)
-				return;
 			for(let i = 0; i < this.sideboard.length; ++i) {
 				if(this.sideboard[i] == c) {
 					this.sideboard.splice(i, 1);
+					this.deck.push(c);
 					break;
 				}
 			}
-			this.deck.push(c);
 		},
 		// Collection management
 		setCollection: function(json) {
