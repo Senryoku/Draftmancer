@@ -569,7 +569,7 @@ ul.player-list {
 
 .booster .card img:hover, 
 .card-pool .card img:hover {
-	transform: scale(1.25);
+	transform: scale(1.08);
 }
 
 .selected {
