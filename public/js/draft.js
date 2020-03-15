@@ -126,7 +126,7 @@ var app = new Vue({
 		// Front-end options & data
 		hideSessionID: false,
 		languages: window.constants.Languages,
-		language: 'en',
+		language: getCookie('language', 'en'),
 		sets: window.constants.MTGSets,
 		cardOrder: "CMCColumns",
 		setsInfos: undefined,
@@ -841,6 +841,9 @@ var app = new Vue({
 		useCollection: function() {
 			this.socket.emit('useCollection', this.useCollection);
 			setCookie('useCollection', this.useCollection);
+		},
+		language: function() {
+			setCookie('language', this.language);
 		},
 		pickOnDblclick: function() {
 			setCookie('pickOnDblclick', this.pickOnDblclick);
