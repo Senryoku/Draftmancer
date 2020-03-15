@@ -6,7 +6,6 @@ function Connection(socket, userID, userName) {
 	this.userID = userID;
 	this.userName = userName;
 	this.sessionID = null;
-	this.readyToDraft = false;
 	this.collection = {};
 	this.useCollection = true;
 	

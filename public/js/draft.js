@@ -114,7 +114,6 @@ var app = new Vue({
 		colorBalance: true,
 		bots: 0,
 		setRestriction: "",
-		readyToDraft: false,
 		drafting: false,
 		booster: [],
 		maxTimer: 60,
@@ -316,7 +315,6 @@ var app = new Vue({
 				setCookie("userID", app.userID);
 			
 				app.drafting = true;
-				app.readyToDraft = false;
 				app.sideboard = [];
 				app.deck = [];
 				Swal.fire({
@@ -331,7 +329,6 @@ var app = new Vue({
 			
 			this.socket.on('rejoinDraft', function(data) {
 				app.drafting = true;
-				app.readyToDraft = false;
 				
 				app.sideboard = [];
 				app.deck = [];
@@ -635,7 +632,31 @@ var app = new Vue({
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;
 		},
+		startDraft: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			if(this.deck.length > 0) {
+				Swal.fire({
+					title: 'Are you sure?',
+					text: "Launching a draft will reset everyones cards/deck!",
+					type: 'warning',
+					showCancelButton: true,
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: "I'm sure!",
+				}).then((result) => {
+					if(result.value) {
+						this.socket.emit('startDraft');
+					}
+				});
+			} else {
+				this.socket.emit('startDraft');
+			}
+		},
 		sealedDialog: async function() {
+			if(this.userID != this.sessionOwner)
+				return;
 			const { value: boosterCount } = await Swal.fire({
 				title: 'Start Sealed',
 				showCancelButton: true,
@@ -810,36 +831,12 @@ var app = new Vue({
 	},
 	watch: {
 		sessionID: function() {
-			this.readyToDraft = false;
 			this.socket.emit('setSession', this.sessionID);
 			setCookie('sessionID', this.sessionID);
 		},
 		userName: function() {
 			this.socket.emit('setUserName', this.userName);
 			setCookie('userName', this.userName);
-		},
-		readyToDraft: function() {
-			if(this.readyToDraft && this.deck.length > 0) {
-				Swal.fire({
-					title: 'Are you sure?',
-					text: "Launching a draft will reset your cards/deck!",
-					type: 'warning',
-					showCancelButton: true,
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-					confirmButtonColor: '#3085d6',
-					cancelButtonColor: '#d33',
-					confirmButtonText: "I'm ready to draft",
-				}).then((result) => {
-					if(result.value) {
-						this.socket.emit('readyToDraft', this.readyToDraft);
-					} else {
-						this.readyToDraft = false;
-						return;
-					}
-				});
-			} else {
-				this.socket.emit('readyToDraft', this.readyToDraft);
-			}
 		},
 		useCollection: function() {
 			this.socket.emit('useCollection', this.useCollection);

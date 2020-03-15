@@ -271,8 +271,7 @@ function Session(id, owner) {
 			user_info.push({
 				userID: u.userID, 
 				userName: u.userName,
-				collection: u.collection,
-				readyToDraft: u.readyToDraft
+				collection: u.collection
 			});
 		}
 		

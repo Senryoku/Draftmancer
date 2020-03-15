@@ -130,33 +130,19 @@ io.on('connection', function(socket) {
 		}
 	});
 	
-	socket.on('readyToDraft', function(readyToDraft) {
+	socket.on('startDraft', function() {
 		let userID = query.userID;
 		let sessionID = Connections[userID].sessionID;
-		
-		if(typeof readyToDraft !== 'boolean' || Sessions[sessionID].drafting)
+		if(Sessions[sessionID].owner != this.userID)
 			return;
 		
-		Connections[userID].readyToDraft = readyToDraft;
-		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('updateUser', {
-				userID: userID,
-				updatedProperties: {
-					readyToDraft: readyToDraft
-				}
-			});
-		}
-		
-		let allReady = true;
-		for(let user of Sessions[sessionID].users) {
-			if(!Connections[user].readyToDraft) {
-				allReady = false;
-				break;
-			}
-		}
-		
-		if(allReady && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
+		if(Sessions[sessionID].drafting)
+			return;
+				
+		if(Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			Sessions[sessionID].startDraft();
+		} else {
+			Connections[userID].socket.emit('message', {title: `Not enough players`, text: `Can't start draft: Not enough players (min. 2 including bots).`});
 		}
 	});
 	

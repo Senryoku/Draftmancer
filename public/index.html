@@ -94,10 +94,6 @@
 					<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
 					<i class="far fa-fw clickable" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID" title="Show/Hide your session ID."></i>
 					<i class="fas fa-share-square clickable" style="padding:4px" title="Share" @click="sessionURLToClipboard"></i>
-					<span class="v-separator"></span>
-					<div class="check-button-container" title="Signals you are ready to start the draft!" :class="{disabled: drafting}">
-						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
-					</div>
 				</span>
 				<span class="generic-container">
 					<span v-bind:class="{ disabled: sessionOwner != userID }">
@@ -123,6 +119,7 @@
 								<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 							<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
 							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="booster-count" min="0" max="120" step="30" v-model="maxTimer" />
+							<button @click="startDraft">Start Draft</button>
 						</span>
 						<span class="v-separator"></span>
 						<span>
@@ -158,9 +155,6 @@
 							<template v-else>
 								<i class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
 							</template>
-						</template>
-						<template v-else>
-							<i v-if="user.readyToDraft" class="fas fa-check green" :title="user.userName + ' is ready to draft!'"></i>
 						</template>
 					</div>
 					<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
