@@ -542,6 +542,10 @@ ul.player-list {
 	transition: transform 0.08s ease-out;
 	/*transform-origin: bottom;*/
 	border-radius: 6px;
+	-webkit-user-select: none; 
+	-moz-user-select: none;  
+	-ms-user-select: none;  
+	user-select: none;   
 }
 
 .card-count {

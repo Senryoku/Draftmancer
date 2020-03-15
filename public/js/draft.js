@@ -59,7 +59,7 @@ Vue.component('modal', {
 
 Vue.component('card', {
 	template: `
-<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="if(app.pickOnDblclick) { selectcard($event, card); app.pickCard(); }">
+<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="if(app.draftingState === DraftState.Picking && app.pickOnDblclick) { selectcard($event, card); app.pickCard(); }">
 	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
 	<img v-else src="img/missing.svg">
 	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
@@ -426,9 +426,6 @@ var app = new Vue({
 			if(urlParamSession)
 				this.sessionID = decodeURI(urlParamSession);
 		},
-		selectCard: function(e, c) {
-			this.selectedCardId = c.id;
-		},
 		// Chat Methods
 		sendChatMessage: function(e) {
 			if(!this.currentChatMessage || this.currentChatMessage == "")
@@ -441,7 +438,12 @@ var app = new Vue({
 			this.currentChatMessage = "";
 		},
 		// Draft Methods
+		selectCard: function(e, c) {
+			this.selectedCardId = c.id;
+		},
 		pickCard: function() {
+			if(this.draftingState != DraftState.Picking || !this.selectedCardId)
+				return;
 			this.draftingState = DraftState.Waiting;
 			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
 			this.deck.push(this.cards[this.selectedCardId]);
