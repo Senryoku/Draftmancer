@@ -470,7 +470,8 @@ function Session(id, owner) {
 	this.maxTimer = 60;
 	this.countdownInterval = null;
 	this.startCountdown = function() {
-		this.countdown = this.maxTimer;
+		let dec = this.maxTimer/15;
+		this.countdown = this.maxTimer - this.round * dec;
 		this.resumeCountdown();
 	};
 	this.resumeCountdown = function() {
