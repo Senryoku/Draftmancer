@@ -36,7 +36,7 @@ function Session(id, owner) {
 	this.users = new Set();
 	
 	// Options
-	this.setRestriction = [];
+	this.setRestriction = [constants.MTGSets[constants.MTGSets.length-1]];
 	this.isPublic = false;
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;

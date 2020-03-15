@@ -106,7 +106,7 @@
 						<span  class="generic-container">
 							<strong>Session options:</strong>
 							<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" title="Ignore players collection: Draft with all cards." /><label for="ignore-collections" title="Ignore players collection: Draft with all cards.">Ignore Collections</label>
-							<label for="set-restriction">Set</label>
+							<label for="set-restriction">Set(s)</label>
 							<multiselect v-if="setsInfos" v-model="setRestriction" placeholder="All" :options="sets" :searchable="false" :allow-empty="true" :close-on-select="false" :multiple="true" select-label="" deselect-label="Remove">
 								<template slot="selection" slot-scope="{ values, search, isOpen }">
 									<span class="multiselect__single" v-if="values.length == 1"><img class="set-icon" :src="setsInfos[values[0]].icon"> {{ setsInfos[values[0]].fullName }}</span>
@@ -124,7 +124,7 @@
 							<label for="boosters-per-player" title="Draft Boosters per Player">Boosters</label>
 								<input type="number" id="boosters-per-player" class="booster-count" min="1" max="25" step="1" v-model="boostersPerPlayer" />
 							<label for="bots">Bots</label><input type="number" id="bots" class="booster-count" min="0" max="7" step="1" v-model="bots" />
-							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="booster-count" min="0" max="120" step="1" v-model="maxTimer" />
+							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="booster-count" min="0" max="120" step="30" v-model="maxTimer" />
 						</span>
 						<span class="v-separator"></span>
 						<span>
