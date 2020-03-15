@@ -2,8 +2,6 @@
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Add double click to pick? (as an option, saved in a cookie?)
  * Add basic lands in draft: fill to 40 cards, 5 little number inputs, auto fill using deck color distribution.
- * Limit sideboard to 15 cards (breaks arena import)
- * Reduce pick timer after each pick (change the pick timer option to have fewer possibilities, like [0, 30, 60, 90, 120])
  * Make the session owner launch the draft
  * Guildgates do not have localized names
  * Move pick time out to server side?

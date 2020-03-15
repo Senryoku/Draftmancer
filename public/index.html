@@ -205,7 +205,7 @@
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 		</template>
-		<div class="container" v-show="(deck !== undefined && deck.length > 0) || draftingState == DraftState.Picking || this.draftingState == DraftState.Brewing">
+		<div class="container" v-show="(deck !== undefined && deck.length > 0) || drafting || this.draftingState == DraftState.Brewing">
 			<div id="brewing-controls" class="controls">
 				<h2>Deck ({{deck.length}})</h2>
 				<label for="card-order">Card Display</label>
@@ -243,9 +243,9 @@
 				</template>
 			</div>
 		</div>
-		<div v-show="(sideboard != undefined && sideboard.length > 0) || draftingState == DraftState.Picking || this.draftingState == DraftState.Brewing" id="card-pool-container" class="container">
+		<div v-show="(sideboard != undefined && sideboard.length > 0) || drafting || this.draftingState == DraftState.Brewing" id="card-pool-container" class="container">
 			<div id="card-pool-controls" class="controls">
-				<h2>Sideboard ({{sideboard.length}})</h2>
+				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}/15</span>)</h2>
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns'? 'card-columns' : 'card-pool'">
 				<template v-if="sideboard.length == 0">

@@ -463,6 +463,13 @@ var app = new Vue({
 			this.draftingState = DraftState.Waiting;
 		},
 		removeFromDeck: function(e, c) { // From deck to sideboard
+			if(this.sideboard.length >= 15) {
+				document.getElementById('sideboard-length').classList.add('shaking');
+				setTimeout(() => {
+					document.getElementById('sideboard-length').classList.remove('shaking');
+				}, 850);
+				return;
+			}
 			for(let i = 0; i < this.deck.length; ++i) {
 				if(this.deck[i] == c) {
 					this.deck.splice(i, 1);
