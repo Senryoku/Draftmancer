@@ -66,16 +66,10 @@
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
 				<button v-if="hasCollection" title="Stats." @click="showCollectionStats = true">Stats</button>
-				
-				<span v-show="Object.keys(collection).length > 0">
-					<span class="v-separator"></span>
-					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
-				</span>
+				<input v-show="Object.keys(collection).length > 0" type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+
 				<span class="v-separator"></span>
-				
-				<div class="check-button-container" title="Signals you are ready to start the draft!" :class="{disabled: drafting}">
-					<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
-				</div>
+				<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" title="Allows you to pick cards by double clicking." /><label for="pickOnDblclick">Pick on Double Click</label>
 			</span>
 			
 			<span class="generic-container">
@@ -100,6 +94,10 @@
 					<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
 					<i class="far fa-fw clickable" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID" title="Show/Hide your session ID."></i>
 					<i class="fas fa-share-square clickable" style="padding:4px" title="Share" @click="sessionURLToClipboard"></i>
+					<span class="v-separator"></span>
+					<div class="check-button-container" title="Signals you are ready to start the draft!" :class="{disabled: drafting}">
+						<input type="checkbox" v-model="readyToDraft" id="readyToDraft" class="check-button" /><label for="readyToDraft">Ready to Draft</label>
+					</div>
 				</span>
 				<span class="generic-container">
 					<span v-bind:class="{ disabled: sessionOwner != userID }">

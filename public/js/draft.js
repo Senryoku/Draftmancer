@@ -59,7 +59,7 @@ Vue.component('modal', {
 
 Vue.component('card', {
 	template: `
-<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)">
+<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="if(app.pickOnDblclick) { selectcard($event, card); app.pickCard(); }">
 	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
 	<img v-else src="img/missing.svg">
 	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
@@ -98,7 +98,7 @@ var app = new Vue({
 		// User Data
 		userID: guid(),
 		userName: getCookie("userName", "Anonymous"),
-		useCollection: true,
+		useCollection: getCookie("useCollection", true),
 		collection: {},
 		socket: undefined,
 		
@@ -133,6 +133,7 @@ var app = new Vue({
 		setsInfos: undefined,
 		boosterIndex: undefined,
 		draftingState: undefined,
+		pickOnDblclick: getCookie("pickOnDblclick", false),
 		selectedCardId: undefined,
 		deck: [],
 		sideboard: [],
@@ -842,6 +843,10 @@ var app = new Vue({
 		},
 		useCollection: function() {
 			this.socket.emit('useCollection', this.useCollection);
+			setCookie('useCollection', this.useCollection);
+		},
+		pickOnDblclick: function() {
+			setCookie('pickOnDblclick', this.pickOnDblclick);
 		},
 		// Session options
 		setRestriction: function() {
