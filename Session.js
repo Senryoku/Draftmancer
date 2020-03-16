@@ -275,6 +275,8 @@ function Session(id, owner) {
 			});
 		}
 		
+		user_info.sort((lhs, rhs) => { return lhs.userID < rhs.userID; });
+		
 		// Send to all session users
 		for(let user of this.users) {
 			Connections[user].socket.emit('sessionOwner', this.owner);
