@@ -186,6 +186,19 @@ io.on('connection', function(socket) {
 	
 	// Session options
 	
+	socket.on('setSessionOwner', function(newOwnerID) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(newOwnerID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(newOwnerID))
+			return;
+		
+		Sessions[sessionID].owner = newOwnerID;
+		for(let user of Sessions[sessionID].users)
+			Connections[user].socket.emit('sessionOwner', Sessions[sessionID].owner);
+	});
+	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)

@@ -141,7 +141,8 @@
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
 					<div class="status-icons">
-						<i v-if="user.userID == sessionOwner" class="fas fa-crown" :title="user.userName + ' is the session\'s owner.'"></i>
+						<i v-if="user.userID == sessionOwner" class="fas fa-crown" :title="`${user.userName} is the session's owner.`"></i>
+						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-plus clickable" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
 						<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
 							<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
 						</template>
@@ -210,7 +211,7 @@
 				</select>
 				<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
 				<span v-show="draftingState == DraftState.Brewing">
-					<input type="checkbox" id="autoLand" v-model="autoLand"><label for="autoLand">Auto. Land</label>
+					<input type="checkbox" id="autoLand" v-model="autoLand"><label for="autoLand" title="If set, will complete your deck to 40 cards with basic lands.">Auto. Land</label>
 					<label for="white-mana"><img src="img/mana/W.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="white-mana" v-model.number="lands['W']" min="0" />
 					<label for="blue-mana"><img src="img/mana/U.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="blue-mana" v-model.number="lands['U']" min="0" />
 					<label for="black-mana"><img src="img/mana/B.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="black-mana" v-model.number="lands['B']" min="0" />

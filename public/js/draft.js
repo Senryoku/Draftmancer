@@ -587,6 +587,24 @@ var app = new Vue({
 				timer: 1500
 			});
 		},
+		setSessionOwner: function(newOwnerID) {
+			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
+			if(!user) return;
+			Swal.fire({
+				title: 'Are you sure?',
+				text: `Do you want to surrender session ownership to ${user.userName}?`,
+				type: 'warning',
+				showCancelButton: true,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: "Yes",
+			}).then((result) => {
+				if(result.value) {
+					this.socket.emit('setSessionOwner', newOwnerID);
+				}
+			});
+		},
 		distributeSealed: function(boosterCount) {
 			if(this.deck.length > 0) {
 				Swal.fire({
