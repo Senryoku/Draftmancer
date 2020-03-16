@@ -129,6 +129,12 @@ a:hover {
 	filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(27deg) brightness(101%) contrast(99%);
 }
 
+.mana-icon {
+	display: inline-block;
+	height: 1em;
+	vertical-align: middle;
+}
+
 #main-vue .multiselect__tag-icon {
 	color: #bf5d5d;
 }
@@ -347,7 +353,7 @@ label {
 	width: 12em;
 }
 
-.booster-count {
+.small-number-input {
 	width: 3em;
 }
 

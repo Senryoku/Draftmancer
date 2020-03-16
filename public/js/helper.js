@@ -65,10 +65,14 @@ function cardToMTGAExport(c, language) {
 	return `1 ${name} (${set}) ${c.collector_number}\n`
 }
 
-function exportMTGA(deck, sideboard, language) {
+function exportMTGA(deck, sideboard, language, lands) {
 	let str = "";
 	for(let c of deck)
 		str += cardToMTGAExport(c, language);
+	if(lands) {
+		for(let c in lands)
+			str += `${lands[c]} ${window.constants.BasicLandNames[language][c]}\n`;
+	}
 	if(sideboard && sideboard.length > 0) {
 		str += '\n';
 		for(let c of sideboard)

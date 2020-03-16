@@ -136,6 +136,8 @@ var app = new Vue({
 		selectedCardId: undefined,
 		deck: [],
 		sideboard: [],
+		autoLand: true,
+		lands: {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0},
 		
 		showSessionOptionsDialog: false,
 		// Draft Log Modal
@@ -535,7 +537,7 @@ var app = new Vue({
 			reader.readAsText(file);
 		},
 		exportDeck: function() {
-			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language));
+			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
 			Swal.fire({
 				toast: true,
 				position: 'top-end',
@@ -712,6 +714,38 @@ var app = new Vue({
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		},
+		updateAutoLands: function() {
+			if(this.autoLand) {
+				const totalLand = 40 - this.deck.length;
+				if(totalLand <= 0) {
+					this.lands = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+					return; 
+				}
+				const colorCount = this.colorsInDeck;
+				let totalColor = 0;
+				for(let c in colorCount)
+					totalColor += colorCount[c];
+				let addedLands = 0;
+				for(let c in this.lands) {
+					this.lands[c] = Math.round(totalLand * (colorCount[c] / totalColor));
+					addedLands += this.lands[c];
+				}
+				
+				if(this.deck.length + addedLands > 40) {
+					let max = 'W';
+					for(let c in this.lands)
+						if(this.lands[c] > this.lands[max])
+							max = c;
+					this.lands[max] -= (this.deck.length + addedLands) - 40;
+				} else if(this.deck.length + addedLands < 40) {
+					let min = 'W';
+					for(let c in this.lands)
+						if(this.lands[c] < this.lands[min])
+							min = c;
+					this.lands[min] += 40 - (this.deck.length + addedLands);
+				}
+			}
+		}
 	},
 	computed: {
 		displaySets: function() {
@@ -760,6 +794,16 @@ var app = new Vue({
 		},
 		hasCollection: function() {
 			return !isEmpty(this.collection);
+		},
+		
+		colorsInDeck: function() {
+			let r = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+			for(let card of this.deck) {
+				for(let color of card.color_identity) {
+					r[color] += 1;
+				}
+			}
+			return r;
 		},
 		
 		deckColumnCMC: function() {
@@ -896,6 +940,12 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('setColorBalance', this.colorBalance);
+		},
+		deck: function() {
+			this.updateAutoLands();
+		},
+		autoLand: function() {
+			this.updateAutoLands();
 		}
 	}
 });
