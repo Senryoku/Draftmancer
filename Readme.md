@@ -1,6 +1,5 @@
 # Todo
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
- * Add basic lands in draft: fill to 40 cards, 5 little number inputs, auto fill using deck color distribution.
  * Let session owner pass ownership to another player
  * -----
  * Move pick time out to server side?

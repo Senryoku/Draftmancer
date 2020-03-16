@@ -465,13 +465,6 @@ var app = new Vue({
 			this.draftingState = DraftState.Waiting;
 		},
 		removeFromDeck: function(e, c) { // From deck to sideboard
-			if(this.sideboard.length >= 15) {
-				document.getElementById('sideboard-length').classList.add('shaking');
-				setTimeout(() => {
-					document.getElementById('sideboard-length').classList.remove('shaking');
-				}, 850);
-				return;
-			}
 			for(let i = 0; i < this.deck.length; ++i) {
 				if(this.deck[i] == c) {
 					this.deck.splice(i, 1);
@@ -716,33 +709,30 @@ var app = new Vue({
 		},
 		updateAutoLands: function() {
 			if(this.autoLand) {
-				const totalLand = 40 - this.deck.length;
-				if(totalLand <= 0) {
-					this.lands = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+				const targetDeckSize = 40;
+				const landToAdd = targetDeckSize - this.deck.length;
+				if(landToAdd <= 0)
 					return; 
-				}
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
 				for(let c in colorCount)
 					totalColor += colorCount[c];
-				let addedLands = 0;
-				for(let c in this.lands) {
-					this.lands[c] = Math.round(totalLand * (colorCount[c] / totalColor));
-					addedLands += this.lands[c];
-				}
+				for(let c in this.lands)
+					this.lands[c] = Math.round(landToAdd * (colorCount[c] / totalColor));
+				let addedLands = this.totalLands;
 				
-				if(this.deck.length + addedLands > 40) {
+				if(this.deck.length + addedLands > targetDeckSize) {
 					let max = 'W';
 					for(let c in this.lands)
 						if(this.lands[c] > this.lands[max])
 							max = c;
-					this.lands[max] -= (this.deck.length + addedLands) - 40;
-				} else if(this.deck.length + addedLands < 40) {
+					this.lands[max] -= (this.deck.length + addedLands) - targetDeckSize;
+				} else if(this.deck.length + addedLands < targetDeckSize) {
 					let min = 'W';
 					for(let c in this.lands)
 						if(this.lands[c] < this.lands[min])
 							min = c;
-					this.lands[min] += 40 - (this.deck.length + addedLands);
+					this.lands[min] += targetDeckSize - (this.deck.length + addedLands);
 				}
 			}
 		}
@@ -804,6 +794,12 @@ var app = new Vue({
 				}
 			}
 			return r;
+		},
+		totalLands: function() {
+			let addedLands = 0;
+			for(let c in this.lands)
+				addedLands += this.lands[c];
+			return addedLands;
 		},
 		
 		deckColumnCMC: function() {

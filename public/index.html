@@ -116,9 +116,9 @@
 						<span>
 							<strong>Draft:</strong>
 							<label for="boosters-per-player" title="Draft Boosters per Player">Boosters</label>
-								<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model="boostersPerPlayer" />
-							<label for="bots">Bots</label><input type="number" id="bots" class="small-number-input" min="0" max="7" step="1" v-model="bots" />
-							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="small-number-input" min="0" max="120" step="30" v-model="maxTimer" />
+								<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
+							<label for="bots">Bots</label><input type="number" id="bots" class="small-number-input" min="0" max="7" step="1" v-model.number="bots" />
+							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="small-number-input" min="0" max="120" step="30" v-model.number="maxTimer" />
 							<button @click="startDraft">Start Draft</button>
 						</span>
 						<span class="v-separator"></span>
@@ -211,12 +211,13 @@
 				<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
 				<span v-show="draftingState == DraftState.Brewing">
 					<input type="checkbox" id="autoLand" v-model="autoLand"><label for="autoLand">Auto. Land</label>
-					<label for="white-mana"><img src="img/mana/W.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="white-mana" v-model="lands['W']" />
-					<label for="blue-mana"><img src="img/mana/U.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="blue-mana" v-model="lands['U']" />
-					<label for="black-mana"><img src="img/mana/B.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="black-mana" v-model="lands['B']" />
-					<label for="red-mana"><img src="img/mana/R.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="red-mana" v-model="lands['R']" />
-					<label for="green-mana"><img src="img/mana/G.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="green-mana" v-model="lands['G']" />
+					<label for="white-mana"><img src="img/mana/W.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="white-mana" v-model.number="lands['W']" min="0" />
+					<label for="blue-mana"><img src="img/mana/U.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="blue-mana" v-model.number="lands['U']" min="0" />
+					<label for="black-mana"><img src="img/mana/B.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="black-mana" v-model.number="lands['B']" min="0" />
+					<label for="red-mana"><img src="img/mana/R.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="red-mana" v-model.number="lands['R']" min="0" />
+					<label for="green-mana"><img src="img/mana/G.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="green-mana" v-model.number="lands['G']" min="0" />
 				</span>
+				{{totalLands}} basic lands and {{deck.length + totalLands}} total cards
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="deck.length == 0">
@@ -245,7 +246,7 @@
 		</div>
 		<div v-show="(sideboard != undefined && sideboard.length > 0) || drafting || this.draftingState == DraftState.Brewing" id="card-pool-container" class="container">
 			<div id="card-pool-controls" class="controls">
-				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}/15</span>)</h2><small v-show="sideboard.length >= 15">Arena does not allow importing a sideboard with more than 15 cards, import you deck into MTGA and use its deck editor to cut more cards.</small>
+				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}</span>)</h2>
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns'? 'card-columns' : 'card-pool'">
 				<template v-if="sideboard.length == 0">
@@ -382,7 +383,7 @@
 				<div class="line">
 					<label for="max-players">Maximum Players</label>
 					<div class="right">
-						<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model="maxPlayers" />
+						<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model.number="maxPlayers" />
 					</div>
 				</div>
 				<div class="line">
