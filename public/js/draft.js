@@ -730,7 +730,7 @@ var app = new Vue({
 				} else if(this.deck.length + addedLands < targetDeckSize) {
 					let min = 'W';
 					for(let c in this.lands)
-						if(this.lands[c] < this.lands[min])
+						if(this.colorsInDeck[min] == 0 || (this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min]))
 							min = c;
 					this.lands[min] += targetDeckSize - (this.deck.length + addedLands);
 				}
