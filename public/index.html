@@ -219,7 +219,7 @@
 					<label for="red-mana"><img src="img/mana/R.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="red-mana" v-model.number="lands['R']" min="0" />
 					<label for="green-mana"><img src="img/mana/G.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="green-mana" v-model.number="lands['G']" min="0" />
 				</span>
-				{{totalLands}} basic lands and {{deck.length + totalLands}} total cards
+				{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="deck.length == 0">
@@ -275,7 +275,7 @@
 				</template>
 			</div>
 		</div>
-	<div class="welcome" v-if="!drafting && (deck == undefined || deck.length == 0)">
+	<div class="welcome" v-if="!drafting && (deck == undefined || deck.length == 0) && (sideboard == undefined || sideboard.length == 0) ">
 			<h1>Welcome to MTGADraft!</h1>
 			<p class="important">
 				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!

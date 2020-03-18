@@ -749,14 +749,21 @@ var app = new Vue({
 		},
 		updateAutoLands: function() {
 			if(this.autoLand) {
+				if(!this.deck || this.deck.length === 0)
+					return;
+				
 				const targetDeckSize = 40;
 				const landToAdd = targetDeckSize - this.deck.length;
 				if(landToAdd <= 0)
 					return; 
+				
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
 				for(let c in colorCount)
 					totalColor += colorCount[c];
+				if(totalColor <= 0)
+					return;
+				
 				for(let c in this.lands)
 					this.lands[c] = Math.round(landToAdd * (colorCount[c] / totalColor));
 				let addedLands = this.totalLands;
