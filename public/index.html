@@ -136,7 +136,7 @@
 			</div>
 		</div>
 		<div class="main-controls session-players">
-			Session Players:
+			Session Players (<span title="Maximum players can be adjusted in session options.">{{sessionUsers.length}}/{{maxPlayers}}</span>):
 			<ul class="player-list">
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
