@@ -457,6 +457,7 @@ ul.player-list {
 	border-radius: 0.5em;
 	color: black;
 	max-width: 50vw;
+	width: max-content;
 	z-index: 1;
 }
 
