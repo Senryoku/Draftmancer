@@ -214,7 +214,7 @@ var app = new Vue({
 				app.sessionID = data;
 				if(app.drafting) { // Expelled during drafting
 					app.drafting = false;
-					draftingState = DraftState.Brewing;
+					app.draftingState = DraftState.Brewing;
 				}
 			});
 			

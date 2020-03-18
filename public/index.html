@@ -218,8 +218,8 @@
 					<label for="black-mana"><img src="img/mana/B.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="black-mana" v-model.number="lands['B']" min="0" />
 					<label for="red-mana"><img src="img/mana/R.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="red-mana" v-model.number="lands['R']" min="0" />
 					<label for="green-mana"><img src="img/mana/G.svg" class="mana-icon"></label><input class="small-number-input" type="number" id="green-mana" v-model.number="lands['G']" min="0" />
+					{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 				</span>
-				{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="deck.length == 0">
