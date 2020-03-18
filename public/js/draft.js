@@ -892,6 +892,7 @@ var app = new Vue({
 	watch: {
 		sessionID: function() {
 			this.socket.emit('setSession', this.sessionID);
+			history.replaceState({sessionID: this.sessionID}, `MTGADraft Session ${this.sessionID}`, `?session=${this.sessionID}`)
 			setCookie('sessionID', this.sessionID);
 		},
 		userName: function() {
