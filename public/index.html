@@ -262,7 +262,7 @@
 			</div>
 			<div class="card-container" :class="cardOrder == 'CMCColumns'? 'card-columns' : 'card-pool'">
 				<template v-if="sideboard.length == 0">
-					<div><h3>Your sideboard is currently empty!</h3></div>
+					<div><h3>Your sideboard is currently empty!</h3><p>Click on cards in your deck to sideboard them.</p></div>
 				</template>
 				<template v-else>
 					<template v-if="cardOrder == 'CMCColumns'">
