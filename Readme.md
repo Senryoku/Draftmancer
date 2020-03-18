@@ -1,5 +1,9 @@
 # Todo
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
+ * Add a remove player option (to handle afk players)
+ * Fix start draft message
+ * Add player count in session
+ * Edit URL to include session dynamically? (to avoid mistakes)
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?
