@@ -141,8 +141,9 @@
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
 					<div class="status-icons">
-						<i v-if="user.userID == sessionOwner" class="fas fa-crown" :title="`${user.userName} is the session's owner.`"></i>
-						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-plus clickable" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
+						<i v-if="user.userID == sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
+						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
+						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
 						<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
 							<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
 						</template>

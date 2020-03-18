@@ -17,6 +17,15 @@ const Session = require('./Session');
 app.use(compression());
 app.use(cookieParser()); 
 
+function shortguid() {
+	function s4() {
+		return Math.floor((1 + Math.random()) * 0x10000)
+		  .toString(16)
+		  .substring(1);
+	}
+	return s4() + s4() + s4();
+}
+
 let Sessions = {};
 
 function getPublicSessions() {
@@ -197,6 +206,24 @@ io.on('connection', function(socket) {
 		Sessions[sessionID].owner = newOwnerID;
 		for(let user of Sessions[sessionID].users)
 			Connections[user].socket.emit('sessionOwner', Sessions[sessionID].owner);
+	});
+	
+	socket.on('removePlayer', function(userID) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(userID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userID))
+			return;
+		
+		removeUserFromSession(userID);
+		Sessions[sessionID].replaceDisconnectedPlayers();
+		Sessions[sessionID].notifyUserChange();
+		
+		let newSession = shortguid();
+		joinSession(newSession, userID);
+		Connections[userID].socket.emit('setSession', newSession);
+		Connections[userID].socket.emit('message', {title: 'Removed from session', text: `You've been removed from session '${sessionID}' by its owner.`});
 	});
 	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
@@ -413,7 +440,7 @@ function joinSession(sessionID, userID) {
 			Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`});
 			// Fallback to previous session if possible, or generate a new one
 			if(Connections[userID].sessionID === null)
-				sessionID = uuidv1();
+				sessionID = shortguid();
 			else
 				sessionID = Connections[userID].sessionID;
 			Connections[userID].socket.emit('setSession', sessionID);
@@ -423,7 +450,7 @@ function joinSession(sessionID, userID) {
 	} else if(sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
 		Connections[userID].socket.emit('message', {title: 'Cannot join session', text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`});
 		if(Connections[userID].sessionID === null)
-			sessionID = uuidv1();
+			sessionID = shortguid();
 		else
 			sessionID = Connections[userID].sessionID;
 		Connections[userID].socket.emit('setSession', sessionID);

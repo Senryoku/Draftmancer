@@ -212,6 +212,10 @@ var app = new Vue({
 			
 			this.socket.on('setSession', function(data) {
 				app.sessionID = data;
+				if(app.drafting) { // Expelled during drafting
+					app.drafting = false;
+					draftingState = DraftState.Brewing;
+				}
 			});
 			
 			this.socket.on('sessionUsers', function(users) {
@@ -602,6 +606,24 @@ var app = new Vue({
 			}).then((result) => {
 				if(result.value) {
 					this.socket.emit('setSessionOwner', newOwnerID);
+				}
+			});
+		},
+		removePlayer: function(userID) {
+			let user = this.sessionUsers.find((u) => u.userID === userID);
+			if(!user) return;
+			Swal.fire({
+				title: 'Are you sure?',
+				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
+				type: 'warning',
+				showCancelButton: true,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: "Yes",
+			}).then((result) => {
+				if(result.value) {
+					this.socket.emit('removePlayer', userID);
 				}
 			});
 		},

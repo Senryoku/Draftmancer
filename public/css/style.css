@@ -665,7 +665,15 @@ ul.player-list {
 }
 
 .red {
-	color: red;
+	color: DarkRed;
+}
+
+.gold {
+	color: gold;
+}
+
+.subtle-gold {
+	text-shadow: 0 0 1px gold;
 }
 
 .disabled {
