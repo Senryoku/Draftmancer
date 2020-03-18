@@ -820,8 +820,12 @@ var app = new Vue({
 				
 				const targetDeckSize = 40;
 				const landToAdd = targetDeckSize - this.deck.length;
-				if(landToAdd <= 0)
+				if(landToAdd < 0)
 					return; 
+				if(landToAdd === 0) {
+					this.lands = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+					return
+				}
 				
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
@@ -836,16 +840,20 @@ var app = new Vue({
 				
 				if(this.deck.length + addedLands > targetDeckSize) {
 					let max = 'W';
-					for(let c in this.lands)
-						if(this.lands[c] > this.lands[max])
-							max = c;
-					this.lands[max] -= (this.deck.length + addedLands) - targetDeckSize;
+					for(let i = 0; i < (this.deck.length + addedLands) - targetDeckSize; ++i) {
+						for(let c in this.lands)
+							if(this.lands[c] > this.lands[max])
+								max = c;
+						this.lands[max] = Math.max(0, this.lands[max] - 1);
+					}
 				} else if(this.deck.length + addedLands < targetDeckSize) {
 					let min = 'W';
-					for(let c in this.lands)
-						if(this.colorsInDeck[min] == 0 || (this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min]))
-							min = c;
-					this.lands[min] += targetDeckSize - (this.deck.length + addedLands);
+					for(let i = 0; i < targetDeckSize - (this.deck.length + addedLands); ++i) {
+						for(let c in this.lands)
+							if(this.colorsInDeck[min] == 0 || (this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min]))
+								min = c;
+						this.lands[min] += 1;
+					}
 				}
 			}
 		}
