@@ -427,6 +427,8 @@ ul.player-list {
 	opacity: 0;
 	min-width: 100%;
 	max-width: 50vw;
+	max-height: 60vh;
+	z-index: 2;
 
 	transition: opacity 0.2s;
 }
@@ -449,12 +451,12 @@ ul.player-list {
 .chat-history {
 	position: absolute;
 	top: calc(100% + 0.25em);
-	left: 0;
+	right: 0;
 	background: rgba(255, 255, 255, 0.5);
 	padding: 0.5em;
 	border-radius: 0.5em;
 	color: black;
-	width: 100%;
+	max-width: 50vw;
 	z-index: 1;
 }
 
@@ -462,7 +464,7 @@ ul.player-list {
 	content: '';
 	position: absolute;
 	top: 0;
-	left: calc(14px + 0.5em);
+	right: calc(14px + 0.5em);
 	width: 0;
 	height: 0;
 	border: 14px solid transparent;

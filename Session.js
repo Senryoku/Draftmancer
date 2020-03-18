@@ -130,14 +130,14 @@ function Session(id, owner) {
 		// Getting intersection of players' collections
 		let collection = this.collection();
 			
-		let removeCardFromDict = function(c, dict) {
+		const removeCardFromDict = function(c, dict) {
 			dict[c] -= 1;
 			if(dict[c] == 0)
 				delete dict[c];
 		};
 		
 		// TODO: Prevent multiples by name?
-		let pick_card = function (dict, booster) {
+		const pick_card = function (dict, booster) {
 			let c = get_random_key(dict);
 			if(booster != undefined) {
 				let prevention_attempts = 0; // Fail safe-ish
@@ -150,6 +150,8 @@ function Session(id, owner) {
 			return c;
 		};
 		
+		const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+		
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if(this.useCustomCardList) {
 			const cardsPerBooster = 15;
@@ -161,10 +163,10 @@ function Session(id, owner) {
 					cardsByColor[Cards[card].color_identity][card] = collection[card];
 				}
 			}
-
-			const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
-			if(count_cards < cardsPerBooster * boosterQuantity) {
-				this.emitMessage('Error generating boosters', `Not enough cards (${count_cards}/${cardsPerBooster * boosterQuantity}) in custom list.`);
+			
+			let card_count = count_cards(collection)
+			if(card_count < cardsPerBooster * boosterQuantity) {
+				this.emitMessage('Error generating boosters', `Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
 				return false;
 			}
 			

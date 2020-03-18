@@ -66,7 +66,10 @@
 				<span class="v-separator"></span>
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
 				<button v-if="hasCollection" title="Stats." @click="showCollectionStats = true">Stats</button>
-				<input v-show="Object.keys(collection).length > 0" type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+				<span  v-show="Object.keys(collection).length > 0">
+					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." />
+					<label for="useCollection">Restrict to Collection</label>
+				</span>
 
 				<span class="v-separator"></span>
 				<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" title="Allows you to pick cards by double clicking." /><label for="pickOnDblclick">Pick on Double Click</label>
@@ -141,7 +144,9 @@
 			</div>
 		</div>
 		<div class="main-controls session-players">
-			Session Players (<span title="Maximum players can be adjusted in session options.">{{sessionUsers.length}}/{{maxPlayers}}</span>):
+			<div>
+				Session Players&nbsp;<span title="Maximum players can be adjusted in session options.">({{sessionUsers.length}}/{{maxPlayers}})</span>:
+			</div>
 			<ul class="player-list">
 				<li v-for="user in sessionUsers" :title="user.userID">
 					{{ user.userName }}
@@ -169,13 +174,13 @@
 			</ul>
 			<div>
 				<small v-if="drafting && bots > 0">(...and {{bots}} bad bot(s)!)</small>
+				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
 			</div>
 			<div class="chat">
-				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
-				<button @click="displayChatHistory = !displayChatHistory">Chat History</button>
 				<form @submit.prevent="sendChatMessage">
 					<input type="text" v-model="currentChatMessage" placeholder="Chat with players in your session."  maxlength="255" />
 				</form>
+				<i class="far fa-comments clickable" @click="displayChatHistory = !displayChatHistory"></i>
 				<div class="chat-history" v-show="displayChatHistory" @focusout="displayChatHistory = false" tabindex="0">
 					<template v-if="messagesHistory && messagesHistory.length > 0">
 						<ol>
@@ -394,7 +399,7 @@
 						<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model.number="maxPlayers" />
 					</div>
 				</div>
-				<div class="line">
+				<div class="line" v-bind:class="{ disabled: useCustomCardList }">
 					<label for="maxRarity">Maximum Rarity</label>
 					<div class="right">
 						<select v-model="maxRarity">
@@ -417,12 +422,12 @@
 						<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" title="Use a custom card list." />
 					</div>
 				</div>
-				<div v-show="useCustomCardList" class="line" title="Manage your custom card list.">
+				<div v-bind:class="{ disabled: !useCustomCardList }" class="line" title="Manage your custom card list.">
 					<label for="card-list-input">Custom Card List</label>
 					<div class="right">
 						<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
 					</div>
-					<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line.</div>
+					<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
 				</div>
 			</div>
 		</modal>
