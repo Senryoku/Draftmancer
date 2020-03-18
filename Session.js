@@ -44,6 +44,8 @@ function Session(id, owner) {
 	this.maxPlayers = 8;
 	this.maxRarity = 'mythic';
 	this.colorBalance = true;
+	this.useCustomCardList = false;
+	this.customCardList = [];
 	
 	// Draft state
 	this.drafting = false;
@@ -74,6 +76,13 @@ function Session(id, owner) {
 	}
 	
 	this.collection = function () {
+		if(this.useCustomCardList) {
+			let r = {};
+			for(let cardId of this.customCardList)
+				r[cardId] = 1;
+			return r;
+		}
+		
 		// Compute collections intersection
 		let user_list = [...this.users];
 		let intersection = [];
@@ -120,77 +129,7 @@ function Session(id, owner) {
 	this.generateBoosters = function(boosterQuantity) {
 		// Getting intersection of players' collections
 		let collection = this.collection();
-		// Order by rarity
-		let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
-		for(let c in collection) {
-			if(!(c in Cards)) {
-				console.warn(`Warning: Card ${c} not in database.`);
-				continue;
-			}
-			if(this.setRestriction.length == 0 || this.setRestriction.includes(Cards[c].set))
-				localCollection[Cards[c].rarity][c] = collection[c];
-		}
-		
-		let commonsByColor = {};
-		if(this.colorBalance) {
-			for(let card in localCollection['common']) {
-				if(!(Cards[card].color_identity in commonsByColor))
-					commonsByColor[Cards[card].color_identity] = {};
-				commonsByColor[Cards[card].color_identity][card] = localCollection['common'][card];
-			}
-		}
-		
-		let targets;
-		
-		switch(this.maxRarity) {
-			case 'uncommon':
-				targets = {
-					'rare': 0,
-					'uncommon': 3,
-					'common': 11
-				};
-			break;
-			case 'common':
-				targets = {
-					'rare': 0,
-					'uncommon': 0,
-					'common': 14
-				};
-			break;
-			case 'mythic':
-			case 'rare':
-			default:
-				targets = {
-					'rare': 1,
-					'uncommon': 3,
-					'common': 10
-				};
-		}
-
-		// Making sure we have enough cards of each rarity
-		const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
-		
-		const comm_count = count_cards(localCollection['common']);
-		if(comm_count < targets['common'] * boosterQuantity) {
-			this.emitMessage('Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
-			console.warn(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
-			return false;
-		}
-		
-		const unco_count = count_cards(localCollection['uncommon']);
-		if(unco_count < targets['uncommon'] * boosterQuantity) {
-			this.emitMessage('Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
-			console.warn(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
-			return false;
-		}
-		
-		const rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
-		if(rm_count < targets['rare'] * boosterQuantity) {
-			this.emitMessage('Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
-			console.warn(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
-			return false;
-		}
-		
+			
 		let removeCardFromDict = function(c, dict) {
 			dict[c] -= 1;
 			if(dict[c] == 0)
@@ -211,55 +150,165 @@ function Session(id, owner) {
 			return c;
 		};
 		
-		// Generate Boosters
-		this.boosters = [];
-		for(let i = 0; i < boosterQuantity; ++i) {
-			let booster = [];
-			
-			for(let i = 0; i < targets['rare']; ++i) {
-				// 1 Rare/Mythic
-				if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
-					// Should not happen, right?
-					this.emitMessage('Error generating boosters', `Not enough rare or mythic cards in collection`);
-					console.error("Not enough cards in collection.");
-					return false;
-				} else if(isEmpty(localCollection['mythic'])) {
-					booster.push(pick_card(localCollection['rare']));
-				} else if(this.maxRarity === 'mythic' && isEmpty(localCollection['rare'])) {
-					booster.push(pick_card(localCollection['mythic']));
-				} else {
-					if(this.maxRarity === 'mythic' && Math.random() * 8 < 1)
-						booster.push(pick_card(localCollection['mythic']));
-					else
-						booster.push(pick_card(localCollection['rare']));
+		// Generate fully random 15-cards booster for cube (not considering rarity)
+		if(this.useCustomCardList) {
+			const cardsPerBooster = 15;
+			let cardsByColor = {};
+			if(this.colorBalance) {
+				for(let card in collection) {
+					if(!(Cards[card].color_identity in cardsByColor))
+						cardsByColor[Cards[card].color_identity] = {};
+					cardsByColor[Cards[card].color_identity][card] = collection[card];
 				}
 			}
+
+			const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+			if(count_cards < cardsPerBooster * boosterQuantity) {
+				this.emitMessage('Error generating boosters', `Not enough cards (${count_cards}/${cardsPerBooster * boosterQuantity}) in custom list.`);
+				return false;
+			}
 			
-			for(let i = 0; i < targets['uncommon']; ++i)
-				booster.push(pick_card(localCollection['uncommon'], booster));
-			
-			// Color balance the booster by adding one common of each color if possible
-			let pickedCommons = [];
-			if(this.colorBalance) {
-				for(let c of 'WUBRG') {
-					if(!isEmpty(commonsByColor[c])) {
-						let pickedCard = pick_card(commonsByColor[c], pickedCommons);
-						pickedCommons.push(pickedCard);
-						removeCardFromDict(pickedCard, localCollection['common']);
+			this.boosters = [];
+			for(let i = 0; i < boosterQuantity; ++i) {
+				let booster = [];
+				
+				if(this.colorBalance) {
+					for(let c of 'WUBRG') {
+						if(!isEmpty(cardsByColor[c])) {
+							let pickedCard = pick_card(cardsByColor[c], booster);
+							booster.push(pickedCard);
+							removeCardFromDict(pickedCard, collection);
+						}
 					}
 				}
+				
+				for(let i = booster.length; i < cardsPerBooster; ++i)
+					booster.push(pick_card(collection, booster));
+				
+				shuffleArray(booster);
+				this.boosters.push(booster);
+			}
+		} else {
+			// Order by rarity
+			let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
+			for(let c in collection) {
+				if(!(c in Cards)) {
+					console.warn(`Warning: Card ${c} not in database.`);
+					continue;
+				}
+				if(this.setRestriction.length == 0 || this.setRestriction.includes(Cards[c].set))
+					localCollection[Cards[c].rarity][c] = collection[c];
 			}
 			
-			for(let i = pickedCommons.length; i < targets['common']; ++i)
-				pickedCommons.push(pick_card(localCollection['common'], pickedCommons));
+			let commonsByColor = {};
+			if(this.colorBalance) {
+				for(let card in localCollection['common']) {
+					if(!(Cards[card].color_identity in commonsByColor))
+						commonsByColor[Cards[card].color_identity] = {};
+					commonsByColor[Cards[card].color_identity][card] = localCollection['common'][card];
+				}
+			}
 			
-			// Shuffle commons to avoid obvious signals to other players when color balancing
-			shuffleArray(pickedCommons);
-			booster = booster.concat(pickedCommons);
+			let targets;
+			
+			switch(this.maxRarity) {
+				case 'uncommon':
+					targets = {
+						'rare': 0,
+						'uncommon': 3,
+						'common': 11
+					};
+				break;
+				case 'common':
+					targets = {
+						'rare': 0,
+						'uncommon': 0,
+						'common': 14
+					};
+				break;
+				case 'mythic':
+				case 'rare':
+				default:
+					targets = {
+						'rare': 1,
+						'uncommon': 3,
+						'common': 10
+					};
+			}
 
-			this.boosters.push(booster);
+			// Making sure we have enough cards of each rarity
+			const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
+			
+			const comm_count = count_cards(localCollection['common']);
+			if(comm_count < targets['common'] * boosterQuantity) {
+				this.emitMessage('Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
+				console.warn(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
+				return false;
+			}
+			
+			const unco_count = count_cards(localCollection['uncommon']);
+			if(unco_count < targets['uncommon'] * boosterQuantity) {
+				this.emitMessage('Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
+				console.warn(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
+				return false;
+			}
+			
+			const rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
+			if(rm_count < targets['rare'] * boosterQuantity) {
+				this.emitMessage('Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
+				console.warn(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
+				return false;
+			}
+			
+			// Generate Boosters
+			this.boosters = [];
+			for(let i = 0; i < boosterQuantity; ++i) {
+				let booster = [];
+				
+				for(let i = 0; i < targets['rare']; ++i) {
+					// 1 Rare/Mythic
+					if(isEmpty(localCollection['mythic']) && isEmpty(localCollection['rare'])) {
+						// Should not happen, right?
+						this.emitMessage('Error generating boosters', `Not enough rare or mythic cards in collection`);
+						console.error("Not enough cards in collection.");
+						return false;
+					} else if(isEmpty(localCollection['mythic'])) {
+						booster.push(pick_card(localCollection['rare']));
+					} else if(this.maxRarity === 'mythic' && isEmpty(localCollection['rare'])) {
+						booster.push(pick_card(localCollection['mythic']));
+					} else {
+						if(this.maxRarity === 'mythic' && Math.random() * 8 < 1)
+							booster.push(pick_card(localCollection['mythic']));
+						else
+							booster.push(pick_card(localCollection['rare']));
+					}
+				}
+				
+				for(let i = 0; i < targets['uncommon']; ++i)
+					booster.push(pick_card(localCollection['uncommon'], booster));
+				
+				// Color balance the booster by adding one common of each color if possible
+				let pickedCommons = [];
+				if(this.colorBalance) {
+					for(let c of 'WUBRG') {
+						if(!isEmpty(commonsByColor[c])) {
+							let pickedCard = pick_card(commonsByColor[c], pickedCommons);
+							pickedCommons.push(pickedCard);
+							removeCardFromDict(pickedCard, localCollection['common']);
+						}
+					}
+				}
+				
+				for(let i = pickedCommons.length; i < targets['common']; ++i)
+					pickedCommons.push(pick_card(localCollection['common'], pickedCommons));
+				
+				// Shuffle commons to avoid obvious signals to other players when color balancing
+				shuffleArray(pickedCommons);
+				booster = booster.concat(pickedCommons);
+
+				this.boosters.push(booster);
+			}
 		}
-		
 		return true;
 	}
 	

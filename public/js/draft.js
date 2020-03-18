@@ -115,6 +115,8 @@ var app = new Vue({
 		bots: 0,
 		setRestriction: "",
 		drafting: false,
+		useCustomCardList: false,
+		customCardList: [],
 		booster: [],
 		maxTimer: 60,
 		pickTimer: 60,
@@ -529,6 +531,70 @@ var app = new Vue({
 						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
 					});
 					//alert(e);
+				}		
+			};
+			reader.readAsText(file);
+		},
+		parseCustomCardList: function(e) {
+			let file = e.target.files[0];
+			if (!file) {
+				return;
+			}
+			Swal.fire({
+				position: 'center',
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				type: 'info',
+				title: 'Parsing card list...',
+				showConfirmButton: false
+			});
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				let contents = e.target.result;
+				try {
+					const lines = contents.split(/\r\n|\n/);
+					let cardList = [];
+					for(let line of lines) {
+						console.log(line);
+						if(line) {
+							let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
+							if(typeof cardID !== 'undefined') {
+								cardList.push(cardID)
+							} else {
+								// If not found, try doubled faced cards before giving up!
+								cardID = Object.keys(app.cards).find((id) => app.cards[id].name.startsWith(line + ' //'));
+								if(typeof cardID !== 'undefined') {
+									cardList.push(cardID)
+								} else {
+									Swal.fire({
+										type: 'error',
+										title: `Card not found`,
+										text: `Could not find ${line} in our database.`,
+										customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+									});
+									return;
+								}
+							}
+						}
+					}
+					app.customCardList = cardList;
+					app.socket.emit('customCardList', app.customCardList);
+					Swal.fire({
+						position: 'top-end',
+						customClass: 'swal-container',
+						type: 'success',
+						title: `Card list uploaded (${app.customCardList.length} cards)`,
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+						showConfirmButton: false,
+						timer: 1500
+					});
+				} catch(e) {
+					Swal.fire({
+						type: 'error',
+						title: 'Parsing Error',
+						text: 'An error occurred during parsing, please check you input file.',
+						footer: 'Full error: ' + e,
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+					});
 				}		
 			};
 			reader.readAsText(file);
@@ -984,6 +1050,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('setColorBalance', this.colorBalance);
+		},
+		useCustomCardList: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setUseCustomCardList', this.useCustomCardList);
 		},
 		deck: function() {
 			this.updateAutoLands();

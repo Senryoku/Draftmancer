@@ -71,7 +71,6 @@ a:hover {
 #main-vue .multiselect__tags {
 	border-radius: 4px;
 	border: 1px solid #888;
-	margin: 0.25em;
 	height: 28px;
 	min-height: auto;
 	padding: 5px 5px;
@@ -120,6 +119,17 @@ a:hover {
 
 #main-vue .multiselect__single_nooverflow .set-icon {
 	margin-right: 0.2em;
+}
+
+#main-vue .multiselect__select {
+	top: 40%;
+	bottom: 60%;
+	right: 0;
+	height: auto;
+}
+
+#main-vue .multiselect__select::before {
+	top: 2.5px;
 }
 
 #main-vue .set-icon {
@@ -267,18 +277,24 @@ a:hover {
 
 .option-column .line label {
 	display: inline-block;
-	width: 15em;
+	width: 15rem;
 	text-align: right;
 }
 
 .option-column .line .right {
 	display: inline-block;
-	width: 15em;
+	width: 15rem;
+}
+
+.option-info {
+	width: 30rem;
+	text-align: center;
+	font-size: 0.8em;
 }
 
 .welcome {
 	font-size: 1.1rem;
-	padding: 2em;
+	padding: 1.5em;
 	padding-top: 0;
 }
 

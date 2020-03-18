@@ -1,5 +1,6 @@
 # Todo
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
+ * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?

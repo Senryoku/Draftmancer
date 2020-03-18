@@ -72,7 +72,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceDownload:
 	print("Extracting arena card to {}...".format(BulkDataArenaPath))
 	with open(BulkDataPath, 'r', encoding="utf8") as file:
 		objects = ijson.items(file, 'item')
-		arena_cards = (o for o in objects if 'arena' in o['games'])
+		arena_cards = (o for o in objects if 'arena' in o['games'] or (o['name'], o['set'].lower()) in NameSetToCardID)
 		cards = []
 		
 		sys.stdout.write("Processing... ")

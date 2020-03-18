@@ -291,6 +291,20 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('customCardList', function(customCardList) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(!Array.isArray(customCardList))
+			return;
+		Sessions[sessionID].customCardList = customCardList;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('sessionOptions', {customCardList : customCardList});
+		}
+	});
+	
 	socket.on('ignoreCollections', function(ignoreCollections) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
@@ -368,6 +382,21 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('setUseCustomCardList', function(useCustomCardList) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(useCustomCardList == Sessions[sessionID].useCustomCardList)
+			return;
+		
+		Sessions[sessionID].useCustomCardList = useCustomCardList;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('sessionOptions', {useCustomCardList: Sessions[sessionID].useCustomCardList});
+		}
+	});
+	
 	socket.on('setPublic', function(isPublic) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
@@ -431,9 +460,9 @@ function getUserID(req, res) {
 function joinSession(sessionID, userID) {
 	// Session exists and is drafting
 	if(sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(`${userID} wants to join drafting session; disconnectedUsers:`);
+		console.log(`${userID} wants to join drafting session...`);
 		let sess = Sessions[sessionID];
-		console.log(sess.disconnectedUsers);
+		console.debug(sess.disconnectedUsers);
 		if(userID in sess.disconnectedUsers) {
 			sess.reconnectUser(userID);
 		} else {
