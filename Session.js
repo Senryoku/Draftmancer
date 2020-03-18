@@ -286,7 +286,7 @@ function Session(id, owner) {
 	
 	this.startDraft = function() {
 		this.drafting = true;
-		this.emitMessage('Everybody is ready!', 'Your draft will start soon...', false, 0);
+		this.emitMessage('Preparing draft!', 'Your draft will start soon...', false, 0);
 		
 		// boostersPerPlayer works fine, what's the problem here?...
 		if(typeof this.bots != "number") {
