@@ -14,7 +14,6 @@ function orderColor(lhs, rhs) {
 		return String(lhs.flat()).localeCompare(String(rhs.flat()));
 }
 
-
 function getCookie(cname, def = "") {
 	let name = cname + "=";
 	let decodedCookie = decodeURIComponent(document.cookie);
