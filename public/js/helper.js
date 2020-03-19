@@ -34,6 +34,14 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
 const copyToClipboard = str => {
 	const el = document.createElement('textarea');  // Create a <textarea> element
