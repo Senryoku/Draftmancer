@@ -71,8 +71,11 @@
 					<label for="useCollection">Restrict to Collection</label>
 				</span>
 
-				<span class="v-separator"></span>
+				<span class="v-separator" title="If enabled, you will be notified when a draft is launched."></span>
 				<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" title="Allows you to pick cards by double clicking." /><label for="pickOnDblclick">Pick on Double Click</label>
+				<span :class="{ disabled: notificationPermission == 'denied' }" v-if="'Notification' in window">
+					<input type="checkbox" v-model="enableNotifications" @change="checkNotificationPermission" id="notification-input" /><label for="notification-input">Notifications</label>
+				</span>
 			</span>
 			
 			<span class="generic-container">
@@ -323,6 +326,7 @@
 						<li><span class="option-name">Language</span>: Adjusts the display language of cards.</li>
 						<li><span class="option-name">Restrict to Collection</span>: If unchecked, your collection will not limit the cards available. If every players unchecks this, you will draft using every cards. (Particularly useful if you don't intend on playing specifically on MTGA)</li>
 						<li><span class="option-name">Pick on Double Click</span>: Allows you to double click on booster cards during draft to pick without having to confirm.</li>
+						<li><span class="option-name">Notifications</span>: If enabled, you will be notified when a draft is launched.</li>
 						<li><span class="option-name">Session ID</span>: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
 						<li><span class="option-name">Card Display</span>: Adjusts the order of cards within a sealed pool or your drafted cards.</li>
 					</ul>

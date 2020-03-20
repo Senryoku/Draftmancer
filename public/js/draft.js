@@ -96,6 +96,8 @@ var app = new Vue({
 		boosterIndex: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
+		enableNotifications: Notification.permission == 'granted' && getCookie("enableNotifications", false),
+		notificationPermission: Notification.permission,
 		selectedCardId: undefined,
 		deck: [],
 		sideboard: [],
@@ -294,6 +296,13 @@ var app = new Vue({
 					showConfirmButton: false,
 					timer: 1500
 				});
+				
+				if(app.enableNotifications) {
+					console.log('Notification');
+					let notification = new Notification('Now drafting!', {
+						body: `Your draft '${app.sessionID}' is starting!`
+					});
+				}
 			});
 			
 			this.socket.on('rejoinDraft', function(data) {
@@ -426,10 +435,20 @@ var app = new Vue({
 				const randomIdx = Math.floor(Math.random() * this.booster.length)
 				this.selectedCardId = this.booster[randomIdx].id;
 			}
-			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
+			this.socket.emit('pickCard', this.boosterIndex, this.selectedCardId);
 			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 			this.draftingState = DraftState.Waiting;
+		},
+		checkNotificationPermission: function(e) {
+			if(e.target.value && Notification.permission != 'granted') {
+				Notification.requestPermission().then(function(permission) {
+					this.notificationPermission = permission;
+					if(permission != 'granted') {
+						this.enableNotifications = false;
+					}
+				});
+			}
 		},
 		removeFromDeck: function(e, c) { // From deck to sideboard
 			for(let i = 0; i < this.deck.length; ++i) {
@@ -1030,6 +1049,9 @@ var app = new Vue({
 		},
 		autoLand: function() {
 			this.updateAutoLands();
+		},
+		enableNotifications: function() {
+			setCookie("enableNotifications", this.enableNotifications);
 		}
 	}
 });
