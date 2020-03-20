@@ -9,8 +9,8 @@
 		{code: 'ja',  name: 'Japanese'},
 		{code: 'ko',  name: 'Korean'},
 		{code: 'ru',  name: 'Russian'},
-		{code: 'zhs', name: 'Simplified Chinese'},
-		{code: 'zht', name: 'Traditional Chinese'}
+		{code: 'zhs', name: '汉语'},
+		{code: 'zht', name: '漢語'}
 	];
 	const MTGSets = ["m19", "xln", "rix", "dom", "grn", "rna", "war", "m20", "eld", "thb"];
 	
