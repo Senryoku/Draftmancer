@@ -414,7 +414,7 @@ var app = new Vue({
 			if(this.draftingState != DraftState.Picking || !this.selectedCardId)
 				return;
 			this.draftingState = DraftState.Waiting;
-			this.socket.emit('pickCard', this.sessionID, this.boosterIndex, this.selectedCardId);
+			this.socket.emit('pickCard', this.boosterIndex, this.selectedCardId);
 			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},

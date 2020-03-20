@@ -346,7 +346,7 @@ function Session(id, owner) {
 		
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		
-		console.log("Starting draft! Session status:");
+		console.log("Starting draft!");
 		console.debug(this);
 		
 		// Generate bots

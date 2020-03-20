@@ -41,7 +41,7 @@ function getPublicSessions() {
 // Setup all websocket responses on client connection
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
-	//console.log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
+	console.log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
 	if(query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		query.userID = uuidv1();
@@ -55,7 +55,7 @@ io.on('connection', function(socket) {
 	// Messages
 	
 	socket.on('disconnect', function() {
-		let userID = query.userID;
+		let userID = this.userID;
 		if(userID in Connections) {
 			//console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
 			removeUserFromSession(userID);
@@ -66,7 +66,7 @@ io.on('connection', function(socket) {
 	// Personnal options
 	
 	socket.on('setUserName', function(userName) {
-		let userID = query.userID;
+		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		
 		Connections[userID].userName = userName;
@@ -81,7 +81,7 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('setSession', function(sessionID) {
-		let userID = query.userID;
+		let userID = this.userID;
 		
 		if(sessionID == Connections[userID].sessionID)
 			return;
@@ -90,7 +90,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('setCollection', function(collection) {
-		let userID = query.userID;
+		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		
 		if(typeof collection !== 'object' || collection === null)
@@ -108,7 +108,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('useCollection', function(useCollection) {
-		let userID = query.userID;
+		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		
 		if(typeof useCollection !== 'boolean')
@@ -140,7 +140,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('startDraft', function() {
-		let userID = query.userID;
+		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
 			return;
@@ -157,8 +157,9 @@ io.on('connection', function(socket) {
 	
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	socket.on('pickCard', function(sessionID, boosterIndex, cardID) {
-		let userID = query.userID;
+	socket.on('pickCard', function(boosterIndex, cardID) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
 		
 		if(!(sessionID in Sessions) || 
 		   !(userID in Connections) || 
@@ -422,7 +423,7 @@ io.on('connection', function(socket) {
 	});
 	
 	socket.on('distributeSealed', function(boostersPerPlayer) {
-		let userID = query.userID;
+		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
 			return;
