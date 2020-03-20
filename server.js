@@ -41,7 +41,7 @@ function getPublicSessions() {
 // Setup all websocket responses on client connection
 io.on('connection', function(socket) {
 	const query = socket.handshake.query;
-	console.log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
+	//console.log(`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
 	if(query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		query.userID = uuidv1();
@@ -57,7 +57,7 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		let userID = query.userID;
 		if(userID in Connections) {
-			console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
+			//console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
 			removeUserFromSession(userID);
 			delete Connections[userID];
 		}
