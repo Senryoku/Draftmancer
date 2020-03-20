@@ -11,31 +11,51 @@ const ioOptions = {
 	reconnection: false
 };
 
+function connectClient(query) {
+	return io('http://localhost:3000/', Object.assign({query: query}, ioOptions));
+}
+
+let outputbuffer;
+function disableLogs() {
+	outputbuffer = "";
+	console.log = console.debug = console.warn = function(msg) { 
+		outputbuffer += msg+'\n';
+	};
+}
+function enableLogs(print) {
+	delete console.log;
+	delete console.debug;
+	delete console.warn;
+	if (print) {
+		console.log(outputbuffer);
+	}
+}
+
 describe('Inter client communication', function() {
 	let sender, receiver;
 	
     beforeEach(function(done) {
-		console.log = function(){};
-		console.debug = function(){};
+		disableLogs();
 		done();
 	});
 	
 	afterEach(function() {
-		delete console.log;
-		delete console.debug;
+		enableLogs(this.currentTest.state == 'failed');
 	});
 
 	before(function(done) {
-		sender = io('http://localhost:3000/', Object.assign({query: {
+		disableLogs();
+		sender = connectClient({
 			userID: 'sender', 
 			sessionID: 'sessionID',
 			userName: 'sender'
-		}}, ioOptions));
-		receiver = io('http://localhost:3000/', Object.assign({query: {
+		});
+		receiver = connectClient({
 			userID: 'receiver', 
 			sessionID: 'sessionID',
 			userName: 'receiver'
-		}}, ioOptions));
+		});
+		enableLogs(false);
 
 		done()
 	});
@@ -106,35 +126,36 @@ describe('Single Draft', function() {
 	let sessionID = 'sessionID';
 	
     beforeEach(function(done) {
-		console.log = function(){};
-		console.debug = function(){};
+		disableLogs();
 		done();
 	});
 	
 	afterEach(function() {
-		delete console.log;
-		delete console.debug;
+		enableLogs(this.currentTest.state == 'failed');
 	});
 	
 	before(function(done) {
-		clients.push(io('http://localhost:3000/', Object.assign({query: {
+		disableLogs();
+		clients.push(connectClient({
 			userID: 'sameID', 
 			sessionID: sessionID,
 			userName: 'Client1'
-		}}, ioOptions)));
-		clients.push(io('http://localhost:3000/', Object.assign({query: {
+		}));
+		clients.push(connectClient({
 			userID: 'sameID', 
 			sessionID: sessionID,
 			userName: 'Client2'
-		}}, ioOptions)));
+		}));
 
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for(let c of clients) {
 			c.on('connect', function() {
 				connectedClients += 1;
-				if(connectedClients == clients.length)
+				if(connectedClients == clients.length) {
+					enableLogs(false);
 					done();
+				}
 			});
 		}
 	});
@@ -196,33 +217,26 @@ describe('Multiple Drafts', function() {
 	const sessionCount = 4;
 	const playersPerSession = 7;
 	
-	let output;
-	
     beforeEach(function(done) {
-		output = "";
-		console.log = function(msg){ output+=msg+'\n'; };
-		console.debug = function(msg){ output+=msg+'\n'; };
+		disableLogs();
 		done();
 	});
 	
 	afterEach(function() {
-		delete console.log;
-		delete console.debug;
-		if (this.currentTest.state == 'failed') {
-			console.log(output);
-		}
+		enableLogs(this.currentTest.state == 'failed');
 	});
 	
 	before(function(done) {
+		disableLogs();
 		for(let sess = 0; sess < sessionCount; ++sess) {
 			sessionIDs[sess] = `Session ${sess}`;
 			clients[sess] = [];
 			for(let i = 0; i < playersPerSession; ++i) {
-				clients[sess].push(io('http://localhost:3000/', Object.assign({query: {
+				clients[sess].push(connectClient({
 					userID: 'sameID', 
 					sessionID: sessionIDs[sess],
 					userName: `Client ${sess * playersPerSession + i}`
-				}}, ioOptions)));
+				}));
 			}
 		}
 		
@@ -232,8 +246,10 @@ describe('Multiple Drafts', function() {
 			for(let c of s) {
 				c.on('connect', function() {
 					connectedClients += 1;
-					if(connectedClients == playersPerSession * clients.length)
+					if(connectedClients == playersPerSession * clients.length) {
+						enableLogs(false);
 						done();
+					}
 				});
 			}
 		}
