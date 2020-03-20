@@ -491,7 +491,7 @@ function joinSession(sessionID, userID) {
 
 function addUserToSession(userID, sessionID) {
 	if(Connections[userID].sessionID !== null)
-		removeUserFromSession(userID, Connections[userID].sessionID);
+		removeUserFromSession(userID);
 	if(!(sessionID in Sessions))
 		Sessions[sessionID] = new Session(sessionID, userID);
 	
