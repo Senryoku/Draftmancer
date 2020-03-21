@@ -319,20 +319,24 @@ function Session(id, owner) {
 		let user_info = [];
 		for(let user of this.users) {
 			let u = Connections[user];
-			user_info.push({
-				userID: u.userID, 
-				userName: u.userName,
-				collection: u.collection
-			});
+			if(u) {
+				user_info.push({
+					userID: u.userID, 
+					userName: u.userName,
+					collection: u.collection
+				});
+			}
 		}
 		
 		user_info.sort((lhs, rhs) => { return lhs.userID < rhs.userID; });
 		
 		// Send to all session users
-		for(let user of this.users) {
-			Connections[user].socket.emit('sessionOwner', this.owner);
-			Connections[user].socket.emit('sessionUsers', user_info);
-		}
+		for(let user of this.users)
+			if(Connections[user])
+				Connections[user].socket.emit('sessionOwner', this.owner);
+		for(let user of this.users)
+			if(Connections[user])
+				Connections[user].socket.emit('sessionUsers', user_info);
 	};
 	
 	this.startDraft = function() {
