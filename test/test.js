@@ -206,11 +206,11 @@ describe('Single Draft', function() {
 	});
 
 	it('3 clients with different userID should be connected.', function(done) {
-		let idx = clients.push(io('http://localhost:3000/', Object.assign({query: {
+		let idx = clients.push(connectClient({
 			userID: 'sameID', 
 			sessionID: sessionID,
 			userName: 'Client3'
-		}}, ioOptions)));
+		}));
 		
 		clients[idx - 1].on('connect', function() {
 			const Connections = server.__get__("Connections");

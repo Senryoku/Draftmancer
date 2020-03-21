@@ -219,12 +219,12 @@ var app = new Vue({
 			});
 			
 			this.socket.on('updateUser', function(data) {
-				let userIdx = app.sessionUsers.findIndex(u => u.userID == data.userID);
-				if(userIdx == -1)
+				let user = app.userByID[data.userID];
+				if(!user)
 					return;
 				
 				for(let prop in data.updatedProperties) {
-					app.sessionUsers[userIdx][prop] = data.updatedProperties[prop];
+					user[prop] = data.updatedProperties[prop];
 				}
 			});
 			
@@ -983,7 +983,7 @@ var app = new Vue({
 			setCookie('sessionID', this.sessionID);
 		},
 		userName: function() {
-			this.socket.query.userName = userName;
+			this.socket.query.userName = this.userName;
 			this.socket.emit('setUserName', this.userName);
 			setCookie('userName', this.userName);
 		},
@@ -991,11 +991,18 @@ var app = new Vue({
 			this.socket.emit('useCollection', this.useCollection);
 			setCookie('useCollection', this.useCollection);
 		},
+		// Front-end options
 		language: function() {
 			setCookie('language', this.language);
 		},
 		pickOnDblclick: function() {
 			setCookie('pickOnDblclick', this.pickOnDblclick);
+		},
+		deck: function() {
+			this.updateAutoLands();
+		},
+		autoLand: function() {
+			this.updateAutoLands();
 		},
 		// Session options
 		setRestriction: function() {
@@ -1053,12 +1060,6 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('setUseCustomCardList', this.useCustomCardList);
-		},
-		deck: function() {
-			this.updateAutoLands();
-		},
-		autoLand: function() {
-			this.updateAutoLands();
 		},
 		enableNotifications: function() {
 			setCookie("enableNotifications", this.enableNotifications);
