@@ -57,7 +57,7 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		let userID = this.userID;
 		if(userID in Connections) {
-			//console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
+			console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
 			removeUserFromSession(userID);
 			delete Connections[userID];
 		}

@@ -158,6 +158,7 @@ var app = new Vue({
 			
 			this.socket.on('alreadyConnected', function(newID) {
 				app.userID = newID;
+				this.query.userID = newID;
 			});
 			
 			this.socket.on('chatMessage', function(message) {
@@ -175,8 +176,9 @@ var app = new Vue({
 				app.publicSessions = sessions;
 			});
 			
-			this.socket.on('setSession', function(data) {
-				app.sessionID = data;
+			this.socket.on('setSession', function(sessionID) {
+				app.sessionID = sessionID;
+				this.query.sessionID = sessionID;
 				if(app.drafting) { // Expelled during drafting
 					app.drafting = false;
 					app.draftingState = DraftState.Brewing;
@@ -974,11 +976,13 @@ var app = new Vue({
 	},
 	watch: {
 		sessionID: function() {
+			this.socket.query.sessionID = this.sessionID;
 			this.socket.emit('setSession', this.sessionID);
 			history.replaceState({sessionID: this.sessionID}, `MTGADraft Session ${this.sessionID}`, `?session=${this.sessionID}`)
 			setCookie('sessionID', this.sessionID);
 		},
 		userName: function() {
+			this.socket.query.userName = userName;
 			this.socket.emit('setUserName', this.userName);
 			setCookie('userName', this.userName);
 		},

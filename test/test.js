@@ -4,6 +4,8 @@ let rewire = require("rewire");
 let expect = require('chai').expect
 let server = rewire('../server') // Rewire exposes internal variables of the module
 
+const NODE_PORT = process.env.NODE_PORT || 3000
+
 let io = require('socket.io-client')
 const ioOptions = { 
 	transports: ['websocket'], 
@@ -12,7 +14,11 @@ const ioOptions = {
 };
 
 function connectClient(query) {
-	return io('http://localhost:3000/', Object.assign({query: query}, ioOptions));
+	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({query: query}, ioOptions));
+	r.on('alreadyConnected', function(newID) {
+		this.query.userID = newID;
+	});
+	return r;
 }
 
 let outputbuffer;
@@ -26,8 +32,10 @@ function enableLogs(print) {
 	delete console.log;
 	delete console.debug;
 	delete console.warn;
-	if (print) {
+	if (print && outputbuffer != "") {
+		console.log('--- Delayed Output ---------------------------------------------------------');
 		console.log(outputbuffer);
+		console.log('----------------------------------------------------- Delayed Output End ---');
 	}
 }
 
@@ -39,12 +47,15 @@ describe('Inter client communication', function() {
 		done();
 	});
 	
-	afterEach(function() {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == 'failed');
+		done();
 	});
 
 	before(function(done) {
 		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
 		sender = connectClient({
 			userID: 'sender', 
 			sessionID: 'sessionID',
@@ -56,14 +67,20 @@ describe('Inter client communication', function() {
 			userName: 'receiver'
 		});
 		enableLogs(false);
-
-		done()
+		done();
 	});
 
 	after(function(done) {
 		sender.disconnect()
+		sender.close()
 		receiver.disconnect()
-		done()
+		receiver.close()
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			done();
+		}, 250);
 	});
 
 	describe('Chat Events', function() {
@@ -130,12 +147,15 @@ describe('Single Draft', function() {
 		done();
 	});
 	
-	afterEach(function() {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == 'failed');
+		done();
 	});
 	
 	before(function(done) {
 		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
 		clients.push(connectClient({
 			userID: 'sameID', 
 			sessionID: sessionID,
@@ -161,9 +181,16 @@ describe('Single Draft', function() {
 	});
 
 	after(function(done) {
-		for(let c of clients)
+		for(let c of clients) {
 			c.disconnect();
-		done();
+			c.close();
+		}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			done();
+		}, 250);
 	});
 	
 	it('A user with userID "sameID" should be connected.', function(done) {
@@ -222,12 +249,15 @@ describe('Multiple Drafts', function() {
 		done();
 	});
 	
-	afterEach(function() {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == 'failed');
+		done();
 	});
 	
 	before(function(done) {
 		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
 		for(let sess = 0; sess < sessionCount; ++sess) {
 			sessionIDs[sess] = `Session ${sess}`;
 			clients[sess] = [];
@@ -257,9 +287,16 @@ describe('Multiple Drafts', function() {
 
 	after(function(done) {
 		for(let s of clients)
-			for(let c of s)
+			for(let c of s) {
 				c.disconnect();
-		done();
+				c.close();
+			}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			done();
+		}, 250);
 	});
 	
 	it(`${sessionCount} sessions should be live.`, function(done) {
@@ -278,7 +315,7 @@ describe('Multiple Drafts', function() {
 	it('When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster', function(done) {
 		let sessionsCorrectlyStartedDrafting = 0;
 		let receivedBoosters = 0;
-		for(let sessionClients of clients) {
+		for(let [sessionIdx, sessionClients] of clients.entries()) {
 			(() => {
 				let connectedClients = 0;
 				for(let c of sessionClients) {
@@ -296,7 +333,9 @@ describe('Multiple Drafts', function() {
 							done();
 					});
 				}
-				sessionClients[0].emit('startDraft');
+				const Sessions = server.__get__("Sessions");
+				let ownerIdx = sessionClients.findIndex(c => c.query.userID == Sessions[sessionIDs[sessionIdx]].owner);
+				sessionClients[ownerIdx].emit('startDraft');
 			})();
 		}
 	});
@@ -312,6 +351,7 @@ describe('Multiple Drafts', function() {
 			expect(newSessionID).to.not.equal(sessionIDs[0]);
 			const Sessions = server.__get__("Sessions");
 			expect(Sessions[sessionIDs[0]].users.size).to.equal(playersPerSession);
+			newClient.disconnect();
 			done();
 		});
 	});

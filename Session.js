@@ -345,10 +345,9 @@ function Session(id, owner) {
 		}
 		
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
-		
 		console.log("Starting draft!");
-		console.debug(this);
 		
+		this.disconnectedUsers = {};
 		// Generate bots
 		this.botsInstances = []
 		for(let i = 0; i < this.bots; ++i)
@@ -364,6 +363,7 @@ function Session(id, owner) {
 			Connections[user].socket.emit('startDraft');
 		}
 		this.round = 0;
+		console.debug(this);
 		this.nextBooster();
 	};
 		
@@ -394,7 +394,14 @@ function Session(id, owner) {
 		for(let userID of sortedPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
-				const pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
+				let pickIdx;
+				if(!this.disconnectedUsers[userID].bot) {
+					console.error("Trying to use bot that doesn't exist... That should not be possible!");
+					console.error(this.disconnectedUsers[userID])
+					pickIdx = 0;
+				} else {
+					pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
+				}
 				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
 				this.boosters[boosterIndex].splice(pickIdx, 1);
 				++this.pickedCardsThisRound;
