@@ -101,6 +101,8 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
 					matches[i+1] = float(matches[i+1])
 				except ValueError:
 					vals = matches[i+1].split(" // ")
+					if len(vals) != 2:
+						vals = matches[i+1].split(" //")
 					matches[i+1] = (float(vals[0]) + float(vals[1]))/2
 				#print(matches[i] + " " + matches[i+1])
 				CardRatings[matches[i]] = matches[i+1]

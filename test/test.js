@@ -135,6 +135,15 @@ describe('Inter client communication', function() {
 			done();
 		  });
 		});
+		it('Clients should receive the updated userName.', function(done) {
+		  sender.emit('setUserName', 'Sender New UserName');
+		  receiver.on('updateUser', function(data) {
+			expect(data.userID).to.equal('sender');
+			expect(data.updatedProperties.userName).to.equal('Sender New UserName');
+			this.removeListener('updateUser');
+			done();
+		  });
+		});
 	});
 });
 
@@ -296,7 +305,7 @@ describe('Multiple Drafts', function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			done();
-		}, 250);
+		}, 500);
 	});
 	
 	it(`${sessionCount} sessions should be live.`, function(done) {
