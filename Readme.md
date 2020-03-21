@@ -2,12 +2,16 @@
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
  * Add back ready to draft... "I'm ready!" ? All it does is signaling the session owner that you're here and ready; a button on the right of SessionID ?
+ * Add foils in packs (with toggle?) ("Odds a pack has a foil uncommon is 1 in 18, a rare is 1 in 36, and a mythic is 1 in whatever 8 * 36")
+ * Display foils as... foils in front end?
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?
  * (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
  
 # Check
+ * Check possible rare duplication? (check randomness of packs)
+ * ----
  * Add notification option: In a sub menu add a way to activate notifications (HTML5 Notification?) fired when a draft is launched.
  * Make chat message easier to read
  * Set Multiple Selection

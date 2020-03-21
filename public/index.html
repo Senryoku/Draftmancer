@@ -314,6 +314,7 @@
 						<li><span class="option-name">Maximum Rarity</span>: Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)</li>
 						<li><span class="option-name">Color Balance</span>: If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random. (Also affects sealed)</li>
 						<li><span class="option-name">Custom card list</span>: Submit a custom card list (one English card name by line) to draft your own cube.</li>
+						<li><span class="option-name">Foil</span>: If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.</li>
 					(Draft options)
 						<li><span class="option-name">Boosters per Player</span>: Defaults to 3.</li>
 						<li><span class="option-name">Bots</span>: Adds virtual players to your draft. They are <strong>pretty dumb</strong>, so their utility is limited, but they are doing their best :(</li>
@@ -418,6 +419,12 @@
 					<label for="colorBalance">Color Balance</label>
 					<div class="right">
 						<input type="checkbox" v-model="colorBalance">
+					</div>
+				</div>
+				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.">
+					<label for="colorBalance">Foil</label>
+					<div class="right">
+						<input type="checkbox" v-model="foil">
 					</div>
 				</div>
 				<div class="line" title="Use a custom card list.">

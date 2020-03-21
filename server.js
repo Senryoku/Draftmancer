@@ -91,24 +91,29 @@ io.on('connection', function(socket) {
 	
 	socket.on('setCollection', function(collection) {
 		let userID = this.userID;
+		if(!Connections[userID])
+			return;
 		let sessionID = Connections[userID].sessionID;
 		
 		if(typeof collection !== 'object' || collection === null)
 			return;
 		
 		Connections[userID].collection = collection;
-		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('updateUser', {
-				userID: userID,
-				updatedProperties: {
-					collection: collection
-				}
-			});
-		}
+		if(Sessions[sessionID])
+			for(let user of Sessions[sessionID].users) {
+				Connections[user].socket.emit('updateUser', {
+					userID: userID,
+					updatedProperties: {
+						collection: collection
+					}
+				});
+			}
 	});
 	
 	socket.on('useCollection', function(useCollection) {
 		let userID = this.userID;
+		if(!Connections[userID])
+			return;
 		let sessionID = Connections[userID].sessionID;
 		
 		if(typeof useCollection !== 'boolean')
@@ -118,14 +123,15 @@ io.on('connection', function(socket) {
 			return;
 		
 		Connections[userID].useCollection = useCollection;
-		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('updateUser', {
-				userID: userID,
-				updatedProperties: {
-					useCollection: useCollection
-				}
-			});
-		}
+		if(Sessions[sessionID])
+			for(let user of Sessions[sessionID].users) {
+				Connections[user].socket.emit('updateUser', {
+					userID: userID,
+					updatedProperties: {
+						useCollection: useCollection
+					}
+				});
+			}
 	});
 	
 	socket.on('chatMessage', function(message) {
@@ -378,8 +384,23 @@ io.on('connection', function(socket) {
 		
 		Sessions[sessionID].colorBalance = colorBalance;
 		for(let user of Sessions[sessionID].users) {
-			if(user != this.userID)
+			if(user != this.userID && user in Connections)
 				Connections[user].socket.emit('sessionOptions', {colorBalance: Sessions[sessionID].colorBalance});
+		}
+	});
+	
+	socket.on('setFoil', function(foil) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		
+		if(foil == Sessions[sessionID].foil)
+			return;
+		
+		Sessions[sessionID].foil = foil;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID && user in Connections)
+				Connections[user].socket.emit('sessionOptions', {foil: Sessions[sessionID].foil});
 		}
 	});
 	
@@ -393,7 +414,7 @@ io.on('connection', function(socket) {
 		
 		Sessions[sessionID].useCustomCardList = useCustomCardList;
 		for(let user of Sessions[sessionID].users) {
-			if(user != this.userID)
+			if(user != this.userID && user in Connections)
 				Connections[user].socket.emit('sessionOptions', {useCustomCardList: Sessions[sessionID].useCustomCardList});
 		}
 	});

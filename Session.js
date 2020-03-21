@@ -44,6 +44,7 @@ function Session(id, owner) {
 	this.maxPlayers = 8;
 	this.maxRarity = 'mythic';
 	this.colorBalance = true;
+	this.foil = true;
 	this.useCustomCardList = false;
 	this.customCardList = [];
 	
@@ -237,6 +238,10 @@ function Session(id, owner) {
 						'common': 10
 					};
 			}
+			
+			const foilFrequency = 15.0/63.0;
+			// 1/16 chances of a foil basic land added to the common slot. Mythic to common
+			const foilRarityFreq = {'mythic': 1.0/128, 'rare': 1.0/128 + 7.0/128, 'uncommon': 1.0/16 + 3.0/16, 'common': 1.0};
 
 			// Making sure we have enough cards of each rarity
 			const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
@@ -266,6 +271,17 @@ function Session(id, owner) {
 			this.boosters = [];
 			for(let i = 0; i < boosterQuantity; ++i) {
 				let booster = [];
+				
+				let addedFoils = 0;
+				if(this.foil && Math.random() <= foilFrequency) {
+					const rarityCheck = Math.random();
+					for(let r in foilRarityFreq)
+						if(rarityCheck <= foilRarityFreq[r] && !isEmpty(localCollection[r])) {
+							booster.push(pick_card(localCollection[r]));
+							addedFoils += 1;
+							break;
+						}
+				}
 				
 				for(let i = 0; i < targets['rare']; ++i) {
 					// 1 Rare/Mythic
@@ -301,7 +317,7 @@ function Session(id, owner) {
 					}
 				}
 				
-				for(let i = pickedCommons.length; i < targets['common']; ++i)
+				for(let i = pickedCommons.length; i < targets['common'] - addedFoils; ++i)
 					pickedCommons.push(pick_card(localCollection['common'], pickedCommons));
 				
 				// Shuffle commons to avoid obvious signals to other players when color balancing
@@ -367,7 +383,7 @@ function Session(id, owner) {
 			Connections[user].socket.emit('startDraft');
 		}
 		this.round = 0;
-		console.debug(this);
+		//console.debug(this);
 		this.nextBooster();
 	};
 		

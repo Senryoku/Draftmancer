@@ -73,6 +73,7 @@ var app = new Vue({
 		maxPlayers: 8,
 		maxRarity: "Mythic",
 		colorBalance: true,
+		foil: true,
 		bots: 0,
 		setRestriction: "",
 		drafting: false,
@@ -1042,6 +1043,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('setColorBalance', this.colorBalance);
+		},
+		foil: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setFoil', this.foil);
 		},
 		useCustomCardList: function() {
 			if(this.userID != this.sessionOwner)
