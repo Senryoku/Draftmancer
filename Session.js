@@ -333,7 +333,7 @@ function Session(id, owner) {
 	this.notifyUserChange = function() {
 		// Send only necessary data
 		let user_info = [];
-		for(let user of this.users) {
+		for(let user of Array.from(this.users).sort()) {
 			let u = Connections[user];
 			if(u) {
 				user_info.push({
@@ -343,9 +343,7 @@ function Session(id, owner) {
 				});
 			}
 		}
-		
-		user_info.sort((lhs, rhs) => { return lhs.userID < rhs.userID; });
-		
+				
 		// Send to all session users
 		for(let user of this.users)
 			if(Connections[user])
