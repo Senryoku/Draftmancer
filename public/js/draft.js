@@ -842,6 +842,9 @@ var app = new Vue({
 		}
 	},
 	computed: {
+		draftRound: function() {
+			return Math.floor((this.deck.length + this.sideboard.length)/(this.useCustomCardList ? 15 : 14)) + 1;
+		},
 		displaySets: function() {
 			let dSets = [];
 			for(let s of this.sets) {

@@ -400,6 +400,16 @@ ul.player-list {
 	border-radius: 5px;
 }
 
+.passing-order-left {
+	position: absolute;
+	left: -0.95em;
+}
+
+.passing-order-right {
+	position: absolute;
+	right: -0.95em;
+}
+
 .chat {
 	display: inline-block;
 	position: relative;

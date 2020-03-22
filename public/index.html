@@ -152,6 +152,8 @@
 			</div>
 			<ul class="player-list">
 				<li v-for="user in sessionUsers" :title="user.userID">
+					<i class="fas fa-angle-double-left passing-order-left" v-show="drafting && (draftRound % 2) == 1" title="Passing order"></i>
+					<i class="fas fa-angle-double-right passing-order-right" v-show="drafting && (draftRound % 2) == 0" title="Passing order"></i>
 					{{ user.userName }}
 					<div class="status-icons">
 						<i v-if="user.userID == sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
@@ -201,7 +203,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ Math.floor((deck.length + sideboard.length)/14) + 1 }}, Pick {{ ((deck.length + sideboard.length) % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % 14) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">
