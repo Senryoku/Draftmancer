@@ -72,7 +72,10 @@ function Session(id, owner) {
 			bots: this.bots,
 			maxPlayers: this.maxPlayers,
 			maxRarity: this.maxRarity,
-			colorBalance: this.colorBalance
+			colorBalance: this.colorBalance,
+			foil: this.foil,
+			useCustomCardList: this.useCustomCardList,
+			customCardList: this.customCardList
 		});
 	}
 	
