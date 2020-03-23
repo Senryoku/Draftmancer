@@ -161,6 +161,16 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('stopDraft', function() {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		if(!Sessions[sessionID].drafting)
+			return;
+		Sessions[sessionID].endDraft();
+	});
+	
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	socket.on('pickCard', function(boosterIndex, cardID) {

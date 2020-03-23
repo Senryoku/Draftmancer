@@ -144,6 +144,7 @@
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
 				Draft in progress!
+				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">Stop Draft</button>
 			</div>
 		</div>
 		<div class="main-controls session-players">
@@ -292,7 +293,7 @@
 				</template>
 			</div>
 		</div>
-	<div class="welcome" v-if="!drafting && (deck == undefined || deck.length == 0) && (sideboard == undefined || sideboard.length == 0) ">
+	<div class="welcome" v-if="draftingState === undefined">
 			<h1>Welcome to MTGADraft!</h1>
 			<p class="important">
 				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!

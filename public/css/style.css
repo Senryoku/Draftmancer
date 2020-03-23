@@ -347,6 +347,10 @@ label {
 	text-shadow: 0px 0px 10px black;
 }
 
+#main-vue button.stop {
+	background-color: darkred;
+}
+
 .v-separator {
 	border: 1px solid #666;
 	width: 0;

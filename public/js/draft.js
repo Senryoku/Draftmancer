@@ -746,6 +746,24 @@ var app = new Vue({
 				this.socket.emit('startDraft');
 			}
 		},
+		stopDraft: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			Swal.fire({
+				title: 'Are you sure?',
+				text: "Do you really want to stop the draft here?",
+				type: 'warning',
+				showCancelButton: true,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: "I'm sure!",
+			}).then((result) => {
+				if(result.value) {
+					this.socket.emit('stopDraft');
+				}
+			});
+		},
 		sealedDialog: async function() {
 			if(this.userID != this.sessionOwner)
 				return;

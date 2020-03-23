@@ -492,8 +492,8 @@ function Session(id, owner) {
 
 	this.endDraft = function() {
 		this.drafting = false;
-		
 		this.stopCountdown();
+		this.boosters = [];
 		
 		let draftLog = {};
 		for(let userID of this.getSortedHumanPlayers()) {
