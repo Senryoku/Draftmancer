@@ -373,6 +373,17 @@ io.on('connection', function(socket) {
 				Connections[user].socket.emit('setMaxRarity', maxRarity);
 		}
 	});
+
+	socket.on('setMaxDuplicates', function(maxDuplicates) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].maxDuplicates = maxDuplicates;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('sessionOptions', {maxDuplicates: maxDuplicates});
+		}
+	});
 	
 	socket.on('setColorBalance', function(colorBalance) {
 		let sessionID = Connections[this.userID].sessionID;

@@ -73,6 +73,12 @@ var app = new Vue({
 		maxPlayers: 8,
 		maxRarity: "Mythic",
 		colorBalance: true,
+		maxDuplicates: {
+			'common': 8,
+			'uncommon': 4,
+			'rare': 2,
+			'mythic': 1,
+		},
 		foil: true,
 		bots: 0,
 		setRestriction: "",
@@ -1048,6 +1054,14 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('ignoreCollections', this.ignoreCollections);
+		},
+		maxDuplicates: {
+			deep: true,
+			handler() {
+				if(this.userID != this.sessionOwner)
+					return;
+				this.socket.emit('setMaxDuplicates', this.maxDuplicates);
+			}
 		},
 		colorBalance: function() {
 			if(this.userID != this.sessionOwner)

@@ -3,6 +3,7 @@
 let rewire = require("rewire");
 let expect = require('chai').expect
 let server = rewire('../server') // Rewire exposes internal variables of the module
+const randomjs = require("random-js");
 
 const NODE_PORT = process.env.NODE_PORT || 3000
 
@@ -71,6 +72,7 @@ describe('Inter client communication', function() {
 	});
 
 	after(function(done) {
+		disableLogs();
 		sender.disconnect()
 		sender.close()
 		receiver.disconnect()
@@ -79,6 +81,7 @@ describe('Inter client communication', function() {
 		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
 			done();
 		}, 250);
 	});
@@ -144,6 +147,15 @@ describe('Inter client communication', function() {
 			done();
 		  });
 		});
+		it('Clients should receive the updated maxDuplicates.', function(done) {
+			const newMaxDuplicates = {'common': 5, 'uncommon': 4, 'rare': 1, 'mythic': 1};
+			sender.emit('setMaxDuplicates', newMaxDuplicates);
+			receiver.on('sessionOptions', function(options) {
+				expect(options.maxDuplicates).to.eql(newMaxDuplicates);
+				this.removeListener('sessionOptions');
+				done();
+			});
+		});
 	});
 });
 
@@ -190,6 +202,7 @@ describe('Single Draft', function() {
 	});
 
 	after(function(done) {
+		disableLogs();
 		for(let c of clients) {
 			c.disconnect();
 			c.close();
@@ -198,6 +211,7 @@ describe('Single Draft', function() {
 		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
 			done();
 		}, 250);
 	});
@@ -231,6 +245,37 @@ describe('Single Draft', function() {
 	it('First client should be the session owner', function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal('sameID');
+		done();
+	});
+	
+	it(`Collection should be all of THB set (+ distribution quick test)`, function(done) {
+		const Sessions = server.__get__("Sessions");
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit('ignoreCollections', true);
+		clients[ownerIdx].emit('setRestriction', ['thb']);
+		const localCollection = Sessions[sessionID].restrictedCollectionByRarity();
+		expect(Object.keys(localCollection['common']).length).to.equal(101);
+		expect(Object.keys(localCollection['uncommon']).length).to.equal(80);
+		expect(Object.keys(localCollection['rare']).length).to.equal(53);
+		expect(Object.keys(localCollection['mythic']).length).to.equal(15);
+
+		const random = new randomjs.Random(randomjs.nodeCrypto);
+		const get_random_key = () => random.integer(0, Object.keys(localCollection['rare']).length - 1);
+		process.stdout.write('Distribution samples:\n');
+		for(let repeat = 0; repeat < 5; ++repeat) {
+			let samples = {};
+			const sampleCount = 8 * 3;
+			for(let i = 0; i < Object.keys(localCollection['rare']).length; ++i)
+				samples[i] = 0;
+			for(let i = 0; i < sampleCount; ++i) {
+				samples[get_random_key()] += 1;
+			}
+			for(let i = 0; i < Object.keys(localCollection['rare']).length; ++i)
+				process.stdout.write(`${samples[i]} `);
+				//process.stdout.write(`${samples[i]}; ${samples[i] * 100.0 / sampleCount} %)`);
+			process.stdout.write('\n');
+		}
+		
 		done();
 	});
 	
@@ -295,6 +340,7 @@ describe('Multiple Drafts', function() {
 	});
 
 	after(function(done) {
+		disableLogs();
 		for(let s of clients)
 			for(let c of s) {
 				c.disconnect();
@@ -304,6 +350,7 @@ describe('Multiple Drafts', function() {
 		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
 			done();
 		}, 500);
 	});

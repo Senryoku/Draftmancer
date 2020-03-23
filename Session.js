@@ -5,7 +5,9 @@ const ConnectionModule = require('./Connection');
 const Connections = ConnectionModule.Connections;
 const Cards = require('./Cards');
 const Bot = require('./Bot');
-
+const randomjs = require("random-js");
+const random = new randomjs.Random(randomjs.nodeCrypto);
+		
 function isEmpty(obj) {
 	return Object.entries(obj).length === 0 && obj.constructor === Object;
 }
@@ -15,11 +17,11 @@ function negMod(m, n) {
 }
 
 function get_random(arr) {
-	return arr[Math.floor(Math.random() * arr.length)];
+	return arr[random.integer(0, arr.length - 1)];
 }
 
 function get_random_key(dict) {
-	return Object.keys(dict)[Math.floor(Math.random() * Object.keys(dict).length)];
+	return Object.keys(dict)[random.integer(0, Object.keys(dict).length - 1)];
 }
 
 // https://stackoverflow.com/a/12646864
@@ -44,6 +46,12 @@ function Session(id, owner) {
 	this.maxPlayers = 8;
 	this.maxRarity = 'mythic';
 	this.colorBalance = true;
+	this.maxDuplicates = {
+		'common': 8,
+		'uncommon': 4,
+		'rare': 2,
+		'mythic': 1,
+	};
 	this.foil = true;
 	this.useCustomCardList = false;
 	this.customCardList = [];
@@ -73,6 +81,7 @@ function Session(id, owner) {
 			maxPlayers: this.maxPlayers,
 			maxRarity: this.maxRarity,
 			colorBalance: this.colorBalance,
+			maxDuplicates: this.maxDuplicates,
 			foil: this.foil,
 			useCustomCardList: this.useCustomCardList,
 			customCardList: this.customCardList
@@ -100,7 +109,7 @@ function Session(id, owner) {
 		if(this.ignoreCollections || all_cards) {
 			for(let c of Object.keys(Cards))
 				if(Cards[c].in_booster)
-					collection[c] = 4;
+					collection[c] = this.maxDuplicates[Cards[c].rarity];
 			return collection;
 		}
 		
@@ -129,11 +138,22 @@ function Session(id, owner) {
 		return collection;
 	};
 	
+	// Prune cards according to set selection in setRestriction; Categorize cards by rarity
+	this.restrictedCollectionByRarity = function() {
+		let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
+		const collection = this.collection();
+		for(let c in collection) {
+			if(!(c in Cards)) {
+				console.warn(`Warning: Card ${c} not in database.`);
+				continue;
+			}
+			if(this.setRestriction.length == 0 || this.setRestriction.includes(Cards[c].set))
+				localCollection[Cards[c].rarity][c] = collection[c];
+		}
+		return localCollection;
+	};
 	
 	this.generateBoosters = function(boosterQuantity) {
-		// Getting intersection of players' collections
-		let collection = this.collection();
-			
 		const removeCardFromDict = function(c, dict) {
 			dict[c] -= 1;
 			if(dict[c] == 0)
@@ -158,6 +178,9 @@ function Session(id, owner) {
 		
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if(this.useCustomCardList) {
+			// Getting custom card list
+			let collection = this.collection();
+			
 			const cardsPerBooster = 15;
 			let cardsByColor = {};
 			if(this.colorBalance) {
@@ -195,16 +218,7 @@ function Session(id, owner) {
 				this.boosters.push(booster);
 			}
 		} else {
-			// Order by rarity
-			let localCollection = {'common':{}, 'uncommon':{}, 'rare':{}, 'mythic':{}};
-			for(let c in collection) {
-				if(!(c in Cards)) {
-					console.warn(`Warning: Card ${c} not in database.`);
-					continue;
-				}
-				if(this.setRestriction.length == 0 || this.setRestriction.includes(Cards[c].set))
-					localCollection[Cards[c].rarity][c] = collection[c];
-			}
+			let localCollection = this.restrictedCollectionByRarity();
 			
 			let commonsByColor = {};
 			if(this.colorBalance) {

@@ -408,7 +408,13 @@
 						<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model.number="maxPlayers" />
 					</div>
 				</div>
-				<div class="line" v-bind:class="{ disabled: useCustomCardList }">
+				<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
+					<label for="colorBalance">Color Balance</label>
+					<div class="right">
+						<input type="checkbox" v-model="colorBalance">
+					</div>
+				</div>
+				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)">
 					<label for="maxRarity">Maximum Rarity</label>
 					<div class="right">
 						<select v-model="maxRarity">
@@ -419,10 +425,13 @@
 						</select>
 					</div>
 				</div>
-				<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
-					<label for="colorBalance">Color Balance</label>
+				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Sets a duplicate limit for each rarity. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.">
+					<label>Max. duplicate copies</label>
 					<div class="right">
-						<input type="checkbox" v-model="colorBalance">
+						<div><input class="small-number-input" type="number" id="max-duplicates-common" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['common']" /><label for="max-duplicates-common">for Commons</label></div>
+						<div><input class="small-number-input" type="number" id="max-duplicates-uncommon" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['uncommon']" /><label for="max-duplicates-uncommon">for Uncommons</label></div>
+						<div><input class="small-number-input" type="number" id="max-duplicates-mare" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['rare']" /><label for="max-duplicates-rare">for Rares</label></div>
+						<div><input class="small-number-input" type="number" id="max-duplicates-mythic" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['mythic']" /><label for="max-duplicates-mythic">for Mythics</label></div>
 					</div>
 				</div>
 				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.">
@@ -442,8 +451,8 @@
 					<div class="right">
 						<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
 					</div>
-					<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
 				</div>
+				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
 			</div>
 		</modal>
 	</div>

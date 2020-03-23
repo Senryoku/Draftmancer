@@ -275,7 +275,12 @@ a:hover {
 	padding: 1em;
 }
 
-.option-column .line label {
+.option-column .line {
+    display: flex;
+	align-items: center; 
+}
+
+.option-column .line > label {
 	display: inline-block;
 	width: 15rem;
 	text-align: right;
