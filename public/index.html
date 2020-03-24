@@ -361,7 +361,7 @@
 				<div v-for="log of draftLog">
 					<h1>{{log.userName}} <button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button></h1>
 					<template v-if="draftLogCardList">
-						<ol>
+						<ol class="draft-log-boosters-list">
 							<li v-for="card in log.cards">{{cards[card].printed_name[language]}}</li>
 						</ol>
 					</template>
