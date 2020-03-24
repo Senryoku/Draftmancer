@@ -6,7 +6,6 @@
  * Make chrono more visible (especially when < 10)
  * Add options for draft log: ["Send to everybody", "Send to owner only", "Do not send"]
  * Draft log: Add table order and drafted colors to draft log (see Vincent H. feedback)
- * Add a way to end a draft
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?

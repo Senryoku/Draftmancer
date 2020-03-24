@@ -390,6 +390,12 @@ var app = new Vue({
 			this.socket.on('timer', function (data) {
 				if(data.countdown == 0)
 					app.forcePick(app.booster);
+				if(data.countdown < 10) {
+					document.getElementById('chrono').classList.add('pulsing');
+					setTimeout(() => {
+						document.getElementById('chrono').classList.remove('pulsing');
+					}, 500);
+				}
 				app.pickTimer = data.countdown;
 			});
 

@@ -206,7 +206,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % (useCustomCardList ? 15 : 14)) +1 }}</span><span v-show="pickTimer >= 0" :class="{red: pickTimer < 10}"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % (useCustomCardList ? 15 : 14)) +1 }}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">
