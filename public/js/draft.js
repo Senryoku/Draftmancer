@@ -874,6 +874,24 @@ var app = new Vue({
 					}
 				}
 			}
+		},
+		colorsInCardIDList: function(cardids) {
+			let r = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+			for(let card of cardids) {
+				for(let color of this.cards[card].color_identity) {
+					r[color] += 1;
+				}
+			}
+			return r;
+		},
+		colorsInCardPool: function(pool) {
+			let r = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
+			for(let card of pool) {
+				for(let color of card.color_identity) {
+					r[color] += 1;
+				}
+			}
+			return r;
 		}
 	},
 	computed: {
@@ -928,14 +946,22 @@ var app = new Vue({
 			return !isEmpty(this.collection);
 		},
 		
-		colorsInDeck: function() {
-			let r = {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0};
-			for(let card of this.deck) {
-				for(let color of card.color_identity) {
-					r[color] += 1;
-				}
+		extendedDraftLog: function() {
+			let extendedDraftLog = [];
+			for(let userID in this.draftLog) {
+				extendedDraftLog.push({
+					userID: userID,
+					userName: this.draftLog[userID].userName,
+					colors: this.colorsInCardIDList(this.draftLog[userID].cards)
+				});
 			}
-			return r;
+			while(Object.keys(extendedDraftLog).length < 8)
+				extendedDraftLog.push({userID: 'none', userName: '(empty)', colors: this.colorsInCardIDList([])});
+			return extendedDraftLog;
+		},
+		
+		colorsInDeck: function() {
+			this.colorsInCardPool(this.deck);
 		},
 		totalLands: function() {
 			let addedLands = 0;

@@ -345,6 +345,19 @@
 				<input type="checkbox" name="draft-log-card-list" v-model="draftLogCardList"><label for="draft-log-card-list">Show simple card list</label>
 				<button type="button" @click="exportLog">Export full log to clipboard</button>
 				
+				<div>
+					<ul class="player-table">
+						<li v-for="log of extendedDraftLog">
+							{{log.userName}}
+							<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
+							<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" :title="log.colors['U']">
+							<img src="img/mana/B.svg" class="mana-icon" v-if="log.colors['B'] >= 10" :title="log.colors['B']">
+							<img src="img/mana/R.svg" class="mana-icon" v-if="log.colors['R'] >= 10" :title="log.colors['R']">
+							<img src="img/mana/G.svg" class="mana-icon" v-if="log.colors['G'] >= 10" :title="log.colors['G']">	
+						</li>
+					</ul>
+				</div>
+				
 				<div v-for="log of draftLog">
 					<h1>{{log.userName}} <button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button></h1>
 					<template v-if="draftLogCardList">
