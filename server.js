@@ -565,6 +565,7 @@ function removeUserFromSession(userID) {
 		if(sess.drafting) {
 			sess.stopCountdown();
 			sess.disconnectedUsers[userID] = {
+				userName: Connections[userID].userName,
 				pickedThisRound: Connections[userID].pickedThisRound,
 				pickedCards: Connections[userID].pickedCards
 			};

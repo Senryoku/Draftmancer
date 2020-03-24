@@ -199,12 +199,14 @@ var app = new Vue({
 				}
 				
 				if(app.drafting && users.length < app.sessionUsers.length) {
+					let missingUsers = app.sessionUsers.filter(u => !users.includes(u));
 					if(app.userID == app.sessionOwner) {
 						Swal.fire({
 							position: 'center',
 							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 							type: 'error',
-							title: 'A user disconnected, wait for them, or...',
+							title: `${missingUsers[0].userName} disconnected`,
+							text: `Wait for ${missingUsers[0].userName} to come back or...`,
 							showConfirmButton: true,
 							confirmButtonText: "Replace with a bot"
 						}).then((result) => {
@@ -216,7 +218,8 @@ var app = new Vue({
 							position: 'center',
 							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
 							type: 'error',
-							title: 'A user disconnected, wait for them or for the owner to replace them.',
+							title: `${missingUsers[0].userName} disconnected`,
+							text: `Wait for ${missingUsers[0].userName} to come back or for the owner to replace them by a bot.`,
 							showConfirmButton: false
 						});
 					}
