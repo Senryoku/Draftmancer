@@ -454,6 +454,16 @@
 					</div>
 				</div>
 				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
+				<div class="line" title="Who's going to receive the draft logs?">
+					<label for="draft-log-recipients">Send draft logs to</label>
+					<div class="right">
+						<select v-model="draftLogRecipients" id="draft-log-recipients" />
+							<option value="everyone">Everyone</option>
+							<option value="owner">Owner only</option>
+							<option value="none">No-one</option>
+						</select>
+					</div>
+				</div>
 			</div>
 		</modal>
 	</div>

@@ -55,6 +55,7 @@ function Session(id, owner) {
 	this.foil = true;
 	this.useCustomCardList = false;
 	this.customCardList = [];
+	this.draftLogRecipients = 'everyone';
 	
 	// Draft state
 	this.drafting = false;
@@ -519,10 +520,22 @@ function Session(id, owner) {
 			};
 		}
 		
-		for(let userID of this.users) {
-			Connections[userID].socket.emit('endDraft');
-			Connections[userID].socket.emit('draftLog', draftLog);
+		switch(this.draftLogRecipients) {
+			case 'none':
+				break;
+			case 'owner':
+				Connections[this.owner].socket.emit('draftLog', draftLog);
+				break;
+			default:
+			case 'everyone':
+				for(let userID of this.users)
+					Connections[userID].socket.emit('draftLog', draftLog);
+				break;
 		}
+		
+		for(let userID of this.users)
+			Connections[userID].socket.emit('endDraft');
+		
 		console.log(`Session ${this.id} draft ended.`);
 	};
 	

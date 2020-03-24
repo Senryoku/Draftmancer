@@ -384,6 +384,22 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	socket.on('setDraftLogRecipients', function(draftLogRecipients) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		if(typeof draftLogRecipients !== 'string')
+			return;
+		draftLogRecipients = draftLogRecipients.toLowerCase();
+		if(!['everyone', 'owner', 'none'].includes(draftLogRecipients))
+			return;
+		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
+		for(let user of Sessions[sessionID].users) {
+			if(user != this.userID)
+				Connections[user].socket.emit('sessionOptions', {draftLogRecipients: draftLogRecipients});
+		}
+	});
+
 	socket.on('setMaxDuplicates', function(maxDuplicates) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)

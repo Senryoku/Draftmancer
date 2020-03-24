@@ -88,6 +88,7 @@ var app = new Vue({
 		booster: [],
 		maxTimer: 60,
 		pickTimer: 60,
+		draftLogRecipients: 'everyone',
 		draftLog: undefined,
 		
 		publicSessions: [],
@@ -1101,6 +1102,11 @@ var app = new Vue({
 			if(this.userID != this.sessionOwner)
 				return;
 			this.socket.emit('setUseCustomCardList', this.useCustomCardList);
+		},
+		draftLogRecipients: function() {
+			if(this.userID != this.sessionOwner)
+				return;
+			this.socket.emit('setDraftLogRecipients', this.draftLogRecipients);
 		},
 		enableNotifications: function() {
 			setCookie("enableNotifications", this.enableNotifications);
