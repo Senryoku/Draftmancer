@@ -589,8 +589,8 @@ function Session(id, owner) {
 		} else {
 			// Immediately propagate current state
 			for(let user of this.users)
-				//Connections[user].socket.emit('timer', { countdown: this.countdown});
-				 Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
+				Connections[user].socket.emit('timer', { countdown: this.countdown});
+				//Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(((sess) => {
 				return () => {
 					sess.countdown--;

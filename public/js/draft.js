@@ -961,7 +961,7 @@ var app = new Vue({
 		},
 		
 		colorsInDeck: function() {
-			this.colorsInCardPool(this.deck);
+			return this.colorsInCardPool(this.deck);
 		},
 		totalLands: function() {
 			let addedLands = 0;
