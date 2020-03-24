@@ -113,6 +113,7 @@ var app = new Vue({
 		lands: {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0},
 		
 		showSessionOptionsDialog: false,
+		displayAbout: false,
 		// Draft Log Modal
 		displayDraftLog: false,
 		draftLogCardList: false,

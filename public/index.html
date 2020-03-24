@@ -480,9 +480,32 @@
 				</div>
 			</div>
 		</modal>
+		<modal v-if="displayAbout" @close="displayAbout = false">
+			<h2 slot="header">About</h2>
+			<div slot="body">
+				<h3>Contact</h3>
+				Senryoku: <a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+				<h3>Patch Notes</h3>
+				<ol>
+					<li>24/03/2020
+						<ul>
+							<li>Added a stop draft button for the owner.</li>
+							<li>Updated visual of pick timer countdown.</li>
+							<li>Draft logs can now be disabled or exclusive to the owner.</li>
+							<li>Updated Draft Log with a table display.</li>
+							<li>Display disconnected user name.</li>
+						</ul>
+					</li>
+				</ol>
+			</div>
+		</modal>
+		<footer>
+			<span @click="displayAbout = true"><a>About</a></span>
+			<span>Made by <a href="http://senryoku.github.io/">Senryoku</a></span>
+			<span><a href="mailto:mtgadraft@gmail.com">Contact</a></span>
+			<span>Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a>
+		</footer>
 	</div>
-	
-	<footer><span>Made by <a href="http://senryoku.github.io/">Senryoku</a></span><span><a href="mailto:mtgadraft@gmail.com">Contact</a></span><span>Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a></footer>
 	
 	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
