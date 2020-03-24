@@ -4,6 +4,7 @@
  * Add back ready to draft... "I'm ready!" ? All it does is signaling the session owner that you're here and ready; a button on the right of SessionID ?
  * Display foils as... foils in front end?
  * Draft log: Add table order and drafted colors to draft log (see Vincent H. feedback)
+ * Display names of disconnected players
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?

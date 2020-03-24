@@ -344,6 +344,7 @@
 			<div slot="body">
 				<input type="checkbox" name="draft-log-card-list" v-model="draftLogCardList"><label for="draft-log-card-list">Show simple card list</label>
 				<button type="button" @click="exportLog">Export full log to clipboard</button>
+				
 				<div v-for="log of draftLog">
 					<h1>{{log.userName}} <button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button></h1>
 					<template v-if="draftLogCardList">
