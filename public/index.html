@@ -182,6 +182,7 @@
 			</ul>
 			<div>
 				<small v-if="drafting && bots > 0">(...and {{bots}} bad bot(s)!)</small>
+				<button @click="shareSavedDraftLog" v-show="savedDraftLog">Share saved Draft Log</button>
 				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
 			</div>
 			<div class="chat">
@@ -358,7 +359,7 @@
 					</ul>
 				</div>
 				
-				<div v-for="log of draftLog">
+				<div v-for="log of draftLog.users">
 					<h1>{{log.userName}} <button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button></h1>
 					<template v-if="draftLogCardList">
 						<ol class="draft-log-boosters-list">
@@ -474,6 +475,7 @@
 						<select v-model="draftLogRecipients" id="draft-log-recipients" />
 							<option value="everyone">Everyone</option>
 							<option value="owner">Owner only</option>
+							<option value="delayed" title="Owner will choose when to make the draft public. Useful for tournaments.">Owner only, delayed</option>
 							<option value="none">No-one</option>
 						</select>
 					</div>

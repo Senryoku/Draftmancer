@@ -381,7 +381,7 @@ function Session(id, owner) {
 		}
 		
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
-		console.log("Starting draft!");
+		console.log(`Session ${this.id}: Starting draft!`);
 		
 		this.disconnectedUsers = {};
 		// Generate bots
@@ -496,16 +496,20 @@ function Session(id, owner) {
 		this.stopCountdown();
 		this.boosters = [];
 		
-		let draftLog = {};
+		let draftLog = {
+			sessionID: this.id,
+			date: Date.now(),
+			users: {}
+		};
 		for(let userID of this.getSortedHumanPlayers()) {
 			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
-				draftLog[userID] = {
+				draftLog.users[userID] = {
 					userName: "(Bot)",
 					userID: userID,
 					cards: this.disconnectedUsers[userID].pickedCards
 				};
 			} else {
-				draftLog[userID] = {
+				draftLog.users[userID] = {
 					userName: Connections[userID].userName,
 					userID: userID,
 					cards: Connections[userID].pickedCards
@@ -513,7 +517,7 @@ function Session(id, owner) {
 			}
 		}
 		for(let i = 0; i < this.bots; ++i) {
-			draftLog[`Bot #${i}`] = {
+			draftLog.users[`Bot #${i}`] = {
 				userName: `Bot #${i}`,
 				userID: 0,
 				cards: this.botsInstances[i].cards
@@ -527,6 +531,9 @@ function Session(id, owner) {
 				Connections[this.owner].socket.emit('draftLog', draftLog);
 				break;
 			default:
+			case 'delayed':
+				Connections[this.owner].socket.emit('draftLog', {delayed: true, draftLog: draftLog});
+				break;
 			case 'everyone':
 				for(let userID of this.users)
 					Connections[userID].socket.emit('draftLog', draftLog);

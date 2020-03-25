@@ -90,6 +90,7 @@ var app = new Vue({
 		pickTimer: 60,
 		draftLogRecipients: 'everyone',
 		draftLog: undefined,
+		savedDraftLog: false,
 		
 		publicSessions: [],
 		selectedPublicSession: "",
@@ -377,7 +378,12 @@ var app = new Vue({
 			});
 			
 			this.socket.on('draftLog', function(draftLog) {
-				app.draftLog = draftLog;
+				if(draftLog.delayed === true) {
+					localStorage.setItem('draftLog', JSON.stringify(draftLog.draftLog));
+					app.savedDraftLog = true;
+				} else {
+					app.draftLog = draftLog;
+				}
 			});
 			
 			this.socket.on('setCardSelection', function(data) {
@@ -423,6 +429,9 @@ var app = new Vue({
 					console.error(e);
 				}
 			}
+			
+			if(localStorage.getItem('draftLog'))
+				this.savedDraftLog = true;
 			
 			let urlParamSession = getUrlVars()['session'];
 			if(urlParamSession)
@@ -617,11 +626,11 @@ var app = new Vue({
 		},
 		exportLog: function() {
 			let draftLogFull = this.draftLog;
-			for(let e in this.draftLog) {
+			for(let e in this.draftLog.users) {
 				let cards = []
-				for(let c of this.draftLog[e].cards)
+				for(let c of this.draftLog.users[e].cards)
 					cards.push(this.cards[c]);
-				this.draftLog[e].exportString = exportMTGA(cards, null, this.language);
+				this.draftLog.users[e].exportString = exportMTGA(cards, null, this.language);
 			}
 			copyToClipboard(JSON.stringify(draftLogFull, null, "\t"));
 			Swal.fire({
@@ -636,7 +645,7 @@ var app = new Vue({
 		},
 		exportSingleLog: function(id) {
 			let cards = []
-			for(let c of this.draftLog[id].cards)
+			for(let c of this.draftLog.users[id].cards)
 				cards.push(this.cards[c]);
 			copyToClipboard(exportMTGA(cards, null, this.language), null, "\t");
 			Swal.fire({
@@ -778,6 +787,54 @@ var app = new Vue({
 					this.socket.emit('stopDraft');
 				}
 			});
+		},
+		shareSavedDraftLog: function() {
+			if(this.userID != this.sessionOwner) {
+				Swal.fire({
+					title: 'You need to be the session owner to share logs.',
+					type: 'error',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+				});
+				return;
+			}
+			let storedDraftLog = localStorage.getItem('draftLog');
+			if(!storedDraftLog) {
+				Swal.fire({
+					toast: true,
+					position: 'top-end',
+					title: 'No saved draft log',
+					type: 'error',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					showConfirmButton: false,
+					timer: 1500
+				});
+				this.savedDraftLog = false;
+				return;
+			} else {
+				let parsedLogs = JSON.parse(storedDraftLog);
+				if(parsedLogs.sessionID !== this.sessionID) {
+					Swal.fire({
+						title: 'Wrong Session ID',
+						text: `Can't share logs: The session ID of your saved draft log ('${parsedLogs.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
+						type: 'error',
+						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+					});
+					return;
+				}
+				this.savedDraftLog = false;
+				this.draftLog = parsedLogs;
+				this.socket.emit('shareDraftLog', this.draftLog);
+				localStorage.removeItem('draftLog');
+				Swal.fire({
+					toast: true,
+					position: 'top-end',
+					title: 'Shared draft log with session!',
+					type: 'success',
+					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					showConfirmButton: false,
+					timer: 1500
+				});
+			}
 		},
 		sealedDialog: async function() {
 			if(this.userID != this.sessionOwner)
@@ -952,11 +1009,11 @@ var app = new Vue({
 		
 		extendedDraftLog: function() {
 			let extendedDraftLog = [];
-			for(let userID in this.draftLog) {
+			for(let userID in this.draftLog.users) {
 				extendedDraftLog.push({
 					userID: userID,
-					userName: this.draftLog[userID].userName,
-					colors: this.colorsInCardIDList(this.draftLog[userID].cards)
+					userName: this.draftLog.users[userID].userName,
+					colors: this.colorsInCardIDList(this.draftLog.users[userID].cards)
 				});
 			}
 			while(Object.keys(extendedDraftLog).length < 8)
