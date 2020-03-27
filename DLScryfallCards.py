@@ -62,7 +62,16 @@ NameSetToCardID = {}
 with open(MTGACardsFile, 'r', encoding="utf8") as file:
 	carddata = json.load(file)
 	for o in carddata:
-		NameSetToCardID[(MTGALocalization[o['titleId']], o['set'].lower())] = o['grpid']
+		set = o['set'].lower()
+		if set == 'conf':
+			set = 'con'
+		NameSetToCardID[(MTGALocalization[o['titleId']], set)] = o['grpid']
+		
+with open('data/NameSetToCardID.json', 'w') as outfile:
+	NameSetToCardIDToJSON = {}
+	for key in NameSetToCardID.keys():
+		NameSetToCardIDToJSON[str(key)] = NameSetToCardID[key]
+	json.dump(NameSetToCardIDToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
