@@ -173,44 +173,15 @@ io.on('connection', function(socket) {
 	
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	socket.on('pickCard', function(boosterIndex, cardID) {
+	socket.on('pickCard', function(cardID) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 		
 		if(!(sessionID in Sessions) || 
-		   !(userID in Connections) || 
-		   boosterIndex > Sessions[sessionID].boosters.length)
-			return;
-			
-		if(!Sessions[sessionID].drafting)
+		   !(userID in Connections))
 			return;
 		
-		console.log(`Session ${sessionID}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
-		
-		Connections[userID].pickedCards.push(cardID);
-		Connections[userID].pickedThisRound = true;
-		// Removes the first occurence of cardID
-		for(let i = 0; i < Sessions[sessionID].boosters[boosterIndex].length; ++i) {
-			if(Sessions[sessionID].boosters[boosterIndex][i] == cardID) {
-				Sessions[sessionID].boosters[boosterIndex].splice(i, 1);
-				break;
-			}
-		}
-		
-		// Signal users
-		for(let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit('updateUser', {
-				userID: userID,
-				updatedProperties: {
-					pickedThisRound: true
-				}
-			});
-		}
-		
-		++Sessions[sessionID].pickedCardsThisRound;
-		if(Sessions[sessionID].pickedCardsThisRound == Sessions[sessionID].getHumanPlayerCount()) {
-			Sessions[sessionID].nextBooster();
-		}
+		Sessions[sessionID].pickCard(userID, cardID);
 	});
 	
 	// Session options

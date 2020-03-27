@@ -88,3 +88,56 @@ function exportMTGA(deck, sideboard, language, lands) {
 	}
 	return str;
 }
+
+function exportToMagicProTools(cardsdb, draftLog, userID) {
+	let str = "";
+	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
+	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
+	str += `Players:\n`; 
+	for(let c in draftLog.users) {
+		if(c == userID)
+			str += `--> ${draftLog.users[c].userName}\n`;
+		else
+			str += `    ${draftLog.users[c].userName}\n`;
+	}
+	
+	str += '\n';
+	
+	let boosterNumber = 0;
+	let pickNumber = 1;
+	let lastLength = 0;
+	for(let p of draftLog.users[userID].picks) {
+		if(p.booster.length > lastLength) {
+			boosterNumber += 1;
+			pickNumber = 1;
+			if(draftLog.setRestriction && draftLog.setRestriction.length === 1)
+				str += `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`;
+			else 
+				str += `------ THB ------\n\n`;
+		}
+		lastLength = p.booster.length;
+		str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
+		for(let c of p.booster)
+			if(c == p.pick)
+				str += `--> ${cardsdb[c].name}\n`;
+			else
+				str += `    ${cardsdb[c].name}\n`;
+		str += '\n';
+		pickNumber += 1;
+	}
+	
+	return str;
+}
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}

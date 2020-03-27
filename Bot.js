@@ -2,7 +2,8 @@
 
 const Cards = require('./Cards');
 
-function Bot() {
+function Bot(name) {
+	this.name = name;
 	this.cards = []; // For debugging mostly.
 	this.pickedColors = {"W": 0, "U": 0, "R": 0, "B": 0, "G": 0};
 	this.pick = function(booster) {

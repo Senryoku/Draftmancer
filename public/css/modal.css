@@ -19,7 +19,7 @@
 	width: -webkit-fit-content;
 	width: -moz-fit-content;
 	width: fit-content;
-	max-width: 80%;
+	max-width: 90%;
 	margin: 0px auto;
 	padding: 20px 30px;
 	background-color: rgba(32,32,32,1);
@@ -28,12 +28,15 @@
 	transition: all .3s ease;
 }
 
+.modal-header {
+	position: relative;
+}
+
 .modal-header h2 {
 	margin-top: 0;
 }
 
 .modal-body {
-	margin: 20px 0;
 	max-height: 80vh;
 	overflow-y: scroll;
 	background-color: rgba(255, 255, 255, 0.1);
@@ -42,6 +45,9 @@
 }
 
 .modal-default-button {
+	position: absolute;
+	top: 0.2em;
+	right: 0.2em;
 }
 
 .modal-footer {

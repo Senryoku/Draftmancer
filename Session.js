@@ -387,11 +387,34 @@ function Session(id, owner) {
 		// Generate bots
 		this.botsInstances = []
 		for(let i = 0; i < this.bots; ++i)
-			this.botsInstances.push(new Bot())
+			this.botsInstances.push(new Bot(`Bot #${i}`))
 		
 		if(!this.generateBoosters(boosterQuantity)) {
 			this.drafting = false;
 			return;
+		}
+		
+		// Draft Log initialization
+		this.draftLog = {
+			sessionID: this.id,
+			time: Date.now(),
+			setRestriction: this.setRestriction,
+			boosters: JSON.parse(JSON.stringify(this.boosters)),
+			users: {}
+		};
+		for(let userID of this.getSortedHumanPlayers()) {
+			this.draftLog.users[userID] = {
+				userName: Connections[userID].userName,
+				userID: userID,
+				picks: []
+			};
+		}
+		for(let i = 0; i < this.bots; ++i) {
+			this.draftLog.users[this.botsInstances[i].name] = {
+				userName: this.botsInstances[i].name,
+				userID: 0,
+				picks: []
+			};
 		}
 		
 		for(let user of this.users) {
@@ -402,7 +425,41 @@ function Session(id, owner) {
 		//console.debug(this);
 		this.nextBooster();
 	};
+
+	this.pickCard = function(userID, cardID) {
+		if(!this.drafting || !this.users.has(userID))
+			return;
 		
+		const boosterIndex = Connections[userID].boosterIndex;
+		console.log(`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
+		this.draftLog.users[userID].picks.push({pick: cardID, booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
+		
+		Connections[userID].pickedCards.push(cardID);
+		Connections[userID].pickedThisRound = true;
+		// Removes the first occurence of cardID
+		for(let i = 0; i < this.boosters[boosterIndex].length; ++i) {
+			if(this.boosters[boosterIndex][i] == cardID) {
+				this.boosters[boosterIndex].splice(i, 1);
+				break;
+			}
+		}
+		
+		// Signal users
+		for(let user of this.users) {
+			Connections[user].socket.emit('updateUser', {
+				userID: userID,
+				updatedProperties: {
+					pickedThisRound: true
+				}
+			});
+		}
+		
+		++this.pickedCardsThisRound;
+		if(this.pickedCardsThisRound == this.getHumanPlayerCount()) {
+			this.nextBooster();
+		}
+	};
+	
 	this.nextBooster = function() {
 		this.stopCountdown();
 		
@@ -439,11 +496,13 @@ function Session(id, owner) {
 					pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
 				}
 				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][pickIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
 				this.boosters[boosterIndex].splice(pickIdx, 1);
 				++this.pickedCardsThisRound;
 			} else {
 				Connections[userID].pickedThisRound = false;
-				Connections[userID].socket.emit('nextBooster', {boosterIndex: boosterIndex, booster: this.boosters[boosterIndex]});
+				Connections[userID].boosterIndex = boosterIndex;
+				Connections[userID].socket.emit('nextBooster', {booster: this.boosters[boosterIndex]});
 			}
 			++index;
 		}
@@ -456,6 +515,7 @@ function Session(id, owner) {
 			const booster = this.boosters[boosterIndex];
 			const botIndex = i % this.bots; // ?
 			const removedIdx = this.botsInstances[botIndex].pick(booster);
+			this.draftLog.users[this.botsInstances[botIndex].name].picks.push({pick: this.boosters[boosterIndex][removedIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
 			this.boosters[boosterIndex].splice(removedIdx, 1);
 		}
 		++this.round;
@@ -496,47 +556,29 @@ function Session(id, owner) {
 		this.stopCountdown();
 		this.boosters = [];
 		
-		let draftLog = {
-			sessionID: this.id,
-			date: Date.now(),
-			users: {}
-		};
 		for(let userID of this.getSortedHumanPlayers()) {
 			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
-				draftLog.users[userID] = {
-					userName: "(Bot)",
-					userID: userID,
-					cards: this.disconnectedUsers[userID].pickedCards
-				};
+				this.draftLog.users[userID].cards = this.disconnectedUsers[userID].pickedCards;
 			} else {
-				draftLog.users[userID] = {
-					userName: Connections[userID].userName,
-					userID: userID,
-					cards: Connections[userID].pickedCards
-				};
+				this.draftLog.users[userID].cards = Connections[userID].pickedCards;
 			}
 		}
-		for(let i = 0; i < this.bots; ++i) {
-			draftLog.users[`Bot #${i}`] = {
-				userName: `Bot #${i}`,
-				userID: 0,
-				cards: this.botsInstances[i].cards
-			};
-		}
+		for(let i = 0; i < this.bots; ++i)
+			this.draftLog.users[`Bot #${i}`].cards = this.botsInstances[i].cards
 		
 		switch(this.draftLogRecipients) {
 			case 'none':
 				break;
 			case 'owner':
-				Connections[this.owner].socket.emit('draftLog', draftLog);
+				Connections[this.owner].socket.emit('draftLog', this.draftLog);
 				break;
 			default:
 			case 'delayed':
-				Connections[this.owner].socket.emit('draftLog', {delayed: true, draftLog: draftLog});
+				Connections[this.owner].socket.emit('draftLog', {delayed: true, draftLog: this.draftLog});
 				break;
 			case 'everyone':
 				for(let userID of this.users)
-					Connections[userID].socket.emit('draftLog', draftLog);
+					Connections[userID].socket.emit('draftLog', this.draftLog);
 				break;
 		}
 		
@@ -553,7 +595,7 @@ function Session(id, owner) {
 		console.warn("Replacing disconnected players with bots!");
 
 		for(let uid in this.disconnectedUsers) {
-			this.disconnectedUsers[uid].bot = new Bot();
+			this.disconnectedUsers[uid].bot = new Bot(`${this.disconnectedUsers[uid].userName} (Bot)`);
 			for(let c of this.disconnectedUsers[uid].pickedCards) {
 				this.disconnectedUsers[uid].bot.pick([c]);
 			}
@@ -597,7 +639,7 @@ function Session(id, owner) {
 			// Immediately propagate current state
 			for(let user of this.users)
 				Connections[user].socket.emit('timer', { countdown: this.countdown});
-				//Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
+				// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(((sess) => {
 				return () => {
 					sess.countdown--;
@@ -624,7 +666,7 @@ function Session(id, owner) {
 	};
 
 	this.getTotalVirtualPlayers = function() {
-		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots
+		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
 	}
 
 	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {

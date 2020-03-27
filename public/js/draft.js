@@ -102,7 +102,6 @@ var app = new Vue({
 		sets: window.constants.MTGSets,
 		cardOrder: "CMCColumns",
 		setsInfos: undefined,
-		boosterIndex: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
 		enableNotifications: Notification.permission == 'granted' && getCookie("enableNotifications", false),
@@ -117,7 +116,11 @@ var app = new Vue({
 		displayAbout: false,
 		// Draft Log Modal
 		displayDraftLog: false,
-		draftLogCardList: false,
+		draftLogDisplayOptions: {
+			detailsUserID: undefined,
+			category: 'Picks',
+			textList: false
+		},
 		// Collection Stats Modal
 		showCollectionStats: false,
 		statsMissingRarity: "rare",
@@ -327,8 +330,7 @@ var app = new Vue({
 				app.deck = [];
 				for(let c of data.pickedCards)
 					app.deck.push(app.cards[c]);
-				
-				app.boosterIndex = data.boosterIndex;
+		
 				app.booster = [];
 				for(let c of data.booster) {
 					app.booster.push(app.genCard(c));
@@ -352,7 +354,6 @@ var app = new Vue({
 			});
 			
 			this.socket.on('nextBooster', function(data) {
-				app.boosterIndex = data.boosterIndex;
 				app.booster = [];
 				for(let c of data.booster) {
 					app.booster.push(app.genCard(c));
@@ -456,7 +457,7 @@ var app = new Vue({
 			if(this.draftingState != DraftState.Picking || !this.selectedCardId)
 				return;
 			this.draftingState = DraftState.Waiting;
-			this.socket.emit('pickCard', this.boosterIndex, this.selectedCardId);
+			this.socket.emit('pickCard', this.selectedCardId);
 			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},
@@ -468,7 +469,7 @@ var app = new Vue({
 				const randomIdx = Math.floor(Math.random() * this.booster.length)
 				this.selectedCardId = this.booster[randomIdx].id;
 			}
-			this.socket.emit('pickCard', this.boosterIndex, this.selectedCardId);
+			this.socket.emit('pickCard', this.selectedCardId);
 			this.deck.push(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 			this.draftingState = DraftState.Waiting;
@@ -548,6 +549,17 @@ var app = new Vue({
 			};
 			reader.readAsText(file);
 		},
+		fireToast: function(type, title) {
+			Swal.fire({
+				toast: true,
+				position: 'top-end',
+				type: type,
+				title: title,
+				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				showConfirmButton: false,
+				timer: 1500
+			});
+		},
 		parseCustomCardList: function(e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -567,7 +579,6 @@ var app = new Vue({
 					const lines = contents.split(/\r\n|\n/);
 					let cardList = [];
 					for(let line of lines) {
-						console.log(line);
 						if(line) {
 							let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
 							if(typeof cardID !== 'undefined') {
@@ -591,15 +602,7 @@ var app = new Vue({
 					}
 					app.customCardList = cardList;
 					app.socket.emit('customCardList', app.customCardList);
-					Swal.fire({
-						position: 'top-end',
-						customClass: 'swal-container',
-						type: 'success',
-						title: `Card list uploaded (${app.customCardList.length} cards)`,
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-						showConfirmButton: false,
-						timer: 1500
-					});
+					app.fireToast('success', `Card list uploaded (${app.customCardList.length} cards)`);
 				} catch(e) {
 					Swal.fire({
 						type: 'error',
@@ -614,15 +617,7 @@ var app = new Vue({
 		},
 		exportDeck: function() {
 			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'success',
-				title: 'Deck exported to clipboard!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
-			});
+			this.fireToast('success', 'Deck exported to clipboard!');
 		},
 		exportLog: function() {
 			let draftLogFull = this.draftLog;
@@ -633,42 +628,52 @@ var app = new Vue({
 				this.draftLog.users[e].exportString = exportMTGA(cards, null, this.language);
 			}
 			copyToClipboard(JSON.stringify(draftLogFull, null, "\t"));
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'success',
-				title: 'Draft log exported to clipboard!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
-			});
+			this.fireToast('success', 'Draft log exported to clipboard!');
 		},
 		exportSingleLog: function(id) {
 			let cards = []
 			for(let c of this.draftLog.users[id].cards)
 				cards.push(this.cards[c]);
 			copyToClipboard(exportMTGA(cards, null, this.language), null, "\t");
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'success',
-				title: 'Card list exported to clipboard!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
+			this.fireToast('success', 'Card list exported to clipboard!');
+		},
+		downloadMPT: function(id) {
+			download(`DraftLog_${id}.txt`, exportToMagicProTools(this.cards, this.draftLog, id));
+		},
+		submitToMPT: function(id) {
+			fetch("https://magicprotools.com/api/draft/add", {
+				"credentials": "omit",
+				"headers": {
+					"Accept": "application/json, text/plain, */*",
+					"Content-Type": "application/x-www-form-urlencoded"
+				},
+				"referrer": "https://mtgadraft.herokuapp.com",
+				"body": `draft=${encodeURI(exportToMagicProTools(this.cards, this.draftLog, id))}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
+				"method": "POST",
+				"mode": "cors"
+			}).then(function (response) {
+				if (response.status !== 200) {
+					app.fireToast('error', 'An error occured submiting log to MagicProTools.');
+				} else {
+					response.json().then(function(json) {
+						if(json.error) {
+							app.fireToast('error', `Error: ${json.error}.`);
+						} else {
+							if(json.url) {
+								copyToClipboard(json.url);
+								app.fireToast('success', 'MagicProTools URL copied to clipboard.');
+								window.open(json.url, '_blank');
+							} else {
+								app.fireToast('error', 'An error occured submiting log to MagicProTools.');
+							}
+						}
+					});
+				}
 			});
 		},
 		sessionURLToClipboard: function() {
 			copyToClipboard(`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(this.sessionID)}`);
-			Swal.fire({
-				toast: true,
-				position: 'top-end',
-				type: 'success',
-				title: 'Session link copied to clipboard!',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-				showConfirmButton: false,
-				timer: 1500
-			});
+			this.fireToast('success', 'Session link copied to clipboard!');
 		},
 		setSessionOwner: function(newOwnerID) {
 			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
@@ -799,15 +804,7 @@ var app = new Vue({
 			}
 			let storedDraftLog = localStorage.getItem('draftLog');
 			if(!storedDraftLog) {
-				Swal.fire({
-					toast: true,
-					position: 'top-end',
-					title: 'No saved draft log',
-					type: 'error',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-					showConfirmButton: false,
-					timer: 1500
-				});
+				this.fireToast('error', 'No saved draft log');
 				this.savedDraftLog = false;
 				return;
 			} else {
@@ -825,15 +822,7 @@ var app = new Vue({
 				this.draftLog = parsedLogs;
 				this.socket.emit('shareDraftLog', this.draftLog);
 				localStorage.removeItem('draftLog');
-				Swal.fire({
-					toast: true,
-					position: 'top-end',
-					title: 'Shared draft log with session!',
-					type: 'success',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
-					showConfirmButton: false,
-					timer: 1500
-				});
+				this.fireToast('success', 'Shared draft log with session!');
 			}
 		},
 		sealedDialog: async function() {
@@ -1201,6 +1190,13 @@ var app = new Vue({
 		},
 		enableNotifications: function() {
 			setCookie("enableNotifications", this.enableNotifications);
+		},
+		draftLog: {
+			deep: true,
+			handler() {
+				if(this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
+					this.draftLogDisplayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
+			}
 		}
 	}
 });

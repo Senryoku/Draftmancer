@@ -4,6 +4,8 @@
  * Add back ready to draft... "I'm ready!" ? All it does is signaling the session owner that you're here and ready; a button on the right of SessionID ?
  * Display foils as... foils in front end?
  * Should the disconnect player event be broadcast my the server rather by detected by clients?
+ * Front end: Color Columns
+ * Add some stats on deck/drafted cards
  * -----
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name?
@@ -17,5 +19,5 @@
  * Prevent multiple copies of the same card in a single booster
  
 # Bugs
- * Player list messed during draft (triggered by a disconnect? - maybe by a quick disconnect/reconnect)
+ * Duplicates in cube
  * Guildgates won't import in arena : Guildgates do not have localized names 

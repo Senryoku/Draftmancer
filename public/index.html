@@ -27,6 +27,7 @@
 				<slot name="header">
 				  ???
 				</slot>
+				<i @click="$emit('close')" class="fa fa-times fa-lg modal-default-button clickable" aria-hidden="true"></i>
 			  </div>
 
 			  <div class="modal-body">
@@ -37,9 +38,6 @@
 
 			  <div class="modal-footer">
 				<slot name="footer">
-					<button class="modal-default-button" @click="$emit('close')">
-						Close
-					</button>
 				</slot>
 			  </div>
 			</div>
@@ -343,12 +341,13 @@
 		<modal v-if="displayDraftLog && draftLog" @close="displayDraftLog = false">
 			<h2 slot="header">Draft Log</h2>
 			<div slot="body">
-				<input type="checkbox" name="draft-log-card-list" v-model="draftLogCardList"><label for="draft-log-card-list">Show simple card list</label>
 				<button type="button" @click="exportLog">Export full log to clipboard</button>
+				
+				Click on a player to display the details of their draft.
 				
 				<div>
 					<ul class="player-table">
-						<li v-for="log of extendedDraftLog">
+						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)'}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = (log.userID == 0 ? log.userName : log.userID) }">
 							{{log.userName}}
 							<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
 							<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" :title="log.colors['U']">
@@ -359,17 +358,36 @@
 					</ul>
 				</div>
 				
-				<div v-for="log of draftLog.users">
-					<h1>{{log.userName}} <button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button></h1>
-					<template v-if="draftLogCardList">
-						<ol class="draft-log-boosters-list">
-							<li v-for="card in log.cards">{{cards[card].printed_name[language]}}</li>
-						</ol>
+				<div v-if="Object.keys(draftLog.users).includes(draftLogDisplayOptions.detailsUserID)" :set="log = draftLog.users[draftLogDisplayOptions.detailsUserID]">
+					<h2>{{log.userName}}</h2>
+					<select v-model="draftLogDisplayOptions.category">
+						<option>Picks</options>
+						<option>Cards<options>
+					</select>
+					<button @click="if(log.userID === 0) exportSingleLog(log.userName); else exportSingleLog(log.userID);">Export in MTGA format</button>
+					<button @click="if(log.userID === 0) downloadMPT(log.userName); else downloadMPT(log.userID);">Download in MTGO format</button>
+					<button @click="if(log.userID === 0) submitToMPT(log.userName); else submitToMPT(log.userID);">Submit to MagicProTools</button></h1>
+					
+					<template v-if="draftLogDisplayOptions.category == 'Picks'">
+						<div v-for="(pick, index) in log.picks">
+							<h3>Pick {{index + 1}}: {{cards[pick.pick].name}}</h3>
+							<div class="card-container">
+								<figure is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language" :class="{'selected-high': pick.pick === card}"></figure>
+							</div>
+						</div>
 					</template>
 					<template v-else>
-						<div class="card-container">
-							<figure is="card" v-for="(card, index) in log.cards" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language"></figure>
-						</div>
+						<input type="checkbox" name="draft-log-card-list" v-model="draftLogDisplayOptions.textList"><label for="draft-log-card-list">Show simple card list</label>
+						<template v-if="draftLogDisplayOptions.textList">
+							<ol class="draft-log-boosters-list">
+								<li v-for="card in log.cards">{{cards[card].printed_name[language]}}</li>
+							</ol>
+						</template>
+						<template v-else>
+							<div class="card-container">
+								<figure is="card" v-for="(card, index) in log.cards" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language"></figure>
+							</div>
+						</template>
 					</template>
 				</div>
 			</div>
@@ -489,6 +507,11 @@
 				Senryoku: <a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 				<h3>Patch Notes</h3>
 				<ol>
+					<li>28/03/2020
+						<ul>
+							<li>Updated draft logs. Complete pick information. Can now be exported in MTGO format/to MagicProTools.</li>
+						</ul>
+					</li>
 					<li>26/03/2020
 						<ul>
 							<li>Added a delayed draft log sharing option. Useful for tournament settings.</li>

@@ -645,6 +645,12 @@ ul.player-list {
 	box-shadow: 0px 0px 20px 1px rgba(0,115,2,1);
 }
 
+.selected-high {
+	-webkit-box-shadow: 0px 0px 20px 4px rgba(0,200,2,1);
+	-moz-box-shadow: 0px 0px 20px 4px rgba(0,200,2,1);
+	box-shadow: 0px 0px 20px 4px rgba(0,200,2,1);
+}
+
 /* Deck display */
 
 .card-columns {
