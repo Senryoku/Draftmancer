@@ -9,7 +9,7 @@ const randomjs = require("random-js");
 const random = new randomjs.Random(randomjs.nodeCrypto);
 		
 function isEmpty(obj) {
-	return Object.entries(obj).length === 0 && obj.constructor === Object;
+	return obj && Object.entries(obj).length === 0 && obj.constructor === Object;
 }
 
 function negMod(m, n) {
@@ -204,7 +204,7 @@ function Session(id, owner) {
 				
 				if(this.colorBalance) {
 					for(let c of 'WUBRG') {
-						if(!isEmpty(cardsByColor[c])) {
+						if(cardsByColor[c] && !isEmpty(cardsByColor[c])) {
 							let pickedCard = pick_card(cardsByColor[c], booster);
 							booster.push(pickedCard);
 							removeCardFromDict(pickedCard, collection);
@@ -327,7 +327,7 @@ function Session(id, owner) {
 				let pickedCommons = [];
 				if(this.colorBalance) {
 					for(let c of 'WUBRG') {
-						if(!isEmpty(commonsByColor[c])) {
+						if(commonsByColor[c] && !isEmpty(commonsByColor[c])) {
 							let pickedCard = pick_card(commonsByColor[c], pickedCommons);
 							pickedCommons.push(pickedCard);
 							removeCardFromDict(pickedCard, localCollection['common']);

@@ -181,6 +181,9 @@ io.on('connection', function(socket) {
 		   !(userID in Connections) || 
 		   boosterIndex > Sessions[sessionID].boosters.length)
 			return;
+			
+		if(!Sessions[sessionID].drafting)
+			return;
 		
 		console.log(`Session ${sessionID}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
 		
