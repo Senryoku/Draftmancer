@@ -93,7 +93,10 @@ function Session(id, owner) {
 		if(this.useCustomCardList) {
 			let r = {};
 			for(let cardId of this.customCardList)
-				r[cardId] = 1;
+				if(cardId in r) // Duplicates adds one copy of the card
+					r[cardId] += 1;
+				else
+					r[cardId] = 1;
 			return r;
 		}
 		
