@@ -19,5 +19,4 @@
  * Prevent multiple copies of the same card in a single booster
  
 # Bugs
- * Duplicates in cube
  * Guildgates won't import in arena : Guildgates do not have localized names 

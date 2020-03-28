@@ -154,7 +154,7 @@ function Session(id, owner) {
 		return localCollection;
 	};
 	
-	this.generateBoosters = function(boosterQuantity) {
+	this.generateBoosters = function(boosterQuantity) {			
 		const removeCardFromDict = function(c, dict) {
 			dict[c] -= 1;
 			if(dict[c] == 0)
@@ -180,19 +180,19 @@ function Session(id, owner) {
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if(this.useCustomCardList) {
 			// Getting custom card list
-			let collection = this.collection();
+			let localCollection = this.collection();
 			
 			const cardsPerBooster = 15;
 			let cardsByColor = {};
 			if(this.colorBalance) {
-				for(let card in collection) {
+				for(let card in localCollection) {
 					if(!(Cards[card].color_identity in cardsByColor))
 						cardsByColor[Cards[card].color_identity] = {};
-					cardsByColor[Cards[card].color_identity][card] = collection[card];
+					cardsByColor[Cards[card].color_identity][card] = localCollection[card];
 				}
 			}
 			
-			let card_count = count_cards(collection)
+			let card_count = count_cards(localCollection)
 			if(card_count < cardsPerBooster * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
 				return false;
@@ -206,14 +206,17 @@ function Session(id, owner) {
 					for(let c of 'WUBRG') {
 						if(cardsByColor[c] && !isEmpty(cardsByColor[c])) {
 							let pickedCard = pick_card(cardsByColor[c], booster);
+							removeCardFromDict(pickedCard, localCollection);
 							booster.push(pickedCard);
-							removeCardFromDict(pickedCard, collection);
 						}
 					}
 				}
 				
-				for(let i = booster.length; i < cardsPerBooster; ++i)
-					booster.push(pick_card(collection, booster));
+				for(let i = booster.length; i < cardsPerBooster; ++i) {
+					let pickedCard = pick_card(localCollection, booster)
+					removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+					booster.push(pickedCard);
+				}
 				
 				shuffleArray(booster);
 				this.boosters.push(booster);
@@ -295,7 +298,10 @@ function Session(id, owner) {
 					const rarityCheck = Math.random();
 					for(let r in foilRarityFreq)
 						if(rarityCheck <= foilRarityFreq[r] && !isEmpty(localCollection[r])) {
-							booster.push(pick_card(localCollection[r]));
+							let pickedCard = pick_card(localCollection[r]);
+							if(Cards[pickedCard].rarity == 'common')
+								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
+							booster.push(pickedCard);
 							addedFoils += 1;
 							break;
 						}
@@ -329,14 +335,17 @@ function Session(id, owner) {
 					for(let c of 'WUBRG') {
 						if(commonsByColor[c] && !isEmpty(commonsByColor[c])) {
 							let pickedCard = pick_card(commonsByColor[c], pickedCommons);
-							pickedCommons.push(pickedCard);
 							removeCardFromDict(pickedCard, localCollection['common']);
+							pickedCommons.push(pickedCard);
 						}
 					}
 				}
 				
-				for(let i = pickedCommons.length; i < targets['common'] - addedFoils; ++i)
-					pickedCommons.push(pick_card(localCollection['common'], pickedCommons));
+				for(let i = pickedCommons.length; i < targets['common'] - addedFoils; ++i) {
+					let pickedCard = pick_card(localCollection['common'], pickedCommons);
+					removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
+					pickedCommons.push(pickedCard);
+				}
 				
 				// Shuffle commons to avoid obvious signals to other players when color balancing
 				shuffleArray(pickedCommons);
