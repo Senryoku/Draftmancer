@@ -505,12 +505,22 @@
 			<div slot="body">
 				<h3>Contact</h3>
 				Senryoku: <a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+				<h3>Support me</h3>
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+					<input type="hidden" name="cmd" value="_s-xclick" />
+					<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+					<img alt="" border="0" src="https://www.paypal.com/en_FR/i/scr/pixel.gif" width="1" height="1" />
+				</form>
+				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol>
 					<li>28/03/2020
 						<ul>
 							<li>Updated draft logs. Complete pick information. Can now be exported in MTGO format/to MagicProTools.</li>
 							<li>Fix: No more undesirable duplicates from the use of Color Balancing.</li>
+							<li>Fix: Crash on reconnection.</li>
+							<li>Fix: Correctly handle duplicates in Custom Card Lists.</li>
 						</ul>
 					</li>
 					<li>26/03/2020

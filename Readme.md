@@ -19,4 +19,6 @@
  * Prevent multiple copies of the same card in a single booster
  
 # Bugs
+ * Missing Historic Cards : Cinder Barrens
+ * Once again, Dual faced cards won't import correctly in Arena! Yay! (Ravnica split cards, Discovery // Dispersal  etc)
  * Guildgates won't import in arena : Guildgates do not have localized names 
