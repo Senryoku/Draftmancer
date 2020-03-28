@@ -492,6 +492,7 @@ describe('Multiple Drafts', function() {
 	let sessionIDs = [];
 	const sessionCount = 4;
 	const playersPerSession = 7;
+	let boosters = [];
 	
     beforeEach(function(done) {
 		disableLogs();
@@ -562,7 +563,6 @@ describe('Multiple Drafts', function() {
 		done();
 	});
 	
-	let boosters = [];
 	it('When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster', function(done) {
 		let sessionsCorrectlyStartedDrafting = 0;
 		let receivedBoosters = 0;
@@ -609,17 +609,21 @@ describe('Multiple Drafts', function() {
 		
 	it('Once everyone in a session has picked a card, receive next boosters.', function(done) {
 		let receivedBoosters = 0;
+		expect(boosters.length).to.equal(playersPerSession * sessionCount);
 		for(let sess = 0; sess < clients.length; ++sess) {
 			for(let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].on('nextBooster', function(data) {
-					receivedBoosters += 1;
+				clients[sess][c].on('nextBooster', function() {
 					let idx = (() => playersPerSession * sess + c)();
-					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
-					boosters[idx] = data;
-					this.removeListener('nextBooster');
-					if(receivedBoosters == playersPerSession * sessionCount)
-						done();
-				});
+					return function(data) {
+						receivedBoosters += 1;
+						console.log(idx); // Literally essential (yeah, wth)
+						expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
+						boosters[idx] = data;
+						this.removeListener('nextBooster');
+						if(receivedBoosters == playersPerSession * sessionCount)
+							done();
+					};
+				}());
 				clients[sess][c].emit('pickCard', boosters[playersPerSession * sess + c].booster[0]);
 			}
 		}

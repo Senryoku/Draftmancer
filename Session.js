@@ -447,6 +447,10 @@ function Session(id, owner) {
 			return;
 		
 		const boosterIndex = Connections[userID].boosterIndex;
+		if(boosterIndex < 0 || boosterIndex >= this.boosters.length) {
+			console.error(`Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
+			return;
+		}
 		console.log(`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`);
 		this.draftLog.users[userID].picks.push({pick: cardID, booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
 		
@@ -502,7 +506,7 @@ function Session(id, owner) {
 		const sortedPlayers = this.getSortedHumanPlayers();
 		for(let userID of sortedPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
+			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot, pick immediately
 				let pickIdx;
 				if(!this.disconnectedUsers[userID].bot) {
 					console.error("Trying to use bot that doesn't exist... That should not be possible!");
@@ -513,6 +517,7 @@ function Session(id, owner) {
 				}
 				this.disconnectedUsers[userID].pickedThisRound = true;
 				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+				this.disconnectedUsers[userID].boosterIndex = boosterIndex;
 				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][pickIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
 				this.boosters[boosterIndex].splice(pickIdx, 1);
 				++this.pickedCardsThisRound;
@@ -541,6 +546,7 @@ function Session(id, owner) {
 	this.reconnectUser = function(userID) {
 		Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
 		Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+		Connections[userID].boosterIndex = this.disconnectedUsers[userID].boosterIndex;
 
 		// Computes boosterIndex
 		const playerIdx = this.getSortedHumanPlayers().indexOf(userID);

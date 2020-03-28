@@ -503,7 +503,7 @@ function getUserID(req, res) {
 function joinSession(sessionID, userID) {
 	// Session exists and is drafting
 	if(sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(`${userID} wants to join drafting session...`);
+		console.log(`${userID} wants to join drafting session '${sessionID}'...`);
 		let sess = Sessions[sessionID];
 		console.debug(sess.disconnectedUsers);
 		if(userID in sess.disconnectedUsers) {

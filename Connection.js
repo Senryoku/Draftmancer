@@ -11,6 +11,7 @@ function Connection(socket, userID, userName) {
 	
 	this.pickedThisRound = false;
 	this.pickedCards = [];
+	this.boosterIndex = -1;
 };
 
 module.exports.Connections = Connections; 
