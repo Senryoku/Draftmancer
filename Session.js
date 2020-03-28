@@ -305,7 +305,7 @@ function Session(id, owner) {
 						if(rarityCheck <= foilRarityFreq[r] && !isEmpty(localCollection[r])) {
 							let pickedCard = pick_card(localCollection[r]);
 							if(Cards[pickedCard].rarity == 'common')
-								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
+								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard]]);
 							booster.push(pickedCard);
 							addedFoils += 1;
 							break;
