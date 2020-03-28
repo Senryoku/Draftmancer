@@ -156,7 +156,7 @@ function Session(id, owner) {
 	
 	this.generateBoosters = function(boosterQuantity) {			
 		const removeCardFromDict = function(c, dict) {
-			if(!Object.keys(dict).includes(c)) { // FIXME: Should not be useful!
+			if(!dict || !c || !Object.keys(dict).includes(c)) { // FIXME: Should not be useful!
 				console.error(`removeCardFromDict: ${c} not in dictionary! Dict. dump:`);
 				console.error(dict);
 				return;
@@ -305,7 +305,7 @@ function Session(id, owner) {
 						if(rarityCheck <= foilRarityFreq[r] && !isEmpty(localCollection[r])) {
 							let pickedCard = pick_card(localCollection[r]);
 							if(Cards[pickedCard].rarity == 'common')
-								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard]]);
+								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
 							booster.push(pickedCard);
 							addedFoils += 1;
 							break;
