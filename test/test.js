@@ -341,6 +341,140 @@ describe('Single Draft', function() {
 	});
 });
 
+describe('Single Draft without Color Balance', function() {
+	let clients = [];
+	let sessionID = 'sessionID';
+	
+    beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+	
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == 'failed');
+		done();
+	});
+	
+	before(function(done) {
+		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
+		clients.push(connectClient({
+			userID: 'sameID', 
+			sessionID: sessionID,
+			userName: 'Client1'
+		}));
+		clients.push(connectClient({
+			userID: 'sameID', 
+			sessionID: sessionID,
+			userName: 'Client2'
+		}));
+
+		// Wait for all clients to be connected
+		let connectedClients = 0;
+		for(let c of clients) {
+			c.on('connect', function() {
+				connectedClients += 1;
+				if(connectedClients == clients.length) {
+					enableLogs(false);
+					done();
+				}
+			});
+		}
+	});
+
+	after(function(done) {
+		disableLogs();
+		for(let c of clients) {
+			c.disconnect();
+			c.close();
+		}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
+			done();
+		}, 250);
+	});
+	
+	it('First client should be the session owner', function(done) {
+		const Sessions = server.__get__("Sessions");
+		expect(Sessions[sessionID].owner).to.equal('sameID');
+		done();
+	});
+	
+	it('Clients should receive the updated colorBalance status.', function(done) {
+		clients[1].on('sessionOptions', function(options) {
+			expect(options.colorBalance).to.equal(false);
+			this.removeListener('sessionOptions');
+			done();
+		});
+		clients[0].emit('setColorBalance', false);
+	});
+	
+	let boosters = [];
+	it('When session owner launch draft, everyone should receive a startDraft event', function(done) {
+		clients[0].emit('startDraft');
+		let connectedClients = 0;
+		let receivedBoosters = 0;
+		for(let c of clients) {
+			c.on('startDraft', function() {
+				connectedClients += 1;
+				if(connectedClients == clients.length && receivedBoosters == clients.length)
+					done();
+			});
+					
+			c.on('nextBooster', function(data) {
+				expect(boosters).not.include(data);
+				boosters.push(data);
+				receivedBoosters += 1;
+				c.removeListener('nextBooster');
+				if(connectedClients == clients.length && receivedBoosters == clients.length)
+					done();
+			});
+		}
+	});
+	
+	it('Once everyone in a session has picked a card, receive next boosters.', function(done) {
+		let receivedBoosters = 0;
+		for(let c = 0; c < clients.length; ++c) {
+			clients[c].on('nextBooster', function(data) {
+				receivedBoosters += 1;
+				let idx = c;
+				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
+				boosters[idx] = data;
+				this.removeListener('nextBooster');
+				if(receivedBoosters == clients.length)
+					done();
+			});
+			clients[c].emit('pickCard', boosters[c].booster[0]);
+		}
+	});
+		
+	it('Do it enough times, and all the drafts should end.', function(done) {
+		this.timeout(20000);
+		let draftEnded = 0;
+		for(let c = 0; c < clients.length; ++c) {
+			clients[c].on('nextBooster', function(data) {
+				let idx = c;
+				boosters[idx] = data.booster;
+				this.emit('pickCard', boosters[idx][0]);
+			});
+			clients[c].on('endDraft', function() {
+				draftEnded += 1;
+				this.removeListener('endDraft');
+				this.removeListener('nextBooster');
+				if(draftEnded == clients.length)
+					done();
+			});
+		}
+		for(let c = 0; c < clients.length; ++c) {
+			clients[c].emit('pickCard', boosters[c].booster[0]);
+		}
+	});
+});
+
 describe('Single Draft with Bots', function() {
 	let clients = [];
 	let sessionID = 'sessionID';
@@ -420,7 +554,7 @@ describe('Single Draft with Bots', function() {
 		clients[0].emit('bots', 6);
 		clients[1].on('bots', function(bots) {
 			expect(bots).to.equal(6);
-			this.removeListener('sessionOptions');
+			this.removeListener('bots');
 			done();
 		});
 	});
