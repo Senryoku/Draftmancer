@@ -22,3 +22,7 @@
  * Missing Historic Cards : Cinder Barrens
  * Once again, Dual faced cards won't import correctly in Arena! Yay! (Ravnica split cards, Discovery // Dispersal  etc)
  * Guildgates won't import in arena : Guildgates do not have localized names 
+ 
+# Notes on Arena Importer
+ * Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
+ * Adventures (ELD) and Dual Faces (IXL) need only one.

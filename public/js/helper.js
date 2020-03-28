@@ -68,7 +68,8 @@ function cardToMTGAExport(c, language) {
 	if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
 	let name = c.printed_name[language];
 	let idx = name.indexOf('//');
-	if(idx != -1)
+	// Ravnica Splits cards needs both names to be imported, others don't
+	if(idx != -1 && (c.set != 'grn' && c.set != 'rna'))
 		name = name.substr(0, idx - 1);
 	return `1 ${name} (${set}) ${c.collector_number}\n`
 }
