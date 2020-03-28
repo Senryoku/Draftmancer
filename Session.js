@@ -200,6 +200,7 @@ function Session(id, owner) {
 			let card_count = count_cards(localCollection)
 			if(card_count < cardsPerBooster * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
+				console.log(`Error generating boosters: Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
 				return false;
 			}
 			
@@ -447,7 +448,7 @@ function Session(id, owner) {
 			return;
 		
 		const boosterIndex = Connections[userID].boosterIndex;
-		if(boosterIndex < 0 || boosterIndex >= this.boosters.length) {
+		if(typeof boosterIndex === 'undefined' || boosterIndex < 0 || boosterIndex >= this.boosters.length) {
 			console.error(`Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
 			return;
 		}
@@ -547,19 +548,12 @@ function Session(id, owner) {
 		Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
 		Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 		Connections[userID].boosterIndex = this.disconnectedUsers[userID].boosterIndex;
-
-		// Computes boosterIndex
-		const playerIdx = this.getSortedHumanPlayers().indexOf(userID);
-		const totalVirtualPlayers = this.getTotalVirtualPlayers();
-		const evenRound = ((this.boosters.length / totalVirtualPlayers) % 2) == 0;
-		const boosterOffset = evenRound ? -(this.round - 1) : (this.round - 1); // Round has already advanced (see nextBooster)
-		const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
-	
+		
 		this.addUser(userID);
 		Connections[userID].socket.emit('rejoinDraft', {
 			pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 			pickedCards: this.disconnectedUsers[userID].pickedCards,
-			booster: this.boosters[boosterIndex]
+			booster: this.boosters[Connections[userID].boosterIndex]
 		});
 		delete this.disconnectedUsers[userID];
 

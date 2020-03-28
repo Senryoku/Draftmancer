@@ -551,7 +551,8 @@ function removeUserFromSession(userID) {
 			sess.disconnectedUsers[userID] = {
 				userName: Connections[userID].userName,
 				pickedThisRound: Connections[userID].pickedThisRound,
-				pickedCards: Connections[userID].pickedCards
+				pickedCards: Connections[userID].pickedCards,
+				boosterIndex: Connections[userID].boosterIndex
 			};
 		}
 		
