@@ -219,7 +219,8 @@ function Session(id, owner) {
 				
 				for(let i = booster.length; i < cardsPerBooster; ++i) {
 					let pickedCard = pick_card(localCollection, booster)
-					removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+					if(this.colorBalance)
+						removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
 					booster.push(pickedCard);
 				}
 				
@@ -304,7 +305,7 @@ function Session(id, owner) {
 					for(let r in foilRarityFreq)
 						if(rarityCheck <= foilRarityFreq[r] && !isEmpty(localCollection[r])) {
 							let pickedCard = pick_card(localCollection[r]);
-							if(Cards[pickedCard].rarity == 'common')
+							if(this.colorBalance && Cards[pickedCard].rarity == 'common')
 								removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
 							booster.push(pickedCard);
 							addedFoils += 1;
@@ -348,7 +349,8 @@ function Session(id, owner) {
 				
 				for(let i = pickedCommons.length; i < targets['common'] - addedFoils; ++i) {
 					let pickedCard = pick_card(localCollection['common'], pickedCommons);
-					removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
+					if(this.colorBalance)
+						removeCardFromDict(pickedCard, commonsByColor[Cards[pickedCard].color_identity]);
 					pickedCommons.push(pickedCard);
 				}
 				
@@ -509,6 +511,7 @@ function Session(id, owner) {
 				} else {
 					pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
 				}
+				this.disconnectedUsers[userID].pickedThisRound = true;
 				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
 				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][pickIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
 				this.boosters[boosterIndex].splice(pickIdx, 1);
@@ -550,7 +553,6 @@ function Session(id, owner) {
 		Connections[userID].socket.emit('rejoinDraft', {
 			pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 			pickedCards: this.disconnectedUsers[userID].pickedCards,
-			boosterIndex: boosterIndex,
 			booster: this.boosters[boosterIndex]
 		});
 		delete this.disconnectedUsers[userID];
