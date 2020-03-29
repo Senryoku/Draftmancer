@@ -219,7 +219,7 @@
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCardId != undefined"/>
 				</div>
 				<div class="booster card-container">
-					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:selected="selectedCardId == card.id"></figure>
+					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="pickOnDblclick ? function (e, card) { selectCard(e, card); app.pickCard(); } : function() {}" v-bind:selected="selectedCardId == card.id"></figure>
 				</div>
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
@@ -440,7 +440,7 @@
 								<td>{{4 * collectionStats[set][r].filter(c => c.in_booster).length - collectionStats[set][r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)}}</td>
 							</tr>
 						</table>
-						<h3>Missing <select v-model="statsMissingRarity"><option value="common">Commons</option><option value="uncommon">Uncommons</option><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" v-model="statsShowNonBooster">Show non-booster cards</input>
+						<h3>Missing <select v-model="statsMissingRarity"><option value="common">Commons</option><option value="uncommon">Uncommons</option><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" id="show-non-booster" v-model="statsShowNonBooster"><label for="show-non-booster">Show non-booster cards</label>
 						<div class="card-container">
 							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster) && c.count < 4)" v-bind:key="index" v-bind:card="card" v-bind:language="language"></figure>
 						</div>

@@ -22,13 +22,13 @@ Vue.component('modal', {
 
 Vue.component('card', {
 	template: `
-<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="if(app.draftingState === DraftState.Picking && app.pickOnDblclick) { selectcard($event, card); app.pickCard(); }">
+<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="ondblclick($event, card)">
 	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
 	<img v-else src="img/missing.svg">
 	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
 </figure>
 	`,
-	props: ['card', 'language', 'selectcard', 'selected']
+	props: {'card': {type: Object, required: true}, 'language': String, 'selectcard': Function, 'selected': Boolean, 'ondblclick': {type: Function, default: function() {}}}
 });
 
 Vue.component('missingCard', {
@@ -40,7 +40,7 @@ Vue.component('missingCard', {
 	<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
 </figure>
 	`,
-	props: ['card', 'language']
+	props: {'card': {type: Object, required: true}, 'language': {type: String, default: 'en'}}
 });
 
 const DraftState = {
