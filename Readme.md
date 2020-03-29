@@ -1,5 +1,5 @@
 # Todo
- * Add a Ready Check! (SweetAlert +Sound? +Notification)
+ * Add a sound to Ready Check?
  * Brackets (Vue Module)
  * Dragging cards
  * Add some stats on deck/drafted cards

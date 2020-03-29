@@ -145,13 +145,29 @@ io.on('connection', function(socket) {
 		}
 	});
 	
+	socket.on('readyCheck', function() {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+
+		if(Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting)
+			return;
+		
+		for(let user of Sessions[sessionID].users)
+			if(user != userID)
+				Connections[user].socket.emit('readyCheck');
+	});
+	
+	socket.on('setReady', function(readyState) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		for(let user of Sessions[sessionID].users)
+			Connections[user].socket.emit('setReady', userID, readyState);
+	});
+	
 	socket.on('startDraft', function() {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if(Sessions[sessionID].owner != this.userID)
-			return;
-		
-		if(Sessions[sessionID].drafting)
+		if(Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting)
 			return;
 				
 		if(Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {

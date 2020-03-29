@@ -14,6 +14,8 @@ function orderColor(lhs, rhs) {
 		return String(lhs.flat()).localeCompare(String(rhs.flat()));
 }
 
+const SwalCustomClasses = { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' };
+
 Vue.component('modal', {
   template: '#modal-template'
 })
@@ -45,6 +47,13 @@ const DraftState = {
 	Waiting: "Waiting",
 	Picking: "Picking",
 	Brewing: "Brewing"
+};
+
+const ReadyState = {
+	Unknown: "Unknown",
+	Ready: "Ready",
+	NotReady: "NotReady",
+	DontCare: "DontCare"
 };
 
 var app = new Vue({
@@ -100,6 +109,7 @@ var app = new Vue({
 		languages: window.constants.Languages,
 		language: getCookie('language', 'en'),
 		sets: window.constants.MTGSets,
+		pendingReadyCheck: false,
 		cardOrder: "CMCColumns",
 		setsInfos: undefined,
 		draftingState: undefined,
@@ -151,7 +161,7 @@ var app = new Vue({
 			this.socket.on('disconnect', function() {
 				console.log('Disconnected from server.');
 				Swal.fire({
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					type: 'error',
 					title: 'Disconnected!',
 					showConfirmButton: false
@@ -162,7 +172,7 @@ var app = new Vue({
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 				
 				Swal.fire({
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					type: 'warning',
 					title: 'Reconnected!',
 					timer: 1500
@@ -201,6 +211,7 @@ var app = new Vue({
 			this.socket.on('sessionUsers', function(users) {
 				for(let u of users) {
 					u.pickedThisRound = false;
+					u.readyState = ReadyState.DontCare;
 				}
 				
 				if(app.drafting && users.length < app.sessionUsers.length) {
@@ -208,7 +219,7 @@ var app = new Vue({
 					if(app.userID == app.sessionOwner) {
 						Swal.fire({
 							position: 'center',
-							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+							customClass: SwalCustomClasses,
 							type: 'error',
 							title: `${missingUsers[0].userName} disconnected`,
 							text: `Wait for ${missingUsers[0].userName} to come back or...`,
@@ -221,7 +232,7 @@ var app = new Vue({
 					} else {
 						Swal.fire({
 							position: 'center',
-							customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+							customClass: SwalCustomClasses,
 							type: 'error',
 							title: `${missingUsers[0].userName} disconnected`,
 							text: `Wait for ${missingUsers[0].userName} to come back or for the owner to replace them by a bot.`,
@@ -293,10 +304,45 @@ var app = new Vue({
 					type: 'info',
 					title: data.title,
 					text: data.text,
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					showConfirmButton: data.showConfirmButton,
 					timer: data.timer
 				});
+			});
+			
+			this.socket.on('readyCheck', function() {
+				if(app.drafting) return;
+				
+				app.initReadyCheck();
+				
+				if(app.enableNotifications) {
+					let notification = new Notification('Are you ready?', {
+						body: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`
+					});
+				}
+				
+				Swal.fire({
+					position: 'center',
+					type: 'question',
+					title: 'Are you ready?',
+					text: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`,
+					customClass: SwalCustomClasses,
+					showCancelButton: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: "I'm ready!",
+					cancelButtonText: "Not Ready"
+				}).then(result => {
+					app.socket.emit('setReady', result.value ? ReadyState.Ready : ReadyState.NotReady);
+				});
+			});
+			
+			this.socket.on('setReady', function(userID, readyState) {
+				if(!app.pendingReadyCheck)
+					return;
+				app.userByID[userID].readyState = readyState;
+				if(app.sessionUsers.every(u => u.readyState === ReadyState.Ready))
+					app.fireToast('success', 'Everybody is ready!');
 			});
 			
 			this.socket.on('startDraft', function(data) {
@@ -304,19 +350,19 @@ var app = new Vue({
 				setCookie("userID", app.userID);
 			
 				app.drafting = true;
+				app.stopReadyCheck();
 				app.sideboard = [];
 				app.deck = [];
 				Swal.fire({
 					position: 'center',
 					type: 'success',
 					title: 'Now drafting!',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500
 				});
 				
 				if(app.enableNotifications) {
-					console.log('Notification');
 					let notification = new Notification('Now drafting!', {
 						body: `Your draft '${app.sessionID}' is starting!`
 					});
@@ -347,7 +393,7 @@ var app = new Vue({
 					position: 'center',
 					type: 'success',
 					title: 'Reconnected to the draft!',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500
 				});
@@ -370,7 +416,7 @@ var app = new Vue({
 					type: 'success',
 					title: 'Done drafting!',
 					showConfirmButton: false,
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					timer: 1500
 				});
 				app.drafting = false;
@@ -532,7 +578,7 @@ var app = new Vue({
 						customClass: 'swal-container',
 						type: 'success',
 						title: 'Collection updated',
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+						customClass: SwalCustomClasses,
 						showConfirmButton: false,
 						timer: 1500
 					});
@@ -542,7 +588,7 @@ var app = new Vue({
 						title: 'Parsing Error',
 						text: 'An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.',
 						footer: 'Full error: ' + e,
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+						customClass: SwalCustomClasses
 					});
 					//alert(e);
 				}		
@@ -555,7 +601,7 @@ var app = new Vue({
 				position: 'top-end',
 				type: type,
 				title: title,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				showConfirmButton: false,
 				timer: 1500
 			});
@@ -567,7 +613,7 @@ var app = new Vue({
 			}
 			Swal.fire({
 				position: 'center',
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				type: 'info',
 				title: 'Parsing card list...',
 				showConfirmButton: false
@@ -593,7 +639,7 @@ var app = new Vue({
 										type: 'error',
 										title: `Card not found`,
 										text: `Could not find ${line} in our database.`,
-										customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+										customClass: SwalCustomClasses
 									});
 									return;
 								}
@@ -609,7 +655,7 @@ var app = new Vue({
 						title: 'Parsing Error',
 						text: 'An error occurred during parsing, please check you input file.',
 						footer: 'Full error: ' + e,
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+						customClass: SwalCustomClasses
 					});
 				}		
 			};
@@ -683,7 +729,7 @@ var app = new Vue({
 				text: `Do you want to surrender session ownership to ${user.userName}?`,
 				type: 'warning',
 				showCancelButton: true,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: "Yes",
@@ -701,7 +747,7 @@ var app = new Vue({
 				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
 				type: 'warning',
 				showCancelButton: true,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: "Yes",
@@ -718,7 +764,7 @@ var app = new Vue({
 					text: "Distributing sealed boosters will reset everyone's cards/deck!",
 					type: 'warning',
 					showCancelButton: true,
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					confirmButtonColor: '#3085d6',
 					cancelButtonColor: '#d33',
 					confirmButtonText: "Yes, distribute!",
@@ -753,6 +799,27 @@ var app = new Vue({
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;
 		},
+		readyCheck: function() {
+			if(this.userID != this.sessionOwner || this.drafting)
+				return;
+			
+			this.initReadyCheck();
+			
+			this.socket.emit('readyCheck');
+			this.socket.emit('setReady', ReadyState.Ready);
+		},
+		initReadyCheck: function() {
+			this.pendingReadyCheck = true;
+			
+			for(let u of app.sessionUsers)
+				u.readyState = ReadyState.Unknown;
+		},
+		stopReadyCheck: function() {
+			this.pendingReadyCheck = false;
+			
+			for(let u of app.sessionUsers)
+				u.readyState = ReadyState.DontCare;
+		},
 		startDraft: function() {
 			if(this.userID != this.sessionOwner)
 				return;
@@ -762,7 +829,7 @@ var app = new Vue({
 					text: "Launching a draft will reset everyones cards/deck!",
 					type: 'warning',
 					showCancelButton: true,
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+					customClass: SwalCustomClasses,
 					confirmButtonColor: '#3085d6',
 					cancelButtonColor: '#d33',
 					confirmButtonText: "I'm sure!",
@@ -783,7 +850,7 @@ var app = new Vue({
 				text: "Do you really want to stop the draft here?",
 				type: 'warning',
 				showCancelButton: true,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: "I'm sure!",
@@ -798,7 +865,7 @@ var app = new Vue({
 				Swal.fire({
 					title: 'You need to be the session owner to share logs.',
 					type: 'error',
-					customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+					customClass: SwalCustomClasses
 				});
 				return;
 			}
@@ -814,7 +881,7 @@ var app = new Vue({
 						title: 'Wrong Session ID',
 						text: `Can't share logs: The session ID of your saved draft log ('${parsedLogs.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
 						type: 'error',
-						customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' }
+						customClass: SwalCustomClasses
 					});
 					return;
 				}
@@ -840,7 +907,7 @@ var app = new Vue({
 					step: 1
 				},
 				inputValue: 6,
-				customClass: { popup: 'custom-swal-popup', title: 'custom-swal-title', content: 'custom-swal-content' },
+				customClass: SwalCustomClasses,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
 				confirmButtonText: "Distribute boosters",
