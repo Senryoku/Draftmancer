@@ -273,7 +273,7 @@
 			<div id="card-pool-controls" class="controls">
 				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}</span>)</h2>
 			</div>
-			<div class="card-container" :class="cardOrder == 'CMCColumns'? 'card-columns' : 'card-pool'">
+			<div class="card-container" :class="cardOrder == 'CMCColumns' || cardOrder == 'ColorColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="sideboard.length == 0">
 					<div><h3>Your sideboard is currently empty!</h3><p>Click on cards in your deck to sideboard them.</p></div>
 				</template>
