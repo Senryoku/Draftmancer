@@ -124,8 +124,6 @@
 						<span class="v-separator"></span>
 						<span>
 							<strong>Draft:</strong>
-							<label for="boosters-per-player" title="Draft Boosters per Player">Boosters</label>
-								<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
 							<label for="bots">Bots</label><input type="number" id="bots" class="small-number-input" min="0" max="7" step="1" v-model.number="bots" />
 							<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="small-number-input" min="0" max="120" step="30" v-model.number="maxTimer" />
 							<button @click="startDraft">Start Draft</button>
@@ -498,6 +496,13 @@
 					</div>
 				</div>
 				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
+				<h4>Draft Specific Options</h4>
+				<div class="line" title="Draft: Boosters per Player; default is 3.">
+					<label for="boosters-per-player">Boosters per Player</label>
+					<div class="right">
+						<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
+					</div>
+				</div>
 				<div class="line" title="Who's going to receive the draft logs?">
 					<label for="draft-log-recipients">Send draft logs to</label>
 					<div class="right">
