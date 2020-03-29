@@ -852,11 +852,26 @@ var app = new Vue({
 		},
 		columnCMC: function(cards) {
 			let a = cards.reduce((acc, item) => {
-			  if (!acc[item.cmc])
-				acc[item.cmc] = [];
-			  acc[item.cmc].push(item);
-			  return acc;
+				if (!acc[item.cmc])
+					acc[item.cmc] = [];
+				acc[item.cmc].push(item);
+				return acc;
 			}, {});
+			for(let col in a) a[col] = this.orderByColor(a[col]);
+			return a;
+		},
+		columnColor: function(cards) {
+			let a = cards.reduce((acc, item) => {
+				if(item.color_identity.length > 1) {
+					if(!acc['multi']) acc['multi'] = [];
+					acc['multi'].push(item);
+				} else {
+					if(!acc[item.color_identity]) acc[item.color_identity] = [];
+					acc[item.color_identity].push(item);
+				}
+				return acc;
+			}, {'': [], 'W': [], 'U': [], 'B': [], 'R': [], 'G': [], 'multi': []});
+			for(let col in a) a[col] = this.orderByCMC(a[col]);
 			return a;
 		},
 		orderByCMC: function(cards) {
@@ -1020,31 +1035,17 @@ var app = new Vue({
 			return addedLands;
 		},
 		
-		deckColumnCMC: function() {
-			return this.columnCMC(this.deck);
-		},
-		deckCMC: function() {
-			return this.orderByCMC(this.deck);
-		},
-		deckColor: function() {
-			return this.orderByColor(this.deck);
-		},
-		deckRarity: function() {
-			return this.orderByRarity(this.deck);
-		},
+		deckColumnCMC:   function() { return this.columnCMC(this.deck); },
+		deckColumnColor: function() { return this.columnColor(this.deck) },
+		deckCMC:    function() { return this.orderByCMC(this.deck); },
+		deckColor:  function() { return this.orderByColor(this.deck); },
+		deckRarity: function() { return this.orderByRarity(this.deck); },
 		
-		sideboardColumnCMC: function() {
-			return this.columnCMC(this.sideboard);
-		},
-		sideboardCMC: function() {
-			return this.orderByCMC(this.sideboard);
-		},
-		sideboardColor: function() {
-			return this.orderByColor(this.sideboard);
-		},
-		sideboardRarity: function() {
-			return this.orderByRarity(this.sideboard);
-		},
+		sideboardColumnCMC:   function() { return this.columnCMC(this.sideboard) },
+		sideboardColumnColor: function() { return this.columnColor(this.sideboard) },
+		sideboardCMC:    function() { return this.orderByCMC(this.sideboard); },
+		sideboardColor:  function() { return this.orderByColor(this.sideboard); },
+		sideboardRarity: function() { return this.orderByRarity(this.sideboard); },
 		
 		userByID: function() {
 			let r = {};

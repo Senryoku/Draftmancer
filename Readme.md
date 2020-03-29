@@ -2,9 +2,9 @@
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
  * Add back ready to draft... "I'm ready!" ? All it does is signaling the session owner that you're here and ready; a button on the right of SessionID ?
+ * OR Add a Ready Check! (SweetAlert +Sound? +Notification)
  * Display foils as... foils in front end?
  * Should the disconnect player event be broadcast my the server rather by detected by clients?
- * Front end: Color Columns
  * Add some stats on deck/drafted cards
  * -----
  * Move pick time out to server side?
@@ -17,6 +17,7 @@
  * Player limit
  * Rarity selection
  * Prevent multiple copies of the same card in a single booster
+ * Front end: Color Columns
  
 # Bugs
  * Missing Historic Cards : Cinder Barrens

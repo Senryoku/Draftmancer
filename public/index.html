@@ -222,6 +222,7 @@
 				<label for="card-order">Card Display</label>
 				<select v-model="cardOrder" name="card-order">
 					<option value="CMCColumns">CMC Columns</option>
+					<option value="ColorColumns">Color Columns</option>
 					<option value="">Pick Order</option>
 					<option value="CMC">Order by CMC</option>
 					<option value="Color">Order by Color</option>
@@ -238,7 +239,7 @@
 					{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 				</span>
 			</div>
-			<div class="card-container" :class="cardOrder == 'CMCColumns' ? 'card-columns' : 'card-pool'">
+			<div class="card-container" :class="cardOrder == 'CMCColumns' || cardOrder == 'ColorColumns' ? 'card-columns' : 'card-pool'">
 				<template v-if="deck.length == 0">
 					<div><h3>Your deck is currently empty!</h3><p>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</p></div>
 				</template>
@@ -246,6 +247,11 @@
 					<template v-if="cardOrder == 'CMCColumns'">
 						<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
 							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
+						</div>
+					</template>
+					<template v-else-if="cardOrder == 'ColorColumns'">
+						<div v-for="column in deckColumnColor" class="cmc-column">
+							<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMC'">
@@ -277,6 +283,11 @@
 							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
 						</div>
 					</template>
+					<template v-else-if="cardOrder == 'ColorColumns'">
+						<div v-for="column in sideboardColumnColor" class="cmc-column">
+							<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
+						</div>
+					</template>
 					<template v-else-if="cardOrder == 'CMC'">
 						<figure is="card" v-for="(card, index) in sideboardCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
 					</template>
@@ -299,7 +310,7 @@
 				<ol class="important">
 					<li>
 						(Optional) Import your collection: Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection won't work without this activated.
-						<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\YourName\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game.
+						<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a> (you should find them at <tt>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\output_log.txt</tt>) to restrict the draft to the cards you actually own in the game.
 					</li>
 					<li>Use the controls on top of the page to enter your User Name and indicate your preferences.</li>
 					<li>Share your session ID with your friends (or join their own session) and wait for your session owner to start a draft!</li>
@@ -515,6 +526,11 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol>
+					<li>29/03/2020
+						<ul>
+							<li>Added a Color Columns option to display cards.</li>
+						</ul>
+					</li>
 					<li>28/03/2020
 						<ul>
 							<li>Updated draft logs. Complete pick information. Can now be exported in MTGO format/to MagicProTools.</li>
