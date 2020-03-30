@@ -185,7 +185,7 @@ if not os.path.isfile(FinalDataPath) or ForceDownload or ForceParse:
 						selection['rating'] = CardRatings[selection['name']]
 					else:
 						selection['rating'] = 0
-					if c['arena_id'] in NonBoosterCards or 'Basic Land' in c['type_line']:
+					if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
 						selection['in_booster'] = False;
 					if 'image_uris' in c and 'border_crop' in c['image_uris']:
 						translations_img[(c['name'], c['set'].lower())][c['lang']] = c['image_uris']['border_crop']
