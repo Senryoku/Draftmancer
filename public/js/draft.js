@@ -115,8 +115,8 @@ var app = new Vue({
 		setsInfos: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
-		enableNotifications: Notification.permission == 'granted' && getCookie("enableNotifications", false),
-		notificationPermission: Notification.permission,
+		enableNotifications: Notification && Notification.permission == 'granted' && getCookie("enableNotifications", false),
+		notificationPermission: Notification && Notification.permission,
 		selectedCardId: undefined,
 		deck: [],
 		sideboard: [],
@@ -1061,6 +1061,8 @@ var app = new Vue({
 		}
 	},
 	computed: {
+		DraftState: function() { return DraftState; },
+		ReadyState: function() { return ReadyState; },
 		draftRound: function() {
 			return Math.floor((this.deck.length + this.sideboard.length)/(this.useCustomCardList ? 15 : 14)) + 1;
 		},
