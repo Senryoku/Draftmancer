@@ -231,9 +231,9 @@
 				<h2>Deck ({{deck.length}})</h2>
 				<label for="card-order">Card Display</label>
 				<select v-model="cardOrder" name="card-order">
+					<option value="DraggableCMC">Draggable</option>
 					<option value="CMCColumns">CMC Columns</option>
 					<option value="ColorColumns">Color Columns</option>
-					<option value="">Pick Order</option>
 					<option value="CMC">Order by CMC</option>
 					<option value="Color">Order by Color</option>
 					<option value="Rarity">Order by Rarity</option>
@@ -249,33 +249,30 @@
 					{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 				</span>
 			</div>
-			<div class="card-container" :class="cardOrder == 'CMCColumns' || cardOrder == 'ColorColumns' ? 'card-columns' : 'card-pool'">
-				<template v-if="deck.length == 0">
-					<div><h3>Your deck is currently empty!</h3><p>Click on your cards to add them to your deck. Don't forget to add lands in MTGA! :)</p></div>
+			<div class="card-container" :class="['CMCColumns', 'ColorColumns', 'DraggableCMC'].includes(cardOrder) ? 'card-columns' : 'card-pool'">
+				<div v-if="deck.length == 0" class="empty-warning">
+					<h3>Your deck is currently empty!</h3>
+					<p>Click on your cards to add them to your deck.</p>
+				</div>
+				<template v-if="cardOrder == 'DraggableCMC'">
+					<draggable v-for="column in deckColumn" class="cmc-column drag-column" :list="column" group="cardColumn" @start="drag=true" @end="drag=false" @change="columnDeckChange">
+					   <figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+					</draggable>
+					<div @click="deckColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+				</template>
+				<template v-else-if="cardOrder == 'CMCColumns'">
+					<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
+						<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+					</div>
+				</template>
+				<template v-else-if="cardOrder == 'ColorColumns'">
+					<div v-for="column in deckColumnColor" class="cmc-column" v-show="column.length > 0">
+						<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+					</div>
 				</template>
 				<template v-else>
-					<template v-if="cardOrder == 'CMCColumns'">
-						<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
-							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="column in deckColumnColor" class="cmc-column">
-							<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'CMC'">
-						<figure is="card" v-for="(card, index) in deckCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-					</template>
-					<template v-else-if="cardOrder == 'Color'">
-						<figure is="card" v-for="(card, index) in deckColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-					</template>
-					<template v-else-if="cardOrder == 'Rarity'">
-						<figure is="card" v-for="(card, index) in deckRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-					</template>
-					<template v-else>
-						<figure is="card" v-for="(card, index) in deck" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="removeFromDeck"></figure>
-					</template>
+					<figure is="card" v-for="(card, index) in {'CMC': deckCMC, 'Color': deckColor, 'Rarity': deckRarity, '': deck}[cardOrder]" 
+						v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
 				</template>
 			</div>
 		</div>
@@ -283,33 +280,30 @@
 			<div id="card-pool-controls" class="controls">
 				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}</span>)</h2>
 			</div>
-			<div class="card-container" :class="cardOrder == 'CMCColumns' || cardOrder == 'ColorColumns' ? 'card-columns' : 'card-pool'">
-				<template v-if="sideboard.length == 0">
-					<div><h3>Your sideboard is currently empty!</h3><p>Click on cards in your deck to sideboard them.</p></div>
+			<div class="card-container" :class="['CMCColumns', 'ColorColumns', 'DraggableCMC'].includes(cardOrder) ? 'card-columns' : 'card-pool'">
+				<div v-if="sideboard.length == 0" class="empty-warning">
+					<h3>Your sideboard is currently empty!</h3>
+					<p>Click on cards in your deck to sideboard them.</p>
+				</div>
+				<template v-if="cardOrder == 'DraggableCMC'">
+					<draggable v-for="column in sideboardColumn" class="cmc-column drag-column" :list="column" group="cardColumn" @start="drag=true" @end="drag=false" @change="columnSideboardChange">
+					   <figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
+					</draggable>
+					<div @click="sideboardColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+				</template>
+				<template v-else-if="cardOrder == 'CMCColumns'">
+					<div v-for="cmc_column in sideboardColumnCMC" class="cmc-column">
+						<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
+					</div>
+				</template>
+				<template v-else-if="cardOrder == 'ColorColumns'">
+					<div v-for="column in sideboardColumnColor" class="cmc-column" v-show="column.length > 0">
+						<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
+					</div>
 				</template>
 				<template v-else>
-					<template v-if="cardOrder == 'CMCColumns'">
-						<div v-for="cmc_column in sideboardColumnCMC" class="cmc-column">
-							<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="column in sideboardColumnColor" class="cmc-column">
-							<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'CMC'">
-						<figure is="card" v-for="(card, index) in sideboardCMC" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-					</template>
-					<template v-else-if="cardOrder == 'Color'">
-						<figure is="card" v-for="(card, index) in sideboardColor" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-					</template>
-					<template v-else-if="cardOrder == 'Rarity'">
-						<figure is="card" v-for="(card, index) in sideboardRarity" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-					</template>
-					<template v-else>
-						<figure is="card" v-for="(card, index) in sideboard" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="addToDeck"></figure>
-					</template>
+					<figure is="card" v-for="(card, index) in {'CMC': sideboardCMC, 'Color': sideboardColor, 'Rarity': sideboardRarity, '': sideboard}[cardOrder]" 
+						v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
 				</template>
 			</div>
 		</div>
@@ -589,6 +583,8 @@
 	<script type="text/javascript" src="js/helper.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 	<script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
+	<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 	<script type="text/javascript" src="js/constants.js"></script>
 	<script type="text/javascript" src="js/cookies.js"></script>
 	<script type="text/javascript" src="js/draft.js"></script>

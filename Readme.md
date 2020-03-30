@@ -1,7 +1,6 @@
 # Todo
  * Add a sound to Ready Check?
  * Brackets (Vue Module)
- * Dragging cards
  * Add some stats on deck/drafted cards
  -----
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
@@ -14,12 +13,12 @@
  * (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
 
 # Check
+ * Dragging cards
+ * Ready Check
  * Add notification option: In a sub menu add a way to activate notifications (HTML5 Notification?) fired when a draft is launched.
  * Set Multiple Selection
- * Player limit
  * Rarity selection
  * Prevent multiple copies of the same card in a single booster
- * Front end: Color Columns
  
 # Bugs
  * Missing Historic Cards : Cinder Barrens

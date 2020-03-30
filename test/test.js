@@ -844,6 +844,7 @@ describe('Multiple Drafts', function() {
 		let sessionsCorrectlyStartedDrafting = 0;
 		let receivedBoosters = 0;
 		for(let [sessionIdx, sessionClients] of clients.entries()) {
+			boosters.push([]);
 			(() => {
 				let connectedClients = 0;
 				for(let c of sessionClients) {
@@ -855,7 +856,7 @@ describe('Multiple Drafts', function() {
 					
 					c.on('nextBooster', function(data) {
 						expect(boosters).not.include(data);
-						boosters.push(data);
+						boosters[playersPerSession * sessionIdx + sessionClients.findIndex(cl => cl == c)] = data;
 						c.removeListener('nextBooster');
 						if(sessionsCorrectlyStartedDrafting == sessionCount && boosters.length == playersPerSession * sessionCount)
 							done();
@@ -890,10 +891,9 @@ describe('Multiple Drafts', function() {
 		for(let sess = 0; sess < clients.length; ++sess) {
 			for(let c = 0; c < clients[sess].length; ++c) {
 				clients[sess][c].on('nextBooster', function() {
-					let idx = (() => playersPerSession * sess + c)();
+					let idx = playersPerSession * sess + c;
 					return function(data) {
 						receivedBoosters += 1;
-						console.log(idx); // Literally essential (yeah, wth)
 						expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 						boosters[idx] = data;
 						this.removeListener('nextBooster');
@@ -912,7 +912,7 @@ describe('Multiple Drafts', function() {
 		for(let sess = 0; sess < clients.length; ++sess) {
 			for(let c = 0; c < clients[sess].length; ++c) {
 				clients[sess][c].on('nextBooster', function(data) {
-					let idx = (() => playersPerSession * sess + c)();
+					let idx = playersPerSession * sess + c;
 					boosters[idx] = data.booster;
 					this.emit('pickCard', boosters[idx][0]);
 				});

@@ -653,10 +653,33 @@ ul.player-list {
 
 /* Deck display */
 
+.empty-warning {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	translate: -50% -50%;
+}
+
+.card-pool {
+	position: relative;
+	min-height: 200px;
+}
+
 .card-columns {
 	justify-content: flex-start;
 	position: relative;
 	padding: 0.75em;
+	min-height: 283.33px;
+}
+
+.plus-column {
+	margin: 0.2em;
+	background-color: rgba(0, 0, 0, 0.1);
+	border-radius: 37px;
+	padding: 5px;
+	width: 32px;
+	height: 32px;
+	text-align: center;
 }
 
 .cmc-column {
@@ -692,6 +715,11 @@ ul.player-list {
 
 .cmc-column figcaption {
 	display: none;
+}
+
+.drag-column {
+	min-width: 200px;
+	background-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Close button */

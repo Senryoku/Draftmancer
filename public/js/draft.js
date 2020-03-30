@@ -59,7 +59,8 @@ const ReadyState = {
 var app = new Vue({
 	el: '#main-vue',
 	components: {
-		Multiselect: window.VueMultiselect.default
+		Multiselect: window.VueMultiselect.default,
+		draggable: window.vuedraggable
 	},
 	data: {
 		// Card Data
@@ -110,7 +111,7 @@ var app = new Vue({
 		language: getCookie('language', 'en'),
 		sets: window.constants.MTGSets,
 		pendingReadyCheck: false,
-		cardOrder: "CMCColumns",
+		cardOrder: getCookie("cardOrder", "DraggableCMC"),
 		setsInfos: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
@@ -121,6 +122,8 @@ var app = new Vue({
 		sideboard: [],
 		autoLand: true,
 		lands: {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0},
+		deckColumn: [[], [], [], [], [], [], []],
+		sideboardColumn: [[], [], [], [], [], [], []],
 		
 		showSessionOptionsDialog: false,
 		displayAbout: false,
@@ -499,12 +502,22 @@ var app = new Vue({
 		selectCard: function(e, c) {
 			this.selectedCardId = c.id;
 		},
+		addToDeck: function(card) {
+			// Handle column sync.
+			this.deck.push(card);
+			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
+		},
+		addToSideboard: function(card) {
+			// Handle column sync.
+			this.sideboard.push(card);
+			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
+		},
 		pickCard: function() {
 			if(this.draftingState != DraftState.Picking || !this.selectedCardId)
 				return;
 			this.draftingState = DraftState.Waiting;
 			this.socket.emit('pickCard', this.selectedCardId);
-			this.deck.push(this.cards[this.selectedCardId]);
+			this.addToDeck(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 		},
 		forcePick: function() {
@@ -516,7 +529,7 @@ var app = new Vue({
 				this.selectedCardId = this.booster[randomIdx].id;
 			}
 			this.socket.emit('pickCard', this.selectedCardId);
-			this.deck.push(this.cards[this.selectedCardId]);
+			this.addToDeck(this.cards[this.selectedCardId]);
 			this.selectedCardId = undefined;
 			this.draftingState = DraftState.Waiting;
 		},
@@ -530,20 +543,32 @@ var app = new Vue({
 				});
 			}
 		},
-		removeFromDeck: function(e, c) { // From deck to sideboard
-			for(let i = 0; i < this.deck.length; ++i) {
-				if(this.deck[i] == c) {
-					this.deck.splice(i, 1);
-					this.sideboard.push(c);
+		deckToSideboard: function(e, c) { // From deck to sideboard
+			let idx = this.deck.findIndex(card => card == c);
+			if(idx >= 0) {
+				this.deck.splice(idx, 1);
+				this.addToSideboard(c);
+			} else return;
+			
+			for(let col of this.deckColumn) {
+				let idx = col.findIndex(card => card == c);
+				if(idx >= 0) {
+					col.splice(idx, 1);
 					break;
 				}
 			}
 		},
-		addToDeck: function(e, c) { // From sideboard to deck
-			for(let i = 0; i < this.sideboard.length; ++i) {
-				if(this.sideboard[i] == c) {
-					this.sideboard.splice(i, 1);
-					this.deck.push(c);
+		sideboardToDeck: function(e, c) { // From sideboard to deck
+			let idx = this.sideboard.findIndex(card => card == c);
+			if(idx >= 0) {
+				this.sideboard.splice(idx, 1);
+				this.addToDeck(c);
+			} else return;
+			
+			for(let col of this.sideboardColumn) {
+				let idx = col.findIndex(card => card == c);
+				if(idx >= 0) {
+					col.splice(idx, 1);
 					break;
 				}
 			}
@@ -917,6 +942,15 @@ var app = new Vue({
 				this.distributeSealed(boosterCount);
 			}
 		},
+		// Sync. column changes with deck and sideboard
+		columnDeckChange: function(e) {
+			if(e.removed) this.deck.splice(this.deck.findIndex(c => c == e.removed.element), 1);
+			if(e.added) this.deck.push(e.added.element);
+		},
+		columnSideboardChange: function(e) {
+			if(e.removed) this.sideboard.splice(this.sideboard.findIndex(c => c == e.removed.element), 1);
+			if(e.added) this.sideboard.push(e.added.element);
+		},
 		columnCMC: function(cards) {
 			let a = cards.reduce((acc, item) => {
 				if (!acc[item.cmc])
@@ -1180,8 +1214,26 @@ var app = new Vue({
 		pickOnDblclick: function() {
 			setCookie('pickOnDblclick', this.pickOnDblclick);
 		},
-		deck: function() {
+		cardOrder: function() {
+			setCookie('cardOrder', this.cardOrder);
+		},
+		deck: function(newDeck, oldDeck) {
 			this.updateAutoLands();
+			
+			// When replacing deck (not mutating it)
+			if(oldDeck != newDeck) {
+				this.deckColumn = [[], [], [], [], [], [], []];
+				for(let c of newDeck)
+					this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
+			}
+		},
+		sideboard: function(newSide, oldSide) {
+			// When replacing deck (not mutating it)
+			if(newSide != oldSide) {
+				this.sideboardColumn = [[], [], [], [], [], [], []];
+				for(let c of newSide)
+					this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
+			}
 		},
 		autoLand: function() {
 			this.updateAutoLands();
