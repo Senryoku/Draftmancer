@@ -56,6 +56,8 @@ const ReadyState = {
 	DontCare: "DontCare"
 };
 
+let UniqueID = 0;
+
 var app = new Vue({
 	el: '#main-vue',
 	components: {
@@ -117,7 +119,7 @@ var app = new Vue({
 		pickOnDblclick: getCookie("pickOnDblclick", false),
 		enableNotifications: Notification && Notification.permission == 'granted' && getCookie("enableNotifications", false),
 		notificationPermission: Notification && Notification.permission,
-		selectedCardId: undefined,
+		selectedCard: undefined,
 		deck: [],
 		sideboard: [],
 		autoLand: true,
@@ -390,7 +392,7 @@ var app = new Vue({
 					app.draftingState = DraftState.Waiting;
 				else
 					app.draftingState = DraftState.Picking;
-				app.selectedCardId = undefined;
+				app.selectedCard = undefined;
 				
 				Swal.fire({
 					position: 'center',
@@ -500,7 +502,12 @@ var app = new Vue({
 		},
 		// Draft Methods
 		selectCard: function(e, c) {
-			this.selectedCardId = c.id;
+			this.selectedCard = c;
+		},
+		doubleClickCard: function(e, c) {
+			this.selectCard(e, c);
+			if(this.pickOnDblclick)
+				this.pickCard();
 		},
 		addToDeck: function(card) {
 			// Handle column sync.
@@ -513,24 +520,24 @@ var app = new Vue({
 			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
 		},
 		pickCard: function() {
-			if(this.draftingState != DraftState.Picking || !this.selectedCardId)
+			if(this.draftingState != DraftState.Picking || !this.selectedCard)
 				return;
 			this.draftingState = DraftState.Waiting;
-			this.socket.emit('pickCard', this.selectedCardId);
-			this.addToDeck(this.cards[this.selectedCardId]);
-			this.selectedCardId = undefined;
+			this.socket.emit('pickCard', this.selectedCard.id);
+			this.addToDeck(this.selectedCard);
+			this.selectedCard = undefined;
 		},
 		forcePick: function() {
 			if(this.draftingState != DraftState.Picking)
 				return;
 			// Forces a random card if none is selected
-			if (!this.selectedCardId) {
+			if (!this.selectedCard) {
 				const randomIdx = Math.floor(Math.random() * this.booster.length)
-				this.selectedCardId = this.booster[randomIdx].id;
+				this.selectedCard = this.booster[randomIdx];
 			}
-			this.socket.emit('pickCard', this.selectedCardId);
-			this.addToDeck(this.cards[this.selectedCardId]);
-			this.selectedCardId = undefined;
+			this.socket.emit('pickCard', this.selectedCard.id);
+			this.addToDeck(this.selectedCard);
+			this.selectedCard = undefined;
 			this.draftingState = DraftState.Waiting;
 		},
 		checkNotificationPermission: function(e) {
@@ -544,14 +551,14 @@ var app = new Vue({
 			}
 		},
 		deckToSideboard: function(e, c) { // From deck to sideboard
-			let idx = this.deck.findIndex(card => card == c);
+			let idx = this.deck.findIndex(card => card === c);
 			if(idx >= 0) {
 				this.deck.splice(idx, 1);
 				this.addToSideboard(c);
 			} else return;
 			
 			for(let col of this.deckColumn) {
-				let idx = col.findIndex(card => card == c);
+				let idx = col.findIndex(card => card === c);
 				if(idx >= 0) {
 					col.splice(idx, 1);
 					break;
@@ -559,14 +566,14 @@ var app = new Vue({
 			}
 		},
 		sideboardToDeck: function(e, c) { // From sideboard to deck
-			let idx = this.sideboard.findIndex(card => card == c);
+			let idx = this.sideboard.findIndex(card => card === c);
 			if(idx >= 0) {
 				this.sideboard.splice(idx, 1);
 				this.addToDeck(c);
 			} else return;
 			
 			for(let col of this.sideboardColumn) {
-				let idx = col.findIndex(card => card == c);
+				let idx = col.findIndex(card => card === c);
 				if(idx >= 0) {
 					col.splice(idx, 1);
 					break;
@@ -810,6 +817,7 @@ var app = new Vue({
 				return undefined;
 			return {
 				id: c, 
+				uniqueID: UniqueID++,
 				name: this.cards[c].name, 
 				printed_name: this.cards[c].printed_name, 
 				image_uris: this.cards[c].image_uris, 
@@ -985,7 +993,10 @@ var app = new Vue({
 		orderByColor: function(cards) {
 			return [...cards].sort(function (lhs, rhs) {
 				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					return lhs.cmc - rhs.cmc;
+					if(lhs.cmc != rhs.cmc)
+						return lhs.cmc - rhs.cmc;
+					else
+						return lhs.name < rhs.name;
 				return orderColor(lhs.color_identity, rhs.color_identity);
 			});
 		},
@@ -1227,6 +1238,8 @@ var app = new Vue({
 				this.deckColumn = [[], [], [], [], [], [], []];
 				for(let c of newDeck)
 					this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
+				for(let col = 0; col < this.deckColumn.length; ++col)
+					this.deckColumn[col] = this.orderByColor(this.deckColumn[col]);
 			}
 		},
 		sideboard: function(newSide, oldSide) {
