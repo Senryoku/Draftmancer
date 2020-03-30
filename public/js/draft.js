@@ -952,11 +952,11 @@ var app = new Vue({
 		},
 		// Sync. column changes with deck and sideboard
 		columnDeckChange: function(e) {
-			if(e.removed) this.deck.splice(this.deck.findIndex(c => c == e.removed.element), 1);
+			if(e.removed) this.deck.splice(this.deck.findIndex(c => c === e.removed.element), 1);
 			if(e.added) this.deck.push(e.added.element);
 		},
 		columnSideboardChange: function(e) {
-			if(e.removed) this.sideboard.splice(this.sideboard.findIndex(c => c == e.removed.element), 1);
+			if(e.removed) this.sideboard.splice(this.sideboard.findIndex(c => c === e.removed.element), 1);
 			if(e.added) this.sideboard.push(e.added.element);
 		},
 		columnCMC: function(cards) {
@@ -983,6 +983,16 @@ var app = new Vue({
 			for(let col in a) a[col] = this.orderByCMC(a[col]);
 			return a;
 		},
+		orderByColorInPlace: function(cards) {
+			return cards.sort(function (lhs, rhs) {
+				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
+					if(lhs.cmc != rhs.cmc)
+						return lhs.cmc - rhs.cmc;
+					else
+						return lhs.name < rhs.name;
+				return orderColor(lhs.color_identity, rhs.color_identity);
+			});
+		},
 		orderByCMC: function(cards) {
 			return [...cards].sort(function (lhs, rhs) {
 				if(lhs.cmc == rhs.cmc)
@@ -991,14 +1001,7 @@ var app = new Vue({
 			});
 		},
 		orderByColor: function(cards) {
-			return [...cards].sort(function (lhs, rhs) {
-				if(orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					if(lhs.cmc != rhs.cmc)
-						return lhs.cmc - rhs.cmc;
-					else
-						return lhs.name < rhs.name;
-				return orderColor(lhs.color_identity, rhs.color_identity);
-			});
+			return this.orderByColorInPlace([...cards]);
 		},
 		orderByRarity: function(cards) {
 			const order = {'mythic' : 0, 'rare' : 1, 'uncommon': 2, 'common': 3};
@@ -1239,7 +1242,7 @@ var app = new Vue({
 				for(let c of newDeck)
 					this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
 				for(let col = 0; col < this.deckColumn.length; ++col)
-					this.deckColumn[col] = this.orderByColor(this.deckColumn[col]);
+					this.orderByColorInPlace(this.deckColumn[col]);
 			}
 		},
 		sideboard: function(newSide, oldSide) {

@@ -255,7 +255,7 @@
 					<p>Click on your cards to add them to your deck.</p>
 				</div>
 				<template v-if="cardOrder == 'DraggableCMC'">
-					<draggable v-for="(column, colIdx) in deckColumn" :key="colIdx" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnDeckChange">
+					<draggable v-for="(column, colIdx) in deckColumn" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnDeckChange">
 					   <figure is="card" v-for="card in column" :key="card.uniqueID" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
 					</draggable>
 					<div @click="deckColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
@@ -286,7 +286,7 @@
 					<p>Click on cards in your deck to sideboard them.</p>
 				</div>
 				<template v-if="cardOrder == 'DraggableCMC'">
-					<draggable v-for="(column, colIdx) in sideboardColumn" :key="colIdx" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnSideboardChange">
+					<draggable v-for="(column, colIdx) in sideboardColumn" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnSideboardChange">
 					   <figure is="card" v-for="card in column" v-bind:key="card.uniqueID" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
 					</draggable>
 					<div @click="sideboardColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
