@@ -10,7 +10,6 @@ import sys
 import re
 from itertools import groupby
 
-Languages = ['en','es','fr','de','it','pt','ja','ko','ru','zhs','zht']
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
@@ -46,22 +45,18 @@ RatingsSources = [
 RatingsDest = 'data/ratings.json'
 
 ForceDownload = len(sys.argv) > 1 and sys.argv[1].lower() == "dl"
-ForceParse = len(sys.argv) > 1 and sys.argv[1].lower() == "parse"
 ForceExtract = len(sys.argv) > 1 and sys.argv[1].lower() == "extract"
 ForceCache = len(sys.argv) > 1 and sys.argv[1].lower() == "cache"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
-ForceUpdateMTGAData = len(sys.argv) > 1 and sys.argv[1].lower() == "mtga"
 
 MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_c9f4f3eee920063a46a2d4a42654ab5b.mtga"
 MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_296741a1382e4e59c7e0e658f9ff376c.mtga"
 MTGALocalization = {}
-#if not or ForceUpdateMTGAData:
 with open(MTGALocFile, 'r', encoding="utf8") as file:
 	locdata = json.load(file)
 	for o in locdata[0]['keys']:
 		MTGALocalization[o['id']] = o['text']
 
-ExtractedCards = {}
 NameSetToCardID = {}
 CardsCollectorNumberAndSet = {}
 with open(MTGACardsFile, 'r', encoding="utf8") as file:
@@ -73,7 +68,6 @@ with open(MTGACardsFile, 'r', encoding="utf8") as file:
 		if o['set'] == 'dar':
 			o['set'] = 'dom'
 		NameSetToCardID[(MTGALocalization[o['titleId']], o['set'])] = o['grpid']
-		ExtractedCards[o['grpid']] = o
 		CardsCollectorNumberAndSet[(o['CollectorNumber'], o['set'])]  = o['grpid']
 		
 with open('data/NameSetToCardID.json', 'w') as outfile:
@@ -206,8 +200,8 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 			
 			with open(FinalDataPath, 'w', encoding="utf8") as outfile:
 				json.dump(cards, outfile, ensure_ascii=False)
-			with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
-				json.dump(cards, outfile, ensure_ascii=False)
+			# with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
+				# json.dump(cards, outfile, ensure_ascii=False)
 
 setFullNames = {
 	"ana": "Arena",
