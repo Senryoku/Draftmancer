@@ -2,6 +2,7 @@
  * Add a sound to Ready Check?
  * Brackets (Vue Module)
  * Add some stats on deck/drafted cards
+ * Look into https://mtg.gamepedia.com/Winston_Draft ?
  -----
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids

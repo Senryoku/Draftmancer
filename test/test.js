@@ -3,6 +3,7 @@
 let rewire = require("rewire");
 let expect = require('chai').expect
 let server = rewire('../server') // Rewire exposes internal variables of the module
+const Cards = require('./../Cards');
 const randomjs = require("random-js");
 
 const NODE_PORT = process.env.NODE_PORT || 3000
@@ -159,6 +160,96 @@ describe('Inter client communication', function() {
 	});
 });
 
+describe('Checking sets', function() {
+	let clients = [];
+	let sessionID = 'sessionID';
+	
+	let sets = {
+		'dom': {'common': 101, 'uncommon': 80, 'rare': 53, 'mythic': 15},
+		'grn': {'common': 111, 'uncommon': 80, 'rare': 53, 'mythic': 15},
+		'rna': {'common': 111, 'uncommon': 80, 'rare': 53, 'mythic': 15},
+		'war': {'common': 101, 'uncommon': 80, 'rare': 53, 'mythic': 15},
+		'eld': {'common': 101, 'uncommon': 80, 'rare': 53, 'mythic': 15},
+		'thb': {'common': 101, 'uncommon': 80, 'rare': 53, 'mythic': 15}
+	};
+	
+    beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+	
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == 'failed');
+		done();
+	});
+	
+	before(function(done) {
+		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
+		clients.push(connectClient({
+			userID: 'sameID', 
+			sessionID: sessionID,
+			userName: 'Client1'
+		}));
+		clients.push(connectClient({
+			userID: 'sameID', 
+			sessionID: sessionID,
+			userName: 'Client2'
+		}));
+
+		// Wait for all clients to be connected
+		let connectedClients = 0;
+		for(let c of clients) {
+			c.on('connect', function() {
+				connectedClients += 1;
+				if(connectedClients == clients.length) {
+					enableLogs(false);
+					done();
+				}
+			});
+		}
+	});
+
+	after(function(done) {
+		disableLogs();
+		for(let c of clients) {
+			c.disconnect();
+			c.close();
+		}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
+			done();
+		}, 250);
+	});
+	
+	it('First client should be the session owner', function(done) {
+		const Sessions = server.__get__("Sessions");
+		expect(Sessions[sessionID].owner).to.equal('sameID');
+		done();
+	});
+	
+	for(let set in sets) {
+		it(`Checking ${set}`, function(done) {
+			const Sessions = server.__get__("Sessions");
+			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			clients[ownerIdx].emit('ignoreCollections', true);
+			clients[ownerIdx].emit('setRestriction', [set]);
+			// Wait for request to arrive
+			clients[1].on('setRestriction', function(sR) {
+				const localCollection = Sessions[sessionID].restrictedCollectionByRarity();
+				for(let r in sets[set])
+					expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
+				clients[1].removeListener('setRestriction');
+				done();
+			});
+		});
+	}
+});
+
 describe('Single Draft', function() {
 	let clients = [];
 	let sessionID = 'sessionID';
@@ -287,6 +378,7 @@ describe('Single Draft', function() {
 		for(let c of clients) {
 			c.on('startDraft', function() {
 				connectedClients += 1;
+				this.removeListener('startDraft');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -295,7 +387,7 @@ describe('Single Draft', function() {
 				expect(boosters).not.include(data);
 				boosters.push(data);
 				receivedBoosters += 1;
-				c.removeListener('nextBooster');
+				this.removeListener('nextBooster');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -429,7 +521,7 @@ describe('Single Draft without Color Balance', function() {
 				expect(boosters).not.include(data);
 				boosters.push(data);
 				receivedBoosters += 1;
-				c.removeListener('nextBooster');
+				this.removeListener('nextBooster');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -546,6 +638,7 @@ describe('Single Draft With disconnect', function() {
 		for(let c of clients) {
 			c.on('startDraft', function() {
 				connectedClients += 1;
+				this.removeListener('startDraft');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -554,7 +647,7 @@ describe('Single Draft With disconnect', function() {
 				expect(boosters).not.include(data);
 				boosters.push(data);
 				receivedBoosters += 1;
-				c.removeListener('nextBooster');
+				this.removeListener('nextBooster');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -718,7 +811,7 @@ describe('Single Draft with Bots', function() {
 				expect(boosters).not.include(data);
 				boosters.push(data);
 				receivedBoosters += 1;
-				c.removeListener('nextBooster');
+				this.removeListener('nextBooster');
 				if(connectedClients == clients.length && receivedBoosters == clients.length)
 					done();
 			});
@@ -857,7 +950,7 @@ describe('Multiple Drafts', function() {
 					c.on('nextBooster', function(data) {
 						expect(boosters).not.include(data);
 						boosters[playersPerSession * sessionIdx + sessionClients.findIndex(cl => cl == c)] = data;
-						c.removeListener('nextBooster');
+						this.removeListener('nextBooster');
 						if(sessionsCorrectlyStartedDrafting == sessionCount && boosters.length == playersPerSession * sessionCount)
 							done();
 					});

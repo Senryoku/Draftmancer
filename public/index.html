@@ -418,12 +418,13 @@
 					<div v-for="set in sets" v-show="statsSelectedSet === set">
 						<table>
 							<caption>{{collectionStats[set].fullName}}</caption>
-							<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Total Missing</th><th>Missing From Boosters</th></tr>
+							<tr><th>Rarity</th><th>Unique</th><th>Total</th><th>Total Missing</th><th>Unique (Booster)</th><th>Missing From Boosters</th></tr>
 							<tr>
 								<td>Total</td>
 								<td>{{collectionStats[set].cards.filter(c => c.count > 0).length}}/{{collectionStats[set].total.unique}}</td>
 								<td>{{collectionStats[set].cardCount}}/{{4 * collectionStats[set]['total']['unique']}}</td>
 								<td>{{4 * collectionStats[set]['total']['unique'] - collectionStats[set].cardCount}}</td>
+								<td>{{collectionStats[set].cards.filter(c => c.in_booster && c.count > 0).length}}/{{collectionStats[set].cards.filter(c => c.in_booster).length}}</td>
 								<td>-</td>
 							</tr>
 							<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" v-if="collectionStats[set][r + 'Count'] && collectionStats[set]['total'][r + 'Count'] > 0">
@@ -431,6 +432,7 @@
 								<td>{{collectionStats[set][r].filter(c => c.count > 0).length}}/{{collectionStats[set]['total'][r + 'Count']}}</td>
 								<td>{{collectionStats[set][r + 'Count']}}/{{4 * collectionStats[set]['total'][r + 'Count']}}</td>
 								<td>{{4 * collectionStats[set]['total'][r + 'Count'] - collectionStats[set][r + 'Count']}}</td>
+								<td>{{collectionStats[set][r].filter(c => c.in_booster && c.count > 0).length}}/{{collectionStats[set][r].filter(c => c.in_booster).length}}</td>
 								<td>{{4 * collectionStats[set][r].filter(c => c.in_booster).length - collectionStats[set][r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)}}</td>
 							</tr>
 						</table>
@@ -537,6 +539,12 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol>
+					<li>31/03/2020
+						<ul>
+							<li>Improved/Fixed card database.</li>
+							<li>Fixed Conflux card exporting.</li>
+						</ul>
+					</li>
 					<li>30/03/2020
 						<ul>
 							<li>Draggable cards option in deck builder.</li>
