@@ -66,6 +66,7 @@ const copyToClipboard = str => {
 function cardToMTGAExport(c, language) {
 	let set = c.set.toUpperCase();
 	if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
+	if(set == "CON") set = "CONF"; // CON is called CONF in MTGA
 	let name = c.printed_name[language];
 	let idx = name.indexOf('//');
 	// Ravnica Splits cards needs both names to be imported, others don't
