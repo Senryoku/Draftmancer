@@ -520,6 +520,7 @@ function Session(id, owner) {
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for(let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
+			console.log(boosterIndex);
 			if(virtualPlayers[userID].isBot) {
 				const removedIdx = virtualPlayers[userID].instance.pick(this.boosters[boosterIndex]);
 				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][removedIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
@@ -630,14 +631,9 @@ function Session(id, owner) {
 			
 			// Immediately pick cards
 			if(!this.disconnectedUsers[uid].pickedThisRound) {
-				const totalVirtualPlayers = this.getTotalVirtualPlayers();
-				const evenRound = ((this.boosters.length / totalVirtualPlayers) % 2) == 0;
-				const boosterOffset = evenRound ? -(this.round - 1) : (this.round - 1); // Round has already advanced (see nextBooster)
-				const playerIdx = this.getSortedHumanPlayers().indexOf(uid);
-				const boosterIndex = negMod(boosterOffset + playerIdx, totalVirtualPlayers);
-				const pickIdx = this.disconnectedUsers[uid].bot.pick(this.boosters[boosterIndex]);
-				this.disconnectedUsers[uid].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
-				this.boosters[boosterIndex].splice(pickIdx, 1);
+				const pickIdx = this.disconnectedUsers[uid].bot.pick(this.boosters[this.disconnectedUsers[uid].boosterIndex]);
+				this.disconnectedUsers[uid].pickedCards.push(this.boosters[this.disconnectedUsers[uid].boosterIndex][pickIdx]);
+				this.boosters[this.disconnectedUsers[uid].boosterIndex].splice(pickIdx, 1);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 				++this.pickedCardsThisRound;
 				if(this.pickedCardsThisRound == this.getHumanPlayerCount()) {

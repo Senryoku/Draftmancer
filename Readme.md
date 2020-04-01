@@ -4,7 +4,6 @@
  * Brackets (Vue Module)
  * Add some stats on deck/drafted cards
  * Look into https://mtg.gamepedia.com/Winston_Draft ?
- * Distribute bots around the table rather than having them all at the end
  * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
  -----
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
@@ -16,6 +15,7 @@
  * (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
 
 # Check
+ * Distribute bots around the table rather than having them all at the end
  * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
  * Dragging cards
  * Ready Check
