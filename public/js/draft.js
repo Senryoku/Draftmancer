@@ -28,7 +28,7 @@ Vue.component('card', {
 	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
 </figure>
 	`,
-	props: {'card': {type: Object, required: true}, 'language': String, 'selectcard': Function, 'selected': Boolean, 'ondblclick': {type: Function, default: function() {}}}
+	props: {'card': {type: Object, required: true}, 'language': String, 'selectcard': {type: Function, default: function() {}}, 'selected': Boolean, 'ondblclick': {type: Function, default: function() {}}}
 });
 
 Vue.component('missingCard', {

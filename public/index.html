@@ -181,7 +181,7 @@
 							<template v-else-if="user.readyState == ReadyState.NotReady">
 								<i class="fas fa-times red" :title="`${user.userName} is NOT ready!`"></i>
 							</template>
-							<template v-else>
+							<template v-else-if="user.readyState == ReadyState.Unknown">
 								<i class="fas fa-spinner fa-spin" :title="`Waiting on ${user.userName} to respond...`"></i>
 							</template>
 						</template>
@@ -191,7 +191,6 @@
 				</li>
 			</ul>
 			<div>
-				<small v-if="drafting && bots > 0">(...and {{bots}} bad bot(s)!)</small>
 				<button @click="shareSavedDraftLog" v-show="savedDraftLog">Share saved Draft Log</button>
 				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
 			</div>
@@ -363,7 +362,7 @@
 				Click on a player to display the details of their draft.
 				
 				<div>
-					<ul class="player-table">
+					<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
 						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; }">
 							{{log.userName}}
 							<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
