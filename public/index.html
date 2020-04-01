@@ -149,10 +149,11 @@
 				Session Players&nbsp;<span title="Maximum players can be adjusted in session options.">({{sessionUsers.length}}/{{maxPlayers}})</span>
 			</div>
 			<ul class="player-list">
-				<li v-for="user in sessionUsers" :title="`${user.userName} (${user.userID})`">
+				<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
 					<i class="fas fa-angle-double-left passing-order-left" v-show="drafting && (draftRound % 2) == 1" title="Passing order"></i>
 					<i class="fas fa-angle-double-right passing-order-right" v-show="drafting && (draftRound % 2) == 0" title="Passing order"></i>
 					<span class="player-name">{{ user.userName }}</span>
+					<template v-if="!user.isBot">
 					<div class="status-icons">
 						<i v-if="user.userID == sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
 						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
@@ -186,6 +187,7 @@
 						</template>
 					</div>
 					<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
+					</template>
 				</li>
 			</ul>
 			<div>
@@ -362,7 +364,7 @@
 				
 				<div>
 					<ul class="player-table">
-						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)'}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = (log.userID == 0 ? log.userName : log.userID) }">
+						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; }">
 							{{log.userName}}
 							<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
 							<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" :title="log.colors['U']">
@@ -379,9 +381,9 @@
 						<option>Picks</options>
 						<option>Cards<options>
 					</select>
-					<button @click="log.userID === 0 ? exportSingleLog(log.userName) : exportSingleLog(log.userID)">Export in MTGA format</button>
-					<button @click="log.userID === 0 ? downloadMPT(log.userName)     : downloadMPT(log.userID)">Download in MTGO format</button>
-					<button @click="log.userID === 0 ? submitToMPT(log.userName)     : submitToMPT(log.userID)">Submit to MagicProTools</button></h1>
+					<button @click="exportSingleLog(log.userID)">Export in MTGA format</button>
+					<button @click="downloadMPT(log.userID)">Download in MTGO format</button>
+					<button @click="submitToMPT(log.userID)">Submit to MagicProTools</button></h1>
 					
 					<template v-if="draftLogDisplayOptions.category == 'Picks'">
 						<div v-for="(pick, index) in log.picks">

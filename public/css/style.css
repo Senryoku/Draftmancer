@@ -1033,6 +1033,10 @@ ul.player-table li {
 	border-radius: 0.2em;
 }
 
+.bot {
+	min-width: auto !important;
+}
+
 ul.player-table li:nth-child(1) { order: 1; }
 ul.player-table li:nth-child(2) { order: 2; }
 ul.player-table li:nth-child(3) { order: 3; }
@@ -1054,7 +1058,6 @@ ul.player-table li:nth-child(3):after {
 	top: 50%;
 }
 
-ul.player-table li:nth-child(0):before,
 ul.player-table li:nth-child(1):before,
 ul.player-table li:nth-child(2):before,
 ul.player-table li:nth-child(3):before {

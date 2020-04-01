@@ -407,7 +407,12 @@ function Session(id, owner) {
 		// Generate bots
 		this.botsInstances = []
 		for(let i = 0; i < this.bots; ++i)
-			this.botsInstances.push(new Bot(`Bot #${i}`))
+			this.botsInstances.push(new Bot(`Bot #${i}`, [...this.users][i % this.users.size].concat(i)))
+		
+		let botsInfo = {};
+		for(let b of this.botsInstances) {
+			botsInfo[b.id] = {id: b.id, name: b.name};
+		}
 		
 		if(!this.generateBoosters(boosterQuantity)) {
 			this.drafting = false;
@@ -422,23 +427,27 @@ function Session(id, owner) {
 			boosters: JSON.parse(JSON.stringify(this.boosters)),
 			users: {}
 		};
-		for(let userID of this.getSortedHumanPlayers()) {
-			this.draftLog.users[userID] = {
-				userName: Connections[userID].userName,
-				userID: userID,
-				picks: []
-			};
-		}
-		for(let i = 0; i < this.bots; ++i) {
-			this.draftLog.users[this.botsInstances[i].name] = {
-				userName: this.botsInstances[i].name,
-				userID: 0,
-				picks: []
-			};
+		let virtualPlayers = this.getSortedVirtualPlayers();
+		for(let userID in virtualPlayers) {
+			if(virtualPlayers[userID].isBot) {
+				this.draftLog.users[userID] = {
+					isBot: true,
+					userName: virtualPlayers[userID].instance.name,
+					userID: virtualPlayers[userID].instance.id,
+					picks: []
+				};
+			} else {
+				this.draftLog.users[userID] = {
+					userName: Connections[userID].userName,
+					userID: userID,
+					picks: []
+				};
+			}
 		}
 		
 		for(let user of this.users) {
 			Connections[user].pickedCards = [];
+			Connections[user].socket.emit('sessionOptions', {botsInfo: botsInfo});
 			Connections[user].socket.emit('startDraft');
 		}
 		this.round = 0;
@@ -507,43 +516,40 @@ function Session(id, owner) {
 		let index = 0;
 		const evenRound = ((this.boosters.length / totalVirtualPlayers) % 2) == 0;
 		const boosterOffset = evenRound ? -this.round : this.round;
-		const sortedPlayers = this.getSortedHumanPlayers();
-		for(let userID of sortedPlayers) {
+		
+		let virtualPlayers = this.getSortedVirtualPlayers();
+		for(let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot, pick immediately
-				let pickIdx;
-				if(!this.disconnectedUsers[userID].bot) {
-					console.error("Trying to use bot that doesn't exist... That should not be possible!");
-					console.error(this.disconnectedUsers[userID])
-					pickIdx = 0;
-				} else {
-					pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
-				}
-				this.disconnectedUsers[userID].pickedThisRound = true;
-				this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
-				this.disconnectedUsers[userID].boosterIndex = boosterIndex;
-				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][pickIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
-				this.boosters[boosterIndex].splice(pickIdx, 1);
-				++this.pickedCardsThisRound;
+			if(virtualPlayers[userID].isBot) {
+				const removedIdx = virtualPlayers[userID].instance.pick(this.boosters[boosterIndex]);
+				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][removedIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
+				this.boosters[boosterIndex].splice(removedIdx, 1);
 			} else {
-				Connections[userID].pickedThisRound = false;
-				Connections[userID].boosterIndex = boosterIndex;
-				Connections[userID].socket.emit('nextBooster', {booster: this.boosters[boosterIndex]});
+				if(virtualPlayers[userID].disconnected) { // This user has been replaced by a bot, pick immediately
+					let pickIdx;
+					if(!this.disconnectedUsers[userID].bot) {
+						console.error("Trying to use bot that doesn't exist... That should not be possible!");
+						console.error(this.disconnectedUsers[userID])
+						pickIdx = 0;
+					} else {
+						pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
+					}
+					this.disconnectedUsers[userID].pickedThisRound = true;
+					this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
+					this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][pickIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
+					this.boosters[boosterIndex].splice(pickIdx, 1);
+					++this.pickedCardsThisRound;
+				} else {
+					Connections[userID].pickedThisRound = false;
+					Connections[userID].boosterIndex = boosterIndex;
+					Connections[userID].socket.emit('nextBooster', {booster: this.boosters[boosterIndex]});
+				}
 			}
 			++index;
 		}
 		
 		this.startCountdown(); // Starts countdown now that everyone has their booster
-		
-		// Bots picks
-		for(let i = index; i < totalVirtualPlayers; ++i) {
-			const boosterIndex = negMod(boosterOffset + i, totalVirtualPlayers);
-			const booster = this.boosters[boosterIndex];
-			const botIndex = i % this.bots; // ?
-			const removedIdx = this.botsInstances[botIndex].pick(booster);
-			this.draftLog.users[this.botsInstances[botIndex].name].picks.push({pick: this.boosters[boosterIndex][removedIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
-			this.boosters[boosterIndex].splice(removedIdx, 1);
-		}
 		++this.round;
 	};
 	
@@ -575,15 +581,18 @@ function Session(id, owner) {
 		this.stopCountdown();
 		this.boosters = [];
 		
-		for(let userID of this.getSortedHumanPlayers()) {
-			if(userID in this.disconnectedUsers) { // This user has been replaced by a bot
-				this.draftLog.users[userID].cards = this.disconnectedUsers[userID].pickedCards;
+		let virtualPlayers = this.getSortedVirtualPlayers();
+		for(let userID in virtualPlayers) {
+			if(virtualPlayers[userID].isBot) {
+				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards;
 			} else {
-				this.draftLog.users[userID].cards = Connections[userID].pickedCards;
+				if(virtualPlayers[userID].disconnected) { // This user has been replaced by a bot
+					this.draftLog.users[userID].cards = this.disconnectedUsers[userID].pickedCards;
+				} else {
+					this.draftLog.users[userID].cards = Connections[userID].pickedCards;
+				}
 			}
 		}
-		for(let i = 0; i < this.bots; ++i)
-			this.draftLog.users[`Bot #${i}`].cards = this.botsInstances[i].cards
 		
 		switch(this.draftLogRecipients) {
 			case 'none':
@@ -683,6 +692,19 @@ function Session(id, owner) {
 	this.getSortedHumanPlayers = function() {
 		return Array.from(this.users).concat(Object.keys(this.disconnectedUsers)).sort();
 	};
+	
+	this.getSortedVirtualPlayers = function() {
+		let tmp = {};
+		for(let userID of this.getSortedHumanPlayers())
+			tmp[userID] = {isBot: false, disconnected: userID in this.disconnectedUsers};
+		for(let bot of this.botsInstances)
+			tmp[bot.id] = {isBot: true, instance: bot};
+		
+		let virtualPlayers = {};
+		for(let p of Object.keys(tmp).sort())
+			virtualPlayers[p] = tmp[p];
+		return virtualPlayers;
+	}
 
 	this.getTotalVirtualPlayers = function() {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;

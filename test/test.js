@@ -349,7 +349,7 @@ describe('Single Draft', function() {
 		expect(Object.keys(localCollection['uncommon']).length).to.equal(80);
 		expect(Object.keys(localCollection['rare']).length).to.equal(53);
 		expect(Object.keys(localCollection['mythic']).length).to.equal(15);
-
+		/*
 		const random = new randomjs.Random(randomjs.nodeCrypto);
 		const get_random_key = () => random.integer(0, Object.keys(localCollection['rare']).length - 1);
 		process.stdout.write('Distribution samples:\n');
@@ -366,7 +366,7 @@ describe('Single Draft', function() {
 				//process.stdout.write(`${samples[i]}; ${samples[i] * 100.0 / sampleCount} %)`);
 			process.stdout.write('\n');
 		}
-		
+		*/
 		done();
 	});
 	

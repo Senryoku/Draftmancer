@@ -93,6 +93,7 @@ var app = new Vue({
 		},
 		foil: true,
 		bots: 0,
+		botsInfo: {},
 		setRestriction: "",
 		drafting: false,
 		useCustomCardList: false,
@@ -1079,6 +1080,21 @@ var app = new Vue({
 		ReadyState: function() { return ReadyState; },
 		draftRound: function() {
 			return Math.floor((this.deck.length + this.sideboard.length)/(this.useCustomCardList ? 15 : 14)) + 1;
+		},
+		virtualPlayers: function() {
+			if(!this.drafting || !this.botsInfo || Object.keys(this.botsInfo).length == 0)
+				return this.sessionUsers;
+			
+			let tmp = {};
+			for(let p of this.sessionUsers)
+				tmp[p.userID] = p;
+			for(let id in this.botsInfo)
+				tmp[id] = {isBot: true, userName: this.botsInfo[id].name, userID: id};
+			
+			let r = [];
+			for(let p of Object.keys(tmp).sort())
+				r.push(tmp[p]);
+			return r;
 		},
 		displaySets: function() {
 			let dSets = [];
