@@ -1069,8 +1069,8 @@ ul.player-table li:nth-child(3):before {
 	border-style: solid;
 	border-width: 7px 0 7px 20px;
 	border-color: transparent transparent transparent black;
-	right: -50px;
-	transform: translateY(-50%);
+	right: -20px;
+	transform: translateY(-50%) rotate(180deg);
 }
 
 ul.player-table li:nth-child(5):after,
@@ -1085,27 +1085,19 @@ ul.player-table li:nth-child(7):after {
 	top: 50%;
 }
 
-ul.player-table li:nth-child(4):before {
+ul.player-table li:nth-child(5):before,
+ul.player-table li:nth-child(6):before,
+ul.player-table li:nth-child(7):before {
 	content: '';
 	position: absolute;
 	width: 0;
 	height: 0;
-	left: 50%;
+	top: 50%;
 	border-style: solid;
 	border-width: 7px 0 7px 20px;
 	border-color: transparent transparent transparent black;
-	bottom: calc(-2 * var(--margin));
-	transform: translateX(-50%) rotate(90deg);
-}
-
-ul.player-table li:nth-child(4):after {
-	content: '';
-	width: 1px;
-	background: black;
-	height: calc(2 * var(--margin));
-	position: absolute;
-	bottom: calc(-2 * var(--margin));
-	left: 50%;
+	left: -20px;
+	transform: translateY(-50%);
 }
 
 ul.player-table li:nth-child(8):before {
@@ -1117,8 +1109,8 @@ ul.player-table li:nth-child(8):before {
 	border-style: solid;
 	border-width: 7px 0 7px 20px;
 	border-color: transparent transparent transparent black;
-	top: calc(-2 * var(--margin));
-	transform: translateX(-50%) rotate(-90deg);
+	top: -20px;
+	transform: translateX(-50%) rotate(90deg);
 }
 
 ul.player-table li:nth-child(8):after {
@@ -1131,17 +1123,25 @@ ul.player-table li:nth-child(8):after {
 	left: 50%;
 }
 
-ul.player-table li:nth-child(5):before,
-ul.player-table li:nth-child(6):before,
-ul.player-table li:nth-child(7):before {
+ul.player-table li:nth-child(4):before {
 	content: '';
 	position: absolute;
 	width: 0;
 	height: 0;
-	top: 50%;
+	left: 50%;
 	border-style: solid;
 	border-width: 7px 0 7px 20px;
 	border-color: transparent transparent transparent black;
-	left: -50px;
-	transform: translateY(-50%) rotate(180deg);
+	bottom: -20px;
+	transform: translateX(-50%) rotate(-90deg);
+}
+
+ul.player-table li:nth-child(4):after {
+	content: '';
+	width: 1px;
+	background: black;
+	height: calc(2 * var(--margin));
+	position: absolute;
+	bottom: calc(-2 * var(--margin));
+	left: 50%;
 }

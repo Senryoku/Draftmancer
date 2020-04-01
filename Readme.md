@@ -7,7 +7,6 @@
  * Distribute bots around the table rather than having them all at the end
  * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
  * Draft Log: Fix table when more than 8 players
- * Draft Log: Table order is reversed!
  -----
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Display foils as... foils in front end?
