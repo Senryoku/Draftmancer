@@ -698,7 +698,7 @@ var app = new Vue({
 			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
 			this.fireToast('success', 'Deck exported to clipboard!');
 		},
-		exportLog: function() {
+		downloadLog: function() {
 			let draftLogFull = this.draftLog;
 			for(let e in this.draftLog.users) {
 				let cards = []
@@ -706,8 +706,7 @@ var app = new Vue({
 					cards.push(this.cards[c]);
 				this.draftLog.users[e].exportString = exportMTGA(cards, null, this.language);
 			}
-			copyToClipboard(JSON.stringify(draftLogFull, null, "\t"));
-			this.fireToast('success', 'Draft log exported to clipboard!');
+			download(`DraftLog_${this.draftLog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
 		exportSingleLog: function(id) {
 			let cards = []

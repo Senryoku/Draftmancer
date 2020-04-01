@@ -357,7 +357,7 @@
 		<modal v-if="displayDraftLog && draftLog" @close="displayDraftLog = false">
 			<h2 slot="header">Draft Log</h2>
 			<div slot="body">
-				<button type="button" @click="exportLog">Export full log to clipboard</button>
+				<button type="button" @click="downloadLog">Download full log</button>
 				
 				Click on a player to display the details of their draft.
 				
