@@ -1,4 +1,5 @@
 # Todo
+ * Cap at one land (gate etc) per pack?
  * Add a sound to Ready Check?
  * Save last draft in localStorage?
  * Brackets (Vue Module)

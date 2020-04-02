@@ -520,7 +520,6 @@ function Session(id, owner) {
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for(let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
-			console.log(boosterIndex);
 			if(virtualPlayers[userID].isBot) {
 				const removedIdx = virtualPlayers[userID].instance.pick(this.boosters[boosterIndex]);
 				this.draftLog.users[userID].picks.push({pick: this.boosters[boosterIndex][removedIdx], booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex]))});
@@ -624,7 +623,7 @@ function Session(id, owner) {
 		console.warn("Replacing disconnected players with bots!");
 
 		for(let uid in this.disconnectedUsers) {
-			this.disconnectedUsers[uid].bot = new Bot(`${this.disconnectedUsers[uid].userName} (Bot)`);
+			this.disconnectedUsers[uid].bot = new Bot(`${this.disconnectedUsers[uid].userName} (Bot)`, uid);
 			for(let c of this.disconnectedUsers[uid].pickedCards) {
 				this.disconnectedUsers[uid].bot.pick([c]);
 			}

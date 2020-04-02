@@ -160,23 +160,23 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 			translations_img = {}
 			arena_cards = json.loads(file.read())
 			for c in arena_cards:
-				if c['name'] not in translations:
-					translations[c['name']] = {}
-				if (c['name'], c['set'].lower()) not in translations_img:
-					translations_img[(c['name'], c['set'])] = {}
-				if c['lang'] != 'en':
-					if 'printed_name' in c:
-						translations[c['name']][c['lang']] = c['printed_name']
-					elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-						translations[c['name']][c['lang']] = c['card_faces'][0]['printed_name']
-					if 'image_uris' in c and 'border_crop' in c['image_uris']:
-						translations_img[(c['name'], c['set'].lower())][c['lang']] = c['image_uris']['border_crop']
-					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-						translations_img[(c['name'], c['set'].lower())][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
-					continue
 				if c['arena_id'] in adventuresIds:
 					print(str(c['arena_id']) + " " + c['name'] + " in an adventure, fixing it.")
 					c['arena_id'] = adventuresIds[c['arena_id']]
+				if c['arena_id'] not in translations:
+					translations[c['arena_id']] = {}
+				if c['arena_id'] not in translations_img:
+					translations_img[c['arena_id']] = {}
+				if c['lang'] != 'en':
+					if 'printed_name' in c:
+						translations[c['arena_id']][c['lang']] = c['printed_name']
+					elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+						translations[c['arena_id']][c['lang']] = c['card_faces'][0]['printed_name']
+					if 'image_uris' in c and 'border_crop' in c['image_uris']:
+						translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
+					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+						translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
+					continue
 				if c['arena_id'] not in cards:
 					cards[c['arena_id']] = {}
 				if c['lang'] == 'en':
@@ -188,15 +188,15 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 					if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
 						selection['in_booster'] = False;
 					if 'image_uris' in c and 'border_crop' in c['image_uris']:
-						translations_img[(c['name'], c['set'].lower())][c['lang']] = c['image_uris']['border_crop']
+						translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
 					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-						translations_img[(c['name'], c['set'].lower())][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
-					translations[c['name']][c['lang']] = c['name']
+						translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
+					translations[c['arena_id']][c['lang']] = c['name']
 					cards[c['arena_id']].update(selection)
 			
 			for k in cards:
-				cards[k]['printed_name'] = translations[cards[k]['name']]
-				cards[k]['image_uris'] = translations_img[(cards[k]['name'], cards[k]['set'].lower())]
+				cards[k]['printed_name'] = translations[k]
+				cards[k]['image_uris'] = translations_img[k]
 			
 			with open(FinalDataPath, 'w', encoding="utf8") as outfile:
 				json.dump(cards, outfile, ensure_ascii=False)
