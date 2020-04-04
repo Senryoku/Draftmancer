@@ -49,8 +49,8 @@ ForceExtract = len(sys.argv) > 1 and sys.argv[1].lower() == "extract"
 ForceCache = len(sys.argv) > 1 and sys.argv[1].lower() == "cache"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
 
-MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_c9f4f3eee920063a46a2d4a42654ab5b.mtga"
-MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_296741a1382e4e59c7e0e658f9ff376c.mtga"
+MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_026879ae4a514388f7ec779898b50255.mtga"
+MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_f4f7518d1f84450287fe1bf15402e4e5.mtga"
 MTGALocalization = {}
 with open(MTGALocFile, 'r', encoding="utf8") as file:
 	locdata = json.load(file)

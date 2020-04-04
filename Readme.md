@@ -1,4 +1,7 @@
 # Todo
+ * Download collection (and collection intersection?) as cube
+ * Add an upload saved draft logs
+ * locally save draft logs?
  * Add a sound to Ready Check?
  * Save last draft in localStorage?
  * Brackets (Vue Module)
@@ -27,6 +30,9 @@
 # Bugs
  * Missing Historic Cards : Cinder Barrens
  * Guildgates won't import in arena : Guildgates do not have localized names 
+ * "Truebanks#69050Aujourd’hui à 05:42
+@Senryoku  just a heads up. We had a strange spot where two people had two different sessions with the same ID and both were leader
+The chat log here might give a few hints. But I felt it was worth a quick note. Easily addressed by just picking a new id or having a leader join the other group"
  
 # Notes on Arena Importer
  * Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
