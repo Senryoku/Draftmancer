@@ -137,7 +137,7 @@
 		</div>
 		<div class="main-controls session-players">
 			<div>
-				Session Players&nbsp;<span title="Maximum players can be adjusted in session options.">({{sessionUsers.length}}/{{maxPlayers}})</span>
+				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
 			</div>
 			<ul class="player-list">
 				<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
