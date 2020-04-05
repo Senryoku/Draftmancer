@@ -442,10 +442,12 @@ var app = new Vue({
 			});
 			
 			this.socket.on('draftLog', function(draftLog) {
-				if(draftLog.delayed === true) {
-					localStorage.setItem('draftLog', JSON.stringify(draftLog.draftLog));
+				if(draftLog.delayed && draftLog.delayed === true) {
+					localStorage.setItem('draftLog', JSON.stringify(draftLog));
+					app.draftLog = undefined;
 					app.savedDraftLog = true;
 				} else {
+					localStorage.setItem('draftLog', JSON.stringify(draftLog));
 					app.draftLog = draftLog;
 				}
 			});
@@ -496,8 +498,14 @@ var app = new Vue({
 				}
 			}
 			
-			if(localStorage.getItem('draftLog'))
-				this.savedDraftLog = true;
+			// Look for a previous draftLog
+			let tmpDraftLog = JSON.parse(localStorage.getItem('draftLog'));
+			if(tmpDraftLog) {
+				if(tmpDraftLog.delayed)
+					this.savedDraftLog = true;
+				else
+					this.draftLog = tmpDraftLog;
+			}
 			
 			let urlParamSession = getUrlVars()['session'];
 			if(urlParamSession)
@@ -930,7 +938,7 @@ var app = new Vue({
 				this.savedDraftLog = false;
 				return;
 			} else {
-				let parsedLogs = JSON.parse(storedDraftLog);
+				let parsedLogs = JSON.parse(storedDraftLog).draftLog;
 				if(parsedLogs.sessionID !== this.sessionID) {
 					Swal.fire({
 						title: 'Wrong Session ID',
@@ -943,7 +951,7 @@ var app = new Vue({
 				this.savedDraftLog = false;
 				this.draftLog = parsedLogs;
 				this.socket.emit('shareDraftLog', this.draftLog);
-				localStorage.removeItem('draftLog');
+				localStorage.setItem('draftLog', this.draftLog);
 				this.fireToast('success', 'Shared draft log with session!');
 			}
 		},
