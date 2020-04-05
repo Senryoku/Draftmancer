@@ -21,7 +21,7 @@ footer {
 	padding: 1em;
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 	display: flex;
-	justify-content: end;
+	justify-content: flex-end;
 }
 
 footer span {
@@ -54,6 +54,11 @@ a:hover {
 .green {
 	color: green;
 }
+
+.yellow {
+	color: yellow;
+}
+
 
 .red {
 	color: DarkRed;

@@ -398,9 +398,7 @@ var app = new Vue({
 				for(let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
-				
-				app.virtualPlayersData = data.virtualPlayersData;
-				
+								
 				app.pickedThisRound = data.pickedThisRound;
 				if(app.pickedThisRound)
 					app.draftingState = DraftState.Waiting;

@@ -597,8 +597,7 @@ function Session(id, owner) {
 		Connections[userID].socket.emit('rejoinDraft', {
 			pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 			pickedCards: this.disconnectedUsers[userID].pickedCards,
-			booster: this.boosters[Connections[userID].boosterIndex],
-			virtualPlayersData: this.getSortedVirtualPlayers()
+			booster: this.boosters[Connections[userID].boosterIndex]
 		});
 		delete this.disconnectedUsers[userID];
 
@@ -608,6 +607,8 @@ function Session(id, owner) {
 
 	this.resumeDraft = function() {
 		console.warn(`Restarting draft for session ${this.id}.`);
+		for(let userID of this.users)
+			Connections[userID].socket.emit('sessionOptions', {virtualPlayersData: this.getSortedVirtualPlayers()});
 		this.resumeCountdown();
 		this.emitMessage('Player reconnected', `Resuming draft...`);
 	};
