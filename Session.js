@@ -417,7 +417,8 @@ function Session(id, owner) {
 				user_info.push({
 					userID: u.userID, 
 					userName: u.userName,
-					collection: u.collection
+					collection: !isEmpty(u.collection),
+					useCollection: u.useCollection
 				});
 			}
 		}

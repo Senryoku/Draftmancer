@@ -158,10 +158,10 @@
 							</template>
 						</template>
 						<template v-if="!ignoreCollections && !drafting">
-							<template v-if="!user.collection && user.useCollection">
+							<template v-if="!user.collection">
 								<i class="fas fa-book red" :title="user.userName + ' have not uploaded their collection yet.'"></i>
 							</template>
-							<template v-else-if="!user.collection && !user.useCollection">
+							<template v-else-if="user.collection && !user.useCollection">
 								<i class="fas fa-book yellow" :title="user.userName + ' have uploaded their collection, but are not using it.'"></i>
 							</template>
 							<template v-else>
