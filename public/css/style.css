@@ -51,6 +51,34 @@ a:hover {
 	color: #FFF;
 }
 
+.green {
+	color: green;
+}
+
+.red {
+	color: DarkRed;
+}
+
+.gold {
+	color: gold;
+}
+
+.subtle-gold {
+	text-shadow: 0 0 1px gold;
+}
+
+.redbg {
+	background-color: DarkRed;
+	border-radius: 0.2em;
+}
+
+.disabled {
+	display: inline-block;
+    pointer-events: none;
+    opacity: 0.3;
+	background: repeating-linear-gradient(45deg, #282828, #282828 10px,   #383838 10px, #383838 20px);
+}
+
 #main-vue {
 	padding: 1em;
 	padding-top: 0.5em;
@@ -786,32 +814,8 @@ ul.player-list {
 	transform: rotate(-45deg);
 }
 
-.green {
-	color: green;
-}
-
-.red {
-	color: DarkRed;
-}
-
-.gold {
-	color: gold;
-}
-
-.subtle-gold {
-	text-shadow: 0 0 1px gold;
-}
-
-.redbg {
-	background-color: DarkRed;
-	border-radius: 0.2em;
-}
-
-.disabled {
-	display: inline-block;
-    pointer-events: none;
-    opacity: 0.3;
-	background: repeating-linear-gradient(45deg, #282828, #282828 10px,   #383838 10px, #383838 20px);
+.patch-notes {
+	list-style-type: none;
 }
 
 /* ------------------------------------------------ */
@@ -995,6 +999,8 @@ ul.player-list {
 .set-stats td:not(:first-child) {
 	text-align: center;
 }
+
+/* Animations */
 
 .shaking {
   animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
