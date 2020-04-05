@@ -233,6 +233,13 @@ io.on('connection', function(socket) {
 		Connections[userID].socket.emit('message', {title: 'Removed from session', text: `You've been removed from session '${sessionID}' by its owner.`});
 	});
 	
+	socket.on('movePlayer', function(userID, dir) {
+		let sessionID = Connections[this.userID].sessionID;
+		if(Sessions[sessionID].owner != this.userID)
+			return;
+		Sessions[sessionID].movePlayer(userID, dir);
+	});
+	
 	socket.on('boostersPerPlayer', function(boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
 		if(Sessions[sessionID].owner != this.userID)
@@ -562,17 +569,8 @@ function removeUserFromSession(userID) {
 	let sessionID = Connections[userID].sessionID;
 	if(sessionID in Sessions && Sessions[sessionID].users.has(userID)) {
 		let sess = Sessions[sessionID];
-		if(sess.drafting) {
-			sess.stopCountdown();
-			sess.disconnectedUsers[userID] = {
-				userName: Connections[userID].userName,
-				pickedThisRound: Connections[userID].pickedThisRound,
-				pickedCards: Connections[userID].pickedCards,
-				boosterIndex: Connections[userID].boosterIndex
-			};
-		}
+		sess.remUser(userID);
 		
-		sess.users.delete(userID);
 		Connections[userID].sessionID = null;
 		if(sess.users.size == 0) {
 			let wasPublic = sess.isPublic;

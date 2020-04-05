@@ -144,11 +144,19 @@
 					<i class="fas fa-angle-double-left passing-order-left" v-show="drafting && (draftRound % 2) == 1" title="Passing order"></i>
 					<i class="fas fa-angle-double-right passing-order-right" v-show="drafting && (draftRound % 2) == 0" title="Passing order"></i>
 					<span class="player-name">{{ user.userName }}</span>
-					<template v-if="!user.isBot">
+					<template v-if="!user.isBot && !user.disconnected">
 					<div class="status-icons">
 						<i v-if="user.userID == sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
-						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
-						<i v-if="userID == sessionOwner && user.userID != sessionOwner" class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
+						<template  v-if="userID == sessionOwner">
+							<template v-if="user.userID != sessionOwner">
+								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
+								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
+							</template>
+							<template v-if="!drafting">
+								<i class="fas fa-chevron-left clickable" :title="`Move ${user.userName} to the left`" @click="movePlayer(user.userID, 'left')"></i>
+								<i class="fas fa-chevron-right clickable" :title="`Move ${user.userName} to the right`" @click="movePlayer(user.userID, 'right')"></i>
+							</template>
+						</template>
 						<template v-if="!ignoreCollections && !drafting">
 							<template v-if="Object.entries(user.collection).length === 0 && user.collection.constructor === Object">
 								<i class="fas fa-book red" :title="user.userName + ' has not uploaded their collection yet.'"></i>
@@ -359,11 +367,13 @@
 					<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
 						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; }">
 							{{log.userName}}
-							<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
-							<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" :title="log.colors['U']">
-							<img src="img/mana/B.svg" class="mana-icon" v-if="log.colors['B'] >= 10" :title="log.colors['B']">
-							<img src="img/mana/R.svg" class="mana-icon" v-if="log.colors['R'] >= 10" :title="log.colors['R']">
-							<img src="img/mana/G.svg" class="mana-icon" v-if="log.colors['G'] >= 10" :title="log.colors['G']">	
+							<span>
+								<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
+								<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" :title="log.colors['U']">
+								<img src="img/mana/B.svg" class="mana-icon" v-if="log.colors['B'] >= 10" :title="log.colors['B']">
+								<img src="img/mana/R.svg" class="mana-icon" v-if="log.colors['R'] >= 10" :title="log.colors['R']">
+								<img src="img/mana/G.svg" class="mana-icon" v-if="log.colors['G'] >= 10" :title="log.colors['G']">
+							</span>
 						</li>
 					</ul>
 				</div>

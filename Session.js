@@ -36,6 +36,7 @@ function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
 	this.users = new Set();
+	this.userOrder = [];
 	
 	// Options
 	this.setRestriction = [constants.MTGSets[constants.MTGSets.length-1]];
@@ -65,12 +66,51 @@ function Session(id, owner) {
 	this.disconnectedUsers = {};
 	
 	this.addUser = function (userID) {
+		if(Connections[userID].sessionID === this.id) {
+			console.error(`Session::addUser Connections[${userID}].sessionID === ${this.id}`);
+			return;
+		}
+		if(this.users.has(userID)) {
+			console.error(`Session::addUser: this.users.has(${user})`);
+			return;
+		}
+		
 		Connections[userID].sessionID = this.id;
 		this.users.add(userID);
+		if(this.userOrder.indexOf(userID) < 0)
+			this.userOrder.push(userID);
 		this.notifyUserChange();
 		this.syncSessionOptions(userID);
 	};
 
+	this.remUser = function (userID) {
+		this.users.delete(userID);
+		if(this.drafting) {
+			this.stopCountdown();
+			this.disconnectedUsers[userID] = {
+				userName: Connections[userID].userName,
+				pickedThisRound: Connections[userID].pickedThisRound,
+				pickedCards: Connections[userID].pickedCards,
+				boosterIndex: Connections[userID].boosterIndex
+			};
+			for(let u of this.users)
+				Connections[u].socket.emit('userDisconnected', Connections[userID].userName);
+		} else {
+			this.userOrder.splice(this.userOrder.indexOf(userID), 1);
+		}
+	};
+
+	this.movePlayer = function(userID, dir) {
+		if(this.drafting) return;
+		
+		let idx = this.userOrder.indexOf(userID);
+		let other = dir === 'right'
+			? negMod(idx + 1, this.userOrder.length)
+			: negMod(idx - 1, this.userOrder.length);
+		[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
+		this.notifyUserChange();
+	};
+	
 	this.syncSessionOptions = function(userID) {
 		Connections[userID].socket.emit('sessionOptions', {
 			sessionOwner: this.owner,
@@ -87,7 +127,7 @@ function Session(id, owner) {
 			useCustomCardList: this.useCustomCardList,
 			customCardList: this.customCardList
 		});
-	}
+	};
 	
 	this.collection = function () {
 		if(this.useCustomCardList) {
@@ -371,8 +411,8 @@ function Session(id, owner) {
 	this.notifyUserChange = function() {
 		// Send only necessary data
 		let user_info = [];
-		for(let user of Array.from(this.users).sort()) {
-			let u = Connections[user];
+		for(let userID of this.getSortedHumanPlayers()) {
+			let u = Connections[userID];
 			if(u) {
 				user_info.push({
 					userID: u.userID, 
@@ -409,11 +449,6 @@ function Session(id, owner) {
 		for(let i = 0; i < this.bots; ++i)
 			this.botsInstances.push(new Bot(`Bot #${i}`, [...this.users][i % this.users.size].concat(i)))
 		
-		let botsInfo = {};
-		for(let b of this.botsInstances) {
-			botsInfo[b.id] = {id: b.id, name: b.name};
-		}
-		
 		if(!this.generateBoosters(boosterQuantity)) {
 			this.drafting = false;
 			return;
@@ -447,7 +482,7 @@ function Session(id, owner) {
 		
 		for(let user of this.users) {
 			Connections[user].pickedCards = [];
-			Connections[user].socket.emit('sessionOptions', {botsInfo: botsInfo});
+			Connections[user].socket.emit('sessionOptions', {virtualPlayersData: virtualPlayers});
 			Connections[user].socket.emit('startDraft');
 		}
 		this.round = 0;
@@ -496,7 +531,7 @@ function Session(id, owner) {
 	this.nextBooster = function() {
 		this.stopCountdown();
 		
-		const totalVirtualPlayers = this.getTotalVirtualPlayers();
+		const totalVirtualPlayers = this.getVirtualPlayersCount();
 		
 		// Boosters are empty
 		if(this.boosters[0].length == 0) {
@@ -562,7 +597,8 @@ function Session(id, owner) {
 		Connections[userID].socket.emit('rejoinDraft', {
 			pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 			pickedCards: this.disconnectedUsers[userID].pickedCards,
-			booster: this.boosters[Connections[userID].boosterIndex]
+			booster: this.boosters[Connections[userID].boosterIndex],
+			virtualPlayersData: this.getSortedVirtualPlayers()
 		});
 		delete this.disconnectedUsers[userID];
 
@@ -641,6 +677,9 @@ function Session(id, owner) {
 			}
 		}
 		
+		for(let userID of this.users)
+			Connections[userID].socket.emit('sessionOptions', {virtualPlayersData: this.getSortedVirtualPlayers()});
+		this.notifyUserChange();
 		this.resumeCountdown();
 		this.emitMessage('Resuming draft', `Disconnected player(s) has been replaced by bot(s).`);
 	};
@@ -685,24 +724,29 @@ function Session(id, owner) {
 	// Includes disconnected players!
 	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
 	this.getSortedHumanPlayers = function() {
-		return Array.from(this.users).concat(Object.keys(this.disconnectedUsers)).sort();
+		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
+		return this.userOrder.filter(e => players.includes(e));
 	};
+
+	this.getVirtualPlayersCount = function() {
+		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
+	}
 	
 	this.getSortedVirtualPlayers = function() {
 		let tmp = {};
-		for(let userID of this.getSortedHumanPlayers())
-			tmp[userID] = {isBot: false, disconnected: userID in this.disconnectedUsers};
-		for(let bot of this.botsInstances)
-			tmp[bot.id] = {isBot: true, instance: bot};
+		let humanPlayers = this.getSortedHumanPlayers();
+		for(let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
+			if(idx < humanPlayers.length) {
+				let userID = humanPlayers[idx];
+				tmp[userID] = { isBot: false, disconnected: userID in this.disconnectedUsers };
+			}
+			if(idx < this.botsInstances.length) {
+				let bot = this.botsInstances[idx];
+				tmp[bot.id] = {isBot: true, instance: bot};
+			}
+		}
 		
-		let virtualPlayers = {};
-		for(let p of Object.keys(tmp).sort())
-			virtualPlayers[p] = tmp[p];
-		return virtualPlayers;
-	}
-
-	this.getTotalVirtualPlayers = function() {
-		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
+		return tmp;
 	}
 
 	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {

@@ -1,6 +1,4 @@
 # Todo
- * Add a way to re-order players (Need to change all ordering logic)
- * Add an upload saved draft logs
  * Add some stats on deck/drafted cards
  * Look into https://mtg.gamepedia.com/Winston_Draft ?
  * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
@@ -10,11 +8,13 @@
  * Display foils as... foils in front end?
  -----
  * Move pick time out to server side?
- * Should the disconnect player event be broadcast my the server rather by detected by clients?
  * Multiple prevention is only done by ID, maybe we should check the card name
  * (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
 
 # Check
+ * Add a way to re-order players (Need to change all ordering logic)
+ * Add an upload saved draft logs
+ * Should the disconnect player event be broadcast my the server rather by detected by clients?
  * Distribute bots around the table rather than having them all at the end
  * Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
  * Dragging cards

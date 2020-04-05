@@ -100,7 +100,7 @@ var app = new Vue({
 		},
 		foil: true,
 		bots: 0,
-		botsInfo: {},
+		virtualPlayersData: undefined,
 		setRestriction: "",
 		drafting: false,
 		useCustomCardList: false,
@@ -228,34 +228,35 @@ var app = new Vue({
 					u.readyState = ReadyState.DontCare;
 				}
 				
-				if(app.drafting && users.length < app.sessionUsers.length) {
-					let missingUsers = app.sessionUsers.filter(u => !users.includes(u));
-					if(app.userID == app.sessionOwner) {
-						Swal.fire({
-							position: 'center',
-							customClass: SwalCustomClasses,
-							type: 'error',
-							title: `${missingUsers[0].userName} disconnected`,
-							text: `Wait for ${missingUsers[0].userName} to come back or...`,
-							showConfirmButton: true,
-							confirmButtonText: "Replace with a bot"
-						}).then((result) => {
-							if (result.value)
-								app.socket.emit("replaceDisconnectedPlayers");
-						});
-					} else {
-						Swal.fire({
-							position: 'center',
-							customClass: SwalCustomClasses,
-							type: 'error',
-							title: `${missingUsers[0].userName} disconnected`,
-							text: `Wait for ${missingUsers[0].userName} to come back or for the owner to replace them by a bot.`,
-							showConfirmButton: false
-						});
-					}
-				}
-				
 				app.sessionUsers = users;
+			});
+			
+			this.socket.on('userDisconnected', function(userName) {
+				if(!app.drafting) return;
+				
+				if(app.userID == app.sessionOwner) {
+					Swal.fire({
+						position: 'center',
+						customClass: SwalCustomClasses,
+						type: 'error',
+						title: `${userName} disconnected`,
+						text: `Wait for ${userName} to come back or...`,
+						showConfirmButton: true,
+						confirmButtonText: "Replace with a bot"
+					}).then((result) => {
+						if (result.value)
+							app.socket.emit("replaceDisconnectedPlayers");
+					});
+				} else {
+					Swal.fire({
+						position: 'center',
+						customClass: SwalCustomClasses,
+						type: 'error',
+						title: `${userName} disconnected`,
+						text: `Wait for ${userName} to come back or for the owner to replace them by a bot.`,
+						showConfirmButton: false
+					});
+				}
 			});
 			
 			this.socket.on('updateUser', function(data) {
@@ -397,6 +398,8 @@ var app = new Vue({
 				for(let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
+				
+				app.virtualPlayersData = data.virtualPlayersData;
 				
 				app.pickedThisRound = data.pickedThisRound;
 				if(app.pickedThisRound)
@@ -580,14 +583,14 @@ var app = new Vue({
 			}
 		},
 		deckToSideboard: function(e, c) { // From deck to sideboard
-			let idx = this.deck.findIndex(card => card === c);
+			let idx = this.deck.indexOf(c);
 			if(idx >= 0) {
 				this.deck.splice(idx, 1);
 				this.addToSideboard(c);
 			} else return;
 			
 			for(let col of this.deckColumn) {
-				let idx = col.findIndex(card => card === c);
+				let idx = col.indexOf(c);
 				if(idx >= 0) {
 					col.splice(idx, 1);
 					break;
@@ -595,14 +598,14 @@ var app = new Vue({
 			}
 		},
 		sideboardToDeck: function(e, c) { // From sideboard to deck
-			let idx = this.sideboard.findIndex(card => card === c);
+			let idx = this.sideboard.indexOf(c);
 			if(idx >= 0) {
 				this.sideboard.splice(idx, 1);
 				this.addToDeck(c);
 			} else return;
 			
 			for(let col of this.sideboardColumn) {
-				let idx = col.findIndex(card => card === c);
+				let idx = col.indexOf(c);
 				if(idx >= 0) {
 					col.splice(idx, 1);
 					break;
@@ -816,6 +819,7 @@ var app = new Vue({
 			this.fireToast('success', 'Session link copied to clipboard!');
 		},
 		setSessionOwner: function(newOwnerID) {
+			if(this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if(!user) return;
 			Swal.fire({
@@ -834,6 +838,7 @@ var app = new Vue({
 			});
 		},
 		removePlayer: function(userID) {
+			if(this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === userID);
 			if(!user) return;
 			Swal.fire({
@@ -850,6 +855,12 @@ var app = new Vue({
 					this.socket.emit('removePlayer', userID);
 				}
 			});
+		},
+		movePlayer: function(userID, dir) {
+			if(this.userID != this.sessionOwner) return;
+			let user = this.sessionUsers.find((u) => u.userID === userID);
+			if(!user) return;
+			this.socket.emit('movePlayer', userID, dir);
 		},
 		distributeSealed: function(boosterCount) {
 			if(this.deck.length > 0) {
@@ -1145,18 +1156,22 @@ var app = new Vue({
 			return Math.floor((this.deck.length + this.sideboard.length)/(this.useCustomCardList ? 15 : 14)) + 1;
 		},
 		virtualPlayers: function() {
-			if(!this.drafting || !this.botsInfo || Object.keys(this.botsInfo).length == 0)
+			if(!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 			
-			let tmp = {};
-			for(let p of this.sessionUsers)
-				tmp[p.userID] = p;
-			for(let id in this.botsInfo)
-				tmp[id] = {isBot: true, userName: this.botsInfo[id].name, userID: id};
+			let r = []
+			for(let id in this.virtualPlayersData) {
+				if(this.virtualPlayersData[id].isBot) {
+					r.push(this.virtualPlayersData[id]);
+					r[r.length - 1].userName = r[r.length - 1].instance.name;
+					r[r.length - 1].userID = r[r.length - 1].instance.id;
+				} else if(this.virtualPlayersData[id].disconnected) {
+					r.push({userName: '(Disconnected)', userID: '', disconnected: true});
+				} else {
+					r.push(this.sessionUsers.find(u => u.userID === id));
+				}
+			}
 			
-			let r = [];
-			for(let p of Object.keys(tmp).sort())
-				r.push(tmp[p]);
 			return r;
 		},
 		displaySets: function() {

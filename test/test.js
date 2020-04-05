@@ -670,10 +670,9 @@ describe('Single Draft With disconnect and reconnect', function() {
 		}
 	});
 	
-	it('Client 1 disconnects, Client 0 receives updated user infos.', function(done) {
-		clients[0].on('sessionUsers', function(sessionUsers) {
-			expect(sessionUsers.length).to.equal(1);
-			this.removeListener('sessionUsers');
+	it('Client 1 disconnects, Client 0 receives a warning.', function(done) {
+		clients[0].on('userDisconnected', function(userName) {
+			this.removeListener('userDisconnected');
 			done();
 		});
 		clients[1].disconnect();
@@ -824,18 +823,16 @@ describe('Single Draft With disconnect and bots', function() {
 	});
 	
 	it('Client 1 disconnects, Client 0 receives updated user infos.', function(done) {
-		clients[0].on('sessionUsers', function(sessionUsers) {
-			expect(sessionUsers.length).to.equal(1);
-			this.removeListener('sessionUsers');
+		clients[0].on('userDisconnected', function(userName) {
+			this.removeListener('userDisconnected');
 			done();
 		});
 		clients[1].disconnect();
 	});
 	
-	it('Client 1 reconnects, Client 0 receives updated user infos.', function(done) {
-		clients[0].on('sessionUsers', function(sessionUsers) {
-			expect(sessionUsers.length).to.equal(2);
-			this.removeListener('sessionUsers');
+	it('Client 1 reconnects, draft restarts.', function(done) {
+		clients[0].on('message', function(sessionUsers) {
+			this.removeListener('message');
 			done();
 		});
 		clients[1].connect();
