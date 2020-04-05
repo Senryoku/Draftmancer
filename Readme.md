@@ -1,14 +1,11 @@
 # Todo
  * Add a way to re-order players (Need to change all ordering logic)
  * Add an upload saved draft logs
- * locally save draft logs?
- * Add a sound to Ready Check?
- * Save last draft in localStorage?
- * Brackets (Vue Module)
  * Add some stats on deck/drafted cards
  * Look into https://mtg.gamepedia.com/Winston_Draft ?
  * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
  -----
+ * Brackets (simplebracket project)
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
  * Display foils as... foils in front end?
  -----
