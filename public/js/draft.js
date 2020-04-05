@@ -736,6 +736,40 @@ var app = new Vue({
 			}
 			download(`DraftLog_${this.draftLog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
+		openLog: function(e) {
+			let file = e.target.files[0];
+			if (!file) {
+				return;
+			}
+			var reader = new FileReader();
+			reader.onload = function(e) {			
+				try {
+					let contents = e.target.result;	
+					let json = JSON.parse(contents);
+					if(json.users) {
+						app.draftLog = json;
+						app.displayDraftLog = true;
+					} else {						
+						Swal.fire({
+							type: 'error',
+							title: 'Parsing Error',
+							text: 'An error occurred during parsing. Please make sure that you selected the correct file.',
+							footer: 'Full error: Missing required data',
+							customClass: SwalCustomClasses
+						});
+					}
+				} catch(e) {
+					Swal.fire({
+						type: 'error',
+						title: 'Parsing Error',
+						text: 'An error occurred during parsing. Please make sure that you selected the correct file.',
+						footer: 'Full error: ' + e,
+						customClass: SwalCustomClasses
+					});
+				}		
+			};
+			reader.readAsText(file);
+		},
 		exportSingleLog: function(id) {
 			let cards = []
 			for(let c of this.draftLog.users[id].cards)
