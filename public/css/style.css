@@ -303,6 +303,25 @@ a:hover {
 	padding-top: 0;
 }
 
+.welcome ul {
+	list-style-type: none;
+	padding-left: 1em;
+	margin-right: 1em;
+}
+
+.welcome ul li {
+	padding: 0.2em;
+	padding-left: 0.5em;
+}
+
+.welcome ul li:nth-child(even) {
+	background: rgba(0, 0, 0, 0.12);
+}
+
+.welcome ul li:nth-child(odd) {
+	background: rgba(255, 255, 255, 0.03);
+}
+
 .welcome .important {
 	font-size: 1.4rem;
 }
@@ -362,6 +381,14 @@ label {
 	padding: 0.25em;
 	margin: 0.25em;
 	border-radius: 0.25em;
+}
+
+.main-controls input[type="checkbox"] {
+	margin-right: 0;
+}
+
+.main-controls fas {
+	padding: 4px;
 }
 
 #limited-controls, #view-controls {
@@ -582,6 +609,14 @@ ul.player-list {
 }
 
 .controls button, .controls input[type=button] {
+}
+
+.more-option {
+	margin: 0.5em;
+}
+
+.more-option .fas {
+	margin-left: 0.5em;
 }
 
 .card-container {

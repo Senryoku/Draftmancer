@@ -1,5 +1,5 @@
 # Todo
- * Download collection (and collection intersection?) as cube
+ * Add a way to re-order players (Need to change all ordering logic)
  * Add an upload saved draft logs
  * locally save draft logs?
  * Add a sound to Ready Check?

@@ -56,6 +56,13 @@ const ReadyState = {
 	DontCare: "DontCare"
 };
 
+const Sounds = {
+	start: new Audio("sound/drop_003.ogg"),
+	next: new Audio("sound/next.mp3"),
+	countdown: new Audio("sound/click_001.ogg"),
+	readyCheck: new Audio("sound/drop_003.ogg")
+};
+
 let UniqueID = 0;
 
 var app = new Vue({
@@ -118,6 +125,7 @@ var app = new Vue({
 		setsInfos: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
+		enableSound: getCookie("enableSound", true),
 		enableNotifications: Notification && Notification.permission == 'granted' && getCookie("enableNotifications", false),
 		notificationPermission: Notification && Notification.permission,
 		selectedCard: undefined,
@@ -368,6 +376,8 @@ var app = new Vue({
 					timer: 1500
 				});
 				
+				app.playSound('start');
+				
 				if(app.enableNotifications) {
 					let notification = new Notification('Now drafting!', {
 						body: `Your draft '${app.sessionID}' is starting!`
@@ -413,6 +423,7 @@ var app = new Vue({
 				for(let u of app.sessionUsers) {
 					u.pickedThisRound = false;
 				}
+				app.playSound('next');
 				app.draftingState = DraftState.Picking;
 			});
 			
@@ -464,6 +475,8 @@ var app = new Vue({
 						}, 500);
 					}
 				}
+				if(data.countdown > 0 && data.countdown <= 5)
+					app.playSound('countdown');
 				app.pickTimer = data.countdown;
 			});
 
@@ -489,6 +502,13 @@ var app = new Vue({
 			let urlParamSession = getUrlVars()['session'];
 			if(urlParamSession)
 				this.sessionID = decodeURI(urlParamSession);
+			
+			for(let key in Sounds)
+				Sounds[key].volume = 0.4;
+		},
+		playSound: function(key) {
+			if(this.enableSound) 
+				Sounds[key].play();
 		},
 		// Chat Methods
 		sendChatMessage: function(e) {
@@ -846,6 +866,8 @@ var app = new Vue({
 			
 			for(let u of app.sessionUsers)
 				u.readyState = ReadyState.Unknown;
+			
+			this.playSound('readyCheck');
 		},
 		stopReadyCheck: function() {
 			this.pendingReadyCheck = false;
@@ -1244,6 +1266,9 @@ var app = new Vue({
 		},
 		pickOnDblclick: function() {
 			setCookie('pickOnDblclick', this.pickOnDblclick);
+		},
+		enableSound: function() {
+			setCookie('enableSound', this.enableSound);
 		},
 		cardOrder: function() {
 			setCookie('cardOrder', this.cardOrder);
