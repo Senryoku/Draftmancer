@@ -242,6 +242,7 @@ var app = new Vue({
 						title: `${userName} disconnected`,
 						text: `Wait for ${userName} to come back or...`,
 						showConfirmButton: true,
+						allowOutsideClick: false,
 						confirmButtonText: "Replace with a bot"
 					}).then((result) => {
 						if (result.value)
@@ -254,7 +255,8 @@ var app = new Vue({
 						type: 'error',
 						title: `${userName} disconnected`,
 						text: `Wait for ${userName} to come back or for the owner to replace them by a bot.`,
-						showConfirmButton: false
+						showConfirmButton: false,
+						allowOutsideClick: false
 					});
 				}
 			});
