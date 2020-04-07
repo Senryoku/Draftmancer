@@ -740,7 +740,12 @@ ul.player-list {
 	min-height: 283.33px;
 }
 
-.plus-column {
+.draggable-constrols {
+	display: flex;
+	flex-direction: column;
+}
+
+.minus-column, .plus-column {
 	margin: 0.2em;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 37px;

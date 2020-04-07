@@ -1025,6 +1025,32 @@ var app = new Vue({
 				this.distributeSealed(boosterCount);
 			}
 		},
+		addDeckColumn: function() {
+			this.deckColumn.push([]);
+			this.deckColumn[this.deckColumn.length - 1] = this.deckColumn[this.deckColumn.length - 2].filter(c => c.cmc > this.deckColumn.length - 2);
+			this.deckColumn[this.deckColumn.length - 2] = this.deckColumn[this.deckColumn.length - 2].filter(c => c.cmc <= this.deckColumn.length - 2);
+		},
+		addSideboardColumn: function() {
+			this.sideboardColumn.push([]);
+			this.sideboardColumn[this.sideboardColumn.length - 1] = this.sideboardColumn[this.sideboardColumn.length - 2].filter(c => c.cmc > this.sideboardColumn.length - 2);
+			this.sideboardColumn[this.sideboardColumn.length - 2] = this.sideboardColumn[this.sideboardColumn.length - 2].filter(c => c.cmc <= this.sideboardColumn.length - 2);
+		},
+		removeDeckColumn: function() {
+			if(this.deckColumn.length < 2) return;
+			this.deckColumn[this.deckColumn.length - 2] = [].concat(
+				this.deckColumn[this.deckColumn.length - 2], 
+				this.deckColumn[this.deckColumn.length - 1]
+			);
+			this.deckColumn.pop();
+		},
+		removeSideboardColumn: function() {
+			if(this.sideboardColumn.length < 2) return;
+			this.sideboardColumn[this.sideboardColumn.length - 2] = [].concat(
+				this.sideboardColumn[this.sideboardColumn.length - 2], 
+				this.sideboardColumn[this.sideboardColumn.length - 1]
+			);
+			this.sideboardColumn.pop();
+		},
 		// Sync. column changes with deck and sideboard
 		columnDeckChange: function(e) {
 			if(e.removed) this.deck.splice(this.deck.findIndex(c => c === e.removed.element), 1);

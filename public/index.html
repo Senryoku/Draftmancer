@@ -261,7 +261,10 @@
 					<draggable v-for="(column, colIdx) in deckColumn" :key="'deck'+colIdx" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnDeckChange">
 					   <figure is="card" v-for="card in column" :key="card.uniqueID" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
 					</draggable>
-					<div @click="deckColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+					<div class="draggable-controls">
+						<div @click="addDeckColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+						<div v-show="deckColumn.length > 1" @click="removeDeckColumn" class="minus-column"><i class="fas fa-minus fa-2x"></i></div>
+					</div>
 				</template>
 				<template v-else-if="cardOrder == 'CMCColumns'">
 					<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
@@ -292,7 +295,10 @@
 					<draggable v-for="(column, colIdx) in sideboardColumn" :key="'side'+colIdx" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnSideboardChange">
 					   <figure is="card" v-for="card in column" v-bind:key="card.uniqueID" v-bind:card="card" v-bind:language="language" v-bind:selectcard="sideboardToDeck"></figure>
 					</draggable>
-					<div @click="sideboardColumn.push([])" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+					<div class="draggable-controls">
+						<div @click="addSideboardColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
+						<div v-show="sideboardColumn.length > 1" @click="removeSideboardColumn" class="minus-column"><i class="fas fa-minus fa-2x"></i></div>
+					</div>
 				</template>
 				<template v-else-if="cardOrder == 'CMCColumns'">
 					<div v-for="cmc_column in sideboardColumnCMC" class="cmc-column">
