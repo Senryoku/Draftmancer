@@ -677,7 +677,9 @@ app.get('/getStatus/:key', (req, res) => {
 		for(let sID in Sessions)
 			if(Sessions[sID].drafting)
 				++draftingSessions;
+		let uptime = process.uptime();
 		returnJSON(res, {
+			uptime: uptime,
 			sessionCount: Object.keys(Sessions).length, 
 			playerCount: Object.keys(Connections).length,
 			draftingSessions: draftingSessions, 
