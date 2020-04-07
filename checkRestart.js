@@ -6,6 +6,9 @@ const secretKey = process.env.SECRET_KEY || '1234';
 const appName = process.env.APP_NAME || "mtgadraftbeta";
 const host = `http://${appName}.herokuapp.com/`;
 
+// Add a job to the Heroku Scheduler to attempt to restart when no one's drafting
+// to avoid automatic dyno cycling at the wrong time.
+
 console.log("Checking for a possible restart...");
 request(`${host}getStatus/${secretKey}`, function(err, res, body) {
 	if(!err) {
