@@ -18,6 +18,7 @@
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
+    "heroku-client": "^3.1.0",
     "random-js": "^2.1.0",
     "socket.io": "^2.3.0",
     "uuid": "^3.3.3"
