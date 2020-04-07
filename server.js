@@ -629,7 +629,7 @@ app.get('/getUsers/:sessionID', (req, res) => {
 
 // Debug endpoints
 
-const secretKey = "b5d62b91-5f52-4512-b7fc-25626b9be37d";
+const secretKey = process.env.SECRET_KEY || '1234';
 
 var express_json_cache = []; // Clear this before calling
 app.set('json replacer', function(key, value) {
@@ -666,6 +666,23 @@ app.get('/getSessions/:key', (req, res) => {
 app.get('/getConnections/:key', (req, res) => {
 	if(req.params.key ===  secretKey) {
 		returnJSON(res, Connections);
+	} else {
+		res.sendStatus(401).end();
+	}
+});
+
+app.get('/getStatus/:key', (req, res) => {
+	if(req.params.key ===  secretKey) {
+		let draftingSessions = 0;
+		for(let sID in Sessions)
+			if(Sessions[sID].drafting)
+				++draftingSessions;
+		returnJSON(res, {
+			sessionCount: Object.keys(Sessions).length, 
+			playerCount: Object.keys(Connections).length,
+			draftingSessions: draftingSessions, 
+			canRestart: draftingSessions === 0
+		});
 	} else {
 		res.sendStatus(401).end();
 	}
