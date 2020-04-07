@@ -12,4 +12,3 @@ request(`/getStatus/${process.env.SECRET_KEY}`, function(err, res, body) {
 		}
 	}
 });
-if(
