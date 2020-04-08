@@ -227,49 +227,82 @@ function Session(id, owner) {
 		
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if(this.useCustomCardList) {
-			// Getting custom card list
-			let localCollection = this.collection();
-			
-			const cardsPerBooster = 15;
-			let cardsByColor = {};
-			if(this.colorBalance) {
-				for(let card in localCollection) {
-					if(!(Cards[card].color_identity in cardsByColor))
-						cardsByColor[Cards[card].color_identity] = {};
-					cardsByColor[Cards[card].color_identity][card] = localCollection[card];
-				}
-			}
-			
-			let card_count = count_cards(localCollection)
-			if(card_count < cardsPerBooster * boosterQuantity) {
-				this.emitMessage('Error generating boosters', `Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
-				console.log(`Error generating boosters: Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
-				return false;
-			}
-			
-			this.boosters = [];
-			for(let i = 0; i < boosterQuantity; ++i) {
-				let booster = [];
-				
-				if(this.colorBalance) {
-					for(let c of 'WUBRG') {
-						if(cardsByColor[c] && !isEmpty(cardsByColor[c])) {
-							let pickedCard = pick_card(cardsByColor[c], booster);
-							removeCardFromDict(pickedCard, localCollection);
-							booster.push(pickedCard);
-						}
+			if(this.customCardList.customSheets) {
+				// TODO
+				let cardsByRarity = {};
+				for(let r in this.customCardList.cardsPerBooster) {
+					cardsByRarity[r] = {};
+					for(let cardId of this.customCardList.cards[r])
+						if(cardId in cardsByRarity[r]) // Duplicates adds one copy of the card
+							cardsByRarity[r][cardId] += 1;
+						else
+							cardsByRarity[r][cardId] = 1;
+						
+					const comm_count = count_cards(cardsByRarity[r]);
+					if(comm_count < this.customCardList.cardsPerBooster[r] * boosterQuantity) {
+						this.emitMessage('Error generating boosters', `Not enough cards (${comm_count}/${this.customCardList.cardsPerBooster[r] * boosterQuantity} ${r}) in custom card list.`);
+						console.warn(`Not enough cards (${comm_count}/${10 * boosterQuantity} ${r}) in custom card list.`);
+						return false;
 					}
 				}
 				
-				for(let i = booster.length; i < cardsPerBooster; ++i) {
-					let pickedCard = pick_card(localCollection, booster)
-					if(this.colorBalance)
-						removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
-					booster.push(pickedCard);
+				// Generate Boosters
+				this.boosters = [];
+				for(let i = 0; i < boosterQuantity; ++i) {
+					let booster = [];
+					
+					for(let r in this.customCardList.cardsPerBooster) {
+						for(let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i)
+							booster.push(pick_card(cardsByRarity[r], booster));
+					}
+					
+					this.boosters.push(booster);
+				}
+			} else {
+				// Getting custom card list
+				let localCollection = this.collection();
+				
+				const cardsPerBooster = 15;
+				let cardsByColor = {};
+				if(this.colorBalance) {
+					for(let card in localCollection) {
+						if(!(Cards[card].color_identity in cardsByColor))
+							cardsByColor[Cards[card].color_identity] = {};
+						cardsByColor[Cards[card].color_identity][card] = localCollection[card];
+					}
 				}
 				
-				shuffleArray(booster);
-				this.boosters.push(booster);
+				let card_count = count_cards(localCollection)
+				if(card_count < cardsPerBooster * boosterQuantity) {
+					this.emitMessage('Error generating boosters', `Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
+					console.log(`Error generating boosters: Not enough cards (${card_count}/${cardsPerBooster * boosterQuantity}) in custom list.`);
+					return false;
+				}
+				
+				this.boosters = [];
+				for(let i = 0; i < boosterQuantity; ++i) {
+					let booster = [];
+					
+					if(this.colorBalance) {
+						for(let c of 'WUBRG') {
+							if(cardsByColor[c] && !isEmpty(cardsByColor[c])) {
+								let pickedCard = pick_card(cardsByColor[c], booster);
+								removeCardFromDict(pickedCard, localCollection);
+								booster.push(pickedCard);
+							}
+						}
+					}
+					
+					for(let i = booster.length; i < cardsPerBooster; ++i) {
+						let pickedCard = pick_card(localCollection, booster)
+						if(this.colorBalance)
+							removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+						booster.push(pickedCard);
+					}
+					
+					shuffleArray(booster);
+					this.boosters.push(booster);
+				}
 			}
 		} else {
 			let localCollection = this.restrictedCollectionByRarity();
@@ -315,26 +348,24 @@ function Session(id, owner) {
 			const foilRarityFreq = {'mythic': 1.0/128, 'rare': 1.0/128 + 7.0/128, 'uncommon': 1.0/16 + 3.0/16, 'common': 1.0};
 
 			// Making sure we have enough cards of each rarity
-			const count_cards = function(coll) { return Object.values(coll).reduce((acc, val) => acc + val, 0); };
-			
 			const comm_count = count_cards(localCollection['common']);
 			if(comm_count < targets['common'] * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
-				console.warn(`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`);
+				console.warn(`Not enough cards (${comm_count}/${targets['common'] * boosterQuantity} commons) in collection.`);
 				return false;
 			}
 			
 			const unco_count = count_cards(localCollection['uncommon']);
 			if(unco_count < targets['uncommon'] * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
-				console.warn(`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`);
+				console.warn(`Not enough cards (${unco_count}/${targets['uncommon'] * boosterQuantity} uncommons) in collection.`);
 				return false;
 			}
 			
 			const rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
 			if(rm_count < targets['rare'] * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
-				console.warn(`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`, FgYellow);
+				console.warn(`Not enough cards (${rm_count}/${targets['rare'] * boosterQuantity} rares & mythics) in collection.`, FgYellow);
 				return false;
 			}
 			

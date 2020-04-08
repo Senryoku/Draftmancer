@@ -35,3 +35,12 @@ The chat log here might give a few hints. But I felt it was worth a quick note. 
 # Notes on Arena Importer
  * Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
  * Adventures (ELD) and Dual Faces (IXL) need only one.
+
+## Custom Set format
+Rarity Header: 
+```
+[SlotName(CardPerBooster)]
+Card 1
+Card 2
+...
+```

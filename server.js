@@ -310,8 +310,9 @@ io.on('connection', function(socket) {
 		if(Sessions[sessionID].owner != this.userID)
 			return;
 		
-		if(!Array.isArray(customCardList))
+		if(!Array.isArray(customCardList) && !customCardList.customSheets)
 			return;
+		
 		Sessions[sessionID].customCardList = customCardList;
 		for(let user of Sessions[sessionID].users) {
 			if(user != this.userID)

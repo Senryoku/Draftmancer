@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>MTGADraft Cube Format</title>
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+	<div class="welcome" style="margin-left:5em; margin-right: 5em;">
+		<h1>MTGADraft Cube Format</h1>
+		<p>
+			Basic cube list is one English card name per line, just like .txt export in either Cube Cobra or Cube Tutor.
+			Boosters will be 15 cards without regards for rarity distribution.
+		</p>
+		<p>
+			If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
+			<pre>
+			<code>
+			[SlotName(CardPerBooster)]
+			Card 1
+			Card 2
+			...
+			[Slot2Name(CardPerBooster)]
+			Card X
+			Card X+1
+			...
+			</code>
+			</pre>
+			Each slot will be present in each booster. For example:
+			<pre>
+			<code>
+			[Common(10)]
+			Card 1
+			Card 2
+			...
+			[Uncommon(3)]
+			Card X
+			Card X+1
+			...
+			[Rare(1)]
+			Card Y
+			Card Y+1
+			...
+			</code>
+			</pre>
+			Will mimic the distribution of a standard Magic booster, except for the 1/8 Mythic/Rare ratio. Cards in the 'Common' slot don't have to be 'real' commons!
+			</p>
+			<p>
+			Why not add a special planeswalker slot in each of your booster instead of one of the commons, everyone loved them in WAR right? :D
+			<pre>
+			<code>
+			[Planewalker(1)]
+			Planewalker 1
+			Planewalker 2
+			...
+			[Common(9)]
+			Card 1
+			Card 2
+			...
+			[Uncommon(3)]
+			Card X
+			Card X+1
+			...
+			[Rare(1)]
+			Card Y
+			Card Y+1
+			...
+			</code>
+			</pre>
+		</p>
+	</div>
+</body>
+</html>

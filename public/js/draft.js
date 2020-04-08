@@ -135,6 +135,7 @@ var app = new Vue({
 		lands: {'W': 0, 'U': 0, 'B': 0, 'R': 0, 'G': 0},
 		deckColumn: [[], [], [], [], [], [], []],
 		sideboardColumn: [[], [], [], [], [], [], []],
+		cardsPerBooster: undefined, // Used to compute pick number
 		
 		showSessionOptionsDialog: false,
 		displayAbout: false,
@@ -362,7 +363,7 @@ var app = new Vue({
 					app.fireToast('success', 'Everybody is ready!');
 			});
 			
-			this.socket.on('startDraft', function(data) {
+			this.socket.on('startDraft', function() {
 				// Save user ID in case of disconnect
 				setCookie("userID", app.userID);
 			
@@ -370,6 +371,7 @@ var app = new Vue({
 				app.stopReadyCheck();
 				app.sideboard = [];
 				app.deck = [];
+				app.cardsPerBooster = undefined;
 				Swal.fire({
 					position: 'center',
 					type: 'success',
@@ -420,6 +422,8 @@ var app = new Vue({
 			
 			this.socket.on('nextBooster', function(data) {
 				app.booster = [];
+				if(!app.cardsPerBooster)
+					app.cardsPerBooster = data.booster.length;
 				for(let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
@@ -685,17 +689,70 @@ var app = new Vue({
 			var reader = new FileReader();
 			reader.onload = function(e) {
 				let contents = e.target.result;
+				
+				const searchCardID = function(line) {
+					let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
+					if(typeof cardID !== 'undefined') {
+						return cardID;
+					} else {
+						// If not found, try doubled faced cards before giving up!
+						return Object.keys(app.cards).find((id) => app.cards[id].name.startsWith(line + ' //'));
+					}
+				}
+				
 				try {
 					const lines = contents.split(/\r\n|\n/);
-					let cardList = [];
-					for(let line of lines) {
-						if(line) {
-							let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
-							if(typeof cardID !== 'undefined') {
-								cardList.push(cardID)
-							} else {
-								// If not found, try doubled faced cards before giving up!
-								cardID = Object.keys(app.cards).find((id) => app.cards[id].name.startsWith(line + ' //'));
+					// Custom rarity sheets
+					if(lines[0].trim()[0] === '[') {
+						let line = 0;
+						let cardCount = 0;
+						let cardList = {
+							customSheets: true,
+							cardsPerBooster: {},
+							cards: {}
+						};
+						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
+						while(line < lines.length) {
+							// TODO
+							let header = lines[line].match(headerRegex);
+							if(!header) {
+								Swal.fire({
+									type: 'error',
+									title: `Slot`,
+									text: `Error parsing slot '${lines[line]}'.`,
+									customClass: SwalCustomClasses
+								});
+								return;
+							}
+							cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
+							cardList.cards[header[1]] = [];
+							line += 1;
+							while(line < lines.length && lines[line].trim()[0] !== '[') {
+								if(lines[line]) {
+									let cardID = searchCardID(lines[line]);
+									if(typeof cardID !== 'undefined') {
+										cardList.cards[header[1]].push(cardID);
+										cardCount += 1;
+									} else {
+										Swal.fire({
+											type: 'error',
+											title: `Card not found`,
+											text: `Could not find ${lines[line]} in our database.`,
+											customClass: SwalCustomClasses
+										});
+										return;
+									}
+								}
+								line += 1;
+							}
+						}
+						cardList.length = cardCount;
+						app.customCardList = cardList;
+					} else {
+						let cardList = [];
+						for(let line of lines) {
+							if(line) {
+								let cardID = searchCardID(line);
 								if(typeof cardID !== 'undefined') {
 									cardList.push(cardID)
 								} else {
@@ -709,8 +766,8 @@ var app = new Vue({
 								}
 							}
 						}
+						app.customCardList = cardList;
 					}
-					app.customCardList = cardList;
 					app.socket.emit('customCardList', app.customCardList);
 					app.fireToast('success', `Card list uploaded (${app.customCardList.length} cards)`);
 				} catch(e) {

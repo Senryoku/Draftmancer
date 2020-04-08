@@ -218,7 +218,7 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % (useCustomCardList ? 15 : 14)) +1 }}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
+					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % cardsPerBooster) + 1 }}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined"/>
 				</div>
 				<div class="booster card-container">
@@ -517,7 +517,7 @@
 						<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
 					</div>
 				</div>
-				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. List format: One English card name by line. Boosters will be 15 cards without regards for rarity distribution.</div>
+				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. <a href="cubeformat.html" target="_blank">Click Here for more informations</a></div>
 				<h4>Draft Specific Options</h4>
 				<div class="line" title="Draft: Boosters per Player; default is 3.">
 					<label for="boosters-per-player">Boosters per Player</label>
