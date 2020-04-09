@@ -228,7 +228,6 @@ function Session(id, owner) {
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if(this.useCustomCardList) {
 			if(this.customCardList.customSheets) {
-				// TODO
 				let cardsByRarity = {};
 				for(let r in this.customCardList.cardsPerBooster) {
 					cardsByRarity[r] = {};

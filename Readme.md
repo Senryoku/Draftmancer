@@ -1,4 +1,5 @@
 # Todo
+ * rewrite cubeformat.html 
  * Heroku dynos are recycled once per day... Everything is in RAM, this is not good... I could find a way to find some persistance, but it will require a massive refactoring, and I'm not sure about the websocket connections...
  * Add some stats on deck/drafted cards
  * Look into https://mtg.gamepedia.com/Winston_Draft ?
