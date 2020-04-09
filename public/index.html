@@ -157,7 +157,7 @@
 								<i class="fas fa-chevron-right clickable" :title="`Move ${user.userName} to the right`" @click="movePlayer(user.userID, 'right')"></i>
 							</template>
 						</template>
-						<template v-if="!ignoreCollections && !drafting">
+						<template v-if="!useCustomCardList && !ignoreCollections && !drafting">
 							<template v-if="!user.collection">
 								<i class="fas fa-book red" :title="user.userName + ' have not uploaded their collection yet.'"></i>
 							</template>
