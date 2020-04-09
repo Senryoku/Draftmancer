@@ -55,11 +55,13 @@ io.on('connection', function(socket) {
 	// Messages
 	
 	socket.on('disconnect', function() {
-		let userID = this.userID;
+		const userID = this.userID;
 		if(userID in Connections) {
 			console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length - 1} players online)`);
 			removeUserFromSession(userID);
-			delete Connections[userID];
+			process.nextTick(() => {
+				delete Connections[userID];
+			});
 		}
 	});
 	
@@ -568,17 +570,19 @@ function addUserToSession(userID, sessionID) {
 
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID) {
-	let sessionID = Connections[userID].sessionID;
+	const sessionID = Connections[userID].sessionID;
 	if(sessionID in Sessions && Sessions[sessionID].users.has(userID)) {
 		let sess = Sessions[sessionID];
 		sess.remUser(userID);
 		
 		Connections[userID].sessionID = null;
 		if(sess.users.size == 0) {
-			let wasPublic = sess.isPublic;
-			delete Sessions[sessionID];
-			if(wasPublic)
-				io.emit('publicSessions', getPublicSessions());
+			const wasPublic = sess.isPublic;
+			process.nextTick(() => {
+				delete Sessions[sessionID];
+				if(wasPublic)
+					io.emit('publicSessions', getPublicSessions());
+			});
 		} else {
 			// User was the owner of the session, transfer ownership.
 			if(sess.owner == userID) {
