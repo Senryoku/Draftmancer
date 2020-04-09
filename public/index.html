@@ -222,7 +222,7 @@
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined"/>
 				</div>
 				<div class="booster card-container">
-					<figure is="card" v-for="(card, index) in booster" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card"></figure>
+					<figure is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card"></figure>
 				</div>
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
