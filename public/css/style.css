@@ -1,7 +1,7 @@
 body {
 	margin: 0;
 	margin-left: 0;
-	background-image: url('../img/eld_1080p_en.jpg'), radial-gradient(ellipse at 75% 30%, rgba(32,32,32,0.8), rgba(32,32,32,1) 50%);
+	background-image: url('../img/eld_1080p_en.jpg'), linear-gradient(rgba(32,32,32,0.8) 0, rgba(32,32,32,1) 60%);
 	background-blend-mode: saturation;
 	background-size: 100%;
 	background-repeat: none;
