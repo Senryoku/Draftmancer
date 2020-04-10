@@ -453,7 +453,7 @@
 						</table>
 						<h3>Missing <select v-model="statsMissingRarity"><option value="common">Commons</option><option value="uncommon">Uncommons</option><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" id="show-non-booster" v-model="statsShowNonBooster"><label for="show-non-booster">Show non-booster cards</label></h3>
 						<div class="card-container">
-							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster) && c.count < 4)" v-bind:key="index" v-bind:card="card" v-bind:language="language"></figure>
+							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster) && c.count < 4)" v-bind:key="card.uniqueID" v-bind:card="card" v-bind:language="language"></figure>
 						</div>
 					</div>
 				</div>
@@ -649,7 +649,7 @@
 	<script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
 	<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
-	<script src="https://unpkg.com/vue-clazy-load/dist/vue-clazy-load.min.js"></script>
+	<script type="text/javascript" src="js/vue-clazy-load.js"></script>
 	<script type="text/javascript" src="js/constants.js"></script>
 	<script type="text/javascript" src="js/cookies.js"></script>
 	<script type="text/javascript" src="js/draft.js"></script>

@@ -25,17 +25,28 @@ Vue.component('modal', {
 */
 Vue.component('card', {
 	template: `
-<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
-	<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-		<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected }" />
-		<img v-else src="img/missing.svg">
-		<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
-			<div class="card-name">{{card.printed_name[language]}}</div>
-		</div>
-	</clazy-load>
-</div>
+	<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
+		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected }" />
+			<img v-else src="img/missing.svg">
+			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
+				<div class="card-name">{{card.printed_name[language]}}</div>
+			</div>
+		</clazy-load>
+	</div>
 	`,
-	props: {'card': {type: Object, required: true}, 'language': String, 'selectcard': {type: Function, default: function() {}}, 'selected': Boolean, 'ondblclick': {type: Function, default: function() {}}}
+	props: {
+		'card': {type: Object, required: true}, 
+		'language': String, 
+		'selectcard': {type: Function, default: function() {}}, 
+		'selected': Boolean, 
+		'ondblclick': {type: Function, default: function() {}}
+	},
+	created: function() {
+		// Preload Carback
+		const img = new Image();
+		img.src = "img/cardback.png";
+	}
 });
 
 Vue.component('missingCard', {
@@ -52,7 +63,15 @@ Vue.component('missingCard', {
 		<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
 	</div>
 	`,
-	props: {'card': {type: Object, required: true}, 'language': {type: String, default: 'en'}}
+	props: {
+		'card': {type: Object, required: true}, 
+		'language': {type: String, default: 'en'}
+	},
+	created: function() {
+		// Preload Carback
+		const img = new Image();
+		img.src = "img/cardback.png";
+	}
 });
 
 const DraftState = {
