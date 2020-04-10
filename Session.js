@@ -364,7 +364,7 @@ function Session(id, owner) {
 			const rm_count = count_cards(localCollection['rare']) + count_cards(localCollection['mythic']);
 			if(rm_count < targets['rare'] * boosterQuantity) {
 				this.emitMessage('Error generating boosters', `Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`);
-				console.warn(`Not enough cards (${rm_count}/${targets['rare'] * boosterQuantity} rares & mythics) in collection.`, FgYellow);
+				console.warn(`Not enough cards (${rm_count}/${targets['rare'] * boosterQuantity} rares & mythics) in collection.`);
 				return false;
 			}
 			
