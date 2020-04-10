@@ -1,3 +1,6 @@
+/**
+ Modified to test visibility on creation and avoid flickering when the image is already in cache.
+**/
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -235,46 +238,47 @@ var ClazyLoadComponent = {
      * Start loading image
      */
     load: function load() {
-      var _this = this;
+		var _this = this;
 
-      // emits 'loading' event upwards
-      this.$emit('loading'); // disconnect observer
-      // so it doesn't load more than once
+		// emits 'loading' event upwards
+		this.$emit('loading'); // disconnect observer
+		// so it doesn't load more than once
 
-      this.observer.disconnect();
+		if(this.observer)
+			this.observer.disconnect();
 
-      if (!this.loaded) {
-        this.img.addEventListener('load', function () {
-			_this.loaded = true; // emits 'load' event upwards
-			//_this.$forceUpdate();
+		if (!this.loaded) {
+			this.img.addEventListener('load', function () {
+				_this.loaded = true; // emits 'load' event upwards
+				//_this.$forceUpdate();
 
-			_this.$emit('load');
+				_this.$emit('load');
 
-			clear();
-        });
-        this.img.addEventListener('error', function (event) {
-          _this.errored = true; // emits 'error' event upwards
-          // adds the original event as argument
+				clear();
+			});
+			this.img.addEventListener('error', function (event) {
+			  _this.errored = true; // emits 'error' event upwards
+			  // adds the original event as argument
 
-          _this.$emit('error', event);
+			  _this.$emit('error', event);
 
-          clear();
-        }); // function used to clear variables from memory
+			  clear();
+			}); // function used to clear variables from memory
 
-        var clear = function clear() {
-          // discard fake image
-          _this.img = null; // remove observer from memory
+			var clear = function clear() {
+			  // discard fake image
+			  _this.img = null; // remove observer from memory
 
-          _this.observer = null;
-        }; // CORS mode configuration
+			  _this.observer = null;
+			}; // CORS mode configuration
 
 
-        if (this.crossorigin !== null) {
-			this.img.crossOrigin = this.crossorigin;
-        }
-		
-		this.img.src = this.src;
-      }
+			if (this.crossorigin !== null) {
+				this.img.crossOrigin = this.crossorigin;
+			}
+
+			this.img.src = this.src;
+		}
     },
 
     /**
@@ -315,10 +319,11 @@ var ClazyLoadComponent = {
 	if(this.isVisible()) {
 		this.img.src = this.src;
 		this.loaded = this.img.complete; // The image may already be in cache
+		if(!this.loaded) {
+			this.load();
+		}
 		this.$forceUpdate();
-	} 
-
-	if(!this.loaded) {
+	} else {
 		// start observing the element visibility
 		this.$nextTick(this.observe);
 	}
