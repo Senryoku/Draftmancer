@@ -222,7 +222,8 @@
 					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined"/>
 				</div>
 				<div class="booster card-container">
-					<figure is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card"></figure>
+					<div is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card">
+					</div>
 				</div>
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
@@ -450,7 +451,7 @@
 								<td>{{4 * collectionStats[set][r].filter(c => c.in_booster).length - collectionStats[set][r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)}}</td>
 							</tr>
 						</table>
-						<h3>Missing <select v-model="statsMissingRarity"><option value="common">Commons</option><option value="uncommon">Uncommons</option><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" id="show-non-booster" v-model="statsShowNonBooster"><label for="show-non-booster">Show non-booster cards</label>
+						<h3>Missing <select v-model="statsMissingRarity"><option value="common">Commons</option><option value="uncommon">Uncommons</option><option value="rare">Rares</option><option value="mythic">Mythics</option></select> <input type="checkbox" id="show-non-booster" v-model="statsShowNonBooster"><label for="show-non-booster">Show non-booster cards</label></h3>
 						<div class="card-container">
 							<figure is="missingCard" v-for="(card, index) in collectionStats[set].cards.filter(c => c.rarity == statsMissingRarity && (statsShowNonBooster || c.in_booster) && c.count < 4)" v-bind:key="index" v-bind:card="card" v-bind:language="language"></figure>
 						</div>
@@ -553,6 +554,11 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>10/04/2020
+						<ul>
+							<li>Improved card image loading.</li>
+						</ul>
+					</li>
 					<li>08/04/2020
 						<ul>
 							<li>Added support for a custom cube format for more control over your boosters.</li>
@@ -643,6 +649,7 @@
 	<script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
 	<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+	<script src="https://unpkg.com/vue-clazy-load/dist/vue-clazy-load.min.js"></script>
 	<script type="text/javascript" src="js/constants.js"></script>
 	<script type="text/javascript" src="js/cookies.js"></script>
 	<script type="text/javascript" src="js/draft.js"></script>

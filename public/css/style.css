@@ -652,6 +652,23 @@ ul.player-list {
 	margin-left: 0.5em;
 }
 
+.card-placeholder {
+	width: 200px;
+	height: 283.333px;
+	border-radius: 10px;
+	background: url('../img/cardback.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.card-placeholder .card-name {
+	height: 20px;
+	width: calc(100% - 5px);
+	padding-top: 5px;
+	padding-left: 5px;
+	background-color: rgba(0, 0, 0, 0.25);
+}
+
 .card-container {
 	display: flex;
 	flex-wrap: wrap;
@@ -762,32 +779,28 @@ ul.player-list {
 	margin-right: 0.75em;
 }
 
-.cmc-column > figure {
+.cmc-column > div {
 	height: 25px;
 	margin: 0;
 	overflow: hidden;
 }
 
-.cmc-column figure:hover {
+.cmc-column > div:hover {
 	z-index: 999;
 	overflow: visible;
 }
 
-.cmc-column figure:last-child {
+.cmc-column > div:last-child {
 	overflow: visible;
 }
 
-/* No :hover outside of the figure bounds */
-.cmc-column figure img {
+/* No :hover outside of the div bounds */
+.cmc-column div > div {
 	pointer-events: none;
 }
 /* Except if its fully visible */ 
-.cmc-column figure:last-child img {
+.cmc-column div:last-child > div {
 	pointer-events: auto;
-}
-
-.cmc-column figcaption {
-	display: none;
 }
 
 .drag-column {

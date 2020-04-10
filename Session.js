@@ -716,8 +716,8 @@ function Session(id, owner) {
 		this.emitMessage('Resuming draft', `Disconnected player(s) has been replaced by bot(s).`);
 	};
 
-	this.countdown = 60;
-	this.maxTimer = 60;
+	this.countdown = 75;
+	this.maxTimer = 75;
 	this.countdownInterval = null;
 	this.startCountdown = function() {
 		let dec = Math.floor(this.maxTimer/15);

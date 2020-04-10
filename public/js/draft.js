@@ -20,25 +20,37 @@ Vue.component('modal', {
   template: '#modal-template'
 })
 
+/*
+ FIXME: Can't have event on the clazy-load node and pointer event have to be disabled on the image when using columns. Clicking on inner card in columns doesn't work right now.
+*/
 Vue.component('card', {
 	template: `
-<figure class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop" v-on:click="selectcard($event, card)" @dblclick="ondblclick($event, card)">
-	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" v-bind:class="{ selected: selected }"/>
-	<img v-else src="img/missing.svg">
-	<!--<figcaption>{{ card.printed_name[language] }}</figcaption>-->
-</figure>
+<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
+	<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+		<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected }" />
+		<img v-else src="img/missing.svg">
+		<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
+			<div class="card-name">{{card.printed_name[language]}}</div>
+		</div>
+	</clazy-load>
+</div>
 	`,
 	props: {'card': {type: Object, required: true}, 'language': String, 'selectcard': {type: Function, default: function() {}}, 'selected': Boolean, 'ondblclick': {type: Function, default: function() {}}}
 });
 
 Vue.component('missingCard', {
 	template: `
-<figure class="card">
-	<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
-	<img v-else src="img/missing.svg">
-	<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
-	<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
-</figure>
+	<div class="card">
+		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+			<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
+			<img v-else src="img/missing.svg">
+			<div class="card-placeholder" slot="placeholder">
+				<div class="card-name">{{card.printed_name[language]}}</div>
+			</div>
+		</clazy-load>
+		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
+		<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
+	</div>
 	`,
 	props: {'card': {type: Object, required: true}, 'language': {type: String, default: 'en'}}
 });
@@ -65,11 +77,14 @@ const Sounds = {
 
 let UniqueID = 0;
 
+Vue.use(window.VueClazyLoad);
+
 var app = new Vue({
 	el: '#main-vue',
 	components: {
 		Multiselect: window.VueMultiselect.default,
-		draggable: window.vuedraggable
+		draggable: window.vuedraggable,
+		VueClazyLoad: window.VueClazyLoad
 	},
 	data: {
 		// Card Data
@@ -106,8 +121,8 @@ var app = new Vue({
 		useCustomCardList: false,
 		customCardList: [],
 		booster: [],
-		maxTimer: 60,
-		pickTimer: 60,
+		maxTimer: 75,
+		pickTimer: 75,
 		draftLogRecipients: 'everyone',
 		draftLog: undefined,
 		savedDraftLog: false,
