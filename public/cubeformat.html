@@ -10,19 +10,20 @@
 		<h1>MTGADraft Cube Format</h1>
 		<p>
 			Basic cube list is one English card name per line, just like .txt export in either Cube Cobra or Cube Tutor.
-			Boosters will be 15 cards without regards for rarity distribution.
+			Boosters will be 15 cards without regards for rarity distribution. Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity, Maximum duplicate copies and Foil.
+			If you want to include multiple copies of the same card, add it as many times as needed to the list.
 		</p>
 		<p>
 			If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
 			<pre>
 			<code>
 			[SlotName(CardPerBooster)]
-			Card 1
-			Card 2
+			Card Name 1
+			Card Name 2
 			...
 			[Slot2Name(CardPerBooster)]
-			Card X
-			Card X+1
+			Card Name 3
+			Card Name 4
 			...
 			</code>
 			</pre>
@@ -30,16 +31,16 @@
 			<pre>
 			<code>
 			[Common(10)]
-			Card 1
-			Card 2
+			Card Name 1
+			Card Name 2
 			...
 			[Uncommon(3)]
-			Card X
-			Card X+1
+			Card Name 3
+			Card Name 4
 			...
 			[Rare(1)]
-			Card Y
-			Card Y+1
+			Card Name 5
+			Card Name 6
 			...
 			</code>
 			</pre>
@@ -50,20 +51,20 @@
 			<pre>
 			<code>
 			[Planewalker(1)]
-			Planewalker 1
-			Planewalker 2
+			Planewalker Card Name 1
+			Planewalker Card Name 2
 			...
 			[Common(9)]
-			Card 1
-			Card 2
+			Card Name 1
+			Card Name 2
 			...
 			[Uncommon(3)]
-			Card X
-			Card X+1
+			Card Name 3
+			Card Name 4
 			...
 			[Rare(1)]
-			Card Y
-			Card Y+1
+			Card Name 5
+			Card Name 6
 			...
 			</code>
 			</pre>

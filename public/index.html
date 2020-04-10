@@ -65,7 +65,7 @@
 				<label for="file-input">MTGA Collection</label><input type="file" id="file-input" @change="parseMTGALog" style="display:none" accept=".txt" /><button onclick="document.querySelector('#file-input').click()" title="Import your collection by uploading your output_log.txt">Upload <i v-if="hasCollection" class="fas fa-check green" title="Collection uploaded."></i></button>
 				<button v-if="hasCollection" title="Stats." @click="showCollectionStats = true">Stats</button>
 				<span  v-show="Object.keys(collection).length > 0">
-					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards." /><label for="useCollection">Restrict to Collection</label>
+					<input type="checkbox" v-model="useCollection" id="useCollection" title="Uncheck this to draft using every cards. Ignored when using a Custom Card List." /><label for="useCollection">Restrict to Collection</label>
 				</span>
 			</span>
 			<span>
@@ -345,16 +345,16 @@
 					<ul>
 						<li><span class="option-name">Public</span>: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.</li>
 						<li><span class="option-name">Maximum Rarity</span>: Default is Mythic, which means no restriction. (Also affects sealed)</li>
-						<li><span class="option-name">Color Balance</span>: If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random. (Also affects sealed)</li>
-						<li><span class="option-name">Custom card list</span>: Submit a custom card list (one English card name by line) to draft your own cube.</li>
+						<li><span class="option-name">Color Balance</span>: If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random. (Also affects sealed and cube)</li>
+						<li><span class="option-name">Custom card list</span>: Submit a custom card list (one English card name by line) to draft your own cube. (Collections are ignored in this mode) <a href="cubeformat.html" target="_blank">More information here</a></li>
 						<li><span class="option-name">Foil</span>: If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.</li>
 					</ul>
 				</div>
 				<div style="width: 50%">
 					<strong>Personal options</strong>
 					<ul>
-						<li><span class="option-name">Language</span>: Adjusts the display language of cards.</li>
-						<li><span class="option-name">Restrict to Collection</span>: If unchecked, your collection will not limit the cards available in the selected sets. If every players unchecks this, you will draft using every cards.</li>
+						<li><span class="option-name">Language</span>: Adjusts the display language of cards. (Only affects cards)</li>
+						<li><span class="option-name">Restrict to Collection</span>: If unchecked, your collection will not limit the cards available in the selected sets. If every players unchecks this, you will draft using every cards. (Ignored if "Ignore Collections" is enabled in the session, or when using a Custom Card List)</li>
 						<li><span class="option-name">Pick on Double Click</span>: Allows you to double click on booster cards during draft to pick without having to confirm.</li>
 						<li><span class="option-name">Notifications</span>: If enabled, you will be notified when a draft is launched.</li>
 						<li><span class="option-name">Session ID</span>: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!</li>
