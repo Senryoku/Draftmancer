@@ -1,10 +1,11 @@
 body {
 	margin: 0;
 	margin-left: 0;
-	background-image: url('../img/eld_1080p_en.jpg'), linear-gradient(rgba(32,32,32,0.8) 0, rgba(32,32,32,1) 60%);
-	background-blend-mode: saturation;
-	background-size: 100%;
-	background-repeat: none;
+	background-color: rgb(32, 32, 32);
+	background-image: url('../img/iko-min.png');
+	background-position: 85% -20%;
+	background-repeat: no-repeat;
+	background-size: 40%;
 	color: #DDD;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	
