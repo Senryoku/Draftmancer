@@ -9,8 +9,6 @@ const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const uuidv1 = require("uuid/v1");
 
-const AWS = require("aws-sdk");
-
 const constants = require("./public/js/constants");
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
@@ -39,11 +37,6 @@ function getPublicSessions() {
 	}
 	return publicSessions;
 }
-
-AWS.config.update({
-	region: "us-west-2",
-	endpoint: "http://localhost:8000",
-});
 
 // Setup all websocket responses on client connection
 io.on("connection", function (socket) {
