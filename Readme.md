@@ -5,7 +5,7 @@
 - Clone repository
 - Open repository
 - Execute `npm install`
-- Execute `npm run start`
+- Execute `npm start`
 - Navigate to `http://localhost:3000/`
 
 ## Todo
