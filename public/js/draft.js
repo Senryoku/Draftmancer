@@ -128,7 +128,7 @@ var app = new Vue({
 			rare: 2,
 			mythic: 1,
 		},
-		foil: true,
+		foil: false,
 		bots: 0,
 		virtualPlayersData: undefined,
 		setRestriction: "",
