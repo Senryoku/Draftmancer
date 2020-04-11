@@ -86,16 +86,22 @@ function Session(id, owner) {
 		this.syncSessionOptions(userID);
 	};
 
+	this.getDisconnectedUserData = function (userID) {
+		return {
+			userName: Connections[userID].userName,
+			pickedThisRound: Connections[userID].pickedThisRound,
+			pickedCards: Connections[userID].pickedCards,
+			boosterIndex: Connections[userID].boosterIndex,
+		};
+	};
+
 	this.remUser = function (userID) {
 		this.users.delete(userID);
 		if (this.drafting) {
 			this.stopCountdown();
-			this.disconnectedUsers[userID] = {
-				userName: Connections[userID].userName,
-				pickedThisRound: Connections[userID].pickedThisRound,
-				pickedCards: Connections[userID].pickedCards,
-				boosterIndex: Connections[userID].boosterIndex,
-			};
+			this.disconnectedUsers[userID] = this.getDisconnectedUserData(
+				userID
+			);
 			for (let u of this.users)
 				Connections[u].socket.emit(
 					"userDisconnected",

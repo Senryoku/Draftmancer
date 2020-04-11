@@ -1,5 +1,9 @@
 "use strict";
 
+if (process.env.NODE_ENV !== "production") {
+	require("dotenv").config();
+}
+
 const port = process.env.PORT || 3000;
 const compression = require("compression");
 const express = require("express");
@@ -40,9 +44,79 @@ function getPublicSessions() {
 	return publicSessions;
 }
 
+////////////////////////////////////////////////////////////////////////
+// Persistence setup
+
 AWS.config.update({
-	region: "us-west-2",
-	endpoint: "http://localhost:8000",
+	region: process.env.AWS_REGION,
+	endpoint: process.env.AWS_ENDPOINT,
+});
+
+const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
+
+function dumpToDynamoDB() {
+	console.log("dumpToDynamoDB");
+	for (const sessionID in Sessions) {
+		const s = Sessions[sessionID];
+		const params = {
+			TableName: "mtga-draft-sessions",
+			Item: {
+				id: sessionID,
+				timestamp: Date.now(),
+				data: {},
+			},
+		};
+		for (let prop of Object.getOwnPropertyNames(s)) {
+			if (!(s[prop] instanceof Function))
+				params.Item.data[prop] = s[prop];
+		}
+
+		if (s.drafting) {
+			// Flag every user as disconnected so they can reconnect later
+			for (let userID of params.Item.users) {
+				params.Item.disconnectedUsers[
+					userID
+				] = s.getDisconnectedUserData(userID);
+			}
+		}
+		// No one is actually connected anymore. (And DynamoDB doesn't support sets)
+		params.Item.data.users = [];
+
+		console.log(params.Item);
+
+		dynamodb.putItem(params, function (err, data) {
+			if (err) console.log(err, err.stack);
+			else console.log(data); // successful response
+		});
+	}
+}
+
+// Can make asynchronous calls, is not called on process.exit() or uncaught exceptions.
+// See https://nodejs.org/api/process.html#process_event_beforeexit
+process.on("beforeExit", (code) => {
+	console.log("beforeExit callback.");
+});
+
+// Only synchronous calls, called on process.exit()
+// See https://nodejs.org/api/process.html#process_event_exit
+process.on("exit", (code) => {
+	console.log(`exit callback: Process exited with code: ${code}`);
+});
+
+/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual restarts and automatic cycling of dynos (~ every 24h)
+ * Process have 30sec. before getting SIGKILL'd.
+ * See https://devcenter.heroku.com/articles/dynos#shutdown
+ */
+process.on("SIGTERM", () => {
+	console.log("Received SIGTERM.");
+	dumpToDynamoDB();
+	process.exit(0);
+});
+
+process.on("SIGINT", () => {
+	console.log("Received SIGINT.");
+	dumpToDynamoDB();
+	process.exit(0);
 });
 
 // Setup all websocket responses on client connection
@@ -558,8 +632,13 @@ function getUserID(req, res) {
 }
 
 function joinSession(sessionID, userID) {
-	// Session exists and is drafting
-	if (sessionID in Sessions && Sessions[sessionID].drafting) {
+	// Session exists and is empty (it was loaded from database)
+	if (sessionID in Sessions && Sessions[sessionID].users.size === 0) {
+		// TODO
+		Sessions[sessionID].owner = userID;
+		addUserToSession(userID, sessionID);
+		// Session exists and is drafting
+	} else if (sessionID in Sessions && Sessions[sessionID].drafting) {
 		console.log(
 			`${userID} wants to join drafting session '${sessionID}'...`
 		);
