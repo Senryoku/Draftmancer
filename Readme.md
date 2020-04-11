@@ -1,3 +1,11 @@
+# How to run the project in local
+
+* Clone repository
+* Open repository
+* Execute `npm install`
+* Execute `npm run start`
+* Navigate to `http://localhost:3000/`
+
 # Todo
 
 ## Important
