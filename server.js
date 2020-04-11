@@ -9,8 +9,6 @@ const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const uuidv1 = require("uuid/v1");
 
-const AWS = require("aws-sdk");
-
 const constants = require("./public/js/constants");
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
@@ -40,18 +38,11 @@ function getPublicSessions() {
 	return publicSessions;
 }
 
-AWS.config.update({
-	region: "us-west-2",
-	endpoint: "http://localhost:8000",
-});
-
 // Setup all websocket responses on client connection
 io.on("connection", function (socket) {
 	const query = socket.handshake.query;
 	console.log(
-		`${query.userName} [${query.userID}] connected. (${
-			Object.keys(Connections).length + 1
-		} players online)`
+		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
 	);
 	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
@@ -61,11 +52,7 @@ io.on("connection", function (socket) {
 	}
 
 	socket.userID = query.userID;
-	Connections[query.userID] = new ConnectionModule.Connection(
-		socket,
-		query.userID,
-		query.userName
-	);
+	Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
 
 	// Messages
 
@@ -153,10 +140,7 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[this.userID].sessionID;
 
 		// Limits chat message length
-		message.text = message.text.substring(
-			0,
-			Math.min(255, message.text.length)
-		);
+		message.text = message.text.substring(0, Math.min(255, message.text.length));
 
 		for (let user of Sessions[sessionID].users) {
 			Connections[user].socket.emit("chatMessage", message);
@@ -167,31 +151,21 @@ io.on("connection", function (socket) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
-		if (
-			Sessions[sessionID].owner != this.userID ||
-			Sessions[sessionID].drafting
-		)
-			return;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
-		for (let user of Sessions[sessionID].users)
-			if (user != userID) Connections[user].socket.emit("readyCheck");
+		for (let user of Sessions[sessionID].users) if (user != userID) Connections[user].socket.emit("readyCheck");
 	});
 
 	socket.on("setReady", function (readyState) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
-		for (let user of Sessions[sessionID].users)
-			Connections[user].socket.emit("setReady", userID, readyState);
+		for (let user of Sessions[sessionID].users) Connections[user].socket.emit("setReady", userID, readyState);
 	});
 
 	socket.on("startDraft", function () {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (
-			Sessions[sessionID].owner != this.userID ||
-			Sessions[sessionID].drafting
-		)
-			return;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
 		if (Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			Sessions[sessionID].startDraft();
@@ -228,29 +202,18 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 
-		if (
-			newOwnerID === Sessions[sessionID].owner ||
-			!Sessions[sessionID].users.has(newOwnerID)
-		)
-			return;
+		if (newOwnerID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(newOwnerID)) return;
 
 		Sessions[sessionID].owner = newOwnerID;
 		for (let user of Sessions[sessionID].users)
-			Connections[user].socket.emit(
-				"sessionOwner",
-				Sessions[sessionID].owner
-			);
+			Connections[user].socket.emit("sessionOwner", Sessions[sessionID].owner);
 	});
 
 	socket.on("removePlayer", function (userID) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 
-		if (
-			userID === Sessions[sessionID].owner ||
-			!Sessions[sessionID].users.has(userID)
-		)
-			return;
+		if (userID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userID)) return;
 
 		removeUserFromSession(userID);
 		Sessions[sessionID].replaceDisconnectedPlayers();
@@ -275,19 +238,14 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 
-		if (!Number.isInteger(boostersPerPlayer))
-			boostersPerPlayer = parseInt(boostersPerPlayer);
+		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
 		if (!Number.isInteger(boostersPerPlayer)) return;
 
 		if (boostersPerPlayer == Sessions[sessionID].boostersPerPlayer) return;
 
 		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit(
-					"boostersPerPlayer",
-					boostersPerPlayer
-				);
+			if (user != this.userID) Connections[user].socket.emit("boostersPerPlayer", boostersPerPlayer);
 		}
 	});
 
@@ -302,8 +260,7 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].bots = bots;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("bots", bots);
+			if (user != this.userID) Connections[user].socket.emit("bots", bots);
 		}
 	});
 
@@ -323,8 +280,7 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].setRestriction = setRestriction;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("setRestriction", setRestriction);
+			if (user != this.userID) Connections[user].socket.emit("setRestriction", setRestriction);
 		}
 	});
 
@@ -334,9 +290,7 @@ io.on("connection", function (socket) {
 
 		if (
 			!Array.isArray(customCardList) &&
-			(!customCardList.customSheets ||
-				!customCardList.cardsPerBooster ||
-				!customCardList.cards)
+			(!customCardList.customSheets || !customCardList.cardsPerBooster || !customCardList.cards)
 		)
 			return;
 
@@ -356,10 +310,7 @@ io.on("connection", function (socket) {
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID)
-				Connections[user].socket.emit(
-					"ignoreCollections",
-					Sessions[sessionID].ignoreCollections
-				);
+				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
 		}
 	});
 
@@ -372,8 +323,7 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].maxTimer = timerValue;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("setPickTimer", timerValue);
+			if (user != this.userID) Connections[user].socket.emit("setPickTimer", timerValue);
 		}
 	});
 
@@ -386,8 +336,7 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].maxPlayers = maxPlayers;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("setMaxPlayers", maxPlayers);
+			if (user != this.userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
 		}
 	});
 
@@ -396,12 +345,10 @@ io.on("connection", function (socket) {
 		if (Sessions[sessionID].owner != this.userID) return;
 		if (typeof maxRarity !== "string") return;
 		maxRarity = maxRarity.toLowerCase();
-		if (!["mythic", "rare", "uncommon", "common"].includes(maxRarity))
-			return;
+		if (!["mythic", "rare", "uncommon", "common"].includes(maxRarity)) return;
 		Sessions[sessionID].maxRarity = maxRarity;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("setMaxRarity", maxRarity);
+			if (user != this.userID) Connections[user].socket.emit("setMaxRarity", maxRarity);
 		}
 	});
 
@@ -410,12 +357,7 @@ io.on("connection", function (socket) {
 		if (Sessions[sessionID].owner != this.userID) return;
 		if (typeof draftLogRecipients !== "string") return;
 		draftLogRecipients = draftLogRecipients.toLowerCase();
-		if (
-			!["everyone", "owner", "delayed", "none"].includes(
-				draftLogRecipients
-			)
-		)
-			return;
+		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
 		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID)
@@ -429,8 +371,7 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("draftLog", draftLog);
+			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
 		}
 	});
 
@@ -499,11 +440,7 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].isPublic = isPublic;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit(
-					"isPublic",
-					Sessions[sessionID].isPublic
-				);
+			if (user != this.userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
 		}
 		// Update all clients
 		io.emit("publicSessions", getPublicSessions());
@@ -522,21 +459,13 @@ io.on("connection", function (socket) {
 
 		if (isNaN(boostersPerPlayer)) return;
 
-		Sessions[sessionID].emitMessage(
-			"Distributing sealed boosters...",
-			"",
-			false,
-			0
-		);
+		Sessions[sessionID].emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		for (let user of Sessions[sessionID].users) {
 			if (!Sessions[sessionID].generateBoosters(boostersPerPlayer)) {
 				return;
 			}
-			Connections[user].socket.emit(
-				"setCardSelection",
-				Sessions[sessionID].boosters
-			);
+			Connections[user].socket.emit("setCardSelection", Sessions[sessionID].boosters);
 		}
 		Sessions[sessionID].boosters = [];
 	});
@@ -560,9 +489,7 @@ function getUserID(req, res) {
 function joinSession(sessionID, userID) {
 	// Session exists and is drafting
 	if (sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(
-			`${userID} wants to join drafting session '${sessionID}'...`
-		);
+		console.log(`${userID} wants to join drafting session '${sessionID}'...`);
 		let sess = Sessions[sessionID];
 		console.debug(sess.disconnectedUsers);
 		if (userID in sess.disconnectedUsers) {
@@ -579,11 +506,7 @@ function joinSession(sessionID, userID) {
 			//joinSession(sessionID, userID);
 		}
 		// Session exists and is full
-	} else if (
-		sessionID in Sessions &&
-		Sessions[sessionID].getHumanPlayerCount() >=
-			Sessions[sessionID].maxPlayers
-	) {
+	} else if (sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
 		Connections[userID].socket.emit("message", {
 			title: "Cannot join session",
 			text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`,
@@ -599,8 +522,7 @@ function joinSession(sessionID, userID) {
 
 function addUserToSession(userID, sessionID) {
 	if (Connections[userID].sessionID !== null) removeUserFromSession(userID);
-	if (!(sessionID in Sessions))
-		Sessions[sessionID] = new Session(sessionID, userID);
+	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID);
 
 	Sessions[sessionID].addUser(userID);
 }
@@ -716,8 +638,7 @@ app.get("/getConnections/:key", (req, res) => {
 app.get("/getStatus/:key", (req, res) => {
 	if (req.params.key === secretKey) {
 		let draftingSessions = 0;
-		for (let sID in Sessions)
-			if (Sessions[sID].drafting) ++draftingSessions;
+		for (let sID in Sessions) if (Sessions[sID].drafting) ++draftingSessions;
 		let uptime = process.uptime();
 		returnJSON(res, {
 			uptime: uptime,

@@ -55,7 +55,7 @@ function Session(id, owner) {
 		rare: 2,
 		mythic: 1,
 	};
-	this.foil = true;
+	this.foil = false;
 	this.useCustomCardList = false;
 	this.customCardList = [];
 	this.draftLogRecipients = "everyone";
