@@ -1,45 +1,22 @@
-function clone(obj) {
-	return JSON.parse(JSON.stringify(obj));
-}
+const clone = obj => JSON.parse(JSON.stringify(obj));
 
-function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
-}
+// todo: I think Object.keys(obj).some(_=>_) should work as well.
+const isEmpty = obj => Object.keys(obj).some(key => obj.hasOwnProperty(key));
 
-function arrayRemove(arr, value) {
-	return arr.filter(function(ele) {
-	   return ele != value;
-	});
-}
+const arrayRemove = (arr, value) => arr.filter(ele => ele != value);
 
-function guid() {
-	function s4() {
-		return Math.floor((1 + Math.random()) * 0x10000)
-		  .toString(16)
-		  .substring(1);
-	}
-	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
+const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 
-function shortguid() {
-	function s4() {
-		return Math.floor((1 + Math.random()) * 0x10000)
-		  .toString(16)
-		  .substring(1);
-	}
-	return s4() + s4() + s4();
-}
+const guid = () => s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+
+const shortguid = () => s4() + s4() + s4();
 
 function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    let vars = {};
+    const _ = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
         vars[key] = value;
     });
-    return vars;
+    return let;
 }
 
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
@@ -65,65 +42,50 @@ const copyToClipboard = str => {
 
 function cardToMTGAExport(c, language) {
 	let set = c.set.toUpperCase();
-	if(set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
-	if(set == "CON") set = "CONF"; // CON is called CONF in MTGA
+	if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
+	if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
 	let name = c.printed_name[language];
-	let idx = name.indexOf('//');
+	const idx = name.indexOf('//');
 	// Ravnica Splits cards needs both names to be imported, others don't
-	if(idx != -1 && (c.set != 'grn' && c.set != 'rna'))
+	if (idx != -1 && (c.set != 'grn' && c.set != 'rna'))
 		name = name.substr(0, idx - 1);
 	return `1 ${name} (${set}) ${c.collector_number}\n`
 }
 
 function exportMTGA(deck, sideboard, language, lands) {
-	let str = "";
-	for(let c of deck)
-		str += cardToMTGAExport(c, language);
-	if(lands) {
-		for(let c in lands)
-			str += `${lands[c]} ${window.constants.BasicLandNames[language][c]}\n`;
+	let str = deck.map(c => cardToMTGAExport(c, language)).join();
+	if (lands) {
+		str += lands.map(c => `${lands[c]} ${window.constants.BasicLandNames[language][c]}\n`).join();
 	}
-	if(sideboard && sideboard.length > 0) {
-		str += '\n';
-		for(let c of sideboard)
-			str += cardToMTGAExport(c, language);
+	if (sideboard && sideboard.length > 0) {
+		str += '\n' + sideboard.map(c => cardToMTGAExport(c, language)).join();
 	}
 	return str;
 }
 
-function exportToMagicProTools(cardsdb, draftLog, userID) {
-	let str = "";
-	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
+function exportToMagicProTools(cardsdb, draftLog, userId) {
+	let str = `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
 	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
 	str += `Players:\n`; 
-	for(let c in draftLog.users) {
-		if(c == userID)
-			str += `--> ${draftLog.users[c].userName}\n`;
-		else
-			str += `    ${draftLog.users[c].userName}\n`;
-	}
-	
+	str += draftLog.users.map(c => `${(c == userId ? `-->` : `   `)} ${draftLog.users[c].userName}\n`).join();
 	str += '\n';
 	
 	let boosterNumber = 0;
 	let pickNumber = 1;
 	let lastLength = 0;
-	for(let p of draftLog.users[userID].picks) {
-		if(p.booster.length > lastLength) {
+	for (let p of draftLog.users[userId].picks) {
+		if (p.booster.length > lastLength) {
 			boosterNumber += 1;
 			pickNumber = 1;
-			if(draftLog.setRestriction && draftLog.setRestriction.length === 1)
-				str += `------ ${draftLog.setRestriction[0].toUpperCase()} ------\n\n`;
-			else 
-				str += `------ THB ------\n\n`;
+			// todo: why THB here? Should it be MTGSets.slice(-1)[0] aka MTGSets.last()?
+			const set = draftLog.setRestriction && draftLog.setRestriction.length === 1
+				? draftLog.setRestriction[0].toUpperCase()
+				: "THB";
+			str += `------ ${set} ------\n\n`;
 		}
 		lastLength = p.booster.length;
 		str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-		for(let c of p.booster)
-			if(c == p.pick)
-				str += `--> ${cardsdb[c].name}\n`;
-			else
-				str += `    ${cardsdb[c].name}\n`;
+		str += p.booster.map(c => `${(c == p.pick ? `-->` : `   `)} ${cardsdb[c].name}\n`).join();
 		str += '\n';
 		pickNumber += 1;
 	}
@@ -132,7 +94,7 @@ function exportToMagicProTools(cardsdb, draftLog, userID) {
 }
 
 function download(filename, text) {
-  var element = document.createElement('a');
+  let element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', filename);
 

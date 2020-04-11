@@ -11,12 +11,11 @@ function Bot(name, id) {
 		let maxScore = 0;
 		let bestPick = 0;
 		for (let idx = 0; idx < booster.length; ++idx) {
-			let c = Cards[booster[idx]];
+			const c = Cards[booster[idx]];
 			// TODO: Rate cards
-			let score = c.rating;
-			for (let color of c.color_identity) {
-				score += 0.35 * this.pickedColors[color];
-			}
+			const score = c.color_identity
+				.map(color => 0.35 * this.pickedColors[color])
+				.reduce((a, b) => a + b, c.rating);
 			if (score > maxScore) {
 				maxScore = score;
 				bestPick = idx;
