@@ -1,32 +1,33 @@
 {
-  "name": "mtgadraft",
-  "version": "1.0.0",
-  "description": "MTGA Direct Challenge drafting environment",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "logs": "heroku logs --app mtgadraft -t --source app",
-    "test": "mocha test --exit"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Senryoku/MTGADraft.git"
-  },
-  "author": "Senryoku",
-  "license": "MIT",
-  "dependencies": {
-    "compression": "^1.7.4",
-    "cookie-parser": "^1.4.4",
-    "express": "^4.17.1",
-    "heroku-client": "^3.1.0",
-    "random-js": "^2.1.0",
-    "request": "^2.88.2",
-    "socket.io": "^2.3.0",
-    "uuid": "^3.3.3"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "mocha": "^7.1.1",
-    "rewire": "^5.0.0"
-  }
+	"name": "mtgadraft",
+	"version": "1.0.0",
+	"description": "MTGA Direct Challenge drafting environment",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js",
+		"logs": "heroku logs --app mtgadraft -t --source app",
+		"test": "mocha test --exit"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Senryoku/MTGADraft.git"
+	},
+	"author": "Senryoku",
+	"license": "MIT",
+	"dependencies": {
+		"aws-sdk": "^2.656.0",
+		"compression": "^1.7.4",
+		"cookie-parser": "^1.4.4",
+		"express": "^4.17.1",
+		"heroku-client": "^3.1.0",
+		"random-js": "^2.1.0",
+		"request": "^2.88.2",
+		"socket.io": "^2.3.0",
+		"uuid": "^3.3.3"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0",
+		"mocha": "^7.1.1",
+		"rewire": "^5.0.0"
+	}
 }

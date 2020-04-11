@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 let Connections = {};
 function Connection(socket, userID, userName) {
@@ -8,11 +8,11 @@ function Connection(socket, userID, userName) {
 	this.sessionID = null;
 	this.collection = {};
 	this.useCollection = true;
-	
+
 	this.pickedThisRound = false;
 	this.pickedCards = [];
 	this.boosterIndex = -1;
-};
+}
 
-module.exports.Connections = Connections; 
+module.exports.Connections = Connections;
 module.exports.Connection = Connection;
