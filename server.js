@@ -52,9 +52,9 @@ AWS.config.update({
 	endpoint: process.env.AWS_ENDPOINT,
 });
 
-const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
+const docClient = new AWS.DynamoDB.DocumentClient();
 
-function dumpToDynamoDB() {
+async function dumpToDynamoDB() {
 	console.log("dumpToDynamoDB");
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
@@ -66,6 +66,7 @@ function dumpToDynamoDB() {
 				data: {},
 			},
 		};
+
 		for (let prop of Object.getOwnPropertyNames(s)) {
 			if (!(s[prop] instanceof Function))
 				params.Item.data[prop] = s[prop];
@@ -79,15 +80,21 @@ function dumpToDynamoDB() {
 				] = s.getDisconnectedUserData(userID);
 			}
 		}
-		// No one is actually connected anymore. (And DynamoDB doesn't support sets)
+		// No one is actually connected anymore.
 		params.Item.data.users = [];
 
 		console.log(params.Item);
 
-		dynamodb.putItem(params, function (err, data) {
-			if (err) console.log(err, err.stack);
-			else console.log(data); // successful response
-		});
+		try {
+			const putResult = await docClient
+				.put(params, function (err, data) {
+					if (err) console.log(err, err.stack);
+					else console.log(data); // successful response
+				})
+				.promise();
+		} catch (err) {
+			console.log("error: ", err);
+		}
 	}
 }
 
@@ -119,7 +126,15 @@ process.on("SIGINT", () => {
 	process.exit(0);
 });
 
+process.on("uncaughtException", (err) => {
+	console.error(err, "Uncaught Exception thrown");
+	dumpToDynamoDB();
+	process.exit(1);
+});
+
+/////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
+
 io.on("connection", function (socket) {
 	const query = socket.handshake.query;
 	console.log(
