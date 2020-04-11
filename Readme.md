@@ -1,11 +1,12 @@
 # Todo
- * Add set code support to cube import?
+## Important
  * Be more resillient: https://blog.heroku.com/best-practices-nodejs-errors ; use beforeExit to save Connections and Sessions in a database?
- * rewrite cubeformat.html 
  * Heroku dynos are recycled once per day... Everything is in RAM, this is not good... I could find a way to find some persistance, but it will require a massive refactoring, and I'm not sure about the websocket connections...
- * Add some stats on deck/drafted cards
- * Look into https://mtg.gamepedia.com/Winston_Draft ?
- * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
+ -----
+ * Improve bot distribution (they're clumping up at the end of the table when bots >> players)
+ * Save session options and reapply them when the user is the owner?
+ * Add set code support to cube import?
+ * rewrite cubeformat.html 
  -----
  * Brackets (simplebracket project)
  * Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
@@ -14,8 +15,12 @@
  * Move pick time out to server side?
  * Multiple prevention is only done by ID, maybe we should check the card name
  * (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
+## Distant Future
+ * Add some stats on deck/drafted cards (will increase card DB size, not a fan.)
+ * Look into https://mtg.gamepedia.com/Winston_Draft ?
 
 # Check
+ * Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
  * Add a way to re-order players (Need to change all ordering logic)
  * Add an upload saved draft logs
  * Should the disconnect player event be broadcast my the server rather by detected by clients?
