@@ -1,5 +1,8 @@
 # MTGADraft
 
+## Contact
+ Join the discord for development related discussions: https://discord.gg/KYKzx9m
+
 ## How to run the project in local
 
 - Clone repository
