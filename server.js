@@ -19,6 +19,7 @@ const constants = require("./public/js/constants");
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
 const Session = require("./Session");
+const Bot = require("./Bot");
 
 app.use(compression());
 app.use(cookieParser());
@@ -33,6 +34,8 @@ function shortguid() {
 }
 
 let Sessions = {};
+let InactiveSessions = {};
+let InactiveConnections = {};
 
 function getPublicSessions() {
 	let publicSessions = [];
@@ -54,8 +57,81 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+(async function requestSavedConnections() {
+	var connectionsRequestParams = {
+		TableName: "mtga-draft-connections",
+	};
+	const data = await docClient.scan(connectionsRequestParams).promise();
+
+	for (let c of data.Items) {
+		InactiveConnections[c.userID] = new ConnectionModule.Connection(
+			null,
+			c.data.userID,
+			c.data.userName
+		);
+		for (let prop of Object.getOwnPropertyNames(c.data)) {
+			InactiveConnections[c.userID][prop] = c.data[prop];
+		}
+	}
+	console.log(`Restored ${data.Count} saved connections.`);
+})();
+
+(async function requestSavedSessions() {
+	var connections = {
+		TableName: "mtga-draft-sessions",
+	};
+	const data = await docClient.scan(connections).promise();
+
+	for (let s of data.Items) {
+		InactiveSessions[s.id] = new Session(s.id, null);
+		for (let prop of Object.getOwnPropertyNames(s.data).filter(
+			(p) => !["botsInstances"].includes(p)
+		)) {
+			InactiveSessions[s.id][prop] = s.data[prop];
+		}
+
+		if (s.data.botsInstances) {
+			InactiveSessions[s.id].botsInstances = [];
+			for (let bot of s.data.botsInstances) {
+				const newBot = new Bot(bot.name, bot.id);
+				for (let prop of Object.getOwnPropertyNames(bot)) {
+					newBot[prop] = bot[prop];
+				}
+				InactiveSessions[s.id].botsInstances.push(newBot);
+			}
+		}
+	}
+	console.log(`Restored ${data.Count} saved sessions.`);
+})();
+
 async function dumpToDynamoDB() {
-	console.log("dumpToDynamoDB");
+	for (const userID in Connections) {
+		const c = Connections[userID];
+		const params = {
+			TableName: "mtga-draft-connections",
+			Item: {
+				userID: userID,
+				timestamp: Date.now(),
+				data: {},
+			},
+		};
+
+		for (let prop of Object.getOwnPropertyNames(c).filter(
+			(p) => p !== "socket"
+		)) {
+			if (!(c[prop] instanceof Function))
+				params.Item.data[prop] = c[prop];
+		}
+
+		//console.log(params.Item);
+
+		try {
+			const putResult = await docClient.put(params).promise();
+		} catch (err) {
+			console.log("error: ", err);
+		}
+	}
+
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
 		const params = {
@@ -67,35 +143,44 @@ async function dumpToDynamoDB() {
 			},
 		};
 
-		for (let prop of Object.getOwnPropertyNames(s)) {
+		for (let prop of Object.getOwnPropertyNames(s).filter(
+			(p) => !["users", "countdownInterval", "botsInstances"].includes(p)
+		)) {
 			if (!(s[prop] instanceof Function))
 				params.Item.data[prop] = s[prop];
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
-			for (let userID of params.Item.users) {
-				params.Item.disconnectedUsers[
+			for (let userID of s.users) {
+				params.Item.data.disconnectedUsers[
 					userID
 				] = s.getDisconnectedUserData(userID);
 			}
+
+			if (s.botsInstances) {
+				params.Item.data.botsInstances = [];
+				for (let bot of s.botsInstances) {
+					let podbot = {};
+					for (let prop of Object.getOwnPropertyNames(bot)) {
+						if (!(bot[prop] instanceof Function))
+							podbot[prop] = bot[prop];
+					}
+					params.Item.data.botsInstances.push(podbot);
+				}
+			}
 		}
-		// No one is actually connected anymore.
-		params.Item.data.users = [];
 
 		console.log(params.Item);
 
 		try {
-			const putResult = await docClient
-				.put(params, function (err, data) {
-					if (err) console.log(err, err.stack);
-					else console.log(data); // successful response
-				})
-				.promise();
+			const putResult = await docClient.put(params).promise();
 		} catch (err) {
 			console.log("error: ", err);
 		}
 	}
+
+	process.exit(0);
 }
 
 // Can make asynchronous calls, is not called on process.exit() or uncaught exceptions.
@@ -117,19 +202,28 @@ process.on("exit", (code) => {
 process.on("SIGTERM", () => {
 	console.log("Received SIGTERM.");
 	dumpToDynamoDB();
-	process.exit(0);
+	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	setTimeout((_) => {
+		process.exit(0);
+	}, 10000);
 });
 
 process.on("SIGINT", () => {
 	console.log("Received SIGINT.");
 	dumpToDynamoDB();
-	process.exit(0);
+	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	setTimeout((_) => {
+		process.exit(0);
+	}, 10000);
 });
 
 process.on("uncaughtException", (err) => {
 	console.error(err, "Uncaught Exception thrown");
 	dumpToDynamoDB();
-	process.exit(1);
+	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	setTimeout((_) => {
+		process.exit(1);
+	}, 10000);
 });
 
 /////////////////////////////////////////////////////////////////
@@ -142,6 +236,7 @@ io.on("connection", function (socket) {
 			Object.keys(Connections).length + 1
 		} players online)`
 	);
+
 	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		query.userID = uuidv1();
@@ -150,11 +245,18 @@ io.on("connection", function (socket) {
 	}
 
 	socket.userID = query.userID;
-	Connections[query.userID] = new ConnectionModule.Connection(
-		socket,
-		query.userID,
-		query.userName
-	);
+	if (query.userID in InactiveConnections) {
+		// Restore previously saved connection
+		InactiveConnections[query.userID].socket = socket;
+		Connections[query.userID] = InactiveConnections[query.userID];
+		delete InactiveConnections[query.userID];
+	} else {
+		Connections[query.userID] = new ConnectionModule.Connection(
+			socket,
+			query.userID,
+			query.userName
+		);
+	}
 
 	// Messages
 
@@ -647,13 +749,13 @@ function getUserID(req, res) {
 }
 
 function joinSession(sessionID, userID) {
-	// Session exists and is empty (it was loaded from database)
-	if (sessionID in Sessions && Sessions[sessionID].users.size === 0) {
-		// TODO
-		Sessions[sessionID].owner = userID;
-		addUserToSession(userID, sessionID);
-		// Session exists and is drafting
-	} else if (sessionID in Sessions && Sessions[sessionID].drafting) {
+	if (sessionID in InactiveSessions) {
+		InactiveSessions[sessionID].owner = userID;
+		Sessions[sessionID] = InactiveSessions[sessionID];
+		delete InactiveSessions[sessionID];
+	}
+
+	if (sessionID in Sessions && Sessions[sessionID].drafting) {
 		console.log(
 			`${userID} wants to join drafting session '${sessionID}'...`
 		);
