@@ -21,6 +21,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Wait for backend response before updating important frontend state
 -   Continue checking and implementing persistence
+-   Trying out a pattern: check socket status before emiting any important call and wait for acknowledgement (acks don't have timeouts and multiple emit can be in flight, but the status check can help a lot in mitigating that.)
+-   Add a little disconnected icon somewhere (bottom right?)
 
 ---
 

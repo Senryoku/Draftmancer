@@ -402,12 +402,13 @@ io.on("connection", function (socket) {
 
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	socket.on("pickCard", function (cardID) {
+	socket.on("pickCard", function (cardID, ack) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 
 		if (!(sessionID in Sessions) || !(userID in Connections)) return;
 
+		ack("ok");
 		Sessions[sessionID].pickCard(userID, cardID);
 	});
 

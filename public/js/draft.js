@@ -608,10 +608,19 @@ var app = new Vue({
 		pickCard: function () {
 			if (this.draftingState != DraftState.Picking || !this.selectedCard)
 				return;
-			this.draftingState = DraftState.Waiting;
-			this.socket.emit("pickCard", this.selectedCard.id);
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
+
+			if (this.socket.disconnected) {
+				this.disconnectedReminder();
+				return;
+			}
+
+			this.socket.emit("pickCard", this.selectedCard.id, (answer) => {
+				if (answer != "ok")
+					console.log(`pickCard: Unexpected answer: ${anwser}`);
+				this.draftingState = DraftState.Waiting;
+				this.addToDeck(this.selectedCard);
+				this.selectedCard = undefined;
+			});
 		},
 		forcePick: function () {
 			if (this.draftingState != DraftState.Picking) return;
@@ -738,6 +747,9 @@ var app = new Vue({
 				showConfirmButton: false,
 				timer: 1500,
 			});
+		},
+		disconnectedReminder: function () {
+			this.fireToast("error", "Connection Error!");
 		},
 		parseCustomCardList: function (e) {
 			let file = e.target.files[0];
