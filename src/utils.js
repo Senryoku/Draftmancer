@@ -20,10 +20,11 @@ function getRandomKey(dict) {
 }
 
 // Returns [start, start + 1, ..., end]
-function range(start, end) {
-	return Array(end - start + 1)
+function range(start, end, step = 1) {
+	const len = Math.floor((end - start) / step) + 1;
+	return Array(len)
 		.fill()
-		.map((_, idx) => start + idx);
+		.map((_, idx) => start + idx * step);
 }
 
 module.exports = {
