@@ -13,7 +13,6 @@ from itertools import groupby
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-CardDataPath = 'data/data_cards.json' # Card data directly from the devs
 FinalDataPath = 'public/data/MTGACards.json'
 SetsInfosPath = 'public/data/SetsInfos.json'
 RatingsSources = [
@@ -175,9 +174,10 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
 				if selection['name'] in CardRatings:
 					selection['rating'] = CardRatings[selection['name']]
 				else:
-					selection['rating'] = 0
+					selection['rating'] = 0.5
 				if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
-					selection['in_booster'] = False;
+					selection['in_booster'] = False
+					selection['rating'] = 0
 				if 'image_uris' in c and 'border_crop' in c['image_uris']:
 					translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
 				elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
