@@ -2,8 +2,8 @@
 
 ## Important
 
--   Be more resillient: https://blog.heroku.com/best-practices-nodejs-errors ; use beforeExit to save Connections and Sessions in a database?
--   Heroku dynos are recycled once per day... Everything is in RAM, this is not good... I could find a way to find some persistance, but it will require a massive refactoring, and I'm not sure about the websocket connections...
+-   Wait for backend response before updating important frontend state
+-   Continue checking and implementing persistence
 
 ---
 

@@ -104,7 +104,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 	console.log(`Restored ${data.Count} saved sessions.`);
 })();
 
-async function dumpToDynamoDB() {
+async function dumpToDynamoDB(exitOnCompletion = false) {
 	for (const userID in Connections) {
 		const c = Connections[userID];
 		const params = {
@@ -122,8 +122,6 @@ async function dumpToDynamoDB() {
 			if (!(c[prop] instanceof Function))
 				params.Item.data[prop] = c[prop];
 		}
-
-		//console.log(params.Item);
 
 		try {
 			const putResult = await docClient.put(params).promise();
@@ -171,8 +169,6 @@ async function dumpToDynamoDB() {
 			}
 		}
 
-		console.log(params.Item);
-
 		try {
 			const putResult = await docClient.put(params).promise();
 		} catch (err) {
@@ -180,7 +176,7 @@ async function dumpToDynamoDB() {
 		}
 	}
 
-	process.exit(0);
+	if (exitOnCompletion) process.exit(0);
 }
 
 // Can make asynchronous calls, is not called on process.exit() or uncaught exceptions.
@@ -201,7 +197,7 @@ process.on("exit", (code) => {
  */
 process.on("SIGTERM", () => {
 	console.log("Received SIGTERM.");
-	dumpToDynamoDB();
+	dumpToDynamoDB(true);
 	// Gives dumpToDynamoDB 10sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(0);
@@ -210,7 +206,7 @@ process.on("SIGTERM", () => {
 
 process.on("SIGINT", () => {
 	console.log("Received SIGINT.");
-	dumpToDynamoDB();
+	dumpToDynamoDB(true);
 	// Gives dumpToDynamoDB 10sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(0);
@@ -218,8 +214,9 @@ process.on("SIGINT", () => {
 });
 
 process.on("uncaughtException", (err) => {
-	console.error(err, "Uncaught Exception thrown");
-	dumpToDynamoDB();
+	console.error("Uncaught Exception thrown: ");
+	console.error(err);
+	dumpToDynamoDB(true);
 	// Gives dumpToDynamoDB 10sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(1);
@@ -247,6 +244,7 @@ io.on("connection", function (socket) {
 	socket.userID = query.userID;
 	if (query.userID in InactiveConnections) {
 		// Restore previously saved connection
+		// TODO: Front and Back end may be out of sync after this!
 		InactiveConnections[query.userID].socket = socket;
 		Connections[query.userID] = InactiveConnections[query.userID];
 		delete InactiveConnections[query.userID];
@@ -750,17 +748,20 @@ function getUserID(req, res) {
 
 function joinSession(sessionID, userID) {
 	if (sessionID in InactiveSessions) {
-		InactiveSessions[sessionID].owner = userID;
+		InactiveSessions[sessionID].owner = userID; // Always having a valid owner is more important than preserving the old one - probably.
 		Sessions[sessionID] = InactiveSessions[sessionID];
 		delete InactiveSessions[sessionID];
 	}
 
+	// Session exists and is drafting
 	if (sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(
-			`${userID} wants to join drafting session '${sessionID}'...`
-		);
 		let sess = Sessions[sessionID];
-		console.debug(sess.disconnectedUsers);
+		console.log(
+			`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
+				userID in sess.disconnectedUsers
+			}`
+		);
+
 		if (userID in sess.disconnectedUsers) {
 			sess.reconnectUser(userID);
 		} else {
