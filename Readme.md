@@ -1,3 +1,20 @@
+# Setup DynamoDB
+
+## Local testing
+
+-   Download [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
+-   Extract and run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb`
+-   Setup environment variables, for development create a '.env' file at the root of MTGADraft with the following:
+
+```
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=...
+AWS_ENDPOINT=http://localhost:8000
+```
+
+-   Run `node createDynamoDBTables.js`
+
 # Todo
 
 ## Important
