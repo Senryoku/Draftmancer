@@ -61,47 +61,57 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 	var connectionsRequestParams = {
 		TableName: "mtga-draft-connections",
 	};
-	const data = await docClient.scan(connectionsRequestParams).promise();
 
-	for (let c of data.Items) {
-		InactiveConnections[c.userID] = new ConnectionModule.Connection(
-			null,
-			c.data.userID,
-			c.data.userName
-		);
-		for (let prop of Object.getOwnPropertyNames(c.data)) {
-			InactiveConnections[c.userID][prop] = c.data[prop];
+	try {
+		const data = await docClient.scan(connectionsRequestParams).promise();
+
+		for (let c of data.Items) {
+			InactiveConnections[c.userID] = new ConnectionModule.Connection(
+				null,
+				c.data.userID,
+				c.data.userName
+			);
+			for (let prop of Object.getOwnPropertyNames(c.data)) {
+				InactiveConnections[c.userID][prop] = c.data[prop];
+			}
 		}
+		console.log(`Restored ${data.Count} saved connections.`);
+	} catch (err) {
+		console.log("error: ", err);
 	}
-	console.log(`Restored ${data.Count} saved connections.`);
 })();
 
 (async function requestSavedSessions() {
 	var connections = {
 		TableName: "mtga-draft-sessions",
 	};
-	const data = await docClient.scan(connections).promise();
 
-	for (let s of data.Items) {
-		InactiveSessions[s.id] = new Session(s.id, null);
-		for (let prop of Object.getOwnPropertyNames(s.data).filter(
-			(p) => !["botsInstances"].includes(p)
-		)) {
-			InactiveSessions[s.id][prop] = s.data[prop];
-		}
+	try {
+		const data = await docClient.scan(connections).promise();
 
-		if (s.data.botsInstances) {
-			InactiveSessions[s.id].botsInstances = [];
-			for (let bot of s.data.botsInstances) {
-				const newBot = new Bot(bot.name, bot.id);
-				for (let prop of Object.getOwnPropertyNames(bot)) {
-					newBot[prop] = bot[prop];
+		for (let s of data.Items) {
+			InactiveSessions[s.id] = new Session(s.id, null);
+			for (let prop of Object.getOwnPropertyNames(s.data).filter(
+				(p) => !["botsInstances"].includes(p)
+			)) {
+				InactiveSessions[s.id][prop] = s.data[prop];
+			}
+
+			if (s.data.botsInstances) {
+				InactiveSessions[s.id].botsInstances = [];
+				for (let bot of s.data.botsInstances) {
+					const newBot = new Bot(bot.name, bot.id);
+					for (let prop of Object.getOwnPropertyNames(bot)) {
+						newBot[prop] = bot[prop];
+					}
+					InactiveSessions[s.id].botsInstances.push(newBot);
 				}
-				InactiveSessions[s.id].botsInstances.push(newBot);
 			}
 		}
+		console.log(`Restored ${data.Count} saved sessions.`);
+	} catch (err) {
+		console.log("error: ", err);
 	}
-	console.log(`Restored ${data.Count} saved sessions.`);
 })();
 
 async function dumpToDynamoDB(exitOnCompletion = false) {
@@ -352,16 +362,19 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("readyCheck", function () {
+	socket.on("readyCheck", function (ack) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
 		if (
 			Sessions[sessionID].owner != this.userID ||
 			Sessions[sessionID].drafting
-		)
+		) {
+			ack({ code: 1 });
 			return;
+		}
 
+		ack({ code: 0 });
 		for (let user of Sessions[sessionID].users)
 			if (user != userID) Connections[user].socket.emit("readyCheck");
 	});
@@ -406,9 +419,12 @@ io.on("connection", function (socket) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 
-		if (!(sessionID in Sessions) || !(userID in Connections)) return;
+		if (!(sessionID in Sessions) || !(userID in Connections)) {
+			ack({ code: 1, error: "Invalid request" });
+			return;
+		}
 
-		ack("ok");
+		ack({ code: 0 });
 		Sessions[sessionID].pickCard(userID, cardID);
 	});
 
@@ -518,7 +534,7 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("customCardList", function (customCardList) {
+	socket.on("customCardList", function (customCardList, ack) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 
@@ -527,8 +543,12 @@ io.on("connection", function (socket) {
 			(!customCardList.customSheets ||
 				!customCardList.cardsPerBooster ||
 				!customCardList.cards)
-		)
+		) {
+			ack({ code: 1, error: "Invalid data" });
 			return;
+		}
+
+		ack({ code: 0 });
 
 		Sessions[sessionID].customCardList = customCardList;
 		for (let user of Sessions[sessionID].users) {

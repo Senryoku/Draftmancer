@@ -615,11 +615,11 @@ var app = new Vue({
 			}
 
 			this.socket.emit("pickCard", this.selectedCard.id, (answer) => {
-				if (answer != "ok")
-					console.log(`pickCard: Unexpected answer: ${anwser}`);
-				this.draftingState = DraftState.Waiting;
-				this.addToDeck(this.selectedCard);
-				this.selectedCard = undefined;
+				if (answer.code === 0) {
+					this.draftingState = DraftState.Waiting;
+					this.addToDeck(this.selectedCard);
+					this.selectedCard = undefined;
+				} else console.log(`pickCard: Unexpected answer:`, anwser);
 			});
 		},
 		forcePick: function () {
@@ -749,7 +749,7 @@ var app = new Vue({
 			});
 		},
 		disconnectedReminder: function () {
-			this.fireToast("error", "Connection Error!");
+			this.fireToast("error", "Disconnected from server!");
 		},
 		parseCustomCardList: function (e) {
 			let file = e.target.files[0];
@@ -856,10 +856,22 @@ var app = new Vue({
 						}
 						app.customCardList = cardList;
 					}
-					app.socket.emit("customCardList", app.customCardList);
-					app.fireToast(
-						"success",
-						`Card list uploaded (${app.customCardList.length} cards)`
+					app.socket.emit(
+						"customCardList",
+						app.customCardList,
+						(answer) => {
+							if (answer.code === 0) {
+								app.fireToast(
+									"success",
+									`Card list uploaded (${app.customCardList.length} cards)`
+								);
+							} else {
+								app.fireToast(
+									"error",
+									`Error while uploading card list: ${answer.error}`
+								);
+							}
+						}
 					);
 				} catch (e) {
 					Swal.fire({
@@ -1086,10 +1098,17 @@ var app = new Vue({
 		readyCheck: function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
-			this.initReadyCheck();
+			if (this.socket.disconnected) {
+				this.disconnectedReminder();
+				return;
+			}
 
-			this.socket.emit("readyCheck");
-			this.socket.emit("setReady", ReadyState.Ready);
+			this.socket.emit("readyCheck", (anwser) => {
+				if (anwser.code === 0) {
+					this.initReadyCheck();
+					this.socket.emit("setReady", ReadyState.Ready);
+				}
+			});
 		},
 		initReadyCheck: function () {
 			this.pendingReadyCheck = true;
