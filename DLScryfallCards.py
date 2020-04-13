@@ -13,7 +13,6 @@ from itertools import groupby
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-CardDataPath = 'data/data_cards.json' # Card data directly from the devs
 FinalDataPath = 'public/data/MTGACards.json'
 SetsInfosPath = 'public/data/SetsInfos.json'
 RatingsSources = [
@@ -57,24 +56,25 @@ with open(MTGALocFile, 'r', encoding="utf8") as file:
 	for o in locdata[0]['keys']:
 		MTGALocalization[o['id']] = o['text']
 
-NameSetToCardID = {}
+MTGADataDebug = {}
 CardsCollectorNumberAndSet = {}
 with open(MTGACardsFile, 'r', encoding="utf8") as file:
 	carddata = json.load(file)
 	for o in carddata:
-		o['set'] = o['set'].lower()
-		if o['set'] == 'conf':
-			o['set'] = 'con'
-		if o['set'] == 'dar':
-			o['set'] = 'dom'
-		NameSetToCardID[(MTGALocalization[o['titleId']], o['set'])] = o['grpid']
-		CardsCollectorNumberAndSet[(o['CollectorNumber'], o['set'])]  = o['grpid']
+		if o['isPrimaryCard']:
+			o['set'] = o['set'].lower()
+			if o['set'] == 'conf':
+				o['set'] = 'con'
+			if o['set'] == 'dar':
+				o['set'] = 'dom'
+			MTGADataDebug[(MTGALocalization[o['titleId']], o['CollectorNumber'], o['set'].lower())] = o['grpid']
+			CardsCollectorNumberAndSet[(o['CollectorNumber'], o['set'].lower())]  = o['grpid']
 		
-with open('data/NameSetToCardID.json', 'w') as outfile:
-	NameSetToCardIDToJSON = {}
-	for key in NameSetToCardID.keys():
-		NameSetToCardIDToJSON[str(key)] = NameSetToCardID[key]
-	json.dump(NameSetToCardIDToJSON, outfile, sort_keys=True, indent=4)
+with open('data/MTGADataDebug.json', 'w') as outfile:
+	MTGADataDebugToJSON = {}
+	for key in MTGADataDebug.keys():
+		MTGADataDebugToJSON[str(key)] = MTGADataDebug[key]
+	json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
 	print("Downloading {}...".format(BulkDataURL))
@@ -91,8 +91,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
 		sys.stdout.flush()
 		copied = 0
 		for c in arena_cards:
-			if (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-				c['arena_id'] = CardsCollectorNumberAndSet[(c['collector_number'], c['set'].lower())]
+			c['arena_id'] = CardsCollectorNumberAndSet[(c['collector_number'], c['set'].lower())]
 			cards.append(c)
 			copied += 1
 			sys.stdout.write("\b" * 100) # return to start of line
@@ -127,7 +126,7 @@ else:
 	with open(RatingsDest, 'r', encoding="utf8") as file:
 		CardRatings = json.loads(file.read())
 
-if not os.path.isfile(FinalDataPath) or ForceCache:
+if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
 	# Tag non booster card as such
 	print("Requesting non-booster cards list...")
 	NonBoosterCards = []
@@ -137,7 +136,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 		if('arena_id' in c):
 			NonBoosterCards.append(c['arena_id'])
 		else:
-			NonBoosterCards.append(NameSetToCardID[(c['name'], c['set'].lower())])
+			NonBoosterCards.append(CardsCollectorNumberAndSet[(c['collector_number'], c['set'].lower())])
 	while(data["has_more"]):
 		response = requests.get(data["next_page"])
 		data = json.loads(response.content)
@@ -145,63 +144,55 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 			if('arena_id' in c):
 				NonBoosterCards.append(c['arena_id'])
 			else:
-				NonBoosterCards.append(NameSetToCardID[(c['name'], c['set'].lower())])
+				NonBoosterCards.append(CardsCollectorNumberAndSet[(c['collector_number'], c['set'].lower())])
 
 	print("Generating card data cache...")
-	with open(CardDataPath, 'r', encoding="utf8") as devCardData:		# List adventures to fix their IDs
-		adventures = list(filter(lambda c : "frameDetails" in c and "adventure" in c["frameDetails"], json.loads(devCardData.read())))
-		adventuresIds = {}
-		for c in adventures:
-			adventuresIds[c["grpid"]] = c["linkedFaces"][0]
-
-		with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
-			cards = {}
-			translations = {}
-			translations_img = {}
-			arena_cards = json.loads(file.read())
-			for c in arena_cards:
-				if c['arena_id'] in adventuresIds:
-					print(str(c['arena_id']) + " " + c['name'] + " in an adventure, fixing it.")
-					c['arena_id'] = adventuresIds[c['arena_id']]
-				if c['arena_id'] not in translations:
-					translations[c['arena_id']] = {}
-				if c['arena_id'] not in translations_img:
-					translations_img[c['arena_id']] = {}
-				if c['lang'] != 'en':
-					if 'printed_name' in c:
-						translations[c['arena_id']][c['lang']] = c['printed_name']
-					elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-						translations[c['arena_id']][c['lang']] = c['card_faces'][0]['printed_name']
-					if 'image_uris' in c and 'border_crop' in c['image_uris']:
-						translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
-					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-						translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
-					continue
-				if c['arena_id'] not in cards:
-					cards[c['arena_id']] = {}
-				if c['lang'] == 'en':
-					selection = {key:value for key,value in c.items() if key in {'name', 'set', 'cmc', 'rarity', 'collector_number', 'color_identity'}}
-					if selection['name'] in CardRatings:
-						selection['rating'] = CardRatings[selection['name']]
-					else:
-						selection['rating'] = 0
-					if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
-						selection['in_booster'] = False;
-					if 'image_uris' in c and 'border_crop' in c['image_uris']:
-						translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
-					elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-						translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
-					translations[c['arena_id']][c['lang']] = c['name']
-					cards[c['arena_id']].update(selection)
-			
-			for k in cards:
-				cards[k]['printed_name'] = translations[k]
-				cards[k]['image_uris'] = translations_img[k]
-			
-			with open(FinalDataPath, 'w', encoding="utf8") as outfile:
-				json.dump(cards, outfile, ensure_ascii=False)
-			# with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
-				# json.dump(cards, outfile, ensure_ascii=False)
+	with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
+		cards = {}
+		translations = {}
+		translations_img = {}
+		arena_cards = json.loads(file.read())
+		for c in arena_cards:
+			if c['arena_id'] not in translations:
+				translations[c['arena_id']] = {}
+			if c['arena_id'] not in translations_img:
+				translations_img[c['arena_id']] = {}
+			if c['lang'] != 'en':
+				if 'printed_name' in c:
+					translations[c['arena_id']][c['lang']] = c['printed_name']
+				elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+					translations[c['arena_id']][c['lang']] = c['card_faces'][0]['printed_name']
+				if 'image_uris' in c and 'border_crop' in c['image_uris']:
+					translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
+				elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+					translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
+				continue
+			if c['arena_id'] not in cards:
+				cards[c['arena_id']] = {}
+			if c['lang'] == 'en':
+				selection = {key:value for key,value in c.items() if key in {'name', 'set', 'cmc', 'rarity', 'collector_number', 'color_identity'}}
+				if selection['name'] in CardRatings:
+					selection['rating'] = CardRatings[selection['name']]
+				else:
+					selection['rating'] = 0.5
+				if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
+					selection['in_booster'] = False
+					selection['rating'] = 0
+				if 'image_uris' in c and 'border_crop' in c['image_uris']:
+					translations_img[c['arena_id']][c['lang']] = c['image_uris']['border_crop']
+				elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+					translations_img[c['arena_id']][c['lang']] = c['card_faces'][0]['image_uris']['border_crop']
+				translations[c['arena_id']][c['lang']] = c['name']
+				cards[c['arena_id']].update(selection)
+		
+		for k in cards:
+			cards[k]['printed_name'] = translations[k]
+			cards[k]['image_uris'] = translations_img[k]
+		
+		with open(FinalDataPath, 'w', encoding="utf8") as outfile:
+			json.dump(cards, outfile, ensure_ascii=False)
+		# with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
+			# json.dump(cards, outfile, ensure_ascii=False)
 
 setFullNames = {
 	"ana": "Arena",
@@ -218,6 +209,7 @@ setFullNames = {
 	"eld": "Throne of Eldraine",
 	"thb": "Theros: Beyond Death",
 	"m21": "Core Set 2021",
+	"iko": "Ikoria: Lair of Behemoths"
 }
 
 print("Cards in database:")

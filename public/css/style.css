@@ -7,8 +7,7 @@ body {
 	background-repeat: no-repeat;
 	background-size: 40%;
 	color: #ddd;
-	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial,
-		sans-serif;
+	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 	position: relative;
 	min-height: calc(100vh - 2em);
@@ -97,13 +96,7 @@ a:hover {
 	display: inline-block;
 	pointer-events: none;
 	opacity: 0.3;
-	background: repeating-linear-gradient(
-		45deg,
-		#282828,
-		#282828 10px,
-		#383838 10px,
-		#383838 20px
-	);
+	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #383838 10px, #383838 20px);
 }
 
 #main-vue {
@@ -114,7 +107,7 @@ a:hover {
 #main-vue .multiselect {
 	display: inline-block;
 	vertical-align: baseline;
-	width: 13em;
+	width: 14.5em;
 	min-height: auto;
 }
 
@@ -145,6 +138,7 @@ a:hover {
 	line-height: 36px;
 	font-size: 10px;
 	padding-left: inherit;
+	font-family: "Font Awesome 5 Free";
 }
 
 #main-vue .multiselect__tag {
@@ -194,8 +188,7 @@ a:hover {
 	display: inline-block;
 	height: 1em;
 	vertical-align: baseline;
-	filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(27deg)
-		brightness(101%) contrast(99%);
+	filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(27deg) brightness(101%) contrast(99%);
 }
 
 .mana-icon {
@@ -275,9 +268,6 @@ a:hover {
 	background-position: -10em -10em;
 	transition: 0.3s ease;
 	outline: 0;
-}
-
-.check-button:focus + label {
 }
 
 .check-button:active + label {
@@ -455,9 +445,6 @@ label {
 	justify-content: space-between;
 	flex-wrap: wrap;
 	align-items: baseline;
-}
-
-#session-controls {
 }
 
 #session-id {
@@ -665,10 +652,6 @@ ul.player-list {
 	margin: 0;
 	font-variant: small-caps;
 	font-size: 28px;
-}
-
-.controls button,
-.controls input[type="button"] {
 }
 
 .more-option {
@@ -897,15 +880,11 @@ ul.player-list {
 	-o-animation: spinner 1500ms infinite linear;
 	animation: spinner 1500ms infinite linear;
 	border-radius: 0.5em;
-	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0,
-		var(--spinner-color) 1.1em -1.1em 0 0;
-	box-shadow: var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0,
-		var(--spinner-color) -1.1em -1.1em 0 0,
+	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0,
+		var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
+		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+	box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
+		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0, var(--spinner-color) -1.1em -1.1em 0 0,
 		var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
 }
 
@@ -967,15 +946,11 @@ ul.player-list {
 	-o-animation: spinner 1500ms infinite linear;
 	animation: spinner 1500ms infinite linear;
 	border-radius: 0.5em;
-	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0,
-		var(--spinner-color) 1.1em -1.1em 0 0;
-	box-shadow: var(--spinner-color) 1.5em 0 0 0,
-		var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0,
-		var(--spinner-color) -1.1em -1.1em 0 0,
+	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0,
+		var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
+		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+	box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
+		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0, var(--spinner-color) -1.1em -1.1em 0 0,
 		var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
 }
 

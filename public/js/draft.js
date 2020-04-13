@@ -3,8 +3,7 @@
 const ColorOrder = { W: 0, U: 1, B: 2, R: 3, G: 4 };
 function orderColor(lhs, rhs) {
 	if (!lhs || !rhs) return 0;
-	if (lhs.length == 1 && rhs.length == 1)
-		return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
+	if (lhs.length == 1 && rhs.length == 1) return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
 	else if (lhs.length == 1) return -1;
 	else if (rhs.length == 1) return 1;
 	else return String(lhs.flat()).localeCompare(String(rhs.flat()));
@@ -20,9 +19,6 @@ Vue.component("modal", {
 	template: "#modal-template",
 });
 
-/*
- FIXME: Can't have event on the clazy-load node and pointer event have to be disabled on the image when using columns. Clicking on inner card in columns doesn't work right now.
-*/
 Vue.component("card", {
 	template: `
 	<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
@@ -132,7 +128,7 @@ var app = new Vue({
 			rare: 2,
 			mythic: 1,
 		},
-		foil: true,
+		foil: false,
 		bots: 0,
 		virtualPlayersData: undefined,
 		setRestriction: "",
@@ -161,9 +157,7 @@ var app = new Vue({
 		pickOnDblclick: getCookie("pickOnDblclick", false),
 		enableSound: getCookie("enableSound", true),
 		enableNotifications:
-			Notification &&
-			Notification.permission == "granted" &&
-			getCookie("enableNotifications", false),
+			Notification && Notification.permission == "granted" && getCookie("enableNotifications", false),
 		notificationPermission: Notification && Notification.permission,
 		selectedCard: undefined,
 		deck: [],
@@ -223,9 +217,7 @@ var app = new Vue({
 			});
 
 			this.socket.on("reconnect", function (attemptNumber) {
-				console.log(
-					`Reconnected to server (attempt ${attemptNumber}).`
-				);
+				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 
 				Swal.fire({
 					customClass: SwalCustomClasses,
@@ -243,16 +235,11 @@ var app = new Vue({
 			this.socket.on("chatMessage", function (message) {
 				app.messagesHistory.push(message);
 				// TODO: Cleanup this?
-				let bubble = document.querySelector(
-					"#chat-bubble-" + message.author
-				);
+				let bubble = document.querySelector("#chat-bubble-" + message.author);
 				bubble.innerText = message.text;
 				bubble.style.opacity = 1;
 				if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
-				bubble.timeoutHandler = window.setTimeout(
-					() => (bubble.style.opacity = 0),
-					5000
-				);
+				bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = 0), 5000);
 			});
 
 			this.socket.on("publicSessions", function (sessions) {
@@ -287,15 +274,12 @@ var app = new Vue({
 						customClass: SwalCustomClasses,
 						type: "error",
 						title: `Player(s) disconnected`,
-						text: `Wait for ${userNames.join(
-							", "
-						)} to come back or...`,
+						text: `Wait for ${userNames.join(", ")} to come back or...`,
 						showConfirmButton: true,
 						allowOutsideClick: false,
 						confirmButtonText: "Replace with a bot",
 					}).then((result) => {
-						if (result.value)
-							app.socket.emit("replaceDisconnectedPlayers");
+						if (result.value) app.socket.emit("replaceDisconnectedPlayers");
 					});
 				} else {
 					Swal.fire({
@@ -359,10 +343,8 @@ var app = new Vue({
 				if (data.title === undefined) data.title = "[Missing Title]";
 				if (data.text === undefined) data.text = "[Missing Text]";
 
-				if (data.showConfirmButton === undefined)
-					data.showConfirmButton = true;
-				else if (!data.showConfirmButton && data.timer === undefined)
-					data.timer = 1500;
+				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
+				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
 
 				Swal.fire({
 					position: "center",
@@ -382,9 +364,7 @@ var app = new Vue({
 
 				if (app.enableNotifications) {
 					let notification = new Notification("Are you ready?", {
-						body: `${
-							app.userByID[app.sessionOwner].userName
-						} has initiated a ready check`,
+						body: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`,
 					});
 				}
 
@@ -392,9 +372,7 @@ var app = new Vue({
 					position: "center",
 					type: "question",
 					title: "Are you ready?",
-					text: `${
-						app.userByID[app.sessionOwner].userName
-					} has initiated a ready check`,
+					text: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`,
 					customClass: SwalCustomClasses,
 					showCancelButton: true,
 					confirmButtonColor: "#3085d6",
@@ -402,21 +380,14 @@ var app = new Vue({
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
 				}).then((result) => {
-					app.socket.emit(
-						"setReady",
-						result.value ? ReadyState.Ready : ReadyState.NotReady
-					);
+					app.socket.emit("setReady", result.value ? ReadyState.Ready : ReadyState.NotReady);
 				});
 			});
 
 			this.socket.on("setReady", function (userID, readyState) {
 				if (!app.pendingReadyCheck) return;
 				app.userByID[userID].readyState = readyState;
-				if (
-					app.sessionUsers.every(
-						(u) => u.readyState === ReadyState.Ready
-					)
-				)
+				if (app.sessionUsers.every((u) => u.readyState === ReadyState.Ready))
 					app.fireToast("success", "Everybody is ready!");
 			});
 
@@ -476,8 +447,7 @@ var app = new Vue({
 
 			this.socket.on("nextBooster", function (data) {
 				app.booster = [];
-				if (!app.cardsPerBooster)
-					app.cardsPerBooster = data.booster.length;
+				if (!app.cardsPerBooster) app.cardsPerBooster = data.booster.length;
 				for (let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
@@ -536,8 +506,7 @@ var app = new Vue({
 						}, 500);
 					}
 				}
-				if (data.countdown > 0 && data.countdown <= 5)
-					app.playSound("countdown");
+				if (data.countdown > 0 && data.countdown <= 5) app.playSound("countdown");
 				app.pickTimer = data.countdown;
 			});
 
@@ -574,8 +543,7 @@ var app = new Vue({
 		},
 		// Chat Methods
 		sendChatMessage: function (e) {
-			if (!this.currentChatMessage || this.currentChatMessage == "")
-				return;
+			if (!this.currentChatMessage || this.currentChatMessage == "") return;
 			this.socket.emit("chatMessage", {
 				author: this.userID,
 				timestamp: Date.now(),
@@ -594,20 +562,15 @@ var app = new Vue({
 		addToDeck: function (card) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.deckColumn[
-				Math.min(card.cmc, this.deckColumn.length - 1)
-			].push(card);
+			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
 		},
 		addToSideboard: function (card) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.sideboardColumn[
-				Math.min(card.cmc, this.sideboardColumn.length - 1)
-			].push(card);
+			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
 		},
 		pickCard: function () {
-			if (this.draftingState != DraftState.Picking || !this.selectedCard)
-				return;
+			if (this.draftingState != DraftState.Picking || !this.selectedCard) return;
 
 			if (this.socket.disconnected) {
 				this.disconnectedReminder();
@@ -626,9 +589,7 @@ var app = new Vue({
 			if (this.draftingState != DraftState.Picking) return;
 			// Forces a random card if none is selected
 			if (!this.selectedCard) {
-				const randomIdx = Math.floor(
-					Math.random() * this.booster.length
-				);
+				const randomIdx = Math.floor(Math.random() * this.booster.length);
 				this.selectedCard = this.booster[randomIdx];
 			}
 			this.socket.emit("pickCard", this.selectedCard.id);
@@ -692,27 +653,16 @@ var app = new Vue({
 			var reader = new FileReader();
 			reader.onload = function (e) {
 				let contents = e.target.result;
-				let call_idx = contents.lastIndexOf(
-					"PlayerInventory.GetPlayerCardsV3"
-				);
+				let call_idx = contents.lastIndexOf("PlayerInventory.GetPlayerCardsV3");
 				let collection_start = contents.indexOf("{", call_idx);
-				let collection_end =
-					contents.indexOf("}}", collection_start) + 2;
+				let collection_end = contents.indexOf("}}", collection_start) + 2;
 
 				try {
-					let collStr = contents.slice(
-						collection_start,
-						collection_end
-					);
+					let collStr = contents.slice(collection_start, collection_end);
 					let collJson = JSON.parse(collStr)["payload"];
-					localStorage.setItem(
-						"Collection",
-						JSON.stringify(collJson)
-					);
-					localStorage.setItem(
-						"CollectionDate",
-						new Date().toLocaleDateString()
-					);
+					//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
+					localStorage.setItem("Collection", JSON.stringify(collJson));
+					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
 					app.setCollection(collJson);
 					Swal.fire({
 						position: "top-end",
@@ -768,16 +718,12 @@ var app = new Vue({
 				let contents = e.target.result;
 
 				const searchCardID = function (line) {
-					let cardID = Object.keys(app.cards).find(
-						(id) => app.cards[id].name == line
-					);
+					let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
 					if (typeof cardID !== "undefined") {
 						return cardID;
 					} else {
 						// If not found, try doubled faced cards before giving up!
-						return Object.keys(app.cards).find((id) =>
-							app.cards[id].name.startsWith(line + " //")
-						);
+						return Object.keys(app.cards).find((id) => app.cards[id].name.startsWith(line + " //"));
 					}
 				};
 
@@ -792,9 +738,7 @@ var app = new Vue({
 							cardsPerBooster: {},
 							cards: {},
 						};
-						let headerRegex = new RegExp(
-							String.raw`\[([^\(\]]+)(\((\d+)\))?\]`
-						); // Groups: SlotName, '(Count)', Count
+						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
 						while (line < lines.length) {
 							// TODO
 							let header = lines[line].match(headerRegex);
@@ -807,15 +751,10 @@ var app = new Vue({
 								});
 								return;
 							}
-							cardList.cardsPerBooster[header[1]] = parseInt(
-								header[3]
-							);
+							cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
 							cardList.cards[header[1]] = [];
 							line += 1;
-							while (
-								line < lines.length &&
-								lines[line].trim()[0] !== "["
-							) {
+							while (line < lines.length && lines[line].trim()[0] !== "[") {
 								if (lines[line]) {
 									let cardID = searchCardID(lines[line]);
 									if (typeof cardID !== "undefined") {
@@ -856,29 +795,18 @@ var app = new Vue({
 						}
 						app.customCardList = cardList;
 					}
-					app.socket.emit(
-						"customCardList",
-						app.customCardList,
-						(answer) => {
-							if (answer.code === 0) {
-								app.fireToast(
-									"success",
-									`Card list uploaded (${app.customCardList.length} cards)`
-								);
-							} else {
-								app.fireToast(
-									"error",
-									`Error while uploading card list: ${answer.error}`
-								);
-							}
+					app.socket.emit("customCardList", app.customCardList, (answer) => {
+						if (answer.code === 0) {
+							app.fireToast("success", `Card list uploaded (${app.customCardList.length} cards)`);
+						} else {
+							app.fireToast("error", `Error while uploading card list: ${answer.error}`);
 						}
-					);
+					});
 				} catch (e) {
 					Swal.fire({
 						type: "error",
 						title: "Parsing Error",
-						text:
-							"An error occurred during parsing, please check you input file.",
+						text: "An error occurred during parsing, please check you input file.",
 						footer: "Full error: " + e,
 						customClass: SwalCustomClasses,
 					});
@@ -887,27 +815,17 @@ var app = new Vue({
 			reader.readAsText(file);
 		},
 		exportDeck: function () {
-			copyToClipboard(
-				exportMTGA(this.deck, this.sideboard, this.language, this.lands)
-			);
+			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
 			this.fireToast("success", "Deck exported to clipboard!");
 		},
 		downloadLog: function () {
 			let draftLogFull = this.draftLog;
 			for (let e in this.draftLog.users) {
 				let cards = [];
-				for (let c of this.draftLog.users[e].cards)
-					cards.push(this.cards[c]);
-				this.draftLog.users[e].exportString = exportMTGA(
-					cards,
-					null,
-					this.language
-				);
+				for (let c of this.draftLog.users[e].cards) cards.push(this.cards[c]);
+				this.draftLog.users[e].exportString = exportMTGA(cards, null, this.language);
 			}
-			download(
-				`DraftLog_${this.draftLog.sessionID}.txt`,
-				JSON.stringify(draftLogFull, null, "\t")
-			);
+			download(`DraftLog_${this.draftLog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
 		openLog: function (e) {
 			let file = e.target.files[0];
@@ -936,8 +854,7 @@ var app = new Vue({
 					Swal.fire({
 						type: "error",
 						title: "Parsing Error",
-						text:
-							"An error occurred during parsing. Please make sure that you selected the correct file.",
+						text: "An error occurred during parsing. Please make sure that you selected the correct file.",
 						footer: "Full error: " + e,
 						customClass: SwalCustomClasses,
 					});
@@ -947,16 +864,12 @@ var app = new Vue({
 		},
 		exportSingleLog: function (id) {
 			let cards = [];
-			for (let c of this.draftLog.users[id].cards)
-				cards.push(this.cards[c]);
+			for (let c of this.draftLog.users[id].cards) cards.push(this.cards[c]);
 			copyToClipboard(exportMTGA(cards, null, this.language), null, "\t");
 			this.fireToast("success", "Card list exported to clipboard!");
 		},
 		downloadMPT: function (id) {
-			download(
-				`DraftLog_${id}.txt`,
-				exportToMagicProTools(this.cards, this.draftLog, id)
-			);
+			download(`DraftLog_${id}.txt`, exportToMagicProTools(this.cards, this.draftLog, id));
 		},
 		submitToMPT: function (id) {
 			fetch("https://magicprotools.com/api/draft/add", {
@@ -973,10 +886,7 @@ var app = new Vue({
 				mode: "cors",
 			}).then(function (response) {
 				if (response.status !== 200) {
-					app.fireToast(
-						"error",
-						"An error occured submiting log to MagicProTools."
-					);
+					app.fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
 					response.json().then(function (json) {
 						if (json.error) {
@@ -984,16 +894,10 @@ var app = new Vue({
 						} else {
 							if (json.url) {
 								copyToClipboard(json.url);
-								app.fireToast(
-									"success",
-									"MagicProTools URL copied to clipboard."
-								);
+								app.fireToast("success", "MagicProTools URL copied to clipboard.");
 								window.open(json.url, "_blank");
 							} else {
-								app.fireToast(
-									"error",
-									"An error occured submiting log to MagicProTools."
-								);
+								app.fireToast("error", "An error occured submiting log to MagicProTools.");
 							}
 						}
 					});
@@ -1002,9 +906,9 @@ var app = new Vue({
 		},
 		sessionURLToClipboard: function () {
 			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}:${
-					window.location.port
-				}/?session=${encodeURI(this.sessionID)}`
+				`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(
+					this.sessionID
+				)}`
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
 		},
@@ -1056,8 +960,7 @@ var app = new Vue({
 			if (this.deck.length > 0) {
 				Swal.fire({
 					title: "Are you sure?",
-					text:
-						"Distributing sealed boosters will reset everyone's cards/deck!",
+					text: "Distributing sealed boosters will reset everyone's cards/deck!",
 					type: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
@@ -1218,25 +1121,21 @@ var app = new Vue({
 		},
 		addDeckColumn: function () {
 			this.deckColumn.push([]);
-			this.deckColumn[this.deckColumn.length - 1] = this.deckColumn[
-				this.deckColumn.length - 2
-			].filter((c) => c.cmc > this.deckColumn.length - 2);
-			this.deckColumn[this.deckColumn.length - 2] = this.deckColumn[
-				this.deckColumn.length - 2
-			].filter((c) => c.cmc <= this.deckColumn.length - 2);
+			this.deckColumn[this.deckColumn.length - 1] = this.deckColumn[this.deckColumn.length - 2].filter(
+				(c) => c.cmc > this.deckColumn.length - 2
+			);
+			this.deckColumn[this.deckColumn.length - 2] = this.deckColumn[this.deckColumn.length - 2].filter(
+				(c) => c.cmc <= this.deckColumn.length - 2
+			);
 		},
 		addSideboardColumn: function () {
 			this.sideboardColumn.push([]);
-			this.sideboardColumn[
-				this.sideboardColumn.length - 1
-			] = this.sideboardColumn[this.sideboardColumn.length - 2].filter(
-				(c) => c.cmc > this.sideboardColumn.length - 2
-			);
-			this.sideboardColumn[
+			this.sideboardColumn[this.sideboardColumn.length - 1] = this.sideboardColumn[
 				this.sideboardColumn.length - 2
-			] = this.sideboardColumn[this.sideboardColumn.length - 2].filter(
-				(c) => c.cmc <= this.sideboardColumn.length - 2
-			);
+			].filter((c) => c.cmc > this.sideboardColumn.length - 2);
+			this.sideboardColumn[this.sideboardColumn.length - 2] = this.sideboardColumn[
+				this.sideboardColumn.length - 2
+			].filter((c) => c.cmc <= this.sideboardColumn.length - 2);
 		},
 		removeDeckColumn: function () {
 			if (this.deckColumn.length < 2) return;
@@ -1287,8 +1186,7 @@ var app = new Vue({
 						if (!acc["multi"]) acc["multi"] = [];
 						acc["multi"].push(item);
 					} else {
-						if (!acc[item.color_identity])
-							acc[item.color_identity] = [];
+						if (!acc[item.color_identity]) acc[item.color_identity] = [];
 						acc[item.color_identity].push(item);
 					}
 					return acc;
@@ -1308,8 +1206,7 @@ var app = new Vue({
 		},
 		orderByCMC: function (cards) {
 			return [...cards].sort(function (lhs, rhs) {
-				if (lhs.cmc == rhs.cmc)
-					return orderColor(lhs.color_identity, rhs.color_identity);
+				if (lhs.cmc == rhs.cmc) return orderColor(lhs.color_identity, rhs.color_identity);
 				return lhs.cmc - rhs.cmc;
 			});
 		},
@@ -1319,8 +1216,7 @@ var app = new Vue({
 		orderByRarity: function (cards) {
 			const order = { mythic: 0, rare: 1, uncommon: 2, common: 3 };
 			return [...cards].sort(function (lhs, rhs) {
-				if (order[lhs.rarity] == order[rhs.rarity])
-					return lhs.cmc - rhs.cmc;
+				if (order[lhs.rarity] == order[rhs.rarity]) return lhs.cmc - rhs.cmc;
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		},
@@ -1341,35 +1237,22 @@ var app = new Vue({
 				for (let c in colorCount) totalColor += colorCount[c];
 				if (totalColor <= 0) return;
 
-				for (let c in this.lands)
-					this.lands[c] = Math.round(
-						landToAdd * (colorCount[c] / totalColor)
-					);
+				for (let c in this.lands) this.lands[c] = Math.round(landToAdd * (colorCount[c] / totalColor));
 				let addedLands = this.totalLands;
 
 				if (this.deck.length + addedLands > targetDeckSize) {
 					let max = "W";
-					for (
-						let i = 0;
-						i < this.deck.length + addedLands - targetDeckSize;
-						++i
-					) {
-						for (let c in this.lands)
-							if (this.lands[c] > this.lands[max]) max = c;
+					for (let i = 0; i < this.deck.length + addedLands - targetDeckSize; ++i) {
+						for (let c in this.lands) if (this.lands[c] > this.lands[max]) max = c;
 						this.lands[max] = Math.max(0, this.lands[max] - 1);
 					}
 				} else if (this.deck.length + addedLands < targetDeckSize) {
 					let min = "W";
-					for (
-						let i = 0;
-						i < targetDeckSize - (this.deck.length + addedLands);
-						++i
-					) {
+					for (let i = 0; i < targetDeckSize - (this.deck.length + addedLands); ++i) {
 						for (let c in this.lands)
 							if (
 								this.colorsInDeck[min] == 0 ||
-								(this.colorsInDeck[c] > 0 &&
-									this.lands[c] < this.lands[min])
+								(this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min])
 							)
 								min = c;
 						this.lands[min] += 1;
@@ -1404,19 +1287,10 @@ var app = new Vue({
 			return ReadyState;
 		},
 		draftRound: function () {
-			return (
-				Math.floor(
-					(this.deck.length + this.sideboard.length) /
-						(this.useCustomCardList ? 15 : 14)
-				) + 1
-			);
+			return Math.floor((this.deck.length + this.sideboard.length) / (this.useCustomCardList ? 15 : 14)) + 1;
 		},
 		virtualPlayers: function () {
-			if (
-				!this.drafting ||
-				!this.virtualPlayersData ||
-				Object.keys(this.virtualPlayersData).length == 0
-			)
+			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 
 			let r = [];
@@ -1451,21 +1325,11 @@ var app = new Vue({
 			return dSets;
 		},
 		collectionStats: function () {
-			if (!this.hasCollection || !this.cards || !this.setsInfos)
-				return undefined;
+			if (!this.hasCollection || !this.cards || !this.setsInfos) return undefined;
 			let stats = [];
 			for (let id in this.cards) {
 				let card = this.genCard(id);
-				if (
-					card &&
-					![
-						"Plains",
-						"Island",
-						"Swamp",
-						"Mountain",
-						"Forest",
-					].includes(card["name"])
-				) {
+				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					if (!(card.set in stats))
 						stats[card.set] = {
@@ -1483,18 +1347,10 @@ var app = new Vue({
 							mythicCount: 0,
 							total: {
 								unique: this.setsInfos[card.set].cardCount,
-								commonCount: this.setsInfos[card.set][
-									"commonCount"
-								],
-								uncommonCount: this.setsInfos[card.set][
-									"uncommonCount"
-								],
-								rareCount: this.setsInfos[card.set][
-									"rareCount"
-								],
-								mythicCount: this.setsInfos[card.set][
-									"mythicCount"
-								],
+								commonCount: this.setsInfos[card.set]["commonCount"],
+								uncommonCount: this.setsInfos[card.set]["uncommonCount"],
+								rareCount: this.setsInfos[card.set]["rareCount"],
+								mythicCount: this.setsInfos[card.set]["mythicCount"],
 							},
 						};
 					stats[card.set].cards.push(card);
@@ -1515,9 +1371,7 @@ var app = new Vue({
 				extendedDraftLog.push({
 					userID: userID,
 					userName: this.draftLog.users[userID].userName,
-					colors: this.colorsInCardIDList(
-						this.draftLog.users[userID].cards
-					),
+					colors: this.colorsInCardIDList(this.draftLog.users[userID].cards),
 				});
 			}
 			while (Object.keys(extendedDraftLog).length < 8)
@@ -1583,15 +1437,12 @@ var app = new Vue({
 				try {
 					let parsed = JSON.parse(text);
 					for (let c in parsed) {
-						if (!("in_booster" in parsed[c]))
-							parsed[c].in_booster = true;
+						if (!("in_booster" in parsed[c])) parsed[c].in_booster = true;
 						for (let l of app.languages) {
 							if (!(l.code in parsed[c]["printed_name"]))
-								parsed[c]["printed_name"][l.code] =
-									parsed[c]["name"];
+								parsed[c]["printed_name"][l.code] = parsed[c]["name"];
 							if (!(l.code in parsed[c]["image_uris"]))
-								parsed[c]["image_uris"][l.code] =
-									parsed[c]["image_uris"]["en"];
+								parsed[c]["image_uris"][l.code] = parsed[c]["image_uris"]["en"];
 						}
 					}
 					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
@@ -1653,22 +1504,15 @@ var app = new Vue({
 			// When replacing deck (not mutating it)
 			if (oldDeck != newDeck) {
 				this.deckColumn = [[], [], [], [], [], [], []];
-				for (let c of newDeck)
-					this.deckColumn[
-						Math.min(c.cmc, this.deckColumn.length - 1)
-					].push(c);
-				for (let col = 0; col < this.deckColumn.length; ++col)
-					this.orderByColorInPlace(this.deckColumn[col]);
+				for (let c of newDeck) this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
+				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByColorInPlace(this.deckColumn[col]);
 			}
 		},
 		sideboard: function (newSide, oldSide) {
 			// When replacing deck (not mutating it)
 			if (newSide != oldSide) {
 				this.sideboardColumn = [[], [], [], [], [], [], []];
-				for (let c of newSide)
-					this.sideboardColumn[
-						Math.min(c.cmc, this.sideboardColumn.length - 1)
-					].push(c);
+				for (let c of newSide) this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
 			}
 		},
 		autoLand: function () {
@@ -1737,14 +1581,8 @@ var app = new Vue({
 		draftLog: {
 			deep: true,
 			handler() {
-				if (
-					this.draftLog &&
-					this.draftLog.users &&
-					Object.keys(this.draftLog.users)[0]
-				)
-					this.draftLogDisplayOptions.detailsUserID = Object.keys(
-						this.draftLog.users
-					)[0];
+				if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
+					this.draftLogDisplayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 			},
 		},
 	},

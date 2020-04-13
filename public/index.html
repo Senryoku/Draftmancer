@@ -108,7 +108,7 @@
 					<template v-else>
 					<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" title="Ignore players collection: Draft with all cards." /><label for="ignore-collections" title="Ignore players collection: Draft with all cards.">Ignore Collections</label>
 					<label for="set-restriction">Set(s)</label>
-					<multiselect v-if="setsInfos" v-model="setRestriction" placeholder="All" :options="sets" :searchable="false" :allow-empty="true" :close-on-select="false" :multiple="true" select-label="" deselect-label="Remove">
+					<multiselect v-if="setsInfos" v-model="setRestriction" placeholder="All" :options="sets" :searchable="false" :allow-empty="true" :close-on-select="false" :multiple="true" select-label="" selected-label="" deselect-label="">
 						<template slot="selection" slot-scope="{ values, search, isOpen }">
 							<span class="multiselect__single" v-if="values.length == 1"><img class="set-icon" :src="setsInfos[values[0]].icon"> {{ setsInfos[values[0]].fullName }}</span>
 							<span class="multiselect__single multiselect__single_nooverflow" v-if="values.length > 1">({{ values.length }})
@@ -543,8 +543,8 @@
 			<h2 slot="header">About</h2>
 			<div slot="body">
 				<h3>Contact</h3>
-				Senryoku: <a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-				(French or English)
+				<p>Senryoku: <a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a> (French or English)</p>
+				<p>MTGADraft Discord: <a href="https://discord.gg/KYKzx9m">https://discord.gg/KYKzx9m</a></p>
 				<h3>Support me</h3>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 					<input type="hidden" name="cmd" value="_s-xclick" />
@@ -554,6 +554,18 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>12/04/2020
+						<ul>
+							<li>Added specific land slot rules when a single set is selected.</li>
+						</ul>
+					</li>
+					<li>11/04/2020
+						<ul>
+							<li>Added Ikoria basic support.</li>
+							<li>Foils are now disabled by default (option is still available).</li>
+							<li>Fixed missing card when importing collection.</li>
+						</ul>
+					</li>
 					<li>10/04/2020
 						<ul>
 							<li>Improved card image loading.</li>
