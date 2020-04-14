@@ -592,10 +592,13 @@ var app = new Vue({
 				const randomIdx = Math.floor(Math.random() * this.booster.length);
 				this.selectedCard = this.booster[randomIdx];
 			}
-			this.socket.emit("pickCard", this.selectedCard.id);
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
-			this.draftingState = DraftState.Waiting;
+			this.socket.emit("pickCard", this.selectedCard.id, (anwser) => {
+				if (anwser.code === 0) {
+					this.addToDeck(this.selectedCard);
+					this.selectedCard = undefined;
+					this.draftingState = DraftState.Waiting;
+				} else console.log(`pickCard: Unexpected answer:`, anwser);
+			});
 		},
 		checkNotificationPermission: function (e) {
 			if (e.target.value && Notification.permission != "granted") {

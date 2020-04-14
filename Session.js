@@ -854,4 +854,5 @@ function Session(id, owner) {
 	};
 }
 
-module.exports = Session;
+module.exports.Session = Session;
+module.exports.Sessions = {};

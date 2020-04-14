@@ -31,11 +31,14 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
+-   Refactor Persistence into its own file
+-   Put items by batches [batchWriteItem](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-table-read-write-batch.html)
+-   Remove older data byissuing a [query](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.04.html)
+
 -   Wait for backend response before updating important frontend state
 -   Continue checking and implementing persistence
 -   Trying out a pattern: check socket status before emiting any important call and wait for acknowledgement (acks don't have timeouts and multiple emit can be in flight, but the status check can help a lot in mitigating that.)
 -   Add a little disconnected icon somewhere (bottom right?)
--   Deal with 'expired' sessions (> 1 week?) and connections (> 1 day?)
 
 ---
 
