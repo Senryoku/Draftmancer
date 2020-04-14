@@ -208,8 +208,8 @@ function Session(id, owner) {
 			return Object.values(coll).reduce((acc, val) => acc + val, 0);
 		};
 
-		// Generate fully random 15-cards booster for cube (not considering rarity)
 		if (this.useCustomCardList) {
+			// List is using custom booster slots
 			if (this.customCardList.customSheets) {
 				let cardsByRarity = {};
 				for (let r in this.customCardList.cardsPerBooster) {
@@ -235,19 +235,47 @@ function Session(id, owner) {
 					}
 				}
 
+				const cardsByColor = {};
+				// Color balance the largest slot
+				const colorBalancedSlot = Object.keys(this.customCardList.cardsPerBooster).reduce((max, curr) =>
+					this.customCardList.cardsPerBooster[curr] > this.customCardList.cardsPerBooster[max] ? curr : max
+				);
+				// Do not color balance if we don't have at least a 5 cards slot
+				const useColorBalance =
+					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
+				if (useColorBalance) {
+					for (let card in cardsByRarity[colorBalancedSlot]) {
+						if (!(Cards[card].color_identity in cardsByColor))
+							cardsByColor[Cards[card].color_identity] = {};
+						cardsByColor[Cards[card].color_identity][card] = cardsByRarity[colorBalancedSlot][card];
+					}
+				}
+
 				// Generate Boosters
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster = [];
 
 					for (let r in this.customCardList.cardsPerBooster) {
-						for (let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i)
+						let addedCards = 0;
+						if (useColorBalance && r === colorBalancedSlot) {
+							for (let c of "WUBRG") {
+								if (cardsByColor[c] && !isEmpty(cardsByColor[c])) {
+									let pickedCard = pick_card(cardsByColor[c], booster);
+									removeCardFromDict(pickedCard, cardsByRarity[colorBalancedSlot]);
+									booster.push(pickedCard);
+									++addedCards;
+								}
+							}
+						}
+						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i)
 							booster.push(pick_card(cardsByRarity[r], booster));
 					}
 
 					this.boosters.push(booster);
 				}
 			} else {
+				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
 				let localCollection = this.collection();
 

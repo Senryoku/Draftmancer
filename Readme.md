@@ -21,7 +21,7 @@ Join the discord for development related discussions: https://discord.gg/KYKzx9m
 
 ---
 
--   Add a land slot to the boosters with a special handler when a single set in selected (e.g. Only guildgates for Ravnica, 5/13 (check this ratio) gain land for M19, M20 and Iko, etc...)
+-   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Add set code support to cube import?
 -   rewrite cubeformat.html

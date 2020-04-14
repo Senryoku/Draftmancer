@@ -742,7 +742,7 @@ var app = new Vue({
 							line += 1;
 							while (line < lines.length && lines[line].trim()[0] !== "[") {
 								if (lines[line]) {
-									let cardID = searchCardID(lines[line]);
+									let cardID = searchCardID(lines[line].trim());
 									if (typeof cardID !== "undefined") {
 										cardList.cards[header[1]].push(cardID);
 										cardCount += 1;
