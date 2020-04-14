@@ -268,8 +268,12 @@ function Session(id, owner) {
 								}
 							}
 						}
-						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i)
-							booster.push(pick_card(cardsByRarity[r], booster));
+						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i) {
+							const pickedCard = pick_card(cardsByRarity[r], booster);
+							if (useColorBalance && r === colorBalancedSlot)
+								removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+							booster.push(pickedCard);
+						}
 					}
 
 					this.boosters.push(booster);
