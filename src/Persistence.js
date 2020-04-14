@@ -23,7 +23,6 @@ const InactiveSessions = {};
 (async function requestSavedConnections() {
 	var connectionsRequestParams = {
 		TableName: "mtga-draft-connections",
-		ReturnConsumedCapacity: "TOTAL",
 	};
 
 	try {
@@ -35,7 +34,7 @@ const InactiveSessions = {};
 				InactiveConnections[c.userID][prop] = c.data[prop];
 			}
 		}
-		console.log(`Restored ${data.Count} saved connections.`, data.ConsumedCapacity);
+		console.log(`Restored ${data.Count} saved connections.`);
 	} catch (err) {
 		console.log("error: ", err);
 	}
@@ -44,7 +43,6 @@ const InactiveSessions = {};
 (async function requestSavedSessions() {
 	var connections = {
 		TableName: "mtga-draft-sessions",
-		ReturnConsumedCapacity: "TOTAL",
 	};
 
 	try {
@@ -67,77 +65,72 @@ const InactiveSessions = {};
 				}
 			}
 		}
-		console.log(`Restored ${data.Count} saved sessions.`, data.ConsumedCapacity);
+		console.log(`Restored ${data.Count} saved sessions.`);
 	} catch (err) {
 		console.log("error: ", err);
 	}
 })();
 
 async function dumpToDynamoDB(exitOnCompletion = false) {
-	const ConnectionsRequests = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
-		const Item = {
-			userID: userID,
-			timestamp: Date.now(),
-			data: {},
+		const params = {
+			TableName: "mtga-draft-connections",
+			Item: {
+				userID: userID,
+				timestamp: Date.now(),
+				data: {},
+			},
 		};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter((p) => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) Item.data[prop] = c[prop];
+			if (!(c[prop] instanceof Function)) params.Item.data[prop] = c[prop];
 		}
 
-		ConnectionsRequests.push({ PutRequest: { Item: Item } });
+		try {
+			const putResult = await docClient.put(params).promise();
+		} catch (err) {
+			console.log("error: ", err);
+		}
 	}
 
-	const SessionsRequests = [];
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
-		const Item = {
-			id: sessionID,
-			timestamp: Date.now(),
-			data: {},
+		const params = {
+			TableName: "mtga-draft-sessions",
+			Item: {
+				id: sessionID,
+				timestamp: Date.now(),
+				data: {},
+			},
 		};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			(p) => !["users", "countdownInterval", "botsInstances"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
+			if (!(s[prop] instanceof Function)) params.Item.data[prop] = s[prop];
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
 			for (let userID of s.users) {
-				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+				params.Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
 			if (s.botsInstances) {
-				Item.data.botsInstances = [];
+				params.Item.data.botsInstances = [];
 				for (let bot of s.botsInstances) {
 					let podbot = {};
 					for (let prop of Object.getOwnPropertyNames(bot)) {
 						if (!(bot[prop] instanceof Function)) podbot[prop] = bot[prop];
 					}
-					Item.data.botsInstances.push(podbot);
+					params.Item.data.botsInstances.push(podbot);
 				}
 			}
 		}
 
-		SessionsRequests.push({ PutRequest: { Item: Item } });
-	}
-
-	if (ConnectionsRequests.length > 0 && SessionsRequests.length > 0) {
-		const params = {
-			RequestItems: {
-				"mtga-draft-connections": ConnectionsRequests,
-				"mtga-draft-sessions": SessionsRequests,
-			},
-			ReturnConsumedCapacity: "TOTAL",
-		};
-
 		try {
-			const putResult = await docClient.batchWrite(params).promise();
-			console.log(putResult);
+			const putResult = await docClient.put(params).promise();
 		} catch (err) {
 			console.log("error: ", err);
 		}
