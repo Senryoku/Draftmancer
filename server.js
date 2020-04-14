@@ -171,11 +171,11 @@ io.on("connection", function (socket) {
 		const sessionID = Connections[userID].sessionID;
 
 		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) {
-			ack({ code: 1 });
+			if (ack) ack({ code: 1 });
 			return;
 		}
 
-		ack({ code: 0 });
+		if (ack) ack({ code: 0 });
 		for (let user of Sessions[sessionID].users) if (user != userID) Connections[user].socket.emit("readyCheck");
 	});
 
@@ -215,11 +215,11 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[userID].sessionID;
 
 		if (!(sessionID in Sessions) || !(userID in Connections)) {
-			ack({ code: 1, error: "Invalid request" });
+			if (ack) ack({ code: 1, error: "Invalid request" });
 			return;
 		}
 
-		ack({ code: 0 });
+		if (ack) ack({ code: 0 });
 		Sessions[sessionID].pickCard(userID, cardID);
 	});
 
@@ -319,11 +319,11 @@ io.on("connection", function (socket) {
 			!Array.isArray(customCardList) &&
 			(!customCardList.customSheets || !customCardList.cardsPerBooster || !customCardList.cards)
 		) {
-			ack({ code: 1, error: "Invalid data" });
+			if (ack) ack({ code: 1, error: "Invalid data" });
 			return;
 		}
 
-		ack({ code: 0 });
+		if (ack) ack({ code: 0 });
 
 		Sessions[sessionID].customCardList = customCardList;
 		for (let user of Sessions[sessionID].users) {
