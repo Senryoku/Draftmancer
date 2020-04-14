@@ -20,9 +20,15 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const InactiveConnections = {};
 const InactiveSessions = {};
 
+// Connections and Session are obsolete after two days
+function isObsolete(item) {
+	return Math.floor((Date.now() - item.timestamp) / 1000 / 60 / 60 / 24) > 2;
+}
+
 (async function requestSavedConnections() {
 	var connectionsRequestParams = {
 		TableName: "mtga-draft-connections",
+		ReturnConsumedCapacity: "TOTAL",
 	};
 
 	try {
@@ -33,8 +39,14 @@ const InactiveSessions = {};
 			for (let prop of Object.getOwnPropertyNames(c.data)) {
 				InactiveConnections[c.userID][prop] = c.data[prop];
 			}
+
+			if (isObsolete(c))
+				docClient.delete({ TableName: "mtga-draft-connections", Key: { userID: c.userID } }, (err, data) => {
+					if (err) console.log(err);
+					else console.log("Deleted obsolete connection ", c.userID);
+				});
 		}
-		console.log(`Restored ${data.Count} saved connections.`);
+		console.log(`Restored ${data.Count} saved connections.`, data.ConsumedCapacity);
 	} catch (err) {
 		console.log("error: ", err);
 	}
@@ -43,6 +55,7 @@ const InactiveSessions = {};
 (async function requestSavedSessions() {
 	var connections = {
 		TableName: "mtga-draft-sessions",
+		ReturnConsumedCapacity: "TOTAL",
 	};
 
 	try {
@@ -64,18 +77,26 @@ const InactiveSessions = {};
 					InactiveSessions[s.id].botsInstances.push(newBot);
 				}
 			}
+
+			if (isObsolete(s))
+				docClient.delete({ TableName: "mtga-draft-sessions", Key: { id: s.id } }, (err, data) => {
+					if (err) console.log(err);
+					else console.log("Deleted obsolete session ", s.id);
+				});
 		}
-		console.log(`Restored ${data.Count} saved sessions.`);
+		console.log(`Restored ${data.Count} saved sessions.`, data.ConsumedCapacity);
 	} catch (err) {
 		console.log("error: ", err);
 	}
 })();
 
 async function dumpToDynamoDB(exitOnCompletion = false) {
+	let ConsumedCapacity = 0;
 	for (const userID in Connections) {
 		const c = Connections[userID];
 		const params = {
 			TableName: "mtga-draft-connections",
+			ReturnConsumedCapacity: "TOTAL",
 			Item: {
 				userID: userID,
 				timestamp: Date.now(),
@@ -89,6 +110,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 
 		try {
 			const putResult = await docClient.put(params).promise();
+			ConsumedCapacity += putResult.ConsumedCapacity.CapacityUnits;
 		} catch (err) {
 			console.log("error: ", err);
 		}
@@ -98,6 +120,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		const s = Sessions[sessionID];
 		const params = {
 			TableName: "mtga-draft-sessions",
+			ReturnConsumedCapacity: "TOTAL",
 			Item: {
 				id: sessionID,
 				timestamp: Date.now(),
@@ -131,12 +154,13 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 
 		try {
 			const putResult = await docClient.put(params).promise();
+			ConsumedCapacity += putResult.ConsumedCapacity.CapacityUnits;
 		} catch (err) {
 			console.log("error: ", err);
 		}
 	}
 
-	console.log("dumpToDynamoDB: done.");
+	console.log(`dumpToDynamoDB: done. Total ConsumedCapacity: ${ConsumedCapacity}`);
 	if (exitOnCompletion) process.exit(0);
 }
 
