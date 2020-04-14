@@ -12,7 +12,7 @@
 		{ code: "zhs", name: "汉语" },
 		{ code: "zht", name: "漢語" },
 	];
-	const MTGSets = ["xln", "rix", "dom", "grn","m19", "rna", "war", "m20", "eld", "thb", "iko"];
+	const MTGSets = ["xln", "rix", "dom", "m19", "grn", "rna", "war", "m20", "eld", "thb", "iko"];
 
 	const BasicLandNames = {
 		en: {
