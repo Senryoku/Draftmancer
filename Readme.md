@@ -31,17 +31,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Refactor Persistence into its own file
--   Put items by batches [batchWriteItem](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-table-read-write-batch.html)
--   Remove older data byissuing a [query](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.04.html)
-
--   Wait for backend response before updating important frontend state
--   Continue checking and implementing persistence
--   Trying out a pattern: check socket status before emiting any important call and wait for acknowledgement (acks don't have timeouts and multiple emit can be in flight, but the status check can help a lot in mitigating that.)
--   Add a little disconnected icon somewhere (bottom right?)
-
----
-
 -   Add more display option for the cards in draft logs (Even make them draggable?)
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
@@ -67,6 +56,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Monitor persistence
 -   Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
 -   Add a way to re-order players (Need to change all ordering logic)
 -   Add an upload saved draft logs
