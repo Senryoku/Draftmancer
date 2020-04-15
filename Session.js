@@ -53,10 +53,6 @@ function Session(id, owner) {
 	this.disconnectedUsers = {};
 
 	this.addUser = function (userID) {
-		if (Connections[userID].sessionID === this.id) {
-			console.error(`Session::addUser Connections[${userID}].sessionID === ${this.id}`);
-			return;
-		}
 		if (this.users.has(userID)) {
 			console.error(`Session::addUser: this.users.has(${user})`);
 			return;
@@ -69,17 +65,28 @@ function Session(id, owner) {
 		this.syncSessionOptions(userID);
 	};
 
+	this.getDisconnectedUserData = function (userID) {
+		return {
+			userName: Connections[userID].userName,
+			pickedThisRound: Connections[userID].pickedThisRound,
+			pickedCards: Connections[userID].pickedCards,
+			boosterIndex: Connections[userID].boosterIndex,
+		};
+	};
+
+	this.broadcastDisconnectedUsers = function () {
+		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(
+			(u) => this.disconnectedUsers[u].userName
+		);
+		for (let u of this.users) Connections[u].socket.emit("userDisconnected", disconnectedUserNames);
+	};
+
 	this.remUser = function (userID) {
 		this.users.delete(userID);
 		if (this.drafting) {
 			this.stopCountdown();
-			this.disconnectedUsers[userID] = {
-				userName: Connections[userID].userName,
-				pickedThisRound: Connections[userID].pickedThisRound,
-				pickedCards: Connections[userID].pickedCards,
-				boosterIndex: Connections[userID].boosterIndex,
-			};
-			for (let u of this.users) Connections[u].socket.emit("userDisconnected", Connections[userID].userName);
+			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
+			this.broadcastDisconnectedUsers();
 		} else {
 			this.userOrder.splice(this.userOrder.indexOf(userID), 1);
 		}
@@ -699,7 +706,9 @@ function Session(id, owner) {
 		});
 		delete this.disconnectedUsers[userID];
 
+		// Resume draft if everyone is here or broacast the new state.
 		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
+		else this.broadcastDisconnectedUsers();
 	};
 
 	this.resumeDraft = function () {
@@ -877,4 +886,5 @@ function Session(id, owner) {
 	};
 }
 
-module.exports = Session;
+module.exports.Session = Session;
+module.exports.Sessions = {};

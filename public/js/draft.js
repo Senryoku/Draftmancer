@@ -265,7 +265,7 @@ var app = new Vue({
 				app.sessionUsers = users;
 			});
 
-			this.socket.on("userDisconnected", function (userName) {
+			this.socket.on("userDisconnected", function (userNames) {
 				if (!app.drafting) return;
 
 				if (app.userID == app.sessionOwner) {
@@ -273,8 +273,8 @@ var app = new Vue({
 						position: "center",
 						customClass: SwalCustomClasses,
 						type: "error",
-						title: `${userName} disconnected`,
-						text: `Wait for ${userName} to come back or...`,
+						title: `Player(s) disconnected`,
+						text: `Wait for ${userNames.join(", ")} to come back or...`,
 						showConfirmButton: true,
 						allowOutsideClick: false,
 						confirmButtonText: "Replace with a bot",
@@ -286,8 +286,10 @@ var app = new Vue({
 						position: "center",
 						customClass: SwalCustomClasses,
 						type: "error",
-						title: `${userName} disconnected`,
-						text: `Wait for ${userName} to come back or for the owner to replace them by a bot.`,
+						title: `Player(s) disconnected`,
+						text: `Wait for ${userNames.join(
+							", "
+						)} to come back or for the owner to replace them by a bot.`,
 						showConfirmButton: false,
 						allowOutsideClick: false,
 					});
@@ -569,10 +571,19 @@ var app = new Vue({
 		},
 		pickCard: function () {
 			if (this.draftingState != DraftState.Picking || !this.selectedCard) return;
-			this.draftingState = DraftState.Waiting;
-			this.socket.emit("pickCard", this.selectedCard.id);
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
+
+			if (this.socket.disconnected) {
+				this.disconnectedReminder();
+				return;
+			}
+
+			this.socket.emit("pickCard", this.selectedCard.id, (answer) => {
+				if (answer.code === 0) {
+					this.draftingState = DraftState.Waiting;
+					this.addToDeck(this.selectedCard);
+					this.selectedCard = undefined;
+				} else console.log(`pickCard: Unexpected answer:`, anwser);
+			});
 		},
 		forcePick: function () {
 			if (this.draftingState != DraftState.Picking) return;
@@ -581,10 +592,13 @@ var app = new Vue({
 				const randomIdx = Math.floor(Math.random() * this.booster.length);
 				this.selectedCard = this.booster[randomIdx];
 			}
-			this.socket.emit("pickCard", this.selectedCard.id);
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
-			this.draftingState = DraftState.Waiting;
+			this.socket.emit("pickCard", this.selectedCard.id, (anwser) => {
+				if (anwser.code === 0) {
+					this.addToDeck(this.selectedCard);
+					this.selectedCard = undefined;
+					this.draftingState = DraftState.Waiting;
+				} else console.log(`pickCard: Unexpected answer:`, anwser);
+			});
 		},
 		checkNotificationPermission: function (e) {
 			if (e.target.value && Notification.permission != "granted") {
@@ -687,6 +701,9 @@ var app = new Vue({
 				timer: 1500,
 			});
 		},
+		disconnectedReminder: function () {
+			this.fireToast("error", "Disconnected from server!");
+		},
 		parseCustomCardList: function (e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -781,8 +798,13 @@ var app = new Vue({
 						}
 						app.customCardList = cardList;
 					}
-					app.socket.emit("customCardList", app.customCardList);
-					app.fireToast("success", `Card list uploaded (${app.customCardList.length} cards)`);
+					app.socket.emit("customCardList", app.customCardList, (answer) => {
+						if (answer.code === 0) {
+							app.fireToast("success", `Card list uploaded (${app.customCardList.length} cards)`);
+						} else {
+							app.fireToast("error", `Error while uploading card list: ${answer.error}`);
+						}
+					});
 				} catch (e) {
 					Swal.fire({
 						type: "error",
@@ -982,10 +1004,17 @@ var app = new Vue({
 		readyCheck: function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
-			this.initReadyCheck();
+			if (this.socket.disconnected) {
+				this.disconnectedReminder();
+				return;
+			}
 
-			this.socket.emit("readyCheck");
-			this.socket.emit("setReady", ReadyState.Ready);
+			this.socket.emit("readyCheck", (anwser) => {
+				if (anwser.code === 0) {
+					this.initReadyCheck();
+					this.socket.emit("setReady", ReadyState.Ready);
+				}
+			});
 		},
 		initReadyCheck: function () {
 			this.pendingReadyCheck = true;
