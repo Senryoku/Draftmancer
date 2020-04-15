@@ -29,6 +29,18 @@ footer span {
 	margin-left: 2em;
 }
 
+.disconnected-icon {
+	position: fixed;
+	right: 2em;
+	bottom: 3em;
+	padding: 1em;
+	background-color: darkred;
+	border-radius: 0.5em;
+	z-index: 999;
+	box-shadow: 0 0 10px black;
+	font-weight: bold;
+}
+
 .custom-swal-popup,
 .custom-swal-title,
 .custom-swal-content {
@@ -258,9 +270,6 @@ a:hover {
 	outline: 0;
 }
 
-.check-button:focus + label {
-}
-
 .check-button:active + label {
 	background-color: #888;
 }
@@ -436,9 +445,6 @@ label {
 	justify-content: space-between;
 	flex-wrap: wrap;
 	align-items: baseline;
-}
-
-#session-controls {
 }
 
 #session-id {
@@ -646,10 +652,6 @@ ul.player-list {
 	margin: 0;
 	font-variant: small-caps;
 	font-size: 28px;
-}
-
-.controls button,
-.controls input[type="button"] {
 }
 
 .more-option {

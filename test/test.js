@@ -415,7 +415,7 @@ describe("Single Draft", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 
@@ -426,7 +426,7 @@ describe("Single Draft", function () {
 			clients[c].on("nextBooster", function (data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0]);
+				this.emit("pickCard", boosters[idx][0], (_) => {});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -436,7 +436,7 @@ describe("Single Draft", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 });
@@ -549,7 +549,7 @@ describe("Single Draft without Color Balance", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 
@@ -560,7 +560,7 @@ describe("Single Draft without Color Balance", function () {
 			clients[c].on("nextBooster", function (data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0]);
+				this.emit("pickCard", boosters[idx][0], (_) => {});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -570,7 +570,7 @@ describe("Single Draft without Color Balance", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 });
@@ -675,7 +675,7 @@ describe("Single Draft With disconnect and reconnect", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 
@@ -703,7 +703,7 @@ describe("Single Draft With disconnect and reconnect", function () {
 			clients[c].on("nextBooster", function (data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0]);
+				this.emit("pickCard", boosters[idx][0], (_) => {});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -713,7 +713,7 @@ describe("Single Draft With disconnect and reconnect", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 });
@@ -827,7 +827,7 @@ describe("Single Draft With disconnect and bots", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 
@@ -854,7 +854,7 @@ describe("Single Draft With disconnect and bots", function () {
 			clients[c].on("nextBooster", function (data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0]);
+				this.emit("pickCard", boosters[idx][0], (_) => {});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -864,7 +864,7 @@ describe("Single Draft With disconnect and bots", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 });
@@ -989,7 +989,7 @@ describe("Single Draft with Bots", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 
@@ -1000,7 +1000,7 @@ describe("Single Draft with Bots", function () {
 			clients[c].on("nextBooster", function (data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0]);
+				this.emit("pickCard", boosters[idx][0], (_) => {});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -1010,7 +1010,7 @@ describe("Single Draft with Bots", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", boosters[c].booster[0]);
+			clients[c].emit("pickCard", boosters[c].booster[0], (_) => {});
 		}
 	});
 });
@@ -1168,7 +1168,7 @@ describe("Multiple Drafts", function () {
 						};
 					})()
 				);
-				clients[sess][c].emit("pickCard", boosters[playersPerSession * sess + c].booster[0]);
+				clients[sess][c].emit("pickCard", boosters[playersPerSession * sess + c].booster[0], (_) => {});
 			}
 		}
 	});
@@ -1181,7 +1181,7 @@ describe("Multiple Drafts", function () {
 				clients[sess][c].on("nextBooster", function (data) {
 					let idx = playersPerSession * sess + c;
 					boosters[idx] = data.booster;
-					this.emit("pickCard", boosters[idx][0]);
+					this.emit("pickCard", boosters[idx][0], (_) => {});
 				});
 				clients[sess][c].on("endDraft", function () {
 					draftEnded += 1;
@@ -1193,7 +1193,7 @@ describe("Multiple Drafts", function () {
 		}
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].emit("pickCard", boosters[playersPerSession * sess + c].booster[0]);
+				clients[sess][c].emit("pickCard", boosters[playersPerSession * sess + c].booster[0], (_) => {});
 			}
 		}
 	});

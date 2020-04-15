@@ -12,12 +12,33 @@ Join the discord for development related discussions: https://discord.gg/KYKzx9m
 -   Execute `npm start`
 -   Navigate to `http://localhost:3000/`
 
+### Setup DynamoDB (local)
+
+-   Download [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
+-   Extract and run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb`
+-   Setup environment variables, for development create a '.env' file at the root of MTGADraft with the following:
+
+```
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=...
+AWS_ENDPOINT=http://localhost:8000
+```
+
+-   Run `node createDynamoDBTables.js`
+
 ## Todo
 
 ### Important
 
--   Be more resillient: [Let It Crash: Best Practices for Handling Node.js Errors on Shutdown](https://blog.heroku.com/best-practices-nodejs-errors) ; use beforeExit to save Connections and Sessions in a database? (Should also solve "Save session options and reapply them when the user is the owner?")
--   Heroku dynos are recycled once per day... Everything is in RAM, this is not good... I could find a way to find some persistance, but it will require a massive refactoring, and I'm not sure about the websocket connections...
+-   Refactor Persistence into its own file
+-   Put items by batches [batchWriteItem](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/dynamodb-example-table-read-write-batch.html)
+-   Remove older data byissuing a [query](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.04.html)
+
+-   Wait for backend response before updating important frontend state
+-   Continue checking and implementing persistence
+-   Trying out a pattern: check socket status before emiting any important call and wait for acknowledgement (acks don't have timeouts and multiple emit can be in flight, but the status check can help a lot in mitigating that.)
+-   Add a little disconnected icon somewhere (bottom right?)
 
 ---
 

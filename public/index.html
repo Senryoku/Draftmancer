@@ -651,6 +651,9 @@
 			<span><a href="mailto:mtgadraft@gmail.com">Contact</a></span>
 			<span>Get <a href="https://magic.wizards.com/fr/mtgarena">Magic: The Gathering Arena</a>
 		</footer>
+		<div class="disconnected-icon" v-if="socket && socket.disconnected" title="You are disconnected from the server, some functionnalities won't be available until the connection is reestablished.">
+			<i class="fas fa-exclamation-triangle"></i> Disconnected
+		</div>
 	</div>
 	
 	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->

@@ -1,5 +1,9 @@
 "use strict";
 
+if (process.env.NODE_ENV !== "production") {
+	require("dotenv").config();
+}
+
 const port = process.env.PORT || 3000;
 const compression = require("compression");
 const express = require("express");
@@ -10,9 +14,12 @@ const cookieParser = require("cookie-parser");
 const uuidv1 = require("uuid/v1");
 
 const constants = require("./public/js/constants");
+const Persistence = require("./src/Persistence");
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
-const Session = require("./Session");
+const SessionModule = require("./Session");
+const Session = SessionModule.Session;
+const Sessions = SessionModule.Sessions;
 
 app.use(compression());
 app.use(cookieParser());
@@ -26,7 +33,8 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
-let Sessions = {};
+const InactiveSessions = Persistence.InactiveSessions;
+const InactiveConnections = Persistence.InactiveConnections;
 
 function getPublicSessions() {
 	let publicSessions = [];
@@ -38,12 +46,15 @@ function getPublicSessions() {
 	return publicSessions;
 }
 
+/////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
+
 io.on("connection", function (socket) {
 	const query = socket.handshake.query;
 	console.log(
 		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
 	);
+
 	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		query.userID = uuidv1();
@@ -52,7 +63,15 @@ io.on("connection", function (socket) {
 	}
 
 	socket.userID = query.userID;
-	Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
+	if (query.userID in InactiveConnections) {
+		// Restore previously saved connection
+		// TODO: Front and Back end may be out of sync after this!
+		InactiveConnections[query.userID].socket = socket;
+		Connections[query.userID] = InactiveConnections[query.userID];
+		delete InactiveConnections[query.userID];
+	} else {
+		Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
+	}
 
 	// Messages
 
@@ -147,12 +166,16 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("readyCheck", function () {
+	socket.on("readyCheck", function (ack) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) {
+			if (ack) ack({ code: 1 });
+			return;
+		}
 
+		if (ack) ack({ code: 0 });
 		for (let user of Sessions[sessionID].users) if (user != userID) Connections[user].socket.emit("readyCheck");
 	});
 
@@ -187,12 +210,16 @@ io.on("connection", function (socket) {
 
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	socket.on("pickCard", function (cardID) {
+	socket.on("pickCard", function (cardID, ack) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 
-		if (!(sessionID in Sessions) || !(userID in Connections)) return;
+		if (!(sessionID in Sessions) || !(userID in Connections)) {
+			if (ack) ack({ code: 1, error: "Invalid request" });
+			return;
+		}
 
+		if (ack) ack({ code: 0 });
 		Sessions[sessionID].pickCard(userID, cardID);
 	});
 
@@ -284,15 +311,19 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("customCardList", function (customCardList) {
+	socket.on("customCardList", function (customCardList, ack) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 
 		if (
 			!Array.isArray(customCardList) &&
 			(!customCardList.customSheets || !customCardList.cardsPerBooster || !customCardList.cards)
-		)
+		) {
+			if (ack) ack({ code: 1, error: "Invalid data" });
 			return;
+		}
+
+		if (ack) ack({ code: 0 });
 
 		Sessions[sessionID].customCardList = customCardList;
 		for (let user of Sessions[sessionID].users) {
@@ -487,11 +518,22 @@ function getUserID(req, res) {
 }
 
 function joinSession(sessionID, userID) {
+	if (sessionID in InactiveSessions) {
+		console.log(`Restoring inactive session '${sessionID}'...`);
+		InactiveSessions[sessionID].owner = userID; // Always having a valid owner is more important than preserving the old one - probably.
+		Sessions[sessionID] = InactiveSessions[sessionID];
+		delete InactiveSessions[sessionID];
+	}
+
 	// Session exists and is drafting
 	if (sessionID in Sessions && Sessions[sessionID].drafting) {
-		console.log(`${userID} wants to join drafting session '${sessionID}'...`);
 		let sess = Sessions[sessionID];
-		console.debug(sess.disconnectedUsers);
+		console.log(
+			`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
+				userID in sess.disconnectedUsers
+			}`
+		);
+
 		if (userID in sess.disconnectedUsers) {
 			sess.reconnectUser(userID);
 		} else {
