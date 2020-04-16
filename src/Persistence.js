@@ -183,29 +183,29 @@ process.on("exit", (code) => {
 process.on("SIGTERM", () => {
 	console.log("Received SIGTERM.");
 	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	// Gives dumpToDynamoDB 20sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(0);
-	}, 10000);
+	}, 20000);
 });
 
 process.on("SIGINT", () => {
 	console.log("Received SIGINT.");
 	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	// Gives dumpToDynamoDB 20sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(0);
-	}, 10000);
+	}, 20000);
 });
 
 process.on("uncaughtException", (err) => {
 	console.error("Uncaught Exception thrown: ");
 	console.error(err);
 	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 10sec. to finish saving everything.
+	// Gives dumpToDynamoDB 20sec. to finish saving everything.
 	setTimeout((_) => {
 		process.exit(1);
-	}, 10000);
+	}, 20000);
 });
 
 module.exports.InactiveSessions = InactiveSessions;
