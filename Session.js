@@ -590,6 +590,11 @@ function Session(id, owner) {
 			console.error(`Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
 			return;
 		}
+		if (!this.boosters[boosterIndex].includes(cardID)) {
+			console.error(`Session.pickCard: cardID ('${cardID}') not found in booster n°${boosterIndex}.`);
+			return;
+		}
+
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`
 		);
