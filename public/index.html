@@ -393,6 +393,7 @@
 					<select v-model="draftLogDisplayOptions.category">
 						<option>Picks</options>
 						<option>Cards<options>
+						<option>Cards (CMC Columns)<options>
 					</select>
 					<button @click="exportSingleLog(log.userID)">Export in MTGA format</button>
 					<button @click="downloadMPT(log.userID)">Download in MTGO format</button>
@@ -403,6 +404,13 @@
 							<h3>Pick {{index + 1}}: {{cards[pick.pick].name}}</h3>
 							<div class="card-container">
 								<figure is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language" :class="{'selected-high': pick.pick === card}"></figure>
+							</div>
+						</div>
+					</template>
+					<template v-else-if="draftLogDisplayOptions.category == 'Cards (CMC Columns)'">
+						<div class="card-container card-columns">
+							<div v-for="cmc_column in idColumnCMC(log.cards)" class="cmc-column">
+								<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language"></figure>
 							</div>
 						</div>
 					</template>

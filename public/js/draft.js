@@ -1199,6 +1199,16 @@ var app = new Vue({
 			for (let col in a) a[col] = this.orderByCMC(a[col]);
 			return a;
 		},
+		idColumnCMC: function (cardids) {
+			let a = cardids.reduce((acc, id) => {
+				const cmc = Math.min(7, this.cards[id].cmc);
+				if (!acc[cmc]) acc[cmc] = [];
+				acc[cmc].push(id);
+				return acc;
+			}, {});
+			for (let col in a) a[col] = this.orderByColor(a[col]);
+			return a;
+		},
 		orderByColorInPlace: function (cards) {
 			return cards.sort(function (lhs, rhs) {
 				if (orderColor(lhs.color_identity, rhs.color_identity) == 0)
