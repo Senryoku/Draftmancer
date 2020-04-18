@@ -92,72 +92,92 @@ function isObsolete(item) {
 
 async function dumpToDynamoDB(exitOnCompletion = false) {
 	let ConsumedCapacity = 0;
-	for (const userID in Connections) {
-		const c = Connections[userID];
-		const params = {
-			TableName: "mtga-draft-connections",
-			ReturnConsumedCapacity: "TOTAL",
-			Item: {
-				userID: userID,
-				timestamp: Date.now(),
-				data: {},
-			},
-		};
 
-		for (let prop of Object.getOwnPropertyNames(c).filter((p) => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) params.Item.data[prop] = c[prop];
-		}
+	const batchWrite = async function (table, Items) {
+		console.log(`batchWrite of length ${Items.length} to ${table}.`);
+		const params = {
+			RequestItems: {},
+			ReturnConsumedCapacity: "TOTAL",
+		};
+		params.RequestItems[table] = Items;
 
 		try {
-			const putResult = await docClient.put(params).promise();
-			ConsumedCapacity += putResult.ConsumedCapacity.CapacityUnits;
+			const putResult = await docClient.batchWrite(params).promise();
+			if (putResult.ConsumedCapacity) return putResult.ConsumedCapacity[0].CapacityUnits;
 		} catch (err) {
 			console.log("error: ", err);
 		}
+		return 0;
+	};
+
+	let ConnectionsRequests = [];
+	for (const userID in Connections) {
+		const c = Connections[userID];
+		const Item = {
+			userID: userID,
+			timestamp: Date.now(),
+			data: {},
+		};
+
+		for (let prop of Object.getOwnPropertyNames(c).filter((p) => p !== "socket")) {
+			if (!(c[prop] instanceof Function)) Item.data[prop] = c[prop];
+		}
+
+		ConnectionsRequests.push({ PutRequest: { Item: Item } });
+
+		if (ConnectionsRequests.length === 25) {
+			ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+			ConnectionsRequests = [];
+		}
+	}
+	if (ConnectionsRequests.length > 0) {
+		ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+		ConnectionsRequests = [];
 	}
 
+	let SessionsRequests = [];
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
-		const params = {
-			TableName: "mtga-draft-sessions",
-			ReturnConsumedCapacity: "TOTAL",
-			Item: {
-				id: sessionID,
-				timestamp: Date.now(),
-				data: {},
-			},
+		const Item = {
+			id: sessionID,
+			timestamp: Date.now(),
+			data: {},
 		};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			(p) => !["users", "countdownInterval", "botsInstances"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) params.Item.data[prop] = s[prop];
+			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
 			for (let userID of s.users) {
-				params.Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
 			if (s.botsInstances) {
-				params.Item.data.botsInstances = [];
+				Item.data.botsInstances = [];
 				for (let bot of s.botsInstances) {
 					let podbot = {};
 					for (let prop of Object.getOwnPropertyNames(bot)) {
 						if (!(bot[prop] instanceof Function)) podbot[prop] = bot[prop];
 					}
-					params.Item.data.botsInstances.push(podbot);
+					Item.data.botsInstances.push(podbot);
 				}
 			}
 		}
 
-		try {
-			const putResult = await docClient.put(params).promise();
-			ConsumedCapacity += putResult.ConsumedCapacity.CapacityUnits;
-		} catch (err) {
-			console.log("error: ", err);
+		SessionsRequests.push({ PutRequest: { Item: Item } });
+		if (SessionsRequests.length === 25) {
+			ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+			SessionsRequests = [];
 		}
+	}
+
+	if (SessionsRequests.length > 0) {
+		ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+		SessionsRequests = [];
 	}
 
 	console.log(`dumpToDynamoDB: done. Total ConsumedCapacity: ${ConsumedCapacity}`);
