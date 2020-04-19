@@ -31,7 +31,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Add more display option for the cards in draft logs (Even make them draggable?)
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Add set code support to cube import?

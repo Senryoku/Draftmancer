@@ -39,7 +39,8 @@ RatingsSources = [
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN5.html',
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN6.html',
 				'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN7.html',
-				'data/LimitedRatings/Limited Card Ratings_THB.html'
+				'data/LimitedRatings/Limited Card Ratings_THB.html',
+				'data/LimitedRatings/LimitedCardRatingsIKO.html'
 ]
 RatingsDest = 'data/ratings.json'
 
@@ -104,27 +105,26 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
 
 
 CardRatings = {}
+with open('data/ratings_base.json', 'r', encoding="utf8") as file:
+	CardRatings = dict(CardRatings, **json.loads(file.read()))
 if not os.path.isfile(RatingsDest) or ForceRatings:
 	for path in RatingsSources:
 		with open(path, 'r', encoding="utf8") as file:
 			text = file.read()
-			text = text[text.find("table_card_rating_wrapper"):text.find("table_card_rating_previous")]
-			matches = re.findall("<b>([^<]*)<\/b>", text)
-			for i in range(0, len(matches), 2):
+			matches = re.findall(r'<[^>]*?data-name="([^"]+)"[^>]*?data-rating="([^"]+)">', text)
+			for m in matches:
 				try:
-					matches[i+1] = float(matches[i+1])
+					rating = float(m[1])
 				except ValueError:
-					vals = matches[i+1].split(" // ")
-					if len(vals) != 2:
-						vals = matches[i+1].split(" //")
-					matches[i+1] = (float(vals[0]) + float(vals[1]))/2
-				#print(matches[i] + " " + matches[i+1])
-				CardRatings[matches[i]] = matches[i+1]
+					vals = m[1].split("//")
+					rating = (float(vals[0]) + float(vals[1]))/2
+				#print(m[0], " ", rating)
+				CardRatings[m[0]] = rating
 	with open(RatingsDest, 'w') as outfile:
 		json.dump(CardRatings, outfile)
 else:
 	with open(RatingsDest, 'r', encoding="utf8") as file:
-		CardRatings = json.loads(file.read())
+		CardRatings = dict(CardRatings, **json.loads(file.read()))
 
 if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
 	# Tag non booster card as such
