@@ -17,19 +17,18 @@ AWS.config.update({
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
-const InactiveConnections = {};
-const InactiveSessions = {};
 
 // Connections and Session are obsolete after two days
 function isObsolete(item) {
 	return Math.floor((Date.now() - item.timestamp) / 1000 / 60 / 60 / 24) > 2;
 }
 
-(async function requestSavedConnections() {
+async function requestSavedConnections() {
 	var connectionsRequestParams = {
 		TableName: "mtga-draft-connections",
 		ReturnConsumedCapacity: "TOTAL",
 	};
+	let InactiveConnections = {};
 
 	try {
 		const data = await docClient.scan(connectionsRequestParams).promise();
@@ -50,14 +49,17 @@ function isObsolete(item) {
 	} catch (err) {
 		console.log("error: ", err);
 	}
-})();
 
-(async function requestSavedSessions() {
+	return InactiveConnections;
+}
+
+async function requestSavedSessions() {
 	var connections = {
 		TableName: "mtga-draft-sessions",
 		ReturnConsumedCapacity: "TOTAL",
 	};
 
+	let InactiveSessions = {};
 	try {
 		const data = await docClient.scan(connections).promise();
 
@@ -88,7 +90,9 @@ function isObsolete(item) {
 	} catch (err) {
 		console.log("error: ", err);
 	}
-})();
+
+	return InactiveSessions;
+}
 
 async function dumpToDynamoDB(exitOnCompletion = false) {
 	let ConsumedCapacity = 0;
@@ -228,5 +232,11 @@ process.on("uncaughtException", (err) => {
 	}, 20000);
 });
 
-module.exports.InactiveSessions = InactiveSessions;
-module.exports.InactiveConnections = InactiveConnections;
+if (typeof global.it === "function") {
+	// Testing in mocha
+	module.exports.InactiveSessions = {};
+	module.exports.InactiveConnections = {};
+} else {
+	module.exports.InactiveSessions = requestSavedSessions();
+	module.exports.InactiveConnections = requestSavedConnections();
+}

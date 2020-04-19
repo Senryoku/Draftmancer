@@ -33,9 +33,6 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
-const InactiveSessions = Persistence.InactiveSessions;
-const InactiveConnections = Persistence.InactiveConnections;
-
 function getPublicSessions() {
 	let publicSessions = [];
 	for (let s in Sessions) {
@@ -694,7 +691,14 @@ app.get("/getStatus/:key", (req, res) => {
 	}
 });
 
-http.listen(port, (err) => {
-	if (err) throw err;
-	console.log("listening on port " + port);
+let InactiveConnections;
+let InactiveSessions;
+
+Promise.all([Persistence.InactiveConnections, Persistence.InactiveSessions]).then((values) => {
+	InactiveConnections = values[0];
+	InactiveSessions = values[1];
+	http.listen(port, (err) => {
+		if (err) throw err;
+		console.log("listening on port " + port);
+	});
 });
