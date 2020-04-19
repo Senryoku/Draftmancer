@@ -384,9 +384,9 @@ describe("Single Draft", function () {
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		clients[0].emit("startDraft");
 		let connectedClients = 0;
 		let receivedBoosters = 0;
+		let index = 0;
 		for (let c of clients) {
 			c.on("startDraft", function () {
 				connectedClients += 1;
@@ -394,14 +394,19 @@ describe("Single Draft", function () {
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			c.on("nextBooster", function (data) {
-				expect(boosters).not.include(data);
-				boosters.push(data);
-				receivedBoosters += 1;
-				this.removeListener("nextBooster");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-			});
+			((_) => {
+				const _idx = index;
+				c.on("nextBooster", function (data) {
+					expect(boosters).not.include(data);
+					boosters[_idx] = data;
+					receivedBoosters += 1;
+					this.removeListener("nextBooster");
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			})();
+			++index;
 		}
+		clients[0].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
@@ -519,23 +524,29 @@ describe("Single Draft without Color Balance", function () {
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		clients[0].emit("startDraft");
 		let connectedClients = 0;
 		let receivedBoosters = 0;
+		let index = 0;
 		for (let c of clients) {
 			c.on("startDraft", function () {
 				connectedClients += 1;
+				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			c.on("nextBooster", function (data) {
-				expect(boosters).not.include(data);
-				boosters.push(data);
-				receivedBoosters += 1;
-				this.removeListener("nextBooster");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-			});
+			((_) => {
+				const _idx = index;
+				c.on("nextBooster", function (data) {
+					expect(boosters).not.include(data);
+					boosters[_idx] = data;
+					receivedBoosters += 1;
+					this.removeListener("nextBooster");
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			})();
+			++index;
 		}
+		clients[0].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
@@ -644,9 +655,9 @@ describe("Single Draft With disconnect and reconnect", function () {
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		clients[0].emit("startDraft");
 		let connectedClients = 0;
 		let receivedBoosters = 0;
+		let index = 0;
 		for (let c of clients) {
 			c.on("startDraft", function () {
 				connectedClients += 1;
@@ -654,14 +665,19 @@ describe("Single Draft With disconnect and reconnect", function () {
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			c.on("nextBooster", function (data) {
-				expect(boosters).not.include(data);
-				boosters.push(data);
-				receivedBoosters += 1;
-				this.removeListener("nextBooster");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-			});
+			((_) => {
+				const _idx = index;
+				c.on("nextBooster", function (data) {
+					expect(boosters).not.include(data);
+					boosters[_idx] = data;
+					receivedBoosters += 1;
+					this.removeListener("nextBooster");
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			})();
+			++index;
 		}
+		clients[0].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
@@ -786,19 +802,19 @@ describe("Single Draft With disconnect and bots", function () {
 	});
 
 	it("Clients should receive the updated bot count.", function (done) {
-		clients[0].emit("bots", 6);
 		clients[1].on("bots", function (bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
 		});
+		clients[0].emit("bots", 6);
 	});
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		clients[0].emit("startDraft");
 		let connectedClients = 0;
 		let receivedBoosters = 0;
+		let index = 0;
 		for (let c of clients) {
 			c.on("startDraft", function () {
 				connectedClients += 1;
@@ -806,14 +822,19 @@ describe("Single Draft With disconnect and bots", function () {
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			c.on("nextBooster", function (data) {
-				expect(boosters).not.include(data);
-				boosters.push(data);
-				receivedBoosters += 1;
-				this.removeListener("nextBooster");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-			});
+			((_) => {
+				const _idx = index;
+				c.on("nextBooster", function (data) {
+					expect(boosters).not.include(data);
+					boosters[_idx] = data;
+					receivedBoosters += 1;
+					this.removeListener("nextBooster");
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			})();
+			++index;
 		}
+		clients[0].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
@@ -852,9 +873,11 @@ describe("Single Draft With disconnect and bots", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("nextBooster", function (data) {
-				let idx = c;
+				const idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", boosters[idx][0], (_) => {});
+				process.nextTick((_) => {
+					this.emit("pickCard", boosters[idx][0], (_) => {});
+				});
 			});
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
@@ -949,33 +972,39 @@ describe("Single Draft with Bots", function () {
 	});
 
 	it("Clients should receive the updated bot count.", function (done) {
-		clients[0].emit("bots", 6);
 		clients[1].on("bots", function (bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
 		});
+		clients[0].emit("bots", 6);
 	});
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		clients[0].emit("startDraft");
 		let connectedClients = 0;
 		let receivedBoosters = 0;
+		let index = 0;
 		for (let c of clients) {
 			c.on("startDraft", function () {
 				connectedClients += 1;
+				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			c.on("nextBooster", function (data) {
-				expect(boosters).not.include(data);
-				boosters.push(data);
-				receivedBoosters += 1;
-				this.removeListener("nextBooster");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-			});
+			((_) => {
+				const _idx = index;
+				c.on("nextBooster", function (data) {
+					expect(boosters).not.include(data);
+					boosters[_idx] = data;
+					receivedBoosters += 1;
+					this.removeListener("nextBooster");
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			})();
+			++index;
 		}
+		clients[0].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
@@ -1095,7 +1124,6 @@ describe("Multiple Drafts", function () {
 
 	it("When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster", function (done) {
 		let sessionsCorrectlyStartedDrafting = 0;
-		let receivedBoosters = 0;
 		for (let [sessionIdx, sessionClients] of clients.entries()) {
 			boosters.push([]);
 			(() => {
