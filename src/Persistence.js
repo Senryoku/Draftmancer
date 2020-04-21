@@ -94,6 +94,7 @@ async function requestSavedSessions() {
 					InactiveSessions[fixedID].botsInstances.push(newBot);
 				}
 			}
+			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
 
 			if (isObsolete(s))
 				docClient.delete({ TableName: "mtga-draft-sessions", Key: { id: s.id } }, (err, data) => {
@@ -192,6 +193,8 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 			}
 		}
 
+		if (s.bracket) Item.data.bracket.players = Item.data.bracket.players.map((n) => filterEmptyStr(n));
+
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
 			ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
@@ -208,7 +211,8 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-// Can make asynchronous calls, is not called on process.exit() or uncaught exceptions.
+// Can make asynchronous calls, is not called on process.exit() or uncaught
+// exceptions.
 // See https://nodejs.org/api/process.html#process_event_beforeexit
 process.on("beforeExit", (code) => {
 	console.log("beforeExit callback.");
@@ -220,7 +224,8 @@ process.on("exit", (code) => {
 	console.log(`exit callback: Process exited with code: ${code}`);
 });
 
-/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual restarts and automatic cycling of dynos (~ every 24h)
+/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual
+ * restarts and automatic cycling of dynos (~ every 24h)
  * Process have 30sec. before getting SIGKILL'd.
  * See https://devcenter.heroku.com/articles/dynos#shutdown
  */

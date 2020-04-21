@@ -505,7 +505,7 @@ io.on("connection", function (socket) {
 
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateBracket(players);
-		ack({ code: 0 });
+		if (ack) ack({ code: 0 });
 	});
 
 	socket.on("updateBracket", function (results) {
@@ -535,7 +535,8 @@ function getUserID(req, res) {
 function joinSession(sessionID, userID) {
 	if (sessionID in InactiveSessions) {
 		console.log(`Restoring inactive session '${sessionID}'...`);
-		InactiveSessions[sessionID].owner = userID; // Always having a valid owner is more important than preserving the old one - probably.
+		InactiveSessions[sessionID].owner = userID; // Always having a valid owner is more important than
+		// preserving the old one - probably.
 		Sessions[sessionID] = InactiveSessions[sessionID];
 		delete InactiveSessions[sessionID];
 	}
@@ -560,7 +561,7 @@ function joinSession(sessionID, userID) {
 			if (Connections[userID].sessionID === null) sessionID = shortguid();
 			else sessionID = Connections[userID].sessionID;
 			Connections[userID].socket.emit("setSession", sessionID);
-			//joinSession(sessionID, userID);
+			// joinSession(sessionID, userID);
 		}
 		// Session exists and is full
 	} else if (sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
@@ -571,7 +572,7 @@ function joinSession(sessionID, userID) {
 		if (Connections[userID].sessionID === null) sessionID = shortguid();
 		else sessionID = Connections[userID].sessionID;
 		Connections[userID].socket.emit("setSession", sessionID);
-		//joinSession(sessionID, userID);
+		// joinSession(sessionID, userID);
 	} else {
 		addUserToSession(userID, sessionID);
 	}
