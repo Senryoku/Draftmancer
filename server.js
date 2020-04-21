@@ -498,6 +498,24 @@ io.on("connection", function (socket) {
 		Sessions[sessionID].boosters = [];
 	});
 
+	socket.on("generateBracket", function (players, ack) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID) return;
+
+		if (players.length !== 8) return;
+		Sessions[sessionID].generateBracket(players);
+		ack({ code: 0 });
+	});
+
+	socket.on("updateBracket", function (results) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID) return;
+
+		Sessions[sessionID].updateBracket(results);
+	});
+
 	joinSession(query.sessionID, query.userID);
 	socket.emit("publicSessions", getPublicSessions());
 });

@@ -1254,3 +1254,43 @@ ul.player-table li:nth-child(4):after {
 	bottom: calc(-2 * var(--margin));
 	left: 50%;
 }
+
+/* Bracket */
+
+.bracket {
+	display: flex;
+}
+
+.bracket-column {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+.bracket-match {
+	padding: 0.5em;
+	margin: 1em;
+
+	background: #333;
+	border-radius: 1em;
+}
+
+.bracket-player {
+	display: flex;
+	justify-content: space-between;
+	height: 2em;
+	line-height: 2em;
+	width: 20em;
+	padding: 0.5em;
+	margin: 0.5em;
+}
+
+.bracket-winner {
+	background-color: #555;
+	box-shadow: 0 0 5px 5px #555;
+}
+
+.bracket-tbd,
+.bracket-empty {
+	color: grey;
+}

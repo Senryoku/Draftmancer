@@ -141,6 +141,7 @@ var app = new Vue({
 		draftLogRecipients: "everyone",
 		draftLog: undefined,
 		savedDraftLog: false,
+		bracket: null,
 
 		publicSessions: [],
 		selectedPublicSession: "",
@@ -169,6 +170,7 @@ var app = new Vue({
 		cardsPerBooster: undefined, // Used to compute pick number
 
 		showSessionOptionsDialog: false,
+		displayBracket: false,
 		displayAbout: false,
 		// Draft Log Modal
 		displayDraftLog: false,
@@ -1122,6 +1124,22 @@ var app = new Vue({
 				this.distributeSealed(boosterCount);
 			}
 		},
+		generateBracket: function () {
+			if (this.userID != this.sessionOwner) return;
+			const playerNames = this.sessionUsers.map((u) => u.userName);
+			let players = [];
+			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
+			for (let i = 0; i < 8; ++i) {
+				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
+				else players[i] = "";
+			}
+			this.socket.emit("generateBracket", players, (answer) => {
+				if (answer.code === 0) app.displayBracket = true;
+			});
+		},
+		updateBracket: function () {
+			this.socket.emit("updateBracket", this.bracket.results);
+		},
 		addDeckColumn: function () {
 			this.deckColumn.push([]);
 			this.deckColumn[this.deckColumn.length - 1] = this.deckColumn[this.deckColumn.length - 2].filter(
@@ -1441,6 +1459,42 @@ var app = new Vue({
 			let r = {};
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
+		},
+
+		matches: function () {
+			let m = [[], [], []];
+			const Match = function (index, players) {
+				this.index = index;
+				this.players = players;
+				this.isValid = function () {
+					return (
+						!this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd
+					);
+				};
+			};
+
+			const winner = function (match) {
+				if (match.players[0].empty && match.players[1].empty) return { empty: true };
+				if (match.players[0].empty) return match.players[1];
+				if (match.players[1].empty) return match.players[0];
+				if (!app.bracket.results || app.bracket.results[match.index][0] === app.bracket.results[match.index][1])
+					return { tbd: true };
+				if (app.bracket.results[match.index][0] > app.bracket.results[match.index][1]) return match.players[0];
+				else return match.players[1];
+			};
+
+			for (let i = 0; i < 4; ++i) {
+				m[0].push(
+					new Match(i, [
+						this.bracket.players[2 * i] === "" ? { empty: true } : this.bracket.players[2 * i],
+						this.bracket.players[2 * i + 1] === "" ? { empty: true } : this.bracket.players[2 * i + 1],
+					])
+				);
+			}
+			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
+			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
+			m[2].push(new Match(6, [winner(m[1][0]), winner(m[1][1])]));
+			return m;
 		},
 	},
 	mounted: async function () {

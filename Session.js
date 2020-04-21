@@ -19,6 +19,19 @@ function shuffleArray(array) {
 	}
 }
 
+function Bracket(players) {
+	this.players = players;
+	this.results = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+	];
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -44,6 +57,7 @@ function Session(id, owner) {
 	this.useCustomCardList = false;
 	this.customCardList = [];
 	this.draftLogRecipients = "everyone";
+	this.bracket = undefined;
 
 	// Draft state
 	this.drafting = false;
@@ -116,6 +130,7 @@ function Session(id, owner) {
 			foil: this.foil,
 			useCustomCardList: this.useCustomCardList,
 			customCardList: this.customCardList,
+			bracket: this.bracket,
 		});
 	};
 
@@ -888,6 +903,17 @@ function Session(id, owner) {
 				timer: timer,
 			});
 		}
+	};
+
+	this.generateBracket = function (players) {
+		this.bracket = new Bracket(players);
+		for (let user of this.users) Connections[user].socket.emit("sessionOptions", { bracket: this.bracket });
+	};
+
+	this.updateBracket = function (results) {
+		if (!this.bracket) return false;
+		this.bracket.results = results;
+		for (let user of this.users) Connections[user].socket.emit("sessionOptions", { bracket: this.bracket });
 	};
 }
 
