@@ -580,12 +580,11 @@ var app = new Vue({
 			}
 
 			this.socket.emit("pickCard", this.selectedCard.id, (answer) => {
-				if (answer.code === 0) {
-					this.draftingState = DraftState.Waiting;
-					this.addToDeck(this.selectedCard);
-					this.selectedCard = undefined;
-				} else console.log(`pickCard: Unexpected answer:`, anwser);
+				if (answer.code !== 0) console.log(`pickCard: Unexpected answer:`, anwser);
 			});
+			this.draftingState = DraftState.Waiting;
+			this.addToDeck(this.selectedCard);
+			this.selectedCard = undefined;
 		},
 		forcePick: function () {
 			if (this.draftingState != DraftState.Picking) return;
@@ -595,12 +594,11 @@ var app = new Vue({
 				this.selectedCard = this.booster[randomIdx];
 			}
 			this.socket.emit("pickCard", this.selectedCard.id, (anwser) => {
-				if (anwser.code === 0) {
-					this.addToDeck(this.selectedCard);
-					this.selectedCard = undefined;
-					this.draftingState = DraftState.Waiting;
-				} else console.log(`pickCard: Unexpected answer:`, anwser);
+				if (anwser.code !== 0) console.log(`pickCard: Unexpected answer:`, anwser);
 			});
+			this.draftingState = DraftState.Waiting;
+			this.addToDeck(this.selectedCard);
+			this.selectedCard = undefined;
 		},
 		checkNotificationPermission: function (e) {
 			if (e.target.value && Notification.permission != "granted") {
@@ -985,7 +983,10 @@ var app = new Vue({
 			this.socket.emit("distributeSealed", boosterCount);
 		},
 		genCard: function (c) {
-			if (!(c in this.cards)) return undefined;
+			if (!(c in this.cards)) {
+				console.error(`Error: Card id '${c}' not found!`);
+				return { id: c };
+			}
 			return {
 				id: c,
 				uniqueID: UniqueID++,
