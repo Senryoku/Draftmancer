@@ -1280,7 +1280,7 @@ ul.player-table li:nth-child(4):after {
 	justify-content: space-between;
 	height: 2em;
 	line-height: 2em;
-	width: 20em;
+	width: 20rem;
 	padding: 0.5em;
 	margin: 0.5em;
 }
@@ -1293,4 +1293,14 @@ ul.player-table li:nth-child(4):after {
 .bracket-tbd,
 .bracket-empty {
 	color: grey;
+}
+
+.bracket-result {
+	font-size: 2em;
+}
+
+.bracket-player-name {
+	font-size: 1.5em;
+	max-width: 15rem;
+	overflow: hidden;
 }
