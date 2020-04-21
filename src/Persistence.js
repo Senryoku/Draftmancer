@@ -18,6 +18,16 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+function filterEmptyStr(obj) {
+	if (obj === "") return "(EmptyString)";
+	return obj;
+}
+
+function restoreEmptyStr(obj) {
+	if (obj === "(EmptyString)") return "";
+	return obj;
+}
+
 // Connections and Session are obsolete after two days
 function isObsolete(item) {
 	return Math.floor((Date.now() - item.timestamp) / 1000 / 60 / 60 / 24) > 2;
@@ -34,9 +44,13 @@ async function requestSavedConnections() {
 		const data = await docClient.scan(connectionsRequestParams).promise();
 
 		for (let c of data.Items) {
-			InactiveConnections[c.userID] = new ConnectionModule.Connection(null, c.data.userID, c.data.userName);
+			InactiveConnections[restoreEmptyStr(c.userID)] = new ConnectionModule.Connection(
+				null,
+				c.data.userID,
+				restoreEmptyStr(c.data.userName)
+			);
 			for (let prop of Object.getOwnPropertyNames(c.data)) {
-				InactiveConnections[c.userID][prop] = c.data[prop];
+				InactiveConnections[restoreEmptyStr(c.userID)][prop] = restoreEmptyStr(c.data[prop]);
 			}
 
 			if (isObsolete(c))
@@ -64,19 +78,20 @@ async function requestSavedSessions() {
 		const data = await docClient.scan(connections).promise();
 
 		for (let s of data.Items) {
-			InactiveSessions[s.id] = new SessionModule.Session(s.id, null);
+			const fixedID = restoreEmptyStr(s.id);
+			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
 			for (let prop of Object.getOwnPropertyNames(s.data).filter((p) => !["botsInstances"].includes(p))) {
-				InactiveSessions[s.id][prop] = s.data[prop];
+				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
 			}
 
 			if (s.data.botsInstances) {
-				InactiveSessions[s.id].botsInstances = [];
+				InactiveSessions[fixedID].botsInstances = [];
 				for (let bot of s.data.botsInstances) {
 					const newBot = new Bot(bot.name, bot.id);
 					for (let prop of Object.getOwnPropertyNames(bot)) {
 						newBot[prop] = bot[prop];
 					}
-					InactiveSessions[s.id].botsInstances.push(newBot);
+					InactiveSessions[fixedID].botsInstances.push(newBot);
 				}
 			}
 
@@ -118,13 +133,13 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	for (const userID in Connections) {
 		const c = Connections[userID];
 		const Item = {
-			userID: userID,
+			userID: filterEmptyStr(userID),
 			timestamp: Date.now(),
 			data: {},
 		};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter((p) => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) Item.data[prop] = c[prop];
+			if (!(c[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(c[prop]);
 		}
 
 		ConnectionsRequests.push({ PutRequest: { Item: Item } });
@@ -143,7 +158,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
 		const Item = {
-			id: sessionID,
+			id: filterEmptyStr(sessionID),
 			timestamp: Date.now(),
 			data: {},
 		};
@@ -151,13 +166,18 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			(p) => !["users", "countdownInterval", "botsInstances"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
+			if (!(s[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(s[prop]);
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
 			for (let userID of s.users) {
 				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+				for (let prop of Object.getOwnPropertyNames(Item.data.disconnectedUsers[userID])) {
+					Item.data.disconnectedUsers[userID][prop] = filterEmptyStr(
+						Item.data.disconnectedUsers[userID][prop]
+					);
+				}
 			}
 
 			if (s.botsInstances) {
