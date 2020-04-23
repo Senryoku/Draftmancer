@@ -113,6 +113,19 @@ async function requestSavedSessions() {
 async function dumpToDynamoDB(exitOnCompletion = false) {
 	let ConsumedCapacity = 0;
 
+	// Immediatly close all connections
+	if (exitOnCompletion) {
+		for (const userID in Connections) {
+			Connections[userID].socket.emit("message", {
+				title: "Server Restarting",
+				text: "Please wait...",
+				showConfirmButton: false,
+				timer: 0,
+				allowOutsideClick: false,
+			});
+		}
+	}
+
 	const batchWrite = async function (table, Items) {
 		console.log(`batchWrite of length ${Items.length} to ${table}.`);
 		const params = {

@@ -348,6 +348,8 @@ var app = new Vue({
 				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
 				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
 
+				if (data.allowOutsideClick === undefined) data.allowOutsideClick = true;
+
 				Swal.fire({
 					position: "center",
 					type: "info",
@@ -356,6 +358,7 @@ var app = new Vue({
 					customClass: SwalCustomClasses,
 					showConfirmButton: data.showConfirmButton,
 					timer: data.timer,
+					allowOutsideClick: data.allowOutsideClick,
 				});
 			});
 
