@@ -692,9 +692,8 @@ var app = new Vue({
 				if (playerIds.size > 1) {
 					const swalResult = await Swal.fire({
 						type: "question",
-						title: "Multiple Account",
-						text:
-							"Looks like there are collections from multiple accounts in these logs, do you want to intersect them all, or just import the latest?",
+						title: "Multiple Accounts",
+						text: `Looks like there are collections from multiple accounts (${playerIds.size}) in these logs, do you want to intersect them all, or just import the latest?`,
 						customClass: SwalCustomClasses,
 						showCancelButton: true,
 						showConfirmButton: true,

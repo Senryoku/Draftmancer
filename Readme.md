@@ -38,8 +38,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
--   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
--   Add a way to randomize seatings
 -   Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
 -   Display foils as... foils in front end?
 
@@ -56,15 +54,11 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
+-   Add a way to randomize seatings
 -   Monitor persistence
 -   Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
--   Add a way to re-order players (Need to change all ordering logic)
--   Add an upload saved draft logs
--   Should the disconnect player event be broadcast my the server rather by detected by clients?
--   Distribute bots around the table rather than having them all at the end
 -   Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
--   Dragging cards
--   Ready Check
 -   Add notification option: In a sub menu add a way to activate notifications (HTML5 Notification?) fired when a draft is launched.
 -   Set Multiple Selection
 -   Rarity selection
@@ -83,7 +77,7 @@ AWS_ENDPOINT=http://localhost:8000
 -   Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
 -   Adventures (ELD) and Dual Faces (IXL) need only one.
 
-### Custom Set format
+## Custom Set format
 
 Rarity Header:
 
