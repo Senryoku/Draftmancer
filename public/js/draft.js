@@ -657,19 +657,75 @@ var app = new Vue({
 				return;
 			}
 			var reader = new FileReader();
-			reader.onload = function (e) {
+			reader.onload = async function (e) {
 				let contents = e.target.result;
-				let call_idx = contents.lastIndexOf("PlayerInventory.GetPlayerCardsV3");
-				let collection_start = contents.indexOf("{", call_idx);
-				let collection_end = contents.indexOf("}}", collection_start) + 2;
 
-				try {
-					let collStr = contents.slice(collection_start, collection_end);
-					let collJson = JSON.parse(collStr)["payload"];
-					//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
-					localStorage.setItem("Collection", JSON.stringify(collJson));
+				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
+
+				const parseCollection = function (contents, startIdx = null) {
+					const rpcName = "PlayerInventory.GetPlayerCardsV3";
+					try {
+						const call_idx = startIdx
+							? contents.lastIndexOf(rpcName, startIdx)
+							: contents.lastIndexOf(rpcName);
+						const collection_start = contents.indexOf("{", call_idx);
+						const collection_end = contents.indexOf("}}", collection_start) + 2;
+						const collStr = contents.slice(collection_start, collection_end);
+						const collJson = JSON.parse(collStr)["payload"];
+						//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
+						console.log(collJson);
+						return collJson;
+					} catch (e) {
+						Swal.fire({
+							type: "error",
+							title: "Parsing Error",
+							text:
+								"An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.",
+							footer: "Full error: " + e,
+							customClass: SwalCustomClasses,
+						});
+						return null;
+					}
+				};
+
+				let collection = null;
+				if (playerIds.size > 1) {
+					const swalResult = await Swal.fire({
+						type: "question",
+						title: "Multiple Account",
+						text:
+							"Looks like there are collections from multiple accounts in these logs, do you want to intersect them all, or just import the latest?",
+						customClass: SwalCustomClasses,
+						showCancelButton: true,
+						showConfirmButton: true,
+						confirmButtonColor: "#3085d6",
+						cancelButtonColor: "#d33",
+						confirmButtonText: "Intersect",
+						cancelButtonText: "Latest Only",
+					});
+					if (swalResult.value) {
+						const collections = [];
+						for (let pid of playerIds) {
+							const startIdx = contents.lastIndexOf(`"payload":{"playerId":"${pid}"`);
+							const coll = parseCollection(contents, startIdx);
+							if (coll) collections.push(coll);
+						}
+						let cardids = Object.keys(collections[0]);
+						// Filter ids
+						for (let i = 1; i < collections.length; ++i)
+							cardids = Object.keys(collections[i]).filter((id) => cardids.includes(id));
+						// Find min amount of each card
+						collection = {};
+						for (let id of cardids) collection[id] = collections[0][id];
+						for (let i = 1; i < collections.length; ++i)
+							for (let id of cardids) collection[id] = Math.min(collection[id], collections[i][id]);
+					} else collection = parseCollection(contents);
+				} else collection = parseCollection(contents);
+
+				if (collection !== null) {
+					localStorage.setItem("Collection", JSON.stringify(collection));
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					app.setCollection(collJson);
+					app.setCollection(collection);
 					Swal.fire({
 						position: "top-end",
 						customClass: "swal-container",
@@ -679,16 +735,6 @@ var app = new Vue({
 						showConfirmButton: false,
 						timer: 1500,
 					});
-				} catch (e) {
-					Swal.fire({
-						type: "error",
-						title: "Parsing Error",
-						text:
-							"An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.",
-						footer: "Full error: " + e,
-						customClass: SwalCustomClasses,
-					});
-					//alert(e);
 				}
 			};
 			reader.readAsText(file);

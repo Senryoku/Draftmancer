@@ -38,7 +38,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
--   Brackets (simplebracket project)
+-   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
+-   Add a way to randomize seatings
 -   Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
 -   Display foils as... foils in front end?
 
