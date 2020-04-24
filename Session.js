@@ -115,6 +115,12 @@ function Session(id, owner) {
 		this.notifyUserChange();
 	};
 
+	this.randomizeSeating = function () {
+		if (this.drafting) return;
+		shuffleArray(this.userOrder);
+		this.notifyUserChange();
+	};
+
 	this.syncSessionOptions = function (userID) {
 		Connections[userID].socket.emit("sessionOptions", {
 			sessionOwner: this.owner,

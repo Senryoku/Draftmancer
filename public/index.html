@@ -140,6 +140,7 @@
 		<div class="main-controls session-players">
 			<div>
 				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
+				<i v-if="userID == sessionOwner" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
 			</div>
 			<ul class="player-list">
 				<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
@@ -585,6 +586,12 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>24/04/2020
+						<ul>
+							<li>Handle importing logs with collections from multiple accounts.</li>
+							<li>Added an option to randomize seating order.</li>
+						</ul>
+					</li>
 					<li>21/04/2020
 						<ul>
 							<li>Added simple bracket generation (pairings).</li>

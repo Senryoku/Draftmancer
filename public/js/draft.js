@@ -1008,6 +1008,10 @@ var app = new Vue({
 			if (!user) return;
 			this.socket.emit("movePlayer", userID, dir);
 		},
+		randomizeSeating: function (userID, dir) {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("randomizeSeating");
+		},
 		distributeSealed: function (boosterCount) {
 			if (this.deck.length > 0) {
 				Swal.fire({

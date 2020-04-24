@@ -258,6 +258,12 @@ io.on("connection", function (socket) {
 		Sessions[sessionID].movePlayer(userID, dir);
 	});
 
+	socket.on("randomizeSeating", function () {
+		let sessionID = Connections[this.userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID) return;
+		Sessions[sessionID].randomizeSeating();
+	});
+
 	socket.on("boostersPerPlayer", function (boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
