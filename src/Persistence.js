@@ -113,7 +113,9 @@ async function requestSavedSessions() {
 async function dumpToDynamoDB(exitOnCompletion = false) {
 	let ConsumedCapacity = 0;
 
-	// Immediatly close all connections
+	// Avoid user interaction during saving
+	// (Disconnecting the socket would be better, but explicitly
+	// disconnecting socket prevents their automatic reconnection)
 	if (exitOnCompletion) {
 		for (const userID in Connections) {
 			Connections[userID].socket.emit("message", {

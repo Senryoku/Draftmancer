@@ -872,13 +872,19 @@ describe("Single Draft With disconnect and bots", function () {
 		this.timeout(4000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
-				const idx = c;
-				boosters[idx] = data.booster;
-				process.nextTick((_) => {
-					this.emit("pickCard", boosters[idx][0], (_) => {});
-				});
-			});
+			clients[c].on(
+				"nextBooster",
+				((_) => {
+					const idx = c;
+					const self = clients[c];
+					return (data) => {
+						boosters[idx] = data.booster;
+						process.nextTick((_) => {
+							self.emit("pickCard", boosters[idx][0], (_) => {});
+						});
+					};
+				})()
+			);
 			clients[c].on("endDraft", function () {
 				draftEnded += 1;
 				this.removeListener("endDraft");

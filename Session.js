@@ -419,7 +419,7 @@ function Session(id, owner) {
 			if (comm_count < targets["common"] * boosterQuantity) {
 				this.emitMessage(
 					"Error generating boosters",
-					`Not enough cards (${comm_count}/${10 * boosterQuantity} commons) in collection.`
+					`Not enough cards (${comm_count}/${targets["common"] * boosterQuantity} commons) in collection.`
 				);
 				console.warn(
 					`Not enough cards (${comm_count}/${targets["common"] * boosterQuantity} commons) in collection.`
@@ -431,7 +431,7 @@ function Session(id, owner) {
 			if (unco_count < targets["uncommon"] * boosterQuantity) {
 				this.emitMessage(
 					"Error generating boosters",
-					`Not enough cards (${unco_count}/${3 * boosterQuantity} uncommons) in collection.`
+					`Not enough cards (${unco_count}/${targets["uncommon"] * boosterQuantity} uncommons) in collection.`
 				);
 				console.warn(
 					`Not enough cards (${unco_count}/${targets["uncommon"] * boosterQuantity} uncommons) in collection.`
@@ -443,7 +443,7 @@ function Session(id, owner) {
 			if (rm_count < targets["rare"] * boosterQuantity) {
 				this.emitMessage(
 					"Error generating boosters",
-					`Not enough cards (${rm_count}/${boosterQuantity} rares & mythics) in collection.`
+					`Not enough cards (${rm_count}/${targets["rare"] * boosterQuantity} rares & mythics) in collection.`
 				);
 				console.warn(
 					`Not enough cards (${rm_count}/${targets["rare"] * boosterQuantity} rares & mythics) in collection.`
@@ -538,8 +538,11 @@ function Session(id, owner) {
 		}
 
 		// Send to all session users
-		for (let user of this.users) if (Connections[user]) Connections[user].socket.emit("sessionOwner", this.owner);
-		for (let user of this.users) if (Connections[user]) Connections[user].socket.emit("sessionUsers", user_info);
+		for (let user of this.users)
+			if (Connections[user]) {
+				Connections[user].socket.emit("sessionOwner", this.owner);
+				Connections[user].socket.emit("sessionUsers", user_info);
+			}
 	};
 
 	this.startDraft = function () {
@@ -552,7 +555,7 @@ function Session(id, owner) {
 		}
 
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
-		console.log(`Session ${this.id}: Starting draft!`);
+		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
 		this.disconnectedUsers = {};
 		// Generate bots
@@ -613,6 +616,10 @@ function Session(id, owner) {
 		}
 		if (!this.boosters[boosterIndex].includes(cardID)) {
 			console.error(`Session.pickCard: cardID ('${cardID}') not found in booster n°${boosterIndex}.`);
+			return;
+		}
+		if (Connections[userID].pickedThisRound) {
+			console.error(`Session.pickCard: User '${userID}' already picked a card this round.`);
 			return;
 		}
 
