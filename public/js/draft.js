@@ -147,6 +147,7 @@ var app = new Vue({
 		selectedPublicSession: "",
 
 		// Front-end options & data
+		userOrder: [],
 		hideSessionID: false,
 		languages: window.constants.Languages,
 		language: getCookie("language", "en"),
@@ -265,6 +266,7 @@ var app = new Vue({
 				}
 
 				app.sessionUsers = users;
+				app.userOrder = users.map((u) => u.userID);
 			});
 
 			this.socket.on("userDisconnected", function (userNames) {
@@ -1001,11 +1003,18 @@ var app = new Vue({
 				}
 			});
 		},
-		movePlayer: function (userID, dir) {
+		movePlayer: function (idx, dir) {
 			if (this.userID != this.sessionOwner) return;
-			let user = this.sessionUsers.find((u) => u.userID === userID);
-			if (!user) return;
-			this.socket.emit("movePlayer", userID, dir);
+
+			const negMod = (m, n) => ((m % n) + n) % n;
+			let other = negMod(idx + dir, this.userOrder.length);
+			[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
+
+			this.socket.emit("setSeating", this.userOrder);
+		},
+		changePlayerOrder: function () {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("setSeating", this.userOrder);
 		},
 		randomizeSeating: function (userID, dir) {
 			if (this.userID != this.sessionOwner) return;

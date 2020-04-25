@@ -142,23 +142,21 @@
 				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
 				<i v-if="userID == sessionOwner" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
 			</div>
-			<ul class="player-list">
-				<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
+			<draggable tag="ul" class="player-list" v-model="userOrder" @change="changePlayerOrder" :disabled="userID != sessionOwner || drafting">
+				<li v-for="(id, idx) in userOrder" :key="id" :class="{draggable: userID === sessionOwner && !drafting}" :set="user = userByID[id]" :title="`${userByID[id].userName} (${id})`" :class="{bot: userByID[id].isBot}">
 					<i class="fas fa-angle-double-left passing-order-left" v-show="drafting && (draftRound % 2) == 1" title="Passing order"></i>
 					<i class="fas fa-angle-double-right passing-order-right" v-show="drafting && (draftRound % 2) == 0" title="Passing order"></i>
 					<span class="player-name">{{ user.userName }}</span>
 					<template v-if="!user.isBot && !user.disconnected">
+					<template v-if="!drafting && userID == sessionOwner">
+						<i class="fas fa-chevron-left clickable move-player move-player-left" :title="`Move ${user.userName} to the left`" @click="movePlayer(idx, -1)"></i>
+						<i class="fas fa-chevron-right clickable move-player move-player-right" :title="`Move ${user.userName} to the right`" @click="movePlayer(idx, 1)"></i>
+					</template>
 					<div class="status-icons">
-						<i v-if="user.userID == sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
-						<template  v-if="userID == sessionOwner">
-							<template v-if="user.userID != sessionOwner">
-								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
-								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
-							</template>
-							<template v-if="!drafting">
-								<i class="fas fa-chevron-left clickable" :title="`Move ${user.userName} to the left`" @click="movePlayer(user.userID, 'left')"></i>
-								<i class="fas fa-chevron-right clickable" :title="`Move ${user.userName} to the right`" @click="movePlayer(user.userID, 'right')"></i>
-							</template>
+						<i v-if="id === sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
+						<template  v-if="userID === sessionOwner && id != sessionOwner">
+							<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(id)"></i>
+							<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(id)"></i>
 						</template>
 						<template v-if="!useCustomCardList && !ignoreCollections && !drafting">
 							<template v-if="!user.collection">
@@ -191,10 +189,10 @@
 							</template>
 						</template>
 					</div>
-					<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
+					<div class="chat-bubble" :id="'chat-bubble-'+id"></div>
 					</template>
 				</li>
-			</ul>
+			</draggable>
 			<div>
 				<button @click="shareSavedDraftLog" v-show="savedDraftLog">Share saved Draft Log</button>
 				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
@@ -586,6 +584,11 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>25/04/2020
+						<ul>
+							<li>Players can now be re-ordered by drag & drop.</li>
+						</ul>
+					</li>
 					<li>24/04/2020
 						<ul>
 							<li>Handle importing logs with collections from multiple accounts.</li>

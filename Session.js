@@ -106,19 +106,24 @@ function Session(id, owner) {
 		}
 	};
 
-	this.movePlayer = function (userID, dir) {
-		if (this.drafting) return;
-
-		let idx = this.userOrder.indexOf(userID);
-		let other = dir === "right" ? negMod(idx + 1, this.userOrder.length) : negMod(idx - 1, this.userOrder.length);
-		[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
+	this.setSeating = function (seating) {
+		if (this.drafting) return false;
+		if (!Array.isArray(seating) || [...this.users].some((u) => !seating.includes(u))) {
+			console.error(`Session.setSeating: invalid seating.`);
+			console.error("Submitted seating:", seating);
+			console.error("Session.users:", this.users);
+			return false;
+		}
+		this.userOrder = seating;
 		this.notifyUserChange();
+		return true;
 	};
 
 	this.randomizeSeating = function () {
-		if (this.drafting) return;
+		if (this.drafting) return false;
 		shuffleArray(this.userOrder);
 		this.notifyUserChange();
+		return true;
 	};
 
 	this.syncSessionOptions = function (userID) {

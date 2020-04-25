@@ -490,6 +490,25 @@ ul.player-list {
 	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 6em, transparent);
 }
 
+.move-player {
+	color: #555;
+	font-size; 0.8em;
+}
+
+.move-player-left {
+	position: absolute;
+	left: -0.3em;
+}
+
+.move-player-right {
+	position: absolute;
+	right: -0.3em;
+}
+
+.draggable {
+	cursor: grab;
+}
+
 .passing-order-left {
 	position: absolute;
 	left: -0.9em;

@@ -252,16 +252,16 @@ io.on("connection", function (socket) {
 		});
 	});
 
-	socket.on("movePlayer", function (userID, dir) {
+	socket.on("setSeating", function (seating) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
-		Sessions[sessionID].movePlayer(userID, dir);
+		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("randomizeSeating", function () {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
-		Sessions[sessionID].randomizeSeating();
+		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("boostersPerPlayer", function (boostersPerPlayer) {
