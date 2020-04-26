@@ -66,6 +66,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Bugs
 
+-   Bots don't appear in draft since 6a6db1f4de53069698045b25157ffe30e233d158
+-   "Bonders' Enclave" (Bonder's Enclave) doesn't export to Arena
 -   Missing Historic Cards : Cinder Barrens
 -   Guildgates won't import in arena : Guildgates do not have localized names
 -   "Truebanks#69050Aujourd’hui à 05:42

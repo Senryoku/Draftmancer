@@ -142,57 +142,72 @@
 				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
 				<i v-if="userID == sessionOwner" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
 			</div>
-			<draggable tag="ul" class="player-list" v-model="userOrder" @change="changePlayerOrder" :disabled="userID != sessionOwner || drafting">
-				<li v-for="(id, idx) in userOrder" :key="id" :class="{draggable: userID === sessionOwner && !drafting}" :set="user = userByID[id]" :title="`${userByID[id].userName} (${id})`" :class="{bot: userByID[id].isBot}">
-					<i class="fas fa-angle-double-left passing-order-left" v-show="drafting && (draftRound % 2) == 1" title="Passing order"></i>
-					<i class="fas fa-angle-double-right passing-order-right" v-show="drafting && (draftRound % 2) == 0" title="Passing order"></i>
-					<span class="player-name">{{ user.userName }}</span>
-					<template v-if="!user.isBot && !user.disconnected">
-					<template v-if="!drafting && userID == sessionOwner">
-						<i class="fas fa-chevron-left clickable move-player move-player-left" :title="`Move ${user.userName} to the left`" @click="movePlayer(idx, -1)"></i>
-						<i class="fas fa-chevron-right clickable move-player move-player-right" :title="`Move ${user.userName} to the right`" @click="movePlayer(idx, 1)"></i>
-					</template>
-					<div class="status-icons">
-						<i v-if="id === sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
-						<template  v-if="userID === sessionOwner && id != sessionOwner">
-							<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(id)"></i>
-							<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(id)"></i>
+			<template v-if="!drafting">
+				<draggable tag="ul" class="player-list" v-model="userOrder" @change="changePlayerOrder" :disabled="userID != sessionOwner || drafting">
+					<li v-for="(id, idx) in userOrder" :key="id" :class="{draggable: userID === sessionOwner && !drafting}" :set="user = userByID[id]" :title="`${userByID[id].userName} (${id})`" :class="{bot: userByID[id].isBot}">
+						<span class="player-name">{{ user.userName }}</span>
+						<template v-if="userID == sessionOwner">
+							<i class="fas fa-chevron-left clickable move-player move-player-left" :title="`Move ${user.userName} to the left`" @click="movePlayer(idx, -1)"></i>
+							<i class="fas fa-chevron-right clickable move-player move-player-right" :title="`Move ${user.userName} to the right`" @click="movePlayer(idx, 1)"></i>
 						</template>
-						<template v-if="!useCustomCardList && !ignoreCollections && !drafting">
-							<template v-if="!user.collection">
-								<i class="fas fa-book red" :title="user.userName + ' have not uploaded their collection yet.'"></i>
+						<div class="status-icons">
+							<i v-if="id === sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
+							<template  v-if="userID === sessionOwner && id != sessionOwner">
+								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(id)"></i>
+								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(id)"></i>
 							</template>
-							<template v-else-if="user.collection && !user.useCollection">
-								<i class="fas fa-book yellow" :title="user.userName + ' have uploaded their collection, but are not using it.'"></i>
+							<template v-if="!useCustomCardList && !ignoreCollections">
+								<template v-if="!user.collection">
+									<i class="fas fa-book red" :title="user.userName + ' have not uploaded their collection yet.'"></i>
+								</template>
+								<template v-else-if="user.collection && !user.useCollection">
+									<i class="fas fa-book yellow" :title="user.userName + ' have uploaded their collection, but are not using it.'"></i>
+								</template>
+								<template v-else>
+									<i class="fas fa-book green" :title="user.userName + ' have uploaded their collection.'"></i>
+								</template>
 							</template>
-							<template v-else>
-								<i class="fas fa-book green" :title="user.userName + ' have uploaded their collection.'"></i>
+							<template v-if="pendingReadyCheck">
+								<template v-if="user.readyState == ReadyState.Ready">
+									<i class="fas fa-check green" :title="`${user.userName} is ready!`"></i>
+								</template>
+								<template v-else-if="user.readyState == ReadyState.NotReady">
+									<i class="fas fa-times red" :title="`${user.userName} is NOT ready!`"></i>
+								</template>
+								<template v-else-if="user.readyState == ReadyState.Unknown">
+									<i class="fas fa-spinner fa-spin" :title="`Waiting on ${user.userName} to respond...`"></i>
+								</template>
 							</template>
-						</template>
-						<template v-if="drafting">
+						</div>
+						<div class="chat-bubble" :id="'chat-bubble-'+id"></div>
+					</li>
+				</draggable>
+			</template>
+			<template v-else>
+				<ul class="player-list">
+					<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
+						<i class="fas fa-angle-double-left passing-order-left" v-show="(draftRound % 2) == 1" title="Passing order"></i>
+						<i class="fas fa-angle-double-right passing-order-right" v-show="(draftRound % 2) == 0" title="Passing order"></i>
+						<span class="player-name">{{ user.userName }}</span>
+						<template v-if="!user.isBot && !user.disconnected">
+						<div class="status-icons">
+							<i v-if="user.userID === sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
+							<template  v-if="userID === sessionOwner && user.userID != sessionOwner">
+								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
+								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
+							</template>
 							<template v-if="user.pickedThisRound">
 								<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
 							</template>
 							<template v-else>
 								<i class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
 							</template>
+						</div>
+						<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
 						</template>
-						<template v-if="!drafting && pendingReadyCheck">
-							<template v-if="user.readyState == ReadyState.Ready">
-								<i class="fas fa-check green" :title="`${user.userName} is ready!`"></i>
-							</template>
-							<template v-else-if="user.readyState == ReadyState.NotReady">
-								<i class="fas fa-times red" :title="`${user.userName} is NOT ready!`"></i>
-							</template>
-							<template v-else-if="user.readyState == ReadyState.Unknown">
-								<i class="fas fa-spinner fa-spin" :title="`Waiting on ${user.userName} to respond...`"></i>
-							</template>
-						</template>
-					</div>
-					<div class="chat-bubble" :id="'chat-bubble-'+id"></div>
-					</template>
-				</li>
-			</draggable>
+					</li>
+				</ul>
+			</template>
 			<div>
 				<button @click="shareSavedDraftLog" v-show="savedDraftLog">Share saved Draft Log</button>
 				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog">Draft Log</button>
