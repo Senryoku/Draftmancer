@@ -5,7 +5,6 @@ import ijson
 import os
 import gzip
 import urllib
-import requests
 import sys
 import re
 from itertools import groupby
