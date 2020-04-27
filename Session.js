@@ -207,8 +207,7 @@ function Session(id, owner) {
 			useCollection[i] =
 				Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection);
 
-		// Start from the first user's collection, or the list of all cards if not
-		// available/used
+		// Start from the first user's collection, or the list of all cards if not available/used
 		if (!useCollection[0]) intersection = Object.keys(Cards).filter((c) => Cards[c].in_booster);
 		else
 			intersection = Object.keys(Connections[user_list[0]].collection).filter(
@@ -231,8 +230,7 @@ function Session(id, owner) {
 		return collection;
 	};
 
-	// Prune cards according to set selection in setRestriction; Categorize cards
-	// by rarity
+	// Prune cards according to set selection in setRestriction; Categorize cards by rarity
 	this.restrictedCollectionByRarity = function () {
 		let localCollection = {
 			common: {},
@@ -342,8 +340,7 @@ function Session(id, owner) {
 					this.boosters.push(booster);
 				}
 			} else {
-				// Generate fully random 15-cards booster for cube (not considering
-				// rarity)
+				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
 				let localCollection = this.collection();
 
@@ -442,8 +439,7 @@ function Session(id, owner) {
 			}
 
 			const foilFrequency = 15.0 / 63.0;
-			// 1/16 chances of a foil basic land added to the common slot. Mythic to
-			// common
+			// 1/16 chances of a foil basic land added to the common slot. Mythic to common
 			const foilRarityFreq = {
 				mythic: 1.0 / 128,
 				rare: 1.0 / 128 + 7.0 / 128,
@@ -528,8 +524,7 @@ function Session(id, owner) {
 				for (let i = 0; i < targets["uncommon"]; ++i)
 					booster.push(pick_card(localCollection["uncommon"], booster));
 
-				// Color balance the booster by adding one common of each color if
-				// possible
+				// Color balance the booster by adding one common of each color if possible
 				let pickedCommons = [];
 				if (this.colorBalance) {
 					for (let c of "WUBRG") {
@@ -548,8 +543,7 @@ function Session(id, owner) {
 					pickedCommons.push(pickedCard);
 				}
 
-				// Shuffle commons to avoid obvious signals to other players when color
-				// balancing
+				// Shuffle commons to avoid obvious signals to other players when color balancing
 				shuffleArray(pickedCommons);
 				booster = booster.concat(pickedCommons);
 
@@ -849,8 +843,7 @@ function Session(id, owner) {
 			++index;
 		}
 
-		this.startCountdown(); // Starts countdown now that everyone has their
-		// booster
+		this.startCountdown(); // Starts countdown now that everyone has their booster
 		++this.round;
 	};
 
