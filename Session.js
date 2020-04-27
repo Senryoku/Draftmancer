@@ -188,8 +188,7 @@ function Session(id, owner) {
 		let intersection = [];
 		let collection = {};
 
-		// If none of the user has uploaded their collection/doesn't want to use it,
-		// or the ignoreCollections flag is set, return all cards.
+		// If none of the user has uploaded their collection/doesn't want to use it, or the ignoreCollections flag is set, return all cards.
 		let all_cards = true;
 		for (let i = 0; i < user_list.length; ++i) {
 			all_cards =
@@ -795,8 +794,7 @@ function Session(id, owner) {
 			return;
 		}
 
-		this.pickedCardsThisRound = 0; // Only counting cards picked by human
-		// players (including disconnected ones)
+		this.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
 
 		let index = 0;
 		const evenRound = (this.boosters.length / totalVirtualPlayers) % 2 == 0;
@@ -1013,8 +1011,7 @@ function Session(id, owner) {
 	};
 
 	// Includes disconnected players!
-	// Distribute order has to be deterministic (especially for the reconnect
-	// feature), sorting by ID is an easy solution...
+	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
 	this.getSortedHumanPlayers = function () {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
 		return this.userOrder.filter((e) => players.includes(e));
