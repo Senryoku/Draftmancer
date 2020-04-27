@@ -1527,7 +1527,7 @@ var app = new Vue({
 			return ReadyState;
 		},
 		draftRound: function () {
-			return Math.floor((this.deck.length + this.sideboard.length) / (this.useCustomCardList ? 15 : 14)) + 1;
+			return Math.floor((this.deck.length + this.sideboard.length) / this.cardsPerBooster) + 1;
 		},
 		winstonCanSkipPile: function () {
 			const s = this.winstonDraftState;
