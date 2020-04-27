@@ -421,6 +421,8 @@ var app = new Vue({
 				app.drafting = true;
 				app.setWinstonDraftState(state);
 				app.stopReadyCheck();
+				app.sideboard = [];
+				app.deck = [];
 				app.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -475,6 +477,27 @@ var app = new Vue({
 				});
 			});
 
+			this.socket.on("rejoinWinstonDraft", function (data) {
+				app.drafting = true;
+
+				app.setWinstonDraftState(data.state);
+				app.sideboard = [];
+				app.deck = [];
+				for (let c of data.pickedCards) app.addToDeck(app.cards[c]);
+
+				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
+				else app.draftingState = DraftState.WinstonWaiting;
+
+				Swal.fire({
+					position: "center",
+					type: "success",
+					title: "Reconnected to the Winston draft!",
+					customClass: SwalCustomClasses,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			});
+
 			this.socket.on("startDraft", function () {
 				// Save user ID in case of disconnect
 				setCookie("userID", app.userID);
@@ -507,7 +530,7 @@ var app = new Vue({
 
 				app.sideboard = [];
 				app.deck = [];
-				for (let c of data.pickedCards) app.deck.push(app.cards[c]);
+				for (let c of data.pickedCards) app.addToDeck(app.genCard(c));
 
 				app.booster = [];
 				for (let c of data.booster) {
@@ -687,11 +710,34 @@ var app = new Vue({
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				console.log(p);
 				for (let c of p) pile.push(this.genCard(c));
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
+		},
+		startWinstonDraft: async function () {
+			if (this.userID != this.sessionOwner || this.drafting) return;
+			const { value: boosterCount } = await Swal.fire({
+				title: "Winston Draft",
+				html: `Winston Draft is a draft variant for two players, <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank">more information here</a>. How many boosters for the main stack (default is 6)?`,
+				inputPlaceholder: "Booster count",
+				input: "number",
+				inputAttributes: {
+					min: 6,
+					max: 12,
+					step: 1,
+				},
+				inputValue: 6,
+				customClass: SwalCustomClasses,
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Start Winston Draft",
+			});
+
+			if (boosterCount) {
+				this.socket.emit("startWinstonDraft", boosterCount);
+			}
 		},
 		winstonDraftTakePile: function () {
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
@@ -776,7 +822,6 @@ var app = new Vue({
 						const collStr = contents.slice(collection_start, collection_end);
 						const collJson = JSON.parse(collStr)["payload"];
 						//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
-						console.log(collJson);
 						return collJson;
 					} catch (e) {
 						Swal.fire({
@@ -1271,7 +1316,7 @@ var app = new Vue({
 				showCancelButton: true,
 				text: "How many booster for each player?",
 				inputPlaceholder: "Booster count",
-				input: "range",
+				input: "number",
 				inputAttributes: {
 					min: 4,
 					max: 12,

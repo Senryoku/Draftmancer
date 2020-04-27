@@ -182,12 +182,12 @@ io.on("connection", function (socket) {
 		for (let user of Sessions[sessionID].users) Connections[user].socket.emit("setReady", userID, readyState);
 	});
 
-	socket.on("startWinstonDraft", function () {
+	socket.on("startWinstonDraft", function (boosterCount) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 		if (Sessions[sessionID].users.size == 2) {
-			Sessions[sessionID].startWinstonDraft();
+			Sessions[sessionID].startWinstonDraft(boosterCount ? boosterCount : 6);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,

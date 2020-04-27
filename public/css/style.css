@@ -684,7 +684,7 @@ ul.player-list {
 .card-placeholder {
 	width: 200px;
 	height: 283.333px;
-	border-radius: 10px;
+	border-radius: 5px;
 	background: url("../img/cardback.png");
 	background-repeat: no-repeat;
 	background-size: 100%;
@@ -797,7 +797,7 @@ ul.player-list {
 
 .minus-column,
 .plus-column {
-	margin: 0.2em;
+	margin: 0 0 0.2em 0;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 37px;
 	padding: 5px;
@@ -1384,6 +1384,7 @@ ul.player-table li:nth-child(4):after {
 
 #main-vue button.confirm {
 	background-color: #3085d6;
+	text-shadow: 0 0 2px black;
 }
 #main-vue button.confirm:hover {
 	background-color: #2972b6;
@@ -1391,6 +1392,7 @@ ul.player-table li:nth-child(4):after {
 
 #main-vue button.cancel {
 	background-color: #d33;
+	text-shadow: 0 0 2px black;
 }
 
 #main-vue button.cancel:hover {

@@ -1343,8 +1343,8 @@ describe("Winston Draft", function () {
 	});
 
 	it("Client 1 reconnects, draft restarts.", function (done) {
-		clients[1].on("winstonDraftSync", function (state) {
-			this.removeListener("winstonDraftSync");
+		clients[1].on("rejoinWinstonDraft", function (state) {
+			this.removeListener("rejoinWinstonDraft");
 			done();
 		});
 		clients[1].connect();

@@ -586,11 +586,11 @@ function Session(id, owner) {
 
 	///////////////////// Winston Draft //////////////////////
 
-	this.startWinstonDraft = function () {
+	this.startWinstonDraft = function (boosterCount) {
 		if (this.users.size != 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
-		if (!this.generateBoosters(6)) {
+		if (!this.generateBoosters(boosterCount)) {
 			this.drafting = false;
 			return;
 		}
@@ -608,7 +608,6 @@ function Session(id, owner) {
 	};
 
 	this.endWinstonDraft = function () {
-		if (this.winstonDraftState.cardPool.length) console.error("Draft ending with a non-empty card pool, what?");
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
@@ -916,7 +915,10 @@ function Session(id, owner) {
 		if (this.winstonDraftState) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
-			Connections[userID].socket.emit("winstonDraftSync", this.winstonDraftState.syncData());
+			Connections[userID].socket.emit("rejoinWinstonDraft", {
+				pickedCards: this.disconnectedUsers[userID].pickedCards,
+				state: this.winstonDraftState.syncData(),
+			});
 			delete this.disconnectedUsers[userID];
 		} else {
 			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
