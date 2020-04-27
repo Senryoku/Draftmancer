@@ -100,7 +100,7 @@
 					<i class="fas fa-share-square clickable" style="padding:4px" title="Share" @click="sessionURLToClipboard"></i>
 					<i class="fas fa-project-diagram clickable" v-if="sessionOwner === userID && !bracket" @click="generateBracket" title="Generate Bracket."></i>
 					<i class="fas fa-project-diagram clickable" v-if="bracket" @click="displayBracket = true" title="Display Bracket."></i>
-					<button v-if="sessionOwner === userID" @click="readyCheck" title="Ask everyone in your session if they're ready to play.">Ready Check</button>
+					<i class="fas fa-user-check clickable" v-if="sessionOwner === userID" @click="readyCheck" title="Ready Check: Ask everyone in your session if they're ready to play."></i>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Session options:</strong>
@@ -125,10 +125,13 @@
 					<strong>Draft:</strong>
 					<label for="bots">Bots</label><input type="number" id="bots" class="small-number-input" min="0" max="7" step="1" v-model.number="bots" />
 					<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="small-number-input" min="0" max="180" step="15" v-model.number="maxTimer" />
-					<button @click="startDraft">Start Draft</button>
+					<button @click="startDraft" title="Starts a Draft Session.">Draft</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button @click="sealedDialog">Start Sealed</button>
+					<button @click="socket.emit('startWinstonDraft')" title="Start a Winston Draft. This is a draft variant for only two players.">Winston</button>
+				</span>
+				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+					<button @click="sealedDialog" title="Distribute booster to everyone for a sealed session.">Sealed</button>
 				</span>
 				<span title="More options" @click="showSessionOptionsDialog = !showSessionOptionsDialog" class="more-option clickable">More<i class="fas fa-bars"></i></span>
 			</div>
@@ -244,6 +247,36 @@
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
+			</div>
+			<!-- Winston Draft -->
+			<div v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting" id="booster-container" class="container">
+				<h2>
+					<template v-if="userID === winstonDraftState.currentPlayer">
+						Your turn to pick a pile of cards!
+					</template>
+					<template v-else>
+						Waiting on {{userByID[winstonDraftState.currentPlayer].userName}}...
+					</template>
+					{{winstonDraftState.remainingCards}} cards left in card pool.
+				</h2>
+				<div class="winstonPiles">
+					<div v-for="(pile, index) in winstonDraftState.piles" class="winstonPile" :class="{winstonCurrentPile: index === winstonDraftState.currentPile}">
+						<template v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile">
+							<div class="card-column winstomCardColumn">
+								<figure is="card" v-for="card in pile" :key="card.uniqueID" v-bind:card="card" v-bind:language="language"></figure>
+							</div>
+							<div class="winstonCurrentPileOptions">
+								<button class="confirmButton" @click="winstonDraftTakePile">Take Pile</button>
+								<button class="cancelButton" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">Skip Pile</button>
+							</div>
+						</template>
+						<template v-else>
+							<div class="card-column winstomCardColumn">
+								<div v-for="card in pile" class="card"><div class="card-placeholder"></div></div>
+							</div>
+						</template>
+					</div>
+				</div>
 			</div>
 		</template>
 		<div class="container" v-show="(deck !== undefined && deck.length > 0) || drafting || this.draftingState == DraftState.Brewing">

@@ -101,7 +101,6 @@ async function requestSavedSessions() {
 					if (!(s.data.winstonDraftState[prop] instanceof Function))
 						InactiveSessions[fixedID].winstonDraftState[prop] = s.data.winstonDraftState[prop];
 				}
-				console.log(InactiveSessions[fixedID].winstonDraftState);
 			}
 
 			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));

@@ -233,7 +233,7 @@ io.on("connection", function (socket) {
 		const r = Sessions[sessionID].winstonSkipPile();
 
 		if (ack) {
-			if (!r) ack({ code: 1, error: "Internal error." });
+			if (!r) ack({ code: 1, error: "This is your only choice!" });
 			else ack({ code: 0 });
 		}
 	});

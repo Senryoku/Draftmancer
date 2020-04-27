@@ -1234,7 +1234,7 @@ describe("Multiple Drafts", function () {
 	});
 });
 
-describe.only("Winston Draft", function () {
+describe("Winston Draft", function () {
 	let clients = [];
 	const clientIDs = ["FirstClientID", "SecondClientID"];
 	let sessionID = "sessionID";

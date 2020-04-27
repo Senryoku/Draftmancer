@@ -632,8 +632,6 @@ function Session(id, owner) {
 	this.winstonSkipPile = function () {
 		const s = this.winstonDraftState;
 		if (!this.drafting || !s) return false;
-		// Add a new card to skipped pile.
-		if (s.cardPool.length > 0) s.piles[s.currentPile].push(s.cardPool.pop());
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
 			!s.cardPool.length &&
@@ -644,6 +642,8 @@ function Session(id, owner) {
 			console.error("Session.winstonSkipPile: No other choice, you have to take that pile!");
 			return false;
 		}
+		// Add a new card to skipped pile.
+		if (s.cardPool.length > 0) s.piles[s.currentPile].push(s.cardPool.pop());
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", s.cardPool.pop());
@@ -938,7 +938,7 @@ function Session(id, owner) {
 	};
 
 	this.replaceDisconnectedPlayers = function () {
-		if (!this.drafting) return;
+		if (!this.drafting || this.winstonDraftState) return;
 
 		console.warn("Replacing disconnected players with bots!");
 
@@ -1047,7 +1047,6 @@ function Session(id, owner) {
 				}
 			}
 		} else {
-			console.log(humanPlayers);
 			for (let userID of humanPlayers) {
 				tmp[userID] = {
 					isBot: false,
