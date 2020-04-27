@@ -1330,7 +1330,7 @@ ul.player-table li:nth-child(4):after {
 }
 
 /** Winston Draft **/
-.winstonPiles {
+.winston-piles {
 	display: flex;
 	justify-content: space-around;
 	position: relative;
@@ -1338,37 +1338,51 @@ ul.player-table li:nth-child(4):after {
 	min-height: 354.2px;
 }
 
-.winstonPile {
+.winston-pile {
 	margin: 0 1em 0 1em;
 	padding: 0.5em;
 }
 
-.winstonPile .card img {
+.winston-pile .card img {
 	width: 250px;
 }
 
-.winstonCurrentPile {
+.winston-current-pile {
 	background-color: #555;
 	-webkit-box-shadow: 0px 0px 5px 5px #555;
 	-moz-box-shadow: 0px 0px 5px 5px #555;
 	box-shadow: 0px 0px 5px 5px #555;
 }
 
-.winstonCurrentPileOptions {
+.winston-current-pile-options {
 	display: flex;
 	flex-direction: column;
 }
 
-.winstomCardColumn {
+.winstom-card-column {
 	display: flex;
 	flex-direction: column;
 	padding-bottom: 354.2px;
 }
 
-.confirmButton {
-	background-color: #3085d6";
+.winston-pile-status {
+	box-sizing: border-box;
+	width: 200px;
+	padding: 0.5em;
+	text-align: center;
 }
 
-.cancelButton {
+#main-vue button.confirm {
+	background-color: #3085d6;
+}
+#main-vue button.confirm:hover {
+	background-color: #2972b6;
+}
+
+#main-vue button.cancel {
 	background-color: #d33;
+}
+
+#main-vue button.cancel:hover {
+	background-color: #c22;
 }

@@ -471,8 +471,7 @@ var app = new Vue({
 					imageAlt: c.printed_name[app.language],
 					imageWidth: 250,
 					customClass: SwalCustomClasses,
-					showConfirmButton: false,
-					timer: 1500,
+					showConfirmButton: true,
 				});
 			});
 

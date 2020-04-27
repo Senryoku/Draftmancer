@@ -56,7 +56,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
-				<label for="language" title="Controls the display language of cards.">Language</label>
+				<label for="language" data-title="Controls the display language of cards.">Language</label>
 				<select v-model="language" name="language" title="Controls the display language of cards.">
 					<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
 				</select>
@@ -128,10 +128,10 @@
 					<button @click="startDraft" title="Starts a Draft Session.">Draft</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button @click="socket.emit('startWinstonDraft')" title="Start a Winston Draft. This is a draft variant for only two players.">Winston</button>
+					<button @click="socket.emit('startWinstonDraft')" title="Starts a Winston Draft. This is a draft variant for only two players.">Winston</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button @click="sealedDialog" title="Distribute booster to everyone for a sealed session.">Sealed</button>
+					<button @click="sealedDialog" title="Distributes boosters to everyone for a sealed session.">Sealed</button>
 				</span>
 				<span title="More options" @click="showSessionOptionsDialog = !showSessionOptionsDialog" class="more-option clickable">More<i class="fas fa-bars"></i></span>
 			</div>
@@ -259,20 +259,23 @@
 					</template>
 					{{winstonDraftState.remainingCards}} cards left in card pool.
 				</h2>
-				<div class="winstonPiles">
-					<div v-for="(pile, index) in winstonDraftState.piles" class="winstonPile" :class="{winstonCurrentPile: index === winstonDraftState.currentPile}">
+				<div class="winston-piles">
+					<div v-for="(pile, index) in winstonDraftState.piles" class="winston-pile" :class="{'winston-current-pile': index === winstonDraftState.currentPile}">
 						<template v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile">
-							<div class="card-column winstomCardColumn">
+							<div class="card-column winstom-card-column">
 								<figure is="card" v-for="card in pile" :key="card.uniqueID" v-bind:card="card" v-bind:language="language"></figure>
 							</div>
-							<div class="winstonCurrentPileOptions">
-								<button class="confirmButton" @click="winstonDraftTakePile">Take Pile</button>
-								<button class="cancelButton" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">Skip Pile</button>
+							<div class="winston-current-pile-options">
+								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
+								<button class="cancel" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">Skip Pile</button>
 							</div>
 						</template>
 						<template v-else>
-							<div class="card-column winstomCardColumn">
+							<div class="card-column winstom-card-column">
 								<div v-for="card in pile" class="card"><div class="card-placeholder"></div></div>
+							</div>
+							<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
+								{{userByID[winstonDraftState.currentPlayer].userName}} is looking at this pile...
 							</div>
 						</template>
 					</div>
