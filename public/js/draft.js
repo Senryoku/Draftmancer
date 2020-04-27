@@ -466,7 +466,7 @@ var app = new Vue({
 				app.addToDeck(c);
 				Swal.fire({
 					position: "center",
-					title: `You drew ${c.printed_name[app.language]} from the pile!`,
+					title: `You drew ${c.printed_name[app.language]} from the card pool!`,
 					imageUrl: c.image_uris[app.language],
 					imageAlt: c.printed_name[app.language],
 					imageWidth: 250,

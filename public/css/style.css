@@ -1330,6 +1330,16 @@ ul.player-table li:nth-child(4):after {
 }
 
 /** Winston Draft **/
+
+.winston-status {
+	margin-bottom: 0.5em;
+}
+
+.winston-status h2 {
+	display: inline-block;
+	margin: 0 1em 0 1em;
+}
+
 .winston-piles {
 	display: flex;
 	justify-content: space-around;
