@@ -50,16 +50,15 @@ AWS_ENDPOINT=http://localhost:8000
 ### Distant Future
 
 -   Add some stats on deck/drafted cards (will increase card DB size, not a fan.)
--   Look into [Winston Draft](https://mtg.gamepedia.com/Winston_Draft) ?
 
 ## Check
 
+-   Winston Draft
 -   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
 -   Add a way to randomize seatings
 -   Monitor persistence
 -   Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
 -   Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
--   Add notification option: In a sub menu add a way to activate notifications (HTML5 Notification?) fired when a draft is launched.
 -   Set Multiple Selection
 -   Rarity selection
 -   Prevent multiple copies of the same card in a single booster
@@ -69,9 +68,6 @@ AWS_ENDPOINT=http://localhost:8000
 -   "Bonders' Enclave" (Bonder's Enclave) doesn't export to Arena (Check: Possibly fixed with updated data)
 -   Missing Historic Cards : Cinder Barrens
 -   Guildgates won't import in arena : Guildgates do not have localized names
--   "Truebanks#69050Aujourd’hui à 05:42
-    @Senryoku just a heads up. We had a strange spot where two people had two different sessions with the same ID and both were leader
-    The chat log here might give a few hints. But I felt it was worth a quick note. Easily addressed by just picking a new id or having a leader join the other group"
 
 ## Notes on Arena Importer
 
