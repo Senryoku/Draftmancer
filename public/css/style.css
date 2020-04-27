@@ -3,7 +3,7 @@ body {
 	margin-left: 0;
 	background-color: rgb(32, 32, 32);
 	background-image: url("../img/iko-min.png");
-	background-position: 85% -20%;
+	background-position: 85% -100px;
 	background-repeat: no-repeat;
 	background-size: 40%;
 	color: #ddd;
