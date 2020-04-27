@@ -26,8 +26,9 @@ function connectClient(query) {
 let outputbuffer;
 function disableLogs() {
 	outputbuffer = "";
-	console.log = console.debug = console.warn = function (msg) {
-		outputbuffer += msg + "\n";
+	console.log = console.debug = console.warn = function () {
+		for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
+		outputbuffer += "\n";
 	};
 }
 function enableLogs(print) {
@@ -1230,5 +1231,235 @@ describe("Multiple Drafts", function () {
 				clients[sess][c].emit("pickCard", boosters[playersPerSession * sess + c].booster[0], (_) => {});
 			}
 		}
+	});
+});
+
+describe.only("Winston Draft", function () {
+	let clients = [];
+	const clientIDs = ["FirstClientID", "SecondClientID"];
+	let sessionID = "sessionID";
+
+	beforeEach(function (done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function (done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function (done) {
+		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
+		clients.push(
+			connectClient({
+				userID: clientIDs[0],
+				sessionID: sessionID,
+				userName: "Client1",
+			})
+		);
+		clients.push(
+			connectClient({
+				userID: clientIDs[1],
+				sessionID: sessionID,
+				userName: "Client2",
+			})
+		);
+
+		// Wait for all clients to be connected
+		let connectedClients = 0;
+		for (let c of clients) {
+			c.on("connect", function () {
+				connectedClients += 1;
+				if (connectedClients == clients.length) {
+					enableLogs(false);
+					done();
+				}
+			});
+		}
+	});
+
+	after(function (done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+			c.close();
+		}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function () {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
+			done();
+		}, 250);
+	});
+
+	it("2 clients with different userID should be connected.", function (done) {
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(2);
+		done();
+	});
+
+	it("First client should be the session owner", function (done) {
+		const Sessions = server.__get__("Sessions");
+		expect(Sessions[sessionID].owner).to.equal("FirstClientID");
+		done();
+	});
+
+	let states = [];
+	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
+		let connectedClients = 0;
+		let receivedState = 0;
+		let index = 0;
+		for (let c of clients) {
+			c.on("startWinstonDraft", function () {
+				connectedClients += 1;
+				this.removeListener("startWinstonDraft");
+				if (connectedClients == clients.length && receivedState == clients.length) done();
+			});
+
+			((_) => {
+				const _idx = index;
+				c.on("winstonDraftNextRound", function (state) {
+					states[_idx] = state;
+					receivedState += 1;
+					this.removeListener("winstonDraftNextRound");
+					if (connectedClients == clients.length && receivedState == clients.length) done();
+				});
+			})();
+			++index;
+		}
+		clients[0].emit("startWinstonDraft");
+	});
+
+	it("Client 1 disconnects, Client 0 receives updated user infos.", function (done) {
+		clients[0].on("userDisconnected", function (userName) {
+			this.removeListener("userDisconnected");
+			done();
+		});
+		clients[1].disconnect();
+	});
+
+	it("Client 1 reconnects, draft restarts.", function (done) {
+		clients[1].on("winstonDraftSync", function (state) {
+			this.removeListener("winstonDraftSync");
+			done();
+		});
+		clients[1].connect();
+	});
+
+	it("Every player takes the first pile possible and the draft should end.", function (done) {
+		this.timeout(2000);
+		let draftEnded = 0;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+			});
+			clients[c].on("winstonDraftEnd", function () {
+				draftEnded += 1;
+				this.removeListener("winstonDraftEnd");
+				this.removeListener("winstonDraftNextRound");
+				if (draftEnded == clients.length) done();
+			});
+		}
+		clients[0].emit("winstonDraftTakePile");
+	});
+
+	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
+		states = [];
+		let connectedClients = 0;
+		let receivedState = 0;
+		let index = 0;
+		for (let c of clients) {
+			c.on("startWinstonDraft", function () {
+				connectedClients += 1;
+				this.removeListener("startWinstonDraft");
+				if (connectedClients == clients.length && receivedState == clients.length) done();
+			});
+
+			((_) => {
+				const _idx = index;
+				c.on("winstonDraftNextRound", function (state) {
+					states[_idx] = state;
+					receivedState += 1;
+					this.removeListener("winstonDraftNextRound");
+					if (connectedClients == clients.length && receivedState == clients.length) done();
+				});
+			})();
+			++index;
+		}
+		clients[0].emit("startWinstonDraft");
+	});
+
+	it("Taking first pile.", function (done) {
+		let nextRound = 0;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				++nextRound;
+				if (nextRound == clients.length) done();
+			});
+		}
+		clients[0].emit("winstonDraftTakePile");
+	});
+
+	it("Skiping, then taking pile.", function (done) {
+		let nextRound = 0;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				++nextRound;
+				if (nextRound == clients.length) done();
+			});
+		}
+		clients[1].emit("winstonDraftSkipPile");
+		clients[1].emit("winstonDraftTakePile");
+	});
+
+	it("Skiping, skiping, then taking pile.", function (done) {
+		let nextRound = 0;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				++nextRound;
+				if (nextRound == clients.length) done();
+			});
+		}
+		clients[0].emit("winstonDraftSkipPile");
+		clients[0].emit("winstonDraftSkipPile");
+		clients[0].emit("winstonDraftTakePile");
+	});
+
+	it("Skiping, skiping and skiping.", function (done) {
+		let nextRound = 0;
+		let receivedRandomCard = false;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				++nextRound;
+				if (receivedRandomCard && nextRound == clients.length) done();
+			});
+		}
+		clients[1].on("winstonDraftRandomCard", function (card) {
+			if (card) receivedRandomCard = true;
+		});
+		clients[1].emit("winstonDraftSkipPile");
+		clients[1].emit("winstonDraftSkipPile");
+		clients[1].emit("winstonDraftSkipPile");
+	});
+
+	it("Every player takes the first pile possible and the draft should end.", function (done) {
+		this.timeout(2000);
+		let draftEnded = 0;
+		for (let c = 0; c < clients.length; ++c) {
+			clients[c].on("winstonDraftNextRound", function (userID) {
+				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+			});
+			clients[c].on("winstonDraftEnd", function () {
+				draftEnded += 1;
+				this.removeListener("winstonDraftEnd");
+				this.removeListener("winstonDraftNextRound");
+				if (draftEnded == clients.length) done();
+			});
+		}
+		clients[0].emit("winstonDraftTakePile");
 	});
 });

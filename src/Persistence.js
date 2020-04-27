@@ -94,6 +94,16 @@ async function requestSavedSessions() {
 					InactiveSessions[fixedID].botsInstances.push(newBot);
 				}
 			}
+
+			if (s.data.winstonDraftState) {
+				InactiveSessions[fixedID].winstonDraftState = new SessionModule.WinstonDraftState();
+				for (let prop of Object.getOwnPropertyNames(s.data.winstonDraftState)) {
+					if (!(s.data.winstonDraftState[prop] instanceof Function))
+						InactiveSessions[fixedID].winstonDraftState[prop] = s.data.winstonDraftState[prop];
+				}
+				console.log(InactiveSessions[fixedID].winstonDraftState);
+			}
+
 			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
 
 			if (isObsolete(s))
@@ -204,6 +214,14 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 						if (!(bot[prop] instanceof Function)) podbot[prop] = bot[prop];
 					}
 					Item.data.botsInstances.push(podbot);
+				}
+			}
+
+			if (s.winstonDraftState) {
+				Item.data.winstonDraftState = {};
+				for (let prop of Object.getOwnPropertyNames(s.winstonDraftState)) {
+					if (!(s.winstonDraftState[prop] instanceof Function))
+						Item.data.winstonDraftState[prop] = s.winstonDraftState[prop];
 				}
 			}
 		}

@@ -182,6 +182,62 @@ io.on("connection", function (socket) {
 		for (let user of Sessions[sessionID].users) Connections[user].socket.emit("setReady", userID, readyState);
 	});
 
+	socket.on("startWinstonDraft", function () {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		if (Sessions[sessionID].users.size == 2) {
+			Sessions[sessionID].startWinstonDraft();
+		} else {
+			Connections[userID].socket.emit("message", {
+				title: `2 Players Only`,
+				text: `Winston Draft can only be played with exactly 2 players.`,
+			});
+		}
+	});
+
+	socket.on("winstonDraftTakePile", function (ack) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (!Sessions[sessionID].drafting || !Sessions[sessionID].winstonDraftState) {
+			if (ack) ack({ code: 1, error: "Not drafting." });
+			return;
+		}
+
+		if (userID != Sessions[sessionID].winstonDraftState.currentPlayer()) {
+			if (ack) ack({ code: 1, error: "Not your turn." });
+			return;
+		}
+
+		const r = Sessions[sessionID].winstonTakePile();
+
+		if (ack) {
+			if (!r) ack({ code: 1, error: "Internal error." });
+			else ack({ code: 0 });
+		}
+	});
+
+	socket.on("winstonDraftSkipPile", function (ack) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (!Sessions[sessionID].drafting || !Sessions[sessionID].winstonDraftState) {
+			if (ack) ack({ code: 1, error: "Not drafting." });
+			return;
+		}
+
+		if (userID != Sessions[sessionID].winstonDraftState.currentPlayer()) {
+			if (ack) ack({ code: 1, error: "Not your turn." });
+			return;
+		}
+
+		const r = Sessions[sessionID].winstonSkipPile();
+
+		if (ack) {
+			if (!r) ack({ code: 1, error: "Internal error." });
+			else ack({ code: 0 });
+		}
+	});
+
 	socket.on("startDraft", function () {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
@@ -202,7 +258,8 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].drafting) return;
-		Sessions[sessionID].endDraft();
+		if (Sessions[sessionID].winstonDraftState) Sessions[sessionID].endWinstonDraft();
+		else Sessions[sessionID].endDraft();
 	});
 
 	// Removes picked card from corresponding booster and notify other players.
