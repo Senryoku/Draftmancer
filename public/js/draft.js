@@ -74,6 +74,8 @@ const DraftState = {
 	Waiting: "Waiting",
 	Picking: "Picking",
 	Brewing: "Brewing",
+	WinstonPicking: "WinstonPicking",
+	WinstonWaiting: "WinstonWaiting",
 };
 
 const ReadyState = {
@@ -142,6 +144,7 @@ var app = new Vue({
 		draftLog: undefined,
 		savedDraftLog: false,
 		bracket: null,
+		winstonDraftState: null,
 
 		publicSessions: [],
 		selectedPublicSession: "",
@@ -272,7 +275,7 @@ var app = new Vue({
 			this.socket.on("userDisconnected", function (userNames) {
 				if (!app.drafting) return;
 
-				if (app.userID == app.sessionOwner) {
+				if (app.winstonDraftState) {
 					Swal.fire({
 						position: "center",
 						customClass: SwalCustomClasses,
@@ -281,22 +284,37 @@ var app = new Vue({
 						text: `Wait for ${userNames.join(", ")} to come back or...`,
 						showConfirmButton: true,
 						allowOutsideClick: false,
-						confirmButtonText: "Replace with a bot",
+						confirmButtonText: "Stop draft",
 					}).then((result) => {
-						if (result.value) app.socket.emit("replaceDisconnectedPlayers");
+						if (result.value) app.socket.emit("stopDraft");
 					});
 				} else {
-					Swal.fire({
-						position: "center",
-						customClass: SwalCustomClasses,
-						type: "error",
-						title: `Player(s) disconnected`,
-						text: `Wait for ${userNames.join(
-							", "
-						)} to come back or for the owner to replace them by a bot.`,
-						showConfirmButton: false,
-						allowOutsideClick: false,
-					});
+					if (app.userID == app.sessionOwner) {
+						Swal.fire({
+							position: "center",
+							customClass: SwalCustomClasses,
+							type: "error",
+							title: `Player(s) disconnected`,
+							text: `Wait for ${userNames.join(", ")} to come back or...`,
+							showConfirmButton: true,
+							allowOutsideClick: false,
+							confirmButtonText: "Replace with a bot",
+						}).then((result) => {
+							if (result.value) app.socket.emit("replaceDisconnectedPlayers");
+						});
+					} else {
+						Swal.fire({
+							position: "center",
+							customClass: SwalCustomClasses,
+							type: "error",
+							title: `Player(s) disconnected`,
+							text: `Wait for ${userNames.join(
+								", "
+							)} to come back or for the owner to replace them by a bot.`,
+							showConfirmButton: false,
+							allowOutsideClick: false,
+						});
+					}
 				}
 			});
 
@@ -398,6 +416,88 @@ var app = new Vue({
 					app.fireToast("success", "Everybody is ready!");
 			});
 
+			this.socket.on("startWinstonDraft", function (state) {
+				setCookie("userID", app.userID);
+				app.drafting = true;
+				app.setWinstonDraftState(state);
+				app.stopReadyCheck();
+				app.sideboard = [];
+				app.deck = [];
+				app.playSound("start");
+				Swal.fire({
+					position: "center",
+					type: "success",
+					title: "Starting Winston Draft!",
+					customClass: SwalCustomClasses,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+
+				if (app.enableNotifications) {
+					let notification = new Notification("Now drafting!", {
+						body: `Your Winston draft '${app.sessionID}' is starting!`,
+					});
+				}
+			});
+			this.socket.on("winstonDraftSync", function (winstonDraftState) {
+				app.setWinstonDraftState(winstonDraftState);
+			});
+			this.socket.on("winstonDraftNextRound", function (currentUser) {
+				if (app.userID === currentUser) {
+					app.playSound("next");
+					app.fireToast("success", "Your turn!");
+					if (app.enableNotifications) {
+						let notification = new Notification("Your turn!", {
+							body: `This is your turn to pick.`,
+						});
+					}
+					app.draftingState = DraftState.WinstonPicking;
+				} else {
+					app.draftingState = DraftState.WinstonWaiting;
+				}
+			});
+			this.socket.on("winstonDraftEnd", function () {
+				app.drafting = false;
+				app.winstonDraftState = null;
+				app.draftingState = DraftState.Brewing;
+				app.fireToast("success", "Done drafting!");
+				eraseCookie("userID");
+			});
+			this.socket.on("winstonDraftRandomCard", function (card) {
+				const c = app.genCard(card);
+				app.addToDeck(c);
+				Swal.fire({
+					position: "center",
+					title: `You drew ${c.printed_name[app.language]} from the card pool!`,
+					imageUrl: c.image_uris[app.language],
+					imageAlt: c.printed_name[app.language],
+					imageWidth: 250,
+					customClass: SwalCustomClasses,
+					showConfirmButton: true,
+				});
+			});
+
+			this.socket.on("rejoinWinstonDraft", function (data) {
+				app.drafting = true;
+
+				app.setWinstonDraftState(data.state);
+				app.sideboard = [];
+				app.deck = [];
+				for (let c of data.pickedCards) app.addToDeck(app.cards[c]);
+
+				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
+				else app.draftingState = DraftState.WinstonWaiting;
+
+				Swal.fire({
+					position: "center",
+					type: "success",
+					title: "Reconnected to the Winston draft!",
+					customClass: SwalCustomClasses,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			});
+
 			this.socket.on("startDraft", function () {
 				// Save user ID in case of disconnect
 				setCookie("userID", app.userID);
@@ -430,7 +530,7 @@ var app = new Vue({
 
 				app.sideboard = [];
 				app.deck = [];
-				for (let c of data.pickedCards) app.deck.push(app.cards[c]);
+				for (let c of data.pickedCards) app.addToDeck(app.genCard(c));
 
 				app.booster = [];
 				for (let c of data.booster) {
@@ -605,6 +705,53 @@ var app = new Vue({
 			this.addToDeck(this.selectedCard);
 			this.selectedCard = undefined;
 		},
+		setWinstonDraftState: function (state) {
+			this.winstonDraftState = state;
+			const piles = [];
+			for (let p of state.piles) {
+				let pile = [];
+				for (let c of p) pile.push(this.genCard(c));
+				piles.push(pile);
+			}
+			this.winstonDraftState.piles = piles;
+		},
+		startWinstonDraft: async function () {
+			if (this.userID != this.sessionOwner || this.drafting) return;
+			const { value: boosterCount } = await Swal.fire({
+				title: "Winston Draft",
+				html: `Winston Draft is a draft variant for two players, <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank">more information here</a>. How many boosters for the main stack (default is 6)?`,
+				inputPlaceholder: "Booster count",
+				input: "number",
+				inputAttributes: {
+					min: 6,
+					max: 12,
+					step: 1,
+				},
+				inputValue: 6,
+				customClass: SwalCustomClasses,
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Start Winston Draft",
+			});
+
+			if (boosterCount) {
+				this.socket.emit("startWinstonDraft", boosterCount);
+			}
+		},
+		winstonDraftTakePile: function () {
+			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
+			this.socket.emit("winstonDraftTakePile", (answer) => {
+				if (answer.code === 0) {
+					for (let c of cards) this.addToDeck(c);
+				} else alert("Error: ", answer.error);
+			});
+		},
+		winstonDraftSkipPile: function () {
+			this.socket.emit("winstonDraftSkipPile", (answer) => {
+				if (answer.code !== 0) alert("Error: ", answer.error);
+			});
+		},
 		checkNotificationPermission: function (e) {
 			if (e.target.value && Notification.permission != "granted") {
 				Notification.requestPermission().then(function (permission) {
@@ -675,7 +822,6 @@ var app = new Vue({
 						const collStr = contents.slice(collection_start, collection_end);
 						const collJson = JSON.parse(collStr)["payload"];
 						//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
-						console.log(collJson);
 						return collJson;
 					} catch (e) {
 						Swal.fire({
@@ -1115,6 +1261,7 @@ var app = new Vue({
 		},
 		stopDraft: function () {
 			if (this.userID != this.sessionOwner) return;
+			const self = this;
 			Swal.fire({
 				title: "Are you sure?",
 				text: "Do you really want to stop the draft here?",
@@ -1126,7 +1273,7 @@ var app = new Vue({
 				confirmButtonText: "I'm sure!",
 			}).then((result) => {
 				if (result.value) {
-					this.socket.emit("stopDraft");
+					self.socket.emit("stopDraft");
 				}
 			});
 		},
@@ -1169,7 +1316,7 @@ var app = new Vue({
 				showCancelButton: true,
 				text: "How many booster for each player?",
 				inputPlaceholder: "Booster count",
-				input: "range",
+				input: "number",
 				inputAttributes: {
 					min: 4,
 					max: 12,
@@ -1380,7 +1527,16 @@ var app = new Vue({
 			return ReadyState;
 		},
 		draftRound: function () {
-			return Math.floor((this.deck.length + this.sideboard.length) / (this.useCustomCardList ? 15 : 14)) + 1;
+			return Math.floor((this.deck.length + this.sideboard.length) / this.cardsPerBooster) + 1;
+		},
+		winstonCanSkipPile: function () {
+			const s = this.winstonDraftState;
+			return !(
+				!s.remainingCards &&
+				((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
+					(s.currentPile === 1 && !s.piles[2].length) ||
+					s.currentPile === 2)
+			);
 		},
 		virtualPlayers: function () {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)

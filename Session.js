@@ -32,6 +32,31 @@ function Bracket(players) {
 	];
 }
 
+function WinstonDraftState(players, boosters) {
+	this.players = players;
+	this.round = -1; // Will be immedialty incremented
+	this.cardPool = [];
+	if (boosters) {
+		for (let booster of boosters) this.cardPool.push(...booster);
+		shuffleArray(this.cardPool);
+	}
+	if (this.cardPool.length >= 3) this.piles = [[this.cardPool.pop()], [this.cardPool.pop()], [this.cardPool.pop()]];
+	this.currentPile = 0;
+
+	this.currentPlayer = function () {
+		return this.players[this.round % 2];
+	};
+	this.syncData = function () {
+		return {
+			round: this.round,
+			currentPlayer: this.currentPlayer(),
+			piles: this.piles,
+			currentPile: this.currentPile,
+			remainingCards: this.cardPool.length,
+		};
+	};
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -65,6 +90,8 @@ function Session(id, owner) {
 	this.round = 0;
 	this.pickedCardsThisRound = 0;
 	this.disconnectedUsers = {};
+
+	this.winstonDraftState = null;
 
 	this.addUser = function (userID) {
 		if (this.users.has(userID)) {
@@ -550,6 +577,93 @@ function Session(id, owner) {
 			}
 	};
 
+	///////////////////// Winston Draft //////////////////////
+
+	this.startWinstonDraft = function (boosterCount) {
+		if (this.users.size != 2) return false;
+		this.drafting = true;
+		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
+		if (!this.generateBoosters(boosterCount)) {
+			this.drafting = false;
+			return;
+		}
+		this.disconnectedUsers = {};
+		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayers(), this.boosters);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedVirtualPlayers(),
+			});
+			Connections[user].socket.emit("startWinstonDraft", this.winstonDraftState);
+		}
+		this.winstonNextRound();
+		return true;
+	};
+
+	this.endWinstonDraft = function () {
+		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
+		this.winstonDraftState = null;
+		this.drafting = false;
+	};
+
+	this.winstonNextRound = function () {
+		const s = this.winstonDraftState;
+		++s.round;
+		s.currentPile = 0;
+		while (s.currentPile < 3 && !s.piles[s.currentPile].length) ++s.currentPile;
+		if (s.currentPile >= 3) {
+			this.endWinstonDraft();
+		} else {
+			for (let user of this.users) {
+				Connections[user].socket.emit("winstonDraftSync", s.syncData());
+				Connections[user].socket.emit("winstonDraftNextRound", s.currentPlayer());
+			}
+		}
+	};
+
+	this.winstonSkipPile = function () {
+		const s = this.winstonDraftState;
+		if (!this.drafting || !s) return false;
+		// If the card pool is empty, make sure there is another pile to pick
+		if (
+			!s.cardPool.length &&
+			((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
+				(s.currentPile === 1 && !s.piles[2].length) ||
+				s.currentPile === 2)
+		) {
+			console.error("Session.winstonSkipPile: No other choice, you have to take that pile!");
+			return false;
+		}
+		// Add a new card to skipped pile.
+		if (s.cardPool.length > 0) s.piles[s.currentPile].push(s.cardPool.pop());
+		// Give a random card from the card pool if this was the last pile
+		if (s.currentPile === 2) {
+			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", s.cardPool.pop());
+			this.winstonNextRound();
+		} else {
+			++s.currentPile;
+			if (s.piles[s.currentPile].length === 0) this.winstonSkipPile();
+			else for (let user of this.users) Connections[user].socket.emit("winstonDraftSync", s.syncData());
+		}
+		return true;
+	};
+
+	this.winstonTakePile = function () {
+		const s = this.winstonDraftState;
+		if (!this.drafting || !s) return false;
+		Connections[s.currentPlayer(this.userOrder)].pickedCards = Connections[
+			s.currentPlayer(this.userOrder)
+		].pickedCards.concat(s.piles[s.currentPile]);
+		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()];
+		else s.piles[s.currentPile] = [];
+		this.winstonNextRound();
+		return true;
+	};
+
+	///////////////////// Winston Draft End //////////////////////
+
+	///////////////////// Traditional Draft Methods //////////////////////
+
 	this.startDraft = function () {
 		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
@@ -607,7 +721,7 @@ function Session(id, owner) {
 			Connections[user].socket.emit("startDraft");
 		}
 		this.round = 0;
-		//console.debug(this);
+		// console.debug(this);
 		this.nextBooster();
 	};
 
@@ -731,30 +845,15 @@ function Session(id, owner) {
 		++this.round;
 	};
 
-	this.reconnectUser = function (userID) {
-		Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
-		Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
-		Connections[userID].boosterIndex = this.disconnectedUsers[userID].boosterIndex;
-
-		this.addUser(userID);
-		Connections[userID].socket.emit("rejoinDraft", {
-			pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
-			pickedCards: this.disconnectedUsers[userID].pickedCards,
-			booster: this.boosters[Connections[userID].boosterIndex],
-		});
-		delete this.disconnectedUsers[userID];
-
-		// Resume draft if everyone is here or broacast the new state.
-		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
-		else this.broadcastDisconnectedUsers();
-	};
-
 	this.resumeDraft = function () {
 		console.warn(`Restarting draft for session ${this.id}.`);
-		for (let userID of this.users)
-			Connections[userID].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
-			});
+		if (this.winstonDraftState) {
+		} else {
+			for (let userID of this.users)
+				Connections[userID].socket.emit("sessionOptions", {
+					virtualPlayersData: this.getSortedVirtualPlayers(),
+				});
+		}
 		this.resumeCountdown();
 		this.emitMessage("Player reconnected", `Resuming draft...`);
 	};
@@ -801,8 +900,38 @@ function Session(id, owner) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
+	///////////////////// Traditional Draft End  //////////////////////
+
+	this.reconnectUser = function (userID) {
+		if (this.winstonDraftState) {
+			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+			this.addUser(userID);
+			Connections[userID].socket.emit("rejoinWinstonDraft", {
+				pickedCards: this.disconnectedUsers[userID].pickedCards,
+				state: this.winstonDraftState.syncData(),
+			});
+			delete this.disconnectedUsers[userID];
+		} else {
+			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
+			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+			Connections[userID].boosterIndex = this.disconnectedUsers[userID].boosterIndex;
+
+			this.addUser(userID);
+			Connections[userID].socket.emit("rejoinDraft", {
+				pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
+				pickedCards: this.disconnectedUsers[userID].pickedCards,
+				booster: this.boosters[Connections[userID].boosterIndex],
+			});
+			delete this.disconnectedUsers[userID];
+		}
+
+		// Resume draft if everyone is here or broacast the new state.
+		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
+		else this.broadcastDisconnectedUsers();
+	};
+
 	this.replaceDisconnectedPlayers = function () {
-		if (!this.drafting) return;
+		if (!this.drafting || this.winstonDraftState) return;
 
 		console.warn("Replacing disconnected players with bots!");
 
@@ -895,18 +1024,28 @@ function Session(id, owner) {
 	this.getSortedVirtualPlayers = function () {
 		let tmp = {};
 		let humanPlayers = this.getSortedHumanPlayers();
-		for (let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
-			if (idx < humanPlayers.length) {
-				let userID = humanPlayers[idx];
+		if (this.botsInstances) {
+			for (let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
+				if (idx < humanPlayers.length) {
+					let userID = humanPlayers[idx];
+					tmp[userID] = {
+						isBot: false,
+						disconnected: userID in this.disconnectedUsers,
+					};
+				}
+				if (idx < this.botsInstances.length) {
+					let bot = this.botsInstances[idx];
+					tmp[bot.id] = { isBot: true, instance: bot };
+				}
+			}
+		} else {
+			for (let userID of humanPlayers) {
 				tmp[userID] = {
 					isBot: false,
 					disconnected: userID in this.disconnectedUsers,
 				};
 			}
-			if (idx < this.botsInstances.length) {
-				let bot = this.botsInstances[idx];
-				tmp[bot.id] = { isBot: true, instance: bot };
-			}
+			return tmp;
 		}
 
 		return tmp;
@@ -936,4 +1075,5 @@ function Session(id, owner) {
 }
 
 module.exports.Session = Session;
+module.exports.WinstonDraftState = WinstonDraftState;
 module.exports.Sessions = {};

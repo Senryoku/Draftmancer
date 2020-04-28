@@ -56,7 +56,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
-				<label for="language" title="Controls the display language of cards.">Language</label>
+				<label for="language" data-title="Controls the display language of cards.">Language</label>
 				<select v-model="language" name="language" title="Controls the display language of cards.">
 					<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
 				</select>
@@ -100,7 +100,7 @@
 					<i class="fas fa-share-square clickable" style="padding:4px" title="Share" @click="sessionURLToClipboard"></i>
 					<i class="fas fa-project-diagram clickable" v-if="sessionOwner === userID && !bracket" @click="generateBracket" title="Generate Bracket."></i>
 					<i class="fas fa-project-diagram clickable" v-if="bracket" @click="displayBracket = true" title="Display Bracket."></i>
-					<button v-if="sessionOwner === userID" @click="readyCheck" title="Ask everyone in your session if they're ready to play.">Ready Check</button>
+					<i class="fas fa-user-check clickable" v-if="sessionOwner === userID" @click="readyCheck" title="Ready Check: Ask everyone in your session if they're ready to play."></i>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Session options:</strong>
@@ -125,10 +125,13 @@
 					<strong>Draft:</strong>
 					<label for="bots">Bots</label><input type="number" id="bots" class="small-number-input" min="0" max="7" step="1" v-model.number="bots" />
 					<label for="timer" title="Pick Timer (sec.). Zero means no timer."><i class="fas fa-clock"></i></label><input type="number" id="timer" class="small-number-input" min="0" max="180" step="15" v-model.number="maxTimer" />
-					<button @click="startDraft">Start Draft</button>
+					<button @click="startDraft" title="Starts a Draft Session.">Draft</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button @click="sealedDialog">Start Sealed</button>
+					<button @click="startWinstonDraft()" title="Starts a Winston Draft. This is a draft variant for only two players.">Winston</button>
+				</span>
+				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+					<button @click="sealedDialog" title="Distributes boosters to everyone for a sealed session.">Sealed</button>
 				</span>
 				<span title="More options" @click="showSessionOptionsDialog = !showSessionOptionsDialog" class="more-option clickable">More<i class="fas fa-bars"></i></span>
 			</div>
@@ -196,11 +199,16 @@
 								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
 								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
 							</template>
-							<template v-if="user.pickedThisRound">
-								<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
+							<template v-if="winstonDraftState">
+								<i v-show="user.userID === winstonDraftState.currentPlayer" class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
 							</template>
 							<template v-else>
-								<i class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
+								<template v-if="user.pickedThisRound">
+									<i class="fas fa-check green" :title="user.userName + ' has picked a card.'"></i>
+								</template>
+								<template v-else>
+									<i class="fas fa-spinner fa-spin" :title="user.userName + ' is thinking...'"></i>
+								</template>
 							</template>
 						</div>
 						<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
@@ -244,6 +252,41 @@
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
+			</div>
+			<!-- Winston Draft -->
+			<div v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting" id="booster-container" class="container">
+				<div class="winston-status"><h2>Winston Draft</h2>
+					<span>
+						<template v-if="userID === winstonDraftState.currentPlayer">
+							Your turn to pick a pile of cards!
+						</template>
+						<template v-else>
+							Waiting on {{userByID[winstonDraftState.currentPlayer].userName}}...
+						</template>
+						There are {{winstonDraftState.remainingCards}} cards left in the main stack.
+					</span>
+				</div>
+				<div class="winston-piles">
+					<div v-for="(pile, index) in winstonDraftState.piles" class="winston-pile" :class="{'winston-current-pile': index === winstonDraftState.currentPile}">
+						<template v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile">
+							<div class="card-column winstom-card-column">
+								<figure is="card" v-for="card in pile" :key="card.uniqueID" v-bind:card="card" v-bind:language="language"></figure>
+							</div>
+							<div class="winston-current-pile-options">
+								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
+								<button class="cancel" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">Skip Pile<span v-show="index === 2"> and Draw</span></button>
+							</div>
+						</template>
+						<template v-else>
+							<div class="card-column winstom-card-column">
+								<div v-for="card in pile" class="card"><div class="card-placeholder"></div></div>
+							</div>
+							<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
+								{{userByID[winstonDraftState.currentPlayer].userName}} is looking at this pile...
+							</div>
+						</template>
+					</div>
+				</div>
 			</div>
 		</template>
 		<div class="container" v-show="(deck !== undefined && deck.length > 0) || drafting || this.draftingState == DraftState.Brewing">
@@ -599,6 +642,12 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>27/04/2020
+						<ul>
+							<li>Implemented Winston Draft.</li>
+							<li>Various Fixes.</li>
+						</ul>
+					</li>
 					<li>25/04/2020
 						<ul>
 							<li>Players can now be re-ordered by drag & drop.</li>
