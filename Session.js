@@ -847,14 +847,13 @@ function Session(id, owner) {
 
 	this.resumeDraft = function () {
 		console.warn(`Restarting draft for session ${this.id}.`);
-		if (this.winstonDraftState) {
-		} else {
-			for (let userID of this.users)
-				Connections[userID].socket.emit("sessionOptions", {
-					virtualPlayersData: this.getSortedVirtualPlayers(),
-				});
+		for (let userID of this.users)
+			Connections[userID].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedVirtualPlayers(),
+			});
+		if (!this.winstonDraftState) {
+			this.resumeCountdown();
 		}
-		this.resumeCountdown();
 		this.emitMessage("Player reconnected", `Resuming draft...`);
 	};
 
