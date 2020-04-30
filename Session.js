@@ -634,8 +634,10 @@ function Session(id, owner) {
 			console.error("Session.winstonSkipPile: No other choice, you have to take that pile!");
 			return false;
 		}
-		// Add a new card to skipped pile.
-		if (s.cardPool.length > 0) s.piles[s.currentPile].push(s.cardPool.pop());
+
+		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
+		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
+			s.piles[s.currentPile].push(s.cardPool.pop());
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", s.cardPool.pop());
