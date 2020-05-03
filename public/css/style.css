@@ -1398,3 +1398,8 @@ ul.player-table li:nth-child(4):after {
 #main-vue button.cancel:hover {
 	background-color: #c22;
 }
+
+pre {
+	background-color: #333;
+	padding: 0.5em;
+}

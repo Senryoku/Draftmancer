@@ -916,14 +916,54 @@ var app = new Vue({
 			reader.onload = function (e) {
 				let contents = e.target.result;
 
-				const searchCardID = function (line) {
-					let cardID = Object.keys(app.cards).find((id) => app.cards[id].name == line);
+				const parseLine = function (line) {
+					console.log(line);
+					let [fullMatch, count, name, set, number] = line.match(
+						/^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/
+					);
+					console.log(fullMatch, count, name, set, number);
+					if (!count) count = 1;
+					if (set) {
+						set = set.toLowerCase();
+						if (set === "dar") set = "dom";
+						if (set === "conf") set = "con";
+					}
+					// Note: The regex currently cannot catch this case. Without parenthesis, the collector number will be part of the name.
+					if (number && !set) {
+						Swal.fire({
+							type: "warning",
+							title: `Collector number without Set`,
+							text: `You should not specify a collector number without also specifying a set: '${line}'.`,
+							customClass: SwalCustomClasses,
+						});
+					}
+					let cardID = Object.keys(app.cards).find(
+						(id) =>
+							app.cards[id].name == name &&
+							(!set || app.cards[id].set === set) &&
+							(!number || app.cards[id].collector_number === number)
+					);
 					if (typeof cardID !== "undefined") {
-						return cardID;
+						return [count, cardID];
 					} else {
 						// If not found, try doubled faced cards before giving up!
-						return Object.keys(app.cards).find((id) => app.cards[id].name.startsWith(line + " //"));
+						cardID = Object.keys(app.cards).find(
+							(id) =>
+								app.cards[id].name.startsWith(name + " //") &&
+								(!set || app.cards[id].set === set) &&
+								(!number || app.cards[id].collector_number === number)
+						);
+						if (typeof cardID !== "undefined") return [count, cardID];
 					}
+
+					Swal.fire({
+						type: "error",
+						title: `Card not found`,
+						text: `Could not find '${name}' in our database.`,
+						footer: `Full line: '${line}'`,
+						customClass: SwalCustomClasses,
+					});
+					return [0, undefined];
 				};
 
 				try {
@@ -939,7 +979,6 @@ var app = new Vue({
 						};
 						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
 						while (line < lines.length) {
-							// TODO
 							let header = lines[line].match(headerRegex);
 							if (!header) {
 								Swal.fire({
@@ -955,19 +994,11 @@ var app = new Vue({
 							line += 1;
 							while (line < lines.length && lines[line].trim()[0] !== "[") {
 								if (lines[line]) {
-									let cardID = searchCardID(lines[line].trim());
+									let [count, cardID] = parseLine(lines[line].trim());
 									if (typeof cardID !== "undefined") {
-										cardList.cards[header[1]].push(cardID);
-										cardCount += 1;
-									} else {
-										Swal.fire({
-											type: "error",
-											title: `Card not found`,
-											text: `Could not find ${lines[line]} in our database.`,
-											customClass: SwalCustomClasses,
-										});
-										return;
-									}
+										for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
+										cardCount += count;
+									} else return;
 								}
 								line += 1;
 							}
@@ -978,18 +1009,10 @@ var app = new Vue({
 						let cardList = [];
 						for (let line of lines) {
 							if (line) {
-								let cardID = searchCardID(line);
+								let [count, cardID] = parseLine(line);
 								if (typeof cardID !== "undefined") {
-									cardList.push(cardID);
-								} else {
-									Swal.fire({
-										type: "error",
-										title: `Card not found`,
-										text: `Could not find ${line} in our database.`,
-										customClass: SwalCustomClasses,
-									});
-									return;
-								}
+									for (let i = 0; i < count; ++i) cardList.push(cardID);
+								} else return;
 							}
 						}
 						app.customCardList = cardList;
