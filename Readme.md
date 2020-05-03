@@ -34,8 +34,6 @@ AWS_ENDPOINT=http://localhost:8000
 -   Check cookie implementation? (Is userID correctly saved when starting a Winston Draft?)
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
--   Add set code support to cube import?
--   rewrite cubeformat.html
 
 ---
 
@@ -54,6 +52,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Card count/set code/Collector number support to cube import
 -   Winston Draft
 -   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
 -   Add a way to randomize seatings
