@@ -95,7 +95,7 @@ function Session(id, owner) {
 
 	this.addUser = function (userID) {
 		if (this.users.has(userID)) {
-			console.error(`Session::addUser: this.users.has(${user})`);
+			console.error(`Session::addUser: this.users.has(${userID})`);
 			return;
 		}
 
