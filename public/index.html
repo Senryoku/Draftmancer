@@ -143,7 +143,7 @@
 		<div class="main-controls session-players">
 			<div>
 				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
-				<i v-if="userID == sessionOwner" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
+				<i v-if="userID == sessionOwner && !drafting" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
 			</div>
 			<template v-if="!drafting">
 				<draggable tag="ul" class="player-list" v-model="userOrder" @change="changePlayerOrder" :disabled="userID != sessionOwner || drafting">

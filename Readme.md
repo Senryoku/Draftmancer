@@ -31,7 +31,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Check cookie implementation? (Is userID correctly saved when starting a Winston Draft?)
+-   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 
