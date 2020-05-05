@@ -917,7 +917,7 @@ var app = new Vue({
 				let contents = e.target.result;
 
 				const parseLine = function (line) {
-					console.log(line);
+					line = line.trim();
 					let [fullMatch, count, name, set, number] = line.match(
 						/^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/
 					);
