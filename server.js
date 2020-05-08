@@ -264,7 +264,7 @@ io.on("connection", function (socket) {
 
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
-	socket.on("pickCard", function (cardID, ack) {
+	socket.on("pickCard", function (data, ack) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
 
@@ -273,8 +273,8 @@ io.on("connection", function (socket) {
 			return;
 		}
 
-		if (ack) ack({ code: 0 });
-		Sessions[sessionID].pickCard(userID, cardID);
+		const r = Sessions[sessionID].pickCard(userID, data.selectedCard, data.burnedCards);
+		if (ack) ack(r);
 	});
 
 	// Session options
@@ -520,6 +520,20 @@ io.on("connection", function (socket) {
 				Connections[user].socket.emit("sessionOptions", {
 					useCustomCardList: Sessions[sessionID].useCustomCardList,
 				});
+		}
+	});
+
+	socket.on("setBurnedCardsPerRound", function (burnedCardsPerRound) {
+		let sessionID = Connections[this.userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID) return;
+
+		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
+		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
+
+		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
 		}
 	});
 

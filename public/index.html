@@ -189,8 +189,8 @@
 			<template v-else>
 				<ul class="player-list">
 					<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
-						<i class="fas fa-angle-double-left passing-order-left" v-show="(draftRound % 2) == 1" title="Passing order"></i>
-						<i class="fas fa-angle-double-right passing-order-right" v-show="(draftRound % 2) == 0" title="Passing order"></i>
+						<i class="fas fa-angle-double-left passing-order-left" v-show="(boosterNumber % 2) == 1" title="Passing order"></i>
+						<i class="fas fa-angle-double-right passing-order-right" v-show="(boosterNumber % 2) == 0" title="Passing order"></i>
 						<span class="player-name">{{ user.userName }}</span>
 						<template v-if="!user.isBot && !user.disconnected">
 						<div class="status-icons">
@@ -242,11 +242,12 @@
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
-					<h2>Your Booster</h2><span>Booster #{{ draftRound }}, Pick {{ ((deck.length + sideboard.length) % cardsPerBooster) + 1 }}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
-					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined"/>
+					<h2>Your Booster</h2><span>Booster #{{ boosterNumber }}, Pick {{pickNumber}}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
+					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined && (burningCards.length === burnedCardsPerRound || booster.length === 1 + burningCards.length)"/>
+					<span v-else>Pick a card<span v-if="cardsToBurnThisRound > 0"> and remove {{cardsToBurnThisRound}} cards from the pool ({{burningCards.length}}/{{cardsToBurnThisRound}})</span></span>
 				</div>
 				<div class="booster card-container">
-					<div is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card">
+					<div is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card" :canbeburned="burnedCardsPerRound > 0" :burned="burningCards.includes(card)" :burn="burnCard" :restore="restoreCard">
 					</div>
 				</div>
 			</div>
@@ -462,7 +463,7 @@
 						<div v-for="(pick, index) in log.picks">
 							<h3>Pick {{index + 1}}: {{cards[pick.pick].name}}</h3>
 							<div class="card-container">
-								<figure is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language" :class="{'selected-high': pick.pick === card}"></figure>
+								<figure is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language" :class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}"></figure>
 							</div>
 						</div>
 					</template>
@@ -576,7 +577,7 @@
 				<div class="line" title="Use a custom card list.">
 					<label for="use-custom-card-list">Use a Custom Card List</label>
 					<div class="right">
-						<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" title="Use a custom card list." />
+						<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" title="Use a custom card list (also called Cube)." />
 					</div>
 				</div>
 				<div v-bind:class="{ disabled: !useCustomCardList }" class="line" title="Manage your custom card list.">
@@ -585,7 +586,7 @@
 						<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
 					</div>
 				</div>
-				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. <a href="cubeformat.html" target="_blank">Click Here for more informations</a></div>
+				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. <a href="cubeformat.html" target="_blank">Click Here for more information.</a></div>
 				<h4>Draft Specific Options</h4>
 				<div class="line" title="Draft: Boosters per Player; default is 3.">
 					<label for="boosters-per-player">Boosters per Player</label>
@@ -593,6 +594,13 @@
 						<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
 					</div>
 				</div>
+				<div class="line" title="Draft: Burned cards per round; default is 0.">
+					<label for="burned-cards-per-round">Burned card per round</label>
+					<div class="right">
+						<input type="number" id="burned-cards-per-round" class="small-number-input" min="0" max="24" step="1" v-model.number="burnedCardsPerRound" />
+					</div>
+				</div>
+				<div class="option-info">In addition to picking a card each round, you will also remove this number of cards from the draft. This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</div>
 				<div class="line" title="Who's going to receive the draft logs?">
 					<label for="draft-log-recipients">Send draft logs to</label>
 					<div class="right">
@@ -642,6 +650,11 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>08/05/2020
+						<ul>
+							<li>Added Burned Cards per Round option to play Glimpse/Burn Draft.</li>
+						</ul>
+					</li>
 					<li>03/05/2020
 						<ul>
 							<li>Updated cube list format with support for more parameters (count, set, collector number).</li>

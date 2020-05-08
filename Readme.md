@@ -31,6 +31,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
+-   Look into Glimpse/Burn Draft. Could be just an option of "# of burned cards", or another mode, like Winston draft (with booster count and # of burned card configured at launch) (Note: Be carefull when the end of the pack is reached, we alreay have 14 and 15 cards pack (and even arbitrary size for cube), so we must correctly handle the case of the booster size not beeing a multiple of 1 (pick) + burn count)
 -   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)

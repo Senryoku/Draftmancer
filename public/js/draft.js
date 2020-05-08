@@ -23,12 +23,14 @@ Vue.component("card", {
 	template: `
 	<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
 		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected }" />
+			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected, burned: burned }" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
 				<div class="card-name">{{card.printed_name[language]}}</div>
 			</div>
 		</clazy-load>
+		<div v-if="!selected && canbeburned && !burned" class="burn-card red clickable" @click="burn($event, card)"><i class="fas fa-ban fa-2x"></i></div>
+		<div v-if="!selected && canbeburned && burned" class="restore-card blue clickable" @click="restore($event, card)"><i class="fas fa-undo-alt fa-2x"></i></div>
 	</div>
 	`,
 	props: {
@@ -37,6 +39,10 @@ Vue.component("card", {
 		selectcard: { type: Function, default: function () {} },
 		selected: Boolean,
 		ondblclick: { type: Function, default: function () {} },
+		burn: { type: Function, default: function () {} },
+		restore: { type: Function, default: function () {} },
+		canbeburned: { type: Boolean, default: false },
+		burned: { type: Boolean, default: false },
 	},
 	created: function () {
 		// Preload Carback
@@ -132,18 +138,19 @@ var app = new Vue({
 		},
 		foil: false,
 		bots: 0,
-		virtualPlayersData: undefined,
 		setRestriction: "",
 		drafting: false,
 		useCustomCardList: false,
 		customCardList: [],
-		booster: [],
+		burnedCardsPerRound: 0,
 		maxTimer: 75,
 		pickTimer: 75,
 		draftLogRecipients: "everyone",
 		draftLog: undefined,
 		savedDraftLog: false,
 		bracket: null,
+		virtualPlayersData: undefined,
+		booster: [],
 		winstonDraftState: null,
 
 		publicSessions: [],
@@ -165,6 +172,7 @@ var app = new Vue({
 			Notification && Notification.permission == "granted" && getCookie("enableNotifications", false),
 		notificationPermission: Notification && Notification.permission,
 		selectedCard: undefined,
+		burningCards: [],
 		deck: [],
 		sideboard: [],
 		autoLand: true,
@@ -541,6 +549,7 @@ var app = new Vue({
 				if (app.pickedThisRound) app.draftingState = DraftState.Waiting;
 				else app.draftingState = DraftState.Picking;
 				app.selectedCard = undefined;
+				app.burningCards = [];
 
 				Swal.fire({
 					position: "center",
@@ -661,6 +670,21 @@ var app = new Vue({
 		// Draft Methods
 		selectCard: function (e, c) {
 			this.selectedCard = c;
+			this.restoreCard(null, c);
+		},
+		burnCard: function (e, c) {
+			if (this.burningCards.includes(c)) return;
+			this.burningCards.push(c);
+			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
+			if (e) e.stopPropagation();
+		},
+		restoreCard: function (e, c) {
+			if (!this.burningCards.includes(c)) return;
+			this.burningCards.splice(
+				this.burningCards.findIndex((o) => o === c),
+				1
+			);
+			if (e) e.stopPropagation();
 		},
 		doubleClickCard: function (e, c) {
 			this.selectCard(e, c);
@@ -677,19 +701,31 @@ var app = new Vue({
 			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
 		},
 		pickCard: function () {
-			if (this.draftingState != DraftState.Picking || !this.selectedCard) return;
+			if (
+				this.draftingState != DraftState.Picking ||
+				!this.selectedCard ||
+				this.burningCards.length > this.burnedCardsPerRound ||
+				(this.burningCards.length !== this.burnedCardsPerRound &&
+					this.booster.length !== this.burningCards.length + 1) // Allows for burning less cards only if we're finishing the booster
+			)
+				return;
 
 			if (this.socket.disconnected) {
 				this.disconnectedReminder();
 				return;
 			}
 
-			this.socket.emit("pickCard", this.selectedCard.id, (answer) => {
-				if (answer.code !== 0) console.log(`pickCard: Unexpected answer:`, anwser);
-			});
+			this.socket.emit(
+				"pickCard",
+				{ selectedCard: this.selectedCard.id, burnedCards: this.burningCards.map((c) => c.id) },
+				(answer) => {
+					if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+				}
+			);
 			this.draftingState = DraftState.Waiting;
 			this.addToDeck(this.selectedCard);
 			this.selectedCard = undefined;
+			this.burningCards = [];
 		},
 		forcePick: function () {
 			if (this.draftingState != DraftState.Picking) return;
@@ -698,12 +734,30 @@ var app = new Vue({
 				const randomIdx = Math.floor(Math.random() * this.booster.length);
 				this.selectedCard = this.booster[randomIdx];
 			}
-			this.socket.emit("pickCard", this.selectedCard.id, (anwser) => {
-				if (anwser.code !== 0) console.log(`pickCard: Unexpected answer:`, anwser);
-			});
+			// Forces random cards to burn if there isn't enough selected already
+			while (
+				1 + this.burningCards.length < this.booster.length &&
+				this.burningCards.length < this.burnedCardsPerRound
+			) {
+				let randomIdx;
+				do randomIdx = Math.floor(Math.random() * this.booster.length);
+				while (
+					this.booster[randomIdx] === this.selectedCard ||
+					this.burningCards.includes(this.booster[randomIdx])
+				);
+				this.burningCards.push(this.booster[randomIdx]);
+			}
+			this.socket.emit(
+				"pickCard",
+				{ selectedCard: this.selectedCard.id, burnedCards: this.burningCards.map((c) => c.id) },
+				(anwser) => {
+					if (anwser.code !== 0) alert(`pickCard: Unexpected answer:`, anwser);
+				}
+			);
 			this.draftingState = DraftState.Waiting;
 			this.addToDeck(this.selectedCard);
 			this.selectedCard = undefined;
+			this.burningCards = [];
 		},
 		setWinstonDraftState: function (state) {
 			this.winstonDraftState = state;
@@ -921,7 +975,6 @@ var app = new Vue({
 					let [fullMatch, count, name, set, number] = line.match(
 						/^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/
 					);
-					console.log(fullMatch, count, name, set, number);
 					if (!count) count = 1;
 					if (set) {
 						set = set.toLowerCase();
@@ -1549,8 +1602,24 @@ var app = new Vue({
 		ReadyState: function () {
 			return ReadyState;
 		},
-		draftRound: function () {
-			return Math.floor((this.deck.length + this.sideboard.length) / this.cardsPerBooster) + 1;
+		boosterNumber: function () {
+			return (
+				Math.floor(
+					(this.deck.length + this.sideboard.length) /
+						Math.ceil(this.cardsPerBooster / (1 + this.burnedCardsPerRound))
+				) + 1
+			);
+		},
+		pickNumber: function () {
+			return (
+				this.deck.length +
+				this.sideboard.length -
+				(this.boosterNumber - 1) * Math.ceil(this.cardsPerBooster / (1 + this.burnedCardsPerRound)) +
+				1
+			);
+		},
+		cardsToBurnThisRound: function () {
+			return Math.min(this.burnedCardsPerRound, this.booster.length - 1);
 		},
 		winstonCanSkipPile: function () {
 			const s = this.winstonDraftState;
@@ -1878,6 +1947,10 @@ var app = new Vue({
 		useCustomCardList: function () {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
+		},
+		burnedCardsPerRound: function () {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
 		},
 		draftLogRecipients: function () {
 			if (this.userID != this.sessionOwner) return;

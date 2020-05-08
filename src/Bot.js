@@ -30,6 +30,10 @@ function Bot(name, id) {
 		//console.log(this);
 		return bestPick;
 	};
+	// TODO: Chooses which card to burn.
+	this.burn = function (booster) {
+		return 0;
+	};
 }
 
 module.exports = Bot;

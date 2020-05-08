@@ -81,6 +81,7 @@ function Session(id, owner) {
 	this.foil = false;
 	this.useCustomCardList = false;
 	this.customCardList = [];
+	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
 	this.bracket = undefined;
 
@@ -167,6 +168,8 @@ function Session(id, owner) {
 			foil: this.foil,
 			useCustomCardList: this.useCustomCardList,
 			customCardList: this.customCardList,
+			burnedCardsPerRound: this.burnedCardsPerRound,
+			draftLogRecipients: this.draftLogRecipients,
 			bracket: this.bracket,
 		});
 	};
@@ -726,38 +729,67 @@ function Session(id, owner) {
 		this.nextBooster();
 	};
 
-	this.pickCard = function (userID, cardID) {
+	this.pickCard = function (userID, cardID, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
 		const boosterIndex = Connections[userID].boosterIndex;
 		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length) {
-			console.error(`Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
-			return;
+			const err = `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`;
+			console.error(err);
+			return { code: 1, error: err };
 		}
 		if (!this.boosters[boosterIndex].includes(cardID)) {
-			console.error(`Session.pickCard: cardID ('${cardID}') not found in booster n°${boosterIndex}.`);
-			return;
+			const err = `Session.pickCard: cardID ('${cardID}') not found in booster #${boosterIndex}.`;
+			console.error(err);
+			return { code: 1, error: err };
 		}
 		if (Connections[userID].pickedThisRound) {
-			console.error(`Session.pickCard: User '${userID}' already picked a card this round.`);
-			return;
+			const err = `Session.pickCard: User '${userID}' already picked a card this round.`;
+			console.error(err);
+			return { code: 1, error: err };
+		}
+
+		if (
+			burnedCards &&
+			(burnedCards.length > this.burnedCardsPerRound ||
+			(burnedCards.length !== this.burnedCardsPerRound &&
+				this.boosters[boosterIndex].length !== 1 + burnedCards.length) || // If there's enough cards left, the proper amount of burned card should be supplied
+				burnedCards.some((c) => !this.boosters[boosterIndex].includes(c)))
+		) {
+			const err = `Session.pickCard: Invalid burned cards.`;
+			console.error(err);
+			return { code: 1, error: err };
 		}
 
 		console.log(
-			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card ${cardID} from booster n°${boosterIndex}.`
+			`Session ${this.id}: ${
+				Connections[userID].userName
+			} [${userID}] picked card ${cardID} from booster #${boosterIndex}, burning ${
+				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
+			}.`
 		);
+
 		this.draftLog.users[userID].picks.push({
 			pick: cardID,
+			burn: burnedCards,
 			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
 		});
 
 		Connections[userID].pickedCards.push(cardID);
 		Connections[userID].pickedThisRound = true;
 		// Removes the first occurence of cardID
-		for (let i = 0; i < this.boosters[boosterIndex].length; ++i) {
-			if (this.boosters[boosterIndex][i] == cardID) {
-				this.boosters[boosterIndex].splice(i, 1);
-				break;
+		this.boosters[boosterIndex].splice(
+			this.boosters[boosterIndex].findIndex((c) => c === cardID),
+			1
+		);
+
+		// Removes burned cards
+		if (burnedCards) {
+			for (let burnID of burnedCards) {
+				this.boosters[boosterIndex].splice(
+					this.boosters[boosterIndex].findIndex((c) => c === burnID),
+					1
+				);
 			}
 		}
 
@@ -775,6 +807,26 @@ function Session(id, owner) {
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
 			this.nextBooster();
 		}
+		return { code: 0 };
+	};
+
+	this.doBotPick = function (instance, boosterIndex) {
+		const removedIdx = instance.pick(this.boosters[boosterIndex]);
+		const startingBooster = JSON.parse(JSON.stringify(this.boosters[boosterIndex]));
+		const picked = this.boosters[boosterIndex][removedIdx];
+		this.boosters[boosterIndex].splice(removedIdx, 1);
+		const burned = [];
+		for (let i = 0; i < this.burnedCardsPerRound; ++i) {
+			const burnedIdx = instance.burn(this.boosters[boosterIndex]);
+			burned.push(this.boosters[boosterIndex][burnedIdx]);
+			this.boosters[boosterIndex].splice(burnedIdx, 1);
+		}
+		this.draftLog.users[instance.id].picks.push({
+			pick: picked,
+			burn: burned,
+			booster: startingBooster,
+		});
+		return picked;
 	};
 
 	this.nextBooster = function () {
@@ -805,31 +857,19 @@ function Session(id, owner) {
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				const removedIdx = virtualPlayers[userID].instance.pick(this.boosters[boosterIndex]);
-				this.draftLog.users[userID].picks.push({
-					pick: this.boosters[boosterIndex][removedIdx],
-					booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
-				});
-				this.boosters[boosterIndex].splice(removedIdx, 1);
+				this.doBotPick(virtualPlayers[userID].instance, boosterIndex);
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					// This user has been replaced by a bot, pick immediately
-					let pickIdx;
 					if (!this.disconnectedUsers[userID].bot) {
 						console.error("Trying to use bot that doesn't exist... That should not be possible!");
 						console.error(this.disconnectedUsers[userID]);
-						pickIdx = 0;
-					} else {
-						pickIdx = this.disconnectedUsers[userID].bot.pick(this.boosters[boosterIndex]);
+						this.disconnectedUsers[userID].bot = new Bot("Bot", userID);
 					}
+					const pickedCard = this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
 					this.disconnectedUsers[userID].pickedThisRound = true;
-					this.disconnectedUsers[userID].pickedCards.push(this.boosters[boosterIndex][pickIdx]);
+					this.disconnectedUsers[userID].pickedCards.push(pickedCard);
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
-					this.draftLog.users[userID].picks.push({
-						pick: this.boosters[boosterIndex][pickIdx],
-						booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
-					});
-					this.boosters[boosterIndex].splice(pickIdx, 1);
 					++this.pickedCardsThisRound;
 				} else {
 					Connections[userID].pickedThisRound = false;
@@ -943,13 +983,11 @@ function Session(id, owner) {
 
 			// Immediately pick cards
 			if (!this.disconnectedUsers[uid].pickedThisRound) {
-				const pickIdx = this.disconnectedUsers[uid].bot.pick(
-					this.boosters[this.disconnectedUsers[uid].boosterIndex]
+				const pickedCard = this.doBotPick(
+					this.disconnectedUsers[uid].bot,
+					this.disconnectedUsers[uid].boosterIndex
 				);
-				this.disconnectedUsers[uid].pickedCards.push(
-					this.boosters[this.disconnectedUsers[uid].boosterIndex][pickIdx]
-				);
-				this.boosters[this.disconnectedUsers[uid].boosterIndex].splice(pickIdx, 1);
+				this.disconnectedUsers[uid].pickedCards.push(pickedCard);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 				++this.pickedCardsThisRound;
 				if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
