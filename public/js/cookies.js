@@ -15,7 +15,7 @@ function getCookie(cname, def = "") {
 }
 
 function setCookie(name, value) {
-	document.cookie = name + "=" + (value || "") + ";max-age=31536000;path=/";
+	document.cookie = name + "=" + (value || "") + ";max-age=31536000;path=/;samesite=strict";
 }
 
 function eraseCookie(name) {
