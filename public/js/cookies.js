@@ -19,5 +19,5 @@ function setCookie(name, value) {
 }
 
 function eraseCookie(name) {
-	document.cookie = name + "=; Max-Age=-99999999;";
+	document.cookie = name + "=;max-age=-99999999;path=/;samesite=strict";
 }
