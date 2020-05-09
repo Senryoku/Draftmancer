@@ -94,14 +94,14 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[userID].sessionID;
 
 		Connections[userID].userName = userName;
-		for (let user of Sessions[sessionID].users) {
+		Sessions[sessionID].forUsers((user) =>
 			Connections[user].socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					userName: userName,
 				},
-			});
-		}
+			})
+		);
 	});
 
 	socket.on("setSession", function (sessionID) {
@@ -121,14 +121,14 @@ io.on("connection", function (socket) {
 
 		Connections[userID].collection = collection;
 		if (Sessions[sessionID])
-			for (let user of Sessions[sessionID].users) {
+			Sessions[sessionID].forUsers((user) =>
 				Connections[user].socket.emit("updateUser", {
 					userID: userID,
 					updatedProperties: {
 						collection: collection,
 					},
-				});
-			}
+				})
+			);
 	});
 
 	socket.on("useCollection", function (useCollection) {
@@ -142,14 +142,14 @@ io.on("connection", function (socket) {
 
 		Connections[userID].useCollection = useCollection;
 		if (Sessions[sessionID])
-			for (let user of Sessions[sessionID].users) {
+			Sessions[sessionID].forUsers((user) =>
 				Connections[user].socket.emit("updateUser", {
 					userID: userID,
 					updatedProperties: {
 						useCollection: useCollection,
 					},
-				});
-			}
+				})
+			);
 	});
 
 	socket.on("chatMessage", function (message) {
@@ -158,9 +158,17 @@ io.on("connection", function (socket) {
 		// Limits chat message length
 		message.text = message.text.substring(0, Math.min(255, message.text.length));
 
-		for (let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit("chatMessage", message);
-		}
+		Sessions[sessionID].forUsers((user) => Connections[user].socket.emit("chatMessage", message));
+	});
+
+	socket.on("setOrganizer", function () {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+
+		Sessions[sessionID].users.delete(userID);
+		Sessions[sessionID].notifyUserChange();
 	});
 
 	socket.on("readyCheck", function (ack) {
@@ -179,7 +187,7 @@ io.on("connection", function (socket) {
 	socket.on("setReady", function (readyState) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
-		for (let user of Sessions[sessionID].users) Connections[user].socket.emit("setReady", userID, readyState);
+		Sessions[sessionID].forUsers((user) => Connections[user].socket.emit("setReady", userID, readyState));
 	});
 
 	socket.on("startWinstonDraft", function (boosterCount) {
@@ -286,8 +294,9 @@ io.on("connection", function (socket) {
 		if (newOwnerID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(newOwnerID)) return;
 
 		Sessions[sessionID].owner = newOwnerID;
-		for (let user of Sessions[sessionID].users)
-			Connections[user].socket.emit("sessionOwner", Sessions[sessionID].owner);
+		Sessions[sessionID].forUsers((user) =>
+			Connections[user].socket.emit("sessionOwner", Sessions[sessionID].owner)
+		);
 	});
 
 	socket.on("removePlayer", function (userID) {
@@ -627,6 +636,15 @@ function joinSession(sessionID, userID) {
 			}`
 		);
 
+		// User was the owner, but not playing
+		if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer()) {
+			Connections[userID].socket.emit("message", {
+				title: "Reconnected as Organizer",
+			});
+			sess.reconnectOwner(userID);
+			return;
+		}
+
 		if (userID in sess.disconnectedUsers) {
 			sess.reconnectUser(userID);
 		} else {
@@ -662,26 +680,36 @@ function addUserToSession(userID, sessionID) {
 	Sessions[sessionID].addUser(userID);
 }
 
+function deleteSession(sessionID) {
+	const wasPublic = Sessions[sessionID].isPublic;
+	process.nextTick(() => {
+		delete Sessions[sessionID];
+		if (wasPublic) io.emit("publicSessions", getPublicSessions());
+	});
+}
+
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID) {
 	const sessionID = Connections[userID].sessionID;
-	if (sessionID in Sessions && Sessions[sessionID].users.has(userID)) {
+	if (sessionID in Sessions) {
 		let sess = Sessions[sessionID];
-		sess.remUser(userID);
+		if (sess.users.has(userID)) {
+			sess.remUser(userID);
 
-		Connections[userID].sessionID = null;
-		if (sess.users.size == 0) {
-			const wasPublic = sess.isPublic;
-			process.nextTick(() => {
-				delete Sessions[sessionID];
-				if (wasPublic) io.emit("publicSessions", getPublicSessions());
-			});
-		} else {
-			// User was the owner of the session, transfer ownership.
-			if (sess.owner == userID) {
-				sess.owner = sess.users.values().next().value;
+			Connections[userID].sessionID = null;
+			// Keep session alive if the owner wasn't a player and is still connected.
+			if ((sess.ownerIsPlayer() || !(sess.owner in Connections)) && sess.users.size === 0) {
+				deleteSession(sessionID);
+			} else {
+				// User was the owner of the session, transfer ownership to the first available users.
+				if (sess.owner == userID) {
+					sess.owner = sess.users.values().next().value;
+				}
+				sess.notifyUserChange();
 			}
-			sess.notifyUserChange();
+		} else if (userID === sess.owner && sess.ownerIsPlayer() && sess.users.size === 0) {
+			// User was a non-playing owner and alone in this session
+			deleteSession(sessionID);
 		}
 	}
 }

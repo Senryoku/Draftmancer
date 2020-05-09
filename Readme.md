@@ -38,6 +38,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
+-   Add an Organizer role: Is the owner of the session, but doesn't play.
 -   Display foils as... foils in front end?
 
 ### Distant Future

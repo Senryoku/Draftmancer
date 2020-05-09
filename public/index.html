@@ -141,6 +141,10 @@
 			</div>
 		</div>
 		<div class="main-controls session-players">
+			<div v-if="(!drafting && !userOrder.includes(sessionOwner)) || (drafting && !virtualPlayers.map(u => u.userID).includes(sessionOwner))" class="generic-container" title="Non-playing session owner." style="margin-right: 0.5em">
+				{{sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}} <i class="fas fa-crown subtle-gold" :title="sessionOwnerUsername ? `${sessionOwnerUsername} is the session's owner.` : 'Session owner is disconnected.'"></i>
+				<div class="chat-bubble" :id="'chat-bubble-'+sessionOwner"></div>
+			</div>
 			<div>
 				<span title="Maximum players can be adjusted in session options.">Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
 				<i v-if="userID == sessionOwner && !drafting" class="fas fa-random clickable" @click="randomizeSeating" title="Randomize Seating Order"></i>
@@ -240,6 +244,9 @@
 			</div>
 		</div>
 		<template v-if="drafting">
+			<div v-show="draftingState == DraftState.Watching">
+				Players are drafting... Booster #{{boosterNumber}}, Pick #{{pickNumber}}
+			</div>
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
 					<h2>Your Booster</h2><span>Booster #{{ boosterNumber }}, Pick {{pickNumber}}</span><span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono"><i class="fas fa-clock"></i> {{ pickTimer }}</span>
@@ -290,7 +297,7 @@
 				</div>
 			</div>
 		</template>
-		<div class="container" v-show="(deck !== undefined && deck.length > 0) || drafting || this.draftingState == DraftState.Brewing">
+		<div class="container" v-show="(deck !== undefined && deck.length > 0) || (drafting && draftingState !== DraftState.Watching) || this.draftingState == DraftState.Brewing">
 			<div id="brewing-controls" class="controls">
 				<h2>Deck ({{deck.length}})</h2>
 				<label for="card-order">Card Display</label>
@@ -343,7 +350,7 @@
 				</template>
 			</div>
 		</div>
-		<div v-show="(sideboard != undefined && sideboard.length > 0) || drafting || this.draftingState == DraftState.Brewing" id="card-pool-container" class="container">
+		<div v-show="(sideboard != undefined && sideboard.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing" id="card-pool-container" class="container">
 			<div id="card-pool-controls" class="controls">
 				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}</span>)</h2>
 			</div>
@@ -530,6 +537,9 @@
 		<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
 			<h2 slot="header">Additional Session Options</h2>
 			<div slot="body" class="option-column" :class="{disabled: userID != sessionOwner}">
+				<div class="line">
+					<button @click="setOrganizer">Become organizer</button>
+				</div>
 				<div class="line" title="Share your session ID with everyone.">
 					<label for="is-public">Public</label>
 					<div class="right">

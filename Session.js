@@ -119,10 +119,13 @@ function Session(id, owner) {
 		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(
 			(u) => this.disconnectedUsers[u].userName
 		);
-		for (let u of this.users) Connections[u].socket.emit("userDisconnected", disconnectedUserNames);
+		this.forUsers((u) => Connections[u].socket.emit("userDisconnected", disconnectedUserNames));
 	};
 
 	this.remUser = function (userID) {
+		// Nothing to do if the user wasn't playing
+		if (userID === this.owner && !this.ownerIsPlayer()) return;
+
 		this.users.delete(userID);
 		if (this.drafting) {
 			this.stopCountdown();
@@ -572,11 +575,16 @@ function Session(id, owner) {
 		}
 
 		// Send to all session users
-		for (let user of this.users)
+		this.forUsers((user) => {
 			if (Connections[user]) {
-				Connections[user].socket.emit("sessionOwner", this.owner);
+				Connections[user].socket.emit(
+					"sessionOwner",
+					this.owner,
+					this.owner in Connections ? Connections[this.owner].userName : null
+				);
 				Connections[user].socket.emit("sessionUsers", user_info);
 			}
+		});
 	};
 
 	///////////////////// Winston Draft //////////////////////
@@ -724,7 +732,16 @@ function Session(id, owner) {
 			});
 			Connections[user].socket.emit("startDraft");
 		}
+
+		if (!this.ownerIsPlayer()) {
+			Connections[this.owner].socket.emit("sessionOptions", {
+				virtualPlayersData: virtualPlayers,
+			});
+			Connections[this.owner].socket.emit("startDraft");
+		}
+
 		this.round = 0;
+		this.boosterNumber = 1;
 		// console.debug(this);
 		this.nextBooster();
 	};
@@ -794,14 +811,14 @@ function Session(id, owner) {
 		}
 
 		// Signal users
-		for (let user of this.users) {
-			Connections[user].socket.emit("updateUser", {
+		this.forUsers((u) => {
+			Connections[u].socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					pickedThisRound: true,
 				},
 			});
-		}
+		});
 
 		++this.pickedCardsThisRound;
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
@@ -839,6 +856,7 @@ function Session(id, owner) {
 			this.round = 0;
 			// Remove empty boosters
 			this.boosters.splice(0, totalVirtualPlayers);
+			++this.boosterNumber;
 		}
 
 		// End draft if there is no more booster to distribute
@@ -876,10 +894,19 @@ function Session(id, owner) {
 					Connections[userID].boosterIndex = boosterIndex;
 					Connections[userID].socket.emit("nextBooster", {
 						booster: this.boosters[boosterIndex],
+						boosterNumber: this.boosterNumber,
+						pickNumber: this.round + 1,
 					});
 				}
 			}
 			++index;
+		}
+
+		if (!this.ownerIsPlayer() && this.owner in Connections) {
+			Connections[this.owner].socket.emit("nextBooster", {
+				boosterNumber: this.boosterNumber,
+				pickNumber: this.round + 1,
+			});
 		}
 
 		this.startCountdown(); // Starts countdown now that everyone has their booster
@@ -888,10 +915,11 @@ function Session(id, owner) {
 
 	this.resumeDraft = function () {
 		console.warn(`Restarting draft for session ${this.id}.`);
-		for (let userID of this.users)
-			Connections[userID].socket.emit("sessionOptions", {
+		this.forUsers((user) =>
+			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
-			});
+			})
+		);
 		if (!this.winstonDraftState) {
 			this.resumeCountdown();
 		}
@@ -931,11 +959,11 @@ function Session(id, owner) {
 				});
 				break;
 			case "everyone":
-				for (let userID of this.users) Connections[userID].socket.emit("draftLog", this.draftLog);
+				this.forUsers((u) => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;
 		}
 
-		for (let userID of this.users) Connections[userID].socket.emit("endDraft");
+		this.forUsers((u) => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
 	};
@@ -961,11 +989,8 @@ function Session(id, owner) {
 				pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				booster: this.boosters[Connections[userID].boosterIndex],
-				// At this point I should just transmit round and booster #s :)
-				cardsPerBooster:
-					(1 + this.burnedCardsPerRound) * this.round +
-					this.boosters[Connections[userID].boosterIndex].length +
-					(this.disconnectedUsers[userID].pickedThisRound ? -1 : -2),
+				boosterNumber: this.boosterNumber,
+				pickNumber: this.round,
 			});
 			delete this.disconnectedUsers[userID];
 		}
@@ -973,6 +998,18 @@ function Session(id, owner) {
 		// Resume draft if everyone is here or broacast the new state.
 		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
 		else this.broadcastDisconnectedUsers();
+	};
+
+	// Non-playing owner (organizer) is trying to reconnect, we just need to send them the current state
+	this.reconnectOwner = function (userID) {
+		if (userID !== this.owner || this.ownerIsPlayer()) return;
+		Connections[userID].sessionID = this.id;
+		this.syncSessionOptions(userID);
+		this.notifyUserChange();
+		Connections[userID].socket.emit("sessionOptions", {
+			virtualPlayersData: this.getSortedVirtualPlayers(),
+		});
+		Connections[userID].socket.emit("startDraft");
 	};
 
 	this.replaceDisconnectedPlayers = function () {
@@ -1001,10 +1038,11 @@ function Session(id, owner) {
 			}
 		}
 
-		for (let userID of this.users)
-			Connections[userID].socket.emit("sessionOptions", {
+		this.forUsers((u) =>
+			Connections[u].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
-			});
+			})
+		);
 		this.notifyUserChange();
 		this.resumeCountdown();
 		this.emitMessage("Resuming draft", `Disconnected player(s) has been replaced by bot(s).`);
@@ -1022,22 +1060,24 @@ function Session(id, owner) {
 		this.stopCountdown(); // Cleanup if one is still running
 		if (this.maxTimer <= 0) {
 			// maxTimer <= 0 means no timer
-			for (let user of this.users) Connections[user].socket.emit("disableTimer");
+			this.forUsers((u) => Connections[u].socket.emit("disableTimer"));
 		} else {
 			// Immediately propagate current state
-			for (let user of this.users)
-				Connections[user].socket.emit("timer", {
+			this.forUsers((u) =>
+				Connections[u].socket.emit("timer", {
 					countdown: this.countdown,
-				});
+				})
+			);
 			// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(
 				((sess) => {
 					return () => {
 						sess.countdown--;
-						for (let user of sess.users)
-							Connections[user].socket.emit("timer", {
+						this.forUsers((u) =>
+							Connections[u].socket.emit("timer", {
 								countdown: sess.countdown,
-							});
+							})
+						);
 					};
 				})(this),
 				1000
@@ -1095,25 +1135,35 @@ function Session(id, owner) {
 	};
 
 	this.emitMessage = function (title, text, showConfirmButton = true, timer = 1500) {
-		for (let user of this.users) {
-			Connections[user].socket.emit("message", {
+		this.forUsers((u) =>
+			Connections[u].socket.emit("message", {
 				title: title,
 				text: text,
 				showConfirmButton: showConfirmButton,
 				timer: timer,
-			});
-		}
+			})
+		);
 	};
 
 	this.generateBracket = function (players) {
 		this.bracket = new Bracket(players);
-		for (let user of this.users) Connections[user].socket.emit("sessionOptions", { bracket: this.bracket });
+		this.forUsers((u) => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
 	this.updateBracket = function (results) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
-		for (let user of this.users) Connections[user].socket.emit("sessionOptions", { bracket: this.bracket });
+		this.forUsers((u) => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+	};
+
+	this.ownerIsPlayer = function () {
+		return this.users.has(this.owner);
+	};
+
+	// Execute fn for each user. Owner included even if they're not playing.
+	this.forUsers = function (fn) {
+		if (!this.ownerIsPlayer() && this.owner in Connections) fn(this.owner);
+		for (let user of this.users) fn(user);
 	};
 }
 
