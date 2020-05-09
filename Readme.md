@@ -34,18 +34,11 @@ AWS_ENDPOINT=http://localhost:8000
 -   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
--   CardPerBooster in frontend isn't accurate after a disconnection (and consequently Booster and Pick Number aren't either)
+-   Cleanup draft state? (See Winston Draft State) Also properly sync booster and pick # rather than relying on cardsPerBooster
 
 ---
 
--   Revamp menu: Can take whole screen and disappear during drafting, (add a button to have it reappear?)
 -   Display foils as... foils in front end?
-
----
-
--   Move pick time out to server side?
--   Multiple prevention is only done by ID, maybe we should check the card name
--   (I finally found out about socket.io room feature... I should use that instead of manually handling sessions.)
 
 ### Distant Future
 
@@ -57,13 +50,10 @@ AWS_ENDPOINT=http://localhost:8000
 -   Card count/set code/Collector number support to cube import
 -   Winston Draft
 -   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
--   Add a way to randomize seatings
 -   Monitor persistence
--   Wait for card image to be loaded before displaying it? (Seems hard to do when updating booster for example)
 -   Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
 -   Set Multiple Selection
 -   Rarity selection
--   Prevent multiple copies of the same card in a single booster
 
 ## Bugs
 
@@ -78,9 +68,4 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Custom Set format
 
-Rarity Header:
-
-    [SlotName(CardPerBooster)]
-    Card 1
-    Card 2
-    ...
+See cubeformat.html
