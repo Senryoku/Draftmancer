@@ -961,6 +961,11 @@ function Session(id, owner) {
 				pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				booster: this.boosters[Connections[userID].boosterIndex],
+				// At this point I should just transmit round and booster #s :)
+				cardsPerBooster:
+					(1 + this.burnedCardsPerRound) * this.round +
+					this.boosters[Connections[userID].boosterIndex].length +
+					(this.disconnectedUsers[userID].pickedThisRound ? -1 : -2),
 			});
 			delete this.disconnectedUsers[userID];
 		}

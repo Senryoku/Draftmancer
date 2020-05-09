@@ -544,6 +544,7 @@ var app = new Vue({
 				for (let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
+				app.cardsPerBooster = data.cardsPerBooster;
 
 				app.pickedThisRound = data.pickedThisRound;
 				if (app.pickedThisRound) app.draftingState = DraftState.Waiting;
