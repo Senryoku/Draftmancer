@@ -11,6 +11,11 @@ const SessionModule = require("../Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 
+const TableNames = {
+	Connections: process.env.TABLENAME_CONNECTIONS ? process.env.TABLENAME_CONNECTIONS : "mtga-draft-connections",
+	Sessions: process.env.TABLENAME_SESSIONS ? process.env.TABLENAME_SESSIONS : "mtga-draft-sessions",
+};
+
 AWS.config.update({
 	region: process.env.AWS_REGION,
 	endpoint: process.env.AWS_ENDPOINT,
@@ -35,7 +40,7 @@ function isObsolete(item) {
 
 async function requestSavedConnections() {
 	var connectionsRequestParams = {
-		TableName: "mtga-draft-connections",
+		TableName: TableNames["Connections"],
 		ReturnConsumedCapacity: "TOTAL",
 	};
 	let InactiveConnections = {};
@@ -69,7 +74,7 @@ async function requestSavedConnections() {
 
 async function requestSavedSessions() {
 	var connections = {
-		TableName: "mtga-draft-sessions",
+		TableName: TableNames["Sessions"],
 		ReturnConsumedCapacity: "TOTAL",
 	};
 
@@ -170,12 +175,12 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		ConnectionsRequests.push({ PutRequest: { Item: Item } });
 
 		if (ConnectionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+			ConsumedCapacity += await batchWrite(TableNames["Connections"], ConnectionsRequests);
 			ConnectionsRequests = [];
 		}
 	}
 	if (ConnectionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+		ConsumedCapacity += await batchWrite(TableNames["Sessions"], ConnectionsRequests);
 		ConnectionsRequests = [];
 	}
 

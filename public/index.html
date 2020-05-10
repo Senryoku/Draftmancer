@@ -244,8 +244,13 @@
 			</div>
 		</div>
 		<template v-if="drafting">
-			<div v-show="draftingState == DraftState.Watching">
-				Players are drafting... Booster #{{boosterNumber}}, Pick #{{pickNumber}}
+			<div v-show="draftingState == DraftState.Watching" class="draft-watching">
+				<h1>Players are drafting...</h1>
+				<div v-show="pickTimer >= 0"><i class="fas fa-clock"></i> {{ pickTimer }}</div>
+				<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
+			</div>
+			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
+				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 			<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
 				<div id="booster-controls" class="controls">
@@ -257,9 +262,6 @@
 					<div is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card" :canbeburned="burnedCardsPerRound > 0" :burned="burningCards.includes(card)" :burn="burnCard" :restore="restoreCard">
 					</div>
 				</div>
-			</div>
-			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
-				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
 			</div>
 			<!-- Winston Draft -->
 			<div v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting" id="booster-container" class="container">
@@ -537,13 +539,16 @@
 		<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
 			<h2 slot="header">Additional Session Options</h2>
 			<div slot="body" class="option-column" :class="{disabled: userID != sessionOwner}">
-				<div class="line">
-					<button @click="setOrganizer">Become organizer</button>
-				</div>
 				<div class="line" title="Share your session ID with everyone.">
 					<label for="is-public">Public</label>
 					<div class="right">
 						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+					</div>
+				</div>
+				<div class="line">
+					<label for="is-owner-player">Session owner is also playing</label>
+					<div class="right">
+						<input type="checkbox" @change="setOwnerIsPlayer($event.target.checked)" id="is-public" title="Is the session owner also playing?" checked="true" />
 					</div>
 				</div>
 				<div class="line">

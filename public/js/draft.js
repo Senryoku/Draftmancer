@@ -378,7 +378,7 @@ var app = new Vue({
 
 			this.socket.on("message", function (data) {
 				if (data.title === undefined) data.title = "[Missing Title]";
-				if (data.text === undefined) data.text = "[Missing Text]";
+				if (data.text === undefined) data.text = "";
 
 				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
 				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
@@ -1213,9 +1213,9 @@ var app = new Vue({
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
 		},
-		setOrganizer: function () {
+		setOwnerIsPlayer: function (val) {
 			setCookie("userID", this.userID); // Used for reconnection
-			this.socket.emit("setOrganizer");
+			this.socket.emit("setOwnerIsPlayer", val);
 		},
 		setSessionOwner: function (newOwnerID) {
 			if (this.userID != this.sessionOwner) return;

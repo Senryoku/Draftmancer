@@ -161,15 +161,20 @@ io.on("connection", function (socket) {
 		Sessions[sessionID].forUsers((user) => Connections[user].socket.emit("chatMessage", message));
 	});
 
-	socket.on("setOrganizer", function () {
+	socket.on("setOwnerIsPlayer", function (val) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		if (Sessions[sessionID].owner != userID || Sessions[sessionID].drafting) return;
 
-		Sessions[sessionID].users.delete(userID);
-		Sessions[sessionID].ownerIsPlayer = false;
-		Sessions[sessionID].notifyUserChange();
+		if (val) {
+			Sessions[sessionID].ownerIsPlayer = true;
+			Sessions[sessionID].addUser(userID);
+		} else {
+			Sessions[sessionID].ownerIsPlayer = false;
+			Sessions[sessionID].users.delete(userID);
+			Sessions[sessionID].notifyUserChange();
+		}
 	});
 
 	socket.on("readyCheck", function (ack) {
@@ -252,7 +257,7 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
-		if (Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
+		if (Sessions[sessionID].users.size > 0 && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			Sessions[sessionID].startDraft();
 		} else {
 			Connections[userID].socket.emit("message", {
@@ -622,23 +627,16 @@ function getUserID(req, res) {
 function joinSession(sessionID, userID) {
 	if (sessionID in InactiveSessions) {
 		console.log(`Restoring inactive session '${sessionID}'...`);
-		InactiveSessions[sessionID].owner = userID; // Always having a valid owner is more important than
-		// preserving the old one - probably.
+		// Always having a valid owner is more important than preserving the old one - probably.
+		if (InactiveSessions[sessionID].ownerIsPlayer) InactiveSessions[sessionID].owner = userID;
 		Sessions[sessionID] = InactiveSessions[sessionID];
 		delete InactiveSessions[sessionID];
 	}
 
-	// Session exists and is drafting
-	if (sessionID in Sessions && Sessions[sessionID].drafting) {
+	if (sessionID in Sessions) {
 		let sess = Sessions[sessionID];
-		console.log(
-			`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
-				userID in sess.disconnectedUsers
-			}`
-		);
-
 		// User was the owner, but not playing
-		if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer) {
+		if (userID === sess.owner && !sess.ownerIsPlayer) {
 			Connections[userID].socket.emit("message", {
 				title: "Reconnected as Organizer",
 			});
@@ -646,29 +644,38 @@ function joinSession(sessionID, userID) {
 			return;
 		}
 
-		if (userID in sess.disconnectedUsers) {
-			sess.reconnectUser(userID);
-		} else {
+		// Session exists and is drafting
+		if (sess.drafting) {
+			console.log(
+				`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
+					userID in sess.disconnectedUsers
+				}`
+			);
+
+			if (userID in sess.disconnectedUsers) {
+				sess.reconnectUser(userID);
+			} else {
+				Connections[userID].socket.emit("message", {
+					title: "Cannot join session",
+					text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`,
+				});
+				// Fallback to previous session if possible, or generate a new one
+				if (Connections[userID].sessionID === null) sessionID = shortguid();
+				else sessionID = Connections[userID].sessionID;
+				Connections[userID].socket.emit("setSession", sessionID);
+			}
+		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
+			// Session exists and is full
 			Connections[userID].socket.emit("message", {
 				title: "Cannot join session",
-				text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`,
+				text: `This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).`,
 			});
-			// Fallback to previous session if possible, or generate a new one
 			if (Connections[userID].sessionID === null) sessionID = shortguid();
 			else sessionID = Connections[userID].sessionID;
 			Connections[userID].socket.emit("setSession", sessionID);
-			// joinSession(sessionID, userID);
+		} else {
+			addUserToSession(userID, sessionID);
 		}
-		// Session exists and is full
-	} else if (sessionID in Sessions && Sessions[sessionID].getHumanPlayerCount() >= Sessions[sessionID].maxPlayers) {
-		Connections[userID].socket.emit("message", {
-			title: "Cannot join session",
-			text: `This session (${sessionID}) is full (${Sessions[sessionID].users.size}/${Sessions[sessionID].maxPlayers} players).`,
-		});
-		if (Connections[userID].sessionID === null) sessionID = shortguid();
-		else sessionID = Connections[userID].sessionID;
-		Connections[userID].socket.emit("setSession", sessionID);
-		// joinSession(sessionID, userID);
 	} else {
 		addUserToSession(userID, sessionID);
 	}

@@ -1010,11 +1010,13 @@ function Session(id, owner) {
 		Connections[userID].socket.emit("sessionOptions", {
 			virtualPlayersData: this.getSortedVirtualPlayers(),
 		});
-		Connections[userID].socket.emit("startDraft");
-		Connections[userID].socket.emit("nextBooster", {
-			boosterNumber: this.boosterNumber,
-			pickNumber: this.round,
-		});
+		if (this.drafting) {
+			Connections[userID].socket.emit("startDraft");
+			Connections[userID].socket.emit("nextBooster", {
+				boosterNumber: this.boosterNumber,
+				pickNumber: this.round,
+			});
+		}
 	};
 
 	this.replaceDisconnectedPlayers = function () {

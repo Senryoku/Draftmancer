@@ -418,6 +418,11 @@ label {
 	text-shadow: 0px 0px 10px black;
 }
 
+.draft-watching {
+	text-align: center;
+	padding: 2em;
+}
+
 #main-vue button.stop {
 	background-color: darkred;
 }
