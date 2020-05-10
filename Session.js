@@ -60,6 +60,7 @@ function WinstonDraftState(players, boosters) {
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
+	this.ownerIsPlayer = true;
 	this.users = new Set();
 	this.userOrder = [];
 
@@ -124,7 +125,7 @@ function Session(id, owner) {
 
 	this.remUser = function (userID) {
 		// Nothing to do if the user wasn't playing
-		if (userID === this.owner && !this.ownerIsPlayer()) return;
+		if (userID === this.owner && !this.ownerIsPlayer) return;
 
 		this.users.delete(userID);
 		if (this.drafting) {
@@ -733,7 +734,7 @@ function Session(id, owner) {
 			Connections[user].socket.emit("startDraft");
 		}
 
-		if (!this.ownerIsPlayer()) {
+		if (!this.ownerIsPlayer) {
 			Connections[this.owner].socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
 			});
@@ -902,7 +903,7 @@ function Session(id, owner) {
 			++index;
 		}
 
-		if (!this.ownerIsPlayer() && this.owner in Connections) {
+		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("nextBooster", {
 				boosterNumber: this.boosterNumber,
 				pickNumber: this.round + 1,
@@ -1002,7 +1003,7 @@ function Session(id, owner) {
 
 	// Non-playing owner (organizer) is trying to reconnect, we just need to send them the current state
 	this.reconnectOwner = function (userID) {
-		if (userID !== this.owner || this.ownerIsPlayer()) return;
+		if (userID !== this.owner || this.ownerIsPlayer) return;
 		Connections[userID].sessionID = this.id;
 		this.syncSessionOptions(userID);
 		this.notifyUserChange();
@@ -1010,6 +1011,10 @@ function Session(id, owner) {
 			virtualPlayersData: this.getSortedVirtualPlayers(),
 		});
 		Connections[userID].socket.emit("startDraft");
+		Connections[userID].socket.emit("nextBooster", {
+			boosterNumber: this.boosterNumber,
+			pickNumber: this.round,
+		});
 	};
 
 	this.replaceDisconnectedPlayers = function () {
@@ -1156,13 +1161,9 @@ function Session(id, owner) {
 		this.forUsers((u) => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
-	this.ownerIsPlayer = function () {
-		return this.users.has(this.owner);
-	};
-
 	// Execute fn for each user. Owner included even if they're not playing.
 	this.forUsers = function (fn) {
-		if (!this.ownerIsPlayer() && this.owner in Connections) fn(this.owner);
+		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
 		for (let user of this.users) fn(user);
 	};
 }

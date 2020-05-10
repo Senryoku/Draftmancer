@@ -168,6 +168,7 @@ io.on("connection", function (socket) {
 		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
 		Sessions[sessionID].users.delete(userID);
+		Sessions[sessionID].ownerIsPlayer = false;
 		Sessions[sessionID].notifyUserChange();
 	});
 
@@ -637,7 +638,7 @@ function joinSession(sessionID, userID) {
 		);
 
 		// User was the owner, but not playing
-		if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer()) {
+		if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer) {
 			Connections[userID].socket.emit("message", {
 				title: "Reconnected as Organizer",
 			});
@@ -698,7 +699,7 @@ function removeUserFromSession(userID) {
 
 			Connections[userID].sessionID = null;
 			// Keep session alive if the owner wasn't a player and is still connected.
-			if ((sess.ownerIsPlayer() || !(sess.owner in Connections)) && sess.users.size === 0) {
+			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
 				deleteSession(sessionID);
 			} else {
 				// User was the owner of the session, transfer ownership to the first available users.
@@ -707,7 +708,7 @@ function removeUserFromSession(userID) {
 				}
 				sess.notifyUserChange();
 			}
-		} else if (userID === sess.owner && sess.ownerIsPlayer() && sess.users.size === 0) {
+		} else if (userID === sess.owner && !sess.ownerIsPlayer && sess.users.size === 0) {
 			// User was a non-playing owner and alone in this session
 			deleteSession(sessionID);
 		}
