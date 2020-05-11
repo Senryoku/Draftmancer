@@ -198,7 +198,7 @@ var app = new Vue({
 		showCollectionStats: false,
 		statsMissingRarity: "rare",
 		statsShowNonBooster: false,
-		statsSelectedSet: "thb",
+		statsSelectedSet: "iko",
 
 		// Chat
 		currentChatMessage: "",
