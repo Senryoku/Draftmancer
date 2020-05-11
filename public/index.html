@@ -141,7 +141,7 @@
 			</div>
 		</div>
 		<div class="main-controls session-players">
-			<div v-if="(!drafting && !userOrder.includes(sessionOwner)) || (drafting && !virtualPlayers.map(u => u.userID).includes(sessionOwner))" class="generic-container" title="Non-playing session owner." style="margin-right: 0.5em">
+			<div v-if="!ownerIsPlayer" class="generic-container" title="Non-playing session owner." style="margin-right: 0.5em">
 				{{sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}} <i class="fas fa-crown subtle-gold" :title="sessionOwnerUsername ? `${sessionOwnerUsername} is the session's owner.` : 'Session owner is disconnected.'"></i>
 				<div class="chat-bubble" :id="'chat-bubble-'+sessionOwner"></div>
 			</div>
@@ -386,7 +386,7 @@
 				</template>
 			</div>
 		</div>
-	<div class="welcome" v-if="draftingState === undefined">
+		<div class="welcome" v-if="draftingState === undefined">
 			<h1>Welcome to MTGADraft!</h1>
 			<p class="important">
 				Want to draft in MTGA with your friends? Noticed you currently can't do that natively? We're here for you!
@@ -546,9 +546,9 @@
 					</div>
 				</div>
 				<div class="line">
-					<label for="is-owner-player">Session owner is also playing</label>
+					<label for="is-owner-player">Session owner is playing</label>
 					<div class="right">
-						<input type="checkbox" @change="setOwnerIsPlayer($event.target.checked)" id="is-public" title="Is the session owner also playing?" checked="true" />
+						<input type="checkbox" v-model="ownerIsPlayer" id="is-public" title="Is the session owner participating in?" />
 					</div>
 				</div>
 				<div class="line">
@@ -622,7 +622,7 @@
 						<select v-model="draftLogRecipients" id="draft-log-recipients" />
 							<option value="everyone">Everyone</option>
 							<option value="owner">Owner only</option>
-							<option value="delayed" title="Owner will choose when to make the draft public. Useful for tournaments.">Owner only, delayed</option>
+							<option value="delayed" title="Owner will choose when to make the draft log public. Useful for tournaments.">Owner only, delayed</option>
 							<option value="none">No-one</option>
 						</select>
 					</div>

@@ -125,6 +125,7 @@ var app = new Vue({
 		sessionID: getCookie("sessionID", shortguid()),
 		sessionOwner: null,
 		sessionOwnerUsername: null,
+		ownerIsPlayer: true,
 		isPublic: false,
 		ignoreCollections: false,
 		sessionUsers: [],
@@ -797,6 +798,18 @@ var app = new Vue({
 		},
 		startWinstonDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
+
+			if (!this.ownerIsPlayer) {
+				Swal.fire({
+					type: "error",
+					title: "Owner has to play",
+					text:
+						"Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
+					customClass: SwalCustomClasses,
+				});
+				return;
+			}
+
 			const { value: boosterCount } = await Swal.fire({
 				title: "Winston Draft",
 				html: `Winston Draft is a draft variant for two players, <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank">more information here</a>. How many boosters for the main stack (default is 6)?`,
@@ -1212,10 +1225,6 @@ var app = new Vue({
 				)}`
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
-		},
-		setOwnerIsPlayer: function (val) {
-			setCookie("userID", this.userID); // Used for reconnection
-			this.socket.emit("setOwnerIsPlayer", val);
 		},
 		setSessionOwner: function (newOwnerID) {
 			if (this.userID != this.sessionOwner) return;
@@ -1913,6 +1922,11 @@ var app = new Vue({
 			this.updateAutoLands();
 		},
 		// Session options
+		ownerIsPlayer: function () {
+			if (this.userID != this.sessionOwner) return;
+			setCookie("userID", this.userID); // Used for reconnection
+			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
+		},
 		setRestriction: function () {
 			if (this.userID != this.sessionOwner) return;
 

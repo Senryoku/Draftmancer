@@ -175,6 +175,9 @@ io.on("connection", function (socket) {
 			Sessions[sessionID].users.delete(userID);
 			Sessions[sessionID].notifyUserChange();
 		}
+		for (let user of Sessions[sessionID].users)
+			if (user != userID)
+				Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: Sessions[sessionID].ownerIsPlayer });
 	});
 
 	socket.on("readyCheck", function (ack) {
@@ -587,6 +590,15 @@ io.on("connection", function (socket) {
 			}
 			Connections[user].socket.emit("setCardSelection", Sessions[sessionID].boosters);
 		}
+
+		if (!Sessions[sessionID].ownerIsPlayer && Sessions[sessionID].owner in Connections) {
+			Connections[Sessions[sessionID].owner].socket.emit("message", {
+				title: "Sealed pools successfly distributed!",
+				showConfirmButton: false,
+				timer: 1500,
+			});
+		}
+
 		Sessions[sessionID].boosters = [];
 	});
 

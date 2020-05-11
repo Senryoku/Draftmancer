@@ -160,6 +160,7 @@ function Session(id, owner) {
 	this.syncSessionOptions = function (userID) {
 		Connections[userID].socket.emit("sessionOptions", {
 			sessionOwner: this.owner,
+			ownerIsPlayer: this.ownerIsPlayer,
 			setRestriction: this.setRestriction,
 			isPublic: this.isPublic,
 			ignoreCollections: this.ignoreCollections,
