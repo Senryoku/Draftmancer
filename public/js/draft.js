@@ -169,8 +169,11 @@ var app = new Vue({
 		pickOnDblclick: getCookie("pickOnDblclick", false),
 		enableSound: getCookie("enableSound", true),
 		enableNotifications:
-			(typeof Notification !== "undefined") && Notification && Notification.permission == "granted" && getCookie("enableNotifications", false),
-		notificationPermission: (typeof Notification !== "undefined") && Notification && Notification.permission,
+			typeof Notification !== "undefined" &&
+			Notification &&
+			Notification.permission == "granted" &&
+			getCookie("enableNotifications", false),
+		notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 		selectedCard: undefined,
 		burningCards: [],
 		deck: [],
@@ -808,7 +811,7 @@ var app = new Vue({
 			});
 		},
 		checkNotificationPermission: function (e) {
-			if (e.target.value && Notification.permission != "granted") {
+			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
 				Notification.requestPermission().then(function (permission) {
 					this.notificationPermission = permission;
 					if (permission != "granted") {
