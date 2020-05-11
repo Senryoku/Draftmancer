@@ -169,8 +169,8 @@ var app = new Vue({
 		pickOnDblclick: getCookie("pickOnDblclick", false),
 		enableSound: getCookie("enableSound", true),
 		enableNotifications:
-			Notification && Notification.permission == "granted" && getCookie("enableNotifications", false),
-		notificationPermission: Notification && Notification.permission,
+			(typeof Notification !== "undefined") && Notification && Notification.permission == "granted" && getCookie("enableNotifications", false),
+		notificationPermission: (typeof Notification !== "undefined") && Notification && Notification.permission,
 		selectedCard: undefined,
 		burningCards: [],
 		deck: [],
