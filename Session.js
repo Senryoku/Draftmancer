@@ -930,6 +930,9 @@ function Session(id, owner) {
 
 		this.startCountdown(); // Starts countdown now that everyone has their booster
 		++this.round;
+
+		// Everyone is disconnected...
+		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	};
 
 	this.resumeDraft = function () {
@@ -1060,9 +1063,6 @@ function Session(id, owner) {
 				this.disconnectedUsers[uid].pickedCards.push(pickedCard);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 				++this.pickedCardsThisRound;
-				if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
-					this.nextBooster();
-				}
 			}
 		}
 
@@ -1074,6 +1074,8 @@ function Session(id, owner) {
 		this.notifyUserChange();
 		this.resumeCountdown();
 		this.emitMessage("Resuming draft", `Disconnected player(s) has been replaced by bot(s).`);
+
+		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) this.nextBooster();
 	};
 
 	this.countdown = 75;
