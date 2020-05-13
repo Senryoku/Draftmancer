@@ -38,7 +38,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
--   Add an Organizer role: Is the owner of the session, but doesn't play. Make OwnerIsPlauer a standard session option. Check the interaction with Winston Draft/Sealed.
+-   Add an Organizer role: Is the owner of the session, but doesn't play. Use draft log to display live picks + replay?
 -   Display foils as... foils in front end?
 
 ### Distant Future

@@ -20,7 +20,7 @@
 	<script type="text/x-template" id="modal-template">
 	  <transition name="modal">
 		<div class="modal-mask">
-		  <div class="modal-wrapper" @click="if($event.target == $event.currentTarget) $emit('close')">
+		  <div class="modal-wrapper" @click="close($event)">
 			<div class="modal-container">
 
 			  <div class="modal-header">
@@ -151,7 +151,7 @@
 			</div>
 			<template v-if="!drafting">
 				<draggable tag="ul" class="player-list" v-model="userOrder" @change="changePlayerOrder" :disabled="userID != sessionOwner || drafting">
-					<li v-for="(id, idx) in userOrder" :key="id" :class="{draggable: userID === sessionOwner && !drafting}" :set="user = userByID[id]" :title="`${userByID[id].userName} (${id})`" :class="{bot: userByID[id].isBot}">
+					<li v-for="(id, idx) in userOrder" :key="id" :class="{draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot}" :set="user = userByID[id]" :title="`${userByID[id].userName} (${id})`" :data-userid="id">
 						<span class="player-name">{{ user.userName }}</span>
 						<template v-if="userID == sessionOwner">
 							<i class="fas fa-chevron-left clickable move-player move-player-left" :title="`Move ${user.userName} to the left`" @click="movePlayer(idx, -1)"></i>
@@ -192,7 +192,7 @@
 			</template>
 			<template v-else>
 				<ul class="player-list">
-					<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}">
+					<li v-for="user in virtualPlayers" :title="`${user.userName} (${user.userID})`" :class="{bot: user.isBot}" :data-userid="user.userID">
 						<i class="fas fa-angle-double-left passing-order-left" v-show="(boosterNumber % 2) == 1" title="Passing order"></i>
 						<i class="fas fa-angle-double-right passing-order-right" v-show="(boosterNumber % 2) == 0" title="Passing order"></i>
 						<span class="player-name">{{ user.userName }}</span>
@@ -245,9 +245,14 @@
 		</div>
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Watching" class="draft-watching">
-				<h1>Players are drafting...</h1>
-				<div v-show="pickTimer >= 0"><i class="fas fa-clock"></i> {{ pickTimer }}</div>
-				<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
+				<div class="draft-watching-state">
+					<h1>Players are drafting...</h1>
+					<div v-show="pickTimer >= 0"><i class="fas fa-clock"></i> {{ pickTimer }}</div>
+					<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
+				</div>
+				<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
+					<draft-log-live :draftlog="draftLog"></draft-log-live>
+				</div>
 			</div>
 			<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
 				<span class="spinner"></span><span v-show="pickTimer >= 0">(<i class="fas fa-clock"></i> {{ pickTimer }})</span> Waiting for other players to pick...
@@ -444,7 +449,7 @@
 				
 				<div>
 					<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
-						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; }">
+						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; } }">
 							{{log.userName}}
 							<span>
 								<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" :title="log.colors['W']">
@@ -471,9 +476,7 @@
 					<template v-if="draftLogDisplayOptions.category == 'Picks'">
 						<div v-for="(pick, index) in log.picks">
 							<h3>Pick {{index + 1}}: {{cards[pick.pick].name}}</h3>
-							<div class="card-container">
-								<figure is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language" :class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}"></figure>
-							</div>
+							<draft-log-pick :pick="pick"></draft-log-pick>
 						</div>
 					</template>
 					<template v-else-if="draftLogDisplayOptions.category == 'Cards (CMC Columns)'">

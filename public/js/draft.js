@@ -17,12 +17,17 @@ const SwalCustomClasses = {
 
 Vue.component("modal", {
 	template: "#modal-template",
+	methods: {
+		close: function (e) {
+			if (e.target == e.currentTarget) this.$emit("close");
+		},
+	},
 });
 
 Vue.component("card", {
 	template: `
-	<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
-		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+	<div class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
+		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
 			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected, burned: burned }" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
@@ -54,7 +59,7 @@ Vue.component("card", {
 Vue.component("missingCard", {
 	template: `
 	<div class="card">
-		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
 			<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder">
@@ -73,6 +78,85 @@ Vue.component("missingCard", {
 		// Preload Carback
 		const img = new Image();
 		img.src = "img/cardback.png";
+	},
+});
+
+Vue.component("draft-log-pick", {
+	template: `
+<div class="card-container">
+	<div is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language" :class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}">
+	</div>
+</div>
+	`,
+	props: { pick: { type: Object, required: true } },
+});
+
+Vue.component("draft-log-live", {
+	template: `
+		<div>
+			<template v-if="['owner', 'everyone'].includes($root.draftLogRecipients)">
+				<div v-if="player in draftlog.users">
+					<div class="draft-log-live-title">
+						<h2>Live Review: {{draftlog.users[player].userName}}</h2>
+						<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
+							<label>Pick #</label>  
+							<i :class="{disabled: pick <= 0}" class="fas fa-chevron-left clickable" @click="_ => { --pick; }"></i>
+							<select v-model="pick">
+								<option v-for="index in [...Array(draftlog.users[player].picks.length).keys()]" :value.number="index">{{index + 1}}</option>
+							</select>
+							<i :class="{disabled: pick >= draftlog.users[player].picks.length - 1}" class="fas fa-chevron-right clickable" @click="_ => { ++pick; }"></i>
+							<h2>{{ $root.cards[draftlog.users[player].picks[pick].pick].printed_name[$root.language] }}</h2>
+						</span>
+					</div>
+					<template v-if="draftlog.users[player].picks.length === 0">
+						Waiting for {{draftlog.users[player].userName}} to make their first pick...
+					</template>
+					<template v-else>
+						<div v-if="pick < draftlog.users[player].picks.length">
+							<draft-log-pick :pick="draftlog.users[player].picks[pick]"></draft-log-pick>
+						</div>
+					</template>
+				</div>
+				<p class="draft-log-live-instructions" v-else>
+					Click on a player to inspect their picks!
+				</p>
+			</template>
+			<template v-else>
+				<p class="draft-log-live-instructions">(Live review is only available when draft logs are immediatly send to the owner (Option set to 'Owner' or 'Everyone'))</p>
+			</template>
+		</div>
+	`,
+	props: {
+		draftlog: { type: Object, required: true },
+	},
+	data: (_) => {
+		return {
+			player: undefined,
+			pick: 0,
+			eventListeners: [],
+		};
+	},
+	mounted: function () {
+		const self = this;
+		const playerEls = document.querySelectorAll("ul.player-list li");
+		for (let el of playerEls) {
+			const callback = (e) => {
+				const id = el.dataset.userid;
+				self.setPlayer(id);
+			};
+			this.eventListeners.push({ element: el, callback: callback });
+			el.addEventListener("click", callback);
+		}
+	},
+	beforeDestroy: function () {
+		for (let tuple of this.eventListeners) tuple.element.removeEventListener("click", tuple.callback);
+	},
+	methods: {
+		setPlayer: function (userID) {
+			if (!(userID in this.draftlog.users)) return;
+			this.player = userID;
+			this.pick = Math.max(0, Math.min(this.pick, this.draftlog.users[userID].picks.length - 1));
+		},
 	},
 });
 
@@ -626,6 +710,10 @@ var app = new Vue({
 				}
 			});
 
+			this.socket.on("pickAlert", function (data) {
+				app.fireToast("info", `${data.userName} picked ${app.cards[data.cardID].printed_name[app.language]}!`);
+			});
+
 			this.socket.on("setCardSelection", function (data) {
 				app.sideboard = [];
 				app.deck = [];
@@ -987,7 +1075,7 @@ var app = new Vue({
 				title: title,
 				customClass: SwalCustomClasses,
 				showConfirmButton: false,
-				timer: 1500,
+				timer: 2000,
 			});
 		},
 		disconnectedReminder: function () {
@@ -1420,7 +1508,7 @@ var app = new Vue({
 				this.savedDraftLog = false;
 				this.draftLog = parsedLogs;
 				this.socket.emit("shareDraftLog", this.draftLog);
-				localStorage.setItem("draftLog", this.draftLog);
+				localStorage.setItem("draftLog", JSON.stringify(this.draftLog));
 				this.fireToast("success", "Shared draft log with session!");
 			}
 		},
@@ -1617,6 +1705,7 @@ var app = new Vue({
 		},
 		colorsInCardIDList: function (cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			if (!cardids) return r;
 			for (let card of cardids) {
 				for (let color of this.cards[card].color_identity) {
 					r[color] += 1;

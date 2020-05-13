@@ -735,11 +735,15 @@ function Session(id, owner) {
 			Connections[user].socket.emit("startDraft");
 		}
 
-		if (!this.ownerIsPlayer) {
+		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
 			});
 			Connections[this.owner].socket.emit("startDraft");
+			// Update draft log for live display if owner in not playing
+			if (["owner", "everyone"].includes(this.draftLogRecipients)) {
+				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+			}
 		}
 
 		this.round = 0;
@@ -821,6 +825,19 @@ function Session(id, owner) {
 				},
 			});
 		});
+
+		// Update draft log for live display if owner in not playing
+		if (
+			!this.ownerIsPlayer &&
+			["owner", "everyone"].includes(this.draftLogRecipients) &&
+			this.owner in Connections
+		) {
+			Connections[this.owner].socket.emit("draftLog", this.draftLog);
+			Connections[this.owner].socket.emit("pickAlert", {
+				userName: Connections[userID].userName,
+				cardID: cardID,
+			});
+		}
 
 		++this.pickedCardsThisRound;
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
@@ -1017,6 +1034,9 @@ function Session(id, owner) {
 				boosterNumber: this.boosterNumber,
 				pickNumber: this.round,
 			});
+			// Update draft log for live display if owner in not playing
+			if (["owner", "everyone"].includes(this.draftLogRecipients))
+				Connections[userID].socket.emit("draftLog", this.draftLog);
 		}
 	};
 

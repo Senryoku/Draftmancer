@@ -418,9 +418,19 @@ label {
 	text-shadow: 0px 0px 10px black;
 }
 
-.draft-watching {
+.draft-watching-state {
 	text-align: center;
-	padding: 2em;
+}
+
+.draft-log-live-title h2 {
+	display: inline-block;
+	margin: 0;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.draft-log-live-instructions {
+	text-align: center;
 }
 
 #main-vue button.stop {
