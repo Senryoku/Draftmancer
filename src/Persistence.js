@@ -59,7 +59,7 @@ async function requestSavedConnections() {
 			}
 
 			if (isObsolete(c))
-				docClient.delete({ TableName: "mtga-draft-connections", Key: { userID: c.userID } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Connections"], Key: { userID: c.userID } }, (err, data) => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete connection ", c.userID);
 				});
@@ -111,7 +111,7 @@ async function requestSavedSessions() {
 			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
 
 			if (isObsolete(s))
-				docClient.delete({ TableName: "mtga-draft-sessions", Key: { id: s.id } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, (err, data) => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete session ", s.id);
 				});
