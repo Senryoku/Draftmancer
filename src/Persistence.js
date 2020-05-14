@@ -180,7 +180,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		}
 	}
 	if (ConnectionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite(TableNames["Sessions"], ConnectionsRequests);
+		ConsumedCapacity += await batchWrite(TableNames["Connections"], ConnectionsRequests);
 		ConnectionsRequests = [];
 	}
 
@@ -234,13 +234,13 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+			ConsumedCapacity += await batchWrite(TableNames["Sessions"], SessionsRequests);
 			SessionsRequests = [];
 		}
 	}
 
 	if (SessionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+		ConsumedCapacity += await batchWrite(TableNames["Sessions"], SessionsRequests);
 		SessionsRequests = [];
 	}
 
