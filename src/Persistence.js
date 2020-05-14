@@ -36,6 +36,7 @@ function isObsolete(item) {
 async function requestSavedConnections() {
 	var connectionsRequestParams = {
 		TableName: "mtga-draft-connections",
+		ConsistentRead: true,
 		ReturnConsumedCapacity: "TOTAL",
 	};
 	let InactiveConnections = {};
@@ -70,6 +71,7 @@ async function requestSavedConnections() {
 async function requestSavedSessions() {
 	var connections = {
 		TableName: "mtga-draft-sessions",
+		ConsistentRead: true,
 		ReturnConsumedCapacity: "TOTAL",
 	};
 
