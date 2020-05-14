@@ -297,14 +297,28 @@ io.on("connection", function (socket) {
 	// Session options
 
 	socket.on("setSessionOwner", function (newOwnerID) {
-		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != userID) return;
 
 		if (newOwnerID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(newOwnerID)) return;
 
-		Sessions[sessionID].owner = newOwnerID;
+		if (!Sessions[sessionID].ownerIsPlayer) {
+			// Prevent changing owner during drafting if owner is not playing
+			if (Sessions[sessionID].drafting) return;
+
+			Sessions[sessionID].users.delete(newOwnerID);
+			Sessions[sessionID].owner = newOwnerID;
+			Sessions[sessionID].addUser(userID);
+		} else {
+			Sessions[sessionID].owner = newOwnerID;
+		}
 		Sessions[sessionID].forUsers((user) =>
-			Connections[user].socket.emit("sessionOwner", Sessions[sessionID].owner)
+			Connections[user].socket.emit(
+				"sessionOwner",
+				Sessions[sessionID].owner,
+				Sessions[sessionID].owner in Connections ? Connections[Sessions[sessionID].owner].userName : null
+			)
 		);
 	});
 

@@ -200,7 +200,7 @@
 						<div class="status-icons">
 							<i v-if="user.userID === sessionOwner" class="fas fa-crown subtle-gold" :title="`${user.userName} is the session's owner.`"></i>
 							<template  v-if="userID === sessionOwner && user.userID != sessionOwner">
-								<i class="fas fa-user-plus clickable subtle-gold" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
+								<i class="fas fa-user-plus clickable subtle-gold" v-if="ownerIsPlayer" :title="`Give session ownership to ${user.userName}`" @click="setSessionOwner(user.userID)"></i>
 								<i class="fas fa-user-slash clickable red" :title="`Remove ${user.userName} from the session`" @click="removePlayer(user.userID)"></i>
 							</template>
 							<template v-if="winstonDraftState">

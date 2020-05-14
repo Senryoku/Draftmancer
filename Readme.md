@@ -39,6 +39,7 @@ AWS_ENDPOINT=http://localhost:8000
 ---
 
 -   Add an Organizer role: Is the owner of the session, but doesn't play. Use draft log to display live picks + replay?
+-   Fix: Changing owner doesn't work correctly when owner is not playing
 -   Display foils as... foils in front end?
 
 ### Distant Future

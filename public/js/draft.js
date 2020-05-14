@@ -145,11 +145,15 @@ Vue.component("draft-log-live", {
 				self.setPlayer(id);
 			};
 			this.eventListeners.push({ element: el, callback: callback });
+			el.classList.add("clickable");
 			el.addEventListener("click", callback);
 		}
 	},
 	beforeDestroy: function () {
-		for (let tuple of this.eventListeners) tuple.element.removeEventListener("click", tuple.callback);
+		for (let tuple of this.eventListeners) {
+			tuple.element.removeEventListener("click", tuple.callback);
+			tuple.element.classList.remove("clickable");
+		}
 	},
 	methods: {
 		setPlayer: function (userID) {
