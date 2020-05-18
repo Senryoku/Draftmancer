@@ -81,6 +81,8 @@ async function requestSavedSessions() {
 
 		for (let s of data.Items) {
 			const fixedID = restoreEmptyStr(s.id);
+			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
+
 			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
 			for (let prop of Object.getOwnPropertyNames(s.data).filter((p) => !["botsInstances"].includes(p))) {
 				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
@@ -104,8 +106,6 @@ async function requestSavedSessions() {
 						InactiveSessions[fixedID].winstonDraftState[prop] = s.data.winstonDraftState[prop];
 				}
 			}
-
-			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
 
 			if (isObsolete(s))
 				docClient.delete({ TableName: "mtga-draft-sessions", Key: { id: s.id } }, (err, data) => {
