@@ -503,7 +503,9 @@ var app = new Vue({
 				const ownerUsername =
 					app.sessionOwner in app.userByID
 						? app.userByID[app.sessionOwner].userName
-						: app.sessionOwnerUsername;
+						: app.sessionOwnerUsername
+						? app.sessionOwnerUsername
+						: "Session owner";
 
 				Swal.fire({
 					position: "center",
