@@ -50,13 +50,14 @@ async function requestSavedConnections() {
 		const data = await docClient.scan(connectionsRequestParams).promise();
 
 		for (let c of data.Items) {
-			InactiveConnections[restoreEmptyStr(c.userID)] = new ConnectionModule.Connection(
+			const restoredID = restoreEmptyStr(c.userID);
+			InactiveConnections[restoredID] = new ConnectionModule.Connection(
 				null,
-				c.data.userID,
+				restoredID,
 				restoreEmptyStr(c.data.userName)
 			);
 			for (let prop of Object.getOwnPropertyNames(c.data)) {
-				InactiveConnections[restoreEmptyStr(c.userID)][prop] = restoreEmptyStr(c.data[prop]);
+				InactiveConnections[restoredID][prop] = restoreEmptyStr(c.data[prop]);
 			}
 
 			if (isObsolete(c))
@@ -161,6 +162,8 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		return 0;
 	};
 
+	let Promises = [];
+
 	let ConnectionsRequests = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
@@ -177,12 +180,12 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		ConnectionsRequests.push({ PutRequest: { Item: Item } });
 
 		if (ConnectionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite(TableNames["Connections"], ConnectionsRequests);
+			Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
 			ConnectionsRequests = [];
 		}
 	}
 	if (ConnectionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite(TableNames["Connections"], ConnectionsRequests);
+		Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
 		ConnectionsRequests = [];
 	}
 
@@ -236,15 +239,21 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite(TableNames["Sessions"], SessionsRequests);
+			Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
 			SessionsRequests = [];
 		}
 	}
 
 	if (SessionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite(TableNames["Sessions"], SessionsRequests);
+		Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
 		SessionsRequests = [];
 	}
+
+	console.log("Waiting for all promises to return...");
+	await Promise.all(Promises).then((vals) => {
+		console.log("All batchWrites returned.");
+		for (let v of vals) ConsumedCapacity += v;
+	});
 
 	console.log(`dumpToDynamoDB: done. Total ConsumedCapacity: ${ConsumedCapacity}`);
 	if (exitOnCompletion) process.exit(0);
