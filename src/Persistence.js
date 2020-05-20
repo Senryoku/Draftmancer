@@ -11,6 +11,11 @@ const SessionModule = require("../Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 
+const TableNames = {
+	Connections: process.env.TABLENAME_CONNECTIONS ? process.env.TABLENAME_CONNECTIONS : "mtga-draft-connections",
+	Sessions: process.env.TABLENAME_SESSIONS ? process.env.TABLENAME_SESSIONS : "mtga-draft-sessions",
+};
+
 AWS.config.update({
 	region: process.env.AWS_REGION,
 	endpoint: process.env.AWS_ENDPOINT,
@@ -35,7 +40,7 @@ function isObsolete(item) {
 
 async function requestSavedConnections() {
 	var connectionsRequestParams = {
-		TableName: "mtga-draft-connections",
+		TableName: TableNames["Connections"],
 		ConsistentRead: true,
 		ReturnConsumedCapacity: "TOTAL",
 	};
@@ -45,17 +50,18 @@ async function requestSavedConnections() {
 		const data = await docClient.scan(connectionsRequestParams).promise();
 
 		for (let c of data.Items) {
-			InactiveConnections[restoreEmptyStr(c.userID)] = new ConnectionModule.Connection(
+			const restoredID = restoreEmptyStr(c.userID);
+			InactiveConnections[restoredID] = new ConnectionModule.Connection(
 				null,
-				c.data.userID,
+				restoredID,
 				restoreEmptyStr(c.data.userName)
 			);
 			for (let prop of Object.getOwnPropertyNames(c.data)) {
-				InactiveConnections[restoreEmptyStr(c.userID)][prop] = restoreEmptyStr(c.data[prop]);
+				InactiveConnections[restoredID][prop] = restoreEmptyStr(c.data[prop]);
 			}
 
 			if (isObsolete(c))
-				docClient.delete({ TableName: "mtga-draft-connections", Key: { userID: c.userID } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Connections"], Key: { userID: c.userID } }, (err, data) => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete connection ", c.userID);
 				});
@@ -70,7 +76,7 @@ async function requestSavedConnections() {
 
 async function requestSavedSessions() {
 	var connections = {
-		TableName: "mtga-draft-sessions",
+		TableName: TableNames["Sessions"],
 		ConsistentRead: true,
 		ReturnConsumedCapacity: "TOTAL",
 	};
@@ -108,7 +114,7 @@ async function requestSavedSessions() {
 			}
 
 			if (isObsolete(s))
-				docClient.delete({ TableName: "mtga-draft-sessions", Key: { id: s.id } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, (err, data) => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete session ", s.id);
 				});
@@ -156,6 +162,8 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		return 0;
 	};
 
+	let Promises = [];
+
 	let ConnectionsRequests = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
@@ -172,12 +180,12 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		ConnectionsRequests.push({ PutRequest: { Item: Item } });
 
 		if (ConnectionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+			Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
 			ConnectionsRequests = [];
 		}
 	}
 	if (ConnectionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite("mtga-draft-connections", ConnectionsRequests);
+		Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
 		ConnectionsRequests = [];
 	}
 
@@ -231,15 +239,21 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
-			ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+			Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
 			SessionsRequests = [];
 		}
 	}
 
 	if (SessionsRequests.length > 0) {
-		ConsumedCapacity += await batchWrite("mtga-draft-sessions", SessionsRequests);
+		Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
 		SessionsRequests = [];
 	}
+
+	console.log("Waiting for all promises to return...");
+	await Promise.all(Promises).then((vals) => {
+		console.log("All batchWrites returned.");
+		for (let v of vals) ConsumedCapacity += v;
+	});
 
 	console.log(`dumpToDynamoDB: done. Total ConsumedCapacity: ${ConsumedCapacity}`);
 	if (exitOnCompletion) process.exit(0);

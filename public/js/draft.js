@@ -17,12 +17,17 @@ const SwalCustomClasses = {
 
 Vue.component("modal", {
 	template: "#modal-template",
+	methods: {
+		close: function (e) {
+			if (e.target == e.currentTarget) this.$emit("close");
+		},
+	},
 });
 
 Vue.component("card", {
 	template: `
-	<div class="card" class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
-		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+	<div class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
+		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
 			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected, burned: burned }" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
@@ -54,7 +59,7 @@ Vue.component("card", {
 Vue.component("missingCard", {
 	template: `
 	<div class="card">
-		<clazy-load ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
+		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
 			<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder">
@@ -76,10 +81,94 @@ Vue.component("missingCard", {
 	},
 });
 
+Vue.component("draft-log-pick", {
+	template: `
+<div class="card-container">
+	<div is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language" :class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}">
+	</div>
+</div>
+	`,
+	props: { pick: { type: Object, required: true } },
+});
+
+Vue.component("draft-log-live", {
+	template: `
+		<div>
+			<template v-if="['owner', 'everyone'].includes($root.draftLogRecipients)">
+				<div v-if="player in draftlog.users">
+					<div class="draft-log-live-title">
+						<h2>Live Review: {{draftlog.users[player].userName}}</h2>
+						<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
+							<label>Pick #</label>  
+							<i :class="{disabled: pick <= 0}" class="fas fa-chevron-left clickable" @click="_ => { --pick; }"></i>
+							<select v-model="pick">
+								<option v-for="index in [...Array(draftlog.users[player].picks.length).keys()]" :value.number="index">{{index + 1}}</option>
+							</select>
+							<i :class="{disabled: pick >= draftlog.users[player].picks.length - 1}" class="fas fa-chevron-right clickable" @click="_ => { ++pick; }"></i>
+							<h2>{{ $root.cards[draftlog.users[player].picks[pick].pick].printed_name[$root.language] }}</h2>
+						</span>
+					</div>
+					<template v-if="draftlog.users[player].picks.length === 0">
+						Waiting for {{draftlog.users[player].userName}} to make their first pick...
+					</template>
+					<template v-else>
+						<div v-if="pick < draftlog.users[player].picks.length">
+							<draft-log-pick :pick="draftlog.users[player].picks[pick]"></draft-log-pick>
+						</div>
+					</template>
+				</div>
+				<p class="draft-log-live-instructions" v-else>
+					Click on a player to inspect their picks!
+				</p>
+			</template>
+			<template v-else>
+				<p class="draft-log-live-instructions">(Live review is only available when draft logs are immediatly send to the owner (Option set to 'Owner' or 'Everyone'))</p>
+			</template>
+		</div>
+	`,
+	props: {
+		draftlog: { type: Object, required: true },
+	},
+	data: (_) => {
+		return {
+			player: undefined,
+			pick: 0,
+			eventListeners: [],
+		};
+	},
+	mounted: function () {
+		const self = this;
+		const playerEls = document.querySelectorAll("ul.player-list li");
+		for (let el of playerEls) {
+			const callback = (e) => {
+				const id = el.dataset.userid;
+				self.setPlayer(id);
+			};
+			this.eventListeners.push({ element: el, callback: callback });
+			el.classList.add("clickable");
+			el.addEventListener("click", callback);
+		}
+	},
+	beforeDestroy: function () {
+		for (let tuple of this.eventListeners) {
+			tuple.element.removeEventListener("click", tuple.callback);
+			tuple.element.classList.remove("clickable");
+		}
+	},
+	methods: {
+		setPlayer: function (userID) {
+			if (!(userID in this.draftlog.users)) return;
+			this.player = userID;
+			this.pick = Math.max(0, Math.min(this.pick, this.draftlog.users[userID].picks.length - 1));
+		},
+	},
+});
+
 const DraftState = {
 	Waiting: "Waiting",
 	Picking: "Picking",
 	Brewing: "Brewing",
+	Watching: "Watching",
 	WinstonPicking: "WinstonPicking",
 	WinstonWaiting: "WinstonWaiting",
 };
@@ -123,6 +212,8 @@ var app = new Vue({
 		// Session status
 		sessionID: getCookie("sessionID", shortguid()),
 		sessionOwner: null,
+		sessionOwnerUsername: null,
+		ownerIsPlayer: true,
 		isPublic: false,
 		ignoreCollections: false,
 		sessionUsers: [],
@@ -151,6 +242,8 @@ var app = new Vue({
 		bracket: null,
 		virtualPlayersData: undefined,
 		booster: [],
+		boosterNumber: 0,
+		pickNumber: 0,
 		winstonDraftState: null,
 
 		publicSessions: [],
@@ -158,7 +251,7 @@ var app = new Vue({
 
 		// Front-end options & data
 		userOrder: [],
-		hideSessionID: false,
+		hideSessionID: getCookie("hideSessionID", false),
 		languages: window.constants.Languages,
 		language: getCookie("language", "en"),
 		sets: window.constants.MTGSets,
@@ -182,7 +275,6 @@ var app = new Vue({
 		lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 		deckColumn: [[], [], [], [], [], [], []],
 		sideboardColumn: [[], [], [], [], [], [], []],
-		cardsPerBooster: undefined, // Used to compute pick number
 
 		showSessionOptionsDialog: false,
 		displayBracket: false,
@@ -331,7 +423,11 @@ var app = new Vue({
 
 			this.socket.on("updateUser", function (data) {
 				let user = app.userByID[data.userID];
-				if (!user) return;
+				if (!user) {
+					if (data.userID === app.sessionOwner && data.updatedProperties.userName)
+						app.sessionOwnerUsername = data.updatedProperties.userName;
+					return;
+				}
 
 				for (let prop in data.updatedProperties) {
 					user[prop] = data.updatedProperties[prop];
@@ -343,9 +439,9 @@ var app = new Vue({
 					app[prop] = sessionOptions[prop];
 				}
 			});
-			this.socket.on("sessionOwner", function (ownerID) {
-				// TODO: Validate OwnerID?
+			this.socket.on("sessionOwner", function (ownerID, ownerUserName) {
 				app.sessionOwner = ownerID;
+				if (ownerUserName) app.sessionOwnerUsername = ownerUserName;
 			});
 			this.socket.on("isPublic", function (data) {
 				app.isPublic = data;
@@ -374,7 +470,7 @@ var app = new Vue({
 
 			this.socket.on("message", function (data) {
 				if (data.title === undefined) data.title = "[Missing Title]";
-				if (data.text === undefined) data.text = "[Missing Text]";
+				if (data.text === undefined) data.text = "";
 
 				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
 				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
@@ -404,11 +500,18 @@ var app = new Vue({
 					});
 				}
 
+				const ownerUsername =
+					app.sessionOwner in app.userByID
+						? app.userByID[app.sessionOwner].userName
+						: app.sessionOwnerUsername
+						? app.sessionOwnerUsername
+						: "Session owner";
+
 				Swal.fire({
 					position: "center",
 					type: "question",
 					title: "Are you ready?",
-					text: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`,
+					text: `${ownerUsername} has initiated a ready check`,
 					customClass: SwalCustomClasses,
 					showCancelButton: true,
 					confirmButtonColor: "#3085d6",
@@ -422,7 +525,7 @@ var app = new Vue({
 
 			this.socket.on("setReady", function (userID, readyState) {
 				if (!app.pendingReadyCheck) return;
-				app.userByID[userID].readyState = readyState;
+				if (userID in app.userByID) app.userByID[userID].readyState = readyState;
 				if (app.sessionUsers.every((u) => u.readyState === ReadyState.Ready))
 					app.fireToast("success", "Everybody is ready!");
 			});
@@ -472,7 +575,6 @@ var app = new Vue({
 				app.winstonDraftState = null;
 				app.draftingState = DraftState.Brewing;
 				app.fireToast("success", "Done drafting!");
-				eraseCookie("userID");
 			});
 			this.socket.on("winstonDraftRandomCard", function (card) {
 				const c = app.genCard(card);
@@ -517,7 +619,6 @@ var app = new Vue({
 				app.stopReadyCheck();
 				app.sideboard = [];
 				app.deck = [];
-				app.cardsPerBooster = undefined;
 				Swal.fire({
 					position: "center",
 					type: "success",
@@ -534,6 +635,11 @@ var app = new Vue({
 						body: `Your draft '${app.sessionID}' is starting!`,
 					});
 				}
+
+				// Are we just an Organizer, and not a player?
+				if (!app.virtualPlayers.map((u) => u.userID).includes(app.userID)) {
+					app.draftingState = DraftState.Watching;
+				}
 			});
 
 			this.socket.on("rejoinDraft", function (data) {
@@ -547,7 +653,8 @@ var app = new Vue({
 				for (let c of data.booster) {
 					app.booster.push(app.genCard(c));
 				}
-				app.cardsPerBooster = data.cardsPerBooster;
+				app.boosterNumber = data.boosterNumber;
+				app.pickNumber = data.pickNumber;
 
 				app.pickedThisRound = data.pickedThisRound;
 				if (app.pickedThisRound) app.draftingState = DraftState.Waiting;
@@ -567,12 +674,17 @@ var app = new Vue({
 
 			this.socket.on("nextBooster", function (data) {
 				app.booster = [];
-				if (!app.cardsPerBooster) app.cardsPerBooster = data.booster.length;
-				for (let c of data.booster) {
-					app.booster.push(app.genCard(c));
-				}
 				for (let u of app.sessionUsers) {
 					u.pickedThisRound = false;
+				}
+				app.boosterNumber = data.boosterNumber;
+				app.pickNumber = data.pickNumber;
+
+				// Only watching, not playing/receiving a boost ourself.
+				if (app.draftingState == DraftState.Watching) return;
+
+				for (let c of data.booster) {
+					app.booster.push(app.genCard(c));
 				}
 				app.playSound("next");
 				app.draftingState = DraftState.Picking;
@@ -588,8 +700,12 @@ var app = new Vue({
 					timer: 1500,
 				});
 				app.drafting = false;
-				app.draftingState = DraftState.Brewing;
-				eraseCookie("userID");
+				if (app.draftingState === DraftState.Watching) {
+					app.draftingState = undefined;
+				} else {
+					// User was playing
+					app.draftingState = DraftState.Brewing;
+				}
 			});
 
 			this.socket.on("draftLog", function (draftLog) {
@@ -601,6 +717,10 @@ var app = new Vue({
 					localStorage.setItem("draftLog", JSON.stringify(draftLog));
 					app.draftLog = draftLog;
 				}
+			});
+
+			this.socket.on("pickAlert", function (data) {
+				app.fireToast("info", `${data.userName} picked ${app.cards[data.cardID].printed_name[app.language]}!`);
 			});
 
 			this.socket.on("setCardSelection", function (data) {
@@ -775,6 +895,18 @@ var app = new Vue({
 		},
 		startWinstonDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
+
+			if (!this.ownerIsPlayer) {
+				Swal.fire({
+					type: "error",
+					title: "Owner has to play",
+					text:
+						"Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
+					customClass: SwalCustomClasses,
+				});
+				return;
+			}
+
 			const { value: boosterCount } = await Swal.fire({
 				title: "Winston Draft",
 				html: `Winston Draft is a draft variant for two players, <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank">more information here</a>. How many boosters for the main stack (default is 6)?`,
@@ -952,7 +1084,7 @@ var app = new Vue({
 				title: title,
 				customClass: SwalCustomClasses,
 				showConfirmButton: false,
-				timer: 1500,
+				timer: 2000,
 			});
 		},
 		disconnectedReminder: function () {
@@ -1385,7 +1517,7 @@ var app = new Vue({
 				this.savedDraftLog = false;
 				this.draftLog = parsedLogs;
 				this.socket.emit("shareDraftLog", this.draftLog);
-				localStorage.setItem("draftLog", this.draftLog);
+				localStorage.setItem("draftLog", JSON.stringify(this.draftLog));
 				this.fireToast("success", "Shared draft log with session!");
 			}
 		},
@@ -1582,6 +1714,7 @@ var app = new Vue({
 		},
 		colorsInCardIDList: function (cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			if (!cardids) return r;
 			for (let card of cardids) {
 				for (let color of this.cards[card].color_identity) {
 					r[color] += 1;
@@ -1605,22 +1738,6 @@ var app = new Vue({
 		},
 		ReadyState: function () {
 			return ReadyState;
-		},
-		boosterNumber: function () {
-			return (
-				Math.floor(
-					(this.deck.length + this.sideboard.length) /
-						Math.ceil(this.cardsPerBooster / (1 + this.burnedCardsPerRound))
-				) + 1
-			);
-		},
-		pickNumber: function () {
-			return (
-				this.deck.length +
-				this.sideboard.length -
-				(this.boosterNumber - 1) * Math.ceil(this.cardsPerBooster / (1 + this.burnedCardsPerRound)) +
-				1
-			);
 		},
 		cardsToBurnThisRound: function () {
 			return Math.min(this.burnedCardsPerRound, this.booster.length - 1);
@@ -1876,6 +1993,9 @@ var app = new Vue({
 		enableSound: function () {
 			setCookie("enableSound", this.enableSound);
 		},
+		hideSessionID: function () {
+			setCookie("hideSessionID", this.hideSessionID);
+		},
 		cardOrder: function () {
 			setCookie("cardOrder", this.cardOrder);
 		},
@@ -1900,6 +2020,11 @@ var app = new Vue({
 			this.updateAutoLands();
 		},
 		// Session options
+		ownerIsPlayer: function () {
+			if (this.userID != this.sessionOwner) return;
+			setCookie("userID", this.userID); // Used for reconnection
+			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
+		},
 		setRestriction: function () {
 			if (this.userID != this.sessionOwner) return;
 
