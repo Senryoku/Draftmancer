@@ -32,11 +32,10 @@ AWS_ENDPOINT=http://localhost:8000
 ### Important
 
 -   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
--   Set specificy booster generation rules, examples: WAR: One planeswalker/pack. DOM: One Legendary/pack.
 -   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
--   Cleanup draft state? (See Winston Draft State) Also properly sync booster and pick # rather than relying on cardsPerBooster
+-   Cleanup draft state? (See Winston Draft State)
 
 ---
 
@@ -44,6 +43,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Distant Future
 
+-   Set specificy booster generation rules, examples: WAR: One planeswalker/pack. DOM: One Legendary/pack.
 -   Add some stats on deck/drafted cards (will increase card DB size, not a fan.)
 
 ## Check
