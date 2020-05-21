@@ -77,14 +77,16 @@ function cardToMTGAExport(c, language) {
 }
 
 function exportMTGA(deck, sideboard, language, lands) {
-	let str = "";
+	let str = "Deck\n";
 	for (let c of deck) str += cardToMTGAExport(c, language);
 	if (lands) {
 		for (let c in lands) str += `${lands[c]} ${window.constants.BasicLandNames[language][c]}\n`;
 	}
 	if (sideboard && sideboard.length > 0) {
-		str += "\n";
+		str += "\nSideboard\n";
 		for (let c of sideboard) str += cardToMTGAExport(c, language);
+		// Add some basic lands in the sideboard
+		for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${window.constants.BasicLandNames[language][c]}\n`;
 	}
 	return str;
 }
