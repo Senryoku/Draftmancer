@@ -7,6 +7,7 @@ import gzip
 import urllib
 import sys
 import re
+import glob
 from itertools import groupby
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
@@ -48,8 +49,10 @@ ForceExtract = len(sys.argv) > 1 and sys.argv[1].lower() == "extract"
 ForceCache = len(sys.argv) > 1 and sys.argv[1].lower() == "cache"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
 
-MTGALocFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_loc_562109079fda6150526d89f1ba9dc54e.mtga"
-MTGACardsFile = "S:\MtGA\MTGA_Data\Downloads\Data\data_cards_6c7ff70a293140088a56288f0596762c.mtga"
+MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
+glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
+MTGALocFile = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))[0]
+MTGACardsFile = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))[0]
 MTGALocalization = {}
 with open(MTGALocFile, 'r', encoding="utf8") as file:
 	locdata = json.load(file)
