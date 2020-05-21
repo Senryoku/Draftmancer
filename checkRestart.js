@@ -14,8 +14,8 @@ request(`${host}getStatus/${secretKey}`, function (err, res, body) {
 	if (!err) {
 		let result = JSON.parse(body);
 		console.log(result);
-		// If uptime is over 20h and no the app is ready to restart...
-		if (result.canRestart && result.uptime > 60 * 60 * 20) {
+		// If uptime is over 12h and the app is ready to restart...
+		if (result.canRestart && result.uptime > 60 * 60 * 12) {
 			console.log("Restarting dynos...");
 			heroku.delete(`/apps/${appName}/dynos`).then((res) => {
 				console.log(res);
