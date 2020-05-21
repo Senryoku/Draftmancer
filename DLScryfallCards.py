@@ -50,7 +50,6 @@ ForceCache = len(sys.argv) > 1 and sys.argv[1].lower() == "cache"
 ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
-glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
 MTGALocFile = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))[0]
 MTGACardsFile = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))[0]
 MTGALocalization = {}
