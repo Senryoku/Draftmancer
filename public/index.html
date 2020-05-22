@@ -548,10 +548,10 @@
 						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
 					</div>
 				</div>
-				<div class="line">
+				<div class="line" title="Is the session owner participating in?">
 					<label for="is-owner-player">Session owner is playing</label>
 					<div class="right">
-						<input type="checkbox" v-model="ownerIsPlayer" id="is-public" title="Is the session owner participating in?" />
+						<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
 					</div>
 				</div>
 				<div class="line">
@@ -561,15 +561,15 @@
 					</div>
 				</div>
 				<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
-					<label for="colorBalance">Color Balance</label>
+					<label for="color-balance">Color Balance</label>
 					<div class="right">
-						<input type="checkbox" v-model="colorBalance">
+						<input type="checkbox" v-model="colorBalance" id="color-balance">
 					</div>
 				</div>
 				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)">
-					<label for="maxRarity">Maximum Rarity</label>
+					<label for="max-rarity">Maximum Rarity</label>
 					<div class="right">
-						<select v-model="maxRarity">
+						<select v-model="maxRarity" id="max-rarity">
 							<option value="mythic">Mythic</option>
 							<option value="rare">Rare</option>
 							<option value="uncommon">Uncommon</option>
@@ -587,9 +587,9 @@
 					</div>
 				</div>
 				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.">
-					<label for="colorBalance">Foil</label>
+					<label for="option-foil">Foil</label>
 					<div class="right">
-						<input type="checkbox" v-model="foil">
+						<input type="checkbox" v-model="foil" id="option-foil">
 					</div>
 				</div>
 				<div class="line" title="Use a custom card list.">
