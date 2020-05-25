@@ -788,6 +788,7 @@ var app = new Vue({
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
+			Sounds["countdown"].volume = 0.11;
 		},
 		playSound: function (key) {
 			if (this.enableSound) Sounds[key].play();
