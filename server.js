@@ -366,14 +366,10 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
 
-		Connections[this.userID].socket.emit("sessionOptions", {
-			customBoosters: Sessions[sessionID].customBoosters,
-		});
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) {
 				Connections[user].socket.emit("sessionOptions", {
 					boostersPerPlayer: Sessions[sessionID].boostersPerPlayer,
-					customBoosters: Sessions[sessionID].customBoosters,
 				});
 			}
 		}
@@ -387,7 +383,8 @@ io.on("connection", function (socket) {
 
 		Sessions[sessionID].customBoosters = customBoosters;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("customBoosters", customBoosters);
+			if (user != this.userID)
+				Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
 		}
 	});
 

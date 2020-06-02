@@ -157,6 +157,12 @@ function Session(id, owner) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
+
+			this.forUsers((u) =>
+				Connections[u].socket.emit("sessionOptions", {
+					customBoosters: this.customBoosters,
+				})
+			);
 		}
 	};
 
@@ -515,8 +521,13 @@ function Session(id, owner) {
 						(this.setRestriction.length === 1 && boosterRule === this.setRestriction[0])
 					) {
 						// No specific rules
-						boosterRules.push({ cardPool: localCollection, landSlot: landSlot });
+						boosterRules.push({
+							cardPool: localCollection,
+							commonsByColor: commonsByColor,
+							landSlot: landSlot,
+						});
 					} else {
+						console.log(boosterRule);
 						if (!usedSets[boosterRule]) {
 							usedSets[boosterRule] = {
 								cardPool: this.setByRarity(boosterRule),
