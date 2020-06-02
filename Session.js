@@ -69,6 +69,7 @@ function Session(id, owner) {
 	this.isPublic = false;
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;
+	this.customBoosters = ["", "", ""];
 	this.bots = 0;
 	this.maxPlayers = 8;
 	this.maxRarity = "mythic";
@@ -134,6 +135,14 @@ function Session(id, owner) {
 			this.broadcastDisconnectedUsers();
 		} else {
 			this.userOrder.splice(this.userOrder.indexOf(userID), 1);
+		}
+	};
+
+	this.setBoostersPerPlayer = function (boostersPerPlayer) {
+		if (this.boostersPerPlayer != boostersPerPlayer) {
+			this.boostersPerPlayer = boostersPerPlayer;
+			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
+			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 		}
 	};
 
