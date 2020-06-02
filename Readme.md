@@ -14,6 +14,8 @@ Join the discord for development related discussions: https://discord.gg/KYKzx9m
 
 ### Setup DynamoDB (local)
 
+Persistence can be disabled by setting environment variable DISABLE_PERSISTENCE to TRUE.
+
 -   Download [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
 -   Extract and run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb`
 -   Setup environment variables, for development create a '.env' file at the root of MTGADraft with the following:
