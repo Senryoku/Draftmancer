@@ -1167,7 +1167,7 @@ describe("Multiple Drafts", function () {
 			Object.assign(
 				{
 					query: {
-						userID: "sameID",
+						userID: "randomID",
 						sessionID: sessionIDs[0],
 						userName: `New Client`,
 					},
@@ -1181,7 +1181,7 @@ describe("Multiple Drafts", function () {
 			const Sessions = server.__get__("Sessions");
 			expect(Sessions[sessionIDs[0]].users.size).to.equal(playersPerSession);
 			newClient.disconnect();
-			done();
+			setTimeout(done, 10);
 		});
 	});
 
