@@ -1,12 +1,15 @@
 "use strict";
 
+// Use another default port.
+process.env.PORT = process.env.PORT | 3001;
+
 let rewire = require("rewire");
 let expect = require("chai").expect;
 let server = rewire("../server"); // Rewire exposes internal variables of the module
 const Cards = require("./../Cards");
 const randomjs = require("random-js");
 
-const NODE_PORT = process.env.NODE_PORT || 3000;
+const NODE_PORT = process.env.PORT;
 
 let io = require("socket.io-client");
 const ioOptions = {
@@ -1322,7 +1325,7 @@ describe("Multiple Drafts", function () {
 
 	it("New players should not be able to join once drafting has started", function (done) {
 		let newClient = io(
-			"http://localhost:3000/",
+			`http://localhost:${NODE_PORT}/`,
 			Object.assign(
 				{
 					query: {

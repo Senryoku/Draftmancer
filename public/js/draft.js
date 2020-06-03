@@ -11,14 +11,14 @@ function orderColor(lhs, rhs) {
 
 Vue.component("patch-notes", {
 	template: `
-<ol class="patch-notes">
-	<li v-for="pn in notes">{{pn.date}}
-		<ul>
-			<li v-for="n in pn.notes">{{n}}</li>
-		</ul>
-	</li>
-</ol>
-`,
+	<ol class="patch-notes">
+		<li v-for="pn in notes">{{pn.date}}
+			<ul>
+				<li v-for="n in pn.notes">{{n}}</li>
+			</ul>
+		</li>
+	</ol>
+	`,
 	data: function () {
 		return {
 			notes: [],
