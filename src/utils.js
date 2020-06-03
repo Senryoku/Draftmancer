@@ -29,6 +29,8 @@ function range(start, end, step = 1) {
 
 // https://bl.ocks.org/lovasoa/3361645; modified to take an array of arrays as argument
 function array_intersect(args) {
+	if (!args.length) return [];
+	if (args.length === 1) return args[0];
 	var a,
 		b,
 		c,
