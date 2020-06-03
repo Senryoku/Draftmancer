@@ -1,0 +1,137 @@
+[
+	{
+		"date": "03/06/2020",
+		"notes": [
+			"Added Individual Booster Restrictions option (Chaos Draft).",
+			"Minor style updates.",
+			"Back end optimizations."
+		]
+	},
+	{
+		"date": "21/05/2020",
+		"notes": ["Updated card data with Historic Anthology 3 cards.", "'output_log.txt' is now 'Player.log'."]
+	},
+	{
+		"date": "13/05/2020",
+		"notes": [
+			"Owner can now take the role of a non-playing draft organizer.",
+			"Non-playing owner can review players picks during the draft!"
+		]
+	},
+	{
+		"date": "08/05/2020",
+		"notes": ["Added Burned Cards per Round option to play Glimpse/Burn Draft."]
+	},
+	{
+		"date": "03/05/2020",
+		"notes": [
+			"Updated cube list format with support for more parameters (count, set, collector number).",
+			"Updated <a href=\"cubeformat.html\" target=\"_blank\">Cube Format Specifications</a> accordingly."
+		]
+	},
+	{
+		"date": "27/04/2020",
+		"notes": ["Implemented Winston Draft.", "Various Fixes."]
+	},
+	{
+		"date": "25/04/2020",
+		"notes": ["Players can now be re-ordered by drag & drop."]
+	},
+	{
+		"date": "24/04/2020",
+		"notes": [
+			"Handle importing logs with collections from multiple accounts.",
+			"Added an option to randomize seating order."
+		]
+	},
+	{
+		"date": "21/04/2020",
+		"notes": ["Added simple bracket generation (pairings)."]
+	},
+	{
+		"date": "19/04/2020",
+		"notes": [
+			"Added card rating for Ikoria (Bot should be just a little less dumb).",
+			"Added CMC Columns display option for cards in draft logs.",
+			"Various stability improvements."
+		]
+	},
+	{
+		"date": "12/04/2020",
+		"notes": ["Added specific land slot rules when a single set is selected."]
+	},
+	{
+		"date": "11/04/2020",
+		"notes": [
+			"Added Ikoria basic support.",
+			"Foils are now disabled by default (option is still available).",
+			"Fixed missing card when importing collection."
+		]
+	},
+	{
+		"date": "10/04/2020",
+		"notes": ["Improved card image loading."]
+	},
+	{
+		"date": "08/04/2020",
+		"notes": ["Added support for a custom cube format for more control over your boosters."]
+	},
+	{
+		"date": "07/04/2020",
+		"notes": ["Can remove draggable column."]
+	},
+	{
+		"date": "05/04/2020",
+		"notes": [
+			"Added some disableable sounds. I hate them, please contact me if you can help me! :D",
+			"Draft log is now saved locally until a new one is received",
+			"Added an option to open saved draft logs",
+			"Session owner can re-order the table",
+			"Minor style changes"
+		]
+	},
+	{
+		"date": "02/04/2020",
+		"notes": ["Fixed some images."]
+	},
+	{
+		"date": "01/04/2020",
+		"notes": ["Improved bot ordering.", "Bug fixes."]
+	},
+	{
+		"date": "31/03/2020",
+		"notes": ["Improved/Fixed card database.", "Fixed Conflux card exporting."]
+	},
+	{
+		"date": "30/03/2020",
+		"notes": ["Draggable cards option in deck builder."]
+	},
+	{
+		"date": "29/03/2020",
+		"notes": ["Added a Color Columns option to display cards.", "Added a Ready Check for the session owner."]
+	},
+	{
+		"date": "28/03/2020",
+		"notes": [
+			"Updated draft logs. Complete pick information. Can now be exported in MTGO format/to MagicProTools.",
+			"Fix: No more undesirable duplicates from the use of Color Balancing.",
+			"Fix: Crash on reconnection.",
+			"Fix: Correctly handle duplicates in Custom Card Lists.",
+			"Fix: Correctly export split cards from Ravnica."
+		]
+	},
+	{
+		"date": "26/03/2020",
+		"notes": ["Added a delayed draft log sharing option. Useful for tournament settings."]
+	},
+	{
+		"date": "24/03/2020",
+		"notes": [
+			"Added a stop draft button for the owner.",
+			"Updated visual of pick timer countdown.",
+			"Draft logs can now be disabled or exclusive to the owner.",
+			"Updated Draft Log with a table display.",
+			"Display disconnected user name."
+		]
+	}
+]
