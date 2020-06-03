@@ -20,6 +20,7 @@ const Connections = ConnectionModule.Connections;
 const SessionModule = require("./Session");
 const Session = SessionModule.Session;
 const Sessions = SessionModule.Sessions;
+const Cards = require("./Cards");
 
 app.use(compression());
 app.use(cookieParser());
@@ -118,6 +119,13 @@ io.on("connection", function (socket) {
 		let sessionID = Connections[userID].sessionID;
 
 		if (typeof collection !== "object" || collection === null) return;
+
+		// Remove unknown cards immediatly.
+		for (let id in collection)
+			if (!(id in Cards)) {
+				//console.log("Unknow card ID: ", id);
+				delete collection[id];
+			}
 
 		Connections[userID].collection = collection;
 		if (Sessions[sessionID])
@@ -615,25 +623,7 @@ io.on("connection", function (socket) {
 		if (Sessions[sessionID].owner != this.userID) return;
 
 		if (isNaN(boostersPerPlayer)) return;
-
-		Sessions[sessionID].emitMessage("Distributing sealed boosters...", "", false, 0);
-
-		for (let user of Sessions[sessionID].users) {
-			if (!Sessions[sessionID].generateBoosters(boostersPerPlayer)) {
-				return;
-			}
-			Connections[user].socket.emit("setCardSelection", Sessions[sessionID].boosters);
-		}
-
-		if (!Sessions[sessionID].ownerIsPlayer && Sessions[sessionID].owner in Connections) {
-			Connections[Sessions[sessionID].owner].socket.emit("message", {
-				title: "Sealed pools successfly distributed!",
-				showConfirmButton: false,
-				timer: 1500,
-			});
-		}
-
-		Sessions[sessionID].boosters = [];
+		Sessions[sessionID].distributeSealed(boostersPerPlayer);
 	});
 
 	socket.on("generateBracket", function (players, ack) {
