@@ -27,17 +27,21 @@ function connectClient(query) {
 }
 
 let outputbuffer;
+const baseConsogleLog = console.log;
+const baseConsogleDebug = console.debug;
+const baseConsogleWarn = console.warn;
+const logReplacer = function () {
+	for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
+	outputbuffer += "\n";
+};
 function disableLogs() {
 	outputbuffer = "";
-	console.log = console.debug = console.warn = function () {
-		for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
-		outputbuffer += "\n";
-	};
+	console.log = console.debug = console.warn = logReplacer;
 }
 function enableLogs(print) {
-	delete console.log;
-	delete console.debug;
-	delete console.warn;
+	console.log = baseConsogleLog;
+	console.debug = baseConsogleDebug;
+	console.warn = baseConsogleWarn;
 	if (print && outputbuffer != "") {
 		console.log("--- Delayed Output ---------------------------------------------------------");
 		console.log(outputbuffer);
