@@ -33,7 +33,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
 -   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
@@ -50,18 +49,14 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
 -   Glimpse/Burn Draft
 -   Card count/set code/Collector number support to cube import
--   Winston Draft
--   Import. Collection: Detect multiple accounts and ask the user if they want to intersect all found collections
 -   Monitor persistence
--   Optimize DLScryfallCards.py; Use MTGA data as base for cards and ids
--   Set Multiple Selection
 -   Rarity selection
 
 ## Bugs
 
--   "Bonders' Enclave" (Bonder's Enclave) doesn't export to Arena (Check: Possibly fixed with updated data)
 -   Missing Historic Cards : Cinder Barrens
 -   Guildgates won't import in arena : Guildgates do not have localized names
 
