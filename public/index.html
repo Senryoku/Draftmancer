@@ -541,93 +541,141 @@
 		</modal>
 		<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
 			<h2 slot="header">Additional Session Options</h2>
-			<div slot="body" class="option-column" :class="{disabled: userID != sessionOwner}">
-				<div class="line" title="Share your session ID with everyone.">
-					<label for="is-public">Public</label>
-					<div class="right">
-						<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+			<div slot="body" class="session-options-container" :class="{disabled: userID != sessionOwner}">
+				<div class="option-column">
+					<div class="line" title="Share your session ID with everyone.">
+						<label for="is-public">Public</label>
+						<div class="right">
+							<input type="checkbox" v-model="isPublic" id="is-public" title="Share your session ID with everyone." />
+						</div>
 					</div>
-				</div>
-				<div class="line" title="Is the session owner participating in?">
-					<label for="is-owner-player">Session owner is playing</label>
-					<div class="right">
-						<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
+					<div class="line" title="Is the session owner participating in?">
+						<label for="is-owner-player">Session owner is playing</label>
+						<div class="right">
+							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
+						</div>
 					</div>
-				</div>
-				<div class="line">
-					<label for="max-players">Maximum Players</label>
-					<div class="right">
-						<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model.number="maxPlayers" />
+					<div class="line">
+						<label for="max-players">Maximum Players</label>
+						<div class="right">
+							<input class="small-number-input" type="number" id="max-players" class="small-number-input" min="1" max="16" step="1" v-model.number="maxPlayers" />
+						</div>
 					</div>
-				</div>
-				<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
-					<label for="color-balance">Color Balance</label>
-					<div class="right">
-						<input type="checkbox" v-model="colorBalance" id="color-balance">
+				<!--
+					<div class="option-section">
+						<div class="option-column-title">
+							Advanced set restrictions
+						</div>
+						<div v-if="setsInfos">
+							<div class="set-list">
+								<toggle id="set-all" :checked="setRestriction.length === constants.MTGSets.length" @click="setRestriction = constants.MTGSets.slice()">
+									All
+								</toggle>
+								<toggle id="set-none" :checked="setRestriction.length === 0" @click="setRestriction = []">
+									None (no restriction)
+								</toggle>
+							</div>
+							<div class="set-list">
+								<toggle v-for="code in constants.MTGSets" :key="code" :checked="setRestriction.includes(code)" @click="toggleSetRestriction(code)">
+									<img :src="setsInfos[code].icon" :title="setsInfos[code].fullName" />
+								</toggle>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)">
-					<label for="max-rarity">Maximum Rarity</label>
-					<div class="right">
-						<select v-model="maxRarity" id="max-rarity">
-							<option value="mythic">Mythic</option>
-							<option value="rare">Rare</option>
-							<option value="uncommon">Uncommon</option>
-							<option value="common">Common</option>
-						</select>
+				-->
+					<div class="line" title="If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.">
+						<label for="color-balance">Color Balance</label>
+						<div class="right">
+							<input type="checkbox" v-model="colorBalance" id="color-balance">
+						</div>
 					</div>
-				</div>
-				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Sets a duplicate limit for each rarity. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.">
-					<label>Max. duplicate copies</label>
-					<div class="right">
-						<div><input class="small-number-input" type="number" id="max-duplicates-common" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['common']" /><label for="max-duplicates-common">for Commons</label></div>
-						<div><input class="small-number-input" type="number" id="max-duplicates-uncommon" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['uncommon']" /><label for="max-duplicates-uncommon">for Uncommons</label></div>
-						<div><input class="small-number-input" type="number" id="max-duplicates-mare" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['rare']" /><label for="max-duplicates-rare">for Rares</label></div>
-						<div><input class="small-number-input" type="number" id="max-duplicates-mythic" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['mythic']" /><label for="max-duplicates-mythic">for Mythics</label></div>
+					<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="Limits the maximum rarity of cards in your pool. (Default is Mythic, which means no restriction. Also affects sealed)">
+						<label for="max-rarity">Maximum Rarity</label>
+						<div class="right">
+							<select v-model="maxRarity" id="max-rarity">
+								<option value="mythic">Mythic</option>
+								<option value="rare">Rare</option>
+								<option value="uncommon">Uncommon</option>
+								<option value="common">Common</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.">
-					<label for="option-foil">Foil</label>
-					<div class="right">
-						<input type="checkbox" v-model="foil" id="option-foil">
+					<div class="option-section" v-bind:class="{ disabled: useCustomCardList }" title="Sets a duplicate limit for each rarity. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.">
+						<div class="option-column-title">Max. duplicate copies</div>
+						<div class="line">
+							<label for="max-duplicates-common">Commons</label>
+							<div class="right"><input class="small-number-input" type="number" id="max-duplicates-common" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['common']" /></div>
+						</div>
+						<div class="line">
+							<label for="max-duplicates-uncommon">Uncommons</label>
+							<div class="right"><input class="small-number-input" type="number" id="max-duplicates-uncommon" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['uncommon']" /></div>
+						</div>
+						<div class="line">
+							<label for="max-duplicates-rare">Rares</label>
+							<div class="right"><input class="small-number-input" type="number" id="max-duplicates-mare" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['rare']" /></div>
+						</div>
+						<div class="line">
+							<label for="max-duplicates-mythic">Mythics</label>
+							<div class="right"><input class="small-number-input" type="number" id="max-duplicates-mythic" class="small-number-input" min="1" max="16" step="1" v-model.number="maxDuplicates['mythic']" /></div>
+						</div>
 					</div>
-				</div>
-				<div class="line" title="Use a custom card list.">
-					<label for="use-custom-card-list">Use a Custom Card List</label>
-					<div class="right">
-						<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" title="Use a custom card list (also called Cube)." />
+					<div class="line" v-bind:class="{ disabled: useCustomCardList }" title="If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.">
+						<label for="option-foil">Foil</label>
+						<div class="right">
+							<input type="checkbox" v-model="foil" id="option-foil">
+						</div>
 					</div>
-				</div>
-				<div v-bind:class="{ disabled: !useCustomCardList }" class="line" title="Manage your custom card list.">
-					<label for="card-list-input">Custom Card List</label>
-					<div class="right">
-						<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
+					<div class="line" title="Use a custom card list.">
+						<label for="use-custom-card-list">Use a Custom Card List</label>
+						<div class="right">
+							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" title="Use a custom card list (also called Cube)." />
+						</div>
 					</div>
-				</div>
-				<div class="option-info">Use services like <a href="https://www.cubetutor.com/">Cube Tutor</a> or <a href="https://cubecobra.com/">Cube Cobra</a> to craft your list, export it to .txt then upload it here. <a href="cubeformat.html" target="_blank">Click Here for more information.</a></div>
-				<h4>Draft Specific Options</h4>
-				<div class="line" title="Draft: Boosters per Player; default is 3.">
-					<label for="boosters-per-player">Boosters per Player</label>
-					<div class="right">
-						<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
+					<div v-bind:class="{ disabled: !useCustomCardList }" class="line" title="Manage your custom card list.">
+						<label for="card-list-input">Custom Card List</label>
+						<div class="right">
+							<input type="file" id="card-list-input" @change="parseCustomCardList" style="display:none" accept=".txt" /><button onclick="document.querySelector('#card-list-input').click()" title="Import your custom card list.">Upload <i  v-if="customCardList.length > 0" class="fas fa-check green" title="Card list uploaded."></i></button> <span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
+						</div>
 					</div>
+					<div class="option-info">Use services like <a href="https://www.cubetutor.com/" target="_blank">Cube Tutor</a> or <a href="https://cubecobra.com/" target="_blank">Cube Cobra</a> to craft your list, export it to .txt then upload it here. <a href="cubeformat.html" target="_blank">Click Here for more information.</a></div>
 				</div>
-				<div class="line" title="Draft: Burned cards per round; default is 0.">
-					<label for="burned-cards-per-round">Burned cards per round</label>
-					<div class="right">
-						<input type="number" id="burned-cards-per-round" class="small-number-input" min="0" max="24" step="1" v-model.number="burnedCardsPerRound" />
+				<div class="option-column">
+					<h4>Draft Specific Options</h4>
+					<div class="line" title="Draft: Boosters per Player; default is 3.">
+						<label for="boosters-per-player">Boosters per Player</label>
+						<div class="right">
+							<input type="number" id="boosters-per-player" class="small-number-input" min="1" max="25" step="1" v-model.number="boostersPerPlayer" />
+						</div>
 					</div>
-				</div>
-				<div class="option-info">In addition to picking a card each round, you will also remove this number of cards from the draft. This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</div>
-				<div class="line" title="Who's going to receive the draft logs?">
-					<label for="draft-log-recipients">Send draft logs to</label>
-					<div class="right">
-						<select v-model="draftLogRecipients" id="draft-log-recipients" />
-							<option value="everyone">Everyone</option>
-							<option value="owner">Owner only</option>
-							<option value="delayed" title="Owner will choose when to make the draft log public. Useful for tournaments.">Owner only, delayed</option>
-							<option value="none">No-one</option>
-						</select>
+					<div class="option-section" title="Specify the set of each booster individually. Useful for classic Chaos Draft for example. Note: Collections are ignored for each booster with any other value than (Default)." v-bind:class="{ disabled: useCustomCardList }">
+						<div class="option-column-title">
+							Individual Booster Set
+						</div>
+						<div v-for="(value, index) in customBoosters" class="line">
+							<label for="customized-booster">Booster #{{index+1}}</label>
+							<select class="right" v-model="customBoosters[index]">
+								<option value="">(Default)</option>
+								<option v-for="code in constants.MTGSets" :value="code">{{setsInfos[code].fullName}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="line" title="Draft: Burned cards per round; default is 0.">
+						<label for="burned-cards-per-round">Burned cards per round</label>
+						<div class="right">
+							<input type="number" id="burned-cards-per-round" class="small-number-input" min="0" max="24" step="1" v-model.number="burnedCardsPerRound" />
+						</div>
+					</div>
+					<div class="option-info">In addition to picking a card each round, you will also remove this number of cards from the draft. This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</div>
+					<div class="line" title="Who's going to receive the draft logs?">
+						<label for="draft-log-recipients">Send draft logs to</label>
+						<div class="right">
+							<select v-model="draftLogRecipients" id="draft-log-recipients" />
+								<option value="everyone">Everyone</option>
+								<option value="owner">Owner only</option>
+								<option value="delayed" title="Owner will choose when to make the draft log public. Useful for tournaments.">Owner only, delayed</option>
+								<option value="none">No-one</option>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -668,6 +716,13 @@
 				Currently this service only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal, or just send me some feedback! :)
 				<h3>Patch Notes</h3>
 				<ol class="patch-notes">
+					<li>03/06/2020
+						<ul>
+							<li>Added Individual Booster Restrictions option (Chaos Draft).</li>
+							<li>Minor style updates.</li>
+							<li>Back end optimizations.</li>
+						</ul>
+					</li>
 					<li>21/05/2020
 						<ul>
 							<li>Updated card data with Historic Anthology 3 cards.</li>

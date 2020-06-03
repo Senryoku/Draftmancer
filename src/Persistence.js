@@ -11,6 +11,9 @@ const SessionModule = require("../Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 
+//                         Testing in mocha                   Explicitly disabled
+const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
+
 const TableNames = {
 	Connections: process.env.TABLENAME_CONNECTIONS ? process.env.TABLENAME_CONNECTIONS : "mtga-draft-connections",
 	Sessions: process.env.TABLENAME_SESSIONS ? process.env.TABLENAME_SESSIONS : "mtga-draft-sessions",
@@ -259,57 +262,56 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-// Can make asynchronous calls, is not called on process.exit() or uncaught
-// exceptions.
-// See https://nodejs.org/api/process.html#process_event_beforeexit
-process.on("beforeExit", (code) => {
-	console.log("beforeExit callback.");
-});
-
-// Only synchronous calls, called on process.exit()
-// See https://nodejs.org/api/process.html#process_event_exit
-process.on("exit", (code) => {
-	console.log(`exit callback: Process exited with code: ${code}`);
-});
-
-/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual
- * restarts and automatic cycling of dynos (~ every 24h)
- * Process have 30sec. before getting SIGKILL'd.
- * See https://devcenter.heroku.com/articles/dynos#shutdown
- */
-process.on("SIGTERM", () => {
-	console.log("Received SIGTERM.");
-	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 20sec. to finish saving everything.
-	setTimeout((_) => {
-		process.exit(0);
-	}, 20000);
-});
-
-process.on("SIGINT", () => {
-	console.log("Received SIGINT.");
-	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 20sec. to finish saving everything.
-	setTimeout((_) => {
-		process.exit(0);
-	}, 20000);
-});
-
-process.on("uncaughtException", (err) => {
-	console.error("Uncaught Exception thrown: ");
-	console.error(err);
-	dumpToDynamoDB(true);
-	// Gives dumpToDynamoDB 20sec. to finish saving everything.
-	setTimeout((_) => {
-		process.exit(1);
-	}, 20000);
-});
-
-if (typeof global.it === "function") {
-	// Testing in mocha
+if (DisablePersistence) {
 	module.exports.InactiveSessions = {};
 	module.exports.InactiveConnections = {};
 } else {
+	// Can make asynchronous calls, is not called on process.exit() or uncaught
+	// exceptions.
+	// See https://nodejs.org/api/process.html#process_event_beforeexit
+	process.on("beforeExit", (code) => {
+		console.log("beforeExit callback.");
+	});
+
+	// Only synchronous calls, called on process.exit()
+	// See https://nodejs.org/api/process.html#process_event_exit
+	process.on("exit", (code) => {
+		console.log(`exit callback: Process exited with code: ${code}`);
+	});
+
+	/* SIGTERM will be called on new deploy, changes to config vars/add-ons, manual
+	 * restarts and automatic cycling of dynos (~ every 24h)
+	 * Process have 30sec. before getting SIGKILL'd.
+	 * See https://devcenter.heroku.com/articles/dynos#shutdown
+	 */
+	process.on("SIGTERM", () => {
+		console.log("Received SIGTERM.");
+		dumpToDynamoDB(true);
+		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		setTimeout((_) => {
+			process.exit(0);
+		}, 20000);
+	});
+
+	process.on("SIGINT", () => {
+		console.log("Received SIGINT.");
+		dumpToDynamoDB(true);
+		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		setTimeout((_) => {
+			process.exit(0);
+		}, 20000);
+	});
+
+	process.on("uncaughtException", (err) => {
+		console.error("Uncaught Exception thrown: ");
+		console.error(err);
+		dumpToDynamoDB(true);
+		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		setTimeout((_) => {
+			process.exit(1);
+		}, 20000);
+	});
+
 	module.exports.InactiveSessions = requestSavedSessions();
 	module.exports.InactiveConnections = requestSavedConnections();
 }

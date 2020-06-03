@@ -102,6 +102,23 @@ Vue.component("draft-log-pick", {
 	props: { pick: { type: Object, required: true } },
 });
 
+Vue.component("toggle", {
+	template: `
+<div class="checkbox-button" :data-checked="checked ? 'true' : 'false'" @click="$emit('click')">
+	<input :id="id" type="checkbox" :checked="checked" class="checkbox-button" @change="$emit('change', $event.target.checked)" />
+	<label :for="id"><slot></slot></label>
+</div>
+`,
+	model: {
+		prop: "checked",
+		event: "change",
+	},
+	props: {
+		id: { type: String, required: true },
+		checked: { type: Boolean, required: true },
+	},
+});
+
 Vue.component("draft-log-live", {
 	template: `
 		<div>
@@ -229,6 +246,7 @@ var app = new Vue({
 		ignoreCollections: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
+		customBoosters: ["", "", ""],
 		maxPlayers: 8,
 		maxRarity: "Mythic",
 		colorBalance: true,
@@ -1335,6 +1353,14 @@ var app = new Vue({
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
 		},
+		toggleSetRestriction: function (code) {
+			if (this.setRestriction.includes(code))
+				this.setRestriction.splice(
+					this.setRestriction.findIndex((c) => c === code),
+					1
+				);
+			else this.setRestriction.push(code);
+		},
 		setSessionOwner: function (newOwnerID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
@@ -2049,6 +2075,10 @@ var app = new Vue({
 		boostersPerPlayer: function () {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
+		},
+		customBoosters: function () {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("customBoosters", this.customBoosters);
 		},
 		bots: function () {
 			if (this.userID != this.sessionOwner) return;
