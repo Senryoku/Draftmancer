@@ -94,7 +94,12 @@ function Session(id, owner) {
 	this.boostersPerPlayer = 3;
 	this.bots = 0;
 	this.maxPlayers = 8;
-	this.maxRarity = "mythic";
+	this.mythicPromotion = true;
+	this.boosterContent = {
+		common: 10,
+		uncommon: 3,
+		rare: 1,
+	};
 	this.colorBalance = true;
 	this.maxDuplicates = {
 		common: 8,
@@ -206,7 +211,8 @@ function Session(id, owner) {
 			customBoosters: this.customBoosters,
 			bots: this.bots,
 			maxPlayers: this.maxPlayers,
-			maxRarity: this.maxRarity,
+			mythicPromotion: this.mythicPromotion,
+			boosterContent: this.boosterContent,
 			colorBalance: this.colorBalance,
 			maxDuplicates: this.maxDuplicates,
 			foil: this.foil,
@@ -451,32 +457,7 @@ function Session(id, owner) {
 				}
 			}
 
-			let targets;
-
-			switch (this.maxRarity) {
-				case "uncommon":
-					targets = {
-						rare: 0,
-						uncommon: 3,
-						common: 11,
-					};
-					break;
-				case "common":
-					targets = {
-						rare: 0,
-						uncommon: 0,
-						common: 14,
-					};
-					break;
-				case "mythic":
-				case "rare":
-				default:
-					targets = {
-						rare: 1,
-						uncommon: 3,
-						common: 10,
-					};
-			}
+			const targets = this.boosterContent;
 
 			// Making sure we have enough cards of each rarity
 			for (let slot of ["common", "uncommon", "rare"]) {
@@ -562,9 +543,10 @@ function Session(id, owner) {
 	 *   landSlot: Optional land slot rule
 	 */
 	this.generateBooster = function (cardPool, colorBalancedSlot, targets, landSlot) {
-		const foilFrequency = 15.0 / 63.0;
+		const mythicRate = 1.0 / 8.0;
+		const foilRate = 15.0 / 63.0;
 		// 1/16 chances of a foil basic land added to the common slot. Mythic to common
-		const foilRarityFreq = {
+		const foilRarityRates = {
 			mythic: 1.0 / 128,
 			rare: 1.0 / 128 + 7.0 / 128,
 			uncommon: 1.0 / 16 + 3.0 / 16,
@@ -574,10 +556,10 @@ function Session(id, owner) {
 		let booster = [];
 
 		let addedFoils = 0;
-		if (this.foil && Math.random() <= foilFrequency) {
+		if (this.foil && Math.random() <= foilRate) {
 			const rarityCheck = Math.random();
-			for (let r in foilRarityFreq)
-				if (rarityCheck <= foilRarityFreq[r] && !isEmpty(cardPool[r])) {
+			for (let r in foilRarityRates)
+				if (rarityCheck <= foilRarityRates[r] && !isEmpty(cardPool[r])) {
 					let pickedCard = pick_card(cardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.colorBalance && Cards[pickedCard].rarity == "common")
@@ -596,10 +578,10 @@ function Session(id, owner) {
 				return false;
 			} else if (isEmpty(cardPool["mythic"])) {
 				booster.push(pick_card(cardPool["rare"]));
-			} else if (this.maxRarity === "mythic" && isEmpty(cardPool["rare"])) {
+			} else if (this.mythicPromotion && isEmpty(cardPool["rare"])) {
 				booster.push(pick_card(cardPool["mythic"]));
 			} else {
-				if (this.maxRarity === "mythic" && Math.random() * 8 < 1) booster.push(pick_card(cardPool["mythic"]));
+				if (this.mythicPromotion && Math.random() <= mythicRate) booster.push(pick_card(cardPool["mythic"]));
 				else booster.push(pick_card(cardPool["rare"]));
 			}
 		}
@@ -608,7 +590,7 @@ function Session(id, owner) {
 
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
-		if (this.colorBalance) {
+		if (this.colorBalance && targets["common"] >= 5) {
 			for (let c of "WUBRG") {
 				if (colorBalancedSlot[c] && !isEmpty(colorBalancedSlot[c])) {
 					let pickedCard = pick_card(colorBalancedSlot[c], pickedCommons);

@@ -491,15 +491,29 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("setMaxRarity", function (maxRarity) {
+	socket.on("setMythicPromotion", function (mythicPromotion) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID) return;
-		if (typeof maxRarity !== "string") return;
-		maxRarity = maxRarity.toLowerCase();
-		if (!["mythic", "rare", "uncommon", "common"].includes(maxRarity)) return;
-		Sessions[sessionID].maxRarity = maxRarity;
+		if (typeof mythicPromotion !== "boolean") return;
+
+		Sessions[sessionID].mythicPromotion = mythicPromotion;
 		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("setMaxRarity", maxRarity);
+			if (user != this.userID)
+				Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
+		}
+	});
+
+	socket.on("setBoosterContent", function (boosterContent) {
+		let sessionID = Connections[this.userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID) return;
+		// Validate input (a value for each rarity and at least one card)
+		if (!["common", "uncommon", "rare"].every((r) => r in boosterContent)) return;
+		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
+
+		Sessions[sessionID].boosterContent = boosterContent;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID)
+				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	});
 

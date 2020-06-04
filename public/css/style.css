@@ -59,6 +59,10 @@ a:hover {
 	color: #72a7ff;
 }
 
+.capitalized {
+	text-transform: capitalize;
+}
+
 .clickable {
 	cursor: pointer;
 }
@@ -427,6 +431,7 @@ a:hover {
 .option-section {
 	background-color: rgba(255, 255, 255, 0.05);
 	border-radius: 0.25em;
+	margin-bottom: 0.25em;
 }
 
 .option-info {

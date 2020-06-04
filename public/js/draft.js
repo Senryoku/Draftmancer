@@ -270,7 +270,12 @@ var app = new Vue({
 		boostersPerPlayer: 3,
 		customBoosters: ["", "", ""],
 		maxPlayers: 8,
-		maxRarity: "Mythic",
+		mythicPromotion: true,
+		boosterContent: {
+			common: 10,
+			uncommon: 3,
+			rare: 1,
+		},
 		colorBalance: true,
 		maxDuplicates: {
 			common: 8,
@@ -508,9 +513,6 @@ var app = new Vue({
 			});
 			this.socket.on("setMaxPlayers", function (maxPlayers) {
 				app.maxPlayers = parseInt(maxPlayers);
-			});
-			this.socket.on("setMaxRarity", function (maxRarity) {
-				app.maxRarity = maxRarity;
 			});
 			this.socket.on("setRestriction", function (setRestriction) {
 				app.setRestriction = setRestriction;
@@ -2110,9 +2112,21 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
-		maxRarity: function () {
+		mythicPromotion: function () {
 			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("setMaxRarity", this.maxRarity);
+			this.socket.emit("setMythicPromotion", this.mythicPromotion);
+		},
+		boosterContent: {
+			deep: true,
+			handler(val, oldValue) {
+				if (this.userID != this.sessionOwner) return;
+				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
+					this.fireToast("warning", "Your boosters should at least contain one card :)");
+					this.boosterContent["common"] = 1;
+				} else {
+					this.socket.emit("setBoosterContent", this.boosterContent);
+				}
+			},
 		},
 		maxTimer: function () {
 			if (this.userID != this.sessionOwner) return;

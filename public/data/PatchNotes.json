@@ -1,5 +1,9 @@
 [
 	{
+		"date": "04/06/2020",
+		"notes": ["Added option to customize the content of boosters (replaces Maximum Rarity)."]
+	},
+	{
 		"date": "03/06/2020",
 		"notes": [
 			"Added Individual Booster Restrictions option (Chaos Draft).",
