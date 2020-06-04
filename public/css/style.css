@@ -63,6 +63,10 @@ a:hover {
 	text-transform: capitalize;
 }
 
+.inline {
+	display: inline-block;
+}
+
 .clickable {
 	cursor: pointer;
 }
@@ -401,8 +405,16 @@ a:hover {
 }
 
 .option-column {
-	width: 25vw;
+	width: 22.5vw;
 	margin: 0.5em;
+}
+
+.option-tooltip > .tooltip-inner {
+	max-width: 20vw;
+}
+.option-tooltip > .tooltip-inner > p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
 }
 
 .option-column .line {

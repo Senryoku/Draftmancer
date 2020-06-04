@@ -9,12 +9,18 @@ function orderColor(lhs, rhs) {
 	else return String(lhs.flat()).localeCompare(String(rhs.flat()));
 }
 
+const SwalCustomClasses = {
+	popup: "custom-swal-popup",
+	title: "custom-swal-title",
+	content: "custom-swal-content",
+};
+
 Vue.component("patch-notes", {
 	template: `
 	<ol class="patch-notes">
 		<li v-for="pn in notes">{{pn.date}}
 			<ul>
-				<li v-for="n in pn.notes">{{n}}</li>
+				<li v-for="n in pn.notes" v-html="n"></li>
 			</ul>
 		</li>
 	</ol>
@@ -30,12 +36,6 @@ Vue.component("patch-notes", {
 			.then((json) => (this.notes = json));
 	},
 });
-
-const SwalCustomClasses = {
-	popup: "custom-swal-popup",
-	title: "custom-swal-title",
-	content: "custom-swal-content",
-};
 
 Vue.component("modal", {
 	template: "#modal-template",
@@ -240,6 +240,8 @@ const Sounds = {
 let UniqueID = 0;
 
 Vue.use(window.VueClazyLoad);
+VTooltip.VTooltip.options.defaultPlacement = "bottom-start";
+VTooltip.VTooltip.options.defaultBoundariesElement = "window";
 
 var app = new Vue({
 	el: "#main-vue",
@@ -2121,7 +2123,7 @@ var app = new Vue({
 			handler(val, oldValue) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
-					this.fireToast("warning", "Your boosters should at least contain one card :)");
+					this.fireToast("warning", "Your boosters should contain at least one card :)");
 					this.boosterContent["common"] = 1;
 				} else {
 					this.socket.emit("setBoosterContent", this.boosterContent);
