@@ -281,7 +281,7 @@ io.on("connection", function (socket) {
 	socket.on("stopDraft", function () {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].drafting) return;
 		if (Sessions[sessionID].winstonDraftState) Sessions[sessionID].endWinstonDraft();
 		else Sessions[sessionID].endDraft();
@@ -332,7 +332,7 @@ io.on("connection", function (socket) {
 
 	socket.on("removePlayer", function (userID) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (userID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userID)) return;
 
@@ -351,19 +351,19 @@ io.on("connection", function (socket) {
 
 	socket.on("setSeating", function (seating) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("randomizeSeating", function () {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("boostersPerPlayer", function (boostersPerPlayer) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
 		if (!Number.isInteger(boostersPerPlayer)) return;
@@ -385,7 +385,7 @@ io.on("connection", function (socket) {
 
 	socket.on("customBoosters", function (customBoosters) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Array.isArray(customBoosters)) return;
 
@@ -398,7 +398,7 @@ io.on("connection", function (socket) {
 
 	socket.on("bots", function (bots) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(bots)) bots = parseInt(bots);
 		if (!Number.isInteger(bots)) return;
@@ -413,7 +413,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setRestriction", function (setRestriction) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Array.isArray(setRestriction)) return;
 
@@ -433,7 +433,7 @@ io.on("connection", function (socket) {
 
 	socket.on("customCardList", function (customCardList, ack) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (
 			!Array.isArray(customCardList) &&
@@ -456,7 +456,7 @@ io.on("connection", function (socket) {
 
 	socket.on("ignoreCollections", function (ignoreCollections) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
 		for (let user of Sessions[sessionID].users) {
@@ -467,7 +467,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setPickTimer", function (timerValue) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
 		if (!Number.isInteger(timerValue) || timerValue < 0) return;
@@ -480,7 +480,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setMaxPlayers", function (maxPlayers) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
 		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
@@ -493,7 +493,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setMythicPromotion", function (mythicPromotion) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (typeof mythicPromotion !== "boolean") return;
 
 		Sessions[sessionID].mythicPromotion = mythicPromotion;
@@ -505,7 +505,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setBoosterContent", function (boosterContent) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		// Validate input (a value for each rarity and at least one card)
 		if (!["common", "uncommon", "rare"].every((r) => r in boosterContent)) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
@@ -519,7 +519,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setDraftLogRecipients", function (draftLogRecipients) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (typeof draftLogRecipients !== "string") return;
 		draftLogRecipients = draftLogRecipients.toLowerCase();
 		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
@@ -534,7 +534,7 @@ io.on("connection", function (socket) {
 
 	socket.on("shareDraftLog", function (draftLog) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
 		}
@@ -542,7 +542,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setMaxDuplicates", function (maxDuplicates) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID)
@@ -554,7 +554,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setColorBalance", function (colorBalance) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (colorBalance == Sessions[sessionID].colorBalance) return;
 
@@ -569,7 +569,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setFoil", function (foil) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (foil == Sessions[sessionID].foil) return;
 
@@ -584,7 +584,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setUseCustomCardList", function (useCustomCardList) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
@@ -599,7 +599,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setBurnedCardsPerRound", function (burnedCardsPerRound) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
 		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
@@ -613,7 +613,7 @@ io.on("connection", function (socket) {
 
 	socket.on("setPublic", function (isPublic) {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (isPublic == Sessions[sessionID].isPublic) return;
 
@@ -627,14 +627,14 @@ io.on("connection", function (socket) {
 
 	socket.on("replaceDisconnectedPlayers", function () {
 		let sessionID = Connections[this.userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		Sessions[sessionID].replaceDisconnectedPlayers();
 	});
 
 	socket.on("distributeSealed", function (boostersPerPlayer) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (isNaN(boostersPerPlayer)) return;
 		Sessions[sessionID].distributeSealed(boostersPerPlayer);
@@ -643,7 +643,7 @@ io.on("connection", function (socket) {
 	socket.on("generateBracket", function (players, ack) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateBracket(players);
@@ -653,7 +653,7 @@ io.on("connection", function (socket) {
 	socket.on("updateBracket", function (results) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		Sessions[sessionID].updateBracket(results);
 	});
