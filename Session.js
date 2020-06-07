@@ -441,37 +441,40 @@ function Session(id, owner) {
 		} else {
 			// Standard draft boosters
 			let localCollection = this.cardPoolByRarity();
-
 			let landSlot = null;
-			if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot) {
-				landSlot = LandSlot[this.setRestriction[0]];
-				landSlot.setup(localCollection["common"]);
-			}
-
 			let commonsByColor = {};
-			if (this.colorBalance) {
-				for (let card in localCollection["common"]) {
-					if (!(Cards[card].color_identity in commonsByColor))
-						commonsByColor[Cards[card].color_identity] = {};
-					commonsByColor[Cards[card].color_identity][card] = localCollection["common"][card];
-				}
-			}
-
 			const targets = this.boosterContent;
 
-			// Making sure we have enough cards of each rarity
-			for (let slot of ["common", "uncommon", "rare"]) {
-				const card_count = count_cards(localCollection[slot]);
-				const card_target = targets[slot] * boosterQuantity;
-				if (card_count < card_target) {
-					const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-					this.emitMessage("Error generating boosters", msg);
-					console.warn(msg);
-					return false;
+			// Skip setting up standard collection if we're only using individual booster rules
+			if (!useCustomBoosters || !this.customBoosters.every((v) => v !== "")) {
+				localCollection = this.cardPoolByRarity();
+				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot) {
+					landSlot = LandSlot[this.setRestriction[0]];
+					landSlot.setup(localCollection["common"]);
+				}
+
+				if (this.colorBalance) {
+					for (let card in localCollection["common"]) {
+						if (!(Cards[card].color_identity in commonsByColor))
+							commonsByColor[Cards[card].color_identity] = {};
+						commonsByColor[Cards[card].color_identity][card] = localCollection["common"][card];
+					}
+				}
+
+				// Making sure we have enough cards of each rarity
+				for (let slot of ["common", "uncommon", "rare"]) {
+					const card_count = count_cards(localCollection[slot]);
+					const card_target = targets[slot] * boosterQuantity;
+					if (card_count < card_target) {
+						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
+						this.emitMessage("Error generating boosters", msg);
+						console.warn(msg);
+						return false;
+					}
 				}
 			}
 
-			// Do we have some booster specific rules?
+			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
 			if (useCustomBoosters && this.customBoosters.some((v) => v !== "")) {
 				const boosterRules = [];
 				const usedSets = {};
@@ -494,6 +497,24 @@ function Session(id, owner) {
 								commonsByColor: {},
 								landSlot: LandSlot[boosterRule],
 							};
+
+							// Check if we have enough card, considering maxDuplicate is a limiting factor
+							const multiplier = this.customBoosters.reduce((a, v) => (v == boosterRule ? a + 1 : a), 0);
+							if (
+								count_cards(usedSets[boosterRule].cardPool["common"]) <
+									multiplier * this.getVirtualPlayersCount() * targets["common"] ||
+								count_cards(usedSets[boosterRule].cardPool["uncommon"]) <
+									multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
+								count_cards(usedSets[boosterRule].cardPool["rare"]) +
+									count_cards(usedSets[boosterRule].cardPool["mythic"]) <
+									multiplier * this.getVirtualPlayersCount() * targets["rare"]
+							) {
+								const msg = `Not enough cards in card pool for individual booster restriction '${boosterRule}'. Please check you Max. Duplicates setting.`;
+								this.emitMessage("Error generating boosters", msg, true, 0);
+								console.warn(msg);
+								return false;
+							}
+
 							if (this.colorBalance) {
 								for (let card in usedSets[boosterRule].cardPool["common"]) {
 									if (!(Cards[card].color_identity in usedSets[boosterRule].commonsByColor))
@@ -573,8 +594,9 @@ function Session(id, owner) {
 		for (let i = 0; i < targets["rare"]; ++i) {
 			// 1 Rare/Mythic
 			if (isEmpty(cardPool["mythic"]) && isEmpty(cardPool["rare"])) {
-				this.emitMessage("Error generating boosters", `Not enough rare or mythic cards in collection`);
-				console.error("Not enough cards in collection.");
+				const msg = `Not enough rare or mythic cards in collection.`;
+				this.emitMessage("Error generating boosters", msg);
+				console.error(msg);
 				return false;
 			} else if (isEmpty(cardPool["mythic"])) {
 				booster.push(pick_card(cardPool["rare"]));
@@ -611,6 +633,15 @@ function Session(id, owner) {
 		booster = booster.concat(pickedCommons);
 
 		if (landSlot) booster.push(landSlot.pick());
+
+		// Last resort safety check
+		if (booster.some((v) => typeof v === "undefined" || v === null)) {
+			const msg = `Unspecified error.`;
+			this.emitMessage("Error generating boosters", msg);
+			console.error(msg, booster);
+			return false;
+		}
+
 		return booster;
 	};
 
