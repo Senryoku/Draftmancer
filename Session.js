@@ -479,10 +479,7 @@ function Session(id, owner) {
 				const boosterRules = [];
 				const usedSets = {};
 				for (let boosterRule of this.customBoosters) {
-					if (
-						boosterRule === "" ||
-						(this.setRestriction.length === 1 && boosterRule === this.setRestriction[0])
-					) {
+					if (boosterRule === "") {
 						// No specific rules
 						boosterRules.push({
 							cardPool: localCollection,
