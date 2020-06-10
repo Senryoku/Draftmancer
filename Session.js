@@ -485,14 +485,22 @@ function Session(id, owner) {
 			if (useCustomBoosters && this.customBoosters.some((v) => v !== "")) {
 				const boosterRules = [];
 				const usedSets = {};
+				let defaultRule = {
+					cardPool: localCollection,
+					commonsByColor: commonsByColor,
+					landSlot: landSlot,
+				};
+				// If randomized, boosters have to all be of the same size; Adding a land slot to the default rule.
+				if (this.distributionMode !== "regular" && !defaultRule.landSlot)
+					defaultRule.landSlot =
+						this.setRestriction.length === 0
+							? LandSlot.BasicLandSlots["m20"]
+							: LandSlot.BasicLandSlots[this.setRestriction[0]];
+
 				for (let boosterRule of this.customBoosters) {
+					// No specific rules
 					if (boosterRule === "") {
-						// No specific rules
-						boosterRules.push({
-							cardPool: localCollection,
-							commonsByColor: commonsByColor,
-							landSlot: landSlot,
-						});
+						boosterRules.push(defaultRule);
 					} else {
 						// Compile necessary data for this set (Multiple boosters of the same set wil share it)
 						if (!usedSets[boosterRule]) {
@@ -503,7 +511,9 @@ function Session(id, owner) {
 								landSlot:
 									boosterRule in LandSlot.SpecialLandSlots
 										? LandSlot.SpecialLandSlots[boosterRule]
-										: LandSlot.BasicLandSlots[boosterRule],
+										: this.distributionMode !== "regular"
+										? LandSlot.BasicLandSlots[boosterRule]
+										: null,
 							};
 
 							// Check if we have enough card, considering maxDuplicate is a limiting factor
@@ -541,18 +551,17 @@ function Session(id, owner) {
 
 				// Generate Boosters
 				this.boosters = [];
-				if (this.distributionMode === "shufflePlayerBoosters") {
-					var boosterOrder = [];
-					for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
-						let order = utils.range(0, this.boostersPerPlayer - 1);
-						shuffleArray(order);
-						boosterOrder.push(order);
-					}
+				// Implements distribution mode 'shufflePlayerBoosters'
+				let boosterOrder = [];
+				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
+					let order = utils.range(0, this.boostersPerPlayer - 1);
+					if (this.distributionMode === "shufflePlayerBoosters") shuffleArray(order);
+					boosterOrder.push(order);
 				}
+
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
-						const boosterNumber =
-							this.distributionMode === "shufflePlayerBoosters" ? boosterOrder[p][b] : b;
+						const boosterNumber = boosterOrder[p][b];
 						const booster = this.generateBooster(
 							boosterRules[boosterNumber].cardPool,
 							boosterRules[boosterNumber].commonsByColor,

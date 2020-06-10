@@ -1144,77 +1144,89 @@ describe("Single Draft with custom boosters and bots", function () {
 		clients[0].emit("setCustomBoosters", CustomBoosters);
 	});
 
-	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
-		let connectedClients = 0;
-		let receivedBoosters = 0;
-		let index = 0;
-		for (let c of clients) {
-			c.on("startDraft", function () {
-				connectedClients += 1;
-				this.removeListener("startDraft");
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+	for (let distributionMode of ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"]) {
+		it(`Setting distributionMode to ${distributionMode}.`, function (done) {
+			clients[1].on("sessionOptions", function (data) {
+				expect(data.distributionMode).to.eql(distributionMode);
+				this.removeListener("sessionOptions");
+				done();
 			});
+			clients[0].emit("setDistributionMode", distributionMode);
+		});
 
-			((_) => {
-				const _idx = index;
-				c.on("nextBooster", function (data) {
-					expect(boosters).not.include(data);
-					for (let cid of data.booster) expect(Cards[cid].set).to.equals(CustomBoosters[0]);
-					boosters[_idx] = data;
-					receivedBoosters += 1;
-					this.removeListener("nextBooster");
+		let boosters = [];
+		it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+			let connectedClients = 0;
+			let receivedBoosters = 0;
+			let index = 0;
+			for (let c of clients) {
+				c.on("startDraft", function () {
+					connectedClients += 1;
+					this.removeListener("startDraft");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
-			})();
-			++index;
-		}
-		clients[0].emit("startDraft");
-	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
-		let receivedBoosters = 0;
-		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
-				receivedBoosters += 1;
-				let idx = c;
-				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
-				boosters[idx] = data;
-				this.removeListener("nextBooster");
-				if (receivedBoosters == clients.length) done();
-			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
-		}
-	});
-
-	it("Pick enough times, and all the drafts should end.", function (done) {
-		this.timeout(4000);
-		let draftEnded = 0;
-		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on(
-				"nextBooster",
 				((_) => {
-					const idx = c;
-					const self = clients[c];
-					return (data) => {
-						boosters[idx] = data.booster;
-						process.nextTick((_) => {
-							self.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
-						});
-					};
-				})()
-			);
-			clients[c].on("endDraft", function () {
-				draftEnded += 1;
-				this.removeListener("endDraft");
-				this.removeListener("nextBooster");
-				if (draftEnded == clients.length) done();
-			});
-		}
-		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
-		}
-	});
+					const _idx = index;
+					c.on("nextBooster", function (data) {
+						expect(boosters).not.include(data);
+						if (distributionMode === "regular")
+							for (let cid of data.booster) expect(Cards[cid].set).to.equals(CustomBoosters[0]);
+						boosters[_idx] = data;
+						receivedBoosters += 1;
+						this.removeListener("nextBooster");
+						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+					});
+				})();
+				++index;
+			}
+			clients[0].emit("startDraft");
+		});
+
+		it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+			let receivedBoosters = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].on("nextBooster", function (data) {
+					receivedBoosters += 1;
+					let idx = c;
+					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
+					boosters[idx] = data;
+					this.removeListener("nextBooster");
+					if (receivedBoosters == clients.length) done();
+				});
+				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			}
+		});
+
+		it("Pick enough times, and all the drafts should end.", function (done) {
+			this.timeout(4000);
+			let draftEnded = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].on(
+					"nextBooster",
+					((_) => {
+						const idx = c;
+						const self = clients[c];
+						return (data) => {
+							boosters[idx] = data.booster;
+							process.nextTick((_) => {
+								self.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+							});
+						};
+					})()
+				);
+				clients[c].on("endDraft", function () {
+					draftEnded += 1;
+					this.removeListener("endDraft");
+					this.removeListener("nextBooster");
+					if (draftEnded == clients.length) done();
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			}
+		});
+	}
 });
 
 describe("Multiple Drafts", function () {

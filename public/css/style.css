@@ -607,12 +607,7 @@ ul.player-list {
 }
 
 .player-list > li.draggable:hover {
-	transform: rotate(0.0001deg); /* Trying to avoid sub-pixel rendering bug on Firefox */
-}
-
-.player-list > li.draggable:hover {
-	translate: 0 -3.0000001px;
-	transform: rotate(0.0001deg);
+	translate: 0 -3px;
 	box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
 }
 
