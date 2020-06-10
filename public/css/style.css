@@ -603,6 +603,17 @@ ul.player-list {
 	margin-right: 1em;
 	background: #282828;
 	border-radius: 5px;
+	transition: all 0.2s;
+}
+
+.player-list > li.draggable:hover {
+	transform: rotate(0.0001deg); /* Trying to avoid sub-pixel rendering bug on Firefox */
+}
+
+.player-list > li.draggable:hover {
+	translate: 0 -3.0000001px;
+	transform: rotate(0.0001deg);
+	box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
 }
 
 .player-name {
