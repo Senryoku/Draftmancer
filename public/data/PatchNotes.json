@@ -1,5 +1,9 @@
 [
 	{
+		"date": "10/06/2020",
+		"notes": ["Added Distribution Mode option when using boosters from different sets."]
+	},
+	{
 		"date": "04/06/2020",
 		"notes": ["Added option to customize the content of boosters (replaces Maximum Rarity).", "Updated tooltips."]
 	},
