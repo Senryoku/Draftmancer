@@ -6,6 +6,17 @@ const utils = require("./utils");
 const getRandomKey = utils.getRandomKey;
 const getRandom = utils.getRandom;
 const range = utils.range;
+const BasicLandIDs = require("../public/data/BasicLandIDs.json");
+
+function genBasicLandSlot(set) {
+	return {
+		basicLandsIds: BasicLandIDs[set],
+		setup: () => {},
+		pick: function () {
+			return getRandom(this.basicLandsIds);
+		},
+	};
+}
 
 function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 	return {
@@ -34,32 +45,36 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 }
 
 // Eldraine common lands appears in the standard common slot, no need for a special rule.
-const LandSlot = {
+const SpecialLandSlots = {
 	grn: landSlotHandler(
-		range(68741, 68745),
+		BasicLandIDs["grn"],
 		[68724, 68725, 68726, 68727, 68729, 68730, 68732, 68733, 68736, 68737],
 		1
 	), // Gateway Plaza (68728) appear in the common slot.
 	rna: landSlotHandler(
-		range(69408, 69412),
+		BasicLandIDs["rna"],
 		[69391, 69392, 69397, 69398, 69400, 69401, 69403, 69404, 69405, 69406],
 		1
 	), // Gateway Plaza (69395) appear in the common slot.
 	m19: landSlotHandler(
-		range(68204, 68242, 2),
+		BasicLandIDs["m19"],
 		[68178, 68182, 68184, 68186, 68188].concat(range(68194, 68202, 2)),
 		1 / 2
 	),
 	m20: landSlotHandler(
-		range(70046, 70065),
+		BasicLandIDs["m20"],
 		[70027, 70028, 70030, 70033, 70035, 70036, 70037, 70043, 70044, 70045, 70031],
 		1 / 2
 	), // Gain Lands and Evoling Wilds (70031)
 	iko: landSlotHandler(
-		range(73121, 73135),
+		BasicLandIDs["iko"],
 		[71314, 71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
 		1 / 2
 	), // Evoling Wilds (71314) and Gain Lands
 };
 
-module.exports = LandSlot;
+const BasicLandSlots = {};
+for (let set in BasicLandIDs) BasicLandSlots[set] = genBasicLandSlot(set);
+
+module.exports.SpecialLandSlots = SpecialLandSlots;
+module.exports.BasicLandSlots = BasicLandSlots;

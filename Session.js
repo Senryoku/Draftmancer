@@ -11,10 +11,11 @@ const Cards = require("./Cards");
 const Bot = require("./src/Bot");
 const LandSlot = require("./src/LandSlot");
 
-// https://stackoverflow.com/a/12646864
-function shuffleArray(array) {
-	for (let i = array.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
+// From https://stackoverflow.com/a/12646864
+// Modified to optionaly work only on the [start, end[ slice of array.
+function shuffleArray(array, start = 0, end = array.length) {
+	for (let i = end - 1; i > start; i--) {
+		const j = start + Math.floor(Math.random() * (i - start + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
@@ -83,16 +84,17 @@ function WinstonDraftState(players, boosters) {
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
-	this.ownerIsPlayer = true;
 	this.users = new Set();
 	this.userOrder = [];
 
 	// Options
+	this.ownerIsPlayer = true;
 	this.setRestriction = [constants.MTGSets[constants.MTGSets.length - 1]];
 	this.isPublic = false;
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;
 	this.bots = 0;
+	this.maxTimer = 75;
 	this.maxPlayers = 8;
 	this.mythicPromotion = true;
 	this.boosterContent = {
@@ -110,6 +112,7 @@ function Session(id, owner) {
 	this.foil = false;
 	this.useCustomCardList = false;
 	this.customCardList = [];
+	this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
@@ -120,6 +123,8 @@ function Session(id, owner) {
 	this.boosters = [];
 	this.round = 0;
 	this.pickedCardsThisRound = 0;
+	this.countdown = 75;
+	this.countdownInterval = null;
 	this.disconnectedUsers = {};
 
 	this.winstonDraftState = null;
@@ -208,8 +213,8 @@ function Session(id, owner) {
 			isPublic: this.isPublic,
 			ignoreCollections: this.ignoreCollections,
 			boostersPerPlayer: this.boostersPerPlayer,
-			customBoosters: this.customBoosters,
 			bots: this.bots,
+			maxTimer: this.maxTimer,
 			maxPlayers: this.maxPlayers,
 			mythicPromotion: this.mythicPromotion,
 			boosterContent: this.boosterContent,
@@ -218,6 +223,8 @@ function Session(id, owner) {
 			foil: this.foil,
 			useCustomCardList: this.useCustomCardList,
 			customCardList: this.customCardList,
+			distributionMode: this.distributionMode,
+			customBoosters: this.customBoosters,
 			burnedCardsPerRound: this.burnedCardsPerRound,
 			draftLogRecipients: this.draftLogRecipients,
 			bracket: this.bracket,
@@ -448,8 +455,8 @@ function Session(id, owner) {
 			// Skip setting up standard collection if we're only using individual booster rules
 			if (!useCustomBoosters || !this.customBoosters.every((v) => v !== "")) {
 				localCollection = this.cardPoolByRarity();
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot) {
-					landSlot = LandSlot[this.setRestriction[0]];
+				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots) {
+					landSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
 					landSlot.setup(localCollection["common"]);
 				}
 
@@ -489,10 +496,14 @@ function Session(id, owner) {
 					} else {
 						// Compile necessary data for this set (Multiple boosters of the same set wil share it)
 						if (!usedSets[boosterRule]) {
+							// As booster distribution can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 							usedSets[boosterRule] = {
 								cardPool: this.setByRarity(boosterRule),
 								commonsByColor: {},
-								landSlot: LandSlot[boosterRule],
+								landSlot:
+									boosterRule in LandSlot.SpecialLandSlots
+										? LandSlot.SpecialLandSlots[boosterRule]
+										: LandSlot.BasicLandSlots[boosterRule],
 							};
 
 							// Check if we have enough card, considering maxDuplicate is a limiting factor
@@ -521,7 +532,7 @@ function Session(id, owner) {
 								}
 							}
 
-							if (usedSets[boosterRule].landSlot)
+							if (usedSets[boosterRule].landSlot && usedSets[boosterRule].landSlot.setup)
 								usedSets[boosterRule].landSlot.setup(usedSets[boosterRule].cardPool);
 						}
 						boosterRules.push(usedSets[boosterRule]);
@@ -530,9 +541,19 @@ function Session(id, owner) {
 
 				// Generate Boosters
 				this.boosters = [];
-				for (let boosterNumber = 0; boosterNumber < this.boostersPerPlayer; ++boosterNumber) {
+				if (this.distributionMode === "shufflePlayerBoosters") {
+					var boosterOrder = [];
 					for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
-						let booster = this.generateBooster(
+						let order = utils.range(0, this.boostersPerPlayer - 1);
+						shuffleArray(order);
+						boosterOrder.push(order);
+					}
+				}
+				for (let b = 0; b < this.boostersPerPlayer; ++b) {
+					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
+						const boosterNumber =
+							this.distributionMode === "shufflePlayerBoosters" ? boosterOrder[p][b] : b;
+						const booster = this.generateBooster(
 							boosterRules[boosterNumber].cardPool,
 							boosterRules[boosterNumber].commonsByColor,
 							targets,
@@ -542,6 +563,8 @@ function Session(id, owner) {
 						else return false;
 					}
 				}
+
+				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(this.boosters);
 			} else {
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
@@ -1185,9 +1208,8 @@ function Session(id, owner) {
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) this.nextBooster();
 	};
 
-	this.countdown = 75;
-	this.maxTimer = 75;
-	this.countdownInterval = null;
+	// Countdown Methods
+
 	this.startCountdown = function () {
 		let dec = Math.floor(this.maxTimer / 15);
 		this.countdown = this.maxTimer - this.round * dec;

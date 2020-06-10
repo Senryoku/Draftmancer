@@ -1141,7 +1141,7 @@ describe("Single Draft with custom boosters and bots", function () {
 			this.removeListener("sessionOptions");
 			done();
 		});
-		clients[0].emit("customBoosters", CustomBoosters);
+		clients[0].emit("setCustomBoosters", CustomBoosters);
 	});
 
 	let boosters = [];

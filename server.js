@@ -383,7 +383,20 @@ io.on("connection", function (socket) {
 		}
 	});
 
-	socket.on("customBoosters", function (customBoosters) {
+	socket.on("setDistributionMode", function (distributionMode) {
+		let sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
+
+		Sessions[sessionID].distributionMode = distributionMode;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID)
+				Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
+		}
+	});
+
+	socket.on("setCustomBoosters", function (customBoosters) {
 		let sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 

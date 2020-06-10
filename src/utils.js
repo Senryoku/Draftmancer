@@ -19,7 +19,7 @@ function getRandomKey(dict) {
 	return Object.keys(dict)[random.integer(0, Object.keys(dict).length - 1)];
 }
 
-// Returns [start, start + 1, ..., end]
+// Returns [start, start + step, ..., end]
 function range(start, end, step = 1) {
 	const len = Math.floor((end - start) / step) + 1;
 	return Array(len)

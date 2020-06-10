@@ -1,6 +1,12 @@
 "use strict";
 
-const ColorOrder = { W: 0, U: 1, B: 2, R: 3, G: 4 };
+const ColorOrder = {
+	W: 0,
+	U: 1,
+	B: 2,
+	R: 3,
+	G: 4,
+};
 function orderColor(lhs, rhs) {
 	if (!lhs || !rhs) return 0;
 	if (lhs.length == 1 && rhs.length == 1) return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
@@ -270,6 +276,7 @@ var app = new Vue({
 		ignoreCollections: false,
 		sessionUsers: [],
 		boostersPerPlayer: 3,
+		distributionMode: "regular",
 		customBoosters: ["", "", ""],
 		maxPlayers: 8,
 		mythicPromotion: true,
@@ -886,7 +893,9 @@ var app = new Vue({
 				!this.selectedCard ||
 				this.burningCards.length > this.burnedCardsPerRound ||
 				(this.burningCards.length !== this.burnedCardsPerRound &&
-					this.booster.length !== this.burningCards.length + 1) // Allows for burning less cards only if we're finishing the booster
+					this.booster.length !== this.burningCards.length + 1) // Allows for burning less cards
+				// only if we're finishing the
+				// booster
 			)
 				return;
 
@@ -897,7 +906,10 @@ var app = new Vue({
 
 			this.socket.emit(
 				"pickCard",
-				{ selectedCard: this.selectedCard.id, burnedCards: this.burningCards.map((c) => c.id) },
+				{
+					selectedCard: this.selectedCard.id,
+					burnedCards: this.burningCards.map((c) => c.id),
+				},
 				(answer) => {
 					if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
 				}
@@ -929,7 +941,10 @@ var app = new Vue({
 			}
 			this.socket.emit(
 				"pickCard",
-				{ selectedCard: this.selectedCard.id, burnedCards: this.burningCards.map((c) => c.id) },
+				{
+					selectedCard: this.selectedCard.id,
+					burnedCards: this.burningCards.map((c) => c.id),
+				},
 				(anwser) => {
 					if (anwser.code !== 0) alert(`pickCard: Unexpected answer:`, anwser);
 				}
@@ -1067,7 +1082,8 @@ var app = new Vue({
 						const collection_end = contents.indexOf("}}", collection_start) + 2;
 						const collStr = contents.slice(collection_start, collection_end);
 						const collJson = JSON.parse(collStr)["payload"];
-						//for (let c of Object.keys(collJson).filter((c) => !(c in app.cards))) console.log(c, " not found.");
+						// for (let c of Object.keys(collJson).filter((c) => !(c in
+						// app.cards))) console.log(c, " not found.");
 						return collJson;
 					} catch (e) {
 						Swal.fire({
@@ -1173,7 +1189,8 @@ var app = new Vue({
 						if (set === "dar") set = "dom";
 						if (set === "conf") set = "con";
 					}
-					// Note: The regex currently cannot catch this case. Without parenthesis, the collector number will be part of the name.
+					// Note: The regex currently cannot catch this case. Without
+					// parenthesis, the collector number will be part of the name.
 					if (number && !set) {
 						Swal.fire({
 							type: "warning",
@@ -1222,7 +1239,8 @@ var app = new Vue({
 							cardsPerBooster: {},
 							cards: {},
 						};
-						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
+						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName,
+						// '(Count)', Count
 						while (line < lines.length) {
 							let header = lines[line].match(headerRegex);
 							if (!header) {
@@ -2007,7 +2025,8 @@ var app = new Vue({
 								parsed[c]["image_uris"][l.code] = parsed[c]["image_uris"]["en"];
 						}
 					}
-					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
+					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't
+					// make everything reactive.
 
 					app.initialize();
 				} catch (e) {
@@ -2102,9 +2121,13 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
+		distributionMode: function () {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("setDistributionMode", this.distributionMode);
+		},
 		customBoosters: function () {
 			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("customBoosters", this.customBoosters);
+			this.socket.emit("setCustomBoosters", this.customBoosters);
 		},
 		bots: function () {
 			if (this.userID != this.sessionOwner) return;
