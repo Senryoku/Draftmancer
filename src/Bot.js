@@ -1,6 +1,6 @@
 "use strict";
 
-const Cards = require("../Cards");
+const Cards = require("./Cards");
 
 function Bot(name, id) {
 	this.name = name;

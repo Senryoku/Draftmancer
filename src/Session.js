@@ -1,15 +1,15 @@
 "use strict";
 
-const constants = require("./public/js/constants");
-const removeCardFromDict = require("./src/cardUtils").removeCardFromDict;
-const utils = require("./src/utils");
+const constants = require("../public/js/constants");
+const removeCardFromDict = require("./cardUtils").removeCardFromDict;
+const utils = require("./utils");
 const negMod = utils.negMod;
 const isEmpty = utils.isEmpty;
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
 const Cards = require("./Cards");
-const Bot = require("./src/Bot");
-const LandSlot = require("./src/LandSlot");
+const Bot = require("./Bot");
+const LandSlot = require("./LandSlot");
 
 // From https://stackoverflow.com/a/12646864
 // Modified to optionaly work only on the [start, end[ slice of array.

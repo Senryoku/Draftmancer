@@ -5,9 +5,9 @@ if (process.env.NODE_ENV !== "production") {
 }
 const AWS = require("aws-sdk");
 
-const ConnectionModule = require("../Connection");
+const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
-const SessionModule = require("../Session");
+const SessionModule = require("./Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 

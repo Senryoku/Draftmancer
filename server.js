@@ -15,12 +15,12 @@ const uuidv1 = require("uuid/v1");
 
 const constants = require("./public/js/constants");
 const Persistence = require("./src/Persistence");
-const ConnectionModule = require("./Connection");
+const ConnectionModule = require("./src/Connection");
 const Connections = ConnectionModule.Connections;
-const SessionModule = require("./Session");
+const SessionModule = require("./src/Session");
 const Session = SessionModule.Session;
 const Sessions = SessionModule.Sessions;
-const Cards = require("./Cards");
+const Cards = require("./src/Cards");
 
 app.use(compression());
 app.use(cookieParser());

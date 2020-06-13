@@ -6,7 +6,7 @@ process.env.PORT = process.env.PORT | 3001;
 let rewire = require("rewire");
 let expect = require("chai").expect;
 let server = rewire("../server"); // Rewire exposes internal variables of the module
-const Cards = require("./../Cards");
+const Cards = require("./../src/Cards");
 const randomjs = require("random-js");
 
 const NODE_PORT = process.env.PORT;

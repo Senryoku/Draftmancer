@@ -16,39 +16,16 @@ BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'public/data/MTGACards.json'
 SetsInfosPath = 'public/data/SetsInfos.json'
 BasicLandIDsPath = 'public/data/BasicLandIDs.json'
-RatingsSources = [
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR2.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR3.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR4.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR5.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR6.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR7.html',
-    'data/LimitedRatings/LimitedCardRatingsELD_M20_WAR8.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M19.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M192.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M193.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M194.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M195.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M196.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M197.html',
-    'data/LimitedRatings/LimitedCardRatingsRNA_GRN_M198.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN2.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN3.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN4.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN5.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN6.html',
-    'data/LimitedRatings/LimitedCardRatingsDOM_RIX_XLN7.html',
-    'data/LimitedRatings/Limited Card Ratings_THB.html',
-    'data/LimitedRatings/LimitedCardRatingsIKO.html'
-]
+RatingSourceFolder = 'data/LimitedRatings/'
 RatingsDest = 'data/ratings.json'
 
-ForceDownload = len(sys.argv) > 1 and sys.argv[1].lower() == "dl"
-ForceExtract = len(sys.argv) > 1 and sys.argv[1].lower() == "extract"
-ForceCache = len(sys.argv) > 1 and sys.argv[1].lower() == "cache"
-ForceRatings = len(sys.argv) > 1 and sys.argv[1].lower() == "ratings"
+ForceDownload = ForceExtract = ForceCache = ForceRatings = False
+if len(sys.argv) > 1:
+    Arg = sys.argv[1].lower()
+    ForceDownload = Arg == "dl"
+    ForceExtract = ForceDownload or Arg == "extract"
+    ForceCache = ForceExtract or Arg == "cache"
+    ForceRatings = Arg == "ratings"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFile = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))[0]
@@ -115,7 +92,7 @@ CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
     CardRatings = dict(CardRatings, **json.loads(file.read()))
 if not os.path.isfile(RatingsDest) or ForceRatings:
-    for path in RatingsSources:
+    for path in glob.glob('{}/*.html'.format(RatingSourceFolder)):
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
