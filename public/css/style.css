@@ -881,7 +881,8 @@ ul.player-list {
 	position: absolute;
 	left: 1em;
 	bottom: 1em;
-	font-size: 0.5em;
+	font-size: 0.6em;
+	font-weight: bold;
 	color: red;
 	background-color: rgba(255, 255, 255, 0.8);
 	padding: 0.2em;

@@ -5,6 +5,7 @@ import Card from "./components/Card.js";
 import DraftLogPick from "./components/DraftLogPick.js";
 import DraftLog from "./components/DraftLog.js";
 import DraftLogLive from "./components/DraftLogLive.js";
+import Collection from "./components/Collection.js";
 
 const ColorOrder = {
 	W: 0,
@@ -47,31 +48,6 @@ Vue.component("patch-notes", {
 		fetch("data/PatchNotes.json")
 			.then((response) => response.json())
 			.then((json) => (this.notes = json));
-	},
-});
-
-Vue.component("missingCard", {
-	template: `
-	<div class="card">
-		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
-			<img v-else src="img/missing.svg">
-			<div class="card-placeholder" slot="placeholder">
-				<div class="card-name">{{card.printed_name[language]}}</div>
-			</div>
-		</clazy-load>
-		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
-		<div class="card-count" v-if="card.count < 4">x{{4 - card.count}}</div>
-	</div>
-	`,
-	props: {
-		card: { type: Object, required: true },
-		language: { type: String, default: "en" },
-	},
-	created: function () {
-		// Preload Carback
-		const img = new Image();
-		img.src = "img/cardback.png";
 	},
 });
 
@@ -129,6 +105,7 @@ var app = new Vue({
 		DraftLogPick,
 		DraftLog,
 		DraftLogLive,
+		Collection,
 		Multiselect: window.VueMultiselect.default,
 		draggable: window.vuedraggable,
 		VueClazyLoad: window.VueClazyLoad,
@@ -222,11 +199,6 @@ var app = new Vue({
 		showSessionOptionsDialog: false,
 		displayBracket: false,
 		displayAbout: false,
-		// Collection Stats Modal
-		showCollectionStats: false,
-		statsMissingRarity: "rare",
-		statsShowNonBooster: false,
-		statsSelectedSet: "iko",
 
 		// Chat
 		currentChatMessage: "",
@@ -1687,43 +1659,6 @@ var app = new Vue({
 					});
 			}
 			return dSets;
-		},
-		collectionStats: function () {
-			if (!this.hasCollection || !this.cards || !this.setsInfos) return undefined;
-			let stats = [];
-			for (let id in this.cards) {
-				let card = this.genCard(id);
-				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
-					card.count = this.collection[id] ? this.collection[id] : 0;
-					if (!(card.set in stats))
-						stats[card.set] = {
-							name: card.set,
-							fullName: this.setsInfos[card.set].fullName,
-							cards: [],
-							cardCount: 0,
-							common: [],
-							uncommon: [],
-							rare: [],
-							mythic: [],
-							commonCount: 0,
-							uncommonCount: 0,
-							rareCount: 0,
-							mythicCount: 0,
-							total: {
-								unique: this.setsInfos[card.set].cardCount,
-								commonCount: this.setsInfos[card.set]["commonCount"],
-								uncommonCount: this.setsInfos[card.set]["uncommonCount"],
-								rareCount: this.setsInfos[card.set]["rareCount"],
-								mythicCount: this.setsInfos[card.set]["mythicCount"],
-							},
-						};
-					stats[card.set].cards.push(card);
-					stats[card.set].cardCount += card.count;
-					stats[card.set][card.rarity].push(card);
-					stats[card.set][card.rarity + "Count"] += card.count;
-				}
-			}
-			return stats;
 		},
 		hasCollection: function () {
 			return !isEmpty(this.collection);
