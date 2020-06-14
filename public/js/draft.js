@@ -1,4 +1,10 @@
 "use strict";
+import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import Modal from "./components/Modal.js";
+import Card from "./components/Card.js";
+import DraftLogPick from "./components/DraftLogPick.js";
+import DraftLog from "./components/DraftLog.js";
+import DraftLogLive from "./components/DraftLogLive.js";
 
 const ColorOrder = {
 	W: 0,
@@ -7,6 +13,7 @@ const ColorOrder = {
 	R: 3,
 	G: 4,
 };
+
 function orderColor(lhs, rhs) {
 	if (!lhs || !rhs) return 0;
 	if (lhs.length == 1 && rhs.length == 1) return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
@@ -43,58 +50,6 @@ Vue.component("patch-notes", {
 	},
 });
 
-Vue.component("modal", {
-	template: "#modal-template",
-	methods: {
-		close: function (e) {
-			if (e.target == e.currentTarget) this.$emit("close");
-		},
-		shortcuts: function (e) {
-			if (e.which === 27)
-				// Escape
-				this.$emit("close");
-		},
-	},
-	mounted: function () {
-		document.addEventListener("keydown", this.shortcuts);
-	},
-	beforeDestroy: function () {
-		document.removeEventListener("keydown", this.shortcuts);
-	},
-});
-
-Vue.component("card", {
-	template: `
-	<div class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
-		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected, burned: burned }" />
-			<img v-else src="img/missing.svg">
-			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
-				<div class="card-name">{{card.printed_name[language]}}</div>
-			</div>
-		</clazy-load>
-		<div v-if="!selected && canbeburned && !burned" class="burn-card red clickable" @click="burn($event, card)"><i class="fas fa-ban fa-2x"></i></div>
-		<div v-if="!selected && canbeburned && burned" class="restore-card blue clickable" @click="restore($event, card)"><i class="fas fa-undo-alt fa-2x"></i></div>
-	</div>
-	`,
-	props: {
-		card: { type: Object, required: true },
-		language: String,
-		selectcard: { type: Function, default: function () {} },
-		selected: Boolean,
-		ondblclick: { type: Function, default: function () {} },
-		burn: { type: Function, default: function () {} },
-		restore: { type: Function, default: function () {} },
-		canbeburned: { type: Boolean, default: false },
-		burned: { type: Boolean, default: false },
-	},
-	created: function () {
-		// Preload Carback
-		const img = new Image();
-		img.src = "img/cardback.png";
-	},
-});
-
 Vue.component("missingCard", {
 	template: `
 	<div class="card">
@@ -120,16 +75,6 @@ Vue.component("missingCard", {
 	},
 });
 
-Vue.component("draft-log-pick", {
-	template: `
-<div class="card-container">
-	<div is="card" v-for="(card, index) in pick.booster" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language" :class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}">
-	</div>
-</div>
-	`,
-	props: { pick: { type: Object, required: true } },
-});
-
 Vue.component("toggle", {
 	template: `
 <div class="checkbox-button" :data-checked="checked ? 'true' : 'false'" @click="$emit('click')">
@@ -144,79 +89,6 @@ Vue.component("toggle", {
 	props: {
 		id: { type: String, required: true },
 		checked: { type: Boolean, required: true },
-	},
-});
-
-Vue.component("draft-log-live", {
-	template: `
-		<div>
-			<template v-if="['owner', 'everyone'].includes($root.draftLogRecipients)">
-				<div v-if="player in draftlog.users">
-					<div class="draft-log-live-title">
-						<h2>Live Review: {{draftlog.users[player].userName}}</h2>
-						<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
-							<label>Pick #</label>  
-							<i :class="{disabled: pick <= 0}" class="fas fa-chevron-left clickable" @click="_ => { --pick; }"></i>
-							<select v-model="pick">
-								<option v-for="index in [...Array(draftlog.users[player].picks.length).keys()]" :value.number="index">{{index + 1}}</option>
-							</select>
-							<i :class="{disabled: pick >= draftlog.users[player].picks.length - 1}" class="fas fa-chevron-right clickable" @click="_ => { ++pick; }"></i>
-							<h2>{{ $root.cards[draftlog.users[player].picks[pick].pick].printed_name[$root.language] }}</h2>
-						</span>
-					</div>
-					<template v-if="draftlog.users[player].picks.length === 0">
-						Waiting for {{draftlog.users[player].userName}} to make their first pick...
-					</template>
-					<template v-else>
-						<div v-if="pick < draftlog.users[player].picks.length">
-							<draft-log-pick :pick="draftlog.users[player].picks[pick]"></draft-log-pick>
-						</div>
-					</template>
-				</div>
-				<p class="draft-log-live-instructions" v-else>
-					Click on a player to inspect their picks!
-				</p>
-			</template>
-			<template v-else>
-				<p class="draft-log-live-instructions">(Live review is only available when draft logs are immediatly send to the owner (Option set to 'Owner' or 'Everyone'))</p>
-			</template>
-		</div>
-	`,
-	props: {
-		draftlog: { type: Object, required: true },
-	},
-	data: (_) => {
-		return {
-			player: undefined,
-			pick: 0,
-			eventListeners: [],
-		};
-	},
-	mounted: function () {
-		const self = this;
-		const playerEls = document.querySelectorAll("ul.player-list li");
-		for (let el of playerEls) {
-			const callback = (e) => {
-				const id = el.dataset.userid;
-				self.setPlayer(id);
-			};
-			this.eventListeners.push({ element: el, callback: callback });
-			el.classList.add("clickable");
-			el.addEventListener("click", callback);
-		}
-	},
-	beforeDestroy: function () {
-		for (let tuple of this.eventListeners) {
-			tuple.element.removeEventListener("click", tuple.callback);
-			tuple.element.classList.remove("clickable");
-		}
-	},
-	methods: {
-		setPlayer: function (userID) {
-			if (!(userID in this.draftlog.users)) return;
-			this.player = userID;
-			this.pick = Math.max(0, Math.min(this.pick, this.draftlog.users[userID].picks.length - 1));
-		},
 	},
 });
 
@@ -252,6 +124,11 @@ VTooltip.VTooltip.options.defaultBoundariesElement = "window";
 var app = new Vue({
 	el: "#main-vue",
 	components: {
+		Modal,
+		Card,
+		DraftLogPick,
+		DraftLog,
+		DraftLogLive,
 		Multiselect: window.VueMultiselect.default,
 		draggable: window.vuedraggable,
 		VueClazyLoad: window.VueClazyLoad,
@@ -341,16 +218,10 @@ var app = new Vue({
 		deckColumn: [[], [], [], [], [], [], []],
 		sideboardColumn: [[], [], [], [], [], [], []],
 
+		displayedModal: "",
 		showSessionOptionsDialog: false,
 		displayBracket: false,
 		displayAbout: false,
-		// Draft Log Modal
-		displayDraftLog: false,
-		draftLogDisplayOptions: {
-			detailsUserID: undefined,
-			category: "Picks",
-			textList: false,
-		},
 		// Collection Stats Modal
 		showCollectionStats: false,
 		statsMissingRarity: "rare",
@@ -1303,15 +1174,6 @@ var app = new Vue({
 			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
 			this.fireToast("success", "Deck exported to clipboard!");
 		},
-		downloadLog: function () {
-			let draftLogFull = this.draftLog;
-			for (let e in this.draftLog.users) {
-				let cards = [];
-				for (let c of this.draftLog.users[e].cards) cards.push(this.cards[c]);
-				this.draftLog.users[e].exportString = exportMTGA(cards, null, this.language);
-			}
-			download(`DraftLog_${this.draftLog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
-		},
 		openLog: function (e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -1346,48 +1208,6 @@ var app = new Vue({
 				}
 			};
 			reader.readAsText(file);
-		},
-		exportSingleLog: function (id) {
-			let cards = [];
-			for (let c of this.draftLog.users[id].cards) cards.push(this.cards[c]);
-			copyToClipboard(exportMTGA(cards, null, this.language), null, "\t");
-			this.fireToast("success", "Card list exported to clipboard!");
-		},
-		downloadMPT: function (id) {
-			download(`DraftLog_${id}.txt`, exportToMagicProTools(this.cards, this.draftLog, id));
-		},
-		submitToMPT: function (id) {
-			fetch("https://magicprotools.com/api/draft/add", {
-				credentials: "omit",
-				headers: {
-					Accept: "application/json, text/plain, */*",
-					"Content-Type": "application/x-www-form-urlencoded",
-				},
-				referrer: "https://mtgadraft.herokuapp.com",
-				body: `draft=${encodeURI(
-					exportToMagicProTools(this.cards, this.draftLog, id)
-				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
-				method: "POST",
-				mode: "cors",
-			}).then(function (response) {
-				if (response.status !== 200) {
-					app.fireToast("error", "An error occured submiting log to MagicProTools.");
-				} else {
-					response.json().then(function (json) {
-						if (json.error) {
-							app.fireToast("error", `Error: ${json.error}.`);
-						} else {
-							if (json.url) {
-								copyToClipboard(json.url);
-								app.fireToast("success", "MagicProTools URL copied to clipboard.");
-								window.open(json.url, "_blank");
-							} else {
-								app.fireToast("error", "An error occured submiting log to MagicProTools.");
-							}
-						}
-					});
-				}
-			});
 		},
 		sessionURLToClipboard: function () {
 			copyToClipboard(
@@ -1909,24 +1729,6 @@ var app = new Vue({
 			return !isEmpty(this.collection);
 		},
 
-		extendedDraftLog: function () {
-			let extendedDraftLog = [];
-			for (let userID in this.draftLog.users) {
-				extendedDraftLog.push({
-					userID: userID,
-					userName: this.draftLog.users[userID].userName,
-					colors: this.colorsInCardIDList(this.draftLog.users[userID].cards),
-				});
-			}
-			while (Object.keys(extendedDraftLog).length < 8)
-				extendedDraftLog.push({
-					userID: "none",
-					userName: "(empty)",
-					colors: this.colorsInCardIDList([]),
-				});
-			return extendedDraftLog;
-		},
-
 		colorsInDeck: function () {
 			return this.colorsInCardPool(this.deck);
 		},
@@ -2190,13 +1992,6 @@ var app = new Vue({
 		},
 		enableNotifications: function () {
 			setCookie("enableNotifications", this.enableNotifications);
-		},
-		draftLog: {
-			deep: true,
-			handler() {
-				if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
-					this.draftLogDisplayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
-			},
 		},
 	},
 });

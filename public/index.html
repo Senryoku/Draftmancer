@@ -19,32 +19,7 @@
 	<link rel="stylesheet" href="css/tooltip.css" />
 
 	<script type="text/x-template" id="modal-template">
-	  <transition name="modal">
-		<div class="modal-mask">
-		  <div class="modal-wrapper" @click="close($event)">
-			<div class="modal-container">
 
-			  <div class="modal-header">
-				<slot name="header">
-				  ???
-				</slot>
-				<i @click="$emit('close')" class="fa fa-times fa-lg modal-default-button clickable" aria-hidden="true"></i>
-			  </div>
-
-			  <div class="modal-body">
-				<slot name="body">
-				  Loading...
-				</slot>
-			  </div>
-
-			  <div class="modal-footer">
-				<slot name="footer">
-				</slot>
-			  </div>
-			</div>
-		  </div>
-		</div>
-	  </transition>
 	</script>
 </head>
 <body>
@@ -238,7 +213,7 @@
 			</template>
 			<div>
 				<button @click="shareSavedDraftLog" v-show="savedDraftLog" v-tooltip="'Reveal and share previous draft log with players in your session.'">Share saved Draft Log</button>
-				<button @click="displayDraftLog = !displayDraftLog" v-show="draftLog" v-tooltip="'Displays logs of your previous draft'">Draft Log</button>
+				<button @click="displayedModal = 'draftLog'" v-show="draftLog" v-tooltip="'Displays logs of your previous draft'">Draft Log</button>
 			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
@@ -452,70 +427,9 @@
 				</div>
 			</div>
 		</div>
-		<modal v-if="displayDraftLog && draftLog" @close="displayDraftLog = false">
-			<h2 slot="header">
-				Draft Log
-				<span v-if="draftLog.sessionID">for Session '{{draftLog.sessionID}}'</span>
-				<span v-if="draftLog.time">({{new Date(draftLog.time).toLocaleString()}})</span>
-				<button type="button" @click="downloadLog">Download full log</button>
-			</h2>
-			<div slot="body">
-				<p>Click on a player to display the details of their draft.</p>
-				
-				<div>
-					<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
-						<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == draftLogDisplayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { draftLogDisplayOptions.detailsUserID = log.userID; } }">
-							{{log.userName}}
-							<span>
-								<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" v-tooltip="log.colors['W']">
-								<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" v-tooltip="log.colors['U']">
-								<img src="img/mana/B.svg" class="mana-icon" v-if="log.colors['B'] >= 10" v-tooltip="log.colors['B']">
-								<img src="img/mana/R.svg" class="mana-icon" v-if="log.colors['R'] >= 10" v-tooltip="log.colors['R']">
-								<img src="img/mana/G.svg" class="mana-icon" v-if="log.colors['G'] >= 10" v-tooltip="log.colors['G']">
-							</span>
-						</li>
-					</ul>
-				</div>
-				
-				<div v-if="Object.keys(draftLog.users).includes(draftLogDisplayOptions.detailsUserID)" :set="log = draftLog.users[draftLogDisplayOptions.detailsUserID]">
-					<h2>{{log.userName}}</h2>
-					<select v-model="draftLogDisplayOptions.category">
-						<option>Picks</options>
-						<option>Cards<options>
-						<option>Cards (CMC Columns)<options>
-					</select>
-					<button @click="exportSingleLog(log.userID)">Export in MTGA format</button>
-					<button @click="downloadMPT(log.userID)">Download in MTGO format</button>
-					<button @click="submitToMPT(log.userID)">Submit to MagicProTools</button></h1>
-					
-					<template v-if="draftLogDisplayOptions.category == 'Picks'">
-						<div v-for="(pick, index) in log.picks">
-							<h3>Pick {{index + 1}}: {{cards[pick.pick].name}}</h3>
-							<draft-log-pick :pick="pick"></draft-log-pick>
-						</div>
-					</template>
-					<template v-else-if="draftLogDisplayOptions.category == 'Cards (CMC Columns)'">
-						<div class="card-container card-columns">
-							<div v-for="cmc_column in idColumnCMC(log.cards)" class="cmc-column">
-								<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language"></figure>
-							</div>
-						</div>
-					</template>
-					<template v-else>
-						<input type="checkbox" name="draft-log-card-list" v-model="draftLogDisplayOptions.textList"><label for="draft-log-card-list">Show simple card list</label>
-						<template v-if="draftLogDisplayOptions.textList">
-							<ol class="draft-log-boosters-list">
-								<li v-for="card in log.cards">{{cards[card].printed_name[language]}}</li>
-							</ol>
-						</template>
-						<template v-else>
-							<div class="card-container">
-								<figure is="card" v-for="(card, index) in log.cards" v-bind:key="index" v-bind:card="cards[card]" v-bind:language="language"></figure>
-							</div>
-						</template>
-					</template>
-				</div>
-			</div>
+		<modal  v-if="displayedModal === 'draftLog' && draftLog" @close="displayedModal = ''">
+			<h2 slot="header">Draft Log</h2>
+			<draft-log slot="body" :draftlog="draftLog"></draft-log>
 		</modal>
 		<modal v-if="showCollectionStats" @close="showCollectionStats = false">
 			<h2 slot="header">Collection Statistics</h2>
@@ -746,18 +660,18 @@
 		</div>
 	</div>
 	
-	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
 	<script src="https://unpkg.com/v-tooltip"></script>
 	<script src="socket.io/socket.io.js"></script>
-	<script type="text/javascript" src="js/helper.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 	<script src="https://unpkg.com/vue-multiselect@2.1.6"></script>
 	<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 	<script type="text/javascript" src="js/vue-clazy-load.js"></script>
 	<script type="text/javascript" src="js/constants.js"></script>
+	<script type="module" src="./js/helper.js"></script>
 	<script type="text/javascript" src="js/cookies.js"></script>
-	<script type="text/javascript" src="js/draft.js"></script>
+	<script type="module" src="js/draft.js"></script>
 </body>
 </html>

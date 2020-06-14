@@ -1,21 +1,21 @@
-function clone(obj) {
+export function clone(obj) {
 	return JSON.parse(JSON.stringify(obj));
 }
 
-function isEmpty(obj) {
+export function isEmpty(obj) {
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) return false;
 	}
 	return true;
 }
 
-function arrayRemove(arr, value) {
+export function arrayRemove(arr, value) {
 	return arr.filter(function (ele) {
 		return ele != value;
 	});
 }
 
-function guid() {
+export function guid() {
 	function s4() {
 		return Math.floor((1 + Math.random()) * 0x10000)
 			.toString(16)
@@ -24,7 +24,7 @@ function guid() {
 	return s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4();
 }
 
-function shortguid() {
+export function shortguid() {
 	function s4() {
 		return Math.floor((1 + Math.random()) * 0x10000)
 			.toString(16)
@@ -33,7 +33,7 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
-function getUrlVars() {
+export function getUrlVars() {
 	var vars = {};
 	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
 		vars[key] = value;
@@ -42,7 +42,7 @@ function getUrlVars() {
 }
 
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
-const copyToClipboard = (str) => {
+export const copyToClipboard = (str) => {
 	const el = document.createElement("textarea"); // Create a <textarea> element
 	el.value = str; // Set its value to the string that you want copied
 	el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
@@ -63,7 +63,7 @@ const copyToClipboard = (str) => {
 	}
 };
 
-function cardToMTGAExport(c, language) {
+export function cardToMTGAExport(c, language) {
 	let set = c.set.toUpperCase();
 	if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
 	if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
@@ -76,7 +76,7 @@ function cardToMTGAExport(c, language) {
 	return `1 ${name} (${set}) ${c.collector_number}\n`;
 }
 
-function exportMTGA(deck, sideboard, language, lands) {
+export function exportMTGA(deck, sideboard, language, lands) {
 	let str = "Deck\n";
 	for (let c of deck) str += cardToMTGAExport(c, language);
 	if (lands) {
@@ -91,7 +91,7 @@ function exportMTGA(deck, sideboard, language, lands) {
 	return str;
 }
 
-function exportToMagicProTools(cardsdb, draftLog, userID) {
+export function exportToMagicProTools(cardsdb, draftLog, userID) {
 	let str = "";
 	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
 	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
@@ -126,7 +126,7 @@ function exportToMagicProTools(cardsdb, draftLog, userID) {
 	return str;
 }
 
-function download(filename, text) {
+export function download(filename, text) {
 	var element = document.createElement("a");
 	element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
 	element.setAttribute("download", filename);
