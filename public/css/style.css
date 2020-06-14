@@ -365,7 +365,7 @@ a:hover {
 	cursor: pointer;
 
 	height: 25px;
-	box-shadow: inset 1px 1px 4px 0 #BBB, inset -1px -1px 4px 0 #222;
+	box-shadow: inset 1px 1px 4px 0 #bbb, inset -1px -1px 4px 0 #222;
 }
 
 .checkbox-button:hover {
@@ -373,7 +373,7 @@ a:hover {
 }
 
 .checkbox-button[data-checked="true"] {
-	box-shadow: 0px 0px 3px 2px #CCC, inset 1px 1px 4px 0 #222, inset -1px -1px 4px 0 #BBB;
+	box-shadow: 0px 0px 3px 2px #ccc, inset 1px 1px 4px 0 #222, inset -1px -1px 4px 0 #bbb;
 }
 
 .checkbox-button label {
@@ -620,7 +620,7 @@ ul.player-list {
 
 .move-player {
 	color: #555;
-	font-size; 0.8em;
+	/*font-size: 0.8em;*/
 }
 
 .move-player-left {
@@ -869,7 +869,8 @@ ul.player-list {
 	text-align: center;
 }
 
-.burn-card, .restore-card {
+.burn-card,
+.restore-card {
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -958,7 +959,7 @@ ul.player-list {
 .cmc-column > div {
 	height: 25px;
 	margin: 0;
-	/*overflow: hidden*/;
+	/*overflow: hidden*/
 }
 
 .card-column > div:hover,

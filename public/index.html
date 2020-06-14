@@ -29,6 +29,7 @@
 			<span>Loading cards data...</span>
 		</div>
 		
+		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label><input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
@@ -71,6 +72,8 @@
 				</span>
 			</span>
 		</div>
+
+		<!-- Session Options -->
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
@@ -131,6 +134,8 @@
 				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">Stop Draft</button>
 			</div>
 		</div>
+
+		<!-- Session Players -->
 		<div class="main-controls session-players">
 			<div v-if="!ownerIsPlayer" class="generic-container" v-tooltip="'Non-playing session owner.'" style="margin-right: 0.5em">
 				{{sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}} <i class="fas fa-crown subtle-gold" v-tooltip="sessionOwnerUsername ? `${sessionOwnerUsername} is the session's owner.` : 'Session owner is disconnected.'"></i>
@@ -234,6 +239,8 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Draft Controls -->
 		<template v-if="drafting">
 			<div v-show="draftingState == DraftState.Watching" class="draft-watching">
 				<div class="draft-watching-state">
@@ -255,8 +262,7 @@
 					<span v-else>Pick a card<span v-if="cardsToBurnThisRound > 0"> and remove {{cardsToBurnThisRound}} cards from the pool ({{burningCards.length}}/{{cardsToBurnThisRound}})</span></span>
 				</div>
 				<div class="booster card-container">
-					<div is="card" v-for="(card, index) in booster" v-bind:key="`${index}-${card.id}`" v-bind:card="card" v-bind:language="language" v-bind:selectcard="selectCard" v-bind:ondblclick="doubleClickCard" v-bind:selected="selectedCard === card" :canbeburned="burnedCardsPerRound > 0" :burned="burningCards.includes(card)" :burn="burnCard" :restore="restoreCard">
-					</div>
+					<card v-for="(card, index) in booster" :key="`${index}-${card.id}`" :card="card" :language="language" :selectcard="selectCard" :ondblclick="doubleClickCard" :selected="selectedCard === card" :canbeburned="burnedCardsPerRound > 0" :burned="burningCards.includes(card)" :burn="burnCard" :restore="restoreCard"></card>
 				</div>
 			</div>
 			<!-- Winston Draft -->
@@ -276,7 +282,7 @@
 					<div v-for="(pile, index) in winstonDraftState.piles" class="winston-pile" :class="{'winston-current-pile': index === winstonDraftState.currentPile}">
 						<template v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile">
 							<div class="card-column winstom-card-column">
-								<figure is="card" v-for="card in pile" :key="card.uniqueID" v-bind:card="card" v-bind:language="language"></figure>
+								<card v-for="card in pile" :key="card.uniqueID" :card="card" :language="language"></card>
 							</div>
 							<div class="winston-current-pile-options">
 								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
@@ -295,8 +301,10 @@
 				</div>
 			</div>
 		</template>
+
+		<!-- Brewing controls (Deck & Sideboard) -->
 		<div class="container" v-show="(deck !== undefined && deck.length > 0) || (drafting && draftingState !== DraftState.Watching) || this.draftingState == DraftState.Brewing">
-			<div id="brewing-controls" class="controls">
+			<div class="controls">
 				<h2>Deck ({{deck.length}})</h2>
 				<label for="card-order">Card Display</label>
 				<select v-model="cardOrder" name="card-order">
@@ -325,7 +333,7 @@
 				</div>
 				<template v-if="cardOrder == 'DraggableCMC'">
 					<draggable v-for="(column, colIdx) in deckColumn" :key="'deck'+colIdx" class="cmc-column drag-column" :list="column" group="cardColumn" @change="columnDeckChange">
-					   <figure is="card" v-for="card in column" :key="card.uniqueID" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+					   <card" v-for="card in column" :key="card.uniqueID" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 					</draggable>
 					<div class="draggable-controls">
 						<div @click="addDeckColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
@@ -334,22 +342,22 @@
 				</template>
 				<template v-else-if="cardOrder == 'CMCColumns'">
 					<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
-						<figure is="card" v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+						<card v-for="(card, index) in cmc_column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 					</div>
 				</template>
 				<template v-else-if="cardOrder == 'ColorColumns'">
 					<div v-for="column in deckColumnColor" class="cmc-column" v-show="column.length > 0">
-						<figure is="card" v-for="(card, index) in column" v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+						<card v-for="(card, index) in column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 					</div>
 				</template>
 				<template v-else>
-					<figure is="card" v-for="(card, index) in {'CMC': deckCMC, 'Color': deckColor, 'Rarity': deckRarity, '': deck}[cardOrder]" 
-						v-bind:key="index" v-bind:card="card" v-bind:language="language" v-bind:selectcard="deckToSideboard"></figure>
+					<card v-for="(card, index) in {'CMC': deckCMC, 'Color': deckColor, 'Rarity': deckRarity, '': deck}[cardOrder]" 
+						:key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 				</template>
 			</div>
 		</div>
-		<div v-show="(sideboard != undefined && sideboard.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing" id="card-pool-container" class="container">
-			<div id="card-pool-controls" class="controls">
+		<div v-show="(sideboard != undefined && sideboard.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing" class="container">
+			<div class="controls">
 				<h2>Sideboard (<span id="sideboard-length" style="display:inline-block">{{sideboard.length}}</span>)</h2>
 			</div>
 			<div class="card-container" :class="['CMCColumns', 'ColorColumns', 'DraggableCMC'].includes(cardOrder) ? 'card-columns' : 'card-pool'">
@@ -382,6 +390,7 @@
 				</template>
 			</div>
 		</div>
+
 		<div class="welcome" v-if="draftingState === undefined">
 			<h1>Welcome to MTGADraft!</h1>
 			<p class="important">
@@ -427,6 +436,7 @@
 				</div>
 			</div>
 		</div>
+
 		<modal  v-if="displayedModal === 'draftLog' && draftLog" @close="displayedModal = ''">
 			<h2 slot="header">Draft Log</h2>
 			<draft-log slot="body" :draftlog="draftLog"></draft-log>
@@ -660,8 +670,8 @@
 		</div>
 	</div>
 	
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="https://unpkg.com/v-tooltip"></script>
 	<script src="socket.io/socket.io.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
@@ -670,7 +680,6 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 	<script type="text/javascript" src="js/vue-clazy-load.js"></script>
 	<script type="text/javascript" src="js/constants.js"></script>
-	<script type="module" src="./js/helper.js"></script>
 	<script type="text/javascript" src="js/cookies.js"></script>
 	<script type="module" src="js/draft.js"></script>
 </body>
