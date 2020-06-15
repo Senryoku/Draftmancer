@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import * as Constant from "./constants.json";
 import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import Modal from "./components/Modal.js";
+import Modal from "./components/Modal.vue";
 import Card from "./components/Card.js";
 import DraftLogPick from "./components/DraftLogPick.js";
 import DraftLog from "./components/DraftLog.js";

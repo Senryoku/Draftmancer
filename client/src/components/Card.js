@@ -16,15 +16,15 @@ export default {
 	props: {
 		card: { type: Object, required: true },
 		language: String,
-		selectcard: { type: Function, default: function () {} },
+		selectcard: { type: Function, default: function() {} },
 		selected: Boolean,
-		ondblclick: { type: Function, default: function () {} },
-		burn: { type: Function, default: function () {} },
-		restore: { type: Function, default: function () {} },
+		ondblclick: { type: Function, default: function() {} },
+		burn: { type: Function, default: function() {} },
+		restore: { type: Function, default: function() {} },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
 	},
-	created: function () {
+	created: function() {
 		// Preload Carback
 		const img = new Image();
 		img.src = "img/cardback.png";
@@ -50,7 +50,7 @@ export const MissingCard = {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
 	},
-	created: function () {
+	created: function() {
 		// Preload Carback
 		const img = new Image();
 		img.src = "img/cardback.png";
