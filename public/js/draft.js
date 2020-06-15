@@ -1719,9 +1719,8 @@ var app = new Vue({
 	mounted: async function () {
 		// Load all card informations
 		fetch("data/MTGACards.json").then(function (response) {
-			response.text().then(function (text) {
+			response.json().then(function (parsed) {
 				try {
-					let parsed = JSON.parse(text);
 					for (let c in parsed) {
 						if (!("in_booster" in parsed[c])) parsed[c].in_booster = true;
 						for (let l of app.languages) {
@@ -1731,8 +1730,7 @@ var app = new Vue({
 								parsed[c]["image_uris"][l.code] = parsed[c]["image_uris"]["en"];
 						}
 					}
-					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't
-					// make everything reactive.
+					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
 
 					app.initialize();
 				} catch (e) {
@@ -1743,9 +1741,9 @@ var app = new Vue({
 
 		// Load set informations
 		fetch("data/SetsInfos.json").then(function (response) {
-			response.text().then(function (text) {
+			response.json().then(function (json) {
 				try {
-					app.setsInfos = Object.freeze(JSON.parse(text));
+					app.setsInfos = Object.freeze(json);
 				} catch (e) {
 					alert(e);
 				}
