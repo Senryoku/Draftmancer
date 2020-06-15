@@ -1,11 +1,4 @@
-import * as helper from "./../helper.js";
-import Card from "./Card.js";
-import DraftLogPick from "./DraftLogPick.js";
-
-export default {
-	name: "DraftLog",
-	components: { Card, DraftLogPick },
-	template: `
+<template>
 	<div>
 		<span v-if="draftlog.sessionID">Draft log for Session '{{draftlog.sessionID}}'</span>
 		<span v-if="draftlog.time">({{new Date(draftlog.time).toLocaleString()}})</span>
@@ -14,14 +7,10 @@ export default {
 		
 		<div>
 			<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
-				<li v-for="log of extendedDraftLog" :class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }">
+				<li v-for="(log, index) of extendedDraftLog" :key="index" :class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }">
 					{{log.userName}}
 					<span>
-						<img src="img/mana/W.svg" class="mana-icon" v-if="log.colors['W'] >= 10" v-tooltip="log.colors['W']">
-						<img src="img/mana/U.svg" class="mana-icon" v-if="log.colors['U'] >= 10" v-tooltip="log.colors['U']">
-						<img src="img/mana/B.svg" class="mana-icon" v-if="log.colors['B'] >= 10" v-tooltip="log.colors['B']">
-						<img src="img/mana/R.svg" class="mana-icon" v-if="log.colors['R'] >= 10" v-tooltip="log.colors['R']">
-						<img src="img/mana/G.svg" class="mana-icon" v-if="log.colors['G'] >= 10" v-tooltip="log.colors['G']">
+						<img v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)" :key="c" :src="'img/mana/'+c+'.svg'" class="mana-icon" v-tooltip="log.colors[c]">
 					</span>
 				</li>
 			</ul>
@@ -39,14 +28,14 @@ export default {
 			<button @click="submitToMPT(selectedLog.userID)">Submit to MagicProTools</button></h1>
 			
 			<template v-if="displayOptions.category == 'Picks'">
-				<div v-for="(pick, index) in selectedLog.picks">
+				<div v-for="(pick, index) in selectedLog.picks" :key="index">
 					<h3>Pick {{index + 1}}: {{$root.cards[pick.pick].name}}</h3>
 					<draft-log-pick :pick="pick"></draft-log-pick>
 				</div>
 			</template>
 			<template v-else-if="displayOptions.category == 'Cards (CMC Columns)'">
 				<div class="card-container card-columns">
-					<div v-for="cmc_column in $root.idColumnCMC(selectedLog.cards)" class="cmc-column">
+					<div v-for="(cmc_column, colIndex) in $root.idColumnCMC(selectedLog.cards)" :key="colIndex" class="cmc-column">
 						<card v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language"></card>
 					</div>
 				</div>
@@ -55,7 +44,7 @@ export default {
 				<input type="checkbox" name="draft-log-card-list" v-model="displayOptions.textList"><label for="draft-log-card-list">Show simple card list</label>
 				<template v-if="displayOptions.textList">
 					<ol class="draft-log-boosters-list">
-						<li v-for="card in selectedLog.cards">{{$root.cards[card].printed_name[$root.language]}}</li>
+						<li v-for="card in selectedLog.cards" :key="card.uniqueID">{{$root.cards[card].printed_name[$root.language]}}</li>
 					</ol>
 				</template>
 				<template v-else>
@@ -66,7 +55,16 @@ export default {
 			</template>
 		</div>
 	</div>
-`,
+</template>
+
+<script>
+import * as helper from "./../helper.js";
+import Card from "./Card.vue";
+import DraftLogPick from "./DraftLogPick.vue";
+
+export default {
+	name: "DraftLog",
+	components: { Card, DraftLogPick },
 	props: { draftlog: { type: Object, required: true } },
 	data: () => {
 		return {
@@ -169,3 +167,5 @@ export default {
 		},
 	},
 };
+
+</script>

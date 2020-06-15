@@ -1,5 +1,6 @@
 const path = require("path");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
 	mode: "production",
@@ -25,8 +26,11 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [new VueLoaderPlugin()],
-	// Includes VueJS compiler - TEMP! Switching to precompiled templates
+	plugins: [
+		new VueLoaderPlugin(),
+		/*new BundleAnalyzerPlugin()*/
+	],
+	// Includes VueJS compiler - Could be removed by switching to precompiled templates... which means refactor everything in index.html to gain these 20kb \o/
 	resolve: {
 		alias: {
 			vue$: "vue/dist/vue.esm.js",

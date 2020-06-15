@@ -39,6 +39,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
+-   Load translations on-demand.
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State)

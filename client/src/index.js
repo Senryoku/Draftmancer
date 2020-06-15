@@ -10,12 +10,14 @@ import * as Constant from "./constants.json";
 import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
-import Card from "./components/Card.js";
-import DraftLogPick from "./components/DraftLogPick.js";
-import DraftLog from "./components/DraftLog.js";
-import DraftLogLive from "./components/DraftLogLive.js";
-import Collection from "./components/Collection.js";
-import Bracket from "./components/Bracket.js";
+import Card from "./components/Card.vue";
+import DraftLogPick from "./components/DraftLogPick.vue";
+import DraftLog from "./components/DraftLog.vue";
+import DraftLogLive from "./components/DraftLogLive.vue";
+import Collection from "./components/Collection.vue";
+import Bracket from "./components/Bracket.vue";
+import PatchNotes from "./components/PatchNotes.vue";
+import Toggle from "./components/Toggle.vue";
 
 const ColorOrder = {
 	W: 0,
@@ -38,45 +40,6 @@ const SwalCustomClasses = {
 	title: "custom-swal-title",
 	content: "custom-swal-content",
 };
-
-Vue.component("patch-notes", {
-	template: `
-	<ol class="patch-notes">
-		<li v-for="pn in notes">{{pn.date}}
-			<ul>
-				<li v-for="n in pn.notes" v-html="n"></li>
-			</ul>
-		</li>
-	</ol>
-	`,
-	data: function () {
-		return {
-			notes: [],
-		};
-	},
-	mounted: function () {
-		fetch("data/PatchNotes.json")
-			.then((response) => response.json())
-			.then((json) => (this.notes = json));
-	},
-});
-
-Vue.component("toggle", {
-	template: `
-<div class="checkbox-button" :data-checked="checked ? 'true' : 'false'" @click="$emit('click')">
-	<input :id="id" type="checkbox" :checked="checked" class="checkbox-button" @change="$emit('change', $event.target.checked)" />
-	<label :for="id"><slot></slot></label>
-</div>
-`,
-	model: {
-		prop: "checked",
-		event: "change",
-	},
-	props: {
-		id: { type: String, required: true },
-		checked: { type: Boolean, required: true },
-	},
-});
 
 const DraftState = {
 	Waiting: "Waiting",
@@ -111,12 +74,14 @@ var app = new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
+		Toggle,
 		Card,
 		DraftLogPick,
 		DraftLog,
 		DraftLogLive,
 		Collection,
 		Bracket,
+		PatchNotes,
 		draggable,
 		Multiselect,
 	},
@@ -1223,7 +1188,7 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		randomizeSeating: function (userID, dir) {
+		randomizeSeating: function () {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("randomizeSeating");
 		},
