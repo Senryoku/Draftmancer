@@ -84,7 +84,7 @@
 					<i class="far fa-fw clickable" :class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'" @click="hideSessionID = !hideSessionID" v-tooltip="'Show/Hide your session ID.'"></i>
 					<i class="fas fa-share-square clickable" style="padding:4px" v-tooltip="'Share your Session ID'" @click="sessionURLToClipboard"></i>
 					<i class="fas fa-project-diagram clickable" v-if="sessionOwner === userID && !bracket" @click="generateBracket" v-tooltip="'Generate Bracket.'"></i>
-					<i class="fas fa-project-diagram clickable" v-if="bracket" @click="displayBracket = true" v-tooltip="'Display Bracket.'"></i>
+					<i class="fas fa-project-diagram clickable" v-if="bracket" @click="displayedModal = 'bracket'" v-tooltip="'Display Bracket.'"></i>
 					<i class="fas fa-user-check clickable" v-if="sessionOwner === userID" @click="readyCheck" v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"></i>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
@@ -587,26 +587,9 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="displayBracket" @close="displayBracket = false">
+		<modal v-if="displayedModal === 'bracket'" @close="displayedModal = ''">
 			<h2 slot="header">Bracket <button v-if="userID === sessionOwner" @click="generateBracket">Re-Generate Bracket</button></h2>
-			<div slot="body">
-				<div class="bracket" v-if="bracket">
-					<div class="bracket-column" v-for="col in matches">
-						<div v-for="m in col" class="bracket-match">
-							<div v-for="(p, index) in m.players">
-								<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-								<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD)</div>
-								<div class="bracket-player" :class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}" v-else>
-									<div class="bracket-player-name">{{p}}</div> 
-									<template v-if="m.isValid()">
-										<input v-if="userID === sessionOwner" class="small-number-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="updateBracket"></input>
-										<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
-									</template></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<bracket slot="body" :bracket="bracket" :editable="userID === sessionOwner" @updated="updateBracket"></bracket>
 		</modal>
 		<modal v-if="displayAbout" @close="displayAbout = false">
 			<h2 slot="header">About</h2>

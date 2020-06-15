@@ -6,6 +6,7 @@ import DraftLogPick from "./components/DraftLogPick.js";
 import DraftLog from "./components/DraftLog.js";
 import DraftLogLive from "./components/DraftLogLive.js";
 import Collection from "./components/Collection.js";
+import Bracket from "./components/Bracket.js";
 
 const ColorOrder = {
 	W: 0,
@@ -106,6 +107,7 @@ var app = new Vue({
 		DraftLog,
 		DraftLogLive,
 		Collection,
+		Bracket,
 		Multiselect: window.VueMultiselect.default,
 		draggable: window.vuedraggable,
 		VueClazyLoad: window.VueClazyLoad,
@@ -197,7 +199,6 @@ var app = new Vue({
 
 		displayedModal: "",
 		showSessionOptionsDialog: false,
-		displayBracket: false,
 		displayAbout: false,
 
 		// Chat
@@ -698,6 +699,46 @@ var app = new Vue({
 			this.currentChatMessage = "";
 		},
 		// Draft Methods
+
+		startDraft: function () {
+			if (this.userID != this.sessionOwner) return;
+			if (this.deck.length > 0) {
+				Swal.fire({
+					title: "Are you sure?",
+					text: "Launching a draft will reset everyones cards/deck!",
+					type: "warning",
+					showCancelButton: true,
+					customClass: SwalCustomClasses,
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					confirmButtonText: "I'm sure!",
+				}).then((result) => {
+					if (result.value) {
+						this.socket.emit("startDraft");
+					}
+				});
+			} else {
+				this.socket.emit("startDraft");
+			}
+		},
+		stopDraft: function () {
+			if (this.userID != this.sessionOwner) return;
+			const self = this;
+			Swal.fire({
+				title: "Are you sure?",
+				text: "Do you really want to stop the draft here?",
+				type: "warning",
+				showCancelButton: true,
+				customClass: SwalCustomClasses,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "I'm sure!",
+			}).then((result) => {
+				if (result.value) {
+					self.socket.emit("stopDraft");
+				}
+			});
+		},
 		selectCard: function (e, c) {
 			this.selectedCard = c;
 			this.restoreCard(null, c);
@@ -719,16 +760,6 @@ var app = new Vue({
 		doubleClickCard: function (e, c) {
 			this.selectCard(e, c);
 			if (this.pickOnDblclick) this.pickCard();
-		},
-		addToDeck: function (card) {
-			// Handle column sync.
-			this.deck.push(card);
-			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
-		},
-		addToSideboard: function (card) {
-			// Handle column sync.
-			this.sideboard.push(card);
-			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
 		},
 		pickCard: function () {
 			if (
@@ -856,48 +887,6 @@ var app = new Vue({
 				if (answer.code !== 0) alert("Error: ", answer.error);
 			});
 		},
-		checkNotificationPermission: function (e) {
-			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
-				Notification.requestPermission().then(function (permission) {
-					this.notificationPermission = permission;
-					if (permission != "granted") {
-						this.enableNotifications = false;
-					}
-				});
-			}
-		},
-		deckToSideboard: function (e, c) {
-			// From deck to sideboard
-			let idx = this.deck.indexOf(c);
-			if (idx >= 0) {
-				this.deck.splice(idx, 1);
-				this.addToSideboard(c);
-			} else return;
-
-			for (let col of this.deckColumn) {
-				let idx = col.indexOf(c);
-				if (idx >= 0) {
-					col.splice(idx, 1);
-					break;
-				}
-			}
-		},
-		sideboardToDeck: function (e, c) {
-			// From sideboard to deck
-			let idx = this.sideboard.indexOf(c);
-			if (idx >= 0) {
-				this.sideboard.splice(idx, 1);
-				this.addToDeck(c);
-			} else return;
-
-			for (let col of this.sideboardColumn) {
-				let idx = col.indexOf(c);
-				if (idx >= 0) {
-					col.splice(idx, 1);
-					break;
-				}
-			}
-		},
 		// Collection management
 		setCollection: function (json) {
 			if (this.collection == json) return;
@@ -990,20 +979,6 @@ var app = new Vue({
 				}
 			};
 			reader.readAsText(file);
-		},
-		fireToast: function (type, title) {
-			Swal.fire({
-				toast: true,
-				position: "top-end",
-				type: type,
-				title: title,
-				customClass: SwalCustomClasses,
-				showConfirmButton: false,
-				timer: 2000,
-			});
-		},
-		disconnectedReminder: function () {
-			this.fireToast("error", "Disconnected from server!");
 		},
 		parseCustomCardList: function (e) {
 			let file = e.target.files[0];
@@ -1181,14 +1156,6 @@ var app = new Vue({
 			};
 			reader.readAsText(file);
 		},
-		sessionURLToClipboard: function () {
-			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(
-					this.sessionID
-				)}`
-			);
-			this.fireToast("success", "Session link copied to clipboard!");
-		},
 		toggleSetRestriction: function (code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
@@ -1252,6 +1219,30 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("randomizeSeating");
 		},
+		sealedDialog: async function () {
+			if (this.userID != this.sessionOwner) return;
+			const { value: boosterCount } = await Swal.fire({
+				title: "Start Sealed",
+				showCancelButton: true,
+				text: "How many booster for each player?",
+				inputPlaceholder: "Booster count",
+				input: "number",
+				inputAttributes: {
+					min: 4,
+					max: 12,
+					step: 1,
+				},
+				inputValue: 6,
+				customClass: SwalCustomClasses,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Distribute boosters",
+			});
+
+			if (boosterCount) {
+				this.distributeSealed(boosterCount);
+			}
+		},
 		distributeSealed: function (boosterCount) {
 			if (this.deck.length > 0) {
 				Swal.fire({
@@ -1274,25 +1265,6 @@ var app = new Vue({
 		},
 		doDistributeSealed: function (boosterCount) {
 			this.socket.emit("distributeSealed", boosterCount);
-		},
-		genCard: function (c) {
-			if (!(c in this.cards)) {
-				console.error(`Error: Card id '${c}' not found!`);
-				return { id: c };
-			}
-			return {
-				id: c,
-				uniqueID: UniqueID++,
-				name: this.cards[c].name,
-				printed_name: this.cards[c].printed_name,
-				image_uris: this.cards[c].image_uris,
-				set: this.cards[c].set,
-				rarity: this.cards[c].rarity,
-				cmc: this.cards[c].cmc,
-				collector_number: this.cards[c].collector_number,
-				color_identity: this.cards[c].color_identity,
-				in_booster: this.cards[c].in_booster,
-			};
 		},
 		joinPublicSession: function () {
 			this.sessionID = this.selectedPublicSession;
@@ -1323,45 +1295,6 @@ var app = new Vue({
 			this.pendingReadyCheck = false;
 
 			for (let u of app.sessionUsers) u.readyState = ReadyState.DontCare;
-		},
-		startDraft: function () {
-			if (this.userID != this.sessionOwner) return;
-			if (this.deck.length > 0) {
-				Swal.fire({
-					title: "Are you sure?",
-					text: "Launching a draft will reset everyones cards/deck!",
-					type: "warning",
-					showCancelButton: true,
-					customClass: SwalCustomClasses,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					confirmButtonText: "I'm sure!",
-				}).then((result) => {
-					if (result.value) {
-						this.socket.emit("startDraft");
-					}
-				});
-			} else {
-				this.socket.emit("startDraft");
-			}
-		},
-		stopDraft: function () {
-			if (this.userID != this.sessionOwner) return;
-			const self = this;
-			Swal.fire({
-				title: "Are you sure?",
-				text: "Do you really want to stop the draft here?",
-				type: "warning",
-				showCancelButton: true,
-				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "I'm sure!",
-			}).then((result) => {
-				if (result.value) {
-					self.socket.emit("stopDraft");
-				}
-			});
 		},
 		shareSavedDraftLog: function () {
 			if (this.userID != this.sessionOwner) {
@@ -1395,30 +1328,7 @@ var app = new Vue({
 				this.fireToast("success", "Shared draft log with session!");
 			}
 		},
-		sealedDialog: async function () {
-			if (this.userID != this.sessionOwner) return;
-			const { value: boosterCount } = await Swal.fire({
-				title: "Start Sealed",
-				showCancelButton: true,
-				text: "How many booster for each player?",
-				inputPlaceholder: "Booster count",
-				input: "number",
-				inputAttributes: {
-					min: 4,
-					max: 12,
-					step: 1,
-				},
-				inputValue: 6,
-				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "Distribute boosters",
-			});
-
-			if (boosterCount) {
-				this.distributeSealed(boosterCount);
-			}
-		},
+		// Bracket (Server communication)
 		generateBracket: function () {
 			if (this.userID != this.sessionOwner) return;
 			const playerNames = this.sessionUsers.map((u) => u.userName);
@@ -1429,11 +1339,54 @@ var app = new Vue({
 				else players[i] = "";
 			}
 			this.socket.emit("generateBracket", players, (answer) => {
-				if (answer.code === 0) app.displayBracket = true;
+				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
 		updateBracket: function () {
 			this.socket.emit("updateBracket", this.bracket.results);
+		},
+		// Deck/Sideboard management
+		addToDeck: function (card) {
+			// Handle column sync.
+			this.deck.push(card);
+			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
+		},
+		addToSideboard: function (card) {
+			// Handle column sync.
+			this.sideboard.push(card);
+			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
+		},
+		deckToSideboard: function (e, c) {
+			// From deck to sideboard
+			let idx = this.deck.indexOf(c);
+			if (idx >= 0) {
+				this.deck.splice(idx, 1);
+				this.addToSideboard(c);
+			} else return;
+
+			for (let col of this.deckColumn) {
+				let idx = col.indexOf(c);
+				if (idx >= 0) {
+					col.splice(idx, 1);
+					break;
+				}
+			}
+		},
+		sideboardToDeck: function (e, c) {
+			// From sideboard to deck
+			let idx = this.sideboard.indexOf(c);
+			if (idx >= 0) {
+				this.sideboard.splice(idx, 1);
+				this.addToDeck(c);
+			} else return;
+
+			for (let col of this.sideboardColumn) {
+				let idx = col.indexOf(c);
+				if (idx >= 0) {
+					col.splice(idx, 1);
+					break;
+				}
+			}
 		},
 		addDeckColumn: function () {
 			this.deckColumn.push([]);
@@ -1605,6 +1558,58 @@ var app = new Vue({
 			}
 			return r;
 		},
+		// Misc.
+		genCard: function (c) {
+			if (!(c in this.cards)) {
+				console.error(`Error: Card id '${c}' not found!`);
+				return { id: c };
+			}
+			return {
+				id: c,
+				uniqueID: UniqueID++,
+				name: this.cards[c].name,
+				printed_name: this.cards[c].printed_name,
+				image_uris: this.cards[c].image_uris,
+				set: this.cards[c].set,
+				rarity: this.cards[c].rarity,
+				cmc: this.cards[c].cmc,
+				collector_number: this.cards[c].collector_number,
+				color_identity: this.cards[c].color_identity,
+				in_booster: this.cards[c].in_booster,
+			};
+		},
+		checkNotificationPermission: function (e) {
+			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
+				Notification.requestPermission().then(function (permission) {
+					this.notificationPermission = permission;
+					if (permission != "granted") {
+						this.enableNotifications = false;
+					}
+				});
+			}
+		},
+		sessionURLToClipboard: function () {
+			copyToClipboard(
+				`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(
+					this.sessionID
+				)}`
+			);
+			this.fireToast("success", "Session link copied to clipboard!");
+		},
+		fireToast: function (type, title) {
+			Swal.fire({
+				toast: true,
+				position: "top-end",
+				type: type,
+				title: title,
+				customClass: SwalCustomClasses,
+				showConfirmButton: false,
+				timer: 2000,
+			});
+		},
+		disconnectedReminder: function () {
+			this.fireToast("error", "Disconnected from server!");
+		},
 	},
 	computed: {
 		DraftState: function () {
@@ -1709,42 +1714,6 @@ var app = new Vue({
 			let r = {};
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
-		},
-
-		matches: function () {
-			let m = [[], [], []];
-			const Match = function (index, players) {
-				this.index = index;
-				this.players = players;
-				this.isValid = function () {
-					return (
-						!this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd
-					);
-				};
-			};
-
-			const winner = function (match) {
-				if (match.players[0].empty && match.players[1].empty) return { empty: true };
-				if (match.players[0].empty) return match.players[1];
-				if (match.players[1].empty) return match.players[0];
-				if (!app.bracket.results || app.bracket.results[match.index][0] === app.bracket.results[match.index][1])
-					return { tbd: true };
-				if (app.bracket.results[match.index][0] > app.bracket.results[match.index][1]) return match.players[0];
-				else return match.players[1];
-			};
-
-			for (let i = 0; i < 4; ++i) {
-				m[0].push(
-					new Match(i, [
-						this.bracket.players[2 * i] === "" ? { empty: true } : this.bracket.players[2 * i],
-						this.bracket.players[2 * i + 1] === "" ? { empty: true } : this.bracket.players[2 * i + 1],
-					])
-				);
-			}
-			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
-			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
-			m[2].push(new Match(6, [winner(m[1][0]), winner(m[1][1])]));
-			return m;
 		},
 	},
 	mounted: async function () {
