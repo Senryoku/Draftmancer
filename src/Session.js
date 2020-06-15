@@ -1,6 +1,6 @@
 "use strict";
 
-const constants = require("../public/js/constants");
+const constants = require("../client/src/constants.json");
 const removeCardFromDict = require("./cardUtils").removeCardFromDict;
 const utils = require("./utils");
 const negMod = utils.negMod;

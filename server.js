@@ -13,7 +13,7 @@ const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const uuidv1 = require("uuid/v1");
 
-const constants = require("./public/js/constants");
+const constants = require("./client/src/constants.json");
 const Persistence = require("./src/Persistence");
 const ConnectionModule = require("./src/Connection");
 const Connections = ConnectionModule.Connections;
@@ -789,7 +789,7 @@ function removeUserFromSession(userID) {
 // Express server setup
 
 // Serve files in the public directory
-app.use(express.static(__dirname + "/public/"));
+app.use(express.static(__dirname + "/client/public/"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints

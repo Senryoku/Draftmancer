@@ -6,7 +6,9 @@
 	"scripts": {
 		"start": "node server.js",
 		"logs": "heroku logs --app mtgadraft -t --source app",
-		"test": "mocha test --exit"
+		"test": "mocha test --exit",
+		"build": "npx webpack --config client/webpack.config.js",
+		"build-dev": "npx webpack --config client/webpack.config.js --watch --progress --info-verbosity verbose"
 	},
 	"repository": {
 		"type": "git",
@@ -24,13 +26,20 @@
 		"random-js": "^2.1.0",
 		"request": "^2.88.2",
 		"socket.io": "^2.3.0",
-		"uuid": "^3.3.3"
+		"sweetalert2": "^9.15.1",
+		"uuid": "^3.3.3",
+		"v-tooltip": "^2.0.3",
+		"vue": "^2.6.11",
+		"vue-multiselect": "^2.1.6",
+		"vuedraggable": "^2.23.2"
 	},
 	"devDependencies": {
 		"chai": "^4.2.0",
 		"eslint": "^7.2.0",
 		"eslint-plugin-vue": "^6.2.2",
 		"mocha": "^7.1.1",
-		"rewire": "^5.0.0"
+		"rewire": "^5.0.0",
+		"webpack": "^4.43.0",
+		"webpack-cli": "^3.3.11"
 	}
 }

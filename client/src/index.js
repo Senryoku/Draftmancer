@@ -1,4 +1,12 @@
 "use strict";
+import Vue from "vue";
+import draggable from "vuedraggable";
+import VTooltip from "v-tooltip";
+import VueClazyLoad from "./vue-clazy-load.js";
+import Multiselect from "vue-multiselect";
+import Swal from "sweetalert2";
+
+import * as Constant from "./constants.json";
 import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.js";
@@ -94,10 +102,10 @@ const Sounds = {
 };
 
 let UniqueID = 0;
-
-Vue.use(window.VueClazyLoad);
-VTooltip.VTooltip.options.defaultPlacement = "bottom-start";
-VTooltip.VTooltip.options.defaultBoundariesElement = "window";
+Vue.use(VueClazyLoad);
+Vue.use(VTooltip);
+VTooltip.options.defaultPlacement = "bottom-start";
+VTooltip.options.defaultBoundariesElement = "window";
 
 var app = new Vue({
 	el: "#main-vue",
@@ -109,9 +117,8 @@ var app = new Vue({
 		DraftLogLive,
 		Collection,
 		Bracket,
-		Multiselect: window.VueMultiselect.default,
-		draggable: window.vuedraggable,
-		VueClazyLoad: window.VueClazyLoad,
+		draggable,
+		Multiselect,
 	},
 	data: {
 		// Card Data
@@ -174,9 +181,9 @@ var app = new Vue({
 		// Front-end options & data
 		userOrder: [],
 		hideSessionID: getCookie("hideSessionID", false),
-		languages: window.constants.Languages,
+		languages: Constant.Languages,
 		language: getCookie("language", "en"),
-		sets: window.constants.MTGSets,
+		sets: Constant.MTGSets,
 		pendingReadyCheck: false,
 		cardOrder: getCookie("cardOrder", "DraggableCMC"),
 		setsInfos: undefined,
@@ -229,7 +236,7 @@ var app = new Vue({
 				console.log("Disconnected from server.");
 				Swal.fire({
 					customClass: SwalCustomClasses,
-					type: "error",
+					icon: "error",
 					title: "Disconnected!",
 					showConfirmButton: false,
 				});
@@ -240,7 +247,7 @@ var app = new Vue({
 
 				Swal.fire({
 					customClass: SwalCustomClasses,
-					type: "warning",
+					icon: "warning",
 					title: "Reconnected!",
 					timer: 1500,
 				});
@@ -292,7 +299,7 @@ var app = new Vue({
 					Swal.fire({
 						position: "center",
 						customClass: SwalCustomClasses,
-						type: "error",
+						icon: "error",
 						title: `Player(s) disconnected`,
 						text: `Wait for ${userNames.join(", ")} to come back or...`,
 						showConfirmButton: true,
@@ -306,7 +313,7 @@ var app = new Vue({
 						Swal.fire({
 							position: "center",
 							customClass: SwalCustomClasses,
-							type: "error",
+							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${userNames.join(", ")} to come back or...`,
 							showConfirmButton: true,
@@ -319,7 +326,7 @@ var app = new Vue({
 						Swal.fire({
 							position: "center",
 							customClass: SwalCustomClasses,
-							type: "error",
+							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${userNames.join(
 								", "
@@ -386,7 +393,7 @@ var app = new Vue({
 
 				Swal.fire({
 					position: "center",
-					type: "info",
+					icon: "info",
 					title: data.title,
 					text: data.text,
 					customClass: SwalCustomClasses,
@@ -416,7 +423,7 @@ var app = new Vue({
 
 				Swal.fire({
 					position: "center",
-					type: "question",
+					icon: "question",
 					title: "Are you ready?",
 					text: `${ownerUsername} has initiated a ready check`,
 					customClass: SwalCustomClasses,
@@ -447,7 +454,7 @@ var app = new Vue({
 				app.playSound("start");
 				Swal.fire({
 					position: "center",
-					type: "success",
+					icon: "success",
 					title: "Starting Winston Draft!",
 					customClass: SwalCustomClasses,
 					showConfirmButton: false,
@@ -510,7 +517,7 @@ var app = new Vue({
 
 				Swal.fire({
 					position: "center",
-					type: "success",
+					icon: "success",
 					title: "Reconnected to the Winston draft!",
 					customClass: SwalCustomClasses,
 					showConfirmButton: false,
@@ -528,7 +535,7 @@ var app = new Vue({
 				app.deck = [];
 				Swal.fire({
 					position: "center",
-					type: "success",
+					icon: "success",
 					title: "Now drafting!",
 					customClass: SwalCustomClasses,
 					showConfirmButton: false,
@@ -571,7 +578,7 @@ var app = new Vue({
 
 				Swal.fire({
 					position: "center",
-					type: "success",
+					icon: "success",
 					title: "Reconnected to the draft!",
 					customClass: SwalCustomClasses,
 					showConfirmButton: false,
@@ -600,7 +607,7 @@ var app = new Vue({
 			this.socket.on("endDraft", function (data) {
 				Swal.fire({
 					position: "center",
-					type: "success",
+					icon: "success",
 					title: "Done drafting!",
 					showConfirmButton: false,
 					customClass: SwalCustomClasses,
@@ -707,7 +714,7 @@ var app = new Vue({
 				Swal.fire({
 					title: "Are you sure?",
 					text: "Launching a draft will reset everyones cards/deck!",
-					type: "warning",
+					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
 					confirmButtonColor: "#3085d6",
@@ -728,7 +735,7 @@ var app = new Vue({
 			Swal.fire({
 				title: "Are you sure?",
 				text: "Do you really want to stop the draft here?",
-				type: "warning",
+				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
 				confirmButtonColor: "#3085d6",
@@ -844,7 +851,7 @@ var app = new Vue({
 
 			if (!this.ownerIsPlayer) {
 				Swal.fire({
-					type: "error",
+					icon: "error",
 					title: "Owner has to play",
 					text:
 						"Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
@@ -920,7 +927,7 @@ var app = new Vue({
 						return collJson;
 					} catch (e) {
 						Swal.fire({
-							type: "error",
+							icon: "error",
 							title: "Parsing Error",
 							text:
 								"An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.",
@@ -934,7 +941,7 @@ var app = new Vue({
 				let collection = null;
 				if (playerIds.size > 1) {
 					const swalResult = await Swal.fire({
-						type: "question",
+						icon: "question",
 						title: "Multiple Accounts",
 						text: `Looks like there are collections from multiple accounts (${playerIds.size}) in these logs, do you want to intersect them all, or just import the latest?`,
 						customClass: SwalCustomClasses,
@@ -971,7 +978,7 @@ var app = new Vue({
 					Swal.fire({
 						position: "top-end",
 						customClass: "swal-container",
-						type: "success",
+						icon: "success",
 						title: "Collection updated",
 						customClass: SwalCustomClasses,
 						showConfirmButton: false,
@@ -989,7 +996,7 @@ var app = new Vue({
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
-				type: "info",
+				icon: "info",
 				title: "Parsing card list...",
 				showConfirmButton: false,
 			});
@@ -1012,7 +1019,7 @@ var app = new Vue({
 					// parenthesis, the collector number will be part of the name.
 					if (number && !set) {
 						Swal.fire({
-							type: "warning",
+							icon: "warning",
 							title: `Collector number without Set`,
 							text: `You should not specify a collector number without also specifying a set: '${line}'.`,
 							customClass: SwalCustomClasses,
@@ -1038,7 +1045,7 @@ var app = new Vue({
 					}
 
 					Swal.fire({
-						type: "error",
+						icon: "error",
 						title: `Card not found`,
 						text: `Could not find '${name}' in our database.`,
 						footer: `Full line: '${line}'`,
@@ -1064,7 +1071,7 @@ var app = new Vue({
 							let header = lines[line].match(headerRegex);
 							if (!header) {
 								Swal.fire({
-									type: "error",
+									icon: "error",
 									title: `Slot`,
 									text: `Error parsing slot '${lines[line]}'.`,
 									customClass: SwalCustomClasses,
@@ -1108,7 +1115,7 @@ var app = new Vue({
 					});
 				} catch (e) {
 					Swal.fire({
-						type: "error",
+						icon: "error",
 						title: "Parsing Error",
 						text: "An error occurred during parsing, please check you input file.",
 						footer: "Full error: " + e,
@@ -1137,7 +1144,7 @@ var app = new Vue({
 						app.displayDraftLog = true;
 					} else {
 						Swal.fire({
-							type: "error",
+							icon: "error",
 							title: "Parsing Error",
 							text:
 								"An error occurred during parsing. Please make sure that you selected the correct file.",
@@ -1147,7 +1154,7 @@ var app = new Vue({
 					}
 				} catch (e) {
 					Swal.fire({
-						type: "error",
+						icon: "error",
 						title: "Parsing Error",
 						text: "An error occurred during parsing. Please make sure that you selected the correct file.",
 						footer: "Full error: " + e,
@@ -1172,7 +1179,7 @@ var app = new Vue({
 			Swal.fire({
 				title: "Are you sure?",
 				text: `Do you want to surrender session ownership to ${user.userName}?`,
-				type: "warning",
+				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
 				confirmButtonColor: "#3085d6",
@@ -1191,7 +1198,7 @@ var app = new Vue({
 			Swal.fire({
 				title: "Are you sure?",
 				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
-				type: "warning",
+				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
 				confirmButtonColor: "#3085d6",
@@ -1249,7 +1256,7 @@ var app = new Vue({
 				Swal.fire({
 					title: "Are you sure?",
 					text: "Distributing sealed boosters will reset everyone's cards/deck!",
-					type: "warning",
+					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
 					confirmButtonColor: "#3085d6",
@@ -1301,7 +1308,7 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner) {
 				Swal.fire({
 					title: "You need to be the session owner to share logs.",
-					type: "error",
+					icon: "error",
 					customClass: SwalCustomClasses,
 				});
 				return;
@@ -1317,7 +1324,7 @@ var app = new Vue({
 					Swal.fire({
 						title: "Wrong Session ID",
 						text: `Can't share logs: The session ID of your saved draft log ('${parsedLogs.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
-						type: "error",
+						icon: "error",
 						customClass: SwalCustomClasses,
 					});
 					return;
@@ -1601,7 +1608,7 @@ var app = new Vue({
 			Swal.fire({
 				toast: true,
 				position: "top-end",
-				type: type,
+				icon: type,
 				title: title,
 				customClass: SwalCustomClasses,
 				showConfirmButton: false,

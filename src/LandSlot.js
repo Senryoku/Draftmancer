@@ -6,7 +6,7 @@ const utils = require("./utils");
 const getRandomKey = utils.getRandomKey;
 const getRandom = utils.getRandom;
 const range = utils.range;
-const BasicLandIDs = require("../public/data/BasicLandIDs.json");
+const BasicLandIDs = require("../client/public/data/BasicLandIDs.json");
 
 function genBasicLandSlot(set) {
 	return {
