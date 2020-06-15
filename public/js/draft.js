@@ -1,5 +1,6 @@
 "use strict";
 import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.js";
 import Card from "./components/Card.js";
 import DraftLogPick from "./components/DraftLogPick.js";
@@ -1847,7 +1848,7 @@ var app = new Vue({
 		},
 		boosterContent: {
 			deep: true,
-			handler(val, oldValue) {
+			handler(val) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
 					this.fireToast("warning", "Your boosters should contain at least one card :)");
