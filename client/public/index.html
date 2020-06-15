@@ -181,7 +181,7 @@
 							Sealed
 						</button>
 					</span>
-					<span v-tooltip="'More session options'" @click="showSessionOptionsDialog = !showSessionOptionsDialog" class="more-option clickable">
+					<span v-tooltip="'More session options'" @click="displayedModal = 'sessionOptions'" class="more-option clickable">
 						More
 						<i class="fas fa-bars"></i>
 					</span>
@@ -636,7 +636,7 @@
 							</li>
 						</ul>
 						Click on
-						<span @click="showSessionOptionsDialog = !showSessionOptionsDialog" class="clickable">
+						<span @click="displayedModal = 'sessionOptions'" class="clickable">
 							More
 							<i class="fa-bars fa"></i>
 						</span>
@@ -703,7 +703,7 @@
 				<h2 slot="header">Collection Statistics</h2>
 				<collection slot="body" :collection="collection"></collection>
 			</modal>
-			<modal v-if="showSessionOptionsDialog" @close="showSessionOptionsDialog = false">
+			<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 				<h2 slot="header">Additional Session Options</h2>
 				<div slot="body" class="session-options-container" :class="{disabled: userID != sessionOwner}">
 					<div class="option-column">
@@ -914,7 +914,7 @@
 				</h2>
 				<bracket slot="body" :bracket="bracket" :editable="userID === sessionOwner" @updated="updateBracket"></bracket>
 			</modal>
-			<modal v-if="displayAbout" @close="displayAbout = false">
+			<modal v-if="displayedModal === 'About'" @close="displayedModal = ''">
 				<h2 slot="header">About</h2>
 				<div slot="body">
 					<h3>Contact</h3>
@@ -947,7 +947,7 @@
 				</div>
 			</modal>
 			<footer>
-				<span @click="displayAbout = true"><a>About</a></span>
+				<span @click="displayedModal = 'About'"><a>About</a></span>
 				<span>
 					<input type="file" id="log-input" @change="openLog" style="display: none;" accept=".txt" />
 					<a onclick="document.querySelector('#log-input').click()" v-tooltip="'Open a saved draft log.'">

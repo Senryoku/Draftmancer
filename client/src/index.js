@@ -144,6 +144,7 @@ var app = new Vue({
 		selectedPublicSession: "",
 
 		// Front-end options & data
+		displayedModal: "",
 		userOrder: [],
 		hideSessionID: getCookie("hideSessionID", false),
 		languages: Constant.Languages,
@@ -169,10 +170,6 @@ var app = new Vue({
 		lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 		deckColumn: [[], [], [], [], [], [], []],
 		sideboardColumn: [[], [], [], [], [], [], []],
-
-		displayedModal: "",
-		showSessionOptionsDialog: false,
-		displayAbout: false,
 
 		// Chat
 		currentChatMessage: "",
