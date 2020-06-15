@@ -1,9 +1,11 @@
+const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
+
 export default {
 	name: "Card",
 	template: `
-	<div class="card clickable" :data-arena-id="card.id" :data-cmc="card.border_crop"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
-		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="card.image_uris[language]"  :class="{ selected: selected, burned: burned }" />
+	<div class="card clickable" :data-arena-id="card.id" :data-cmc="card.cmc"  @click="selectcard($event, card)" @dblclick="ondblclick($event, card)"  :title="card.printed_name[language]">
+		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
+			<img v-if="card.image_uris[language]" :src="imageURI"  :class="{ selected: selected, burned: burned }" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
 				<div class="card-name">{{card.printed_name[language]}}</div>
@@ -24,6 +26,9 @@ export default {
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
 	},
+	computed: {
+		imageURI: () => ImageURLPrefix + card.image_uris[language],
+	},
 	created: function() {
 		// Preload Carback
 		const img = new Image();
@@ -35,8 +40,8 @@ export const MissingCard = {
 	name: "MissingCard",
 	template: `
 	<div class="card">
-		<clazy-load :ratio="0.01" margin="200px" :src="card.image_uris[language]" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="card.image_uris[language]" :title="card.printed_name[language]" />
+		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
+			<img v-if="card.image_uris[language]" :src="imageURI" :title="card.printed_name[language]" />
 			<img v-else src="img/missing.svg">
 			<div class="card-placeholder" slot="placeholder">
 				<div class="card-name">{{card.printed_name[language]}}</div>
@@ -49,6 +54,9 @@ export const MissingCard = {
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
+	},
+	computed: {
+		imageURI: () => ImageURLPrefix + card.image_uris[language],
 	},
 	created: function() {
 		// Preload Carback

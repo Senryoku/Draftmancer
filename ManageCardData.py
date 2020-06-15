@@ -8,14 +8,15 @@ import urllib
 import sys
 import re
 import glob
+import decimal
 from itertools import groupby
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-FinalDataPath = 'public/data/MTGACards.json'
-SetsInfosPath = 'public/data/SetsInfos.json'
-BasicLandIDsPath = 'public/data/BasicLandIDs.json'
+FinalDataPath = 'client/public/data/MTGACards.json'
+SetsInfosPath = 'client/public/data/SetsInfos.json'
+BasicLandIDsPath = 'client/public/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
 RatingsDest = 'data/ratings.json'
 
@@ -62,6 +63,15 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     print("Downloading {}...".format(BulkDataURL))
     urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
 
+
+# Handle decimals from Scryfall data? (Prices?)
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return super(DecimalEncoder, self).default(o)
+
+
 if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     print("Extracting arena card to {}...".format(BulkDataArenaPath))
     with open(BulkDataPath, 'r', encoding="utf8") as file:
@@ -85,8 +95,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.write(" " + str(copied) + " cards added.")
 
         with open(BulkDataArenaPath, 'w') as outfile:
-            json.dump(cards, outfile)
-
+            json.dump(cards, outfile, cls=DecimalEncoder)
 
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
@@ -103,7 +112,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
                 except ValueError:
                     vals = m[1].split("//")
                     rating = (float(vals[0]) + float(vals[1]))/2
-                #print(m[0], " ", rating)
+                # print(m[0], " ", rating)
                 CardRatings[m[0]] = rating
     with open(RatingsDest, 'w') as outfile:
         json.dump(CardRatings, outfile)
@@ -121,7 +130,7 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
     for c in data['data']:
         if('arena_id' in c):
             NonBoosterCards.append(c['arena_id'])
-        else:
+        elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
             NonBoosterCards.append(CardsCollectorNumberAndSet[(
                 c['collector_number'], c['set'].lower())])
     while(data["has_more"]):
@@ -130,7 +139,7 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
         for c in data['data']:
             if('arena_id' in c):
                 NonBoosterCards.append(c['arena_id'])
-            else:
+            elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
                 NonBoosterCards.append(CardsCollectorNumberAndSet[(
                     c['collector_number'], c['set'].lower())])
 
@@ -183,10 +192,20 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
             cards[k]['printed_name'] = translations[k]
             cards[k]['image_uris'] = translations_img[k]
 
+        # Removes URL prefix
+        allURIs = []
+        for c in cards:
+            for lang in cards[c]['image_uris']:
+                allURIs.append(cards[c]['image_uris'][lang])
+        URLPrefix = os.path.commonprefix(allURIs)
+        print("Scryfall Image URLPrefix: ", URLPrefix)
+        for c in cards:
+            for lang in cards[c]['image_uris']:
+                cards[c]['image_uris'][lang] = cards[c]['image_uris'][lang][len(
+                    URLPrefix):]
+
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
-        # with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
-            # json.dump(cards, outfile, ensure_ascii=False)
 
 setFullNames = {
     "ana": "Arena",
@@ -221,13 +240,13 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
         # Get set icon
         icon_path = "img/sets/{}.svg".format(set)
         # con is a reserved keyword on windows; we don't need it anyway.
-        if not os.path.isfile("public/" + icon_path) and set != "con":
+        if not os.path.isfile("client/public/" + icon_path) and set != "con":
             response = requests.get(
                 "https://api.scryfall.com/sets/{}".format(set))
             scryfall_set_data = json.loads(response.content)
             if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
                 urllib.request.urlretrieve(
-                    scryfall_set_data['icon_svg_uri'], "public/" + icon_path)
+                    scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
                 setinfos[set]["icon"] = icon_path
         else:
             setinfos[set]["icon"] = icon_path
@@ -241,7 +260,7 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
         for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
             rarityGroupList = list(rarityGroup)
             setinfos[set][rarity + "Count"] = len(rarityGroupList)
-            #print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
+            # print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
     with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
         json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
