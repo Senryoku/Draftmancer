@@ -1,5 +1,9 @@
 [
 	{
+		"date": "16/06/2020",
+		"notes": ["Lazy loading of languages.", "A lot of Front-End rewrite and slight optimizations."]
+	},
+	{
 		"date": "10/06/2020",
 		"notes": ["Added Distribution Mode option when using boosters from different sets."]
 	},

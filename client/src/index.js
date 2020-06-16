@@ -1091,8 +1091,34 @@ var app = new Vue({
 			reader.readAsText(file);
 		},
 		exportDeck: function () {
-			copyToClipboard(exportMTGA(this.deck, this.sideboard, this.language, this.lands));
+			copyToClipboard(this.exportMTGA(this.deck, this.sideboard, this.language, this.lands));
 			this.fireToast("success", "Deck exported to clipboard!");
+		},
+		cardToMTGAExport: function (c, language) {
+			let set = c.set.toUpperCase();
+			if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
+			if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
+			let name = this.cards[c.id].printed_name[language];
+			// FIXME: Workaround for a typo in MTGA
+			if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
+			let idx = name.indexOf("//");
+			// Ravnica Splits cards needs both names to be imported, others don't
+			if (idx != -1 && c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
+			return `1 ${name} (${set}) ${c.collector_number}\n`;
+		},
+		exportMTGA: function (deck, sideboard, language, lands) {
+			let str = "Deck\n";
+			for (let c of deck) str += this.cardToMTGAExport(c, language);
+			if (lands) {
+				for (let c in lands) if (lands[c] > 0) str += `${lands[c]} ${Constant.BasicLandNames[language][c]}\n`;
+			}
+			if (sideboard && sideboard.length > 0) {
+				str += "\nSideboard\n";
+				for (let c of sideboard) str += this.cardToMTGAExport(c, language);
+				// Add some basic lands to the sideboard
+				for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${Constant.BasicLandNames[language][c]}\n`;
+			}
+			return str;
 		},
 		openLog: function (e) {
 			let file = e.target.files[0];

@@ -80,6 +80,7 @@ export default {
 
 .modal-header {
 	position: relative;
+	text-align: center;
 }
 
 .modal-header h2 {

@@ -925,33 +925,50 @@
 			<modal v-if="displayedModal === 'About'" @close="displayedModal = ''">
 				<h2 slot="header">About</h2>
 				<div slot="body">
-					<h3>Contact</h3>
 					<p>
-						Senryoku:
+						Developped by
+						<a href="http://senryoku.github.io/" target="_blank">Senryoku</a>
+						(contact in French or English:
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-						(French or English)
+						) using
+						<a href="https://scryfall.com/">Scryfall</a>
+						card data an images and loads of open source software.
 					</p>
 					<p>
 						MTGADraft Discord:
 						<a href="https://discord.gg/KYKzx9m">https://discord.gg/KYKzx9m</a>
 					</p>
-					<h3>Support me</h3>
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-						<input type="hidden" name="cmd" value="_s-xclick" />
-						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
-						<input
-							type="image"
-							src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-							border="0"
-							name="submit"
-							title="PayPal - The safer, easier way to pay online!"
-							alt="Donate with PayPal button"
-						/>
-					</form>
-					This service currently only costs me time, but if you want to encourage me to maintain and improve it you can donate via PayPal - Thank you very much if you do!
-					- , or just send me some feedback! :)
 					<h3>Patch Notes</h3>
 					<patch-notes></patch-notes>
+				</div>
+			</modal>
+			<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
+				<h2 slot="header">Support me</h2>
+				<div slot="body">
+					<div style="max-width: 50vw;">
+						<p>Hello there!</p>
+						<p>
+							If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by adding support for new cards appearing on MTGA and
+							improving it, both with your and my ideas. If that sounds like a good use of my time and you want to help me stay motivated and high on cafeine, you can
+							donate here
+							<em>via</em>
+							PayPal:
+						</p>
+						<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+							<input type="hidden" name="cmd" value="_s-xclick" />
+							<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+							<input
+								type="image"
+								src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+								border="0"
+								name="submit"
+								title="PayPal - The safer, easier way to pay online!"
+								alt="Donate with PayPal button"
+							/>
+						</form>
+						<p>Thank you very much!</p>
+						<p>Sen</p>
+					</div>
 				</div>
 			</modal>
 			<footer>
@@ -962,10 +979,16 @@
 					</a>
 				</span>
 				<span>-</span>
-				<span @click="displayedModal = 'About'"><a>About</a></span>
+				<span @click="displayedModal = 'About'" class="clickable"><a>About</a></span>
 				<span>
 					Made by
 					<a href="http://senryoku.github.io/" target="_blank">Senryoku</a>
+				</span>
+				<span>
+					<a @click="displayedModal = 'donation'">
+						Buy me a Coffee
+						<i class="fa fa-mug-hot" aria-hidden="true"></i>
+					</a>
 				</span>
 				<span><a href="mailto:mtgadraft@gmail.com">Contact</a></span>
 				<span>

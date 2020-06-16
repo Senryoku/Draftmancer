@@ -4,15 +4,13 @@ export function clone(obj) {
 
 export function isEmpty(obj) {
 	for (var key in obj) {
-		if (obj.hasOwnProperty(key)) return false;
+		if (Object.prototype.hasOwnProperty.call(obj, key)) return false;
 	}
 	return true;
 }
 
 export function arrayRemove(arr, value) {
-	return arr.filter(function (ele) {
-		return ele != value;
-	});
+	return arr.filter(el => el != value);
 }
 
 export function guid() {
@@ -35,14 +33,14 @@ export function shortguid() {
 
 export function getUrlVars() {
 	var vars = {};
-	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
 		vars[key] = value;
 	});
 	return vars;
 }
 
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
-export const copyToClipboard = (str) => {
+export const copyToClipboard = str => {
 	const el = document.createElement("textarea"); // Create a <textarea> element
 	el.value = str; // Set its value to the string that you want copied
 	el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
@@ -62,34 +60,6 @@ export const copyToClipboard = (str) => {
 		document.getSelection().addRange(selected); // Restore the original selection
 	}
 };
-
-export function cardToMTGAExport(c, language) {
-	let set = c.set.toUpperCase();
-	if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
-	if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
-	let name = c.printed_name[language];
-	// FIXME: Workaround for a typo in MTGA
-	if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
-	let idx = name.indexOf("//");
-	// Ravnica Splits cards needs both names to be imported, others don't
-	if (idx != -1 && c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
-	return `1 ${name} (${set}) ${c.collector_number}\n`;
-}
-
-export function exportMTGA(deck, sideboard, language, lands) {
-	let str = "Deck\n";
-	for (let c of deck) str += cardToMTGAExport(c, language);
-	if (lands) {
-		for (let c in lands) str += `${lands[c]} ${window.constants.BasicLandNames[language][c]}\n`;
-	}
-	if (sideboard && sideboard.length > 0) {
-		str += "\nSideboard\n";
-		for (let c of sideboard) str += cardToMTGAExport(c, language);
-		// Add some basic lands in the sideboard
-		for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${window.constants.BasicLandNames[language][c]}\n`;
-	}
-	return str;
-}
 
 export function exportToMagicProTools(cardsdb, draftLog, userID) {
 	let str = "";
