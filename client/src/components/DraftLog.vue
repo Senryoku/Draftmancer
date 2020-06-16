@@ -86,7 +86,7 @@ export default {
 			for (let e in this.draftlog.users) {
 				let cards = [];
 				for (let c of this.draftlog.users[e].cards) cards.push(this.$root.cards[c]);
-				this.draftlog.users[e].exportString = helper.exportMTGA(cards, null, this.$root.language);
+				this.draftlog.users[e].exportString = this.$root.exportMTGA(cards, null, this.$root.language);
 			}
 			helper.download(`DraftLog_${this.draftlog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
@@ -129,7 +129,7 @@ export default {
 		exportSingleLog: function (id) {
 			let cards = [];
 			for (let c of this.draftlog.users[id].cards) cards.push(this.$root.cards[c]);
-			helper.copyToClipboard(helper.exportMTGA(cards, null, this.$root.language), null, "\t");
+			helper.copyToClipboard(this.$root.exportMTGA(cards, null, this.$root.language), null, "\t");
 			this.$root.fireToast("success", "Card list exported to clipboard!");
 		},
 	},
