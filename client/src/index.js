@@ -7,7 +7,7 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
 import * as Constant from "./constants.json";
-import { isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
 import Card from "./components/Card.vue";
@@ -149,6 +149,8 @@ var app = new Vue({
 		hideSessionID: getCookie("hideSessionID", false),
 		languages: Constant.Languages,
 		language: getCookie("language", "en"),
+		loadingLanguages: [],
+		loadedLanguages: [],
 		sets: Constant.MTGSets,
 		pendingReadyCheck: false,
 		cardOrder: getCookie("cardOrder", "DraggableCMC"),
@@ -472,7 +474,7 @@ var app = new Vue({
 				app.setWinstonDraftState(data.state);
 				app.sideboard = [];
 				app.deck = [];
-				for (let c of data.pickedCards) app.addToDeck(app.cards[c]);
+				for (let c of data.pickedCards) app.addToDeck(app.genCard(app.cards[c]));
 
 				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
 				else app.draftingState = DraftState.WinstonWaiting;
@@ -1529,6 +1531,32 @@ var app = new Vue({
 			return r;
 		},
 		// Misc.
+		fetchTranslation: function (lang) {
+			if (this.loadedLanguages.includes(lang)) {
+				if (this.language !== lang) this.language = lang;
+				return;
+			}
+			if (this.loadingLanguages.includes(lang)) return;
+			this.loadingLanguages.push(lang);
+			fetch(`data/MTGACards.${lang}.json`).then((response) =>
+				response.json().then((json) => {
+					let merged = clone(this.cards);
+					// Missing translation will default to english
+					for (let c in merged) {
+						merged[c]["printed_name"][lang] =
+							c in json && "printed_name" in json[c] ? json[c]["printed_name"] : this.cards[c]["name"];
+						merged[c]["image_uris"][lang] =
+							c in json && "image_uris" in json[c]
+								? json[c]["image_uris"]
+								: this.cards[c]["image_uris"]["en"];
+					}
+					this.cards = Object.freeze(merged);
+					this.loadingLanguages.splice(lang, 1);
+					this.loadedLanguages.push(lang);
+					if (this.language !== lang) this.language = lang;
+				})
+			);
+		},
 		genCard: function (c) {
 			if (!(c in this.cards)) {
 				console.error(`Error: Card id '${c}' not found!`);
@@ -1538,8 +1566,11 @@ var app = new Vue({
 				id: c,
 				uniqueID: UniqueID++,
 				name: this.cards[c].name,
+				/*
+				// printed_name and image_uris can be dynamically loaded (multiple languages), use $root.cards
 				printed_name: this.cards[c].printed_name,
 				image_uris: this.cards[c].image_uris,
+				*/
 				set: this.cards[c].set,
 				rarity: this.cards[c].rarity,
 				cmc: this.cards[c].cmc,
@@ -1693,15 +1724,12 @@ var app = new Vue({
 				try {
 					for (let c in parsed) {
 						if (!("in_booster" in parsed[c])) parsed[c].in_booster = true;
-						for (let l of app.languages) {
-							if (!(l.code in parsed[c]["printed_name"]))
-								parsed[c]["printed_name"][l.code] = parsed[c]["name"];
-							if (!(l.code in parsed[c]["image_uris"]))
-								parsed[c]["image_uris"][l.code] = parsed[c]["image_uris"]["en"];
-						}
+						if (!("printed_name" in parsed[c])) parsed[c].printed_name = {};
+						if (!("image_uris" in parsed[c])) parsed[c].image_uris = {};
 					}
-					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
 
+					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
+					app.fetchTranslation(app.language);
 					app.initialize();
 				} catch (e) {
 					alert(e);

@@ -38,9 +38,17 @@
 					<input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
 					<div class="inline" v-tooltip="'Controls the display language of cards.'">
 						<label for="language">Language</label>
-						<select v-model="language" name="language">
-							<option v-for="lang in languages" v-bind:value="lang.code">{{ lang.name }}</option>
+						<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
+							<option v-for="lang in languages" v-bind:value="lang.code" :selected="lang.code === language">
+								{{ lang.name }}
+							</option>
 						</select>
+						<i
+							class="fas fa-spinner fa-spin"
+							style="position: absolute; margin-top: 0.6em; margin-left: 0.5em;"
+							v-tooltip="'Loading language data...'"
+							v-if="loadingLanguages.length > 0"
+						></i>
 					</div>
 				</span>
 				<span>

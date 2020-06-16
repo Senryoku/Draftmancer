@@ -5,17 +5,12 @@
 		:data-cmc="card.cmc"
 		@click="selectcard($event, card)"
 		@dblclick="ondblclick($event, card)"
-		:title="card.printed_name[language]"
+		:title="printedName"
 	>
 		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
-			<img
-				v-if="card.image_uris[language]"
-				:src="imageURI"
-				:class="{ selected: selected, burned: burned }"
-			/>
-			<img v-else src="img/missing.svg" />
+			<img :src="imageURI" :class="{ selected: selected, burned: burned }" />
 			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
-				<div class="card-name">{{ card.printed_name[language] }}</div>
+				<div class="card-name">{{ printedName }}</div>
 			</div>
 		</clazy-load>
 		<div
@@ -37,14 +32,13 @@
 
 <script>
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
-
 export default {
 	name: "Card",
 	props: {
 		card: { type: Object, required: true },
-		language: String,
+		language: { type: String, default: "en" },
 		selectcard: { type: Function, default: function() {} },
-		selected: Boolean,
+		selected: { type: Boolean, default: false },
 		ondblclick: { type: Function, default: function() {} },
 		burn: { type: Function, default: function() {} },
 		restore: { type: Function, default: function() {} },
@@ -53,7 +47,10 @@ export default {
 	},
 	computed: {
 		imageURI: function() {
-			return ImageURLPrefix + this.card.image_uris[this.language];
+			return ImageURLPrefix + this.$root.cards[this.card.id].image_uris[this.language];
+		},
+		printedName: function() {
+			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
 	},
 	created: function() {

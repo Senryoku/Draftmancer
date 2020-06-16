@@ -2,7 +2,7 @@
 	<div v-if="collectionStats">
 		Select set:
 		<select v-model="selectedSetCode">
-			<option v-for="set in collectionStats" :key="set" :value="set.name">{{ set.fullName }}</option>
+			<option v-for="set in collectionStats" :key="set.code" :value="set.name">{{ set.fullName }}</option>
 		</select>
 		<div class="set-stats">
 			<div v-if="selectedSet">

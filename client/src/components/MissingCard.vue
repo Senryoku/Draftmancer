@@ -1,10 +1,9 @@
 <template>
 	<div class="card">
 		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
-			<img v-if="card.image_uris[language]" :src="imageURI" :title="card.printed_name[language]" />
-			<img v-else src="img/missing.svg" />
+			<img :src="imageURI" :title="printedName" />
 			<div class="card-placeholder" slot="placeholder">
-				<div class="card-name">{{ card.printed_name[language] }}</div>
+				<div class="card-name">{{ printedName }}</div>
 			</div>
 		</clazy-load>
 		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
@@ -14,7 +13,6 @@
 
 <script>
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
-
 export default {
 	name: "MissingCard",
 	template: `
@@ -25,7 +23,10 @@ export default {
 	},
 	computed: {
 		imageURI: function() {
-			return ImageURLPrefix + this.card.image_uris[this.language];
+			return ImageURLPrefix + this.$root.cards[this.card.id].image_uris[this.language];
+		},
+		printedName: function() {
+			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
 	},
 	created: function() {

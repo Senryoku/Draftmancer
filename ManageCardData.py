@@ -144,28 +144,32 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
                     c['collector_number'], c['set'].lower())])
 
     print("Generating card data cache...")
+    translations = {"en": {},
+                    "es": {},
+                    "fr": {},
+                    "de": {},
+                    "it": {},
+                    "pt": {},
+                    "ja": {},
+                    "ko": {},
+                    "ru": {},
+                    "zhs": {},
+                    "zht": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
-        translations = {}
-        translations_img = {}
         arena_cards = json.loads(file.read())
         for c in arena_cards:
-            if c['arena_id'] not in translations:
-                translations[c['arena_id']] = {}
-            if c['arena_id'] not in translations_img:
-                translations_img[c['arena_id']] = {}
+            translation = {}
+            if 'printed_name' in c:
+                translation['printed_name'] = c['printed_name']
+            elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+                translation['printed_name'] = c['card_faces'][0]['printed_name']
+            if 'image_uris' in c and 'border_crop' in c['image_uris']:
+                translation['image_uris'] = c['image_uris']['border_crop']
+            elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+                translation['image_uris'] = c['card_faces'][0]['image_uris']['border_crop']
+            translations[c['lang']][c['arena_id']] = translation
             if c['lang'] != 'en':
-                if 'printed_name' in c:
-                    translations[c['arena_id']][c['lang']] = c['printed_name']
-                elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-                    translations[c['arena_id']][c['lang']
-                                                ] = c['card_faces'][0]['printed_name']
-                if 'image_uris' in c and 'border_crop' in c['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['image_uris']['border_crop']
-                elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['card_faces'][0]['image_uris']['border_crop']
                 continue
             if c['arena_id'] not in cards:
                 cards[c['arena_id']] = {}
@@ -179,30 +183,29 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
                 if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
                     selection['in_booster'] = False
                     selection['rating'] = 0
-                if 'image_uris' in c and 'border_crop' in c['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['image_uris']['border_crop']
-                elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['card_faces'][0]['image_uris']['border_crop']
-                translations[c['arena_id']][c['lang']] = c['name']
                 cards[c['arena_id']].update(selection)
 
-        for k in cards:
-            cards[k]['printed_name'] = translations[k]
-            cards[k]['image_uris'] = translations_img[k]
+        # Add only English card image to the main DB, other language will be loaded on demand
+        # for c in cards:
+        #     # English Printed Name can in infered from name
+        #     cards[c]["image_uris"] = {}
+        #     cards[c]["image_uris"]['en'] = translations[c]["image_uris"]['en']
 
         # Removes URL prefix
         allURIs = []
-        for c in cards:
-            for lang in cards[c]['image_uris']:
-                allURIs.append(cards[c]['image_uris'][lang])
+        for lang in translations:
+            for c in translations[lang]:
+                allURIs.append(translations[lang][c]['image_uris'])
         URLPrefix = os.path.commonprefix(allURIs)
         print("Scryfall Image URLPrefix: ", URLPrefix)
-        for c in cards:
-            for lang in cards[c]['image_uris']:
-                cards[c]['image_uris'][lang] = cards[c]['image_uris'][lang][len(
+        for lang in translations:
+            for c in translations[lang]:
+                translations[lang][c]['image_uris'] = translations[lang][c]['image_uris'][len(
                     URLPrefix):]
+
+        for lang in translations:
+            with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
+                json.dump(translations[lang], outfile, ensure_ascii=False)
 
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
