@@ -3,7 +3,7 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
-	mode: "development",
+	mode: "production",
 	entry: "./client/src/index.js",
 	output: {
 		filename: "index.js",

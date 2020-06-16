@@ -7,8 +7,8 @@
 		"start": "node server.js",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "mocha test --exit",
-		"build": "npx webpack --config client/webpack.config.js",
-		"build-dev": "npx webpack --config client/webpack.config.js --watch --progress --info-verbosity verbose"
+		"build": "npx webpack --config client/webpack.config.js --mode=production",
+		"build-dev": "npx webpack --config client/webpack.config.js --mode=development --watch --progress --info-verbosity verbose"
 	},
 	"repository": {
 		"type": "git",
