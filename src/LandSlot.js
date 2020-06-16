@@ -71,11 +71,11 @@ const SpecialLandSlots = {
 		[71314, 71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
 		1 / 2
 	), // Evoling Wilds (71314) and Gain Lands
-  m21: landSlotHandler(
-    BasicLandIDs["m21"],
-    [72243, 72244, 72245, 72247, 72248, 72249, 72250, 72251, 72257, 72258, 72259]
-    1 / 2
-  ), // Gain Lands and Radiant Fountain
+	m21: landSlotHandler(
+		BasicLandIDs["m21"],
+		[72243, 72244, 72245, 72247, 72248, 72249, 72250, 72251, 72257, 72258, 72259],
+		1 / 2
+	), // Gain Lands and Radiant Fountain
 };
 
 const BasicLandSlots = {};
