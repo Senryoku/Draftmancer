@@ -1103,7 +1103,7 @@ var app = new Vue({
 					let json = JSON.parse(contents);
 					if (json.users) {
 						app.draftLog = json;
-						app.displayDraftLog = true;
+						app.displayedModal = "draftLog";
 					} else {
 						Swal.fire({
 							icon: "error",
