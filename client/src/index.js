@@ -129,7 +129,7 @@ var app = new Vue({
 		setRestriction: "",
 		drafting: false,
 		useCustomCardList: false,
-		customCardList: [],
+		customCardList: {},
 		burnedCardsPerRound: 0,
 		maxTimer: 75,
 		pickTimer: 75,
@@ -1085,15 +1085,12 @@ var app = new Vue({
 								} else return;
 							}
 						}
-						app.customCardList = cardList;
+						app.customCardList = {
+							customSheets: false,
+							cards: cardList,
+							length: cardList.length,
+						};
 					}
-					app.socket.emit("customCardList", app.customCardList, answer => {
-						if (answer.code === 0) {
-							app.fireToast("success", `Card list uploaded (${app.customCardList.length} cards)`);
-						} else {
-							app.fireToast("error", `Error while uploading card list: ${answer.error}`);
-						}
-					});
 				} catch (e) {
 					Swal.fire({
 						icon: "error",
@@ -1915,6 +1912,16 @@ var app = new Vue({
 		useCustomCardList: function() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
+		},
+		customCardList: function() {
+			if (this.userID != this.sessionOwner || !this.customCardList.length) return;
+			this.socket.emit("customCardList", this.customCardList, answer => {
+				if (answer.code === 0) {
+					app.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+				} else {
+					app.fireToast("error", `Error while uploading card list: ${answer.error}`);
+				}
+			});
 		},
 		burnedCardsPerRound: function() {
 			if (this.userID != this.sessionOwner) return;

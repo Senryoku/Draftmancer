@@ -123,13 +123,18 @@
 							v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 						></i>
 					</span>
-					<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+					<span class="generic-container">
 						<strong>Card Pool:</strong>
-						<template v-if="useCustomCardList">
-							Using Custom Card List ({{customCardList.length}} cards)
-							<a @click="displayedModal = 'cardList'"><i class="fas fa-edit"></i></a>
-						</template>
-						<template v-else>
+						<span v-if="useCustomCardList">
+							Using Custom Card List
+							<template v-if="customCardList.length > 0">
+								({{customCardList.length}} cards
+								<a @click="displayedModal = 'cardList'"><i class="fas fa-file-alt"></i></a>
+								)
+							</template>
+							<template v-else>(No list loaded)</template>
+						</span>
+						<span v-else :class="{ disabled: sessionOwner != userID }">
 							<div class="inline" v-tooltip="'Draft with all cards within set restriction disregarding players collections.'">
 								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
 								<label for="ignore-collections">Ignore Collections</label>
@@ -166,7 +171,7 @@
 									</template>
 								</multiselect>
 							</div>
-						</template>
+						</span>
 					</span>
 					<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 						<strong>Draft:</strong>
@@ -483,7 +488,7 @@
 						<draggable
 							v-for="(column, colIdx) in deckColumn"
 							:key="'deck'+colIdx"
-							class="cmc-column drag-column"
+							class="card-column drag-column"
 							:list="column"
 							group="cardColumn"
 							@change="columnDeckChange"
@@ -498,12 +503,12 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="(cmc_column, colIndex) in deckColumnCMC" :key="'col' + colIndex" class="cmc-column">
+						<div v-for="(cmc_column, colIndex) in deckColumnCMC" :key="'col' + colIndex" class="card-column">
 							<card v-for="(card, index) in cmc_column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="(column, colIndex) in deckColumnColor" :key="'col' + colIndex" class="cmc-column" v-show="column.length > 0">
+						<div v-for="(column, colIndex) in deckColumnColor" :key="'col' + colIndex" class="card-column" v-show="column.length > 0">
 							<card v-for="(card, index) in column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 						</div>
 					</template>
@@ -538,7 +543,7 @@
 						<draggable
 							v-for="(column, colIdx) in sideboardColumn"
 							:key="'side'+colIdx"
-							class="cmc-column drag-column"
+							class="card-column drag-column"
 							:list="column"
 							group="cardColumn"
 							@change="columnSideboardChange"
@@ -560,7 +565,7 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="(cmc_column, colIndex) in sideboardColumnCMC" :key="'col' + colIndex" class="cmc-column">
+						<div v-for="(cmc_column, colIndex) in sideboardColumnCMC" :key="'col' + colIndex" class="card-column">
 							<figure
 								is="card"
 								v-for="(card, index) in cmc_column"
@@ -572,7 +577,7 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="(column, colIndex) in sideboardColumnColor" :key="'col' + colIndex" class="cmc-column" v-show="column.length > 0">
+						<div v-for="(column, colIndex) in sideboardColumnColor" :key="'col' + colIndex" class="card-column" v-show="column.length > 0">
 							<figure
 								is="card"
 								v-for="(card, index) in column"
@@ -871,8 +876,8 @@
 									<i v-if="customCardList.length > 0" class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
 									Loaded list with {{customCardList.length}} cards.
 									<a @click="displayedModal = 'cardList'">
-										<i class="fas fa-edit"></i>
-										Manage custom card list.
+										<i class="fas fa-file-alt"></i>
+										Review custom card list.
 									</a>
 								</div>
 								<div class="option-info">

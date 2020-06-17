@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import CardBack from "../assets/img/cardback.png";
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
 export default {
 	name: "MissingCard",
@@ -26,6 +27,11 @@ export default {
 		printedName: function() {
 			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
+	},
+	created: function() {
+		// Preload Carback
+		const img = new Image();
+		img.src = CardBack;
 	},
 };
 </script>

@@ -856,13 +856,6 @@ ul.player-list {
 	min-height: 200px;
 }
 
-.card-columns {
-	justify-content: flex-start;
-	position: relative;
-	padding: 0.75em;
-	min-height: 283.33px;
-}
-
 .draggable-constrols {
 	display: flex;
 	flex-direction: column;
@@ -879,7 +872,14 @@ ul.player-list {
 	text-align: center;
 }
 
-.cmc-column {
+.card-columns {
+	justify-content: flex-start;
+	position: relative;
+	padding: 0.75em;
+	min-height: 283.33px;
+}
+
+.card-column {
 	display: flex;
 	flex-direction: column;
 	padding-bottom: 275px;

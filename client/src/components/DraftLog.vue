@@ -35,7 +35,7 @@
 			</template>
 			<template v-else-if="displayOptions.category == 'Cards (CMC Columns)'">
 				<div class="card-container card-columns">
-					<div v-for="(cmc_column, colIndex) in $root.idColumnCMC(selectedLog.cards)" :key="colIndex" class="cmc-column">
+					<div v-for="(cmc_column, colIndex) in $root.idColumnCMC(selectedLog.cards)" :key="colIndex" class="card-column">
 						<card v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language"></card>
 					</div>
 				</div>

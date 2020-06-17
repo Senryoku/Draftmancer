@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="card clickable"
+		class="card"
+		:class="{ clickable: selectcard }"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
 		@click="selectcard($event, card)"
@@ -27,6 +28,7 @@
 </template>
 
 <script>
+import CardBack from "../assets/img/cardback.png";
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
 export default {
 	name: "Card",
@@ -48,6 +50,11 @@ export default {
 		printedName: function() {
 			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
+	},
+	created: function() {
+		// Preload Carback
+		const img = new Image();
+		img.src = CardBack;
 	},
 };
 </script>

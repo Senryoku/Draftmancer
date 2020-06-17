@@ -1,5 +1,12 @@
 [
 	{
+		"date": "17/06/2020",
+		"notes": [
+			"Added cube presets (Only the Arena Cube for now, more to come!).",
+			"Added a cube view, with information about the missing cards in user's collection."
+		]
+	},
+	{
 		"date": "16/06/2020",
 		"notes": ["Lazy loading of languages.", "A lot of Front-End rewrite and slight optimizations."]
 	},
