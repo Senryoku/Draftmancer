@@ -6,8 +6,8 @@
 		<p>Click on a player to display the details of their draft.</p>
 		
 		<div>
-			<ul :class="{'player-table': extendedDraftLog.length <= 8, 'player-list': extendedDraftLog.length > 8}">
-				<li v-for="(log, index) of extendedDraftLog" :key="index" :class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }">
+			<ul :class="{'player-table': tableSumary.length <= 8, 'player-list': tableSumary.length > 8}">
+				<li v-for="(log, index) of tableSumary" :key="index" :class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }">
 					{{log.userName}}
 					<span>
 						<img v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)" :key="c" :src="'img/mana/'+c+'.svg'" class="mana-icon" v-tooltip="log.colors[c]">
@@ -132,27 +132,37 @@ export default {
 			helper.copyToClipboard(this.$root.exportMTGA(cards, null, this.$root.language), null, "\t");
 			this.$root.fireToast("success", "Card list exported to clipboard!");
 		},
+		colorsInCardIDList: function(cardids) {
+			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
+			if (!cardids) return r;
+			for (let card of cardids) {
+				for (let color of this.$root.cards[card].color_identity) {
+					r[color] += 1;
+				}
+			}
+			return r;
+		},
 	},
 	computed: {
 		selectedLog: function () {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
-		extendedDraftLog: function () {
-			let extendedDraftLog = [];
+		tableSumary: function () {
+			let tableSumary = [];
 			for (let userID in this.draftlog.users) {
-				extendedDraftLog.push({
+				tableSumary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
-					colors: this.$root.colorsInCardIDList(this.draftlog.users[userID].cards),
+					colors: this.colorsInCardIDList(this.draftlog.users[userID].cards),
 				});
 			}
-			while (Object.keys(extendedDraftLog).length < 8)
-				extendedDraftLog.push({
+			while (Object.keys(tableSumary).length < 8)
+				tableSumary.push({
 					userID: "none",
 					userName: "(empty)",
-					colors: this.$root.colorsInCardIDList([]),
+					colors: this.colorsInCardIDList([]),
 				});
-			return extendedDraftLog;
+			return tableSumary;
 		},
 	},
 	watch: {

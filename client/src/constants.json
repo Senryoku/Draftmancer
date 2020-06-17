@@ -91,5 +91,11 @@
 			"R": "山脈",
 			"G": "樹林"
 		}
-	}
+	},
+	"CubeLists": [
+		{
+			"name": "Arena Historic Cube #1",
+			"filename": "data/cubes/ArenaHistoricCube1.txt"
+		}
+	]
 }

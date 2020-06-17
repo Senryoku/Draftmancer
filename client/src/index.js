@@ -16,6 +16,7 @@ import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import Collection from "./components/Collection.vue";
+import CardList from "./components/CardList.vue";
 import Bracket from "./components/Bracket.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import Toggle from "./components/Toggle.vue";
@@ -81,6 +82,7 @@ var app = new Vue({
 		DraftLog,
 		DraftLogLive,
 		Collection,
+		CardList,
 		Bracket,
 		PatchNotes,
 		draggable,
@@ -153,6 +155,7 @@ var app = new Vue({
 		loadingLanguages: [],
 		loadedLanguages: [],
 		sets: Constant.MTGSets,
+		cubeLists: Constant.CubeLists,
 		pendingReadyCheck: false,
 		cardOrder: getCookie("cardOrder", "DraggableCMC"),
 		setsInfos: undefined,
@@ -953,11 +956,26 @@ var app = new Vue({
 			};
 			reader.readAsText(file);
 		},
-		parseCustomCardList: function(e) {
+		// Returns a Blob to be consumed by a FileReader
+		uploadFile: function(e, callback) {
 			let file = e.target.files[0];
 			if (!file) {
+				this.fireToast("error", "An error occured while uploading the file.");
 				return;
 			}
+			callback(file);
+		},
+		// Returns a Blob to be consumed by a FileReader
+		fetchFile: async function(url, callback) {
+			const response = await fetch(url);
+			if (!response.ok) {
+				this.fireToast("error", `Could not fetch ${url}.`);
+				return;
+			}
+			const blob = await response.blob();
+			callback(blob);
+		},
+		parseCustomCardList: function(file) {
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
@@ -969,11 +987,10 @@ var app = new Vue({
 			reader.onload = function(e) {
 				let contents = e.target.result;
 
+				const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
 				const parseLine = function(line) {
 					line = line.trim();
-					let [fullMatch, count, name, set, number] = line.match(
-						/^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/
-					);
+					let [, count, name, set, number] = line.match(lineRegex);
 					if (!count) count = 1;
 					if (set) {
 						set = set.toLowerCase();
@@ -1030,8 +1047,7 @@ var app = new Vue({
 							cardsPerBooster: {},
 							cards: {},
 						};
-						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName,
-						// '(Count)', Count
+						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
 						while (line < lines.length) {
 							let header = lines[line].match(headerRegex);
 							if (!header) {
@@ -1537,16 +1553,6 @@ var app = new Vue({
 					}
 				}
 			}
-		},
-		colorsInCardIDList: function(cardids) {
-			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
-			if (!cardids) return r;
-			for (let card of cardids) {
-				for (let color of this.cards[card].color_identity) {
-					r[color] += 1;
-				}
-			}
-			return r;
 		},
 		colorsInCardPool: function(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };

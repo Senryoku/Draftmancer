@@ -124,9 +124,10 @@
 						></i>
 					</span>
 					<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-						<strong>Session options:</strong>
+						<strong>Card Pool:</strong>
 						<template v-if="useCustomCardList">
 							Using Custom Card List ({{customCardList.length}} cards)
+							<a @click="displayedModal = 'cardList'"><i class="fas fa-edit"></i></a>
 						</template>
 						<template v-else>
 							<div class="inline" v-tooltip="'Draft with all cards within set restriction disregarding players collections.'">
@@ -497,12 +498,12 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="cmc_column in deckColumnCMC" class="cmc-column">
+						<div v-for="(cmc_column, colIndex) in deckColumnCMC" :key="'col' + colIndex" class="cmc-column">
 							<card v-for="(card, index) in cmc_column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="column in deckColumnColor" class="cmc-column" v-show="column.length > 0">
+						<div v-for="(column, colIndex) in deckColumnColor" :key="'col' + colIndex" class="cmc-column" v-show="column.length > 0">
 							<card v-for="(card, index) in column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
 						</div>
 					</template>
@@ -559,7 +560,7 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="cmc_column in sideboardColumnCMC" class="cmc-column">
+						<div v-for="(cmc_column, colIndex) in sideboardColumnCMC" :key="'col' + colIndex" class="cmc-column">
 							<figure
 								is="card"
 								v-for="(card, index) in cmc_column"
@@ -571,7 +572,7 @@
 						</div>
 					</template>
 					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="column in sideboardColumnColor" class="cmc-column" v-show="column.length > 0">
+						<div v-for="(column, colIndex) in sideboardColumnColor" :key="'col' + colIndex" class="cmc-column" v-show="column.length > 0">
 							<figure
 								is="card"
 								v-for="(card, index) in column"
@@ -845,7 +846,7 @@
 										Custom Card List
 									</label>
 									<div class="right">
-										<input type="file" id="card-list-input" @change="parseCustomCardList" style="display: none;" accept=".txt" />
+										<input type="file" id="card-list-input" @change="uploadFile($event, parseCustomCardList)" style="display: none;" accept=".txt" />
 										<button onclick="document.querySelector('#card-list-input').click()">
 											Upload
 										</button>
@@ -855,21 +856,24 @@
 										</a>
 									</div>
 								</div>
+								<!-- Loading cubes this way is wasteful, but easier to manage. -->
 								<div class="line" v-tooltip.left="{classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>'}">
 									<label for="featured-cubes">
 										<select name="featured-cubes">
-											<option value="filename">CUBE OPTION #1</option>
-											<option>CUBE OPTION #2</option>
+											<option v-for="cube in cubeLists" :value="cube.filename">{{cube.name}}</option>
 										</select>
 									</label>
 									<div class="right">
-										<button>Load Cube</button>
+										<button @click="fetchFile('data/cubes/ArenaHistoricCube1.txt', parseCustomCardList)">Load Cube</button>
 									</div>
 								</div>
 								<div v-if="customCardList.length > 0" style="text-align: center;">
-									<i v-if="customCardList.length > 0" class="fas fa-check green" v-tooltip="'Card list uploaded.'"></i>
+									<i v-if="customCardList.length > 0" class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
 									Loaded list with {{customCardList.length}} cards.
-									<a>Manage custom card list.</a>
+									<a @click="displayedModal = 'cardList'">
+										<i class="fas fa-edit"></i>
+										Manage custom card list.
+									</a>
 								</div>
 								<div class="option-info">
 									You can find more cubes or craft your own on
@@ -950,6 +954,12 @@
 					<button v-if="userID === sessionOwner" @click="generateBracket">Re-Generate Bracket</button>
 				</h2>
 				<bracket slot="body" :bracket="bracket" :editable="userID === sessionOwner" @updated="updateBracket"></bracket>
+			</modal>
+			<modal v-if="displayedModal === 'cardList'" @close="displayedModal = ''">
+				<h2 slot="header">
+					Custom Card List Management
+				</h2>
+				<card-list slot="body" :cardlist="customCardList" :editable="userID === sessionOwner"></card-list>
 			</modal>
 			<modal v-if="displayedModal === 'About'" @close="displayedModal = ''">
 				<h2 slot="header">About</h2>
