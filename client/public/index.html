@@ -828,30 +828,59 @@
 								<input type="checkbox" v-model="foil" id="option-foil" />
 							</div>
 						</div>
-						<div class="line" v-tooltip.left="{classes: 'option-tooltip', content: '<p>Use a custom card list (aka Cube).</p>'}">
-							<label for="use-custom-card-list">Use a Custom Card List</label>
-							<div class="right">
-								<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
+						<div class="option-section">
+							<div class="option-column-title">Custom Card List</div>
+							<div class="line" v-tooltip.left="{classes: 'option-tooltip', content: '<p>Use a custom card list (aka Cube).</p>'}">
+								<label for="use-custom-card-list">Use a Custom Card List</label>
+								<div class="right">
+									<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
+								</div>
 							</div>
-						</div>
-						<div v-bind:class="{ disabled: !useCustomCardList }" class="line">
-							<label for="card-list-input">Custom Card List</label>
-							<div class="right">
-								<input type="file" id="card-list-input" @change="parseCustomCardList" style="display: none;" accept=".txt" />
-								<button onclick="document.querySelector('#card-list-input').click()" v-tooltip="'Import your custom card list.'">
-									Upload
+							<div v-bind:class="{ disabled: !useCustomCardList }">
+								<div
+									class="line"
+									v-tooltip.left="{classes: 'option-tooltip', content: '<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>'}"
+								>
+									<label for="card-list-input">
+										Custom Card List
+									</label>
+									<div class="right">
+										<input type="file" id="card-list-input" @change="parseCustomCardList" style="display: none;" accept=".txt" />
+										<button onclick="document.querySelector('#card-list-input').click()">
+											Upload
+										</button>
+										<a href="cubeformat.html" target="_blank">
+											<i class="fas fa-external-link-alt"></i>
+											Format
+										</a>
+									</div>
+								</div>
+								<div class="line" v-tooltip.left="{classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>'}">
+									<label for="featured-cubes">
+										<select name="featured-cubes">
+											<option value="filename">CUBE OPTION #1</option>
+											<option>CUBE OPTION #2</option>
+										</select>
+									</label>
+									<div class="right">
+										<button>Load Cube</button>
+									</div>
+								</div>
+								<div v-if="customCardList.length > 0" style="text-align: center;">
 									<i v-if="customCardList.length > 0" class="fas fa-check green" v-tooltip="'Card list uploaded.'"></i>
-								</button>
-								<span v-if="customCardList.length > 0">{{customCardList.length}} cards in list.</span>
+									Loaded list with {{customCardList.length}} cards.
+									<a>Manage custom card list.</a>
+								</div>
+								<div class="option-info">
+									You can find more cubes or craft your own on
+									<a href="https://www.cubetutor.com/" target="_blank">Cube Tutor</a>
+									or
+									<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
+									<br />
+									Customize your list even further by using
+									<a href="cubeformat.html" target="_blank">card slots</a>
+								</div>
 							</div>
-						</div>
-						<div class="option-info">
-							Use services like
-							<a href="https://www.cubetutor.com/" target="_blank">Cube Tutor</a>
-							or
-							<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
-							to craft your list, export it to .txt then upload it here.
-							<a href="cubeformat.html" target="_blank">Click Here for more information.</a>
 						</div>
 					</div>
 					<div class="option-column">

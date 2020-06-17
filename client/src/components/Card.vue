@@ -13,11 +13,7 @@
 				<div class="card-name">{{ printedName }}</div>
 			</div>
 		</clazy-load>
-		<div
-			v-if="!selected && canbeburned && !burned"
-			class="burn-card red clickable"
-			@click="burn($event, card)"
-		>
+		<div v-if="!selected && canbeburned && !burned" class="burn-card red clickable" @click="burn($event, card)">
 			<i class="fas fa-ban fa-2x"></i>
 		</div>
 		<div
@@ -53,13 +49,10 @@ export default {
 			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
 	},
-	created: function() {
-		// Preload Carback
-		const img = new Image();
-		img.src = "img/cardback.png";
-	},
 };
 </script>
+
+<style src="./Card.css"></style>
 
 <style scoped>
 .burned {

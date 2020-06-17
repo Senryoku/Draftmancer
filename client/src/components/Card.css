@@ -1,0 +1,31 @@
+.card-placeholder {
+	width: 200px;
+	height: 283.333px;
+	border-radius: 5px;
+	background: url("../assets/img/cardback.png");
+	background-repeat: no-repeat;
+	background-size: 100%;
+}
+
+.card {
+	display: inline-block;
+	position: relative;
+	margin: 0.75em;
+	text-align: center;
+}
+
+.card img {
+	width: 200px;
+	transition: transform 0.08s ease-out;
+	/*transform-origin: bottom;*/
+	border-radius: 6px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.booster .card img:hover,
+.card-pool .card img:hover {
+	transform: scale(1.08);
+}

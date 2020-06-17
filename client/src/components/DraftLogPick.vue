@@ -2,10 +2,10 @@
 	<div class="card-container">
 		<Card
 			v-for="(card, index) in pick.booster"
-			v-bind:key="index"
-			v-bind:card="$root.cards[card]"
-			v-bind:language="$root.language"
-			:class="{'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card)}"
+			:key="index"
+			:card="$root.cards[card]"
+			:language="$root.language"
+			:class="{ 'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card) }"
 		></Card>
 	</div>
 </template>

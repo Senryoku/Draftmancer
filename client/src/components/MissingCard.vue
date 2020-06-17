@@ -15,8 +15,6 @@
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
 export default {
 	name: "MissingCard",
-	template: `
-	`,
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
@@ -29,13 +27,10 @@ export default {
 			return this.$root.cards[this.card.id].printed_name[this.language];
 		},
 	},
-	created: function() {
-		// Preload Carback
-		const img = new Image();
-		img.src = "img/cardback.png";
-	},
 };
 </script>
+
+<style src="./Card.css"></style>
 
 <style scoped>
 .card-count {

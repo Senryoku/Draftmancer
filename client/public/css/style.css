@@ -447,9 +447,9 @@ a:hover {
 }
 
 .option-info {
-	width: 100%;
 	text-align: center;
 	font-size: 0.8em;
+	padding: 0.5em;
 }
 
 .welcome {
@@ -809,15 +809,6 @@ ul.player-list {
 	margin-left: 0.5em;
 }
 
-.card-placeholder {
-	width: 200px;
-	height: 283.333px;
-	border-radius: 5px;
-	background: url("../img/cardback.png");
-	background-repeat: no-repeat;
-	background-size: 100%;
-}
-
 .card-placeholder .card-name {
 	height: 20px;
 	width: calc(100% - 5px);
@@ -837,29 +828,6 @@ ul.player-list {
 	background-color: #282828;
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
-}
-
-.card {
-	display: inline-block;
-	position: relative;
-	margin: 0.75em;
-	text-align: center;
-}
-
-.card img {
-	width: 200px;
-	transition: transform 0.08s ease-out;
-	/*transform-origin: bottom;*/
-	border-radius: 6px;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
-.booster .card img:hover,
-.card-pool .card img:hover {
-	transform: scale(1.08);
 }
 
 .selected {
@@ -950,36 +918,6 @@ ul.player-list {
 .drag-column {
 	min-width: 200px;
 	background-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Close button */
-.close {
-	position: absolute;
-	right: 32px;
-	top: 32px;
-	width: 32px;
-	height: 32px;
-	opacity: 0.5;
-	transition: opacity 0.25s;
-}
-.close:hover {
-	opacity: 1;
-}
-.close:before,
-.close:after {
-	position: absolute;
-	left: 15px;
-	content: " ";
-	height: 33px;
-	width: 4px;
-	border-radius: 2px;
-	background-color: #fff;
-}
-.close:before {
-	transform: rotate(45deg);
-}
-.close:after {
-	transform: rotate(-45deg);
 }
 
 /* ------------------------------------------------ */

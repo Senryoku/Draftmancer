@@ -185,12 +185,6 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
                     selection['rating'] = 0
                 cards[c['arena_id']].update(selection)
 
-        # Add only English card image to the main DB, other language will be loaded on demand
-        # for c in cards:
-        #     # English Printed Name can in infered from name
-        #     cards[c]["image_uris"] = {}
-        #     cards[c]["image_uris"]['en'] = translations[c]["image_uris"]['en']
-
         # Removes URL prefix
         allURIs = []
         for lang in translations:
