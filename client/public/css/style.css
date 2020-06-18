@@ -842,6 +842,12 @@ ul.player-list {
 	box-shadow: 0px 0px 20px 4px rgba(0, 200, 2, 1);
 }
 
+.burned {
+	-webkit-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
+	-moz-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
+	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
+}
+
 /* Deck display */
 
 .empty-warning {
@@ -887,31 +893,31 @@ ul.player-list {
 }
 
 .card-column > div,
-.cmc-column > div {
+.card-column > div {
 	height: 25px;
 	margin: 0;
 	/*overflow: hidden*/
 }
 
 .card-column > div:hover,
-.cmc-column > div:hover {
+.card-column > div:hover {
 	z-index: 999;
 	overflow: visible;
 }
 
 .card-column > div:last-child,
-.cmc-column > div:last-child {
+.card-column > div:last-child {
 	overflow: visible;
 }
 
 /* No :hover outside of the div bounds */
 .card-column > div > div,
-.cmc-column > div > div {
+.card-column > div > div {
 	pointer-events: none;
 }
 /* Except if its fully visible */
 .card-column > div:last-child > div,
-.cmc-column > div:last-child > div {
+.card-column > div:last-child > div {
 	pointer-events: auto;
 }
 

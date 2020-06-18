@@ -42,8 +42,6 @@ export default {
 
 img {
 	width: 200px;
-	transition: transform 0.08s ease-out;
-	/*transform-origin: bottom;*/
 	border-radius: 6px;
 	-webkit-user-select: none;
 	-moz-user-select: none;

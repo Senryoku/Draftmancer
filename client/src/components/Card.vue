@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="card"
-		:class="{ clickable: selectcard }"
+		:class="{ clickable: selectcard, selected: selected, burned: burned }"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
 		@click="selectcard($event, card)"
@@ -41,12 +41,6 @@ export default {
 <style src="./Card.css"></style>
 
 <style scoped>
-.burned {
-	-webkit-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
-	-moz-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
-	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
-}
-
 .burn-card,
 .restore-card {
 	position: absolute;

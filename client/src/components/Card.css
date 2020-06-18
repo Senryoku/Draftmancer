@@ -5,9 +5,10 @@
 	position: relative;
 	margin: 0.75em;
 	text-align: center;
+	transition: transform 0.08s ease-out;
 }
 
-.booster .card img:hover,
-.card-pool .card img:hover {
+.booster .card:hover,
+.card-pool .card:hover {
 	transform: scale(1.08);
 }
