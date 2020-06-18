@@ -43,7 +43,6 @@ function orderCardId(lhs, rhs) {
 }
 
 const arenaComparitors = [orderCardCMC, orderCardCreature, orderCardColor, orderCardAlphabetical, orderCardId];
-
 function orderCardArena(lhs, rhs) {
   for (let comparitor of arenaComparitors) {
   	let result = comparitor(lhs, rhs)
@@ -1739,7 +1738,7 @@ var app = new Vue({
 				acc[item.cmc].push(item);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) a[col] = this.orderByArena(a[col]);
 			return a;
 		},
 		columnColor: function (cards) {
@@ -1772,8 +1771,7 @@ var app = new Vue({
 		orderByColorInPlace: function (cards) {
 			return cards.sort(function (lhs, rhs) {
 				if (orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					if (lhs.cmc != rhs.cmc) return lhs.cmc - rhs.cmc;
-					else return lhs.name < rhs.name;
+					return orderCardArena(lhs, rhs);
 				return orderColor(lhs.color_identity, rhs.color_identity);
 			});
 		},
@@ -1783,7 +1781,7 @@ var app = new Vue({
 		orderByRarity: function (cards) {
 			const order = { mythic: 0, rare: 1, uncommon: 2, common: 3 };
 			return [...cards].sort(function (lhs, rhs) {
-				if (order[lhs.rarity] == order[rhs.rarity]) return lhs.cmc - rhs.cmc;
+				if (order[lhs.rarity] == order[rhs.rarity]) return orderCardArena(lhs, rhs);
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		},
