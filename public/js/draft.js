@@ -920,14 +920,14 @@ var app = new Vue({
 			this.deck.push(card);
 			let columnIndex = Math.min(card.cmc, this.deckColumn.length - 1);
 			this.deckColumn[columnIndex].push(card);
-			this.deckColumn[columnIndex] = this.orderByArena(this.deckColumn[columnIndex]);
+			this.orderByArenaInPlace(this.deckColumn[columnIndex]);
 		},
 		addToSideboard: function (card) {
 			// Handle column sync.
 			this.sideboard.push(card);
 			let columnIndex = Math.min(card.cmc, this.sideboardColumn.length - 1);
 			this.sideboardColumn[columnIndex].push(card);
-			this.sideboardColumn[columnIndex] = this.orderByArena(this.sideboardColumn[columnIndex]);
+			this.orderByArenaInPlace(this.sideboardColumn[columnIndex]);
 		},
 		pickCard: function () {
 			if (
@@ -1744,7 +1744,7 @@ var app = new Vue({
 				acc[item.cmc].push(item);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByArena(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		columnColor: function (cards) {
@@ -1761,7 +1761,7 @@ var app = new Vue({
 				},
 				{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] }
 			);
-			for (let col in a) a[col] = this.orderByArena(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		idColumnCMC: function (cardids) {
@@ -1771,7 +1771,7 @@ var app = new Vue({
 				acc[cmc].push(id);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByArena(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		orderByColorInPlace: function (cards) {
