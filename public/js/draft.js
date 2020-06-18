@@ -7,7 +7,6 @@ const ColorOrder = {
 	R: 3,
 	G: 4,
 };
-
 function orderColor(lhs, rhs) {
 	if (!lhs || !rhs) return 0;
 	if (lhs.length == 1 && rhs.length == 1) return ColorOrder[lhs[0]] - ColorOrder[rhs[0]];
