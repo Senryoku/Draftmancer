@@ -75,7 +75,7 @@ export default {
 		return {
 			missingCardsRarity: "rare",
 			showNonBooster: false,
-			selectedSetCode: "iko",
+			selectedSetCode: "m21",
 		};
 	},
 	computed: {

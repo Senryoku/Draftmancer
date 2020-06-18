@@ -29,29 +29,31 @@ if len(sys.argv) > 1:
     ForceRatings = Arg == "ratings"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
-MTGALocFile = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))[0]
-MTGACardsFile = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))[0]
+MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
+MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
 MTGALocalization = {}
-with open(MTGALocFile, 'r', encoding="utf8") as file:
-    locdata = json.load(file)
-    for o in locdata[0]['keys']:
-        MTGALocalization[o['id']] = o['text']
+for path in MTGALocFiles:
+    with open(path, 'r', encoding="utf8") as file:
+        locdata = json.load(file)
+        for o in locdata[0]['keys']:
+            MTGALocalization[o['id']] = o['text']
 
 MTGADataDebug = {}
 CardsCollectorNumberAndSet = {}
-with open(MTGACardsFile, 'r', encoding="utf8") as file:
-    carddata = json.load(file)
-    for o in carddata:
-        if o['isPrimaryCard']:
-            o['set'] = o['set'].lower()
-            if o['set'] == 'conf':
-                o['set'] = 'con'
-            if o['set'] == 'dar':
-                o['set'] = 'dom'
-            MTGADataDebug[(MTGALocalization[o['titleId']],
-                           o['CollectorNumber'], o['set'].lower())] = o['grpid']
-            CardsCollectorNumberAndSet[(
-                o['CollectorNumber'], o['set'].lower())] = o['grpid']
+for path in MTGACardsFiles:
+    with open(path, 'r', encoding="utf8") as file:
+        carddata = json.load(file)
+        for o in carddata:
+            if o['isPrimaryCard']:
+                o['set'] = o['set'].lower()
+                if o['set'] == 'conf':
+                    o['set'] = 'con'
+                if o['set'] == 'dar':
+                    o['set'] = 'dom'
+                MTGADataDebug[(MTGALocalization[o['titleId']],
+                               o['CollectorNumber'], o['set'].lower())] = o['grpid']
+                CardsCollectorNumberAndSet[(
+                    o['CollectorNumber'], o['set'].lower())] = o['grpid']
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -60,8 +62,9 @@ with open('data/MTGADataDebug.json', 'w') as outfile:
     json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
-    print("Downloading {}...".format(BulkDataURL))
-    urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
+    #print("Downloading {}...".format(BulkDataURL))
+    #urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
+    print("Permanent link to all latest Scryfall data doesn't seem available anymore, please visit: https://scryfall.com/docs/api/bulk-data and place the 'All Cards' archive here :'{}'".format(BulkDataPath))
 
 
 # Handle decimals from Scryfall data? (Prices?)
@@ -97,6 +100,8 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         with open(BulkDataArenaPath, 'w') as outfile:
             json.dump(cards, outfile, cls=DecimalEncoder)
 
+        print("\nDone!")
+
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
     CardRatings = dict(CardRatings, **json.loads(file.read()))
@@ -120,7 +125,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
+if not os.path.isfile(FinalDataPath) or ForceCache:
     # Tag non booster card as such
     print("Requesting non-booster cards list...")
     NonBoosterCards = []
