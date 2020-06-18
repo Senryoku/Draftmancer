@@ -173,14 +173,18 @@ var app = new Vue({
 			Notification.permission == "granted" &&
 			getCookie("enableNotifications", false),
 		notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
+		// Draft Booster
 		selectedCard: undefined,
 		burningCards: [],
+		// Brewing
 		deck: [],
 		sideboard: [],
 		autoLand: true,
 		lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 		deckColumn: [[], [], [], [], [], [], []],
 		sideboardColumn: [[], [], [], [], [], [], []],
+		//
+		selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
 		// Chat
 		currentChatMessage: "",
@@ -962,25 +966,25 @@ var app = new Vue({
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile: function(e, callback) {
+		uploadFile: function(e, callback, options) {
 			let file = e.target.files[0];
 			if (!file) {
 				this.fireToast("error", "An error occured while uploading the file.");
 				return;
 			}
-			callback(file);
+			callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function(url, callback) {
+		fetchFile: async function(url, callback, options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				this.fireToast("error", `Could not fetch ${url}.`);
 				return;
 			}
 			const blob = await response.blob();
-			callback(blob);
+			callback(blob, options);
 		},
-		parseCustomCardList: function(file) {
+		parseCustomCardList: function(file, options) {
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
@@ -1043,11 +1047,12 @@ var app = new Vue({
 
 				try {
 					const lines = contents.split(/\r\n|\n/);
+					let cardList = {};
 					// Custom rarity sheets
 					if (lines[0].trim()[0] === "[") {
 						let line = 0;
 						let cardCount = 0;
-						let cardList = {
+						cardList = {
 							customSheets: true,
 							cardsPerBooster: {},
 							cards: {},
@@ -1079,23 +1084,23 @@ var app = new Vue({
 							}
 						}
 						cardList.length = cardCount;
-						app.customCardList = cardList;
 					} else {
-						let cardList = [];
+						cardList = {
+							customSheets: false,
+							cards: [],
+						};
 						for (let line of lines) {
 							if (line) {
 								let [count, cardID] = parseLine(line);
 								if (typeof cardID !== "undefined") {
-									for (let i = 0; i < count; ++i) cardList.push(cardID);
+									for (let i = 0; i < count; ++i) cardList.cards.push(cardID);
 								} else return;
 							}
 						}
-						app.customCardList = {
-							customSheets: false,
-							cards: cardList,
-							length: cardList.length,
-						};
+						cardList.length = cardList.cards.length;
 					}
+					if (options && options.name) cardList.name = options.name;
+					app.customCardList = cardList;
 				} catch (e) {
 					Swal.fire({
 						icon: "error",

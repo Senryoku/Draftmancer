@@ -126,7 +126,7 @@
 					<span class="generic-container">
 						<strong>Card Pool:</strong>
 						<span v-if="useCustomCardList">
-							Using Custom Card List
+							{{customCardList.name ? customCardList.name : "Custom Card List"}}
 							<template v-if="customCardList.length > 0">
 								({{customCardList.length}} cards
 								<a @click="displayedModal = 'cardList'"><i class="fas fa-file-alt"></i></a>
@@ -864,21 +864,24 @@
 								<!-- Loading cubes this way is wasteful, but easier to manage. -->
 								<div class="line" v-tooltip.left="{classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>'}">
 									<label for="featured-cubes">
-										<select name="featured-cubes">
-											<option v-for="cube in cubeLists" :value="cube.filename">{{cube.name}}</option>
+										<select name="featured-cubes" v-model="selectedCube">
+											<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">{{cube.name}}</option>
 										</select>
 									</label>
 									<div class="right">
-										<button @click="fetchFile('data/cubes/ArenaHistoricCube1.txt', parseCustomCardList)">Load Cube</button>
+										<button @click="fetchFile(selectedCube.filename, parseCustomCardList, {name: selectedCube.name})">Load Cube</button>
 									</div>
 								</div>
 								<div v-if="customCardList.length > 0" style="text-align: center;">
-									<i v-if="customCardList.length > 0" class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
-									Loaded list with {{customCardList.length}} cards.
-									<a @click="displayedModal = 'cardList'">
+									<i class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
+									<span v-if="customCardList.name">
+										Loaded '{{customCardList.name}}' ({{customCardList.length}} cards).
+									</span>
+									<span v-else>Loaded list with {{customCardList.length}} cards.</span>
+									<button @click="displayedModal = 'cardList'">
 										<i class="fas fa-file-alt"></i>
-										Review custom card list.
-									</a>
+										Review.
+									</button>
 								</div>
 								<div class="option-info">
 									You can find more cubes or craft your own on
@@ -962,7 +965,7 @@
 			</modal>
 			<modal v-if="displayedModal === 'cardList'" @close="displayedModal = ''">
 				<h2 slot="header">
-					Custom Card List Management
+					Custom Card List Review
 				</h2>
 				<card-list slot="body" :cardlist="customCardList" :editable="userID === sessionOwner"></card-list>
 			</modal>

@@ -1,6 +1,6 @@
 <template>
 	<div v-if="isValid">
-		Loaded list with {{ cardlist.length }} cards.
+		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
 		<span v-if="missing && missing.total > 0">
 			<i class="fas fa-exclamation-triangle yellow"></i> {{ missing.total }} are missing from your collection ({{
 				missingText
@@ -37,11 +37,6 @@ const CardColumn = Vue.component("CardColumn", {
 		column: { type: Object, required: true },
 	},
 	components: { CardImage },
-	data: function() {
-		return {
-			count: 0,
-		};
-	},
 	template: `
 <div class="card-column" v-show="column.length > 0">
 	<div v-for="(card, index) in column" :key="index" class="card card-wrapper">
