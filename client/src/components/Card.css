@@ -1,0 +1,13 @@
+/* TEMP: Should be refactored. */
+
+.card {
+	display: inline-block;
+	position: relative;
+	margin: 0.75em;
+	text-align: center;
+}
+
+.booster .card img:hover,
+.card-pool .card img:hover {
+	transform: scale(1.08);
+}
