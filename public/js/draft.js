@@ -1709,6 +1709,7 @@ var app = new Vue({
 				this.deckColumn[this.deckColumn.length - 2],
 				this.deckColumn[this.deckColumn.length - 1]
 			);
+			this.orderByArenaInPlace(this.deckColumn[this.deckColumn.length - 2]);
 			this.deckColumn.pop();
 		},
 		removeSideboardColumn: function () {
@@ -1717,6 +1718,7 @@ var app = new Vue({
 				this.sideboardColumn[this.sideboardColumn.length - 2],
 				this.sideboardColumn[this.sideboardColumn.length - 1]
 			);
+			this.orderByArenaInPlace(this.sideboardColumn[this.sideboardColumn.length - 2]);
 			this.sideboardColumn.pop();
 		},
 		// Sync. column changes with deck and sideboard
