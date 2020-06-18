@@ -21,6 +21,11 @@ import Bracket from "./components/Bracket.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import Toggle from "./components/Toggle.vue";
 
+// Preload Carback
+import CardBack from "./assets/img/cardback.png";
+const img = new Image();
+img.src = CardBack;
+
 const ColorOrder = {
 	W: 0,
 	U: 1,

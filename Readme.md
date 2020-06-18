@@ -39,8 +39,9 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Load translations on-demand.
--   Add some example cubes (starting with Arena Cube)
+-   Display cube name (for presets)
+-   Add reorganize button for draggable (Remove other display options)
+-   Regroup multiple copies of cards on pick?
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State)
@@ -56,6 +57,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Load translations on-demand.
+-   Add some example cubes (starting with Arena Cube)
 -   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
 -   Glimpse/Burn Draft

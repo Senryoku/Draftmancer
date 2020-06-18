@@ -11,37 +11,14 @@
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
 				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
-					<div
-						v-for="(column, colIndex) in row"
-						:key="'col' + colIndex"
-						class="card-column"
-						v-show="column.length > 0"
-					>
-						<div v-for="(card, index) in column" :key="index" class="card-wrapper">
-							<div v-if="$root.collection && !(card.id in $root.collection)" class="collection-warning">
-								<i class="fas fa-exclamation-triangle yellow"></i>
-							</div>
-							<card :card="card" :language="$root.language"></card>
-						</div>
-					</div>
+					<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column">
+					</card-column>
 				</div>
 			</div>
 		</template>
 		<template v-else>
 			<div v-for="(row, rowIndex) in rows" :key="'row' + rowIndex" class="category-wrapper">
-				<div
-					v-for="(column, colIndex) in row"
-					:key="'col' + colIndex"
-					class="card-column"
-					v-show="column.length > 0"
-				>
-					<div v-for="(card, index) in column" :key="index" class="card-wrapper">
-						<div v-if="$root.collection && !(card.id in $root.collection)" class="collection-warning">
-							<i class="fas fa-exclamation-triangle yellow"></i>
-						</div>
-						<card :card="card" :language="$root.language"></card>
-					</div>
-				</div>
+				<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"> </card-column>
 			</div>
 		</template>
 	</div>
@@ -51,10 +28,33 @@
 </template>
 
 <script>
+import Vue from "vue";
 import { download } from "../helper.js";
-import Card from "./Card.vue";
+import CardImage from "./CardImage.vue";
+
+const CardColumn = Vue.component("CardColumn", {
+	props: {
+		column: { type: Object, required: true },
+	},
+	components: { CardImage },
+	data: function() {
+		return {
+			count: 0,
+		};
+	},
+	template: `
+<div class="card-column" v-show="column.length > 0">
+	<div v-for="(card, index) in column" :key="index" class="card card-wrapper">
+		<div v-if="$root.hasCollection && !(card.id in $root.collection)" class="collection-warning">
+			<i class="fas fa-exclamation-triangle yellow"></i>
+		</div>
+		<card-image :card="card" :language="$root.language"></card-image>
+	</div>
+</div>`,
+});
+
 export default {
-	components: { Card },
+	components: { CardColumn },
 	props: {
 		cardlist: { type: Object, required: true },
 	},
@@ -75,7 +75,7 @@ export default {
 			return rowsBySlot;
 		},
 		missing: function() {
-			if (!this.$root.collection) return null;
+			if (!this.$root.hasCollection) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			for (let cid of this.flatCardList) {
 				if (!(cid in this.$root.collection)) {
@@ -130,7 +130,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .category-wrapper {
 	column-count: 6;
 	column-gap: 1rem;
@@ -144,9 +144,6 @@ export default {
 
 .card-wrapper {
 	position: relative;
-}
-
-.card-wrapper > .card {
 	margin: 0;
 }
 

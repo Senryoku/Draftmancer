@@ -6,32 +6,24 @@
 		:data-cmc="card.cmc"
 		@click="selectcard($event, card)"
 		@dblclick="ondblclick($event, card)"
-		:title="printedName"
 	>
-		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
-			<img :src="imageURI" :class="{ selected: selected, burned: burned }" />
-			<div class="card-placeholder" slot="placeholder" :class="{ selected: selected }">
-				<div class="card-name">{{ printedName }}</div>
+		<card-image :card="card" :language="language"></card-image>
+		<template v-if="canbeburned && !selected">
+			<div v-if="burned" class="restore-card blue clickable" @click="restore($event, card)">
+				<i class="fas fa-undo-alt fa-2x"></i>
 			</div>
-		</clazy-load>
-		<div v-if="!selected && canbeburned && !burned" class="burn-card red clickable" @click="burn($event, card)">
-			<i class="fas fa-ban fa-2x"></i>
-		</div>
-		<div
-			v-if="!selected && canbeburned && burned"
-			class="restore-card blue clickable"
-			@click="restore($event, card)"
-		>
-			<i class="fas fa-undo-alt fa-2x"></i>
-		</div>
+			<div v-else class="burn-card red clickable" @click="burn($event, card)">
+				<i class="fas fa-ban fa-2x"></i>
+			</div>
+		</template>
 	</div>
 </template>
 
 <script>
-import CardBack from "../assets/img/cardback.png";
-const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
+import CardImage from "./CardImage.vue";
 export default {
 	name: "Card",
+	components: { CardImage },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
@@ -42,19 +34,6 @@ export default {
 		restore: { type: Function, default: function() {} },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
-	},
-	computed: {
-		imageURI: function() {
-			return ImageURLPrefix + this.$root.cards[this.card.id].image_uris[this.language];
-		},
-		printedName: function() {
-			return this.$root.cards[this.card.id].printed_name[this.language];
-		},
-	},
-	created: function() {
-		// Preload Carback
-		const img = new Image();
-		img.src = CardBack;
 	},
 };
 </script>

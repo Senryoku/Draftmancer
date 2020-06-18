@@ -1,37 +1,19 @@
 <template>
 	<div class="card">
-		<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading">
-			<img :src="imageURI" :title="printedName" />
-			<div class="card-placeholder" slot="placeholder">
-				<div class="card-name">{{ printedName }}</div>
-			</div>
-		</clazy-load>
+		<card-image :card="card" :language="language"></card-image>
 		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
 		<div class="card-count" v-if="card.count < 4">x{{ 4 - card.count }}</div>
 	</div>
 </template>
 
 <script>
-import CardBack from "../assets/img/cardback.png";
-const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
+import CardImage from "./CardImage.vue";
 export default {
 	name: "MissingCard",
+	components: { CardImage },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
-	},
-	computed: {
-		imageURI: function() {
-			return ImageURLPrefix + this.$root.cards[this.card.id].image_uris[this.language];
-		},
-		printedName: function() {
-			return this.$root.cards[this.card.id].printed_name[this.language];
-		},
-	},
-	created: function() {
-		// Preload Carback
-		const img = new Image();
-		img.src = CardBack;
 	},
 };
 </script>
