@@ -1,5 +1,9 @@
 [
 	{
+		"date": "18/06/2020",
+		"notes": ["Added M21 cards (most images are only available in English for now)"]
+	},
+	{
 		"date": "17/06/2020",
 		"notes": [
 			"Added cube presets (Only the Arena Cube for now, more to come!).",
