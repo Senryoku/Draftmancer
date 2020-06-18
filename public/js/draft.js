@@ -918,12 +918,16 @@ var app = new Vue({
 		addToDeck: function (card) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
+			let columnIndex = Math.min(card.cmc, this.deckColumn.length - 1);
+			this.deckColumn[columnIndex].push(card);
+			this.deckColumn[columnIndex] = this.orderByArena(this.deckColumn[columnIndex]);
 		},
 		addToSideboard: function (card) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
+			let columnIndex = Math.min(card.cmc, this.sideboardColumn.length - 1);
+			this.sideboardColumn[columnIndex].push(card);
+			this.sideboardColumn[columnIndex] = this.orderByArena(this.sideboardColumn[columnIndex]);
 		},
 		pickCard: function () {
 			if (
@@ -1723,6 +1727,7 @@ var app = new Vue({
 					1
 				);
 			if (e.added) this.deck.push(e.added.element);
+			for (let col = 0; col < this.deckColumn.length; ++col) this.orderByArenaInPlace(this.deckColumn[col]);
 		},
 		columnSideboardChange: function (e) {
 			if (e.removed)
@@ -1731,6 +1736,7 @@ var app = new Vue({
 					1
 				);
 			if (e.added) this.sideboard.push(e.added.element);
+			for (let col = 0; col < this.sideboardColumn.length; ++col) this.orderByArenaInPlace(this.sideboardColumn[col]);
 		},
 		columnCMC: function (cards) {
 			let a = cards.reduce((acc, item) => {
@@ -1765,7 +1771,7 @@ var app = new Vue({
 				acc[cmc].push(id);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) a[col] = this.orderByArena(a[col]);
 			return a;
 		},
 		orderByColorInPlace: function (cards) {
@@ -1785,8 +1791,11 @@ var app = new Vue({
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		},
+		orderByArenaInPlace: function (cards) {
+			return cards.sort(orderCardArena);
+		},
 		orderByArena: function (cards) {
-			return [...cards].sort(orderCardArena);
+			return this.orderByArenaInPlace([...cards]);
 		},
 		updateAutoLands: function () {
 			if (this.autoLand) {
@@ -2123,7 +2132,7 @@ var app = new Vue({
 			if (oldDeck != newDeck) {
 				this.deckColumn = [[], [], [], [], [], [], []];
 				for (let c of newDeck) this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
-				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByColorInPlace(this.deckColumn[col]);
+				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByArenaInPlace(this.deckColumn[col]);
 			}
 		},
 		sideboard: function (newSide, oldSide) {
@@ -2131,6 +2140,7 @@ var app = new Vue({
 			if (newSide != oldSide) {
 				this.sideboardColumn = [[], [], [], [], [], [], []];
 				for (let c of newSide) this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
+				for (let col = 0; col < this.sideboardColumn.length; ++col) this.orderByArenaInPlace(this.sideboardColumn[col]);
 			}
 		},
 		autoLand: function () {
