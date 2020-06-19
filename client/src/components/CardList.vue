@@ -1,40 +1,45 @@
 <template>
 	<div v-if="isValid">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
-		<span v-if="missing && missing.total > 0">
-			<i class="fas fa-exclamation-triangle yellow"></i> {{ missing.total }} are missing from your collection ({{
-				missingText
+		<span
+			v-if="missing && missing.total > 0"
+		>
+			<i class="fas fa-exclamation-triangle yellow"></i>
+			{{ missing.total }} are missing from your collection ({{
+			missingText
 			}})
 		</span>
 		<button @click="download">Download List</button>
 		<template v-if="cardlist.customSheets">
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
-				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
-					<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column">
-					</card-column>
+				<div
+					v-for="(row, rowIndex) in rowsBySlot[key]"
+					:key="'row' + rowIndex"
+					class="category-wrapper"
+				>
+					<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"></card-column>
 				</div>
 			</div>
 		</template>
 		<template v-else>
 			<div v-for="(row, rowIndex) in rows" :key="'row' + rowIndex" class="category-wrapper">
-				<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"> </card-column>
+				<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"></card-column>
 			</div>
 		</template>
 	</div>
-	<div v-else>
-		No card list loaded.
-	</div>
+	<div v-else>No card list loaded.</div>
 </template>
 
 <script>
 import Vue from "vue";
 import { download } from "../helper.js";
+import CardOrder from "../cardorder.js";
 import CardImage from "./CardImage.vue";
 
 const CardColumn = Vue.component("CardColumn", {
 	props: {
-		column: { type: Object, required: true },
+		column: { type: Array, required: true },
 	},
 	components: { CardImage },
 	template: `
@@ -118,7 +123,7 @@ export default {
 				},
 				[{ "": [], W: [], U: [], B: [], R: [], G: [] }, {}]
 			);
-			for (let row of a) for (let col in row) row[col] = this.$root.orderByCMC(row[col]);
+			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
 		},
 	},

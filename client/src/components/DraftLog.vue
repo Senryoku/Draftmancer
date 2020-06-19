@@ -4,54 +4,53 @@
 		<span v-if="draftlog.time">({{new Date(draftlog.time).toLocaleString()}})</span>
 		<button type="button" @click="downloadLog">Download full log</button>
 		<p>Click on a player to display the details of their draft.</p>
-		
+
 		<div>
 			<ul :class="{'player-table': tableSumary.length <= 8, 'player-list': tableSumary.length > 8}">
-				<li v-for="(log, index) of tableSumary" :key="index" :class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}" @click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }">
+				<li
+					v-for="(log, index) of tableSumary"
+					:key="index"
+					:class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}"
+					@click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }"
+				>
 					{{log.userName}}
 					<span>
-						<img v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)" :key="c" :src="'img/mana/'+c+'.svg'" class="mana-icon" v-tooltip="log.colors[c]">
+						<img
+							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+							:key="c"
+							:src="'img/mana/'+c+'.svg'"
+							class="mana-icon"
+							v-tooltip="log.colors[c]"
+						/>
 					</span>
 				</li>
 			</ul>
 		</div>
-		
+
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<h2>{{selectedLog.userName}}</h2>
 			<select v-model="displayOptions.category">
 				<option>Picks</option>
 				<option>Cards</option>
-				<option>Cards (CMC Columns)</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">Export in MTGA format</button>
 			<button @click="downloadMPT(selectedLog.userID)">Download in MTGO format</button>
-			<button @click="submitToMPT(selectedLog.userID)">Submit to MagicProTools</button></h1>
-			
+			<button @click="submitToMPT(selectedLog.userID)">Submit to MagicProTools</button>
+
 			<template v-if="displayOptions.category == 'Picks'">
 				<div v-for="(pick, index) in selectedLog.picks" :key="index">
 					<h3>Pick {{index + 1}}: {{$root.cards[pick.pick].name}}</h3>
 					<draft-log-pick :pick="pick"></draft-log-pick>
 				</div>
 			</template>
-			<template v-else-if="displayOptions.category == 'Cards (CMC Columns)'">
+			<template v-else-if="displayOptions.category == 'Cards'">
 				<div class="card-container card-columns">
-					<div v-for="(cmc_column, colIndex) in $root.idColumnCMC(selectedLog.cards)" :key="colIndex" class="card-column">
-						<card v-for="(card, index) in cmc_column" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language"></card>
-					</div>
+					<card-pool
+						:cards="selectedLogCards"
+						:group="`cardPool-${selectedLog.userID}`"
+						:key="`cardPool-${selectedLog.userID}`"
+					></card-pool>
 				</div>
-			</template>
-			<template v-else>
-				<input type="checkbox" name="draft-log-card-list" v-model="displayOptions.textList"><label for="draft-log-card-list">Show simple card list</label>
-				<template v-if="displayOptions.textList">
-					<ol class="draft-log-boosters-list">
-						<li v-for="card in selectedLog.cards" :key="card.uniqueID">{{$root.cards[card].printed_name[$root.language]}}</li>
-					</ol>
-				</template>
-				<template v-else>
-					<div class="card-container">
-						<card v-for="(card, index) in selectedLog.cards" v-bind:key="index" v-bind:card="$root.cards[card]" v-bind:language="$root.language"></card>
-					</div>
-				</template>
 			</template>
 		</div>
 	</div>
@@ -59,12 +58,12 @@
 
 <script>
 import * as helper from "./../helper.js";
-import Card from "./Card.vue";
+import CardPool from "./CardPool.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
 	name: "DraftLog",
-	components: { Card, DraftLogPick },
+	components: { CardPool, DraftLogPick },
 	props: { draftlog: { type: Object, required: true } },
 	data: () => {
 		return {
@@ -81,7 +80,7 @@ export default {
 			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
 				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 		},
-		downloadLog: function () {
+		downloadLog: function() {
 			let draftLogFull = this.draftlog;
 			for (let e in this.draftlog.users) {
 				let cards = [];
@@ -90,10 +89,10 @@ export default {
 			}
 			helper.download(`DraftLog_${this.draftlog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
-		downloadMPT: function (id) {
+		downloadMPT: function(id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.$root.cards, this.draftlog, id));
 		},
-		submitToMPT: function (id) {
+		submitToMPT: function(id) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
 				headers: {
@@ -106,11 +105,11 @@ export default {
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
-			}).then((response) => {
+			}).then(response => {
 				if (response.status !== 200) {
 					this.$root.fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
-					response.json().then((json) => {
+					response.json().then(json => {
 						if (json.error) {
 							this.$root.fireToast("error", `Error: ${json.error}.`);
 						} else {
@@ -126,7 +125,7 @@ export default {
 				}
 			});
 		},
-		exportSingleLog: function (id) {
+		exportSingleLog: function(id) {
 			let cards = [];
 			for (let c of this.draftlog.users[id].cards) cards.push(this.$root.cards[c]);
 			helper.copyToClipboard(this.$root.exportMTGA(cards, null, this.$root.language), null, "\t");
@@ -144,10 +143,13 @@ export default {
 		},
 	},
 	computed: {
-		selectedLog: function () {
+		selectedLog: function() {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
-		tableSumary: function () {
+		selectedLogCards: function() {
+			return this.selectedLog.cards.map(cid => this.$root.genCard(cid));
+		},
+		tableSumary: function() {
 			let tableSumary = [];
 			for (let userID in this.draftlog.users) {
 				tableSumary.push({
@@ -177,5 +179,4 @@ export default {
 		},
 	},
 };
-
 </script>

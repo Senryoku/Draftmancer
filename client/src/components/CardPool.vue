@@ -1,11 +1,16 @@
 <template>
 	<div class="card-container card-columns">
+		<div class="empty-warning" v-if="cards.length == 0">
+			<slot name="empty">
+				<h3>This card pool is currently empty!</h3>
+			</slot>
+		</div>
 		<draggable
 			v-for="(column, colIdx) in columns"
 			:key="`${_uid}_col_${colIdx}`"
 			class="card-column drag-column"
 			:list="column"
-			group="cardColumn"
+			:group="group"
 			@change="change"
 		>
 			<card
@@ -32,17 +37,13 @@
 				<i class="fas fa-sort-amount-up fa-2x"></i>
 			</div>
 		</div>
-		<div class="empty-warning" v-if="cards.length == 0">
-			<slot name="empty">
-				<h3>This card pool is currently empty!</h3>
-			</slot>
-		</div>
 	</div>
 </template>
 
 <script>
 import Vue from "vue";
 import draggable from "vuedraggable";
+import CardOrder from "../cardorder.js";
 import Card from "./Card.vue";
 
 export default {
@@ -51,11 +52,15 @@ export default {
 	props: {
 		cards: { type: Array, required: true },
 		click: { type: Function },
+		group: { type: String },
 	},
 	data: function() {
 		return {
 			columns: [[], [], [], [], [], [], []],
 		};
+	},
+	mounted: function() {
+		this.sync();
 	},
 	methods: {
 		reset: function() {
@@ -64,7 +69,6 @@ export default {
 		sync: function() {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
-			//for (let col of this.columns) this.$root.orderByArenaInPlace(col);
 		},
 		addCard: function(card) {
 			let columnIndex = Math.min(card.cmc, this.columns.length - 1);
@@ -80,9 +84,9 @@ export default {
 			let duplicateIndex = column.findIndex(c => c.name === card.name);
 			if (duplicateIndex != -1) {
 				column.splice(duplicateIndex, 0, card);
-			} else if (this.$root.isOrderedByArena(column)) {
+			} else if (CardOrder.isOrdered(column, CardOrder.Comparators.arena)) {
 				column.push(card);
-				this.$root.orderByArenaInPlace(column);
+				CardOrder.orderByArenaInPlace(column);
 			} else {
 				column.push(card);
 			}
@@ -125,7 +129,7 @@ export default {
 				this.columns.length - 2,
 				[].concat(this.columns[this.columns.length - 2], this.columns[this.columns.length - 1])
 			);
-			this.$root.orderByArenaInPlace(this.columns[this.columns.length - 2]);
+			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
 	},
