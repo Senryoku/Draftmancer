@@ -11,7 +11,6 @@ import glob
 import decimal
 from itertools import groupby
 
-BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'client/public/data/MTGACards.json'
@@ -62,9 +61,13 @@ with open('data/MTGADataDebug.json', 'w') as outfile:
     json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
-    #print("Downloading {}...".format(BulkDataURL))
-    #urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
-    print("Permanent link to all latest Scryfall data doesn't seem available anymore, please visit: https://scryfall.com/docs/api/bulk-data and place the 'All Cards' archive here :'{}'".format(BulkDataPath))
+    # Get Bulk Data URL
+    response = requests.get("https://api.scryfall.com/bulk-data")
+    bulkdata = json.loads(response.content)
+    allcardURL = next(x for x in bulkdata['data'] if x['type'] == "all_cards")[
+        'download_uri']
+    print("Downloading {}...".format(allcardURL))
+    urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
 
 # Handle decimals from Scryfall data? (Prices?)
