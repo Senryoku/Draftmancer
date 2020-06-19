@@ -159,7 +159,7 @@
 									<template slot="selection" slot-scope="{ values, search, isOpen }">
 										<span class="multiselect__single" v-if="values.length == 1">
 											<img class="set-icon" :src="setsInfos[values[0]].icon" />
-											{{ setsInfos[values[0]].fullName }}
+											&nbsp{{ setsInfos[values[0]].fullName }}
 										</span>
 										<span class="multiselect__single multiselect__single_nooverflow" v-if="values.length > 1">
 											({{ values.length }})
@@ -167,7 +167,10 @@
 										</span>
 									</template>
 									<template slot="option" slot-scope="{ option , search  }">
-										<span class="multiselect__option">{{ setsInfos[option].fullName }}</span>
+										<span class="multiselect__option">
+											<img class="set-icon" :src="setsInfos[option].icon" />
+												&nbsp{{ setsInfos[option].fullName }}
+										</span>
 									</template>
 								</multiselect>
 							</div>

@@ -120,6 +120,7 @@ a:hover {
 	vertical-align: baseline;
 	width: 14.5em;
 	min-height: auto;
+	--invertedness: 100%;
 }
 
 #main-vue .multiselect__tags,
@@ -143,6 +144,10 @@ a:hover {
 	min-height: auto;
 	line-height: inherit;
 	padding: 5px;
+}
+
+#main-vue .multiselect__option--selected {
+	--invertedness: 0%;
 }
 
 #main-vue .multiselect__option::after {
@@ -199,7 +204,7 @@ a:hover {
 	display: inline-block;
 	height: 1em;
 	vertical-align: baseline;
-	filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(27deg) brightness(101%) contrast(99%);
+	filter: invert(var(--invertedness));
 }
 
 .mana-icon {
