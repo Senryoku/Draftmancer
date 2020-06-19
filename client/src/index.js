@@ -43,6 +43,44 @@ function orderColor(lhs, rhs) {
 	else return String(lhs.flat()).localeCompare(String(rhs.flat()));
 }
 
+// Arena counts each X as 100 basically
+// Arena uses the front half of split cards here
+// TODO: handle X, handle split cards
+function orderCardCMC(lhs, rhs) {
+	return lhs.cmc - rhs.cmc;
+}
+
+// Arena puts creatures before non-creatures
+// TODO: add that data to card
+function orderCardCreature(lhs, rhs) {
+	return 0;
+}
+
+// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
+// TODO: handle cards that aren't monocolor
+function orderCardColor(lhs, rhs) {
+	return orderColor(lhs.color_identity, rhs.color_identity);
+}
+
+function orderCardAlphabetical(lhs, rhs) {
+	return String(lhs.name).localeCompare(rhs.name);
+}
+
+function orderCardId(lhs, rhs) {
+	return lhs.id - rhs.id;
+}
+
+const arenaComparitors = [orderCardCMC, orderCardCreature, orderCardColor, orderCardAlphabetical, orderCardId];
+function orderCardArena(lhs, rhs) {
+	for (let comparitor of arenaComparitors) {
+		let result = comparitor(lhs, rhs);
+		if (result != 0) {
+			return result;
+		}
+	}
+	return 0;
+}
+
 const SwalCustomClasses = {
 	popup: "custom-swal-popup",
 	title: "custom-swal-title",
@@ -1409,7 +1447,7 @@ var app = new Vue({
 				acc[item.cmc].push(item);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		columnColor: function(cards) {
@@ -1426,7 +1464,7 @@ var app = new Vue({
 				},
 				{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] }
 			);
-			for (let col in a) a[col] = this.orderByCMC(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		idColumnCMC: function(cardids) {
@@ -1436,21 +1474,13 @@ var app = new Vue({
 				acc[cmc].push(id);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		orderByColorInPlace: function(cards) {
 			return cards.sort(function(lhs, rhs) {
-				if (orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					if (lhs.cmc != rhs.cmc) return lhs.cmc - rhs.cmc;
-					else return lhs.name < rhs.name;
+				if (orderColor(lhs.color_identity, rhs.color_identity) == 0) return orderCardArena(lhs, rhs);
 				return orderColor(lhs.color_identity, rhs.color_identity);
-			});
-		},
-		orderByCMC: function(cards) {
-			return [...cards].sort(function(lhs, rhs) {
-				if (lhs.cmc == rhs.cmc) return orderColor(lhs.color_identity, rhs.color_identity);
-				return lhs.cmc - rhs.cmc;
 			});
 		},
 		orderByColor: function(cards) {
@@ -1459,9 +1489,23 @@ var app = new Vue({
 		orderByRarity: function(cards) {
 			const order = { mythic: 0, rare: 1, uncommon: 2, common: 3 };
 			return [...cards].sort(function(lhs, rhs) {
-				if (order[lhs.rarity] == order[rhs.rarity]) return lhs.cmc - rhs.cmc;
+				if (order[lhs.rarity] == order[rhs.rarity]) orderCardArena(lhs, rhs);
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
+		},
+		orderByArenaInPlace: function(cards) {
+			return cards.sort(orderCardArena);
+		},
+		orderByArena: function(cards) {
+			return this.orderByArenaInPlace([...cards]);
+		},
+		isOrderedByArena: function(cards) {
+			for (let i = 0; i < cards.length - 1; i++) {
+				if (orderCardArena(cards[i], cards[i + 1]) > 0) {
+					return false;
+				}
+			}
+			return true;
 		},
 		updateAutoLands: function() {
 			if (this.autoLand) {

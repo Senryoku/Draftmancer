@@ -2,7 +2,7 @@
 	<div class="card-container card-columns">
 		<draggable
 			v-for="(column, colIdx) in columns"
-			:key="'side' + colIdx"
+			:key="`${_uid}_col_${colIdx}`"
 			class="card-column drag-column"
 			:list="column"
 			group="cardColumn"
@@ -10,16 +10,26 @@
 		>
 			<card
 				v-for="card in column"
-				:key="card.uniqueID"
+				:key="`${_uid}_card_${card.uniqueID}`"
 				:card="card"
 				:language="$root.language"
 				:selectcard="click"
 			></card>
 		</draggable>
 		<div class="draggable-controls">
-			<div @click="addColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
-			<div v-show="columns.length > 1" @click="remColumn" class="minus-column">
+			<div @click="addColumn" class="column-control clickable" v-tooltip.right="'Add a Column'">
+				<i class="fas fa-plus fa-2x"></i>
+			</div>
+			<div
+				v-show="columns.length > 1"
+				@click="remColumn"
+				class="column-control clickable"
+				v-tooltip.right="'Remove the last Column'"
+			>
 				<i class="fas fa-minus fa-2x"></i>
+			</div>
+			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards'">
+				<i class="fas fa-sort-amount-up fa-2x"></i>
 			</div>
 		</div>
 		<div class="empty-warning" v-if="cards.length == 0">
@@ -31,6 +41,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import draggable from "vuedraggable";
 import Card from "./Card.vue";
 
@@ -53,10 +64,28 @@ export default {
 		sync: function() {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
-			for (let col of this.columns) this.$root.orderByColorInPlace(col);
+			//for (let col of this.columns) this.$root.orderByArenaInPlace(col);
 		},
 		addCard: function(card) {
-			this.columns[Math.min(card.cmc, this.columns.length - 1)].push(card);
+			let columnIndex = Math.min(card.cmc, this.columns.length - 1);
+			let columnWithDuplicate = this.columns.findIndex(
+				column => column.findIndex(c => c.name === card.name) > -1
+			);
+			if (columnWithDuplicate > -1) {
+				columnIndex = columnWithDuplicate;
+			}
+			this.insertCard(this.columns[columnIndex], card);
+		},
+		insertCard: function(column, card) {
+			let duplicateIndex = column.findIndex(c => c.name === card.name);
+			if (duplicateIndex != -1) {
+				column.splice(duplicateIndex, 0, card);
+			} else if (this.$root.isOrderedByArena(column)) {
+				column.push(card);
+				this.$root.orderByArenaInPlace(column);
+			} else {
+				column.push(card);
+			}
 		},
 		remCard: function(card) {
 			for (let col of this.columns) {
@@ -68,6 +97,7 @@ export default {
 			}
 		},
 		change: function(e) {
+			// Sync. source array when adding/removing cards by drag & drop
 			if (e.removed)
 				this.cards.splice(
 					this.cards.findIndex(c => c === e.removed.element),
@@ -77,19 +107,25 @@ export default {
 		},
 		addColumn: function() {
 			this.columns.push([]);
-			this.columns[this.columns.length - 1] = this.columns[this.columns.length - 2].filter(
-				c => c.cmc > this.columns.length - 2
+			Vue.set(
+				this.columns,
+				this.columns.length - 1,
+				this.columns[this.columns.length - 2].filter(c => c.cmc > this.columns.length - 2)
 			);
-			this.columns[this.columns.length - 2] = this.columns[this.columns.length - 2].filter(
-				c => c.cmc <= this.columns.length - 2
+			Vue.set(
+				this.columns,
+				this.columns.length - 2,
+				this.columns[this.columns.length - 2].filter(c => c.cmc <= this.columns.length - 2)
 			);
 		},
 		remColumn: function() {
 			if (this.columns.length < 2) return;
-			this.columns[this.columns.length - 2] = [].concat(
-				this.columns[this.columns.length - 2],
-				this.columns[this.columns.length - 1]
+			Vue.set(
+				this.columns,
+				this.columns.length - 2,
+				[].concat(this.columns[this.columns.length - 2], this.columns[this.columns.length - 1])
 			);
+			this.$root.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
 	},
@@ -108,14 +144,14 @@ export default {
 	left: 50%;
 	translate: -50% -50%;
 }
+
 .draggable-constrols {
 	display: flex;
 	flex-direction: column;
 }
 
-.minus-column,
-.plus-column {
-	margin: 0 0 0.2em 0;
+.column-control {
+	margin: 0 0 0.4em 0;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 37px;
 	padding: 5px;

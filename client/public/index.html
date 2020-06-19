@@ -451,23 +451,16 @@
 			>
 				<div class="controls">
 					<h2>Deck ({{deck.length}})</h2>
-					[TODO:Manual Re-Order]
 					<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
 					<span v-show="draftingState == DraftState.Brewing">
 						<input type="checkbox" id="autoLand" v-model="autoLand" />
 						<label for="autoLand" v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'">
 							Auto. Land
 						</label>
-						<label for="white-mana"><img src="img/mana/W.svg" class="mana-icon" /></label>
-						<input class="small-number-input" type="number" id="white-mana" v-model.number="lands['W']" min="0" />
-						<label for="blue-mana"><img src="img/mana/U.svg" class="mana-icon" /></label>
-						<input class="small-number-input" type="number" id="blue-mana" v-model.number="lands['U']" min="0" />
-						<label for="black-mana"><img src="img/mana/B.svg" class="mana-icon" /></label>
-						<input class="small-number-input" type="number" id="black-mana" v-model.number="lands['B']" min="0" />
-						<label for="red-mana"><img src="img/mana/R.svg" class="mana-icon" /></label>
-						<input class="small-number-input" type="number" id="red-mana" v-model.number="lands['R']" min="0" />
-						<label for="green-mana"><img src="img/mana/G.svg" class="mana-icon" /></label>
-						<input class="small-number-input" type="number" id="green-mana" v-model.number="lands['G']" min="0" />
+						<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
+							<label :for="`${c}-mana`"><img :src="`img/mana/${c}.svg`" class="mana-icon" /></label>
+							<input class="small-number-input" type="number" id="`${c}-mana`" v-model.number="lands[c]" min="0" />
+						</template>
 						{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 					</span>
 				</div>
@@ -483,11 +476,7 @@
 				class="container"
 			>
 				<div class="controls">
-					<h2>
-						Sideboard (
-						<span id="sideboard-length" style="display: inline-block;">{{sideboard.length}}</span>
-						)
-					</h2>
+					<h2>Sideboard ({{sideboard.length}})</h2>
 				</div>
 				<card-pool :cards="sideboard" :click="sideboardToDeck" ref="sideboardDisplay">
 					<template v-slot:empty>
