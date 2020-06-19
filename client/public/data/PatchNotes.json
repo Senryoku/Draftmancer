@@ -1,7 +1,10 @@
 [
 	{
 		"date": "19/06/2020",
-		"notes": ["Sort columns so that duplicates go together"]
+		"notes": [
+			"Improved default card sorting (thanks Squerp!)",
+			"Removed display options other than draggable and added a manual re-sorting."
+		]
 	},
 	{
 		"date": "18/06/2020",
