@@ -167,7 +167,10 @@
 										</span>
 									</template>
 									<template slot="option" slot-scope="{ option , search  }">
-										<span class="multiselect__option">{{ setsInfos[option].fullName }}</span>
+										<span class="multiselect__option">
+											<img class="set-icon padded-icon" :src="setsInfos[option].icon" />
+											{{ setsInfos[option].fullName }}
+										</span>
 									</template>
 								</multiselect>
 							</div>
