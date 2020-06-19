@@ -9,19 +9,19 @@
 						<i
 							:class="{disabled: pick <= 0}"
 							class="fas fa-chevron-left clickable"
-							@click="_ => { --pick; }"
+							@click="() => { --pick; }"
 						></i>
 						<select v-model="pick">
 							<option
-								v-for="index in [...Array(draftlog.users[player].picks.length).keys()]"
+								v-for="index in draftlog.users[player].picks.length"
 								:key="index"
-								:value.number="index"
-							>{{index + 1}}</option>
+								:value="index - 1"
+							>{{index}}</option>
 						</select>
 						<i
 							:class="{disabled: pick >= draftlog.users[player].picks.length - 1}"
 							class="fas fa-chevron-right clickable"
-							@click="_ => { ++pick; }"
+							@click="() => { ++pick; }"
 						></i>
 						<h2>{{ $root.cards[draftlog.users[player].picks[pick].pick].printed_name[$root.language] }}</h2>
 					</span>
@@ -54,7 +54,7 @@ export default {
 	props: {
 		draftlog: { type: Object, required: true },
 	},
-	data: _ => {
+	data: () => {
 		return {
 			player: undefined,
 			pick: 0,
@@ -65,7 +65,7 @@ export default {
 		const self = this;
 		const playerEls = document.querySelectorAll("ul.player-list li");
 		for (let el of playerEls) {
-			const callback = e => {
+			const callback = () => {
 				const id = el.dataset.userid;
 				self.setPlayer(id);
 			};
