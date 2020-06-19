@@ -1410,12 +1410,22 @@ var app = new Vue({
 		addToDeck: function(card) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.insertCard(this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)], card);
+			let columnIndex = Math.min(card.cmc, this.deckColumn.length - 1);
+			let columnWithDuplicate = this.deckColumn.findIndex(column => column.findIndex(c => c.name === card.name) > -1)
+			if (columnWithDuplicate > -1) {
+				columnIndex = columnWithDuplicate;
+			}
+			this.insertCard(this.deckColumn[columnIndex], card);
 		},
 		addToSideboard: function(card) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.insertCard(this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)], card);
+			let columnIndex = Math.min(card.cmc, this.sideboardColumn.length - 1);
+			let columnWithDuplicate = this.sideboardColumn.findIndex(column => column.findIndex(c => c.name === card.name) > -1)
+			if (columnWithDuplicate > -1) {
+				columnIndex = columnWithDuplicate;
+			}
+			this.insertCard(this.sideboardColumn[columnIndex], card);
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
@@ -1539,7 +1549,7 @@ var app = new Vue({
 		orderByColorInPlace: function(cards) {
 			return cards.sort(function(lhs, rhs) {
 				if (orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					return return orderCardArena(lhs, rhs);
+					return orderCardArena(lhs, rhs);
 				return orderColor(lhs.color_identity, rhs.color_identity);
 			});
 		},
@@ -1566,7 +1576,7 @@ var app = new Vue({
 				}
 			}
 			return true;
-		}
+		},
 		insertCard: function (column, card) {
 			let duplicateIndex = column.findIndex(c => c.name === card.name);
 			if (duplicateIndex != -1) {
@@ -1577,7 +1587,7 @@ var app = new Vue({
 			} else {
 			  column.push(card);
 			}
-		}
+		},
 		updateAutoLands: function() {
 			if (this.autoLand) {
 				if (!this.deck || this.deck.length === 0) return;
@@ -1896,6 +1906,7 @@ var app = new Vue({
 			// When replacing deck (not mutating it)
 			if (newSide != oldSide) {
 				this.sideboardColumn = [[], [], [], [], [], [], []];
+				for (let c of newSide) this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
 				for (let col = 0; col < this.sideboardColumn.length; ++col) this.orderByArenaInPlace(this.sideboardColumn[col]);
 			}
 		},
