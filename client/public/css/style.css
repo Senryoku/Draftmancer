@@ -848,36 +848,6 @@ ul.player-list {
 	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 }
 
-/* Deck display */
-
-.empty-warning {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	translate: -50% -50%;
-}
-
-.card-pool {
-	position: relative;
-	min-height: 200px;
-}
-
-.draggable-constrols {
-	display: flex;
-	flex-direction: column;
-}
-
-.minus-column,
-.plus-column {
-	margin: 0 0 0.2em 0;
-	background-color: rgba(0, 0, 0, 0.1);
-	border-radius: 37px;
-	padding: 5px;
-	width: 32px;
-	height: 32px;
-	text-align: center;
-}
-
 .card-columns {
 	justify-content: flex-start;
 	position: relative;
@@ -890,6 +860,7 @@ ul.player-list {
 	flex-direction: column;
 	padding-bottom: 275px;
 	margin-right: 0.75em;
+	margin-bottom: 0.5em;
 }
 
 .card-column > div,

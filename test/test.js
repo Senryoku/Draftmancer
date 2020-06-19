@@ -20,7 +20,7 @@ const ioOptions = {
 
 function connectClient(query) {
 	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions));
-	r.on("alreadyConnected", function (newID) {
+	r.on("alreadyConnected", function(newID) {
 		this.query.userID = newID;
 	});
 	return r;
@@ -30,7 +30,7 @@ let outputbuffer;
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
-const logReplacer = function () {
+const logReplacer = function() {
 	for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
 	outputbuffer += "\n";
 };
@@ -49,20 +49,20 @@ function enableLogs(print) {
 	}
 }
 
-describe("Inter client communication", function () {
+describe("Inter client communication", function() {
 	let sender, receiver;
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -80,14 +80,14 @@ describe("Inter client communication", function () {
 		done();
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		sender.disconnect();
 		sender.close();
 		receiver.disconnect();
 		receiver.close();
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -95,10 +95,10 @@ describe("Inter client communication", function () {
 		}, 250);
 	});
 
-	describe("Chat Events", function () {
+	describe("Chat Events", function() {
 		const text = "Text Value";
-		it("Clients should receive a message when the `chatMessage` event is emited.", function (done) {
-			receiver.on("chatMessage", function (msg) {
+		it("Clients should receive a message when the `chatMessage` event is emited.", function(done) {
+			receiver.on("chatMessage", function(msg) {
 				expect(msg.text).to.equal(text);
 				done();
 			});
@@ -106,9 +106,9 @@ describe("Inter client communication", function () {
 		});
 	});
 
-	describe("Personal options updates", function () {
-		it("Clients should receive the updated userName when a user changes it.", function (done) {
-			receiver.on("updateUser", function (data) {
+	describe("Personal options updates", function() {
+		it("Clients should receive the updated userName when a user changes it.", function(done) {
+			receiver.on("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.userName).to.equal("senderUpdatedUserName");
 				this.removeListener("updateUser");
@@ -116,8 +116,8 @@ describe("Inter client communication", function () {
 			});
 			sender.emit("setUserName", "senderUpdatedUserName");
 		});
-		it("Clients should receive the updated useCollection status.", function (done) {
-			receiver.on("updateUser", function (data) {
+		it("Clients should receive the updated useCollection status.", function(done) {
+			receiver.on("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.useCollection).to.equal(false);
 				this.removeListener("updateUser");
@@ -125,7 +125,7 @@ describe("Inter client communication", function () {
 			});
 			sender.emit("useCollection", false);
 		});
-		it("Clients should NOT receive an update if the option is not actually changed.", function (done) {
+		it("Clients should NOT receive an update if the option is not actually changed.", function(done) {
 			this.timeout(200 + 100);
 			let timeout = setTimeout(() => {
 				receiver.removeListener("updateUser");
@@ -138,8 +138,8 @@ describe("Inter client communication", function () {
 			});
 			sender.emit("useCollection", false);
 		});
-		it("Clients should receive the updated useCollection status.", function (done) {
-			receiver.on("updateUser", function (data) {
+		it("Clients should receive the updated useCollection status.", function(done) {
+			receiver.on("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.useCollection).to.equal(true);
 				this.removeListener("updateUser");
@@ -147,8 +147,8 @@ describe("Inter client communication", function () {
 			});
 			sender.emit("useCollection", true);
 		});
-		it("Clients should receive the updated userName.", function (done) {
-			receiver.on("updateUser", function (data) {
+		it("Clients should receive the updated userName.", function(done) {
+			receiver.on("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.userName).to.equal("Sender New UserName");
 				this.removeListener("updateUser");
@@ -156,9 +156,9 @@ describe("Inter client communication", function () {
 			});
 			sender.emit("setUserName", "Sender New UserName");
 		});
-		it("Clients should receive the updated maxDuplicates.", function (done) {
+		it("Clients should receive the updated maxDuplicates.", function(done) {
 			const newMaxDuplicates = { common: 5, uncommon: 4, rare: 1, mythic: 1 };
-			receiver.on("sessionOptions", function (options) {
+			receiver.on("sessionOptions", function(options) {
 				expect(options.maxDuplicates).to.eql(newMaxDuplicates);
 				this.removeListener("sessionOptions");
 				done();
@@ -168,7 +168,7 @@ describe("Inter client communication", function () {
 	});
 });
 
-describe("Checking sets", function () {
+describe("Checking sets", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
@@ -180,19 +180,20 @@ describe("Checking sets", function () {
 		eld: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		thb: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		iko: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
+		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 	};
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -214,7 +215,7 @@ describe("Checking sets", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -224,14 +225,14 @@ describe("Checking sets", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -239,20 +240,20 @@ describe("Checking sets", function () {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
 	for (let set in sets) {
-		it(`Checking ${set}`, function (done) {
+		it(`Checking ${set}`, function(done) {
 			const Sessions = server.__get__("Sessions");
-			let ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			// Wait for request to arrive
-			clients[1].on("setRestriction", function (sR) {
+			clients[1].on("setRestriction", function(sR) {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				for (let r in sets[set]) expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
 				clients[1].removeListener("setRestriction");
@@ -262,21 +263,21 @@ describe("Checking sets", function () {
 	}
 });
 
-describe("Single Draft", function () {
+describe("Single Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -298,7 +299,7 @@ describe("Single Draft", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -308,14 +309,14 @@ describe("Single Draft", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -323,19 +324,19 @@ describe("Single Draft", function () {
 		}, 250);
 	});
 
-	it('A user with userID "sameID" should be connected.', function (done) {
+	it('A user with userID "sameID" should be connected.', function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("sameID");
 		done();
 	});
 
-	it("2 clients with different userID should be connected.", function (done) {
+	it("2 clients with different userID should be connected.", function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
-	it("3 clients with different userID should be connected.", function (done) {
+	it("3 clients with different userID should be connected.", function(done) {
 		let idx = clients.push(
 			connectClient({
 				userID: "sameID",
@@ -344,24 +345,24 @@ describe("Single Draft", function () {
 			})
 		);
 
-		clients[idx - 1].on("connect", function () {
+		clients[idx - 1].on("connect", function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(3);
 			done();
 		});
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it(`Card Pool should be all of THB set (+ distribution quick test)`, function (done) {
+	it(`Card Pool should be all of THB set (+ distribution quick test)`, function(done) {
 		const Sessions = server.__get__("Sessions");
-		let ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
-		clients[1].on("setRestriction", (_) => {
+		clients[1].on("setRestriction", _ => {
 			const localCollection = Sessions[sessionID].cardPoolByRarity();
 			expect(Object.keys(localCollection["common"]).length).to.equal(101);
 			expect(Object.keys(localCollection["uncommon"]).length).to.equal(80);
@@ -391,20 +392,20 @@ describe("Single Draft", function () {
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -417,10 +418,10 @@ describe("Single Draft", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -428,20 +429,20 @@ describe("Single Draft", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 
-	it("Do it enough times, and all the drafts should end.", function (done) {
+	it("Do it enough times, and all the drafts should end.", function(done) {
 		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -449,26 +450,26 @@ describe("Single Draft", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 });
 
-describe("Single Draft without Color Balance", function () {
+describe("Single Draft without Color Balance", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -490,7 +491,7 @@ describe("Single Draft without Color Balance", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -500,14 +501,14 @@ describe("Single Draft without Color Balance", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -515,14 +516,14 @@ describe("Single Draft without Color Balance", function () {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it("Clients should receive the updated colorBalance status.", function (done) {
-		clients[1].on("sessionOptions", function (options) {
+	it("Clients should receive the updated colorBalance status.", function(done) {
+		clients[1].on("sessionOptions", function(options) {
 			expect(options.colorBalance).to.equal(false);
 			this.removeListener("sessionOptions");
 			done();
@@ -531,20 +532,20 @@ describe("Single Draft without Color Balance", function () {
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -557,10 +558,10 @@ describe("Single Draft without Color Balance", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -568,20 +569,20 @@ describe("Single Draft without Color Balance", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 
-	it("Do it enough times, and all the drafts should end.", function (done) {
+	it("Do it enough times, and all the drafts should end.", function(done) {
 		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -589,26 +590,26 @@ describe("Single Draft without Color Balance", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 });
 
-describe("Single Draft With disconnect and reconnect", function () {
+describe("Single Draft With disconnect and reconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -630,7 +631,7 @@ describe("Single Draft With disconnect and reconnect", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -640,14 +641,14 @@ describe("Single Draft With disconnect and reconnect", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -655,27 +656,27 @@ describe("Single Draft With disconnect and reconnect", function () {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -688,10 +689,10 @@ describe("Single Draft With disconnect and reconnect", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -699,12 +700,12 @@ describe("Single Draft With disconnect and reconnect", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 
-	it("Client 1 disconnects, Client 0 receives a warning.", function (done) {
-		clients[0].on("userDisconnected", function (userName) {
+	it("Client 1 disconnects, Client 0 receives a warning.", function(done) {
+		clients[0].on("userDisconnected", function(userName) {
 			this.removeListener("userDisconnected");
 			done();
 		});
@@ -712,24 +713,24 @@ describe("Single Draft With disconnect and reconnect", function () {
 		clients.pop();
 	});
 
-	it("Client 0 choose to replace by bots.", function (done) {
-		clients[0].on("message", function (sessionUsers) {
+	it("Client 0 choose to replace by bots.", function(done) {
+		clients[0].on("message", function(sessionUsers) {
 			this.removeListener("message");
 			done();
 		});
 		clients[0].emit("replaceDisconnectedPlayers");
 	});
 
-	it("Pick enough times, and all the drafts should end.", function (done) {
+	it("Pick enough times, and all the drafts should end.", function(done) {
 		this.timeout(4000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -737,26 +738,26 @@ describe("Single Draft With disconnect and reconnect", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 });
 
-describe("Single Draft with Bots", function () {
+describe("Single Draft with Bots", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -778,7 +779,7 @@ describe("Single Draft with Bots", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -788,14 +789,14 @@ describe("Single Draft with Bots", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -803,26 +804,26 @@ describe("Single Draft with Bots", function () {
 		}, 250);
 	});
 
-	it('A user with userID "sameID" should be connected.', function (done) {
+	it('A user with userID "sameID" should be connected.', function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("sameID");
 		done();
 	});
 
-	it("2 clients with different userID should be connected.", function (done) {
+	it("2 clients with different userID should be connected.", function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it("Clients should receive the updated bot count.", function (done) {
-		clients[1].on("bots", function (bots) {
+	it("Clients should receive the updated bot count.", function(done) {
+		clients[1].on("bots", function(bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
@@ -831,20 +832,20 @@ describe("Single Draft with Bots", function () {
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -857,10 +858,10 @@ describe("Single Draft with Bots", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -868,20 +869,20 @@ describe("Single Draft with Bots", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 
-	it("Do it enough times, and all the drafts should end.", function (done) {
+	it("Do it enough times, and all the drafts should end.", function(done) {
 		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				let idx = c;
 				boosters[idx] = data.booster;
-				this.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -889,26 +890,26 @@ describe("Single Draft with Bots", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 });
 
-describe("Single Draft With disconnect and bots", function () {
+describe("Single Draft With disconnect and bots", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -930,7 +931,7 @@ describe("Single Draft With disconnect and bots", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -940,14 +941,14 @@ describe("Single Draft With disconnect and bots", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -955,14 +956,14 @@ describe("Single Draft With disconnect and bots", function () {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it("Clients should receive the updated bot count.", function (done) {
-		clients[1].on("bots", function (bots) {
+	it("Clients should receive the updated bot count.", function(done) {
+		clients[1].on("bots", function(bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
@@ -971,20 +972,20 @@ describe("Single Draft With disconnect and bots", function () {
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -997,10 +998,10 @@ describe("Single Draft With disconnect and bots", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -1008,44 +1009,44 @@ describe("Single Draft With disconnect and bots", function () {
 				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 
-	it("Client 1 disconnects, Client 0 receives updated user infos.", function (done) {
-		clients[0].on("userDisconnected", function (userName) {
+	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
+		clients[0].on("userDisconnected", function(userName) {
 			this.removeListener("userDisconnected");
 			done();
 		});
 		clients[1].disconnect();
 	});
 
-	it("Client 1 reconnects, draft restarts.", function (done) {
-		clients[0].on("message", function (sessionUsers) {
+	it("Client 1 reconnects, draft restarts.", function(done) {
+		clients[0].on("message", function(sessionUsers) {
 			this.removeListener("message");
 			done();
 		});
 		clients[1].connect();
 	});
 
-	it("Pick enough times, and all the drafts should end.", function (done) {
+	it("Pick enough times, and all the drafts should end.", function(done) {
 		this.timeout(4000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on(
 				"nextBooster",
-				((_) => {
+				(_ => {
 					const idx = c;
 					const self = clients[c];
-					return (data) => {
+					return data => {
 						boosters[idx] = data.booster;
-						process.nextTick((_) => {
-							self.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+						process.nextTick(_ => {
+							self.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 						});
 					};
 				})()
 			);
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -1053,27 +1054,27 @@ describe("Single Draft With disconnect and bots", function () {
 			});
 		}
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 		}
 	});
 });
 
-describe("Single Draft with custom boosters and bots", function () {
+describe("Single Draft with custom boosters and bots", function() {
 	const clients = [];
 	const sessionID = "sessionID";
 	const CustomBoosters = ["xln", "rix", ""];
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -1095,7 +1096,7 @@ describe("Single Draft with custom boosters and bots", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -1105,14 +1106,14 @@ describe("Single Draft with custom boosters and bots", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -1120,14 +1121,14 @@ describe("Single Draft with custom boosters and bots", function () {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it("Clients should receive the updated bot count.", function (done) {
-		clients[1].on("bots", function (bots) {
+	it("Clients should receive the updated bot count.", function(done) {
+		clients[1].on("bots", function(bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
@@ -1135,8 +1136,8 @@ describe("Single Draft with custom boosters and bots", function () {
 		clients[0].emit("bots", 6);
 	});
 
-	it("Clients should receive the updated booster spec.", function (done) {
-		clients[1].on("sessionOptions", function (data) {
+	it("Clients should receive the updated booster spec.", function(done) {
+		clients[1].on("sessionOptions", function(data) {
 			expect(data.customBoosters).to.eql(CustomBoosters);
 			this.removeListener("sessionOptions");
 			done();
@@ -1145,8 +1146,8 @@ describe("Single Draft with custom boosters and bots", function () {
 	});
 
 	for (let distributionMode of ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"]) {
-		it(`Setting distributionMode to ${distributionMode}.`, function (done) {
-			clients[1].on("sessionOptions", function (data) {
+		it(`Setting distributionMode to ${distributionMode}.`, function(done) {
+			clients[1].on("sessionOptions", function(data) {
 				expect(data.distributionMode).to.eql(distributionMode);
 				this.removeListener("sessionOptions");
 				done();
@@ -1155,20 +1156,20 @@ describe("Single Draft with custom boosters and bots", function () {
 		});
 
 		let boosters = [];
-		it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+		it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 			let connectedClients = 0;
 			let receivedBoosters = 0;
 			let index = 0;
 			for (let c of clients) {
-				c.on("startDraft", function () {
+				c.on("startDraft", function() {
 					connectedClients += 1;
 					this.removeListener("startDraft");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 
-				((_) => {
+				(_ => {
 					const _idx = index;
-					c.on("nextBooster", function (data) {
+					c.on("nextBooster", function(data) {
 						expect(boosters).not.include(data);
 						if (distributionMode === "regular")
 							for (let cid of data.booster) expect(Cards[cid].set).to.equals(CustomBoosters[0]);
@@ -1183,10 +1184,10 @@ describe("Single Draft with custom boosters and bots", function () {
 			clients[0].emit("startDraft");
 		});
 
-		it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+		it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 			let receivedBoosters = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].on("nextBooster", function (data) {
+				clients[c].on("nextBooster", function(data) {
 					receivedBoosters += 1;
 					let idx = c;
 					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
@@ -1194,28 +1195,28 @@ describe("Single Draft with custom boosters and bots", function () {
 					this.removeListener("nextBooster");
 					if (receivedBoosters == clients.length) done();
 				});
-				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 			}
 		});
 
-		it("Pick enough times, and all the drafts should end.", function (done) {
+		it("Pick enough times, and all the drafts should end.", function(done) {
 			this.timeout(4000);
 			let draftEnded = 0;
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].on(
 					"nextBooster",
-					((_) => {
+					(_ => {
 						const idx = c;
 						const self = clients[c];
-						return (data) => {
+						return data => {
 							boosters[idx] = data.booster;
-							process.nextTick((_) => {
-								self.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+							process.nextTick(_ => {
+								self.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 							});
 						};
 					})()
 				);
-				clients[c].on("endDraft", function () {
+				clients[c].on("endDraft", function() {
 					draftEnded += 1;
 					this.removeListener("endDraft");
 					this.removeListener("nextBooster");
@@ -1223,30 +1224,30 @@ describe("Single Draft with custom boosters and bots", function () {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, (_) => {});
+				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
 			}
 		});
 	}
 });
 
-describe("Multiple Drafts", function () {
+describe("Multiple Drafts", function() {
 	let clients = [];
 	let sessionIDs = [];
 	const sessionCount = 4;
 	const playersPerSession = 7;
 	let boosters = [];
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -1268,7 +1269,7 @@ describe("Multiple Drafts", function () {
 		let connectedClients = 0;
 		for (let s of clients) {
 			for (let c of s) {
-				c.on("connect", function () {
+				c.on("connect", function() {
 					connectedClients += 1;
 					if (connectedClients == playersPerSession * clients.length) {
 						enableLogs(false);
@@ -1279,7 +1280,7 @@ describe("Multiple Drafts", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let s of clients)
 			for (let c of s) {
@@ -1287,7 +1288,7 @@ describe("Multiple Drafts", function () {
 				c.close();
 			}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -1295,33 +1296,33 @@ describe("Multiple Drafts", function () {
 		}, 500);
 	});
 
-	it(`${sessionCount} sessions should be live.`, function (done) {
+	it(`${sessionCount} sessions should be live.`, function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Object.keys(Sessions).length).to.equal(sessionCount);
 		done();
 	});
 
-	it(`${playersPerSession * sessionCount} players should be connected.`, function (done) {
+	it(`${playersPerSession * sessionCount} players should be connected.`, function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(playersPerSession * sessionCount);
 		done();
 	});
 
-	it("When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster", function (done) {
+	it("When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster", function(done) {
 		let sessionsCorrectlyStartedDrafting = 0;
 		for (let [sessionIdx, sessionClients] of clients.entries()) {
 			boosters.push([]);
 			(() => {
 				let connectedClients = 0;
 				for (let c of sessionClients) {
-					c.on("startDraft", function () {
+					c.on("startDraft", function() {
 						connectedClients += 1;
 						if (connectedClients == sessionClients.length) sessionsCorrectlyStartedDrafting += 1;
 					});
 
-					c.on("nextBooster", function (data) {
+					c.on("nextBooster", function(data) {
 						expect(boosters).not.include(data);
-						boosters[playersPerSession * sessionIdx + sessionClients.findIndex((cl) => cl == c)] = data;
+						boosters[playersPerSession * sessionIdx + sessionClients.findIndex(cl => cl == c)] = data;
 						this.removeListener("nextBooster");
 						if (
 							sessionsCorrectlyStartedDrafting == sessionCount &&
@@ -1331,15 +1332,13 @@ describe("Multiple Drafts", function () {
 					});
 				}
 				const Sessions = server.__get__("Sessions");
-				let ownerIdx = sessionClients.findIndex(
-					(c) => c.query.userID == Sessions[sessionIDs[sessionIdx]].owner
-				);
+				let ownerIdx = sessionClients.findIndex(c => c.query.userID == Sessions[sessionIDs[sessionIdx]].owner);
 				sessionClients[ownerIdx].emit("startDraft");
 			})();
 		}
 	});
 
-	it("New players should not be able to join once drafting has started", function (done) {
+	it("New players should not be able to join once drafting has started", function(done) {
 		let newClient = io(
 			`http://localhost:${NODE_PORT}/`,
 			Object.assign(
@@ -1354,7 +1353,7 @@ describe("Multiple Drafts", function () {
 			)
 		);
 
-		newClient.on("setSession", function (newSessionID) {
+		newClient.on("setSession", function(newSessionID) {
 			expect(newSessionID).to.not.equal(sessionIDs[0]);
 			const Sessions = server.__get__("Sessions");
 			expect(Sessions[sessionIDs[0]].users.size).to.equal(playersPerSession);
@@ -1363,16 +1362,16 @@ describe("Multiple Drafts", function () {
 		});
 	});
 
-	it("Once everyone in a session has picked a card, receive next boosters.", function (done) {
+	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		expect(boosters.length).to.equal(playersPerSession * sessionCount);
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
 				clients[sess][c].on(
 					"nextBooster",
-					(function () {
+					(function() {
 						let idx = playersPerSession * sess + c;
-						return function (data) {
+						return function(data) {
 							receivedBoosters += 1;
 							expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 							boosters[idx] = data;
@@ -1384,23 +1383,23 @@ describe("Multiple Drafts", function () {
 				clients[sess][c].emit(
 					"pickCard",
 					{ selectedCard: boosters[playersPerSession * sess + c].booster[0] },
-					(_) => {}
+					_ => {}
 				);
 			}
 		}
 	});
 
-	it("Do it enough times, and all the drafts should end.", function (done) {
+	it("Do it enough times, and all the drafts should end.", function(done) {
 		this.timeout(20000);
 		let draftEnded = 0;
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].on("nextBooster", function (data) {
+				clients[sess][c].on("nextBooster", function(data) {
 					let idx = playersPerSession * sess + c;
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { selectedCard: boosters[idx][0] }, (_) => {});
+					this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 				});
-				clients[sess][c].on("endDraft", function () {
+				clients[sess][c].on("endDraft", function() {
 					draftEnded += 1;
 					this.removeListener("endDraft");
 					this.removeListener("nextBooster");
@@ -1413,29 +1412,29 @@ describe("Multiple Drafts", function () {
 				clients[sess][c].emit(
 					"pickCard",
 					{ selectedCard: boosters[playersPerSession * sess + c].booster[0] },
-					(_) => {}
+					_ => {}
 				);
 			}
 		}
 	});
 });
 
-describe("Winston Draft", function () {
+describe("Winston Draft", function() {
 	let clients = [];
 	const clientIDs = ["FirstClientID", "SecondClientID"];
 	let sessionID = "sessionID";
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -1457,7 +1456,7 @@ describe("Winston Draft", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -1467,14 +1466,14 @@ describe("Winston Draft", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -1482,33 +1481,33 @@ describe("Winston Draft", function () {
 		}, 250);
 	});
 
-	it("2 clients with different userID should be connected.", function (done) {
+	it("2 clients with different userID should be connected.", function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("FirstClientID");
 		done();
 	});
 
 	let states = [];
-	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
+	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedState = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startWinstonDraft", function () {
+			c.on("startWinstonDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startWinstonDraft");
 				if (connectedClients == clients.length && receivedState == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("winstonDraftNextRound", function (state) {
+				c.on("winstonDraftNextRound", function(state) {
 					states[_idx] = state;
 					receivedState += 1;
 					this.removeListener("winstonDraftNextRound");
@@ -1520,30 +1519,30 @@ describe("Winston Draft", function () {
 		clients[0].emit("startWinstonDraft");
 	});
 
-	it("Client 1 disconnects, Client 0 receives updated user infos.", function (done) {
-		clients[0].on("userDisconnected", function (userName) {
+	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
+		clients[0].on("userDisconnected", function(userName) {
 			this.removeListener("userDisconnected");
 			done();
 		});
 		clients[1].disconnect();
 	});
 
-	it("Client 1 reconnects, draft restarts.", function (done) {
-		clients[1].on("rejoinWinstonDraft", function (state) {
+	it("Client 1 reconnects, draft restarts.", function(done) {
+		clients[1].on("rejoinWinstonDraft", function(state) {
 			this.removeListener("rejoinWinstonDraft");
 			done();
 		});
 		clients[1].connect();
 	});
 
-	it("Every player takes the first pile possible and the draft should end.", function (done) {
+	it("Every player takes the first pile possible and the draft should end.", function(done) {
 		this.timeout(2000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
 			});
-			clients[c].on("winstonDraftEnd", function () {
+			clients[c].on("winstonDraftEnd", function() {
 				draftEnded += 1;
 				this.removeListener("winstonDraftEnd");
 				this.removeListener("winstonDraftNextRound");
@@ -1553,21 +1552,21 @@ describe("Winston Draft", function () {
 		clients[0].emit("winstonDraftTakePile");
 	});
 
-	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
+	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
 		states = [];
 		let connectedClients = 0;
 		let receivedState = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startWinstonDraft", function () {
+			c.on("startWinstonDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startWinstonDraft");
 				if (connectedClients == clients.length && receivedState == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("winstonDraftNextRound", function (state) {
+				c.on("winstonDraftNextRound", function(state) {
 					states[_idx] = state;
 					receivedState += 1;
 					this.removeListener("winstonDraftNextRound");
@@ -1579,10 +1578,10 @@ describe("Winston Draft", function () {
 		clients[0].emit("startWinstonDraft");
 	});
 
-	it("Taking first pile.", function (done) {
+	it("Taking first pile.", function(done) {
 		let nextRound = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				++nextRound;
 				if (nextRound == clients.length) done();
 			});
@@ -1590,10 +1589,10 @@ describe("Winston Draft", function () {
 		clients[0].emit("winstonDraftTakePile");
 	});
 
-	it("Skiping, then taking pile.", function (done) {
+	it("Skiping, then taking pile.", function(done) {
 		let nextRound = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				++nextRound;
 				if (nextRound == clients.length) done();
 			});
@@ -1602,10 +1601,10 @@ describe("Winston Draft", function () {
 		clients[1].emit("winstonDraftTakePile");
 	});
 
-	it("Skiping, skiping, then taking pile.", function (done) {
+	it("Skiping, skiping, then taking pile.", function(done) {
 		let nextRound = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				++nextRound;
 				if (nextRound == clients.length) done();
 			});
@@ -1615,16 +1614,16 @@ describe("Winston Draft", function () {
 		clients[0].emit("winstonDraftTakePile");
 	});
 
-	it("Skiping, skiping and skiping.", function (done) {
+	it("Skiping, skiping and skiping.", function(done) {
 		let nextRound = 0;
 		let receivedRandomCard = false;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				++nextRound;
 				if (receivedRandomCard && nextRound == clients.length) done();
 			});
 		}
-		clients[1].on("winstonDraftRandomCard", function (card) {
+		clients[1].on("winstonDraftRandomCard", function(card) {
 			if (card) receivedRandomCard = true;
 		});
 		clients[1].emit("winstonDraftSkipPile");
@@ -1632,14 +1631,14 @@ describe("Winston Draft", function () {
 		clients[1].emit("winstonDraftSkipPile");
 	});
 
-	it("Every player takes the first pile possible and the draft should end.", function (done) {
+	it("Every player takes the first pile possible and the draft should end.", function(done) {
 		this.timeout(2000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("winstonDraftNextRound", function (userID) {
+			clients[c].on("winstonDraftNextRound", function(userID) {
 				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
 			});
-			clients[c].on("winstonDraftEnd", function () {
+			clients[c].on("winstonDraftEnd", function() {
 				draftEnded += 1;
 				this.removeListener("winstonDraftEnd");
 				this.removeListener("winstonDraftNextRound");
@@ -1650,22 +1649,22 @@ describe("Winston Draft", function () {
 	});
 });
 
-describe("Single Draft with Bots and burning", function () {
+describe("Single Draft with Bots and burning", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	const burnedCardsPerRound = 2;
 
-	beforeEach(function (done) {
+	beforeEach(function(done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function (done) {
+	afterEach(function(done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function (done) {
+	before(function(done) {
 		disableLogs();
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
@@ -1687,7 +1686,7 @@ describe("Single Draft with Bots and burning", function () {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function () {
+			c.on("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -1697,14 +1696,14 @@ describe("Single Draft with Bots and burning", function () {
 		}
 	});
 
-	after(function (done) {
+	after(function(done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
 			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function () {
+		setTimeout(function() {
 			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
@@ -1712,26 +1711,26 @@ describe("Single Draft with Bots and burning", function () {
 		}, 250);
 	});
 
-	it('A user with userID "sameID" should be connected.', function (done) {
+	it('A user with userID "sameID" should be connected.', function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("sameID");
 		done();
 	});
 
-	it("2 clients with different userID should be connected.", function (done) {
+	it("2 clients with different userID should be connected.", function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
-	it("First client should be the session owner", function (done) {
+	it("First client should be the session owner", function(done) {
 		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
-	it("Clients should receive the updated bot count.", function (done) {
-		clients[1].on("bots", function (bots) {
+	it("Clients should receive the updated bot count.", function(done) {
+		clients[1].on("bots", function(bots) {
 			expect(bots).to.equal(6);
 			this.removeListener("bots");
 			done();
@@ -1739,8 +1738,8 @@ describe("Single Draft with Bots and burning", function () {
 		clients[0].emit("bots", 6);
 	});
 
-	it("Clients should receive the updated burn count.", function (done) {
-		clients[1].on("sessionOptions", function (sessionOptions) {
+	it("Clients should receive the updated burn count.", function(done) {
+		clients[1].on("sessionOptions", function(sessionOptions) {
 			expect(sessionOptions.burnedCardsPerRound).to.equal(burnedCardsPerRound);
 			this.removeListener("sessionOptions");
 			done();
@@ -1749,20 +1748,20 @@ describe("Single Draft with Bots and burning", function () {
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function (done) {
+	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function () {
+			c.on("startDraft", function() {
 				connectedClients += 1;
 				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			((_) => {
+			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function (data) {
+				c.on("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -1775,19 +1774,19 @@ describe("Single Draft with Bots and burning", function () {
 		clients[0].emit("startDraft");
 	});
 
-	it("Pick enough times, and the draft should end.", function (done) {
+	it("Pick enough times, and the draft should end.", function(done) {
 		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function (data) {
+			clients[c].on("nextBooster", function(data) {
 				let idx = c;
 				boosters[idx] = data.booster;
 				let burned = [];
 				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < data.booster.length; ++cidx)
 					burned.push(data.booster[cidx]);
-				this.emit("pickCard", { selectedCard: boosters[idx][0], burnedCards: burned }, (_) => {});
+				this.emit("pickCard", { selectedCard: boosters[idx][0], burnedCards: burned }, _ => {});
 			});
-			clients[c].on("endDraft", function () {
+			clients[c].on("endDraft", function() {
 				draftEnded += 1;
 				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
@@ -1798,7 +1797,7 @@ describe("Single Draft with Bots and burning", function () {
 			let burned = [];
 			for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < boosters[c].booster.length; ++cidx)
 				burned.push(boosters[c].booster[cidx]);
-			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0], burnedCards: burned }, (_) => {});
+			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0], burnedCards: burned }, _ => {});
 		}
 	});
 });

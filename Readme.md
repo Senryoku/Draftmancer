@@ -39,7 +39,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Display cube name (for presets)
 -   Add reorganize button for draggable (Remove other display options)
 -   Regroup multiple copies of cards on pick?
 -   Re-think color balance for multi-colored cards?

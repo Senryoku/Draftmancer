@@ -8,7 +8,6 @@
 	transition: transform 0.08s ease-out;
 }
 
-.booster .card:hover,
-.card-pool .card:hover {
+.booster .card:hover {
 	transform: scale(1.08);
 }

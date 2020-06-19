@@ -12,6 +12,7 @@ import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
 import Card from "./components/Card.vue";
+import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
@@ -83,6 +84,7 @@ var app = new Vue({
 		Modal,
 		Toggle,
 		Card,
+		CardPool,
 		DraftLogPick,
 		DraftLog,
 		DraftLogLive,
@@ -162,7 +164,6 @@ var app = new Vue({
 		sets: Constant.MTGSets,
 		cubeLists: Constant.CubeLists,
 		pendingReadyCheck: false,
-		cardOrder: getCookie("cardOrder", "DraggableCMC"),
 		setsInfos: undefined,
 		draftingState: undefined,
 		pickOnDblclick: getCookie("pickOnDblclick", false),
@@ -176,13 +177,11 @@ var app = new Vue({
 		// Draft Booster
 		selectedCard: undefined,
 		burningCards: [],
-		// Brewing
+		// Brewing (deck and sideboard should not be modified directly, have to stay in sync with their CardPool display)
 		deck: [],
 		sideboard: [],
 		autoLand: true,
 		lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
-		deckColumn: [[], [], [], [], [], [], []],
-		sideboardColumn: [[], [], [], [], [], [], []],
 		//
 		selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -426,8 +425,8 @@ var app = new Vue({
 				app.drafting = true;
 				app.setWinstonDraftState(state);
 				app.stopReadyCheck();
-				app.sideboard = [];
-				app.deck = [];
+				app.clearSideboard();
+				app.clearDeck();
 				app.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -485,8 +484,8 @@ var app = new Vue({
 				app.drafting = true;
 
 				app.setWinstonDraftState(data.state);
-				app.sideboard = [];
-				app.deck = [];
+				app.clearSideboard();
+				app.clearDeck();
 				for (let c of data.pickedCards) app.addToDeck(app.genCard(app.cards[c]));
 
 				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
@@ -508,8 +507,8 @@ var app = new Vue({
 
 				app.drafting = true;
 				app.stopReadyCheck();
-				app.sideboard = [];
-				app.deck = [];
+				app.clearSideboard();
+				app.clearDeck();
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -536,8 +535,8 @@ var app = new Vue({
 			this.socket.on("rejoinDraft", function(data) {
 				app.drafting = true;
 
-				app.sideboard = [];
-				app.deck = [];
+				app.clearDeck();
+				app.clearSideboard();
 				for (let c of data.pickedCards) app.addToDeck(app.genCard(c));
 
 				app.booster = [];
@@ -615,10 +614,10 @@ var app = new Vue({
 			});
 
 			this.socket.on("setCardSelection", function(data) {
-				app.sideboard = [];
-				app.deck = [];
+				app.clearSideboard();
+				app.clearDeck();
 				for (let c of data.flat()) {
-					app.deck.push(app.genCard(c));
+					app.addToDeck(app.genCard(c));
 				}
 				app.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -1371,12 +1370,12 @@ var app = new Vue({
 		addToDeck: function(card) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
+			this.$refs.deckDisplay.addCard(card);
 		},
 		addToSideboard: function(card) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
+			this.$refs.sideboardDisplay.addCard(card);
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
@@ -1385,14 +1384,7 @@ var app = new Vue({
 				this.deck.splice(idx, 1);
 				this.addToSideboard(c);
 			} else return;
-
-			for (let col of this.deckColumn) {
-				let idx = col.indexOf(c);
-				if (idx >= 0) {
-					col.splice(idx, 1);
-					break;
-				}
-			}
+			this.$refs.deckDisplay.remCard(c);
 		},
 		sideboardToDeck: function(e, c) {
 			// From sideboard to deck
@@ -1401,65 +1393,15 @@ var app = new Vue({
 				this.sideboard.splice(idx, 1);
 				this.addToDeck(c);
 			} else return;
-
-			for (let col of this.sideboardColumn) {
-				let idx = col.indexOf(c);
-				if (idx >= 0) {
-					col.splice(idx, 1);
-					break;
-				}
-			}
+			this.$refs.sideboardDisplay.remCard(c);
 		},
-		addDeckColumn: function() {
-			this.deckColumn.push([]);
-			this.deckColumn[this.deckColumn.length - 1] = this.deckColumn[this.deckColumn.length - 2].filter(
-				c => c.cmc > this.deckColumn.length - 2
-			);
-			this.deckColumn[this.deckColumn.length - 2] = this.deckColumn[this.deckColumn.length - 2].filter(
-				c => c.cmc <= this.deckColumn.length - 2
-			);
+		clearDeck() {
+			this.deck = [];
+			this.$refs.deckDisplay.reset();
 		},
-		addSideboardColumn: function() {
-			this.sideboardColumn.push([]);
-			this.sideboardColumn[this.sideboardColumn.length - 1] = this.sideboardColumn[
-				this.sideboardColumn.length - 2
-			].filter(c => c.cmc > this.sideboardColumn.length - 2);
-			this.sideboardColumn[this.sideboardColumn.length - 2] = this.sideboardColumn[
-				this.sideboardColumn.length - 2
-			].filter(c => c.cmc <= this.sideboardColumn.length - 2);
-		},
-		removeDeckColumn: function() {
-			if (this.deckColumn.length < 2) return;
-			this.deckColumn[this.deckColumn.length - 2] = [].concat(
-				this.deckColumn[this.deckColumn.length - 2],
-				this.deckColumn[this.deckColumn.length - 1]
-			);
-			this.deckColumn.pop();
-		},
-		removeSideboardColumn: function() {
-			if (this.sideboardColumn.length < 2) return;
-			this.sideboardColumn[this.sideboardColumn.length - 2] = [].concat(
-				this.sideboardColumn[this.sideboardColumn.length - 2],
-				this.sideboardColumn[this.sideboardColumn.length - 1]
-			);
-			this.sideboardColumn.pop();
-		},
-		// Sync. column changes with deck and sideboard
-		columnDeckChange: function(e) {
-			if (e.removed)
-				this.deck.splice(
-					this.deck.findIndex(c => c === e.removed.element),
-					1
-				);
-			if (e.added) this.deck.push(e.added.element);
-		},
-		columnSideboardChange: function(e) {
-			if (e.removed)
-				this.sideboard.splice(
-					this.sideboard.findIndex(c => c === e.removed.element),
-					1
-				);
-			if (e.added) this.sideboard.push(e.added.element);
+		clearSideboard() {
+			this.sideboard = [];
+			this.$refs.sideboardDisplay.reset();
 		},
 		columnCMC: function(cards) {
 			let a = cards.reduce((acc, item) => {
@@ -1719,38 +1661,6 @@ var app = new Vue({
 			return addedLands;
 		},
 
-		deckColumnCMC: function() {
-			return this.columnCMC(this.deck);
-		},
-		deckColumnColor: function() {
-			return this.columnColor(this.deck);
-		},
-		deckCMC: function() {
-			return this.orderByCMC(this.deck);
-		},
-		deckColor: function() {
-			return this.orderByColor(this.deck);
-		},
-		deckRarity: function() {
-			return this.orderByRarity(this.deck);
-		},
-
-		sideboardColumnCMC: function() {
-			return this.columnCMC(this.sideboard);
-		},
-		sideboardColumnColor: function() {
-			return this.columnColor(this.sideboard);
-		},
-		sideboardCMC: function() {
-			return this.orderByCMC(this.sideboard);
-		},
-		sideboardColor: function() {
-			return this.orderByColor(this.sideboard);
-		},
-		sideboardRarity: function() {
-			return this.orderByRarity(this.sideboard);
-		},
-
 		userByID: function() {
 			let r = {};
 			for (let u of this.sessionUsers) r[u.userID] = u;
@@ -1822,25 +1732,8 @@ var app = new Vue({
 		hideSessionID: function() {
 			setCookie("hideSessionID", this.hideSessionID);
 		},
-		cardOrder: function() {
-			setCookie("cardOrder", this.cardOrder);
-		},
-		deck: function(newDeck, oldDeck) {
+		deck: function() {
 			this.updateAutoLands();
-
-			// When replacing deck (not mutating it)
-			if (oldDeck != newDeck) {
-				this.deckColumn = [[], [], [], [], [], [], []];
-				for (let c of newDeck) this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
-				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByColorInPlace(this.deckColumn[col]);
-			}
-		},
-		sideboard: function(newSide, oldSide) {
-			// When replacing deck (not mutating it)
-			if (newSide != oldSide) {
-				this.sideboardColumn = [[], [], [], [], [], [], []];
-				for (let c of newSide) this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
-			}
 		},
 		autoLand: function() {
 			this.updateAutoLands();

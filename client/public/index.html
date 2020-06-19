@@ -451,15 +451,7 @@
 			>
 				<div class="controls">
 					<h2>Deck ({{deck.length}})</h2>
-					<label for="card-order">Card Display</label>
-					<select v-model="cardOrder" name="card-order">
-						<option value="DraggableCMC">Draggable</option>
-						<option value="CMCColumns">CMC Columns</option>
-						<option value="ColorColumns">Color Columns</option>
-						<option value="CMC">Order by CMC</option>
-						<option value="Color">Order by Color</option>
-						<option value="Rarity">Order by Rarity</option>
-					</select>
+					[TODO:Manual Re-Order]
 					<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
 					<span v-show="draftingState == DraftState.Brewing">
 						<input type="checkbox" id="autoLand" v-model="autoLand" />
@@ -479,49 +471,12 @@
 						{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 					</span>
 				</div>
-				<div class="card-container" :class="['CMCColumns', 'ColorColumns', 'DraggableCMC'].includes(cardOrder) ? 'card-columns' : 'card-pool'">
-					<div v-if="deck.length == 0" class="empty-warning">
+				<card-pool :cards="deck" :click="deckToSideboard" ref="deckDisplay">
+					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
 						<p>Click on your cards to add them to your deck.</p>
-					</div>
-					<template v-if="cardOrder == 'DraggableCMC'">
-						<draggable
-							v-for="(column, colIdx) in deckColumn"
-							:key="'deck'+colIdx"
-							class="card-column drag-column"
-							:list="column"
-							group="cardColumn"
-							@change="columnDeckChange"
-						>
-							<card v-for="card in column" :key="card.uniqueID" :card="card" :language="language" :selectcard="deckToSideboard"></card>
-						</draggable>
-						<div class="draggable-controls">
-							<div @click="addDeckColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
-							<div v-show="deckColumn.length > 1" @click="removeDeckColumn" class="minus-column">
-								<i class="fas fa-minus fa-2x"></i>
-							</div>
-						</div>
 					</template>
-					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="(cmc_column, colIndex) in deckColumnCMC" :key="'col' + colIndex" class="card-column">
-							<card v-for="(card, index) in cmc_column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="(column, colIndex) in deckColumnColor" :key="'col' + colIndex" class="card-column" v-show="column.length > 0">
-							<card v-for="(card, index) in column" :key="index" :card="card" :language="language" :selectcard="deckToSideboard"></card>
-						</div>
-					</template>
-					<template v-else>
-						<card
-							v-for="(card, index) in {'CMC': deckCMC, 'Color': deckColor, 'Rarity': deckRarity, '': deck}[cardOrder]"
-							:key="index"
-							:card="card"
-							:language="language"
-							:selectcard="deckToSideboard"
-						></card>
-					</template>
-				</div>
+				</card-pool>
 			</div>
 			<div
 				v-show="(sideboard != undefined && sideboard.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing"
@@ -534,71 +489,12 @@
 						)
 					</h2>
 				</div>
-				<div class="card-container" :class="['CMCColumns', 'ColorColumns', 'DraggableCMC'].includes(cardOrder) ? 'card-columns' : 'card-pool'">
-					<div v-if="sideboard.length == 0" class="empty-warning">
+				<card-pool :cards="sideboard" :click="sideboardToDeck" ref="sideboardDisplay">
+					<template v-slot:empty>
 						<h3>Your sideboard is currently empty!</h3>
 						<p>Click on cards in your deck to sideboard them.</p>
-					</div>
-					<template v-if="cardOrder == 'DraggableCMC'">
-						<draggable
-							v-for="(column, colIdx) in sideboardColumn"
-							:key="'side'+colIdx"
-							class="card-column drag-column"
-							:list="column"
-							group="cardColumn"
-							@change="columnSideboardChange"
-						>
-							<figure
-								is="card"
-								v-for="card in column"
-								v-bind:key="card.uniqueID"
-								v-bind:card="card"
-								v-bind:language="language"
-								v-bind:selectcard="sideboardToDeck"
-							></figure>
-						</draggable>
-						<div class="draggable-controls">
-							<div @click="addSideboardColumn" class="plus-column"><i class="fas fa-plus fa-2x"></i></div>
-							<div v-show="sideboardColumn.length > 1" @click="removeSideboardColumn" class="minus-column">
-								<i class="fas fa-minus fa-2x"></i>
-							</div>
-						</div>
 					</template>
-					<template v-else-if="cardOrder == 'CMCColumns'">
-						<div v-for="(cmc_column, colIndex) in sideboardColumnCMC" :key="'col' + colIndex" class="card-column">
-							<figure
-								is="card"
-								v-for="(card, index) in cmc_column"
-								v-bind:key="index"
-								v-bind:card="card"
-								v-bind:language="language"
-								v-bind:selectcard="sideboardToDeck"
-							></figure>
-						</div>
-					</template>
-					<template v-else-if="cardOrder == 'ColorColumns'">
-						<div v-for="(column, colIndex) in sideboardColumnColor" :key="'col' + colIndex" class="card-column" v-show="column.length > 0">
-							<figure
-								is="card"
-								v-for="(card, index) in column"
-								v-bind:key="index"
-								v-bind:card="card"
-								v-bind:language="language"
-								v-bind:selectcard="sideboardToDeck"
-							></figure>
-						</div>
-					</template>
-					<template v-else>
-						<figure
-							is="card"
-							v-for="(card, index) in {'CMC': sideboardCMC, 'Color': sideboardColor, 'Rarity': sideboardRarity, '': sideboard}[cardOrder]"
-							v-bind:key="index"
-							v-bind:card="card"
-							v-bind:language="language"
-							v-bind:selectcard="sideboardToDeck"
-						></figure>
-					</template>
-				</div>
+				</card-pool>
 			</div>
 
 			<div class="welcome" v-if="draftingState === undefined">
@@ -979,7 +875,7 @@
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 						) using
 						<a href="https://scryfall.com/">Scryfall</a>
-						card data an images and loads of open source software.
+						card data and images and loads of open source software.
 					</p>
 					<p>
 						MTGADraft Discord:
