@@ -42,6 +42,45 @@ function orderColor(lhs, rhs) {
 	else return String(lhs.flat()).localeCompare(String(rhs.flat()));
 }
 
+// Arena counts each X as 100 basically
+// Arena uses the front half of split cards here
+// TODO: handle X, handle split cards
+function orderCardCMC(lhs, rhs) {
+	return lhs.cmc - rhs.cmc;
+}
+
+// Arena puts creatures before non-creatures
+// TODO: add that data to card
+function orderCardCreature(lhs, rhs) {
+	return 0;
+}
+
+// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
+// TODO: handle cards that aren't monocolor
+function orderCardColor(lhs, rhs) {
+	return orderColor(lhs.color_identity, rhs.color_identity);
+}
+
+function orderCardAlphabetical(lhs, rhs) {
+	return String(lhs.name).localeCompare(rhs.name);
+}
+
+function orderCardId(lhs, rhs) {
+	return lhs.id - rhs.id;
+}
+
+const arenaComparitors = [orderCardCMC, orderCardCreature, orderCardColor, orderCardAlphabetical, orderCardId];
+function orderCardArena(lhs, rhs) {
+  for (let comparitor of arenaComparitors) {
+  	let result = comparitor(lhs, rhs)
+  	if (result != 0) {
+  		return result;
+  	}
+  }
+  return 0;
+}
+
+
 const SwalCustomClasses = {
 	popup: "custom-swal-popup",
 	title: "custom-swal-title",
@@ -1371,12 +1410,12 @@ var app = new Vue({
 		addToDeck: function(card) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)].push(card);
+			this.insertCard(this.deckColumn[Math.min(card.cmc, this.deckColumn.length - 1)], card);
 		},
 		addToSideboard: function(card) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)].push(card);
+			this.insertCard(this.sideboardColumn[Math.min(card.cmc, this.sideboardColumn.length - 1)], card);
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
@@ -1467,7 +1506,7 @@ var app = new Vue({
 				acc[item.cmc].push(item);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		columnColor: function(cards) {
@@ -1484,7 +1523,7 @@ var app = new Vue({
 				},
 				{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] }
 			);
-			for (let col in a) a[col] = this.orderByCMC(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		idColumnCMC: function(cardids) {
@@ -1494,21 +1533,14 @@ var app = new Vue({
 				acc[cmc].push(id);
 				return acc;
 			}, {});
-			for (let col in a) a[col] = this.orderByColor(a[col]);
+			for (let col in a) this.orderByArenaInPlace(a[col]);
 			return a;
 		},
 		orderByColorInPlace: function(cards) {
 			return cards.sort(function(lhs, rhs) {
 				if (orderColor(lhs.color_identity, rhs.color_identity) == 0)
-					if (lhs.cmc != rhs.cmc) return lhs.cmc - rhs.cmc;
-					else return lhs.name < rhs.name;
+					return return orderCardArena(lhs, rhs);
 				return orderColor(lhs.color_identity, rhs.color_identity);
-			});
-		},
-		orderByCMC: function(cards) {
-			return [...cards].sort(function(lhs, rhs) {
-				if (lhs.cmc == rhs.cmc) return orderColor(lhs.color_identity, rhs.color_identity);
-				return lhs.cmc - rhs.cmc;
 			});
 		},
 		orderByColor: function(cards) {
@@ -1517,10 +1549,35 @@ var app = new Vue({
 		orderByRarity: function(cards) {
 			const order = { mythic: 0, rare: 1, uncommon: 2, common: 3 };
 			return [...cards].sort(function(lhs, rhs) {
-				if (order[lhs.rarity] == order[rhs.rarity]) return lhs.cmc - rhs.cmc;
+				if (order[lhs.rarity] == order[rhs.rarity]) orderCardArena(lhs, rhs);
 				return order[lhs.rarity] - order[rhs.rarity];
 			});
 		},
+		orderByArenaInPlace: function (cards) {
+			return cards.sort(orderCardArena);
+		},
+		orderByArena: function (cards) {
+			return this.orderByArenaInPlace([...cards]);
+		},
+		isOrderedByArena: function (cards) {
+			for (let i = 0; i < cards.length - 1; i++) {
+				if (orderCardArena(cards[i], cards[i+1]) > 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+		insertCard: function (column, card) {
+			let duplicateIndex = column.findIndex(c => c.name === card.name);
+			if (duplicateIndex != -1) {
+				column.splice(duplicateIndex, 0, card);
+			} else if (this.isOrderedByArena(column)) {
+				column.push(card);
+				this.orderByArenaInPlace(column);
+			} else {
+			  column.push(card);
+			}
+		}
 		updateAutoLands: function() {
 			if (this.autoLand) {
 				if (!this.deck || this.deck.length === 0) return;
@@ -1726,7 +1783,7 @@ var app = new Vue({
 			return this.columnColor(this.deck);
 		},
 		deckCMC: function() {
-			return this.orderByCMC(this.deck);
+			return this.orderByArena(this.deck);
 		},
 		deckColor: function() {
 			return this.orderByColor(this.deck);
@@ -1742,7 +1799,7 @@ var app = new Vue({
 			return this.columnColor(this.sideboard);
 		},
 		sideboardCMC: function() {
-			return this.orderByCMC(this.sideboard);
+			return this.orderByArena(this.sideboard);
 		},
 		sideboardColor: function() {
 			return this.orderByColor(this.sideboard);
@@ -1832,14 +1889,14 @@ var app = new Vue({
 			if (oldDeck != newDeck) {
 				this.deckColumn = [[], [], [], [], [], [], []];
 				for (let c of newDeck) this.deckColumn[Math.min(c.cmc, this.deckColumn.length - 1)].push(c);
-				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByColorInPlace(this.deckColumn[col]);
+				for (let col = 0; col < this.deckColumn.length; ++col) this.orderByArenaInPlace(this.deckColumn[col]);
 			}
 		},
 		sideboard: function(newSide, oldSide) {
 			// When replacing deck (not mutating it)
 			if (newSide != oldSide) {
 				this.sideboardColumn = [[], [], [], [], [], [], []];
-				for (let c of newSide) this.sideboardColumn[Math.min(c.cmc, this.sideboardColumn.length - 1)].push(c);
+				for (let col = 0; col < this.sideboardColumn.length; ++col) this.orderByArenaInPlace(this.sideboardColumn[col]);
 			}
 		},
 		autoLand: function() {
