@@ -118,7 +118,7 @@ a:hover {
 #main-vue .multiselect {
 	display: inline-block;
 	vertical-align: baseline;
-	width: 14.5em;
+	width: 15.25em;
 	min-height: auto;
 	--invertedness: 100%;
 }
@@ -207,7 +207,19 @@ a:hover {
 	filter: invert(var(--invertedness));
 }
 
-.mana-icon {
+#main-vue .padded-icon {
+	min-width: 2em;
+}
+
+#main-vue .set-icon.multiselect__option {
+	display: inline-block;
+	height: 1em;
+	min-width: 2em;
+	vertical-align: baseline;
+	filter: invert(var(--invertedness));
+}
+
+#main-vue .mana-icon {
 	display: inline-block;
 	height: 1em;
 	vertical-align: middle;
