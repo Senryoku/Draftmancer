@@ -1,5 +1,9 @@
 [
 	{
+		"date": "19/06/2020",
+		"notes": ["Sort columns so that duplicates go together"]
+	},
+	{
 		"date": "18/06/2020",
 		"notes": ["Added M21 cards (most images are only available in English for now)"]
 	},
