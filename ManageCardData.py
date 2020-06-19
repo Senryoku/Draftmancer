@@ -8,14 +8,15 @@ import urllib
 import sys
 import re
 import glob
+import decimal
 from itertools import groupby
 
 BulkDataURL = 'https://archive.scryfall.com/json/scryfall-all-cards.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-FinalDataPath = 'public/data/MTGACards.json'
-SetsInfosPath = 'public/data/SetsInfos.json'
-BasicLandIDsPath = 'public/data/BasicLandIDs.json'
+FinalDataPath = 'client/public/data/MTGACards.json'
+SetsInfosPath = 'client/public/data/SetsInfos.json'
+BasicLandIDsPath = 'client/public/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
 RatingsDest = 'data/ratings.json'
 
@@ -28,29 +29,31 @@ if len(sys.argv) > 1:
     ForceRatings = Arg == "ratings"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
-MTGALocFile = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))[0]
-MTGACardsFile = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))[0]
+MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
+MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
 MTGALocalization = {}
-with open(MTGALocFile, 'r', encoding="utf8") as file:
-    locdata = json.load(file)
-    for o in locdata[0]['keys']:
-        MTGALocalization[o['id']] = o['text']
+for path in MTGALocFiles:
+    with open(path, 'r', encoding="utf8") as file:
+        locdata = json.load(file)
+        for o in locdata[0]['keys']:
+            MTGALocalization[o['id']] = o['text']
 
 MTGADataDebug = {}
 CardsCollectorNumberAndSet = {}
-with open(MTGACardsFile, 'r', encoding="utf8") as file:
-    carddata = json.load(file)
-    for o in carddata:
-        if o['isPrimaryCard']:
-            o['set'] = o['set'].lower()
-            if o['set'] == 'conf':
-                o['set'] = 'con'
-            if o['set'] == 'dar':
-                o['set'] = 'dom'
-            MTGADataDebug[(MTGALocalization[o['titleId']],
-                           o['CollectorNumber'], o['set'].lower())] = o['grpid']
-            CardsCollectorNumberAndSet[(
-                o['CollectorNumber'], o['set'].lower())] = o['grpid']
+for path in MTGACardsFiles:
+    with open(path, 'r', encoding="utf8") as file:
+        carddata = json.load(file)
+        for o in carddata:
+            if o['isPrimaryCard']:
+                o['set'] = o['set'].lower()
+                if o['set'] == 'conf':
+                    o['set'] = 'con'
+                if o['set'] == 'dar':
+                    o['set'] = 'dom'
+                MTGADataDebug[(MTGALocalization[o['titleId']],
+                               o['CollectorNumber'], o['set'].lower())] = o['grpid']
+                CardsCollectorNumberAndSet[(
+                    o['CollectorNumber'], o['set'].lower())] = o['grpid']
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -59,8 +62,18 @@ with open('data/MTGADataDebug.json', 'w') as outfile:
     json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
-    print("Downloading {}...".format(BulkDataURL))
-    urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
+    #print("Downloading {}...".format(BulkDataURL))
+    #urllib.request.urlretrieve(BulkDataURL, BulkDataPath)
+    print("Permanent link to all latest Scryfall data doesn't seem available anymore, please visit: https://scryfall.com/docs/api/bulk-data and place the 'All Cards' archive here :'{}'".format(BulkDataPath))
+
+
+# Handle decimals from Scryfall data? (Prices?)
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return super(DecimalEncoder, self).default(o)
+
 
 if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     print("Extracting arena card to {}...".format(BulkDataArenaPath))
@@ -85,8 +98,9 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.write(" " + str(copied) + " cards added.")
 
         with open(BulkDataArenaPath, 'w') as outfile:
-            json.dump(cards, outfile)
+            json.dump(cards, outfile, cls=DecimalEncoder)
 
+        print("\nDone!")
 
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
@@ -103,7 +117,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
                 except ValueError:
                     vals = m[1].split("//")
                     rating = (float(vals[0]) + float(vals[1]))/2
-                #print(m[0], " ", rating)
+                # print(m[0], " ", rating)
                 CardRatings[m[0]] = rating
     with open(RatingsDest, 'w') as outfile:
         json.dump(CardRatings, outfile)
@@ -111,7 +125,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
+if not os.path.isfile(FinalDataPath) or ForceCache:
     # Tag non booster card as such
     print("Requesting non-booster cards list...")
     NonBoosterCards = []
@@ -121,7 +135,7 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
     for c in data['data']:
         if('arena_id' in c):
             NonBoosterCards.append(c['arena_id'])
-        else:
+        elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
             NonBoosterCards.append(CardsCollectorNumberAndSet[(
                 c['collector_number'], c['set'].lower())])
     while(data["has_more"]):
@@ -130,33 +144,37 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
         for c in data['data']:
             if('arena_id' in c):
                 NonBoosterCards.append(c['arena_id'])
-            else:
+            elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
                 NonBoosterCards.append(CardsCollectorNumberAndSet[(
                     c['collector_number'], c['set'].lower())])
 
     print("Generating card data cache...")
+    translations = {"en": {},
+                    "es": {},
+                    "fr": {},
+                    "de": {},
+                    "it": {},
+                    "pt": {},
+                    "ja": {},
+                    "ko": {},
+                    "ru": {},
+                    "zhs": {},
+                    "zht": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
-        translations = {}
-        translations_img = {}
         arena_cards = json.loads(file.read())
         for c in arena_cards:
-            if c['arena_id'] not in translations:
-                translations[c['arena_id']] = {}
-            if c['arena_id'] not in translations_img:
-                translations_img[c['arena_id']] = {}
+            translation = {}
+            if 'printed_name' in c:
+                translation['printed_name'] = c['printed_name']
+            elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+                translation['printed_name'] = c['card_faces'][0]['printed_name']
+            if 'image_uris' in c and 'border_crop' in c['image_uris']:
+                translation['image_uris'] = c['image_uris']['border_crop']
+            elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+                translation['image_uris'] = c['card_faces'][0]['image_uris']['border_crop']
+            translations[c['lang']][c['arena_id']] = translation
             if c['lang'] != 'en':
-                if 'printed_name' in c:
-                    translations[c['arena_id']][c['lang']] = c['printed_name']
-                elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-                    translations[c['arena_id']][c['lang']
-                                                ] = c['card_faces'][0]['printed_name']
-                if 'image_uris' in c and 'border_crop' in c['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['image_uris']['border_crop']
-                elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['card_faces'][0]['image_uris']['border_crop']
                 continue
             if c['arena_id'] not in cards:
                 cards[c['arena_id']] = {}
@@ -170,23 +188,26 @@ if not os.path.isfile(FinalDataPath) or ForceExtract or ForceCache:
                 if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
                     selection['in_booster'] = False
                     selection['rating'] = 0
-                if 'image_uris' in c and 'border_crop' in c['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['image_uris']['border_crop']
-                elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-                    translations_img[c['arena_id']][c['lang']
-                                                    ] = c['card_faces'][0]['image_uris']['border_crop']
-                translations[c['arena_id']][c['lang']] = c['name']
                 cards[c['arena_id']].update(selection)
 
-        for k in cards:
-            cards[k]['printed_name'] = translations[k]
-            cards[k]['image_uris'] = translations_img[k]
+        # Removes URL prefix
+        allURIs = []
+        for lang in translations:
+            for c in translations[lang]:
+                allURIs.append(translations[lang][c]['image_uris'])
+        URLPrefix = os.path.commonprefix(allURIs)
+        print("Scryfall Image URLPrefix: ", URLPrefix)
+        for lang in translations:
+            for c in translations[lang]:
+                translations[lang][c]['image_uris'] = translations[lang][c]['image_uris'][len(
+                    URLPrefix):]
+
+        for lang in translations:
+            with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
+                json.dump(translations[lang], outfile, ensure_ascii=False)
 
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
-        # with gzip.open(FinalDataPath+'.gzip', 'wt', encoding="utf8") as outfile:
-            # json.dump(cards, outfile, ensure_ascii=False)
 
 setFullNames = {
     "ana": "Arena",
@@ -221,13 +242,13 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
         # Get set icon
         icon_path = "img/sets/{}.svg".format(set)
         # con is a reserved keyword on windows; we don't need it anyway.
-        if not os.path.isfile("public/" + icon_path) and set != "con":
+        if not os.path.isfile("client/public/" + icon_path) and set != "con":
             response = requests.get(
                 "https://api.scryfall.com/sets/{}".format(set))
             scryfall_set_data = json.loads(response.content)
             if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
                 urllib.request.urlretrieve(
-                    scryfall_set_data['icon_svg_uri'], "public/" + icon_path)
+                    scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
                 setinfos[set]["icon"] = icon_path
         else:
             setinfos[set]["icon"] = icon_path
@@ -241,7 +262,7 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
         for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
             rarityGroupList = list(rarityGroup)
             setinfos[set][rarity + "Count"] = len(rarityGroupList)
-            #print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
+            # print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
     with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
         json.dump(setinfos, setinfosfile, ensure_ascii=False)
 

@@ -2,5 +2,14 @@
 	"tabWidth": 4,
 	"trailingComma": "es5",
 	"useTabs": true,
-	"printWidth": 120
+	"printWidth": 120,
+	"overrides": [
+		{
+			"files": "*.html",
+			"options": {
+				"printWidth": 180,
+				"htmlWhitespaceSensitivity": "ignore"
+			}
+		}
+	]
 }

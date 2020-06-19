@@ -63,3 +63,4 @@ typings/
 data/scryfall-all-cards.json
 data/BulkArena.json
 Makefile
+client/public/dist/*

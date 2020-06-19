@@ -4,13 +4,19 @@
 
 Join the discord for development related discussions: https://discord.gg/KYKzx9m
 
-## How to run the project in local
+## How to run the project locally
 
 -   Clone repository
 -   Open repository
--   Execute `npm install`
--   Execute `npm start`
+-   Execute `npm install` to install dependencies.
+-   Execute `npm run build` to build the client using webpack.
+-   Execute `npm start` to start the server (which also serves the webapp).
 -   Navigate to `http://localhost:3000/`
+
+### Development tips
+
+-   Running `nodemon` instead of `npm start` will restart the node server on any changes.
+-   Use `npm run build-dev` to watch for changes in the client js code and automatically re-build it.
 
 ### Setup DynamoDB (local)
 
@@ -33,7 +39,9 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Make the rarity distribution in boosters customizable (it's been asked multiple times).
+-   Display cube name (for presets)
+-   Add reorganize button for draggable (Remove other display options)
+-   Regroup multiple copies of cards on pick?
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State)
@@ -49,6 +57,9 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+-   Load translations on-demand.
+-   Add some example cubes (starting with Arena Cube)
+-   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
 -   Glimpse/Burn Draft
 -   Card count/set code/Collector number support to cube import

@@ -1,6 +1,6 @@
 "use strict";
 
-const constants = require("../public/js/constants");
+const constants = require("../client/src/constants.json");
 const removeCardFromDict = require("./cardUtils").removeCardFromDict;
 const utils = require("./utils");
 const negMod = utils.negMod;
@@ -21,7 +21,7 @@ function shuffleArray(array, start = 0, end = array.length) {
 }
 
 // TODO: Prevent multiples by name?
-const pick_card = function (dict, booster) {
+const pick_card = function(dict, booster) {
 	let c = utils.getRandomKey(dict);
 	if (booster != undefined) {
 		let prevention_attempts = 0; // Fail safe-ish
@@ -67,10 +67,10 @@ function WinstonDraftState(players, boosters) {
 	if (this.cardPool.length >= 3) this.piles = [[this.cardPool.pop()], [this.cardPool.pop()], [this.cardPool.pop()]];
 	this.currentPile = 0;
 
-	this.currentPlayer = function () {
+	this.currentPlayer = function() {
 		return this.players[this.round % 2];
 	};
-	this.syncData = function () {
+	this.syncData = function() {
 		return {
 			round: this.round,
 			currentPlayer: this.currentPlayer(),
@@ -111,7 +111,7 @@ function Session(id, owner) {
 	};
 	this.foil = false;
 	this.useCustomCardList = false;
-	this.customCardList = [];
+	this.customCardList = {};
 	this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	this.burnedCardsPerRound = 0;
@@ -129,7 +129,7 @@ function Session(id, owner) {
 
 	this.winstonDraftState = null;
 
-	this.addUser = function (userID) {
+	this.addUser = function(userID) {
 		if (this.users.has(userID)) {
 			console.error(`Session::addUser: this.users.has(${userID})`);
 		}
@@ -141,7 +141,7 @@ function Session(id, owner) {
 		this.syncSessionOptions(userID);
 	};
 
-	this.getDisconnectedUserData = function (userID) {
+	this.getDisconnectedUserData = function(userID) {
 		return {
 			userName: Connections[userID].userName,
 			pickedThisRound: Connections[userID].pickedThisRound,
@@ -150,14 +150,12 @@ function Session(id, owner) {
 		};
 	};
 
-	this.broadcastDisconnectedUsers = function () {
-		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(
-			(u) => this.disconnectedUsers[u].userName
-		);
-		this.forUsers((u) => Connections[u].socket.emit("userDisconnected", disconnectedUserNames));
+	this.broadcastDisconnectedUsers = function() {
+		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(u => this.disconnectedUsers[u].userName);
+		this.forUsers(u => Connections[u].socket.emit("userDisconnected", disconnectedUserNames));
 	};
 
-	this.remUser = function (userID) {
+	this.remUser = function(userID) {
 		// Nothing to do if the user wasn't playing
 		if (userID === this.owner && !this.ownerIsPlayer) return;
 
@@ -171,13 +169,13 @@ function Session(id, owner) {
 		}
 	};
 
-	this.setBoostersPerPlayer = function (boostersPerPlayer) {
+	this.setBoostersPerPlayer = function(boostersPerPlayer) {
 		if (this.boostersPerPlayer != boostersPerPlayer) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 
-			this.forUsers((u) =>
+			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
 					customBoosters: this.customBoosters,
 				})
@@ -185,9 +183,9 @@ function Session(id, owner) {
 		}
 	};
 
-	this.setSeating = function (seating) {
+	this.setSeating = function(seating) {
 		if (this.drafting) return false;
-		if (!Array.isArray(seating) || [...this.users].some((u) => !seating.includes(u))) {
+		if (!Array.isArray(seating) || [...this.users].some(u => !seating.includes(u))) {
 			console.error(`Session.setSeating: invalid seating.`);
 			console.error("Submitted seating:", seating);
 			console.error("Session.users:", this.users);
@@ -198,14 +196,14 @@ function Session(id, owner) {
 		return true;
 	};
 
-	this.randomizeSeating = function () {
+	this.randomizeSeating = function() {
 		if (this.drafting) return false;
 		shuffleArray(this.userOrder);
 		this.notifyUserChange();
 		return true;
 	};
 
-	this.syncSessionOptions = function (userID) {
+	this.syncSessionOptions = function(userID) {
 		Connections[userID].socket.emit("sessionOptions", {
 			sessionOwner: this.owner,
 			ownerIsPlayer: this.ownerIsPlayer,
@@ -232,7 +230,7 @@ function Session(id, owner) {
 	};
 
 	// Returns current card pool according to all session options (Collections, setRestrictions...)
-	this.cardPool = function () {
+	this.cardPool = function() {
 		const user_list = [...this.users];
 		let cardPool = {};
 
@@ -267,7 +265,7 @@ function Session(id, owner) {
 	};
 
 	// Compute user collections intersection (taking into account each user preferences)
-	this.collection = function () {
+	this.collection = function() {
 		const user_list = [...this.users];
 		let intersection = [];
 		let collection = {};
@@ -279,8 +277,8 @@ function Session(id, owner) {
 
 		let arrays = [];
 		// Start from the first user's collection, or the list of all cards if not available/used
-		if (!useCollection[0]) arrays.push(Object.keys(Cards).filter((c) => Cards[c].in_booster));
-		else arrays.push(Object.keys(Connections[user_list[0]].collection).filter((c) => Cards[c].in_booster));
+		if (!useCollection[0]) arrays.push(Object.keys(Cards).filter(c => Cards[c].in_booster));
+		else arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push(Object.keys(Connections[user_list[i]].collection));
 		intersection = utils.array_intersect(arrays);
@@ -295,7 +293,7 @@ function Session(id, owner) {
 	};
 
 	// Categorize card pool by rarity
-	this.cardPoolByRarity = function () {
+	this.cardPoolByRarity = function() {
 		const cardPoolByRarity = {
 			common: {},
 			uncommon: {},
@@ -308,7 +306,7 @@ function Session(id, owner) {
 	};
 
 	// Returns all cards from specified set categorized by rarity and set to maxDuplicates
-	this.setByRarity = function (set) {
+	this.setByRarity = function(set) {
 		let local = {
 			common: {},
 			uncommon: {},
@@ -321,8 +319,8 @@ function Session(id, owner) {
 
 	// Populates this.boosters following session options
 	// WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
-	this.generateBoosters = function (boosterQuantity, useCustomBoosters) {
-		const count_cards = function (coll) {
+	this.generateBoosters = function(boosterQuantity, useCustomBoosters) {
+		const count_cards = function(coll) {
 			return Object.values(coll).reduce((acc, val) => acc + val, 0);
 		};
 
@@ -395,7 +393,7 @@ function Session(id, owner) {
 				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
 				let localCollection = {};
-				for (let cardId of this.customCardList) {
+				for (let cardId of this.customCardList.cards) {
 					// Duplicates adds one copy of the card
 					if (cardId in localCollection) localCollection[cardId] += 1;
 					else localCollection[cardId] = 1;
@@ -453,7 +451,7 @@ function Session(id, owner) {
 			const targets = this.boosterContent;
 
 			// Skip setting up standard collection if we're only using individual booster rules
-			if (!useCustomBoosters || !this.customBoosters.every((v) => v !== "")) {
+			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				localCollection = this.cardPoolByRarity();
 				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots) {
 					landSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
@@ -482,7 +480,7 @@ function Session(id, owner) {
 			}
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (useCustomBoosters && this.customBoosters.some((v) => v !== "")) {
+			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
 				const boosterRules = [];
 				const usedSets = {};
 				let defaultRule = {
@@ -592,7 +590,7 @@ function Session(id, owner) {
 	 *   targets: Card count for each slot
 	 *   landSlot: Optional land slot rule
 	 */
-	this.generateBooster = function (cardPool, colorBalancedSlot, targets, landSlot) {
+	this.generateBooster = function(cardPool, colorBalancedSlot, targets, landSlot) {
 		const mythicRate = 1.0 / 8.0;
 		const foilRate = 15.0 / 63.0;
 		// 1/16 chances of a foil basic land added to the common slot. Mythic to common
@@ -664,7 +662,7 @@ function Session(id, owner) {
 		if (landSlot) booster.push(landSlot.pick());
 
 		// Last resort safety check
-		if (booster.some((v) => typeof v === "undefined" || v === null)) {
+		if (booster.some(v => typeof v === "undefined" || v === null)) {
 			const msg = `Unspecified error.`;
 			this.emitMessage("Error generating boosters", msg);
 			console.error(msg, booster);
@@ -674,7 +672,7 @@ function Session(id, owner) {
 		return booster;
 	};
 
-	this.notifyUserChange = function () {
+	this.notifyUserChange = function() {
 		// Send only necessary data
 		let user_info = [];
 		for (let userID of this.getSortedHumanPlayers()) {
@@ -690,7 +688,7 @@ function Session(id, owner) {
 		}
 
 		// Send to all session users
-		this.forUsers((user) => {
+		this.forUsers(user => {
 			if (Connections[user]) {
 				Connections[user].socket.emit(
 					"sessionOwner",
@@ -704,7 +702,7 @@ function Session(id, owner) {
 
 	///////////////////// Winston Draft //////////////////////
 
-	this.startWinstonDraft = function (boosterCount) {
+	this.startWinstonDraft = function(boosterCount) {
 		if (this.users.size != 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
@@ -725,13 +723,13 @@ function Session(id, owner) {
 		return true;
 	};
 
-	this.endWinstonDraft = function () {
+	this.endWinstonDraft = function() {
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
 	};
 
-	this.winstonNextRound = function () {
+	this.winstonNextRound = function() {
 		const s = this.winstonDraftState;
 		++s.round;
 		s.currentPile = 0;
@@ -746,7 +744,7 @@ function Session(id, owner) {
 		}
 	};
 
-	this.winstonSkipPile = function () {
+	this.winstonSkipPile = function() {
 		const s = this.winstonDraftState;
 		if (!this.drafting || !s) return false;
 		// If the card pool is empty, make sure there is another pile to pick
@@ -775,7 +773,7 @@ function Session(id, owner) {
 		return true;
 	};
 
-	this.winstonTakePile = function () {
+	this.winstonTakePile = function() {
 		const s = this.winstonDraftState;
 		if (!this.drafting || !s) return false;
 		Connections[s.currentPlayer(this.userOrder)].pickedCards = Connections[
@@ -791,7 +789,7 @@ function Session(id, owner) {
 
 	///////////////////// Traditional Draft Methods //////////////////////
 
-	this.startDraft = function () {
+	this.startDraft = function() {
 		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
 
@@ -865,7 +863,7 @@ function Session(id, owner) {
 		this.nextBooster();
 	};
 
-	this.pickCard = function (userID, cardID, burnedCards) {
+	this.pickCard = function(userID, cardID, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
 		const boosterIndex = Connections[userID].boosterIndex;
@@ -890,7 +888,7 @@ function Session(id, owner) {
 			(burnedCards.length > this.burnedCardsPerRound ||
 			(burnedCards.length !== this.burnedCardsPerRound &&
 				this.boosters[boosterIndex].length !== 1 + burnedCards.length) || // If there's enough cards left, the proper amount of burned card should be supplied
-				burnedCards.some((c) => !this.boosters[boosterIndex].includes(c)))
+				burnedCards.some(c => !this.boosters[boosterIndex].includes(c)))
 		) {
 			const err = `Session.pickCard: Invalid burned cards.`;
 			console.error(err);
@@ -915,7 +913,7 @@ function Session(id, owner) {
 		Connections[userID].pickedThisRound = true;
 		// Removes the first occurence of cardID
 		this.boosters[boosterIndex].splice(
-			this.boosters[boosterIndex].findIndex((c) => c === cardID),
+			this.boosters[boosterIndex].findIndex(c => c === cardID),
 			1
 		);
 
@@ -923,14 +921,14 @@ function Session(id, owner) {
 		if (burnedCards) {
 			for (let burnID of burnedCards) {
 				this.boosters[boosterIndex].splice(
-					this.boosters[boosterIndex].findIndex((c) => c === burnID),
+					this.boosters[boosterIndex].findIndex(c => c === burnID),
 					1
 				);
 			}
 		}
 
 		// Signal users
-		this.forUsers((u) => {
+		this.forUsers(u => {
 			Connections[u].socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
@@ -959,7 +957,7 @@ function Session(id, owner) {
 		return { code: 0 };
 	};
 
-	this.doBotPick = function (instance, boosterIndex) {
+	this.doBotPick = function(instance, boosterIndex) {
 		const removedIdx = instance.pick(this.boosters[boosterIndex]);
 		const startingBooster = JSON.parse(JSON.stringify(this.boosters[boosterIndex]));
 		const picked = this.boosters[boosterIndex][removedIdx];
@@ -978,7 +976,7 @@ function Session(id, owner) {
 		return picked;
 	};
 
-	this.nextBooster = function () {
+	this.nextBooster = function() {
 		this.stopCountdown();
 
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
@@ -1048,9 +1046,9 @@ function Session(id, owner) {
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	};
 
-	this.resumeDraft = function () {
+	this.resumeDraft = function() {
 		console.warn(`Restarting draft for session ${this.id}.`);
-		this.forUsers((user) =>
+		this.forUsers(user =>
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
@@ -1061,7 +1059,7 @@ function Session(id, owner) {
 		this.emitMessage("Player reconnected", `Resuming draft...`);
 	};
 
-	this.endDraft = function () {
+	this.endDraft = function() {
 		this.drafting = false;
 		this.stopCountdown();
 		this.boosters = [];
@@ -1094,18 +1092,18 @@ function Session(id, owner) {
 				});
 				break;
 			case "everyone":
-				this.forUsers((u) => Connections[u].socket.emit("draftLog", this.draftLog));
+				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;
 		}
 
-		this.forUsers((u) => Connections[u].socket.emit("endDraft"));
+		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
 	///////////////////// Traditional Draft End  //////////////////////
 
-	this.distributeSealed = function (boostersPerPlayer) {
+	this.distributeSealed = function(boostersPerPlayer) {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		if (!this.generateBoosters(this.users.size * boostersPerPlayer)) return;
@@ -1131,7 +1129,7 @@ function Session(id, owner) {
 		this.boosters = [];
 	};
 
-	this.reconnectUser = function (userID) {
+	this.reconnectUser = function(userID) {
 		if (this.winstonDraftState) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
@@ -1162,7 +1160,7 @@ function Session(id, owner) {
 	};
 
 	// Non-playing owner (organizer) is trying to reconnect, we just need to send them the current state
-	this.reconnectOwner = function (userID) {
+	this.reconnectOwner = function(userID) {
 		if (userID !== this.owner || this.ownerIsPlayer) return;
 		Connections[userID].sessionID = this.id;
 		this.syncSessionOptions(userID);
@@ -1182,7 +1180,7 @@ function Session(id, owner) {
 		}
 	};
 
-	this.replaceDisconnectedPlayers = function () {
+	this.replaceDisconnectedPlayers = function() {
 		if (!this.drafting || this.winstonDraftState) return;
 
 		console.warn("Replacing disconnected players with bots!");
@@ -1205,7 +1203,7 @@ function Session(id, owner) {
 			}
 		}
 
-		this.forUsers((u) =>
+		this.forUsers(u =>
 			Connections[u].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
@@ -1219,29 +1217,29 @@ function Session(id, owner) {
 
 	// Countdown Methods
 
-	this.startCountdown = function () {
+	this.startCountdown = function() {
 		let dec = Math.floor(this.maxTimer / 15);
 		this.countdown = this.maxTimer - this.round * dec;
 		this.resumeCountdown();
 	};
-	this.resumeCountdown = function () {
+	this.resumeCountdown = function() {
 		this.stopCountdown(); // Cleanup if one is still running
 		if (this.maxTimer <= 0) {
 			// maxTimer <= 0 means no timer
-			this.forUsers((u) => Connections[u].socket.emit("disableTimer"));
+			this.forUsers(u => Connections[u].socket.emit("disableTimer"));
 		} else {
 			// Immediately propagate current state
-			this.forUsers((u) =>
+			this.forUsers(u =>
 				Connections[u].socket.emit("timer", {
 					countdown: this.countdown,
 				})
 			);
 			// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(
-				((sess) => {
+				(sess => {
 					return () => {
 						sess.countdown--;
-						this.forUsers((u) =>
+						this.forUsers(u =>
 							Connections[u].socket.emit("timer", {
 								countdown: sess.countdown,
 							})
@@ -1252,27 +1250,27 @@ function Session(id, owner) {
 			);
 		}
 	};
-	this.stopCountdown = function () {
+	this.stopCountdown = function() {
 		if (this.countdownInterval != null) clearInterval(this.countdownInterval);
 	};
 
 	// Includes disconnected players!
-	this.getHumanPlayerCount = function () {
+	this.getHumanPlayerCount = function() {
 		return this.users.size + Object.keys(this.disconnectedUsers).length;
 	};
 
 	// Includes disconnected players!
 	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
-	this.getSortedHumanPlayers = function () {
+	this.getSortedHumanPlayers = function() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
-		return this.userOrder.filter((e) => players.includes(e));
+		return this.userOrder.filter(e => players.includes(e));
 	};
 
-	this.getVirtualPlayersCount = function () {
+	this.getVirtualPlayersCount = function() {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
 	};
 
-	this.getSortedVirtualPlayers = function () {
+	this.getSortedVirtualPlayers = function() {
 		let tmp = {};
 		let humanPlayers = this.getSortedHumanPlayers();
 		if (this.botsInstances) {
@@ -1302,8 +1300,8 @@ function Session(id, owner) {
 		return tmp;
 	};
 
-	this.emitMessage = function (title, text, showConfirmButton = true, timer = 1500) {
-		this.forUsers((u) =>
+	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {
+		this.forUsers(u =>
 			Connections[u].socket.emit("message", {
 				title: title,
 				text: text,
@@ -1313,19 +1311,19 @@ function Session(id, owner) {
 		);
 	};
 
-	this.generateBracket = function (players) {
+	this.generateBracket = function(players) {
 		this.bracket = new Bracket(players);
-		this.forUsers((u) => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
-	this.updateBracket = function (results) {
+	this.updateBracket = function(results) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
-		this.forUsers((u) => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
 	// Execute fn for each user. Owner included even if they're not playing.
-	this.forUsers = function (fn) {
+	this.forUsers = function(fn) {
 		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
 		for (let user of this.users) fn(user);
 	};

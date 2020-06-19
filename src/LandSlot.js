@@ -6,13 +6,13 @@ const utils = require("./utils");
 const getRandomKey = utils.getRandomKey;
 const getRandom = utils.getRandom;
 const range = utils.range;
-const BasicLandIDs = require("../public/data/BasicLandIDs.json");
+const BasicLandIDs = require("../client/public/data/BasicLandIDs.json");
 
 function genBasicLandSlot(set) {
 	return {
 		basicLandsIds: BasicLandIDs[set],
 		setup: () => {},
-		pick: function () {
+		pick: function() {
 			return getRandom(this.basicLandsIds);
 		},
 	};
@@ -24,7 +24,7 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 		commonLandsIds: commonLandsIds,
 		rate: rate,
 		landsToDistribute: {},
-		setup: function (commons) {
+		setup: function(commons) {
 			for (let c of this.commonLandsIds) {
 				if (c in commons) {
 					this.landsToDistribute[c] = commons[c];
@@ -32,7 +32,7 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 				}
 			}
 		},
-		pick: function () {
+		pick: function() {
 			if (Math.random() <= this.rate && Object.keys(this.landsToDistribute).length > 0) {
 				let c = getRandomKey(this.landsToDistribute);
 				removeCardFromDict(c, this.landsToDistribute);
@@ -71,6 +71,11 @@ const SpecialLandSlots = {
 		[71314, 71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
 		1 / 2
 	), // Evoling Wilds (71314) and Gain Lands
+	m21: landSlotHandler(
+		BasicLandIDs["m21"],
+		[72025, 72026, 72027, 72029, 72030, 72031, 72032, 72033, 72039, 72040, 72041],
+		1 / 2
+	), // Gain Lands and Radiant Fountain (72030)
 };
 
 const BasicLandSlots = {};
