@@ -987,8 +987,8 @@ ul.player-list {
 }
 
 .loading + span {
-	position: absolute;
-	top: calc(50% + 2em);
+	position: fixed;
+	top: calc(50vh + 2em);
 	right: 0;
 	left: 0;
 	z-index: 1000;
