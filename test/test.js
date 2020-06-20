@@ -108,19 +108,17 @@ describe("Inter client communication", function() {
 
 	describe("Personal options updates", function() {
 		it("Clients should receive the updated userName when a user changes it.", function(done) {
-			receiver.on("updateUser", function(data) {
+			receiver.once("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.userName).to.equal("senderUpdatedUserName");
-				this.removeListener("updateUser");
 				done();
 			});
 			sender.emit("setUserName", "senderUpdatedUserName");
 		});
 		it("Clients should receive the updated useCollection status.", function(done) {
-			receiver.on("updateUser", function(data) {
+			receiver.once("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.useCollection).to.equal(false);
-				this.removeListener("updateUser");
 				done();
 			});
 			sender.emit("useCollection", false);
@@ -131,36 +129,32 @@ describe("Inter client communication", function() {
 				receiver.removeListener("updateUser");
 				done();
 			}, 200);
-			receiver.on("updateUser", () => {
+			receiver.once("updateUser", () => {
 				clearTimeout(timeout);
-				this.removeListener("updateUser");
 				done(new Error("Unexpected Call"));
 			});
 			sender.emit("useCollection", false);
 		});
 		it("Clients should receive the updated useCollection status.", function(done) {
-			receiver.on("updateUser", function(data) {
+			receiver.once("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.useCollection).to.equal(true);
-				this.removeListener("updateUser");
 				done();
 			});
 			sender.emit("useCollection", true);
 		});
 		it("Clients should receive the updated userName.", function(done) {
-			receiver.on("updateUser", function(data) {
+			receiver.once("updateUser", function(data) {
 				expect(data.userID).to.equal("sender");
 				expect(data.updatedProperties.userName).to.equal("Sender New UserName");
-				this.removeListener("updateUser");
 				done();
 			});
 			sender.emit("setUserName", "Sender New UserName");
 		});
 		it("Clients should receive the updated maxDuplicates.", function(done) {
 			const newMaxDuplicates = { common: 5, uncommon: 4, rare: 1, mythic: 1 };
-			receiver.on("sessionOptions", function(options) {
+			receiver.once("sessionOptions", function(options) {
 				expect(options.maxDuplicates).to.eql(newMaxDuplicates);
-				this.removeListener("sessionOptions");
 				done();
 			});
 			sender.emit("setMaxDuplicates", newMaxDuplicates);
@@ -253,10 +247,9 @@ describe("Checking sets", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			// Wait for request to arrive
-			clients[1].on("setRestriction", function(sR) {
+			clients[1].once("setRestriction", function(sR) {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				for (let r in sets[set]) expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
-				clients[1].removeListener("setRestriction");
 				done();
 			});
 		});
@@ -397,19 +390,17 @@ describe("Single Draft", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -421,12 +412,11 @@ describe("Single Draft", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function(data) {
+			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
-				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
 			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -442,9 +432,8 @@ describe("Single Draft", function() {
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
@@ -523,9 +512,8 @@ describe("Single Draft without Color Balance", function() {
 	});
 
 	it("Clients should receive the updated colorBalance status.", function(done) {
-		clients[1].on("sessionOptions", function(options) {
+		clients[1].once("sessionOptions", function(options) {
 			expect(options.colorBalance).to.equal(false);
-			this.removeListener("sessionOptions");
 			done();
 		});
 		clients[0].emit("setColorBalance", false);
@@ -537,19 +525,17 @@ describe("Single Draft without Color Balance", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -561,12 +547,11 @@ describe("Single Draft without Color Balance", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function(data) {
+			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
-				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
 			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -582,9 +567,8 @@ describe("Single Draft without Color Balance", function() {
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
@@ -668,19 +652,17 @@ describe("Single Draft With disconnect and reconnect", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -692,12 +674,11 @@ describe("Single Draft With disconnect and reconnect", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function(data) {
+			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
-				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
 			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -705,8 +686,7 @@ describe("Single Draft With disconnect and reconnect", function() {
 	});
 
 	it("Client 1 disconnects, Client 0 receives a warning.", function(done) {
-		clients[0].on("userDisconnected", function(userName) {
-			this.removeListener("userDisconnected");
+		clients[0].once("userDisconnected", function(userName) {
 			done();
 		});
 		clients[1].disconnect();
@@ -714,8 +694,7 @@ describe("Single Draft With disconnect and reconnect", function() {
 	});
 
 	it("Client 0 choose to replace by bots.", function(done) {
-		clients[0].on("message", function(sessionUsers) {
-			this.removeListener("message");
+		clients[0].once("message", function(sessionUsers) {
 			done();
 		});
 		clients[0].emit("replaceDisconnectedPlayers");
@@ -730,9 +709,8 @@ describe("Single Draft With disconnect and reconnect", function() {
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
@@ -823,9 +801,8 @@ describe("Single Draft with Bots", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].on("bots", function(bots) {
+		clients[1].once("bots", function(bots) {
 			expect(bots).to.equal(6);
-			this.removeListener("bots");
 			done();
 		});
 		clients[0].emit("bots", 6);
@@ -837,19 +814,17 @@ describe("Single Draft with Bots", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -861,12 +836,11 @@ describe("Single Draft with Bots", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function(data) {
+			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
-				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
 			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -882,9 +856,8 @@ describe("Single Draft with Bots", function() {
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
@@ -931,7 +904,7 @@ describe("Single Draft With disconnect and bots", function() {
 		// Wait for all clients to be connected
 		let connectedClients = 0;
 		for (let c of clients) {
-			c.on("connect", function() {
+			c.once("connect", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length) {
 					enableLogs(false);
@@ -963,9 +936,8 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].on("bots", function(bots) {
+		clients[1].once("bots", function(bots) {
 			expect(bots).to.equal(6);
-			this.removeListener("bots");
 			done();
 		});
 		clients[0].emit("bots", 6);
@@ -977,19 +949,17 @@ describe("Single Draft With disconnect and bots", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -1001,12 +971,11 @@ describe("Single Draft With disconnect and bots", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function(data) {
+			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
 				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
-				this.removeListener("nextBooster");
 				if (receivedBoosters == clients.length) done();
 			});
 			clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -1014,16 +983,14 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
-		clients[0].on("userDisconnected", function(userName) {
-			this.removeListener("userDisconnected");
+		clients[0].once("userDisconnected", function(userName) {
 			done();
 		});
 		clients[1].disconnect();
 	});
 
 	it("Client 1 reconnects, draft restarts.", function(done) {
-		clients[0].on("message", function(sessionUsers) {
-			this.removeListener("message");
+		clients[0].once("message", function(sessionUsers) {
 			done();
 		});
 		clients[1].connect();
@@ -1046,9 +1013,8 @@ describe("Single Draft With disconnect and bots", function() {
 					};
 				})()
 			);
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
@@ -1128,18 +1094,16 @@ describe("Single Draft with custom boosters and bots", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].on("bots", function(bots) {
+		clients[1].once("bots", function(bots) {
 			expect(bots).to.equal(6);
-			this.removeListener("bots");
 			done();
 		});
 		clients[0].emit("bots", 6);
 	});
 
 	it("Clients should receive the updated booster spec.", function(done) {
-		clients[1].on("sessionOptions", function(data) {
+		clients[1].once("sessionOptions", function(data) {
 			expect(data.customBoosters).to.eql(CustomBoosters);
-			this.removeListener("sessionOptions");
 			done();
 		});
 		clients[0].emit("setCustomBoosters", CustomBoosters);
@@ -1147,9 +1111,8 @@ describe("Single Draft with custom boosters and bots", function() {
 
 	for (let distributionMode of ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"]) {
 		it(`Setting distributionMode to ${distributionMode}.`, function(done) {
-			clients[1].on("sessionOptions", function(data) {
+			clients[1].once("sessionOptions", function(data) {
 				expect(data.distributionMode).to.eql(distributionMode);
-				this.removeListener("sessionOptions");
 				done();
 			});
 			clients[0].emit("setDistributionMode", distributionMode);
@@ -1161,21 +1124,19 @@ describe("Single Draft with custom boosters and bots", function() {
 			let receivedBoosters = 0;
 			let index = 0;
 			for (let c of clients) {
-				c.on("startDraft", function() {
+				c.once("startDraft", function() {
 					connectedClients += 1;
-					this.removeListener("startDraft");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 
 				(_ => {
 					const _idx = index;
-					c.on("nextBooster", function(data) {
+					c.once("nextBooster", function(data) {
 						expect(boosters).not.include(data);
 						if (distributionMode === "regular")
 							for (let cid of data.booster) expect(Cards[cid].set).to.equals(CustomBoosters[0]);
 						boosters[_idx] = data;
 						receivedBoosters += 1;
-						this.removeListener("nextBooster");
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
 				})();
@@ -1187,12 +1148,11 @@ describe("Single Draft with custom boosters and bots", function() {
 		it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 			let receivedBoosters = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].on("nextBooster", function(data) {
+				clients[c].once("nextBooster", function(data) {
 					receivedBoosters += 1;
 					let idx = c;
 					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 					boosters[idx] = data;
-					this.removeListener("nextBooster");
 					if (receivedBoosters == clients.length) done();
 				});
 				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, _ => {});
@@ -1216,9 +1176,8 @@ describe("Single Draft with custom boosters and bots", function() {
 						};
 					})()
 				);
-				clients[c].on("endDraft", function() {
+				clients[c].once("endDraft", function() {
 					draftEnded += 1;
-					this.removeListener("endDraft");
 					this.removeListener("nextBooster");
 					if (draftEnded == clients.length) done();
 				});
@@ -1320,10 +1279,9 @@ describe("Multiple Drafts", function() {
 						if (connectedClients == sessionClients.length) sessionsCorrectlyStartedDrafting += 1;
 					});
 
-					c.on("nextBooster", function(data) {
+					c.once("nextBooster", function(data) {
 						expect(boosters).not.include(data);
 						boosters[playersPerSession * sessionIdx + sessionClients.findIndex(cl => cl == c)] = data;
-						this.removeListener("nextBooster");
 						if (
 							sessionsCorrectlyStartedDrafting == sessionCount &&
 							boosters.length == playersPerSession * sessionCount
@@ -1367,7 +1325,7 @@ describe("Multiple Drafts", function() {
 		expect(boosters.length).to.equal(playersPerSession * sessionCount);
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].on(
+				clients[sess][c].once(
 					"nextBooster",
 					(function() {
 						let idx = playersPerSession * sess + c;
@@ -1375,7 +1333,6 @@ describe("Multiple Drafts", function() {
 							receivedBoosters += 1;
 							expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 							boosters[idx] = data;
-							this.removeListener("nextBooster");
 							if (receivedBoosters == playersPerSession * sessionCount) done();
 						};
 					})()
@@ -1399,9 +1356,8 @@ describe("Multiple Drafts", function() {
 					boosters[idx] = data.booster;
 					this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 				});
-				clients[sess][c].on("endDraft", function() {
+				clients[sess][c].once("endDraft", function() {
 					draftEnded += 1;
-					this.removeListener("endDraft");
 					this.removeListener("nextBooster");
 					if (draftEnded == playersPerSession * sessionCount) done();
 				});
@@ -1499,18 +1455,16 @@ describe("Winston Draft", function() {
 		let receivedState = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startWinstonDraft", function() {
+			c.once("startWinstonDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startWinstonDraft");
 				if (connectedClients == clients.length && receivedState == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("winstonDraftNextRound", function(state) {
+				c.once("winstonDraftNextRound", function(state) {
 					states[_idx] = state;
 					receivedState += 1;
-					this.removeListener("winstonDraftNextRound");
 					if (connectedClients == clients.length && receivedState == clients.length) done();
 				});
 			})();
@@ -1520,16 +1474,14 @@ describe("Winston Draft", function() {
 	});
 
 	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
-		clients[0].on("userDisconnected", function(userName) {
-			this.removeListener("userDisconnected");
+		clients[0].once("userDisconnected", function(userName) {
 			done();
 		});
 		clients[1].disconnect();
 	});
 
 	it("Client 1 reconnects, draft restarts.", function(done) {
-		clients[1].on("rejoinWinstonDraft", function(state) {
-			this.removeListener("rejoinWinstonDraft");
+		clients[1].once("rejoinWinstonDraft", function(state) {
 			done();
 		});
 		clients[1].connect();
@@ -1542,9 +1494,8 @@ describe("Winston Draft", function() {
 			clients[c].on("winstonDraftNextRound", function(userID) {
 				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
 			});
-			clients[c].on("winstonDraftEnd", function() {
+			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
-				this.removeListener("winstonDraftEnd");
 				this.removeListener("winstonDraftNextRound");
 				if (draftEnded == clients.length) done();
 			});
@@ -1558,18 +1509,16 @@ describe("Winston Draft", function() {
 		let receivedState = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startWinstonDraft", function() {
+			c.once("startWinstonDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startWinstonDraft");
 				if (connectedClients == clients.length && receivedState == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("winstonDraftNextRound", function(state) {
+				c.once("winstonDraftNextRound", function(state) {
 					states[_idx] = state;
 					receivedState += 1;
-					this.removeListener("winstonDraftNextRound");
 					if (connectedClients == clients.length && receivedState == clients.length) done();
 				});
 			})();
@@ -1638,9 +1587,8 @@ describe("Winston Draft", function() {
 			clients[c].on("winstonDraftNextRound", function(userID) {
 				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
 			});
-			clients[c].on("winstonDraftEnd", function() {
+			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
-				this.removeListener("winstonDraftEnd");
 				this.removeListener("winstonDraftNextRound");
 				if (draftEnded == clients.length) done();
 			});
@@ -1730,18 +1678,16 @@ describe("Single Draft with Bots and burning", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].on("bots", function(bots) {
+		clients[1].once("bots", function(bots) {
 			expect(bots).to.equal(6);
-			this.removeListener("bots");
 			done();
 		});
 		clients[0].emit("bots", 6);
 	});
 
 	it("Clients should receive the updated burn count.", function(done) {
-		clients[1].on("sessionOptions", function(sessionOptions) {
+		clients[1].once("sessionOptions", function(sessionOptions) {
 			expect(sessionOptions.burnedCardsPerRound).to.equal(burnedCardsPerRound);
-			this.removeListener("sessionOptions");
 			done();
 		});
 		clients[0].emit("setBurnedCardsPerRound", burnedCardsPerRound);
@@ -1753,19 +1699,17 @@ describe("Single Draft with Bots and burning", function() {
 		let receivedBoosters = 0;
 		let index = 0;
 		for (let c of clients) {
-			c.on("startDraft", function() {
+			c.once("startDraft", function() {
 				connectedClients += 1;
-				this.removeListener("startDraft");
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
 				const _idx = index;
-				c.on("nextBooster", function(data) {
+				c.once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
-					this.removeListener("nextBooster");
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
@@ -1786,9 +1730,8 @@ describe("Single Draft with Bots and burning", function() {
 					burned.push(data.booster[cidx]);
 				this.emit("pickCard", { selectedCard: boosters[idx][0], burnedCards: burned }, _ => {});
 			});
-			clients[c].on("endDraft", function() {
+			clients[c].once("endDraft", function() {
 				draftEnded += 1;
-				this.removeListener("endDraft");
 				this.removeListener("nextBooster");
 				if (draftEnded == clients.length) done();
 			});
