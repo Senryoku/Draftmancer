@@ -49,6 +49,29 @@ function enableLogs(print) {
 	}
 }
 
+function makeClients(queries, done) {
+		let sockets = [];
+		disableLogs();
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(0);
+		for (let query of queries) {
+			sockets.push(connectClient(query));
+		}
+
+		// Wait for all clients to be connected
+		let connectedClientCount = 0;
+		for (let s of sockets) {
+			s.on("connect", function() {
+				connectedClientCount += 1;
+				if (connectedClientCount == sockets.length) {
+					enableLogs(false);
+					done();
+				}
+			});
+		}
+		return sockets;
+}
+
 describe("Inter client communication", function() {
 	let sender, receiver;
 
@@ -188,35 +211,18 @@ describe("Checking sets", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
+			},
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -271,35 +277,18 @@ describe("Single Draft", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
+			},
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -459,35 +448,18 @@ describe("Single Draft without Color Balance", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
+			},
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -594,35 +566,18 @@ describe("Single Draft With disconnect and reconnect", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
-				userID: "anotherID",
+			},
+			{
+				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -736,35 +691,18 @@ describe("Single Draft with Bots", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
+			},
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -883,35 +821,18 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
-				userID: "anotherID",
+			},
+			{
+				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.once("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -1026,7 +947,7 @@ describe("Single Draft With disconnect and bots", function() {
 });
 
 describe("Single Draft with custom boosters and bots", function() {
-	const clients = [];
+	let clients = [];
 	const sessionID = "sessionID";
 	const CustomBoosters = ["xln", "rix", ""];
 
@@ -1041,35 +962,18 @@ describe("Single Draft with custom boosters and bots", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
-				userID: "anotherID",
+			},
+			{
+				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -1391,35 +1295,18 @@ describe("Winston Draft", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
-				userID: clientIDs[0],
+		clients = makeClients([
+			{
+				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
-				userID: clientIDs[1],
+			},
+			{
+				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
@@ -1613,35 +1500,18 @@ describe("Single Draft with Bots and burning", function() {
 	});
 
 	before(function(done) {
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		clients.push(
-			connectClient({
+		clients = makeClients([
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client1",
-			})
-		);
-		clients.push(
-			connectClient({
+			},
+			{
 				userID: "sameID",
 				sessionID: sessionID,
 				userName: "Client2",
-			})
-		);
-
-		// Wait for all clients to be connected
-		let connectedClients = 0;
-		for (let c of clients) {
-			c.on("connect", function() {
-				connectedClients += 1;
-				if (connectedClients == clients.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
+			}
+		], done);
 	});
 
 	after(function(done) {
