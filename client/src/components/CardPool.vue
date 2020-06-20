@@ -11,7 +11,7 @@
 			class="card-column drag-column"
 			:list="column"
 			:group="group"
-			@change="change"
+			drag-class="drag"
 		>
 			<card
 				v-for="card in column"
@@ -162,5 +162,9 @@ export default {
 	width: 32px;
 	height: 32px;
 	text-align: center;
+}
+
+.drag {
+	height: 283.33px;
 }
 </style>
