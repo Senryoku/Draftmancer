@@ -230,6 +230,17 @@ setFullNames = {
     "iko": "Ikoria: Lair of Behemoths"
 }
 
+def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
+    with open(svgPath, 'r') as inputFile:
+        inputFile.seek(0)
+        content = inputFile.read()
+        if 'viewBox="%s"'%expectedViewbox not in content:
+            print("svg did not have expected viewbox: %s" % svgPath)
+            return
+        content = content.replace('viewBox="%s"'%expectedViewbox,'viewBox="%s"'%correctedViewbox)
+    with open(svgPath, 'w') as outputFile:
+        outputFile.write(content)
+
 print("Cards in database:")
 with open(FinalDataPath, 'r', encoding="utf8") as file:
     data = json.loads(file.read())
@@ -252,6 +263,8 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
             if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
                 urllib.request.urlretrieve(
                     scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
+                if set == "rna":
+                    overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
                 setinfos[set]["icon"] = icon_path
         else:
             setinfos[set]["icon"] = icon_path
