@@ -394,7 +394,7 @@
 						<div class="booster card-container">
 							<card
 								v-for="(card, index) in booster"
-								:key="`${index}-${card.id}`"
+								:key="`card-booster-${card.uniqueID}`"
 								:card="card"
 								:language="language"
 								:selectcard="selectCard"

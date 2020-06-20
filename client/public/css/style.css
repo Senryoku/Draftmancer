@@ -793,6 +793,7 @@ ul.player-list {
 .slide-fade-right-leave-active,
 .slide-fade-left-enter-active,
 .slide-fade-left-leave-active {
+	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.3s ease-in;
 }
 .slide-fade-left-enter,

@@ -742,7 +742,7 @@ var app = new Vue({
 			if (e) e.stopPropagation();
 		},
 		doubleClickCard: function(e, c) {
-			this.selectCard(e, c);
+			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
 		pickCard: function() {

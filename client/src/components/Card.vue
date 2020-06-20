@@ -4,6 +4,7 @@
 		:class="{ clickable: selectcard, selected: selected, burned: burned }"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
+		:key="`card-${card.uniqueID}`"
 		@click="selectcard($event, card)"
 		@dblclick="ondblclick($event, card)"
 	>
