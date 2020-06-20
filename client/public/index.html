@@ -438,7 +438,7 @@
 							</template>
 							<template v-else>
 								<div class="card-column winstom-card-column">
-									<div v-for="card in pile" class="card"><div class="card-placeholder"></div></div>
+									<div v-for="card in pile" class="card"><card-placeholder></card-placeholder></div>
 								</div>
 								<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
 									{{userByID[winstonDraftState.currentPlayer].userName}} is looking at this pile...

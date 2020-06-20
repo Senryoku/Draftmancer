@@ -11,6 +11,7 @@ import * as Constant from "./constants.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
+import CardPlaceholder from "./components/CardPlaceholder.vue";
 import Card from "./components/Card.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
@@ -67,6 +68,7 @@ var app = new Vue({
 	components: {
 		Modal,
 		Toggle,
+		CardPlaceholder,
 		Card,
 		CardPool,
 		DraftLogPick,
@@ -452,15 +454,17 @@ var app = new Vue({
 				app.draftingState = DraftState.Brewing;
 				app.fireToast("success", "Done drafting!");
 			});
-			this.socket.on("winstonDraftRandomCard", function(card) {
-				const c = app.genCard(card);
+			this.socket.on("winstonDraftRandomCard", function(cid) {
+				const c = app.genCard(cid);
 				app.addToDeck(c);
+				// Instantiate a card component to display in Swal (yep, I know.)
+				const ComponentClass = Vue.extend(Card);
+				const cardView = new ComponentClass({ parent: app, propsData: { card: c } });
+				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${c.printed_name[app.language]} from the card pool!`,
-					imageUrl: c.image_uris[app.language],
-					imageAlt: c.printed_name[app.language],
-					imageWidth: 250,
+					title: `You drew ${app.cards[cid].printed_name[app.language]} from the card pool!`,
+					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
 				});
@@ -472,7 +476,11 @@ var app = new Vue({
 				app.setWinstonDraftState(data.state);
 				app.clearSideboard();
 				app.clearDeck();
-				for (let c of data.pickedCards) app.addToDeck(app.genCard(app.cards[c]));
+				for (let cid of data.pickedCards) app.addToDeck(app.genCard(cid));
+				// Fixme: I don't understand why this in necessary...
+				app.$nextTick(() => {
+					app.$refs.deckDisplay.sync();
+				});
 
 				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
 				else app.draftingState = DraftState.WinstonWaiting;
@@ -523,11 +531,15 @@ var app = new Vue({
 
 				app.clearDeck();
 				app.clearSideboard();
-				for (let c of data.pickedCards) app.addToDeck(app.genCard(c));
+				for (let cid of data.pickedCards) app.addToDeck(app.genCard(cid));
+				// Fixme: I don't understand why this in necessary...
+				app.$nextTick(() => {
+					app.$refs.deckDisplay.sync();
+				});
 
 				app.booster = [];
-				for (let c of data.booster) {
-					app.booster.push(app.genCard(c));
+				for (let cid of data.booster) {
+					app.booster.push(app.genCard(cid));
 				}
 				app.boosterNumber = data.boosterNumber;
 				app.pickNumber = data.pickNumber;
@@ -559,8 +571,8 @@ var app = new Vue({
 				// Only watching, not playing/receiving a boost ourself.
 				if (app.draftingState == DraftState.Watching) return;
 
-				for (let c of data.booster) {
-					app.booster.push(app.genCard(c));
+				for (let cid of data.booster) {
+					app.booster.push(app.genCard(cid));
 				}
 				app.playSound("next");
 				app.draftingState = DraftState.Picking;
@@ -602,8 +614,8 @@ var app = new Vue({
 			this.socket.on("setCardSelection", function(data) {
 				app.clearSideboard();
 				app.clearDeck();
-				for (let c of data.flat()) {
-					app.addToDeck(app.genCard(c));
+				for (let cid of data.flat()) {
+					app.addToDeck(app.genCard(cid));
 				}
 				app.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -803,7 +815,7 @@ var app = new Vue({
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				for (let c of p) pile.push(this.genCard(c));
+				for (let cid of p) pile.push(this.genCard(cid));
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
@@ -1382,11 +1394,15 @@ var app = new Vue({
 		},
 		clearDeck() {
 			this.deck = [];
-			this.$refs.deckDisplay.reset();
+			app.$nextTick(() => {
+				this.$refs.deckDisplay.sync();
+			});
 		},
 		clearSideboard() {
 			this.sideboard = [];
-			this.$refs.sideboardDisplay.reset();
+			app.$nextTick(() => {
+				this.$refs.deckDisplay.sync();
+			});
 		},
 		updateAutoLands: function() {
 			if (this.autoLand) {
@@ -1465,6 +1481,7 @@ var app = new Vue({
 			);
 		},
 		genCard: function(c) {
+			// Takes a card id and return a unique card object (without localization information)
 			if (!(c in this.cards)) {
 				console.error(`Error: Card id '${c}' not found!`);
 				return { id: c };

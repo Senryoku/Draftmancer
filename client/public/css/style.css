@@ -853,18 +853,6 @@ ul.player-list {
 	margin-left: 0.5em;
 }
 
-.card-placeholder .card-name {
-	height: 20px;
-	width: calc(100% - 5px);
-	padding-top: 5px;
-	padding-left: 5px;
-	background-color: rgba(0, 0, 0, 0.25);
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
 .card-container {
 	display: flex;
 	flex-wrap: wrap;
