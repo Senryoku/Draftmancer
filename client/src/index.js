@@ -8,7 +8,9 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
+import CardData from "../public/data/MTGACards.json";
 import DefaultLoc from "../public/data/MTGACards.en.json";
+import SetsInfos from "../public/data/SetsInfos.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
@@ -1602,38 +1604,26 @@ var app = new Vue({
 			return r;
 		},
 	},
-	mounted: async function() {
+	mounted: function() {
 		// Load all card informations
-		fetch("data/MTGACards.json").then(function(response) {
-			response.json().then(function(parsed) {
-				try {
-					for (let c in parsed) {
-						parsed[c].id = c;
-						if (!("in_booster" in parsed[c])) parsed[c].in_booster = true;
-						if (!("printed_name" in parsed[c])) parsed[c].printed_name = {};
-						if (!("image_uris" in parsed[c])) parsed[c].image_uris = {};
-					}
+		try {
+			for (let c in CardData) {
+				CardData[c].id = c;
+				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
+				if (!("printed_name" in CardData[c])) CardData[c].printed_name = {};
+				if (!("image_uris" in CardData[c])) CardData[c].image_uris = {};
+			}
 
-					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
-					app.handleTranslation("en", DefaultLoc);
-					if (!(app.language in app.loadedLanguages)) app.fetchTranslation(app.language);
-					app.initialize();
-				} catch (e) {
-					alert(e);
-				}
-			});
-		});
+			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
+			this.handleTranslation("en", DefaultLoc);
+			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
+			this.initialize();
+		} catch (e) {
+			alert(e);
+		}
 
 		// Load set informations
-		fetch("data/SetsInfos.json").then(function(response) {
-			response.json().then(function(json) {
-				try {
-					app.setsInfos = Object.freeze(json);
-				} catch (e) {
-					alert(e);
-				}
-			});
-		});
+		this.setsInfos = Object.freeze(SetsInfos);
 	},
 	watch: {
 		sessionID: function() {
