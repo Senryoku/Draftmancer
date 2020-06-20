@@ -347,65 +347,67 @@
 
 			<!-- Draft Controls -->
 			<template v-if="drafting">
-				<div v-show="draftingState == DraftState.Watching" class="draft-watching">
-					<div class="draft-watching-state">
-						<h1>Players are drafting...</h1>
-						<div v-show="pickTimer >= 0">
-							<i class="fas fa-clock"></i>
-							{{ pickTimer }}
+				<transition :name="'slide-fade-'+((boosterNumber % 2)?'left':'right')" mode="out-in">
+					<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
+						<div class="draft-watching-state">
+							<h1>Players are drafting...</h1>
+							<div v-show="pickTimer >= 0">
+								<i class="fas fa-clock"></i>
+								{{ pickTimer }}
+							</div>
+							<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
 						</div>
-						<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
+						<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
+							<draft-log-live :draftlog="draftLog"></draft-log-live>
+						</div>
 					</div>
-					<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
-						<draft-log-live :draftlog="draftLog"></draft-log-live>
-					</div>
-				</div>
-				<div v-show="draftingState == DraftState.Waiting" class="pick-waiting">
-					<span class="spinner"></span>
-					<span v-show="pickTimer >= 0">
-						(
-						<i class="fas fa-clock"></i>
-						{{ pickTimer }})
-					</span>
-					Waiting for other players to pick...
-				</div>
-				<div v-show="draftingState == DraftState.Picking" id="booster-container" class="container">
-					<div id="booster-controls" class="controls">
-						<h2>Your Booster</h2>
-						<span>Booster #{{ boosterNumber }}, Pick {{pickNumber}}</span>
-						<span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono">
+					<div v-if="draftingState == DraftState.Waiting" key="draft-waiting" class="pick-waiting">
+						<span class="spinner"></span>
+						<span v-show="pickTimer >= 0">
+							(
 							<i class="fas fa-clock"></i>
-							{{ pickTimer }}
+							{{ pickTimer }})
 						</span>
-						<input
-							type="button"
-							@click="pickCard"
-							value="Confirm Pick"
-							v-if="selectedCard != undefined && (burningCards.length === burnedCardsPerRound || booster.length === 1 + burningCards.length)"
-						/>
-						<span v-else>
-							Pick a card
-							<span v-if="cardsToBurnThisRound > 0">
-								and remove {{cardsToBurnThisRound}} cards from the pool ({{burningCards.length}}/{{cardsToBurnThisRound}})
+						Waiting for other players to pick...
+					</div>
+					<div v-if="draftingState == DraftState.Picking" key="draft-picking" id="booster-container" class="container">
+						<div id="booster-controls" class="controls">
+							<h2>Your Booster</h2>
+							<span>Booster #{{ boosterNumber }}, Pick {{pickNumber}}</span>
+							<span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono">
+								<i class="fas fa-clock"></i>
+								{{ pickTimer }}
 							</span>
-						</span>
+							<input
+								type="button"
+								@click="pickCard"
+								value="Confirm Pick"
+								v-if="selectedCard != undefined && (burningCards.length === burnedCardsPerRound || booster.length === 1 + burningCards.length)"
+							/>
+							<span v-else>
+								Pick a card
+								<span v-if="cardsToBurnThisRound > 0">
+									and remove {{cardsToBurnThisRound}} cards from the pool ({{burningCards.length}}/{{cardsToBurnThisRound}})
+								</span>
+							</span>
+						</div>
+						<div class="booster card-container">
+							<card
+								v-for="(card, index) in booster"
+								:key="`${index}-${card.id}`"
+								:card="card"
+								:language="language"
+								:selectcard="selectCard"
+								:ondblclick="doubleClickCard"
+								:selected="selectedCard === card"
+								:canbeburned="burnedCardsPerRound > 0"
+								:burned="burningCards.includes(card)"
+								:burn="burnCard"
+								:restore="restoreCard"
+							></card>
+						</div>
 					</div>
-					<div class="booster card-container">
-						<card
-							v-for="(card, index) in booster"
-							:key="`${index}-${card.id}`"
-							:card="card"
-							:language="language"
-							:selectcard="selectCard"
-							:ondblclick="doubleClickCard"
-							:selected="selectedCard === card"
-							:canbeburned="burnedCardsPerRound > 0"
-							:burned="burningCards.includes(card)"
-							:burn="burnCard"
-							:restore="restoreCard"
-						></card>
-					</div>
-				</div>
+				</transition>
 				<!-- Winston Draft -->
 				<div v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting" id="booster-container" class="container">
 					<div class="winston-status">

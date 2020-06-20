@@ -94,6 +94,7 @@ var app = new Vue({
 		sessionID: getCookie("sessionID", shortguid()),
 		sessionOwner: null,
 		sessionOwnerUsername: null,
+		// Session options
 		ownerIsPlayer: true,
 		isPublic: false,
 		ignoreCollections: false,
@@ -125,6 +126,7 @@ var app = new Vue({
 		maxTimer: 75,
 		pickTimer: 75,
 		draftLogRecipients: "everyone",
+		//
 		draftLog: undefined,
 		savedDraftLog: false,
 		bracket: null,

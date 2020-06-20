@@ -14,6 +14,12 @@ body {
 	padding-bottom: 2em;
 }
 
+@media only screen and (min-width: 800px) {
+	body {
+		overflow-x: hidden;
+	}
+}
+
 footer {
 	position: absolute;
 	bottom: 0;
@@ -781,6 +787,35 @@ ul.player-list {
 .status-icons i {
 	margin-left: 0.5em;
 	font-size: 14px;
+}
+
+.slide-fade-right-enter-active,
+.slide-fade-right-leave-active,
+.slide-fade-left-enter-active,
+.slide-fade-left-leave-active {
+	transition: all 0.3s ease-in;
+}
+.slide-fade-left-enter,
+.slide-fade-right-leave-to {
+	transform: translateX(50px);
+	opacity: 0;
+}
+
+.slide-fade-right-enter,
+.slide-fade-left-leave-to {
+	transform: translateX(-50px);
+	opacity: 0;
+}
+
+.slide-fade-right-leave-active .selected,
+.slide-fade-left-leave-active .selected {
+	transition: all 0.3s ease-in, opacity 0.2s ease-in;
+}
+.slide-fade-right-leave-to .selected,
+.slide-fade-left-leave-to .selected {
+	transform: translateY(250px);
+	z-index: 2;
+	opacity: 0;
 }
 
 .pick-waiting {
