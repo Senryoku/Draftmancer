@@ -118,7 +118,7 @@ a:hover {
 #main-vue .multiselect {
 	display: inline-block;
 	vertical-align: baseline;
-	width: 16em;
+	width: 16.5em;
 	min-height: auto;
 	--invertedness: 100%;
 }
