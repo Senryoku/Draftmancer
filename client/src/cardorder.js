@@ -29,7 +29,7 @@ const Comparators = {
 		if (l.length === 1 && r.length === 1) return ColorOrder[l[0]] - ColorOrder[r[0]];
 		else if (l.length === 1) return -1;
 		else if (r.length === 1) return 1;
-		else return String(l.flat()).localeCompare(String(r.flat()));
+		else return String(l).localeCompare(String(r));
 	},
 
 	name: (lhs, rhs) => {

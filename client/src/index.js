@@ -7,7 +7,8 @@ import VueClazyLoad from "./vue-clazy-load.js";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
-import * as Constant from "./constants.json";
+import Constant from "./constants.json";
+import DefaultLoc from "../public/data/MTGACards.en.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
@@ -163,6 +164,7 @@ var app = new Vue({
 			getCookie("enableNotifications", false),
 		notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 		// Draft Booster
+		pickInFlight: false,
 		selectedCard: undefined,
 		burningCards: [],
 		// Brewing (deck and sideboard should not be modified directly, have to stay in sync with their CardPool display)
@@ -745,6 +747,7 @@ var app = new Vue({
 		},
 		pickCard: function() {
 			if (
+				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				this.draftingState != DraftState.Picking ||
 				!this.selectedCard ||
 				this.burningCards.length > this.burnedCardsPerRound ||
@@ -759,21 +762,25 @@ var app = new Vue({
 				this.disconnectedReminder();
 				return;
 			}
-
-			this.socket.emit(
-				"pickCard",
-				{
-					selectedCard: this.selectedCard.id,
-					burnedCards: this.burningCards.map(c => c.id),
-				},
-				answer => {
-					if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
-				}
-			);
-			this.draftingState = DraftState.Waiting;
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
-			this.burningCards = [];
+			// Give Vue one frame to react to state changes before triggering the transitions.
+			this.$nextTick(() => {
+				this.socket.emit(
+					"pickCard",
+					{
+						selectedCard: this.selectedCard.id,
+						burnedCards: this.burningCards.map(c => c.id),
+					},
+					answer => {
+						this.pickInFlight = false;
+						if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+					}
+				);
+				this.draftingState = DraftState.Waiting;
+				this.addToDeck(this.selectedCard);
+				this.selectedCard = undefined;
+				this.burningCards = [];
+			});
+			this.pickInFlight = true;
 		},
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
@@ -795,20 +802,7 @@ var app = new Vue({
 				);
 				this.burningCards.push(this.booster[randomIdx]);
 			}
-			this.socket.emit(
-				"pickCard",
-				{
-					selectedCard: this.selectedCard.id,
-					burnedCards: this.burningCards.map(c => c.id),
-				},
-				anwser => {
-					if (anwser.code !== 0) alert(`pickCard: Unexpected answer:`, anwser);
-				}
-			);
-			this.draftingState = DraftState.Waiting;
-			this.addToDeck(this.selectedCard);
-			this.selectedCard = undefined;
-			this.burningCards = [];
+			this.pickCard();
 		},
 		setWinstonDraftState: function(state) {
 			this.winstonDraftState = state;
@@ -1462,23 +1456,22 @@ var app = new Vue({
 			if (this.loadingLanguages.includes(lang)) return;
 			this.loadingLanguages.push(lang);
 			fetch(`data/MTGACards.${lang}.json`).then(response =>
-				response.json().then(json => {
-					let merged = clone(this.cards);
-					// Missing translation will default to english
-					for (let c in merged) {
-						merged[c]["printed_name"][lang] =
-							c in json && "printed_name" in json[c] ? json[c]["printed_name"] : this.cards[c]["name"];
-						merged[c]["image_uris"][lang] =
-							c in json && "image_uris" in json[c]
-								? json[c]["image_uris"]
-								: this.cards[c]["image_uris"]["en"];
-					}
-					this.cards = Object.freeze(merged);
-					this.loadingLanguages.splice(lang, 1);
-					this.loadedLanguages.push(lang);
-					if (this.language !== lang) this.language = lang;
-				})
+				response.json().then(json => this.handleTranslation(lang, json))
 			);
+		},
+		handleTranslation: function(lang, json) {
+			let merged = clone(this.cards);
+			// Missing translation will default to english
+			for (let c in merged) {
+				merged[c]["printed_name"][lang] =
+					c in json && "printed_name" in json[c] ? json[c]["printed_name"] : this.cards[c]["name"];
+				merged[c]["image_uris"][lang] =
+					c in json && "image_uris" in json[c] ? json[c]["image_uris"] : this.cards[c]["image_uris"]["en"];
+			}
+			this.cards = Object.freeze(merged);
+			this.loadingLanguages.splice(lang, 1);
+			this.loadedLanguages.push(lang);
+			if (this.language !== lang) this.language = lang;
 		},
 		genCard: function(c) {
 			// Takes a card id and return a unique card object (without localization information)
@@ -1622,7 +1615,8 @@ var app = new Vue({
 					}
 
 					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
-					app.fetchTranslation(app.language);
+					app.handleTranslation("en", DefaultLoc);
+					if (!(app.language in app.loadedLanguages)) app.fetchTranslation(app.language);
 					app.initialize();
 				} catch (e) {
 					alert(e);

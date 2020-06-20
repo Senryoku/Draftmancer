@@ -1,6 +1,6 @@
 <template functional>
 	<div class="card-placeholder">
-		<div class="card-name" v-if="name">{{ name }}</div>
+		<div class="card-name" v-if="name !== ''">{{ props.name }}</div>
 	</div>
 </template>
 
