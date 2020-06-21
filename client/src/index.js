@@ -15,15 +15,6 @@ import Modal from "./components/Modal.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import Card from "./components/Card.vue";
 import CardPool from "./components/CardPool.vue";
-/*
-const DraftLogPick = () => import("./components/DraftLogPick.vue");
-const DraftLog = () => import("./components/DraftLog.vue");
-const DraftLogLive = () => import("./components/DraftLogLive.vue");
-const Collection = () => import("./components/Collection.vue");
-const CardList = () => import("./components/CardList.vue");
-const Bracket = () => import("./components/Bracket.vue");
-const PatchNotes = () => import("./components/PatchNotes.vue");
-*/
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
