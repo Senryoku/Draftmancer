@@ -147,7 +147,6 @@ describe("Inter client communication", function() {
 			sender.emit("useCollection", false);
 		});
 		it("Clients should NOT receive an update if the option is not actually changed.", function(done) {
-			this.timeout(200 + 100);
 			let timeout = setTimeout(() => {
 				receiver.removeListener("updateUser");
 				done();
@@ -213,12 +212,12 @@ describe("Checking sets", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -240,9 +239,9 @@ describe("Checking sets", function() {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
+	it("2 clients with different userID should be connected.", function(done) {
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
@@ -250,14 +249,15 @@ describe("Checking sets", function() {
 		it(`Checking ${set}`, function(done) {
 			const Sessions = server.__get__("Sessions");
 			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
-			clients[ownerIdx].emit("ignoreCollections", true);
-			clients[ownerIdx].emit("setRestriction", [set]);
-			// Wait for request to arrive
-			clients[1].once("setRestriction", function(sR) {
+			let nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("setRestriction", function(sR) {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				for (let r in sets[set]) expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
 				done();
 			});
+			clients[ownerIdx].emit("ignoreCollections", true);
+			clients[ownerIdx].emit("setRestriction", [set]);
+			// Wait for request to arrive
 		});
 	}
 });
@@ -265,6 +265,9 @@ describe("Checking sets", function() {
 describe("Single Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -279,12 +282,12 @@ describe("Single Draft", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -306,9 +309,9 @@ describe("Single Draft", function() {
 		}, 250);
 	});
 
-	it('A user with userID "sameID" should be connected.', function(done) {
+	it('A user with userID "id1" should be connected.', function(done) {
 		const Connections = server.__get__("Connections");
-		expect(Connections).to.have.property("sameID");
+		expect(Connections).to.have.property("id1");
 		done();
 	});
 
@@ -321,7 +324,7 @@ describe("Single Draft", function() {
 	it("3 clients with different userID should be connected.", function(done) {
 		let idx = clients.push(
 			connectClient({
-				userID: "sameID",
+				userID: "id3",
 				sessionID: sessionID,
 				userName: "Client3",
 			})
@@ -334,17 +337,13 @@ describe("Single Draft", function() {
 		});
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
 
 	it(`Card Pool should be all of THB set (+ distribution quick test)`, function(done) {
-		const Sessions = server.__get__("Sessions");
-		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+	 	Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
 		clients[ownerIdx].emit("ignoreCollections", true);
-		clients[1].on("setRestriction", _ => {
+		clients[nonOwnerIdx].on("setRestriction", _ => {
 			const localCollection = Sessions[sessionID].cardPoolByRarity();
 			expect(Object.keys(localCollection["common"]).length).to.equal(101);
 			expect(Object.keys(localCollection["uncommon"]).length).to.equal(80);
@@ -395,7 +394,7 @@ describe("Single Draft", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -436,6 +435,9 @@ describe("Single Draft", function() {
 describe("Single Draft without Color Balance", function() {
 	let clients = [];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -450,12 +452,12 @@ describe("Single Draft without Color Balance", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -477,18 +479,15 @@ describe("Single Draft without Color Balance", function() {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
-
 	it("Clients should receive the updated colorBalance status.", function(done) {
-		clients[1].once("sessionOptions", function(options) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
+		clients[nonOwnerIdx].once("sessionOptions", function(options) {
 			expect(options.colorBalance).to.equal(false);
 			done();
 		});
-		clients[0].emit("setColorBalance", false);
+		clients[ownerIdx].emit("setColorBalance", false);
 	});
 
 	let boosters = [];
@@ -513,7 +512,7 @@ describe("Single Draft without Color Balance", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -554,6 +553,9 @@ describe("Single Draft without Color Balance", function() {
 describe("Single Draft With disconnect and reconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -568,12 +570,12 @@ describe("Single Draft With disconnect and reconnect", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -595,14 +597,11 @@ describe("Single Draft With disconnect and reconnect", function() {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
-
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
@@ -623,7 +622,7 @@ describe("Single Draft With disconnect and reconnect", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -640,19 +639,19 @@ describe("Single Draft With disconnect and reconnect", function() {
 		}
 	});
 
-	it("Client 1 disconnects, Client 0 receives a warning.", function(done) {
-		clients[0].once("userDisconnected", function(userName) {
+	it("Non-owner disconnects, owner receives a warning.", function(done) {
+		clients[ownerIdx].once("userDisconnected", function(userName) {
 			done();
 		});
-		clients[1].disconnect();
-		clients.pop();
+		clients[nonOwnerIdx].disconnect();
+		clients.splice(nonOwnerIdx, 1);
 	});
 
-	it("Client 0 choose to replace by bots.", function(done) {
-		clients[0].once("message", function(sessionUsers) {
+	it("Owner chooses to replace by bots.", function(done) {
+		clients[ownerIdx].once("message", function(sessionUsers) {
 			done();
 		});
-		clients[0].emit("replaceDisconnectedPlayers");
+		clients[ownerIdx].emit("replaceDisconnectedPlayers");
 	});
 
 	it("Pick enough times, and all the drafts should end.", function(done) {
@@ -679,6 +678,9 @@ describe("Single Draft With disconnect and reconnect", function() {
 describe("Single Draft with Bots", function() {
 	let clients = [];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -693,12 +695,12 @@ describe("Single Draft with Bots", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -720,34 +722,31 @@ describe("Single Draft with Bots", function() {
 		}, 250);
 	});
 
-	it('A user with userID "sameID" should be connected.', function(done) {
+	it('A user with userID "id1" should be connected.', function(done) {
 		const Connections = server.__get__("Connections");
-		expect(Connections).to.have.property("sameID");
+		expect(Connections).to.have.property("id1");
 		done();
 	});
 
-	it("2 clients with different userID should be connected.", function(done) {
+	it("2 clients with different userIDs should be connected.", function(done) {
 		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
-
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].once("bots", function(bots) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
+		clients[nonOwnerIdx].once("bots", function(bots) {
 			expect(bots).to.equal(6);
 			done();
 		});
-		clients[0].emit("bots", 6);
+		clients[ownerIdx].emit("bots", 6);
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
+	it("When session owner launches draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
@@ -768,7 +767,7 @@ describe("Single Draft with Bots", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -786,7 +785,6 @@ describe("Single Draft with Bots", function() {
 	});
 
 	it("Do it enough times, and all the drafts should end.", function(done) {
-		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("nextBooster", function(data) {
@@ -809,6 +807,9 @@ describe("Single Draft with Bots", function() {
 describe("Single Draft With disconnect and bots", function() {
 	let clients = [];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -823,12 +824,12 @@ describe("Single Draft With disconnect and bots", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -850,22 +851,19 @@ describe("Single Draft With disconnect and bots", function() {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
-
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].once("bots", function(bots) {
+	  Sessions = server.__get__("Sessions");
+	  ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+	 	nonOwnerIdx = 1 - ownerIdx;
+		clients[nonOwnerIdx].once("bots", function(bots) {
 			expect(bots).to.equal(6);
 			done();
 		});
-		clients[0].emit("bots", 6);
+		clients[ownerIdx].emit("bots", 6);
 	});
 
 	let boosters = [];
-	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
+	it("When session owner launches draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
@@ -875,18 +873,16 @@ describe("Single Draft With disconnect and bots", function() {
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			(_ => {
-				const _idx = index;
-				c.once("nextBooster", function(data) {
-					expect(boosters).not.include(data);
-					boosters[_idx] = data;
-					receivedBoosters += 1;
-					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-				});
-			})();
+			const _idx = index;
+			c.once("nextBooster", function(data) {
+				expect(boosters).not.include(data);
+				boosters[_idx] = data;
+				receivedBoosters += 1;
+				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+			});
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -904,21 +900,20 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
-		clients[0].once("userDisconnected", function(userName) {
+		clients[ownerIdx].once("userDisconnected", function(userName) {
 			done();
 		});
-		clients[1].disconnect();
+		clients[nonOwnerIdx].disconnect();
 	});
 
 	it("Client 1 reconnects, draft restarts.", function(done) {
-		clients[0].once("message", function(sessionUsers) {
+		clients[ownerIdx].once("message", function(sessionUsers) {
 			done();
 		});
-		clients[1].connect();
+		clients[nonOwnerIdx].connect();
 	});
 
 	it("Pick enough times, and all the drafts should end.", function(done) {
-		this.timeout(4000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on(
@@ -950,6 +945,9 @@ describe("Single Draft with custom boosters and bots", function() {
 	let clients = [];
 	const sessionID = "sessionID";
 	const CustomBoosters = ["xln", "rix", ""];
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -964,12 +962,12 @@ describe("Single Draft with custom boosters and bots", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -991,35 +989,32 @@ describe("Single Draft with custom boosters and bots", function() {
 		}, 250);
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("sameID");
-		done();
-	});
-
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].once("bots", function(bots) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
+		clients[nonOwnerIdx].once("bots", function(bots) {
 			expect(bots).to.equal(6);
 			done();
 		});
-		clients[0].emit("bots", 6);
+		clients[ownerIdx].emit("bots", 6);
 	});
 
 	it("Clients should receive the updated booster spec.", function(done) {
-		clients[1].once("sessionOptions", function(data) {
+		clients[nonOwnerIdx].once("sessionOptions", function(data) {
 			expect(data.customBoosters).to.eql(CustomBoosters);
 			done();
 		});
-		clients[0].emit("setCustomBoosters", CustomBoosters);
+		clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
 	});
 
 	for (let distributionMode of ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"]) {
 		it(`Setting distributionMode to ${distributionMode}.`, function(done) {
-			clients[1].once("sessionOptions", function(data) {
+			clients[nonOwnerIdx].once("sessionOptions", function(data) {
 				expect(data.distributionMode).to.eql(distributionMode);
 				done();
 			});
-			clients[0].emit("setDistributionMode", distributionMode);
+			clients[ownerIdx].emit("setDistributionMode", distributionMode);
 		});
 
 		let boosters = [];
@@ -1046,7 +1041,7 @@ describe("Single Draft with custom boosters and bots", function() {
 				})();
 				++index;
 			}
-			clients[0].emit("startDraft");
+			clients[ownerIdx].emit("startDraft");
 		});
 
 		it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
@@ -1283,6 +1278,9 @@ describe("Winston Draft", function() {
 	let clients = [];
 	const clientIDs = ["FirstClientID", "SecondClientID"];
 	let sessionID = "sessionID";
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -1297,12 +1295,12 @@ describe("Winston Draft", function() {
 	before(function(done) {
 		clients = makeClients([
 			{
-				userID: "sameID",
+				userID: "id1",
 				sessionID: sessionID,
 				userName: "Client1",
 			},
 			{
-				userID: "sameID",
+				userID: "id2",
 				sessionID: sessionID,
 				userName: "Client2",
 			}
@@ -1330,14 +1328,11 @@ describe("Winston Draft", function() {
 		done();
 	});
 
-	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
-		expect(Sessions[sessionID].owner).to.equal("FirstClientID");
-		done();
-	});
-
 	let states = [];
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
 		let receivedState = 0;
 		let index = 0;
@@ -1357,21 +1352,21 @@ describe("Winston Draft", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startWinstonDraft");
+		clients[ownerIdx].emit("startWinstonDraft");
 	});
 
-	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
-		clients[0].once("userDisconnected", function(userName) {
+	it("Non-owner disconnects, owner receives updated user infos.", function(done) {
+		clients[ownerIdx].once("userDisconnected", function(userName) {
 			done();
 		});
-		clients[1].disconnect();
+		clients[nonOwnerIdx].disconnect();
 	});
 
-	it("Client 1 reconnects, draft restarts.", function(done) {
-		clients[1].once("rejoinWinstonDraft", function(state) {
+	it("Non-owner reconnects, draft restarts.", function(done) {
+		clients[nonOwnerIdx].once("rejoinWinstonDraft", function(state) {
 			done();
 		});
-		clients[1].connect();
+		clients[nonOwnerIdx].connect();
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function(done) {
@@ -1387,7 +1382,7 @@ describe("Winston Draft", function() {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		clients[0].emit("winstonDraftTakePile");
+		clients[ownerIdx].emit("winstonDraftTakePile");
 	});
 
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
@@ -1411,7 +1406,7 @@ describe("Winston Draft", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startWinstonDraft");
+		clients[ownerIdx].emit("startWinstonDraft");
 	});
 
 	it("Taking first pile.", function(done) {
@@ -1422,7 +1417,7 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[0].emit("winstonDraftTakePile");
+		clients[ownerIdx].emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, then taking pile.", function(done) {
@@ -1433,8 +1428,8 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[1].emit("winstonDraftSkipPile");
-		clients[1].emit("winstonDraftTakePile");
+		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
+		clients[nonOwnerIdx].emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, skiping, then taking pile.", function(done) {
@@ -1445,9 +1440,9 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[0].emit("winstonDraftSkipPile");
-		clients[0].emit("winstonDraftSkipPile");
-		clients[0].emit("winstonDraftTakePile");
+		clients[ownerIdx].emit("winstonDraftSkipPile");
+		clients[ownerIdx].emit("winstonDraftSkipPile");
+		clients[ownerIdx].emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, skiping and skiping.", function(done) {
@@ -1459,12 +1454,12 @@ describe("Winston Draft", function() {
 				if (receivedRandomCard && nextRound == clients.length) done();
 			});
 		}
-		clients[1].on("winstonDraftRandomCard", function(card) {
+		clients[nonOwnerIdx].on("winstonDraftRandomCard", function(card) {
 			if (card) receivedRandomCard = true;
 		});
-		clients[1].emit("winstonDraftSkipPile");
-		clients[1].emit("winstonDraftSkipPile");
-		clients[1].emit("winstonDraftSkipPile");
+		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
+		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
+		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function(done) {
@@ -1480,7 +1475,7 @@ describe("Winston Draft", function() {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		clients[0].emit("winstonDraftTakePile");
+		clients[ownerIdx].emit("winstonDraftTakePile");
 	});
 });
 
@@ -1488,6 +1483,9 @@ describe("Single Draft with Bots and burning", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	const burnedCardsPerRound = 2;
+	var Sessions;
+	var ownerIdx;
+	var nonOwnerIdx;
 
 	beforeEach(function(done) {
 		disableLogs();
@@ -1548,19 +1546,22 @@ describe("Single Draft with Bots and burning", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		clients[1].once("bots", function(bots) {
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
+		clients[nonOwnerIdx].once("bots", function(bots) {
 			expect(bots).to.equal(6);
 			done();
 		});
-		clients[0].emit("bots", 6);
+		clients[ownerIdx].emit("bots", 6);
 	});
 
 	it("Clients should receive the updated burn count.", function(done) {
-		clients[1].once("sessionOptions", function(sessionOptions) {
+		clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
 			expect(sessionOptions.burnedCardsPerRound).to.equal(burnedCardsPerRound);
 			done();
 		});
-		clients[0].emit("setBurnedCardsPerRound", burnedCardsPerRound);
+		clients[ownerIdx].emit("setBurnedCardsPerRound", burnedCardsPerRound);
 	});
 
 	let boosters = [];
@@ -1585,7 +1586,7 @@ describe("Single Draft with Bots and burning", function() {
 			})();
 			++index;
 		}
-		clients[0].emit("startDraft");
+		clients[ownerIdx].emit("startDraft");
 	});
 
 	it("Pick enough times, and the draft should end.", function(done) {
