@@ -11,6 +11,7 @@
 			class="card-column drag-column"
 			:list="column"
 			:group="group"
+			@change="change"
 			drag-class="drag"
 		>
 			<card
