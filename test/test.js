@@ -50,26 +50,26 @@ function enableLogs(print) {
 }
 
 function makeClients(queries, done) {
-		let sockets = [];
-		disableLogs();
-		const Connections = server.__get__("Connections");
-		expect(Object.keys(Connections).length).to.equal(0);
-		for (let query of queries) {
-			sockets.push(connectClient(query));
-		}
+	let sockets = [];
+	disableLogs();
+	const Connections = server.__get__("Connections");
+	expect(Object.keys(Connections).length).to.equal(0);
+	for (let query of queries) {
+		sockets.push(connectClient(query));
+	}
 
-		// Wait for all clients to be connected
-		let connectedClientCount = 0;
-		for (let s of sockets) {
-			s.on("connect", function() {
-				connectedClientCount += 1;
-				if (connectedClientCount == sockets.length) {
-					enableLogs(false);
-					done();
-				}
-			});
-		}
-		return sockets;
+	// Wait for all clients to be connected
+	let connectedClientCount = 0;
+	for (let s of sockets) {
+		s.once("connect", function() {
+			connectedClientCount += 1;
+			if (connectedClientCount == sockets.length) {
+				enableLogs(false);
+				done();
+			}
+		});
+	}
+	return sockets;
 }
 
 describe("Inter client communication", function() {
@@ -210,18 +210,21 @@ describe("Checking sets", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -280,18 +283,21 @@ describe("Single Draft", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -337,9 +343,8 @@ describe("Single Draft", function() {
 		});
 	});
 
-
 	it(`Card Pool should be all of THB set (+ distribution quick test)`, function(done) {
-	 	Sessions = server.__get__("Sessions");
+		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[ownerIdx].emit("ignoreCollections", true);
@@ -450,18 +455,21 @@ describe("Single Draft without Color Balance", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -568,18 +576,21 @@ describe("Single Draft With disconnect and reconnect", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -693,18 +704,21 @@ describe("Single Draft with Bots", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -822,18 +836,21 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -852,9 +869,9 @@ describe("Single Draft With disconnect and bots", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-	  Sessions = server.__get__("Sessions");
-	  ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
-	 	nonOwnerIdx = 1 - ownerIdx;
+		Sessions = server.__get__("Sessions");
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("bots", function(bots) {
 			expect(bots).to.equal(6);
 			done();
@@ -960,18 +977,21 @@ describe("Single Draft with custom boosters and bots", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -1276,7 +1296,6 @@ describe("Multiple Drafts", function() {
 
 describe("Winston Draft", function() {
 	let clients = [];
-	const clientIDs = ["FirstClientID", "SecondClientID"];
 	let sessionID = "sessionID";
 	var Sessions;
 	var ownerIdx;
@@ -1293,18 +1312,21 @@ describe("Winston Draft", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "id1",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "id2",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
@@ -1374,7 +1396,7 @@ describe("Winston Draft", function() {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function(userID) {
-				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
@@ -1467,7 +1489,7 @@ describe("Winston Draft", function() {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function(userID) {
-				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
@@ -1498,18 +1520,21 @@ describe("Single Draft with Bots and burning", function() {
 	});
 
 	before(function(done) {
-		clients = makeClients([
-			{
-				userID: "sameID",
-				sessionID: sessionID,
-				userName: "Client1",
-			},
-			{
-				userID: "sameID",
-				sessionID: sessionID,
-				userName: "Client2",
-			}
-		], done);
+		clients = makeClients(
+			[
+				{
+					userID: "sameID",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "sameID",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
 	});
 
 	after(function(done) {
