@@ -1276,7 +1276,6 @@ describe("Multiple Drafts", function() {
 
 describe("Winston Draft", function() {
 	let clients = [];
-	const clientIDs = ["FirstClientID", "SecondClientID"];
 	let sessionID = "sessionID";
 	var Sessions;
 	var ownerIdx;
@@ -1374,7 +1373,7 @@ describe("Winston Draft", function() {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function(userID) {
-				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
@@ -1467,7 +1466,7 @@ describe("Winston Draft", function() {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function(userID) {
-				if (userID === clientIDs[c]) this.emit("winstonDraftTakePile");
+				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function() {
 				draftEnded += 1;
