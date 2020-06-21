@@ -6,6 +6,13 @@ const ColorOrder = {
 	G: 4,
 };
 
+const RarityOrder = {
+	mythic: 0,
+	rare: 1,
+	uncommon: 2,
+	common: 3,
+};
+
 const Comparators = {
 	// Arena counts each X as 100 basically
 	// Arena uses the front half of split cards here
@@ -30,6 +37,10 @@ const Comparators = {
 		else if (l.length === 1) return -1;
 		else if (r.length === 1) return 1;
 		else return String(l).localeCompare(String(r));
+	},
+
+	rarity: (lhs, rhs) => {
+		return RarityOrder[lhs.rarity] - RarityOrder[rhs.rarity];
 	},
 
 	name: (lhs, rhs) => {

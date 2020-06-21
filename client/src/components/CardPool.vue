@@ -34,8 +34,24 @@
 			>
 				<i class="fas fa-minus fa-2x"></i>
 			</div>
-			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards'">
-				<i class="fas fa-sort-amount-up fa-2x"></i>
+			<div class="sort-dropdown">
+				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
+					<i class="fas fa-sort-amount-up fa-2x"></i>
+				</div>
+				<div
+					@click="sortByColor"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by color'"
+				>
+					<img src="img/sort-color.svg" />
+				</div>
+				<div
+					@click="sortByRarity"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by rarity'"
+				>
+					<img src="img/sort-rarity.svg" />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -65,7 +81,9 @@ export default {
 	},
 	methods: {
 		reset: function() {
-			this.columns = [[], [], [], [], [], [], []];
+			const colCount = Math.max(1, this.columns.length);
+			this.columns = [];
+			for (let i = 0; i < colCount; ++i) this.columns.push([]);
 		},
 		sync: function() {
 			this.reset();
@@ -91,6 +109,25 @@ export default {
 			} else {
 				column.push(card);
 			}
+		},
+		sort: function(comparator, columnSorter = CardOrder.orderByArenaInPlace) {
+			this.reset();
+			if (this.cards.length === 0) return;
+			let sorted = [...this.cards].sort(comparator);
+			let columnIndex = 0;
+			for (let idx = 0; idx < sorted.length - 1; ++idx) {
+				this.columns[columnIndex].push(sorted[idx]);
+				if (comparator(sorted[idx], sorted[idx + 1]))
+					columnIndex = Math.min(columnIndex + 1, this.columns.length - 1);
+			}
+			this.columns[columnIndex].push(sorted[sorted.length - 1]);
+			for (let col of this.columns) columnSorter(col);
+		},
+		sortByColor: function() {
+			this.sort(CardOrder.Comparators.color);
+		},
+		sortByRarity: function() {
+			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
 		},
 		remCard: function(card) {
 			for (let col of this.columns) {
@@ -137,7 +174,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+:root {
+	--controls-margin: 0.4em;
+	--controls-padding: 8px;
+	--controls-size: 32px;
+}
+
 .card-pool {
 	position: relative;
 	min-height: 200px;
@@ -156,16 +199,35 @@ export default {
 }
 
 .column-control {
-	margin: 0 0 0.4em 0;
+	margin: 0 0 var(--controls-margin) 0;
 	background-color: rgba(0, 0, 0, 0.1);
-	border-radius: 37px;
-	padding: 5px;
-	width: 32px;
-	height: 32px;
+	border-radius: calc(var(--controls-padding) + var(--controls-size));
+	padding: var(--controls-padding);
+	width: var(--controls-size);
+	height: var(--controls-size);
 	text-align: center;
+}
+
+.column-control:hover {
+	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
+}
+
+.column-control img {
+	width: var(--controls-size);
+	height: var(--controls-size);
 }
 
 .drag {
 	height: 283.33px;
+}
+
+.sort-dropdown {
+	max-height: calc(2 * var(--controls-padding) + var(--controls-size));
+	transition: 0.2s ease-out;
+	overflow: hidden;
+}
+
+.sort-dropdown:hover {
+	max-height: calc(3 * (2 * var(--controls-padding) + var(--controls-size) + var(--controls-margin)));
 }
 </style>
