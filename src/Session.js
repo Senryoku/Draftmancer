@@ -393,6 +393,12 @@ function Session(id, owner) {
 				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
 				let localCollection = {};
+
+				if (!this.customCardList.cards) {
+					this.emitMessage("Error generating boosters", "No custom card list provided.");
+					return false;
+				}
+
 				for (let cardId of this.customCardList.cards) {
 					// Duplicates adds one copy of the card
 					if (cardId in localCollection) localCollection[cardId] += 1;
