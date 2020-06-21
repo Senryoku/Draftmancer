@@ -8,8 +8,6 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
-import CardData from "../public/data/MTGACards.json";
-import DefaultLoc from "../public/data/MTGACards.en.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
@@ -17,6 +15,15 @@ import Modal from "./components/Modal.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import Card from "./components/Card.vue";
 import CardPool from "./components/CardPool.vue";
+/*
+const DraftLogPick = () => import("./components/DraftLogPick.vue");
+const DraftLog = () => import("./components/DraftLog.vue");
+const DraftLogLive = () => import("./components/DraftLogLive.vue");
+const Collection = () => import("./components/Collection.vue");
+const CardList = () => import("./components/CardList.vue");
+const Bracket = () => import("./components/Bracket.vue");
+const PatchNotes = () => import("./components/PatchNotes.vue");
+*/
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
@@ -24,7 +31,6 @@ import Collection from "./components/Collection.vue";
 import CardList from "./components/CardList.vue";
 import Bracket from "./components/Bracket.vue";
 import PatchNotes from "./components/PatchNotes.vue";
-import Toggle from "./components/Toggle.vue";
 
 // Preload Carback
 import CardBack from "./assets/img/cardback.png";
@@ -70,7 +76,6 @@ var app = new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
-		Toggle,
 		CardPlaceholder,
 		Card,
 		CardPool,
@@ -1604,9 +1609,10 @@ var app = new Vue({
 			return r;
 		},
 	},
-	mounted: function() {
+	mounted: async function() {
 		// Load all card informations
 		try {
+			const CardData = await import("../public/data/MTGACards.json");
 			for (let c in CardData) {
 				CardData[c].id = c;
 				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
@@ -1615,6 +1621,7 @@ var app = new Vue({
 			}
 
 			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
+			const DefaultLoc = await import("../public/data/MTGACards.en.json");
 			this.handleTranslation("en", DefaultLoc);
 			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
 			this.initialize();
