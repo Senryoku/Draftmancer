@@ -1,4 +1,5 @@
 "use strict";
+import "core-js/fn/string/match-all";
 import io from "../../node_modules/socket.io-client/dist/socket.io.js";
 import Vue from "vue";
 import draggable from "vuedraggable";
@@ -614,7 +615,7 @@ var app = new Vue({
 			this.socket.on("setCardSelection", function(data) {
 				app.clearSideboard();
 				app.clearDeck();
-				for (let cid of data.flat()) {
+				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
 					app.addToDeck(app.genCard(cid));
 				}
 				app.draftingState = DraftState.Brewing;
