@@ -898,12 +898,18 @@ describe("Single Draft With Bots and Disconnect", function() {
 		clients[nonOwnerIdx].disconnect();
 	});
 
-	it("Non-owner reconnects, draft restarts.", function(done) {
+	it("Non-owner reconnects, owner reconnects non-owner and non-owner gets rejoinDraft event.", function(done) {
+		var eventCount = 0;
 		clients[ownerIdx].on("message", function(data) {
 			if (data.title == "Player reconnected") {
 				this.removeListener("message");
-				done();
+				eventCount += 1;
+				if (eventCount >= 2) done();
 			}
+		});
+		clients[nonOwnerIdx].once("rejoinDraft", function() {
+			eventCount += 1;
+			if (eventCount >= 2) done();
 		});
 		clients[nonOwnerIdx].connect();
 	});
@@ -1356,9 +1362,18 @@ describe("Winston Draft", function() {
 		clients[nonOwnerIdx].disconnect();
 	});
 
-	it("Non-owner reconnects, draft restarts.", function(done) {
-		clients[nonOwnerIdx].once("rejoinWinstonDraft", function(state) {
-			done();
+	it("Non-owner reconnects, owner reconnects non-owner and non-owner gets rejoinWinstonDraft event.", function(done) {
+		var eventCount = 0;
+		clients[ownerIdx].on("message", function(data) {
+			if (data.title == "Player reconnected") {
+				this.removeListener("message");
+				eventCount += 1;
+				if (eventCount >= 2) done();
+			}
+		});
+		clients[nonOwnerIdx].once("rejoinWinstonDraft", function() {
+			eventCount += 1;
+			if (eventCount >= 2) done();
 		});
 		clients[nonOwnerIdx].connect();
 	});
