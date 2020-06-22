@@ -14,13 +14,11 @@ export default {
 	name: "PatchNotes",
 	data: function() {
 		return {
-			notes: [],
+			notes: null,
 		};
 	},
-	mounted: function() {
-		fetch("data/PatchNotes.json")
-			.then(response => response.json())
-			.then(json => (this.notes = json));
+	mounted: async function() {
+		this.notes = (await import("../../public/data/PatchNotes.json")).default;
 	},
 };
 </script>
