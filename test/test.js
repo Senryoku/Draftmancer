@@ -72,6 +72,27 @@ function makeClients(queries, done) {
 	return sockets;
 }
 
+const waitForSocket = (socket, done) => {
+	if (socket.io.engine.readyState === "closed") done();
+	else
+		setTimeout(() => {
+			waitForSocket(socket, done);
+		}, 1);
+};
+
+// Wait for the sockets to be disconnected, I haven't found another way...
+const waitForClientDisconnects = done => {
+	const Connections = server.__get__("Connections");
+	if (Object.keys(Connections).length === 0) {
+		enableLogs(false);
+		done();
+	} else {
+		setTimeout(() => {
+			waitForClientDisconnects(done);
+		}, 1);
+	}
+};
+
 describe("Inter client communication", function() {
 	let sender, receiver;
 
@@ -106,16 +127,9 @@ describe("Inter client communication", function() {
 	after(function(done) {
 		disableLogs();
 		sender.disconnect();
-		sender.close();
 		receiver.disconnect();
-		receiver.close();
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	describe("Chat Events", function() {
@@ -231,15 +245,8 @@ describe("Checking sets", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+		waitForClientDisconnects(done);
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
@@ -304,15 +311,9 @@ describe("Single Draft", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it('A user with userID "id1" should be connected.', function(done) {
@@ -382,15 +383,15 @@ describe("Single Draft", function() {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
 		let index = 0;
-		for (let c of clients) {
-			c.once("startDraft", function() {
+		for (let c in clients) {
+			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
 			(_ => {
-				const _idx = index;
-				c.once("nextBooster", function(data) {
+				const _idx = c;
+				clients[c].once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
@@ -417,7 +418,6 @@ describe("Single Draft", function() {
 	});
 
 	it("Do it enough times, and all the drafts should end.", function(done) {
-		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("nextBooster", function(data) {
@@ -476,15 +476,9 @@ describe("Single Draft without Color Balance", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it("Clients should receive the updated colorBalance status.", function(done) {
@@ -502,23 +496,21 @@ describe("Single Draft without Color Balance", function() {
 	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
-		let index = 0;
-		for (let c of clients) {
-			c.once("startDraft", function() {
+		for (let c in clients) {
+			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
+			const _idx = c;
 			(_ => {
-				const _idx = index;
-				c.once("nextBooster", function(data) {
+				clients[c].once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
-			++index;
 		}
 		clients[ownerIdx].emit("startDraft");
 	});
@@ -538,7 +530,6 @@ describe("Single Draft without Color Balance", function() {
 	});
 
 	it("Do it enough times, and all the drafts should end.", function(done) {
-		this.timeout(20000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("nextBooster", function(data) {
@@ -558,7 +549,7 @@ describe("Single Draft without Color Balance", function() {
 	});
 });
 
-describe("Single Draft With disconnect and reconnect", function() {
+describe("Single Draft With disconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	var Sessions;
@@ -597,15 +588,9 @@ describe("Single Draft With disconnect and reconnect", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	let boosters = [];
@@ -615,23 +600,21 @@ describe("Single Draft With disconnect and reconnect", function() {
 		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
 		let receivedBoosters = 0;
-		let index = 0;
-		for (let c of clients) {
-			c.once("startDraft", function() {
+		for (let c in clients) {
+			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
+			const _idx = c;
 			(_ => {
-				const _idx = index;
-				c.once("nextBooster", function(data) {
+				clients[_idx].once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
-			++index;
 		}
 		clients[ownerIdx].emit("startDraft");
 	});
@@ -641,7 +624,7 @@ describe("Single Draft With disconnect and reconnect", function() {
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
-				let idx = c;
+				const idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
 				if (receivedBoosters == clients.length) done();
@@ -651,15 +634,19 @@ describe("Single Draft With disconnect and reconnect", function() {
 	});
 
 	it("Non-owner disconnects, owner receives a warning.", function(done) {
-		clients[ownerIdx].once("userDisconnected", function(userName) {
-			done();
+		clients[ownerIdx].once("userDisconnected", () => {
+			waitForSocket(clients[nonOwnerIdx], () => {
+				clients.splice(nonOwnerIdx, 1);
+				done();
+			});
 		});
 		clients[nonOwnerIdx].disconnect();
-		clients.splice(nonOwnerIdx, 1);
+		boosters.splice(nonOwnerIdx, 1);
+		ownerIdx = 0;
 	});
 
 	it("Owner chooses to replace by bots.", function(done) {
-		clients[ownerIdx].once("message", function(sessionUsers) {
+		clients[ownerIdx].once("message", function(state) {
 			done();
 		});
 		clients[ownerIdx].emit("replaceDisconnectedPlayers");
@@ -669,8 +656,8 @@ describe("Single Draft With disconnect and reconnect", function() {
 		this.timeout(4000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
+			const idx = c;
 			clients[c].on("nextBooster", function(data) {
-				let idx = c;
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
@@ -725,15 +712,9 @@ describe("Single Draft with Bots", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it('A user with userID "id1" should be connected.', function(done) {
@@ -763,23 +744,21 @@ describe("Single Draft with Bots", function() {
 	it("When session owner launches draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
-		let index = 0;
-		for (let c of clients) {
-			c.once("startDraft", function() {
+		for (let c in clients) {
+			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
+			const _idx = c;
 			(_ => {
-				const _idx = index;
-				c.once("nextBooster", function(data) {
+				clients[c].once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			})();
-			++index;
 		}
 		clients[ownerIdx].emit("startDraft");
 	});
@@ -787,9 +766,9 @@ describe("Single Draft with Bots", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
+			const idx = c;
 			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
-				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
 				if (receivedBoosters == clients.length) done();
@@ -801,8 +780,8 @@ describe("Single Draft with Bots", function() {
 	it("Do it enough times, and all the drafts should end.", function(done) {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
+			const idx = c;
 			clients[c].on("nextBooster", function(data) {
-				let idx = c;
 				boosters[idx] = data.booster;
 				this.emit("pickCard", { selectedCard: boosters[idx][0] }, _ => {});
 			});
@@ -818,7 +797,7 @@ describe("Single Draft with Bots", function() {
 	});
 });
 
-describe("Single Draft With disconnect and bots", function() {
+describe("Single Draft With Bots and Disconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	var Sessions;
@@ -857,15 +836,9 @@ describe("Single Draft With disconnect and bots", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
@@ -883,21 +856,19 @@ describe("Single Draft With disconnect and bots", function() {
 	it("When session owner launches draft, everyone should receive a startDraft event", function(done) {
 		let connectedClients = 0;
 		let receivedBoosters = 0;
-		let index = 0;
-		for (let c of clients) {
-			c.once("startDraft", function() {
+		for (let c in clients) {
+			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
 
-			const _idx = index;
-			c.once("nextBooster", function(data) {
+			const _idx = c;
+			clients[c].once("nextBooster", function(data) {
 				expect(boosters).not.include(data);
 				boosters[_idx] = data;
 				receivedBoosters += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 			});
-			++index;
 		}
 		clients[ownerIdx].emit("startDraft");
 	});
@@ -905,9 +876,9 @@ describe("Single Draft With disconnect and bots", function() {
 	it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 		let receivedBoosters = 0;
 		for (let c = 0; c < clients.length; ++c) {
+			const idx = c;
 			clients[c].once("nextBooster", function(data) {
 				receivedBoosters += 1;
-				let idx = c;
 				expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
 				boosters[idx] = data;
 				if (receivedBoosters == clients.length) done();
@@ -916,16 +887,19 @@ describe("Single Draft With disconnect and bots", function() {
 		}
 	});
 
-	it("Client 1 disconnects, Client 0 receives updated user infos.", function(done) {
-		clients[ownerIdx].once("userDisconnected", function(userName) {
-			done();
+	it("Non-owner disconnects, Owner receives updated user infos.", function(done) {
+		clients[ownerIdx].once("userDisconnected", function() {
+			waitForSocket(clients[nonOwnerIdx], done);
 		});
 		clients[nonOwnerIdx].disconnect();
 	});
 
-	it("Client 1 reconnects, draft restarts.", function(done) {
-		clients[ownerIdx].once("message", function(sessionUsers) {
-			done();
+	it("Non-owner reconnects, draft restarts.", function(done) {
+		clients[ownerIdx].on("message", function(data) {
+			if (data.title == "Player reconnected") {
+				this.removeListener("message");
+				done();
+			}
 		});
 		clients[nonOwnerIdx].connect();
 	});
@@ -933,10 +907,10 @@ describe("Single Draft With disconnect and bots", function() {
 	it("Pick enough times, and all the drafts should end.", function(done) {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
+			const idx = c;
 			clients[c].on(
 				"nextBooster",
 				(_ => {
-					const idx = c;
 					const self = clients[c];
 					return data => {
 						boosters[idx] = data.booster;
@@ -998,15 +972,9 @@ describe("Single Draft with custom boosters and bots", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
@@ -1163,15 +1131,9 @@ describe("Multiple Drafts", function() {
 		for (let s of clients)
 			for (let c of s) {
 				c.disconnect();
-				c.close();
 			}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 500);
+
+		waitForClientDisconnects(done);
 	});
 
 	it(`${sessionCount} sessions should be live.`, function(done) {
@@ -1235,7 +1197,7 @@ describe("Multiple Drafts", function() {
 			const Sessions = server.__get__("Sessions");
 			expect(Sessions[sessionIDs[0]].users.size).to.equal(playersPerSession);
 			newClient.disconnect();
-			setTimeout(done, 10);
+			waitForSocket(newClient, done);
 		});
 	});
 
@@ -1333,7 +1295,6 @@ describe("Winston Draft", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
 		setTimeout(function() {
@@ -1378,8 +1339,8 @@ describe("Winston Draft", function() {
 	});
 
 	it("Non-owner disconnects, owner receives updated user infos.", function(done) {
-		clients[ownerIdx].once("userDisconnected", function(userName) {
-			done();
+		clients[ownerIdx].once("userDisconnected", function() {
+			waitForSocket(clients[nonOwnerIdx], done);
 		});
 		clients[nonOwnerIdx].disconnect();
 	});
@@ -1392,7 +1353,6 @@ describe("Winston Draft", function() {
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function(done) {
-		this.timeout(2000);
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function(userID) {
@@ -1541,15 +1501,9 @@ describe("Single Draft with Bots and burning", function() {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
-			c.close();
 		}
-		// Wait for the sockets to be disconnected, I haven't found another way...
-		setTimeout(function() {
-			const Connections = server.__get__("Connections");
-			expect(Object.keys(Connections).length).to.equal(0);
-			enableLogs(false);
-			done();
-		}, 250);
+
+		waitForClientDisconnects(done);
 	});
 
 	it('A user with userID "sameID" should be connected.', function(done) {
