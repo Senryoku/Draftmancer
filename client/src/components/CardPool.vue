@@ -20,6 +20,7 @@
 				:card="card"
 				:language="$root.language"
 				:selectcard="click"
+				@click="click($event, card)"
 			></card>
 		</draggable>
 		<div class="draggable-controls">
@@ -38,18 +39,10 @@
 				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 					<i class="fas fa-sort-amount-up fa-2x"></i>
 				</div>
-				<div
-					@click="sortByColor"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by color'"
-				>
+				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
 					<img src="img/sort-color.svg" />
 				</div>
-				<div
-					@click="sortByRarity"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by rarity'"
-				>
+				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
 					<img src="img/sort-rarity.svg" />
 				</div>
 			</div>

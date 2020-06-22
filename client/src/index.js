@@ -12,8 +12,7 @@ import SetsInfos from "../public/data/SetsInfos.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
-import CardPlaceholder from "./components/CardPlaceholder.vue";
-import Card from "./components/Card.vue";
+import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
@@ -67,8 +66,7 @@ new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
-		CardPlaceholder,
-		Card,
+		BoosterCard,
 		CardPool,
 		DraftLogPick,
 		DraftLog,
@@ -959,7 +957,7 @@ new Vue({
 				showConfirmButton: false,
 			});
 			var reader = new FileReader();
-			reader.onload = function(e) {
+			reader.onload = e => {
 				let contents = e.target.result;
 
 				const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;

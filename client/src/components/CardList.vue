@@ -1,24 +1,20 @@
 <template>
 	<div v-if="isValid">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
-		<span
-			v-if="missing && missing.total > 0"
-		>
+		<span v-if="missing && missing.total > 0">
 			<i class="fas fa-exclamation-triangle yellow"></i>
-			{{ missing.total }} are missing from your collection ({{
-			missingText
-			}})
+			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
 		<button @click="download">Download List</button>
 		<template v-if="cardlist.customSheets">
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
-				<div
-					v-for="(row, rowIndex) in rowsBySlot[key]"
-					:key="'row' + rowIndex"
-					class="category-wrapper"
-				>
-					<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"></card-column>
+				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
+					<card-column
+						v-for="(column, colIndex) in row"
+						:key="'col' + colIndex"
+						:column="column"
+					></card-column>
 				</div>
 			</div>
 		</template>
@@ -35,20 +31,20 @@
 import Vue from "vue";
 import { download } from "../helper.js";
 import CardOrder from "../cardorder.js";
-import CardImage from "./CardImage.vue";
+import Card from "./Card.vue";
 
 const CardColumn = Vue.component("CardColumn", {
 	props: {
 		column: { type: Array, required: true },
 	},
-	components: { CardImage },
+	components: { Card },
 	template: `
 <div class="card-column" v-show="column.length > 0">
 	<div v-for="(card, index) in column" :key="index" class="card card-wrapper">
 		<div v-if="$root.hasCollection && !(card.id in $root.collection)" class="collection-warning">
 			<i class="fas fa-exclamation-triangle yellow"></i>
 		</div>
-		<card-image :card="card" :language="$root.language"></card-image>
+		<card :card="card" :language="$root.language"></card>
 	</div>
 </div>`,
 });
