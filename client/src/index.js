@@ -63,7 +63,7 @@ Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
 VTooltip.options.defaultBoundariesElement = "window";
 
-var app = new Vue({
+new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
@@ -196,7 +196,7 @@ var app = new Vue({
 				},
 			});
 
-			this.socket.on("disconnect", function() {
+			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
 				Swal.fire({
 					customClass: SwalCustomClasses,
@@ -206,7 +206,7 @@ var app = new Vue({
 				});
 			});
 
-			this.socket.on("reconnect", function(attemptNumber) {
+			this.socket.on("reconnect", attemptNumber => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 
 				Swal.fire({
@@ -217,13 +217,13 @@ var app = new Vue({
 				});
 			});
 
-			this.socket.on("alreadyConnected", function(newID) {
-				app.userID = newID;
+			this.socket.on("alreadyConnected", newID => {
+				this.userID = newID;
 				this.query.userID = newID;
 			});
 
-			this.socket.on("chatMessage", function(message) {
-				app.messagesHistory.push(message);
+			this.socket.on("chatMessage", message => {
+				this.messagesHistory.push(message);
 				// TODO: Cleanup this?
 				let bubble = document.querySelector("#chat-bubble-" + message.author);
 				bubble.innerText = message.text;
@@ -232,34 +232,34 @@ var app = new Vue({
 				bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = 0), 5000);
 			});
 
-			this.socket.on("publicSessions", function(sessions) {
-				app.publicSessions = sessions;
+			this.socket.on("publicSessions", sessions => {
+				this.publicSessions = sessions;
 			});
 
-			this.socket.on("setSession", function(sessionID) {
-				app.sessionID = sessionID;
+			this.socket.on("setSession", sessionID => {
+				this.sessionID = sessionID;
 				this.query.sessionID = sessionID;
-				if (app.drafting) {
+				if (this.drafting) {
 					// Expelled during drafting
-					app.drafting = false;
-					app.draftingState = DraftState.Brewing;
+					this.drafting = false;
+					this.draftingState = DraftState.Brewing;
 				}
 			});
 
-			this.socket.on("sessionUsers", function(users) {
+			this.socket.on("sessionUsers", users => {
 				for (let u of users) {
 					u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
-				app.sessionUsers = users;
-				app.userOrder = users.map(u => u.userID);
+				this.sessionUsers = users;
+				this.userOrder = users.map(u => u.userID);
 			});
 
-			this.socket.on("userDisconnected", function(userNames) {
-				if (!app.drafting) return;
+			this.socket.on("userDisconnected", userNames => {
+				if (!this.drafting) return;
 
-				if (app.winstonDraftState) {
+				if (this.winstonDraftState) {
 					Swal.fire({
 						position: "center",
 						customClass: SwalCustomClasses,
@@ -270,10 +270,10 @@ var app = new Vue({
 						allowOutsideClick: false,
 						confirmButtonText: "Stop draft",
 					}).then(result => {
-						if (result.value) app.socket.emit("stopDraft");
+						if (result.value) this.socket.emit("stopDraft");
 					});
 				} else {
-					if (app.userID == app.sessionOwner) {
+					if (this.userID == this.sessionOwner) {
 						Swal.fire({
 							position: "center",
 							customClass: SwalCustomClasses,
@@ -284,7 +284,7 @@ var app = new Vue({
 							allowOutsideClick: false,
 							confirmButtonText: "Replace with a bot",
 						}).then(result => {
-							if (result.value) app.socket.emit("replaceDisconnectedPlayers");
+							if (result.value) this.socket.emit("replaceDisconnectedPlayers");
 						});
 					} else {
 						Swal.fire({
@@ -302,11 +302,11 @@ var app = new Vue({
 				}
 			});
 
-			this.socket.on("updateUser", function(data) {
-				let user = app.userByID[data.userID];
+			this.socket.on("updateUser", data => {
+				let user = this.userByID[data.userID];
 				if (!user) {
-					if (data.userID === app.sessionOwner && data.updatedProperties.userName)
-						app.sessionOwnerUsername = data.updatedProperties.userName;
+					if (data.userID === this.sessionOwner && data.updatedProperties.userName)
+						this.sessionOwnerUsername = data.updatedProperties.userName;
 					return;
 				}
 
@@ -315,38 +315,38 @@ var app = new Vue({
 				}
 			});
 
-			this.socket.on("sessionOptions", function(sessionOptions) {
+			this.socket.on("sessionOptions", sessionOptions => {
 				for (let prop in sessionOptions) {
-					app[prop] = sessionOptions[prop];
+					this[prop] = sessionOptions[prop];
 				}
 			});
-			this.socket.on("sessionOwner", function(ownerID, ownerUserName) {
-				app.sessionOwner = ownerID;
-				if (ownerUserName) app.sessionOwnerUsername = ownerUserName;
+			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {
+				this.sessionOwner = ownerID;
+				if (ownerUserName) this.sessionOwnerUsername = ownerUserName;
 			});
-			this.socket.on("isPublic", function(data) {
-				app.isPublic = data;
+			this.socket.on("isPublic", data => {
+				this.isPublic = data;
 			});
-			this.socket.on("ignoreCollections", function(ignoreCollections) {
-				app.ignoreCollections = ignoreCollections;
+			this.socket.on("ignoreCollections", ignoreCollections => {
+				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("boostersPerPlayer", function(data) {
-				app.boostersPerPlayer = parseInt(data);
+			this.socket.on("boostersPerPlayer", data => {
+				this.boostersPerPlayer = parseInt(data);
 			});
-			this.socket.on("bots", function(data) {
-				app.bots = parseInt(data);
+			this.socket.on("bots", data => {
+				this.bots = parseInt(data);
 			});
-			this.socket.on("setMaxPlayers", function(maxPlayers) {
-				app.maxPlayers = parseInt(maxPlayers);
+			this.socket.on("setMaxPlayers", maxPlayers => {
+				this.maxPlayers = parseInt(maxPlayers);
 			});
-			this.socket.on("setRestriction", function(setRestriction) {
-				app.setRestriction = setRestriction;
+			this.socket.on("setRestriction", setRestriction => {
+				this.setRestriction = setRestriction;
 			});
-			this.socket.on("setPickTimer", function(timer) {
-				app.maxTimer = timer;
+			this.socket.on("setPickTimer", timer => {
+				this.maxTimer = timer;
 			});
 
-			this.socket.on("message", function(data) {
+			this.socket.on("message", data => {
 				if (data.title === undefined) data.title = "[Missing Title]";
 				if (data.text === undefined) data.text = "";
 
@@ -367,22 +367,22 @@ var app = new Vue({
 				});
 			});
 
-			this.socket.on("readyCheck", function() {
-				if (app.drafting) return;
+			this.socket.on("readyCheck", () => {
+				if (this.drafting) return;
 
-				app.initReadyCheck();
+				this.initReadyCheck();
 
-				if (app.enableNotifications) {
+				if (this.enableNotifications) {
 					new Notification("Are you ready?", {
-						body: `${app.userByID[app.sessionOwner].userName} has initiated a ready check`,
+						body: `${this.userByID[this.sessionOwner].userName} has initiated a ready check`,
 					});
 				}
 
 				const ownerUsername =
-					app.sessionOwner in app.userByID
-						? app.userByID[app.sessionOwner].userName
-						: app.sessionOwnerUsername
-						? app.sessionOwnerUsername
+					this.sessionOwner in this.userByID
+						? this.userByID[this.sessionOwner].userName
+						: this.sessionOwnerUsername
+						? this.sessionOwnerUsername
 						: "Session owner";
 
 				Swal.fire({
@@ -397,25 +397,25 @@ var app = new Vue({
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
 				}).then(result => {
-					app.socket.emit("setReady", result.value ? ReadyState.Ready : ReadyState.NotReady);
+					this.socket.emit("setReady", result.value ? ReadyState.Ready : ReadyState.NotReady);
 				});
 			});
 
-			this.socket.on("setReady", function(userID, readyState) {
-				if (!app.pendingReadyCheck) return;
-				if (userID in app.userByID) app.userByID[userID].readyState = readyState;
-				if (app.sessionUsers.every(u => u.readyState === ReadyState.Ready))
-					app.fireToast("success", "Everybody is ready!");
+			this.socket.on("setReady", (userID, readyState) => {
+				if (!this.pendingReadyCheck) return;
+				if (userID in this.userByID) this.userByID[userID].readyState = readyState;
+				if (this.sessionUsers.every(u => u.readyState === ReadyState.Ready))
+					this.fireToast("success", "Everybody is ready!");
 			});
 
-			this.socket.on("startWinstonDraft", function(state) {
-				setCookie("userID", app.userID);
-				app.drafting = true;
-				app.setWinstonDraftState(state);
-				app.stopReadyCheck();
-				app.clearSideboard();
-				app.clearDeck();
-				app.playSound("start");
+			this.socket.on("startWinstonDraft", state => {
+				setCookie("userID", this.userID);
+				this.drafting = true;
+				this.setWinstonDraftState(state);
+				this.stopReadyCheck();
+				this.clearSideboard();
+				this.clearDeck();
+				this.playSound("start");
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -425,65 +425,65 @@ var app = new Vue({
 					timer: 1500,
 				});
 
-				if (app.enableNotifications) {
+				if (this.enableNotifications) {
 					new Notification("Now drafting!", {
-						body: `Your Winston draft '${app.sessionID}' is starting!`,
+						body: `Your Winston draft '${this.sessionID}' is starting!`,
 					});
 				}
 			});
-			this.socket.on("winstonDraftSync", function(winstonDraftState) {
-				app.setWinstonDraftState(winstonDraftState);
+			this.socket.on("winstonDraftSync", winstonDraftState => {
+				this.setWinstonDraftState(winstonDraftState);
 			});
-			this.socket.on("winstonDraftNextRound", function(currentUser) {
-				if (app.userID === currentUser) {
-					app.playSound("next");
-					app.fireToast("success", "Your turn!");
-					if (app.enableNotifications) {
+			this.socket.on("winstonDraftNextRound", currentUser => {
+				if (this.userID === currentUser) {
+					this.playSound("next");
+					this.fireToast("success", "Your turn!");
+					if (this.enableNotifications) {
 						new Notification("Your turn!", {
 							body: `This is your turn to pick.`,
 						});
 					}
-					app.draftingState = DraftState.WinstonPicking;
+					this.draftingState = DraftState.WinstonPicking;
 				} else {
-					app.draftingState = DraftState.WinstonWaiting;
+					this.draftingState = DraftState.WinstonWaiting;
 				}
 			});
-			this.socket.on("winstonDraftEnd", function() {
-				app.drafting = false;
-				app.winstonDraftState = null;
-				app.draftingState = DraftState.Brewing;
-				app.fireToast("success", "Done drafting!");
+			this.socket.on("winstonDraftEnd", () => {
+				this.drafting = false;
+				this.winstonDraftState = null;
+				this.draftingState = DraftState.Brewing;
+				this.fireToast("success", "Done drafting!");
 			});
-			this.socket.on("winstonDraftRandomCard", function(cid) {
-				const c = app.genCard(cid);
-				app.addToDeck(c);
+			this.socket.on("winstonDraftRandomCard", cid => {
+				const c = this.genCard(cid);
+				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
-				const cardView = new ComponentClass({ parent: app, propsData: { card: c } });
+				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${app.cards[cid].printed_name[app.language]} from the card pool!`,
+					title: `You drew ${this.cards[cid].printed_name[this.language]} from the card pool!`,
 					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
 				});
 			});
 
-			this.socket.on("rejoinWinstonDraft", function(data) {
-				app.drafting = true;
+			this.socket.on("rejoinWinstonDraft", data => {
+				this.drafting = true;
 
-				app.setWinstonDraftState(data.state);
-				app.clearSideboard();
-				app.clearDeck();
-				for (let cid of data.pickedCards) app.addToDeck(app.genCard(cid));
+				this.setWinstonDraftState(data.state);
+				this.clearSideboard();
+				this.clearDeck();
+				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
 				// Fixme: I don't understand why this in necessary...
-				app.$nextTick(() => {
-					app.$refs.deckDisplay.sync();
+				this.$nextTick(() => {
+					this.$refs.deckDisplay.sync();
 				});
 
-				if (app.userID === data.state.currentUser) app.draftingState = DraftState.WinstonPicking;
-				else app.draftingState = DraftState.WinstonWaiting;
+				if (this.userID === data.state.currentUser) this.draftingState = DraftState.WinstonPicking;
+				else this.draftingState = DraftState.WinstonWaiting;
 
 				Swal.fire({
 					position: "center",
@@ -495,14 +495,14 @@ var app = new Vue({
 				});
 			});
 
-			this.socket.on("startDraft", function() {
+			this.socket.on("startDraft", () => {
 				// Save user ID in case of disconnect
-				setCookie("userID", app.userID);
+				setCookie("userID", this.userID);
 
-				app.drafting = true;
-				app.stopReadyCheck();
-				app.clearSideboard();
-				app.clearDeck();
+				this.drafting = true;
+				this.stopReadyCheck();
+				this.clearSideboard();
+				this.clearDeck();
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -512,43 +512,43 @@ var app = new Vue({
 					timer: 1500,
 				});
 
-				app.playSound("start");
+				this.playSound("start");
 
-				if (app.enableNotifications) {
+				if (this.enableNotifications) {
 					new Notification("Now drafting!", {
-						body: `Your draft '${app.sessionID}' is starting!`,
+						body: `Your draft '${this.sessionID}' is starting!`,
 					});
 				}
 
 				// Are we just an Organizer, and not a player?
-				if (!app.virtualPlayers.map(u => u.userID).includes(app.userID)) {
-					app.draftingState = DraftState.Watching;
+				if (!this.virtualPlayers.map(u => u.userID).includes(this.userID)) {
+					this.draftingState = DraftState.Watching;
 				}
 			});
 
-			this.socket.on("rejoinDraft", function(data) {
-				app.drafting = true;
+			this.socket.on("rejoinDraft", data => {
+				this.drafting = true;
 
-				app.clearDeck();
-				app.clearSideboard();
-				for (let cid of data.pickedCards) app.addToDeck(app.genCard(cid));
+				this.clearDeck();
+				this.clearSideboard();
+				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
 				// Fixme: I don't understand why this in necessary...
-				app.$nextTick(() => {
-					app.$refs.deckDisplay.sync();
+				this.$nextTick(() => {
+					this.$refs.deckDisplay.sync();
 				});
 
-				app.booster = [];
+				this.booster = [];
 				for (let cid of data.booster) {
-					app.booster.push(app.genCard(cid));
+					this.booster.push(this.genCard(cid));
 				}
-				app.boosterNumber = data.boosterNumber;
-				app.pickNumber = data.pickNumber;
+				this.boosterNumber = data.boosterNumber;
+				this.pickNumber = data.pickNumber;
 
-				app.pickedThisRound = data.pickedThisRound;
-				if (app.pickedThisRound) app.draftingState = DraftState.Waiting;
-				else app.draftingState = DraftState.Picking;
-				app.selectedCard = undefined;
-				app.burningCards = [];
+				this.pickedThisRound = data.pickedThisRound;
+				if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
+				else this.draftingState = DraftState.Picking;
+				this.selectedCard = undefined;
+				this.burningCards = [];
 
 				Swal.fire({
 					position: "center",
@@ -560,25 +560,25 @@ var app = new Vue({
 				});
 			});
 
-			this.socket.on("nextBooster", function(data) {
-				app.booster = [];
-				for (let u of app.sessionUsers) {
+			this.socket.on("nextBooster", data => {
+				this.booster = [];
+				for (let u of this.sessionUsers) {
 					u.pickedThisRound = false;
 				}
-				app.boosterNumber = data.boosterNumber;
-				app.pickNumber = data.pickNumber;
+				this.boosterNumber = data.boosterNumber;
+				this.pickNumber = data.pickNumber;
 
 				// Only watching, not playing/receiving a boost ourself.
-				if (app.draftingState == DraftState.Watching) return;
+				if (this.draftingState == DraftState.Watching) return;
 
 				for (let cid of data.booster) {
-					app.booster.push(app.genCard(cid));
+					this.booster.push(this.genCard(cid));
 				}
-				app.playSound("next");
-				app.draftingState = DraftState.Picking;
+				this.playSound("next");
+				this.draftingState = DraftState.Picking;
 			});
 
-			this.socket.on("endDraft", function() {
+			this.socket.on("endDraft", () => {
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -587,43 +587,46 @@ var app = new Vue({
 					customClass: SwalCustomClasses,
 					timer: 1500,
 				});
-				app.drafting = false;
-				if (app.draftingState === DraftState.Watching) {
-					app.draftingState = undefined;
+				this.drafting = false;
+				if (this.draftingState === DraftState.Watching) {
+					this.draftingState = undefined;
 				} else {
 					// User was playing
-					app.draftingState = DraftState.Brewing;
+					this.draftingState = DraftState.Brewing;
 				}
 			});
 
-			this.socket.on("draftLog", function(draftLog) {
+			this.socket.on("draftLog", draftLog => {
 				if (draftLog.delayed && draftLog.delayed === true) {
 					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					app.draftLog = undefined;
-					app.savedDraftLog = true;
+					this.draftLog = undefined;
+					this.savedDraftLog = true;
 				} else {
 					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					app.draftLog = draftLog;
+					this.draftLog = draftLog;
 				}
 			});
 
-			this.socket.on("pickAlert", function(data) {
-				app.fireToast("info", `${data.userName} picked ${app.cards[data.cardID].printed_name[app.language]}!`);
+			this.socket.on("pickAlert", data => {
+				this.fireToast(
+					"info",
+					`${data.userName} picked ${this.cards[data.cardID].printed_name[this.language]}!`
+				);
 			});
 
-			this.socket.on("setCardSelection", function(data) {
-				app.clearSideboard();
-				app.clearDeck();
+			this.socket.on("setCardSelection", data => {
+				this.clearSideboard();
+				this.clearDeck();
 				for (let cid of data.flat()) {
-					app.addToDeck(app.genCard(cid));
+					this.addToDeck(this.genCard(cid));
 				}
-				app.draftingState = DraftState.Brewing;
+				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
 				if (Swal.isVisible()) Swal.close();
 			});
 
-			this.socket.on("timer", function(data) {
-				if (data.countdown == 0) app.forcePick(app.booster);
+			this.socket.on("timer", data => {
+				if (data.countdown == 0) this.forcePick(this.booster);
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
 					if (chrono) {
@@ -634,12 +637,12 @@ var app = new Vue({
 						}, 500);
 					}
 				}
-				if (data.countdown > 0 && data.countdown <= 5) app.playSound("countdown");
-				app.pickTimer = data.countdown;
+				if (data.countdown > 0 && data.countdown <= 5) this.playSound("countdown");
+				this.pickTimer = data.countdown;
 			});
 
-			this.socket.on("disableTimer", function() {
-				app.pickTimer = -1;
+			this.socket.on("disableTimer", () => {
+				this.pickTimer = -1;
 			});
 		},
 		playSound: function(key) {
@@ -848,7 +851,7 @@ var app = new Vue({
 				return;
 			}
 			var reader = new FileReader();
-			reader.onload = async function(e) {
+			reader.onload = async e => {
 				let contents = e.target.result;
 
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map(e => e[1]));
@@ -864,7 +867,7 @@ var app = new Vue({
 						const collStr = contents.slice(collection_start, collection_end);
 						const collJson = JSON.parse(collStr)["payload"];
 						// for (let c of Object.keys(collJson).filter((c) => !(c in
-						// app.cards))) console.log(c, " not found.");
+						// this.cards))) console.log(c, " not found.");
 						return collJson;
 					} catch (e) {
 						Swal.fire({
@@ -915,7 +918,7 @@ var app = new Vue({
 				if (collection !== null) {
 					localStorage.setItem("Collection", JSON.stringify(collection));
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					app.setCollection(collection);
+					this.setCollection(collection);
 					Swal.fire({
 						position: "top-end",
 						icon: "success",
@@ -960,7 +963,7 @@ var app = new Vue({
 				let contents = e.target.result;
 
 				const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
-				const parseLine = function(line) {
+				const parseLine = line => {
 					line = line.trim();
 					let [, count, name, set, number] = line.match(lineRegex);
 					if (!count) count = 1;
@@ -979,21 +982,21 @@ var app = new Vue({
 							customClass: SwalCustomClasses,
 						});
 					}
-					let cardID = Object.keys(app.cards).find(
+					let cardID = Object.keys(this.cards).find(
 						id =>
-							app.cards[id].name == name &&
-							(!set || app.cards[id].set === set) &&
-							(!number || app.cards[id].collector_number === number)
+							this.cards[id].name == name &&
+							(!set || this.cards[id].set === set) &&
+							(!number || this.cards[id].collector_number === number)
 					);
 					if (typeof cardID !== "undefined") {
 						return [count, cardID];
 					} else {
 						// If not found, try doubled faced cards before giving up!
-						cardID = Object.keys(app.cards).find(
+						cardID = Object.keys(this.cards).find(
 							id =>
-								app.cards[id].name.startsWith(name + " //") &&
-								(!set || app.cards[id].set === set) &&
-								(!number || app.cards[id].collector_number === number)
+								this.cards[id].name.startsWith(name + " //") &&
+								(!set || this.cards[id].set === set) &&
+								(!number || this.cards[id].collector_number === number)
 						);
 						if (typeof cardID !== "undefined") return [count, cardID];
 					}
@@ -1063,7 +1066,7 @@ var app = new Vue({
 						cardList.length = cardList.cards.length;
 					}
 					if (options && options.name) cardList.name = options.name;
-					app.customCardList = cardList;
+					this.customCardList = cardList;
 				} catch (e) {
 					Swal.fire({
 						icon: "error",
@@ -1112,13 +1115,13 @@ var app = new Vue({
 				return;
 			}
 			var reader = new FileReader();
-			reader.onload = function(e) {
+			reader.onload = e => {
 				try {
 					let contents = e.target.result;
 					let json = JSON.parse(contents);
 					if (json.users) {
-						app.draftLog = json;
-						app.displayedModal = "draftLog";
+						this.draftLog = json;
+						this.displayedModal = "draftLog";
 					} else {
 						Swal.fire({
 							icon: "error",
@@ -1272,14 +1275,14 @@ var app = new Vue({
 		initReadyCheck: function() {
 			this.pendingReadyCheck = true;
 
-			for (let u of app.sessionUsers) u.readyState = ReadyState.Unknown;
+			for (let u of this.sessionUsers) u.readyState = ReadyState.Unknown;
 
 			this.playSound("readyCheck");
 		},
 		stopReadyCheck: function() {
 			this.pendingReadyCheck = false;
 
-			for (let u of app.sessionUsers) u.readyState = ReadyState.DontCare;
+			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
 		shareSavedDraftLog: function() {
 			if (this.userID != this.sessionOwner) {
@@ -1361,13 +1364,13 @@ var app = new Vue({
 		},
 		clearDeck() {
 			this.deck = [];
-			app.$nextTick(() => {
+			this.$nextTick(() => {
 				this.$refs.deckDisplay.sync();
 			});
 		},
 		clearSideboard() {
 			this.sideboard = [];
-			app.$nextTick(() => {
+			this.$nextTick(() => {
 				this.$refs.deckDisplay.sync();
 			});
 		},
@@ -1745,9 +1748,9 @@ var app = new Vue({
 			if (this.userID != this.sessionOwner || !this.customCardList.length) return;
 			this.socket.emit("customCardList", this.customCardList, answer => {
 				if (answer.code === 0) {
-					app.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+					this.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
 				} else {
-					app.fireToast("error", `Error while uploading card list: ${answer.error}`);
+					this.fireToast("error", `Error while uploading card list: ${answer.error}`);
 				}
 			});
 		},
