@@ -24,7 +24,7 @@ import Bracket from "./components/Bracket.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 
 // Preload Carback
-import CardBack from "./assets/img/cardback.png";
+import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
 const img = new Image();
 img.src = CardBack;
 
@@ -179,7 +179,7 @@ var app = new Vue({
 		messagesHistory: [],
 	},
 	methods: {
-		initialize: function() {
+		initializeSocket: function() {
 			let storedUserID = getCookie("userID", null);
 			if (storedUserID != null) {
 				this.userID = storedUserID;
@@ -641,31 +641,6 @@ var app = new Vue({
 			this.socket.on("disableTimer", function() {
 				app.pickTimer = -1;
 			});
-
-			// Look for a locally stored collection
-			let localStorageCollection = localStorage.getItem("Collection");
-			if (localStorageCollection) {
-				try {
-					let json = JSON.parse(localStorageCollection);
-					this.setCollection(json);
-					console.log("Loaded collection from local storage");
-				} catch (e) {
-					console.error(e);
-				}
-			}
-
-			// Look for a previous draftLog
-			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
-			if (tmpDraftLog) {
-				if (tmpDraftLog.delayed) this.savedDraftLog = true;
-				else this.draftLog = tmpDraftLog;
-			}
-
-			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
-
-			for (let key in Sounds) Sounds[key].volume = 0.4;
-			Sounds["countdown"].volume = 0.11;
 		},
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
@@ -1603,26 +1578,51 @@ var app = new Vue({
 	mounted: async function() {
 		// Load all card informations
 		try {
+			let urlParamSession = getUrlVars()["session"];
+			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
+
+			this.initializeSocket();
+
 			const CardData = (await import("../public/data/MTGACards.json")).default;
-			console.log(CardData);
 			for (let c in CardData) {
 				CardData[c].id = c;
 				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
 				if (!("printed_name" in CardData[c])) CardData[c].printed_name = {};
 				if (!("image_uris" in CardData[c])) CardData[c].image_uris = {};
 			}
-
 			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
+
 			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
 			this.handleTranslation("en", DefaultLoc);
 			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
-			this.initialize();
+
+			// Load set informations
+			this.setsInfos = Object.freeze(SetsInfos);
+
+			// Look for a locally stored collection
+			let localStorageCollection = localStorage.getItem("Collection");
+			if (localStorageCollection) {
+				try {
+					let json = JSON.parse(localStorageCollection);
+					this.setCollection(json);
+					console.log("Loaded collection from local storage");
+				} catch (e) {
+					console.error(e);
+				}
+			}
+
+			// Look for a previous draftLog
+			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
+			if (tmpDraftLog) {
+				if (tmpDraftLog.delayed) this.savedDraftLog = true;
+				else this.draftLog = tmpDraftLog;
+			}
+
+			for (let key in Sounds) Sounds[key].volume = 0.4;
+			Sounds["countdown"].volume = 0.11;
 		} catch (e) {
 			alert(e);
 		}
-
-		// Load set informations
-		this.setsInfos = Object.freeze(SetsInfos);
 	},
 	watch: {
 		sessionID: function() {

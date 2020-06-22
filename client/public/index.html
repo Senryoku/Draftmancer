@@ -26,10 +26,9 @@
 	</head>
 	<body>
 		<div id="main-vue">
-			<template v-if="typeof(cards) === 'undefined' || typeof(setsInfos) === 'undefined' || loadedLanguages.length === 0 || typeof(socket) === 'undefined'">
+			<template v-if="typeof(cards) === 'undefined' || typeof(setsInfos) === 'undefined' || loadedLanguages.length === 0">
 				<div class="loading"></div>
-				<span v-if="typeof(cards) === 'undefined' || typeof(setsInfos) === 'undefined' || loadedLanguages.length === 0">Loading cards data...</span>
-				<span v-else-if="typeof(socket) === 'undefined'">Connecting to your session...</span>
+				<span>Loading cards data...</span>
 			</template>
 			<template v-else>
 				<!-- Personal Options -->
