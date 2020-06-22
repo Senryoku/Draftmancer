@@ -911,7 +911,7 @@ describe("Single Draft With Bots and Disconnect", function() {
 			eventCount += 1;
 			if (eventCount >= 2) done();
 		});
-		clients[nonOwnerIdx].connect();
+		clients[nonOwnerIdx].reconnect();
 	});
 
 	it("Pick enough times, and all the drafts should end.", function(done) {
@@ -1375,7 +1375,7 @@ describe("Winston Draft", function() {
 			eventCount += 1;
 			if (eventCount >= 2) done();
 		});
-		clients[nonOwnerIdx].connect();
+		clients[nonOwnerIdx].reconnect();
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function(done) {
