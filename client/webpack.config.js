@@ -1,6 +1,6 @@
 const path = require("path");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+//const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = {
 	mode: "production",
@@ -8,6 +8,7 @@ module.exports = {
 	output: {
 		filename: "index.js",
 		path: path.resolve(__dirname, "public/dist/"),
+		publicPath: "/dist/",
 	},
 	module: {
 		rules: [

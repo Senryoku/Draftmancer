@@ -8,7 +8,7 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
-import DefaultLoc from "../public/data/MTGACards.en.json";
+import SetsInfos from "../public/data/SetsInfos.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
@@ -22,10 +22,9 @@ import Collection from "./components/Collection.vue";
 import CardList from "./components/CardList.vue";
 import Bracket from "./components/Bracket.vue";
 import PatchNotes from "./components/PatchNotes.vue";
-import Toggle from "./components/Toggle.vue";
 
 // Preload Carback
-import CardBack from "./assets/img/cardback.png";
+import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
 const img = new Image();
 img.src = CardBack;
 
@@ -68,7 +67,6 @@ var app = new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
-		Toggle,
 		CardPlaceholder,
 		Card,
 		CardPool,
@@ -181,7 +179,7 @@ var app = new Vue({
 		messagesHistory: [],
 	},
 	methods: {
-		initialize: function() {
+		initializeSocket: function() {
 			let storedUserID = getCookie("userID", null);
 			if (storedUserID != null) {
 				this.userID = storedUserID;
@@ -643,31 +641,6 @@ var app = new Vue({
 			this.socket.on("disableTimer", function() {
 				app.pickTimer = -1;
 			});
-
-			// Look for a locally stored collection
-			let localStorageCollection = localStorage.getItem("Collection");
-			if (localStorageCollection) {
-				try {
-					let json = JSON.parse(localStorageCollection);
-					this.setCollection(json);
-					console.log("Loaded collection from local storage");
-				} catch (e) {
-					console.error(e);
-				}
-			}
-
-			// Look for a previous draftLog
-			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
-			if (tmpDraftLog) {
-				if (tmpDraftLog.delayed) this.savedDraftLog = true;
-				else this.draftLog = tmpDraftLog;
-			}
-
-			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
-
-			for (let key in Sounds) Sounds[key].volume = 0.4;
-			Sounds["countdown"].volume = 0.11;
 		},
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
@@ -1508,9 +1481,9 @@ var app = new Vue({
 		},
 		sessionURLToClipboard: function() {
 			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}${window.location.port ? ":"+window.location.port : ""}/?session=${encodeURI(
-					this.sessionID
-				)}`
+				`${window.location.protocol}//${window.location.hostname}${
+					window.location.port ? ":" + window.location.port : ""
+				}/?session=${encodeURI(this.sessionID)}`
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
 		},
@@ -1604,36 +1577,52 @@ var app = new Vue({
 	},
 	mounted: async function() {
 		// Load all card informations
-		fetch("data/MTGACards.json").then(function(response) {
-			response.json().then(function(parsed) {
-				try {
-					for (let c in parsed) {
-						parsed[c].id = c;
-						if (!("in_booster" in parsed[c])) parsed[c].in_booster = true;
-						if (!("printed_name" in parsed[c])) parsed[c].printed_name = {};
-						if (!("image_uris" in parsed[c])) parsed[c].image_uris = {};
-					}
+		try {
+			let urlParamSession = getUrlVars()["session"];
+			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
-					app.cards = Object.freeze(parsed); // Object.freeze so Vue doesn't make everything reactive.
-					app.handleTranslation("en", DefaultLoc);
-					if (!(app.language in app.loadedLanguages)) app.fetchTranslation(app.language);
-					app.initialize();
-				} catch (e) {
-					alert(e);
-				}
-			});
-		});
+			this.initializeSocket();
 
-		// Load set informations
-		fetch("data/SetsInfos.json").then(function(response) {
-			response.json().then(function(json) {
+			const CardData = (await import("../public/data/MTGACards.json")).default;
+			for (let c in CardData) {
+				CardData[c].id = c;
+				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
+				if (!("printed_name" in CardData[c])) CardData[c].printed_name = {};
+				if (!("image_uris" in CardData[c])) CardData[c].image_uris = {};
+			}
+			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
+
+			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
+			this.handleTranslation("en", DefaultLoc);
+			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
+
+			// Load set informations
+			this.setsInfos = Object.freeze(SetsInfos);
+
+			// Look for a locally stored collection
+			let localStorageCollection = localStorage.getItem("Collection");
+			if (localStorageCollection) {
 				try {
-					app.setsInfos = Object.freeze(json);
+					let json = JSON.parse(localStorageCollection);
+					this.setCollection(json);
+					console.log("Loaded collection from local storage");
 				} catch (e) {
-					alert(e);
+					console.error(e);
 				}
-			});
-		});
+			}
+
+			// Look for a previous draftLog
+			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
+			if (tmpDraftLog) {
+				if (tmpDraftLog.delayed) this.savedDraftLog = true;
+				else this.draftLog = tmpDraftLog;
+			}
+
+			for (let key in Sounds) Sounds[key].volume = 0.4;
+			Sounds["countdown"].volume = 0.11;
+		} catch (e) {
+			alert(e);
+		}
 	},
 	watch: {
 		sessionID: function() {
