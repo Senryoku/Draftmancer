@@ -1,24 +1,20 @@
 <template>
 	<div v-if="isValid">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
-		<span
-			v-if="missing && missing.total > 0"
-		>
+		<span v-if="missing && missing.total > 0">
 			<i class="fas fa-exclamation-triangle yellow"></i>
-			{{ missing.total }} are missing from your collection ({{
-			missingText
-			}})
+			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
 		<button @click="download">Download List</button>
 		<template v-if="cardlist.customSheets">
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
-				<div
-					v-for="(row, rowIndex) in rowsBySlot[key]"
-					:key="'row' + rowIndex"
-					class="category-wrapper"
-				>
-					<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"></card-column>
+				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
+					<card-column
+						v-for="(column, colIndex) in row"
+						:key="'col' + colIndex"
+						:column="column"
+					></card-column>
 				</div>
 			</div>
 		</template>
@@ -89,7 +85,9 @@ export default {
 			return ["common", "uncommon", "rare", "mythic"].map(r => `${this.missing[r]} ${r}s`).join(", ");
 		},
 		flatCardList: function() {
-			return this.cardlist.customSheets ? Object.values(this.cardlist.cards).flat() : this.cardlist.cards;
+			return this.cardlist.customSheets
+				? Object.values(this.cardlist.cards).reduce((acc, val) => acc.concat(val), [])
+				: this.cardlist.cards;
 		},
 	},
 	methods: {
