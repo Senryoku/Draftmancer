@@ -1506,9 +1506,9 @@ var app = new Vue({
 		},
 		sessionURLToClipboard: function() {
 			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}${window.location.port ? ":"+window.location.port : ""}/?session=${encodeURI(
-					this.sessionID
-				)}`
+				`${window.location.protocol}//${window.location.hostname}${
+					window.location.port ? ":" + window.location.port : ""
+				}/?session=${encodeURI(this.sessionID)}`
 			);
 			this.fireToast("success", "Session link copied to clipboard!");
 		},
@@ -1603,7 +1603,8 @@ var app = new Vue({
 	mounted: async function() {
 		// Load all card informations
 		try {
-			const CardData = await import("../public/data/MTGACards.json");
+			const CardData = (await import("../public/data/MTGACards.json")).default;
+			console.log(CardData);
 			for (let c in CardData) {
 				CardData[c].id = c;
 				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
@@ -1612,7 +1613,7 @@ var app = new Vue({
 			}
 
 			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
-			const DefaultLoc = await import("../public/data/MTGACards.en.json");
+			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
 			this.handleTranslation("en", DefaultLoc);
 			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
 			this.initialize();
