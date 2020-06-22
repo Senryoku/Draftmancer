@@ -1508,7 +1508,7 @@ var app = new Vue({
 		},
 		sessionURLToClipboard: function() {
 			copyToClipboard(
-				`${window.location.protocol}//${window.location.hostname}:${window.location.port}/?session=${encodeURI(
+				`${window.location.protocol}//${window.location.hostname}${window.location.port ? ":"+window.location.port : ""}/?session=${encodeURI(
 					this.sessionID
 				)}`
 			);
