@@ -1369,7 +1369,7 @@ var app = new Vue({
 		clearSideboard() {
 			this.sideboard = [];
 			app.$nextTick(() => {
-				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 			});
 		},
 		updateAutoLands: function() {
