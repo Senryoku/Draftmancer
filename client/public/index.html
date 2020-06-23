@@ -133,7 +133,7 @@
 								{{customCardList.name ? customCardList.name : "Custom Card List"}}
 								<template v-if="customCardList.length > 0">
 									({{customCardList.length}} cards
-									<a @click="displayedModal = 'cardList'"><i class="fas fa-file-alt"></i></a>
+									<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'"><i class="fas fa-file-alt"></i></a>
 									)
 								</template>
 								<template v-else>(No list loaded)</template>
