@@ -114,6 +114,8 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
             text = file.read()
             matches = re.findall(
                 r'<[^>]*?data-name="([^"]+)"[^>]*?data-rating="([^"]+)">', text)
+            print("Extracting ratings from ", path,
+                  ": Found ", len(matches), " matches.")
             for m in matches:
                 try:
                     rating = float(m[1])
@@ -122,6 +124,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
                     rating = (float(vals[0]) + float(vals[1]))/2
                 # print(m[0], " ", rating)
                 CardRatings[m[0]] = rating
+
     with open(RatingsDest, 'w') as outfile:
         json.dump(CardRatings, outfile)
 else:
@@ -230,23 +233,27 @@ setFullNames = {
     "iko": "Ikoria: Lair of Behemoths"
 }
 
+
 def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
     with open(svgPath, 'r') as inputFile:
         inputFile.seek(0)
         content = inputFile.read()
-        if 'viewBox="%s"'%expectedViewbox not in content:
+        if 'viewBox="%s"' % expectedViewbox not in content:
             print("svg did not have expected viewbox: %s" % svgPath)
             return
-        content = content.replace('viewBox="%s"'%expectedViewbox,'viewBox="%s"'%correctedViewbox)
+        content = content.replace(
+            'viewBox="%s"' % expectedViewbox, 'viewBox="%s"' % correctedViewbox)
     with open(svgPath, 'w') as outputFile:
         outputFile.write(content)
 
-print("Cards in database:")
+
 with open(FinalDataPath, 'r', encoding="utf8") as file:
     data = json.loads(file.read())
     array = []
     for key, value in data.items():
         array.append(value)
+
+    print("Cards in database: ", len(array))
     array.sort(key=lambda c: c['set'])
     groups = groupby(array, lambda c: c['set'])
     setinfos = {}
