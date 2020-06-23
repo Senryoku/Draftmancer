@@ -1141,7 +1141,12 @@ function Session(id, owner) {
 			let boosters = [utils.getRandom(JumpstartBoosters), utils.getRandom(JumpstartBoosters)];
 			Connections[user].socket.emit(
 				"setCardSelection",
-				boosters.map(b => b.cards).reduce((arr, val) => arr.concat(val), [])
+				boosters
+					.map(b => b.cards)
+					.reduce((arr, val) => {
+						arr.push(val);
+						return arr;
+					}, [])
 			);
 			Connections[user].socket.emit("message", {
 				icon: "success",

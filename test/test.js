@@ -1594,3 +1594,103 @@ describe("Single Draft with Bots and burning", function() {
 		}
 	});
 });
+
+describe("Sealed", function() {
+	let clients = [];
+	let sessionID = "sessionID";
+	const random = new randomjs.Random(randomjs.nodeCrypto);
+	const boosterCount = random.integer(1, 10);
+
+	beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function(done) {
+		let queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				userID: "sameID",
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, done);
+	});
+
+	after(function(done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+		}
+
+		waitForClientDisconnects(done);
+	});
+
+	it(`Owner launch a sealed (${boosterCount} boosters), clients should receive their card selection.`, function(done) {
+		const Sessions = server.__get__("Sessions");
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		let receivedPools = 0;
+		for (let client of clients)
+			client.once("setCardSelection", boosters => {
+				expect(boosters.length).to.equal(boosterCount);
+				++receivedPools;
+				if (receivedPools === clients.length) done();
+			});
+		clients[ownerIdx].emit("distributeSealed", boosterCount);
+	});
+});
+
+describe("Jumpstart", function() {
+	let clients = [];
+	let sessionID = "JumpStartSession";
+
+	beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function(done) {
+		let queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				userID: "sameID",
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, done);
+	});
+
+	after(function(done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+		}
+
+		waitForClientDisconnects(done);
+	});
+
+	it(`Owner launches a Jumpstart game, clients should receive their card selection (2*20 cards).`, function(done) {
+		const Sessions = server.__get__("Sessions");
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		let receivedPools = 0;
+		for (let client of clients) {
+			client.once("setCardSelection", function(boosters) {
+				expect(boosters.length).to.equal(2);
+				for (let b of boosters) expect(b.length).to.equal(20);
+				++receivedPools;
+				if (receivedPools === clients.length) done();
+			});
+		}
+		clients[ownerIdx].emit("distributeJumpstart");
+	});
+});
