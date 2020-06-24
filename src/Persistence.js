@@ -300,7 +300,7 @@ async function logSession(type, session) {
 	try {
 		const putResult = await docClient.put(params).promise();
 		console.log(
-			`Saved draft log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
+			`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
 		);
 	} catch (err) {
 		console.error("saveDraftlog error: ", err);
