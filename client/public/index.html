@@ -139,10 +139,6 @@
 								<template v-else>(No list loaded)</template>
 							</span>
 							<span v-else :class="{ disabled: sessionOwner != userID }">
-								<div class="inline" v-tooltip="'Draft with all cards within set restriction disregarding players collections.'">
-									<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
-									<label for="ignore-collections">Ignore Collections</label>
-								</div>
 								<div class="inline">
 									<label for="set-restriction" v-tooltip="'Restricts to the selected sets. No selection means all cards present in Arena.'">
 										Set(s)
@@ -151,7 +147,7 @@
 										v-if="setsInfos"
 										v-model="setRestriction"
 										placeholder="All"
-										:options="sets"
+										:options="sets.slice().reverse()"
 										:searchable="false"
 										:allow-empty="true"
 										:close-on-select="false"
@@ -177,6 +173,10 @@
 											</span>
 										</template>
 									</multiselect>
+									<div class="inline" v-tooltip="'Draft with all cards within set restriction disregarding players collections.'">
+										<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
+										<label for="ignore-collections">Ignore Collections</label>
+									</div>
 								</div>
 							</span>
 						</span>
