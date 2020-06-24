@@ -473,6 +473,7 @@
 					<div class="controls">
 						<h2>Deck ({{deck.length}})</h2>
 						<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
+						<button v-if="deck.length > 0" type="button" @click="exportDeck(false)">Export (Simple)</button>
 						<span v-show="draftingState == DraftState.Brewing">
 							<input type="checkbox" id="autoLand" v-model="autoLand" />
 							<label for="autoLand" v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'">
