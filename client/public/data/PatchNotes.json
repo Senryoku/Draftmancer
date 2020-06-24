@@ -1,5 +1,9 @@
 [
 	{
+		"date": "23/06/2020",
+		"notes": ["Added sort by color and rarity.", "Improved Edge compatibility.", "Minor front-end changes."]
+	},
+	{
 		"date": "19/06/2020",
 		"notes": [
 			"Improved default card sorting (thanks Squerp!)",

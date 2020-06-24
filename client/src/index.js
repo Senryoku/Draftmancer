@@ -1,4 +1,5 @@
 "use strict";
+import "core-js/features/string/match-all";
 import io from "../../node_modules/socket.io-client/dist/socket.io.js";
 import Vue from "vue";
 import draggable from "vuedraggable";
@@ -615,7 +616,7 @@ new Vue({
 			this.socket.on("setCardSelection", data => {
 				this.clearSideboard();
 				this.clearDeck();
-				for (let cid of data.flat()) {
+				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
 					this.addToDeck(this.genCard(cid));
 				}
 				this.draftingState = DraftState.Brewing;
@@ -1077,11 +1078,11 @@ new Vue({
 			};
 			reader.readAsText(file);
 		},
-		exportDeck: function() {
-			copyToClipboard(this.exportMTGA(this.deck, this.sideboard, this.language, this.lands));
+		exportDeck: function(full = true) {
+			copyToClipboard(this.exportMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			this.fireToast("success", "Deck exported to clipboard!");
 		},
-		cardToMTGAExport: function(c, language) {
+		cardToMTGAExport: function(c, language, full) {
 			let set = c.set.toUpperCase();
 			if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
 			if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
@@ -1091,17 +1092,18 @@ new Vue({
 			let idx = name.indexOf("//");
 			// Ravnica Splits cards needs both names to be imported, others don't
 			if (idx != -1 && c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
-			return `1 ${name} (${set}) ${c.collector_number}\n`;
+			if (full) return `1 ${name} (${set}) ${c.collector_number}\n`;
+			else return `1 ${name}\n`;
 		},
-		exportMTGA: function(deck, sideboard, language, lands) {
-			let str = "Deck\n";
-			for (let c of deck) str += this.cardToMTGAExport(c, language);
+		exportMTGA: function(deck, sideboard, language, lands, full = true) {
+			let str = full ? "Deck\n" : "";
+			for (let c of deck) str += this.cardToMTGAExport(c, language, full);
 			if (lands) {
 				for (let c in lands) if (lands[c] > 0) str += `${lands[c]} ${Constant.BasicLandNames[language][c]}\n`;
 			}
 			if (sideboard && sideboard.length > 0) {
-				str += "\nSideboard\n";
-				for (let c of sideboard) str += this.cardToMTGAExport(c, language);
+				str += full ? "\nSideboard\n" : "\n";
+				for (let c of sideboard) str += this.cardToMTGAExport(c, language, full);
 				// Add some basic lands to the sideboard
 				for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${Constant.BasicLandNames[language][c]}\n`;
 			}
@@ -1369,7 +1371,7 @@ new Vue({
 		clearSideboard() {
 			this.sideboard = [];
 			this.$nextTick(() => {
-				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 			});
 		},
 		updateAutoLands: function() {

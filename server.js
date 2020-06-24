@@ -867,13 +867,20 @@ app.get("/getConnections/:key", (req, res) => {
 app.get("/getStatus/:key", (req, res) => {
 	if (req.params.key === secretKey) {
 		let draftingSessions = 0;
-		for (let sID in Sessions) if (Sessions[sID].drafting) ++draftingSessions;
+		let draftingPlayers = 0;
+		for (let sID in Sessions) {
+			if (Sessions[sID].drafting) {
+				++draftingSessions;
+				draftingPlayers += Sessions[sID].users.size;
+			}
+		}
 		let uptime = process.uptime();
 		returnJSON(res, {
 			uptime: uptime,
 			sessionCount: Object.keys(Sessions).length,
 			playerCount: Object.keys(Connections).length,
 			draftingSessions: draftingSessions,
+			draftingPlayers: draftingPlayers,
 			canRestart: draftingSessions === 0,
 		});
 	} else {

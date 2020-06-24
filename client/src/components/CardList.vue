@@ -85,7 +85,9 @@ export default {
 			return ["common", "uncommon", "rare", "mythic"].map(r => `${this.missing[r]} ${r}s`).join(", ");
 		},
 		flatCardList: function() {
-			return this.cardlist.customSheets ? Object.values(this.cardlist.cards).flat() : this.cardlist.cards;
+			return this.cardlist.customSheets
+				? Object.values(this.cardlist.cards).reduce((acc, val) => acc.concat(val), [])
+				: this.cardlist.cards;
 		},
 	},
 	methods: {
