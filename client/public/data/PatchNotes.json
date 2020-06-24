@@ -1,5 +1,14 @@
 [
 	{
+		"date": "24/06/2020",
+		"notes": [
+			"Added 'Export (Simple)' option to export deck and sideboard without set information (Useful to make better use of your existing collection in Arena or to import in other programs).",
+			"Added JiRock's Historic Cube to the preset list.",
+			"Bots should be slightly less dumb when drafting M21.",
+			"Minor style changes."
+		]
+	},
+	{
 		"date": "23/06/2020",
 		"notes": ["Added sort by color and rarity.", "Improved Edge compatibility.", "Minor front-end changes."]
 	},
