@@ -75,7 +75,7 @@ const SpecialLandSlots = {
 		BasicLandIDs["m21"],
 		[72025, 72026, 72027, 72029, 72031, 72032, 72033, 72039, 72040, 72041],
 		1 / 2
-	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
+	), // Gain Lands
 };
 
 const BasicLandSlots = {};
