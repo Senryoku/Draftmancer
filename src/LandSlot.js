@@ -73,9 +73,9 @@ const SpecialLandSlots = {
 	), // Evoling Wilds (71314) and Gain Lands
 	m21: landSlotHandler(
 		BasicLandIDs["m21"],
-		[72025, 72026, 72027, 72029, 72030, 72031, 72032, 72033, 72039, 72040, 72041],
+		[72025, 72026, 72027, 72029, 72031, 72032, 72033, 72039, 72040, 72041],
 		1 / 2
-	), // Gain Lands and Radiant Fountain (72030)
+	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
 };
 
 const BasicLandSlots = {};

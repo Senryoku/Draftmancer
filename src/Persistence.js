@@ -292,8 +292,9 @@ async function logSession(type, session) {
 		ReturnConsumedCapacity: "TOTAL",
 		Item: {
 			id: localSess.id,
+			time: new Date().getTime(),
 			type: type === "" ? null : type,
-			session: filterForDDB(JSON.parse(JSON.stringify(localSess))),
+			session: filterForDDB(localSess),
 		},
 	};
 
