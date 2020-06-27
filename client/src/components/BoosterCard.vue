@@ -1,11 +1,5 @@
 <template>
-	<card
-		:card="card"
-		:language="language"
-		:class="{ selected: selected, burned: burned }"
-		@click="$emit('click')"
-		@dblclick="$emit('dblclick')"
-	>
+	<card :card="card" :language="language" :class="{ selected: selected, burned: burned }">
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>

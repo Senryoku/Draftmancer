@@ -720,18 +720,58 @@ new Vue({
 			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
-		pickCard: function() {
+		allowBoosterCardDrop: function(e) {
+			// Allow dropping only if the dragged object is the selected card
+
+			// A better (?) solution would be something like
+			// 		let cardid = e.dataTransfer.getData("text");
+			// 		if (this.selectedCard && cardid == this.selectedCard.id) {
+			// but only Firefox allows to check for dataTransfer in this event (and it's against the standard)
+
+			if (e.dataTransfer.types.includes("isboostercard")) {
+				e.preventDefault();
+				e.dataTransfer.dropEffect = "move";
+				return false;
+			}
+		},
+		dragBoosterCard: function(e, card) {
+			e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
+			e.dataTransfer.setData("text", card.id);
+			e.dataTransfer.effectAllowed = "move";
+			this.selectCard(null, card);
+		},
+		dropBoosterCard: function(e, options) {
+			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
+			if (e.dataTransfer.getData("isboostercard") !== "true" || this.draftingState != DraftState.Picking) return;
+			e.preventDefault();
+			let cardid = e.dataTransfer.getData("text");
+			if (!this.selectedCard) {
+				console.error(`dropBoosterCard error: this.selectedCard === ${this.selectedCard}`);
+				return;
+			}
+			if (cardid != this.selectedCard.id) {
+				console.error(
+					`dropBoosterCard error: cardid (${cardid}) != this.selectedCard.id (${this.selectedCard.id})`
+				);
+				return;
+			} else {
+				this.pickCard(options);
+			}
+		},
+		pickCard: function(options) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				this.draftingState != DraftState.Picking ||
-				!this.selectedCard ||
-				this.burningCards.length > this.burnedCardsPerRound ||
-				(this.burningCards.length !== this.burnedCardsPerRound &&
-					this.booster.length !== this.burningCards.length + 1) // Allows for burning less cards
-				// only if we're finishing the
-				// booster
+				!this.selectedCard
 			)
 				return;
+			if (!this.validBurnedCardCount) {
+				this.fireToast(
+					"error",
+					`You need to burn ${this.cardsToBurnThisRound - this.burningCards.length} more card(s).`
+				);
+				return;
+			}
 
 			if (this.socket.disconnected) {
 				this.disconnectedReminder();
@@ -751,7 +791,8 @@ new Vue({
 					}
 				);
 				this.draftingState = DraftState.Waiting;
-				this.addToDeck(this.selectedCard);
+				if (options && options.toSideboard) this.addToSideboard(this.selectedCard);
+				else this.addToDeck(this.selectedCard);
 				this.selectedCard = undefined;
 				this.burningCards = [];
 			});
@@ -1511,6 +1552,14 @@ new Vue({
 		},
 		ReadyState: function() {
 			return ReadyState;
+		},
+		validBurnedCardCount: function() {
+			// Allows for burning less cards only if we're finishing the booster
+			return (
+				this.burningCards.length <= this.burnedCardsPerRound &&
+				(this.burningCards.length === this.burnedCardsPerRound ||
+					this.booster.length === this.burningCards.length + 1)
+			);
 		},
 		cardsToBurnThisRound: function() {
 			return Math.min(this.burnedCardsPerRound, this.booster.length - 1);
