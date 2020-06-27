@@ -810,7 +810,7 @@ ul.player-list {
 
 .slide-fade-right-leave-active .selected,
 .slide-fade-left-leave-active .selected {
-	transition: all 0.3s ease-in, opacity 0.2s ease-in;
+	transition: all 0.3s ease-in, opacity 0.2s ease-in !important;
 }
 .slide-fade-right-leave-to .selected,
 .slide-fade-left-leave-to .selected {

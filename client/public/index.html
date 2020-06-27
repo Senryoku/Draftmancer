@@ -403,19 +403,19 @@
 								</span>
 							</div>
 							<div class="booster card-container">
-								<card
+								<booster-card
 									v-for="(card, index) in booster"
 									:key="`card-booster-${card.uniqueID}`"
 									:card="card"
 									:language="language"
-									:selectcard="selectCard"
-									:ondblclick="doubleClickCard"
-									:selected="selectedCard === card"
 									:canbeburned="burnedCardsPerRound > 0"
 									:burned="burningCards.includes(card)"
-									:burn="burnCard"
-									:restore="restoreCard"
-								></card>
+									:class="{selected: selectedCard === card}"
+									@click="selectCard($event, card)"
+									@dblclick="doubleClickCard($event, card)"
+									@burn="burnCard($event, card)"
+									@restore="restoreCard($event, card)"
+								></booster-card>
 							</div>
 						</div>
 					</transition>
