@@ -7,10 +7,10 @@
 		@dblclick="$emit('dblclick')"
 	>
 		<template v-if="canbeburned && !selected">
-			<div v-if="burned" class="restore-card blue clickable" @click="$emit('restore')">
+			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>
 			</div>
-			<div v-else class="burn-card red clickable" @click="$emit('burn')">
+			<div v-else class="burn-card red clickable" @click="burnCard($event)">
 				<i class="fas fa-ban fa-2x"></i>
 			</div>
 		</template>
@@ -28,6 +28,18 @@ export default {
 		selected: { type: Boolean, default: false },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
+	},
+	methods: {
+		burnCard: function(e) {
+			this.$emit("burn");
+			e.stopPropagation();
+			e.preventDefault();
+		},
+		restoreCard: function(e) {
+			this.$emit("restore");
+			e.stopPropagation();
+			e.preventDefault();
+		},
 	},
 };
 </script>
