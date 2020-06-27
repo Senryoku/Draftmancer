@@ -70,7 +70,7 @@ const SpecialLandSlots = {
 		BasicLandIDs["iko"],
 		[71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
 		1 / 2
-	), // Gain Lands; Evoling Wilds (71314) is found in th common slot
+	), // Gain Lands; Evoling Wilds (71314) is found in the common slot
 	m21: landSlotHandler(
 		BasicLandIDs["m21"],
 		[72025, 72026, 72027, 72029, 72031, 72032, 72033, 72039, 72040, 72041],
