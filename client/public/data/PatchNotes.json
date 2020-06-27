@@ -1,5 +1,9 @@
 [
 	{
+		"date": "27/06/2020",
+		"notes": ["Cards from booster can now be picked by drag & drop."]
+	},
+	{
 		"date": "24/06/2020",
 		"notes": [
 			"Added 'Export (Simple)' option to export deck and sideboard without set information (Useful to make better use of your existing collection in Arena or to import in other programs).",
