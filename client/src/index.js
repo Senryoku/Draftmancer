@@ -13,6 +13,8 @@ import SetsInfos from "../public/data/SetsInfos.json";
 import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
+import Card from "./components/Card.vue";
+import CardPlaceholder from "./components/CardPlaceholder.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
@@ -67,6 +69,8 @@ new Vue({
 	el: "#main-vue",
 	components: {
 		Modal,
+		Card,
+		CardPlaceholder,
 		BoosterCard,
 		CardPool,
 		DraftLogPick,
