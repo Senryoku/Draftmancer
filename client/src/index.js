@@ -241,7 +241,7 @@ new Vue({
 
 			this.socket.on("setSession", sessionID => {
 				this.sessionID = sessionID;
-				this.query.sessionID = sessionID;
+				this.socket.query.sessionID = sessionID;
 				if (this.drafting) {
 					// Expelled during drafting
 					this.drafting = false;
