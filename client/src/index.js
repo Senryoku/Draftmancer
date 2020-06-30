@@ -222,7 +222,7 @@ new Vue({
 
 			this.socket.on("alreadyConnected", newID => {
 				this.userID = newID;
-				this.query.userID = newID;
+				this.socket.query.userID = newID;
 			});
 
 			this.socket.on("chatMessage", message => {
