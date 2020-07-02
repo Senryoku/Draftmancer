@@ -17,15 +17,19 @@ FinalDataPath = 'client/public/data/MTGACards.json'
 SetsInfosPath = 'client/public/data/SetsInfos.json'
 BasicLandIDsPath = 'client/public/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
+JumpstartBoostersFolder = 'data/JumpstartBoosters'
+JumpstartSwaps = "data/JumpstartSwaps.json"
+JumpstartBoostersDist = 'data/JumpstartBoosters.json'
 RatingsDest = 'data/ratings.json'
 
-ForceDownload = ForceExtract = ForceCache = ForceRatings = False
+ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = False
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
     ForceDownload = Arg == "dl"
     ForceExtract = ForceDownload or Arg == "extract"
     ForceCache = ForceExtract or Arg == "cache"
     ForceRatings = Arg == "ratings"
+    ForceJumpstart = Arg == "jmp"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
@@ -129,6 +133,7 @@ else:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
 if not os.path.isfile(FinalDataPath) or ForceCache:
+    cards = {}
     # Tag non booster card as such
     print("Requesting non-booster cards list...")
     NonBoosterCards = []
@@ -164,7 +169,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     "zhs": {},
                     "zht": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
-        cards = {}
         arena_cards = json.loads(file.read())
         for c in arena_cards:
             translation = {}
@@ -212,6 +216,54 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
 
+
+cards = {}
+with open(FinalDataPath, 'r', encoding="utf8") as file:
+    cards = json.loads(file.read())
+
+# Retrieve basic land ids for each set
+BasicLandIDs = {}
+for cid in cards:
+    if cards[cid]["name"] in ["Plains", "Island", "Swamp", "Mountain", "Forest"]:
+        if(cards[cid]["set"] not in BasicLandIDs):
+            BasicLandIDs[cards[cid]["set"]] = []
+        BasicLandIDs[cards[cid]["set"]].append(cid)
+    for set in BasicLandIDs:
+        BasicLandIDs[set].sort()
+with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
+    json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
+
+if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
+    jumpstartBoosters = []
+    cardPool = {}
+    for key in cards:
+        if cards[key]['set'] in ['jmp', 'm21']:
+            cardPool[cards[key]['name']] = key
+
+    regex = re.compile("(\d+) (.*)")
+    swaps = {}
+    with open(JumpstartSwaps, 'r', encoding="utf8") as file:
+        swaps = json.loads(file.read())
+    for path in glob.glob('{}/*.txt'.format(JumpstartBoostersFolder)):
+        with open(path, 'r', encoding="utf8") as file:
+            lines = file.readlines()
+            booster = {"name": lines[0].strip(), "cards": []}
+            for line in lines[1:]:
+                m = regex.match(line.strip())
+                if m:
+                    count = int(m.group(1))
+                    name = m.group(2)
+                    if name in swaps:
+                        name = swaps[name]
+                    if name in cardPool:
+                        booster["cards"] += [cardPool[name]] * count
+                    else:
+                        print("Jumpstart Boosters: Card '{}' not found.".format(name))
+            jumpstartBoosters.append(booster)
+    print("Jumpstart Boosters: ", len(jumpstartBoosters))
+    with open(JumpstartBoostersDist, 'w', encoding="utf8") as outfile:
+        json.dump(jumpstartBoosters, outfile, ensure_ascii=False)
+
 setFullNames = {
     "ana": "Arena",
     "akh": "Amonkhet",
@@ -230,66 +282,55 @@ setFullNames = {
     "iko": "Ikoria: Lair of Behemoths"
 }
 
+
 def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
     with open(svgPath, 'r') as inputFile:
         inputFile.seek(0)
         content = inputFile.read()
-        if 'viewBox="%s"'%expectedViewbox not in content:
+        if 'viewBox="%s"' % expectedViewbox not in content:
             print("svg did not have expected viewbox: %s" % svgPath)
             return
-        content = content.replace('viewBox="%s"'%expectedViewbox,'viewBox="%s"'%correctedViewbox)
+        content = content.replace(
+            'viewBox="%s"' % expectedViewbox, 'viewBox="%s"' % correctedViewbox)
     with open(svgPath, 'w') as outputFile:
         outputFile.write(content)
 
-print("Cards in database:")
-with open(FinalDataPath, 'r', encoding="utf8") as file:
-    data = json.loads(file.read())
-    array = []
-    for key, value in data.items():
-        array.append(value)
-    array.sort(key=lambda c: c['set'])
-    groups = groupby(array, lambda c: c['set'])
-    setinfos = {}
-    for set, group in groups:
-        cardList = list(group)
-        setinfos[set] = {}
-        # Get set icon
-        icon_path = "img/sets/{}.svg".format(set)
-        # con is a reserved keyword on windows; we don't need it anyway.
-        if not os.path.isfile("client/public/" + icon_path) and set != "con":
-            response = requests.get(
-                "https://api.scryfall.com/sets/{}".format(set))
-            scryfall_set_data = json.loads(response.content)
-            if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
-                urllib.request.urlretrieve(
-                    scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
-                if set == "rna":
-                    overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
-                setinfos[set]["icon"] = icon_path
-        else:
-            setinfos[set]["icon"] = icon_path
-        if set in setFullNames:
-            setinfos[set]["fullName"] = setFullNames[set]
-        else:
-            setinfos[set]["fullName"] = set
-        setinfos[set]["cardCount"] = len(cardList)
-        print('\t', set, ": ", len(cardList))
-        cardList.sort(key=lambda c: c['rarity'])
-        for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
-            rarityGroupList = list(rarityGroup)
-            setinfos[set][rarity + "Count"] = len(rarityGroupList)
-            # print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
-    with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
-        json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
-        # Retrieve basic land ids for each set
-    BasicLandIDs = {}
-    for cid in data:
-        if data[cid]["name"] in ["Plains", "Island", "Swamp", "Mountain", "Forest"]:
-            if(data[cid]["set"] not in BasicLandIDs):
-                BasicLandIDs[data[cid]["set"]] = []
-            BasicLandIDs[data[cid]["set"]].append(cid)
-        for set in BasicLandIDs:
-            BasicLandIDs[set].sort()
-    with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
-        json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
+print("Cards in database:")
+array = []
+for key, value in cards.items():
+    array.append(value)
+array.sort(key=lambda c: c['set'])
+groups = groupby(array, lambda c: c['set'])
+setinfos = {}
+for set, group in groups:
+    cardList = list(group)
+    setinfos[set] = {}
+    # Get set icon
+    icon_path = "img/sets/{}.svg".format(set)
+    # con is a reserved keyword on windows; we don't need it anyway.
+    if not os.path.isfile("client/public/" + icon_path) and set != "con":
+        response = requests.get(
+            "https://api.scryfall.com/sets/{}".format(set))
+        scryfall_set_data = json.loads(response.content)
+        if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
+            urllib.request.urlretrieve(
+                scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
+            if set == "rna":
+                overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
+            setinfos[set]["icon"] = icon_path
+    else:
+        setinfos[set]["icon"] = icon_path
+    if set in setFullNames:
+        setinfos[set]["fullName"] = setFullNames[set]
+    else:
+        setinfos[set]["fullName"] = set
+    setinfos[set]["cardCount"] = len(cardList)
+    print('\t', set, ": ", len(cardList))
+    cardList.sort(key=lambda c: c['rarity'])
+    for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
+        rarityGroupList = list(rarityGroup)
+        setinfos[set][rarity + "Count"] = len(rarityGroupList)
+        # print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
+with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
+    json.dump(setinfos, setinfosfile, ensure_ascii=False)

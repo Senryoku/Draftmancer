@@ -1152,8 +1152,9 @@ function Session(id, owner) {
 				icon: "success",
 				imageUrl: "/img/2JumpstartBoosters.png",
 				title: "Here are your Jumpstart boosters!",
-				text: `You got '${boosters[0].name}' and '${boosters[0].name}'.`,
+				text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
 				showConfirmButton: false,
+				timer: 2000,
 			});
 		}
 
