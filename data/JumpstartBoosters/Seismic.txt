@@ -1,0 +1,20 @@
+Seismic
+
+1 Ashmouth Hound
+1 Bloodrock Cyclops
+1 Cinder Elemental
+1 Grim Lavamancer
+1 Molten Ravager
+1 Seismic Elemental
+
+1 Magma Jet
+1 Magmaquake
+1 Volcanic Fallout
+1 Volcanic Geyser
+
+1 Spitting Earth
+
+1 Mana Geode
+
+1 Thriving Bluff
+7 Mountain

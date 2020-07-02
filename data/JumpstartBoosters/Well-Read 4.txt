@@ -1,0 +1,19 @@
+Well-Read 4
+
+1 Cloudreader Sphinx
+1 Library Larcenist
+1 Mystic Archaeologist
+1 Oneirophage
+1 Runed Servitor
+1 Suspicious Bookcase
+1 Tolarian Kraken
+1 Tome Anima
+
+1 Opt
+1 Read the Runes
+
+1 Capture Sphere
+1 Curiosity
+
+1 Thriving Isle
+7 Island
