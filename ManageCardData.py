@@ -118,6 +118,8 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
             text = file.read()
             matches = re.findall(
                 r'<[^>]*?data-name="([^"]+)"[^>]*?data-rating="([^"]+)">', text)
+            print("Extracting ratings from ", path,
+                  ": Found ", len(matches), " matches.")
             for m in matches:
                 try:
                     rating = float(m[1])
@@ -126,6 +128,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
                     rating = (float(vals[0]) + float(vals[1]))/2
                 # print(m[0], " ", rating)
                 CardRatings[m[0]] = rating
+
     with open(RatingsDest, 'w') as outfile:
         json.dump(CardRatings, outfile)
 else:
@@ -296,10 +299,12 @@ def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
         outputFile.write(content)
 
 
-print("Cards in database:")
+
 array = []
 for key, value in cards.items():
     array.append(value)
+
+print("Cards in database: ", len(array))
 array.sort(key=lambda c: c['set'])
 groups = groupby(array, lambda c: c['set'])
 setinfos = {}
@@ -318,6 +323,8 @@ for set, group in groups:
                 scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
             if set == "rna":
                 overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
+            setinfos[set]["icon"] = icon_path
+    else:
             setinfos[set]["icon"] = icon_path
     else:
         setinfos[set]["icon"] = icon_path

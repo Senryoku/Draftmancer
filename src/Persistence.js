@@ -17,6 +17,7 @@ const DisablePersistence = typeof global.it === "function" || process.env.DISABL
 const TableNames = {
 	Connections: process.env.TABLENAME_CONNECTIONS ? process.env.TABLENAME_CONNECTIONS : "mtga-draft-connections",
 	Sessions: process.env.TABLENAME_SESSIONS ? process.env.TABLENAME_SESSIONS : "mtga-draft-sessions",
+	DraftLogs: process.env.TABLENAME_SESSIONLOGS ? process.env.TABLENAME_SESSIONLOGS : "mtga-draft-session-logs",
 };
 
 AWS.config.update({
@@ -29,6 +30,17 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 function filterEmptyStr(obj) {
 	if (obj === "") return "(EmptyString)";
 	return obj;
+}
+
+// Recursivly filter empty strings (DynamoDB doesn't support them.) and functions
+// Warning: This mutates the supplied object!
+function filterForDDB(obj) {
+	if (typeof obj === "object" && obj !== null) {
+		for (const [key, value] of Object.entries(obj)) obj[key] = filterForDDB(value);
+		return obj;
+	}
+	if (typeof obj === "function") return null;
+	return filterEmptyStr(obj);
 }
 
 function restoreEmptyStr(obj) {
@@ -90,10 +102,10 @@ async function requestSavedSessions() {
 
 		for (let s of data.Items) {
 			const fixedID = restoreEmptyStr(s.id);
-			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map((n) => restoreEmptyStr(n));
+			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map(n => restoreEmptyStr(n));
 
 			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
-			for (let prop of Object.getOwnPropertyNames(s.data).filter((p) => !["botsInstances"].includes(p))) {
+			for (let prop of Object.getOwnPropertyNames(s.data).filter(p => !["botsInstances"].includes(p))) {
 				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
 			}
 
@@ -148,7 +160,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		}
 	}
 
-	const batchWrite = async function (table, Items) {
+	const batchWrite = async function(table, Items) {
 		console.log(`batchWrite of length ${Items.length} to ${table}.`);
 		const params = {
 			RequestItems: {},
@@ -176,7 +188,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 			data: {},
 		};
 
-		for (let prop of Object.getOwnPropertyNames(c).filter((p) => p !== "socket")) {
+		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
 			if (!(c[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(c[prop]);
 		}
 
@@ -202,7 +214,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
-			(p) => !["users", "countdownInterval", "botsInstances"].includes(p)
+			p => !["users", "countdownInterval", "botsInstances"].includes(p)
 		)) {
 			if (!(s[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(s[prop]);
 		}
@@ -238,7 +250,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 			}
 		}
 
-		if (s.bracket) Item.data.bracket.players = Item.data.bracket.players.map((n) => filterEmptyStr(n));
+		if (s.bracket) Item.data.bracket.players = Item.data.bracket.players.map(n => filterEmptyStr(n));
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
@@ -253,7 +265,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	}
 
 	console.log("Waiting for all promises to return...");
-	await Promise.all(Promises).then((vals) => {
+	await Promise.all(Promises).then(vals => {
 		console.log("All batchWrites returned.");
 		for (let v of vals) ConsumedCapacity += v;
 	});
@@ -262,20 +274,56 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
+async function logSession(type, session) {
+	let localSess = JSON.parse(JSON.stringify(session));
+	localSess.users = [...session.users]; // Stringifying doesn't support Sets
+	// Anonymize Draft Log
+	localSess.id = new Date().toISOString();
+	if (localSess.draftLog) {
+		localSess.draftLog.sessionID = localSess.id;
+		let idx = 0;
+		if (localSess.draftLog.users)
+			for (let uid in localSess.draftLog.users)
+				if (!localSess.draftLog.users[uid].userName.startsWith("Bot #"))
+					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
+	}
+	const params = {
+		TableName: TableNames.DraftLogs,
+		ReturnConsumedCapacity: "TOTAL",
+		Item: {
+			id: localSess.id,
+			time: new Date().getTime(),
+			type: type === "" ? null : type,
+			session: filterForDDB(localSess),
+		},
+	};
+
+	try {
+		const putResult = await docClient.put(params).promise();
+		console.log(
+			`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
+		);
+	} catch (err) {
+		console.error("saveDraftlog error: ", err);
+		console.error(params);
+	}
+}
+
 if (DisablePersistence) {
 	module.exports.InactiveSessions = {};
 	module.exports.InactiveConnections = {};
+	module.exports.logSession = () => {};
 } else {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
 	// See https://nodejs.org/api/process.html#process_event_beforeexit
-	process.on("beforeExit", (code) => {
+	process.on("beforeExit", code => {
 		console.log("beforeExit callback.");
 	});
 
 	// Only synchronous calls, called on process.exit()
 	// See https://nodejs.org/api/process.html#process_event_exit
-	process.on("exit", (code) => {
+	process.on("exit", code => {
 		console.log(`exit callback: Process exited with code: ${code}`);
 	});
 
@@ -288,7 +336,7 @@ if (DisablePersistence) {
 		console.log("Received SIGTERM.");
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout((_) => {
+		setTimeout(_ => {
 			process.exit(0);
 		}, 20000);
 	});
@@ -297,21 +345,22 @@ if (DisablePersistence) {
 		console.log("Received SIGINT.");
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout((_) => {
+		setTimeout(_ => {
 			process.exit(0);
 		}, 20000);
 	});
 
-	process.on("uncaughtException", (err) => {
+	process.on("uncaughtException", err => {
 		console.error("Uncaught Exception thrown: ");
 		console.error(err);
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout((_) => {
+		setTimeout(_ => {
 			process.exit(1);
 		}, 20000);
 	});
 
 	module.exports.InactiveSessions = requestSavedSessions();
 	module.exports.InactiveConnections = requestSavedConnections();
+	module.exports.logSession = logSession;
 }

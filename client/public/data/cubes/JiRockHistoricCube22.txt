@@ -1,0 +1,360 @@
+Blood Crypt
+Hallowed Fountain
+Temple Garden
+Godless Shrine
+Sacred Foundry
+Watery Grave
+Steam Vents
+Breeding Pool
+Overgrown Tomb
+Stomping Ground
+Glacial Fortress
+Fabled Passage
+Evolving Wilds
+Isolated Chapel
+Clifftop Retreat
+Sunpetal Grove
+Drowned Catacomb
+Sulfur Falls
+Hinterland Harbor
+Dragonskull Summit
+Rootbound Crag
+Woodland Cemetery
+Chromatic Lantern
+Dryad of the Ilysian Grove
+Temple of Enlightenment
+Temple of Abandon
+Temple of Epiphany
+Temple of Malady
+Temple of Malice
+Temple of Mystery
+Temple of Deceit
+Temple of Plenty
+Temple of Silence
+Temple of Triumph
+Treasure Map
+Mayhem Devil
+Woe Strider
+Prime Speaker Vannifar
+Hydroid Krasis
+Agent of Treachery
+Find // Finality
+Tajic, Legion's Edge
+Aurelia, Exemplar of Justice
+Fight with Fire
+Finale of Devastation
+Kenrith, the Returned King
+Cryptbreaker
+Thalia, Guardian of Thraben
+Mentor of the Meek
+Dance of the Manse
+Incubation Druid
+Paradise Druid
+Alela, Artful Provocateur
+Setessan Champion
+Yarok, the Desecrated
+Fauna Shaman
+Doom Foretold
+Jadelight Ranger
+Korvold, Fae-Cursed King
+Thassa's Oracle
+Hostage Taker
+Teferi, Time Raveler
+Brazen Borrower
+Bonecrusher Giant
+Murderous Rider
+Growing Rites of Itlimoc
+Isareth the Awakener
+Midnight Clock
+Siege-Gang Commander
+Goblin Cratermaker
+Golden Egg
+Guild Globe
+Mind Stone
+Elspeth Conquers Death
+Trostani Discordant
+Meteor Golem
+History of Benalia
+Ajani's Pridemate
+Ajani, Strength of the Pride
+Resplendent Angel
+Adanto Vanguard
+Skittering Surveyor
+Arcanist's Owl
+Sai, Master Thopterist
+Archon of Sun's Grace
+Emry, Lurker of the Loch
+Witching Well
+Traveler's Amulet
+Remorseful Cleric
+Vantress Gargoyle
+Ajani, Adversary of Tyrants
+Thassa, Deep-Dwelling
+The Antiquities War
+Judith, the Scourge Diva
+Soul Warden
+Daxos, Blessed by the Sun
+Heliod, Sun-Crowned
+Charming Prince
+Rekindling Phoenix
+Phoenix of Ash
+Fountain of Renewal
+Calix, Destiny's Hand
+Anax, Hardened in the Forge
+The Akroan War
+Reclamation Sage
+Gadwick, the Wizened
+Shepherd of the Flock
+Search for Azcanta
+Chart a Course
+Thassa's Intervention
+Thrill of Possibility
+Midnight Reaper
+Ravenous Chupacabra
+Eat to Extinction
+Thought Erasure
+Cavalier of Thorns
+Scorching Dragonfire
+Dragonmaster Outcast
+Brain Maggot
+Biogenic Ooze
+Rix Maadi Reveler
+Opt
+Rankle, Master of Pranks
+Thorn Mammoth
+Domri, Anarch of Bolas
+Blink of an Eye
+Cleansing Nova
+Llanowar Elves
+Atris, Oracle of Half-Truths
+The Birth of Meletis
+The Binding of the Titans
+Banishing Light
+Aphemia, the Cacophony
+Tymaret Calls the Dead
+Mire Triton
+Sigil of the Empty Throne
+Kroxa, Titan of Death's Hunger
+Nightmare Shepherd
+Sinister Sabotage
+Syncopate
+Negate
+Chemister's Insight
+Voracious Hydra
+Gutterbones
+Destiny Spinner
+Lovestruck Beast
+Elvish Visionary
+Fblthp, the Lost
+Elspeth's Nightmare
+Cavalier of Gales
+Cavalier of Night
+Chandra, Acolyte of Flame
+Realm-Cloaked Giant
+Connive // Concoct
+Domri's Ambush
+Tomebound Lich
+Polukranos, Unchained
+Dusk Legion Zealot
+Legion Warboss
+Fireblade Artist
+Skyknight Vanguard
+Talrand, Sky Summoner
+Rimrock Knight
+Reassembling Skeleton
+Pteramander
+Sarkhan the Masterless
+Kiora, Behemoth Beckoner
+Sorin, Vengeful Bloodlord
+Elspeth, Sun's Nemesis
+Conclave Tribunal
+Cavalier of Dawn
+Glass Casket
+Alseid of Life's Bounty
+Massacre Girl
+End-Raze Forerunners
+Vilis, Broker of Blood
+Fanatical Firebrand
+Ghitu Lavarunner
+Shock
+Lightning Strike
+Skarrgan Hellkite
+Lava Coil
+Adeliz, the Cinder Wind
+Wizard's Lightning
+Wizard's Retort
+Crash Through
+Warlord's Fury
+Exclusion Mage
+Naru Meha, Master Wizard
+Viashino Pyromancer
+Wolfwillow Haven
+Gift of Paradise
+Bond of Revival
+Cauldron's Gift
+Radical Idea
+Acolyte of Affliction
+The Mending of Dominaria
+March of the Multitudes
+Satyr Enchanter
+Militia Bugler
+Dauntless Bodyguard
+Tithe Taker
+Finale of Eternity
+Legion's Landing
+Lampad of Death's Vigil
+Soul-Guide Lantern
+Benalish Marshal
+Linden, the Steadfast Queen
+Goblin Chainwhirler
+Torbran, Thane of Red Fell
+Erebos, Bleak-Hearted
+Nessian Wanderer
+Elite Guardmage
+Deputy of Detention
+Cruel Celebrant
+Chamber Sentry
+Venerated Loxodon
+Naban, Dean of Iteration
+Cloudkin Seer
+Benthic Biomancer
+Burning Prophet
+Skyscanner
+Quench
+Slaughter-Priest of Mogis
+Dreadhorde Invasion
+Essence Scatter
+Discovery // Dispersal
+Burning-Tree Emissary
+Footlight Fiend
+Saheeli, Sublime Artificer
+Golos, Tireless Pilgrim
+Dawn of Hope
+Serra Ascendant
+Stonecoil Serpent
+Faerie Guidemother
+Boros Challenger
+Grim Initiate
+Epic Downfall
+Agonizing Remorse
+Multani, Yavimaya's Avatar
+Blood Aspirant
+Silhana Wayfinder
+The First Iroan Games
+Purphoros's Intervention
+Runaway Steam-Kin
+Slaying Fire
+Woodland Champion
+Krenko, Tin Street Kingpin
+Mystic Sanctuary
+Gilded Lotus
+Imperious Perfect
+Omen of the Dead
+Priest of Forgotten Gods
+Scalding Cauldron
+Jace, Wielder of Mysteries
+Heartfire
+Risen Reef
+Uro, Titan of Nature's Wrath
+Arboreal Grazer
+Grumgully, the Generous
+Leafkin Druid
+Renata, Called to the Hunt
+Pelakka Wurm
+Goblin Instigator
+Mire's Grasp
+Nezahal, Primal Tide
+Salvager of Secrets
+Prison Realm
+Castle Embereth
+Castle Garenbrig
+Dire Fleet Daredevil
+Phyrexian Arena
+Omen of the Sun
+Tetzimoc, Primal Death
+Stitcher's Supplier
+Wand of Vertebrae
+Ob Nixilis's Cruelty
+Alirios, Enraptured
+Hunted Witness
+Nyx-Fleece Ram
+Harmonious Archon
+Irencrag Pyromancer
+Vraska's Contempt
+God-Eternal Bontu
+Lazotep Reaver
+Incubation // Incongruity
+Castle Ardenvale
+Memorial to Folly
+Tormenting Voice
+The Gitrog Monster
+Oath of Kaya
+Augur of Bolas
+Mass Manipulation
+Finale of Glory
+Careless Celebrant
+Crucible of Worlds
+Arasta of the Endless Web
+Kykar, Wind's Fury
+Thirst for Meaning
+Urban Utopia
+Escape to the Wilds
+Goblin Electromancer
+Ral's Outburst
+Merfolk Branchwalker
+Beanstalk Giant
+Omen of the Hunt
+Unsummon
+Tibalt, Rakish Instigator
+Blackblade Reforged
+Jhoira, Weatherlight Captain
+Drawn from Dreams
+Sleeper Dart
+Facet Reader
+Raugrin Crystal
+Lurrus of the Dream-Den
+Yorion, Sky Nomad
+Savai Triome
+Ketria Triome
+Indatha Triome
+Raugrin Triome
+Zagoth Triome
+Neutralize
+Shark Typhoon
+Bastion of Remembrance
+Unbreakable Bond
+Heartless Act
+Corpse Churn
+Memory Leak
+Weaponize the Monsters
+Fire Prophecy
+Dismissive Pyromancer
+Excavation Mole
+Wilt
+Vivien, Monsters' Advocate
+Mythos of Brokkos
+Kogla, the Titan Ape
+Migration Path
+Grand Warlord Radha
+Alert Heedbonder
+Fiend Artisan
+Skull Prophet
+Rielle, the Everwise
+Eerie Ultimatum
+Flower // Flourish
+Luminous Broodmoth
+Integrity // Intervention
+Order of Midnight
+Heroic Reinforcements
+Giant Killer
+Devil's Play
+Mirari's Wake
+Ratchet Bomb
+Body Double
+Momentary Blink
+Bond of Flourishing
+Roar of the Wurm
+Enchantress's Presence
+Profane Procession
+Unburial Rites
+Easy Prey

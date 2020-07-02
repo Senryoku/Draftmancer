@@ -39,11 +39,9 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Add reorganize button for draggable (Remove other display options)
--   Regroup multiple copies of cards on pick?
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
--   Cleanup draft state? (See Winston Draft State)
+-   Cleanup draft state? (See Winston Draft State for a better example)
 
 ---
 
@@ -56,9 +54,10 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Check
 
+Features that may need some additional testing:
+
+-   Picks by Drag & Drop
 -   Load translations on-demand.
--   Add some example cubes (starting with Arena Cube)
--   Make the rarity distribution in boosters customizable (it's been asked multiple times).
 -   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
 -   Glimpse/Burn Draft
 -   Card count/set code/Collector number support to cube import
@@ -67,7 +66,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Bugs
 
--   Missing Historic Cards : Cinder Barrens
 -   Guildgates won't import in arena : Guildgates do not have localized names
 
 ## Notes on Arena Importer

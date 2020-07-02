@@ -11,6 +11,7 @@ const Cards = require("./Cards");
 const Bot = require("./Bot");
 const LandSlot = require("./LandSlot");
 const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
+const Persistence = require("./Persistence");
 
 // From https://stackoverflow.com/a/12646864
 // Modified to optionaly work only on the [start, end[ slice of array.
@@ -730,6 +731,7 @@ function Session(id, owner) {
 	};
 
 	this.endWinstonDraft = function() {
+		Persistence.logSession("WinstonDraft", this);
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
@@ -1068,7 +1070,6 @@ function Session(id, owner) {
 	this.endDraft = function() {
 		this.drafting = false;
 		this.stopCountdown();
-		this.boosters = [];
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
@@ -1101,6 +1102,9 @@ function Session(id, owner) {
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;
 		}
+
+		Persistence.logSession("Draft", this);
+		this.boosters = [];
 
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
@@ -1165,6 +1169,8 @@ function Session(id, owner) {
 				showConfirmButton: false,
 			});
 		}
+
+		Persistence.logSession("Sealed", this);
 
 		this.boosters = [];
 	};
@@ -1291,7 +1297,10 @@ function Session(id, owner) {
 		}
 	};
 	this.stopCountdown = function() {
-		if (this.countdownInterval != null) clearInterval(this.countdownInterval);
+		if (this.countdownInterval != null) {
+			clearInterval(this.countdownInterval);
+			this.countdownInterval = null;
+		}
 	};
 
 	// Includes disconnected players!

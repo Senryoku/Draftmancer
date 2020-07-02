@@ -20,6 +20,7 @@
 				:card="card"
 				:language="$root.language"
 				:selectcard="click"
+				@click="click($event, card)"
 			></card>
 		</draggable>
 		<div class="draggable-controls">

@@ -68,14 +68,14 @@ const SpecialLandSlots = {
 	), // Gain Lands and Evoling Wilds (70031)
 	iko: landSlotHandler(
 		BasicLandIDs["iko"],
-		[71314, 71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
+		[71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
 		1 / 2
-	), // Evoling Wilds (71314) and Gain Lands
+	), // Gain Lands; Evoling Wilds (71314) is found in the common slot
 	m21: landSlotHandler(
 		BasicLandIDs["m21"],
-		[72025, 72026, 72027, 72029, 72030, 72031, 72032, 72033, 72039, 72040, 72041],
+		[72025, 72026, 72027, 72029, 72031, 72032, 72033, 72039, 72040, 72041],
 		1 / 2
-	), // Gain Lands and Radiant Fountain (72030)
+	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
 };
 
 const BasicLandSlots = {};

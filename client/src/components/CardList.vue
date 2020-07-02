@@ -31,20 +31,20 @@
 import Vue from "vue";
 import { download } from "../helper.js";
 import CardOrder from "../cardorder.js";
-import CardImage from "./CardImage.vue";
+import Card from "./Card.vue";
 
 const CardColumn = Vue.component("CardColumn", {
 	props: {
 		column: { type: Array, required: true },
 	},
-	components: { CardImage },
+	components: { Card },
 	template: `
 <div class="card-column" v-show="column.length > 0">
 	<div v-for="(card, index) in column" :key="index" class="card card-wrapper">
 		<div v-if="$root.hasCollection && !(card.id in $root.collection)" class="collection-warning">
 			<i class="fas fa-exclamation-triangle yellow"></i>
 		</div>
-		<card-image :card="card" :language="$root.language"></card-image>
+		<card :card="card" :language="$root.language"></card>
 	</div>
 </div>`,
 });

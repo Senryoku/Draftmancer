@@ -1,16 +1,15 @@
 <template>
-	<div class="card">
-		<card-image :card="card" :language="language"></card-image>
+	<card :card="card" :language="language">
 		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
 		<div class="card-count" v-if="card.count < 4">x{{ 4 - card.count }}</div>
-	</div>
+	</card>
 </template>
 
 <script>
-import CardImage from "./CardImage.vue";
+import Card from "./Card.vue";
 export default {
 	name: "MissingCard",
-	components: { CardImage },
+	components: { Card },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
@@ -18,9 +17,11 @@ export default {
 };
 </script>
 
-<style src="./Card.css"></style>
-
 <style scoped>
+.card {
+	margin: 0.75em;
+}
+
 .card-count {
 	position: absolute;
 	right: 1em;
