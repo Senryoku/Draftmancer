@@ -299,7 +299,6 @@ def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
         outputFile.write(content)
 
 
-
 array = []
 for key, value in cards.items():
     array.append(value)
@@ -323,8 +322,6 @@ for set, group in groups:
                 scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
             if set == "rna":
                 overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
-            setinfos[set]["icon"] = icon_path
-    else:
             setinfos[set]["icon"] = icon_path
     else:
         setinfos[set]["icon"] = icon_path
