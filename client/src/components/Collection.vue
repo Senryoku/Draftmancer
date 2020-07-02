@@ -53,7 +53,7 @@
 						v-for="card in selectedSet.cards.filter(c => c.rarity == missingCardsRarity && (showNonBooster || c.in_booster) && c.count < 4)"
 						:key="card.uniqueID"
 						:card="card"
-						:language="$root.language"
+						:language="language"
 					></missing-card>
 				</div>
 			</div>
@@ -70,6 +70,7 @@ export default {
 	components: { MissingCard },
 	props: {
 		collection: { type: Object, required: true },
+		language: { type: String, required: true },
 	},
 	data: () => {
 		return {
@@ -80,9 +81,9 @@ export default {
 	},
 	computed: {
 		collectionStats: function() {
-			if (!this.collection || !this.$root.cards || !this.$root.setsInfos) return null;
+			if (!this.collection || !this.$cards || !this.$root.setsInfos) return null;
 			let stats = {};
-			for (let id in this.$root.cards) {
+			for (let id in this.$cards) {
 				let card = this.$root.genCard(id);
 				const completeSet = this.$root.sets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {

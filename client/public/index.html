@@ -638,7 +638,7 @@
 				</modal>
 				<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 					<h2 slot="header">Collection Statistics</h2>
-					<collection slot="body" :collection="collection"></collection>
+					<collection slot="body" :collection="collection" :language="language"></collection>
 				</modal>
 				<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 					<h2 slot="header">Additional Session Options</h2>
