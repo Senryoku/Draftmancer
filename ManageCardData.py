@@ -133,7 +133,6 @@ else:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
 if not os.path.isfile(FinalDataPath) or ForceCache:
-    cards = {}
     # Tag non booster card as such
     print("Requesting non-booster cards list...")
     NonBoosterCards = []
@@ -169,6 +168,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     "zhs": {},
                     "zht": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
+        cards = {}
         arena_cards = json.loads(file.read())
         for c in arena_cards:
             translation = {}
