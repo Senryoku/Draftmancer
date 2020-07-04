@@ -9,7 +9,10 @@
 						<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
 						<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
 						<div class="bracket-player" :class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}" v-else>
-							<div class="bracket-player-name">{{p}}</div> 
+							<img v-if="colIndex === 2 && matchIndex === 0 && bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]" class="trophy" src="img/goldtrophy.svg" />
+							<img v-else-if="colIndex === 2 && matchIndex === 0 && bracket.results[m.index][index] < bracket.results[m.index][(index + 1)%2] || colIndex === 2 && (matchIndex === 1 || matchIndex === 2) && bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]" class="trophy" src="img/silvertrophy.svg" />
+							<div v-else-if="colIndex === 2" class="trophy"></div>
+							<div class="bracket-player-name">{{p}}</div>
 							<template v-if="m.isValid()">
 								<input v-if="editable" class="small-number-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="emitUpdated"></input>
 								<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
@@ -118,7 +121,7 @@ export default {
 
 .bracket-match-num {
 	vertical-align: middle;
-	padding: 1em;
+	min-width: 1.5em;
 }
 
 .bracket-match-players {
@@ -139,7 +142,7 @@ export default {
 
 .bracket-winner {
 	background-color: #555;
-	box-shadow: 0 0 5px 5px #555;
+	box-shadow: 0 0 4px 4px #555;
 }
 
 .bracket-tbd,
@@ -149,11 +152,18 @@ export default {
 
 .bracket-result {
 	font-size: 2em;
+	min-width: 32px;
+	text-align: right
 }
 
 .bracket-player-name {
 	font-size: 1.5em;
 	max-width: 15rem;
 	overflow: hidden;
+}
+
+.trophy {
+	height:32px;
+	width:32px;
 }
 </style>
