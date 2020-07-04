@@ -44,6 +44,16 @@ function Bracket(players) {
 		[0, 0],
 		[0, 0],
 		[0, 0],
+	];
+}
+
+function SwissBracket(players) {
+	this.players = players;
+	this.results = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
 		[0, 0],
 		[0, 0],
 		[0, 0],
@@ -53,6 +63,7 @@ function Bracket(players) {
 		[0, 0],
 		[0, 0],
 	];
+	this.swiss = true;
 }
 
 // Cache for cards organized by set.
@@ -1326,6 +1337,11 @@ function Session(id, owner) {
 
 	this.generateBracket = function(players) {
 		this.bracket = new Bracket(players);
+		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+	};
+
+	this.generateSwissBracket = function(players) {
+		this.bracket = new SwissBracket(players);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 

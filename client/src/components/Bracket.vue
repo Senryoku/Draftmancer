@@ -3,17 +3,19 @@
 	<div class="bracket" v-if="bracket">
 		<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
 			<div v-for="(m, matchIndex) in col" :key="matchIndex" class="bracket-match">
-				<div>{{m.index+1}}</div>
-				<div v-for="(p, index) in m.players" :key="index">
-					<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-					<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
-					<div class="bracket-player" :class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}" v-else>
-						<div class="bracket-player-name">{{p}}</div> 
-						<template v-if="m.isValid()">
-							<input v-if="editable" class="small-number-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="emitUpdated"></input>
-							<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
-						</template></div>
-				</div>
+				<td class="bracket-match-num">{{m.index+1}}</td>
+				<td class="bracket-match-players">
+					<div v-for="(p, index) in m.players" :key="index">
+						<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
+						<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
+						<div class="bracket-player" :class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}" v-else>
+							<div class="bracket-player-name">{{p}}</div> 
+							<template v-if="m.isValid()">
+								<input v-if="editable" class="small-number-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="emitUpdated"></input>
+								<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
+							</template></div>
+					</div>
+				</td>
 			</div>
 		</div>
 	</div>
@@ -83,12 +85,16 @@ export default {
 			}
 			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
 			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
-			m[1].push(new Match(6, [loser(m[0][2]), loser(m[0][3])]));
-			m[1].push(new Match(7, [loser(m[0][0]), loser(m[0][1])]));
-			m[2].push(new Match(8, [winner(m[1][0]), winner(m[1][1])]));
-			m[2].push(new Match(9, [loser(m[1][0]), winner(m[1][2])]));
-			m[2].push(new Match(10, [loser(m[1][1]), winner(m[1][3])]));
-			m[2].push(new Match(11, [loser(m[1][2]), loser(m[1][3])]));
+			if (this.bracket.swiss) {
+				m[1].push(new Match(6, [loser(m[0][2]), loser(m[0][3])]));
+				m[1].push(new Match(7, [loser(m[0][0]), loser(m[0][1])]));
+				m[2].push(new Match(8, [winner(m[1][0]), winner(m[1][1])]));
+				m[2].push(new Match(9, [loser(m[1][0]), winner(m[1][2])]));
+				m[2].push(new Match(10, [loser(m[1][1]), winner(m[1][3])]));
+				m[2].push(new Match(11, [loser(m[1][2]), loser(m[1][3])]));
+			} else {
+				m[2].push(new Match(6, [winner(m[1][0]), winner(m[1][1])]));			
+			}
 			return m;
 		},
 	},
@@ -107,11 +113,18 @@ export default {
 }
 
 .bracket-match {
-	padding: 0.5em;
-	margin: 1em;
+	margin: 0.5em;
+}
 
+.bracket-match-num {
+	vertical-align: middle;
+	padding: 1em;
+}
+
+.bracket-match-players {
 	background: #333;
-	border-radius: 1em;
+	border-radius: 1em;	
+	padding: 0.5em;
 }
 
 .bracket-player {
