@@ -14,7 +14,7 @@
 							<div v-else-if="colIndex === 2" class="trophy"></div>
 							<div class="bracket-player-name">{{p}}</div>
 							<template v-if="m.isValid()">
-								<input v-if="editable" class="small-number-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="emitUpdated"></input>
+								<input v-if="editable" class="result-input" type="number" v-model.number="bracket.results[m.index][index]" min="0" @change="emitUpdated"></input>
 								<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
 							</template></div>
 					</div>
@@ -165,5 +165,9 @@ export default {
 .trophy {
 	height:32px;
 	width:32px;
+}
+
+.result-input {
+	width:2.2em;
 }
 </style>
