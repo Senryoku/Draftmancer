@@ -891,7 +891,8 @@
 				<modal v-if="displayedModal === 'bracket'" @close="displayedModal = ''">
 					<h2 slot="header">
 						Bracket
-						<button v-if="userID === sessionOwner" @click="generateBracket">Re-Generate Bracket</button>
+						<button v-if="userID === sessionOwner" @click="generateBracket">Re-Generate Single Elimination</button>
+						<button v-if="userID === sessionOwner" @click="generateSwissBracket">Re-Generate 3-Round Swiss</button>
 					</h2>
 					<bracket slot="body" :bracket="bracket" :editable="userID === sessionOwner" @updated="updateBracket"></bracket>
 				</modal>
