@@ -14,14 +14,8 @@
 							v-else
 						>
 							<template v-if="colIndex === 2">
-								<i
-									v-if="matchIndex === 0 && bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]"
-									class="trophy gold fas fa-trophy"
-								></i>
-								<i
-									v-else-if="matchIndex === 0 && bracket.results[m.index][index] < bracket.results[m.index][(index + 1)%2] || (matchIndex === 1 || matchIndex === 2) && bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]"
-									class="trophy silver fas fa-trophy"
-								></i>
+								<i v-if="records[p].wins === 3" class="trophy gold fas fa-trophy"></i>
+								<i v-else-if="records[p].wins === 2" class="trophy silver fas fa-trophy"></i>
 								<div v-else class="trophy"></div>
 							</template>
 							<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
