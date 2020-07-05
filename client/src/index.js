@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { clone, isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
 import Card from "./components/Card.vue";
@@ -89,7 +89,7 @@ new Vue({
 
 		// User Data
 		userID: guid(),
-		userName: getCookie("userName", "Anonymous"),
+		userName: getCookie("userName", `Anonymous_${randomStr4()}`),
 		useCollection: getCookie("useCollection", true),
 		collection: {},
 		socket: undefined,
