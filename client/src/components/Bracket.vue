@@ -22,7 +22,7 @@
 								class="trophy silver fas fa-trophy"
 							></i>
 							<div v-else-if="colIndex === 2" class="trophy"></div>
-							<div class="bracket-player-name">{{p}}</div>
+							<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
 							<template v-if="m.isValid()">
 								<input
 									v-if="editable"
@@ -53,6 +53,9 @@ export default {
 	methods: {
 		emitUpdated: function() {
 			this.$emit("updated");
+		},
+		recordString: function(player) {
+			return `${this.records[player].wins} - ${this.records[player].losses}`;
 		},
 	},
 	computed: {
@@ -115,6 +118,19 @@ export default {
 				m[2].push(new Match(6, [winner(m[1][0]), winner(m[1][1])]));
 			}
 			return m;
+		},
+		records: function() {
+			let r = {};
+			for (let p of this.bracket.players) r[p] = { wins: 0, losses: 0 };
+			for (let col of this.matches)
+				for (let m of col) {
+					console.log(m);
+					if (!m.isValid() || this.bracket.results[m.index][0] === this.bracket.results[m.index][1]) continue;
+					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+					r[m.players[winIdx]].wins += 1;
+					r[m.players[(winIdx + 1) % 2]].losses += 1;
+				}
+			return r;
 		},
 	},
 };
