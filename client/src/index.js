@@ -535,9 +535,10 @@ new Vue({
 				this.clearDeck();
 				this.clearSideboard();
 				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
-				// Fixme: I don't understand why this in necessary...
+				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
 				});
 
 				this.booster = [];

@@ -29,6 +29,13 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 function filterEmptyStr(obj) {
 	if (obj === "") return "(EmptyString)";
+	if (Array.isArray(obj)) {
+		let r = [];
+		for (let i of obj) {
+			r.push(filterEmptyStr(i));
+		}
+		return r;
+	}
 	return obj;
 }
 
@@ -45,6 +52,13 @@ function filterForDDB(obj) {
 
 function restoreEmptyStr(obj) {
 	if (obj === "(EmptyString)") return "";
+	if (Array.isArray(obj)) {
+		let r = [];
+		for (let i of obj) {
+			r.push(restoreEmptyStr(i));
+		}
+		return r;
+	}
 	return obj;
 }
 
