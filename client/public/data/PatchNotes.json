@@ -1,5 +1,9 @@
 [
 	{
+		"date": "05/07/2020",
+		"notes": ["Added 3-Round Swiss support (by Squerp)."]
+	},
+	{
 		"date": "27/06/2020",
 		"notes": ["Cards from booster can now be picked by drag & drop."]
 	},
