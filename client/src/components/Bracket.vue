@@ -120,7 +120,6 @@ export default {
 			for (let p of this.bracket.players) r[p] = { wins: 0, losses: 0 };
 			for (let col of this.matches)
 				for (let m of col) {
-					console.log(m);
 					if (!m.isValid() || this.bracket.results[m.index][0] === this.bracket.results[m.index][1]) continue;
 					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
 					r[m.players[winIdx]].wins += 1;
