@@ -1375,6 +1375,19 @@ new Vue({
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
+		generateSwissBracket: function() {
+			if (this.userID != this.sessionOwner) return;
+			const playerNames = this.sessionUsers.map(u => u.userName);
+			let players = [];
+			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
+			for (let i = 0; i < 8; ++i) {
+				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
+				else players[i] = "";
+			}
+			this.socket.emit("generateSwissBracket", players, answer => {
+				if (answer.code === 0) this.displayedModal = "bracket";
+			});
+		},
 		updateBracket: function() {
 			this.socket.emit("updateBracket", this.bracket.results);
 		},

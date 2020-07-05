@@ -659,6 +659,16 @@ io.on("connection", function(socket) {
 		if (ack) ack({ code: 0 });
 	});
 
+	socket.on("generateSwissBracket", function(players, ack) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (players.length !== 8) return;
+		Sessions[sessionID].generateSwissBracket(players);
+		if (ack) ack({ code: 0 });
+	});
+
 	socket.on("updateBracket", function(results) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
