@@ -138,7 +138,9 @@ async function requestSavedSessions() {
 				InactiveSessions[fixedID].winstonDraftState = new SessionModule.WinstonDraftState();
 				for (let prop of Object.getOwnPropertyNames(s.data.winstonDraftState)) {
 					if (!(s.data.winstonDraftState[prop] instanceof Function))
-						InactiveSessions[fixedID].winstonDraftState[prop] = s.data.winstonDraftState[prop];
+						InactiveSessions[fixedID].winstonDraftState[prop] = restoreEmptyStr(
+							s.data.winstonDraftState[prop]
+						);
 				}
 			}
 
@@ -259,7 +261,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 				Item.data.winstonDraftState = {};
 				for (let prop of Object.getOwnPropertyNames(s.winstonDraftState)) {
 					if (!(s.winstonDraftState[prop] instanceof Function))
-						Item.data.winstonDraftState[prop] = s.winstonDraftState[prop];
+						Item.data.winstonDraftState[prop] = filterEmptyStr(s.winstonDraftState[prop]);
 				}
 			}
 		}
