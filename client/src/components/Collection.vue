@@ -81,9 +81,9 @@ export default {
 	},
 	computed: {
 		collectionStats: function() {
-			if (!this.collection || !this.$cards || !this.$root.setsInfos) return null;
+			if (!this.collection || !this.$root.cards || !this.$root.setsInfos) return null;
 			let stats = {};
-			for (let id in this.$cards) {
+			for (let id in this.$root.cards) {
 				let card = this.$root.genCard(id);
 				const completeSet = this.$root.sets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
