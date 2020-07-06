@@ -537,8 +537,8 @@ new Vue({
 				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
+					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
+					if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
 				});
 
 				this.booster = [];
@@ -1651,8 +1651,6 @@ new Vue({
 			let urlParamSession = getUrlVars()["session"];
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
-			this.initializeSocket();
-
 			const CardData = (await import("../public/data/MTGACards.json")).default;
 			for (let c in CardData) {
 				CardData[c].id = c;
@@ -1668,6 +1666,9 @@ new Vue({
 
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);
+
+			// Now that we have all the essential data, initialize the websocket.
+			this.initializeSocket();
 
 			// Look for a locally stored collection
 			let localStorageCollection = localStorage.getItem("Collection");
