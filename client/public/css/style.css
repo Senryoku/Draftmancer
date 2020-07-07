@@ -223,6 +223,10 @@ a:hover {
 	vertical-align: middle;
 }
 
+.land-input {
+	white-space: nowrap;
+}
+
 #main-vue .multiselect__tag-icon {
 	color: #bf5d5d;
 }

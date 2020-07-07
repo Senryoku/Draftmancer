@@ -482,8 +482,10 @@
 								Auto. Land
 							</label>
 							<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
-								<label :for="`${c}-mana`"><img :src="`img/mana/${c}.svg`" class="mana-icon" /></label>
-								<input class="small-number-input" type="number" id="`${c}-mana`" v-model.number="lands[c]" min="0" />
+								<label class="land-input">
+									<img :src="`img/mana/${c}.svg`" class="mana-icon" />
+									<input class="small-number-input" type="number" :id="`${c}-mana`" v-model.number="lands[c]" min="0" />
+								</label>
 							</template>
 							{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
 						</span>
