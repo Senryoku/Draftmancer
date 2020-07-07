@@ -27,6 +27,11 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+function filterEmptyStr(obj) {
+	if (obj === "") return "(EmptyString)";
+	return obj;
+}
+
 function restoreEmptyStr(obj) {
 	if (obj === "(EmptyString)") return "";
 	if (Array.isArray(obj)) {
@@ -176,7 +181,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	for (const userID in Connections) {
 		const c = Connections[userID];
 		const Item = {
-			userID: userID,
+			userID: filterEmptyStr(userID),
 			timestamp: Date.now(),
 			data: {},
 		};
@@ -201,7 +206,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
 		const Item = {
-			id: sessionID,
+			id: filterEmptyStr(sessionID),
 			timestamp: Date.now(),
 			data: {},
 		};
@@ -277,7 +282,7 @@ async function logSession(type, session) {
 		TableName: TableNames.DraftLogs,
 		ReturnConsumedCapacity: "TOTAL",
 		Item: {
-			id: localSess.id,
+			id: filterEmptyStr(localSess.id),
 			time: new Date().getTime(),
 			type: type === "" ? null : type,
 			session: localSess,
