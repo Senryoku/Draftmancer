@@ -120,10 +120,15 @@ export default {
 			for (let p of this.bracket.players) r[p] = { wins: 0, losses: 0 };
 			for (let col of this.matches)
 				for (let m of col) {
-					if (!m.isValid() || this.bracket.results[m.index][0] === this.bracket.results[m.index][1]) continue;
-					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-					r[m.players[winIdx]].wins += 1;
-					r[m.players[(winIdx + 1) % 2]].losses += 1;
+					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
+						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+						r[m.players[winIdx]].wins += 1;
+						r[m.players[(winIdx + 1) % 2]].losses += 1;
+					} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
+						r[m.players[0]].wins += 1;					
+					} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
+						r[m.players[1]].wins += 1;
+					}
 				}
 			return r;
 		},
