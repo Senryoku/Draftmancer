@@ -1697,8 +1697,10 @@ new Vue({
 	},
 	watch: {
 		sessionID: function() {
-			this.socket.query.sessionID = this.sessionID;
-			this.socket.emit("setSession", this.sessionID);
+			if (this.socket) {
+				this.socket.query.sessionID = this.sessionID;
+				this.socket.emit("setSession", this.sessionID);
+			}
 			history.replaceState(
 				{ sessionID: this.sessionID },
 				`MTGADraft Session ${this.sessionID}`,
@@ -1707,12 +1709,14 @@ new Vue({
 			setCookie("sessionID", this.sessionID);
 		},
 		userName: function() {
-			this.socket.query.userName = this.userName;
-			this.socket.emit("setUserName", this.userName);
+			if (this.socket) {
+				this.socket.query.userName = this.userName;
+				this.socket.emit("setUserName", this.userName);
+			}
 			setCookie("userName", this.userName);
 		},
 		useCollection: function() {
-			this.socket.emit("useCollection", this.useCollection);
+			if (this.socket) this.socket.emit("useCollection", this.useCollection);
 			setCookie("useCollection", this.useCollection);
 		},
 		// Front-end options
@@ -1736,41 +1740,41 @@ new Vue({
 		},
 		// Session options
 		ownerIsPlayer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
 		setRestriction: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 
 			this.socket.emit("setRestriction", this.setRestriction);
 		},
 		isPublic: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
 		},
 		boostersPerPlayer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
 		distributionMode: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
 		customBoosters: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setCustomBoosters", this.customBoosters);
 		},
 		bots: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("bots", this.bots);
 		},
 		maxPlayers: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
 		mythicPromotion: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMythicPromotion", this.mythicPromotion);
 		},
 		boosterContent: {
@@ -1781,39 +1785,39 @@ new Vue({
 					this.fireToast("warning", "Your boosters should contain at least one card :)");
 					this.boosterContent["common"] = 1;
 				} else {
-					this.socket.emit("setBoosterContent", this.boosterContent);
+					if (this.socket) this.socket.emit("setBoosterContent", this.boosterContent);
 				}
 			},
 		},
 		maxTimer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
 		},
 		ignoreCollections: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("ignoreCollections", this.ignoreCollections);
 		},
 		maxDuplicates: {
 			deep: true,
 			handler() {
-				if (this.userID != this.sessionOwner) return;
+				if (this.userID != this.sessionOwner || !this.socket) return;
 				this.socket.emit("setMaxDuplicates", this.maxDuplicates);
 			},
 		},
 		colorBalance: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setColorBalance", this.colorBalance);
 		},
 		foil: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setFoil", this.foil);
 		},
 		useCustomCardList: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
 		},
 		customCardList: function() {
-			if (this.userID != this.sessionOwner || !this.customCardList.length) return;
+			if (this.userID != this.sessionOwner || !this.customCardList.length || !this.socket) return;
 			this.socket.emit("customCardList", this.customCardList, answer => {
 				if (answer.code === 0) {
 					this.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
@@ -1823,11 +1827,11 @@ new Vue({
 			});
 		},
 		burnedCardsPerRound: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
 		},
 		draftLogRecipients: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 		},
 		enableNotifications: function() {
