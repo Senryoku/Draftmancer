@@ -1563,6 +1563,10 @@ new Vue({
 		disconnectedReminder: function() {
 			this.fireToast("error", "Disconnected from server!");
 		},
+		logPathToClipboard: function() {
+			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log`);
+			this.fireToast("success", "Default log path copied to clipboard!");
+		},
 	},
 	computed: {
 		DraftState: function() {
