@@ -531,81 +531,105 @@
 					<p class="important">
 						Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them, in pod!
 					</p>
-					<div class="welcome-col">
-						<div class="container">
-							<div class="controls">
-								<h2>Basic setup</h2>
+					<div class="welcome-cols">
+						<div class="welcome-col">
+							<div class="container" v-if="userID !== sessionOwner">
+								<div class="controls">
+									<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
+								</div>
+								<div class="welcome-section">
+									{{ userByID[sessionOwner].userName }} is the session owner
+									<i class="fas fa-crown subtle-gold"></i>
+									. Wait for them to select the options and launch a game!
+									<br />
+									You can still customize your personal options on top of the page.
+								</div>
 							</div>
-							<div class="welcome-section">
-								One player will take the role of owner of the session (designated with
-								<i class="fas fa-crown subtle-gold"></i>
-								).
-								<ol>
-									<li>Session owner chooses an arbitrary Session ID.</li>
-									<li>
-										Other players can join the session simply by entering its ID or by following the
-										<a @click="sessionURLToClipboard">
-											Session Link
-											<i class="fas fa-share-square"></i>
-										</a>
-									</li>
-									<li>
-										Owner sets the desired options (Take a look at
-										<a @click="displayedModal = 'sessionOptions'">all of them</a>
-										)
-									</li>
-									<li>
-										Once everyone is ready (use the ready check
-										<i class="fas fa-user-check"></i>
-										to make sure!), session owner can launch the desired game mode.
-									</li>
-								</ol>
+							<div class="container" v-else>
+								<div class="controls">
+									<h2>Basic setup</h2>
+								</div>
+								<div class="welcome-section">
+									One player will take the role of owner of the session (designated with
+									<i class="fas fa-crown subtle-gold"></i>
+									).
+									<ol>
+										<li>Session owner chooses an arbitrary Session ID.</li>
+										<li>
+											Other players can join the session simply by entering its ID or by following the
+											<a @click="sessionURLToClipboard">
+												Session Link
+												<i class="fas fa-share-square"></i>
+											</a>
+										</li>
+										<li>
+											Owner sets the desired options (Take a look at
+											<a @click="displayedModal = 'sessionOptions'">all of them</a>
+											)
+										</li>
+										<li>
+											Once everyone is ready (use the ready check
+											<i class="fas fa-user-check"></i>
+											to make sure!), session owner can launch the desired game mode.
+										</li>
+									</ol>
+								</div>
+							</div>
+							<div class="container">
+								<div class="controls">
+									<h2>Collection Import</h2>
+								</div>
+								<div class="welcome-section">
+									Each player can import their MTGA collection to restrict the card pool to cards already owned by everyone. (Session owner can bypass this
+									feature by enabling "Ignore Collections")
+
+									<ol>
+										<li>
+											Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your
+											collection won't work without this activated.
+										</li>
+										<li>
+											<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a>
+											located at
+											<tt class="clickable" @click="logPathToClipboard" v-tooltip="'Copy path to clipboard'">
+												C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log
+											</tt>
+											(note that
+											<a href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files" target="_blank">
+												AppData is hidden by default
+												<i class="fas fa-external-link-alt"></i>
+											</a>
+											)
+										</li>
+									</ol>
+								</div>
 							</div>
 						</div>
-						<div class="container">
-							<div class="controls">
-								<h2>Collection Import</h2>
+						<div class="welcome-col">
+							<div class="container">
+								<div class="controls">
+									<h2>News</h2>
+								</div>
+								<div class="welcome-section">
+									<em>XX/07/2020</em>
+									<p>Jumpstart in now availble!</p>
+								</div>
 							</div>
-							<div class="welcome-section">
-								Each player can import their MTGA collection to restrict the card pool to cards already owned by everyone. (Session owner can bypass this feature by
-								enabling "Ignore Collections")
-
-								<ol>
-									<li>
-										Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your collection
-										won't work without this activated.
-									</li>
-									<li>
-										<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a>
-										located at
-										<tt class="clickable" @click="logPathToClipboard" v-tooltip="'Copy path to clipboard'">
-											C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log
-										</tt>
-										(note that
-										<a href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files" target="_blank">
-											AppData is hidden by default
-											<i class="fas fa-external-link-alt"></i>
-										</a>
-										)
-									</li>
-								</ol>
-							</div>
-						</div>
-
-						<div class="container">
-							<div class="controls">
-								<h2>Help</h2>
-							</div>
-							<div class="welcome-section">
-								Visit the
-								<a @click="displayedModal = 'help'">FAQ / Help</a>
-								section.
-								<br />
-								For any question/bug report/feature you can e-mail at
-								<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-								, or join the
-								<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>
-								.
+							<div class="container">
+								<div class="controls">
+									<h2>Help</h2>
+								</div>
+								<div class="welcome-section">
+									Visit the
+									<a @click="displayedModal = 'help'">FAQ / Help</a>
+									section.
+									<br />
+									For any question/bug report/feature you can e-mail at
+									<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+									, or join the
+									<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>
+									.
+								</div>
 							</div>
 						</div>
 					</div>
@@ -614,11 +638,20 @@
 				<modal v-if="displayedModal === 'help'" @close="displayedModal = ''">
 					<h2 slot="header">Help</h2>
 					<div slot="body">
-						<h3>FAQ</h3>
+						<h2>FAQ</h2>
 						<div>
-							WIP...
+							<strong>Can we play cube?</strong>
+							<p>
+								Yes! You can import custom list of cards in text format in the options.
+								<a href="cubeformat.html" target="_blank">More informations here</a>
+								.
+							</p>
+							<strong>Will MTGADraft support cards from outside Arena?</strong>
+							<p>
+								Probably not. MTGADraft was designed from the start with Arena in mind and supporting decades of card brings a lot of complexity.
+							</p>
 						</div>
-						<h3>Options Description</h3>
+						<h2>Options Description</h2>
 						<div class="help-options">
 							<div style="width: 50%;">
 								<strong>Session options</strong>
