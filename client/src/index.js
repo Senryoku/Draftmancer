@@ -899,6 +899,50 @@ new Vue({
 			reader.onload = async e => {
 				let contents = e.target.result;
 
+				// Propose to use MTGA user name
+				let nameFromLogs = getCookie("nameFromLogs", "");
+				if (nameFromLogs === "") {
+					let m = contents.match(/DisplayName:(.+)#(\d+)/);
+					if (m) {
+						let name = `${m[1]}#${m[2]}`;
+						if (name != this.userName) {
+							const swalResult = await Swal.fire({
+								icon: "question",
+								title: "User Name",
+								text: `Found display name '${name}', do you want to use it as your User Name?`,
+								customClass: SwalCustomClasses,
+								showCancelButton: true,
+								showConfirmButton: true,
+								confirmButtonColor: "#3085d6",
+								cancelButtonColor: "#d33",
+								confirmButtonText: "Yes",
+								cancelButtonText: "No",
+							});
+							if (swalResult.value) {
+								this.userName = name;
+								setCookie("nameFromLogs", "done");
+							} else {
+								setCookie("nameFromLogs", "refused");
+							}
+						}
+					}
+				}
+
+				// Specific error message when detailed logs are disabled in MTGA
+				if (
+					contents.indexOf("DETAILED LOGS: DISABLED") !== -1 &&
+					contents.indexOf("DETAILED LOGS: ENABLED") === -1
+				) {
+					Swal.fire({
+						icon: "error",
+						title: "Detailed logs disabled",
+						text:
+							"Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
+						customClass: SwalCustomClasses,
+					});
+					return null;
+				}
+
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map(e => e[1]));
 
 				const parseCollection = function(contents, startIdx = null) {
