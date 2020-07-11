@@ -963,7 +963,7 @@ new Vue({
 							icon: "error",
 							title: "Parsing Error",
 							text:
-								"An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.",
+								"An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
 							footer: "Full error: " + e,
 							customClass: SwalCustomClasses,
 						});
