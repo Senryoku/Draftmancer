@@ -538,7 +538,7 @@
 					</p>
 					<div class="welcome-cols">
 						<div class="welcome-col">
-							<div class="container" v-if="userID !== sessionOwner">
+							<div class="container" v-if="userID !== sessionOwner && sessionOwner in userByID">
 								<div class="controls">
 									<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
 								</div>
