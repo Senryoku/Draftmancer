@@ -648,6 +648,14 @@ io.on("connection", function(socket) {
 		Sessions[sessionID].distributeSealed(boostersPerPlayer);
 	});
 
+	socket.on("distributeJumpstart", function() {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		Sessions[sessionID].distributeJumpstart();
+	});
+
 	socket.on("generateBracket", function(players, ack) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;

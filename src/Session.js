@@ -10,6 +10,7 @@ const Connections = ConnectionModule.Connections;
 const Cards = require("./Cards");
 const Bot = require("./Bot");
 const LandSlot = require("./LandSlot");
+const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
 const Persistence = require("./Persistence");
 
 // From https://stackoverflow.com/a/12646864
@@ -1150,7 +1151,41 @@ function Session(id, owner) {
 			Connections[this.owner].socket.emit("message", {
 				title: "Sealed pools successfly distributed!",
 				showConfirmButton: false,
-				timer: 1500,
+			});
+		}
+
+		this.boosters = [];
+	};
+
+	this.distributeJumpstart = function() {
+		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
+
+		for (let user of this.users) {
+			let boosters = [utils.getRandom(JumpstartBoosters), utils.getRandom(JumpstartBoosters)];
+			Connections[user].socket.emit(
+				"setCardSelection",
+				boosters
+					.map(b => b.cards)
+					.reduce((arr, val) => {
+						arr.push(val);
+						return arr;
+					}, [])
+			);
+			Connections[user].socket.emit("message", {
+				icon: "success",
+				imageUrl: "/img/2JumpstartBoosters.png",
+				title: "Here are your Jumpstart boosters!",
+				text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
+				showConfirmButton: false,
+				timer: 2000,
+			});
+		}
+
+		// If owner is not playing, let them know everything went ok.
+		if (!this.ownerIsPlayer && this.owner in Connections) {
+			Connections[this.owner].socket.emit("message", {
+				title: "Jumpstart boosters successfly distributed!",
+				showConfirmButton: false,
 			});
 		}
 

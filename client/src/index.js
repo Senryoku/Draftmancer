@@ -350,8 +350,11 @@ new Vue({
 			});
 
 			this.socket.on("message", data => {
+				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
 				if (data.text === undefined) data.text = "";
+				if (data.html === undefined) data.html = null;
+				if (data.imageUrl === undefined) data.imageUrl = null;
 
 				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
 				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
@@ -360,9 +363,12 @@ new Vue({
 
 				Swal.fire({
 					position: "center",
-					icon: "info",
+					icon: data.icon,
 					title: data.title,
 					text: data.text,
+					html: data.html,
+					imageUrl: data.imageUrl,
+					imageHeight: 300,
 					customClass: SwalCustomClasses,
 					showConfirmButton: data.showConfirmButton,
 					timer: data.timer,
@@ -1318,31 +1324,36 @@ new Vue({
 			});
 
 			if (boosterCount) {
-				this.distributeSealed(boosterCount);
+				this.deckWarning(this.distributeSealed, boosterCount);
 			}
 		},
-		distributeSealed: function(boosterCount) {
+		deckWarning: function(call, options) {
 			if (this.deck.length > 0) {
 				Swal.fire({
 					title: "Are you sure?",
-					text: "Distributing sealed boosters will reset everyone's cards/deck!",
+					text: "Lauching another game will reset everyone's cards/deck!",
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
 					confirmButtonColor: "#3085d6",
 					cancelButtonColor: "#d33",
-					confirmButtonText: "Yes, distribute!",
+					confirmButtonText: "Yes, play!",
 				}).then(result => {
 					if (result.value) {
-						this.doDistributeSealed(boosterCount);
+						call(options);
 					}
 				});
 			} else {
-				this.doDistributeSealed(boosterCount);
+				call(options);
 			}
 		},
-		doDistributeSealed: function(boosterCount) {
+		distributeSealed: function(boosterCount) {
+			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeSealed", boosterCount);
+		},
+		distributeJumpstart: function() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("distributeJumpstart");
 		},
 		joinPublicSession: function() {
 			this.sessionID = this.selectedPublicSession;

@@ -202,6 +202,11 @@
 								Sealed
 							</button>
 						</span>
+						<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+							<button @click="deckWarning(distributeJumpstart)" v-tooltip="'Distributes two Jumpstart boosters to everyone.'">
+								Jumpstart
+							</button>
+						</span>
 						<span v-tooltip="'More session options'" @click="displayedModal = 'sessionOptions'" class="more-option clickable">
 							More
 							<i class="fas fa-bars"></i>
