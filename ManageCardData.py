@@ -41,7 +41,6 @@ for path in MTGALocFiles:
         for o in locdata[0]['keys']:
             MTGALocalization[o['id']] = o['text']
 
-MTGADataDebug = {}
 CardsCollectorNumberAndSet = {}
 CardNameToID = {}
 for path in MTGACardsFiles:
@@ -54,18 +53,16 @@ for path in MTGACardsFiles:
                     o['set'] = 'con'
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
-                MTGADataDebug[(MTGALocalization[o['titleId']],
-                               o['CollectorNumber'], o['set'].lower())] = o['grpid']
-                CardsCollectorNumberAndSet[(
-                    o['CollectorNumber'], o['set'])] = o['grpid']
+                CardsCollectorNumberAndSet[(MTGALocalization[o['titleId']],
+                                            o['CollectorNumber'], o['set'])] = o['grpid']
 
                 if MTGALocalization[o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
                     CardNameToID[MTGALocalization[o['titleId']]] = o['grpid']
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
-    for key in MTGADataDebug.keys():
-        MTGADataDebugToJSON[str(key)] = MTGADataDebug[key]
+    for key in CardsCollectorNumberAndSet.keys():
+        MTGADataDebugToJSON[str(key)] = CardsCollectorNumberAndSet[key]
     json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
@@ -91,15 +88,17 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         objects = ijson.items(file, 'item')
         arena_cards = (o for o in objects if (
-            o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
+            o['name'], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
         cards = []
 
         sys.stdout.write("Processing... ")
         sys.stdout.flush()
         copied = 0
         for c in arena_cards:
-            c['arena_id'] = CardsCollectorNumberAndSet[(
-                c['collector_number'], c['set'].lower())]
+            if c['set'].lower() == 'jmp' and c['collector_number'] == 143:
+                print("OK")
+            c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
+                                                        c['collector_number'], c['set'].lower())]
             cards.append(c)
             copied += 1
             sys.stdout.write("\b" * 100)  # return to start of line
@@ -149,18 +148,18 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     for c in data['data']:
         if('arena_id' in c):
             NonBoosterCards.append(c['arena_id'])
-        elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-            NonBoosterCards.append(CardsCollectorNumberAndSet[(
-                c['collector_number'], c['set'].lower())])
+        elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
+            NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
+                                                               c['collector_number'], c['set'].lower())])
     while(data["has_more"]):
         response = requests.get(data["next_page"])
         data = json.loads(response.content)
         for c in data['data']:
             if('arena_id' in c):
                 NonBoosterCards.append(c['arena_id'])
-            elif (c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-                NonBoosterCards.append(CardsCollectorNumberAndSet[(
-                    c['collector_number'], c['set'].lower())])
+            elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
+                NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
+                                                                   c['collector_number'], c['set'].lower())])
 
     print("Generating card data cache...")
     translations = {"en": {},

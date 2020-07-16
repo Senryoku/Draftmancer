@@ -1645,7 +1645,9 @@ describe("Sealed", function() {
 	});
 });
 
-describe("Jumpstart", function() {
+const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
+
+describe.only("Jumpstart", function() {
 	let clients = [];
 	let sessionID = "JumpStartSession";
 
@@ -1677,6 +1679,16 @@ describe("Jumpstart", function() {
 		}
 
 		waitForClientDisconnects(done);
+	});
+
+	it("Each booster contains 20 valid cards", function(done) {
+		for (let b of JumpstartBoosters) {
+			expect(b.cards.length).to.equals(20);
+			for (let c of b.cards) {
+				expect(Cards).to.have.deep.property(c);
+			}
+		}
+		done();
 	});
 
 	it(`Owner launches a Jumpstart game, clients should receive their card selection (2*20 cards).`, function(done) {
