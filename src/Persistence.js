@@ -32,19 +32,15 @@ function filterEmptyStr(obj) {
 	return obj;
 }
 
-// Recursivly filter empty strings (DynamoDB doesn't support them.) and functions
-// Warning: This mutates the supplied object!
-function filterForDDB(obj) {
-	if (typeof obj === "object" && obj !== null) {
-		for (const [key, value] of Object.entries(obj)) obj[key] = filterForDDB(value);
-		return obj;
-	}
-	if (typeof obj === "function") return null;
-	return filterEmptyStr(obj);
-}
-
 function restoreEmptyStr(obj) {
 	if (obj === "(EmptyString)") return "";
+	if (Array.isArray(obj)) {
+		let r = [];
+		for (let i of obj) {
+			r.push(restoreEmptyStr(i));
+		}
+		return r;
+	}
 	return obj;
 }
 
@@ -76,7 +72,7 @@ async function requestSavedConnections() {
 			}
 
 			if (isObsolete(c))
-				docClient.delete({ TableName: TableNames["Connections"], Key: { userID: c.userID } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Connections"], Key: { userID: c.userID } }, err => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete connection ", c.userID);
 				});
@@ -124,12 +120,14 @@ async function requestSavedSessions() {
 				InactiveSessions[fixedID].winstonDraftState = new SessionModule.WinstonDraftState();
 				for (let prop of Object.getOwnPropertyNames(s.data.winstonDraftState)) {
 					if (!(s.data.winstonDraftState[prop] instanceof Function))
-						InactiveSessions[fixedID].winstonDraftState[prop] = s.data.winstonDraftState[prop];
+						InactiveSessions[fixedID].winstonDraftState[prop] = restoreEmptyStr(
+							s.data.winstonDraftState[prop]
+						);
 				}
 			}
 
 			if (isObsolete(s))
-				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, (err, data) => {
+				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, err => {
 					if (err) console.log(err);
 					else console.log("Deleted obsolete session ", s.id);
 				});
@@ -189,7 +187,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(c[prop]);
+			if (!(c[prop] instanceof Function)) Item.data[prop] = c[prop];
 		}
 
 		ConnectionsRequests.push({ PutRequest: { Item: Item } });
@@ -216,18 +214,13 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			p => !["users", "countdownInterval", "botsInstances"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) Item.data[prop] = filterEmptyStr(s[prop]);
+			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
 			for (let userID of s.users) {
 				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
-				for (let prop of Object.getOwnPropertyNames(Item.data.disconnectedUsers[userID])) {
-					Item.data.disconnectedUsers[userID][prop] = filterEmptyStr(
-						Item.data.disconnectedUsers[userID][prop]
-					);
-				}
 			}
 
 			if (s.botsInstances) {
@@ -249,8 +242,6 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 				}
 			}
 		}
-
-		if (s.bracket) Item.data.bracket.players = Item.data.bracket.players.map(n => filterEmptyStr(n));
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
 		if (SessionsRequests.length === 25) {
@@ -291,10 +282,10 @@ async function logSession(type, session) {
 		TableName: TableNames.DraftLogs,
 		ReturnConsumedCapacity: "TOTAL",
 		Item: {
-			id: localSess.id,
+			id: filterEmptyStr(localSess.id),
 			time: new Date().getTime(),
 			type: type === "" ? null : type,
-			session: filterForDDB(localSess),
+			session: localSess,
 		},
 	};
 
@@ -317,7 +308,7 @@ if (DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
 	// See https://nodejs.org/api/process.html#process_event_beforeexit
-	process.on("beforeExit", code => {
+	process.on("beforeExit", () => {
 		console.log("beforeExit callback.");
 	});
 
@@ -336,7 +327,7 @@ if (DisablePersistence) {
 		console.log("Received SIGTERM.");
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout(_ => {
+		setTimeout(() => {
 			process.exit(0);
 		}, 20000);
 	});
@@ -345,7 +336,7 @@ if (DisablePersistence) {
 		console.log("Received SIGINT.");
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout(_ => {
+		setTimeout(() => {
 			process.exit(0);
 		}, 20000);
 	});
@@ -355,7 +346,7 @@ if (DisablePersistence) {
 		console.error(err);
 		dumpToDynamoDB(true);
 		// Gives dumpToDynamoDB 20sec. to finish saving everything.
-		setTimeout(_ => {
+		setTimeout(() => {
 			process.exit(1);
 		}, 20000);
 	});

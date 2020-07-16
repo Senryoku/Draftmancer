@@ -143,9 +143,7 @@ io.on("connection", function(socket) {
 		if (!Connections[userID]) return;
 		let sessionID = Connections[userID].sessionID;
 
-		if (typeof useCollection !== "boolean") return;
-
-		if (useCollection == Connections[userID].useCollection) return;
+		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
 
 		Connections[userID].useCollection = useCollection;
 		if (Sessions[sessionID])
@@ -161,6 +159,7 @@ io.on("connection", function(socket) {
 
 	socket.on("chatMessage", function(message) {
 		let sessionID = Connections[this.userID].sessionID;
+		if (!Sessions[sessionID]) return;
 
 		// Limits chat message length
 		message.text = message.text.substring(0, Math.min(255, message.text.length));
@@ -172,7 +171,7 @@ io.on("connection", function(socket) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
-		if (Sessions[sessionID].owner != userID || Sessions[sessionID].drafting) return;
+		if (!Sessions[sessionID] || Sessions[sessionID].owner != userID || Sessions[sessionID].drafting) return;
 
 		if (val) {
 			Sessions[sessionID].ownerIsPlayer = true;
@@ -191,7 +190,7 @@ io.on("connection", function(socket) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) {
+		if (!Sessions[sessionID] || Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) {
 			if (ack) ack({ code: 1 });
 			return;
 		}
@@ -265,7 +264,7 @@ io.on("connection", function(socket) {
 	socket.on("startDraft", function() {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		if (!Sessions[sessionID] || Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
 		if (Sessions[sessionID].users.size > 0 && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
 			Sessions[sessionID].startDraft();
@@ -664,6 +663,16 @@ io.on("connection", function(socket) {
 
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateBracket(players);
+		if (ack) ack({ code: 0 });
+	});
+
+	socket.on("generateSwissBracket", function(players, ack) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (players.length !== 8) return;
+		Sessions[sessionID].generateSwissBracket(players);
 		if (ack) ack({ code: 0 });
 	});
 

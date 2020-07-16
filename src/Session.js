@@ -49,6 +49,25 @@ function Bracket(players) {
 	];
 }
 
+function SwissBracket(players) {
+	this.players = players;
+	this.results = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+	];
+	this.swiss = true;
+}
+
 // Cache for cards organized by set.
 const BoosterCardsBySet = {};
 for (let cid in Cards) {
@@ -1362,6 +1381,11 @@ function Session(id, owner) {
 
 	this.generateBracket = function(players) {
 		this.bracket = new Bracket(players);
+		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+	};
+
+	this.generateSwissBracket = function(players) {
+		this.bracket = new SwissBracket(players);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 

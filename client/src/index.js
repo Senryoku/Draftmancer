@@ -10,7 +10,7 @@ import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { clone, isEmpty, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { clone, isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import Modal from "./components/Modal.vue";
 import Card from "./components/Card.vue";
@@ -89,7 +89,7 @@ new Vue({
 
 		// User Data
 		userID: guid(),
-		userName: getCookie("userName", "Anonymous"),
+		userName: getCookie("userName", `Anonymous_${randomStr4()}`),
 		useCollection: getCookie("useCollection", true),
 		collection: {},
 		socket: undefined,
@@ -541,9 +541,10 @@ new Vue({
 				this.clearDeck();
 				this.clearSideboard();
 				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
-				// Fixme: I don't understand why this in necessary...
+				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
+					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
+					if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
 				});
 
 				this.booster = [];
@@ -904,6 +905,50 @@ new Vue({
 			reader.onload = async e => {
 				let contents = e.target.result;
 
+				// Propose to use MTGA user name
+				let nameFromLogs = getCookie("nameFromLogs", "");
+				if (nameFromLogs === "") {
+					let m = contents.match(/DisplayName:(.+)#(\d+)/);
+					if (m) {
+						let name = `${m[1]}#${m[2]}`;
+						if (name != this.userName) {
+							const swalResult = await Swal.fire({
+								icon: "question",
+								title: "User Name",
+								text: `Found display name '${name}', do you want to use it as your User Name?`,
+								customClass: SwalCustomClasses,
+								showCancelButton: true,
+								showConfirmButton: true,
+								confirmButtonColor: "#3085d6",
+								cancelButtonColor: "#d33",
+								confirmButtonText: "Yes",
+								cancelButtonText: "No",
+							});
+							if (swalResult.value) {
+								this.userName = name;
+								setCookie("nameFromLogs", "done");
+							} else {
+								setCookie("nameFromLogs", "refused");
+							}
+						}
+					}
+				}
+
+				// Specific error message when detailed logs are disabled in MTGA
+				if (
+					contents.indexOf("DETAILED LOGS: DISABLED") !== -1 &&
+					contents.indexOf("DETAILED LOGS: ENABLED") === -1
+				) {
+					Swal.fire({
+						icon: "error",
+						title: "Detailed logs disabled",
+						text:
+							"Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
+						customClass: SwalCustomClasses,
+					});
+					return null;
+				}
+
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map(e => e[1]));
 
 				const parseCollection = function(contents, startIdx = null) {
@@ -924,7 +969,7 @@ new Vue({
 							icon: "error",
 							title: "Parsing Error",
 							text:
-								"An error occurred during parsing. Please make sure that you selected the correct file and that the detailed logs option (found in Options > View Account > Detailed Logs (Plugin Support)) is activated in game.",
+								"An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
 							footer: "Full error: " + e,
 							customClass: SwalCustomClasses,
 						});
@@ -1386,6 +1431,19 @@ new Vue({
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
+		generateSwissBracket: function() {
+			if (this.userID != this.sessionOwner) return;
+			const playerNames = this.sessionUsers.map(u => u.userName);
+			let players = [];
+			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
+			for (let i = 0; i < 8; ++i) {
+				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
+				else players[i] = "";
+			}
+			this.socket.emit("generateSwissBracket", players, answer => {
+				if (answer.code === 0) this.displayedModal = "bracket";
+			});
+		},
 		updateBracket: function() {
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
@@ -1560,6 +1618,10 @@ new Vue({
 		disconnectedReminder: function() {
 			this.fireToast("error", "Disconnected from server!");
 		},
+		logPathToClipboard: function() {
+			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log`);
+			this.fireToast("success", "Default log path copied to clipboard!");
+		},
 	},
 	computed: {
 		DraftState: function() {
@@ -1648,8 +1710,6 @@ new Vue({
 			let urlParamSession = getUrlVars()["session"];
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
-			this.initializeSocket();
-
 			const CardData = (await import("../public/data/MTGACards.json")).default;
 			for (let c in CardData) {
 				CardData[c].id = c;
@@ -1665,6 +1725,9 @@ new Vue({
 
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);
+
+			// Now that we have all the essential data, initialize the websocket.
+			this.initializeSocket();
 
 			// Look for a locally stored collection
 			let localStorageCollection = localStorage.getItem("Collection");
@@ -1693,8 +1756,10 @@ new Vue({
 	},
 	watch: {
 		sessionID: function() {
-			this.socket.query.sessionID = this.sessionID;
-			this.socket.emit("setSession", this.sessionID);
+			if (this.socket) {
+				this.socket.query.sessionID = this.sessionID;
+				this.socket.emit("setSession", this.sessionID);
+			}
 			history.replaceState(
 				{ sessionID: this.sessionID },
 				`MTGADraft Session ${this.sessionID}`,
@@ -1703,12 +1768,14 @@ new Vue({
 			setCookie("sessionID", this.sessionID);
 		},
 		userName: function() {
-			this.socket.query.userName = this.userName;
-			this.socket.emit("setUserName", this.userName);
+			if (this.socket) {
+				this.socket.query.userName = this.userName;
+				this.socket.emit("setUserName", this.userName);
+			}
 			setCookie("userName", this.userName);
 		},
 		useCollection: function() {
-			this.socket.emit("useCollection", this.useCollection);
+			if (this.socket) this.socket.emit("useCollection", this.useCollection);
 			setCookie("useCollection", this.useCollection);
 		},
 		// Front-end options
@@ -1732,41 +1799,41 @@ new Vue({
 		},
 		// Session options
 		ownerIsPlayer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
 		setRestriction: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 
 			this.socket.emit("setRestriction", this.setRestriction);
 		},
 		isPublic: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
 		},
 		boostersPerPlayer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
 		distributionMode: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
 		customBoosters: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setCustomBoosters", this.customBoosters);
 		},
 		bots: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("bots", this.bots);
 		},
 		maxPlayers: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
 		mythicPromotion: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMythicPromotion", this.mythicPromotion);
 		},
 		boosterContent: {
@@ -1777,39 +1844,39 @@ new Vue({
 					this.fireToast("warning", "Your boosters should contain at least one card :)");
 					this.boosterContent["common"] = 1;
 				} else {
-					this.socket.emit("setBoosterContent", this.boosterContent);
+					if (this.socket) this.socket.emit("setBoosterContent", this.boosterContent);
 				}
 			},
 		},
 		maxTimer: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
 		},
 		ignoreCollections: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("ignoreCollections", this.ignoreCollections);
 		},
 		maxDuplicates: {
 			deep: true,
 			handler() {
-				if (this.userID != this.sessionOwner) return;
+				if (this.userID != this.sessionOwner || !this.socket) return;
 				this.socket.emit("setMaxDuplicates", this.maxDuplicates);
 			},
 		},
 		colorBalance: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setColorBalance", this.colorBalance);
 		},
 		foil: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setFoil", this.foil);
 		},
 		useCustomCardList: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
 		},
 		customCardList: function() {
-			if (this.userID != this.sessionOwner || !this.customCardList.length) return;
+			if (this.userID != this.sessionOwner || !this.customCardList.length || !this.socket) return;
 			this.socket.emit("customCardList", this.customCardList, answer => {
 				if (answer.code === 0) {
 					this.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
@@ -1819,11 +1886,11 @@ new Vue({
 			});
 		},
 		burnedCardsPerRound: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
 		},
 		draftLogRecipients: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 		},
 		enableNotifications: function() {

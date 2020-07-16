@@ -223,6 +223,10 @@ a:hover {
 	vertical-align: middle;
 }
 
+.land-input {
+	white-space: nowrap;
+}
+
 #main-vue .multiselect__tag-icon {
 	color: #bf5d5d;
 }
@@ -473,27 +477,64 @@ a:hover {
 	padding-top: 0;
 }
 
-.welcome ul {
+.welcome .important {
+	font-size: 1.4rem;
+}
+
+.welcome-cols {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+}
+
+@media (orientation: portrait) {
+	.welcome-cols {
+		flex-direction: column;
+	}
+
+	.welcome-col {
+		width: 100%;
+	}
+}
+
+@media (orientation: landscape) {
+	.welcome-cols {
+		flex-direction: row;
+	}
+
+	.welcome-col {
+		width: 48%;
+	}
+}
+
+.welcome-section {
+	padding: 0.5em;
+	background-color: #282828d0;
+	border-radius: 10px;
+	box-shadow: inset 0 0 8px #383838;
+}
+
+.help-options {
+	display: flex;
+}
+
+.help-options ul {
 	list-style-type: none;
 	padding-left: 1em;
 	margin-right: 1em;
 }
 
-.welcome ul li {
+.help-options ul li {
 	padding: 0.2em;
 	padding-left: 0.5em;
 }
 
-.welcome ul li:nth-child(even) {
+.help-options ul li:nth-child(even) {
 	background: rgba(0, 0, 0, 0.12);
 }
 
-.welcome ul li:nth-child(odd) {
+.help-options ul li:nth-child(odd) {
 	background: rgba(255, 255, 255, 0.03);
-}
-
-.welcome .important {
-	font-size: 1.4rem;
 }
 
 .option-name {
@@ -914,15 +955,16 @@ ul.player-list {
 	overflow: visible;
 }
 
-/* No :hover outside of the div bounds */
-.card-column > div > div,
-.card-column > div > div {
-	pointer-events: none;
-}
-/* Except if its fully visible */
-.card-column > div:last-child > div,
-.card-column > div:last-child > div {
-	pointer-events: auto;
+/* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
+@media (hover: hover) and (pointer: fine) {
+	/* No :hover outside of the div bounds, will let the card disappear when the mouse moves outside of it */
+	.card-column > div > div {
+		pointer-events: none;
+	}
+	/* Except if its fully visible */
+	.card-column > div:last-child > div {
+		pointer-events: auto;
+	}
 }
 
 .drag-column {

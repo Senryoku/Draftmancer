@@ -53,7 +53,7 @@
 						v-for="card in selectedSet.cards.filter(c => c.rarity == missingCardsRarity && (showNonBooster || c.in_booster) && c.count < 4)"
 						:key="card.uniqueID"
 						:card="card"
-						:language="$root.language"
+						:language="language"
 					></missing-card>
 				</div>
 			</div>
@@ -70,6 +70,7 @@ export default {
 	components: { MissingCard },
 	props: {
 		collection: { type: Object, required: true },
+		language: { type: String, required: true },
 	},
 	data: () => {
 		return {
