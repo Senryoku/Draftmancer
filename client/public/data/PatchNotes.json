@@ -1,5 +1,9 @@
 [
 	{
+		"date": "16/07/2020",
+		"notes": ["Updated landing page.", "Added Jumpstart cards and gamemode."]
+	},
+	{
 		"date": "05/07/2020",
 		"notes": ["Added 3-Round Swiss support (by Squerp)."]
 	},
