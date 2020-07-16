@@ -283,7 +283,8 @@ setFullNames = {
     "eld": "Throne of Eldraine",
     "thb": "Theros: Beyond Death",
     "m21": "Core Set 2021",
-    "iko": "Ikoria: Lair of Behemoths"
+    "iko": "Ikoria: Lair of Behemoths",
+    "jmp": "Jumpstart"
 }
 
 
