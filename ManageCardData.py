@@ -69,7 +69,7 @@ for name, num, set, id in [('Lightning Serpent', '88', 'csp', 74996),
                            ('Doomed Necromancer', '137', '10e', 74992),
                            ('Fanatic of Mogis', '121', 'ths', 74999)]:
     CardsCollectorNumberAndSet[(name, num, set)] = id
-    #CardNameToID[name] = id
+    # CardNameToID[name] = id
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -100,15 +100,19 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         objects = ijson.items(file, 'item')
         arena_cards = (o for o in objects if (
-            o['name'], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
+            o['name'], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet or (o['name'].split(" //")[0], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
         cards = []
 
         sys.stdout.write("Processing... ")
         sys.stdout.flush()
         copied = 0
         for c in arena_cards:
-            c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
-                                                        c['collector_number'], c['set'].lower())]
+            if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
+                c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
+                                                            c['collector_number'], c['set'].lower())]
+            else:
+                c['arena_id'] = CardsCollectorNumberAndSet[(c['name'].split(" //")[0],
+                                                            c['collector_number'], c['set'].lower())]
             cards.append(c)
             copied += 1
             sys.stdout.write("\b" * 100)  # return to start of line

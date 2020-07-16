@@ -1647,7 +1647,7 @@ describe("Sealed", function() {
 
 const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
 
-describe.only("Jumpstart", function() {
+describe("Jumpstart", function() {
 	let clients = [];
 	let sessionID = "JumpStartSession";
 
