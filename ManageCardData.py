@@ -53,11 +53,23 @@ for path in MTGACardsFiles:
                     o['set'] = 'con'
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
+                # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
+                # Adding name to disambiguate.
                 CardsCollectorNumberAndSet[(MTGALocalization[o['titleId']],
                                             o['CollectorNumber'], o['set'])] = o['grpid']
 
+                # From Jumpstart: Prioritizing cards from JMP and M21
                 if MTGALocalization[o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
                     CardNameToID[MTGALocalization[o['titleId']]] = o['grpid']
+
+# Manually add some Jumpstart cards that only exists on Arena (Scryfall doesn't know about their JMP version and we have to specify another set to extract the card data)
+for name, num, set, id in [('Lightning Serpent', '88', 'csp', 74996),
+                           ('Goblin Oriflamme', '130', 'mh1', 74998),
+                           ('Carnifex Demon', '57', 'som', 74993),
+                           ('Doomed Necromancer', '137', '10e', 74992),
+                           ('Fanatic of Mogis', '121', 'ths', 74999)]:
+    CardsCollectorNumberAndSet[(name, num, set)] = id
+    #CardNameToID[name] = id
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -95,8 +107,6 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.flush()
         copied = 0
         for c in arena_cards:
-            if c['set'].lower() == 'jmp' and c['collector_number'] == 143:
-                print("OK")
             c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                         c['collector_number'], c['set'].lower())]
             cards.append(c)
@@ -241,6 +251,7 @@ with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
     json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
 
 if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
+    print("Extracting Jumpstart Boosters...")
     jumpstartBoosters = []
 
     regex = re.compile("(\d+) (.*)")
@@ -259,13 +270,26 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                     if name in swaps:
                         name = swaps[name]
                     if name in CardNameToID:
-                        booster["cards"] += [CardNameToID[name]] * count
+                        cid = CardNameToID[name]
+                        # Some cards are labeled as JMP in Arena but not on Scryfall (Swaped cards). We can search for an alternative version.
+                        if str(cid) not in cards:
+                            print("{} ({}) not found in cards...".format(name, cid))
+                            candidates = [
+                                key for key, val in cards.items() if val['name'] == name and val['set'] != 'jmp']
+                            if len(candidates) == 0:
+                                print(
+                                    " > Cannot find a good candidate ID for {} !!".format(name))
+                            else:
+                                cid = max(candidates)
+                                print("> Using {}".format(cid))
+                        booster["cards"] += [cid] * count
                     else:
                         print("Jumpstart Boosters: Card '{}' not found.".format(name))
             jumpstartBoosters.append(booster)
     print("Jumpstart Boosters: ", len(jumpstartBoosters))
     with open(JumpstartBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartBoosters, outfile, ensure_ascii=False)
+    print("Jumpstart booster dumped to disk.")
 
 setFullNames = {
     "ana": "Arena",
