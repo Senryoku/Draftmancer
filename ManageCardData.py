@@ -43,6 +43,7 @@ for path in MTGALocFiles:
 
 MTGADataDebug = {}
 CardsCollectorNumberAndSet = {}
+CardNameToID = {}
 for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
@@ -56,7 +57,10 @@ for path in MTGACardsFiles:
                 MTGADataDebug[(MTGALocalization[o['titleId']],
                                o['CollectorNumber'], o['set'].lower())] = o['grpid']
                 CardsCollectorNumberAndSet[(
-                    o['CollectorNumber'], o['set'].lower())] = o['grpid']
+                    o['CollectorNumber'], o['set'])] = o['grpid']
+
+                if MTGALocalization[o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
+                    CardNameToID[MTGALocalization[o['titleId']]] = o['grpid']
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -169,7 +173,8 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     "ko": {},
                     "ru": {},
                     "zhs": {},
-                    "zht": {}}
+                    "zht": {},
+                    "ph": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
         arena_cards = json.loads(file.read())
@@ -238,10 +243,6 @@ with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
 
 if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
     jumpstartBoosters = []
-    cardPool = {}
-    for key in cards:
-        if cards[key]['set'] in ['jmp', 'm21']:
-            cardPool[cards[key]['name']] = key
 
     regex = re.compile("(\d+) (.*)")
     swaps = {}
@@ -258,8 +259,8 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                     name = m.group(2)
                     if name in swaps:
                         name = swaps[name]
-                    if name in cardPool:
-                        booster["cards"] += [cardPool[name]] * count
+                    if name in CardNameToID:
+                        booster["cards"] += [CardNameToID[name]] * count
                     else:
                         print("Jumpstart Boosters: Card '{}' not found.".format(name))
             jumpstartBoosters.append(booster)
