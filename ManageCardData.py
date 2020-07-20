@@ -57,19 +57,15 @@ for path in MTGACardsFiles:
                 # Adding name to disambiguate.
                 CardsCollectorNumberAndSet[(MTGALocalization[o['titleId']],
                                             o['CollectorNumber'], o['set'])] = o['grpid']
+                # Also look of the Arena only version (ajmp) of the card on Scryfall
+                if o['set'] == 'jmp':
+                    CardsCollectorNumberAndSet[(
+                        MTGALocalization[o['titleId']], o['CollectorNumber'], 'ajmp')] = o['grpid']
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
                 if MTGALocalization[o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
                     CardNameToID[MTGALocalization[o['titleId']]] = o['grpid']
 
-# Manually add some Jumpstart cards that only exists on Arena (Scryfall doesn't know about their JMP version and we have to specify another set to extract the card data)
-for name, num, set, id in [('Lightning Serpent', '88', 'csp', 74996),
-                           ('Goblin Oriflamme', '130', 'mh1', 74998),
-                           ('Carnifex Demon', '57', 'som', 74993),
-                           ('Doomed Necromancer', '137', '10e', 74992),
-                           ('Fanatic of Mogis', '121', 'ths', 74999)]:
-    CardsCollectorNumberAndSet[(name, num, set)] = id
-    # CardNameToID[name] = id
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
