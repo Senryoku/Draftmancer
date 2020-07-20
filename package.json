@@ -28,6 +28,7 @@
 		"eslint-config-prettier": "^6.11.0",
 		"express": "^4.17.1",
 		"heroku-client": "^3.1.0",
+		"mixpanel": "^0.11.0",
 		"random-js": "^2.1.0",
 		"request": "^2.88.2",
 		"socket.io": "^2.3.0",
