@@ -10,6 +10,9 @@ const Connections = ConnectionModule.Connections;
 const SessionModule = require("./Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
+const Mixpanel = require("mixpanel");
+const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : "NoToken";
+const MixInstance = Mixpanel.init(MixPanelToken, { api_host: "api-eu.mixpanel.com" }, "");
 
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
@@ -297,32 +300,15 @@ async function logSession(type, session) {
 				if (!localSess.draftLog.users[uid].userName.startsWith("Bot #"))
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
-	const params = {
-		TableName: TableNames.DraftLogs,
-		ReturnConsumedCapacity: "TOTAL",
-		Item: {
-			id: filterEmptyStr(localSess.id),
-			time: new Date().getTime(),
-			type: type === "" ? null : type,
-			session: localSess,
-		},
-	};
 
-	try {
-		const putResult = await docClient.put(params).promise();
-		console.log(
-			`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
-		);
-	} catch (err) {
-		console.error("saveDraftlog error: ", err);
-		console.error(params);
-	}
+	localSess.distinct_id = "Server";
+
+	MixInstance.track(type === "" ? "DefaultEvent" : type, localSess);
 }
 
 if (DisablePersistence) {
 	module.exports.InactiveSessions = {};
 	module.exports.InactiveConnections = {};
-	module.exports.logSession = () => {};
 } else {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
@@ -372,5 +358,6 @@ if (DisablePersistence) {
 
 	module.exports.InactiveSessions = requestSavedSessions();
 	module.exports.InactiveConnections = requestSavedConnections();
-	module.exports.logSession = () => {}; //logSession; // Disabled
 }
+
+module.exports.logSession = logSession;
