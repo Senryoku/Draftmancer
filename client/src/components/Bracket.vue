@@ -1,38 +1,55 @@
 
 <template>
-	<div class="bracket" v-if="bracket">
-		<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
-			<div v-for="(m, matchIndex) in col" :key="matchIndex" class="bracket-match">
-				<td class="bracket-match-num">{{m.index+1}}</td>
-				<td class="bracket-match-players">
-					<div v-for="(p, index) in m.players" :key="index">
-						<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-						<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
-						<div
-							class="bracket-player"
-							:class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}"
-							v-else
-						>
-							<template v-if="colIndex === 2">
-								<i v-if="records[p].wins === 3" class="trophy gold fas fa-trophy"></i>
-								<i v-else-if="records[p].wins === 2" class="trophy silver fas fa-trophy"></i>
-								<div v-else class="trophy"></div>
-							</template>
-							<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
-							<template v-if="m.isValid()">
-								<input
-									v-if="editable"
-									class="result-input"
-									type="number"
-									v-model.number="bracket.results[m.index][index]"
-									min="0"
-									@change="emitUpdated"
-								/>
-								<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
-							</template>
+	<div v-if="bracket">
+		<div v-if="fullcontrol" class="controls">
+			<span v-tooltip="'If set, only the owner will be able to enter results.'">
+				<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
+				<label for="lock">
+					<i class="fas fa-lock"></i> Lock
+				</label>
+			</span>
+			<button @click="$emit('generate')">Re-Generate Single Elimination</button>
+			<button @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
+		</div>
+		<div v-else-if="locked" class="controls">
+			<span>
+				<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
+			</span>
+		</div>
+		<div class="bracket-columns">
+			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
+				<div v-for="(m, matchIndex) in col" :key="matchIndex" class="bracket-match">
+					<td class="bracket-match-num">{{m.index+1}}</td>
+					<td class="bracket-match-players">
+						<div v-for="(p, index) in m.players" :key="index">
+							<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
+							<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
+							<div
+								class="bracket-player"
+								:class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}"
+								v-else
+							>
+								<template v-if="colIndex === 2">
+									<i v-if="records[p].wins === 3" class="trophy gold fas fa-trophy"></i>
+									<i v-else-if="records[p].wins === 2" class="trophy silver fas fa-trophy"></i>
+									<div v-else class="trophy"></div>
+								</template>
+								<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
+								<template v-if="m.isValid()">
+									<input
+										v-if="editable"
+										class="result-input"
+										type="number"
+										v-model.number="bracket.results[m.index][index]"
+										min="0"
+										@change="emitUpdated"
+									/>
+									<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
+								</template>
+							</div>
 						</div>
-					</div>
-				</td>
+					</td>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -45,6 +62,8 @@ export default {
 	props: {
 		bracket: { type: Object, required: true },
 		editable: { type: Boolean, default: false },
+		locked: { type: Boolean, default: false },
+		fullcontrol: { type: Boolean, default: false },
 	},
 	methods: {
 		emitUpdated: function() {
@@ -52,6 +71,9 @@ export default {
 		},
 		recordString: function(player) {
 			return `${this.records[player].wins} - ${this.records[player].losses}`;
+		},
+		lock: function(e) {
+			this.$emit("lock", e.target.checked);
 		},
 	},
 	computed: {
@@ -125,7 +147,7 @@ export default {
 						r[m.players[winIdx]].wins += 1;
 						r[m.players[(winIdx + 1) % 2]].losses += 1;
 					} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
-						r[m.players[0]].wins += 1;					
+						r[m.players[0]].wins += 1;
 					} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
 						r[m.players[1]].wins += 1;
 					}
@@ -137,7 +159,11 @@ export default {
 </script>
 
 <style>
-.bracket {
+.controls {
+	padding: 0.5em;
+}
+
+.bracket-columns {
 	display: flex;
 }
 

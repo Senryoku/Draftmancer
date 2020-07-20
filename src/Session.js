@@ -138,6 +138,7 @@ function Session(id, owner) {
 	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
 	this.bracket = undefined;
+	this.bracketLocked = false; // If set, only the owner can edit the results.
 
 	// Draft state
 	this.drafting = false;
@@ -247,6 +248,7 @@ function Session(id, owner) {
 			burnedCardsPerRound: this.burnedCardsPerRound,
 			draftLogRecipients: this.draftLogRecipients,
 			bracket: this.bracket,
+			bracketLocked: this.bracketLocked,
 		});
 	};
 

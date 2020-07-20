@@ -134,6 +134,7 @@ new Vue({
 		draftLog: undefined,
 		savedDraftLog: false,
 		bracket: null,
+		bracketLocked: false,
 		virtualPlayersData: undefined,
 		booster: [],
 		boosterNumber: 0,
@@ -1446,7 +1447,13 @@ new Vue({
 			});
 		},
 		updateBracket: function() {
+			if (this.userID != this.sessionOwner && this.bracketLocked) return;
 			this.socket.emit("updateBracket", this.bracket.results);
+		},
+		lockBracket: function(val) {
+			if (this.userID != this.sessionOwner) return;
+			this.bracketLocked = val;
+			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
 		addToDeck: function(card) {

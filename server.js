@@ -679,9 +679,22 @@ io.on("connection", function(socket) {
 	socket.on("updateBracket", function(results) {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+		if (!(sessionID in Sessions) || (Sessions[sessionID].owner != this.userID && Sessions[sessionID].bracketLock))
+			return;
 
 		Sessions[sessionID].updateBracket(results);
+	});
+
+	socket.on("lockBracket", function(bracketLocked) {
+		let userID = this.userID;
+		let sessionID = Connections[userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		Sessions[sessionID].bracketLocked = bracketLocked;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
+		}
 	});
 
 	joinSession(query.sessionID, query.userID);

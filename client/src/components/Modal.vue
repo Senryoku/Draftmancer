@@ -71,7 +71,7 @@ export default {
 	width: fit-content;
 	max-width: 95%;
 	margin: 0px auto;
-	padding: 20px 20px;
+	padding: 1em;
 	background-color: rgba(32, 32, 32, 1);
 	border-radius: 1em;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
