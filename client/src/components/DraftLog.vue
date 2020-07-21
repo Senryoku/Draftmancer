@@ -2,7 +2,9 @@
 	<div>
 		<span v-if="draftlog.sessionID">Draft log for Session '{{draftlog.sessionID}}'</span>
 		<span v-if="draftlog.time">({{new Date(draftlog.time).toLocaleString()}})</span>
-		<button type="button" @click="downloadLog">Download full log</button>
+		<button type="button" @click="downloadLog">
+			<i class="fas fa-file-download"></i> Download full log
+		</button>
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
@@ -33,9 +35,15 @@
 				<option>Picks</option>
 				<option>Cards</option>
 			</select>
-			<button @click="exportSingleLog(selectedLog.userID)">Export in MTGA format</button>
-			<button @click="downloadMPT(selectedLog.userID)">Download in MTGO format</button>
-			<button @click="submitToMPT(selectedLog.userID)">Submit to MagicProTools</button>
+			<button @click="exportSingleLog(selectedLog.userID)">
+				<i class="fas fa-clipboard-list"></i> Export in MTGA format
+			</button>
+			<button @click="downloadMPT(selectedLog.userID)">
+				<i class="fas fa-file-download"></i> Download in MTGO format
+			</button>
+			<button @click="submitToMPT(selectedLog.userID)">
+				<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
+			</button>
 
 			<template v-if="displayOptions.category == 'Picks'">
 				<div v-for="(pick, index) in selectedLog.picks" :key="index">

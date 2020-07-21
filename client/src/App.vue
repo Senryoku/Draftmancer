@@ -618,8 +618,12 @@
 		>
 			<div class="controls">
 				<h2>Deck ({{deck.length}})</h2>
-				<button v-if="deck.length > 0" type="button" @click="exportDeck">Export Deck to MTGA</button>
-				<button v-if="deck.length > 0" type="button" @click="exportDeck(false)">Export (Simple)</button>
+				<button v-if="deck.length > 0" type="button" @click="exportDeck">
+					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
+				</button>
+				<button v-if="deck.length > 0" type="button" @click="exportDeck(false)">
+					<i class="fas fa-clipboard"></i> Export (Simple)
+				</button>
 				<span v-show="draftingState == DraftState.Brewing">
 					<input type="checkbox" id="autoLand" v-model="autoLand" />
 					<label
