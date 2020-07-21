@@ -33,6 +33,7 @@ module.exports = {
 						options: {
 							publicPath: "dist/assets/",
 							outputPath: "assets/",
+							esModule: false,
 						},
 					},
 				],
@@ -42,10 +43,4 @@ module.exports = {
 	plugins: [
 		new VueLoaderPlugin(), //new BundleAnalyzerPlugin()
 	],
-	// Includes VueJS compiler - Could be removed by switching to precompiled templates... which means refactor everything in index.html to gain these 20kb \o/
-	resolve: {
-		alias: {
-			vue$: "vue/dist/vue.esm.js",
-		},
-	},
 };

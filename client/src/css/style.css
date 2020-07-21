@@ -1,0 +1,98 @@
+body {
+	margin: 0;
+	margin-left: 0;
+	background-color: rgb(32, 32, 32);
+	background-image: url("../assets/img/m21-min.png");
+	background-position: 85% -50px;
+	background-repeat: no-repeat;
+	background-size: 40%;
+	color: #ddd;
+	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+	position: relative;
+	min-height: calc(100vh - 2em);
+	padding-bottom: 2em;
+}
+
+a,
+a:visited {
+	color: #518ae6;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a:hover {
+	color: #72a7ff;
+}
+
+pre {
+	background-color: #333;
+	padding: 0.5em;
+}
+
+label {
+	margin: 0.25em;
+}
+
+.capitalized {
+	text-transform: capitalize;
+}
+
+.inline {
+	display: inline-block;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.clickable:hover {
+	color: #fff;
+}
+
+.draggable {
+	cursor: grab;
+}
+
+.green {
+	color: green;
+}
+
+.yellow {
+	color: yellow;
+}
+
+.red {
+	color: DarkRed;
+}
+
+.blue {
+	color: #3666b3;
+}
+
+.gold {
+	color: gold;
+}
+
+.subtle-gold {
+	text-shadow: 0 0 1px gold;
+}
+
+.redbg {
+	background-color: DarkRed;
+	border-radius: 0.2em;
+}
+
+.disabled {
+	pointer-events: none;
+	opacity: 0.3;
+	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #383838 10px, #383838 20px);
+}
+
+.small-number-input {
+	width: 3em;
+}
+
+.generic-container {
+	position: relative;
+}
