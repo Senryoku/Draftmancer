@@ -22,3 +22,11 @@ export default {
 	components: { Card },
 };
 </script>
+
+<style scoped>
+.card-column {
+	-webkit-column-break-inside: avoid;
+	page-break-inside: avoid;
+	break-inside: avoid;
+}
+</style>

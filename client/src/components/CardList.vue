@@ -139,12 +139,6 @@ export default {
 	column-gap: 1rem;
 }
 
-.card-column {
-	-webkit-column-break-inside: avoid;
-	page-break-inside: avoid;
-	break-inside: avoid;
-}
-
 .card-wrapper {
 	position: relative;
 	margin: 0;

@@ -44,14 +44,14 @@
 					class="column-control clickable"
 					v-tooltip.right="'Sort cards by color'"
 				>
-					<img src="img/sort-color.svg" />
+					<img src="../assets/img/sort-color.svg" />
 				</div>
 				<div
 					@click="sortByRarity"
 					class="column-control clickable"
 					v-tooltip.right="'Sort cards by rarity'"
 				>
-					<img src="img/sort-rarity.svg" />
+					<img src="../assets/img/sort-rarity.svg" />
 				</div>
 			</div>
 		</div>
