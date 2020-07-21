@@ -88,3 +88,7 @@ label {
 	opacity: 0.3;
 	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #383838 10px, #383838 20px);
 }
+
+.generic-container {
+	position: relative;
+}
