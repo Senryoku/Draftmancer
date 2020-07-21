@@ -106,7 +106,7 @@
 						v-tooltip="'Show/Hide your session ID.'"
 					></i>
 					<i
-						class="fas fa-share-square clickable"
+						class="fas fa-fw fa-share-square clickable"
 						v-tooltip="'Share your Session ID'"
 						@click="sessionURLToClipboard"
 					></i>
