@@ -61,11 +61,7 @@
 						<button v-if="hasCollection" v-tooltip="'Display some statistics about your collection.'" @click="displayedModal = 'collection'">
 							Stats
 						</button>
-						<div
-							v-show="Object.keys(collection).length > 0"
-							class="inline"
-							v-tooltip="'Uncheck this to draft using every cards. Ignored when using a Custom Card List.'"
-						>
+						<div v-show="hasCollection" class="inline" v-tooltip="'Uncheck this to draft using every cards. Ignored when using a Custom Card List.'">
 							<input type="checkbox" v-model="useCollection" id="useCollection" />
 							<label for="useCollection">Restrict to Collection</label>
 						</div>
@@ -1057,7 +1053,6 @@
 								<input
 									type="image"
 									src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-									border="0"
 									name="submit"
 									title="PayPal - The safer, easier way to pay online!"
 									alt="Donate with PayPal button"
