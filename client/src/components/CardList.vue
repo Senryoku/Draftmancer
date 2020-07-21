@@ -1,7 +1,9 @@
 <template>
 	<div v-if="isValid">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
-		<span v-if="missing && missing.total > 0">
+		<span
+			v-if="missing && missing.total > 0"
+		>
 			<i class="fas fa-exclamation-triangle yellow"></i>
 			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
@@ -9,18 +11,32 @@
 		<template v-if="cardlist.customSheets">
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
-				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
-					<card-column
+				<div
+					v-for="(row, rowIndex) in rowsBySlot[key]"
+					:key="'row' + rowIndex"
+					class="category-wrapper"
+				>
+					<card-list-column
 						v-for="(column, colIndex) in row"
 						:key="'col' + colIndex"
 						:column="column"
-					></card-column>
+						:checkcollection="checkCollection"
+						:collection="collection"
+						:language="language"
+					></card-list-column>
 				</div>
 			</div>
 		</template>
 		<template v-else>
 			<div v-for="(row, rowIndex) in rows" :key="'row' + rowIndex" class="category-wrapper">
-				<card-column v-for="(column, colIndex) in row" :key="'col' + colIndex" :column="column"></card-column>
+				<card-list-column
+					v-for="(column, colIndex) in row"
+					:key="'col' + colIndex"
+					:column="column"
+					:checkcollection="checkCollection"
+					:collection="collection"
+					:language="language"
+				></card-list-column>
 			</div>
 		</template>
 	</div>
@@ -28,31 +44,17 @@
 </template>
 
 <script>
-import Vue from "vue";
-import { download } from "../helper.js";
+import { download, isEmpty } from "../helper.js";
+import { Cards } from "./../Cards.js";
 import CardOrder from "../cardorder.js";
-import Card from "./Card.vue";
-
-const CardColumn = Vue.component("CardColumn", {
-	props: {
-		column: { type: Array, required: true },
-	},
-	components: { Card },
-	template: `
-<div class="card-column" v-show="column.length > 0">
-	<div v-for="(card, index) in column" :key="index" class="card card-wrapper">
-		<div v-if="$root.hasCollection && !(card.id in $root.collection)" class="collection-warning">
-			<i class="fas fa-exclamation-triangle yellow"></i>
-		</div>
-		<card :card="card" :language="$root.language"></card>
-	</div>
-</div>`,
-});
+import CardListColumn from "./CardListColumn.vue";
 
 export default {
-	components: { CardColumn },
+	components: { CardListColumn },
 	props: {
 		cardlist: { type: Object, required: true },
+		language: { type: String, required: true },
+		collection: { type: Object },
 	},
 	computed: {
 		isValid: function() {
@@ -60,23 +62,26 @@ export default {
 		},
 		rows: function() {
 			if (this.cardlist.customSheets) return [];
-			return this.rowsByColor(this.cardlist.cards.map(cid => this.$root.cards[cid]));
+			return this.rowsByColor(this.cardlist.cards.map(cid => Cards[cid]));
 		},
 		rowsBySlot: function() {
 			if (!this.cardlist.customSheets) return [];
 			let rowsBySlot = {};
 			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map(cid => this.$root.cards[cid]));
+				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map(cid => Cards[cid]));
 			}
 			return rowsBySlot;
 		},
+		checkCollection: function() {
+			return !isEmpty(this.collection);
+		},
 		missing: function() {
-			if (!this.$root.hasCollection) return null;
+			if (!this.checkCollection) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			for (let cid of this.flatCardList) {
-				if (!(cid in this.$root.collection)) {
+				if (!(cid in this.collection)) {
 					missing.total += 1;
-					missing[this.$root.cards[cid].rarity] += 1;
+					missing[Cards[cid].rarity] += 1;
 				}
 			}
 			return missing;
@@ -97,12 +102,12 @@ export default {
 				for (let slot in this.cardlist.cards) {
 					str += `[${slot}(${this.cardlist.cardsPerBooster[slot]})]\n`;
 					for (let cid of this.cardlist.cards[slot]) {
-						str += this.$root.cards[cid].name + "\n";
+						str += Cards[cid].name + "\n";
 					}
 				}
 			} else {
 				for (let cid of this.cardlist.cards) {
-					str += this.$root.cards[cid].name + "\n";
+					str += Cards[cid].name + "\n";
 				}
 			}
 			download("Cube.txt", str);

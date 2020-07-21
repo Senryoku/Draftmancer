@@ -1,11 +1,18 @@
 <template>
-	<clazy-load :ratio="0.01" margin="200px" :src="imageURI" loadingClass="card-loading" :title="printedName">
+	<clazy-load
+		:ratio="0.01"
+		margin="200px"
+		:src="imageURI"
+		loadingClass="card-loading"
+		:title="printedName"
+	>
 		<img :src="imageURI" />
 		<card-placeholder slot="placeholder" :name="printedName"></card-placeholder>
 	</clazy-load>
 </template>
 
 <script>
+import { Cards } from "./../Cards.js";
 import CardPlaceholder from "./CardPlaceholder.vue";
 const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
 export default {
@@ -13,18 +20,18 @@ export default {
 	components: { CardPlaceholder },
 	props: {
 		card: { type: Object, required: true },
-		language: { type: String, default: "en" },
+		language: { type: String, required: true },
 	},
 	computed: {
 		imageURI: function() {
-			if (this.language in this.$root.cards[this.card.id].image_uris)
-				return ImageURLPrefix + this.$root.cards[this.card.id].image_uris[this.language];
-			return ImageURLPrefix + this.$root.cards[this.card.id].image_uris["en"];
+			if (this.language in Cards[this.card.id].image_uris)
+				return ImageURLPrefix + Cards[this.card.id].image_uris[this.language];
+			return ImageURLPrefix + Cards[this.card.id].image_uris["en"];
 		},
 		printedName: function() {
-			if (this.language in this.$root.cards[this.card.id].printed_name)
-				return this.$root.cards[this.card.id].printed_name[this.language];
-			return this.$root.cards[this.card.id].name;
+			if (this.language in Cards[this.card.id].printed_name)
+				return Cards[this.card.id].printed_name[this.language];
+			return Cards[this.card.id].name;
 		},
 	},
 };

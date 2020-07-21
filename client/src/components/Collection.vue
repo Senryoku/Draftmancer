@@ -63,6 +63,9 @@
 </template>
 
 <script>
+import Constant from "../constants.json";
+import SetsInfos from "../../public/data/SetsInfos.json";
+import { Cards, genCard } from "./../Cards.js";
 import MissingCard from "./MissingCard.vue";
 
 export default {
@@ -81,18 +84,18 @@ export default {
 	},
 	computed: {
 		collectionStats: function() {
-			if (!this.collection || !this.$root.cards || !this.$root.setsInfos) return null;
+			if (!this.collection || !Cards || !SetsInfos) return null;
 			let stats = {};
-			for (let id in this.$root.cards) {
-				let card = this.$root.genCard(id);
-				const completeSet = this.$root.sets.includes(card.set);
+			for (let id in Cards) {
+				let card = genCard(id);
+				const completeSet = Constant.MTGSets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					const set = completeSet ? card.set : "Others";
 					if (!(set in stats)) {
 						stats[set] = {
 							name: set,
-							fullName: completeSet ? this.$root.setsInfos[card.set].fullName : "Others",
+							fullName: completeSet ? SetsInfos[card.set].fullName : "Others",
 							cards: [],
 							cardCount: 0,
 							common: [],
@@ -105,11 +108,11 @@ export default {
 							mythicCount: 0,
 							total: completeSet
 								? {
-										unique: this.$root.setsInfos[card.set].cardCount,
-										commonCount: this.$root.setsInfos[card.set]["commonCount"],
-										uncommonCount: this.$root.setsInfos[card.set]["uncommonCount"],
-										rareCount: this.$root.setsInfos[card.set]["rareCount"],
-										mythicCount: this.$root.setsInfos[card.set]["mythicCount"],
+										unique: SetsInfos[card.set].cardCount,
+										commonCount: SetsInfos[card.set]["commonCount"],
+										uncommonCount: SetsInfos[card.set]["uncommonCount"],
+										rareCount: SetsInfos[card.set]["rareCount"],
+										mythicCount: SetsInfos[card.set]["mythicCount"],
 								  }
 								: { unique: 0, commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0 },
 						};
