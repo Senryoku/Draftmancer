@@ -50,6 +50,10 @@ label {
 	color: #fff;
 }
 
+.draggable {
+	cursor: grab;
+}
+
 .green {
 	color: green;
 }
