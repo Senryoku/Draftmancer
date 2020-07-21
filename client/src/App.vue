@@ -166,7 +166,7 @@
 								selected-label=""
 								deselect-label=""
 							>
-								<template slot="selection" slot-scope="{ values, search, isOpen }">
+								<template slot="selection" slot-scope="{ values }">
 									<span class="multiselect__single" v-if="values.length == 1">
 										<img class="set-icon" :src="setsInfos[values[0]].icon" />
 										{{ setsInfos[values[0]].fullName }}
@@ -181,7 +181,7 @@
 										/>
 									</span>
 								</template>
-								<template slot="option" slot-scope="{ option , search  }">
+								<template slot="option" slot-scope="{ option }">
 									<span class="multiselect__option">
 										<img class="set-icon padded-icon" :src="setsInfos[option].icon" />
 										{{ setsInfos[option].fullName }}
@@ -1476,91 +1476,6 @@ footer span {
 	color: green;
 }
 
-.multiselect {
-	display: inline-block;
-	vertical-align: baseline;
-	width: 16.5em;
-	min-height: auto;
-	--invertedness: 100%;
-}
-
-.multiselect__tags,
-.multiselect__single,
-.multiselect__element,
-.multiselect__content-wrapper {
-	color: #ddd;
-	background: #555;
-}
-
-.multiselect__tags {
-	border-radius: 4px;
-	border: 1px solid #888;
-	height: 28px;
-	min-height: auto;
-	padding: 5px 5px;
-}
-
-.multiselect__option {
-	font-size: 14px;
-	min-height: auto;
-	line-height: inherit;
-	padding: 5px;
-}
-
-.multiselect__option--selected {
-	--invertedness: 0%;
-}
-
-.multiselect__option::after {
-	line-height: 36px;
-	font-size: 10px;
-	padding-left: inherit;
-	font-family: "Font Awesome 5 Free";
-}
-
-.multiselect__tag {
-	background: #333;
-}
-
-.multiselect__placeholder {
-	padding-top: 0;
-	padding-bottom: 0;
-	margin-bottom: 0;
-}
-
-.multiselect--active .multiselect__placeholder {
-	display: inline-block;
-}
-
-.multiselect__single {
-	margin-bottom: 0;
-	line-height: inherit;
-	min-height: auto;
-	width: auto;
-	font-size: inherit;
-}
-
-.multiselect__single_nooverflow {
-	overflow: hidden;
-	max-height: 1em;
-	max-width: 12em;
-}
-
-.multiselect__single_nooverflow .set-icon {
-	margin-right: 0.2em;
-}
-
-.multiselect__select {
-	top: 40%;
-	bottom: 60%;
-	right: 0;
-	height: auto;
-}
-
-.multiselect__select::before {
-	top: 2.5px;
-}
-
 .set-icon {
 	display: inline-block;
 	height: 1em;
@@ -1580,10 +1495,6 @@ footer span {
 
 .land-input {
 	white-space: nowrap;
-}
-
-.multiselect__tag-icon {
-	color: #bf5d5d;
 }
 
 #session-more-options {
@@ -2645,5 +2556,97 @@ ul.player-table li:nth-child(4):after {
 	width: 200px;
 	padding: 0.5em;
 	text-align: center;
+}
+</style>
+
+<style scoped>
+.multiselect {
+	display: inline-block;
+	vertical-align: baseline;
+	width: 16.5em;
+	min-height: auto;
+	--invertedness: 100%;
+}
+
+.multiselect__tags,
+.multiselect__single,
+.multiselect__element,
+.multiselect__content-wrapper {
+	color: #ddd;
+	background: #555;
+}
+
+.multiselect__tags {
+	border-radius: 4px;
+	border: 1px solid #888;
+	height: 28px;
+	min-height: auto;
+	padding: 5px 5px;
+}
+
+.multiselect__option {
+	font-size: 14px;
+	min-height: auto;
+	line-height: inherit;
+	padding: 5px;
+	padding-left: 0;
+}
+
+.multiselect__option--selected {
+	--invertedness: 0%;
+}
+
+.multiselect__option::after {
+	line-height: 36px;
+	font-size: 10px;
+	padding-left: inherit;
+	font-family: "Font Awesome 5 Free";
+}
+
+.multiselect__tag {
+	background: #333;
+}
+
+.multiselect__placeholder {
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+
+.multiselect--active .multiselect__placeholder {
+	display: inline-block;
+}
+
+.multiselect__single {
+	margin-bottom: 0;
+	line-height: inherit;
+	min-height: auto;
+	width: auto;
+	font-size: inherit;
+}
+
+.multiselect__single_nooverflow {
+	overflow: hidden;
+	max-height: 1em;
+	max-width: 12em;
+}
+
+.multiselect__single_nooverflow .set-icon {
+	margin-right: 0.2em;
+}
+
+.multiselect__select {
+	top: 40%;
+	bottom: 60%;
+	right: 0;
+	height: auto;
+}
+
+.multiselect__select::before {
+	top: 2.5px;
+}
+
+.multiselect__tag-icon {
+	color: #bf5d5d;
 }
 </style>
