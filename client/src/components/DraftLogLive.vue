@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<template v-if="['owner', 'everyone'].includes($root.draftLogRecipients)">
+		<template v-if="show">
 			<div v-if="player in draftlog.users">
 				<div class="draft-log-live-title">
 					<h2>Live Review: {{draftlog.users[player].userName}}</h2>
@@ -23,7 +23,7 @@
 							class="fas fa-chevron-right clickable"
 							@click="() => { ++pick; }"
 						></i>
-						<h2>{{ $root.cards[draftlog.users[player].picks[pick].pick].printed_name[$root.language] }}</h2>
+						<h2>{{ getCardName(draftlog.users[player].picks[pick].pick) }}</h2>
 					</span>
 				</div>
 				<template
@@ -31,7 +31,7 @@
 				>Waiting for {{draftlog.users[player].userName}} to make their first pick...</template>
 				<template v-else>
 					<div v-if="pick < draftlog.users[player].picks.length">
-						<draft-log-pick :pick="draftlog.users[player].picks[pick]"></draft-log-pick>
+						<draft-log-pick :pick="draftlog.users[player].picks[pick]" :language="language"></draft-log-pick>
 					</div>
 				</template>
 			</div>
@@ -46,13 +46,16 @@
 </template>
 
 <script>
+import { Cards } from "../Cards.js";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
 	name: "DraftLogLive",
 	components: { DraftLogPick },
 	props: {
+		show: { type: Boolean, default: true },
 		draftlog: { type: Object, required: true },
+		language: { type: String, required: true },
 	},
 	data: () => {
 		return {
@@ -81,6 +84,9 @@ export default {
 		}
 	},
 	methods: {
+		getCardName: function(cid) {
+			Cards[cid].printed_name[this.language];
+		},
 		setPlayer: function(userID) {
 			if (!(userID in this.draftlog.users)) return;
 			this.player = userID;

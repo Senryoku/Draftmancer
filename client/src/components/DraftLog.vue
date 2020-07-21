@@ -39,14 +39,15 @@
 
 			<template v-if="displayOptions.category == 'Picks'">
 				<div v-for="(pick, index) in selectedLog.picks" :key="index">
-					<h3>Pick {{index + 1}}: {{$root.cards[pick.pick].name}}</h3>
-					<draft-log-pick :pick="pick"></draft-log-pick>
+					<h3>Pick {{index + 1}}: {{getCard(pick.pick).name}}</h3>
+					<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
 				</div>
 			</template>
 			<template v-else-if="displayOptions.category == 'Cards'">
 				<div class="card-container card-columns">
 					<card-pool
 						:cards="selectedLogCards"
+						:language="language"
 						:group="`cardPool-${selectedLog.userID}`"
 						:key="`cardPool-${selectedLog.userID}`"
 					></card-pool>
@@ -57,14 +58,21 @@
 </template>
 
 <script>
-import * as helper from "./../helper.js";
+import * as helper from "../helper.js";
+import { fireToast } from "../alerts.js";
+import { Cards, genCard } from "../Cards.js";
+import exportToMTGA from "../exportToMTGA.js";
+
 import CardPool from "./CardPool.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
 	name: "DraftLog",
 	components: { CardPool, DraftLogPick },
-	props: { draftlog: { type: Object, required: true } },
+	props: {
+		draftlog: { type: Object, required: true },
+		language: { type: String, required: true },
+	},
 	data: () => {
 		return {
 			displayOptions: {
@@ -80,17 +88,20 @@ export default {
 			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
 				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 		},
+		getCard: function(cid) {
+			return Cards[cid];
+		},
 		downloadLog: function() {
 			let draftLogFull = this.draftlog;
 			for (let e in this.draftlog.users) {
 				let cards = [];
-				for (let c of this.draftlog.users[e].cards) cards.push(this.$root.cards[c]);
-				this.draftlog.users[e].exportString = this.$root.exportMTGA(cards, null, this.$root.language);
+				for (let c of this.draftlog.users[e].cards) cards.push(Cards[c]);
+				this.draftlog.users[e].exportString = exportToMTGA(cards, null, this.language);
 			}
 			helper.download(`DraftLog_${this.draftlog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
 		downloadMPT: function(id) {
-			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.$root.cards, this.draftlog, id));
+			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(Cards, this.draftlog, id));
 		},
 		submitToMPT: function(id) {
 			fetch("https://magicprotools.com/api/draft/add", {
@@ -101,24 +112,24 @@ export default {
 				},
 				referrer: "https://mtgadraft.herokuapp.com",
 				body: `draft=${encodeURI(
-					helper.exportToMagicProTools(this.$root.cards, this.draftlog, id)
+					helper.exportToMagicProTools(Cards, this.draftlog, id)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
 			}).then(response => {
 				if (response.status !== 200) {
-					this.$root.fireToast("error", "An error occured submiting log to MagicProTools.");
+					fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
 					response.json().then(json => {
 						if (json.error) {
-							this.$root.fireToast("error", `Error: ${json.error}.`);
+							fireToast("error", `Error: ${json.error}.`);
 						} else {
 							if (json.url) {
 								helper.copyToClipboard(json.url);
-								this.$root.fireToast("success", "MagicProTools URL copied to clipboard.");
+								fireToast("success", "MagicProTools URL copied to clipboard.");
 								window.open(json.url, "_blank");
 							} else {
-								this.$root.fireToast("error", "An error occured submiting log to MagicProTools.");
+								fireToast("error", "An error occured submiting log to MagicProTools.");
 							}
 						}
 					});
@@ -127,15 +138,15 @@ export default {
 		},
 		exportSingleLog: function(id) {
 			let cards = [];
-			for (let c of this.draftlog.users[id].cards) cards.push(this.$root.cards[c]);
-			helper.copyToClipboard(this.$root.exportMTGA(cards, null, this.$root.language), null, "\t");
-			this.$root.fireToast("success", "Card list exported to clipboard!");
+			for (let c of this.draftlog.users[id].cards) cards.push(Cards[c]);
+			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
+			fireToast("success", "Card list exported to clipboard!");
 		},
 		colorsInCardIDList: function(cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cardids) return r;
 			for (let card of cardids) {
-				for (let color of this.$root.cards[card].color_identity) {
+				for (let color of Cards[card].color_identity) {
 					r[color] += 1;
 				}
 			}
@@ -147,7 +158,7 @@ export default {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
 		selectedLogCards: function() {
-			return this.selectedLog.cards.map(cid => this.$root.genCard(cid));
+			return this.selectedLog.cards.map(cid => genCard(cid));
 		},
 		tableSumary: function() {
 			let tableSumary = [];

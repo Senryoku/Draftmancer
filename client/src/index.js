@@ -10,8 +10,12 @@ import Swal from "sweetalert2";
 
 import Constant from "./constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { clone, isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
+import { SwalCustomClasses, fireToast } from "./alerts.js";
+import { Cards, genCard, loadCards, addLanguage } from "./Cards.js";
+import exportToMTGA from "./exportToMTGA.js";
+
 import Modal from "./components/Modal.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
@@ -29,12 +33,6 @@ import PatchNotes from "./components/PatchNotes.vue";
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
 const img = new Image();
 img.src = CardBack;
-
-const SwalCustomClasses = {
-	popup: "custom-swal-popup",
-	title: "custom-swal-title",
-	content: "custom-swal-content",
-};
 
 const DraftState = {
 	Waiting: "Waiting",
@@ -59,7 +57,6 @@ const Sounds = {
 	readyCheck: new Audio("sound/drop_003.ogg"),
 };
 
-let UniqueID = 0;
 Vue.use(VueClazyLoad);
 Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
@@ -84,8 +81,7 @@ new Vue({
 		Multiselect,
 	},
 	data: {
-		// Card Data
-		cards: undefined,
+		ready: false, // Wait for initial loading
 
 		// User Data
 		userID: guid(),
@@ -415,7 +411,7 @@ new Vue({
 				if (!this.pendingReadyCheck) return;
 				if (userID in this.userByID) this.userByID[userID].readyState = readyState;
 				if (this.sessionUsers.every(u => u.readyState === ReadyState.Ready))
-					this.fireToast("success", "Everybody is ready!");
+					fireToast("success", "Everybody is ready!");
 			});
 
 			this.socket.on("startWinstonDraft", state => {
@@ -447,7 +443,7 @@ new Vue({
 			this.socket.on("winstonDraftNextRound", currentUser => {
 				if (this.userID === currentUser) {
 					this.playSound("next");
-					this.fireToast("success", "Your turn!");
+					fireToast("success", "Your turn!");
 					if (this.enableNotifications) {
 						new Notification("Your turn!", {
 							body: `This is your turn to pick.`,
@@ -462,10 +458,10 @@ new Vue({
 				this.drafting = false;
 				this.winstonDraftState = null;
 				this.draftingState = DraftState.Brewing;
-				this.fireToast("success", "Done drafting!");
+				fireToast("success", "Done drafting!");
 			});
 			this.socket.on("winstonDraftRandomCard", cid => {
-				const c = this.genCard(cid);
+				const c = genCard(cid);
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
@@ -473,7 +469,7 @@ new Vue({
 				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${this.cards[cid].printed_name[this.language]} from the card pool!`,
+					title: `You drew ${Cards[cid].printed_name[this.language]} from the card pool!`,
 					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
@@ -486,7 +482,7 @@ new Vue({
 				this.setWinstonDraftState(data.state);
 				this.clearSideboard();
 				this.clearDeck();
-				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
+				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this in necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -541,7 +537,7 @@ new Vue({
 
 				this.clearDeck();
 				this.clearSideboard();
-				for (let cid of data.pickedCards) this.addToDeck(this.genCard(cid));
+				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
 					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
@@ -550,7 +546,7 @@ new Vue({
 
 				this.booster = [];
 				for (let cid of data.booster) {
-					this.booster.push(this.genCard(cid));
+					this.booster.push(genCard(cid));
 				}
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
@@ -583,7 +579,7 @@ new Vue({
 				if (this.draftingState == DraftState.Watching) return;
 
 				for (let cid of data.booster) {
-					this.booster.push(this.genCard(cid));
+					this.booster.push(genCard(cid));
 				}
 				this.playSound("next");
 				this.draftingState = DraftState.Picking;
@@ -619,17 +615,14 @@ new Vue({
 			});
 
 			this.socket.on("pickAlert", data => {
-				this.fireToast(
-					"info",
-					`${data.userName} picked ${this.cards[data.cardID].printed_name[this.language]}!`
-				);
+				fireToast("info", `${data.userName} picked ${Cards[data.cardID].printed_name[this.language]}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
 				this.clearSideboard();
 				this.clearDeck();
 				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
-					this.addToDeck(this.genCard(cid));
+					this.addToDeck(genCard(cid));
 				}
 				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -778,7 +771,7 @@ new Vue({
 			)
 				return;
 			if (!this.validBurnedCardCount) {
-				this.fireToast(
+				fireToast(
 					"error",
 					`You need to burn ${this.cardsToBurnThisRound - this.burningCards.length} more card(s).`
 				);
@@ -837,7 +830,7 @@ new Vue({
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				for (let cid of p) pile.push(this.genCard(cid));
+				for (let cid of p) pile.push(genCard(cid));
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
@@ -963,7 +956,7 @@ new Vue({
 						const collStr = contents.slice(collection_start, collection_end);
 						const collJson = JSON.parse(collStr)["payload"];
 						// for (let c of Object.keys(collJson).filter((c) => !(c in
-						// this.cards))) console.log(c, " not found.");
+						// Cards))) console.log(c, " not found.");
 						return collJson;
 					} catch (e) {
 						Swal.fire({
@@ -1031,7 +1024,7 @@ new Vue({
 		uploadFile: function(e, callback, options) {
 			let file = e.target.files[0];
 			if (!file) {
-				this.fireToast("error", "An error occured while uploading the file.");
+				fireToast("error", "An error occured while uploading the file.");
 				return;
 			}
 			callback(file, options);
@@ -1040,7 +1033,7 @@ new Vue({
 		fetchFile: async function(url, callback, options) {
 			const response = await fetch(url);
 			if (!response.ok) {
-				this.fireToast("error", `Could not fetch ${url}.`);
+				fireToast("error", `Could not fetch ${url}.`);
 				return;
 			}
 			const blob = await response.blob();
@@ -1078,21 +1071,21 @@ new Vue({
 							customClass: SwalCustomClasses,
 						});
 					}
-					let cardID = Object.keys(this.cards).find(
+					let cardID = Object.keys(Cards).find(
 						id =>
-							this.cards[id].name == name &&
-							(!set || this.cards[id].set === set) &&
-							(!number || this.cards[id].collector_number === number)
+							Cards[id].name == name &&
+							(!set || Cards[id].set === set) &&
+							(!number || Cards[id].collector_number === number)
 					);
 					if (typeof cardID !== "undefined") {
 						return [count, cardID];
 					} else {
 						// If not found, try doubled faced cards before giving up!
-						cardID = Object.keys(this.cards).find(
+						cardID = Object.keys(Cards).find(
 							id =>
-								this.cards[id].name.startsWith(name + " //") &&
-								(!set || this.cards[id].set === set) &&
-								(!number || this.cards[id].collector_number === number)
+								Cards[id].name.startsWith(name + " //") &&
+								(!set || Cards[id].set === set) &&
+								(!number || Cards[id].collector_number === number)
 						);
 						if (typeof cardID !== "undefined") return [count, cardID];
 					}
@@ -1176,36 +1169,8 @@ new Vue({
 			reader.readAsText(file);
 		},
 		exportDeck: function(full = true) {
-			copyToClipboard(this.exportMTGA(this.deck, this.sideboard, this.language, this.lands, full));
-			this.fireToast("success", "Deck exported to clipboard!");
-		},
-		cardToMTGAExport: function(c, language, full) {
-			let set = c.set.toUpperCase();
-			if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
-			if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
-			if (set == "AJMP") set = "JMP"; // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
-			let name = this.cards[c.id].printed_name[language];
-			// FIXME: Workaround for a typo in MTGA
-			if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
-			let idx = name.indexOf("//");
-			// Ravnica Splits cards needs both names to be imported, others don't
-			if (idx != -1 && c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
-			if (full) return `1 ${name} (${set}) ${c.collector_number}\n`;
-			else return `1 ${name}\n`;
-		},
-		exportMTGA: function(deck, sideboard, language, lands, full = true) {
-			let str = full ? "Deck\n" : "";
-			for (let c of deck) str += this.cardToMTGAExport(c, language, full);
-			if (lands) {
-				for (let c in lands) if (lands[c] > 0) str += `${lands[c]} ${Constant.BasicLandNames[language][c]}\n`;
-			}
-			if (sideboard && sideboard.length > 0) {
-				str += full ? "\nSideboard\n" : "\n";
-				for (let c of sideboard) str += this.cardToMTGAExport(c, language, full);
-				// Add some basic lands to the sideboard
-				for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${Constant.BasicLandNames[language][c]}\n`;
-			}
-			return str;
+			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
+			fireToast("success", "Deck exported to clipboard!");
 		},
 		openLog: function(e) {
 			let file = e.target.files[0];
@@ -1398,7 +1363,7 @@ new Vue({
 			}
 			let storedDraftLog = localStorage.getItem("draftLog");
 			if (!storedDraftLog) {
-				this.fireToast("error", "No saved draft log");
+				fireToast("error", "No saved draft log");
 				this.savedDraftLog = false;
 				return;
 			} else {
@@ -1416,7 +1381,7 @@ new Vue({
 				this.draftLog = parsedLogs;
 				this.socket.emit("shareDraftLog", this.draftLog);
 				localStorage.setItem("draftLog", JSON.stringify(this.draftLog));
-				this.fireToast("success", "Shared draft log with session!");
+				fireToast("success", "Shared draft log with session!");
 			}
 		},
 		// Bracket (Server communication)
@@ -1551,48 +1516,17 @@ new Vue({
 				if (this.language !== lang) this.language = lang;
 				return;
 			}
-			if (this.loadingLanguages.includes(lang)) return;
+
 			this.loadingLanguages.push(lang);
 			fetch(`data/MTGACards.${lang}.json`).then(response =>
 				response.json().then(json => this.handleTranslation(lang, json))
 			);
 		},
 		handleTranslation: function(lang, json) {
-			let merged = clone(this.cards);
-			// Missing translation will default to english
-			for (let c in merged) {
-				merged[c]["printed_name"][lang] =
-					c in json && "printed_name" in json[c] ? json[c]["printed_name"] : this.cards[c]["name"];
-				merged[c]["image_uris"][lang] =
-					c in json && "image_uris" in json[c] ? json[c]["image_uris"] : this.cards[c]["image_uris"]["en"];
-			}
-			this.cards = Object.freeze(merged);
+			addLanguage(lang, json);
 			this.loadingLanguages.splice(lang, 1);
 			this.loadedLanguages.push(lang);
 			if (this.language !== lang) this.language = lang;
-		},
-		genCard: function(c) {
-			// Takes a card id and return a unique card object (without localization information)
-			if (!(c in this.cards)) {
-				console.error(`Error: Card id '${c}' not found!`);
-				return { id: c };
-			}
-			return {
-				id: c,
-				uniqueID: UniqueID++,
-				name: this.cards[c].name,
-				/*
-				// printed_name and image_uris can be dynamically loaded (multiple languages), use $root.cards
-				printed_name: this.cards[c].printed_name,
-				image_uris: this.cards[c].image_uris,
-				*/
-				set: this.cards[c].set,
-				rarity: this.cards[c].rarity,
-				cmc: this.cards[c].cmc,
-				collector_number: this.cards[c].collector_number,
-				color_identity: this.cards[c].color_identity,
-				in_booster: this.cards[c].in_booster,
-			};
 		},
 		checkNotificationPermission: function(e) {
 			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
@@ -1610,25 +1544,14 @@ new Vue({
 					window.location.port ? ":" + window.location.port : ""
 				}/?session=${encodeURI(this.sessionID)}`
 			);
-			this.fireToast("success", "Session link copied to clipboard!");
-		},
-		fireToast: function(type, title) {
-			Swal.fire({
-				toast: true,
-				position: "top-end",
-				icon: type,
-				title: title,
-				customClass: SwalCustomClasses,
-				showConfirmButton: false,
-				timer: 2000,
-			});
+			fireToast("success", "Session link copied to clipboard!");
 		},
 		disconnectedReminder: function() {
-			this.fireToast("error", "Disconnected from server!");
+			fireToast("error", "Disconnected from server!");
 		},
 		logPathToClipboard: function() {
 			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log`);
-			this.fireToast("success", "Default log path copied to clipboard!");
+			fireToast("success", "Default log path copied to clipboard!");
 		},
 	},
 	computed: {
@@ -1718,15 +1641,9 @@ new Vue({
 			let urlParamSession = getUrlVars()["session"];
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
-			const CardData = (await import("../public/data/MTGACards.json")).default;
-			for (let c in CardData) {
-				CardData[c].id = c;
-				if (!("in_booster" in CardData[c])) CardData[c].in_booster = true;
-				if (!("printed_name" in CardData[c])) CardData[c].printed_name = {};
-				if (!("image_uris" in CardData[c])) CardData[c].image_uris = {};
-			}
-			this.cards = Object.freeze(CardData); // Object.freeze so Vue doesn't make everything reactive.
+			await loadCards();
 
+			// Always load English as it's used as a backup
 			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
 			this.handleTranslation("en", DefaultLoc);
 			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
@@ -1758,6 +1675,8 @@ new Vue({
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
+
+			this.ready = true;
 		} catch (e) {
 			alert(e);
 		}
@@ -1849,7 +1768,7 @@ new Vue({
 			handler(val) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
-					this.fireToast("warning", "Your boosters should contain at least one card :)");
+					fireToast("warning", "Your boosters should contain at least one card :)");
 					this.boosterContent["common"] = 1;
 				} else {
 					if (this.socket) this.socket.emit("setBoosterContent", this.boosterContent);
@@ -1887,9 +1806,9 @@ new Vue({
 			if (this.userID != this.sessionOwner || !this.customCardList.length || !this.socket) return;
 			this.socket.emit("customCardList", this.customCardList, answer => {
 				if (answer.code === 0) {
-					this.fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
 				} else {
-					this.fireToast("error", `Error while uploading card list: ${answer.error}`);
+					fireToast("error", `Error while uploading card list: ${answer.error}`);
 				}
 			});
 		},

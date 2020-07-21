@@ -18,7 +18,7 @@
 				v-for="card in column"
 				:key="`${_uid}_card_${card.uniqueID}`"
 				:card="card"
-				:language="$root.language"
+				:language="language"
 				:selectcard="click"
 				@click="click($event, card)"
 			></card>
@@ -39,10 +39,18 @@
 				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 					<i class="fas fa-sort-amount-up fa-2x"></i>
 				</div>
-				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
+				<div
+					@click="sortByColor"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by color'"
+				>
 					<img src="img/sort-color.svg" />
 				</div>
-				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
+				<div
+					@click="sortByRarity"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by rarity'"
+				>
 					<img src="img/sort-rarity.svg" />
 				</div>
 			</div>
@@ -61,6 +69,7 @@ export default {
 	components: { draggable, Card },
 	props: {
 		cards: { type: Array, required: true },
+		language: { type: String, required: true },
 		click: { type: Function },
 		group: { type: String },
 	},

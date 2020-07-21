@@ -26,7 +26,7 @@
 	</head>
 	<body>
 		<div id="main-vue">
-			<template v-if="typeof(cards) === 'undefined' || typeof(setsInfos) === 'undefined' || loadedLanguages.length === 0">
+			<template v-if="!ready">
 				<div class="loading"></div>
 				<span>Loading cards data...</span>
 			</template>
@@ -374,7 +374,7 @@
 								<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
 							</div>
 							<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
-								<draft-log-live :draftlog="draftLog"></draft-log-live>
+								<draft-log-live :draftlog="draftLog" :show="['owner', 'everyone'].includes(draftLogRecipients)" :language="language"></draft-log-live>
 							</div>
 						</div>
 						<div v-if="draftingState == DraftState.Waiting" key="draft-waiting" class="pick-waiting">
@@ -497,6 +497,7 @@
 					</div>
 					<card-pool
 						:cards="deck"
+						:language="language"
 						:click="deckToSideboard"
 						ref="deckDisplay"
 						group="deck"
@@ -518,6 +519,7 @@
 					</div>
 					<card-pool
 						:cards="sideboard"
+						:language="language"
 						:click="sideboardToDeck"
 						ref="sideboardDisplay"
 						group="deck"
@@ -740,7 +742,7 @@
 				</modal>
 				<modal v-if="displayedModal === 'draftLog' && draftLog" @close="displayedModal = ''">
 					<h2 slot="header">Draft Log</h2>
-					<draft-log slot="body" :draftlog="draftLog"></draft-log>
+					<draft-log slot="body" :draftlog="draftLog" :language="language"></draft-log>
 				</modal>
 				<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 					<h2 slot="header">Collection Statistics</h2>
@@ -1014,7 +1016,7 @@
 					<h2 slot="header">
 						Custom Card List Review
 					</h2>
-					<card-list slot="body" :cardlist="customCardList" :editable="userID === sessionOwner"></card-list>
+					<card-list slot="body" :cardlist="customCardList" :language="language" :collection="collection"></card-list>
 				</modal>
 				<modal v-if="displayedModal === 'About'" @close="displayedModal = ''">
 					<h2 slot="header">About</h2>
