@@ -45,6 +45,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
+-	Regroup Game Mode besides Draft in a single dropdown menu; Change "More" into "Setting" + Cog Icon
 -   Display foils as... foils in front end?
 
 ### Distant Future
