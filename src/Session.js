@@ -1175,7 +1175,7 @@ function Session(id, owner) {
 			);
 			Connections[user].socket.emit("message", {
 				icon: "success",
-				imageUrl: "/img/2JumpstartBoosters.png",
+				imageUrl: "/img/2JumpstartBoosters-min.png",
 				title: "Here are your Jumpstart boosters!",
 				text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
 				showConfirmButton: false,
