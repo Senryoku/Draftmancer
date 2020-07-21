@@ -142,6 +142,10 @@ footer span {
 	padding: 0;
 }
 
+#main-container button.stop {
+	background-color: darkred;
+}
+
 .check-button {
 	position: absolute;
 	left: 0;
@@ -415,10 +419,6 @@ footer span {
 
 .draft-log-live-instructions {
 	text-align: center;
-}
-
-button.stop {
-	background-color: darkred;
 }
 
 .main-controls {
