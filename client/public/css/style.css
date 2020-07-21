@@ -613,8 +613,10 @@ label {
 	margin-right: 0;
 }
 
-.main-controls fas {
-	padding: 4px;
+#session-controls .far,
+#session-controls .fas {
+	margin-left: 1px;
+	margin-right: 1px;
 }
 
 #limited-controls,
@@ -623,6 +625,14 @@ label {
 	justify-content: space-between;
 	flex-wrap: wrap;
 	align-items: baseline;
+}
+
+#limited-controls > * {
+	margin-right: 4px;
+}
+
+#limited-controls > *:last-child {
+	margin-right: inherit;
 }
 
 #session-id {

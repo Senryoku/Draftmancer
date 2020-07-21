@@ -113,23 +113,21 @@
 							</div>
 							<i
 								class="far fa-fw clickable"
-								style="padding: 2px;"
 								:class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'"
 								@click="hideSessionID = !hideSessionID"
 								v-tooltip="'Show/Hide your session ID.'"
 							></i>
-							<i class="fas fa-share-square clickable" style="padding: 2px; width: 20px;" v-tooltip="'Share your Session ID'" @click="sessionURLToClipboard"></i>
-							<i class="fas fa-project-diagram clickable" style="padding: 2px;" v-if="sessionOwner === userID && !bracket" @click="generateBracket" v-tooltip="'Generate Bracket.'"></i>
-							<i class="fas fa-project-diagram clickable" style="padding: 2px;" v-if="bracket" @click="displayedModal = 'bracket'" v-tooltip="'Display Bracket.'"></i>
+							<i class="fas fa-share-square clickable" v-tooltip="'Share your Session ID'" @click="sessionURLToClipboard"></i>
+							<i class="fas fa-project-diagram clickable" v-if="sessionOwner === userID && !bracket" @click="generateBracket" v-tooltip="'Generate Bracket.'"></i>
+							<i class="fas fa-project-diagram clickable" v-if="bracket" @click="displayedModal = 'bracket'" v-tooltip="'Display Bracket.'"></i>
 							<i
 								class="fas fa-user-check clickable"
-								style="padding: 2px;"
 								v-if="sessionOwner === userID"
 								@click="readyCheck"
 								v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 							></i>
 						</span>
-						<span class="generic-container" style="padding: 2px;">
+						<span class="generic-container">
 							<strong>Card Pool:</strong>
 							<span v-if="useCustomCardList">
 								{{customCardList.name ? customCardList.name : "Custom Card List"}}
@@ -635,7 +633,8 @@
 									For any question/bug report/feature you can e-mail at
 									<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 									, or join the
-									<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>.
+									<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>
+									.
 								</div>
 							</div>
 						</div>
