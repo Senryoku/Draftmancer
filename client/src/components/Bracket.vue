@@ -1,20 +1,28 @@
 
 <template>
 	<div v-if="bracket">
-		<div v-if="fullcontrol" class="controls">
-			<span v-tooltip="'If set, only the owner will be able to enter results.'">
-				<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
-				<label for="lock">
-					<i class="fas fa-lock"></i> Lock
-				</label>
-			</span>
-			<button @click="$emit('generate')">Re-Generate Single Elimination</button>
-			<button @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
-		</div>
-		<div v-else-if="locked" class="controls">
-			<span>
-				<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
-			</span>
+		<div v-if="displayControls" class="controls">
+			<button
+				@click="copyLink"
+				v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'"
+			>
+				<i class="fas fa-clipboard"></i> Copy Link to Clipboard
+			</button>
+			<div v-if="fullcontrol">
+				<span v-tooltip="'If set, only the owner will be able to enter results.'">
+					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
+					<label for="lock">
+						<i class="fas fa-lock"></i> Lock
+					</label>
+				</span>
+				<button @click="$emit('generate')">Re-Generate Single Elimination</button>
+				<button @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
+			</div>
+			<div v-else-if="locked">
+				<span>
+					<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
+				</span>
+			</div>
 		</div>
 		<div class="bracket-columns">
 			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
@@ -57,13 +65,17 @@
 </template>
 
 <script>
+import { copyToClipboard } from "../helper";
+import { fireToast } from "../alerts";
 export default {
 	name: "Bracket",
 	props: {
 		bracket: { type: Object, required: true },
+		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
 		fullcontrol: { type: Boolean, default: false },
+		sessionID: { type: String },
 	},
 	methods: {
 		emitUpdated: function() {
@@ -74,6 +86,14 @@ export default {
 		},
 		lock: function(e) {
 			this.$emit("lock", e.target.checked);
+		},
+		copyLink: function() {
+			copyToClipboard(
+				`${window.location.protocol}//${window.location.hostname}${
+					window.location.port ? ":" + window.location.port : ""
+				}/bracket?session=${encodeURI(this.sessionID)}`
+			);
+			fireToast("success", "Bracket Link copied to clipboard!");
 		},
 	},
 	computed: {

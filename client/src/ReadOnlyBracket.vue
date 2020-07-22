@@ -1,0 +1,82 @@
+<template>
+	<div>
+		<a href="/"><i class="fas fa-chevron-left"></i> Go back to MTGADraft </a>
+		<div class="main">
+			<div v-if="bracket">
+				<h1>Bracket for Session '{{ sessionID }}'</h1>
+				<bracket :bracket="bracket" :displayControls="false"></bracket>
+			</div>
+			<div class="error" v-else>
+				<h1>Error</h1>
+				<p>{{ error }}</p>
+				<span v-if="response" class="small-error">{{ response.statusText }}</span>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+import Vue from "vue";
+import VTooltip from "v-tooltip";
+import { getUrlVars } from "./helper.js";
+import Bracket from "./components/Bracket.vue";
+
+Vue.use(VTooltip);
+VTooltip.options.defaultPlacement = "bottom-start";
+VTooltip.options.defaultBoundariesElement = "window";
+
+export default {
+	components: { Bracket },
+	data: () => {
+		return {
+			bracket: null,
+			sessionID: null,
+			response: null,
+			error: null,
+		};
+	},
+	mounted: async function() {
+		let urlParamSession = getUrlVars()["session"];
+		if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
+
+		try {
+			this.response = await fetch(`/getBracket/${this.sessionID}`);
+			if (this.response.status === 200) {
+				this.bracket = await this.response.json();
+			} else {
+				if (this.response.status === 404) {
+					this.error = `Bracket not found. Please note that sessions are automatically deleted when there's no player left.`;
+				} else {
+					this.error = `Status: ${this.response.status}`;
+				}
+			}
+		} catch (e) {
+			this.error = "Client-side error.";
+		}
+	},
+};
+</script>
+
+<style src="./css/style.css"></style>
+<style src="./css/tooltip.css"></style>
+<style>
+body {
+	margin: 0.5em;
+}
+
+.main {
+	margin: auto;
+	width: 90%;
+}
+
+.error {
+	margin: auto;
+	text-align: center;
+	width: 50%;
+}
+
+.small-error {
+	font-style: italic;
+	font-size: 0.8em;
+}
+</style>

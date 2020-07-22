@@ -4,9 +4,9 @@ const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 module.exports = {
 	mode: "production",
-	entry: "./client/src/index.js",
+	entry: { index: "./client/src/index.js", readOnlyBracket: "./client/src/readOnlyBracket.js" },
 	output: {
-		filename: "index.js",
+		filename: "[name].js",
 		path: path.resolve(__dirname, "public/dist/"),
 		publicPath: "/dist/",
 	},

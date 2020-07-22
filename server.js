@@ -850,6 +850,22 @@ app.get("/getUsers/:sessionID", (req, res) => {
 	}
 });
 
+app.get("/bracket", (req, res) => {
+	res.sendFile(__dirname + "/client/public/bracket.html");
+});
+
+app.get("/getBracket/:sessionID", (req, res) => {
+	if (!req.params.sessionID) {
+		res.sendStatus(400);
+	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].bracket) {
+		//res.json(Sessions[req.params.sessionID].bracket); // Only works once for whatever reason?...
+		res.setHeader("Content-Type", "application/json");
+		res.send(JSON.stringify(Sessions[req.params.sessionID].bracket));
+	} else {
+		res.sendStatus(404);
+	}
+});
+
 // Debug endpoints
 
 const secretKey = process.env.SECRET_KEY || "1234";

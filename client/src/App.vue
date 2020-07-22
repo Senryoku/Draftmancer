@@ -1187,6 +1187,7 @@
 				:editable="userID === sessionOwner || !bracketLocked"
 				:locked="bracketLocked"
 				:fullcontrol="userID === sessionOwner"
+				:sessionID="sessionID"
 				@updated="updateBracket"
 				@generate="generateBracket"
 				@generate-swiss="generateSwissBracket"
