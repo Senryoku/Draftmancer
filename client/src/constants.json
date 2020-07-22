@@ -101,6 +101,11 @@
 			"name": "JiRock's Historic Cube 2.2",
 			"filename": "data/cubes/JiRockHistoricCube22.txt",
 			"url": "https://cubecobra.com/cube/list/5e7368d540eaf0158e2360e9"
+		},
+		{
+			"name": "JiRock's Historic Cube 3.3 (Jumpstart Edition)",
+			"filename": "data/cubes/JiRockHistoricCube33.txt",
+			"url": "https://cubecobra.com/cube/list/5e7368d540eaf0158e2360e9"
 		}
 	]
 }

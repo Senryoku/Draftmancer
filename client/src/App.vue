@@ -17,7 +17,8 @@
 							v-bind:value="lang.code"
 							:selected="lang.code === language"
 							:key="lang.code"
-						>{{ lang.name }}</option>
+							>{{ lang.name }}</option
+						>
 					</select>
 					<i
 						class="fas fa-spinner fa-spin"
@@ -41,7 +42,9 @@
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
-				>Stats</button>
+				>
+					Stats
+				</button>
 				<div
 					v-show="hasCollection"
 					class="inline"
@@ -54,7 +57,7 @@
 			<span>
 				<i
 					class="fas clickable"
-					:class="{'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound}"
+					:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
 					@click="enableSound = !enableSound"
 					v-tooltip="'Toggle sound.'"
 				></i>
@@ -78,10 +81,7 @@
 
 			<span class="generic-container">
 				<div v-show="publicSessions.length == 0" class="disable-warning">(No public sessions)</div>
-				<span
-					v-bind:class="{ disabled: drafting || publicSessions.length == 0 }"
-					id="public-session-controls"
-				>
+				<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="public-session-controls">
 					<label for="public-sessions">Public sessions</label>
 					<select id="public-sessions" v-model="selectedPublicSession">
 						<option v-for="s in publicSessions" :value="s" :key="s">{{ s }}</option>
@@ -132,15 +132,10 @@
 				<span class="generic-container">
 					<strong>Card Pool:</strong>
 					<span v-if="useCustomCardList">
-						{{customCardList.name ? customCardList.name : "Custom Card List"}}
-						<template
-							v-if="customCardList.length > 0"
-						>
-							({{customCardList.length}} cards
-							<a
-								@click="displayedModal = 'cardList'"
-								v-tooltip="'Review the card list'"
-							>
+						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
+						<template v-if="customCardList.length > 0">
+							({{ customCardList.length }} cards
+							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
 								<i class="fas fa-file-alt"></i>
 							</a>
 							)
@@ -151,8 +146,11 @@
 						<div class="inline">
 							<label
 								for="set-restriction"
-								v-tooltip="'Restricts to the selected sets. No selection means all cards present in Arena.'"
-							>Set(s)</label>
+								v-tooltip="
+									'Restricts to the selected sets. No selection means all cards present in Arena.'
+								"
+								>Set(s)</label
+							>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
@@ -171,14 +169,12 @@
 										<img class="set-icon" :src="setsInfos[values[0]].icon" />
 										{{ setsInfos[values[0]].fullName }}
 									</span>
-									<span class="multiselect__single multiselect__single_nooverflow" v-if="values.length > 1">
+									<span
+										class="multiselect__single multiselect__single_nooverflow"
+										v-if="values.length > 1"
+									>
 										({{ values.length }})
-										<img
-											v-for="v in values"
-											class="set-icon"
-											:src="setsInfos[v].icon"
-											:key="v"
-										/>
+										<img v-for="v in values" class="set-icon" :src="setsInfos[v].icon" :key="v" />
 									</span>
 								</template>
 								<template slot="option" slot-scope="{ option }">
@@ -190,7 +186,9 @@
 							</multiselect>
 							<div
 								class="inline"
-								v-tooltip="'Draft with all cards within set restriction disregarding players collections.'"
+								v-tooltip="
+									'Draft with all cards within set restriction disregarding players collections.'
+								"
 							>
 								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
 								<label for="ignore-collections">Ignore Collections</label>
@@ -232,19 +230,22 @@
 					<button
 						@click="startWinstonDraft()"
 						v-tooltip="'Starts a Winston Draft. This is a draft variant for only two players.'"
-					>Winston</button>
+					>
+						Winston
+					</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button
-						@click="sealedDialog"
-						v-tooltip="'Distributes boosters to everyone for a sealed session.'"
-					>Sealed</button>
+					<button @click="sealedDialog" v-tooltip="'Distributes boosters to everyone for a sealed session.'">
+						Sealed
+					</button>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<button
 						@click="deckWarning(distributeJumpstart)"
 						v-tooltip="'Distributes two Jumpstart boosters to everyone.'"
-					>Jumpstart</button>
+					>
+						Jumpstart
+					</button>
 				</span>
 				<span
 					v-tooltip="'More session options'"
@@ -257,11 +258,7 @@
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
 				Draft in progress!
-				<button
-					v-if="sessionOwner == userID"
-					class="stop"
-					@click="stopDraft"
-				>Stop Draft</button>
+				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">Stop Draft</button>
 			</div>
 		</div>
 
@@ -273,17 +270,21 @@
 				v-tooltip="'Non-playing session owner.'"
 				style="margin-right: 0.5em;"
 			>
-				{{sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}}
+				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 				<i
 					class="fas fa-crown subtle-gold"
-					v-tooltip="sessionOwnerUsername ? `${sessionOwnerUsername} is the session's owner.` : 'Session owner is disconnected.'"
+					v-tooltip="
+						sessionOwnerUsername
+							? `${sessionOwnerUsername} is the session's owner.`
+							: 'Session owner is disconnected.'
+					"
 				></i>
-				<div class="chat-bubble" :id="'chat-bubble-'+sessionOwner"></div>
+				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
 			<div>
-				<span
-					v-tooltip="'Maximum players can be adjusted in session options.'"
-				>Players ({{sessionUsers.length}}/{{maxPlayers}})</span>
+				<span v-tooltip="'Maximum players can be adjusted in session options.'"
+					>Players ({{ sessionUsers.length }}/{{ maxPlayers }})</span
+				>
 				<i
 					v-if="userID == sessionOwner && !drafting"
 					class="fas fa-random clickable"
@@ -302,7 +303,7 @@
 					<li
 						v-for="(id, idx) in userOrder"
 						:key="id"
-						:class="{draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot}"
+						:class="{ draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot }"
 						:data-userid="id"
 					>
 						<span class="player-name">{{ userByID[id].userName }}</span>
@@ -346,7 +347,10 @@
 								<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
 									<i
 										class="fas fa-book yellow"
-										v-tooltip="userByID[id].userName + ' have uploaded their collection, but are not using it.'"
+										v-tooltip="
+											userByID[id].userName +
+												' have uploaded their collection, but are not using it.'
+										"
 									></i>
 								</template>
 								<template v-else>
@@ -361,7 +365,10 @@
 									<i class="fas fa-check green" v-tooltip="`${userByID[id].userName} is ready!`"></i>
 								</template>
 								<template v-else-if="userByID[id].readyState == ReadyState.NotReady">
-									<i class="fas fa-times red" v-tooltip="`${userByID[id].userName} is NOT ready!`"></i>
+									<i
+										class="fas fa-times red"
+										v-tooltip="`${userByID[id].userName} is NOT ready!`"
+									></i>
 								</template>
 								<template v-else-if="userByID[id].readyState == ReadyState.Unknown">
 									<i
@@ -371,7 +378,7 @@
 								</template>
 							</template>
 						</div>
-						<div class="chat-bubble" :id="'chat-bubble-'+id"></div>
+						<div class="chat-bubble" :id="'chat-bubble-' + id"></div>
 					</li>
 				</draggable>
 			</template>
@@ -379,18 +386,18 @@
 				<ul class="player-list">
 					<li
 						v-for="user in virtualPlayers"
-						:class="{bot: user.isBot}"
+						:class="{ bot: user.isBot }"
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
 						<i
 							class="fas fa-angle-double-left passing-order-left"
-							v-show="(boosterNumber % 2) == 1"
+							v-show="boosterNumber % 2 == 1"
 							v-tooltip="'Passing order'"
 						></i>
 						<i
 							class="fas fa-angle-double-right passing-order-right"
-							v-show="(boosterNumber % 2) == 0"
+							v-show="boosterNumber % 2 == 0"
 							v-tooltip="'Passing order'"
 						></i>
 						<span class="player-name">{{ user.userName }}</span>
@@ -423,14 +430,20 @@
 								</template>
 								<template v-else>
 									<template v-if="user.pickedThisRound">
-										<i class="fas fa-check green" v-tooltip="user.userName + ' has picked a card.'"></i>
+										<i
+											class="fas fa-check green"
+											v-tooltip="user.userName + ' has picked a card.'"
+										></i>
 									</template>
 									<template v-else>
-										<i class="fas fa-spinner fa-spin" v-tooltip="user.userName + ' is thinking...'"></i>
+										<i
+											class="fas fa-spinner fa-spin"
+											v-tooltip="user.userName + ' is thinking...'"
+										></i>
 									</template>
 								</template>
 							</div>
-							<div class="chat-bubble" :id="'chat-bubble-'+user.userID"></div>
+							<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
 						</template>
 					</li>
 				</ul>
@@ -440,12 +453,16 @@
 					@click="shareSavedDraftLog"
 					v-show="savedDraftLog"
 					v-tooltip="'Reveal and share previous draft log with players in your session.'"
-				>Share saved Draft Log</button>
+				>
+					Share saved Draft Log
+				</button>
 				<button
 					@click="displayedModal = 'draftLog'"
 					v-show="draftLog"
 					v-tooltip="'Displays logs of your previous draft'"
-				>Draft Log</button>
+				>
+					Draft Log
+				</button>
 			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
@@ -474,10 +491,10 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span
-									class="chat-author"
-								>{{ msg.author in userByID ? userByID[msg.author].userName : "(Left)"}}</span>
-								<span class="chat-message">{{msg.text}}</span>
+								<span class="chat-author">{{
+									msg.author in userByID ? userByID[msg.author].userName : "(Left)"
+								}}</span>
+								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
 					</template>
@@ -488,7 +505,7 @@
 
 		<!-- Draft Controls -->
 		<template v-if="drafting">
-			<transition :name="'slide-fade-'+((boosterNumber % 2)?'left':'right')" mode="out-in">
+			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
 						<h1>Players are drafting...</h1>
@@ -496,7 +513,7 @@
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</div>
-						<div>Booster #{{boosterNumber}}, Pick #{{pickNumber}}</div>
+						<div>Booster #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
 					</div>
 					<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
@@ -523,8 +540,8 @@
 				>
 					<div id="booster-controls" class="controls">
 						<h2>Your Booster</h2>
-						<span>Booster #{{ boosterNumber }}, Pick {{pickNumber}}</span>
-						<span v-show="pickTimer >= 0" :class="{redbg: pickTimer <= 10}" id="chrono">
+						<span>Booster #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+						<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</span>
@@ -532,13 +549,19 @@
 							type="button"
 							@click="pickCard"
 							value="Confirm Pick"
-							v-if="selectedCard != undefined && (burningCards.length === burnedCardsPerRound || booster.length === 1 + burningCards.length)"
+							v-if="
+								selectedCard != undefined &&
+									(burningCards.length === burnedCardsPerRound ||
+										booster.length === 1 + burningCards.length)
+							"
 						/>
 						<span v-else>
 							Pick a card
-							<span
-								v-if="cardsToBurnThisRound > 0"
-							>and remove {{cardsToBurnThisRound}} cards from the pool ({{burningCards.length}}/{{cardsToBurnThisRound}})</span>
+							<span v-if="cardsToBurnThisRound > 0"
+								>and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
+									cardsToBurnThisRound
+								}})</span
+							>
 						</span>
 					</div>
 					<div class="booster card-container">
@@ -549,7 +572,7 @@
 							:language="language"
 							:canbeburned="burnedCardsPerRound > 0"
 							:burned="burningCards.includes(card)"
-							:class="{selected: selectedCard === card}"
+							:class="{ selected: selectedCard === card }"
 							@click.native="selectCard($event, card)"
 							@dblclick.native="doubleClickCard($event, card)"
 							@burn="burnCard($event, card)"
@@ -569,9 +592,13 @@
 				<div class="winston-status">
 					<h2>Winston Draft</h2>
 					<span>
-						<template v-if="userID === winstonDraftState.currentPlayer">Your turn to pick a pile of cards!</template>
-						<template v-else>Waiting on {{userByID[winstonDraftState.currentPlayer].userName}}...</template>
-						There are {{winstonDraftState.remainingCards}} cards left in the main stack.
+						<template v-if="userID === winstonDraftState.currentPlayer"
+							>Your turn to pick a pile of cards!</template
+						>
+						<template v-else
+							>Waiting on {{ userByID[winstonDraftState.currentPlayer].userName }}...</template
+						>
+						There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
 					</span>
 				</div>
 				<div class="winston-piles">
@@ -579,13 +606,18 @@
 						v-for="(pile, index) in winstonDraftState.piles"
 						:key="`winston-pile-${index}`"
 						class="winston-pile"
-						:class="{'winston-current-pile': index === winstonDraftState.currentPile}"
+						:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
 					>
 						<template
 							v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile"
 						>
 							<div class="card-column winstom-card-column">
-								<card v-for="card in pile" :key="card.uniqueID" :card="card" :language="language"></card>
+								<card
+									v-for="card in pile"
+									:key="card.uniqueID"
+									:card="card"
+									:language="language"
+								></card>
 							</div>
 							<div class="winston-current-pile-options">
 								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
@@ -601,10 +633,9 @@
 									<card-placeholder></card-placeholder>
 								</div>
 							</div>
-							<div
-								class="winston-pile-status"
-								v-show="index === winstonDraftState.currentPile"
-							>{{userByID[winstonDraftState.currentPlayer].userName}} is looking at this pile...</div>
+							<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
+								{{ userByID[winstonDraftState.currentPlayer].userName }} is looking at this pile...
+							</div>
 						</template>
 					</div>
 				</div>
@@ -614,10 +645,14 @@
 		<!-- Brewing controls (Deck & Sideboard) -->
 		<div
 			class="container"
-			v-show="(deck !== undefined && deck.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing"
+			v-show="
+				(deck !== undefined && deck.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing
+			"
 		>
 			<div class="controls">
-				<h2>Deck ({{deck.length}})</h2>
+				<h2>Deck ({{ deck.length }})</h2>
 				<button v-if="deck.length > 0" type="button" @click="exportDeck">
 					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 				</button>
@@ -626,10 +661,9 @@
 				</button>
 				<span v-show="draftingState == DraftState.Brewing">
 					<input type="checkbox" id="autoLand" v-model="autoLand" />
-					<label
-						for="autoLand"
-						v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
-					>Auto. Land</label>
+					<label for="autoLand" v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
+						>Auto. Land</label
+					>
 					<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
 						<label class="land-input" :key="c">
 							<img :src="`img/mana/${c}.svg`" class="mana-icon" />
@@ -642,7 +676,7 @@
 							/>
 						</label>
 					</template>
-					{{totalLands}} basic lands for a total of {{deck.length + totalLands}} cards
+					{{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
 				</span>
 			</div>
 			<card-pool
@@ -661,11 +695,15 @@
 			</card-pool>
 		</div>
 		<div
-			v-show="(sideboard != undefined && sideboard.length > 0) || (drafting && draftingState !== DraftState.Watching) || draftingState == DraftState.Brewing"
+			v-show="
+				(sideboard != undefined && sideboard.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing
+			"
 			class="container"
 		>
 			<div class="controls">
-				<h2>Sideboard ({{sideboard.length}})</h2>
+				<h2>Sideboard ({{ sideboard.length }})</h2>
 			</div>
 			<card-pool
 				:cards="sideboard"
@@ -674,7 +712,7 @@
 				ref="sideboardDisplay"
 				group="deck"
 				@dragover.native="allowBoosterCardDrop($event)"
-				@drop.native="dropBoosterCard($event, {toSideboard: true})"
+				@drop.native="dropBoosterCard($event, { toSideboard: true })"
 			>
 				<template v-slot:empty>
 					<h3>Your sideboard is currently empty!</h3>
@@ -685,9 +723,10 @@
 
 		<div class="welcome" v-if="draftingState === undefined">
 			<h1>Welcome to MTGADraft!</h1>
-			<p
-				class="important"
-			>Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them, in pod!</p>
+			<p class="important">
+				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
+				in pod!
+			</p>
 			<div class="welcome-cols">
 				<div class="welcome-col">
 					<div class="container" v-if="userID !== sessionOwner && sessionOwner in userByID">
@@ -696,9 +735,7 @@
 						</div>
 						<div class="welcome-section">
 							{{ userByID[sessionOwner].userName }} is the session owner
-							<i
-								class="fas fa-crown subtle-gold"
-							></i>
+							<i class="fas fa-crown subtle-gold"></i>
 							. Wait for them to select the options and launch a game!
 							<br />You can still customize your personal options on top of the page.
 						</div>
@@ -709,17 +746,13 @@
 						</div>
 						<div class="welcome-section">
 							One player takes the role of owner of the session (designated with
-							<i
-								class="fas fa-crown subtle-gold"
-							></i>
+							<i class="fas fa-crown subtle-gold"></i>
 							).
 							<ol>
 								<li>Session owner chooses an arbitrary Session ID.</li>
 								<li>
 									Other players join the session by entering its ID or by following the
-									<a
-										@click="sessionURLToClipboard"
-									>
+									<a @click="sessionURLToClipboard">
 										Session Link
 										<i class="fas fa-share-square"></i>
 									</a>
@@ -727,9 +760,7 @@
 								</li>
 								<li>
 									Owner sets the desired options. (Take a look at
-									<a
-										@click="displayedModal = 'sessionOptions'"
-									>all of them</a>
+									<a @click="displayedModal = 'sessionOptions'">all of them</a>
 									.)
 								</li>
 								<li>
@@ -745,12 +776,13 @@
 							<h2>Collection Import</h2>
 						</div>
 						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards already owned by everyone. (Session owner can bypass this
-							feature by enabling "Ignore Collections"):
+							Each player can import their MTGA collection to restrict the card pool to cards already
+							owned by everyone. (Session owner can bypass this feature by enabling "Ignore Collections"):
 							<ol>
 								<li>
-									Enable Detailed logs in game, the toggle can be found in Options > View Account > Detailed Logs (Plugin Support), importing your
-									collection won't work without this activated.
+									Enable Detailed logs in game, the toggle can be found in Options > View Account >
+									Detailed Logs (Plugin Support), importing your collection won't work without this
+									activated.
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a>
@@ -759,7 +791,8 @@
 										class="clickable"
 										@click="logPathToClipboard"
 										v-tooltip="'Copy path to clipboard'"
-									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log</tt>
+										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log</tt
+									>
 									(note that
 									<a
 										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
@@ -793,9 +826,7 @@
 							<a @click="displayedModal = 'help'">FAQ / Help</a>
 							section.
 							<br />For any question/bug report/feature you can e-mail at
-							<a
-								href="mailto:mtgadraft@gmail.com"
-							>mtgadraft@gmail.com</a>
+							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 							, or join the
 							<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>
 							.
@@ -813,14 +844,14 @@
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the options.
-						<a
-							href="cubeformat.html"
-							target="_blank"
-						>More informations here</a>
+						<a href="cubeformat.html" target="_blank">More informations here</a>
 						.
 					</p>
 					<strong>Will MTGADraft support cards from outside Arena?</strong>
-					<p>Probably not. MTGADraft was designed from the start with Arena in mind and supporting decades of card brings a lot of complexity.</p>
+					<p>
+						Probably not. MTGADraft was designed from the start with Arena in mind and supporting decades of
+						card brings a lot of complexity.
+					</p>
 				</div>
 				<h2>Options Description</h2>
 				<div class="help-options">
@@ -830,7 +861,8 @@
 						<ul>
 							<li>
 								<span class="option-name">Ignore Collections</span>
-								: Draft with all cards of the selected set(s), ignoring player collections and preferences.
+								: Draft with all cards of the selected set(s), ignoring player collections and
+								preferences.
 							</li>
 							<li>
 								<span class="option-name">Set(s)</span>
@@ -844,9 +876,11 @@
 							</li>
 							<li>
 								<span class="option-name">Pick Timer</span>
-								: Maximum time in seconds allowed to pick a card in each booster. 0 means the timer is disabled.
+								: Maximum time in seconds allowed to pick a card in each booster. 0 means the timer is
+								disabled.
 							</li>
-						</ul>Click on
+						</ul>
+						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
 							More
 							<i class="fa-bars fa"></i>
@@ -855,24 +889,24 @@
 						<ul>
 							<li>
 								<span class="option-name">Public</span>
-								: Flags your session as public. It will appear in the "Public Sessions" menu so anyone can directly join.
+								: Flags your session as public. It will appear in the "Public Sessions" menu so anyone
+								can directly join.
 							</li>
 							<li>
 								<span class="option-name">Color Balance</span>
-								: If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random. (Also affects
-								sealed and cube)
+								: If set, the system will attempt to smooth out the color distribution in each pack, as
+								opposed to being completely random. (Also affects sealed and cube)
 							</li>
 							<li>
 								<span class="option-name">Custom card list</span>
-								: Submit a custom card list (one English card name by line) to draft your own cube. (Collections are ignored in this mode)
-								<a
-									href="cubeformat.html"
-									target="_blank"
-								>More information here</a>
+								: Submit a custom card list (one English card name by line) to draft your own cube.
+								(Collections are ignored in this mode)
+								<a href="cubeformat.html" target="_blank">More information here</a>
 							</li>
 							<li>
 								<span class="option-name">Foil</span>
-								: If enabled, each pack will have a chance to contain a 'foil' card of any rarity in place of one common.
+								: If enabled, each pack will have a chance to contain a 'foil' card of any rarity in
+								place of one common.
 							</li>
 						</ul>
 					</div>
@@ -885,12 +919,14 @@
 							</li>
 							<li>
 								<span class="option-name">Restrict to Collection</span>
-								: If unchecked, your collection will not limit the cards available in the selected sets. If every players unchecks this, you will draft
-								using every cards. (Ignored if "Ignore Collections" is enabled in the session, or when using a Custom Card List)
+								: If unchecked, your collection will not limit the cards available in the selected sets.
+								If every players unchecks this, you will draft using every cards. (Ignored if "Ignore
+								Collections" is enabled in the session, or when using a Custom Card List)
 							</li>
 							<li>
 								<span class="option-name">Pick on Double Click</span>
-								: Allows you to double click on booster cards during draft to pick without having to confirm.
+								: Allows you to double click on booster cards during draft to pick without having to
+								confirm.
 							</li>
 							<li>
 								<span class="option-name">Notifications</span>
@@ -898,7 +934,8 @@
 							</li>
 							<li>
 								<span class="option-name">Session ID</span>
-								: A unique identifier for your session, you can use any name, just make sure to use the same as your friends to play with them!
+								: A unique identifier for your session, you can use any name, just make sure to use the
+								same as your friends to play with them!
 							</li>
 						</ul>
 					</div>
@@ -915,11 +952,14 @@
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 			<h2 slot="header">Additional Session Options</h2>
-			<div slot="body" class="session-options-container" :class="{disabled: userID != sessionOwner}">
+			<div slot="body" class="session-options-container" :class="{ disabled: userID != sessionOwner }">
 				<div class="option-column">
 					<div
 						class="line"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>Share this session ID with everyone.</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content: '<p>Share this session ID with everyone.</p>',
+						}"
 					>
 						<label for="is-public">Public</label>
 						<div class="right">
@@ -928,7 +968,10 @@
 					</div>
 					<div
 						class="line"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>Is the session owner participating in?</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content: '<p>Is the session owner participating in?</p>',
+						}"
 					>
 						<label for="is-owner-player">Session owner is playing</label>
 						<div class="right">
@@ -951,7 +994,11 @@
 					</div>
 					<div
 						class="line"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.</p>',
+						}"
 					>
 						<label for="color-balance">Color Balance</label>
 						<div class="right">
@@ -961,7 +1008,11 @@
 					<div
 						class="line"
 						v-bind:class="{ disabled: useCustomCardList }"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>If enabled (default) Rares can be promoted to a Mythic at a 1/8 rate.</p><p>Disabled for Custom Card Lists.</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>If enabled (default) Rares can be promoted to a Mythic at a 1/8 rate.</p><p>Disabled for Custom Card Lists.</p>',
+						}"
 					>
 						<label for="mythic-promotion">Rare promotion to Mythic</label>
 						<div class="right">
@@ -971,16 +1022,20 @@
 					<div
 						class="option-section"
 						v-bind:class="{ disabled: useCustomCardList }"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
+						}"
 					>
 						<div class="option-column-title">Booster Content</div>
 						<div class="line" v-for="r in ['common', 'uncommon', 'rare']" :key="r">
-							<label :for="'booster-content-'+r" class="capitalized">{{r}}s</label>
+							<label :for="'booster-content-' + r" class="capitalized">{{ r }}s</label>
 							<div class="right">
 								<input
 									class="small-number-input"
 									type="number"
-									:id="'booster-content-'+r"
+									:id="'booster-content-' + r"
 									min="0"
 									max="16"
 									step="1"
@@ -992,16 +1047,20 @@
 					<div
 						class="option-section"
 						v-bind:class="{ disabled: useCustomCardList }"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.</p>',
+						}"
 					>
 						<div class="option-column-title">Max. duplicate copies</div>
 						<div class="line" v-for="r in ['common', 'uncommon', 'rare', 'mythic']" :key="r">
-							<label :for="'max-duplicates-'+r" class="capitalized">{{r}}s</label>
+							<label :for="'max-duplicates-' + r" class="capitalized">{{ r }}s</label>
 							<div class="right">
 								<input
 									class="small-number-input"
 									type="number"
-									:id="'max-duplicates-'+r"
+									:id="'max-duplicates-' + r"
 									min="1"
 									max="16"
 									step="1"
@@ -1013,7 +1072,11 @@
 					<div
 						class="line"
 						v-bind:class="{ disabled: useCustomCardList }"
-						v-tooltip.left="{classes: 'option-tooltip', content: '<p>If enabled, each pack will have a chance to contain a \'foil\' card of any rarity in place of one common.</p>'}"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>If enabled, each pack will have a chance to contain a \'foil\' card of any rarity in place of one common.</p>',
+						}"
 					>
 						<label for="option-foil">Foil</label>
 						<div class="right">
@@ -1024,7 +1087,10 @@
 						<div class="option-column-title">Custom Card List</div>
 						<div
 							class="line"
-							v-tooltip.left="{classes: 'option-tooltip', content: '<p>Use a custom card list (aka Cube).</p>'}"
+							v-tooltip.left="{
+								classes: 'option-tooltip',
+								content: '<p>Use a custom card list (aka Cube).</p>',
+							}"
 						>
 							<label for="use-custom-card-list">Use a Custom Card List</label>
 							<div class="right">
@@ -1034,7 +1100,11 @@
 						<div v-bind:class="{ disabled: !useCustomCardList }">
 							<div
 								class="line"
-								v-tooltip.left="{classes: 'option-tooltip', content: '<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>'}"
+								v-tooltip.left="{
+									classes: 'option-tooltip',
+									content:
+										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
+								}"
 							>
 								<label for="card-list-input">Custom Card List</label>
 								<div class="right">
@@ -1054,26 +1124,31 @@
 							</div>
 							<!-- Loading cubes this way is wasteful, but easier to manage. -->
 							<div
-								class="line"
-								v-tooltip.left="{classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>'}"
+								class="full-line"
+								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>' }"
 							>
-								<label for="featured-cubes">
-									<select name="featured-cubes" v-model="selectedCube">
-										<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">{{cube.name}}</option>
-									</select>
-								</label>
-								<div class="right">
-									<button
-										@click="fetchFile(selectedCube.filename, parseCustomCardList, {name: selectedCube.name})"
-									>Load Cube</button>
-								</div>
+								<select name="featured-cubes" v-model="selectedCube">
+									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">{{
+										cube.name
+									}}</option>
+								</select>
+								<button
+									@click="
+										fetchFile(selectedCube.filename, parseCustomCardList, {
+											name: selectedCube.name,
+										})
+									"
+									style="min-width: auto"
+								>
+									Load Cube
+								</button>
 							</div>
 							<div v-if="customCardList.length > 0" style="text-align: center;">
 								<i class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
-								<span
-									v-if="customCardList.name"
-								>Loaded '{{customCardList.name}}' ({{customCardList.length}} cards).</span>
-								<span v-else>Loaded list with {{customCardList.length}} cards.</span>
+								<span v-if="customCardList.name"
+									>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span
+								>
+								<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
 								<button @click="displayedModal = 'cardList'">
 									<i class="fas fa-file-alt"></i>
 									Review.
@@ -1081,17 +1156,11 @@
 							</div>
 							<div class="option-info">
 								You can find more cubes or craft your own on
-								<a
-									href="https://www.cubetutor.com/"
-									target="_blank"
-								>Cube Tutor</a>
+								<a href="https://www.cubetutor.com/" target="_blank">Cube Tutor</a>
 								or
 								<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
 								<br />Customize your list even further by using
-								<a
-									href="cubeformat.html"
-									target="_blank"
-								>card slots</a>
+								<a href="cubeformat.html" target="_blank">card slots</a>
 							</div>
 						</div>
 					</div>
@@ -1100,7 +1169,10 @@
 					<h4>Draft Specific Options</h4>
 					<div
 						class="line"
-						v-tooltip.right="{classes: 'option-tooltip', content: '<p>Draft: Boosters per Player; default is 3.</p>'}"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content: '<p>Draft: Boosters per Player; default is 3.</p>',
+						}"
 					>
 						<label for="boosters-per-player">Boosters per Player</label>
 						<div class="right">
@@ -1119,7 +1191,11 @@
 						<div class="option-column-title">Individual Booster Set</div>
 						<div
 							class="line"
-							v-tooltip.right="{classes: 'option-tooltip', content: '<p>Controls how the boosters will be distributed.</p><ul><li>Regular: Each player will receive boosters from the same sets and will open them in the same order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be randomly handed to each player.</li></ul>'}"
+							v-tooltip.right="{
+								classes: 'option-tooltip',
+								content:
+									'<p>Controls how the boosters will be distributed.</p><ul><li>Regular: Each player will receive boosters from the same sets and will open them in the same order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be randomly handed to each player.</li></ul>',
+							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
 							<select
@@ -1134,20 +1210,30 @@
 							</select>
 						</div>
 						<div
-							v-tooltip.right="{classes: 'option-tooltip', content: '<p>Specify the set of each booster individually. Useful for classic Chaos Draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>'}"
+							v-tooltip.right="{
+								classes: 'option-tooltip',
+								content:
+									'<p>Specify the set of each booster individually. Useful for classic Chaos Draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+							}"
 						>
 							<div v-for="(value, index) in customBoosters" class="line" :key="index">
-								<label for="customized-booster">Booster #{{index+1}}</label>
+								<label for="customized-booster">Booster #{{ index + 1 }}</label>
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
-									<option v-for="code in sets" :value="code" :key="code">{{setsInfos[code].fullName}}</option>
+									<option v-for="code in sets" :value="code" :key="code">{{
+										setsInfos[code].fullName
+									}}</option>
 								</select>
 							</div>
 						</div>
 					</div>
 					<div
 						class="line"
-						v-tooltip.right="{classes: 'option-tooltip', content: '<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</p><p>Default is 0.</p>'}"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</p><p>Default is 0.</p>',
+						}"
 					>
 						<label for="burned-cards-per-round">Burned cards per round</label>
 						<div class="right">
@@ -1164,7 +1250,11 @@
 					</div>
 					<div
 						class="line"
-						v-tooltip.right="{classes: 'option-tooltip', content: '<p>Controls who is going to receive the draft logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the draft log. Useful for tournaments.</p>'}"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Controls who is going to receive the draft logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the draft log. Useful for tournaments.</p>',
+						}"
 					>
 						<label for="draft-log-recipients">Send draft logs to</label>
 						<div class="right">
@@ -1224,9 +1314,10 @@
 				<div style="max-width: 50vw;">
 					<p>Hello there!</p>
 					<p>
-						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by adding support for new cards appearing on MTGA and
-						improving it, both with your and my ideas. If that sounds like a good use of my time and you want to help me stay motivated and high on cafeine, you
-						can donate here
+						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by
+						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
+						that sounds like a good use of my time and you want to help me stay motivated and high on
+						cafeine, you can donate here
 						<em>via</em>
 						PayPal:
 					</p>
@@ -1250,10 +1341,9 @@
 		<footer>
 			<span>
 				<input type="file" id="log-input" @change="openLog" style="display: none;" accept=".txt" />
-				<a
-					onclick="document.querySelector('#log-input').click()"
-					v-tooltip="'Open a saved draft log.'"
-				>Open Draft Log</a>
+				<a onclick="document.querySelector('#log-input').click()" v-tooltip="'Open a saved draft log.'"
+					>Open Draft Log</a
+				>
 			</span>
 			<span>-</span>
 			<span @click="displayedModal = 'About'" class="clickable">
@@ -1280,7 +1370,9 @@
 		<div
 			class="disconnected-icon"
 			v-if="socket && socket.disconnected"
-			v-tooltip="'You are disconnected from the server, some functionnalities won\'t be available until the connection is re-established.'"
+			v-tooltip="
+				'You are disconnected from the server, some functionnalities won\'t be available until the connection is re-established.'
+			"
 		>
 			<i class="fas fa-exclamation-triangle"></i>
 			Disconnected
