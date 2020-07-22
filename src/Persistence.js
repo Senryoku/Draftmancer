@@ -11,8 +11,12 @@ const SessionModule = require("./Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 const Mixpanel = require("mixpanel");
-const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : "NoToken";
-const MixInstance = Mixpanel.init(MixPanelToken, { api_host: "api-eu.mixpanel.com" }, "");
+const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
+const MixInstance = Mixpanel.init(MixPanelToken, {
+	api_host: "api-eu.mixpanel.com",
+	debug: process.env.NODE_ENV !== "production",
+	protocol: "https",
+});
 
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
@@ -324,9 +328,32 @@ async function logSession(type, session) {
 		}
 	}
 
-	localSess.distinct_id = "Server";
-
-	MixInstance.track(type === "" ? "DefaultEvent" : type, localSess);
+	let mixdata = {
+		distinct_id: process.env.NODE_ENV || "development",
+	};
+	for (let prop of [
+		"boostersPerPlayer",
+		"ignoreCollections",
+		"mythicPromotion",
+		"maxDuplicates",
+		"customBoosters",
+		"isPublic",
+		"foil",
+		"draftLogRecipients",
+		"distributionMode",
+		"ownerIsPlayer",
+		"bots",
+		"maxPlayers",
+		"setRestriction",
+		"useCustomCardList",
+		"maxTimer",
+		"colorBalance",
+		"boosterContent",
+	])
+		mixdata[prop] = localSess[prop];
+	if (localSess.customCardList && localSess.customCardList.name)
+		mixdata.customCardListName = localSess.customCardList.name;
+	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
 if (DisablePersistence) {
