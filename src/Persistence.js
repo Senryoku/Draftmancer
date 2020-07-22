@@ -301,6 +301,29 @@ async function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
+	if (!DisablePersistence) {
+		const params = {
+			TableName: TableNames.DraftLogs,
+			ReturnConsumedCapacity: "TOTAL",
+			Item: {
+				id: filterEmptyStr(localSess.id),
+				time: new Date().getTime(),
+				type: type === "" ? null : type,
+				session: localSess,
+			},
+		};
+
+		try {
+			const putResult = await docClient.put(params).promise();
+			console.log(
+				`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
+			);
+		} catch (err) {
+			console.error("saveDraftlog error: ", err);
+			console.error(params);
+		}
+	}
+
 	localSess.distinct_id = "Server";
 
 	MixInstance.track(type === "" ? "DefaultEvent" : type, localSess);
