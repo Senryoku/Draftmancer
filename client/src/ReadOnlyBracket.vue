@@ -1,17 +1,15 @@
 <template>
 	<div>
-		<a href="/">
-			<i class="fas fa-chevron-left"></i> Go back to MTGADraft
-		</a>
+		<a href="/"><i class="fas fa-chevron-left"></i> Go back to MTGADraft </a>
 		<div class="main">
 			<div v-if="bracket">
-				<h1>Bracket for Session '{{sessionID}}'</h1>
+				<h1>Bracket for Session '{{ sessionID }}'</h1>
 				<bracket :bracket="bracket" :displayControls="false"></bracket>
 			</div>
 			<div class="error" v-else>
 				<h1>Error</h1>
-				<p>{{error}}</p>
-				<span v-if="response" class="small-error">{{response.statusText}}</span>
+				<p>{{ error }}</p>
+				<span v-if="response" class="small-error">{{ response.statusText }}</span>
 			</div>
 		</div>
 	</div>
