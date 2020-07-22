@@ -1191,7 +1191,7 @@ function Session(id, owner) {
 			});
 		}
 
-		Persistence.logSession("Sealed", this);
+		Persistence.logSession("Jumpstart", this);
 
 		this.boosters = [];
 	};
