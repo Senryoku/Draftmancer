@@ -516,83 +516,95 @@ function Session(id, owner) {
 					commonsByColor: commonsByColor,
 					landSlot: landSlot,
 				};
-				// If randomized, boosters have to all be of the same size; Adding a land slot to the default rule.
-				if (this.distributionMode !== "regular" && !defaultRule.landSlot)
+				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
+				const addLandSlot =
+					this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
+				if (addLandSlot && !defaultRule.landSlot)
 					defaultRule.landSlot =
 						this.setRestriction.length === 0
-							? LandSlot.BasicLandSlots["m20"]
+							? LandSlot.BasicLandSlots["m20"] // Totally arbitrary
 							: LandSlot.BasicLandSlots[this.setRestriction[0]];
 
-				for (let boosterRule of this.customBoosters) {
-					// No specific rules
-					if (boosterRule === "") {
-						boosterRules.push(defaultRule);
-					} else {
-						// Compile necessary data for this set (Multiple boosters of the same set wil share it)
-						if (!usedSets[boosterRule]) {
-							// As booster distribution can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-							usedSets[boosterRule] = {
-								cardPool: this.setByRarity(boosterRule),
-								commonsByColor: {},
-								landSlot:
-									boosterRule in LandSlot.SpecialLandSlots
-										? LandSlot.SpecialLandSlots[boosterRule]
-										: this.distributionMode !== "regular"
-										? LandSlot.BasicLandSlots[boosterRule]
-										: null,
-							};
-
-							// Check if we have enough card, considering maxDuplicate is a limiting factor
-							const multiplier = this.customBoosters.reduce((a, v) => (v == boosterRule ? a + 1 : a), 0);
-							if (
-								count_cards(usedSets[boosterRule].cardPool["common"]) <
-									multiplier * this.getVirtualPlayersCount() * targets["common"] ||
-								count_cards(usedSets[boosterRule].cardPool["uncommon"]) <
-									multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
-								count_cards(usedSets[boosterRule].cardPool["rare"]) +
-									count_cards(usedSets[boosterRule].cardPool["mythic"]) <
-									multiplier * this.getVirtualPlayersCount() * targets["rare"]
-							) {
-								const msg = `Not enough cards in card pool for individual booster restriction '${boosterRule}'. Please check you Max. Duplicates setting.`;
-								this.emitMessage("Error generating boosters", msg, true, 0);
-								console.warn(msg);
-								return false;
+				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
+					const playerBoosterRules = [];
+					for (let boosterRule of this.customBoosters) {
+						// No specific rules
+						if (boosterRule === "") {
+							playerBoosterRules.push(defaultRule);
+						} else {
+							if (boosterRule === "random") {
+								// Random booster from one of the sets in Card Pool
+								boosterRule =
+									this.setRestriction.length === 0
+										? utils.getRandom(constants.MTGSets)
+										: utils.getRandom(this.setRestriction);
 							}
+							// Compile necessary data for this set (Multiple boosters of the same set will share it)
+							if (!usedSets[boosterRule]) {
+								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
+								usedSets[boosterRule] = {
+									cardPool: this.setByRarity(boosterRule),
+									commonsByColor: {},
+									landSlot:
+										boosterRule in LandSlot.SpecialLandSlots
+											? LandSlot.SpecialLandSlots[boosterRule]
+											: addLandSlot
+											? LandSlot.BasicLandSlots[boosterRule]
+											: null,
+								};
 
-							if (this.colorBalance) {
-								for (let card in usedSets[boosterRule].cardPool["common"]) {
-									if (!(Cards[card].color_identity in usedSets[boosterRule].commonsByColor))
-										usedSets[boosterRule].commonsByColor[Cards[card].color_identity] = {};
-									usedSets[boosterRule].commonsByColor[Cards[card].color_identity][card] =
-										usedSets[boosterRule].cardPool["common"][card];
+								// Check if we have enough card, considering maxDuplicate is a limiting factor
+								const multiplier = this.customBoosters.reduce(
+									(a, v) => (v == boosterRule ? a + 1 : a),
+									0
+								);
+								if (
+									count_cards(usedSets[boosterRule].cardPool["common"]) <
+										multiplier * this.getVirtualPlayersCount() * targets["common"] ||
+									count_cards(usedSets[boosterRule].cardPool["uncommon"]) <
+										multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
+									count_cards(usedSets[boosterRule].cardPool["rare"]) +
+										count_cards(usedSets[boosterRule].cardPool["mythic"]) <
+										multiplier * this.getVirtualPlayersCount() * targets["rare"]
+								) {
+									const msg = `Not enough cards in card pool for individual booster restriction '${boosterRule}'. Please check you Max. Duplicates setting.`;
+									this.emitMessage("Error generating boosters", msg, true, 0);
+									console.warn(msg);
+									return false;
 								}
-							}
 
-							if (usedSets[boosterRule].landSlot && usedSets[boosterRule].landSlot.setup)
-								usedSets[boosterRule].landSlot.setup(usedSets[boosterRule].cardPool);
+								if (this.colorBalance) {
+									for (let card in usedSets[boosterRule].cardPool["common"]) {
+										if (!(Cards[card].color_identity in usedSets[boosterRule].commonsByColor))
+											usedSets[boosterRule].commonsByColor[Cards[card].color_identity] = {};
+										usedSets[boosterRule].commonsByColor[Cards[card].color_identity][card] =
+											usedSets[boosterRule].cardPool["common"][card];
+									}
+								}
+
+								if (usedSets[boosterRule].landSlot && usedSets[boosterRule].landSlot.setup)
+									usedSets[boosterRule].landSlot.setup(usedSets[boosterRule].cardPool);
+							}
+							playerBoosterRules.push(usedSets[boosterRule]);
 						}
-						boosterRules.push(usedSets[boosterRule]);
 					}
+					boosterRules.push(playerBoosterRules);
 				}
 
 				// Generate Boosters
 				this.boosters = [];
 				// Implements distribution mode 'shufflePlayerBoosters'
-				let boosterOrder = [];
-				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
-					let order = utils.range(0, this.boostersPerPlayer - 1);
-					if (this.distributionMode === "shufflePlayerBoosters") shuffleArray(order);
-					boosterOrder.push(order);
-				}
+				if (this.distributionMode === "shufflePlayerBoosters")
+					for (let rules of boosterRules) shuffleArray(rules);
 
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
-						const boosterNumber = boosterOrder[p][b];
+						const rule = boosterRules[p][b];
 						const booster = this.generateBooster(
-							boosterRules[boosterNumber].cardPool,
-							boosterRules[boosterNumber].commonsByColor,
+							rule.cardPool,
+							rule.commonsByColor,
 							targets,
-							boosterRules[boosterNumber].landSlot
+							rule.landSlot
 						);
 						if (booster) this.boosters.push(booster);
 						else return false;

@@ -32,7 +32,6 @@ function array_intersect(args) {
 	if (!args.length) return [];
 	if (args.length === 1) return args[0];
 	var a,
-		b,
 		c,
 		d,
 		e,

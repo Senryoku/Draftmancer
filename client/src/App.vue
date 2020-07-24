@@ -1194,7 +1194,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the boosters will be distributed.</p><ul><li>Regular: Each player will receive boosters from the same sets and will open them in the same order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be randomly handed to each player.</li></ul>',
+									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -1213,13 +1213,14 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Specify the set of each booster individually. Useful for classic Chaos Draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+									'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
 							}"
 						>
 							<div v-for="(value, index) in customBoosters" class="line" :key="index">
 								<label for="customized-booster">Booster #{{ index + 1 }}</label>
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
+									<option value="random">Random Set from Card Pool</option>
 									<option v-for="code in sets" :value="code" :key="code">{{
 										setsInfos[code].fullName
 									}}</option>

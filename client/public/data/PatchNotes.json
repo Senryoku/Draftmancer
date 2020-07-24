@@ -1,5 +1,9 @@
 [
 	{
+		"date": "24/07/2020",
+		"notes": ["Added 'Random Set from Card Pool' option for individual boosters."]
+	},
+	{
 		"date": "22/07/2020",
 		"notes": ["Added link to a read-only version of the bracket to share with non-players."]
 	},
