@@ -1094,7 +1094,7 @@ export default {
 					Swal.fire({
 						icon: "error",
 						title: `Card not found`,
-						text: `Could not find '${name}' in our database. Could not find 'Brood Monitor' in our database. (Note: this app only supports cards from MTG Arena.)`,
+						text: `Could not find '${name}' in our database. (Note: this app only supports cards from MTG Arena.)`,
 						footer: `Full line: '${line}'`,
 						customClass: SwalCustomClasses,
 					});
