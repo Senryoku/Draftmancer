@@ -1520,13 +1520,19 @@ export default {
 
 			this.loadingLanguages.push(lang);
 			fetch(`data/MTGACards.${lang}.json`).then(response =>
-				response.json().then(json => this.handleTranslation(lang, json))
+				response.json().then(json => {
+					this.loadTranslation(lang, json);
+					if (this.language !== lang) this.language = lang;
+				})
 			);
 		},
-		handleTranslation: function(lang, json) {
+		loadTranslation(lang, json) {
 			addLanguage(lang, json);
 			this.loadingLanguages.splice(lang, 1);
 			this.loadedLanguages.push(lang);
+		},
+		handleTranslation: function(lang, json) {
+			this.loadTranslation(lang, json);
 			if (this.language !== lang) this.language = lang;
 		},
 		checkNotificationPermission: function(e) {
@@ -1646,7 +1652,7 @@ export default {
 
 			// Always load English as it's used as a backup
 			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
-			this.handleTranslation("en", DefaultLoc);
+			this.loadTranslation("en", DefaultLoc);
 			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
 
 			// Load set informations
