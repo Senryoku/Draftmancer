@@ -38,9 +38,25 @@ MTGALocalization = {}
 for path in MTGALocFiles:
     with open(path, 'r', encoding="utf8") as file:
         locdata = json.load(file)
-        for o in locdata[0]['keys']:
-            MTGALocalization[o['id']] = o['text']
+        for lang in locdata:
+            langcode = lang['isoCode'][:2]
+            MTGALocalization[langcode] = {}
+            for o in lang['keys']:
+                MTGALocalization[langcode][o['id']] = o['text']
 
+
+Translations = {"en": {},
+                "es": {},
+                "fr": {},
+                "de": {},
+                "it": {},
+                "pt": {},
+                "ja": {},
+                "ko": {},
+                "ru": {},
+                "zhs": {},
+                "zht": {},
+                "ph": {}}
 CardsCollectorNumberAndSet = {}
 CardNameToID = {}
 for path in MTGACardsFiles:
@@ -55,16 +71,20 @@ for path in MTGACardsFiles:
                     o['set'] = 'dom'
                 # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                 # Adding name to disambiguate.
-                CardsCollectorNumberAndSet[(MTGALocalization[o['titleId']],
+                CardsCollectorNumberAndSet[(MTGALocalization['en'][o['titleId']],
                                             o['CollectorNumber'], o['set'])] = o['grpid']
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
-                        MTGALocalization[o['titleId']], o['CollectorNumber'], 'ajmp')] = o['grpid']
+                        MTGALocalization['en'][o['titleId']], o['CollectorNumber'], 'ajmp')] = o['grpid']
+                for lang in MTGALocalization:
+                    Translations[lang][o['grpid']] = {
+                        'printed_name': MTGALocalization[lang][o['titleId']]}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
-                if MTGALocalization[o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
-                    CardNameToID[MTGALocalization[o['titleId']]] = o['grpid']
+                if MTGALocalization['en'][o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
+                    CardNameToID[MTGALocalization['en']
+                                 [o['titleId']]] = o['grpid']
 
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
@@ -172,32 +192,25 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                                                                    c['collector_number'], c['set'].lower())])
 
     print("Generating card data cache...")
-    translations = {"en": {},
-                    "es": {},
-                    "fr": {},
-                    "de": {},
-                    "it": {},
-                    "pt": {},
-                    "ja": {},
-                    "ko": {},
-                    "ru": {},
-                    "zhs": {},
-                    "zht": {},
-                    "ph": {}}
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
         arena_cards = json.loads(file.read())
         for c in arena_cards:
             translation = {}
-            if 'printed_name' in c:
-                translation['printed_name'] = c['printed_name']
-            elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-                translation['printed_name'] = c['card_faces'][0]['printed_name']
+            if c['arena_id'] not in Translations[c['lang']]:
+                Translations[c['lang']][c['arena_id']] = {}
+                if 'printed_name' in c:
+                    translation['printed_name'] = c['printed_name']
+                elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+                    translation['printed_name'] = c['card_faces'][0]['printed_name']
+
             if 'image_uris' in c and 'border_crop' in c['image_uris']:
                 translation['image_uris'] = c['image_uris']['border_crop']
             elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
                 translation['image_uris'] = c['card_faces'][0]['image_uris']['border_crop']
-            translations[c['lang']][c['arena_id']] = translation
+
+            Translations[c['lang']][c['arena_id']].update(translation)
+
             if c['lang'] != 'en':
                 continue
             if c['arena_id'] not in cards:
@@ -216,19 +229,21 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 
         # Removes URL prefix
         allURIs = []
-        for lang in translations:
-            for c in translations[lang]:
-                allURIs.append(translations[lang][c]['image_uris'])
+        for lang in Translations:
+            for c in Translations[lang]:
+                if('image_uris' in Translations[lang][c]):
+                    allURIs.append(Translations[lang][c]['image_uris'])
         URLPrefix = os.path.commonprefix(allURIs)
         print("Scryfall Image URLPrefix: ", URLPrefix)
-        for lang in translations:
-            for c in translations[lang]:
-                translations[lang][c]['image_uris'] = translations[lang][c]['image_uris'][len(
-                    URLPrefix):]
+        for lang in Translations:
+            for c in Translations[lang]:
+                if('image_uris' in Translations[lang][c]):
+                    Translations[lang][c]['image_uris'] = Translations[lang][c]['image_uris'][len(
+                        URLPrefix):]
 
-        for lang in translations:
+        for lang in Translations:
             with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
-                json.dump(translations[lang], outfile, ensure_ascii=False)
+                json.dump(Translations[lang], outfile, ensure_ascii=False)
 
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
