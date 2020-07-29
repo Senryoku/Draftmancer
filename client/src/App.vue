@@ -827,9 +827,16 @@
 							section.
 							<br />For any question/bug report/feature you can e-mail at
 							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-							, or join the
-							<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>
-							.
+							or join the
+							<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>.
+						</div>
+					</div>
+					<div class="container">
+						<div class="controls">
+							<h2>Survey</h2>
+						</div>
+						<div class="welcome-section">
+							Answer a <a href="https://forms.gle/dQ9yTuggbk2wGcfKA">short 3-questions survey</a> to help us improve the draft app.
 						</div>
 					</div>
 				</div>
