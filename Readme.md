@@ -45,13 +45,13 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
--	Regroup Game Mode besides Draft in a single dropdown menu; Change "More" into "Setting" + Cog Icon
+-   Add some stats on deck/drafted cards
+-   Regroup Game Mode besides Draft in a single dropdown menu; Change "More" into "Setting" + Cog Icon
 -   Display foils as... foils in front end?
 
 ### Distant Future
 
 -   Set specificy booster generation rules, examples: WAR: One planeswalker/pack. DOM: One Legendary/pack.
--   Add some stats on deck/drafted cards (will increase card DB size, not a fan.)
 
 ## Check
 
@@ -64,10 +64,6 @@ Features that may need some additional testing:
 -   Card count/set code/Collector number support to cube import
 -   Monitor persistence
 -   Rarity selection
-
-## Bugs
-
--   Guildgates won't import in arena : Guildgates do not have localized names
 
 ## Notes on Arena Importer
 
