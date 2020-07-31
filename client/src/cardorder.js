@@ -13,6 +13,23 @@ const RarityOrder = {
 	common: 3,
 };
 
+const TypeOrder = {
+	Creature: 0,
+	"Legendary Creature": 0,
+	"Enchantment Creature": 0,
+	"Artifact Creature": 0,
+	Planeswalker: 1,
+	"Legendary Planeswalker": 1,
+	Enchantment: 2,
+	"Legendary Enchantment": 2,
+	Artifact: 3,
+	"Legendary Artifact": 3,
+	Instant: 4,
+	Sorcery: 5,
+	Land: 6,
+	"Basic Land": 7,
+};
+
 const Comparators = {
 	// Arena counts each X as 100 basically
 	// Arena uses the front half of split cards here
@@ -22,9 +39,10 @@ const Comparators = {
 	},
 
 	// Arena puts creatures before non-creatures
-	// TODO: add that data to card
 	type: (lhs, rhs) => {
-		return 0;
+		if (!(lhs.type in TypeOrder)) alert(lhs.type);
+		if (!(rhs.type in TypeOrder)) alert(rhs.type);
+		return TypeOrder[lhs.type] - TypeOrder[rhs.type];
 	},
 
 	// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
@@ -131,10 +149,9 @@ export function orderByColor(cards) {
 }
 
 export function orderByRarityInPlace(cards) {
-	const order = { mythic: 0, rare: 1, uncommon: 2, common: 3 };
 	return cards.sort(function(lhs, rhs) {
-		if (order[lhs.rarity] == order[rhs.rarity]) Comparators.arena(lhs, rhs);
-		return order[lhs.rarity] - order[rhs.rarity];
+		if (RarityOrder[lhs.rarity] == RarityOrder[rhs.rarity]) Comparators.arena(lhs, rhs);
+		return RarityOrder[lhs.rarity] - RarityOrder[rhs.rarity];
 	});
 }
 

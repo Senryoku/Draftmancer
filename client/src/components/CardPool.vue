@@ -39,19 +39,14 @@
 				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 					<i class="fas fa-sort-amount-up fa-2x"></i>
 				</div>
-				<div
-					@click="sortByColor"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by color'"
-				>
+				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
 					<img src="../assets/img/sort-color.svg" />
 				</div>
-				<div
-					@click="sortByRarity"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by rarity'"
-				>
+				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
 					<img src="../assets/img/sort-rarity.svg" />
+				</div>
+				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
+					<img src="../assets/img/sort-type.svg" />
 				</div>
 			</div>
 		</div>
@@ -130,6 +125,9 @@ export default {
 		},
 		sortByRarity: function() {
 			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
+		},
+		sortByType: function() {
+			this.sort(CardOrder.Comparators.type);
 		},
 		remCard: function(card) {
 			for (let col of this.columns) {
@@ -230,6 +228,6 @@ export default {
 }
 
 .sort-dropdown:hover {
-	max-height: calc(3 * (2 * var(--controls-padding) + var(--controls-size) + var(--controls-margin)));
+	max-height: calc(4 * (2 * var(--controls-padding) + var(--controls-size) + var(--controls-margin)));
 }
 </style>

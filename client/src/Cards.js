@@ -22,6 +22,7 @@ export function genCard(c) {
 		set: Cards[c].set,
 		rarity: Cards[c].rarity,
 		cmc: Cards[c].cmc,
+		type: Cards[c].type,
 		collector_number: Cards[c].collector_number,
 		color_identity: Cards[c].color_identity,
 		in_booster: Cards[c].in_booster,
