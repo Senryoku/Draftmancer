@@ -218,6 +218,12 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             if c['lang'] == 'en':
                 selection = {key: value for key, value in c.items() if key in {
                     'name', 'set', 'cmc', 'rarity', 'collector_number', 'color_identity'}}
+                typeLine = c['type_line'].split(' — ')
+                selection['type'] = typeLine[0]
+                subtypes = []  # Unused for now
+                if len(typeLine) > 1:
+                    subtypes = typeLine[1].split()
+                #selection['subtypes'] = subtypes
                 if selection['name'] in CardRatings:
                     selection['rating'] = CardRatings[selection['name']]
                 else:
