@@ -40,8 +40,6 @@ const Comparators = {
 
 	// Arena puts creatures before non-creatures
 	type: (lhs, rhs) => {
-		if (!(lhs.type in TypeOrder)) alert(lhs.type);
-		if (!(rhs.type in TypeOrder)) alert(rhs.type);
 		return TypeOrder[lhs.type] - TypeOrder[rhs.type];
 	},
 
