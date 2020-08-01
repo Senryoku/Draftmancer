@@ -45,9 +45,13 @@ Chart.defaults.global.defaultFontColor = "#ddd";
 
 const CMCChart = {
 	extends: Bar,
-	props: { cards: { type: Array, required: true }, options: { type: Object } },
+	props: { cards: { type: Array, required: true } },
 	mounted() {
-		this.renderChart(this.chartdata, this.options);
+		this.renderChart(this.chartdata, {
+			scales: {
+				yAxes: [{ ticks: { beginAtZero: true } }],
+			},
+		});
 	},
 	computed: {
 		chartdata: function() {
