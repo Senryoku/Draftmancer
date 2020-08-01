@@ -46,8 +46,8 @@ const Comparators = {
 	// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
 	// TODO: handle cards that aren't monocolor
 	color: (lhs, rhs) => {
-		const l = lhs.color_identity;
-		const r = rhs.color_identity;
+		const l = lhs.colors;
+		const r = rhs.colors;
 		if (!l || !r) return 0;
 		if (l.length === 1 && r.length === 1) return ColorOrder[l[0]] - ColorOrder[r[0]];
 		else if (l.length === 1) return -1;
@@ -98,12 +98,12 @@ export function columnCMC(cards) {
 export function columnColor(cards) {
 	let a = cards.reduce(
 		(acc, item) => {
-			if (item.color_identity.length > 1) {
+			if (item.colors.length > 1) {
 				if (!acc["multi"]) acc["multi"] = [];
 				acc["multi"].push(item);
 			} else {
-				if (!acc[item.color_identity]) acc[item.color_identity] = [];
-				acc[item.color_identity].push(item);
+				if (!acc[item.colors]) acc[item.colors] = [];
+				acc[item.colors].push(item);
 			}
 			return acc;
 		},

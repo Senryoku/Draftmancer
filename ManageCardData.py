@@ -30,6 +30,7 @@ if len(sys.argv) > 1:
     ForceCache = ForceExtract or Arg == "cache"
     ForceRatings = Arg == "ratings"
     ForceJumpstart = Arg == "jmp"
+    ForceSymbology = Arg == "symb"
 
 MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
@@ -44,6 +45,23 @@ for path in MTGALocFiles:
             for o in lang['keys']:
                 MTGALocalization[langcode][o['id']] = o['text']
 
+# Get mana symbols info from Scryfall
+SymbologyFile = "./data/symbology.json"
+ManaSymbolsFile = "./client/src/data/mana_symbols.json"
+if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
+    if not os.path.isfile(SymbologyFile):
+        urllib.request.urlretrieve(
+            "https://api.scryfall.com/symbology", SymbologyFile)
+    mana_symbols = {}
+    with open(SymbologyFile, 'r', encoding="utf8") as file:
+        symbols = json.load(file)
+        for s in symbols["data"]:
+            mana_symbols[s['symbol']] = {
+                "cmc": s["cmc"],
+                "colors": s["colors"]
+            }
+    with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
+        json.dump(mana_symbols, outfile)
 
 Translations = {"en": {},
                 "es": {},
@@ -217,7 +235,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 cards[c['arena_id']] = {}
             if c['lang'] == 'en':
                 selection = {key: value for key, value in c.items() if key in {
-                    'name', 'set', 'cmc', 'rarity', 'collector_number', 'color_identity'}}
+                    'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
+                if 'mana_cost' not in selection and "card_faces" in c:
+                    selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
                 typeLine = c['type_line'].split(' — ')
                 selection['type'] = typeLine[0]
                 subtypes = []  # Unused for now

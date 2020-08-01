@@ -13,7 +13,7 @@ const io = require("socket.io")(http);
 const cookieParser = require("cookie-parser");
 const uuidv1 = require("uuid/v1");
 
-const constants = require("./client/src/constants.json");
+const constants = require("./client/src/data/constants.json");
 const Persistence = require("./src/Persistence");
 const ConnectionModule = require("./src/Connection");
 const Connections = ConnectionModule.Connections;

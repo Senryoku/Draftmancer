@@ -88,9 +88,8 @@ const ColorChart = {
 				labels: [],
 				datasets: [],
 			};
-			// FIXME: Use color in mana cost and not color identity!
 			let types = this.cards
-				.map(c => c.color_identity)
+				.map(c => c.colors)
 				.reduce(
 					(acc, arr) => {
 						for (let t of arr) {

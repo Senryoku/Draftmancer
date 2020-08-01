@@ -1,26 +1,33 @@
 <template>
 	<div>
-		<span v-if="draftlog.sessionID">Draft log for Session '{{draftlog.sessionID}}'</span>
-		<span v-if="draftlog.time">({{new Date(draftlog.time).toLocaleString()}})</span>
-		<button type="button" @click="downloadLog">
-			<i class="fas fa-file-download"></i> Download full log
-		</button>
+		<span v-if="draftlog.sessionID">Draft log for Session '{{ draftlog.sessionID }}'</span>
+		<span v-if="draftlog.time">({{ new Date(draftlog.time).toLocaleString() }})</span>
+		<button type="button" @click="downloadLog"><i class="fas fa-file-download"></i> Download full log</button>
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
-			<ul :class="{'player-table': tableSumary.length <= 8, 'player-list': tableSumary.length > 8}">
+			<ul :class="{ 'player-table': tableSumary.length <= 8, 'player-list': tableSumary.length > 8 }">
 				<li
 					v-for="(log, index) of tableSumary"
 					:key="index"
-					:class="{clickable: log.userName != '(empty)', selected: log.userID == displayOptions.detailsUserID}"
-					@click="(_) => { if(log.userName != '(empty)') { displayOptions.detailsUserID = log.userID; } }"
+					:class="{
+						clickable: log.userName != '(empty)',
+						selected: log.userID == displayOptions.detailsUserID,
+					}"
+					@click="
+						_ => {
+							if (log.userName != '(empty)') {
+								displayOptions.detailsUserID = log.userID;
+							}
+						}
+					"
 				>
-					{{log.userName}}
+					{{ log.userName }}
 					<span>
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 							:key="c"
-							:src="'img/mana/'+c+'.svg'"
+							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
 							v-tooltip="log.colors[c]"
 						/>
@@ -30,7 +37,7 @@
 		</div>
 
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<h2>{{selectedLog.userName}}</h2>
+			<h2>{{ selectedLog.userName }}</h2>
 			<select v-model="displayOptions.category">
 				<option>Picks</option>
 				<option>Cards</option>
@@ -47,7 +54,7 @@
 
 			<template v-if="displayOptions.category == 'Picks'">
 				<div v-for="(pick, index) in selectedLog.picks" :key="index">
-					<h3>Pick {{index + 1}}: {{getCard(pick.pick).name}}</h3>
+					<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
 					<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
 				</div>
 			</template>
@@ -154,7 +161,7 @@ export default {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cardids) return r;
 			for (let card of cardids) {
-				for (let color of Cards[card].color_identity) {
+				for (let color of Cards[card].colors) {
 					r[color] += 1;
 				}
 			}

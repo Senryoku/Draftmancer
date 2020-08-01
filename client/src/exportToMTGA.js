@@ -1,4 +1,4 @@
-import Constant from "./constants.json";
+import Constant from "./data/constants.json";
 import { Cards } from "./Cards.js";
 
 function exportCardToMTGA(c, language, full) {

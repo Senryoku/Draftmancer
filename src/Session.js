@@ -1,6 +1,6 @@
 "use strict";
 
-const constants = require("../client/src/constants.json");
+const constants = require("../client/src/data/constants.json");
 const removeCardFromDict = require("./cardUtils").removeCardFromDict;
 const utils = require("./utils");
 const negMod = utils.negMod;
@@ -383,9 +383,8 @@ function Session(id, owner) {
 					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
 				if (useColorBalance) {
 					for (let card in cardsByRarity[colorBalancedSlot]) {
-						if (!(Cards[card].color_identity in cardsByColor))
-							cardsByColor[Cards[card].color_identity] = {};
-						cardsByColor[Cards[card].color_identity][card] = cardsByRarity[colorBalancedSlot][card];
+						if (!(Cards[card].colors in cardsByColor)) cardsByColor[Cards[card].colors] = {};
+						cardsByColor[Cards[card].colors][card] = cardsByRarity[colorBalancedSlot][card];
 					}
 				}
 
@@ -409,7 +408,7 @@ function Session(id, owner) {
 						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i) {
 							const pickedCard = pick_card(cardsByRarity[r], booster);
 							if (useColorBalance && r === colorBalancedSlot)
-								removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+								removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 							booster.push(pickedCard);
 						}
 					}
@@ -431,9 +430,8 @@ function Session(id, owner) {
 				let cardsByColor = {};
 				if (this.colorBalance) {
 					for (let card in localCollection) {
-						if (!(Cards[card].color_identity in cardsByColor))
-							cardsByColor[Cards[card].color_identity] = {};
-						cardsByColor[Cards[card].color_identity][card] = localCollection[card];
+						if (!(Cards[card].colors in cardsByColor)) cardsByColor[Cards[card].colors] = {};
+						cardsByColor[Cards[card].colors][card] = localCollection[card];
 					}
 				}
 
@@ -462,8 +460,7 @@ function Session(id, owner) {
 
 					for (let i = booster.length; i < cardsPerBooster; ++i) {
 						const pickedCard = pick_card(localCollection, booster);
-						if (this.colorBalance)
-							removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].color_identity]);
+						if (this.colorBalance) removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 						booster.push(pickedCard);
 					}
 
@@ -488,9 +485,8 @@ function Session(id, owner) {
 
 				if (this.colorBalance) {
 					for (let card in localCollection["common"]) {
-						if (!(Cards[card].color_identity in commonsByColor))
-							commonsByColor[Cards[card].color_identity] = {};
-						commonsByColor[Cards[card].color_identity][card] = localCollection["common"][card];
+						if (!(Cards[card].colors in commonsByColor)) commonsByColor[Cards[card].colors] = {};
+						commonsByColor[Cards[card].colors][card] = localCollection["common"][card];
 					}
 				}
 
@@ -575,9 +571,9 @@ function Session(id, owner) {
 
 								if (this.colorBalance) {
 									for (let card in usedSets[boosterRule].cardPool["common"]) {
-										if (!(Cards[card].color_identity in usedSets[boosterRule].commonsByColor))
-											usedSets[boosterRule].commonsByColor[Cards[card].color_identity] = {};
-										usedSets[boosterRule].commonsByColor[Cards[card].color_identity][card] =
+										if (!(Cards[card].colors in usedSets[boosterRule].commonsByColor))
+											usedSets[boosterRule].commonsByColor[Cards[card].colors] = {};
+										usedSets[boosterRule].commonsByColor[Cards[card].colors][card] =
 											usedSets[boosterRule].cardPool["common"][card];
 									}
 								}
@@ -651,7 +647,7 @@ function Session(id, owner) {
 					let pickedCard = pick_card(cardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.colorBalance && Cards[pickedCard].rarity == "common")
-						removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].color_identity]);
+						removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
 					booster.push(pickedCard);
 					addedFoils += 1;
 					break;
@@ -691,7 +687,7 @@ function Session(id, owner) {
 
 		for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
 			let pickedCard = pick_card(cardPool["common"], pickedCommons);
-			if (this.colorBalance) removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].color_identity]);
+			if (this.colorBalance) removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
 			pickedCommons.push(pickedCard);
 		}
 
