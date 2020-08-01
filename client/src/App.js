@@ -74,6 +74,7 @@ export default {
 		DraftLogLive,
 		Collection,
 		CardList,
+		CardStats: () => import("./components/CardStats.vue"),
 		Bracket,
 		PatchNotes,
 		draggable,

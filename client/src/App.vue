@@ -491,9 +491,9 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span class="chat-author">{{
-									msg.author in userByID ? userByID[msg.author].userName : "(Left)"
-								}}</span>
+								<span class="chat-author">
+									{{ msg.author in userByID ? userByID[msg.author].userName : "(Left)" }}
+								</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
@@ -557,11 +557,11 @@
 						/>
 						<span v-else>
 							Pick a card
-							<span v-if="cardsToBurnThisRound > 0"
-								>and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
+							<span v-if="cardsToBurnThisRound > 0">
+								and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
 									cardsToBurnThisRound
-								}})</span
-							>
+								}})
+							</span>
 						</span>
 					</div>
 					<div class="booster card-container">
@@ -656,7 +656,12 @@
 				<button v-if="deck.length > 0" type="button" @click="exportDeck">
 					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 				</button>
-				<button v-if="deck.length > 0" type="button" @click="exportDeck(false)">
+				<button
+					v-if="deck.length > 0"
+					type="button"
+					@click="exportDeck(false)"
+					v-tooltip="'Export without set information'"
+				>
 					<i class="fas fa-clipboard"></i> Export (Simple)
 				</button>
 				<span v-show="draftingState == DraftState.Brewing">
@@ -678,6 +683,11 @@
 					</template>
 					{{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
 				</span>
+				<i
+					class="fas fa-chart-pie clickable"
+					@click="displayedModal = 'deckStats'"
+					v-tooltip="'Display some statistics about your deck'"
+				></i>
 			</div>
 			<card-pool
 				:cards="deck"
@@ -836,7 +846,9 @@
 							<h2>Survey</h2>
 						</div>
 						<div class="welcome-section">
-							Answer a <a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short 3-questions survey</a> to help us improve the draft app.
+							Answer a
+							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short 3-questions survey</a>
+							to help us improve the draft app.
 						</div>
 					</div>
 				</div>
@@ -1135,9 +1147,9 @@
 								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>' }"
 							>
 								<select name="featured-cubes" v-model="selectedCube">
-									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">{{
-										cube.name
-									}}</option>
+									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
+										{{ cube.name }}
+									</option>
 								</select>
 								<button
 									@click="
@@ -1228,9 +1240,9 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">{{
-										setsInfos[code].fullName
-									}}</option>
+									<option v-for="code in sets" :value="code" :key="code">
+										{{ setsInfos[code].fullName }}
+									</option>
 								</select>
 							</div>
 						</div>
@@ -1291,6 +1303,10 @@
 				@generate-swiss="generateSwissBracket"
 				@lock="lockBracket"
 			></bracket>
+		</modal>
+		<modal v-if="displayedModal === 'deckStats'" @close="displayedModal = ''">
+			<h2 slot="header">Deck Statistics</h2>
+			<card-stats slot="body" :cards="deck"></card-stats>
 		</modal>
 		<modal v-if="displayedModal === 'cardList'" @close="displayedModal = ''">
 			<h2 slot="header">Custom Card List Review</h2>
