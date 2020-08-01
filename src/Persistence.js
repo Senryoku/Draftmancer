@@ -353,5 +353,5 @@ if (DisablePersistence) {
 
 	module.exports.InactiveSessions = requestSavedSessions();
 	module.exports.InactiveConnections = requestSavedConnections();
-	module.exports.logSession = logSession;
+	module.exports.logSession = () => {}; //logSession; // Disabled
 }
