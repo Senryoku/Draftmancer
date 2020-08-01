@@ -1,7 +1,17 @@
 <template>
 	<div class="charts">
-		<cmcchart :cards="cards"></cmcchart>
-		<cardtypechart :cards="cards"></cardtypechart>
+		<div>
+			<h2>CMC</h2>
+			<cmcchart :cards="cards"></cmcchart>
+		</div>
+		<div>
+			<h2>Colors in Mana Cost</h2>
+			<colorchart :cards="cards"></colorchart>
+		</div>
+		<div>
+			<h2>Types</h2>
+			<cardtypechart :cards="cards"></cardtypechart>
+		</div>
 	</div>
 </template>
 
@@ -66,6 +76,48 @@ const CMCChart = {
 	},
 };
 
+const ColorChart = {
+	extends: Pie,
+	props: { cards: { type: Array, required: true }, options: { type: Object } },
+	mounted() {
+		this.renderChart(this.chartdata, this.options);
+	},
+	computed: {
+		chartdata: function() {
+			let data = {
+				labels: [],
+				datasets: [],
+			};
+			// FIXME: Use color in mana cost and not color identity!
+			let types = this.cards
+				.map(c => c.color_identity)
+				.reduce(
+					(acc, arr) => {
+						for (let t of arr) {
+							if (!(t in acc)) acc[t] = 1;
+							else ++acc[t];
+						}
+						return acc;
+					},
+					{ W: 0, U: 0, B: 0, R: 0, G: 0 }
+				);
+			data.labels = Object.keys(types);
+			data.datasets.push({
+				label: "Deck",
+				backgroundColor: [
+					"rgb(249, 250, 244)",
+					"rgb(14, 104, 171)",
+					"rgb(21, 11, 0)",
+					"rgb(211, 32, 42)",
+					"rgb(0, 115, 62)",
+				],
+				data: Object.values(types),
+			});
+			return data;
+		},
+	},
+};
+
 const CardTypeChart = {
 	extends: Pie,
 	props: { cards: { type: Array, required: true }, options: { type: Object } },
@@ -102,7 +154,7 @@ const CardTypeChart = {
 
 export default {
 	props: { cards: { type: Array, required: true } },
-	components: { cmcchart: CMCChart, cardtypechart: CardTypeChart },
+	components: { cmcchart: CMCChart, colorchart: ColorChart, cardtypechart: CardTypeChart },
 };
 </script>
 
@@ -110,5 +162,9 @@ export default {
 .charts {
 	display: flex;
 	color: #;
+}
+
+.charts h2 {
+	text-align: center;
 }
 </style>
