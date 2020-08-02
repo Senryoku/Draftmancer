@@ -1,7 +1,7 @@
 <template>
 	<div class="charts">
 		<div>
-			<h2>CMC</h2>
+			<h2>Mana Curve</h2>
 			<cmcchart :cards="cards"></cmcchart>
 		</div>
 		<div>
@@ -85,7 +85,15 @@ const ColorChart = {
 				datasets: [],
 			};
 			let types = this.cards
-				.map((c) => c.colors)
+				.map((c) => {
+					let colors = [];
+					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
+						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
+						const count = matches.length;
+						for (let i = 0; i < count; ++i) colors.push(s[1]);
+					}
+					return colors;
+				})
 				.reduce(
 					(acc, arr) => {
 						for (let t of arr) {
