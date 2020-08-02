@@ -3,6 +3,7 @@
 		<div>
 			<h2>Mana Curve</h2>
 			<cmcchart :curve="manacurve"></cmcchart>
+			<div class="info">Average Mana Cost: {{manaAverage}}</div>
 			<table class="type-table">
 				<tr>
 					<th>CMC</th>
@@ -201,14 +202,19 @@ export default {
 					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 }
 				);
 		},
+		nonLands: function () {
+			return this.cards.filter((c) => !c.type.includes("Land"));
+		},
 		manacurve: function () {
-			let nonLand = this.cards.filter((c) => !c.type.includes("Land"));
-			return nonLand.reduce((acc, c) => {
+			return this.nonLands.reduce((acc, c) => {
 				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
 				if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
 				else ++acc[c.cmc].nonCreatures;
 				return acc;
 			}, {});
+		},
+		manaAverage: function () {
+			return (this.nonLands.reduce((acc, c) => acc + c.cmc, 0) / this.nonLands.length).toPrecision(2);
 		},
 	},
 };
@@ -221,6 +227,11 @@ export default {
 
 .charts h2 {
 	text-align: center;
+}
+
+.info {
+	text-align: center;
+	margin: 0.25em;
 }
 
 .type-table {
