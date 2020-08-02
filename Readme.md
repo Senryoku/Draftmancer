@@ -45,7 +45,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ---
 
--   Add some stats on deck/drafted cards
+-   Improve deck stats (Get some inspiration from MTGA. Add text form below charts. Mana Curve: Differentiate between creature and non-creature.)
 -   Regroup Game Mode besides Draft in a single dropdown menu; Change "More" into "Setting" + Cog Icon
 -   Display foils as... foils in front end?
 
