@@ -20,24 +20,15 @@ import Chart from "chart.js";
 import { Bar, Pie } from "vue-chartjs";
 
 const Colors = {
-	// FIXME
-	codes: [
-		"#69d2e7",
-		"#a7dbd8",
-		"#e0e4cc",
-		"#f38630",
-		"#fa6900",
-		"#fe4365",
-		"#fc9d9a",
-		"#f9cdad",
-		"#c8c8a9",
-		"#83af9b",
-	],
+	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
 	current: 0,
-	next: function() {
+	next: function () {
 		const r = this.current;
 		this.current = (this.current + 1) % this.codes.length;
 		return this.codes[r];
+	},
+	reset: function () {
+		this.current = 0;
 	},
 };
 
@@ -47,6 +38,7 @@ const CMCChart = {
 	extends: Bar,
 	props: { cards: { type: Array, required: true } },
 	mounted() {
+		Colors.reset();
 		this.renderChart(this.chartdata, {
 			scales: {
 				yAxes: [{ ticks: { beginAtZero: true } }],
@@ -54,14 +46,14 @@ const CMCChart = {
 		});
 	},
 	computed: {
-		chartdata: function() {
+		chartdata: function () {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let cmcs = this.cards
-				.filter(c => !c.type.includes("Land"))
-				.map(c => {
+				.filter((c) => !c.type.includes("Land"))
+				.map((c) => {
 					return c.cmc;
 				})
 				.reduce((acc, t) => {
@@ -87,13 +79,13 @@ const ColorChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function() {
+		chartdata: function () {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let types = this.cards
-				.map(c => c.colors)
+				.map((c) => c.colors)
 				.reduce(
 					(acc, arr) => {
 						for (let t of arr) {
@@ -128,17 +120,17 @@ const CardTypeChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function() {
+		chartdata: function () {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let types = this.cards
-				.map(c => {
+				.map((c) => {
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
 					return c.type;
 				})
-				.filter(t => t !== "Basic Land")
+				.filter((t) => t !== "Basic Land")
 				.reduce((acc, t) => {
 					if (!(t in acc)) acc[t] = 1;
 					else ++acc[t];
