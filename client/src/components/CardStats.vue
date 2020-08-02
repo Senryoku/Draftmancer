@@ -41,7 +41,8 @@ const CMCChart = {
 		Colors.reset();
 		this.renderChart(this.chartdata, {
 			scales: {
-				yAxes: [{ ticks: { beginAtZero: true } }],
+				xAxes: [{ stacked: true }],
+				yAxes: [{ ticks: { beginAtZero: true }, stacked: true }],
 			},
 		});
 	},
@@ -51,21 +52,33 @@ const CMCChart = {
 				labels: [],
 				datasets: [],
 			};
-			let cmcs = this.cards
-				.filter(c => !c.type.includes("Land"))
-				.map(c => {
-					return c.cmc;
-				})
+			let nonLand = this.cards.filter(c => !c.type.includes("Land"));
+			let creaturesCMCs = nonLand
+				.filter(c => c.type.includes("Creature"))
+				.map(c => c.cmc)
 				.reduce((acc, t) => {
 					if (!(t in acc)) acc[t] = 1;
 					else ++acc[t];
 					return acc;
 				}, {});
-			data.labels = Object.keys(cmcs);
+			let nonCreaturesCMCs = nonLand
+				.filter(c => !c.type.includes("Creature"))
+				.map(c => c.cmc)
+				.reduce((acc, t) => {
+					if (!(t in acc)) acc[t] = 1;
+					else ++acc[t];
+					return acc;
+				}, {});
+			data.labels = [...new Set(Object.keys(creaturesCMCs), Object.keys(nonCreaturesCMCs))];
 			data.datasets.push({
-				label: "Deck",
-				backgroundColor: "#BBB",
-				data: Object.values(cmcs),
+				label: "Creatures",
+				backgroundColor: "#ff9900",
+				data: Object.values(creaturesCMCs),
+			});
+			data.datasets.push({
+				label: "Non-Creatures",
+				backgroundColor: "#7dd6ff",
+				data: Object.values(nonCreaturesCMCs),
 			});
 			return data;
 		},
