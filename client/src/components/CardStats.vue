@@ -2,15 +2,51 @@
 	<div class="charts">
 		<div>
 			<h2>Mana Curve</h2>
-			<cmcchart :cards="cards"></cmcchart>
+			<cmcchart :curve="manacurve"></cmcchart>
+			<table class="type-table">
+				<tr>
+					<th>CMC</th>
+					<th>Creature</th>
+					<th>Non-Creature</th>
+					<th>Total</th>
+				</tr>
+				<tr v-for="(data, cmc) in manacurve" :key="cmc">
+					<td class="table-number">
+						<img :src="`img/mana/${cmc}.svg`" class="mana-icon" />
+					</td>
+					<td class="table-number">{{ data.creatures }}</td>
+					<td class="table-number">{{ data.nonCreatures }}</td>
+					<td class="table-number">{{ data.creatures + data.nonCreatures }}</td>
+				</tr>
+			</table>
 		</div>
 		<div>
 			<h2>Colors in Mana Cost</h2>
-			<colorchart :cards="cards"></colorchart>
+			<colorchart :colors="colors"></colorchart>
+			<table class="type-table">
+				<tr>
+					<th>Mana Color</th>
+					<th>Count in Cost</th>
+				</tr>
+				<tr v-for="(count, color) in colors" :key="color">
+					<td>{{color}}</td>
+					<td class="table-number">{{ count }}</td>
+				</tr>
+			</table>
 		</div>
 		<div>
 			<h2>Types</h2>
-			<cardtypechart :cards="cards"></cardtypechart>
+			<cardtypechart :types="types"></cardtypechart>
+			<table class="type-table">
+				<tr>
+					<th>Type</th>
+					<th>Count</th>
+				</tr>
+				<tr v-for="(val, key) in types" :key="key">
+					<td>{{ key }}</td>
+					<td class="table-number">{{ val }}</td>
+				</tr>
+			</table>
 		</div>
 	</div>
 </template>
@@ -22,12 +58,12 @@ import { Bar, Pie } from "vue-chartjs";
 const Colors = {
 	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
 	current: 0,
-	next: function() {
+	next: function () {
 		const r = this.current;
 		this.current = (this.current + 1) % this.codes.length;
 		return this.codes[r];
 	},
-	reset: function() {
+	reset: function () {
 		this.current = 0;
 	},
 };
@@ -36,7 +72,7 @@ Chart.defaults.global.defaultFontColor = "#ddd";
 
 const CMCChart = {
 	extends: Bar,
-	props: { cards: { type: Array, required: true } },
+	props: { curve: { type: Object, required: true } },
 	mounted() {
 		Colors.reset();
 		this.renderChart(this.chartdata, {
@@ -47,38 +83,21 @@ const CMCChart = {
 		});
 	},
 	computed: {
-		chartdata: function() {
+		chartdata: function () {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
-			let nonLand = this.cards.filter(c => !c.type.includes("Land"));
-			let creaturesCMCs = nonLand
-				.filter(c => c.type.includes("Creature"))
-				.map(c => c.cmc)
-				.reduce((acc, t) => {
-					if (!(t in acc)) acc[t] = 1;
-					else ++acc[t];
-					return acc;
-				}, {});
-			let nonCreaturesCMCs = nonLand
-				.filter(c => !c.type.includes("Creature"))
-				.map(c => c.cmc)
-				.reduce((acc, t) => {
-					if (!(t in acc)) acc[t] = 1;
-					else ++acc[t];
-					return acc;
-				}, {});
-			data.labels = [...new Set(Object.keys(creaturesCMCs), Object.keys(nonCreaturesCMCs))];
+			data.labels = Object.keys(this.curve);
 			data.datasets.push({
 				label: "Creatures",
 				backgroundColor: "#ff9900",
-				data: Object.values(creaturesCMCs),
+				data: Object.values(this.curve).map((cmc) => cmc.creatures),
 			});
 			data.datasets.push({
 				label: "Non-Creatures",
 				backgroundColor: "#7dd6ff",
-				data: Object.values(nonCreaturesCMCs),
+				data: Object.values(this.curve).map((cmc) => cmc.nonCreatures),
 			});
 			return data;
 		},
@@ -87,18 +106,82 @@ const CMCChart = {
 
 const ColorChart = {
 	extends: Pie,
-	props: { cards: { type: Array, required: true }, options: { type: Object } },
+	props: { colors: { type: Object, required: true }, options: { type: Object } },
 	mounted() {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function() {
+		chartdata: function () {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
-			let types = this.cards
-				.map(c => {
+			data.labels = Object.keys(this.colors);
+			data.datasets.push({
+				label: "Deck",
+				backgroundColor: [
+					"rgb(249, 250, 244)",
+					"rgb(14, 104, 171)",
+					"rgb(21, 11, 0)",
+					"rgb(211, 32, 42)",
+					"rgb(0, 115, 62)",
+				],
+				data: Object.values(this.colors),
+			});
+			return data;
+		},
+	},
+};
+
+const CardTypeChart = {
+	extends: Pie,
+	props: { types: { type: Object, required: true }, options: { type: Object } },
+	mounted() {
+		this.renderChart(this.chartdata, this.options);
+	},
+	computed: {
+		chartdata: function () {
+			return {
+				labels: Object.keys(this.types),
+				datasets: [
+					{
+						label: "Deck",
+						backgroundColor: Object.keys(this.types).map(() => Colors.next()),
+						data: Object.values(this.types),
+					},
+				],
+			};
+		},
+	},
+};
+
+export default {
+	props: { cards: { type: Array, required: true } },
+	components: { cmcchart: CMCChart, colorchart: ColorChart, cardtypechart: CardTypeChart },
+	computed: {
+		types: function () {
+			return this.cards
+				.map((c) => {
+					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
+					return c.type;
+				})
+				.filter((t) => t !== "Basic Land")
+				.reduce((acc, t) => {
+					if (!(t in acc)) acc[t] = 1;
+					else ++acc[t];
+					return acc;
+				}, {});
+		},
+		colors: function () {
+			let fullNames = {
+				W: "White",
+				U: "Blue",
+				B: "Black",
+				R: "Red",
+				G: "Green",
+			};
+			return this.cards
+				.map((c) => {
 					let colors = [];
 					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
 						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
@@ -110,67 +193,24 @@ const ColorChart = {
 				.reduce(
 					(acc, arr) => {
 						for (let t of arr) {
-							if (!(t in acc)) acc[t] = 1;
-							else ++acc[t];
+							if (!(fullNames[t] in acc)) acc[fullNames[t]] = 1;
+							else ++acc[fullNames[t]];
 						}
 						return acc;
 					},
-					{ W: 0, U: 0, B: 0, R: 0, G: 0 }
+					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 }
 				);
-			data.labels = Object.keys(types);
-			data.datasets.push({
-				label: "Deck",
-				backgroundColor: [
-					"rgb(249, 250, 244)",
-					"rgb(14, 104, 171)",
-					"rgb(21, 11, 0)",
-					"rgb(211, 32, 42)",
-					"rgb(0, 115, 62)",
-				],
-				data: Object.values(types),
-			});
-			return data;
+		},
+		manacurve: function () {
+			let nonLand = this.cards.filter((c) => !c.type.includes("Land"));
+			return nonLand.reduce((acc, c) => {
+				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
+				if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
+				else ++acc[c.cmc].nonCreatures;
+				return acc;
+			}, {});
 		},
 	},
-};
-
-const CardTypeChart = {
-	extends: Pie,
-	props: { cards: { type: Array, required: true }, options: { type: Object } },
-	mounted() {
-		this.renderChart(this.chartdata, this.options);
-	},
-	computed: {
-		chartdata: function() {
-			let data = {
-				labels: [],
-				datasets: [],
-			};
-			let types = this.cards
-				.map(c => {
-					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
-					return c.type;
-				})
-				.filter(t => t !== "Basic Land")
-				.reduce((acc, t) => {
-					if (!(t in acc)) acc[t] = 1;
-					else ++acc[t];
-					return acc;
-				}, {});
-			data.labels = Object.keys(types);
-			data.datasets.push({
-				label: "Deck",
-				backgroundColor: data.labels.map(() => Colors.next()),
-				data: Object.values(types),
-			});
-			return data;
-		},
-	},
-};
-
-export default {
-	props: { cards: { type: Array, required: true } },
-	components: { cmcchart: CMCChart, colorchart: ColorChart, cardtypechart: CardTypeChart },
 };
 </script>
 
@@ -180,6 +220,25 @@ export default {
 }
 
 .charts h2 {
+	text-align: center;
+}
+
+.type-table {
+	margin: auto;
+}
+
+td,
+th {
+	padding: 0.25em;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
+}
+
+tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.table-number {
 	text-align: center;
 }
 </style>
