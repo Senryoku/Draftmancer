@@ -7,7 +7,11 @@
 		<div class="set-stats">
 			<div v-if="selectedSet">
 				<table>
-					<caption>{{selectedSet.fullName}}</caption>
+					<caption>
+						{{
+							selectedSet.fullName
+						}}
+					</caption>
 					<tr>
 						<th>Rarity</th>
 						<th>Unique</th>
@@ -21,19 +25,36 @@
 						<td>{{ selectedSet.cards.filter(c => c.count > 0).length }}/{{ selectedSet.total.unique }}</td>
 						<td>{{ selectedSet.cardCount }}/{{ 4 * selectedSet["total"]["unique"] }}</td>
 						<td>{{ 4 * selectedSet["total"]["unique"] - selectedSet.cardCount }}</td>
-						<td>{{ selectedSet.cards.filter(c => c.in_booster && c.count > 0).length }}/{{ selectedSet.cards.filter(c => c.in_booster).length }}</td>
+						<td>
+							{{ selectedSet.cards.filter(c => c.in_booster && c.count > 0).length }}/{{
+								selectedSet.cards.filter(c => c.in_booster).length
+							}}
+						</td>
 						<td>-</td>
 					</tr>
 					<tr
-						v-for="r in ['common', 'uncommon', 'rare', 'mythic'].filter(r => selectedSet[r + 'Count'] && selectedSet['total'][r + 'Count'] > 0)"
+						v-for="r in ['common', 'uncommon', 'rare', 'mythic'].filter(
+							r => selectedSet[r + 'Count'] && selectedSet['total'][r + 'Count'] > 0
+						)"
 						:key="r"
 					>
 						<td>{{ r }}</td>
-						<td>{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}</td>
+						<td>
+							{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}
+						</td>
 						<td>{{ selectedSet[r + "Count"] }}/{{ 4 * selectedSet["total"][r + "Count"] }}</td>
 						<td>{{ 4 * selectedSet["total"][r + "Count"] - selectedSet[r + "Count"] }}</td>
-						<td>{{ selectedSet[r].filter(c => c.in_booster && c.count > 0).length }}/{{selectedSet[r].filter(c => c.in_booster).length}}</td>
-						<td>{{4 * selectedSet[r].filter(c => c.in_booster).length - selectedSet[r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)}}</td>
+						<td>
+							{{ selectedSet[r].filter(c => c.in_booster && c.count > 0).length }}/{{
+								selectedSet[r].filter(c => c.in_booster).length
+							}}
+						</td>
+						<td>
+							{{
+								4 * selectedSet[r].filter(c => c.in_booster).length -
+									selectedSet[r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)
+							}}
+						</td>
 					</tr>
 				</table>
 
@@ -50,7 +71,9 @@
 				</h3>
 				<div class="card-container">
 					<missing-card
-						v-for="card in selectedSet.cards.filter(c => c.rarity == missingCardsRarity && (showNonBooster || c.in_booster) && c.count < 4)"
+						v-for="card in selectedSet.cards.filter(
+							c => c.rarity == missingCardsRarity && (showNonBooster || c.in_booster) && c.count < 4
+						)"
 						:key="card.uniqueID"
 						:card="card"
 						:language="language"
@@ -63,7 +86,7 @@
 </template>
 
 <script>
-import Constant from "../constants.json";
+import Constant from "../data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 import { Cards, genCard } from "./../Cards.js";
 import MissingCard from "./MissingCard.vue";

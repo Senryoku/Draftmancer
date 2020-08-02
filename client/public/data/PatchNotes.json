@@ -1,5 +1,12 @@
 [
 	{
+		"date": "02/08/2020",
+		"notes": [
+			"Add sort by card type.",
+			"Add some basic statistics about your deck (Mana curve, color and type distribution)."
+		]
+	},
+	{
 		"date": "24/07/2020",
 		"notes": ["Added 'Random Set from Card Pool' option for individual boosters."]
 	},

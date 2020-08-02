@@ -8,7 +8,7 @@ import VueClazyLoad from "./vue-clazy-load.js";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
-import Constant from "./constants.json";
+import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
@@ -74,6 +74,7 @@ export default {
 		DraftLogLive,
 		Collection,
 		CardList,
+		CardStats: () => import("./components/CardStats.vue"),
 		Bracket,
 		PatchNotes,
 		draggable,
@@ -1505,7 +1506,7 @@ export default {
 		colorsInCardPool: function(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			for (let card of pool) {
-				for (let color of card.color_identity) {
+				for (let color of card.colors) {
 					r[color] += 1;
 				}
 			}
