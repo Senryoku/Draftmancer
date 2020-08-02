@@ -3,7 +3,7 @@
 		<div>
 			<h2>Mana Curve</h2>
 			<cmcchart :curve="manacurve"></cmcchart>
-			<div class="info">Average Mana Cost: {{manaAverage}}</div>
+			<div class="info">Average Mana Cost: {{ manaAverage }}</div>
 			<table class="type-table">
 				<tr>
 					<th>CMC</th>
@@ -30,7 +30,7 @@
 					<th>Count in Cost</th>
 				</tr>
 				<tr v-for="(count, color) in colors" :key="color">
-					<td>{{color}}</td>
+					<td>{{ color }}</td>
 					<td class="table-number">{{ count }}</td>
 				</tr>
 			</table>
@@ -42,10 +42,17 @@
 				<tr>
 					<th>Type</th>
 					<th>Count</th>
+					<th>%</th>
 				</tr>
 				<tr v-for="(val, key) in types" :key="key">
 					<td>{{ key }}</td>
 					<td class="table-number">{{ val }}</td>
+					<td class="table-number">{{ (100 * (val / cards.length)).toPrecision(3) }}%</td>
+				</tr>
+				<tr>
+					<td>Total</td>
+					<td class="table-number">{{ cards.length }}</td>
+					<td class="table-number">-</td>
 				</tr>
 			</table>
 		</div>
@@ -59,12 +66,12 @@ import { Bar, Pie } from "vue-chartjs";
 const Colors = {
 	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
 	current: 0,
-	next: function () {
+	next: function() {
 		const r = this.current;
 		this.current = (this.current + 1) % this.codes.length;
 		return this.codes[r];
 	},
-	reset: function () {
+	reset: function() {
 		this.current = 0;
 	},
 };
@@ -84,7 +91,7 @@ const CMCChart = {
 		});
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			let data = {
 				labels: [],
 				datasets: [],
@@ -93,12 +100,12 @@ const CMCChart = {
 			data.datasets.push({
 				label: "Creatures",
 				backgroundColor: "#ff9900",
-				data: Object.values(this.curve).map((cmc) => cmc.creatures),
+				data: Object.values(this.curve).map(cmc => cmc.creatures),
 			});
 			data.datasets.push({
 				label: "Non-Creatures",
 				backgroundColor: "#7dd6ff",
-				data: Object.values(this.curve).map((cmc) => cmc.nonCreatures),
+				data: Object.values(this.curve).map(cmc => cmc.nonCreatures),
 			});
 			return data;
 		},
@@ -112,7 +119,7 @@ const ColorChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			let data = {
 				labels: [],
 				datasets: [],
@@ -141,7 +148,7 @@ const CardTypeChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			return {
 				labels: Object.keys(this.types),
 				datasets: [
@@ -157,23 +164,24 @@ const CardTypeChart = {
 };
 
 export default {
-	props: { cards: { type: Array, required: true } },
+	props: { cards: { type: Array, required: true }, addedbasics: { type: Number, required: true } },
 	components: { cmcchart: CMCChart, colorchart: ColorChart, cardtypechart: CardTypeChart },
 	computed: {
-		types: function () {
-			return this.cards
-				.map((c) => {
+		types: function() {
+			let r = this.cards
+				.map(c => {
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
 					return c.type;
 				})
-				.filter((t) => t !== "Basic Land")
 				.reduce((acc, t) => {
 					if (!(t in acc)) acc[t] = 1;
 					else ++acc[t];
 					return acc;
 				}, {});
+			r["Basic Land"] = (r["Basic Land"] || 0) + this.addedbasics;
+			return r;
 		},
-		colors: function () {
+		colors: function() {
 			let fullNames = {
 				W: "White",
 				U: "Blue",
@@ -182,7 +190,7 @@ export default {
 				G: "Green",
 			};
 			return this.cards
-				.map((c) => {
+				.map(c => {
 					let colors = [];
 					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
 						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
@@ -202,10 +210,10 @@ export default {
 					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 }
 				);
 		},
-		nonLands: function () {
-			return this.cards.filter((c) => !c.type.includes("Land"));
+		nonLands: function() {
+			return this.cards.filter(c => !c.type.includes("Land"));
 		},
-		manacurve: function () {
+		manacurve: function() {
 			return this.nonLands.reduce((acc, c) => {
 				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
 				if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
@@ -213,8 +221,8 @@ export default {
 				return acc;
 			}, {});
 		},
-		manaAverage: function () {
-			return (this.nonLands.reduce((acc, c) => acc + c.cmc, 0) / this.nonLands.length).toPrecision(2);
+		manaAverage: function() {
+			return (this.nonLands.reduce((acc, c) => acc + c.cmc, 0) / this.nonLands.length).toPrecision(3);
 		},
 	},
 };
