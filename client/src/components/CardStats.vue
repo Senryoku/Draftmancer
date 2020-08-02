@@ -22,12 +22,12 @@ import { Bar, Pie } from "vue-chartjs";
 const Colors = {
 	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
 	current: 0,
-	next: function () {
+	next: function() {
 		const r = this.current;
 		this.current = (this.current + 1) % this.codes.length;
 		return this.codes[r];
 	},
-	reset: function () {
+	reset: function() {
 		this.current = 0;
 	},
 };
@@ -46,14 +46,14 @@ const CMCChart = {
 		});
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let cmcs = this.cards
-				.filter((c) => !c.type.includes("Land"))
-				.map((c) => {
+				.filter(c => !c.type.includes("Land"))
+				.map(c => {
 					return c.cmc;
 				})
 				.reduce((acc, t) => {
@@ -79,13 +79,13 @@ const ColorChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let types = this.cards
-				.map((c) => {
+				.map(c => {
 					let colors = [];
 					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
 						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
@@ -128,17 +128,17 @@ const CardTypeChart = {
 		this.renderChart(this.chartdata, this.options);
 	},
 	computed: {
-		chartdata: function () {
+		chartdata: function() {
 			let data = {
 				labels: [],
 				datasets: [],
 			};
 			let types = this.cards
-				.map((c) => {
+				.map(c => {
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
 					return c.type;
 				})
-				.filter((t) => t !== "Basic Land")
+				.filter(t => t !== "Basic Land")
 				.reduce((acc, t) => {
 					if (!(t in acc)) acc[t] = 1;
 					else ++acc[t];
@@ -164,7 +164,6 @@ export default {
 <style scoped>
 .charts {
 	display: flex;
-	color: #;
 }
 
 .charts h2 {

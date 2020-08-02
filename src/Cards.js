@@ -4,6 +4,7 @@ const ManaSymbols = require("../client/src/data/mana_symbols.json");
 
 const fs = require("fs");
 
+// FIXME: Duplicate function from ../client/src/Cards.js, sharing code with the browser is a pain.
 function parseCost(cost) {
 	let r = {
 		cmc: 0,
