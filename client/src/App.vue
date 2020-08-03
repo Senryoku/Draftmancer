@@ -252,8 +252,8 @@
 					@click="displayedModal = 'sessionOptions'"
 					class="more-option clickable"
 				>
-					More
-					<i class="fas fa-bars"></i>
+					Settings
+					<i class="fas fa-cog"></i>
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
