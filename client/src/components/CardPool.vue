@@ -21,8 +21,6 @@
 				:language="language"
 				:selectcard="click"
 				@click="click($event, card)"
-				@contextmenu.native="toggleZoom"
-				@mouseleave.native="disableZoom"
 			></card>
 		</draggable>
 		<div class="draggable-controls">
@@ -184,14 +182,6 @@ export default {
 			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
-		toggleZoom: function (e) {
-			e.currentTarget.classList.toggle("zoomedin");
-			e.preventDefault();
-		},
-		disableZoom: function (e) {
-			e.currentTarget.classList.remove("zoomedin");
-			e.preventDefault();
-		},
 	},
 };
 </script>
@@ -243,13 +233,5 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-}
-
-.card {
-	transition: transform 0.3s ease;
-}
-
-.zoomedin {
-	transform: scale(1.75);
 }
 </style>

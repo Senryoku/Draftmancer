@@ -6,6 +6,8 @@
 		@click="$emit('click')"
 		@dblclick="$emit('dblclick')"
 		:key="`card-${card.uniqueID}`"
+		@contextmenu="toggleZoom"
+		@mouseleave="disableZoom"
 	>
 		<card-image :card="card" :language="language"></card-image>
 		<slot></slot>
@@ -21,6 +23,16 @@ export default {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
 	},
+	methods: {
+		toggleZoom: function (e) {
+			e.currentTarget.classList.toggle("zoomedin");
+			e.preventDefault();
+		},
+		disableZoom: function (e) {
+			e.currentTarget.classList.remove("zoomedin");
+			e.preventDefault();
+		},
+	},
 };
 </script>
 
@@ -29,5 +41,11 @@ export default {
 	display: inline-block;
 	position: relative;
 	text-align: center;
+	transition: transform 0.25s ease;
+}
+
+.card.zoomedin {
+	transform: scale(1.75) !important;
+	z-index: 2;
 }
 </style>

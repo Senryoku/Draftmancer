@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isValid">
+	<div v-if="isValid" class="card-list">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
 		<span
 			v-if="missing && missing.total > 0"
@@ -134,6 +134,11 @@ export default {
 </script>
 
 <style>
+.card-list {
+	margin-left: 3em;
+	margin-right: 3em;
+}
+
 .category-wrapper {
 	column-count: 6;
 	column-gap: 1rem;
