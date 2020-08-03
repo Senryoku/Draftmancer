@@ -9,8 +9,8 @@
 		{ "code": "ja", "name": "Japanese" },
 		{ "code": "ko", "name": "Korean" },
 		{ "code": "ru", "name": "Russian" },
-		{ "code": "zhs", "name": "汉语" },
-		{ "code": "zht", "name": "漢語" }
+		{ "code": "zhs", "name": "Simplified Chinese" },
+		{ "code": "zht", "name": "Traditional Chinese" }
 	],
 	"MTGSets": ["xln", "rix", "dom", "m19", "grn", "rna", "war", "m20", "eld", "thb", "iko", "m21"],
 	"BasicLandNames": {
