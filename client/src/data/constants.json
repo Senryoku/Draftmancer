@@ -1,16 +1,16 @@
 {
 	"Languages": [
 		{ "code": "en", "name": "English" },
-		{ "code": "es", "name": "Spanish" },
-		{ "code": "fr", "name": "French" },
-		{ "code": "de", "name": "German" },
-		{ "code": "it", "name": "Italian" },
-		{ "code": "pt", "name": "Portuguese" },
-		{ "code": "ja", "name": "Japanese" },
-		{ "code": "ko", "name": "Korean" },
-		{ "code": "ru", "name": "Russian" },
-		{ "code": "zhs", "name": "汉语" },
-		{ "code": "zht", "name": "漢語" }
+		{ "code": "es", "name": "Español" },
+		{ "code": "fr", "name": "Français" },
+		{ "code": "de", "name": "Deutsch" },
+		{ "code": "it", "name": "Italiano" },
+		{ "code": "pt", "name": "Português" },
+		{ "code": "ja", "name": "日本語" },
+		{ "code": "ko", "name": "한국어" },
+		{ "code": "ru", "name": "Русский" },
+		{ "code": "zhs", "name": "简体中文" },
+		{ "code": "zht", "name": "繁体中文" }
 	],
 	"MTGSets": ["xln", "rix", "dom", "m19", "grn", "rna", "war", "m20", "eld", "thb", "iko", "m21"],
 	"BasicLandNames": {
