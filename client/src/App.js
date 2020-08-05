@@ -87,7 +87,7 @@ export default {
 			// User Data
 			userID: guid(),
 			userName: getCookie("userName", `Anonymous_${randomStr4()}`),
-			useCollection: getCookie("useCollection", true),
+			useCollection: true,
 			collection: {},
 			socket: undefined,
 
@@ -144,7 +144,7 @@ export default {
 			// Front-end options & data
 			displayedModal: "",
 			userOrder: [],
-			hideSessionID: getCookie("hideSessionID", false),
+			hideSessionID: getCookie("hideSessionID", "false") === "true",
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
 			loadingLanguages: [],
@@ -154,13 +154,13 @@ export default {
 			pendingReadyCheck: false,
 			setsInfos: undefined,
 			draftingState: undefined,
-			pickOnDblclick: getCookie("pickOnDblclick", false),
-			enableSound: getCookie("enableSound", true),
+			pickOnDblclick: getCookie("pickOnDblclick", "false") === "true",
+			enableSound: getCookie("enableSound", "true") === "true",
 			enableNotifications:
 				typeof Notification !== "undefined" &&
 				Notification &&
 				Notification.permission == "granted" &&
-				getCookie("enableNotifications", false),
+				getCookie("enableNotifications", "false") === "true",
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 			// Draft Booster
 			pickInFlight: false,
@@ -1664,6 +1664,8 @@ export default {
 			// Now that we have all the essential data, initialize the websocket.
 			this.initializeSocket();
 
+			this.useCollection = getCookie("useCollection", "true") === "true";
+
 			// Look for a locally stored collection
 			let localStorageCollection = localStorage.getItem("Collection");
 			if (localStorageCollection) {
@@ -1713,20 +1715,23 @@ export default {
 		},
 		useCollection: function() {
 			if (this.socket) this.socket.emit("useCollection", this.useCollection);
-			setCookie("useCollection", this.useCollection);
+			setCookie("useCollection", this.useCollection.toString());
 		},
 		// Front-end options
 		language: function() {
 			setCookie("language", this.language);
 		},
 		pickOnDblclick: function() {
-			setCookie("pickOnDblclick", this.pickOnDblclick);
+			setCookie("pickOnDblclick", this.pickOnDblclick.toString());
+		},
+		enableNotifications: function() {
+			setCookie("enableNotifications", this.enableNotifications.toString());
 		},
 		enableSound: function() {
-			setCookie("enableSound", this.enableSound);
+			setCookie("enableSound", this.enableSound.toString());
 		},
 		hideSessionID: function() {
-			setCookie("hideSessionID", this.hideSessionID);
+			setCookie("hideSessionID", this.hideSessionID.toString());
 		},
 		deck: function() {
 			this.updateAutoLands();
@@ -1829,9 +1834,6 @@ export default {
 		draftLogRecipients: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
-		},
-		enableNotifications: function() {
-			setCookie("enableNotifications", this.enableNotifications);
 		},
 	},
 };
