@@ -531,7 +531,8 @@ function Session(id, owner) {
 							} else {
 								let updatedTargets = Object.assign({}, targets);
 								let pickedCID = pick_card(this.planeswalkers, []);
-								--updatedTargets[Cards[pickedCID].rarity];
+								if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
+								else --updatedTargets[Cards[pickedCID].rarity];
 								if (this.colorBalance && Cards[pickedCID].rarity == "common")
 									removeCardFromDict(pickedCID, colorBalancedSlot[Cards[pickedCID].colors]);
 								let booster = this.genericBoosterFunc(
@@ -570,9 +571,10 @@ function Session(id, owner) {
 								return this.genericBoosterFunc(cardpool, colorBalancedSlot, targets, landSlot);
 							} else {
 								let updatedTargets = Object.assign({}, targets);
-								let pickedCID = pick_card(this.legendaryCreatures, []); // ! NO DUPLICATE PROTECTION!!!!!
-								removeCardFromDict(cardpool[Cards[pickedCID].rarity], pickedCID);
-								--updatedTargets[Cards[pickedCID].rarity];
+								let pickedCID = pick_card(this.legendaryCreatures, []); // FIXME : No duplicate protection!
+								removeCardFromDict(pickedCID, cardpool[Cards[pickedCID].rarity]);
+								if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
+								else --updatedTargets[Cards[pickedCID].rarity];
 								let booster = this.genericBoosterFunc(
 									cardpool,
 									colorBalancedSlot,
@@ -581,9 +583,8 @@ function Session(id, owner) {
 								);
 								// Sync. legendaryCreatures object with the new card pool
 								for (let cid of booster)
-									for (let slot of legendaryCreatures)
-										if (cid in legendaryCreatures[slot])
-											removeCardFromDict(cid, legendaryCreatures[slot]);
+									if (cid in this.legendaryCreatures)
+										removeCardFromDict(cid, this.legendaryCreatures);
 								// Insert the card in the appropriate slot
 								if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
 									booster.unshift(pickedCID);
