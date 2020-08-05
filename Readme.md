@@ -51,7 +51,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Distant Future
 
--   Set specificy booster generation rules, examples: WAR: One planeswalker/pack. DOM: One Legendary/pack.
+-   Set specificy booster generation rules, examples: WAR: Exactly one planeswalker per pack (not counting foils). DOM: At least one Legendary creature per pack.
 
 ## Check
 
