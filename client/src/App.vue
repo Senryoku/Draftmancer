@@ -847,7 +847,7 @@
 						</div>
 						<div class="welcome-section">
 							Answer a
-							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short 3-questions survey</a>
+							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short 3-question survey</a>
 							to help us improve the draft app.
 						</div>
 					</div>
