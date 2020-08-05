@@ -348,7 +348,7 @@
 								<template v-if="!userByID[id].collection">
 									<i
 										class="fas fa-book red"
-										v-tooltip="userByID[id].userName + ' have not uploaded their collection yet.'"
+										v-tooltip="userByID[id].userName + ' has not uploaded their collection yet.'"
 									></i>
 								</template>
 								<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
@@ -356,14 +356,14 @@
 										class="fas fa-book yellow"
 										v-tooltip="
 											userByID[id].userName +
-												' have uploaded their collection, but are not using it.'
+												' has uploaded their collection, but is not using it.'
 										"
 									></i>
 								</template>
 								<template v-else>
 									<i
 										class="fas fa-book green"
-										v-tooltip="userByID[id].userName + ' have uploaded their collection.'"
+										v-tooltip="userByID[id].userName + ' has uploaded their collection.'"
 									></i>
 								</template>
 							</template>
