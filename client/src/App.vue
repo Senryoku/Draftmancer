@@ -10,7 +10,7 @@
 				<label for="user-name">User Name</label>
 				<input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
-					<label for="language">Language</label>
+					<label for="language">Card Language</label>
 					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
