@@ -641,7 +641,12 @@
 		>
 			<div class="controls">
 				<h2>Deck ({{ deck.length }})</h2>
-				<button v-if="deck.length > 0" type="button" @click="exportDeck">
+				<button
+					v-if="deck.length > 0"
+					type="button"
+					@click="exportDeck"
+					v-tooltip="'Export deck and sideboard'"
+				>
 					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 				</button>
 				<button
