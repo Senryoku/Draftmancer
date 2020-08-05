@@ -453,12 +453,8 @@ footer span {
 	width: 12em;
 }
 
-.more-option {
+.setting-button {
 	margin: 0.5em;
-}
-
-.more-option .fas {
-	margin-left: 0.5em;
 }
 
 /**** Session Players ****/

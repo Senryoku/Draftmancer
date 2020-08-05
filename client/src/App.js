@@ -1059,6 +1059,7 @@ export default {
 					let [, count, name, set, number] = line.match(lineRegex);
 					count = parseInt(count);
 					if (!Number.isInteger(count)) count = 1;
+
 					if (set) {
 						set = set.toLowerCase();
 						if (set === "dar") set = "dom";
