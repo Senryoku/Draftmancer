@@ -282,7 +282,7 @@
 					class="fas fa-crown subtle-gold"
 					v-tooltip="
 						sessionOwnerUsername
-							? `${sessionOwnerUsername} is the session's owner.`
+							? `${sessionOwnerUsername} is the session owner.`
 							: 'Session owner is disconnected.'
 					"
 				></i>
@@ -290,7 +290,7 @@
 			</div>
 			<div>
 				<span
-					v-tooltip="'Maximum players can be adjusted in session options.'"
+					v-tooltip="'Maximum players can be adjusted in session settings.'"
 				>Players ({{ sessionUsers.length }}/{{ maxPlayers }})</span>
 				<i
 					v-if="userID == sessionOwner && !drafting"
