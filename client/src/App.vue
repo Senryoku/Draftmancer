@@ -95,7 +95,7 @@
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
-					<div class="inline" v-tooltip="'Share it with your friends!'">
+					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
 						<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
 					</div>
@@ -107,7 +107,7 @@
 					></i>
 					<i
 						class="fas fa-fw fa-share-square clickable"
-						v-tooltip="'Share your Session ID'"
+						v-tooltip="'Copy session link for sharing.'"
 						@click="sessionURLToClipboard"
 					></i>
 					<i
@@ -296,7 +296,7 @@
 					v-if="userID == sessionOwner && !drafting"
 					class="fas fa-random clickable"
 					@click="randomizeSeating"
-					v-tooltip="'Randomize Seating Order'"
+					v-tooltip="'Randomize Seating Order.'"
 				></i>
 			</div>
 			<template v-if="!drafting">
@@ -799,12 +799,12 @@
 										@click="logPathToClipboard"
 										v-tooltip="'Copy path to clipboard'"
 									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log</tt>
-									(note that
+									(Note:
 									<a
 										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
 										target="_blank"
 									>
-										AppData is hidden by default
+										AppData folder is hidden by default
 										<i class="fas fa-external-link-alt"></i>
 									</a>
 									).
@@ -831,7 +831,7 @@
 							Visit the
 							<a @click="displayedModal = 'help'">FAQ / Help</a>
 							section.
-							<br />For any question/bug report/feature you can e-mail at
+							<br />For any question/bug report/feature request you can email to
 							<a
 								href="mailto:mtgadraft@gmail.com"
 							>mtgadraft@gmail.com</a>
@@ -1352,9 +1352,9 @@
 						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by
 						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
 						that sounds like a good use of my time and you want to help me stay motivated and high on
-						cafeine, you can donate here
-						<em>via</em>
-						PayPal:
+						cafeine, you can donate here via
+						<em>PayPal</em>
+						:
 					</p>
 					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 						<input type="hidden" name="cmd" value="_s-xclick" />
