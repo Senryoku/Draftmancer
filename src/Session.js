@@ -503,6 +503,103 @@ function Session(id, owner) {
 				}
 			}
 
+			// Set specific rules.
+			// FIXME: Handle colorBalancedSlot correctly
+			const SetBoosterRules = {
+				war: (cardpool, genericBoosterFunc) => {
+					let planeswalkers = {};
+					let filteredCardPool = {};
+					for (let slot in cardpool) {
+						for (let cid in cardpool[slot]) {
+							if (Cards[cid].type.includes("Planeswalker")) planeswalkers[cid] = cardpool[slot][cid];
+							else filteredCardPool[cid] = cardpool[slot][cid];
+						}
+					}
+					return {
+						genericBoosterFunc: genericBoosterFunc,
+						planeswalkers: planeswalkers,
+						cardpool: filteredCardPool,
+						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
+							console.log("WAR Generate Booster");
+							// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
+							if (
+								((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
+									(!("rare" in targets) || targets["rare"] <= 0)) ||
+								Object.values(planeswalkers).every(arr => arr.length === 0)
+							) {
+								return this.genericBoosterFunc(this.cardpool, colorBalancedSlot, targets, landSlot);
+							} else {
+								let updatedTargets = Object.assign({}, targets);
+								let pickedCID = pick_card(this.planeswalkers, []);
+								--updatedTargets[Cards[pickedCID].rarity];
+								if (this.colorBalance && Cards[pickedCID].rarity == "common")
+									removeCardFromDict(pickedCID, colorBalancedSlot[Cards[pickedCID].colors]);
+								let booster = this.genericBoosterFunc(
+									this.cardpool,
+									colorBalancedSlot,
+									updatedTargets,
+									landSlot
+								);
+								// Insert the card in the appropriate slot
+								if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
+									booster.unshift(pickedCID);
+								else
+									booster.splice(
+										booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
+										0,
+										pickedCID
+									);
+								return booster;
+							}
+						},
+					};
+				},
+				dom: (cardpool, genericBoosterFunc) => {
+					let legendaryCreatures = {};
+					for (let slot in cardpool)
+						for (let cid in cardpool[slot])
+							if (Cards[cid].type.includes("Legendary Creature"))
+								legendaryCreatures[cid] = cardpool[slot][cid];
+					return {
+						genericBoosterFunc: genericBoosterFunc,
+						legendaryCreatures: legendaryCreatures,
+						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
+							console.log("DOM Generate Booster");
+							// Ignore the rule if there's no legendary creatures left
+							if (Object.values(legendaryCreatures).every(arr => arr.length === 0)) {
+								return this.genericBoosterFunc(cardpool, colorBalancedSlot, targets, landSlot);
+							} else {
+								let updatedTargets = Object.assign({}, targets);
+								let pickedCID = pick_card(this.legendaryCreatures, []); // ! NO DUPLICATE PROTECTION!!!!!
+								removeCardFromDict(cardpool[Cards[pickedCID].rarity], pickedCID);
+								--updatedTargets[Cards[pickedCID].rarity];
+								let booster = this.genericBoosterFunc(
+									cardpool,
+									colorBalancedSlot,
+									updatedTargets,
+									landSlot
+								);
+								// Sync. legendaryCreatures object with the new card pool
+								for (let cid of booster)
+									for (let slot of legendaryCreatures)
+										if (cid in legendaryCreatures[slot])
+											removeCardFromDict(cid, legendaryCreatures[slot]);
+								// Insert the card in the appropriate slot
+								if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
+									booster.unshift(pickedCID);
+								else
+									booster.splice(
+										booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
+										0,
+										pickedCID
+									);
+								return booster;
+							}
+						},
+					};
+				},
+			};
+
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
 			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
 				const boosterRules = [];
@@ -537,17 +634,23 @@ function Session(id, owner) {
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterRule]) {
+								if (boosterRule in SetBoosterRules)
+									usedSets[boosterRule] = SetBoosterRules[boosterRule](
+										this.setByRarity(boosterRule, this.generateBooster)
+									);
+								else
+									usedSets[boosterRule] = {
+										generateBooster: this.generateBooster,
+										cardPool: this.setByRarity(boosterRule),
+									};
+								usedSets[boosterRule].commonsByColor = {};
 								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-								usedSets[boosterRule] = {
-									cardPool: this.setByRarity(boosterRule),
-									commonsByColor: {},
-									landSlot:
-										boosterRule in LandSlot.SpecialLandSlots
-											? LandSlot.SpecialLandSlots[boosterRule]
-											: addLandSlot
-											? LandSlot.BasicLandSlots[boosterRule]
-											: null,
-								};
+								usedSets[boosterRule].landSlot =
+									boosterRule in LandSlot.SpecialLandSlots
+										? LandSlot.SpecialLandSlots[boosterRule]
+										: addLandSlot
+										? LandSlot.BasicLandSlots[boosterRule]
+										: null;
 
 								// Check if we have enough card, considering maxDuplicate is a limiting factor
 								const multiplier = this.customBoosters.reduce(
@@ -609,9 +712,14 @@ function Session(id, owner) {
 
 				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(this.boosters);
 			} else {
+				// If we're using a single set, look for specific rules for that set
+				const BoosterRule =
+					this.setRestriction.length === 1 && this.setRestriction[0] in SetBoosterRules
+						? SetBoosterRules[this.setRestriction[0]](localCollection, this.generateBooster)
+						: { generateBooster: this.generateBooster };
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = this.generateBooster(localCollection, commonsByColor, targets, landSlot);
+					let booster = BoosterRule.generateBooster(localCollection, commonsByColor, targets, landSlot);
 					if (booster) this.boosters.push(booster);
 					else return false;
 				}
