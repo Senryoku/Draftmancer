@@ -1328,7 +1328,7 @@
 			<div slot="body">
 				<p>
 					Developped by
-					<a href="http://senryoku.github.io/" target="_blank">Senryoku</a>
+					<a href="https://senryoku.github.io/" target="_blank">Senryoku</a>
 					(contact in French or English:
 					<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 					) using
