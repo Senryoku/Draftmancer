@@ -10,7 +10,7 @@
 				<label for="user-name">User Name</label>
 				<input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
-					<label for="language">Language</label>
+					<label for="language">Card Language</label>
 					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
@@ -95,7 +95,7 @@
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
-					<div class="inline" v-tooltip="'Share it with your friends!'">
+					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
 						<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
 					</div>
@@ -107,7 +107,7 @@
 					></i>
 					<i
 						class="fas fa-fw fa-share-square clickable"
-						v-tooltip="'Share your Session ID'"
+						v-tooltip="'Copy session link for sharing.'"
 						@click="sessionURLToClipboard"
 					></i>
 					<i
@@ -282,7 +282,7 @@
 					class="fas fa-crown subtle-gold"
 					v-tooltip="
 						sessionOwnerUsername
-							? `${sessionOwnerUsername} is the session's owner.`
+							? `${sessionOwnerUsername} is the session owner.`
 							: 'Session owner is disconnected.'
 					"
 				></i>
@@ -290,13 +290,13 @@
 			</div>
 			<div>
 				<span
-					v-tooltip="'Maximum players can be adjusted in session options.'"
+					v-tooltip="'Maximum players can be adjusted in session settings.'"
 				>Players ({{ sessionUsers.length }}/{{ maxPlayers }})</span>
 				<i
 					v-if="userID == sessionOwner && !drafting"
 					class="fas fa-random clickable"
 					@click="randomizeSeating"
-					v-tooltip="'Randomize Seating Order'"
+					v-tooltip="'Randomize Seating Order.'"
 				></i>
 			</div>
 			<template v-if="!drafting">
@@ -348,7 +348,7 @@
 								<template v-if="!userByID[id].collection">
 									<i
 										class="fas fa-book red"
-										v-tooltip="userByID[id].userName + ' have not uploaded their collection yet.'"
+										v-tooltip="userByID[id].userName + ' has not uploaded their collection yet.'"
 									></i>
 								</template>
 								<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
@@ -356,14 +356,14 @@
 										class="fas fa-book yellow"
 										v-tooltip="
 											userByID[id].userName +
-												' have uploaded their collection, but are not using it.'
+												' has uploaded their collection, but is not using it.'
 										"
 									></i>
 								</template>
 								<template v-else>
 									<i
 										class="fas fa-book green"
-										v-tooltip="userByID[id].userName + ' have uploaded their collection.'"
+										v-tooltip="userByID[id].userName + ' has uploaded their collection.'"
 									></i>
 								</template>
 							</template>
@@ -641,7 +641,12 @@
 		>
 			<div class="controls">
 				<h2>Deck ({{ deck.length }})</h2>
-				<button v-if="deck.length > 0" type="button" @click="exportDeck">
+				<button
+					v-if="deck.length > 0"
+					type="button"
+					@click="exportDeck"
+					v-tooltip="'Export deck and sideboard'"
+				>
 					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 				</button>
 				<button
@@ -799,12 +804,12 @@
 										@click="logPathToClipboard"
 										v-tooltip="'Copy path to clipboard'"
 									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log</tt>
-									(note that
+									(Note:
 									<a
 										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
 										target="_blank"
 									>
-										AppData is hidden by default
+										AppData folder is hidden by default
 										<i class="fas fa-external-link-alt"></i>
 									</a>
 									).
@@ -831,7 +836,7 @@
 							Visit the
 							<a @click="displayedModal = 'help'">FAQ / Help</a>
 							section.
-							<br />For any question/bug report/feature you can e-mail at
+							<br />For any question/bug report/feature request you can email to
 							<a
 								href="mailto:mtgadraft@gmail.com"
 							>mtgadraft@gmail.com</a>
@@ -1328,7 +1333,7 @@
 			<div slot="body">
 				<p>
 					Developped by
-					<a href="http://senryoku.github.io/" target="_blank">Senryoku</a>
+					<a href="https://senryoku.github.io/" target="_blank">Senryoku</a>
 					(contact in French or English:
 					<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 					) using
@@ -1352,9 +1357,9 @@
 						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by
 						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
 						that sounds like a good use of my time and you want to help me stay motivated and high on
-						cafeine, you can donate here
-						<em>via</em>
-						PayPal:
+						cafeine, you can donate here via
+						<em>PayPal</em>
+						:
 					</p>
 					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 						<input type="hidden" name="cmd" value="_s-xclick" />
