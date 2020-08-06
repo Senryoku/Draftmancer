@@ -28,7 +28,7 @@ function range(start, end, step = 1) {
 }
 
 // https://bl.ocks.org/lovasoa/3361645; modified to take an array of arrays as argument
-function array_intersect(args) {
+function arrayIntersect(args) {
 	if (!args.length) return [];
 	if (args.length === 1) return args[0];
 	var a,
@@ -69,11 +69,21 @@ function array_intersect(args) {
 	return g;
 }
 
+// From https://stackoverflow.com/a/12646864
+// Modified to optionaly work only on the [start, end[ slice of array.
+function shuffleArray(array, start = 0, end = array.length) {
+	for (let i = end - 1; i > start; i--) {
+		const j = start + Math.floor(Math.random() * (i - start + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
 module.exports = {
 	isEmpty: isEmpty,
 	negMod: negMod,
 	getRandom: getRandom,
 	getRandomKey: getRandomKey,
 	range: range,
-	array_intersect: array_intersect,
+	arrayIntersect: arrayIntersect,
+	shuffleArray: shuffleArray,
 };
