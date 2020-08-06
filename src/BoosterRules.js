@@ -9,6 +9,7 @@ function BoosterFactory(cardPool, landSlot, options) {
 	this.landSlot = landSlot;
 	if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool);
 	this.options = options;
+	// Generate cache object for color balancing of the common slot
 	if (this.options.colorBalance) {
 		this.commonsByColor = {};
 		for (let card in this.cardPool["common"]) {
@@ -17,8 +18,12 @@ function BoosterFactory(cardPool, landSlot, options) {
 		}
 	}
 
-	/* Returns a standard draft booster (Do NOT use for custom list/sets)
-	 *   targets: Card count for each slot
+	this.onError = function(...args) {
+		if (this.options.onError) this.options.onError(...args);
+	};
+
+	/* Returns a standard draft booster
+	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
 	 */
 	this.generateBooster = function(targets) {
 		const mythicRate = 1.0 / 8.0;

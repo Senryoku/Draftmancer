@@ -448,13 +448,23 @@ function Session(id, owner) {
 			// Standard draft boosters
 			const targets = this.boosterContent;
 
-			const BoosterOptions = {
+			const BoosterFactoryOptions = {
 				foil: this.foil,
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
+				onError: (...args) => {
+					this.emitMessage(...args);
+				},
 			};
 
 			let defaultFactory = null;
+
+			const getBoosterFactory = function(set, cardPool, landSlot, options) {
+				// Check for a special booster factory
+				return set && set in SetSpecificFactories
+					? SetSpecificFactories[set](cardPool, landSlot, options)
+					: new BoosterFactory(cardPool, landSlot, options);
+			};
 
 			// If the default rule will be used, initialize it
 			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
@@ -462,14 +472,12 @@ function Session(id, owner) {
 				let defaultLandSlot = null;
 				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots)
 					defaultLandSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
-				// Check for a special booster factory
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in SetSpecificFactories)
-					defaultFactory = SetSpecificFactories[this.setRestriction[0]](
-						localCollection,
-						defaultLandSlot,
-						BoosterOptions
-					);
-				else defaultFactory = new BoosterFactory(localCollection, defaultLandSlot, BoosterOptions);
+				defaultFactory = getBoosterFactory(
+					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
+					localCollection,
+					defaultLandSlot,
+					BoosterFactoryOptions
+				);
 				// Make sure we have enough cards
 				for (let slot of ["common", "uncommon", "rare"]) {
 					const card_count = count_cards(defaultFactory.cardPool[slot]);
@@ -520,19 +528,12 @@ function Session(id, owner) {
 										: addLandSlot
 										? LandSlot.BasicLandSlots[boosterRule]
 										: null;
-								// Check for a special booster factory
-								if (boosterRule in SetSpecificFactories)
-									usedSets[boosterRule] = SetSpecificFactories[boosterRule](
-										this.setByRarity(boosterRule),
-										landSlot,
-										BoosterOptions
-									);
-								else
-									usedSets[boosterRule] = new BoosterFactory(
-										this.setByRarity(boosterRule),
-										landSlot,
-										BoosterOptions
-									);
+								usedSets[boosterRule] = getBoosterFactory(
+									boosterRule,
+									this.setByRarity(boosterRule),
+									landSlot,
+									BoosterFactoryOptions
+								);
 								// Check if we have enough card, considering maxDuplicate is a limiting factor
 								const multiplier = this.customBoosters.reduce(
 									(a, v) => (v == boosterRule ? a + 1 : a),
