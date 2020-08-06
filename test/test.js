@@ -1707,7 +1707,7 @@ describe("Jumpstart", function() {
 	});
 });
 
-describe.only("Set Specific Booster Rules", function() {
+describe("Set Specific Booster Rules", function() {
 	const Sessions = server.__get__("Sessions");
 	let clients = [];
 	let sessionID = "SessionID";
