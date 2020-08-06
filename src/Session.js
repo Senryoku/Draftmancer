@@ -510,15 +510,16 @@ function Session(id, owner) {
 					let planeswalkers = {};
 					let filteredCardPool = {};
 					for (let slot in cardpool) {
+						filteredCardPool[slot] = {};
 						for (let cid in cardpool[slot]) {
 							if (Cards[cid].type.includes("Planeswalker")) planeswalkers[cid] = cardpool[slot][cid];
-							else filteredCardPool[cid] = cardpool[slot][cid];
+							else filteredCardPool[slot][cid] = cardpool[slot][cid];
 						}
 					}
 					return {
 						genericBoosterFunc: genericBoosterFunc,
 						planeswalkers: planeswalkers,
-						cardpool: filteredCardPool,
+						cardPool: filteredCardPool,
 						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
 							console.log("WAR Generate Booster");
 							// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
@@ -527,7 +528,7 @@ function Session(id, owner) {
 									(!("rare" in targets) || targets["rare"] <= 0)) ||
 								Object.values(planeswalkers).every(arr => arr.length === 0)
 							) {
-								return this.genericBoosterFunc(this.cardpool, colorBalancedSlot, targets, landSlot);
+								return this.genericBoosterFunc(this.cardPool, colorBalancedSlot, targets, landSlot);
 							} else {
 								let updatedTargets = Object.assign({}, targets);
 								let pickedCID = pick_card(this.planeswalkers, []);
@@ -536,7 +537,7 @@ function Session(id, owner) {
 								if (this.colorBalance && Cards[pickedCID].rarity == "common")
 									removeCardFromDict(pickedCID, colorBalancedSlot[Cards[pickedCID].colors]);
 								let booster = this.genericBoosterFunc(
-									this.cardpool,
+									this.cardPool,
 									colorBalancedSlot,
 									updatedTargets,
 									landSlot
@@ -564,6 +565,7 @@ function Session(id, owner) {
 					return {
 						genericBoosterFunc: genericBoosterFunc,
 						legendaryCreatures: legendaryCreatures,
+						cardPool: cardpool,
 						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
 							console.log("DOM Generate Booster");
 							// Ignore the rule if there's no legendary creatures left
@@ -637,7 +639,8 @@ function Session(id, owner) {
 							if (!usedSets[boosterRule]) {
 								if (boosterRule in SetBoosterRules)
 									usedSets[boosterRule] = SetBoosterRules[boosterRule](
-										this.setByRarity(boosterRule, this.generateBooster)
+										this.setByRarity(boosterRule),
+										this.generateBooster
 									);
 								else
 									usedSets[boosterRule] = {
@@ -700,7 +703,7 @@ function Session(id, owner) {
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterRules[p][b];
-						const booster = this.generateBooster(
+						const booster = rule.generateBooster(
 							rule.cardPool,
 							rule.commonsByColor,
 							targets,

@@ -1706,3 +1706,130 @@ describe("Jumpstart", function() {
 		clients[ownerIdx].emit("distributeJumpstart");
 	});
 });
+
+describe.only("Set Specific Booster Rules", function() {
+	const Sessions = server.__get__("Sessions");
+	let clients = [];
+	let sessionID = "SessionID";
+
+	const validateWARBooster = function(booster) {
+		let PLCount = booster.reduce((acc, val) => {
+			return acc + Cards[val].type.includes("Planeswalker") ? 1 : 0;
+		}, 0);
+		expect(PLCount).to.equal(1);
+	};
+
+	const validateDOMBooster = function(booster) {
+		let LCCount = booster.reduce((acc, val) => {
+			return acc + Cards[val].type.includes("Legendary Creature") ? 1 : 0;
+		}, 0);
+		expect(LCCount).to.be.at.least(1);
+	};
+
+	beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function(done) {
+		let queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				userID: "sameID",
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, done);
+	});
+
+	after(function(done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+		}
+
+		waitForClientDisconnects(done);
+	});
+
+	it(`WAR boosters should have exactly one planeswalker per pack (Single set restriction).`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", ["war"]);
+		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let b of Sessions[sessionID].boosters) validateWARBooster(b);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`WAR boosters should have exactly one planeswalker per pack (Custom boosters).`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", []);
+		clients[ownerIdx].emit("setCustomBoosters", ["war", "war", "war"]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let b of Sessions[sessionID].boosters) validateWARBooster(b);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`DOM boosters should have at least one legendary creature per pack (Single set restriction).`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", ["dom"]);
+		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let b of Sessions[sessionID].boosters) validateDOMBooster(b);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`DOM boosters should have exactly one planeswalker per pack (Custom boosters).`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", []);
+		clients[ownerIdx].emit("setCustomBoosters", ["dom", "dom", "dom"]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let b of Sessions[sessionID].boosters) validateDOMBooster(b);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`Validate mixed Custom boosters.`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", []);
+		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
+				if (Math.floor(idx / 8) == 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
+				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+});
