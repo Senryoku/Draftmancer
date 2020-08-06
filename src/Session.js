@@ -504,7 +504,7 @@ function Session(id, owner) {
 			}
 
 			// Set specific rules.
-			// FIXME: Handle colorBalancedSlot correctly
+			// Neither DOM or WAR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 			const SetBoosterRules = {
 				war: (cardpool, genericBoosterFunc) => {
 					let planeswalkers = {};
@@ -526,6 +526,7 @@ function Session(id, owner) {
 							if (
 								((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
 									(!("rare" in targets) || targets["rare"] <= 0)) ||
+								Object.values(planeswalkers).length === 0 ||
 								Object.values(planeswalkers).every(arr => arr.length === 0)
 							) {
 								return this.genericBoosterFunc(this.cardPool, colorBalancedSlot, targets, landSlot);
@@ -534,8 +535,6 @@ function Session(id, owner) {
 								let pickedCID = pick_card(this.planeswalkers, []);
 								if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
 								else --updatedTargets[Cards[pickedCID].rarity];
-								if (this.colorBalance && Cards[pickedCID].rarity == "common")
-									removeCardFromDict(pickedCID, colorBalancedSlot[Cards[pickedCID].colors]);
 								let booster = this.genericBoosterFunc(
 									this.cardPool,
 									colorBalancedSlot,
@@ -569,7 +568,10 @@ function Session(id, owner) {
 						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
 							console.log("DOM Generate Booster");
 							// Ignore the rule if there's no legendary creatures left
-							if (Object.values(legendaryCreatures).every(arr => arr.length === 0)) {
+							if (
+								Object.values(legendaryCreatures).length === 0 ||
+								Object.values(legendaryCreatures).every(arr => arr.length === 0)
+							) {
 								return this.genericBoosterFunc(cardpool, colorBalancedSlot, targets, landSlot);
 							} else {
 								let updatedTargets = Object.assign({}, targets);
