@@ -461,6 +461,9 @@ function Session(id, owner) {
 			let landSlot = null;
 			let commonsByColor = {};
 			const targets = this.boosterContent;
+			const genBoosterWrapper = (...args) => {
+				return this.generateBooster(...args);
+			};
 
 			// Skip setting up standard collection if we're only using individual booster rules
 			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
@@ -498,7 +501,7 @@ function Session(id, owner) {
 					cardPool: localCollection,
 					commonsByColor: commonsByColor,
 					landSlot: landSlot,
-					generateBooster: this.generateBooster,
+					generateBooster: genBoosterWrapper,
 				};
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot =
@@ -528,11 +531,11 @@ function Session(id, owner) {
 								if (boosterRule in SetBoosterRules)
 									usedSets[boosterRule] = SetBoosterRules[boosterRule](
 										this.setByRarity(boosterRule),
-										this.generateBooster
+										genBoosterWrapper
 									);
 								else
 									usedSets[boosterRule] = {
-										generateBooster: this.generateBooster,
+										generateBooster: genBoosterWrapper,
 										cardPool: this.setByRarity(boosterRule),
 									};
 								usedSets[boosterRule].commonsByColor = {};
@@ -607,8 +610,8 @@ function Session(id, owner) {
 				// If we're using a single set, look for specific rules for that set
 				const BoosterRule =
 					this.setRestriction.length === 1 && this.setRestriction[0] in SetBoosterRules
-						? SetBoosterRules[this.setRestriction[0]](localCollection, this.generateBooster)
-						: { generateBooster: this.generateBooster };
+						? SetBoosterRules[this.setRestriction[0]](localCollection, genBoosterWrapper)
+						: { generateBooster: genBoosterWrapper };
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster = BoosterRule.generateBooster(localCollection, commonsByColor, targets, landSlot);

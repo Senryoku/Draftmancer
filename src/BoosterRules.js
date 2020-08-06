@@ -21,8 +21,8 @@ const SetBoosterRules = {
 			genericBoosterFunc: genericBoosterFunc,
 			planeswalkers: planeswalkers,
 			cardPool: filteredCardPool,
+			// Not using the supllied cardpool here
 			generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
-				console.log("WAR Generate Booster");
 				// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
 				if (
 					((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
@@ -66,8 +66,8 @@ const SetBoosterRules = {
 			genericBoosterFunc: genericBoosterFunc,
 			legendaryCreatures: legendaryCreatures,
 			cardPool: filteredCardPool,
+			// Not using the supllied cardpool here
 			generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
-				console.log("DOM Generate Booster");
 				// Ignore the rule if there's no legendary creatures left
 				if (
 					Object.values(legendaryCreatures).length === 0 ||
@@ -76,7 +76,7 @@ const SetBoosterRules = {
 					return this.genericBoosterFunc(this.cardPool, colorBalancedSlot, targets, landSlot);
 				} else {
 					let updatedTargets = Object.assign({}, targets);
-					let pickedCID = pickCard(this.legendaryCreatures, []); // FIXME : No duplicate protection!
+					let pickedCID = pickCard(this.legendaryCreatures, []);
 					removeCardFromDict(pickedCID, this.cardPool[Cards[pickedCID].rarity]);
 					if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
 					else --updatedTargets[Cards[pickedCID].rarity];
