@@ -93,6 +93,13 @@ const waitForClientDisconnects = done => {
 	}
 };
 
+const checkColorBalance = function(booster) {
+	for (let c of "WUBRG")
+		expect(
+			booster.filter(cid => Cards[cid].rarity === "common" && Cards[cid].colors.includes(c)).length
+		).to.be.at.least(1);
+};
+
 describe("Inter client communication", function() {
 	let sender, receiver;
 
@@ -272,7 +279,7 @@ describe("Checking sets", function() {
 	}
 });
 
-describe("Single Draft", function() {
+describe("Single Draft with Color Balance", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	var Sessions;
@@ -348,6 +355,7 @@ describe("Single Draft", function() {
 		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
+		clients[ownerIdx].emit("setColorBalance", true);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[nonOwnerIdx].on("setRestriction", _ => {
 			const localCollection = Sessions[sessionID].cardPoolByRarity();
@@ -386,13 +394,18 @@ describe("Single Draft", function() {
 		for (let c in clients) {
 			clients[c].once("startDraft", function() {
 				connectedClients += 1;
-				if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				if (connectedClients == clients.length && receivedBoosters == clients.length) {
+					Sessions = server.__get__("Sessions");
+					for (let b of Sessions[sessionID].boosters) checkColorBalance(b);
+					done();
+				}
 			});
 
 			(_ => {
 				const _idx = c;
 				clients[c].once("nextBooster", function(data) {
 					expect(boosters).not.include(data);
+					checkColorBalance(data.booster);
 					boosters[_idx] = data;
 					receivedBoosters += 1;
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
@@ -1157,7 +1170,11 @@ describe("Multiple Drafts", function() {
 				for (let c of sessionClients) {
 					c.on("startDraft", function() {
 						connectedClients += 1;
-						if (connectedClients == sessionClients.length) sessionsCorrectlyStartedDrafting += 1;
+						if (connectedClients == sessionClients.length) {
+							const Sessions = server.__get__("Sessions");
+							for (let b of Sessions[sessionIDs[sessionIdx]].boosters) checkColorBalance(b);
+							sessionsCorrectlyStartedDrafting += 1;
+						}
 					});
 
 					c.once("nextBooster", function(data) {
@@ -1172,6 +1189,7 @@ describe("Multiple Drafts", function() {
 				}
 				const Sessions = server.__get__("Sessions");
 				let ownerIdx = sessionClients.findIndex(c => c.query.userID == Sessions[sessionIDs[sessionIdx]].owner);
+				sessionClients[ownerIdx].emit("setColorBalance", true);
 				sessionClients[ownerIdx].emit("startDraft");
 			})();
 		}
