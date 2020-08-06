@@ -43,20 +43,17 @@ AWS_ENDPOINT=http://localhost:8000
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State for a better example)
 
----
+### Minor Improvements
 
 -   Improve deck stats (Get some inspiration from MTGA)
 -   Regroup Game Mode besides Draft in a single dropdown menu
 -   Display foils as... foils in front end?
 
-### Distant Future
-
--   Set specificy booster generation rules, examples: WAR: Exactly one planeswalker per pack (not counting foils). DOM: At least one Legendary creature per pack.
-
 ## Check
 
 Features that may need some additional testing:
 
+-   Set specificy booster generation rules (DOM/WAR)
 -   Picks by Drag & Drop
 -   Load translations on-demand.
 -   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
