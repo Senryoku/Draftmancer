@@ -269,7 +269,14 @@ describe("Checking sets", function() {
 			let nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", function(sR) {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				for (let r in sets[set]) expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
+				for (let r in sets[set]) {
+					expect(
+						Object.keys(localCollection[r])
+							.map(cid => Cards[cid].set)
+							.every(s => s === set)
+					).to.be.true;
+					expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
+				}
 				done();
 			});
 			clients[ownerIdx].emit("ignoreCollections", true);
