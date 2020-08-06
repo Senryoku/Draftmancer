@@ -1248,9 +1248,9 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "Yes",
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: "Remove player",
 			}).then(result => {
 				if (result.value) {
 					this.socket.emit("removePlayer", userID);
