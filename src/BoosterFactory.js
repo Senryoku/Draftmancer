@@ -9,7 +9,7 @@ const { removeCardFromDict, pickCard } = require("./cardUtils");
 function BoosterFactory(cardPool, landSlot, options) {
 	this.cardPool = cardPool;
 	this.landSlot = landSlot;
-	if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool);
+	if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
 	this.options = options;
 	// Generate cache object for color balancing of the common slot
 	if (this.options.colorBalance) {
