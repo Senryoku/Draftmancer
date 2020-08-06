@@ -1,5 +1,11 @@
 [
 	{
+		"date": "06/08/2020",
+		"notes": [
+			"Implemented set specific collation rules for boosters: One Planeswalker per War of the Spark pack, one Legendary Creature per Dominaria pack."
+		]
+	},
+	{
 		"date": "03/08/2020",
 		"notes": ["Cards can be zoomed-in by right clicking."]
 	},
