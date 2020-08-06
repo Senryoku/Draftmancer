@@ -1724,7 +1724,7 @@ describe("Set Specific Booster Rules", function() {
 		let LCCount = booster.reduce((acc, val) => {
 			return acc + Cards[val].type.match(regex) ? 1 : 0;
 		}, 0);
-		expect(LCCount).to.be.at.least(1);
+		expect(LCCount).to.equal(1);
 	};
 
 	beforeEach(function(done) {

@@ -51,17 +51,21 @@ const SetBoosterRules = {
 			},
 		};
 	},
-	// At least one Legendary Creature per booster
+	// Exactly one Legendary Creature per booster
 	dom: (cardpool, genericBoosterFunc) => {
 		let legendaryCreatures = {};
+		let filteredCardPool = {};
 		const regex = /Legendary.*Creature/;
-		for (let slot in cardpool)
+		for (let slot in cardpool) {
+			filteredCardPool[slot] = {};
 			for (let cid in cardpool[slot])
 				if (Cards[cid].type.match(regex)) legendaryCreatures[cid] = cardpool[slot][cid];
+				else filteredCardPool[slot][cid] = cardpool[slot][cid];
+		}
 		return {
 			genericBoosterFunc: genericBoosterFunc,
 			legendaryCreatures: legendaryCreatures,
-			cardPool: cardpool,
+			cardPool: filteredCardPool,
 			generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
 				console.log("DOM Generate Booster");
 				// Ignore the rule if there's no legendary creatures left
@@ -69,26 +73,19 @@ const SetBoosterRules = {
 					Object.values(legendaryCreatures).length === 0 ||
 					Object.values(legendaryCreatures).every(arr => arr.length === 0)
 				) {
-					return this.genericBoosterFunc(cardpool, colorBalancedSlot, targets, landSlot);
+					return this.genericBoosterFunc(this.cardPool, colorBalancedSlot, targets, landSlot);
 				} else {
 					let updatedTargets = Object.assign({}, targets);
 					let pickedCID = pickCard(this.legendaryCreatures, []); // FIXME : No duplicate protection!
-					removeCardFromDict(pickedCID, cardpool[Cards[pickedCID].rarity]);
+					removeCardFromDict(pickedCID, this.cardPool[Cards[pickedCID].rarity]);
 					if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
 					else --updatedTargets[Cards[pickedCID].rarity];
-					let booster = this.genericBoosterFunc(cardpool, colorBalancedSlot, updatedTargets, landSlot);
+					let booster = this.genericBoosterFunc(this.cardPool, colorBalancedSlot, updatedTargets, landSlot);
 					// Sync. legendaryCreatures object with the new card pool
 					for (let cid of booster)
 						if (cid in this.legendaryCreatures) removeCardFromDict(cid, this.legendaryCreatures);
-					// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
-					if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
-						booster.unshift(pickedCID);
-					else
-						booster.splice(
-							booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
-							0,
-							pickedCID
-						);
+					// Insert the card in the appropriate slot
+					booster.unshift(pickedCID);
 					return booster;
 				}
 			},
