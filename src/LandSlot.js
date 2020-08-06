@@ -1,8 +1,7 @@
 "use strict";
 
-const cardUtils = require("./cardUtils");
-const removeCardFromDict = cardUtils.removeCardFromDict;
 const utils = require("./utils");
+const removeCardFromDict = require("./cardUtils").removeCardFromDict;
 const getRandomKey = utils.getRandomKey;
 const getRandom = utils.getRandom;
 const range = utils.range;
@@ -66,11 +65,7 @@ const SpecialLandSlots = {
 		[70027, 70028, 70030, 70033, 70035, 70036, 70037, 70043, 70044, 70045, 70031],
 		1 / 2
 	), // Gain Lands and Evoling Wilds (70031)
-	iko: landSlotHandler(
-		BasicLandIDs["iko"],
-		[71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)),
-		1 / 2
-	), // Gain Lands; Evoling Wilds (71314) is found in the common slot
+	iko: landSlotHandler(BasicLandIDs["iko"], [71310, 71311, 71313, 71316, 71319].concat(range(71321, 71325)), 1 / 2), // Gain Lands; Evoling Wilds (71314) is found in the common slot
 	m21: landSlotHandler(
 		BasicLandIDs["m21"],
 		[72025, 72026, 72027, 72029, 72031, 72032, 72033, 72039, 72040, 72041],

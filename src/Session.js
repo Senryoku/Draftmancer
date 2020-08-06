@@ -1,40 +1,16 @@
 "use strict";
 
 const constants = require("../client/src/data/constants.json");
-const removeCardFromDict = require("./cardUtils").removeCardFromDict;
-const utils = require("./utils");
-const negMod = utils.negMod;
-const isEmpty = utils.isEmpty;
+const { removeCardFromDict, pickCard } = require("./cardUtils");
+const { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } = require("./utils");
 const ConnectionModule = require("./Connection");
 const Connections = ConnectionModule.Connections;
 const Cards = require("./Cards");
 const Bot = require("./Bot");
 const LandSlot = require("./LandSlot");
+const { BoosterFactory, SetSpecificFactories } = require("./BoosterFactory");
 const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
 const Persistence = require("./Persistence");
-
-// From https://stackoverflow.com/a/12646864
-// Modified to optionaly work only on the [start, end[ slice of array.
-function shuffleArray(array, start = 0, end = array.length) {
-	for (let i = end - 1; i > start; i--) {
-		const j = start + Math.floor(Math.random() * (i - start + 1));
-		[array[i], array[j]] = [array[j], array[i]];
-	}
-}
-
-// TODO: Prevent multiples by name?
-const pick_card = function(dict, booster) {
-	let c = utils.getRandomKey(dict);
-	if (booster != undefined) {
-		let prevention_attempts = 0; // Fail safe-ish
-		while (booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
-			c = utils.getRandomKey(dict);
-			++prevention_attempts;
-		}
-	}
-	removeCardFromDict(c, dict);
-	return c;
-};
 
 function Bracket(players) {
 	this.players = players;
@@ -304,7 +280,7 @@ function Session(id, owner) {
 		else arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push(Object.keys(Connections[user_list[i]].collection));
-		intersection = utils.array_intersect(arrays);
+		intersection = arrayIntersect(arrays);
 
 		// Compute the minimum count of each remaining card
 		for (let c of intersection) {
@@ -398,7 +374,7 @@ function Session(id, owner) {
 						if (useColorBalance && r === colorBalancedSlot) {
 							for (let c of "WUBRG") {
 								if (cardsByColor[c] && !isEmpty(cardsByColor[c])) {
-									let pickedCard = pick_card(cardsByColor[c], booster);
+									let pickedCard = pickCard(cardsByColor[c], booster);
 									removeCardFromDict(pickedCard, cardsByRarity[colorBalancedSlot]);
 									booster.push(pickedCard);
 									++addedCards;
@@ -406,7 +382,7 @@ function Session(id, owner) {
 							}
 						}
 						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i) {
-							const pickedCard = pick_card(cardsByRarity[r], booster);
+							const pickedCard = pickCard(cardsByRarity[r], booster);
 							if (useColorBalance && r === colorBalancedSlot)
 								removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 							booster.push(pickedCard);
@@ -451,7 +427,7 @@ function Session(id, owner) {
 					if (this.colorBalance) {
 						for (let c of "WUBRG") {
 							if (cardsByColor[c] && !isEmpty(cardsByColor[c])) {
-								let pickedCard = pick_card(cardsByColor[c], booster);
+								let pickedCard = pickCard(cardsByColor[c], booster);
 								removeCardFromDict(pickedCard, localCollection);
 								booster.push(pickedCard);
 							}
@@ -459,7 +435,7 @@ function Session(id, owner) {
 					}
 
 					for (let i = booster.length; i < cardsPerBooster; ++i) {
-						const pickedCard = pick_card(localCollection, booster);
+						const pickedCard = pickCard(localCollection, booster);
 						if (this.colorBalance) removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 						booster.push(pickedCard);
 					}
@@ -470,29 +446,41 @@ function Session(id, owner) {
 			}
 		} else {
 			// Standard draft boosters
-			let localCollection = this.cardPoolByRarity();
-			let landSlot = null;
-			let commonsByColor = {};
 			const targets = this.boosterContent;
 
-			// Skip setting up standard collection if we're only using individual booster rules
+			const BoosterFactoryOptions = {
+				foil: this.foil,
+				colorBalance: this.colorBalance,
+				mythicPromotion: this.mythicPromotion,
+				onError: (...args) => {
+					this.emitMessage(...args);
+				},
+			};
+
+			let defaultFactory = null;
+
+			const getBoosterFactory = function(set, cardPool, landSlot, options) {
+				// Check for a special booster factory
+				return set && set in SetSpecificFactories
+					? SetSpecificFactories[set](cardPool, landSlot, options)
+					: new BoosterFactory(cardPool, landSlot, options);
+			};
+
+			// If the default rule will be used, initialize it
 			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
-				localCollection = this.cardPoolByRarity();
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots) {
-					landSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
-					landSlot.setup(localCollection["common"]);
-				}
-
-				if (this.colorBalance) {
-					for (let card in localCollection["common"]) {
-						if (!(Cards[card].colors in commonsByColor)) commonsByColor[Cards[card].colors] = {};
-						commonsByColor[Cards[card].colors][card] = localCollection["common"][card];
-					}
-				}
-
-				// Making sure we have enough cards of each rarity
+				let localCollection = this.cardPoolByRarity();
+				let defaultLandSlot = null;
+				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots)
+					defaultLandSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
+				defaultFactory = getBoosterFactory(
+					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
+					localCollection,
+					defaultLandSlot,
+					BoosterFactoryOptions
+				);
+				// Make sure we have enough cards
 				for (let slot of ["common", "uncommon", "rare"]) {
-					const card_count = count_cards(localCollection[slot]);
+					const card_count = count_cards(defaultFactory.cardPool[slot]);
 					const card_target = targets[slot] * boosterQuantity;
 					if (card_count < card_target) {
 						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
@@ -505,103 +493,83 @@ function Session(id, owner) {
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
 			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
-				const boosterRules = [];
+				const boosterFactories = [];
 				const usedSets = {};
-				let defaultRule = {
-					cardPool: localCollection,
-					commonsByColor: commonsByColor,
-					landSlot: landSlot,
-				};
+
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot =
 					this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
-				if (addLandSlot && !defaultRule.landSlot)
-					defaultRule.landSlot =
+				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
+					defaultFactory.landSlot =
 						this.setRestriction.length === 0
 							? LandSlot.BasicLandSlots["m20"] // Totally arbitrary
 							: LandSlot.BasicLandSlots[this.setRestriction[0]];
 
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
-					const playerBoosterRules = [];
-					for (let boosterRule of this.customBoosters) {
+					const playerBoosterFactories = [];
+					for (let boosterSet of this.customBoosters) {
 						// No specific rules
-						if (boosterRule === "") {
-							playerBoosterRules.push(defaultRule);
+						if (boosterSet === "") {
+							playerBoosterFactories.push(defaultFactory);
 						} else {
-							if (boosterRule === "random") {
+							if (boosterSet === "random") {
 								// Random booster from one of the sets in Card Pool
-								boosterRule =
+								boosterSet =
 									this.setRestriction.length === 0
-										? utils.getRandom(constants.MTGSets)
-										: utils.getRandom(this.setRestriction);
+										? getRandom(constants.MTGSets)
+										: getRandom(this.setRestriction);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
-							if (!usedSets[boosterRule]) {
+							if (!usedSets[boosterSet]) {
 								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-								usedSets[boosterRule] = {
-									cardPool: this.setByRarity(boosterRule),
-									commonsByColor: {},
-									landSlot:
-										boosterRule in LandSlot.SpecialLandSlots
-											? LandSlot.SpecialLandSlots[boosterRule]
-											: addLandSlot
-											? LandSlot.BasicLandSlots[boosterRule]
-											: null,
-								};
-
+								const landSlot =
+									boosterSet in LandSlot.SpecialLandSlots
+										? LandSlot.SpecialLandSlots[boosterSet]
+										: addLandSlot
+										? LandSlot.BasicLandSlots[boosterSet]
+										: null;
+								usedSets[boosterSet] = getBoosterFactory(
+									boosterSet,
+									this.setByRarity(boosterSet),
+									landSlot,
+									BoosterFactoryOptions
+								);
 								// Check if we have enough card, considering maxDuplicate is a limiting factor
 								const multiplier = this.customBoosters.reduce(
-									(a, v) => (v == boosterRule ? a + 1 : a),
+									(a, v) => (v == boosterSet ? a + 1 : a),
 									0
 								);
 								if (
-									count_cards(usedSets[boosterRule].cardPool["common"]) <
+									count_cards(usedSets[boosterSet].cardPool["common"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["common"] ||
-									count_cards(usedSets[boosterRule].cardPool["uncommon"]) <
+									count_cards(usedSets[boosterSet].cardPool["uncommon"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
-									count_cards(usedSets[boosterRule].cardPool["rare"]) +
-										count_cards(usedSets[boosterRule].cardPool["mythic"]) <
+									count_cards(usedSets[boosterSet].cardPool["rare"]) +
+										count_cards(usedSets[boosterSet].cardPool["mythic"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["rare"]
 								) {
-									const msg = `Not enough cards in card pool for individual booster restriction '${boosterRule}'. Please check you Max. Duplicates setting.`;
+									const msg = `Not enough cards in card pool for individual booster restriction '${boosterSet}'. Please check you Max. Duplicates setting.`;
 									this.emitMessage("Error generating boosters", msg, true, 0);
 									console.warn(msg);
 									return false;
 								}
-
-								if (this.colorBalance) {
-									for (let card in usedSets[boosterRule].cardPool["common"]) {
-										if (!(Cards[card].colors in usedSets[boosterRule].commonsByColor))
-											usedSets[boosterRule].commonsByColor[Cards[card].colors] = {};
-										usedSets[boosterRule].commonsByColor[Cards[card].colors][card] =
-											usedSets[boosterRule].cardPool["common"][card];
-									}
-								}
-
-								if (usedSets[boosterRule].landSlot && usedSets[boosterRule].landSlot.setup)
-									usedSets[boosterRule].landSlot.setup(usedSets[boosterRule].cardPool);
 							}
-							playerBoosterRules.push(usedSets[boosterRule]);
+							playerBoosterFactories.push(usedSets[boosterSet]);
 						}
 					}
-					boosterRules.push(playerBoosterRules);
+					boosterFactories.push(playerBoosterFactories);
 				}
 
 				// Generate Boosters
 				this.boosters = [];
 				// Implements distribution mode 'shufflePlayerBoosters'
 				if (this.distributionMode === "shufflePlayerBoosters")
-					for (let rules of boosterRules) shuffleArray(rules);
+					for (let rules of boosterFactories) shuffleArray(rules);
 
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
-						const rule = boosterRules[p][b];
-						const booster = this.generateBooster(
-							rule.cardPool,
-							rule.commonsByColor,
-							targets,
-							rule.landSlot
-						);
+						const rule = boosterFactories[p][b];
+						const booster = rule.generateBooster(targets);
 						if (booster) this.boosters.push(booster);
 						else return false;
 					}
@@ -611,101 +579,13 @@ function Session(id, owner) {
 			} else {
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = this.generateBooster(localCollection, commonsByColor, targets, landSlot);
+					let booster = defaultFactory.generateBooster(targets);
 					if (booster) this.boosters.push(booster);
 					else return false;
 				}
 			}
 		}
 		return true;
-	};
-
-	/* Returns a standard draft booster
-	 *   cardPool: Cards (dict with id: card count) arranged by slot
-	 *   colorBalancedSlot: Cards arranged by color
-	 *   targets: Card count for each slot
-	 *   landSlot: Optional land slot rule
-	 */
-	this.generateBooster = function(cardPool, colorBalancedSlot, targets, landSlot) {
-		const mythicRate = 1.0 / 8.0;
-		const foilRate = 15.0 / 63.0;
-		// 1/16 chances of a foil basic land added to the common slot. Mythic to common
-		const foilRarityRates = {
-			mythic: 1.0 / 128,
-			rare: 1.0 / 128 + 7.0 / 128,
-			uncommon: 1.0 / 16 + 3.0 / 16,
-			common: 1.0,
-		};
-
-		let booster = [];
-
-		let addedFoils = 0;
-		if (this.foil && Math.random() <= foilRate) {
-			const rarityCheck = Math.random();
-			for (let r in foilRarityRates)
-				if (rarityCheck <= foilRarityRates[r] && !isEmpty(cardPool[r])) {
-					let pickedCard = pick_card(cardPool[r]);
-					// Synchronize color balancing dictionary
-					if (this.colorBalance && Cards[pickedCard].rarity == "common")
-						removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
-					booster.push(pickedCard);
-					addedFoils += 1;
-					break;
-				}
-		}
-
-		for (let i = 0; i < targets["rare"]; ++i) {
-			// 1 Rare/Mythic
-			if (isEmpty(cardPool["mythic"]) && isEmpty(cardPool["rare"])) {
-				const msg = `Not enough rare or mythic cards in collection.`;
-				this.emitMessage("Error generating boosters", msg);
-				console.error(msg);
-				return false;
-			} else if (isEmpty(cardPool["mythic"])) {
-				booster.push(pick_card(cardPool["rare"]));
-			} else if (this.mythicPromotion && isEmpty(cardPool["rare"])) {
-				booster.push(pick_card(cardPool["mythic"]));
-			} else {
-				if (this.mythicPromotion && Math.random() <= mythicRate) booster.push(pick_card(cardPool["mythic"]));
-				else booster.push(pick_card(cardPool["rare"]));
-			}
-		}
-
-		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pick_card(cardPool["uncommon"], booster));
-
-		// Color balance the booster by adding one common of each color if possible
-		let pickedCommons = [];
-		if (this.colorBalance && targets["common"] >= 5) {
-			for (let c of "WUBRG") {
-				if (colorBalancedSlot[c] && !isEmpty(colorBalancedSlot[c])) {
-					let pickedCard = pick_card(colorBalancedSlot[c], pickedCommons);
-					removeCardFromDict(pickedCard, cardPool["common"]);
-					pickedCommons.push(pickedCard);
-				}
-			}
-		}
-
-		for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
-			let pickedCard = pick_card(cardPool["common"], pickedCommons);
-			if (this.colorBalance) removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
-			pickedCommons.push(pickedCard);
-		}
-
-		// Shuffle commons to avoid obvious signals to other players when color balancing
-		shuffleArray(pickedCommons);
-		booster = booster.concat(pickedCommons);
-
-		if (landSlot) booster.push(landSlot.pick());
-
-		// Last resort safety check
-		if (booster.some(v => typeof v === "undefined" || v === null)) {
-			const msg = `Unspecified error.`;
-			this.emitMessage("Error generating boosters", msg);
-			console.error(msg, booster);
-			return false;
-		}
-
-		return booster;
 	};
 
 	this.notifyUserChange = function() {
@@ -1171,7 +1051,7 @@ function Session(id, owner) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
 		for (let user of this.users) {
-			let boosters = [utils.getRandom(JumpstartBoosters), utils.getRandom(JumpstartBoosters)];
+			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
 			Connections[user].socket.emit(
 				"setCardSelection",
 				boosters

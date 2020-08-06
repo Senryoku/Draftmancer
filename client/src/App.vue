@@ -824,6 +824,8 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>06/08/2020</em>
+							<p>You should now correctly find one Planeswalker in each War of the Spark booster, and one legendary creature in each Dominaria pack. Also, you can now zoom on cards for extra readability by right clicking!</p>
 							<em>16/07/2020</em>
 							<p>Jumpstart is now available!</p>
 						</div>
