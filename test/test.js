@@ -1720,8 +1720,9 @@ describe("Set Specific Booster Rules", function() {
 	};
 
 	const validateDOMBooster = function(booster) {
+		const regex = /Legendary.*Creature/;
 		let LCCount = booster.reduce((acc, val) => {
-			return acc + Cards[val].type.includes("Legendary Creature") ? 1 : 0;
+			return acc + Cards[val].type.match(regex) ? 1 : 0;
 		}, 0);
 		expect(LCCount).to.be.at.least(1);
 	};

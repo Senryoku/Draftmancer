@@ -557,10 +557,10 @@ function Session(id, owner) {
 				},
 				dom: (cardpool, genericBoosterFunc) => {
 					let legendaryCreatures = {};
+					const regex = /Legendary.*Creature/;
 					for (let slot in cardpool)
 						for (let cid in cardpool[slot])
-							if (Cards[cid].type.includes("Legendary Creature"))
-								legendaryCreatures[cid] = cardpool[slot][cid];
+							if (Cards[cid].type.match(regex)) legendaryCreatures[cid] = cardpool[slot][cid];
 					return {
 						genericBoosterFunc: genericBoosterFunc,
 						legendaryCreatures: legendaryCreatures,
