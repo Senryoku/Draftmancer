@@ -677,7 +677,7 @@ export default {
 					customClass: SwalCustomClasses,
 					confirmButtonColor: "#d33",
 					cancelButtonColor: "#3085d6",
-					confirmButtonText: "Relaunch draft!",
+					confirmButtonText: "Launch draft!",
 				}).then(result => {
 					if (result.value) {
 						this.socket.emit("startDraft");
@@ -1306,9 +1306,9 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					confirmButtonText: "Yes, play!",
+					confirmButtonColor: "#d33",
+					cancelButtonColor: "#3085d6",
+					confirmButtonText: "Start new game!",
 				}).then(result => {
 					if (result.value) {
 						call(options);
