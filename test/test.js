@@ -1731,6 +1731,7 @@ describe("Set Specific Booster Rules", function() {
 	let sessionID = "SessionID";
 
 	const validateWARBooster = function(booster) {
+		expect(booster.map(cid => Cards[cid].set).every(s => s === "war")).to.be.true;
 		let PLCount = booster.reduce((acc, val) => {
 			return acc + Cards[val].type.includes("Planeswalker") ? 1 : 0;
 		}, 0);
@@ -1739,6 +1740,7 @@ describe("Set Specific Booster Rules", function() {
 
 	const validateDOMBooster = function(booster) {
 		const regex = /Legendary.*Creature/;
+		expect(booster.map(cid => Cards[cid].set).every(s => s === "dom")).to.be.true;
 		let LCCount = booster.reduce((acc, val) => {
 			return acc + Cards[val].type.match(regex) ? 1 : 0;
 		}, 0);
@@ -1840,6 +1842,23 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", []);
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
+				if (Math.floor(idx / 8) == 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
+				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`Validate mixed Custom boosters with regular set restriction.`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", ["dom"]);
+		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
 		clients[ownerIdx].once("startDraft", function() {
 			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
 				if (Math.floor(idx / 8) == 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
