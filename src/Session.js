@@ -8,7 +8,7 @@ const Connections = ConnectionModule.Connections;
 const Cards = require("./Cards");
 const Bot = require("./Bot");
 const LandSlot = require("./LandSlot");
-const { BoosterFactory, SetSpecificFactories } = require("./BoosterRules");
+const { BoosterFactory, SetSpecificFactories } = require("./BoosterFactory");
 const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
 const Persistence = require("./Persistence");
 
@@ -493,82 +493,82 @@ function Session(id, owner) {
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
 			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
-				const boosterRules = [];
+				const boosterFactories = [];
 				const usedSets = {};
 
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot =
 					this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
-				if (addLandSlot && !defaultFactory.landSlot)
+				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
 					defaultFactory.landSlot =
 						this.setRestriction.length === 0
 							? LandSlot.BasicLandSlots["m20"] // Totally arbitrary
 							: LandSlot.BasicLandSlots[this.setRestriction[0]];
 
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
-					const playerBoosterRules = [];
-					for (let boosterRule of this.customBoosters) {
+					const playerBoosterFactories = [];
+					for (let boosterSet of this.customBoosters) {
 						// No specific rules
-						if (boosterRule === "") {
-							playerBoosterRules.push(defaultFactory);
+						if (boosterSet === "") {
+							playerBoosterFactories.push(defaultFactory);
 						} else {
-							if (boosterRule === "random") {
+							if (boosterSet === "random") {
 								// Random booster from one of the sets in Card Pool
-								boosterRule =
+								boosterSet =
 									this.setRestriction.length === 0
 										? getRandom(constants.MTGSets)
 										: getRandom(this.setRestriction);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
-							if (!usedSets[boosterRule]) {
+							if (!usedSets[boosterSet]) {
 								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 								const landSlot =
-									boosterRule in LandSlot.SpecialLandSlots
-										? LandSlot.SpecialLandSlots[boosterRule]
+									boosterSet in LandSlot.SpecialLandSlots
+										? LandSlot.SpecialLandSlots[boosterSet]
 										: addLandSlot
-										? LandSlot.BasicLandSlots[boosterRule]
+										? LandSlot.BasicLandSlots[boosterSet]
 										: null;
-								usedSets[boosterRule] = getBoosterFactory(
-									boosterRule,
-									this.setByRarity(boosterRule),
+								usedSets[boosterSet] = getBoosterFactory(
+									boosterSet,
+									this.setByRarity(boosterSet),
 									landSlot,
 									BoosterFactoryOptions
 								);
 								// Check if we have enough card, considering maxDuplicate is a limiting factor
 								const multiplier = this.customBoosters.reduce(
-									(a, v) => (v == boosterRule ? a + 1 : a),
+									(a, v) => (v == boosterSet ? a + 1 : a),
 									0
 								);
 								if (
-									count_cards(usedSets[boosterRule].cardPool["common"]) <
+									count_cards(usedSets[boosterSet].cardPool["common"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["common"] ||
-									count_cards(usedSets[boosterRule].cardPool["uncommon"]) <
+									count_cards(usedSets[boosterSet].cardPool["uncommon"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
-									count_cards(usedSets[boosterRule].cardPool["rare"]) +
-										count_cards(usedSets[boosterRule].cardPool["mythic"]) <
+									count_cards(usedSets[boosterSet].cardPool["rare"]) +
+										count_cards(usedSets[boosterSet].cardPool["mythic"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["rare"]
 								) {
-									const msg = `Not enough cards in card pool for individual booster restriction '${boosterRule}'. Please check you Max. Duplicates setting.`;
+									const msg = `Not enough cards in card pool for individual booster restriction '${boosterSet}'. Please check you Max. Duplicates setting.`;
 									this.emitMessage("Error generating boosters", msg, true, 0);
 									console.warn(msg);
 									return false;
 								}
 							}
-							playerBoosterRules.push(usedSets[boosterRule]);
+							playerBoosterFactories.push(usedSets[boosterSet]);
 						}
 					}
-					boosterRules.push(playerBoosterRules);
+					boosterFactories.push(playerBoosterFactories);
 				}
 
 				// Generate Boosters
 				this.boosters = [];
 				// Implements distribution mode 'shufflePlayerBoosters'
 				if (this.distributionMode === "shufflePlayerBoosters")
-					for (let rules of boosterRules) shuffleArray(rules);
+					for (let rules of boosterFactories) shuffleArray(rules);
 
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
-						const rule = boosterRules[p][b];
+						const rule = boosterFactories[p][b];
 						const booster = rule.generateBooster(targets);
 						if (booster) this.boosters.push(booster);
 						else return false;

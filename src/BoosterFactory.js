@@ -4,6 +4,8 @@ const Cards = require("./Cards");
 const { isEmpty, shuffleArray } = require("./utils");
 const { removeCardFromDict, pickCard } = require("./cardUtils");
 
+// Generates booster for regular MtG Sets
+
 function BoosterFactory(cardPool, landSlot, options) {
 	this.cardPool = cardPool;
 	this.landSlot = landSlot;
@@ -57,7 +59,7 @@ function BoosterFactory(cardPool, landSlot, options) {
 			// 1 Rare/Mythic
 			if (isEmpty(cardPool["mythic"]) && isEmpty(cardPool["rare"])) {
 				const msg = `Not enough rare or mythic cards in collection.`;
-				this.emitMessage("Error generating boosters", msg);
+				this.onError("Error generating boosters", msg);
 				console.error(msg);
 				return false;
 			} else if (isEmpty(cardPool["mythic"])) {
@@ -101,7 +103,7 @@ function BoosterFactory(cardPool, landSlot, options) {
 		// Last resort safety check
 		if (booster.some(v => typeof v === "undefined" || v === null)) {
 			const msg = `Unspecified error.`;
-			this.emitMessage("Error generating boosters", msg);
+			this.onError("Error generating boosters", msg);
 			console.error(msg, booster);
 			return false;
 		}
