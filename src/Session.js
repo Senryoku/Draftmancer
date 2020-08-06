@@ -611,6 +611,7 @@ function Session(id, owner) {
 					cardPool: localCollection,
 					commonsByColor: commonsByColor,
 					landSlot: landSlot,
+					generateBooster: this.generateBooster,
 				};
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot =
