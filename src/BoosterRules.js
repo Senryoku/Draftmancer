@@ -81,9 +81,6 @@ const SetBoosterRules = {
 					if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
 					else --updatedTargets[Cards[pickedCID].rarity];
 					let booster = this.genericBoosterFunc(this.cardPool, colorBalancedSlot, updatedTargets, landSlot);
-					// Sync. legendaryCreatures object with the new card pool
-					for (let cid of booster)
-						if (cid in this.legendaryCreatures) removeCardFromDict(cid, this.legendaryCreatures);
 					// Insert the card in the appropriate slot
 					booster.unshift(pickedCID);
 					return booster;
