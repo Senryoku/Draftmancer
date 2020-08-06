@@ -1,7 +1,7 @@
 "use strict";
 
 const constants = require("../client/src/data/constants.json");
-const removeCardFromDict = require("./cardUtils").removeCardFromDict;
+const { removeCardFromDict, pickCard } = require("./cardUtils");
 const utils = require("./utils");
 const negMod = utils.negMod;
 const isEmpty = utils.isEmpty;
@@ -10,6 +10,7 @@ const Connections = ConnectionModule.Connections;
 const Cards = require("./Cards");
 const Bot = require("./Bot");
 const LandSlot = require("./LandSlot");
+const SetBoosterRules = require("./BoosterRules");
 const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
 const Persistence = require("./Persistence");
 
@@ -21,20 +22,6 @@ function shuffleArray(array, start = 0, end = array.length) {
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
-
-// TODO: Prevent multiples by name?
-const pick_card = function(dict, booster) {
-	let c = utils.getRandomKey(dict);
-	if (booster != undefined) {
-		let prevention_attempts = 0; // Fail safe-ish
-		while (booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
-			c = utils.getRandomKey(dict);
-			++prevention_attempts;
-		}
-	}
-	removeCardFromDict(c, dict);
-	return c;
-};
 
 function Bracket(players) {
 	this.players = players;
@@ -398,7 +385,7 @@ function Session(id, owner) {
 						if (useColorBalance && r === colorBalancedSlot) {
 							for (let c of "WUBRG") {
 								if (cardsByColor[c] && !isEmpty(cardsByColor[c])) {
-									let pickedCard = pick_card(cardsByColor[c], booster);
+									let pickedCard = pickCard(cardsByColor[c], booster);
 									removeCardFromDict(pickedCard, cardsByRarity[colorBalancedSlot]);
 									booster.push(pickedCard);
 									++addedCards;
@@ -406,7 +393,7 @@ function Session(id, owner) {
 							}
 						}
 						for (let i = 0; i < this.customCardList.cardsPerBooster[r] - addedCards; ++i) {
-							const pickedCard = pick_card(cardsByRarity[r], booster);
+							const pickedCard = pickCard(cardsByRarity[r], booster);
 							if (useColorBalance && r === colorBalancedSlot)
 								removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 							booster.push(pickedCard);
@@ -451,7 +438,7 @@ function Session(id, owner) {
 					if (this.colorBalance) {
 						for (let c of "WUBRG") {
 							if (cardsByColor[c] && !isEmpty(cardsByColor[c])) {
-								let pickedCard = pick_card(cardsByColor[c], booster);
+								let pickedCard = pickCard(cardsByColor[c], booster);
 								removeCardFromDict(pickedCard, localCollection);
 								booster.push(pickedCard);
 							}
@@ -459,7 +446,7 @@ function Session(id, owner) {
 					}
 
 					for (let i = booster.length; i < cardsPerBooster; ++i) {
-						const pickedCard = pick_card(localCollection, booster);
+						const pickedCard = pickCard(localCollection, booster);
 						if (this.colorBalance) removeCardFromDict(pickedCard, cardsByColor[Cards[pickedCard].colors]);
 						booster.push(pickedCard);
 					}
@@ -502,108 +489,6 @@ function Session(id, owner) {
 					}
 				}
 			}
-
-			// Set specific rules.
-			// Neither DOM or WAR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
-			const SetBoosterRules = {
-				war: (cardpool, genericBoosterFunc) => {
-					let planeswalkers = {};
-					let filteredCardPool = {};
-					for (let slot in cardpool) {
-						filteredCardPool[slot] = {};
-						for (let cid in cardpool[slot]) {
-							if (Cards[cid].type.includes("Planeswalker")) planeswalkers[cid] = cardpool[slot][cid];
-							else filteredCardPool[slot][cid] = cardpool[slot][cid];
-						}
-					}
-					return {
-						genericBoosterFunc: genericBoosterFunc,
-						planeswalkers: planeswalkers,
-						cardPool: filteredCardPool,
-						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
-							console.log("WAR Generate Booster");
-							// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
-							if (
-								((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
-									(!("rare" in targets) || targets["rare"] <= 0)) ||
-								Object.values(planeswalkers).length === 0 ||
-								Object.values(planeswalkers).every(arr => arr.length === 0)
-							) {
-								return this.genericBoosterFunc(this.cardPool, colorBalancedSlot, targets, landSlot);
-							} else {
-								let updatedTargets = Object.assign({}, targets);
-								let pickedCID = pick_card(this.planeswalkers, []);
-								if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
-								else --updatedTargets[Cards[pickedCID].rarity];
-								let booster = this.genericBoosterFunc(
-									this.cardPool,
-									colorBalancedSlot,
-									updatedTargets,
-									landSlot
-								);
-								// Insert the card in the appropriate slot
-								if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
-									booster.unshift(pickedCID);
-								else
-									booster.splice(
-										booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
-										0,
-										pickedCID
-									);
-								return booster;
-							}
-						},
-					};
-				},
-				dom: (cardpool, genericBoosterFunc) => {
-					let legendaryCreatures = {};
-					const regex = /Legendary.*Creature/;
-					for (let slot in cardpool)
-						for (let cid in cardpool[slot])
-							if (Cards[cid].type.match(regex)) legendaryCreatures[cid] = cardpool[slot][cid];
-					return {
-						genericBoosterFunc: genericBoosterFunc,
-						legendaryCreatures: legendaryCreatures,
-						cardPool: cardpool,
-						generateBooster: function(cardpool, colorBalancedSlot, targets, landSlot) {
-							console.log("DOM Generate Booster");
-							// Ignore the rule if there's no legendary creatures left
-							if (
-								Object.values(legendaryCreatures).length === 0 ||
-								Object.values(legendaryCreatures).every(arr => arr.length === 0)
-							) {
-								return this.genericBoosterFunc(cardpool, colorBalancedSlot, targets, landSlot);
-							} else {
-								let updatedTargets = Object.assign({}, targets);
-								let pickedCID = pick_card(this.legendaryCreatures, []); // FIXME : No duplicate protection!
-								removeCardFromDict(pickedCID, cardpool[Cards[pickedCID].rarity]);
-								if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
-								else --updatedTargets[Cards[pickedCID].rarity];
-								let booster = this.genericBoosterFunc(
-									cardpool,
-									colorBalancedSlot,
-									updatedTargets,
-									landSlot
-								);
-								// Sync. legendaryCreatures object with the new card pool
-								for (let cid of booster)
-									if (cid in this.legendaryCreatures)
-										removeCardFromDict(cid, this.legendaryCreatures);
-								// Insert the card in the appropriate slot
-								if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
-									booster.unshift(pickedCID);
-								else
-									booster.splice(
-										booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
-										0,
-										pickedCID
-									);
-								return booster;
-							}
-						},
-					};
-				},
-			};
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
 			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
@@ -735,9 +620,9 @@ function Session(id, owner) {
 		return true;
 	};
 
-	/* Returns a standard draft booster
+	/* Returns a standard draft booster (Do NOT use for custom list/sets)
 	 *   cardPool: Cards (dict with id: card count) arranged by slot
-	 *   colorBalancedSlot: Cards arranged by color
+	 *   colorBalancedSlot: Cards arranged by color (common slot)
 	 *   targets: Card count for each slot
 	 *   landSlot: Optional land slot rule
 	 */
@@ -759,7 +644,7 @@ function Session(id, owner) {
 			const rarityCheck = Math.random();
 			for (let r in foilRarityRates)
 				if (rarityCheck <= foilRarityRates[r] && !isEmpty(cardPool[r])) {
-					let pickedCard = pick_card(cardPool[r]);
+					let pickedCard = pickCard(cardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.colorBalance && Cards[pickedCard].rarity == "common")
 						removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
@@ -777,23 +662,23 @@ function Session(id, owner) {
 				console.error(msg);
 				return false;
 			} else if (isEmpty(cardPool["mythic"])) {
-				booster.push(pick_card(cardPool["rare"]));
+				booster.push(pickCard(cardPool["rare"]));
 			} else if (this.mythicPromotion && isEmpty(cardPool["rare"])) {
-				booster.push(pick_card(cardPool["mythic"]));
+				booster.push(pickCard(cardPool["mythic"]));
 			} else {
-				if (this.mythicPromotion && Math.random() <= mythicRate) booster.push(pick_card(cardPool["mythic"]));
-				else booster.push(pick_card(cardPool["rare"]));
+				if (this.mythicPromotion && Math.random() <= mythicRate) booster.push(pickCard(cardPool["mythic"]));
+				else booster.push(pickCard(cardPool["rare"]));
 			}
 		}
 
-		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pick_card(cardPool["uncommon"], booster));
+		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pickCard(cardPool["uncommon"], booster));
 
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		if (this.colorBalance && targets["common"] >= 5) {
 			for (let c of "WUBRG") {
 				if (colorBalancedSlot[c] && !isEmpty(colorBalancedSlot[c])) {
-					let pickedCard = pick_card(colorBalancedSlot[c], pickedCommons);
+					let pickedCard = pickCard(colorBalancedSlot[c], pickedCommons);
 					removeCardFromDict(pickedCard, cardPool["common"]);
 					pickedCommons.push(pickedCard);
 				}
@@ -801,7 +686,7 @@ function Session(id, owner) {
 		}
 
 		for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
-			let pickedCard = pick_card(cardPool["common"], pickedCommons);
+			let pickedCard = pickCard(cardPool["common"], pickedCommons);
 			if (this.colorBalance) removeCardFromDict(pickedCard, colorBalancedSlot[Cards[pickedCard].colors]);
 			pickedCommons.push(pickedCard);
 		}
