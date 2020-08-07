@@ -9,7 +9,7 @@
 				<table>
 					<caption>
 						{{
-							selectedSet.fullName
+						selectedSet.fullName
 						}}
 					</caption>
 					<tr>
@@ -27,7 +27,7 @@
 						<td>{{ 4 * selectedSet["total"]["unique"] - selectedSet.cardCount }}</td>
 						<td>
 							{{ selectedSet.cards.filter(c => c.in_booster && c.count > 0).length }}/{{
-								selectedSet.cards.filter(c => c.in_booster).length
+							selectedSet.cards.filter(c => c.in_booster).length
 							}}
 						</td>
 						<td>-</td>
@@ -39,20 +39,18 @@
 						:key="r"
 					>
 						<td>{{ r }}</td>
-						<td>
-							{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}
-						</td>
+						<td>{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}</td>
 						<td>{{ selectedSet[r + "Count"] }}/{{ 4 * selectedSet["total"][r + "Count"] }}</td>
 						<td>{{ 4 * selectedSet["total"][r + "Count"] - selectedSet[r + "Count"] }}</td>
 						<td>
 							{{ selectedSet[r].filter(c => c.in_booster && c.count > 0).length }}/{{
-								selectedSet[r].filter(c => c.in_booster).length
+							selectedSet[r].filter(c => c.in_booster).length
 							}}
 						</td>
 						<td>
 							{{
-								4 * selectedSet[r].filter(c => c.in_booster).length -
-									selectedSet[r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)
+							4 * selectedSet[r].filter(c => c.in_booster).length -
+							selectedSet[r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)
 							}}
 						</td>
 					</tr>
@@ -102,11 +100,11 @@ export default {
 		return {
 			missingCardsRarity: "rare",
 			showNonBooster: false,
-			selectedSetCode: "m21",
+			selectedSetCode: Constant.MTGSets[Constant.MTGSets.length - 1],
 		};
 	},
 	computed: {
-		collectionStats: function() {
+		collectionStats: function () {
 			if (!this.collection || !Cards || !SetsInfos) return null;
 			let stats = {};
 			for (let id in Cards) {
@@ -152,7 +150,7 @@ export default {
 			}
 			return stats;
 		},
-		selectedSet: function() {
+		selectedSet: function () {
 			return this.collectionStats[this.selectedSetCode];
 		},
 	},
