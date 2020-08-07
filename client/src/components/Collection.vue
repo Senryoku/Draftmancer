@@ -32,12 +32,7 @@
 						</td>
 						<td>-</td>
 					</tr>
-					<tr
-						v-for="r in ['common', 'uncommon', 'rare', 'mythic'].filter(
-							r => selectedSet[r + 'Count'] && selectedSet['total'][r + 'Count'] > 0
-						)"
-						:key="r"
-					>
+					<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" :key="r">
 						<td>{{ r }}</td>
 						<td>{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}</td>
 						<td>{{ selectedSet[r + "Count"] }}/{{ 4 * selectedSet["total"][r + "Count"] }}</td>
