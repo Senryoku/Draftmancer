@@ -22,6 +22,14 @@ JumpstartSwaps = "data/JumpstartSwaps.json"
 JumpstartBoostersDist = 'data/JumpstartBoosters.json'
 RatingsDest = 'data/ratings.json'
 
+ArenaRarity = {
+    1: "basic",  # I guess?
+    2: "common",
+    3: "uncommon",
+    4: "rare",
+    5: "mythic"
+}
+
 ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = False
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
@@ -109,7 +117,7 @@ for path in MTGACardsFiles:
 
                 if o["set"] == "akr":
                     AKRCards[MTGALocalization['en'][o['titleId']]] = (
-                        o['grpid'], collectorNumber)
+                        o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
@@ -179,6 +187,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = AKRCards[c["name"]][0]
                 c['set'] = "akr"
                 c['collector_number'] = AKRCards[c["name"]][1]
+                c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
                 akr_candidates[c["lang"]][c["name"]] = c
         for l in akr_candidates.keys():
             for c in akr_candidates[l].values():
