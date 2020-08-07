@@ -218,6 +218,7 @@ describe("Checking sets", function() {
 		thb: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		iko: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
+		akr: { common: 200, uncommon: 99, rare: 99, mythic: 99 }, // FIXME: All we know is that there's 338 cards total
 	};
 
 	beforeEach(function(done) {
