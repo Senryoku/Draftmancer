@@ -671,13 +671,13 @@ export default {
 			if (this.deck.length > 0) {
 				Swal.fire({
 					title: "Are you sure?",
-					text: "Launching a draft will reset everyones cards/deck!",
+					text: "Launching a new draft will reset everyones cards/deck!",
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					confirmButtonText: "I'm sure!",
+					confirmButtonColor: "#d33",
+					cancelButtonColor: "#3085d6",
+					confirmButtonText: "Launch draft!",
 				}).then(result => {
 					if (result.value) {
 						this.socket.emit("startDraft");
@@ -692,13 +692,13 @@ export default {
 			const self = this;
 			Swal.fire({
 				title: "Are you sure?",
-				text: "Do you really want to stop the draft here?",
+				text: "Do you really want to stop the draft for all players?",
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "I'm sure!",
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: "Stop the draft!",
 			}).then(result => {
 				if (result.value) {
 					self.socket.emit("stopDraft");
@@ -1248,9 +1248,9 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "Yes",
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: "Remove player",
 			}).then(result => {
 				if (result.value) {
 					this.socket.emit("removePlayer", userID);
@@ -1306,9 +1306,9 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
-					confirmButtonText: "Yes, play!",
+					confirmButtonColor: "#d33",
+					cancelButtonColor: "#3085d6",
+					confirmButtonText: "Start new game!",
 				}).then(result => {
 					if (result.value) {
 						call(options);
