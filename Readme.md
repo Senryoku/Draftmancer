@@ -2,7 +2,7 @@
 
 ## Contact
 
-Join the discord for development related discussions: https://discord.gg/KYKzx9m
+Join the discord for development related discussions: https://discord.gg/XscXXNw
 
 ## How to run the project locally
 

@@ -843,7 +843,7 @@
 								href="mailto:mtgadraft@gmail.com"
 							>mtgadraft@gmail.com</a>
 							or join the
-							<a href="https://discord.gg/KYKzx9m">MTGADraft Discord</a>.
+							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
 						</div>
 					</div>
 					<div class="container">
@@ -1344,7 +1344,7 @@
 				</p>
 				<p>
 					MTGADraft Discord:
-					<a href="https://discord.gg/KYKzx9m">https://discord.gg/KYKzx9m</a>
+					<a href="https://discord.gg/XscXXNw">https://discord.gg/XscXXNw</a>
 				</p>
 				<h3>Patch Notes</h3>
 				<patch-notes></patch-notes>
