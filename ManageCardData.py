@@ -185,6 +185,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
             if (c['set'].lower() == 'akh' or c['set'].lower() == "hou") or c['name'] not in akr_candidates[c["lang"]] or c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']:
                 c['arena_id'] = AKRCards[c["name"]][0]
                 c['set'] = "akr"
+                c['booster'] = True
                 c['collector_number'] = AKRCards[c["name"]][1]
                 c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
                 akr_candidates[c["lang"]][c["name"]] = c
@@ -236,21 +237,20 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     response = requests.get("https://api.scryfall.com/cards/search?{}".format(
         urllib.parse.urlencode({'q': 'game:arena -in:booster'})))
     data = json.loads(response.content)
-    for c in data['data']:
-        if('arena_id' in c):
-            NonBoosterCards.append(c['arena_id'])
-        elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-            NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
-                                                               c['collector_number'], c['set'].lower())])
-    while(data["has_more"]):
-        response = requests.get(data["next_page"])
-        data = json.loads(response.content)
+
+    def handleNonBoosterResponse(data):
         for c in data['data']:
             if('arena_id' in c):
                 NonBoosterCards.append(c['arena_id'])
             elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
                 NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
                                                                    c['collector_number'], c['set'].lower())])
+
+    handleNonBoosterResponse(data)
+    while(data["has_more"]):
+        response = requests.get(data["next_page"])
+        data = json.loads(response.content)
+        handleNonBoosterResponse(data)
 
     print("Generating card data cache...")
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
