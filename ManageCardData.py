@@ -116,7 +116,7 @@ for path in MTGACardsFiles:
                                  [o['titleId']]] = o['grpid']
 
                 if o["set"] == "akr":
-                    AKRCards[MTGALocalization['en'][o['titleId']]] = (
+                    AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
                         o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
 
 
@@ -176,8 +176,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         print("\nExtracting AKR card data...")
         objects = ijson.items(file, 'item')
-        akr_cards = (o for o in objects if o['name'] in AKRCards or o['name'].split(
-            " //")[0] in AKRCards)
+        akr_cards = (o for o in objects if o['name'] in AKRCards)
         akr_candidates = {}
         # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
         for c in akr_cards:
@@ -192,6 +191,12 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         for l in akr_candidates.keys():
             for c in akr_candidates[l].values():
                 cards.append(c)
+
+        MissingAKRCards = AKRCards
+        for name in akr_candidates["en"]:
+            del MissingAKRCards[name]
+        if len(MissingAKRCards) > 0:
+            print("MissingAKRCards: ", MissingAKRCards)
 
     with open(BulkDataArenaPath, 'w') as outfile:
         json.dump(cards, outfile, cls=DecimalEncoder)
