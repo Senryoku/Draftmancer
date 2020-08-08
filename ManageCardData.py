@@ -182,7 +182,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         for c in akr_cards:
             if c["lang"] not in akr_candidates:
                 akr_candidates[c["lang"]] = {}
-            if (c['set'].lower() == 'akh' or c['set'].lower() == "hou") or c['name'] not in akr_candidates[c["lang"]]:
+            if (c['set'].lower() == 'akh' or c['set'].lower() == "hou") or c['name'] not in akr_candidates[c["lang"]] or c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']:
                 c['arena_id'] = AKRCards[c["name"]][0]
                 c['set'] = "akr"
                 c['collector_number'] = AKRCards[c["name"]][1]
