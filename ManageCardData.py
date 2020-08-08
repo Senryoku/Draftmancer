@@ -184,8 +184,9 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 akr_candidates[c["lang"]] = {}
             if (c['set'].lower() in ['akh', 'hou']) or c['name'] not in akr_candidates[c['lang']] or (akr_candidates[c['lang']][c['name']]['set'] not in ['akh', 'hou'] and c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']):
                 c['arena_id'] = AKRCards[c["name"]][0]
-                c['booster'] = True
                 c['collector_number'] = AKRCards[c["name"]][1]
+                # Force AKR cards to appear in boosters, excluding Regal Caracal (Buy-a-Box). FIXME: Check if this is indeed a Buy-a-Box :)
+                c['booster'] = c['collector_number'] != "339"
                 c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
                 akr_candidates[c["lang"]][c["name"]] = c
         for l in akr_candidates.keys():
