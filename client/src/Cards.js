@@ -14,7 +14,7 @@ function parseCost(cost) {
 	// Use only the first part of split cards
 	if (cost.includes("//")) cost = cost.split("//")[0].trim();
 	if (!cost || cost === "") return r;
-	let symbols = cost.split(/(?<=})/);
+	let symbols = cost.match(/({[^}]+})/g);
 	for (let s of symbols) {
 		r.cmc += ManaSymbols[s].cmc;
 		r.colors = r.colors.concat(ManaSymbols[s].colors);
