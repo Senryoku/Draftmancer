@@ -22,6 +22,14 @@ JumpstartSwaps = "data/JumpstartSwaps.json"
 JumpstartBoostersDist = 'data/JumpstartBoosters.json'
 RatingsDest = 'data/ratings.json'
 
+ArenaRarity = {
+    1: "basic",  # I guess?
+    2: "common",
+    3: "uncommon",
+    4: "rare",
+    5: "mythic"
+}
+
 ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = False
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
@@ -41,7 +49,8 @@ for path in MTGALocFiles:
         locdata = json.load(file)
         for lang in locdata:
             langcode = lang['isoCode'][:2]
-            MTGALocalization[langcode] = {}
+            if langcode not in MTGALocalization:
+                MTGALocalization[langcode] = {}
             for o in lang['keys']:
                 MTGALocalization[langcode][o['id']] = o['text']
 
@@ -77,6 +86,7 @@ Translations = {"en": {},
                 "ph": {}}
 CardsCollectorNumberAndSet = {}
 CardNameToID = {}
+AKRCards = {}
 for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
@@ -87,14 +97,15 @@ for path in MTGACardsFiles:
                     o['set'] = 'con'
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
+                collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                 # Adding name to disambiguate.
                 CardsCollectorNumberAndSet[(MTGALocalization['en'][o['titleId']],
-                                            o['CollectorNumber'], o['set'])] = o['grpid']
+                                            collectorNumber, o['set'])] = o['grpid']
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
-                        MTGALocalization['en'][o['titleId']], o['CollectorNumber'], 'ajmp')] = o['grpid']
+                        MTGALocalization['en'][o['titleId']], collectorNumber, 'ajmp')] = o['grpid']
                 for lang in MTGALocalization:
                     Translations[lang][o['grpid']] = {
                         'printed_name': MTGALocalization[lang][o['titleId']]}
@@ -104,6 +115,12 @@ for path in MTGACardsFiles:
                     CardNameToID[MTGALocalization['en']
                                  [o['titleId']]] = o['grpid']
 
+                if o["set"] == "akr":
+                    AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
+                        o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
+
+
+print("AKRCards length: {}".format(len(AKRCards.keys())))
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -131,11 +148,11 @@ class DecimalEncoder(json.JSONEncoder):
 
 if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     print("Extracting arena card to {}...".format(BulkDataArenaPath))
+    cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         objects = ijson.items(file, 'item')
         arena_cards = (o for o in objects if (
             o['name'], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet or (o['name'].split(" //")[0], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
-        cards = []
 
         sys.stdout.write("Processing... ")
         sys.stdout.flush()
@@ -155,10 +172,38 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.write("\b" * 100)
         sys.stdout.write(" " + str(copied) + " cards added.")
 
-        with open(BulkDataArenaPath, 'w') as outfile:
-            json.dump(cards, outfile, cls=DecimalEncoder)
+    # Scryfall (understandably) doesn't have data for AKR right now, getting AKH/HOU cards by name instead
+    with open(BulkDataPath, 'r', encoding="utf8") as file:
+        print("\nExtracting AKR card data...")
+        objects = ijson.items(file, 'item')
+        akr_cards = (o for o in objects if o['name'] in AKRCards)
+        akr_candidates = {}
+        # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
+        for c in akr_cards:
+            if c["lang"] not in akr_candidates:
+                akr_candidates[c["lang"]] = {}
+            if (c['set'].lower() in ['akh', 'hou']) or c['name'] not in akr_candidates[c['lang']] or (akr_candidates[c['lang']][c['name']]['set'] not in ['akh', 'hou'] and c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']):
+                c['arena_id'] = AKRCards[c["name"]][0]
+                c['collector_number'] = AKRCards[c["name"]][1]
+                # Force AKR cards to appear in boosters, excluding Regal Caracal (Buy-a-Box). FIXME: Check if this is indeed a Buy-a-Box :)
+                c['booster'] = c['collector_number'] != "339"
+                c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
+                akr_candidates[c["lang"]][c["name"]] = c
+        for l in akr_candidates.keys():
+            for c in akr_candidates[l].values():
+                c['set'] = "akr"
+                cards.append(c)
 
-        print("\nDone!")
+        MissingAKRCards = AKRCards
+        for name in akr_candidates["en"]:
+            del MissingAKRCards[name]
+        if len(MissingAKRCards) > 0:
+            print("MissingAKRCards: ", MissingAKRCards)
+
+    with open(BulkDataArenaPath, 'w') as outfile:
+        json.dump(cards, outfile, cls=DecimalEncoder)
+
+    print("\nDone!")
 
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
@@ -193,21 +238,20 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     response = requests.get("https://api.scryfall.com/cards/search?{}".format(
         urllib.parse.urlencode({'q': 'game:arena -in:booster'})))
     data = json.loads(response.content)
-    for c in data['data']:
-        if('arena_id' in c):
-            NonBoosterCards.append(c['arena_id'])
-        elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-            NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
-                                                               c['collector_number'], c['set'].lower())])
-    while(data["has_more"]):
-        response = requests.get(data["next_page"])
-        data = json.loads(response.content)
+
+    def handleNonBoosterResponse(data):
         for c in data['data']:
             if('arena_id' in c):
                 NonBoosterCards.append(c['arena_id'])
             elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
                 NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
                                                                    c['collector_number'], c['set'].lower())])
+
+    handleNonBoosterResponse(data)
+    while(data["has_more"]):
+        response = requests.get(data["next_page"])
+        data = json.loads(response.content)
+        handleNonBoosterResponse(data)
 
     print("Generating card data cache...")
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
@@ -243,7 +287,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 subtypes = []  # Unused for now
                 if len(typeLine) > 1:
                     subtypes = typeLine[1].split()
-                #selection['subtypes'] = subtypes
+                # selection['subtypes'] = subtypes
                 if selection['name'] in CardRatings:
                     selection['rating'] = CardRatings[selection['name']]
                 else:
@@ -348,7 +392,8 @@ setFullNames = {
     "thb": "Theros: Beyond Death",
     "m21": "Core Set 2021",
     "iko": "Ikoria: Lair of Behemoths",
-    "jmp": "Jumpstart"
+    "jmp": "Jumpstart",
+    "akr": "Amonkhet Remastered"
 }
 
 
