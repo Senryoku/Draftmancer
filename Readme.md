@@ -49,6 +49,10 @@ AWS_ENDPOINT=http://localhost:8000
 -   Regroup Game Mode besides Draft in a single dropdown menu
 -   Display foils as... foils in front end?
 
+### New Features
+
+-   Grid Draft; Winchester Draft (harder to implement)
+
 ## Check
 
 Features that may need some additional testing:
@@ -66,6 +70,7 @@ Features that may need some additional testing:
 
 -   Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
 -   Adventures (ELD) and Dual Faces (IXL) need only one.
+-   AKR Splits Cards uses triple forward slashes (///) instead of double.
 
 ## Custom Set format
 

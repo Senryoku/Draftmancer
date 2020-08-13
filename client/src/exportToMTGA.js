@@ -11,7 +11,10 @@ function exportCardToMTGA(c, language, full) {
 	if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
 	let idx = name.indexOf("//");
 	// Ravnica Splits cards needs both names to be imported, others don't
-	if (idx != -1 && c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
+	if (idx != -1) {
+		if (c.set === "akr") name = name.replace("//", "///");
+		else if (c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
+	}
 
 	if (full) return `1 ${name} (${set}) ${c.collector_number}\n`;
 	else return `1 ${name}\n`;
