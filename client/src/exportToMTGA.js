@@ -30,7 +30,7 @@ export default function exportToMTGA(deck, sideboard, language, lands, full = tr
 		str += full ? "\nSideboard\n" : "\n";
 		for (let c of sideboard) str += exportCardToMTGA(c, language, full);
 		// Add some basic lands to the sideboard
-		for (let c of ["W", "U", "B", "R", "G"]) str += `2 ${Constant.BasicLandNames[language][c]}\n`;
+		for (let c of ["W", "U", "B", "R", "G"]) str += `10 ${Constant.BasicLandNames[language][c]}\n`;
 	}
 	return str;
 }
