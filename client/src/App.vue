@@ -240,6 +240,12 @@
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<button
+						@click="startGridDraft()"
+						v-tooltip="'Starts a Grid Draft. This is a draft variant for only two players.'"
+					>Grid</button>
+				</span>
+				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+					<button
 						@click="sealedDialog"
 						v-tooltip="'Distributes boosters to everyone for a sealed session.'"
 					>Sealed</button>
@@ -428,6 +434,13 @@
 								<template v-if="winstonDraftState">
 									<i
 										v-show="user.userID === winstonDraftState.currentPlayer"
+										class="fas fa-spinner fa-spin"
+										v-tooltip="user.userName + ' is thinking...'"
+									></i>
+								</template>
+								<template v-if="gridDraftState">
+									<i
+										v-show="user.userID === gridDraftState.currentPlayer"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
 									></i>
@@ -627,6 +640,21 @@
 						</template>
 					</div>
 				</div>
+			</div>
+			<!-- Grid Draft -->
+			<div v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
+				<div class="winston-status">
+					<h2>Grid Draft</h2>
+					<span>
+						<template v-if="userID === gridDraftState.currentPlayer">Your turn!</template>
+						<template v-else>Waiting on {{ userByID[gridDraftState.currentPlayer].userName }}...</template>
+					</span>
+				</div>
+				<grid-draft
+					:state="gridDraftState"
+					:picking="userID === gridDraftState.currentPlayer"
+					@pick="gridDraftPick"
+				></grid-draft>
 			</div>
 		</template>
 
@@ -877,7 +905,7 @@
 					<strong>Will MTGADraft support cards from outside Arena?</strong>
 					<p>
 						Probably not. MTGADraft was designed from the start with Arena in mind and supporting decades of
-						card brings a lot of complexity.
+						cards brings a lot of complexity.
 					</p>
 				</div>
 				<h2>Options Description</h2>

@@ -1351,7 +1351,7 @@ describe("Winston Draft", function() {
 				if (connectedClients == clients.length && receivedState == clients.length) done();
 			});
 
-			(_ => {
+			(() => {
 				const _idx = index;
 				c.once("winstonDraftNextRound", function(state) {
 					states[_idx] = state;
@@ -1484,6 +1484,125 @@ describe("Winston Draft", function() {
 			});
 		}
 		clients[ownerIdx].emit("winstonDraftTakePile");
+	});
+});
+
+describe.only("Grid Draft", function() {
+	let clients = [];
+	let sessionID = "sessionID";
+	const Sessions = server.__get__("Sessions");
+	var ownerIdx;
+	var nonOwnerIdx;
+
+	beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function(done) {
+		clients = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+				{
+					userID: "id2",
+					sessionID: sessionID,
+					userName: "Client2",
+				},
+			],
+			done
+		);
+	});
+
+	after(function(done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+		}
+		// Wait for the sockets to be disconnected, I haven't found another way...
+		setTimeout(function() {
+			const Connections = server.__get__("Connections");
+			expect(Object.keys(Connections).length).to.equal(0);
+			enableLogs(false);
+			done();
+		}, 250);
+	});
+
+	it("2 clients with different userID should be connected.", function(done) {
+		const Connections = server.__get__("Connections");
+		expect(Object.keys(Connections).length).to.equal(2);
+		done();
+	});
+
+	let states = [];
+	it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function(done) {
+		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		nonOwnerIdx = 1 - ownerIdx;
+		let connectedClients = 0;
+		let receivedState = 0;
+		let index = 0;
+		for (let c of clients) {
+			c.once("startGridDraft", function() {
+				connectedClients += 1;
+				if (connectedClients == clients.length && receivedState == clients.length) done();
+			});
+
+			(() => {
+				const _idx = index;
+				c.once("gridDraftNextRound", function(state) {
+					states[_idx] = state;
+					receivedState += 1;
+					if (connectedClients == clients.length && receivedState == clients.length) done();
+				});
+			})();
+			++index;
+		}
+		clients[ownerIdx].emit("startGridDraft");
+	});
+
+	it("Non-owner disconnects, owner receives updated user infos.", function(done) {
+		clients[ownerIdx].once("userDisconnected", function() {
+			waitForSocket(clients[nonOwnerIdx], done);
+		});
+		clients[nonOwnerIdx].disconnect();
+	});
+
+	it("Non-owner reconnects, draft restarts.", function(done) {
+		clients[nonOwnerIdx].once("rejoinGridDraft", function(state) {
+			done();
+		});
+		clients[nonOwnerIdx].connect();
+	});
+
+	it("Every player randomly chooses a row or column and the draft should end.", function(done) {
+		let draftEnded = 0;
+
+		for (let c = 0; c < clients.length; ++c) {
+			// Pick randomly and retry on error (empty col/row)
+			const pick = () => {
+				const cl = clients[c];
+				cl.emit("gridDraftPick", Math.floor(Math.random() * 6), response => {
+					if (response.code !== 0) pick();
+				});
+			};
+			clients[c].on("gridDraftNextRound", function(userID) {
+				if (userID === clients[c].query.userID) pick();
+			});
+			clients[c].once("gridDraftEnd", function() {
+				draftEnded += 1;
+				this.removeListener("gridDraftNextRound");
+				if (draftEnded == clients.length) done();
+			});
+		}
+		clients[ownerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
 	});
 });
 

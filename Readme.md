@@ -37,8 +37,16 @@ AWS_ENDPOINT=http://localhost:8000
 
 ## Todo
 
+### Grid Draft
+
+-   Animation on second pick before displaying the new booster
+-   Better pick icons
+-   Improve booster generation (9-cards boosters, the excess is just discarded right now!)
+-   Better placeholder for picked cards
+
 ### Important
 
+-   Remove Bots from Virtual Players when Winston/Grid drafting
 -   Re-think color balance for multi-colored cards?
 -   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State for a better example)
@@ -51,12 +59,13 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### New Features
 
--   Grid Draft; Winchester Draft (harder to implement)
+-   Winchester Draft (harder to implement)
 
 ## Check
 
 Features that may need some additional testing:
 
+-   Grid Draft
 -   Set specificy booster generation rules (DOM/WAR)
 -   Picks by Drag & Drop
 -   Load translations on-demand.

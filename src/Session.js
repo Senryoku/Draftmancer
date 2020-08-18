@@ -78,6 +78,31 @@ function WinstonDraftState(players, boosters) {
 	};
 }
 
+function GridDraftState(players, boosters) {
+	this.players = players;
+	this.round = -1; // Will be immedialty incremented
+	this.boosters = []; // 3x3 Grid, Row-Major order
+	if (boosters) {
+		for (let booster of boosters) {
+			if (booster.length > 9) booster.length = 9;
+			if (booster.length < 9) this.error = true;
+			shuffleArray(booster);
+			this.boosters.push(booster);
+		}
+	}
+
+	this.currentPlayer = function() {
+		return this.players[[0, 1, 1, 0][this.round % 4]];
+	};
+	this.syncData = function() {
+		return {
+			round: this.round,
+			currentPlayer: this.currentPlayer(),
+			booster: this.boosters[0],
+		};
+	};
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -126,6 +151,7 @@ function Session(id, owner) {
 	this.disconnectedUsers = {};
 
 	this.winstonDraftState = null;
+	this.gridDraftState = null;
 
 	this.addUser = function(userID) {
 		if (this.users.has(userID)) {
@@ -704,6 +730,77 @@ function Session(id, owner) {
 
 	///////////////////// Winston Draft End //////////////////////
 
+	///////////////////// Grid Draft //////////////////////
+
+	this.startGridDraft = function(boosterCount) {
+		if (this.users.size != 2) return false;
+		this.drafting = true;
+		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
+		// TODO
+		if (!this.generateBoosters(boosterCount)) {
+			this.drafting = false;
+			return;
+		}
+
+		this.disconnectedUsers = {};
+		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayers(), this.boosters);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedVirtualPlayers(),
+			});
+			Connections[user].socket.emit("startGridDraft", this.gridDraftState.syncData());
+		}
+		this.gridDraftNextRound();
+		return true;
+	};
+
+	this.endGridDraft = function() {
+		Persistence.logSession("GridDraft", this);
+		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
+		this.gridDraftState = null;
+		this.drafting = false;
+	};
+
+	this.gridDraftNextRound = function() {
+		const s = this.gridDraftState;
+		++s.round;
+		if (s.round % 2 === 0) {
+			s.boosters.shift();
+			if (s.boosters.length === 0) {
+				this.endGridDraft();
+				return;
+			}
+		}
+		for (let user of this.users) {
+			Connections[user].socket.emit("gridDraftSync", s.syncData());
+			Connections[user].socket.emit("gridDraftNextRound", s.currentPlayer());
+		}
+	};
+
+	this.gridDraftPick = function(choice) {
+		const s = this.gridDraftState;
+		if (!this.drafting || !s) return false;
+
+		let pickedCards = 0;
+		for (let i = 0; i < 3; ++i) {
+			//                     Column           Row
+			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
+			if (s.boosters[0][idx] > 0) {
+				Connections[s.currentPlayer(this.userOrder)].pickedCards.push(s.boosters[0][idx]);
+				s.boosters[0][idx] = -1;
+				++pickedCards;
+			}
+		}
+
+		if (pickedCards === 0) return false;
+
+		this.gridDraftNextRound();
+		return true;
+	};
+
+	///////////////////// Grid Draft End //////////////////////
+
 	///////////////////// Traditional Draft Methods //////////////////////
 
 	this.startDraft = function() {
@@ -970,7 +1067,7 @@ function Session(id, owner) {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		if (!this.winstonDraftState) {
+		if (!this.winstonDraftState && !this.gridDraftState) {
 			this.resumeCountdown();
 		}
 		this.emitMessage("Player reconnected", `Resuming draft...`);
@@ -1091,6 +1188,15 @@ function Session(id, owner) {
 			Connections[userID].socket.emit("rejoinWinstonDraft", {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				state: this.winstonDraftState.syncData(),
+			});
+			delete this.disconnectedUsers[userID];
+		} else if (this.gridDraftState) {
+			// FIXME: TODO!!
+			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+			this.addUser(userID);
+			Connections[userID].socket.emit("rejoinGridDraft", {
+				pickedCards: this.disconnectedUsers[userID].pickedCards,
+				state: this.gridDraftState.syncData(),
 			});
 			delete this.disconnectedUsers[userID];
 		} else {
