@@ -780,28 +780,18 @@ function Session(id, owner) {
 		const s = this.gridDraftState;
 		++s.round;
 
-		const advanceToNextRound = () => {
-			for (let user of this.users) {
-				Connections[user].socket.emit("gridDraftSync", s.syncData());
-				Connections[user].socket.emit("gridDraftNextRound", s.currentPlayer());
-			}
-		};
-
 		if (s.round % 2 === 0) {
 			// Share the last pick before advancing to the next booster.
-			for (let user of this.users) {
-				Connections[user].socket.emit("gridDraftSync", s.syncData());
-				Connections[user].socket.emit("gridDraftNextRound", null);
-			}
+			const syncData = s.syncData();
+			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
+			for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
 			s.boosters.shift();
 			if (s.boosters.length === 0) {
 				this.endGridDraft();
 				return;
 			}
-			advanceToNextRound();
-		} else {
-			advanceToNextRound();
 		}
+		for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", s.syncData());
 	};
 
 	this.gridDraftPick = function(choice) {

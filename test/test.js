@@ -2135,8 +2135,9 @@ describe("Grid Draft", function() {
 				clients[c].on("gridDraftSync", function(state) {
 					if (state.booster) expect(state.booster.length).to.equal(9);
 				});
-				clients[c].on("gridDraftNextRound", function(userID) {
-					if (userID === clients[c].query.userID) pick();
+				clients[c].on("gridDraftNextRound", function(state) {
+					if (state.booster) expect(state.booster.length).to.equal(9);
+					if (state.currentPlayer === clients[c].query.userID) pick();
 				});
 				clients[c].once("gridDraftEnd", function() {
 					draftEnded += 1;

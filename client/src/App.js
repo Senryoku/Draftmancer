@@ -539,10 +539,10 @@ export default {
 			this.socket.on("gridDraftSync", gridDraftState => {
 				this.setGridDraftState(gridDraftState);
 			});
-			this.socket.on("gridDraftNextRound", currentPlayer => {
+			this.socket.on("gridDraftNextRound", state => {
 				const doNextRound = () => {
-					this.gridDraftState.currentPlayer = currentPlayer;
-					if (this.userID === currentPlayer) {
+					this.setGridDraftState(state);
+					if (this.userID === state.currentPlayer) {
 						this.playSound("next");
 						fireToast("success", "Your turn!");
 						if (this.enableNotifications) {
