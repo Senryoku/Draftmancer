@@ -45,7 +45,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Minor Improvements
 
--   Improve table display in draft logs (correctly display clockwise passing order, improve visuals)
 -   Improve deck stats (Get some inspiration from MTGA)
 -   Regroup Game Mode besides Draft in a single dropdown menu
 -   Display foils as... foils in front end?

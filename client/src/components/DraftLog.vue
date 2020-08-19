@@ -14,15 +14,15 @@
 					:key="index"
 					:class="{
 						clickable: log.userName != '(empty)',
-						selected: log.userID == displayOptions.detailsUserID,
+						'selected-player': log.userID == displayOptions.detailsUserID,
 					}"
 					@click="() => {
 						if (log.userName != '(empty)')
 							displayOptions.detailsUserID = log.userID;
 					}"
 				>
-					{{ log.userName }}
-					<span>
+					<span>{{ log.userName }}</span>
+					<span class="color-list">
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 							:key="c"
@@ -206,14 +206,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 ul.player-table {
 	display: flex;
 	flex-wrap: wrap;
 	list-style: none;
-	--margin: 1.5em;
+	--margin: 1rem;
 }
 
+ul.player-list li,
 ul.player-table li {
 	width: calc(24% - 2 * var(--margin) - 1em);
 	max-width: calc(24% - 2 * var(--margin) - 1em);
@@ -222,6 +223,27 @@ ul.player-table li {
 	position: relative;
 	padding: 0.5em;
 	border-radius: 0.2em;
+	background-color: #444;
+
+	display: inline-flex;
+	justify-content: space-between;
+}
+
+ul.player-list > li {
+	margin-right: 0.5em;
+}
+
+.color-list > img {
+	margin-left: 0.25em;
+	margin-right: 0.25em;
+}
+
+ul.player-list li.selected-player,
+ul.player-table li.selected-player {
+	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+	background-color: #555;
 }
 
 ul.player-table li:nth-child(1) {
@@ -252,100 +274,46 @@ ul.player-table li:nth-child(8) {
 ul.player-table li:nth-child(1):after,
 ul.player-table li:nth-child(2):after,
 ul.player-table li:nth-child(3):after {
-	content: "";
-	height: 1px;
-	background: black;
-	width: calc(2 * var(--margin));
 	position: absolute;
-	right: calc(-2 * var(--margin));
-	top: 50%;
-}
-
-ul.player-table li:nth-child(1):before,
-ul.player-table li:nth-child(2):before,
-ul.player-table li:nth-child(3):before {
-	content: "";
-	position: absolute;
-	width: 0;
-	height: 0;
-	top: 50%;
-	border-style: solid;
-	border-width: 7px 0 7px 20px;
-	border-color: transparent transparent transparent black;
-	right: -20px;
-	transform: translateY(-50%) rotate(180deg);
+	top: 0;
+	right: calc(-2rem + 1px);
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 2rem;
+	content: "\f100";
 }
 
 ul.player-table li:nth-child(5):after,
 ul.player-table li:nth-child(6):after,
 ul.player-table li:nth-child(7):after {
-	content: "";
-	height: 1px;
-	background: black;
-	width: calc(2 * var(--margin));
 	position: absolute;
-	left: calc(-2 * var(--margin));
-	top: 50%;
-}
-
-ul.player-table li:nth-child(5):before,
-ul.player-table li:nth-child(6):before,
-ul.player-table li:nth-child(7):before {
-	content: "";
-	position: absolute;
-	width: 0;
-	height: 0;
-	top: 50%;
-	border-style: solid;
-	border-width: 7px 0 7px 20px;
-	border-color: transparent transparent transparent black;
-	left: -20px;
-	transform: translateY(-50%);
+	top: 0;
+	left: calc(-2rem + 1px);
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 2rem;
+	content: "\f101";
 }
 
 ul.player-table li:nth-child(4):before {
-	content: "";
 	position: absolute;
-	width: 0;
-	height: 0;
-	left: 50%;
-	border-style: solid;
-	border-width: 7px 0 7px 20px;
-	border-color: transparent transparent transparent black;
-	top: -20px;
-	transform: translateX(-50%) rotate(90deg);
-}
-
-ul.player-table li:nth-child(4):after {
-	content: "";
-	width: 1px;
-	background: black;
-	height: calc(2 * var(--margin));
-	position: absolute;
-	top: calc(-2 * var(--margin));
-	left: 50%;
-}
-
-ul.player-table li:nth-child(8):before {
-	content: "";
-	position: absolute;
-	width: 0;
-	height: 0;
-	left: 50%;
-	border-style: solid;
-	border-width: 7px 0 7px 20px;
-	border-color: transparent transparent transparent black;
-	bottom: -20px;
+	top: calc(-2rem - 2px);
+	left: calc(50%);
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 2rem;
+	content: "\f100";
 	transform: translateX(-50%) rotate(-90deg);
 }
 
-ul.player-table li:nth-child(8):after {
-	content: "";
-	width: 1px;
-	background: black;
-	height: calc(2 * var(--margin));
+ul.player-table li:nth-child(8):before {
 	position: absolute;
-	bottom: calc(-2 * var(--margin));
-	left: 50%;
+	bottom: calc(-2rem - 2px);
+	left: calc(50%);
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	font-size: 2rem;
+	content: "\f100";
+	transform: translateX(-50%) rotate(90deg);
 }
 </style>
