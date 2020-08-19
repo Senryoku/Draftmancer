@@ -1203,7 +1203,6 @@ function Session(id, owner) {
 			});
 			delete this.disconnectedUsers[userID];
 		} else if (this.gridDraftState) {
-			// FIXME: TODO!!
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 			Connections[userID].socket.emit("rejoinGridDraft", {
@@ -1254,7 +1253,7 @@ function Session(id, owner) {
 	};
 
 	this.replaceDisconnectedPlayers = function() {
-		if (!this.drafting || this.winstonDraftState) return;
+		if (!this.drafting || this.winstonDraftState || this.gridDraftState) return;
 
 		console.warn("Replacing disconnected players with bots!");
 
@@ -1412,4 +1411,5 @@ function Session(id, owner) {
 
 module.exports.Session = Session;
 module.exports.WinstonDraftState = WinstonDraftState;
+module.exports.GridDraftState = GridDraftState;
 module.exports.Sessions = {};

@@ -1757,7 +1757,8 @@ export default {
 						disconnected: true,
 					});
 				} else {
-					r.push(this.sessionUsers.find(u => u.userID === id));
+					const p = this.sessionUsers.find(u => u.userID === id);
+					if (p) r.push(p);
 				}
 			}
 

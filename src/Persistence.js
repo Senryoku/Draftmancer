@@ -126,6 +126,14 @@ async function requestSavedSessions() {
 				}
 			}
 
+			if (s.data.gridDraftState) {
+				InactiveSessions[fixedID].gridDraftState = new SessionModule.GridDraftState();
+				for (let prop of Object.getOwnPropertyNames(s.data.gridDraftState)) {
+					if (!(s.data.gridDraftState[prop] instanceof Function))
+						InactiveSessions[fixedID].gridDraftState[prop] = restoreEmptyStr(s.data.gridDraftState[prop]);
+				}
+			}
+
 			if (isObsolete(s))
 				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, err => {
 					if (err) console.log(err);
@@ -212,7 +220,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
-			p => !["users", "countdownInterval", "botsInstances"].includes(p)
+			p => !["users", "countdownInterval", "botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
 		)) {
 			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
 		}
@@ -223,23 +231,28 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
+			const copyProps = (obj, target) => {
+				for (let prop of Object.getOwnPropertyNames(obj))
+					if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+			};
+
 			if (s.botsInstances) {
 				Item.data.botsInstances = [];
 				for (let bot of s.botsInstances) {
 					let podbot = {};
-					for (let prop of Object.getOwnPropertyNames(bot)) {
-						if (!(bot[prop] instanceof Function)) podbot[prop] = bot[prop];
-					}
+					copyProps(bot, podbot);
 					Item.data.botsInstances.push(podbot);
 				}
 			}
 
 			if (s.winstonDraftState) {
 				Item.data.winstonDraftState = {};
-				for (let prop of Object.getOwnPropertyNames(s.winstonDraftState)) {
-					if (!(s.winstonDraftState[prop] instanceof Function))
-						Item.data.winstonDraftState[prop] = s.winstonDraftState[prop];
-				}
+				copyProps(s.winstonDraftState, Item.data.winstonDraftState);
+			}
+
+			if (s.gridDraftState) {
+				Item.data.gridDraftState = {};
+				copyProps(s.gridDraftState, Item.data.gridDraftState);
 			}
 		}
 
