@@ -226,34 +226,42 @@
 					</div>
 					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'">Draft</button>
 				</span>
-				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button
-						@click="startWinstonDraft()"
-						v-tooltip="'Starts a Winston Draft. This is a draft variant for only two players.'"
-					>
-						Winston
-					</button>
-				</span>
-				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button
-						@click="startGridDraft()"
-						v-tooltip="'Starts a Grid Draft. This is a draft variant for only two players.'"
-					>
-						Grid
-					</button>
-				</span>
-				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button @click="sealedDialog" v-tooltip="'Distributes boosters to everyone for a sealed session.'">
-						Sealed
-					</button>
-				</span>
-				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<button
-						@click="deckWarning(distributeJumpstart)"
-						v-tooltip="'Distributes two Jumpstart boosters to everyone.'"
-					>
-						Jumpstart
-					</button>
+				<span>
+					<div class="game-modes-button" :class="{ disabled: sessionOwner != userID }">
+						<span class="game-modes-button-text">Other Game Modes <i class="fas fa-caret-down"></i></span>
+						<div class="game-modes-dropdown">
+							<div class="game-modes-container">
+								<button
+									@click="startWinstonDraft()"
+									v-tooltip.left="
+										'Starts a Winston Draft. This is a draft variant for only two players.'
+									"
+								>
+									Winston Draft
+								</button>
+								<button
+									@click="startGridDraft()"
+									v-tooltip.left="
+										'Starts a Grid Draft. This is a draft variant for only two players.'
+									"
+								>
+									Grid Draft
+								</button>
+								<button
+									@click="sealedDialog"
+									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+								>
+									Sealed
+								</button>
+								<button
+									@click="deckWarning(distributeJumpstart)"
+									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+								>
+									Jumpstart
+								</button>
+							</div>
+						</div>
+					</div>
 				</span>
 				<span
 					v-tooltip="'More session options'"
