@@ -555,9 +555,9 @@ export default {
 						this.draftingState = DraftState.GridWaiting;
 					}
 				};
-				console.log(this.gridDraftState);
+
 				// Next booster, add a slight delay so user can see the last pick.
-				if (this.gridDraftState.currentPlayer === null && currentPlayer !== null) {
+				if (this.gridDraftState.currentPlayer === null) {
 					setTimeout(doNextRound, 1750);
 				} else doNextRound();
 			});
