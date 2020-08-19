@@ -2,7 +2,9 @@
 	<div>
 		<span v-if="draftlog.sessionID">Draft log for Session '{{ draftlog.sessionID }}'</span>
 		<span v-if="draftlog.time">({{ new Date(draftlog.time).toLocaleString() }})</span>
-		<button type="button" @click="downloadLog"><i class="fas fa-file-download"></i> Download full log</button>
+		<button type="button" @click="downloadLog">
+			<i class="fas fa-file-download"></i> Download full log
+		</button>
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
@@ -14,13 +16,10 @@
 						clickable: log.userName != '(empty)',
 						selected: log.userID == displayOptions.detailsUserID,
 					}"
-					@click="
-						_ => {
-							if (log.userName != '(empty)') {
-								displayOptions.detailsUserID = log.userID;
-							}
-						}
-					"
+					@click="() => {
+						if (log.userName != '(empty)')
+							displayOptions.detailsUserID = log.userID;
+					}"
 				>
 					{{ log.userName }}
 					<span>
@@ -103,10 +102,10 @@ export default {
 			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
 				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 		},
-		getCard: function(cid) {
+		getCard: function (cid) {
 			return Cards[cid];
 		},
-		downloadLog: function() {
+		downloadLog: function () {
 			let draftLogFull = this.draftlog;
 			for (let e in this.draftlog.users) {
 				let cards = [];
@@ -115,10 +114,10 @@ export default {
 			}
 			helper.download(`DraftLog_${this.draftlog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
-		downloadMPT: function(id) {
+		downloadMPT: function (id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(Cards, this.draftlog, id));
 		},
-		submitToMPT: function(id) {
+		submitToMPT: function (id) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
 				headers: {
@@ -131,11 +130,11 @@ export default {
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
-			}).then(response => {
+			}).then((response) => {
 				if (response.status !== 200) {
 					fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
-					response.json().then(json => {
+					response.json().then((json) => {
 						if (json.error) {
 							fireToast("error", `Error: ${json.error}.`);
 						} else {
@@ -151,13 +150,13 @@ export default {
 				}
 			});
 		},
-		exportSingleLog: function(id) {
+		exportSingleLog: function (id) {
 			let cards = [];
 			for (let c of this.draftlog.users[id].cards) cards.push(Cards[c]);
 			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		colorsInCardIDList: function(cardids) {
+		colorsInCardIDList: function (cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cardids) return r;
 			for (let card of cardids) {
@@ -169,13 +168,13 @@ export default {
 		},
 	},
 	computed: {
-		selectedLog: function() {
+		selectedLog: function () {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
-		selectedLogCards: function() {
-			return this.selectedLog.cards.map(cid => genCard(cid));
+		selectedLogCards: function () {
+			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
-		tableSumary: function() {
+		tableSumary: function () {
 			let tableSumary = [];
 			for (let userID in this.draftlog.users) {
 				tableSumary.push({
