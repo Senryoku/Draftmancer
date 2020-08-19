@@ -514,6 +514,8 @@ export default {
 			this.socket.on("startGridDraft", state => {
 				setCookie("userID", this.userID);
 				this.drafting = true;
+				this.draftingState =
+					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 				this.stopReadyCheck();
 				this.clearSideboard();
@@ -537,8 +539,9 @@ export default {
 			this.socket.on("gridDraftSync", gridDraftState => {
 				this.setGridDraftState(gridDraftState);
 			});
-			this.socket.on("gridDraftNextRound", currentUser => {
-				if (this.userID === currentUser) {
+			this.socket.on("gridDraftNextRound", currentPlayer => {
+				this.gridDraftState.currentPlayer = currentPlayer;
+				if (this.userID === currentPlayer) {
 					this.playSound("next");
 					fireToast("success", "Your turn!");
 					if (this.enableNotifications) {
@@ -969,11 +972,16 @@ export default {
 			});
 		},
 		setGridDraftState: function(state) {
+			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
 			const booster = [];
+			let idx = 0;
 			for (let cid of this.gridDraftState.booster) {
-				if (cid in Cards) booster.push(genCard(cid));
-				else booster.push(null);
+				if (cid in Cards) {
+					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === cid) booster.push(prevBooster[idx]);
+					else booster.push(genCard(cid));
+				} else booster.push(null);
+				++idx;
 			}
 			this.gridDraftState.booster = booster;
 		},

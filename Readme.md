@@ -35,14 +35,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Run `node createDynamoDBTables.js`
 
-## Todo
-
-### Grid Draft
-
--   Animation on second pick before displaying the new booster
--   Better pick icons
--   Better placeholder for picked cards
-
 ### Important
 
 -   Remove Bots from Virtual Players when Winston/Grid drafting

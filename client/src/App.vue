@@ -604,7 +604,7 @@
 				id="booster-container"
 				class="container"
 			>
-				<div class="winston-status">
+				<div class="title-status">
 					<h2>Winston Draft</h2>
 					<span>
 						<template v-if="userID === winstonDraftState.currentPlayer"
@@ -662,12 +662,21 @@
 			</div>
 			<!-- Grid Draft -->
 			<div v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
-				<div class="winston-status">
+				<div class="title-status">
 					<h2>Grid Draft</h2>
 					<span>
-						<template v-if="userID === gridDraftState.currentPlayer">Your turn!</template>
-						<template v-else
-							>Waiting on
+						Booster #{{ Math.floor(gridDraftState.round / 2) + 1 }} / {{ gridDraftState.boosterCount }}
+					</span>
+					<span>
+						<template v-if="userID === gridDraftState.currentPlayer"
+							><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.</template
+						>
+						<template v-else-if="gridDraftState.currentPlayer === null">
+							Advancing to the next booster...
+						</template>
+						<template v-else>
+							<i class="fas fa-spinner fa-spin"></i>
+							Waiting on
 							{{
 								gridDraftState.currentPlayer in userByID
 									? userByID[gridDraftState.currentPlayer].userName

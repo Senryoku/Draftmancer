@@ -80,7 +80,7 @@ function WinstonDraftState(players, boosters) {
 
 function GridDraftState(players, boosters) {
 	this.players = players;
-	this.round = -1; // Will be immedialty incremented
+	this.round = 0;
 	this.boosters = []; // 3x3 Grid, Row-Major order
 	if (boosters) {
 		for (let booster of boosters) {
@@ -90,6 +90,7 @@ function GridDraftState(players, boosters) {
 			this.boosters.push(booster);
 		}
 	}
+	this.boosterCount = this.boosters.length;
 
 	this.currentPlayer = function() {
 		return this.players[[0, 1, 1, 0][this.round % 4]];
@@ -99,6 +100,7 @@ function GridDraftState(players, boosters) {
 			round: this.round,
 			currentPlayer: this.currentPlayer(),
 			booster: this.boosters[0],
+			boosterCount: this.boosterCount,
 		};
 	};
 }
@@ -763,7 +765,7 @@ function Session(id, owner) {
 			});
 			Connections[user].socket.emit("startGridDraft", this.gridDraftState.syncData());
 		}
-		this.gridDraftNextRound();
+
 		return true;
 	};
 
@@ -777,16 +779,31 @@ function Session(id, owner) {
 	this.gridDraftNextRound = function() {
 		const s = this.gridDraftState;
 		++s.round;
+
+		const advanceToNextRound = () => {
+			for (let user of this.users) {
+				Connections[user].socket.emit("gridDraftSync", s.syncData());
+				Connections[user].socket.emit("gridDraftNextRound", s.currentPlayer());
+			}
+		};
+
+		const delay = 1750;
 		if (s.round % 2 === 0) {
+			// Share the last pick before advancing to the next booster.
+			for (let user of this.users) {
+				Connections[user].socket.emit("gridDraftSync", s.syncData());
+				Connections[user].socket.emit("gridDraftNextRound", null);
+			}
 			s.boosters.shift();
 			if (s.boosters.length === 0) {
-				this.endGridDraft();
+				setTimeout(() => {
+					this.endGridDraft();
+				}, delay);
 				return;
 			}
-		}
-		for (let user of this.users) {
-			Connections[user].socket.emit("gridDraftSync", s.syncData());
-			Connections[user].socket.emit("gridDraftNextRound", s.currentPlayer());
+			setTimeout(advanceToNextRound, delay);
+		} else {
+			advanceToNextRound();
 		}
 	};
 

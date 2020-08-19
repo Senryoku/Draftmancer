@@ -942,16 +942,20 @@ ul.player-list {
 	min-width: auto !important;
 }
 
-/** Winston Draft **/
-
-.winston-status {
+.title-status {
 	margin-bottom: 0.5em;
 }
 
-.winston-status h2 {
+.title-status h2 {
 	display: inline-block;
 	margin: 0 1em 0 1em;
 }
+
+.title-status span {
+	margin-right: 1em;
+}
+
+/** Winston Draft **/
 
 .winston-piles {
 	display: flex;
