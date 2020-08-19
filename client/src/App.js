@@ -540,25 +540,35 @@ export default {
 				this.setGridDraftState(gridDraftState);
 			});
 			this.socket.on("gridDraftNextRound", currentPlayer => {
-				this.gridDraftState.currentPlayer = currentPlayer;
-				if (this.userID === currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					if (this.enableNotifications) {
-						new Notification("Your turn!", {
-							body: `This is your turn to pick.`,
-						});
+				const doNextRound = () => {
+					this.gridDraftState.currentPlayer = currentPlayer;
+					if (this.userID === currentPlayer) {
+						this.playSound("next");
+						fireToast("success", "Your turn!");
+						if (this.enableNotifications) {
+							new Notification("Your turn!", {
+								body: `This is your turn to pick.`,
+							});
+						}
+						this.draftingState = DraftState.GridPicking;
+					} else {
+						this.draftingState = DraftState.GridWaiting;
 					}
-					this.draftingState = DraftState.GridPicking;
-				} else {
-					this.draftingState = DraftState.GridWaiting;
-				}
+				};
+
+				// Next booster, add a slight delay so user can see the last pick.
+				if (this.gridDraftState.currentPlayer === null && currentPlayer !== null) {
+					setTimeout(doNextRound, 1750);
+				} else doNextRound();
 			});
 			this.socket.on("gridDraftEnd", () => {
-				this.drafting = false;
-				this.gridDraftState = null;
-				this.draftingState = DraftState.Brewing;
-				fireToast("success", "Done drafting!");
+				// Adds a slight deplay while the last pick is displayed.
+				setTimeout(() => {
+					this.drafting = false;
+					this.gridDraftState = null;
+					this.draftingState = DraftState.Brewing;
+					fireToast("success", "Done drafting!");
+				}, 1750);
 			});
 
 			this.socket.on("rejoinGridDraft", data => {

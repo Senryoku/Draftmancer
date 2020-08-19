@@ -673,7 +673,8 @@
 				<div class="title-status">
 					<h2>Grid Draft</h2>
 					<span>
-						Booster #{{ Math.floor(gridDraftState.round / 2) + 1 }} / {{ gridDraftState.boosterCount }}
+						Booster #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }} /
+						{{ gridDraftState.boosterCount }}
 					</span>
 					<span>
 						<template v-if="userID === gridDraftState.currentPlayer"

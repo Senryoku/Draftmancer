@@ -787,7 +787,6 @@ function Session(id, owner) {
 			}
 		};
 
-		const delay = 1750;
 		if (s.round % 2 === 0) {
 			// Share the last pick before advancing to the next booster.
 			for (let user of this.users) {
@@ -796,12 +795,10 @@ function Session(id, owner) {
 			}
 			s.boosters.shift();
 			if (s.boosters.length === 0) {
-				setTimeout(() => {
-					this.endGridDraft();
-				}, delay);
+				this.endGridDraft();
 				return;
 			}
-			setTimeout(advanceToNextRound, delay);
+			advanceToNextRound();
 		} else {
 			advanceToNextRound();
 		}
