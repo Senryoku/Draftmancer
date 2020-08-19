@@ -41,7 +41,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Animation on second pick before displaying the new booster
 -   Better pick icons
--   Improve booster generation (9-cards boosters, the excess is just discarded right now!)
 -   Better placeholder for picked cards
 
 ### Important

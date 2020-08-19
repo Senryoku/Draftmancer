@@ -343,8 +343,12 @@ function Session(id, owner) {
 	};
 
 	// Populates this.boosters following session options
-	// WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
-	this.generateBoosters = function(boosterQuantity, useCustomBoosters) {
+	// Options object properties:
+	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
+	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
+	//  - targets: Overrides session boosterContent setting
+	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists whitout custom slots
+	this.generateBoosters = function(boosterQuantity, options = {}) {
 		const count_cards = function(coll) {
 			return Object.values(coll).reduce((acc, val) => acc + val, 0);
 		};
@@ -428,7 +432,7 @@ function Session(id, owner) {
 					else localCollection[cardId] = 1;
 				}
 
-				const cardsPerBooster = 15;
+				const cardsPerBooster = options.cardsPerBooster || 15;
 				let cardsByColor = {};
 				if (this.colorBalance) {
 					for (let card in localCollection) {
@@ -472,7 +476,7 @@ function Session(id, owner) {
 			}
 		} else {
 			// Standard draft boosters
-			const targets = this.boosterContent;
+			const targets = options.targets || this.boosterContent;
 
 			const BoosterFactoryOptions = {
 				foil: this.foil,
@@ -493,7 +497,7 @@ function Session(id, owner) {
 			};
 
 			// If the default rule will be used, initialize it
-			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
+			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				let localCollection = this.cardPoolByRarity();
 				let defaultLandSlot = null;
 				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots)
@@ -518,7 +522,7 @@ function Session(id, owner) {
 			}
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
+			if (options.useCustomBoosters && this.customBoosters.some(v => v !== "")) {
 				const boosterFactories = [];
 				const usedSets = {};
 
@@ -736,8 +740,16 @@ function Session(id, owner) {
 		if (this.users.size != 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
-		// TODO
-		if (!this.generateBoosters(boosterCount)) {
+		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
+		// Use boosterContent setting only if it is valid (adds up to 9 cards)
+		const cardsPerBooster = Object.values(this.boosterContent).reduce((val, acc) => val + acc, 0);
+
+		if (
+			!this.generateBoosters(boosterCount, {
+				targets: cardsPerBooster === 9 ? this.boosterContent : { rare: 1, uncommon: 3, common: 5 },
+				cardsPerBooster: 9,
+			})
+		) {
 			this.drafting = false;
 			return;
 		}
@@ -821,7 +833,7 @@ function Session(id, owner) {
 		for (let i = 0; i < this.bots; ++i)
 			this.botsInstances.push(new Bot(`Bot #${i}`, [...this.users][i % this.users.size].concat(i)));
 
-		if (!this.generateBoosters(boosterQuantity, true)) {
+		if (!this.generateBoosters(boosterQuantity, { useCustomBoosters: true })) {
 			this.drafting = false;
 			return;
 		}
