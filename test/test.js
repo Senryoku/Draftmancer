@@ -2106,28 +2106,15 @@ describe("Grid Draft", function() {
 	});
 
 	const startDraft = () => {
-		let states = [];
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function(done) {
 			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			let connectedClients = 0;
-			let receivedState = 0;
-			let index = 0;
 			for (let c of clients) {
 				c.once("startGridDraft", function() {
 					connectedClients += 1;
-					if (connectedClients == clients.length && receivedState == clients.length) done();
+					if (connectedClients == clients.length) done();
 				});
-
-				(() => {
-					const _idx = index;
-					c.once("gridDraftNextRound", function(state) {
-						states[_idx] = state;
-						receivedState += 1;
-						if (connectedClients == clients.length && receivedState == clients.length) done();
-					});
-				})();
-				++index;
 			}
 			clients[ownerIdx].emit("startGridDraft");
 		});
