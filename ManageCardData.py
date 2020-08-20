@@ -235,27 +235,6 @@ else:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
 if not os.path.isfile(FinalDataPath) or ForceCache:
-    # Tag non booster card as such
-    print("Requesting non-booster cards list...")
-    NonBoosterCards = []
-    response = requests.get("https://api.scryfall.com/cards/search?{}".format(
-        urllib.parse.urlencode({'q': 'game:arena -in:booster'})))
-    data = json.loads(response.content)
-
-    def handleNonBoosterResponse(data):
-        for c in data['data']:
-            if('arena_id' in c):
-                NonBoosterCards.append(c['arena_id'])
-            elif (c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet:
-                NonBoosterCards.append(CardsCollectorNumberAndSet[(c['name'],
-                                                                   c['collector_number'], c['set'].lower())])
-
-    handleNonBoosterResponse(data)
-    while(data["has_more"]):
-        response = requests.get(data["next_page"])
-        data = json.loads(response.content)
-        handleNonBoosterResponse(data)
-
     print("Generating card data cache...")
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
@@ -297,7 +276,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     selection['rating'] = 0.5
                 if c['set'] == 'akr':
                     selection['in_booster'] = c['booster']
-                elif c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
+                elif not c['booster'] or 'Basic Land' in c['type_line']:
                     selection['in_booster'] = False
                     selection['rating'] = 0
                 cards[c['arena_id']].update(selection)
