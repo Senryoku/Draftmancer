@@ -98,8 +98,8 @@ for path in MTGACardsFiles:
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
-                # Process AKR cards separately
-                if o["set"] == "akr":
+                # Process AKR cards separately (except basics)
+                if o["set"] == "akr" and o['rarity'] != 1:
                     AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
                         o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
                 else:
