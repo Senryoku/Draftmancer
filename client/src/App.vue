@@ -681,7 +681,12 @@
 							><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.</template
 						>
 						<template v-else-if="gridDraftState.currentPlayer === null">
-							Advancing to the next booster...
+							<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
+								This was the last booster! Let me push these booster wrappers off the table...
+							</template>
+							<template v-else>
+								Advancing to the next booster...
+							</template>
 						</template>
 						<template v-else>
 							<i class="fas fa-spinner fa-spin"></i>
