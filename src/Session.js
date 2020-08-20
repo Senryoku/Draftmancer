@@ -623,7 +623,7 @@ function Session(id, owner) {
 	this.notifyUserChange = function() {
 		// Send only necessary data
 		let user_info = [];
-		for (let userID of this.getSortedHumanPlayers()) {
+		for (let userID of this.getSortedHumanPlayersIDs()) {
 			let u = Connections[userID];
 			if (u) {
 				user_info.push({
@@ -659,11 +659,11 @@ function Session(id, owner) {
 			return;
 		}
 		this.disconnectedUsers = {};
-		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayers(), this.boosters);
+		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayers(),
 			});
 			Connections[user].socket.emit("startWinstonDraft", this.winstonDraftState);
 		}
@@ -757,11 +757,11 @@ function Session(id, owner) {
 		}
 
 		this.disconnectedUsers = {};
-		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayers(), this.boosters);
+		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayers(),
 			});
 			Connections[user].socket.emit("startGridDraft", this.gridDraftState.syncData());
 		}
@@ -1340,7 +1340,7 @@ function Session(id, owner) {
 
 	// Includes disconnected players!
 	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
-	this.getSortedHumanPlayers = function() {
+	this.getSortedHumanPlayersIDs = function() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
 		return this.userOrder.filter(e => players.includes(e));
 	};
@@ -1349,10 +1349,21 @@ function Session(id, owner) {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
 	};
 
-	this.getSortedVirtualPlayers = function() {
+	this.getSortedHumanPlayers = function() {
 		let tmp = {};
-		let humanPlayers = this.getSortedHumanPlayers();
+		for (let userID of this.getSortedHumanPlayersIDs()) {
+			tmp[userID] = {
+				isBot: false,
+				disconnected: userID in this.disconnectedUsers,
+			};
+		}
+		return tmp;
+	};
+
+	this.getSortedVirtualPlayers = function() {
 		if (this.botsInstances) {
+			let tmp = {};
+			let humanPlayers = this.getSortedHumanPlayersIDs();
 			for (let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
 				if (idx < humanPlayers.length) {
 					let userID = humanPlayers[idx];
@@ -1366,17 +1377,8 @@ function Session(id, owner) {
 					tmp[bot.id] = { isBot: true, instance: bot };
 				}
 			}
-		} else {
-			for (let userID of humanPlayers) {
-				tmp[userID] = {
-					isBot: false,
-					disconnected: userID in this.disconnectedUsers,
-				};
-			}
 			return tmp;
-		}
-
-		return tmp;
+		} else return this.getSortedHumanPlayers();
 	};
 
 	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {
