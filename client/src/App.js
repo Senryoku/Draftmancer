@@ -1197,9 +1197,9 @@ export default {
 			let file = e.target.files[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
-				return;
+				return false;
 			}
-			callback(file, options);
+			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
 		fetchFile: async function(url, callback, options) {
@@ -1211,7 +1211,7 @@ export default {
 			const blob = await response.blob();
 			callback(blob, options);
 		},
-		parseCustomCardList: function(file, options) {
+		parseCustomCardList: async function(file, options) {
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
@@ -1219,128 +1219,125 @@ export default {
 				title: "Parsing card list...",
 				showConfirmButton: false,
 			});
-			var reader = new FileReader();
-			reader.onload = e => {
-				let contents = e.target.result;
+			let contents = await file.text(); //e.target.result;
 
-				const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
-				const parseLine = line => {
-					line = line.trim();
-					let [, count, name, set, number] = line.match(lineRegex);
-					count = parseInt(count);
-					if (!Number.isInteger(count)) count = 1;
+			const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
+			const parseLine = line => {
+				line = line.trim();
+				let [, count, name, set, number] = line.match(lineRegex);
+				count = parseInt(count);
+				if (!Number.isInteger(count)) count = 1;
 
-					if (set) {
-						set = set.toLowerCase();
-						if (set === "dar") set = "dom";
-						if (set === "conf") set = "con";
-					}
-					// Note: The regex currently cannot catch this case. Without
-					// parenthesis, the collector number will be part of the name.
-					if (number && !set) {
-						Swal.fire({
-							icon: "warning",
-							title: `Collector number without Set`,
-							text: `You should not specify a collector number without also specifying a set: '${line}'.`,
-							customClass: SwalCustomClasses,
-						});
-					}
-					let cardID = Object.keys(Cards).find(
-						id =>
-							Cards[id].name == name &&
-							(!set || Cards[id].set === set) &&
-							(!number || Cards[id].collector_number === number)
-					);
-					if (typeof cardID !== "undefined") {
-						return [count, cardID];
-					} else {
-						// If not found, try doubled faced cards before giving up!
-						cardID = Object.keys(Cards).find(
-							id =>
-								Cards[id].name.startsWith(name + " //") &&
-								(!set || Cards[id].set === set) &&
-								(!number || Cards[id].collector_number === number)
-						);
-						if (typeof cardID !== "undefined") return [count, cardID];
-					}
-
+				if (set) {
+					set = set.toLowerCase();
+					if (set === "dar") set = "dom";
+					if (set === "conf") set = "con";
+				}
+				// Note: The regex currently cannot catch this case. Without
+				// parenthesis, the collector number will be part of the name.
+				if (number && !set) {
 					Swal.fire({
-						icon: "error",
-						title: `Card not found`,
-						text: `Could not find '${name}' in our database. (Note: this app only supports cards from MTG Arena.)`,
-						footer: `Full line: '${line}'`,
-						customClass: SwalCustomClasses,
-					});
-					return [0, undefined];
-				};
-
-				try {
-					const lines = contents.split(/\r\n|\n/);
-					let cardList = {};
-					// Custom rarity sheets
-					if (lines[0].trim()[0] === "[") {
-						let line = 0;
-						let cardCount = 0;
-						cardList = {
-							customSheets: true,
-							cardsPerBooster: {},
-							cards: {},
-						};
-						let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
-						while (line < lines.length) {
-							let header = lines[line].match(headerRegex);
-							if (!header) {
-								Swal.fire({
-									icon: "error",
-									title: `Slot`,
-									text: `Error parsing slot '${lines[line]}'.`,
-									customClass: SwalCustomClasses,
-								});
-								return;
-							}
-							cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
-							cardList.cards[header[1]] = [];
-							line += 1;
-							while (line < lines.length && lines[line].trim()[0] !== "[") {
-								if (lines[line]) {
-									let [count, cardID] = parseLine(lines[line].trim());
-									if (typeof cardID !== "undefined") {
-										for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
-										cardCount += count;
-									} else return;
-								}
-								line += 1;
-							}
-						}
-						cardList.length = cardCount;
-					} else {
-						cardList = {
-							customSheets: false,
-							cards: [],
-						};
-						for (let line of lines) {
-							if (line) {
-								let [count, cardID] = parseLine(line);
-								if (typeof cardID !== "undefined") {
-									for (let i = 0; i < count; ++i) cardList.cards.push(cardID);
-								} else return;
-							}
-						}
-						cardList.length = cardList.cards.length;
-					}
-					if (options && options.name) cardList.name = options.name;
-					this.customCardList = cardList;
-				} catch (e) {
-					Swal.fire({
-						icon: "error",
-						title: "Parsing Error",
-						text: "An error occurred during parsing, please check you input file.",
-						footer: "Full error: " + e,
+						icon: "warning",
+						title: `Collector number without Set`,
+						text: `You should not specify a collector number without also specifying a set: '${line}'.`,
 						customClass: SwalCustomClasses,
 					});
 				}
+				let cardID = Object.keys(Cards).find(
+					id =>
+						Cards[id].name == name &&
+						(!set || Cards[id].set === set) &&
+						(!number || Cards[id].collector_number === number)
+				);
+				if (typeof cardID !== "undefined") {
+					return [count, cardID];
+				} else {
+					// If not found, try doubled faced cards before giving up!
+					cardID = Object.keys(Cards).find(
+						id =>
+							Cards[id].name.startsWith(name + " //") &&
+							(!set || Cards[id].set === set) &&
+							(!number || Cards[id].collector_number === number)
+					);
+					if (typeof cardID !== "undefined") return [count, cardID];
+				}
+
+				Swal.fire({
+					icon: "error",
+					title: `Card not found`,
+					text: `Could not find '${name}' in our database. (Note: this app only supports cards from MTG Arena.)`,
+					footer: `Full line: '${line}'`,
+					customClass: SwalCustomClasses,
+				});
+				return [0, undefined];
 			};
-			reader.readAsText(file);
+
+			try {
+				const lines = contents.split(/\r\n|\n/);
+				let cardList = {};
+				// Custom rarity sheets
+				if (lines[0].trim()[0] === "[") {
+					let line = 0;
+					let cardCount = 0;
+					cardList = {
+						customSheets: true,
+						cardsPerBooster: {},
+						cards: {},
+					};
+					let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`); // Groups: SlotName, '(Count)', Count
+					while (line < lines.length) {
+						let header = lines[line].match(headerRegex);
+						if (!header) {
+							Swal.fire({
+								icon: "error",
+								title: `Slot`,
+								text: `Error parsing slot '${lines[line]}'.`,
+								customClass: SwalCustomClasses,
+							});
+							return;
+						}
+						cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
+						cardList.cards[header[1]] = [];
+						line += 1;
+						while (line < lines.length && lines[line].trim()[0] !== "[") {
+							if (lines[line]) {
+								let [count, cardID] = parseLine(lines[line].trim());
+								if (typeof cardID !== "undefined") {
+									for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
+									cardCount += count;
+								} else return;
+							}
+							line += 1;
+						}
+					}
+					cardList.length = cardCount;
+				} else {
+					cardList = {
+						customSheets: false,
+						cards: [],
+					};
+					for (let line of lines) {
+						if (line) {
+							let [count, cardID] = parseLine(line);
+							if (typeof cardID !== "undefined") {
+								for (let i = 0; i < count; ++i) cardList.cards.push(cardID);
+							} else return;
+						}
+					}
+					cardList.length = cardList.cards.length;
+				}
+				if (options && options.name) cardList.name = options.name;
+				this.customCardList = cardList;
+				this.useCustomCardList = true;
+			} catch (e) {
+				Swal.fire({
+					icon: "error",
+					title: "Parsing Error",
+					text: "An error occurred during parsing, please check you input file.",
+					footer: "Full error: " + e,
+					customClass: SwalCustomClasses,
+				});
+			}
 		},
 		exportDeck: function(full = true) {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));

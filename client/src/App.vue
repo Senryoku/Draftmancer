@@ -129,18 +129,36 @@
 						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 					></i>
 				</span>
-				<span class="generic-container">
+				<span class="generic-container card-pool-controls">
+					<input
+						type="file"
+						id="card-list-input-main"
+						@change="uploadFile($event, parseCustomCardList)"
+						style="display: none;"
+						accept=".txt"
+					/>
+
 					<strong>Card Pool:</strong>
 					<span v-if="useCustomCardList">
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						<template v-if="customCardList.length > 0">
-							({{ customCardList.length }} cards
+						(<template v-if="customCardList.length > 0">
+							{{ customCardList.length }} cards
 							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
 								<i class="fas fa-file-alt"></i>
 							</a>
-							)
 						</template>
-						<template v-else>(No list loaded)</template>
+						<template v-else>No list loaded </template>
+						<i
+							class="fas fa-file-upload clickable"
+							onclick="document.querySelector('#card-list-input-main').click()"
+							v-tooltip="'Upload a Custom Card List'"
+						></i>
+						<i
+							class="fas fa-times clickable brightred"
+							@click="useCustomCardList = false"
+							v-tooltip="'Return to official sets.'"
+						></i>
+						)
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
@@ -183,6 +201,14 @@
 										{{ setsInfos[option].fullName }}
 									</span>
 								</template>
+								<div
+									class="clickable"
+									style="text-align:center; padding: 0.5em; font-size:0.75em;"
+									slot="beforeList"
+									onclick="document.querySelector('#card-list-input-main').click()"
+								>
+									Upload a Custom Card List...
+								</div>
 							</multiselect>
 							<div
 								class="inline"
