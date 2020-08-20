@@ -97,30 +97,26 @@ for path in MTGACardsFiles:
                     o['set'] = 'con'
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
+                # Fix Amonkhet split cards name for Scryfall
+                name = MTGALocalization['en'][o['titleId']].replace(
+                    "///", "//")
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                 # Adding name to disambiguate.
-                CardsCollectorNumberAndSet[(MTGALocalization['en'][o['titleId']],
-                                            collectorNumber, o['set'])] = o['grpid']
+                CardsCollectorNumberAndSet[(
+                    name, collectorNumber, o['set'])] = o['grpid']
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
-                        MTGALocalization['en'][o['titleId']], collectorNumber, 'ajmp')] = o['grpid']
+                        name, collectorNumber, 'ajmp')] = o['grpid']
                 for lang in MTGALocalization:
                     Translations[lang][o['grpid']] = {
-                        'printed_name': MTGALocalization[lang][o['titleId']]}
+                        'printed_name': MTGALocalization[lang][o['titleId']].replace("///", "//")}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
-                if MTGALocalization['en'][o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
+                if name not in CardNameToID or o['set'] in ['jmp', 'm21']:
                     CardNameToID[MTGALocalization['en']
                                  [o['titleId']]] = o['grpid']
-
-                if o["set"] == "akr":
-                    AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
-                        o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
-
-
-print("AKRCards length: {}".format(len(AKRCards.keys())))
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -171,34 +167,6 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                              str(copied) + " cards added...")
         sys.stdout.write("\b" * 100)
         sys.stdout.write(" " + str(copied) + " cards added.")
-
-    # Scryfall (understandably) doesn't have data for AKR right now, getting AKH/HOU cards by name instead
-    with open(BulkDataPath, 'r', encoding="utf8") as file:
-        print("\nExtracting AKR card data...")
-        objects = ijson.items(file, 'item')
-        akr_cards = (o for o in objects if o['name'] in AKRCards)
-        akr_candidates = {}
-        # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
-        for c in akr_cards:
-            if c["lang"] not in akr_candidates:
-                akr_candidates[c["lang"]] = {}
-            if (c['set'].lower() in ['akh', 'hou']) or c['name'] not in akr_candidates[c['lang']] or (akr_candidates[c['lang']][c['name']]['set'] not in ['akh', 'hou'] and c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']):
-                c['arena_id'] = AKRCards[c["name"]][0]
-                c['collector_number'] = AKRCards[c["name"]][1]
-                # Force AKR cards to appear in boosters, excluding Regal Caracal (Buy-a-Box). FIXME: Check if this is indeed a Buy-a-Box :)
-                c['booster'] = c['collector_number'] != "339"
-                c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
-                akr_candidates[c["lang"]][c["name"]] = c
-        for l in akr_candidates.keys():
-            for c in akr_candidates[l].values():
-                c['set'] = "akr"
-                cards.append(c)
-
-        MissingAKRCards = AKRCards
-        for name in akr_candidates["en"]:
-            del MissingAKRCards[name]
-        if len(MissingAKRCards) > 0:
-            print("MissingAKRCards: ", MissingAKRCards)
 
     with open(BulkDataArenaPath, 'w') as outfile:
         json.dump(cards, outfile, cls=DecimalEncoder)
@@ -292,7 +260,11 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     selection['rating'] = CardRatings[selection['name']]
                 else:
                     selection['rating'] = 0.5
-                if c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
+                if selection['set'] == 'akr':
+                    # Exclude Buy-a-Box
+                    selection['in_booster'] = 'Basic Land' not in c['type_line'] and selection["collector_number"] != "339"
+                elif c['arena_id'] in NonBoosterCards or not c['booster'] or 'Basic Land' in c['type_line']:
+                    # Exception for akr
                     selection['in_booster'] = False
                     selection['rating'] = 0
                 cards[c['arena_id']].update(selection)

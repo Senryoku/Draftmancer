@@ -781,7 +781,7 @@ describe("Checking sets", function() {
 		thb: { common: 101, uncommon: 80, rare: 53, mythic: 15 },
 		iko: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
-		akr: { common: 108, uncommon: 90, rare: 74, mythic: 31 }, // FIXME: Check these numbers when the set is officially released
+		akr: { common: 108, uncommon: 90, rare: 74, mythic: 31 },
 	};
 
 	beforeEach(function(done) {
