@@ -101,29 +101,33 @@ async function requestSavedSessions() {
 			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map(n => restoreEmptyStr(n));
 
 			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
-			for (let prop of Object.getOwnPropertyNames(s.data).filter(p => !["botsInstances"].includes(p))) {
+			for (let prop of Object.getOwnPropertyNames(s.data).filter(
+				p => !["botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
+			)) {
 				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
 			}
+
+			const copyProps = (obj, target) => {
+				for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
+			};
 
 			if (s.data.botsInstances) {
 				InactiveSessions[fixedID].botsInstances = [];
 				for (let bot of s.data.botsInstances) {
 					const newBot = new Bot(bot.name, bot.id);
-					for (let prop of Object.getOwnPropertyNames(bot)) {
-						newBot[prop] = bot[prop];
-					}
+					copyProps(bot, newBot);
 					InactiveSessions[fixedID].botsInstances.push(newBot);
 				}
 			}
 
 			if (s.data.winstonDraftState) {
 				InactiveSessions[fixedID].winstonDraftState = new SessionModule.WinstonDraftState();
-				for (let prop of Object.getOwnPropertyNames(s.data.winstonDraftState)) {
-					if (!(s.data.winstonDraftState[prop] instanceof Function))
-						InactiveSessions[fixedID].winstonDraftState[prop] = restoreEmptyStr(
-							s.data.winstonDraftState[prop]
-						);
-				}
+				copyProps(s.data.winstonDraftState, InactiveSessions[fixedID].winstonDraftState);
+			}
+
+			if (s.data.gridDraftState) {
+				InactiveSessions[fixedID].gridDraftState = new SessionModule.GridDraftState();
+				copyProps(s.data.gridDraftState, InactiveSessions[fixedID].gridDraftState);
 			}
 
 			if (isObsolete(s))
@@ -212,7 +216,7 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
-			p => !["users", "countdownInterval", "botsInstances"].includes(p)
+			p => !["users", "countdownInterval", "botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
 		)) {
 			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
 		}
@@ -223,23 +227,28 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
+			const copyProps = (obj, target) => {
+				for (let prop of Object.getOwnPropertyNames(obj))
+					if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+			};
+
 			if (s.botsInstances) {
 				Item.data.botsInstances = [];
 				for (let bot of s.botsInstances) {
 					let podbot = {};
-					for (let prop of Object.getOwnPropertyNames(bot)) {
-						if (!(bot[prop] instanceof Function)) podbot[prop] = bot[prop];
-					}
+					copyProps(bot, podbot);
 					Item.data.botsInstances.push(podbot);
 				}
 			}
 
 			if (s.winstonDraftState) {
 				Item.data.winstonDraftState = {};
-				for (let prop of Object.getOwnPropertyNames(s.winstonDraftState)) {
-					if (!(s.winstonDraftState[prop] instanceof Function))
-						Item.data.winstonDraftState[prop] = s.winstonDraftState[prop];
-				}
+				copyProps(s.winstonDraftState, Item.data.winstonDraftState);
+			}
+
+			if (s.gridDraftState) {
+				Item.data.gridDraftState = {};
+				copyProps(s.gridDraftState, Item.data.gridDraftState);
 			}
 		}
 

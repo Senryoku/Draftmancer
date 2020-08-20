@@ -205,6 +205,51 @@ io.on("connection", function(socket) {
 		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
 	});
 
+	// Grid Draft
+
+	socket.on("startGridDraft", function(boosterCount) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		if (Sessions[sessionID].users.size == 2) {
+			Sessions[sessionID].startGridDraft(boosterCount ? boosterCount : 18);
+		} else {
+			Connections[userID].socket.emit("message", {
+				title: `2 Players Only`,
+				text: `Grid Draft can only be played with exactly 2 players.`,
+			});
+		}
+	});
+
+	socket.on("gridDraftPick", function(choice, ack) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		const sess = Sessions[sessionID];
+		if (!sess) {
+			if (ack) ack({ code: 2, error: "Internal error. Session does not exist." });
+			return;
+		}
+
+		if (!sess.drafting || !sess.gridDraftState) {
+			if (ack) ack({ code: 3, error: "Not drafting." });
+			return;
+		}
+
+		if (userID != sess.gridDraftState.currentPlayer()) {
+			if (ack) ack({ code: 4, error: "Not your turn." });
+			return;
+		}
+
+		const r = sess.gridDraftPick(choice);
+
+		if (ack) {
+			if (!r) ack({ code: 1, error: "Internal error." });
+			else ack({ code: 0 });
+		}
+	});
+
+	// Winston Draft
+
 	socket.on("startWinstonDraft", function(boosterCount) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
@@ -223,12 +268,12 @@ io.on("connection", function(socket) {
 		const userID = this.userID;
 		const sessionID = Connections[userID].sessionID;
 		if (!Sessions[sessionID].drafting || !Sessions[sessionID].winstonDraftState) {
-			if (ack) ack({ code: 1, error: "Not drafting." });
+			if (ack) ack({ code: 2, error: "Not drafting." });
 			return;
 		}
 
 		if (userID != Sessions[sessionID].winstonDraftState.currentPlayer()) {
-			if (ack) ack({ code: 1, error: "Not your turn." });
+			if (ack) ack({ code: 3, error: "Not your turn." });
 			return;
 		}
 
@@ -261,6 +306,8 @@ io.on("connection", function(socket) {
 		}
 	});
 
+	// Standard Draft
+
 	socket.on("startDraft", function() {
 		let userID = this.userID;
 		let sessionID = Connections[userID].sessionID;
@@ -282,6 +329,7 @@ io.on("connection", function(socket) {
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].drafting) return;
 		if (Sessions[sessionID].winstonDraftState) Sessions[sessionID].endWinstonDraft();
+		else if (Sessions[sessionID].gridDraftState) Sessions[sessionID].endGridDraft();
 		else Sessions[sessionID].endDraft();
 	});
 

@@ -35,8 +35,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Run `node createDynamoDBTables.js`
 
-## Todo
-
 ### Important
 
 -   Re-think color balance for multi-colored cards?
@@ -51,12 +49,13 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### New Features
 
--   Grid Draft; Winchester Draft (harder to implement)
+-   Winchester Draft (harder to implement)
 
 ## Check
 
 Features that may need some additional testing:
 
+-   Grid Draft
 -   Set specificy booster generation rules (DOM/WAR)
 -   Picks by Drag & Drop
 -   Load translations on-demand.

@@ -1,5 +1,9 @@
 [
 	{
+		"date": "19/08/2020",
+		"notes": ["Implemented Grid Draft as a 2-player variant for drafting cubes."]
+	},
+	{
 		"date": "06/08/2020",
 		"notes": [
 			"Implemented set specific collation rules for boosters: One Planeswalker per War of the Spark pack, one Legendary Creature per Dominaria pack."

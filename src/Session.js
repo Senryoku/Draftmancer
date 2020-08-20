@@ -78,6 +78,33 @@ function WinstonDraftState(players, boosters) {
 	};
 }
 
+function GridDraftState(players, boosters) {
+	this.players = players;
+	this.round = 0;
+	this.boosters = []; // 3x3 Grid, Row-Major order
+	if (boosters) {
+		for (let booster of boosters) {
+			if (booster.length > 9) booster.length = 9;
+			if (booster.length < 9) this.error = true;
+			shuffleArray(booster);
+			this.boosters.push(booster);
+		}
+	}
+	this.boosterCount = this.boosters.length;
+
+	this.currentPlayer = function() {
+		return this.players[[0, 1, 1, 0][this.round % 4]];
+	};
+	this.syncData = function() {
+		return {
+			round: this.round,
+			currentPlayer: this.currentPlayer(),
+			booster: this.boosters[0],
+			boosterCount: this.boosterCount,
+		};
+	};
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -126,6 +153,7 @@ function Session(id, owner) {
 	this.disconnectedUsers = {};
 
 	this.winstonDraftState = null;
+	this.gridDraftState = null;
 
 	this.addUser = function(userID) {
 		if (this.users.has(userID)) {
@@ -317,8 +345,12 @@ function Session(id, owner) {
 	};
 
 	// Populates this.boosters following session options
-	// WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
-	this.generateBoosters = function(boosterQuantity, useCustomBoosters) {
+	// Options object properties:
+	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
+	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
+	//  - targets: Overrides session boosterContent setting
+	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists whitout custom slots
+	this.generateBoosters = function(boosterQuantity, options = {}) {
 		const count_cards = function(coll) {
 			return Object.values(coll).reduce((acc, val) => acc + val, 0);
 		};
@@ -402,7 +434,7 @@ function Session(id, owner) {
 					else localCollection[cardId] = 1;
 				}
 
-				const cardsPerBooster = 15;
+				const cardsPerBooster = options.cardsPerBooster || 15;
 				let cardsByColor = {};
 				if (this.colorBalance) {
 					for (let card in localCollection) {
@@ -446,7 +478,7 @@ function Session(id, owner) {
 			}
 		} else {
 			// Standard draft boosters
-			const targets = this.boosterContent;
+			const targets = options.targets || this.boosterContent;
 
 			const BoosterFactoryOptions = {
 				foil: this.foil,
@@ -467,7 +499,7 @@ function Session(id, owner) {
 			};
 
 			// If the default rule will be used, initialize it
-			if (!useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
+			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				let localCollection = this.cardPoolByRarity();
 				let defaultLandSlot = null;
 				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots)
@@ -492,7 +524,7 @@ function Session(id, owner) {
 			}
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (useCustomBoosters && this.customBoosters.some(v => v !== "")) {
+			if (options.useCustomBoosters && this.customBoosters.some(v => v !== "")) {
 				const boosterFactories = [];
 				const usedSets = {};
 
@@ -591,7 +623,7 @@ function Session(id, owner) {
 	this.notifyUserChange = function() {
 		// Send only necessary data
 		let user_info = [];
-		for (let userID of this.getSortedHumanPlayers()) {
+		for (let userID of this.getSortedHumanPlayersIDs()) {
 			let u = Connections[userID];
 			if (u) {
 				user_info.push({
@@ -627,11 +659,11 @@ function Session(id, owner) {
 			return;
 		}
 		this.disconnectedUsers = {};
-		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayers(), this.boosters);
+		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayers(),
 			});
 			Connections[user].socket.emit("startWinstonDraft", this.winstonDraftState);
 		}
@@ -704,6 +736,87 @@ function Session(id, owner) {
 
 	///////////////////// Winston Draft End //////////////////////
 
+	///////////////////// Grid Draft //////////////////////
+
+	this.startGridDraft = function(boosterCount) {
+		if (this.users.size != 2) return false;
+		this.drafting = true;
+		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
+		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
+		// Use boosterContent setting only if it is valid (adds up to 9 cards)
+		const cardsPerBooster = Object.values(this.boosterContent).reduce((val, acc) => val + acc, 0);
+
+		if (
+			!this.generateBoosters(boosterCount, {
+				targets: cardsPerBooster === 9 ? this.boosterContent : { rare: 1, uncommon: 3, common: 5 },
+				cardsPerBooster: 9,
+			})
+		) {
+			this.drafting = false;
+			return;
+		}
+
+		this.disconnectedUsers = {};
+		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedHumanPlayers(),
+			});
+			Connections[user].socket.emit("startGridDraft", this.gridDraftState.syncData());
+		}
+
+		return true;
+	};
+
+	this.endGridDraft = function() {
+		Persistence.logSession("GridDraft", this);
+		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
+		this.gridDraftState = null;
+		this.drafting = false;
+	};
+
+	this.gridDraftNextRound = function() {
+		const s = this.gridDraftState;
+		++s.round;
+
+		if (s.round % 2 === 0) {
+			// Share the last pick before advancing to the next booster.
+			const syncData = s.syncData();
+			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
+			for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
+			s.boosters.shift();
+			if (s.boosters.length === 0) {
+				this.endGridDraft();
+				return;
+			}
+		}
+		for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", s.syncData());
+	};
+
+	this.gridDraftPick = function(choice) {
+		const s = this.gridDraftState;
+		if (!this.drafting || !s) return false;
+
+		let pickedCards = 0;
+		for (let i = 0; i < 3; ++i) {
+			//                     Column           Row
+			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
+			if (s.boosters[0][idx] > 0) {
+				Connections[s.currentPlayer(this.userOrder)].pickedCards.push(s.boosters[0][idx]);
+				s.boosters[0][idx] = -1;
+				++pickedCards;
+			}
+		}
+
+		if (pickedCards === 0) return false;
+
+		this.gridDraftNextRound();
+		return true;
+	};
+
+	///////////////////// Grid Draft End //////////////////////
+
 	///////////////////// Traditional Draft Methods //////////////////////
 
 	this.startDraft = function() {
@@ -724,7 +837,7 @@ function Session(id, owner) {
 		for (let i = 0; i < this.bots; ++i)
 			this.botsInstances.push(new Bot(`Bot #${i}`, [...this.users][i % this.users.size].concat(i)));
 
-		if (!this.generateBoosters(boosterQuantity, true)) {
+		if (!this.generateBoosters(boosterQuantity, { useCustomBoosters: true })) {
 			this.drafting = false;
 			return;
 		}
@@ -970,7 +1083,7 @@ function Session(id, owner) {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		if (!this.winstonDraftState) {
+		if (!this.winstonDraftState && !this.gridDraftState) {
 			this.resumeCountdown();
 		}
 		this.emitMessage("Player reconnected", `Resuming draft...`);
@@ -1093,6 +1206,14 @@ function Session(id, owner) {
 				state: this.winstonDraftState.syncData(),
 			});
 			delete this.disconnectedUsers[userID];
+		} else if (this.gridDraftState) {
+			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
+			this.addUser(userID);
+			Connections[userID].socket.emit("rejoinGridDraft", {
+				pickedCards: this.disconnectedUsers[userID].pickedCards,
+				state: this.gridDraftState.syncData(),
+			});
+			delete this.disconnectedUsers[userID];
 		} else {
 			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
@@ -1136,7 +1257,7 @@ function Session(id, owner) {
 	};
 
 	this.replaceDisconnectedPlayers = function() {
-		if (!this.drafting || this.winstonDraftState) return;
+		if (!this.drafting || this.winstonDraftState || this.gridDraftState) return;
 
 		console.warn("Replacing disconnected players with bots!");
 
@@ -1219,7 +1340,7 @@ function Session(id, owner) {
 
 	// Includes disconnected players!
 	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
-	this.getSortedHumanPlayers = function() {
+	this.getSortedHumanPlayersIDs = function() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
 		return this.userOrder.filter(e => players.includes(e));
 	};
@@ -1228,10 +1349,21 @@ function Session(id, owner) {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
 	};
 
-	this.getSortedVirtualPlayers = function() {
+	this.getSortedHumanPlayers = function() {
 		let tmp = {};
-		let humanPlayers = this.getSortedHumanPlayers();
+		for (let userID of this.getSortedHumanPlayersIDs()) {
+			tmp[userID] = {
+				isBot: false,
+				disconnected: userID in this.disconnectedUsers,
+			};
+		}
+		return tmp;
+	};
+
+	this.getSortedVirtualPlayers = function() {
 		if (this.botsInstances) {
+			let tmp = {};
+			let humanPlayers = this.getSortedHumanPlayersIDs();
 			for (let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
 				if (idx < humanPlayers.length) {
 					let userID = humanPlayers[idx];
@@ -1245,17 +1377,8 @@ function Session(id, owner) {
 					tmp[bot.id] = { isBot: true, instance: bot };
 				}
 			}
-		} else {
-			for (let userID of humanPlayers) {
-				tmp[userID] = {
-					isBot: false,
-					disconnected: userID in this.disconnectedUsers,
-				};
-			}
 			return tmp;
-		}
-
-		return tmp;
+		} else return this.getSortedHumanPlayers();
 	};
 
 	this.emitMessage = function(title, text, showConfirmButton = true, timer = 1500) {
@@ -1294,4 +1417,5 @@ function Session(id, owner) {
 
 module.exports.Session = Session;
 module.exports.WinstonDraftState = WinstonDraftState;
+module.exports.GridDraftState = GridDraftState;
 module.exports.Sessions = {};
