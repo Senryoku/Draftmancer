@@ -35,6 +35,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Run `node createDynamoDBTables.js`
 
+## TODOs
+
 ### Important
 
 -   Re-think color balance for multi-colored cards?
