@@ -281,20 +281,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     selection['rating'] = 0
                 cards[c['arena_id']].update(selection)
 
-        # Removes URL prefix
-        allURIs = []
-        for lang in Translations:
-            for c in Translations[lang]:
-                if('image_uris' in Translations[lang][c]):
-                    allURIs.append(Translations[lang][c]['image_uris'])
-        URLPrefix = os.path.commonprefix(allURIs)
-        print("Scryfall Image URLPrefix: ", URLPrefix)
-        for lang in Translations:
-            for c in Translations[lang]:
-                if('image_uris' in Translations[lang][c]):
-                    Translations[lang][c]['image_uris'] = Translations[lang][c]['image_uris'][len(
-                        URLPrefix):]
-
         for lang in Translations:
             with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
                 json.dump(Translations[lang], outfile, ensure_ascii=False)

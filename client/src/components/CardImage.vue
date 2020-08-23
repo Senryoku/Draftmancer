@@ -14,7 +14,6 @@
 <script>
 import { Cards } from "./../Cards.js";
 import CardPlaceholder from "./CardPlaceholder.vue";
-const ImageURLPrefix = "https://img.scryfall.com/cards/border_crop/front/";
 export default {
 	name: "CardImage",
 	components: { CardPlaceholder },
@@ -23,12 +22,11 @@ export default {
 		language: { type: String, required: true },
 	},
 	computed: {
-		imageURI: function() {
-			if (this.language in Cards[this.card.id].image_uris)
-				return ImageURLPrefix + Cards[this.card.id].image_uris[this.language];
-			return ImageURLPrefix + Cards[this.card.id].image_uris["en"];
+		imageURI: function () {
+			if (this.language in Cards[this.card.id].image_uris) return Cards[this.card.id].image_uris[this.language];
+			return Cards[this.card.id].image_uris["en"];
 		},
-		printedName: function() {
+		printedName: function () {
 			if (this.language in Cards[this.card.id].printed_name)
 				return Cards[this.card.id].printed_name[this.language];
 			return Cards[this.card.id].name;
