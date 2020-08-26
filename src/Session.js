@@ -1175,7 +1175,7 @@ function Session(id, owner) {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		if (!this.winstonDraftState && !this.gridDraftState) {
+		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
 			this.resumeCountdown();
 		}
 		this.emitMessage("Player reconnected", `Resuming draft...`);
@@ -1509,4 +1509,5 @@ function Session(id, owner) {
 module.exports.Session = Session;
 module.exports.WinstonDraftState = WinstonDraftState;
 module.exports.GridDraftState = GridDraftState;
+module.exports.RochesterDraftState = RochesterDraftState;
 module.exports.Sessions = {};

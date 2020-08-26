@@ -274,6 +274,14 @@
 									Grid Draft
 								</button>
 								<button
+									@click="startRochesterDraft()"
+									v-tooltip.left="
+										'Starts a Rochester Draft. Every players picks from a single booster.'
+									"
+								>
+									Rochester Draft
+								</button>
+								<button
 									@click="sealedDialog"
 									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
 								>
@@ -730,6 +738,54 @@
 					:picking="userID === gridDraftState.currentPlayer"
 					@pick="gridDraftPick"
 				></grid-draft>
+			</div>
+			<!-- Rochester Draft -->
+			<div v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+				<div class="title-status">
+					<h2>Rochester Draft</h2>
+					<span>
+						Booster #{{ rochesterDraftState.boosterNumber + 1 }} / {{ rochesterDraftState.boosterCount }};
+						Pick #{{ rochesterDraftState.pickNumber + 1 }}
+					</span>
+					<span>
+						<template v-if="userID === rochesterDraftState.currentPlayer">
+							<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
+						</template>
+						<template v-else>
+							<i class="fas fa-spinner fa-spin"></i>
+							Waiting on
+							{{
+								rochesterDraftState.currentPlayer in userByID
+									? userByID[rochesterDraftState.currentPlayer].userName
+									: "(Disconnected)"
+							}}...
+						</template>
+					</span>
+				</div>
+				<div class="booster card-container">
+					<template v-if="userID === rochesterDraftState.currentPlayer">
+						<booster-card
+							v-for="card in rochesterDraftState.booster"
+							:key="`card-booster-${card.uniqueID}`"
+							:card="card"
+							:language="language"
+							:canbeburned="false"
+							:class="{ selected: selectedCard === card }"
+							@click.native="selectCard($event, card)"
+							@dblclick.native="doubleClickCard($event, card)"
+							draggable
+							@dragstart.native="dragBoosterCard($event, card)"
+						></booster-card>
+					</template>
+					<template v-else>
+						<card
+							v-for="card in rochesterDraftState.booster"
+							:key="`card-booster-${card.uniqueID}`"
+							:card="card"
+							:language="language"
+						></card>
+					</template>
+				</div>
 			</div>
 		</template>
 
