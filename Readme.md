@@ -49,10 +49,6 @@ AWS_ENDPOINT=http://localhost:8000
 -   Regroup Game Mode besides Draft in a single dropdown menu
 -   Display foils as... foils in front end?
 
-### New Features
-
--   Winchester Draft (harder to implement)
-
 ## Check
 
 Features that may need some additional testing:

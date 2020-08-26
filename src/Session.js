@@ -105,6 +105,35 @@ function GridDraftState(players, boosters) {
 	};
 }
 
+function RochesterDraftState(players, boosters) {
+	this.players = players;
+	this.pickNumber = 0;
+	this.boosterNumber = 0;
+	this.boosters = [];
+	if (boosters) {
+		for (let booster of boosters) {
+			this.boosters.push(booster);
+		}
+	}
+	this.boosterCount = this.boosters.length;
+
+	this.firstPick = function() {
+		return this.players[this.boosterNumber % this.players.length];
+	};
+	this.currentPlayer = function() {
+		return this.players[(this.boosterNumber + this.pickNumber) % this.players.length];
+	};
+	this.syncData = function() {
+		return {
+			pickNumber: this.pickNumber,
+			boosterNumber: this.boosterNumber,
+			currentPlayer: this.currentPlayer(),
+			booster: this.boosters[0],
+			boosterCount: this.boosterCount,
+		};
+	};
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -803,7 +832,7 @@ function Session(id, owner) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] > 0) {
-				Connections[s.currentPlayer(this.userOrder)].pickedCards.push(s.boosters[0][idx]);
+				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
 				s.boosters[0][idx] = -1;
 				++pickedCards;
 			}
@@ -816,6 +845,69 @@ function Session(id, owner) {
 	};
 
 	///////////////////// Grid Draft End //////////////////////
+
+	///////////////////// Rochester Draft //////////////////////
+
+	this.startRochesterDraft = function() {
+		if (this.users.size <= 1) return false;
+		this.drafting = true;
+		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
+		if (!this.generateBoosters(3 * this.users.size)) {
+			this.drafting = false;
+			return;
+		}
+
+		this.disconnectedUsers = {};
+		this.rochesterDraftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedHumanPlayers(),
+			});
+			Connections[user].socket.emit("startRochesterDraft", this.rochesterDraftState.syncData());
+		}
+
+		return true;
+	};
+
+	this.endRochesterDraft = function() {
+		Persistence.logSession("RochesterDraft", this);
+		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
+		this.rochesterDraftState = null;
+		this.drafting = false;
+	};
+
+	this.rochesterDraftNextRound = function() {
+		const s = this.rochesterDraftState;
+		// Empty booster, open the next one
+		if (s.boosters[0].length === 0) {
+			s.boosters.shift();
+			// No more boosters; End draft.
+			if (s.boosters.length === 0) {
+				this.endRochesterDraft();
+				return;
+			}
+			s.pickNumber = 0;
+			++s.boosterNumber;
+		} else {
+			++s.pickNumber;
+		}
+		const syncData = s.syncData();
+		for (let user of this.users) Connections[user].socket.emit("rochesterDraftNextRound", syncData);
+	};
+
+	this.rochesterDraftPick = function(idx) {
+		const s = this.rochesterDraftState;
+		if (!this.drafting || !s) return false;
+
+		Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+		s.boosters[0].splice(idx, 1);
+
+		this.rochesterDraftNextRound();
+		return true;
+	};
+
+	///////////////////// Rochester Draft End //////////////////////
 
 	///////////////////// Traditional Draft Methods //////////////////////
 
@@ -1198,21 +1290,20 @@ function Session(id, owner) {
 	};
 
 	this.reconnectUser = function(userID) {
-		if (this.winstonDraftState) {
+		if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
-			Connections[userID].socket.emit("rejoinWinstonDraft", {
+
+			let msgData = {};
+			if (this.winstonDraftState) msgData = { name: "rejoinWinstonDraft", state: this.winstonDraftState };
+			else if (this.gridDraftState) msgData = { name: "rejoinGridDraft", state: this.gridDraftState };
+			else if (this.rochesterDraftState)
+				msgData = { name: "rejoinRochesterDraft", state: this.rochesterDraftState };
+			Connections[userID].socket.emit(msgData.name, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: this.winstonDraftState.syncData(),
+				state: msgData.state.syncData(),
 			});
-			delete this.disconnectedUsers[userID];
-		} else if (this.gridDraftState) {
-			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
-			this.addUser(userID);
-			Connections[userID].socket.emit("rejoinGridDraft", {
-				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: this.gridDraftState.syncData(),
-			});
+
 			delete this.disconnectedUsers[userID];
 		} else {
 			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;

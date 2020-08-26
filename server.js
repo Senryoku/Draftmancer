@@ -248,6 +248,43 @@ io.on("connection", function(socket) {
 		}
 	});
 
+	// Rochester Draft
+
+	socket.on("startRochesterDraft", function() {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+
+		Sessions[sessionID].startRochesterDraft();
+	});
+
+	socket.on("rochesterDraftPick", function(choice, ack) {
+		const userID = this.userID;
+		const sessionID = Connections[userID].sessionID;
+		const sess = Sessions[sessionID];
+		if (!sess) {
+			if (ack) ack({ code: 2, error: "Internal error. Session does not exist." });
+			return;
+		}
+
+		if (!sess.drafting || !sess.rochesterDraftState) {
+			if (ack) ack({ code: 3, error: "Not drafting." });
+			return;
+		}
+
+		if (userID != sess.rochesterDraftState.currentPlayer()) {
+			if (ack) ack({ code: 4, error: "Not your turn." });
+			return;
+		}
+
+		const r = sess.rochesterDraftPick(choice);
+
+		if (ack) {
+			if (!r) ack({ code: 1, error: "Internal error." });
+			else ack({ code: 0 });
+		}
+	});
+
 	// Winston Draft
 
 	socket.on("startWinstonDraft", function(boosterCount) {
@@ -330,6 +367,7 @@ io.on("connection", function(socket) {
 		if (!Sessions[sessionID].drafting) return;
 		if (Sessions[sessionID].winstonDraftState) Sessions[sessionID].endWinstonDraft();
 		else if (Sessions[sessionID].gridDraftState) Sessions[sessionID].endGridDraft();
+		else if (Sessions[sessionID].rochesterDraftState) Sessions[sessionID].endRochesterDraft();
 		else Sessions[sessionID].endDraft();
 	});
 
