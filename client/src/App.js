@@ -448,8 +448,8 @@ export default {
 			this.socket.on("winstonDraftSync", winstonDraftState => {
 				this.setWinstonDraftState(winstonDraftState);
 			});
-			this.socket.on("winstonDraftNextRound", currentUser => {
-				if (this.userID === currentUser) {
+			this.socket.on("winstonDraftNextRound", currentPlayer => {
+				if (this.userID === currentPlayer) {
 					this.playSound("next");
 					fireToast("success", "Your turn!");
 					if (this.enableNotifications) {
@@ -497,7 +497,7 @@ export default {
 					this.$refs.sideboardDisplay.sync();
 				});
 
-				if (this.userID === data.state.currentUser) this.draftingState = DraftState.WinstonPicking;
+				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
 				else this.draftingState = DraftState.WinstonWaiting;
 
 				Swal.fire({
@@ -587,7 +587,7 @@ export default {
 					this.$refs.sideboardDisplay.sync();
 				});
 
-				if (this.userID === data.state.currentUser) this.draftingState = DraftState.GridPicking;
+				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
 				else this.draftingState = DraftState.GridWaiting;
 
 				Swal.fire({
