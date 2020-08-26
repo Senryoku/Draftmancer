@@ -279,7 +279,7 @@
 										'Starts a Rochester Draft. Every players picks from a single booster.'
 									"
 								>
-									Rochester Draft
+									Rochester
 								</button>
 								<button
 									@click="sealedDialog"
@@ -436,7 +436,13 @@
 				<ul class="player-list">
 					<li
 						v-for="user in virtualPlayers"
-						:class="{ bot: user.isBot }"
+						:class="{
+							bot: user.isBot,
+							currentPlayer:
+								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
+								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
+								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID),
+						}"
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
@@ -741,10 +747,10 @@
 			</div>
 			<!-- Rochester Draft -->
 			<div v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
-				<div class="title-status">
+				<div class="title-status controls">
 					<h2>Rochester Draft</h2>
 					<span>
-						Booster #{{ rochesterDraftState.boosterNumber + 1 }} / {{ rochesterDraftState.boosterCount }};
+						Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
 						Pick #{{ rochesterDraftState.pickNumber + 1 }}
 					</span>
 					<span>
@@ -761,6 +767,7 @@
 							}}...
 						</template>
 					</span>
+					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
 				</div>
 				<div class="booster card-container">
 					<template v-if="userID === rochesterDraftState.currentPlayer">
@@ -778,12 +785,12 @@
 						></booster-card>
 					</template>
 					<template v-else>
-						<card
+						<booster-card
 							v-for="card in rochesterDraftState.booster"
 							:key="`card-booster-${card.uniqueID}`"
 							:card="card"
 							:language="language"
-						></card>
+						></booster-card>
 					</template>
 				</div>
 			</div>

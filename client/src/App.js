@@ -967,9 +967,7 @@ export default {
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						{
-							selectedCard: this.rochesterDraftState.booster.findIndex(c => c === this.selectedCard), // FIXME
-						},
+						this.rochesterDraftState.booster.findIndex(c => c === this.selectedCard),
 						answer => {
 							this.pickInFlight = false;
 							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);

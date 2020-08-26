@@ -899,9 +899,12 @@ function Session(id, owner) {
 	this.rochesterDraftPick = function(idx) {
 		const s = this.rochesterDraftState;
 		if (!this.drafting || !s) return false;
+		console.log("rochesterDraftPick ", idx);
 
 		Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+		console.log(s.boosters[0]);
 		s.boosters[0].splice(idx, 1);
+		console.log(s.boosters[0]);
 
 		this.rochesterDraftNextRound();
 		return true;
