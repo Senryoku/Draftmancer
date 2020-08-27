@@ -854,7 +854,7 @@ function Session(id, owner) {
 		if (this.users.size <= 1) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
-		if (!this.generateBoosters(3 * this.users.size)) {
+		if (!this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true })) {
 			this.drafting = false;
 			return;
 		}
