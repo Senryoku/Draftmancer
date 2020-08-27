@@ -30,9 +30,16 @@
 				></i>
 			</transition>
 		</div>
-		<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
+		<div
+			v-for="(c, idx) in state.booster"
+			:key="idx"
+			class="card-slot"
+			:style="'grid-area: card-slot-' + idx"
+		>
 			<transition name="fade" mode="out-in">
-				<div v-if="c" :key="'card-container-' + c.uniqueID"><card :card="c"></card></div>
+				<div v-if="c" :key="'card-container-' + c.uniqueID">
+					<card :card="c"></card>
+				</div>
 				<div v-else :key="'empty-' + idx">
 					<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
 				</div>
@@ -47,7 +54,7 @@ export default {
 	components: { Card },
 	props: { state: { type: Object, required: true }, picking: { type: Boolean, required: true } },
 	methods: {
-		isValidChoice: function(choice) {
+		isValidChoice: function (choice) {
 			let validCards = 0;
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row

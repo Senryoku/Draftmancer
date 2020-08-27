@@ -939,23 +939,27 @@ describe("Single Draft with Color Balance", function() {
 		});
 		clients[ownerIdx].emit("setRestriction", ["thb"]);
 		/*
-		const random = new randomjs.Random(randomjs.nodeCrypto);
-		const get_random_key = () => random.integer(0, Object.keys(localCollection['rare']).length - 1);
-		process.stdout.write('Distribution samples:\n');
-		for(let repeat = 0; repeat < 5; ++repeat) {
-			let samples = {};
-			const sampleCount = 8 * 3;
-			for(let i = 0; i < Object.keys(localCollection['rare']).length; ++i)
-				samples[i] = 0;
-			for(let i = 0; i < sampleCount; ++i) {
-				samples[get_random_key()] += 1;
-			}
-			for(let i = 0; i < Object.keys(localCollection['rare']).length; ++i)
-				process.stdout.write(`${samples[i]} `);
-				//process.stdout.write(`${samples[i]}; ${samples[i] * 100.0 / sampleCount} %)`);
-			process.stdout.write('\n');
-		}
-		*/
+       const random = new randomjs.Random(randomjs.nodeCrypto);
+       const get_random_key = () => random.integer(0,
+       Object.keys(localCollection['rare']).length - 1);
+       process.stdout.write('Distribution samples:\n');
+       for(let repeat = 0; repeat < 5; ++repeat) {
+               let samples = {};
+               const sampleCount = 8 * 3;
+               for(let i = 0; i < Object.keys(localCollection['rare']).length;
+       ++i)
+                       samples[i] = 0;
+               for(let i = 0; i < sampleCount; ++i) {
+                       samples[get_random_key()] += 1;
+               }
+               for(let i = 0; i < Object.keys(localCollection['rare']).length;
+       ++i)
+                       process.stdout.write(`${samples[i]} `);
+                       //process.stdout.write(`${samples[i]}; ${samples[i] *
+       100.0 / sampleCount} %)`);
+               process.stdout.write('\n');
+       }
+       */
 	});
 
 	let boosters = [];
@@ -1810,8 +1814,10 @@ describe("Multiple Drafts", function() {
 				);
 				clients[sess][c].emit(
 					"pickCard",
-					{ selectedCard: boosters[playersPerSession * sess + c].booster[0] },
-					_ => {}
+					{
+						selectedCard: boosters[playersPerSession * sess + c].booster[0],
+					},
+					() => {}
 				);
 			}
 		}
@@ -2183,7 +2189,7 @@ describe("Grid Draft", function() {
 	});
 });
 
-describe.only("Rochester Draft", function() {
+describe("Rochester Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	const Sessions = server.__get__("Sessions");

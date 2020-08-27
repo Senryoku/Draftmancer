@@ -843,7 +843,6 @@ export default {
 			this.currentChatMessage = "";
 		},
 		// Draft Methods
-
 		startDraft: function() {
 			if (this.userID != this.sessionOwner) return;
 			if (this.deck.length > 0) {
