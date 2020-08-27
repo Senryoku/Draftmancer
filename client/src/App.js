@@ -269,7 +269,7 @@ export default {
 			this.socket.on("userDisconnected", userNames => {
 				if (!this.drafting) return;
 
-				if (this.winstonDraftState) {
+				if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
 					Swal.fire({
 						position: "center",
 						customClass: SwalCustomClasses,
@@ -927,7 +927,11 @@ export default {
 		},
 		dropBoosterCard: function(e, options) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
-			if (e.dataTransfer.getData("isboostercard") !== "true" || this.draftingState != DraftState.Picking) return;
+			if (
+				e.dataTransfer.getData("isboostercard") !== "true" ||
+				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
+			)
+				return;
 			e.preventDefault();
 			let cardid = e.dataTransfer.getData("text");
 			if (!this.selectedCard) {
