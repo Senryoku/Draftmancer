@@ -1148,10 +1148,19 @@ export default {
 			}
 		},
 		setRochesterDraftState: function(state) {
+			console.log("setRochesterDraftState");
+			let booster = [];
+			if (
+				this.rochesterDraftState &&
+				this.rochesterDraftState.booster &&
+				this.rochesterDraftState.booster.length - 1 === state.booster.length
+			) {
+				console.log("Ok ", this.rochesterDraftState.booster);
+				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
+				console.log("Ok ", booster);
+			} else for (let cid of state.booster) booster.push(genCard(cid));
+			state.booster = booster;
 			this.rochesterDraftState = state;
-			const booster = [];
-			for (let cid of state.booster) booster.push(genCard(cid));
-			this.rochesterDraftState.booster = booster;
 		},
 		startRochesterDraft: async function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;

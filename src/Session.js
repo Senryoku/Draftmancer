@@ -903,14 +903,14 @@ function Session(id, owner) {
 		const cid = s.boosters[0][idx];
 		Connections[s.currentPlayer()].pickedCards.push(cid);
 		s.boosters[0].splice(idx, 1);
-
+		/*
 		const msg = {
 			author: s.currentPlayer(),
 			timestamp: Date.now(),
 			text: `I picked ${Cards[cid].name}!`,
 		};
 		this.forUsers(user => Connections[user].socket.emit("chatMessage", msg));
-
+		*/
 		this.rochesterDraftNextRound();
 		return true;
 	};
