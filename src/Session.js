@@ -185,6 +185,7 @@ function Session(id, owner) {
 
 	this.winstonDraftState = null;
 	this.gridDraftState = null;
+	this.rochesterDraftState = null;
 
 	this.addUser = function(userID) {
 		if (this.users.has(userID)) {
@@ -209,7 +210,12 @@ function Session(id, owner) {
 
 	this.broadcastDisconnectedUsers = function() {
 		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(u => this.disconnectedUsers[u].userName);
-		this.forUsers(u => Connections[u].socket.emit("userDisconnected", disconnectedUserNames));
+		this.forUsers(u =>
+			Connections[u].socket.emit("userDisconnected", {
+				owner: this.owner,
+				disconnectedUserNames: disconnectedUserNames,
+			})
+		);
 	};
 
 	this.remUser = function(userID) {
@@ -756,9 +762,9 @@ function Session(id, owner) {
 	this.winstonTakePile = function() {
 		const s = this.winstonDraftState;
 		if (!this.drafting || !s) return false;
-		Connections[s.currentPlayer(this.userOrder)].pickedCards = Connections[
-			s.currentPlayer(this.userOrder)
-		].pickedCards.concat(s.piles[s.currentPile]);
+		Connections[s.currentPlayer()].pickedCards = Connections[s.currentPlayer()].pickedCards.concat(
+			s.piles[s.currentPile]
+		);
 		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
@@ -991,7 +997,6 @@ function Session(id, owner) {
 
 		this.round = 0;
 		this.boosterNumber = 1;
-		// console.debug(this);
 		this.nextBooster();
 	};
 
@@ -1002,17 +1007,17 @@ function Session(id, owner) {
 		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length) {
 			const err = `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`;
 			console.error(err);
-			return { code: 1, error: err };
+			return { code: 2, error: err };
 		}
 		if (!this.boosters[boosterIndex].includes(cardID)) {
 			const err = `Session.pickCard: cardID ('${cardID}') not found in booster #${boosterIndex}.`;
 			console.error(err);
-			return { code: 1, error: err };
+			return { code: 3, error: err };
 		}
 		if (Connections[userID].pickedThisRound) {
 			const err = `Session.pickCard: User '${userID}' already picked a card this round.`;
 			console.error(err);
-			return { code: 1, error: err };
+			return { code: 4, error: err };
 		}
 
 		if (

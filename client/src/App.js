@@ -133,11 +133,11 @@ export default {
 			maxTimer: 75,
 			pickTimer: 75,
 			draftLogRecipients: "everyone",
+			bracketLocked: false,
 			//
 			draftLog: undefined,
 			savedDraftLog: false,
 			bracket: null,
-			bracketLocked: false,
 			virtualPlayersData: undefined,
 			booster: [],
 			boosterNumber: 0,
@@ -266,33 +266,48 @@ export default {
 				this.userOrder = users.map(u => u.userID);
 			});
 
-			this.socket.on("userDisconnected", userNames => {
+			this.socket.on("userDisconnected", data => {
 				if (!this.drafting) return;
+				this.sessionOwner = data.owner;
 
 				if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
-					Swal.fire({
-						position: "center",
-						customClass: SwalCustomClasses,
-						icon: "error",
-						title: `Player(s) disconnected`,
-						text: `Wait for ${userNames.join(", ")} to come back or...`,
-						showConfirmButton: true,
-						allowOutsideClick: false,
-						confirmButtonText: "Stop draft",
-					}).then(result => {
-						if (result.value) this.socket.emit("stopDraft");
-					});
-				} else {
-					if (this.userID == this.sessionOwner) {
+					if (this.userID === this.sessionOwner) {
 						Swal.fire({
 							position: "center",
 							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
-							text: `Wait for ${userNames.join(", ")} to come back or...`,
+							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
 							showConfirmButton: true,
 							allowOutsideClick: false,
-							confirmButtonText: "Replace with a bot",
+							confirmButtonText: "Stop draft",
+						}).then(result => {
+							if (result.value) this.socket.emit("stopDraft");
+						});
+					} else {
+						Swal.fire({
+							position: "center",
+							customClass: SwalCustomClasses,
+							icon: "error",
+							title: `Player(s) disconnected`,
+							text: `Wait for ${data.disconnectedUserNames.join(
+								", "
+							)} to come back or for the session owner to stop the draft.`,
+							showConfirmButton: false,
+							allowOutsideClick: false,
+						});
+					}
+				} else {
+					if (this.userID === this.sessionOwner) {
+						Swal.fire({
+							position: "center",
+							customClass: SwalCustomClasses,
+							icon: "error",
+							title: `Player(s) disconnected`,
+							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
+							showConfirmButton: true,
+							allowOutsideClick: false,
+							confirmButtonText: "Replace them by bot(s)",
 						}).then(result => {
 							if (result.value) this.socket.emit("replaceDisconnectedPlayers");
 						});
@@ -302,9 +317,9 @@ export default {
 							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
-							text: `Wait for ${userNames.join(
+							text: `Wait for ${data.disconnectedUserNames.join(
 								", "
-							)} to come back or for the owner to replace them by a bot.`,
+							)} to come back or for the owner to replace them by bot(s).`,
 							showConfirmButton: false,
 							allowOutsideClick: false,
 						});
