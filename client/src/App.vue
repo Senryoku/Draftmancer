@@ -427,7 +427,7 @@
 								<template v-else-if="userByID[id].readyState == ReadyState.Unknown">
 									<i
 										class="fas fa-spinner fa-spin"
-										v-tooltip="`Waiting on ${userByID[id].userName} to respond...`"
+										v-tooltip="`Waiting for ${userByID[id].userName} to respond...`"
 									></i>
 								</template>
 							</template>
@@ -665,7 +665,7 @@
 							>Your turn to pick a pile of cards!</template
 						>
 						<template v-else>
-							Waiting on
+							Waiting for
 							{{
 								winstonDraftState.currentPlayer in userByID
 									? userByID[winstonDraftState.currentPlayer].userName
@@ -735,7 +735,7 @@
 						</template>
 						<template v-else>
 							<i class="fas fa-spinner fa-spin"></i>
-							Waiting on
+							Waiting for
 							{{
 								gridDraftState.currentPlayer in userByID
 									? userByID[gridDraftState.currentPlayer].userName
@@ -764,7 +764,7 @@
 						</template>
 						<template v-else>
 							<i class="fas fa-spinner fa-spin"></i>
-							Waiting on
+							Waiting for
 							{{
 								rochesterDraftState.currentPlayer in userByID
 									? userByID[rochesterDraftState.currentPlayer].userName
