@@ -158,7 +158,7 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("chatMessage", function(message) {
-		let sessionID = Connections[this.userID].sessionID;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!Sessions[sessionID]) return;
 
 		// Limits chat message length
@@ -169,50 +169,50 @@ io.on("connection", function(socket) {
 
 	socket.on("setOwnerIsPlayer", function(val) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
+		const sess = Sessions[Connections[userID].sessionID];
 
-		if (!Sessions[sessionID] || Sessions[sessionID].owner != userID || Sessions[sessionID].drafting) return;
+		if (!sess || sess.owner !== userID || sess.drafting) return;
 
 		if (val) {
-			Sessions[sessionID].ownerIsPlayer = true;
-			Sessions[sessionID].addUser(userID);
+			sess.ownerIsPlayer = true;
+			sess.addUser(userID);
 		} else {
-			Sessions[sessionID].ownerIsPlayer = false;
-			Sessions[sessionID].users.delete(userID);
-			Sessions[sessionID].notifyUserChange();
+			sess.ownerIsPlayer = false;
+			sess.users.delete(userID);
+			sess.notifyUserChange();
 		}
-		for (let user of Sessions[sessionID].users)
-			if (user != userID)
-				Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: Sessions[sessionID].ownerIsPlayer });
+		for (let user of sess.users)
+			if (user != userID) Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	});
 
 	socket.on("readyCheck", function(ack) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
+		const sess = Sessions[Connections[userID].sessionID];
 
-		if (!Sessions[sessionID] || Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) {
+		if (!sess || sess.owner != this.userID || sess.drafting) {
 			if (ack) ack({ code: 1 });
 			return;
 		}
 
 		if (ack) ack({ code: 0 });
-		for (let user of Sessions[sessionID].users) if (user != userID) Connections[user].socket.emit("readyCheck");
+		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("readyCheck");
 	});
 
 	socket.on("setReady", function(readyState) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess) return;
+		sess.forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
 	});
 
 	// Grid Draft
 
 	socket.on("startGridDraft", function(boosterCount) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
-		if (Sessions[sessionID].users.size == 2) {
-			Sessions[sessionID].startGridDraft(boosterCount ? boosterCount : 18);
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID || sess.drafting) return;
+		if (sess.users.size == 2) {
+			sess.startGridDraft(boosterCount ? boosterCount : 18);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -223,8 +223,7 @@ io.on("connection", function(socket) {
 
 	socket.on("gridDraftPick", function(choice, ack) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		const sess = Sessions[sessionID];
+		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess) {
 			if (ack) ack({ code: 2, error: "Internal error. Session does not exist." });
 			return;
@@ -235,7 +234,7 @@ io.on("connection", function(socket) {
 			return;
 		}
 
-		if (userID != sess.gridDraftState.currentPlayer()) {
+		if (userID !== sess.gridDraftState.currentPlayer()) {
 			if (ack) ack({ code: 4, error: "Not your turn." });
 			return;
 		}
@@ -252,15 +251,15 @@ io.on("connection", function(socket) {
 
 	socket.on("startRochesterDraft", function() {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID || sess.drafting) return;
 
-		if (Sessions[sessionID].users.size < 2) {
+		if (sess.users.size < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
 				text: `You need at least two players to start a Rochester Draft.`,
 			});
-		} else Sessions[sessionID].startRochesterDraft();
+		} else sess.startRochesterDraft();
 	});
 
 	socket.on("rochesterDraftPick", function(choice, ack) {
@@ -294,10 +293,10 @@ io.on("connection", function(socket) {
 
 	socket.on("startWinstonDraft", function(boosterCount) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
-		if (Sessions[sessionID].users.size == 2) {
-			Sessions[sessionID].startWinstonDraft(boosterCount ? boosterCount : 6);
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID || sess.drafting) return;
+		if (sess.users.size == 2) {
+			sess.startWinstonDraft(boosterCount ? boosterCount : 6);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -308,18 +307,18 @@ io.on("connection", function(socket) {
 
 	socket.on("winstonDraftTakePile", function(ack) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (!Sessions[sessionID].drafting || !Sessions[sessionID].winstonDraftState) {
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || !sess.drafting || !sess.winstonDraftState) {
 			if (ack) ack({ code: 2, error: "Not drafting." });
 			return;
 		}
 
-		if (userID != Sessions[sessionID].winstonDraftState.currentPlayer()) {
+		if (userID != sess.winstonDraftState.currentPlayer()) {
 			if (ack) ack({ code: 3, error: "Not your turn." });
 			return;
 		}
 
-		const r = Sessions[sessionID].winstonTakePile();
+		const r = sess.winstonTakePile();
 
 		if (ack) {
 			if (!r) ack({ code: 1, error: "Internal error." });
@@ -329,18 +328,18 @@ io.on("connection", function(socket) {
 
 	socket.on("winstonDraftSkipPile", function(ack) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (!Sessions[sessionID].drafting || !Sessions[sessionID].winstonDraftState) {
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || !sess.drafting || !sess.winstonDraftState) {
 			if (ack) ack({ code: 1, error: "Not drafting." });
 			return;
 		}
 
-		if (userID != Sessions[sessionID].winstonDraftState.currentPlayer()) {
+		if (userID !== sess.winstonDraftState.currentPlayer()) {
 			if (ack) ack({ code: 1, error: "Not your turn." });
 			return;
 		}
 
-		const r = Sessions[sessionID].winstonSkipPile();
+		const r = sess.winstonSkipPile();
 
 		if (ack) {
 			if (!r) ack({ code: 1, error: "This is your only choice!" });
@@ -352,11 +351,11 @@ io.on("connection", function(socket) {
 
 	socket.on("startDraft", function() {
 		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
-		if (!Sessions[sessionID] || Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
+		let sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != this.userID || sess.drafting) return;
 
-		if (Sessions[sessionID].users.size > 0 && Sessions[sessionID].users.size + Sessions[sessionID].bots >= 2) {
-			Sessions[sessionID].startDraft();
+		if (sess.users.size > 0 && sess.users.size + sess.bots >= 2) {
+			sess.startDraft();
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
@@ -367,13 +366,13 @@ io.on("connection", function(socket) {
 
 	socket.on("stopDraft", function() {
 		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		if (!Sessions[sessionID].drafting) return;
-		if (Sessions[sessionID].winstonDraftState) Sessions[sessionID].endWinstonDraft();
-		else if (Sessions[sessionID].gridDraftState) Sessions[sessionID].endGridDraft();
-		else if (Sessions[sessionID].rochesterDraftState) Sessions[sessionID].endRochesterDraft();
-		else Sessions[sessionID].endDraft();
+		let sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID) return;
+		if (!sess.drafting) return;
+		if (sess.winstonDraftState) sess.endWinstonDraft();
+		else if (sess.gridDraftState) sess.endGridDraft();
+		else if (sess.rochesterDraftState) sess.endRochesterDraft();
+		else sess.endDraft();
 	});
 
 	// Removes picked card from corresponding booster and notify other players.
@@ -395,26 +394,25 @@ io.on("connection", function(socket) {
 
 	socket.on("setSessionOwner", function(newOwnerID) {
 		const userID = this.userID;
-		const sessionID = Connections[userID].sessionID;
-		if (Sessions[sessionID].owner != userID) return;
+		const sess = Sessions[Connections[userID].sessionID];
 
-		if (newOwnerID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(newOwnerID)) return;
+		if (!sess || sess.owner != userID || newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
 
-		if (!Sessions[sessionID].ownerIsPlayer) {
+		if (!sess.ownerIsPlayer) {
 			// Prevent changing owner during drafting if owner is not playing
-			if (Sessions[sessionID].drafting) return;
+			if (sess.drafting) return;
 
-			Sessions[sessionID].users.delete(newOwnerID);
-			Sessions[sessionID].owner = newOwnerID;
-			Sessions[sessionID].addUser(userID);
+			sess.users.delete(newOwnerID);
+			sess.owner = newOwnerID;
+			sess.addUser(userID);
 		} else {
-			Sessions[sessionID].owner = newOwnerID;
+			sess.owner = newOwnerID;
 		}
-		Sessions[sessionID].forUsers(user =>
+		sess.forUsers(user =>
 			Connections[user].socket.emit(
 				"sessionOwner",
-				Sessions[sessionID].owner,
-				Sessions[sessionID].owner in Connections ? Connections[Sessions[sessionID].owner].userName : null
+				sess.owner,
+				sess.owner in Connections ? Connections[sess.owner].userName : null
 			)
 		);
 	});
@@ -793,16 +791,6 @@ io.on("connection", function(socket) {
 });
 
 ///////////////////////////////////////////////////////////////////////////////
-
-function getUserID(req, res) {
-	if (!req.cookies.userID) {
-		let ID = uuidv1();
-		res.cookie("userID", ID);
-		return ID;
-	} else {
-		return req.cookies.userID;
-	}
-}
 
 function joinSession(sessionID, userID) {
 	if (sessionID in InactiveSessions) {
