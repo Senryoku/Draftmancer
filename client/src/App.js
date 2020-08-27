@@ -412,6 +412,7 @@ export default {
 					cancelButtonColor: "#d33",
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
+					allowOutsideClick: false,
 				}).then(result => {
 					this.socket.emit("setReady", result.value ? ReadyState.Ready : ReadyState.NotReady);
 				});
