@@ -44,6 +44,8 @@ const DraftState = {
 	WinstonWaiting: "WinstonWaiting",
 	GridPicking: "GridPicking",
 	GridWaiting: "GridWaiting",
+	RochesterPicking: "RochesterPicking",
+	RochesterWaiting: "RochesterWaiting",
 };
 
 const ReadyState = {
@@ -142,6 +144,7 @@ export default {
 			pickNumber: 0,
 			winstonDraftState: null,
 			gridDraftState: null,
+			rochesterDraftState: null,
 
 			publicSessions: [],
 			selectedPublicSession: "",
@@ -587,13 +590,90 @@ export default {
 					this.$refs.sideboardDisplay.sync();
 				});
 
-				if (this.userID === data.state.currentUser) this.draftingState = DraftState.GridPicking;
+				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
 				else this.draftingState = DraftState.GridWaiting;
 
 				Swal.fire({
 					position: "center",
 					icon: "success",
 					title: "Reconnected to the Grid draft!",
+					customClass: SwalCustomClasses,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			});
+
+			// Rochester Draft
+			this.socket.on("startRochesterDraft", state => {
+				setCookie("userID", this.userID);
+				this.drafting = true;
+				this.draftingState =
+					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
+				this.setRochesterDraftState(state);
+				this.stopReadyCheck();
+				this.clearSideboard();
+				this.clearDeck();
+				this.playSound("start");
+				Swal.fire({
+					position: "center",
+					icon: "success",
+					title: "Starting Rochester Draft!",
+					customClass: SwalCustomClasses,
+					showConfirmButton: false,
+					timer: 1500,
+				});
+
+				if (this.enableNotifications) {
+					new Notification("Now drafting!", {
+						body: `Your Rochester draft '${this.sessionID}' is starting!`,
+					});
+				}
+			});
+			this.socket.on("rochesterDraftSync", state => {
+				this.setRochesterDraftState(state);
+			});
+			this.socket.on("rochesterDraftNextRound", state => {
+				this.setRochesterDraftState(state);
+				if (this.userID === state.currentPlayer) {
+					this.playSound("next");
+					fireToast("success", "Your turn!");
+					if (this.enableNotifications) {
+						new Notification("Your turn!", {
+							body: `This is your turn to pick.`,
+						});
+					}
+					this.draftingState = DraftState.RochesterPicking;
+				} else {
+					this.draftingState = DraftState.RochesterWaiting;
+				}
+			});
+			this.socket.on("rochesterDraftEnd", () => {
+				this.drafting = false;
+				this.rochesterDraftState = null;
+				this.draftingState = DraftState.Brewing;
+				fireToast("success", "Done drafting!");
+			});
+
+			this.socket.on("rejoinRochesterDraft", data => {
+				this.drafting = true;
+
+				this.setRochesterDraftState(data.state);
+				this.clearSideboard();
+				this.clearDeck();
+				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				// Fixme: I don't understand why this is necessary...
+				this.$nextTick(() => {
+					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
+				});
+
+				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
+				else this.draftingState = DraftState.RochesterWaiting;
+
+				Swal.fire({
+					position: "center",
+					icon: "success",
+					title: "Reconnected to the Rochester draft!",
 					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
@@ -763,7 +843,6 @@ export default {
 			this.currentChatMessage = "";
 		},
 		// Draft Methods
-
 		startDraft: function() {
 			if (this.userID != this.sessionOwner) return;
 			if (this.deck.length > 0) {
@@ -866,7 +945,7 @@ export default {
 		pickCard: function(options) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
-				this.draftingState != DraftState.Picking ||
+				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) ||
 				!this.selectedCard
 			)
 				return;
@@ -884,18 +963,30 @@ export default {
 			}
 			// Give Vue one frame to react to state changes before triggering the transitions.
 			this.$nextTick(() => {
-				this.socket.emit(
-					"pickCard",
-					{
-						selectedCard: this.selectedCard.id,
-						burnedCards: this.burningCards.map(c => c.id),
-					},
-					answer => {
-						this.pickInFlight = false;
-						if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
-					}
-				);
-				this.draftingState = DraftState.Waiting;
+				if (this.rochesterDraftState) {
+					this.socket.emit(
+						"rochesterDraftPick",
+						this.rochesterDraftState.booster.findIndex(c => c === this.selectedCard),
+						answer => {
+							this.pickInFlight = false;
+							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+						}
+					);
+					this.draftingState = DraftState.RochesterWaiting;
+				} else {
+					this.socket.emit(
+						"pickCard",
+						{
+							selectedCard: this.selectedCard.id,
+							burnedCards: this.burningCards.map(c => c.id),
+						},
+						answer => {
+							this.pickInFlight = false;
+							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+						}
+					);
+					this.draftingState = DraftState.Waiting;
+				}
 				if (options && options.toSideboard) this.addToSideboard(this.selectedCard);
 				else this.addToDeck(this.selectedCard);
 				this.selectedCard = undefined;
@@ -1055,6 +1146,36 @@ export default {
 					} else alert("Error: ", answer.error);
 				});
 			}
+		},
+		setRochesterDraftState: function(state) {
+			console.log("setRochesterDraftState");
+			let booster = [];
+			if (
+				this.rochesterDraftState &&
+				this.rochesterDraftState.booster &&
+				this.rochesterDraftState.booster.length - 1 === state.booster.length
+			) {
+				console.log("Ok ", this.rochesterDraftState.booster);
+				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
+				console.log("Ok ", booster);
+			} else for (let cid of state.booster) booster.push(genCard(cid));
+			state.booster = booster;
+			this.rochesterDraftState = state;
+		},
+		startRochesterDraft: async function() {
+			if (this.userID != this.sessionOwner || this.drafting) return;
+
+			if (!this.ownerIsPlayer) {
+				Swal.fire({
+					icon: "error",
+					title: "Owner has to play",
+					text:
+						"Non-playing owner is not supported in Rochester Draft for now. The 'Session owner is playing' option needs to be active.",
+					customClass: SwalCustomClasses,
+				});
+				return;
+			}
+			this.socket.emit("startRochesterDraft");
 		},
 		// Collection management
 		setCollection: function(json) {

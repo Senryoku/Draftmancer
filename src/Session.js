@@ -105,6 +105,37 @@ function GridDraftState(players, boosters) {
 	};
 }
 
+function RochesterDraftState(players, boosters) {
+	this.players = players;
+	this.pickNumber = 0;
+	this.boosterNumber = 0;
+	this.boosters = [];
+	if (boosters) {
+		for (let booster of boosters) {
+			this.boosters.push(booster);
+		}
+	}
+	this.boosterCount = this.boosters.length;
+
+	this.currentPlayer = function() {
+		const startingDirection = Math.floor(this.boosterNumber / this.players.length) % 2;
+		const direction = Math.floor(this.pickNumber / this.players.length) % 2;
+		const offset = direction
+			? this.players.length - 1 - (this.pickNumber % this.players.length)
+			: this.pickNumber % this.players.length;
+		return this.players[negMod(this.boosterNumber + (startingDirection ? 1 : -1) * offset, this.players.length)];
+	};
+	this.syncData = function() {
+		return {
+			pickNumber: this.pickNumber,
+			boosterNumber: this.boosterNumber,
+			currentPlayer: this.currentPlayer(),
+			booster: this.boosters[0],
+			boosterCount: this.boosterCount,
+		};
+	};
+}
+
 function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
@@ -803,7 +834,7 @@ function Session(id, owner) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] > 0) {
-				Connections[s.currentPlayer(this.userOrder)].pickedCards.push(s.boosters[0][idx]);
+				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
 				s.boosters[0][idx] = -1;
 				++pickedCards;
 			}
@@ -816,6 +847,77 @@ function Session(id, owner) {
 	};
 
 	///////////////////// Grid Draft End //////////////////////
+
+	///////////////////// Rochester Draft //////////////////////
+
+	this.startRochesterDraft = function() {
+		if (this.users.size <= 1) return false;
+		this.drafting = true;
+		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
+		if (!this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true })) {
+			this.drafting = false;
+			return;
+		}
+
+		this.disconnectedUsers = {};
+		this.rochesterDraftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedHumanPlayers(),
+			});
+			Connections[user].socket.emit("startRochesterDraft", this.rochesterDraftState.syncData());
+		}
+
+		return true;
+	};
+
+	this.endRochesterDraft = function() {
+		Persistence.logSession("RochesterDraft", this);
+		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
+		this.rochesterDraftState = null;
+		this.drafting = false;
+	};
+
+	this.rochesterDraftNextRound = function() {
+		const s = this.rochesterDraftState;
+		// Empty booster, open the next one
+		if (s.boosters[0].length === 0) {
+			s.boosters.shift();
+			// No more boosters; End draft.
+			if (s.boosters.length === 0) {
+				this.endRochesterDraft();
+				return;
+			}
+			s.pickNumber = 0;
+			++s.boosterNumber;
+		} else {
+			++s.pickNumber;
+		}
+		const syncData = s.syncData();
+		for (let user of this.users) Connections[user].socket.emit("rochesterDraftNextRound", syncData);
+	};
+
+	this.rochesterDraftPick = function(idx) {
+		const s = this.rochesterDraftState;
+		if (!this.drafting || !s) return false;
+
+		const cid = s.boosters[0][idx];
+		Connections[s.currentPlayer()].pickedCards.push(cid);
+		s.boosters[0].splice(idx, 1);
+		/*
+		const msg = {
+			author: s.currentPlayer(),
+			timestamp: Date.now(),
+			text: `I picked ${Cards[cid].name}!`,
+		};
+		this.forUsers(user => Connections[user].socket.emit("chatMessage", msg));
+		*/
+		this.rochesterDraftNextRound();
+		return true;
+	};
+
+	///////////////////// Rochester Draft End //////////////////////
 
 	///////////////////// Traditional Draft Methods //////////////////////
 
@@ -1083,7 +1185,7 @@ function Session(id, owner) {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		if (!this.winstonDraftState && !this.gridDraftState) {
+		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
 			this.resumeCountdown();
 		}
 		this.emitMessage("Player reconnected", `Resuming draft...`);
@@ -1198,21 +1300,20 @@ function Session(id, owner) {
 	};
 
 	this.reconnectUser = function(userID) {
-		if (this.winstonDraftState) {
+		if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
-			Connections[userID].socket.emit("rejoinWinstonDraft", {
+
+			let msgData = {};
+			if (this.winstonDraftState) msgData = { name: "rejoinWinstonDraft", state: this.winstonDraftState };
+			else if (this.gridDraftState) msgData = { name: "rejoinGridDraft", state: this.gridDraftState };
+			else if (this.rochesterDraftState)
+				msgData = { name: "rejoinRochesterDraft", state: this.rochesterDraftState };
+			Connections[userID].socket.emit(msgData.name, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: this.winstonDraftState.syncData(),
+				state: msgData.state.syncData(),
 			});
-			delete this.disconnectedUsers[userID];
-		} else if (this.gridDraftState) {
-			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
-			this.addUser(userID);
-			Connections[userID].socket.emit("rejoinGridDraft", {
-				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: this.gridDraftState.syncData(),
-			});
+
 			delete this.disconnectedUsers[userID];
 		} else {
 			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
@@ -1418,4 +1519,5 @@ function Session(id, owner) {
 module.exports.Session = Session;
 module.exports.WinstonDraftState = WinstonDraftState;
 module.exports.GridDraftState = GridDraftState;
+module.exports.RochesterDraftState = RochesterDraftState;
 module.exports.Sessions = {};
