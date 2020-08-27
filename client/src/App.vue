@@ -283,7 +283,7 @@
 										'Starts a Rochester Draft. Every players picks from a single booster.'
 									"
 								>
-									Rochester
+									Rochester Draft
 								</button>
 								<button
 									@click="sealedDialog"
