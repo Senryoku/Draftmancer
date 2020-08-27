@@ -117,11 +117,13 @@ function RochesterDraftState(players, boosters) {
 	}
 	this.boosterCount = this.boosters.length;
 
-	this.firstPick = function() {
-		return this.players[this.boosterNumber % this.players.length];
-	};
 	this.currentPlayer = function() {
-		return this.players[(this.boosterNumber + this.pickNumber) % this.players.length];
+		const startingDirection = Math.floor(this.boosterNumber / this.players.length) % 2;
+		const direction = Math.floor(this.pickNumber / this.players.length) % 2;
+		const offset = direction
+			? this.players.length - 1 - (this.pickNumber % this.players.length)
+			: this.pickNumber % this.players.length;
+		return this.players[negMod(this.boosterNumber + (startingDirection ? 1 : -1) * offset, this.players.length)];
 	};
 	this.syncData = function() {
 		return {

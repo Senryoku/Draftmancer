@@ -450,16 +450,18 @@
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
-						<i
-							class="fas fa-angle-double-left passing-order-left"
-							v-show="boosterNumber % 2 == 1"
-							v-tooltip="'Passing order'"
-						></i>
-						<i
-							class="fas fa-angle-double-right passing-order-right"
-							v-show="boosterNumber % 2 == 0"
-							v-tooltip="'Passing order'"
-						></i>
+						<template v-if="!rochesterDraftState">
+							<i
+								class="fas fa-angle-double-left passing-order-left"
+								v-show="boosterNumber % 2 == 1"
+								v-tooltip="'Passing order'"
+							></i>
+							<i
+								class="fas fa-angle-double-right passing-order-right"
+								v-show="boosterNumber % 2 == 0"
+								v-tooltip="'Passing order'"
+							></i>
+						</template>
 						<span class="player-name">{{ user.userName }}</span>
 						<template v-if="!user.isBot && !user.disconnected">
 							<div class="status-icons">

@@ -255,6 +255,11 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 				Item.data.gridDraftState = {};
 				copyProps(s.gridDraftState, Item.data.gridDraftState);
 			}
+
+			if (s.rochesterDraftState) {
+				Item.data.rochesterDraftState = {};
+				copyProps(s.rochesterDraftState, Item.data.rochesterDraftState);
+			}
 		}
 
 		SessionsRequests.push({ PutRequest: { Item: Item } });
