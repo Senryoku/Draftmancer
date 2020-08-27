@@ -102,7 +102,7 @@ async function requestSavedSessions() {
 
 			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
 			for (let prop of Object.getOwnPropertyNames(s.data).filter(
-				p => !["botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
+				p => !["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
 			)) {
 				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
 			}
@@ -128,6 +128,11 @@ async function requestSavedSessions() {
 			if (s.data.gridDraftState) {
 				InactiveSessions[fixedID].gridDraftState = new SessionModule.GridDraftState();
 				copyProps(s.data.gridDraftState, InactiveSessions[fixedID].gridDraftState);
+			}
+
+			if (s.data.rochesterDraftState) {
+				InactiveSessions[fixedID].rochesterDraftState = new SessionModule.RochesterDraftState();
+				copyProps(s.data.rochesterDraftState, InactiveSessions[fixedID].rochesterDraftState);
 			}
 
 			if (isObsolete(s))
@@ -249,6 +254,11 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 			if (s.gridDraftState) {
 				Item.data.gridDraftState = {};
 				copyProps(s.gridDraftState, Item.data.gridDraftState);
+			}
+
+			if (s.rochesterDraftState) {
+				Item.data.rochesterDraftState = {};
+				copyProps(s.rochesterDraftState, Item.data.rochesterDraftState);
 			}
 		}
 

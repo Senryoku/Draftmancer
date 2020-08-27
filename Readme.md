@@ -46,12 +46,7 @@ AWS_ENDPOINT=http://localhost:8000
 ### Minor Improvements
 
 -   Improve deck stats (Get some inspiration from MTGA)
--   Regroup Game Mode besides Draft in a single dropdown menu
 -   Display foils as... foils in front end?
-
-### New Features
-
--   Winchester Draft (harder to implement)
 
 ## Check
 

@@ -44,6 +44,11 @@ export default {
 	transition: transform 0.08s ease-out;
 }
 
+.fade-enter-active.card,
+.fade-leave-active.card {
+	transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
 .card:hover {
 	transform: scale(1.08);
 }

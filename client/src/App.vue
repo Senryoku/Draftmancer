@@ -141,13 +141,14 @@
 					<strong>Card Pool:</strong>
 					<span v-if="useCustomCardList">
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						(<template v-if="customCardList.length > 0">
+						(
+						<template v-if="customCardList.length > 0">
 							{{ customCardList.length }} cards
 							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
 								<i class="fas fa-file-alt"></i>
 							</a>
 						</template>
-						<template v-else>No list loaded </template>
+						<template v-else>No list loaded</template>
 						<i
 							class="fas fa-file-upload clickable"
 							onclick="document.querySelector('#card-list-input-main').click()"
@@ -254,7 +255,10 @@
 				</span>
 				<span>
 					<div class="game-modes-button" :class="{ disabled: sessionOwner != userID }">
-						<span class="game-modes-button-text">Other Game Modes <i class="fas fa-caret-down"></i></span>
+						<span class="game-modes-button-text">
+							Other Game Modes
+							<i class="fas fa-caret-down"></i>
+						</span>
 						<div class="game-modes-dropdown">
 							<div class="game-modes-container">
 								<button
@@ -272,6 +276,14 @@
 									"
 								>
 									Grid Draft
+								</button>
+								<button
+									@click="startRochesterDraft()"
+									v-tooltip.left="
+										'Starts a Rochester Draft. Every players picks from a single booster.'
+									"
+								>
+									Rochester
 								</button>
 								<button
 									@click="sealedDialog"
@@ -415,7 +427,7 @@
 								<template v-else-if="userByID[id].readyState == ReadyState.Unknown">
 									<i
 										class="fas fa-spinner fa-spin"
-										v-tooltip="`Waiting on ${userByID[id].userName} to respond...`"
+										v-tooltip="`Waiting for ${userByID[id].userName} to respond...`"
 									></i>
 								</template>
 							</template>
@@ -428,20 +440,28 @@
 				<ul class="player-list">
 					<li
 						v-for="user in virtualPlayers"
-						:class="{ bot: user.isBot }"
+						:class="{
+							bot: user.isBot,
+							currentPlayer:
+								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
+								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
+								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID),
+						}"
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
-						<i
-							class="fas fa-angle-double-left passing-order-left"
-							v-show="boosterNumber % 2 == 1"
-							v-tooltip="'Passing order'"
-						></i>
-						<i
-							class="fas fa-angle-double-right passing-order-right"
-							v-show="boosterNumber % 2 == 0"
-							v-tooltip="'Passing order'"
-						></i>
+						<template v-if="!rochesterDraftState">
+							<i
+								class="fas fa-angle-double-left passing-order-left"
+								v-show="boosterNumber % 2 == 1"
+								v-tooltip="'Passing order'"
+							></i>
+							<i
+								class="fas fa-angle-double-right passing-order-right"
+								v-show="boosterNumber % 2 == 0"
+								v-tooltip="'Passing order'"
+							></i>
+						</template>
 						<span class="player-name">{{ user.userName }}</span>
 						<template v-if="!user.isBot && !user.disconnected">
 							<div class="status-icons">
@@ -540,9 +560,9 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span class="chat-author">
-									{{ msg.author in userByID ? userByID[msg.author].userName : "(Left)" }}
-								</span>
+								<span class="chat-author">{{
+									msg.author in userByID ? userByID[msg.author].userName : "(Left)"
+								}}</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
@@ -644,14 +664,14 @@
 						<template v-if="userID === winstonDraftState.currentPlayer"
 							>Your turn to pick a pile of cards!</template
 						>
-						<template v-else
-							>Waiting on
+						<template v-else>
+							Waiting for
 							{{
 								winstonDraftState.currentPlayer in userByID
 									? userByID[winstonDraftState.currentPlayer].userName
 									: "(Disconnected)"
-							}}...</template
-						>
+							}}...
+						</template>
 						There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
 					</span>
 				</div>
@@ -703,26 +723,25 @@
 						{{ gridDraftState.boosterCount }}
 					</span>
 					<span>
-						<template v-if="userID === gridDraftState.currentPlayer"
-							><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.</template
-						>
+						<template v-if="userID === gridDraftState.currentPlayer">
+							<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
+						</template>
 						<template v-else-if="gridDraftState.currentPlayer === null">
-							<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
-								This was the last booster! Let me push these booster wrappers off the table...
-							</template>
-							<template v-else>
-								Advancing to the next booster...
-							</template>
+							<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
+								>This was the last booster! Let me push these booster wrappers off the
+								table...</template
+							>
+							<template v-else>Advancing to the next booster...</template>
 						</template>
 						<template v-else>
 							<i class="fas fa-spinner fa-spin"></i>
-							Waiting on
+							Waiting for
 							{{
 								gridDraftState.currentPlayer in userByID
 									? userByID[gridDraftState.currentPlayer].userName
 									: "(Disconnected)"
-							}}...</template
-						>
+							}}...
+						</template>
 					</span>
 				</div>
 				<grid-draft
@@ -730,6 +749,55 @@
 					:picking="userID === gridDraftState.currentPlayer"
 					@pick="gridDraftPick"
 				></grid-draft>
+			</div>
+			<!-- Rochester Draft -->
+			<div v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+				<div class="title-status controls">
+					<h2>Rochester Draft</h2>
+					<span>
+						Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+						Pick #{{ rochesterDraftState.pickNumber + 1 }}
+					</span>
+					<span>
+						<template v-if="userID === rochesterDraftState.currentPlayer">
+							<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
+						</template>
+						<template v-else>
+							<i class="fas fa-spinner fa-spin"></i>
+							Waiting for
+							{{
+								rochesterDraftState.currentPlayer in userByID
+									? userByID[rochesterDraftState.currentPlayer].userName
+									: "(Disconnected)"
+							}}...
+						</template>
+					</span>
+					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
+				</div>
+				<transition-group name="fade" tag="div" class="booster card-container">
+					<template v-if="userID === rochesterDraftState.currentPlayer">
+						<booster-card
+							v-for="card in rochesterDraftState.booster"
+							:key="`card-booster-${card.uniqueID}`"
+							:card="card"
+							:language="language"
+							:canbeburned="false"
+							:class="{ selected: selectedCard === card }"
+							@click.native="selectCard($event, card)"
+							@dblclick.native="doubleClickCard($event, card)"
+							draggable
+							@dragstart.native="dragBoosterCard($event, card)"
+						></booster-card>
+					</template>
+					<template v-else>
+						<booster-card
+							v-for="card in rochesterDraftState.booster"
+							:key="`card-booster-${card.uniqueID}`"
+							:card="card"
+							:language="language"
+						></booster-card>
+					</template>
+				</transition-group>
 			</div>
 		</template>
 
@@ -1254,9 +1322,9 @@
 								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>' }"
 							>
 								<select name="featured-cubes" v-model="selectedCube">
-									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
-										{{ cube.name }}
-									</option>
+									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">{{
+										cube.name
+									}}</option>
 								</select>
 								<button
 									@click="
@@ -1347,9 +1415,9 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">
-										{{ setsInfos[code].fullName }}
-									</option>
+									<option v-for="code in sets" :value="code" :key="code">{{
+										setsInfos[code].fullName
+									}}</option>
 								</select>
 							</div>
 						</div>

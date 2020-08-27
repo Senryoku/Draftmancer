@@ -32,7 +32,9 @@
 		</div>
 		<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
 			<transition name="fade" mode="out-in">
-				<div v-if="c" :key="'card-container-' + c.uniqueID"><card :card="c"></card></div>
+				<div v-if="c" :key="'card-container-' + c.uniqueID">
+					<card :card="c"></card>
+				</div>
 				<div v-else :key="'empty-' + idx">
 					<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
 				</div>
@@ -86,13 +88,5 @@ export default {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-	opacity: 0;
 }
 </style>
