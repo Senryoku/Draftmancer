@@ -255,7 +255,12 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[userID].sessionID;
 		if (Sessions[sessionID].owner != this.userID || Sessions[sessionID].drafting) return;
 
-		Sessions[sessionID].startRochesterDraft();
+		if (Sessions[sessionID].users.size < 2) {
+			Connections[userID].socket.emit("message", {
+				title: `Not enough players`,
+				text: `You need at least two players to start a Rochester Draft.`,
+			});
+		} else Sessions[sessionID].startRochesterDraft();
 	});
 
 	socket.on("rochesterDraftPick", function(choice, ack) {
