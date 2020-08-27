@@ -265,24 +265,26 @@
 						</span>
 						<div class="game-modes-dropdown">
 							<div class="game-modes-container">
+								<span class="game-modes-cat">Draft</span>
 								<button
 									@click="startWinstonDraft()"
 									v-tooltip.left="
 										'Starts a Winston Draft. This is a draft variant for only two players.'
 									"
-								>Winston Draft</button>
+								>Winston (2p.)</button>
 								<button
 									@click="startGridDraft()"
 									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for only two players.'
 									"
-								>Grid Draft</button>
+								>Grid (2p.)</button>
 								<button
 									@click="startRochesterDraft()"
 									v-tooltip.left="
 										'Starts a Rochester Draft. Every players picks from a single booster.'
 									"
 								>Rochester</button>
+								<span class="game-modes-cat">Sealed</span>
 								<button
 									@click="sealedDialog"
 									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
