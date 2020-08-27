@@ -52,15 +52,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 Features that may need some additional testing:
 
--   Grid Draft
--   Set specificy booster generation rules (DOM/WAR)
--   Picks by Drag & Drop
--   Load translations on-demand.
--   Chaos Draft with specific boosters? (e.g. 2 RIX 1 IXL)
--   Glimpse/Burn Draft
--   Card count/set code/Collector number support to cube import
--   Monitor persistence
--   Rarity selection
+-   Rochester Draft / Grid Draft
 
 ## Notes on Arena Importer
 
