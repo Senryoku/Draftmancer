@@ -12,11 +12,13 @@ const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
 const Mixpanel = require("mixpanel");
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
-const MixInstance = Mixpanel.init(MixPanelToken, {
-	api_host: "api-eu.mixpanel.com",
-	debug: process.env.NODE_ENV !== "production",
-	protocol: "https",
-});
+const MixInstance = MixPanelToken
+	? Mixpanel.init(MixPanelToken, {
+			api_host: "api.mixpanel.com",
+			debug: process.env.NODE_ENV !== "production",
+			protocol: "https",
+	  })
+	: null;
 
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
@@ -291,7 +293,33 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-async function logSession(type, session) {
+async function logSessionToDynamoDB(type, localSess) {
+	if (DisablePersistence) return;
+	const params = {
+		TableName: TableNames.DraftLogs,
+		ReturnConsumedCapacity: "TOTAL",
+		Item: {
+			id: filterEmptyStr(localSess.id),
+			time: new Date().getTime(),
+			type: type === "" ? null : type,
+			session: localSess,
+		},
+	};
+
+	try {
+		const putResult = await docClient.put(params).promise();
+		console.log(
+			`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
+		);
+	} catch (err) {
+		console.error("saveDraftlog error: ", err);
+		console.error(params);
+	}
+}
+
+function logSession(type, session) {
+	if (!MixInstance) return;
+
 	let localSess = JSON.parse(JSON.stringify(session));
 	localSess.users = [...session.users]; // Stringifying doesn't support Sets
 	// Anonymize Draft Log
@@ -305,28 +333,7 @@ async function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
-	if (!DisablePersistence) {
-		const params = {
-			TableName: TableNames.DraftLogs,
-			ReturnConsumedCapacity: "TOTAL",
-			Item: {
-				id: filterEmptyStr(localSess.id),
-				time: new Date().getTime(),
-				type: type === "" ? null : type,
-				session: localSess,
-			},
-		};
-
-		try {
-			const putResult = await docClient.put(params).promise();
-			console.log(
-				`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
-			);
-		} catch (err) {
-			console.error("saveDraftlog error: ", err);
-			console.error(params);
-		}
-	}
+	//logSessionToDynamoDB(type, localSess);
 
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",

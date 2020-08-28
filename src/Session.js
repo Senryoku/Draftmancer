@@ -1264,6 +1264,8 @@ function Session(id, owner) {
 			});
 		}
 
+		Persistence.logSession("Sealed", this);
+
 		this.boosters = [];
 	};
 
