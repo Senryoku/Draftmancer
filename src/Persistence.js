@@ -356,6 +356,8 @@ function logSession(type, session) {
 		"maxTimer",
 		"colorBalance",
 		"boosterContent",
+		"burnedCardsPerRound",
+		"bracketLocked",
 	])
 		mixdata[prop] = localSess[prop];
 	if (localSess.customCardList && localSess.customCardList.name)
