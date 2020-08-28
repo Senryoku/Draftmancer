@@ -10,6 +10,14 @@ const Connections = ConnectionModule.Connections;
 const SessionModule = require("./Session");
 const Sessions = SessionModule.Sessions;
 const Bot = require("./Bot");
+const Mixpanel = require("mixpanel");
+const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
+const MixInstance = MixPanelToken
+	? Mixpanel.init(MixPanelToken, {
+			//debug: process.env.NODE_ENV !== "production",
+			protocol: "https",
+	  })
+	: null;
 
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
@@ -284,19 +292,8 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-async function logSession(type, session) {
-	let localSess = JSON.parse(JSON.stringify(session));
-	localSess.users = [...session.users]; // Stringifying doesn't support Sets
-	// Anonymize Draft Log
-	localSess.id = new Date().toISOString();
-	if (localSess.draftLog) {
-		localSess.draftLog.sessionID = localSess.id;
-		let idx = 0;
-		if (localSess.draftLog.users)
-			for (let uid in localSess.draftLog.users)
-				if (!localSess.draftLog.users[uid].userName.startsWith("Bot #"))
-					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
-	}
+async function logSessionToDynamoDB(type, localSess) {
+	if (DisablePersistence) return;
 	const params = {
 		TableName: TableNames.DraftLogs,
 		ReturnConsumedCapacity: "TOTAL",
@@ -319,10 +316,55 @@ async function logSession(type, session) {
 	}
 }
 
+function logSession(type, session) {
+	if (!MixInstance) return;
+
+	let localSess = JSON.parse(JSON.stringify(session));
+	localSess.users = [...session.users]; // Stringifying doesn't support Sets
+	// Anonymize Draft Log
+	localSess.id = new Date().toISOString();
+	if (localSess.draftLog) {
+		localSess.draftLog.sessionID = localSess.id;
+		let idx = 0;
+		if (localSess.draftLog.users)
+			for (let uid in localSess.draftLog.users)
+				if (!localSess.draftLog.users[uid].userName.startsWith("Bot #"))
+					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
+	}
+
+	//logSessionToDynamoDB(type, localSess);
+
+	let mixdata = {
+		distinct_id: process.env.NODE_ENV || "development",
+	};
+	for (let prop of [
+		"boostersPerPlayer",
+		"ignoreCollections",
+		"mythicPromotion",
+		"maxDuplicates",
+		"customBoosters",
+		"isPublic",
+		"foil",
+		"draftLogRecipients",
+		"distributionMode",
+		"ownerIsPlayer",
+		"bots",
+		"maxPlayers",
+		"setRestriction",
+		"useCustomCardList",
+		"maxTimer",
+		"colorBalance",
+		"boosterContent",
+	])
+		mixdata[prop] = localSess[prop];
+	if (localSess.customCardList && localSess.customCardList.name)
+		mixdata.customCardListName = localSess.customCardList.name;
+	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
+}
+
 if (DisablePersistence) {
 	module.exports.InactiveSessions = {};
 	module.exports.InactiveConnections = {};
-	module.exports.logSession = () => {};
 } else {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
@@ -372,5 +414,6 @@ if (DisablePersistence) {
 
 	module.exports.InactiveSessions = requestSavedSessions();
 	module.exports.InactiveConnections = requestSavedConnections();
-	module.exports.logSession = () => {}; //logSession; // Disabled
 }
+
+module.exports.logSession = logSession;
