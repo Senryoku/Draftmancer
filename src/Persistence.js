@@ -14,8 +14,7 @@ const Mixpanel = require("mixpanel");
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
 	? Mixpanel.init(MixPanelToken, {
-			api_host: "api.mixpanel.com",
-			debug: process.env.NODE_ENV !== "production",
+			//debug: process.env.NODE_ENV !== "production",
 			protocol: "https",
 	  })
 	: null;
