@@ -336,6 +336,7 @@ function logSession(type, session) {
 
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",
+		playerCount: localSess.users.length,
 	};
 	for (let prop of [
 		"boostersPerPlayer",
