@@ -468,10 +468,18 @@ footer span {
 	transition: all 0.2s ease-in-out;
 }
 
+.game-modes-container {
+	display: flex;
+	flex-direction: column;
+	padding: 0.5em;
+	padding-top: 0;
+}
+
 .game-modes-cat {
 	text-align: center;
 	font-variant: small-caps;
 	font-size: 0.75em;
+	margin-top: 0.5em;
 }
 
 .game-modes-button {
@@ -491,12 +499,6 @@ footer span {
 .game-modes-button:focus > .game-modes-dropdown,
 .game-modes-button:hover > .game-modes-dropdown {
 	max-height: calc(4 * 3em + 2em);
-}
-
-.game-modes-container {
-	display: flex;
-	flex-direction: column;
-	padding: 0.5em;
 }
 
 .setting-button {
