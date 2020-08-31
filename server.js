@@ -793,7 +793,23 @@ io.on("connection", function(socket) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function joinSession(sessionID, userID) {
+	// Fallback to previous session if possible, or generate a new one
+	const refuse = msg => {
+		Connections[userID].socket.emit("message", {
+			title: "Cannot join session",
+			text: msg,
+		});
+		if (Connections[userID].sessionID === null) sessionID = shortguid();
+		else sessionID = Connections[userID].sessionID;
+		Connections[userID].socket.emit("setSession", sessionID);
+	};
+
 	if (sessionID in InactiveSessions) {
+		if (InactiveSessions[sessionID].drafting && !(userID in InactiveSessions[sessionID].disconnectedUsers)) {
+			refuse(`Session '${sessionID}' is currently drafting.`);
+			return;
+		}
+
 		console.log(`Restoring inactive session '${sessionID}'...`);
 		// Always having a valid owner is more important than preserving the old one - probably.
 		if (InactiveSessions[sessionID].ownerIsPlayer) InactiveSessions[sessionID].owner = userID;
@@ -822,24 +838,11 @@ function joinSession(sessionID, userID) {
 			if (userID in sess.disconnectedUsers) {
 				sess.reconnectUser(userID);
 			} else {
-				Connections[userID].socket.emit("message", {
-					title: "Cannot join session",
-					text: `This session (${sessionID}) is currently drafting. Please wait for them to finish.`,
-				});
-				// Fallback to previous session if possible, or generate a new one
-				if (Connections[userID].sessionID === null) sessionID = shortguid();
-				else sessionID = Connections[userID].sessionID;
-				Connections[userID].socket.emit("setSession", sessionID);
+				refuse(`This session (${sessionID}) is currently drafting. Please wait for them to finish.`);
 			}
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
-			Connections[userID].socket.emit("message", {
-				title: "Cannot join session",
-				text: `This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).`,
-			});
-			if (Connections[userID].sessionID === null) sessionID = shortguid();
-			else sessionID = Connections[userID].sessionID;
-			Connections[userID].socket.emit("setSession", sessionID);
+			refuse(`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).`);
 		} else {
 			addUserToSession(userID, sessionID);
 		}
