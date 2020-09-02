@@ -1,11 +1,6 @@
 <template>
 	<div class="card-image">
-		<div
-			v-if="hasBack"
-			class="flip-button"
-			@mouseenter="displayBack = true"
-			@mouseleave="displayBack = false"
-		>
+		<div v-if="hasBack" class="flip-button">
 			<i class="fas fa-sync flip-icon"></i>
 		</div>
 		<div class="flip-container">
@@ -45,9 +40,6 @@ export default {
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
-	},
-	data: function () {
-		return { displayBack: false };
 	},
 	computed: {
 		imageURI: function () {
