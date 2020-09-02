@@ -21,6 +21,7 @@ const SessionModule = require("./src/Session");
 const Session = SessionModule.Session;
 const Sessions = SessionModule.Sessions;
 const Cards = require("./src/Cards");
+const { cpuUsage } = require("process");
 
 app.use(compression());
 app.use(cookieParser());
@@ -90,8 +91,9 @@ io.on("connection", function(socket) {
 	// Personnal options
 
 	socket.on("setUserName", function(userName) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 
 		Connections[userID].userName = userName;
 		Sessions[sessionID].forUsers(user =>
@@ -158,6 +160,7 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("chatMessage", function(message) {
+		if (!(this.userID in Connections)) return;
 		const sessionID = Connections[this.userID].sessionID;
 		if (!Sessions[sessionID]) return;
 
@@ -169,6 +172,7 @@ io.on("connection", function(socket) {
 
 	socket.on("setOwnerIsPlayer", function(val) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 
 		if (!sess || sess.owner !== userID || sess.drafting) return;
@@ -187,6 +191,7 @@ io.on("connection", function(socket) {
 
 	socket.on("readyCheck", function(ack) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 
 		if (!sess || sess.owner != this.userID || sess.drafting) {
@@ -200,6 +205,7 @@ io.on("connection", function(socket) {
 
 	socket.on("setReady", function(readyState) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess) return;
 		sess.forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
@@ -209,6 +215,7 @@ io.on("connection", function(socket) {
 
 	socket.on("startGridDraft", function(boosterCount) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
@@ -223,6 +230,7 @@ io.on("connection", function(socket) {
 
 	socket.on("gridDraftPick", function(choice, ack) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess) {
 			if (ack) ack({ code: 2, error: "Internal error. Session does not exist." });
@@ -251,6 +259,7 @@ io.on("connection", function(socket) {
 
 	socket.on("startRochesterDraft", function() {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 
@@ -264,6 +273,7 @@ io.on("connection", function(socket) {
 
 	socket.on("rochesterDraftPick", function(choice, ack) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sessionID = Connections[userID].sessionID;
 		const sess = Sessions[sessionID];
 		if (!sess) {
@@ -293,6 +303,7 @@ io.on("connection", function(socket) {
 
 	socket.on("startWinstonDraft", function(boosterCount) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
@@ -307,6 +318,7 @@ io.on("connection", function(socket) {
 
 	socket.on("winstonDraftTakePile", function(ack) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || !sess.drafting || !sess.winstonDraftState) {
 			if (ack) ack({ code: 2, error: "Not drafting." });
@@ -328,6 +340,7 @@ io.on("connection", function(socket) {
 
 	socket.on("winstonDraftSkipPile", function(ack) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || !sess.drafting || !sess.winstonDraftState) {
 			if (ack) ack({ code: 1, error: "Not drafting." });
@@ -350,8 +363,9 @@ io.on("connection", function(socket) {
 	// Standard Draft
 
 	socket.on("startDraft", function() {
-		let userID = this.userID;
-		let sess = Sessions[Connections[userID].sessionID];
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != this.userID || sess.drafting) return;
 
 		if (sess.users.size > 0 && sess.users.size + sess.bots >= 2) {
@@ -365,8 +379,9 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("stopDraft", function() {
-		let userID = this.userID;
-		let sess = Sessions[Connections[userID].sessionID];
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != userID) return;
 		if (!sess.drafting) return;
 		if (sess.winstonDraftState) sess.endWinstonDraft();
@@ -378,8 +393,9 @@ io.on("connection", function(socket) {
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	socket.on("pickCard", function(data, ack) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 
 		if (!(sessionID in Sessions) || !(userID in Connections)) {
 			if (ack) ack({ code: 1, error: "Invalid request" });
@@ -394,6 +410,7 @@ io.on("connection", function(socket) {
 
 	socket.on("setSessionOwner", function(newOwnerID) {
 		const userID = this.userID;
+		if (!(userID in Connections)) return;
 		const sess = Sessions[Connections[userID].sessionID];
 
 		if (!sess || sess.owner != userID || newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
@@ -418,7 +435,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("removePlayer", function(userID) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (userID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userID)) return;
@@ -427,7 +445,7 @@ io.on("connection", function(socket) {
 		Sessions[sessionID].replaceDisconnectedPlayers();
 		Sessions[sessionID].notifyUserChange();
 
-		let newSession = shortguid();
+		const newSession = shortguid();
 		joinSession(newSession, userID);
 		Connections[userID].socket.emit("setSession", newSession);
 		Connections[userID].socket.emit("message", {
@@ -437,19 +455,22 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setSeating", function(seating) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("randomizeSeating", function() {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	});
 
 	socket.on("boostersPerPlayer", function(boostersPerPlayer) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
@@ -471,7 +492,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setDistributionMode", function(distributionMode) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
@@ -484,7 +506,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setCustomBoosters", function(customBoosters) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Array.isArray(customBoosters)) return;
@@ -497,7 +520,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("bots", function(bots) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(bots)) bots = parseInt(bots);
@@ -512,7 +536,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setRestriction", function(setRestriction) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Array.isArray(setRestriction)) return;
@@ -532,7 +557,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("customCardList", function(customCardList, ack) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!customCardList.cards || (customCardList.customSheets && !customCardList.cardsPerBooster)) {
@@ -552,7 +578,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("ignoreCollections", function(ignoreCollections) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
@@ -563,7 +590,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setPickTimer", function(timerValue) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
@@ -576,7 +604,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setMaxPlayers", function(maxPlayers) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
@@ -589,7 +618,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setMythicPromotion", function(mythicPromotion) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (typeof mythicPromotion !== "boolean") return;
 
@@ -601,7 +631,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setBoosterContent", function(boosterContent) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		// Validate input (a value for each rarity and at least one card)
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
@@ -615,7 +646,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setDraftLogRecipients", function(draftLogRecipients) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		if (typeof draftLogRecipients !== "string") return;
 		draftLogRecipients = draftLogRecipients.toLowerCase();
@@ -630,7 +662,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("shareDraftLog", function(draftLog) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
@@ -638,7 +671,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setMaxDuplicates", function(maxDuplicates) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
 		for (let user of Sessions[sessionID].users) {
@@ -650,7 +684,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setColorBalance", function(colorBalance) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (colorBalance == Sessions[sessionID].colorBalance) return;
@@ -665,7 +700,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setFoil", function(foil) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (foil == Sessions[sessionID].foil) return;
@@ -680,7 +716,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setUseCustomCardList", function(useCustomCardList) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
@@ -695,7 +732,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
@@ -709,7 +747,8 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("setPublic", function(isPublic) {
-		let sessionID = Connections[this.userID].sessionID;
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (isPublic == Sessions[sessionID].isPublic) return;
@@ -723,14 +762,16 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("replaceDisconnectedPlayers", function() {
+		if (!(this.userID in Connections)) return;
 		let sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		Sessions[sessionID].replaceDisconnectedPlayers();
 	});
 
 	socket.on("distributeSealed", function(boostersPerPlayer) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (isNaN(boostersPerPlayer)) return;
@@ -738,16 +779,18 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("distributeJumpstart", function() {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		Sessions[sessionID].distributeJumpstart();
 	});
 
 	socket.on("generateBracket", function(players, ack) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (players.length !== 8) return;
@@ -756,8 +799,9 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("generateSwissBracket", function(players, ack) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (players.length !== 8) return;
@@ -766,8 +810,9 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("updateBracket", function(results) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || (Sessions[sessionID].owner != this.userID && Sessions[sessionID].bracketLock))
 			return;
 
@@ -775,8 +820,9 @@ io.on("connection", function(socket) {
 	});
 
 	socket.on("lockBracket", function(bracketLocked) {
-		let userID = this.userID;
-		let sessionID = Connections[userID].sessionID;
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		Sessions[sessionID].bracketLocked = bracketLocked;
