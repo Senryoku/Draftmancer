@@ -24,11 +24,11 @@ export default {
 		language: { type: String, default: "en" },
 	},
 	methods: {
-		toggleZoom: function(e) {
+		toggleZoom: function (e) {
 			e.currentTarget.classList.toggle("zoomedin");
 			e.preventDefault();
 		},
-		disableZoom: function(e) {
+		disableZoom: function (e) {
 			e.currentTarget.classList.remove("zoomedin");
 			e.preventDefault();
 		},

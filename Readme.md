@@ -39,9 +39,13 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Re-think color balance for multi-colored cards?
--   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
--   Cleanup draft state? (See Winston Draft State for a better example)
+-   Handle Double Faced Cards
+    -- Add face info when needed (py) (image and name, for each translation)
+    -- Add a flip button active on hover to display the other face
+
+*   Re-think color balance for multi-colored cards?
+*   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
+*   Cleanup draft state? (See Winston Draft State for a better example)
 
 ### Minor Improvements
 
