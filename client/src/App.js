@@ -904,6 +904,7 @@ export default {
 		},
 		burnCard: function(e, c) {
 			if (this.burningCards.includes(c)) return;
+			if (this.selectedCard === c) this.selectCard(null, null);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
