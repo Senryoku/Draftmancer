@@ -69,6 +69,12 @@ export function addLanguage(lang, json) {
 			c in json && "printed_name" in json[c] ? json[c]["printed_name"] : Cards[c]["name"];
 		merged[c]["image_uris"][lang] =
 			c in json && "image_uris" in json[c] ? json[c]["image_uris"] : Cards[c]["image_uris"]["en"];
+
+		if (c in json && json[c]["back"]) {
+			if (!("back" in merged[c])) merged[c]["back"] = {};
+			merged[c]["back"][lang] = json[c]["back"];
+			// Defaults to English
+		} else if ("back" in merged[c] && "en" in merged[c]["back"]) merged[c]["back"][lang] = merged[c]["back"]["en"];
 	}
 	Cards = Object.freeze(merged);
 }

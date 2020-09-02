@@ -253,6 +253,12 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
                 translation['image_uris'] = c['card_faces'][0]['image_uris']['border_crop']
 
+            if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
+                translation['back'] = {}
+                translation['back']['printed_name'] = c['card_faces'][1][
+                    'printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
+                translation['back']['image_uris'] = c['card_faces'][1]['image_uris']['border_crop']
+
             Translations[c['lang']][c['arena_id']].update(translation)
 
             if c['lang'] != 'en':

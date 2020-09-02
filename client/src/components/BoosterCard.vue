@@ -1,5 +1,10 @@
 <template>
-	<card :card="card" :language="language" :class="{ selected: selected, burned: burned }">
+	<card
+		:card="card"
+		:language="language"
+		:class="{ selected: selected, burned: burned }"
+		class="booster-card"
+	>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>
@@ -24,12 +29,12 @@ export default {
 		burned: { type: Boolean, default: false },
 	},
 	methods: {
-		burnCard: function(e) {
+		burnCard: function (e) {
 			this.$emit("burn");
 			e.stopPropagation();
 			e.preventDefault();
 		},
-		restoreCard: function(e) {
+		restoreCard: function (e) {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();
@@ -49,15 +54,22 @@ export default {
 	transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
-.card:hover {
-	transform: scale(1.08);
-}
-
 .burn-card,
 .restore-card {
 	position: absolute;
 	left: 0;
 	bottom: 0;
 	text-shadow: 0 0 3px black, 0 0 4px white;
+}
+</style>
+
+<style>
+.booster-card:not(.zoomedin) img {
+	transition: transform 0.08s ease-out;
+}
+
+.booster-card:hover:not(.zoomedin) img {
+	transform: scale(1.08);
+	image-rendering: optimizeQuality;
 }
 </style>

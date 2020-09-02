@@ -24,11 +24,11 @@ export default {
 		language: { type: String, default: "en" },
 	},
 	methods: {
-		toggleZoom: function(e) {
+		toggleZoom: function (e) {
 			e.currentTarget.classList.toggle("zoomedin");
 			e.preventDefault();
 		},
-		disableZoom: function(e) {
+		disableZoom: function (e) {
 			e.currentTarget.classList.remove("zoomedin");
 			e.preventDefault();
 		},
@@ -41,7 +41,7 @@ export default {
 	display: inline-block;
 	position: relative;
 	text-align: center;
-	transition: transform 0.25s ease;
+	transition: transform 0.2s ease;
 }
 
 .fade-enter-active.card,
@@ -52,5 +52,6 @@ export default {
 .card.zoomedin {
 	transform: scale(1.75) !important;
 	z-index: 2;
+	image-rendering: optimizeQuality;
 }
 </style>
