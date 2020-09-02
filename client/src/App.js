@@ -4,7 +4,6 @@ import io from "../../node_modules/socket.io-client/dist/socket.io.js";
 import Vue from "vue";
 import draggable from "vuedraggable";
 import VTooltip from "v-tooltip";
-import ClazyLoad from "./vue-clazy-load.vue";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 
@@ -69,7 +68,6 @@ const Sounds = {
   readyCheck: new Audio("sound/drop_003.ogg"),
 };
 
-Vue.use(ClazyLoad);
 Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
 VTooltip.options.defaultBoundariesElement = "window";
