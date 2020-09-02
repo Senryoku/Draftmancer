@@ -39,8 +39,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   Fix Blurry card with scaling
-
 -   Handle Double Faced Cards
     -- Add face info when needed (py) (image and name, for each translation)
     -- Add a flip button active on hover to display the other face

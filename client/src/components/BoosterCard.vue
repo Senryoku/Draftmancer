@@ -51,6 +51,7 @@ export default {
 
 .card:hover {
 	transform: scale(1.08);
+	image-rendering: optimizeQuality;
 }
 
 .burn-card,

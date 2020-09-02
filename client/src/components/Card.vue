@@ -52,5 +52,6 @@ export default {
 .card.zoomedin {
 	transform: scale(1.75) !important;
 	z-index: 2;
+	image-rendering: optimizeQuality;
 }
 </style>
