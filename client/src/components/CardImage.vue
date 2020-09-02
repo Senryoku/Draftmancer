@@ -33,9 +33,10 @@
 <script>
 import { Cards } from "./../Cards.js";
 import CardPlaceholder from "./CardPlaceholder.vue";
+import ClazyLoad from "./../vue-clazy-load.vue";
 export default {
 	name: "CardImage",
-	components: { CardPlaceholder },
+	components: { CardPlaceholder, ClazyLoad },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
