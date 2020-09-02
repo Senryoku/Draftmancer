@@ -18,36 +18,17 @@
 						<th>Total</th>
 						<th>Total Missing</th>
 						<th>Unique (Booster)</th>
+						<th>Total (Booster)</th>
 						<th>Missing From Boosters</th>
 					</tr>
-					<tr>
-						<td>Total</td>
-						<td>{{ selectedSet.cards.filter(c => c.count > 0).length }}/{{ selectedSet.total.unique }}</td>
-						<td>{{ selectedSet.cardCount }}/{{ 4 * selectedSet["total"]["unique"] }}</td>
-						<td>{{ 4 * selectedSet["total"]["unique"] - selectedSet.cardCount }}</td>
-						<td>
-							{{ selectedSet.cards.filter(c => c.in_booster && c.count > 0).length }}/{{
-							selectedSet.cards.filter(c => c.in_booster).length
-							}}
-						</td>
-						<td>-</td>
-					</tr>
-					<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic']" :key="r">
-						<td>{{ r }}</td>
-						<td>{{ selectedSet[r].filter(c => c.count > 0).length }}/{{ selectedSet["total"][r + "Count"] }}</td>
-						<td>{{ selectedSet[r + "Count"] }}/{{ 4 * selectedSet["total"][r + "Count"] }}</td>
-						<td>{{ 4 * selectedSet["total"][r + "Count"] - selectedSet[r + "Count"] }}</td>
-						<td>
-							{{ selectedSet[r].filter(c => c.in_booster && c.count > 0).length }}/{{
-							selectedSet[r].filter(c => c.in_booster).length
-							}}
-						</td>
-						<td>
-							{{
-							4 * selectedSet[r].filter(c => c.in_booster).length -
-							selectedSet[r].filter(c => c.in_booster).reduce((acc, val) => acc + val.count, 0)
-							}}
-						</td>
+					<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic', 'all']" :key="r">
+						<td style="text-transform: capitalize">{{ r }}</td>
+						<td>{{ selectedSet.owned.unique[r] }} / {{ selectedSet.total[r] }}</td>
+						<td>{{ selectedSet.owned[r] }} / {{ 4 * selectedSet.total[r] }}</td>
+						<td>{{ 4 * selectedSet.total[r] - selectedSet.owned[r] }}</td>
+						<td>{{ selectedSet.inBoosters.owned.unique[r] }} / {{ selectedSet.inBoosters.total[r] }}</td>
+						<td>{{ selectedSet.inBoosters.owned[r] }} / {{ 4 * selectedSet.inBoosters.total[r] }}</td>
+						<td>{{ 4 * selectedSet.inBoosters.total[r] - selectedSet.inBoosters.owned[r] }}</td>
 					</tr>
 				</table>
 
@@ -64,9 +45,7 @@
 				</h3>
 				<div class="card-container">
 					<missing-card
-						v-for="card in selectedSet.cards.filter(
-							c => c.rarity == missingCardsRarity && (showNonBooster || c.in_booster) && c.count < 4
-						)"
+						v-for="card in selectedSet[missingCardsRarity].filter(c => (showNonBooster || c.in_booster) && c.count < 4)"
 						:key="card.uniqueID"
 						:card="card"
 						:language="language"
@@ -101,45 +80,65 @@ export default {
 	computed: {
 		collectionStats: function () {
 			if (!this.collection || !Cards || !SetsInfos) return null;
-			let stats = {};
+			const baseSet = (setCode, fullName) => {
+				return {
+					name: setCode,
+					fullName: fullName,
+					common: [],
+					uncommon: [],
+					rare: [],
+					mythic: [],
+					owned: {
+						unique: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
+						all: 0,
+						common: 0,
+						uncommon: 0,
+						rare: 0,
+						mythic: 0,
+					},
+					total: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
+					inBoosters: {
+						owned: {
+							unique: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
+							all: 0,
+							common: 0,
+							uncommon: 0,
+							rare: 0,
+							mythic: 0,
+						},
+						total: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
+					},
+				};
+			};
+			let stats = {
+				all: baseSet("all", "All"),
+				standard: baseSet("standard", "Standard"),
+				others: baseSet("others", "Other Sets"),
+			};
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
-					const set = completeSet ? card.set : "Others";
-					if (!(set in stats)) {
-						stats[set] = {
-							name: set,
-							fullName: completeSet ? SetsInfos[card.set].fullName : "Others",
-							cards: [],
-							cardCount: 0,
-							common: [],
-							uncommon: [],
-							rare: [],
-							mythic: [],
-							commonCount: 0,
-							uncommonCount: 0,
-							rareCount: 0,
-							mythicCount: 0,
-							total: completeSet
-								? {
-										unique: SetsInfos[card.set].cardCount,
-										commonCount: SetsInfos[card.set]["commonCount"],
-										uncommonCount: SetsInfos[card.set]["uncommonCount"],
-										rareCount: SetsInfos[card.set]["rareCount"],
-										mythicCount: SetsInfos[card.set]["mythicCount"],
-								  }
-								: { unique: 0, commonCount: 0, uncommonCount: 0, rareCount: 0, mythicCount: 0 },
+					const set = completeSet ? card.set : "others";
+					if (!(card.set in stats) && completeSet)
+						stats[card.set] = baseSet(card.set, SetsInfos[card.set].fullName);
+					let categories = [set, "all"];
+					if (Constant.StandardSets.includes(card.set)) categories.push("standard");
+					for (let s of categories) {
+						stats[s][card.rarity].push(card);
+
+						const count = (target) => {
+							target.total.all += 1;
+							target.total[card.rarity] += 1;
+							target.owned.all += card.count;
+							target.owned[card.rarity] += card.count;
+							target.owned.unique.all += card.count > 0 ? 1 : 0;
+							target.owned.unique[card.rarity] += card.count > 0 ? 1 : 0;
 						};
-					}
-					stats[set].cards.push(card);
-					stats[set].cardCount += card.count;
-					stats[set][card.rarity].push(card);
-					stats[set][card.rarity + "Count"] += card.count;
-					if (!completeSet) {
-						stats[set].total.unique += 1;
-						stats[set].total[card.rarity + "Count"] += 1;
+
+						count(stats[s]);
+						if (card.in_booster) count(stats[s].inBoosters);
 					}
 				}
 			}

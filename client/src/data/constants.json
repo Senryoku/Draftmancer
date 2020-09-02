@@ -13,6 +13,7 @@
 		{ "code": "zht", "name": "繁体中文" }
 	],
 	"MTGSets": ["xln", "rix", "dom", "m19", "grn", "rna", "war", "m20", "eld", "thb", "iko", "m21", "akr"],
+	"StandardSets": ["grn", "rna", "war", "m20", "eld", "thb", "iko", "m21"],
 	"BasicLandNames": {
 		"en": {
 			"W": "Plains",

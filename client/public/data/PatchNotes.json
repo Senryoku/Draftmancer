@@ -1,7 +1,10 @@
 [
 	{
 		"date": "02/09/2020",
-		"notes": ["Added a way to display the back of Double-Faced cards in prevision of Zendikar Rising Model DFC."]
+		"notes": [
+			"Added a way to display the back of Double-Faced cards in prevision of Zendikar Rising Model DFC.",
+			"Optimized the collection statistics panel and added options 'All' and 'Standard'."
+		]
 	},
 	{
 		"date": "27/08/2020",
