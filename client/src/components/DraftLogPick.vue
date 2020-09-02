@@ -6,6 +6,7 @@
 			:card="getCard(card)"
 			:language="language"
 			:class="{ 'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card) }"
+			:lazyLoad="true"
 		></card>
 	</div>
 </template>
@@ -22,7 +23,7 @@ export default {
 		language: { type: String, required: true },
 	},
 	methods: {
-		getCard: function(cid) {
+		getCard: function (cid) {
 			return Cards[cid];
 		},
 	},

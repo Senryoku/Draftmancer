@@ -20,6 +20,13 @@ export default {
 		tag: { type: String, default: "div" },
 
 		/**
+		 * Forces immediate loading
+		 * @type {Boolean}
+		 * @default false
+		 */
+		forceLoad: { type: Boolean, default: false },
+
+		/**
 		 * Image source URL
 		 * @type {String}
 		 * @required
@@ -51,8 +58,8 @@ export default {
 			type: Number,
 			default: 0.4,
 			validator: function validator(value) {
-				// can't be less or equal to 0 and greater than 1
-				return value > 0 && value <= 1;
+				// can't be less than 0 and greater than 1
+				return value >= 0 && value <= 1;
 			},
 		},
 
@@ -101,7 +108,7 @@ export default {
 	},
 	methods: {
 		isVisible: function () {
-			var rect = this.$el.getBoundingClientRect();
+			const rect = this.$el.getBoundingClientRect();
 
 			return (
 				rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
@@ -114,42 +121,33 @@ export default {
 		 * Start loading image
 		 */
 		load: function load() {
-			var _this = this;
+			this.$emit("loading");
 
-			// emits 'loading' event upwards
-			this.$emit("loading"); // disconnect observer
-			// so it doesn't load more than once
-
+			// disconnect observer so it doesn't load more than once
 			if (this.observer) this.observer.disconnect();
 
 			if (!this.loaded) {
-				this.img.addEventListener("load", function () {
-					_this.loaded = true; // emits 'load' event upwards
-					//_this.$forceUpdate();
+				// function used to clear variables from memory
+				const clear = () => {
+					this.img = null; // discard fake image
+					this.observer = null; // remove observer from memory
+				};
 
-					_this.$emit("load");
-
+				this.img.addEventListener("load", () => {
+					this.loaded = true;
+					//this.$forceUpdate();
+					this.$emit("load"); // emits 'load' event upwards
 					clear();
 				});
-				this.img.addEventListener("error", function (event) {
-					_this.errored = true; // emits 'error' event upwards
-					// adds the original event as argument
-
-					_this.$emit("error", event);
-
+				this.img.addEventListener("error", (event) => {
+					this.errored = true;
+					// emits 'error' event upwards adds the original event as argument
+					this.$emit("error", event);
 					clear();
-				}); // function used to clear variables from memory
+				});
 
-				var clear = function clear() {
-					// discard fake image
-					_this.img = null; // remove observer from memory
-
-					_this.observer = null;
-				}; // CORS mode configuration
-
-				if (this.crossorigin !== null) {
-					this.img.crossOrigin = this.crossorigin;
-				}
+				// CORS mode configuration
+				if (this.crossorigin !== null) this.img.crossOrigin = this.crossorigin;
 
 				this.img.src = this.src;
 			}
@@ -159,19 +157,18 @@ export default {
 		 * Creates IntersectionObserver instance and observe current element
 		 */
 		observe: function observe() {
-			var _this2 = this;
-
-			var options = {
+			const options = {
 				threshold: this.threshold,
 				root: this.element ? document.querySelector(this.element) : null,
 				rootMargin: this.margin, // creates IO instance
 			};
-			this.observer = new IntersectionObserver(function (entries) {
-				// as we instantiated one for each component
-				// we can directly access the first index
-				if (entries[0].intersectionRatio >= _this2.ratio) {
-					_this2.load();
-				}
+			this.observer = new IntersectionObserver((entries) => {
+				// as we instantiated one for each component we can directly access the first index
+				if (
+					(this.ratio === 0 && entries[0].isIntersecting) ||
+					(this.ratio > 0 && entries[0].intersectionRatio >= this.ratio)
+				)
+					this.load();
 			}, options); // start observing main component
 
 			this.observer.observe(this.$el);
@@ -179,12 +176,11 @@ export default {
 	},
 	render: function render(h) {
 		// class to be added to element indicating load state
-		var elementClass = this.loaded ? this.loadedClass : this.loadingClass;
+		const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
 		return h(
 			this.tag,
 			{
-				// if loading failed adds error class if exists,
-				// otherwhise adds elementClass defined above
+				// if loading failed adds error class if exists, otherwhise adds elementClass defined above
 				class: this.errored && this.errorClass ? this.errorClass : elementClass,
 			},
 			[
@@ -196,12 +192,10 @@ export default {
 	},
 	mounted: function mounted() {
 		// Immediatly load if visible
-		if (this.isVisible()) {
+		if (this.isVisible() || this.forceLoad) {
 			this.img.src = this.src;
 			this.loaded = this.img.complete; // The image may already be in cache
-			if (!this.loaded) {
-				this.load();
-			}
+			if (!this.loaded) this.load();
 			this.$forceUpdate();
 		} else {
 			// start observing the element visibility

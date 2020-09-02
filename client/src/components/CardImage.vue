@@ -4,23 +4,25 @@
 
 		<div class="flip-container">
 			<clazy-load
-				:ratio="0.01"
+				:ratio="0"
 				margin="200px"
 				:src="imageURI"
 				loadingClass="card-loading"
 				:title="printedName"
+				:forceLoad="!lazyLoad"
 				class="flip-front"
 			>
 				<img :src="imageURI" />
 				<card-placeholder slot="placeholder" :name="printedName"></card-placeholder>
 			</clazy-load>
 			<clazy-load
-				:ratio="0.01"
+				:ratio="0"
 				margin="200px"
 				:src="back['image_uris']"
 				loadingClass="card-loading"
 				:title="back['printed_name']"
 				class="flip-back"
+				:forceLoad="!lazyLoad"
 				v-if="hasBack"
 			>
 				<img :src="back['image_uris']" />
@@ -40,6 +42,7 @@ export default {
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
+		lazyLoad: { type: Boolean, default: false },
 	},
 	computed: {
 		imageURI: function () {

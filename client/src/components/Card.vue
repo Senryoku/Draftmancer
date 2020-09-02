@@ -9,7 +9,7 @@
 		@contextmenu="toggleZoom"
 		@mouseleave="disableZoom"
 	>
-		<card-image :card="card" :language="language"></card-image>
+		<card-image :card="card" :language="language" :lazyLoad="lazyLoad"></card-image>
 		<slot></slot>
 	</div>
 </template>
@@ -22,6 +22,7 @@ export default {
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
+		lazyLoad: { type: Boolean, default: false },
 	},
 	methods: {
 		toggleZoom: function (e) {

@@ -1,6 +1,12 @@
 <template>
 	<div class="card-column" v-show="column.length > 0">
-		<card v-for="(card, index) in column" :key="index" :card="card" :language="language">
+		<card
+			v-for="(card, index) in column"
+			:key="index"
+			:card="card"
+			:language="language"
+			:lazyLoad="true"
+		>
 			<div v-if="checkcollection && !(card.id in collection)" class="collection-warning">
 				<i class="fas fa-exclamation-triangle yellow"></i>
 			</div>
