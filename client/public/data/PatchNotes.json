@@ -1,5 +1,9 @@
 [
 	{
+		"date": "02/09/2020",
+		"notes": ["Added a way to display the back of Double-Faced cards in prevision of Zendikar Rising Model DFC."]
+	},
+	{
 		"date": "27/08/2020",
 		"notes": ["Implemented Rochester Draft."]
 	},
