@@ -1,8 +1,7 @@
 <template>
 	<div class="card-image">
-		<div v-if="hasBack" class="flip-button">
-			<i class="fas fa-sync flip-icon"></i>
-		</div>
+		<i v-if="hasBack" class="fas fa-sync flip-icon flip-button"></i>
+
 		<div class="flip-container">
 			<clazy-load
 				:ratio="0.01"
@@ -89,7 +88,15 @@ img {
 }
 
 .flip-icon {
+	transition: transform 0.2s, text-shadow 0.2s;
 	transform: rotateX(45deg) skewX(-10deg);
+	color: white;
+	text-shadow: 0 0 4px black, 0 4px 0 black;
+}
+
+.flip-icon:hover {
+	transform: rotateX(45deg) skewX(-10deg) rotateZ(180deg);
+	text-shadow: 0 0 4px black, 0 -4px 0 black;
 }
 
 .flip-container {

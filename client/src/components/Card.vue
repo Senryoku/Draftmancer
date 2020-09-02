@@ -41,7 +41,7 @@ export default {
 	display: inline-block;
 	position: relative;
 	text-align: center;
-	transition: transform 0.25s ease;
+	transition: transform 0.2s ease;
 }
 
 .fade-enter-active.card,
