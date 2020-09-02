@@ -39,7 +39,7 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
--   BUG: Burning selected card doesn't deselect it. Burning card effect isn't applied to the image but the container.
+-   BUG: Burning selected card doesn't deselect it.
 -   Fix Blurry card with scaling
 
 -   Handle Double Faced Cards
