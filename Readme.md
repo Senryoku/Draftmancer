@@ -39,6 +39,8 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Important
 
+-   BUG: Burning selected card doesn't deselect it. Burning card effect isn't applied to the image but the container.
+
 -   Handle Double Faced Cards
     -- Add face info when needed (py) (image and name, for each translation)
     -- Add a flip button active on hover to display the other face

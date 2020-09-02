@@ -24,12 +24,12 @@ export default {
 		burned: { type: Boolean, default: false },
 	},
 	methods: {
-		burnCard: function(e) {
+		burnCard: function (e) {
 			this.$emit("burn");
 			e.stopPropagation();
 			e.preventDefault();
 		},
-		restoreCard: function(e) {
+		restoreCard: function (e) {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();

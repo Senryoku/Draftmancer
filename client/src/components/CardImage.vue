@@ -1,39 +1,38 @@
 <template>
-	<div>
+	<div class="card-image">
 		<div
 			v-if="hasBack"
-			style="pointer-events: auto"
+			class="flip-button"
 			@mouseenter="displayBack = true"
 			@mouseleave="displayBack = false"
 		>
 			<i class="fas fa-sync flip-icon"></i>
 		</div>
-		<transition name="flip" mode="out-in">
-			<div v-if="hasBack && displayBack" :key="'back'">
-				<clazy-load
-					:ratio="0.01"
-					margin="200px"
-					:src="back['image_uris']"
-					loadingClass="card-loading"
-					:title="back['printed_name']"
-				>
-					<img :src="back['image_uris']" />
-					<card-placeholder slot="placeholder" :name="back['printed_name']"></card-placeholder>
-				</clazy-load>
-			</div>
-			<div v-else :key="'front'">
-				<clazy-load
-					:ratio="0.01"
-					margin="200px"
-					:src="imageURI"
-					loadingClass="card-loading"
-					:title="printedName"
-				>
-					<img :src="imageURI" />
-					<card-placeholder slot="placeholder" :name="printedName"></card-placeholder>
-				</clazy-load>
-			</div>
-		</transition>
+		<div class="flip-container">
+			<clazy-load
+				:ratio="0.01"
+				margin="200px"
+				:src="imageURI"
+				loadingClass="card-loading"
+				:title="printedName"
+				class="flip-front"
+			>
+				<img :src="imageURI" />
+				<card-placeholder slot="placeholder" :name="printedName"></card-placeholder>
+			</clazy-load>
+			<clazy-load
+				:ratio="0.01"
+				margin="200px"
+				:src="back['image_uris']"
+				loadingClass="card-loading"
+				:title="back['printed_name']"
+				class="flip-back"
+				v-if="hasBack"
+			>
+				<img :src="back['image_uris']" />
+				<card-placeholder slot="placeholder" :name="back['printed_name']"></card-placeholder>
+			</clazy-load>
+		</div>
 	</div>
 </template>
 
@@ -73,6 +72,13 @@ export default {
 </script>
 
 <style scoped>
+.card-image {
+	width: 200px;
+	height: 283.3333333333334px;
+	background-color: transparent;
+	perspective: 1000px;
+}
+
 img {
 	width: 200px;
 	border-radius: 6px;
@@ -82,27 +88,42 @@ img {
 	user-select: none;
 }
 
-.flip-icon {
+.flip-button {
 	position: absolute;
 	top: -0.25em;
 	right: -0.4em;
-	z-index: 2;
+	z-index: 1;
+	pointer-events: auto;
+}
 
+.flip-icon {
 	transform: rotateX(45deg) skewX(-10deg);
 }
 
-.flip-enter-active {
-	transition: transform 0.1s ease-out;
+.flip-container {
+	position: relative;
+	transition: transform 0.2s;
+	transform-style: preserve-3d;
 }
 
-.flip-leave-active {
-	transition: transform 0.1s ease-in;
-}
-.flip-enter {
-	transform: rotateY(-90deg);
+.flip-button:hover ~ .flip-container {
+	transform: rotateY(180deg);
 }
 
-.flip-leave-to {
-	transform: rotateY(90deg);
+.flip-front,
+.flip-back {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	-webkit-backface-visibility: hidden; /* Safari */
+	backface-visibility: hidden;
+
+	-ms-transform: translateZ(0); /* IE 9 */
+	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+	transform: translateZ(0);
+}
+
+.flip-back {
+	transform: rotateY(180deg) translateZ(0);
 }
 </style>
