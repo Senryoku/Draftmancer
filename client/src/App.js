@@ -182,6 +182,7 @@ export default {
       // stay in sync with their CardPool display)
       deck: [],
       sideboard: [],
+      collapseSideboard: getCookie("collapseSideboard", "true") === "true",
       autoLand: true,
       lands: {W: 0, U: 0, B: 0, R: 0, G: 0},
       //
@@ -2089,6 +2090,9 @@ export default {
     },
     hideSessionID: function() {
       setCookie("hideSessionID", this.hideSessionID.toString());
+    },
+    collapseSideboard: function() {
+      setCookie("collapseSideboard", this.collapseSideboard.toString());
     },
     deck: function() { this.updateAutoLands();},
     autoLand: function() { this.updateAutoLands();},

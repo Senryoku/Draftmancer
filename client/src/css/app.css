@@ -631,6 +631,7 @@ ul.player-list {
 .controls {
 	display: flex;
 	align-items: center;
+	height: 28px;
 }
 
 .controls > * {
@@ -652,6 +653,29 @@ ul.player-list {
 	background-color: #282828;
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
+}
+
+.deck-container {
+	display: flex;
+}
+
+.deck {
+	flex: 1 1 auto;
+}
+
+.collapsed-sideboard {
+	flex: 0 0 auto;
+	margin-left: 1em;
+	box-sizing: border-box;
+}
+
+.collapsed-sideboard h2 {
+	font-size: 20px;
+	line-height: 28px;
+}
+
+.collapsed-sideboard .card-column {
+	margin: auto;
 }
 
 .selected img,
