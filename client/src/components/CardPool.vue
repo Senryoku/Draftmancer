@@ -1,5 +1,5 @@
 <template>
-	<div class="card-container card-columns">
+	<div class="card-pool card-container card-columns">
 		<div class="empty-warning" v-if="cards.length == 0">
 			<slot name="empty">
 				<h3>This card pool is currently empty!</h3>
@@ -238,5 +238,9 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.card-pool .card-column {
+	margin-right: 0.75em;
 }
 </style>

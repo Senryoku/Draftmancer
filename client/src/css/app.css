@@ -628,22 +628,29 @@ ul.player-list {
 	padding-right: 0.5em;
 }
 
-.controls {
+.section-title {
 	display: flex;
 	align-items: center;
-	height: 28px;
+	margin-left: 1em;
+	min-height: 35px;
 }
 
-.controls > * {
-	margin: 0 !important;
-	margin-right: 1.5em !important;
-}
-
-.controls h2 {
+.section-title h2 {
 	display: inline-block;
 	margin: 0;
 	font-variant: small-caps;
 	font-size: 28px;
+}
+
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-left: 1.5em;
+}
+
+.controls > * {
+	margin-left: 1.5em;
 }
 
 .card-container {
@@ -709,7 +716,6 @@ ul.player-list {
 	display: flex;
 	flex-direction: column;
 	padding-bottom: 275px;
-	margin-right: 0.75em;
 	margin-bottom: 0.5em;
 }
 
@@ -1048,7 +1054,8 @@ ul.player-list {
 	padding: 0.5em;
 }
 
-.winston-pile .card img {
+.winston-pile .card-image,
+.winston-pile .card-image img {
 	width: 250px;
 }
 

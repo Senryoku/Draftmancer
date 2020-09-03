@@ -78,16 +78,16 @@ export default {
 		sessionID: { type: String },
 	},
 	methods: {
-		emitUpdated: function() {
+		emitUpdated: function () {
 			this.$emit("updated");
 		},
-		recordString: function(player) {
+		recordString: function (player) {
 			return `${this.records[player].wins} - ${this.records[player].losses}`;
 		},
-		lock: function(e) {
+		lock: function (e) {
 			this.$emit("lock", e.target.checked);
 		},
-		copyLink: function() {
+		copyLink: function () {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
@@ -97,19 +97,19 @@ export default {
 		},
 	},
 	computed: {
-		matches: function() {
+		matches: function () {
 			let m = [[], [], []];
-			const Match = function(index, players) {
+			const Match = function (index, players) {
 				this.index = index;
 				this.players = players;
-				this.isValid = function() {
+				this.isValid = function () {
 					return (
 						!this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd
 					);
 				};
 			};
 
-			const winner = match => {
+			const winner = (match) => {
 				if (match.players[0].empty && match.players[1].empty) return { empty: true };
 				if (match.players[0].empty) return match.players[1];
 				if (match.players[1].empty) return match.players[0];
@@ -123,7 +123,7 @@ export default {
 				else return match.players[1];
 			};
 
-			const loser = match => {
+			const loser = (match) => {
 				if (match.players[0].empty || match.players[1].empty) return { empty: true };
 				if (
 					!this.bracket.results ||
@@ -157,7 +157,7 @@ export default {
 			}
 			return m;
 		},
-		records: function() {
+		records: function () {
 			let r = {};
 			for (let p of this.bracket.players) r[p] = { wins: 0, losses: 0 };
 			for (let col of this.matches)
@@ -178,7 +178,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .controls {
 	padding: 0.5em;
 }
