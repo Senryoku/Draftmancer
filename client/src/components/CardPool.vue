@@ -1,5 +1,5 @@
 <template>
-	<div class="card-container card-columns">
+	<div class="card-pool card-container card-columns">
 		<div class="empty-warning" v-if="cards.length == 0">
 			<slot name="empty">
 				<h3>This card pool is currently empty!</h3>
@@ -19,7 +19,6 @@
 				:key="`${_uid}_card_${card.uniqueID}`"
 				:card="card"
 				:language="language"
-				:selectcard="click"
 				@click="click($event, card)"
 			></card>
 		</draggable>
@@ -39,13 +38,25 @@
 				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 					<i class="fas fa-sort-amount-up fa-2x"></i>
 				</div>
-				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
+				<div
+					@click="sortByColor"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by color'"
+				>
 					<img src="../assets/img/sort-color.svg" />
 				</div>
-				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
+				<div
+					@click="sortByRarity"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by rarity'"
+				>
 					<img src="../assets/img/sort-rarity.svg" />
 				</div>
-				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
+				<div
+					@click="sortByType"
+					class="column-control clickable"
+					v-tooltip.right="'Sort cards by type'"
+				>
 					<img src="../assets/img/sort-type.svg" />
 				</div>
 			</div>
@@ -68,36 +79,36 @@ export default {
 		click: { type: Function },
 		group: { type: String },
 	},
-	data: function() {
+	data: function () {
 		return {
 			columns: [[], [], [], [], [], [], []],
 		};
 	},
-	mounted: function() {
+	mounted: function () {
 		this.sync();
 	},
 	methods: {
-		reset: function() {
+		reset: function () {
 			const colCount = Math.max(1, this.columns.length);
 			this.columns = [];
 			for (let i = 0; i < colCount; ++i) this.columns.push([]);
 		},
-		sync: function() {
+		sync: function () {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
 		},
-		addCard: function(card) {
+		addCard: function (card) {
 			let columnIndex = Math.min(card.cmc, this.columns.length - 1);
 			let columnWithDuplicate = this.columns.findIndex(
-				column => column.findIndex(c => c.name === card.name) > -1
+				(column) => column.findIndex((c) => c.name === card.name) > -1
 			);
 			if (columnWithDuplicate > -1) {
 				columnIndex = columnWithDuplicate;
 			}
 			this.insertCard(this.columns[columnIndex], card);
 		},
-		insertCard: function(column, card) {
-			let duplicateIndex = column.findIndex(c => c.name === card.name);
+		insertCard: function (column, card) {
+			let duplicateIndex = column.findIndex((c) => c.name === card.name);
 			if (duplicateIndex != -1) {
 				column.splice(duplicateIndex, 0, card);
 			} else if (CardOrder.isOrdered(column, CardOrder.Comparators.arena)) {
@@ -107,7 +118,7 @@ export default {
 				column.push(card);
 			}
 		},
-		sort: function(comparator, columnSorter = CardOrder.orderByArenaInPlace) {
+		sort: function (comparator, columnSorter = CardOrder.orderByArenaInPlace) {
 			this.reset();
 			if (this.cards.length === 0) return;
 			let sorted = [...this.cards].sort(comparator);
@@ -120,16 +131,16 @@ export default {
 			this.columns[columnIndex].push(sorted[sorted.length - 1]);
 			for (let col of this.columns) columnSorter(col);
 		},
-		sortByColor: function() {
+		sortByColor: function () {
 			this.sort(CardOrder.Comparators.color);
 		},
-		sortByRarity: function() {
+		sortByRarity: function () {
 			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
 		},
-		sortByType: function() {
+		sortByType: function () {
 			this.sort(CardOrder.Comparators.type);
 		},
-		remCard: function(card) {
+		remCard: function (card) {
 			for (let col of this.columns) {
 				let idx = col.indexOf(card);
 				if (idx >= 0) {
@@ -138,29 +149,29 @@ export default {
 				}
 			}
 		},
-		change: function(e) {
+		change: function (e) {
 			// Sync. source array when adding/removing cards by drag & drop
 			if (e.removed)
 				this.cards.splice(
-					this.cards.findIndex(c => c === e.removed.element),
+					this.cards.findIndex((c) => c === e.removed.element),
 					1
 				);
 			if (e.added) this.cards.push(e.added.element);
 		},
-		addColumn: function() {
+		addColumn: function () {
 			this.columns.push([]);
 			Vue.set(
 				this.columns,
 				this.columns.length - 1,
-				this.columns[this.columns.length - 2].filter(c => c.cmc > this.columns.length - 2)
+				this.columns[this.columns.length - 2].filter((c) => c.cmc > this.columns.length - 2)
 			);
 			Vue.set(
 				this.columns,
 				this.columns.length - 2,
-				this.columns[this.columns.length - 2].filter(c => c.cmc <= this.columns.length - 2)
+				this.columns[this.columns.length - 2].filter((c) => c.cmc <= this.columns.length - 2)
 			);
 		},
-		remColumn: function() {
+		remColumn: function () {
 			if (this.columns.length < 2) return;
 			Vue.set(
 				this.columns,
@@ -227,5 +238,9 @@ export default {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.card-pool .card-column {
+	margin-right: 0.75em;
 }
 </style>

@@ -591,31 +591,33 @@
 					id="booster-container"
 					class="container"
 				>
-					<div id="booster-controls" class="controls">
+					<div id="booster-controls" class="section-title">
 						<h2>Your Booster</h2>
-						<span>Booster #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
-						<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-							<i class="fas fa-clock"></i>
-							{{ pickTimer }}
-						</span>
-						<input
-							type="button"
-							@click="pickCard"
-							value="Confirm Pick"
-							v-if="
+						<div class="controls">
+							<span>Booster #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
+								<i class="fas fa-clock"></i>
+								{{ pickTimer }}
+							</span>
+							<input
+								type="button"
+								@click="pickCard"
+								value="Confirm Pick"
+								v-if="
 								selectedCard != undefined &&
 									(burningCards.length === burnedCardsPerRound ||
 										booster.length === 1 + burningCards.length)
 							"
-						/>
-						<span v-else>
-							Pick a card
-							<span v-if="cardsToBurnThisRound > 0">
-								and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
-								cardsToBurnThisRound
-								}})
+							/>
+							<span v-else>
+								Pick a card
+								<span v-if="cardsToBurnThisRound > 0">
+									and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
+									cardsToBurnThisRound
+									}})
+								</span>
 							</span>
-						</span>
+						</div>
 					</div>
 					<div class="booster card-container">
 						<booster-card
@@ -782,82 +784,134 @@
 
 		<!-- Brewing controls (Deck & Sideboard) -->
 		<div
-			class="container"
+			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
 					(drafting && draftingState !== DraftState.Watching) ||
 					draftingState == DraftState.Brewing
 			"
 		>
-			<div class="controls">
-				<h2>Deck ({{ deck.length }})</h2>
-				<button
-					v-if="deck.length > 0"
-					type="button"
-					@click="exportDeck"
-					v-tooltip="'Export deck and sideboard'"
+			<div class="deck">
+				<div class="section-title">
+					<h2>Deck ({{ deck.length }})</h2>
+					<div class="controls">
+						<button
+							v-if="deck.length > 0"
+							type="button"
+							@click="exportDeck"
+							v-tooltip="'Export deck and sideboard'"
+						>
+							<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
+						</button>
+						<button
+							v-if="deck.length > 0"
+							type="button"
+							@click="exportDeck(false)"
+							v-tooltip="'Export without set information'"
+						>
+							<i class="fas fa-clipboard"></i> Export (Simple)
+						</button>
+						<i
+							class="fas fa-chart-pie fa-lg clickable"
+							@click="displayedModal = 'deckStats'"
+							v-tooltip="'Deck Statistics'"
+						></i>
+						<span v-show="draftingState == DraftState.Brewing">
+							<input type="checkbox" id="autoLand" v-model="autoLand" />
+							<label
+								for="autoLand"
+								v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
+							>Auto. Land</label>
+							<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
+								<label class="land-input" :key="c">
+									<img :src="`img/mana/${c}.svg`" class="mana-icon" />
+									<input
+										class="small-number-input"
+										type="number"
+										:id="`${c}-mana`"
+										v-model.number="lands[c]"
+										min="0"
+									/>
+								</label>
+							</template>
+							Adding {{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
+						</span>
+					</div>
+				</div>
+
+				<card-pool
+					:cards="deck"
+					:language="language"
+					:click="deckToSideboard"
+					ref="deckDisplay"
+					group="deck"
+					@dragover.native="allowBoosterCardDrop($event)"
+					@drop.native="dropBoosterCard($event)"
 				>
-					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
-				</button>
-				<button
-					v-if="deck.length > 0"
-					type="button"
-					@click="exportDeck(false)"
-					v-tooltip="'Export without set information'"
-				>
-					<i class="fas fa-clipboard"></i> Export (Simple)
-				</button>
-				<i
-					class="fas fa-chart-pie fa-lg clickable"
-					@click="displayedModal = 'deckStats'"
-					v-tooltip="'Deck Statistics'"
-				></i>
-				<span v-show="draftingState == DraftState.Brewing">
-					<input type="checkbox" id="autoLand" v-model="autoLand" />
-					<label
-						for="autoLand"
-						v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
-					>Auto. Land</label>
-					<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
-						<label class="land-input" :key="c">
-							<img :src="`img/mana/${c}.svg`" class="mana-icon" />
-							<input
-								class="small-number-input"
-								type="number"
-								:id="`${c}-mana`"
-								v-model.number="lands[c]"
-								min="0"
-							/>
-						</label>
+					<template v-slot:empty>
+						<h3>Your deck is currently empty!</h3>
+						<p>Click on your cards to add them to your deck.</p>
 					</template>
-					Adding {{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
-				</span>
+				</card-pool>
 			</div>
-			<card-pool
-				:cards="deck"
-				:language="language"
-				:click="deckToSideboard"
-				ref="deckDisplay"
-				group="deck"
-				@dragover.native="allowBoosterCardDrop($event)"
-				@drop.native="dropBoosterCard($event)"
+			<!-- Collapsed Sideboard -->
+			<div
+				v-if="collapseSideboard && ((sideboard != undefined && sideboard.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing)"
+				class="collapsed-sideboard"
 			>
-				<template v-slot:empty>
-					<h3>Your deck is currently empty!</h3>
-					<p>Click on your cards to add them to your deck.</p>
-				</template>
-			</card-pool>
+				<div class="section-title">
+					<h2>Sideboard ({{ sideboard.length }})</h2>
+					<div class="controls">
+						<i
+							class="fas fa-chevron-down clickable"
+							@click="collapseSideboard = false"
+							v-tooltip="'Maximize sideboard'"
+						></i>
+					</div>
+				</div>
+				<div
+					class="card-container card-columns"
+					@dragover="allowBoosterCardDrop($event)"
+					@drop="dropBoosterCard($event, { toSideboard: true })"
+				>
+					<draggable
+						:key="`${_uid}_col`"
+						class="card-column drag-column"
+						:list="sideboard"
+						group="deck"
+						@change="$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */"
+						drag-class="drag"
+					>
+						<card
+							v-for="card in sideboard"
+							:key="`${_uid}_card_${card.uniqueID}`"
+							:card="card"
+							:language="language"
+							@click="sideboardToDeck($event, card)"
+						></card>
+					</draggable>
+				</div>
+			</div>
 		</div>
 		<div
-			v-show="
+			v-show="!collapseSideboard && (
 				(sideboard != undefined && sideboard.length > 0) ||
 					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing
+					draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
-			<div class="controls">
+			<div class="section-title">
 				<h2>Sideboard ({{ sideboard.length }})</h2>
+				<div class="controls">
+					<i
+						class="fas fa-chevron-up clickable"
+						@click="collapseSideboard = true"
+						v-tooltip="'Minimize sideboard'"
+					></i>
+				</div>
 			</div>
 			<card-pool
 				:cards="sideboard"
@@ -884,7 +938,7 @@
 			<div class="welcome-cols">
 				<div class="welcome-col">
 					<div class="container" v-if="userID !== sessionOwner && sessionOwner in userByID">
-						<div class="controls">
+						<div class="section-title">
 							<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
 						</div>
 						<div class="welcome-section">
@@ -897,7 +951,7 @@
 						</div>
 					</div>
 					<div class="container" v-else>
-						<div class="controls">
+						<div class="section-title">
 							<h2>Basic setup</h2>
 						</div>
 						<div class="welcome-section">
@@ -934,7 +988,7 @@
 						</div>
 					</div>
 					<div class="container">
-						<div class="controls">
+						<div class="section-title">
 							<h2>Collection Import</h2>
 						</div>
 						<div class="welcome-section">
@@ -970,7 +1024,7 @@
 				</div>
 				<div class="welcome-col">
 					<div class="container">
-						<div class="controls">
+						<div class="section-title">
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
@@ -990,7 +1044,7 @@
 						</div>
 					</div>
 					<div class="container">
-						<div class="controls">
+						<div class="section-title">
 							<h2>Help</h2>
 						</div>
 						<div class="welcome-section">
@@ -1006,7 +1060,7 @@
 						</div>
 					</div>
 					<div class="container">
-						<div class="controls">
+						<div class="section-title">
 							<h2>Survey</h2>
 						</div>
 						<div class="welcome-section">
