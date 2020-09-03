@@ -643,20 +643,24 @@
 				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 				class="container"
 			>
-				<div class="title-status">
+				<div class="section-title">
 					<h2>Winston Draft</h2>
-					<span>
-						<template v-if="userID === winstonDraftState.currentPlayer">Your turn to pick a pile of cards!</template>
-						<template v-else>
-							Waiting for
-							{{
-							winstonDraftState.currentPlayer in userByID
-							? userByID[winstonDraftState.currentPlayer].userName
-							: "(Disconnected)"
-							}}...
-						</template>
-						There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
-					</span>
+					<div class="controls">
+						<span>
+							<template
+								v-if="userID === winstonDraftState.currentPlayer"
+							>Your turn to pick a pile of cards!</template>
+							<template v-else>
+								Waiting for
+								{{
+								winstonDraftState.currentPlayer in userByID
+								? userByID[winstonDraftState.currentPlayer].userName
+								: "(Disconnected)"
+								}}...
+							</template>
+							There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
+						</span>
+					</div>
 				</div>
 				<div class="winston-piles">
 					<div
@@ -695,33 +699,35 @@
 			</div>
 			<!-- Grid Draft -->
 			<div v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
-				<div class="title-status">
+				<div class="section-title">
 					<h2>Grid Draft</h2>
-					<span>
-						Booster #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }} /
-						{{ gridDraftState.boosterCount }}
-					</span>
-					<span>
-						<template v-if="userID === gridDraftState.currentPlayer">
-							<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
-						</template>
-						<template v-else-if="gridDraftState.currentPlayer === null">
-							<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
-								This was the last booster! Let me push these booster wrappers off the
-								table...
+					<div class="controls">
+						<span>
+							Booster #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }} /
+							{{ gridDraftState.boosterCount }}
+						</span>
+						<span>
+							<template v-if="userID === gridDraftState.currentPlayer">
+								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
 							</template>
-							<template v-else>Advancing to the next booster...</template>
-						</template>
-						<template v-else>
-							<i class="fas fa-spinner fa-spin"></i>
-							Waiting for
-							{{
-							gridDraftState.currentPlayer in userByID
-							? userByID[gridDraftState.currentPlayer].userName
-							: "(Disconnected)"
-							}}...
-						</template>
-					</span>
+							<template v-else-if="gridDraftState.currentPlayer === null">
+								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
+									This was the last booster! Let me push these booster wrappers off the
+									table...
+								</template>
+								<template v-else>Advancing to the next booster...</template>
+							</template>
+							<template v-else>
+								<i class="fas fa-spinner fa-spin"></i>
+								Waiting for
+								{{
+								gridDraftState.currentPlayer in userByID
+								? userByID[gridDraftState.currentPlayer].userName
+								: "(Disconnected)"
+								}}...
+							</template>
+						</span>
+					</div>
 				</div>
 				<grid-draft
 					:state="gridDraftState"
@@ -733,27 +739,29 @@
 			<div
 				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
 			>
-				<div class="title-status controls">
+				<div class="section-title controls">
 					<h2>Rochester Draft</h2>
-					<span>
-						Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
-						Pick #{{ rochesterDraftState.pickNumber + 1 }}
-					</span>
-					<span>
-						<template v-if="userID === rochesterDraftState.currentPlayer">
-							<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
-						</template>
-						<template v-else>
-							<i class="fas fa-spinner fa-spin"></i>
-							Waiting for
-							{{
-							rochesterDraftState.currentPlayer in userByID
-							? userByID[rochesterDraftState.currentPlayer].userName
-							: "(Disconnected)"
-							}}...
-						</template>
-					</span>
-					<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
+					<div class="controls">
+						<span>
+							Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+							Pick #{{ rochesterDraftState.pickNumber + 1 }}
+						</span>
+						<span>
+							<template v-if="userID === rochesterDraftState.currentPlayer">
+								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
+							</template>
+							<template v-else>
+								<i class="fas fa-spinner fa-spin"></i>
+								Waiting for
+								{{
+								rochesterDraftState.currentPlayer in userByID
+								? userByID[rochesterDraftState.currentPlayer].userName
+								: "(Disconnected)"
+								}}...
+							</template>
+						</span>
+						<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
+					</div>
 				</div>
 				<transition-group name="fade" tag="div" class="booster card-container">
 					<template v-if="userID === rochesterDraftState.currentPlayer">

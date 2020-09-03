@@ -1026,19 +1026,6 @@ ul.player-list {
 	box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.5);
 }
 
-.title-status {
-	margin-bottom: 0.5em;
-}
-
-.title-status h2 {
-	display: inline-block;
-	margin: 0 1em 0 1em;
-}
-
-.title-status span {
-	margin-right: 1em;
-}
-
 /** Winston Draft **/
 
 .winston-piles {
