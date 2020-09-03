@@ -21,7 +21,6 @@ const SessionModule = require("./src/Session");
 const Session = SessionModule.Session;
 const Sessions = SessionModule.Sessions;
 const Cards = require("./src/Cards");
-const { cpuUsage } = require("process");
 
 app.use(compression());
 app.use(cookieParser());
