@@ -1356,6 +1356,22 @@ export default {
 			const blob = await response.blob();
 			callback(blob, options);
 		},
+		dropCustomList: function(event) {
+			event.preventDefault();
+
+			if (event.dataTransfer.items) {
+				for (let item of event.dataTransfer.items) {
+					if (item.kind === "file") {
+						const file = item.getAsFile();
+						this.parseCustomCardList(file);
+					}
+				}
+			} else {
+				for (let file of event.dataTransfer.files) {
+					this.parseCustomCardList(file);
+				}
+			}
+		},
 		parseCustomCardList: async function(file, options) {
 			Swal.fire({
 				position: "center",

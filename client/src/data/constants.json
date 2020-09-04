@@ -103,6 +103,10 @@
 			"cubeCobraID": "5e7368d540eaf0158e2360e9"
 		},
 		{
+			"name": "MTGA Tinkerer's Cube",
+			"filename": "MTGATinkererCube.txt"
+		},
+		{
 			"name": "Arena Historic Cube #1",
 			"filename": "ArenaHistoricCube1.txt"
 		},

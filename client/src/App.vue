@@ -1348,34 +1348,27 @@
 							</div>
 						</div>
 						<div v-bind:class="{ disabled: !useCustomCardList }">
+							<input
+								type="file"
+								id="card-list-input"
+								@change="uploadFile($event, parseCustomCardList)"
+								style="display: none;"
+								accept=".txt"
+							/>
 							<div
-								class="line"
+								class="full-line file-drop clickable"
 								v-tooltip.left="{
 									classes: 'option-tooltip',
 									content:
 										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
 								}"
-							>
-								<label for="card-list-input">Custom Card List</label>
-								<div class="right">
-									<input
-										type="file"
-										id="card-list-input"
-										@change="uploadFile($event, parseCustomCardList)"
-										style="display: none;"
-										accept=".txt"
-									/>
-									<button onclick="document.querySelector('#card-list-input').click()">Upload</button>
-									<a href="cubeformat.html" target="_blank">
-										<i class="fas fa-external-link-alt"></i>
-										Format
-									</a>
-								</div>
-							</div>
-							<!-- Loading cubes this way is wasteful, but easier to manage. -->
+								@drop="dropCustomList"
+								onclick="document.querySelector('#card-list-input').click()"
+								@dragover="$event.preventDefault();"
+							>Drop a Custom Card List or click to browse.</div>
 							<div
 								class="full-line"
-								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube.</p>' }"
+								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube from a curated list.</p>' }"
 							>
 								<select name="featured-cubes" v-model="selectedCube">
 									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
@@ -1416,11 +1409,14 @@
 								>Cube Tutor</a>
 								or
 								<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
-								<br />Customize your list even further by using
+								<br />Customize your list even further by using all features of the
 								<a
 									href="cubeformat.html"
 									target="_blank"
-								>card slots</a>
+								>
+									<i class="fas fa-external-link-alt"></i>
+									format
+								</a>
 							</div>
 						</div>
 					</div>
