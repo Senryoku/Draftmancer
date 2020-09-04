@@ -1,8 +1,8 @@
 "use strict";
 
-const ManaSymbols = require("../client/src/data/mana_symbols.json");
+import ManaSymbols from "../client/src/data/mana_symbols.json";
 
-const fs = require("fs");
+import fs from "fs";
 
 // FIXME: Duplicate function from ../client/src/Cards.js, sharing code with the browser is a pain.
 function parseCost(cost) {
@@ -22,11 +22,11 @@ function parseCost(cost) {
 	return r;
 }
 
-let Cards = JSON.parse(fs.readFileSync("client/public/data/MTGACards.json"));
+const Cards = JSON.parse(fs.readFileSync("client/public/data/MTGACards.json"));
 for (let c in Cards) {
 	if (!("in_booster" in Cards[c])) Cards[c].in_booster = true;
 	Object.assign(Cards[c], parseCost(Cards[c].mana_cost));
 }
-Object.freeze(Cards);
 
-module.exports = Cards;
+Object.freeze(Cards);
+export default Cards;

@@ -1,12 +1,12 @@
 "use strict";
 
-const Cards = require("./Cards");
-const { isEmpty, shuffleArray } = require("./utils");
-const { removeCardFromDict, pickCard } = require("./cardUtils");
+import Cards from "./Cards.js";
+import { isEmpty, shuffleArray } from "./utils.js";
+import { removeCardFromDict, pickCard } from "./cardUtils.js";
 
 // Generates booster for regular MtG Sets
 
-function BoosterFactory(cardPool, landSlot, options) {
+export function BoosterFactory(cardPool, landSlot, options) {
 	this.cardPool = cardPool;
 	this.landSlot = landSlot;
 	if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
@@ -114,7 +114,7 @@ function BoosterFactory(cardPool, landSlot, options) {
 
 // Set specific rules.
 // Neither DOM or WAR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
-const SetSpecificFactories = {
+export const SetSpecificFactories = {
 	// Exactly one Planeswalker per booster
 	war: (cardPool, landSlot, options) => {
 		let planeswalkers = {};
@@ -196,6 +196,3 @@ const SetSpecificFactories = {
 		return factory;
 	},
 };
-
-module.exports.BoosterFactory = BoosterFactory;
-module.exports.SetSpecificFactories = SetSpecificFactories;

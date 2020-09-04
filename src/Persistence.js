@@ -1,16 +1,15 @@
 "use strict";
 
+import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
-	require("dotenv").config();
+	dotenv.config();
 }
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
 
-const ConnectionModule = require("./Connection");
-const Connections = ConnectionModule.Connections;
-const SessionModule = require("./Session");
-const Sessions = SessionModule.Sessions;
-const Bot = require("./Bot");
-const Mixpanel = require("mixpanel");
+import { Connection, Connections } from "./Connection.js";
+import { Session, Sessions, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
+import Bot from "./Bot.js";
+import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
 	? Mixpanel.init(MixPanelToken, {
@@ -70,11 +69,7 @@ async function requestSavedConnections() {
 
 		for (let c of data.Items) {
 			const restoredID = restoreEmptyStr(c.userID);
-			InactiveConnections[restoredID] = new ConnectionModule.Connection(
-				null,
-				restoredID,
-				restoreEmptyStr(c.data.userName)
-			);
+			InactiveConnections[restoredID] = new Connection(null, restoredID, restoreEmptyStr(c.data.userName));
 			for (let prop of Object.getOwnPropertyNames(c.data)) {
 				InactiveConnections[restoredID][prop] = restoreEmptyStr(c.data[prop]);
 			}
@@ -108,7 +103,7 @@ async function requestSavedSessions() {
 			const fixedID = restoreEmptyStr(s.id);
 			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map(n => restoreEmptyStr(n));
 
-			InactiveSessions[fixedID] = new SessionModule.Session(fixedID, null);
+			InactiveSessions[fixedID] = new Session(fixedID, null);
 			for (let prop of Object.getOwnPropertyNames(s.data).filter(
 				p => !["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
 			)) {
@@ -129,17 +124,17 @@ async function requestSavedSessions() {
 			}
 
 			if (s.data.winstonDraftState) {
-				InactiveSessions[fixedID].winstonDraftState = new SessionModule.WinstonDraftState();
+				InactiveSessions[fixedID].winstonDraftState = new WinstonDraftState();
 				copyProps(s.data.winstonDraftState, InactiveSessions[fixedID].winstonDraftState);
 			}
 
 			if (s.data.gridDraftState) {
-				InactiveSessions[fixedID].gridDraftState = new SessionModule.GridDraftState();
+				InactiveSessions[fixedID].gridDraftState = new GridDraftState();
 				copyProps(s.data.gridDraftState, InactiveSessions[fixedID].gridDraftState);
 			}
 
 			if (s.data.rochesterDraftState) {
-				InactiveSessions[fixedID].rochesterDraftState = new SessionModule.RochesterDraftState();
+				InactiveSessions[fixedID].rochesterDraftState = new RochesterDraftState();
 				copyProps(s.data.rochesterDraftState, InactiveSessions[fixedID].rochesterDraftState);
 			}
 
@@ -316,7 +311,7 @@ async function logSessionToDynamoDB(type, localSess) {
 	}
 }
 
-function logSession(type, session) {
+export function logSession(type, session) {
 	if (!MixInstance) return;
 
 	let localSess = JSON.parse(JSON.stringify(session));
@@ -365,10 +360,9 @@ function logSession(type, session) {
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
-if (DisablePersistence) {
-	module.exports.InactiveSessions = {};
-	module.exports.InactiveConnections = {};
-} else {
+export let InactiveSessions = {};
+export let InactiveConnections = {};
+if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
 	// See https://nodejs.org/api/process.html#process_event_beforeexit
@@ -415,8 +409,6 @@ if (DisablePersistence) {
 		}, 20000);
 	});
 
-	module.exports.InactiveSessions = requestSavedSessions();
-	module.exports.InactiveConnections = requestSavedConnections();
+	InactiveSessions = requestSavedSessions();
+	InactiveConnections = requestSavedConnections();
 }
-
-module.exports.logSession = logSession;

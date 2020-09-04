@@ -1,26 +1,26 @@
 "use strict";
 
+import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
-	require("dotenv").config();
+	dotenv.config();
 }
 
 const port = process.env.PORT || 3000;
-const compression = require("compression");
-const express = require("express");
+import compression from "compression";
+import express from "express";
 const app = express();
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
-const cookieParser = require("cookie-parser");
-const uuidv1 = require("uuid/v1");
+import http from "http";
+const httpServer = http.Server(app);
+import socketIO from "socket.io";
+const io = socketIO(httpServer);
+import cookieParser from "cookie-parser";
+import uuidv1 from "uuid/v1.js";
 
-const constants = require("./client/src/data/constants.json");
-const Persistence = require("./src/Persistence");
-const ConnectionModule = require("./src/Connection");
-const Connections = ConnectionModule.Connections;
-const SessionModule = require("./src/Session");
-const Session = SessionModule.Session;
-const Sessions = SessionModule.Sessions;
-const Cards = require("./src/Cards");
+import constants from "./client/src/data/constants.json";
+import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
+import { Connection, Connections } from "./src/Connection.js";
+import { Session, Sessions } from "./src/Session.js";
+import Cards from "./src/Cards.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -68,7 +68,7 @@ io.on("connection", function(socket) {
 		Connections[query.userID] = InactiveConnections[query.userID];
 		delete InactiveConnections[query.userID];
 	} else {
-		Connections[query.userID] = new ConnectionModule.Connection(socket, query.userID, query.userName);
+		Connections[query.userID] = new Connection(socket, query.userID, query.userName);
 	}
 
 	// Messages
@@ -941,7 +941,7 @@ function removeUserFromSession(userID) {
 // Express server setup
 
 // Serve files in the public directory
-app.use(express.static(__dirname + "/client/public/"));
+app.use(express.static("./client/public/"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints
@@ -978,7 +978,7 @@ app.get("/getUsers/:sessionID", (req, res) => {
 });
 
 app.get("/bracket", (req, res) => {
-	res.sendFile(__dirname + "/client/public/bracket.html");
+	res.sendFile("./client/public/bracket.html");
 });
 
 app.get("/getBracket/:sessionID", (req, res) => {
@@ -1061,13 +1061,8 @@ app.get("/getStatus/:key", (req, res) => {
 	}
 });
 
-let InactiveConnections;
-let InactiveSessions;
-
-Promise.all([Persistence.InactiveConnections, Persistence.InactiveSessions]).then(values => {
-	InactiveConnections = values[0];
-	InactiveSessions = values[1];
-	http.listen(port, err => {
+Promise.all([InactiveConnections, InactiveSessions]).then(() => {
+	httpServer.listen(port, err => {
 		if (err) throw err;
 		console.log("listening on port " + port);
 	});
