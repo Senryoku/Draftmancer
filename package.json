@@ -8,7 +8,7 @@
 	"main": "server.js",
 	"type": "module",
 	"scripts": {
-		"start": "node --experimental-json-modules server.js",
+		"start": "node --experimental-json-modules .",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "mocha test --exit",
 		"build": "npx webpack --config client/webpack.config.cjs --mode=production",
