@@ -617,7 +617,8 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 2000 }, (err, res, body) => {
+		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID}
+		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
 			if (err) {
 				if (ack)
 					ack({
