@@ -1382,16 +1382,20 @@
 										{{
 										cube.name
 										}}
+										<span
+											v-if="cube.cubeCobraID"
+											style="font-size:0.75em;"
+										>(Cube Cobra)</span>
 									</option>
 								</select>
-								<button
-									@click="
-										fetchFile(selectedCube.filename, parseCustomCardList, {
-											name: selectedCube.name,
-										})
-									"
-									style="min-width: auto"
-								>Load Cube</button>
+								<button @click="selectCube(selectedCube)" style="min-width: auto">
+									<img
+										v-if="selectedCube.cubeCobraID"
+										class="set-icon"
+										src="./assets/img/cubecobra-small-logo.png"
+									/>
+									Load Cube
+								</button>
 							</div>
 							<div v-if="customCardList.length > 0" style="text-align: center;">
 								<i class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>

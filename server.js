@@ -6,6 +6,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const port = process.env.PORT || 3000;
+import fs from "fs";
+import request from "request";
 import compression from "compression";
 import express from "express";
 const app = express();
@@ -21,6 +23,7 @@ import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions } from "./src/Session.js";
 import Cards from "./src/Cards.js";
+import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -42,6 +45,20 @@ function getPublicSessions() {
 		}
 	}
 	return publicSessions;
+}
+
+// Prepare local custom card lists
+const ParsedCubeLists = {};
+for (let cube of constants.CubeLists) {
+	if (cube.filename) {
+		ParsedCubeLists[cube.name] = parseCardList(Cards, fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
+			name: cube.name,
+		});
+		if (ParsedCubeLists[cube.name].error) {
+			console.error("An error occured while parsing local cube ", cube);
+			console.error(ParsedCubeLists[cube.name].error);
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////
@@ -574,6 +591,63 @@ io.on("connection", function(socket) {
 					customCardList: customCardList,
 				});
 		}
+	});
+
+	socket.on("loadLocalCustomCardList", function(cubeName) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!(cubeName in ParsedCubeLists)) {
+			return;
+		}
+
+		Sessions[sessionID].useCustomCardList = true;
+		Sessions[sessionID].customCardList = ParsedCubeLists[cubeName];
+		for (let user of Sessions[sessionID].users) {
+			Connections[user].socket.emit("sessionOptions", {
+				useCustomCardList: Sessions[sessionID].useCustomCardList,
+				customCardList: Sessions[sessionID].customCardList,
+			});
+		}
+	});
+
+	socket.on("loadFromCubeCobra", function(data, ack) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 2000 }, (err, res, body) => {
+			if (err) {
+				if (ack)
+					ack({
+						type: "error",
+						title: "Error",
+						text: "Couldn't retrieve the card list from Cube Cobra.",
+						footer: `Full error: ${err}`,
+						error: err,
+					});
+				return;
+			}
+
+			let parsedList = parseCardList(Cards, body, data);
+
+			if (parsedList.error) {
+				if (ack) ack(parsedList.error);
+				return;
+			}
+
+			Sessions[sessionID].useCustomCardList = true;
+			Sessions[sessionID].customCardList = parsedList;
+			for (let user of Sessions[sessionID].users) {
+				Connections[user].socket.emit("sessionOptions", {
+					useCustomCardList: Sessions[sessionID].useCustomCardList,
+					customCardList: Sessions[sessionID].customCardList,
+				});
+			}
+
+			if (ack) ack({ code: 0 });
+		});
 	});
 
 	socket.on("ignoreCollections", function(ignoreCollections) {

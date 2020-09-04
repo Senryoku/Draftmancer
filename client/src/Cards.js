@@ -1,27 +1,10 @@
 import { clone } from "./helper.js";
 
-import ManaSymbols from "./data/mana_symbols.json";
+import parseCost from "../../src/parseCost.js";
 
 export let Cards = {};
 
 let UniqueID = 0;
-
-function parseCost(cost) {
-	let r = {
-		cmc: 0,
-		colors: [],
-	};
-	// Use only the first part of split cards
-	if (cost.includes("//")) cost = cost.split("//")[0].trim();
-	if (!cost || cost === "") return r;
-	let symbols = cost.match(/({[^}]+})/g);
-	for (let s of symbols) {
-		r.cmc += ManaSymbols[s].cmc;
-		r.colors = r.colors.concat(ManaSymbols[s].colors);
-	}
-	r.colors = [...new Set(r.colors)]; // Remove duplicates
-	return r;
-}
 
 export function genCard(c) {
 	// Takes a card id and return a unique card object (without localization information)
@@ -29,15 +12,12 @@ export function genCard(c) {
 		console.error(`Error: Card id '${c}' not found!`);
 		return { id: c };
 	}
+	// Properties printed_name, image_uris and back can be dynamically loaded (multiple languages)
+	// Access them throught Cards when needed.
 	return {
 		id: c,
 		uniqueID: UniqueID++,
 		name: Cards[c].name,
-		/*
-		// printed_name and image_uris can be dynamically loaded (multiple languages), use Cards
-		printed_name: Cards[c].printed_name,
-		image_uris: Cards[c].image_uris,
-		*/
 		set: Cards[c].set,
 		rarity: Cards[c].rarity,
 		mana_cost: Cards[c].mana_cost,
