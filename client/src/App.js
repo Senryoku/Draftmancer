@@ -1358,18 +1358,16 @@ export default {
 		},
 		dropCustomList: function(event) {
 			event.preventDefault();
+			event.target.classList.remove("dropzone-highlight");
 
 			if (event.dataTransfer.items) {
-				for (let item of event.dataTransfer.items) {
+				for (let item of event.dataTransfer.items)
 					if (item.kind === "file") {
 						const file = item.getAsFile();
 						this.parseCustomCardList(file);
 					}
-				}
 			} else {
-				for (let file of event.dataTransfer.files) {
-					this.parseCustomCardList(file);
-				}
+				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
 			}
 		},
 		parseCustomCardList: async function(file, options) {

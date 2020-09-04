@@ -1347,7 +1347,7 @@
 								<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
 							</div>
 						</div>
-						<div v-bind:class="{ disabled: !useCustomCardList }">
+						<div>
 							<input
 								type="file"
 								id="card-list-input"
@@ -1364,7 +1364,7 @@
 								}"
 								@drop="dropCustomList"
 								onclick="document.querySelector('#card-list-input').click()"
-								@dragover="$event.preventDefault();"
+								@dragover="$event.preventDefault(); $event.target.classList.add('dropzone-highlight');"
 							>Drop a Custom Card List or click to browse.</div>
 							<div
 								class="full-line"

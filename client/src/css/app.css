@@ -320,7 +320,9 @@ footer span {
 	border: 4px dashed rgba(255, 255, 255, 0.5);
 }
 
+.dropzone-highlight,
 .file-drop:hover {
+	color: white;
 	border: 4px dashed rgba(255, 255, 255, 1);
 }
 
