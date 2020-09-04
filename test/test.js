@@ -1,17 +1,16 @@
 "use strict";
 
-// Use another default port.
-process.env.PORT = process.env.PORT | 3001;
+import chai from "chai";
+const expect = chai.expect;
+import Cards from "./../src/Cards.js";
+import server from "../server.js";
+import { Connection, Connections } from "../src/Connection.js";
+import { Session, Sessions } from "../src/Session.js";
+import randomjs from "random-js";
 
-let rewire = require("rewire");
-let expect = require("chai").expect;
-let server = rewire("../server"); // Rewire exposes internal variables of the module
-const Cards = require("./../src/Cards");
-const randomjs = require("random-js");
+const NODE_PORT = process.env.PORT | 3000;
 
-const NODE_PORT = process.env.PORT;
-
-let io = require("socket.io-client");
+import io from "socket.io-client";
 const ioOptions = {
 	transports: ["websocket"],
 	forceNew: true,
@@ -52,7 +51,6 @@ function enableLogs(print) {
 function makeClients(queries, done) {
 	let sockets = [];
 	disableLogs();
-	const Connections = server.__get__("Connections");
 	expect(Object.keys(Connections).length).to.equal(0);
 	for (let query of queries) {
 		sockets.push(connectClient(query));
@@ -83,7 +81,6 @@ const waitForSocket = (socket, done) => {
 
 // Wait for the sockets to be disconnected, I haven't found another way...
 const waitForClientDisconnects = done => {
-	const Connections = server.__get__("Connections");
 	if (Object.keys(Connections).length === 0) {
 		enableLogs(false);
 		done();
@@ -679,7 +676,6 @@ describe("Inter client communication", function() {
 
 	before(function(done) {
 		disableLogs();
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
 		sender = connectClient({
 			userID: "sender",
@@ -822,14 +818,12 @@ describe("Checking sets", function() {
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
 	for (let set in sets) {
 		it(`Checking ${set}`, function(done) {
-			const Sessions = server.__get__("Sessions");
 			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", function(sR) {
@@ -854,7 +848,6 @@ describe("Checking sets", function() {
 describe("Single Draft with Color Balance", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -896,13 +889,11 @@ describe("Single Draft with Color Balance", function() {
 	});
 
 	it('A user with userID "id1" should be connected.', function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("id1");
 		done();
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
@@ -917,14 +908,12 @@ describe("Single Draft with Color Balance", function() {
 		);
 
 		clients[idx - 1].on("connect", function() {
-			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(3);
 			done();
 		});
 	});
 
 	it(`Card Pool should be all of THB set (+ distribution quick test)`, function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[ownerIdx].emit("setColorBalance", true);
@@ -971,7 +960,6 @@ describe("Single Draft with Color Balance", function() {
 			clients[c].once("startDraft", function() {
 				connectedClients += 1;
 				if (connectedClients == clients.length && receivedBoosters == clients.length) {
-					Sessions = server.__get__("Sessions");
 					for (let b of Sessions[sessionID].boosters) checkColorBalance(b);
 					done();
 				}
@@ -1029,7 +1017,6 @@ describe("Single Draft with Color Balance", function() {
 describe("Single Draft without Color Balance", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1071,7 +1058,6 @@ describe("Single Draft without Color Balance", function() {
 	});
 
 	it("Clients should receive the updated colorBalance status.", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("sessionOptions", function(options) {
@@ -1141,7 +1127,6 @@ describe("Single Draft without Color Balance", function() {
 describe("Single Draft With disconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1184,7 +1169,6 @@ describe("Single Draft With disconnect", function() {
 
 	let boosters = [];
 	it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
@@ -1265,7 +1249,6 @@ describe("Single Draft With disconnect", function() {
 describe("Single Draft with Bots", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1307,19 +1290,16 @@ describe("Single Draft with Bots", function() {
 	});
 
 	it('A user with userID "id1" should be connected.', function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("id1");
 		done();
 	});
 
 	it("2 clients with different userIDs should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("bots", function(bots) {
@@ -1389,7 +1369,6 @@ describe("Single Draft with Bots", function() {
 describe("Single Draft With Bots and Disconnect", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1431,7 +1410,6 @@ describe("Single Draft With Bots and Disconnect", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("bots", function(bots) {
@@ -1525,7 +1503,6 @@ describe("Single Draft with custom boosters and bots", function() {
 	let clients = [];
 	const sessionID = "sessionID";
 	const CustomBoosters = ["xln", "rix", ""];
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1567,7 +1544,6 @@ describe("Single Draft with custom boosters and bots", function() {
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("bots", function(bots) {
@@ -1684,7 +1660,6 @@ describe("Multiple Drafts", function() {
 
 	before(function(done) {
 		disableLogs();
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(0);
 		for (let sess = 0; sess < sessionCount; ++sess) {
 			sessionIDs[sess] = `Session ${sess}`;
@@ -1726,13 +1701,11 @@ describe("Multiple Drafts", function() {
 	});
 
 	it(`${sessionCount} sessions should be live.`, function(done) {
-		const Sessions = server.__get__("Sessions");
 		expect(Object.keys(Sessions).length).to.equal(sessionCount);
 		done();
 	});
 
 	it(`${playersPerSession * sessionCount} players should be connected.`, function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(playersPerSession * sessionCount);
 		done();
 	});
@@ -1747,7 +1720,6 @@ describe("Multiple Drafts", function() {
 					c.on("startDraft", function() {
 						connectedClients += 1;
 						if (connectedClients == sessionClients.length) {
-							const Sessions = server.__get__("Sessions");
 							for (let b of Sessions[sessionIDs[sessionIdx]].boosters) checkColorBalance(b);
 							sessionsCorrectlyStartedDrafting += 1;
 						}
@@ -1763,7 +1735,6 @@ describe("Multiple Drafts", function() {
 							done();
 					});
 				}
-				const Sessions = server.__get__("Sessions");
 				let ownerIdx = sessionClients.findIndex(c => c.query.userID == Sessions[sessionIDs[sessionIdx]].owner);
 				sessionClients[ownerIdx].emit("setColorBalance", true);
 				sessionClients[ownerIdx].emit("startDraft");
@@ -1788,7 +1759,6 @@ describe("Multiple Drafts", function() {
 
 		newClient.on("setSession", function(newSessionID) {
 			expect(newSessionID).to.not.equal(sessionIDs[0]);
-			const Sessions = server.__get__("Sessions");
 			expect(Sessions[sessionIDs[0]].users.size).to.equal(playersPerSession);
 			newClient.disconnect();
 			waitForSocket(newClient, done);
@@ -1855,7 +1825,6 @@ describe("Multiple Drafts", function() {
 describe("Winston Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -1894,7 +1863,6 @@ describe("Winston Draft", function() {
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
 		setTimeout(function() {
-			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
 			done();
@@ -1902,14 +1870,12 @@ describe("Winston Draft", function() {
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
 	let states = [];
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
@@ -2060,7 +2026,6 @@ describe("Winston Draft", function() {
 describe("Grid Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	const Sessions = server.__get__("Sessions");
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -2099,7 +2064,6 @@ describe("Grid Draft", function() {
 		}
 		// Wait for the sockets to be disconnected, I haven't found another way...
 		setTimeout(function() {
-			const Connections = server.__get__("Connections");
 			expect(Object.keys(Connections).length).to.equal(0);
 			enableLogs(false);
 			done();
@@ -2107,7 +2071,6 @@ describe("Grid Draft", function() {
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
@@ -2192,8 +2155,6 @@ describe("Grid Draft", function() {
 describe("Rochester Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
-	const Sessions = server.__get__("Sessions");
-	const Connections = server.__get__("Connections");
 	let ownerIdx;
 
 	beforeEach(function(done) {
@@ -2351,7 +2312,6 @@ describe("Single Draft with Bots and burning", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	const burnedCardsPerRound = 2;
-	var Sessions;
 	var ownerIdx;
 	var nonOwnerIdx;
 
@@ -2393,25 +2353,21 @@ describe("Single Draft with Bots and burning", function() {
 	});
 
 	it('A user with userID "sameID" should be connected.', function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Connections).to.have.property("sameID");
 		done();
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		const Connections = server.__get__("Connections");
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
 	it("First client should be the session owner", function(done) {
-		const Sessions = server.__get__("Sessions");
 		expect(Sessions[sessionID].owner).to.equal("sameID");
 		done();
 	});
 
 	it("Clients should receive the updated bot count.", function(done) {
-		Sessions = server.__get__("Sessions");
 		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		clients[nonOwnerIdx].once("bots", function(bots) {
@@ -2518,7 +2474,6 @@ describe("Sealed", function() {
 	});
 
 	it(`Owner launch a sealed (${boosterCount} boosters), clients should receive their card selection.`, function(done) {
-		const Sessions = server.__get__("Sessions");
 		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (let client of clients)
@@ -2531,7 +2486,7 @@ describe("Sealed", function() {
 	});
 });
 
-const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
+import JumpstartBoosters from "../data/JumpstartBoosters.json";
 
 describe("Jumpstart", function() {
 	let clients = [];
@@ -2578,7 +2533,6 @@ describe("Jumpstart", function() {
 	});
 
 	it(`Owner launches a Jumpstart game, clients should receive their card selection (2*20 cards).`, function(done) {
-		const Sessions = server.__get__("Sessions");
 		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		let receivedPools = 0;
 		for (let client of clients) {
@@ -2594,7 +2548,6 @@ describe("Jumpstart", function() {
 });
 
 describe("Set Specific Booster Rules", function() {
-	const Sessions = server.__get__("Sessions");
 	let clients = [];
 	let sessionID = "SessionID";
 

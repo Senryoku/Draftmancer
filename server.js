@@ -1142,3 +1142,5 @@ Promise.all([InactiveConnections, InactiveSessions]).then(() => {
 		console.log("listening on port " + port);
 	});
 });
+
+export default {};
