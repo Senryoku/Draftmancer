@@ -1,11 +1,8 @@
 "use strict";
 
-const utils = require("./utils");
-const removeCardFromDict = require("./cardUtils").removeCardFromDict;
-const getRandomKey = utils.getRandomKey;
-const getRandom = utils.getRandom;
-const range = utils.range;
-const BasicLandIDs = require("../client/public/data/BasicLandIDs.json");
+import { getRandomKey, getRandom, range } from "./utils.js";
+import { removeCardFromDict } from "./cardUtils.js";
+import BasicLandIDs from "../client/public/data/BasicLandIDs.json";
 
 function genBasicLandSlot(set) {
 	return {
@@ -44,7 +41,7 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 }
 
 // Eldraine common lands appears in the standard common slot, no need for a special rule.
-const SpecialLandSlots = {
+export const SpecialLandSlots = {
 	grn: landSlotHandler(
 		BasicLandIDs["grn"],
 		[68724, 68725, 68726, 68727, 68729, 68730, 68732, 68733, 68736, 68737],
@@ -73,8 +70,5 @@ const SpecialLandSlots = {
 	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
 };
 
-const BasicLandSlots = {};
+export const BasicLandSlots = {};
 for (let set in BasicLandIDs) BasicLandSlots[set] = genBasicLandSlot(set);
-
-module.exports.SpecialLandSlots = SpecialLandSlots;
-module.exports.BasicLandSlots = BasicLandSlots;

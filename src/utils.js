@@ -1,26 +1,26 @@
 "use strict";
 
-const randomjs = require("random-js");
+import randomjs from "random-js";
 const random = new randomjs.Random(randomjs.nodeCrypto);
 
-function isEmpty(obj) {
+export function isEmpty(obj) {
 	return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
-function negMod(m, n) {
+export function negMod(m, n) {
 	return ((m % n) + n) % n;
 }
 
-function getRandom(arr) {
+export function getRandom(arr) {
 	return arr[random.integer(0, arr.length - 1)];
 }
 
-function getRandomKey(dict) {
+export function getRandomKey(dict) {
 	return Object.keys(dict)[random.integer(0, Object.keys(dict).length - 1)];
 }
 
 // Returns [start, start + step, ..., end]
-function range(start, end, step = 1) {
+export function range(start, end, step = 1) {
 	const len = Math.floor((end - start) / step) + 1;
 	return Array(len)
 		.fill()
@@ -28,7 +28,7 @@ function range(start, end, step = 1) {
 }
 
 // https://bl.ocks.org/lovasoa/3361645; modified to take an array of arrays as argument
-function arrayIntersect(args) {
+export function arrayIntersect(args) {
 	if (!args.length) return [];
 	if (args.length === 1) return args[0];
 	var a,
@@ -71,19 +71,9 @@ function arrayIntersect(args) {
 
 // From https://stackoverflow.com/a/12646864
 // Modified to optionaly work only on the [start, end[ slice of array.
-function shuffleArray(array, start = 0, end = array.length) {
+export function shuffleArray(array, start = 0, end = array.length) {
 	for (let i = end - 1; i > start; i--) {
 		const j = start + Math.floor(Math.random() * (i - start + 1));
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
-
-module.exports = {
-	isEmpty: isEmpty,
-	negMod: negMod,
-	getRandom: getRandom,
-	getRandomKey: getRandomKey,
-	range: range,
-	arrayIntersect: arrayIntersect,
-	shuffleArray: shuffleArray,
-};

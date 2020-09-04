@@ -2,13 +2,17 @@
 	"name": "mtgadraft",
 	"version": "1.0.0",
 	"description": "MTGA Direct Challenge drafting environment",
+	"engines": {
+		"node": "14.x"
+	},
 	"main": "server.js",
+	"type": "module",
 	"scripts": {
-		"start": "node server.js",
+		"start": "node --experimental-json-modules .",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "mocha test --exit",
-		"build": "npx webpack --config client/webpack.config.js --mode=production",
-		"build-dev": "npx webpack --config client/webpack.config.js --mode=development --watch --progress --info-verbosity verbose"
+		"build": "npx webpack --config client/webpack.config.cjs --mode=production",
+		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress --info-verbosity verbose"
 	},
 	"repository": {
 		"type": "git",

@@ -1,8 +1,8 @@
 "use strict";
 
-const Cards = require("./Cards");
+import Cards from "./Cards.js";
 
-function Bot(name, id) {
+export default function Bot(name, id) {
 	this.name = name;
 	this.id = id; // Used for sorting
 	this.cards = []; // For debugging mostly.
@@ -35,5 +35,3 @@ function Bot(name, id) {
 		return 0;
 	};
 }
-
-module.exports = Bot;

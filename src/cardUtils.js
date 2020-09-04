@@ -1,8 +1,8 @@
 "use strict";
 
-const utils = require("./utils");
+import { getRandomKey } from "./utils.js";
 
-function removeCardFromDict(c, dict) {
+export function removeCardFromDict(c, dict) {
 	/* // Debug
 	if (!dict || !c || !Object.keys(dict).includes(c)) {
 		console.error(`removeCardFromDict: ${c} not in dictionary! Dict. dump:`);
@@ -15,18 +15,15 @@ function removeCardFromDict(c, dict) {
 }
 
 // TODO: Prevent multiples by name?
-const pickCard = function(dict, booster) {
-	let c = utils.getRandomKey(dict);
+export function pickCard(dict, booster) {
+	let c = getRandomKey(dict);
 	if (booster != undefined) {
 		let prevention_attempts = 0; // Fail safe-ish
 		while (booster.indexOf(c) != -1 && prevention_attempts < Object.keys(dict).length) {
-			c = utils.getRandomKey(dict);
+			c = getRandomKey(dict);
 			++prevention_attempts;
 		}
 	}
 	removeCardFromDict(c, dict);
 	return c;
-};
-
-module.exports.removeCardFromDict = removeCardFromDict;
-module.exports.pickCard = pickCard;
+}

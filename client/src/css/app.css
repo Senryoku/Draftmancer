@@ -314,6 +314,18 @@ footer span {
 	padding: 0.5em;
 }
 
+.file-drop {
+	padding: 0.75em;
+	margin: 0.5em;
+	border: 4px dashed rgba(255, 255, 255, 0.5);
+}
+
+.dropzone-highlight,
+.file-drop:hover {
+	color: white;
+	border: 4px dashed rgba(255, 255, 255, 1);
+}
+
 /* ** Welcome ** */
 
 .welcome {

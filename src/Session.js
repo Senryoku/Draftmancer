@@ -1,16 +1,16 @@
 "use strict";
 
-const constants = require("../client/src/data/constants.json");
-const { removeCardFromDict, pickCard } = require("./cardUtils");
-const { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } = require("./utils");
-const ConnectionModule = require("./Connection");
-const Connections = ConnectionModule.Connections;
-const Cards = require("./Cards");
-const Bot = require("./Bot");
-const LandSlot = require("./LandSlot");
-const { BoosterFactory, SetSpecificFactories } = require("./BoosterFactory");
-const JumpstartBoosters = Object.freeze(require("../data/JumpstartBoosters.json"));
-const Persistence = require("./Persistence");
+import constants from "../client/src/data/constants.json";
+import { removeCardFromDict, pickCard } from "./cardUtils.js";
+import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
+import { Connections } from "./Connection.js";
+import Cards from "./Cards.js";
+import Bot from "./Bot.js";
+import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { BoosterFactory, SetSpecificFactories } from "./BoosterFactory.js";
+import JumpstartBoosters from "../data/JumpstartBoosters.json";
+Object.freeze(JumpstartBoosters);
+import { logSession } from "./Persistence.js";
 
 function Bracket(players) {
 	this.players = players;
@@ -53,7 +53,7 @@ for (let cid in Cards) {
 	}
 }
 
-function WinstonDraftState(players, boosters) {
+export function WinstonDraftState(players, boosters) {
 	this.players = players;
 	this.round = -1; // Will be immedialty incremented
 	this.cardPool = [];
@@ -78,7 +78,7 @@ function WinstonDraftState(players, boosters) {
 	};
 }
 
-function GridDraftState(players, boosters) {
+export function GridDraftState(players, boosters) {
 	this.players = players;
 	this.round = 0;
 	this.boosters = []; // 3x3 Grid, Row-Major order
@@ -105,7 +105,7 @@ function GridDraftState(players, boosters) {
 	};
 }
 
-function RochesterDraftState(players, boosters) {
+export function RochesterDraftState(players, boosters) {
 	this.players = players;
 	this.pickNumber = 0;
 	this.boosterNumber = 0;
@@ -136,7 +136,7 @@ function RochesterDraftState(players, boosters) {
 	};
 }
 
-function Session(id, owner) {
+export function Session(id, owner) {
 	this.id = id;
 	this.owner = owner;
 	this.users = new Set();
@@ -539,8 +539,8 @@ function Session(id, owner) {
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				let localCollection = this.cardPoolByRarity();
 				let defaultLandSlot = null;
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in LandSlot.SpecialLandSlots)
-					defaultLandSlot = LandSlot.SpecialLandSlots[this.setRestriction[0]];
+				if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
+					defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
 				defaultFactory = getBoosterFactory(
 					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
 					localCollection,
@@ -571,8 +571,8 @@ function Session(id, owner) {
 				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
 					defaultFactory.landSlot =
 						this.setRestriction.length === 0
-							? LandSlot.BasicLandSlots["m20"] // Totally arbitrary
-							: LandSlot.BasicLandSlots[this.setRestriction[0]];
+							? BasicLandSlots["m20"] // Totally arbitrary
+							: BasicLandSlots[this.setRestriction[0]];
 
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
 					const playerBoosterFactories = [];
@@ -592,10 +592,10 @@ function Session(id, owner) {
 							if (!usedSets[boosterSet]) {
 								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 								const landSlot =
-									boosterSet in LandSlot.SpecialLandSlots
-										? LandSlot.SpecialLandSlots[boosterSet]
+									boosterSet in SpecialLandSlots
+										? SpecialLandSlots[boosterSet]
 										: addLandSlot
-										? LandSlot.BasicLandSlots[boosterSet]
+										? BasicLandSlots[boosterSet]
 										: null;
 								usedSets[boosterSet] = getBoosterFactory(
 									boosterSet,
@@ -709,7 +709,7 @@ function Session(id, owner) {
 	};
 
 	this.endWinstonDraft = function() {
-		Persistence.logSession("WinstonDraft", this);
+		logSession("WinstonDraft", this);
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
@@ -807,7 +807,7 @@ function Session(id, owner) {
 	};
 
 	this.endGridDraft = function() {
-		Persistence.logSession("GridDraft", this);
+		logSession("GridDraft", this);
 		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
 		this.gridDraftState = null;
 		this.drafting = false;
@@ -879,7 +879,7 @@ function Session(id, owner) {
 	};
 
 	this.endRochesterDraft = function() {
-		Persistence.logSession("RochesterDraft", this);
+		logSession("RochesterDraft", this);
 		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
 		this.rochesterDraftState = null;
 		this.drafting = false;
@@ -1232,7 +1232,7 @@ function Session(id, owner) {
 				break;
 		}
 
-		Persistence.logSession("Draft", this);
+		logSession("Draft", this);
 		this.boosters = [];
 
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
@@ -1264,7 +1264,7 @@ function Session(id, owner) {
 			});
 		}
 
-		Persistence.logSession("Sealed", this);
+		logSession("Sealed", this);
 
 		this.boosters = [];
 	};
@@ -1301,7 +1301,7 @@ function Session(id, owner) {
 			});
 		}
 
-		Persistence.logSession("Jumpstart", this);
+		logSession("Jumpstart", this);
 
 		this.boosters = [];
 	};
@@ -1523,8 +1523,4 @@ function Session(id, owner) {
 	};
 }
 
-module.exports.Session = Session;
-module.exports.WinstonDraftState = WinstonDraftState;
-module.exports.GridDraftState = GridDraftState;
-module.exports.RochesterDraftState = RochesterDraftState;
-module.exports.Sessions = {};
+export let Sessions = {};
