@@ -328,17 +328,17 @@ footer span {
 .option-cube-select {
 	background-color: rgba(75, 75, 75, 1);
 	border-radius: 6px;
-	margin: 0.5em 0.5em 0 0.5em;
+	margin: 0 0 0 0;
 	padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
 .option-cube-infos {
 	padding: 0.75em;
 	box-sizing: border-box;
-	background: linear-gradient(180deg, rgba(75, 75, 75, 0) 0%, rgba(75, 75, 75, 1) 15%);
+	background: linear-gradient(180deg, rgba(75, 75, 75, 0.1) 0%, rgba(75, 75, 75, 1) 15%);
 	border-radius: 0 0 6px 6px;
-	width: 50vw;
-	margin: auto;
+	min-width: 50vw;
+	margin: 0 0.75em 0 0.75em;
 }
 
 .option-section {
@@ -355,7 +355,7 @@ footer span {
 
 .file-drop {
 	padding: 0.75em;
-	margin: 0.5em;
+	margin: 0.5em 0 0.5em 0;
 	border: 4px dashed rgba(255, 255, 255, 0.5);
 	background-color: rgba(255, 255, 255, 0.05);
 }
