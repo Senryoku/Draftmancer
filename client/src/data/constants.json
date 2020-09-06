@@ -96,27 +96,33 @@
 	"CubeLists": [
 		{
 			"name": "The Arena Peasant Cube",
-			"cubeCobraID": "arenapeasantcube"
+			"cubeCobraID": "arenapeasantcube",
+			"description": "A peasant cube designed by Chris Sofsky and Tim Zaccagnino for online drafting and Arena play.<br>They also organize drafts using this cube on their <a href=\"https://discord.gg/RMaEexX\" target=_\"_blank\">Discord server</a>."
 		},
 		{
 			"name": "JiRock's Historic Cube",
-			"cubeCobraID": "5e7368d540eaf0158e2360e9"
+			"cubeCobraID": "5e7368d540eaf0158e2360e9",
+			"description": "Latest version of Jean-Emmanuel Depraz (JiRock) Historic Cube."
 		},
 		{
 			"name": "Arena Tinkerer's Cube",
-			"filename": "MTGATinkererCube.txt"
+			"filename": "MTGATinkererCube.txt",
+			"description": "MTGA Tinkerer's Cube from September 2020."
 		},
 		{
 			"name": "Arena Historic Cube #1",
-			"filename": "ArenaHistoricCube1.txt"
+			"filename": "ArenaHistoricCube1.txt",
+			"description": "MTGA Official Historic Cube from June 2020."
 		},
 		{
 			"name": "JiRock's Historic Cube 2.2",
-			"filename": "JiRockHistoricCube22.txt"
+			"filename": "JiRockHistoricCube22.txt",
+			"description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Throne of Eldraine."
 		},
 		{
 			"name": "JiRock's Historic Cube 3.3 (Jumpstart Edition)",
-			"filename": "JiRockHistoricCube33.txt"
+			"filename": "JiRockHistoricCube33.txt",
+			"description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Jumpstart."
 		}
 	]
 }

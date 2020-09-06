@@ -1203,7 +1203,7 @@
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 			<h2 slot="header">Additional Session Options</h2>
 			<div slot="body" class="session-options-container" :class="{ disabled: userID != sessionOwner }">
-				<div class="option-column">
+				<div class="option-column option-column-left">
 					<div
 						class="line"
 						v-tooltip.left="{
@@ -1333,95 +1333,8 @@
 							<input type="checkbox" v-model="foil" id="option-foil" />
 						</div>
 					</div>
-					<div class="option-section">
-						<div class="option-column-title">Custom Card List</div>
-						<div
-							class="line"
-							v-tooltip.left="{
-								classes: 'option-tooltip',
-								content: '<p>Use a custom card list (aka Cube).</p>',
-							}"
-						>
-							<label for="use-custom-card-list">Use a Custom Card List</label>
-							<div class="right">
-								<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
-							</div>
-						</div>
-						<div>
-							<input
-								type="file"
-								id="card-list-input"
-								@change="uploadFile($event, parseCustomCardList)"
-								style="display: none;"
-								accept=".txt"
-							/>
-							<div
-								class="full-line file-drop clickable"
-								v-tooltip.left="{
-									classes: 'option-tooltip',
-									content:
-										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
-								}"
-								@drop="dropCustomList"
-								onclick="document.querySelector('#card-list-input').click()"
-								@dragover="$event.preventDefault(); $event.target.classList.add('dropzone-highlight');"
-							>Drop a Custom Card List or click to browse.</div>
-							<div
-								class="full-line"
-								v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube from a curated list.</p>' }"
-							>
-								<select name="featured-cubes" v-model="selectedCube">
-									<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
-										{{
-										cube.name
-										}}
-										<span
-											v-if="cube.cubeCobraID"
-											style="font-size:0.75em;"
-										>(Cube Cobra)</span>
-									</option>
-								</select>
-								<button @click="selectCube(selectedCube)" style="min-width: auto">
-									<img
-										v-if="selectedCube.cubeCobraID"
-										class="set-icon"
-										src="./assets/img/cubecobra-small-logo.png"
-									/>
-									Load Cube
-								</button>
-							</div>
-							<div v-if="customCardList.length > 0" style="text-align: center;">
-								<i class="fas fa-check green" v-tooltip="'Card list successfuly loaded!'"></i>
-								<span
-									v-if="customCardList.name"
-								>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span>
-								<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
-								<button @click="displayedModal = 'cardList'">
-									<i class="fas fa-file-alt"></i>
-									Review.
-								</button>
-							</div>
-							<div class="option-info">
-								You can find more cubes or craft your own on
-								<a
-									href="https://www.cubetutor.com/"
-									target="_blank"
-								>Cube Tutor</a>
-								or
-								<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
-								<br />Customize your list even further by using all features of the
-								<a
-									href="cubeformat.html"
-									target="_blank"
-								>
-									<i class="fas fa-external-link-alt"></i>
-									format
-								</a>
-							</div>
-						</div>
-					</div>
 				</div>
-				<div class="option-column">
+				<div class="option-column option-column-right">
 					<h4>Draft Specific Options</h4>
 					<div
 						class="line"
@@ -1524,6 +1437,110 @@
 								<option value="none">No-one</option>
 							</select>
 						</div>
+					</div>
+				</div>
+				<div class="option-section option-custom-card-list">
+					<div class="option-column-title">Custom Card List</div>
+					<div style="display:flex; justify-content: space-between; align-items: center;">
+						<div
+							v-tooltip.left="{
+								classes: 'option-tooltip',
+								content: '<p>Use a custom card list (aka Cube).</p>',
+							}"
+						>
+							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
+							<label for="use-custom-card-list">Use a Custom Card List</label>
+						</div>
+						<div v-if="customCardList.length > 0">
+							<i
+								class="fas fa-check green"
+								v-if="useCustomCardList"
+								v-tooltip="'Card list successfuly loaded!'"
+							></i>
+							<i
+								class="fas fa-check yellow"
+								v-else
+								v-tooltip="'Card list successfuly loaded, but not used.'"
+							></i>
+							<span
+								v-if="customCardList.name"
+							>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span>
+							<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
+							<button @click="displayedModal = 'cardList'">
+								<i class="fas fa-file-alt"></i>
+								Review.
+							</button>
+						</div>
+					</div>
+					<input
+						type="file"
+						id="card-list-input"
+						@change="uploadFile($event, parseCustomCardList)"
+						style="display: none;"
+						accept=".txt"
+					/>
+					<div
+						class="file-drop clickable"
+						v-tooltip.left="{
+									classes: 'option-tooltip',
+									content:
+										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
+								}"
+						@drop="dropCustomList"
+						onclick="document.querySelector('#card-list-input').click()"
+						@dragover="$event.preventDefault(); $event.target.classList.add('dropzone-highlight');"
+					>Drop a Custom Card List or click to browse.</div>
+					<div
+						class="option-cube-select"
+						v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube from a curated list.</p>' }"
+					>
+						<label for="curated-cubes">Load a Pre-Build Cube:</label>
+						<select name="featured-cubes" id="curated-cubes" v-model="selectedCube">
+							<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
+								{{
+								cube.name
+								}}
+								<span
+									v-if="cube.cubeCobraID"
+									style="font-size:0.75em;"
+								>(Cube Cobra)</span>
+							</option>
+						</select>
+						<button @click="selectCube(selectedCube)" style="min-width: auto">
+							<img
+								v-if="selectedCube.cubeCobraID"
+								class="set-icon"
+								src="./assets/img/cubecobra-small-logo.png"
+							/>
+							Load Cube
+						</button>
+					</div>
+					<div class="option-cube-infos" v-if="selectedCube">
+						<strong>{{selectedCube.name}}</strong>
+						<div v-if="selectedCube.cubeCobraID">
+							<a :href="`https://cubecobra.com/cube/overview/${selectedCube.cubeCobraID}`" target="_blank">
+								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
+								Cube Cobra page
+							</a>
+						</div>
+						<div v-if="selectedCube.description" v-html="selectedCube.description"></div>
+					</div>
+					<div class="option-info">
+						You can find more cubes or craft your own on
+						<a
+							href="https://www.cubetutor.com/"
+							target="_blank"
+						>Cube Tutor</a>
+						or
+						<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
+						<br />Customize your list even further by using all features of the
+						<a
+							href="cubeformat.html"
+							target="_blank"
+						>
+							<i class="fas fa-external-link-alt"></i>
+							format
+						</a>
 					</div>
 				</div>
 			</div>

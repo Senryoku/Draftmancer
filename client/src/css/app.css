@@ -210,14 +210,6 @@ footer span {
 	white-space: nowrap;
 }
 
-.session-options-container {
-	display: flex;
-}
-
-.session-options-container h4 {
-	margin: 0.25em;
-}
-
 /**** checkbox-button ****/
 
 .checkbox-button {
@@ -256,8 +248,39 @@ footer span {
 
 /* ** Session Options ** */
 
+.session-options-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	grid-template-areas:
+		"option-column-left option-column-right"
+		"option-custom-card-list option-custom-card-list";
+}
+
+.session-options-container h4 {
+	margin: 0.25em;
+}
+
+.option-column-left {
+	grid-area: option-column-left;
+}
+
+.option-column-right {
+	grid-area: option-column-right;
+}
+
+.option-custom-card-list {
+	grid-area: option-custom-card-list;
+	margin: 0.5em;
+	padding: 0.5em;
+	padding-top: 0;
+}
+
+.option-custom-card-list button {
+	margin: 0;
+}
+
 .option-column {
-	width: min(30rem, 45vw);
 	margin: 0.5em;
 }
 
@@ -302,6 +325,22 @@ footer span {
 	min-width: 0;
 }
 
+.option-cube-select {
+	background-color: rgba(75, 75, 75, 1);
+	border-radius: 6px;
+	margin: 0.5em 0.5em 0 0.5em;
+	padding: 0.25em 0.5em 0.25em 0.5em;
+}
+
+.option-cube-infos {
+	padding: 0.75em;
+	box-sizing: border-box;
+	background: linear-gradient(180deg, rgba(75, 75, 75, 0) 0%, rgba(75, 75, 75, 1) 15%);
+	border-radius: 0 0 6px 6px;
+	width: 50vw;
+	margin: auto;
+}
+
 .option-section {
 	background-color: rgba(255, 255, 255, 0.05);
 	border-radius: 0.25em;
@@ -318,6 +357,7 @@ footer span {
 	padding: 0.75em;
 	margin: 0.5em;
 	border: 4px dashed rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 .dropzone-highlight,
