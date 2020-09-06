@@ -1053,7 +1053,7 @@ app.get("/getUsers/:sessionID", (req, res) => {
 });
 
 app.get("/bracket", (req, res) => {
-	res.sendFile("./client/public/bracket.html");
+	res.sendFile("client/public/bracket.html", { root: "." });
 });
 
 app.get("/getBracket/:sessionID", (req, res) => {
