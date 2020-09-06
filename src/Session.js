@@ -194,7 +194,8 @@ export function Session(id, owner) {
 
 		Connections[userID].sessionID = this.id;
 		this.users.add(userID);
-		if (this.userOrder.indexOf(userID) < 0) this.userOrder.push(userID);
+		if (this.userOrder.indexOf(userID) < 0)
+			this.userOrder.splice(Math.floor(Math.random() * (this.userOrder.length + 1)), 0, userID);
 		this.notifyUserChange();
 		this.syncSessionOptions(userID);
 	};

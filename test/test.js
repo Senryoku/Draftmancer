@@ -1828,6 +1828,12 @@ describe("Winston Draft", function() {
 	var ownerIdx;
 	var nonOwnerIdx;
 
+	const getCurrentPlayer = () => {
+		const currentPlayerID = Sessions[sessionID].winstonDraftState.currentPlayer();
+		const currentPlayerIdx = clients.findIndex(c => c.query.userID == currentPlayerID);
+		return clients[currentPlayerIdx];
+	};
+
 	beforeEach(function(done) {
 		disableLogs();
 		done();
@@ -1926,7 +1932,7 @@ describe("Winston Draft", function() {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile");
 	});
 
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function(done) {
@@ -1961,7 +1967,7 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, then taking pile.", function(done) {
@@ -1972,8 +1978,8 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
-		clients[nonOwnerIdx].emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, skiping, then taking pile.", function(done) {
@@ -1984,9 +1990,9 @@ describe("Winston Draft", function() {
 				if (nextRound == clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("winstonDraftSkipPile");
-		clients[ownerIdx].emit("winstonDraftSkipPile");
-		clients[ownerIdx].emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftTakePile");
 	});
 
 	it("Skiping, skiping and skiping.", function(done) {
@@ -1998,12 +2004,12 @@ describe("Winston Draft", function() {
 				if (receivedRandomCard && nextRound == clients.length) done();
 			});
 		}
-		clients[nonOwnerIdx].on("winstonDraftRandomCard", function(card) {
+		getCurrentPlayer().on("winstonDraftRandomCard", function(card) {
 			if (card) receivedRandomCard = true;
 		});
-		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
-		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
-		clients[nonOwnerIdx].emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftSkipPile");
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function(done) {
@@ -2019,7 +2025,7 @@ describe("Winston Draft", function() {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile");
 	});
 });
 
@@ -2116,7 +2122,9 @@ describe("Grid Draft", function() {
 					if (draftEnded == clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
+			let currentPlayerID = Sessions[sessionID].gridDraftState.currentPlayer();
+			let currentPlayerIdx = clients.findIndex(c => c.query.userID == currentPlayerID);
+			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
 		});
 	};
 
