@@ -1226,7 +1226,7 @@ export default {
 			Swal.fire({
 				title: "Glimpse Draft",
 				html: `
-					<p>Glimpse Draft is a draft variant where players remove cards (typically two) from the draft alongside each pick.</p>
+					<p>Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft (typically 2) alongside each pick. It's mostly used for small and medium sized groups where a regular draft makes not much sense.</p>
 					<p>How many boosters per player (default is 9)?
 					<input type="number" value="${boostersPerPlayer}" min="3" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
 					<p>How many burned cards per pick (default is 2)?
