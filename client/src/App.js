@@ -1523,7 +1523,7 @@ export default {
 			const { value: boosterCount } = await Swal.fire({
 				title: "Start Sealed",
 				showCancelButton: true,
-				text: "How many booster for each player?",
+				text: "How many boosters for each player (default is 6)?",
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
