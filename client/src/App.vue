@@ -281,17 +281,17 @@
 									"
 								>Grid (2p.)</button>
 								<button
-									@click="startRochesterDraft()"
-									v-tooltip.left="
-										'Starts a Rochester Draft. Every players picks from a single booster.'
-									"
-								>Rochester</button>
-								<button
 									@click="startGlimpseDraft()"
 									v-tooltip.left="
 										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
 									"
 								>Glimpse/Burn</button>
+								<button
+									@click="startRochesterDraft()"
+									v-tooltip.left="
+										'Starts a Rochester Draft. Every players picks from a single booster.'
+									"
+								>Rochester</button>
 								<span class="game-modes-cat">Sealed</span>
 								<button
 									@click="sealedDialog"
