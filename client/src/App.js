@@ -861,7 +861,17 @@ export default {
 		},
 		// Draft Methods
 		startDraft: function() {
-			if (this.userID != this.sessionOwner) return;
+			if (this.userID != this.sessionOwner) return false;
+			if (this.sessionUsers.length + this.bots < 2) {
+				Swal.fire({
+					icon: "info",
+					title: "Not enough players",
+					text: "Can't start draft: Not enough players (min. 2 including bots).",
+					customClass: SwalCustomClasses,
+				});
+				return false;
+			}
+
 			if (this.deck.length > 0) {
 				Swal.fire({
 					title: "Are you sure?",
@@ -875,11 +885,14 @@ export default {
 				}).then(result => {
 					if (result.value) {
 						this.socket.emit("startDraft");
+						return true;
 					}
 				});
 			} else {
 				this.socket.emit("startDraft");
+				return true;
 			}
+			return false;
 		},
 		stopDraft: function() {
 			if (this.userID != this.sessionOwner) return;
@@ -1200,6 +1213,49 @@ export default {
 				return;
 			}
 			this.socket.emit("startRochesterDraft");
+		},
+		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
+		startGlimpseDraft: async function() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			let boostersPerPlayer = 9;
+			if (this.boostersPerPlayer !== 3) boostersPerPlayer = this.boostersPerPlayer;
+			let burnedCardsPerRound = 2;
+			if (this.burnedCardsPerRound > 0) burnedCardsPerRound = this.burnedCardsPerRound;
+
+			Swal.fire({
+				title: "Glimpse Draft",
+				html: `
+					<p>Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft (typically 2) alongside each pick. It's mostly used for small and medium sized groups where a regular draft makes not much sense.</p>
+					<p>How many boosters per player (default is 9)?
+					<input type="number" value="${boostersPerPlayer}" min="3" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
+					<p>How many burned cards per pick (default is 2)?
+					<input type="number" value="${burnedCardsPerRound}" min="1" max="13" step="1" id="input-burnedCardsPerRound" class="swal2-input" placeholder="Burned Cards"></p>`,
+				inputValue: 6,
+				customClass: SwalCustomClasses,
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Start Glimpse Draft",
+				preConfirm: function() {
+					return new Promise(function(resolve) {
+						resolve({
+							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
+							burnedCardsPerRound: document.getElementById("input-burnedCardsPerRound").valueAsNumber,
+						});
+					});
+				},
+			}).then(r => {
+				if (r.isConfirmed) {
+					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
+					this.boostersPerPlayer = r.value.boostersPerPlayer;
+					this.burnedCardsPerRound = r.value.burnedCardsPerRound;
+					// Draft didn't start, restore previous values.
+					if (!this.startDraft()) {
+						[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
+					}
+				}
+			});
 		},
 		// Collection management
 		setCollection: function(json) {

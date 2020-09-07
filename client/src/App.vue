@@ -281,6 +281,12 @@
 									"
 								>Grid (2p.)</button>
 								<button
+									@click="startGlimpseDraft()"
+									v-tooltip.left="
+										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
+									"
+								>Glimpse/Burn</button>
+								<button
 									@click="startRochesterDraft()"
 									v-tooltip.left="
 										'Starts a Rochester Draft. Every players picks from a single booster.'
@@ -484,9 +490,12 @@
 								</template>
 								<template v-if="winstonDraftState || gridDraftState || rochesterDraftState">
 									<i
-										v-show="(winstonDraftState && user.userID === winstonDraftState.currentPlayer) || 
-											    (gridDraftState && user.userID === gridDraftState.currentPlayer) || 
-												(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)"
+										v-show="
+											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
+												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+												(rochesterDraftState &&
+													user.userID === rochesterDraftState.currentPlayer)
+										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
 									></i>
@@ -544,11 +553,9 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span class="chat-author">
-									{{
-									msg.author in userByID ? userByID[msg.author].userName : "(Left)"
-									}}
-								</span>
+								<span
+									class="chat-author"
+								>{{ msg.author in userByID ? userByID[msg.author].userName : "(Left)" }}</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
@@ -606,17 +613,17 @@
 								@click="pickCard"
 								value="Confirm Pick"
 								v-if="
-								selectedCard != undefined &&
-									(burningCards.length === burnedCardsPerRound ||
-										booster.length === 1 + burningCards.length)
-							"
+									selectedCard != undefined &&
+										(burningCards.length === burnedCardsPerRound ||
+											booster.length === 1 + burningCards.length)
+								"
 							/>
 							<span v-else>
 								Pick a card
 								<span v-if="cardsToBurnThisRound > 0">
-									and remove {{ cardsToBurnThisRound }} cards from the pool ({{ burningCards.length }}/{{
-									cardsToBurnThisRound
-									}})
+									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+									burningCards.length
+									}}/{{ cardsToBurnThisRound }})
 								</span>
 							</span>
 						</div>
@@ -705,7 +712,10 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Booster #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }} /
+							Booster #{{
+							Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
+							}}
+							/
 							{{ gridDraftState.boosterCount }}
 						</span>
 						<span>
@@ -713,10 +723,9 @@
 								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
 							</template>
 							<template v-else-if="gridDraftState.currentPlayer === null">
-								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
-									This was the last booster! Let me push these booster wrappers off the
-									table...
-								</template>
+								<template
+									v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
+								>This was the last booster! Let me push these booster wrappers off the table...</template>
 								<template v-else>Advancing to the next booster...</template>
 							</template>
 							<template v-else>
@@ -745,8 +754,10 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
-							Pick #{{ rochesterDraftState.pickNumber + 1 }}
+							Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{
+							rochesterDraftState.boosterCount
+							}}
+							- Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
 						<span>
 							<template v-if="userID === rochesterDraftState.currentPlayer">
@@ -866,9 +877,12 @@
 			</div>
 			<!-- Collapsed Sideboard -->
 			<div
-				v-if="collapseSideboard && ((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)"
+				v-if="
+					collapseSideboard &&
+						((sideboard != undefined && sideboard.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState == DraftState.Brewing)
+				"
 				class="collapsed-sideboard"
 			>
 				<div class="section-title">
@@ -891,7 +905,7 @@
 						class="card-column drag-column"
 						:list="sideboard"
 						group="deck"
-						@change="$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */"
+						@change="$refs.sideboardDisplay.sync() /* Sync sideboard card-pool */"
 						drag-class="drag"
 					>
 						<card
@@ -906,10 +920,11 @@
 			</div>
 		</div>
 		<div
-			v-show="!collapseSideboard && (
-				(sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
+			v-show="
+				!collapseSideboard &&
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1392,11 +1407,7 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">
-										{{
-										setsInfos[code].fullName
-										}}
-									</option>
+									<option v-for="code in sets" :value="code" :key="code">{{ setsInfos[code].fullName }}</option>
 								</select>
 							</div>
 						</div>
@@ -1484,28 +1495,29 @@
 					<div
 						class="file-drop clickable"
 						v-tooltip.left="{
-									classes: 'option-tooltip',
-									content:
-										'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
-								}"
+							classes: 'option-tooltip',
+							content:
+								'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
+						}"
 						@drop="dropCustomList"
 						onclick="document.querySelector('#card-list-input').click()"
-						@dragover="$event.preventDefault(); $event.target.classList.add('dropzone-highlight');"
+						@dragover="
+							$event.preventDefault();
+							$event.target.classList.add('dropzone-highlight');
+						"
 					>Drop a Custom Card List or click to browse.</div>
 					<div
 						class="option-cube-select"
-						v-tooltip.left="{ classes: 'option-tooltip', content: '<p>Load a pre-built cube from a curated list.</p>' }"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content: '<p>Load a pre-built cube from a curated list.</p>',
+						}"
 					>
 						<label for="curated-cubes">Load a Pre-Build Cube:</label>
 						<select name="featured-cubes" id="curated-cubes" v-model="selectedCube">
 							<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
-								{{
-								cube.name
-								}}
-								<span
-									v-if="cube.cubeCobraID"
-									style="font-size:0.75em;"
-								>(Cube Cobra)</span>
+								{{ cube.name }}
+								<span v-if="cube.cubeCobraID" style="font-size:0.75em;">(Cube Cobra)</span>
 							</option>
 						</select>
 						<button @click="selectCube(selectedCube)" style="min-width: auto">
@@ -1518,7 +1530,7 @@
 						</button>
 					</div>
 					<div class="option-cube-infos" v-if="selectedCube">
-						<strong>{{selectedCube.name}}</strong>
+						<strong>{{ selectedCube.name }}</strong>
 						<div v-if="selectedCube.cubeCobraID">
 							<a :href="`https://cubecobra.com/cube/overview/${selectedCube.cubeCobraID}`" target="_blank">
 								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
