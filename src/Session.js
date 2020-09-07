@@ -148,6 +148,7 @@ export function Session(id, owner) {
 	this.isPublic = false;
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;
+	this.teamDraft = false;
 	this.bots = 0;
 	this.maxTimer = 75;
 	this.maxPlayers = 8;
@@ -242,6 +243,24 @@ export function Session(id, owner) {
 			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
 					customBoosters: this.customBoosters,
+				})
+			);
+		}
+	};
+
+	this.setTeamDraft = function(teamDraft) {
+		if (this.teamDraft != teamDraft) {
+			this.teamDraft = teamDraft;
+			if (teamDraft) {
+				this.maxPlayers = 6;
+			} else {
+				this.maxPlayers = 8;
+			}
+
+			this.forUsers(u =>
+				Connections[u].socket.emit("sessionOptions", {
+					teamDraft: this.teamDraft,
+					maxPlayers: this.maxPlayers
 				})
 			);
 		}

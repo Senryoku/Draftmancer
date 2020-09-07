@@ -1222,7 +1222,7 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Is the session owner participating in?</p>',
+							content: '<p>Is the session owner participating?</p>',
 						}"
 					>
 						<label for="is-owner-player">Session owner is playing</label>
@@ -1230,7 +1230,10 @@
 							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
 						</div>
 					</div>
-					<div class="line">
+					<div
+						class="line"
+						v-bind:class="{ disabled: teamDraft || useCustomCardList}"
+					>
 						<label for="max-players">Maximum Players</label>
 						<div class="right">
 							<input
@@ -1355,6 +1358,22 @@
 								max="25"
 								step="1"
 								v-model.number="boostersPerPlayer"
+							/>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content: '<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where each player faces everyone on the other team.</p>',
+						}"
+					>
+						<label for="team-draft">Team Draft</label>
+						<div class="right">
+							<input
+								type="checkbox"
+								id="team-draft"
+								v-model="teamDraft"
 							/>
 						</div>
 					</div>

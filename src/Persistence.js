@@ -335,6 +335,7 @@ export function logSession(type, session) {
 	};
 	for (let prop of [
 		"boostersPerPlayer",
+		"teamDraft",
 		"ignoreCollections",
 		"mythicPromotion",
 		"maxDuplicates",
