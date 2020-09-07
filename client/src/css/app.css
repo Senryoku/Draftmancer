@@ -550,7 +550,7 @@ footer span {
 
 .game-modes-button:focus > .game-modes-dropdown,
 .game-modes-button:hover > .game-modes-dropdown {
-	max-height: calc(4 * 3em + 2em);
+	max-height: calc(5 * 3em + 2em);
 }
 
 .setting-button {
