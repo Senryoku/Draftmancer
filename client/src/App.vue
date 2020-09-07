@@ -359,7 +359,7 @@
 					<li
 						v-for="(id, idx) in userOrder"
 						:key="id"
-						:class="{ draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot }"
+						:class="{ teama: teamDraft && (idx % 2 === 0), teamb: teamDraft && (idx % 2 === 1)}, draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot"
 						:data-userid="id"
 					>
 						<span class="player-name">{{ userByID[id].userName }}</span>
@@ -1384,7 +1384,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
+									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -1425,7 +1425,7 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</p><p>Default is 0.</p>',
+								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player and 2 burned cards per round.</p><p>Default is 0.</p>',
 						}"
 					>
 						<label for="burned-cards-per-round">Burned cards per round</label>

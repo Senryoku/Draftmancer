@@ -294,6 +294,7 @@ export function Session(id, owner) {
 			isPublic: this.isPublic,
 			ignoreCollections: this.ignoreCollections,
 			boostersPerPlayer: this.boostersPerPlayer,
+			teamDraft: this.teamDraft,
 			bots: this.bots,
 			maxTimer: this.maxTimer,
 			maxPlayers: this.maxPlayers,

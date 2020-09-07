@@ -615,6 +615,13 @@ ul.player-list {
 	right: -0.3em;
 }
 
+.player-list > .teama {
+	background: #103810;
+}
+.player-list > .teamb {
+	background: #101038;
+}
+
 .passing-order-left {
 	position: absolute;
 	left: -0.9em;
