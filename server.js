@@ -870,7 +870,7 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (players.length !== 8) return;
+		if (!(players.length === 8 && !Sessions[sessionID].teamDraft || players.length === 6 && Sessions[sessionID].teamDraft)	) return;
 		Sessions[sessionID].generateBracket(players);
 		if (ack) ack({ code: 0 });
 	});

@@ -1641,8 +1641,8 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			const playerNames = this.sessionUsers.map(u => u.userName);
 			let players = [];
-			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < 8; ++i) {
+			const pairingOrder = this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7];
+			for (let i = 0; i < pairingOrder.length; ++i) {
 				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
 				else players[i] = "";
 			}

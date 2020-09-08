@@ -135,6 +135,19 @@ export default {
 				else return match.players[0];
 			};
 
+			if(this.bracket.players.length === 6) {
+				m[0].push(new Match(0, this.bracket.players[0], this.bracket.players[3]));
+				m[0].push(new Match(0, this.bracket.players[2], this.bracket.players[5]));
+				m[0].push(new Match(0, this.bracket.players[4], this.bracket.players[1]));
+				m[1].push(new Match(0, this.bracket.players[0], this.bracket.players[5]));
+				m[1].push(new Match(0, this.bracket.players[2], this.bracket.players[1]));
+				m[1].push(new Match(0, this.bracket.players[4], this.bracket.players[3]));
+				m[2].push(new Match(0, this.bracket.players[0], this.bracket.players[1]));
+				m[2].push(new Match(0, this.bracket.players[2], this.bracket.players[3]));
+				m[2].push(new Match(0, this.bracket.players[4], this.bracket.players[5]));
+				return m;
+			}
+
 			for (let i = 0; i < 4; ++i) {
 				m[0].push(
 					new Match(i, [

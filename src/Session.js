@@ -25,6 +25,22 @@ function Bracket(players) {
 	];
 }
 
+function TeamBracket(players) {
+	this.players = players;
+	this.results = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+	];
+	this.teamDraft = true;
+}
+
 function SwissBracket(players) {
 	this.players = players;
 	this.results = [
@@ -1522,7 +1538,12 @@ export function Session(id, owner) {
 	};
 
 	this.generateBracket = function(players) {
-		this.bracket = new Bracket(players);
+		if (this.teamDraft) {
+			this.bracket = new TeamBracket(players);
+		} else {
+			this.bracket = new Bracket(players);
+		}
+		console.log(this.bracket);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
