@@ -267,12 +267,12 @@ export default {
 
 .teama.bracket-winner {
 	box-shadow: 0 0 12px 12px #555;
-	background: #204820;
+	background: #21402e;
 }
 
 .teamb.bracket-winner {
 	box-shadow: 0 0 12px 12px #555;
-	background: #202048;
+	background: #222440;
 }
 
 .teama {
