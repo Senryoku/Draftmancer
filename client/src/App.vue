@@ -1345,6 +1345,22 @@
 						class="line"
 						v-tooltip.right="{
 							classes: 'option-tooltip',
+							content: '<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where you face each player on the other team.</p>',
+						}"
+					>
+						<label for="team-draft">Team Draft</label>
+						<div class="right">
+							<input
+								type="checkbox"
+								id="team-draft"
+								v-model="teamDraft"
+							/>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
 							content: '<p>Draft: Boosters per Player; default is 3.</p>',
 						}"
 					>
@@ -1358,22 +1374,6 @@
 								max="25"
 								step="1"
 								v-model.number="boostersPerPlayer"
-							/>
-						</div>
-					</div>
-					<div
-						class="line"
-						v-tooltip.right="{
-							classes: 'option-tooltip',
-							content: '<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where each player faces everyone on the other team.</p>',
-						}"
-					>
-						<label for="team-draft">Team Draft</label>
-						<div class="right">
-							<input
-								type="checkbox"
-								id="team-draft"
-								v-model="teamDraft"
 							/>
 						</div>
 					</div>
