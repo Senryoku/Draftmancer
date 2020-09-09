@@ -266,24 +266,24 @@ export default {
 }
 
 .teama.bracket-winner {
-	box-shadow: 0 0 12px 12px #555;
-	background: #21402e;
+	box-shadow: 0 0 10px 10px #555;
+	background: #2b523b;
 }
 
 .teamb.bracket-winner {
-	box-shadow: 0 0 12px 12px #555;
-	background: #222440;
+	box-shadow: 0 0 10px 10px #555;
+	background: #2f3257;
 }
 
 .teama {
 	margin: 20px;
   border-radius: 5px;
-	background: #103810;
+	background: #21402e;
 }
 .teamb {
 	margin: 20px;
   border-radius: 5px;
-	background: #101038;
+	background: #222440;
 }
 
 .bracket-tbd,
