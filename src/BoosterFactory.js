@@ -129,7 +129,7 @@ export const SetSpecificFactories = {
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.planeswalkers = planeswalkers;
 		factory.originalGenBooster = factory.generateBooster;
-		// Not using the supllied cardpool here
+		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
 			// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
 			if (
@@ -173,7 +173,7 @@ export const SetSpecificFactories = {
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.legendaryCreatures = legendaryCreatures;
-		// Not using the supllied cardpool here
+		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
 			// Ignore the rule if there's no legendary creatures left
 			if (
@@ -190,6 +190,51 @@ export const SetSpecificFactories = {
 				let booster = this.originalGenBooster(updatedTargets);
 				// Insert the card in the appropriate slot
 				booster.unshift(pickedCID);
+				return booster;
+			}
+		};
+		return factory;
+	},
+	// Exactly one MDFC per booster
+	znr: (cardPool, landSlot, options) => {
+		let mdfc = {};
+		let filteredCardPool = {};
+		for (let slot in cardPool) {
+			filteredCardPool[slot] = {};
+			for (let cid in cardPool[slot]) {
+				// CHECK THIS
+				if (Cards[cid].name.includes("//")) mdfc[cid] = cardPool[slot][cid];
+				else filteredCardPool[slot][cid] = cardPool[slot][cid];
+			}
+		}
+		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.mdfc = mdfc;
+		factory.originalGenBooster = factory.generateBooster;
+		// Not using the suplied cardpool here
+		factory.generateBooster = function(targets) {
+			// Ignore the rule if suitable rarities are ignored, or there's no mdfc left
+			if (
+				((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
+					(!("rare" in targets) || targets["rare"] <= 0)) ||
+				Object.values(this.mdfc).length === 0 ||
+				Object.values(this.mdfc).every(arr => arr.length === 0)
+			) {
+				return this.originalGenBooster(targets);
+			} else {
+				let updatedTargets = Object.assign({}, targets);
+				let pickedCID = pickCard(this.mdfc, []);
+				if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[Cards[pickedCID].rarity];
+				let booster = this.originalGenBooster(updatedTargets);
+				// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
+				if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
+					booster.unshift(pickedCID);
+				else
+					booster.splice(
+						booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
+						0,
+						pickedCID
+					);
 				return booster;
 			}
 		};
