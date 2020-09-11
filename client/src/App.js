@@ -134,8 +134,7 @@ export default {
 			draftLogRecipients: "everyone",
 			bracketLocked: false,
 			//
-			draftLog: undefined,
-			savedDraftLog: false,
+			draftLogs: [],
 			bracket: null,
 			virtualPlayersData: undefined,
 			booster: [],
@@ -801,14 +800,12 @@ export default {
 			});
 
 			this.socket.on("draftLog", draftLog => {
-				if (draftLog.delayed && draftLog.delayed === true) {
-					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					this.draftLog = undefined;
-					this.savedDraftLog = true;
-				} else {
-					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					this.draftLog = draftLog;
-				}
+				this.draftLogs.push(draftLog);
+				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+			});
+
+			this.socket.on("draftLogLive", draftLog => {
+				this.draftLogLive = draftLog;
 			});
 
 			this.socket.on("pickAlert", data => {
@@ -1502,8 +1499,9 @@ export default {
 					let contents = e.target.result;
 					let json = JSON.parse(contents);
 					if (json.users) {
-						this.draftLog = json;
-						this.displayedModal = "draftLog";
+						this.draftLogs.push(json);
+						localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+						this.displayedModal = "draftLogs";
 					} else displayError("Missing required data.");
 				} catch (e) {
 					displayError(e);
@@ -1656,7 +1654,7 @@ export default {
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog: function() {
+		shareSavedDraftLog: function(idx) {
 			if (this.userID != this.sessionOwner) {
 				Swal.fire({
 					title: "You need to be the session owner to share logs.",
@@ -1665,26 +1663,23 @@ export default {
 				});
 				return;
 			}
-			let storedDraftLog = localStorage.getItem("draftLog");
-			if (!storedDraftLog) {
+			let storedDraftLog = this.draftLogs[idx];
+			if (!storedDraftLog || !storedDraftLog.delayed) {
 				fireToast("error", "No saved draft log");
-				this.savedDraftLog = false;
 				return;
 			} else {
-				let parsedLogs = JSON.parse(storedDraftLog).draftLog;
-				if (parsedLogs.sessionID !== this.sessionID) {
+				if (storedDraftLog.sessionID !== this.sessionID) {
 					Swal.fire({
 						title: "Wrong Session ID",
-						text: `Can't share logs: The session ID of your saved draft log ('${parsedLogs.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
+						text: `Can't share logs: The session ID of your saved draft log ('${storedDraftLog.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
 						icon: "error",
 						customClass: SwalCustomClasses,
 					});
 					return;
 				}
-				this.savedDraftLog = false;
-				this.draftLog = parsedLogs;
-				this.socket.emit("shareDraftLog", this.draftLog);
-				localStorage.setItem("draftLog", JSON.stringify(this.draftLog));
+				this.draftLogs.splice(idx, 1, storedDraftLog);
+				this.socket.emit("shareDraftLog", storedDraftLog);
+				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
@@ -1979,11 +1974,20 @@ export default {
 				}
 			}
 
-			// Look for a previous draftLog
+			let tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			if (tmpDraftLogs) this.draftLogs = tmpDraftLogs;
+
+			// Look for a previously saved single draftLog (backward comp.)
 			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
 			if (tmpDraftLog) {
-				if (tmpDraftLog.delayed) this.savedDraftLog = true;
-				else this.draftLog = tmpDraftLog;
+				if (tmpDraftLog.delayed && tmpDraftLog.draftLog) {
+					// handle old delayed format
+					tmpDraftLog = tmpDraftLog.draftLog;
+					tmpDraftLog.delayed = true;
+				}
+				this.draftLogs.push(tmpDraftLog);
+				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				localStorage.removeItem("draftLog");
 			}
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;

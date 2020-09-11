@@ -516,15 +516,9 @@
 			</template>
 			<div>
 				<button
-					@click="shareSavedDraftLog"
-					v-show="savedDraftLog"
-					v-tooltip="'Reveal and share previous draft log with players in your session.'"
-				>Share saved Draft Log</button>
-				<button
-					@click="displayedModal = 'draftLog'"
-					v-show="draftLog"
-					v-tooltip="'Displays logs of your previous draft'"
-				>Draft Log</button>
+					@click="displayedModal = 'draftLogs'"
+					v-tooltip="'Displays logs of your previous drafts'"
+				>Draft Logs</button>
 			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
@@ -577,9 +571,12 @@
 						</div>
 						<div>Booster #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
 					</div>
-					<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
+					<div
+						v-if="draftLogLive && draftLogLive.sessionID === sessionID"
+						class="draft-watching-live-log"
+					>
 						<draft-log-live
-							:draftlog="draftLog"
+							:draftlog="draftLogLive"
 							:show="['owner', 'everyone'].includes(draftLogRecipients)"
 							:language="language"
 						></draft-log-live>
@@ -1209,9 +1206,20 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="displayedModal === 'draftLog' && draftLog" @close="displayedModal = ''">
-			<h2 slot="header">Draft Log</h2>
-			<draft-log slot="body" :draftlog="draftLog" :language="language"></draft-log>
+		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
+			<h2 slot="header">Draft Logs</h2>
+			<div slot="body">
+				<div v-for="(draftLog, idx) in draftLogs" :key="idx">
+					<span v-if="draftLog.sessionID">Draft log for Session '{{ draftLog.sessionID }}'</span>
+					<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
+					<div v-if="draftLog.delayed">
+						<button @click="shareSavedDraftLog(idx)">Click to share with session and unlock</button>
+					</div>
+					<div v-else>
+						<!-- <draft-log :draftlog="draftLog" :language="language"></draft-log> -->
+					</div>
+				</div>
+			</div>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Statistics</h2>
