@@ -100,3 +100,13 @@ label {
 .generic-container {
 	position: relative;
 }
+
+.teama,
+.player-list > .teama {
+  background: #21402e;
+}
+
+.teamb,
+.player-list > .teamb {
+  background: #222440;
+}

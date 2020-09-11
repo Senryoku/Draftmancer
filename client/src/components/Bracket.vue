@@ -265,27 +265,6 @@ export default {
 	box-shadow: 0 0 4px 4px #555;
 }
 
-.teama.bracket-winner {
-	box-shadow: 0 0 10px 10px #555;
-	background: #2b523b;
-}
-
-.teamb.bracket-winner {
-	box-shadow: 0 0 10px 10px #555;
-	background: #2f3257;
-}
-
-.teama {
-	margin: 20px;
-  border-radius: 5px;
-	background: #21402e;
-}
-.teamb {
-	margin: 20px;
-  border-radius: 5px;
-	background: #222440;
-}
-
 .bracket-tbd,
 .bracket-empty {
 	color: grey;

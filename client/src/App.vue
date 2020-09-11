@@ -438,8 +438,10 @@
 			<template v-else>
 				<ul class="player-list">
 					<li
-						v-for="user in virtualPlayers"
+						v-for="(user, idx) in virtualPlayers"
 						:class="{
+							teama: teamDraft && (idx % 2 === 0),
+							teamb: teamDraft && (idx % 2 === 1),
 							bot: user.isBot,
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
