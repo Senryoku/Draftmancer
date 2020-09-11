@@ -106,6 +106,7 @@ export default {
 			ignoreCollections: false,
 			sessionUsers: [],
 			boostersPerPlayer: 3,
+			teamDraft: false,
 			distributionMode: "regular",
 			customBoosters: ["", "", ""],
 			maxPlayers: 8,
@@ -358,6 +359,9 @@ export default {
 			});
 			this.socket.on("boostersPerPlayer", data => {
 				this.boostersPerPlayer = parseInt(data);
+			});
+			this.socket.on("teamDraft", data => {
+				this.teamDraft = parseBoolean(data);
 			});
 			this.socket.on("bots", data => {
 				this.bots = parseInt(data);
@@ -1693,8 +1697,8 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			const playerNames = this.sessionUsers.map(u => u.userName);
 			let players = [];
-			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < 8; ++i) {
+			const pairingOrder = this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7];
+			for (let i = 0; i < pairingOrder.length; ++i) {
 				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
 				else players[i] = "";
 			}
@@ -2061,6 +2065,10 @@ export default {
 		boostersPerPlayer: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
+		},
+		teamDraft: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("teamDraft", this.teamDraft);
 		},
 		distributionMode: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

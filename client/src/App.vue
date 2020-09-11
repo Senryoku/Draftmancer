@@ -365,7 +365,7 @@
 					<li
 						v-for="(id, idx) in userOrder"
 						:key="id"
-						:class="{ draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot }"
+						:class="{ teama: teamDraft && (idx % 2 === 0), teamb: teamDraft && (idx % 2 === 1)}, draggable: userID === sessionOwner && !drafting, bot: userByID[id].isBot"
 						:data-userid="id"
 					>
 						<span class="player-name">{{ userByID[id].userName }}</span>
@@ -444,8 +444,10 @@
 			<template v-else>
 				<ul class="player-list">
 					<li
-						v-for="user in virtualPlayers"
+						v-for="(user, idx) in virtualPlayers"
 						:class="{
+							teama: teamDraft && (idx % 2 === 0),
+							teamb: teamDraft && (idx % 2 === 1),
 							bot: user.isBot,
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
@@ -1237,7 +1239,7 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Is the session owner participating in?</p>',
+							content: '<p>Is the session owner participating?</p>',
 						}"
 					>
 						<label for="is-owner-player">Session owner is playing</label>
@@ -1245,7 +1247,10 @@
 							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
 						</div>
 					</div>
-					<div class="line">
+					<div
+						class="line"
+						v-bind:class="{ disabled: teamDraft || useCustomCardList}"
+					>
 						<label for="max-players">Maximum Players</label>
 						<div class="right">
 							<input
@@ -1357,6 +1362,22 @@
 						class="line"
 						v-tooltip.right="{
 							classes: 'option-tooltip',
+							content: '<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where you face each player on the other team.</p>',
+						}"
+					>
+						<label for="team-draft">Team Draft</label>
+						<div class="right">
+							<input
+								type="checkbox"
+								id="team-draft"
+								v-model="teamDraft"
+							/>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
 							content: '<p>Draft: Boosters per Player; default is 3.</p>',
 						}"
 					>
@@ -1380,7 +1401,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each players will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
+									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -1417,7 +1438,7 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per players and 2 burned cards per round.</p><p>Default is 0.</p>',
+								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player and 2 burned cards per round.</p><p>Default is 0.</p>',
 						}"
 					>
 						<label for="burned-cards-per-round">Burned cards per round</label>

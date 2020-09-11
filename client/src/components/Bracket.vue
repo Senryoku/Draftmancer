@@ -15,8 +15,8 @@
 						<i class="fas fa-lock"></i> Lock
 					</label>
 				</span>
-				<button @click="$emit('generate')">Re-Generate Single Elimination</button>
-				<button @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
+				<button @click="$emit('generate')">{{!bracket.teamDraft ? "Re-Generate Single Elimination" : "Re-Generate"}} </button>
+				<button v-if="!bracket.teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
 			</div>
 			<div v-else-if="locked">
 				<span>
@@ -34,12 +34,13 @@
 							<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
 							<div
 								class="bracket-player"
-								:class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2]}"
+								:class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2],
+								teama: bracket.teamDraft && (index % 2 === 0), teamb: bracket.teamDraft && (index % 2 === 1)}"
 								v-else
 							>
 								<template v-if="colIndex === 2">
-									<i v-if="records[p].wins === 3" class="trophy gold fas fa-trophy"></i>
-									<i v-else-if="records[p].wins === 2" class="trophy silver fas fa-trophy"></i>
+									<i v-if="isGold(p, index)" class="trophy gold fas fa-trophy"></i>
+									<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
 									<div v-else class="trophy"></div>
 								</template>
 								<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
@@ -78,6 +79,30 @@ export default {
 		sessionID: { type: String },
 	},
 	methods: {
+		teamWins: function (team) {
+			let total = 0;
+			for (let col of this.matches) {
+				for (let m of col) {
+					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
+						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+						if (winIdx === team) {
+							total += 1;
+						}
+					}
+				}
+			}
+			return total;
+		},
+		isGold: function (p, index) {
+			if (this.bracket.teamDraft) {
+				return this.teamWins(index) >= 5;
+			} else {
+				return this.records[p].wins === 3;
+			}
+		},
+		isSilver: function (p, index) {
+			return !this.bracket.teamDraft && this.records[p].wins === 2;
+		},
 		emitUpdated: function () {
 			this.$emit("updated");
 		},
@@ -135,11 +160,28 @@ export default {
 				else return match.players[0];
 			};
 
+			const playerOrEmpty = (idx) => {
+				return this.bracket.players[idx] === "" ? { empty: true } : this.bracket.players[idx];
+			};
+
+			if(this.bracket.teamDraft) {
+				m[0].push(new Match(0, [playerOrEmpty(0), playerOrEmpty(3)]));
+				m[0].push(new Match(1, [playerOrEmpty(2), playerOrEmpty(5)]));
+				m[0].push(new Match(2, [playerOrEmpty(4), playerOrEmpty(1)]));
+				m[1].push(new Match(3, [playerOrEmpty(0), playerOrEmpty(5)]));
+				m[1].push(new Match(4, [playerOrEmpty(2), playerOrEmpty(1)]));
+				m[1].push(new Match(5, [playerOrEmpty(4), playerOrEmpty(3)]));
+				m[2].push(new Match(6, [playerOrEmpty(0), playerOrEmpty(1)]));
+				m[2].push(new Match(7, [playerOrEmpty(2), playerOrEmpty(3)]));
+				m[2].push(new Match(8, [playerOrEmpty(4), playerOrEmpty(5)]));
+				return m;
+			}
+
 			for (let i = 0; i < 4; ++i) {
 				m[0].push(
 					new Match(i, [
-						this.bracket.players[2 * i] === "" ? { empty: true } : this.bracket.players[2 * i],
-						this.bracket.players[2 * i + 1] === "" ? { empty: true } : this.bracket.players[2 * i + 1],
+						playerOrEmpty(2 * i),
+						playerOrEmpty(2 * i + 1)
 					])
 				);
 			}
@@ -210,17 +252,19 @@ export default {
 
 .bracket-player {
 	display: flex;
+	background: #2c2c2c;
 	justify-content: space-between;
 	height: 2em;
 	line-height: 2em;
 	width: 20rem;
 	padding: 0.5em;
 	margin: 0.5em;
+  border-radius: 8px;
 }
 
 .bracket-winner {
-	background-color: #555;
-	box-shadow: 0 0 4px 4px #555;
+	font-weight: bold;
+	box-shadow: 0 0 4px 4px #bbb;
 }
 
 .bracket-tbd,

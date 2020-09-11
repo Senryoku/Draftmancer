@@ -25,6 +25,22 @@ function Bracket(players) {
 	];
 }
 
+function TeamBracket(players) {
+	this.players = players;
+	this.results = [
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+		[0, 0],
+	];
+	this.teamDraft = true;
+}
+
 function SwissBracket(players) {
 	this.players = players;
 	this.results = [
@@ -148,6 +164,7 @@ export function Session(id, owner) {
 	this.isPublic = false;
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;
+	this.teamDraft = false;
 	this.bots = 0;
 	this.maxTimer = 75;
 	this.maxPlayers = 8;
@@ -247,6 +264,24 @@ export function Session(id, owner) {
 		}
 	};
 
+	this.setTeamDraft = function(teamDraft) {
+		if (this.teamDraft != teamDraft) {
+			this.teamDraft = teamDraft;
+			if (teamDraft) {
+				this.maxPlayers = 6;
+			} else {
+				this.maxPlayers = 8;
+			}
+
+			this.forUsers(u =>
+				Connections[u].socket.emit("sessionOptions", {
+					teamDraft: this.teamDraft,
+					maxPlayers: this.maxPlayers
+				})
+			);
+		}
+	};
+
 	this.setSeating = function(seating) {
 		if (this.drafting) return false;
 		if (!Array.isArray(seating) || [...this.users].some(u => !seating.includes(u))) {
@@ -275,6 +310,7 @@ export function Session(id, owner) {
 			isPublic: this.isPublic,
 			ignoreCollections: this.ignoreCollections,
 			boostersPerPlayer: this.boostersPerPlayer,
+			teamDraft: this.teamDraft,
 			bots: this.bots,
 			maxTimer: this.maxTimer,
 			maxPlayers: this.maxPlayers,
@@ -1502,7 +1538,12 @@ export function Session(id, owner) {
 	};
 
 	this.generateBracket = function(players) {
-		this.bracket = new Bracket(players);
+		if (this.teamDraft) {
+			this.bracket = new TeamBracket(players);
+		} else {
+			this.bracket = new Bracket(players);
+		}
+		console.log(this.bracket);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
