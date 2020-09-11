@@ -734,7 +734,7 @@ ul.player-list {
 }
 
 .collapsed-sideboard .card-column {
-	margin: auto;
+	margin: 0 auto;
 }
 
 .selected img,
