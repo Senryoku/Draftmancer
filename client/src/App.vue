@@ -51,6 +51,12 @@
 					<label for="useCollection">Restrict to Collection</label>
 				</div>
 			</span>
+			<div>
+				<button
+					@click="displayedModal = 'draftLogs'"
+					v-tooltip="'Displays logs of your previous drafts'"
+				>Draft Logs</button>
+			</div>
 			<span>
 				<i
 					class="fas clickable"
@@ -514,12 +520,6 @@
 					</li>
 				</ul>
 			</template>
-			<div>
-				<button
-					@click="displayedModal = 'draftLogs'"
-					v-tooltip="'Displays logs of your previous drafts'"
-				>Draft Logs</button>
-			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
 					<input
@@ -1208,18 +1208,12 @@
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
 			<h2 slot="header">Draft Logs</h2>
-			<div slot="body">
-				<div v-for="(draftLog, idx) in draftLogs" :key="idx">
-					<span v-if="draftLog.sessionID">Draft log for Session '{{ draftLog.sessionID }}'</span>
-					<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
-					<div v-if="draftLog.delayed">
-						<button @click="shareSavedDraftLog(idx)">Click to share with session and unlock</button>
-					</div>
-					<div v-else>
-						<!-- <draft-log :draftlog="draftLog" :language="language"></draft-log> -->
-					</div>
-				</div>
-			</div>
+			<draft-log-history
+				slot="body"
+				:draftLogs="draftLogs"
+				:language="language"
+				@shareLog="shareSavedDraftLog"
+			></draft-log-history>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Statistics</h2>
@@ -1641,14 +1635,6 @@
 			</div>
 		</modal>
 		<footer>
-			<span>
-				<input type="file" id="log-input" @change="openLog" style="display: none;" accept=".txt" />
-				<a
-					onclick="document.querySelector('#log-input').click()"
-					v-tooltip="'Open a saved draft log.'"
-				>Open Draft Log</a>
-			</span>
-			<span>-</span>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<a>About</a>
 			</span>

@@ -23,6 +23,7 @@ import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
+import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import Collection from "./components/Collection.vue";
 import CardList from "./components/CardList.vue";
@@ -75,6 +76,7 @@ export default {
 		CardPool,
 		DraftLogPick,
 		DraftLog,
+		DraftLogHistory,
 		DraftLogLive,
 		Collection,
 		CardList,
@@ -1480,36 +1482,6 @@ export default {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		openLog: function(e) {
-			let file = e.target.files[0];
-			if (!file) {
-				return;
-			}
-			var reader = new FileReader();
-			const displayError = e => {
-				Swal.fire({
-					icon: "error",
-					title: "Parsing Error",
-					text: "An error occurred during parsing. Please make sure that you selected the correct file.",
-					footer: `Full error: ${e}`,
-					customClass: SwalCustomClasses,
-				});
-			};
-			reader.onload = e => {
-				try {
-					let contents = e.target.result;
-					let json = JSON.parse(contents);
-					if (json.users) {
-						this.draftLogs.push(json);
-						localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
-						this.displayedModal = "draftLogs";
-					} else displayError("Missing required data.");
-				} catch (e) {
-					displayError(e);
-				}
-			};
-			reader.readAsText(file);
-		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
@@ -1655,7 +1627,7 @@ export default {
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog: function(idx) {
+		shareSavedDraftLog: function(storedDraftLog) {
 			if (this.userID != this.sessionOwner) {
 				Swal.fire({
 					title: "You need to be the session owner to share logs.",
@@ -1664,7 +1636,6 @@ export default {
 				});
 				return;
 			}
-			let storedDraftLog = this.draftLogs[idx];
 			if (!storedDraftLog || !storedDraftLog.delayed) {
 				fireToast("error", "No saved draft log");
 				return;
@@ -1678,7 +1649,7 @@ export default {
 					});
 					return;
 				}
-				this.draftLogs.splice(idx, 1, storedDraftLog);
+				storedDraftLog.delayed = false;
 				this.socket.emit("shareDraftLog", storedDraftLog);
 				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
 				fireToast("success", "Shared draft log with session!");
