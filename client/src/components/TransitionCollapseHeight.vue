@@ -12,6 +12,7 @@
 		<slot />
 	</transition>
 </template>
+
 <script>
 export default {
 	methods: {
@@ -33,9 +34,7 @@ export default {
 		},
 		beforeLeave(element) {
 			requestAnimationFrame(() => {
-				if (!element.style.height) {
-					element.style.height = `${element.offsetHeight}px`;
-				}
+				if (!element.style.height) element.style.height = `${element.offsetHeight}px`;
 			});
 		},
 		leave(element) {
