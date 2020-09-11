@@ -258,6 +258,7 @@ export function Session(id, owner) {
 
 			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
+					boostersPerPlayer: this.boostersPerPlayer,
 					customBoosters: this.customBoosters,
 				})
 			);
