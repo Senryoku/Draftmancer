@@ -252,17 +252,19 @@ export default {
 
 .bracket-player {
 	display: flex;
+	background: #2c2c2c;
 	justify-content: space-between;
 	height: 2em;
 	line-height: 2em;
 	width: 20rem;
 	padding: 0.5em;
 	margin: 0.5em;
+  border-radius: 8px;
 }
 
 .bracket-winner {
-	background-color: #555;
-	box-shadow: 0 0 4px 4px #555;
+	font-weight: bold;
+	box-shadow: 0 0 4px 4px #bbb;
 }
 
 .bracket-tbd,
