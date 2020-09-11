@@ -135,6 +135,7 @@ export default {
 			bracketLocked: false,
 			//
 			draftLogs: [],
+			draftLogLive: null,
 			bracket: null,
 			virtualPlayersData: undefined,
 			booster: [],
