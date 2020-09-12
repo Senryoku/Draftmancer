@@ -1234,7 +1234,7 @@
 					</div>
 					<div
 						class="line"
-						v-bind:class="{ disabled: teamDraft || useCustomCardList}"
+						v-bind:class="{ disabled: teamDraft }"
 					>
 						<label for="max-players">Maximum Players</label>
 						<div class="right">
@@ -1573,6 +1573,7 @@
 			<bracket
 				slot="body"
 				:bracket="bracket"
+				:teamDraft="teamDraft"
 				:editable="userID === sessionOwner || !bracketLocked"
 				:locked="bracketLocked"
 				:fullcontrol="userID === sessionOwner"
