@@ -105,7 +105,7 @@ export default {
 				cancelButtonText: "Cancel",
 				allowOutsideClick: false,
 			}).then((result) => {
-				if (result) {
+				if (result.isConfirmed) {
 					this.draftLogs.splice(
 						this.draftLogs.findIndex((e) => e === draftLog),
 						1
