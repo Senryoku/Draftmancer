@@ -22,24 +22,31 @@
 							@click="selectedLog = null"
 						></i>
 					</template>
+					<template v-else>
+						<i class="fas fa-lock"></i>
+					</template>
 					Session '{{ draftLog.sessionID }}'
 					<span
 						v-if="draftLog.time"
 					>({{ new Date(draftLog.time).toLocaleString() }})</span>
 				</span>
-				<span v-if="!draftLog.delayed">
-					<button type="button" @click="downloadLog(draftLog)">
-						<i class="fas fa-file-download"></i> Download
-					</button>
+				<span>
+					<template v-if="!draftLog.delayed">
+						<button type="button" @click="downloadLog(draftLog)">
+							<i class="fas fa-file-download"></i> Download
+						</button>
+					</template>
+					<template v-else>
+						(Delayed: No one can review this log until you share it)
+						<button
+							@click="$emit('shareLog', draftLog)"
+						>
+							<i class="fas fa-share-square"></i> Share with session and unlock
+						</button>
+					</template>
 					<button type="button" class="cancel" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
-				</span>
-				<span v-else>
-					(Delayed: No one can review this log until you share it)
-					<button
-						@click="$emit('shareLog', draftLog)"
-					>Share with session and unlock</button>
 				</span>
 			</div>
 			<transition-collapse-height>
