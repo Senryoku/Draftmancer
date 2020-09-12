@@ -1,37 +1,46 @@
 <template>
 	<div>
 		<input type="file" id="log-input" @change="importLog" style="display: none;" accept=".txt" />
-		<button
-			onclick="document.querySelector('#log-input').click()"
-			v-tooltip="'Import a saved draft log.'"
-		>Import Draft Log</button>
+		<div class="controls">
+			<button
+				onclick="document.querySelector('#log-input').click()"
+				v-tooltip="'Import a saved draft log.'"
+			>Import Draft Log</button>
+		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
-			<div>
-				<template v-if="!draftLog.delayed">
-					<i
-						class="fa fa-chevron-down clickable"
-						v-if="selectedLog !== draftLog"
-						@click="selectedLog = draftLog"
-					></i>
-					<i
-						class="fa fa-chevron-up clickable"
-						v-if="selectedLog === draftLog"
-						@click="selectedLog = null"
-					></i>
-				</template>
-				<span v-if="draftLog.sessionID">Session '{{ draftLog.sessionID }}'</span>
-				<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
-				<template v-if="!draftLog.delayed">
+			<div class="log-controls">
+				<span>
+					<template v-if="!draftLog.delayed">
+						<i
+							class="fa fa-chevron-down clickable"
+							v-if="selectedLog !== draftLog"
+							@click="selectedLog = draftLog"
+						></i>
+						<i
+							class="fa fa-chevron-up clickable"
+							v-if="selectedLog === draftLog"
+							@click="selectedLog = null"
+						></i>
+					</template>
+					Session '{{ draftLog.sessionID }}'
+					<span
+						v-if="draftLog.time"
+					>({{ new Date(draftLog.time).toLocaleString() }})</span>
+				</span>
+				<span v-if="!draftLog.delayed">
 					<button type="button" @click="downloadLog(draftLog)">
-						<i class="fas fa-file-download"></i> Download full log
+						<i class="fas fa-file-download"></i> Download
 					</button>
 					<button type="button" class="cancel" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
-				</template>
-				<template v-else>
-					<button @click="$emit('shareLog', draftLog)">Click to share with session and unlock</button>
-				</template>
+				</span>
+				<span v-else>
+					(Delayed: No one can review this log until you share it)
+					<button
+						@click="$emit('shareLog', draftLog)"
+					>Share with session and unlock</button>
+				</span>
 			</div>
 			<transition-collapse-height>
 				<draft-log
@@ -138,11 +147,22 @@ export default {
 </script>
 
 <style scoped>
+.controls {
+	margin-bottom: 0.5em;
+}
+
 .log {
 	width: 90vw;
 	margin-bottom: 0.5em;
 	border-radius: 0.5em;
 	padding: 0.5em;
 	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.log-controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	width: 100%;
 }
 </style>
