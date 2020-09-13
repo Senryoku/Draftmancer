@@ -1,5 +1,9 @@
 [
 	{
+		"date": "13/09/2020",
+		"notes": ["Added a Draft Log History storing up to 25 logs."]
+	},
+	{
 		"date": "03/09/2020",
 		"notes": ["Sideboard can now be minimized to a single column to the right of the deck."]
 	},
