@@ -1,7 +1,10 @@
 [
 	{
 		"date": "13/09/2020",
-		"notes": ["Added a Draft Log History storing up to 25 logs."]
+		"notes": [
+			"Added a Draft Log History storing up to 25 logs.",
+			"Added a Team Draft option for 6 players with matching bracket (Contribution from Squerp)."
+		]
 	},
 	{
 		"date": "03/09/2020",
