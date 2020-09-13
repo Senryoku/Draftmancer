@@ -804,7 +804,7 @@ export default {
 
 			this.socket.on("draftLog", draftLog => {
 				this.draftLogs.push(draftLog);
-				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				this.storeDraftLogs();
 			});
 
 			this.socket.on("draftLogLive", draftLog => {
@@ -1651,7 +1651,7 @@ export default {
 				}
 				storedDraftLog.delayed = false;
 				this.socket.emit("shareDraftLog", storedDraftLog);
-				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				this.storeDraftLogs();
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
@@ -1829,6 +1829,15 @@ export default {
 		logPathToClipboard: function() {
 			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log`);
 			fireToast("success", "Default log path copied to clipboard!");
+		},
+		storeDraftLogs: function() {
+			while (this.draftLogs.length > 25) {
+				const idx = this.draftLogs.reduce((acc, cur, idx, src) => {
+					return cur.time < src[acc].time ? idx : acc;
+				}, 0);
+				this.draftLogs.splice(idx, 1);
+			}
+			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
 		},
 	},
 	computed: {
