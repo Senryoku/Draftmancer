@@ -100,3 +100,13 @@ label {
 .generic-container {
 	position: relative;
 }
+
+.bracket-player.teama,
+.player-list > .teama {
+  background: #21402e;
+}
+
+.bracket-player.teamb,
+.player-list > .teamb {
+  background: #222440;
+}

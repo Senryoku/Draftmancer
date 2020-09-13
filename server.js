@@ -384,13 +384,19 @@ io.on("connection", function(socket) {
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != this.userID || sess.drafting) return;
 
-		if (sess.users.size > 0 && sess.users.size + sess.bots >= 2) {
-			sess.startDraft();
-		} else {
+		if (sess.teamDraft && sess.users.size !== 6) {
+			const verb = sess.users.size < 6 ? "add" : "remove";
+			Connections[userID].socket.emit("message", {
+				title: `Wrong player count`,
+				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings.`,
+			});
+		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
 				text: `Can't start draft: Not enough players (min. 2 including bots).`,
 			});
+		} else {
+			sess.startDraft();
 		}
 	});
 
@@ -495,16 +501,19 @@ io.on("connection", function(socket) {
 		if (boostersPerPlayer == Sessions[sessionID].boostersPerPlayer) return;
 
 		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
+	});
 
-		Sessions[sessionID].boostersPerPlayer = boostersPerPlayer;
+	socket.on("teamDraft", function(teamDraft) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) {
-				Connections[user].socket.emit("sessionOptions", {
-					boostersPerPlayer: Sessions[sessionID].boostersPerPlayer,
-				});
-			}
-		}
+		if (!(typeof teamDraft === 'boolean')) teamDraft = parseBoolean(teamDraft);
+		if (!(typeof teamDraft === 'boolean')) return;
+
+		if (teamDraft == Sessions[sessionID].teamDraft) return;
+
+		Sessions[sessionID].setTeamDraft(teamDraft);
 	});
 
 	socket.on("setDistributionMode", function(distributionMode) {
@@ -867,7 +876,7 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (players.length !== 8) return;
+		if (!(players.length === 8 && !Sessions[sessionID].teamDraft || players.length === 6 && Sessions[sessionID].teamDraft)	) return;
 		Sessions[sessionID].generateBracket(players);
 		if (ack) ack({ code: 0 });
 	});
