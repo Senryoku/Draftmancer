@@ -1,10 +1,5 @@
 <template>
 	<div>
-		<span v-if="draftlog.sessionID">Draft log for Session '{{ draftlog.sessionID }}'</span>
-		<span v-if="draftlog.time">({{ new Date(draftlog.time).toLocaleString() }})</span>
-		<button type="button" @click="downloadLog">
-			<i class="fas fa-file-download"></i> Download full log
-		</button>
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
@@ -104,15 +99,6 @@ export default {
 		},
 		getCard: function (cid) {
 			return Cards[cid];
-		},
-		downloadLog: function () {
-			let draftLogFull = this.draftlog;
-			for (let e in this.draftlog.users) {
-				let cards = [];
-				for (let c of this.draftlog.users[e].cards) cards.push(Cards[c]);
-				this.draftlog.users[e].exportString = exportToMTGA(cards, null, this.language);
-			}
-			helper.download(`DraftLog_${this.draftlog.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
 		downloadMPT: function (id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(Cards, this.draftlog, id));

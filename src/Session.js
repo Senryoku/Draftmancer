@@ -992,7 +992,7 @@ export function Session(id, owner) {
 			Connections[this.owner].socket.emit("startDraft");
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients)) {
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			}
 		}
 
@@ -1081,7 +1081,7 @@ export function Session(id, owner) {
 			["owner", "everyone"].includes(this.draftLogRecipients) &&
 			this.owner in Connections
 		) {
-			Connections[this.owner].socket.emit("draftLog", this.draftLog);
+			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
 				cardID: cardID,
@@ -1223,10 +1223,8 @@ export function Session(id, owner) {
 				break;
 			default:
 			case "delayed":
-				Connections[this.owner].socket.emit("draftLog", {
-					delayed: true,
-					draftLog: this.draftLog,
-				});
+				this.draftLog.delayed = true;
+				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				break;
 			case "everyone":
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
@@ -1361,7 +1359,7 @@ export function Session(id, owner) {
 			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
-				Connections[userID].socket.emit("draftLog", this.draftLog);
+				Connections[userID].socket.emit("draftLogLive", this.draftLog);
 		}
 	};
 
