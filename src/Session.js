@@ -974,6 +974,10 @@ export function Session(id, owner) {
 			this.bots = parseInt(this.bots);
 		}
 
+		if (this.teamDraft) {
+			this.bots = 0;
+		}
+
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 

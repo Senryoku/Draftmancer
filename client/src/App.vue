@@ -231,7 +231,7 @@
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Draft:</strong>
-					<div class="inline" v-tooltip="'Add some dumb bots to your draft.'">
+					<div v-if="!teamDraft" class="inline" v-tooltip="'Add some dumb bots to your draft.'">
 						<label for="bots">Bots</label>
 						<input
 							type="number"

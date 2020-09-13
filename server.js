@@ -384,15 +384,16 @@ io.on("connection", function(socket) {
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != this.userID || sess.drafting) return;
 
-		if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
+		if (sess.teamDraft && sess.users.size !== 6) {
+			const verb = sess.users.size < 6 ? "add" : "remove";
+			Connections[userID].socket.emit("message", {
+				title: `Wrong player count`,
+				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings.`,
+			});
+		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
 				text: `Can't start draft: Not enough players (min. 2 including bots).`,
-			});
-		} else if (sess.teamDraft && sess.users.size + sess.bots !== 6) {
-			Connections[userID].socket.emit("message", {
-				title: `Wrong player count`,
-				text: `Team draft requires exactly 6 drafters including bots. Please change drafter count or disable team draft under Settings.`,
 			});
 		} else {
 			sess.startDraft();
