@@ -412,6 +412,24 @@ io.on("connection", function(socket) {
 		else sess.endDraft();
 	});
 
+	socket.on("pauseDraft", function() {
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID) return;
+
+		sess.pauseDraft();
+	});
+
+	socket.on("resumeDraft", function() {
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID) return;
+
+		sess.resumeDraft({ title: "Draft Resumed" });
+	});
+
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	socket.on("pickCard", function(data, ack) {
@@ -508,8 +526,8 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(typeof teamDraft === 'boolean')) teamDraft = parseBoolean(teamDraft);
-		if (!(typeof teamDraft === 'boolean')) return;
+		if (!(typeof teamDraft === "boolean")) teamDraft = parseBoolean(teamDraft);
+		if (!(typeof teamDraft === "boolean")) return;
 
 		if (teamDraft == Sessions[sessionID].teamDraft) return;
 
@@ -876,7 +894,13 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(players.length === 8 && !Sessions[sessionID].teamDraft || players.length === 6 && Sessions[sessionID].teamDraft)	) return;
+		if (
+			!(
+				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
+				(players.length === 6 && Sessions[sessionID].teamDraft)
+			)
+		)
+			return;
 		Sessions[sessionID].generateBracket(players);
 		if (ack) ack({ code: 0 });
 	});

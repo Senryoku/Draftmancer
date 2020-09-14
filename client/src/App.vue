@@ -326,11 +326,12 @@
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
 				Draft in progress!
-				<button
-					v-if="sessionOwner == userID"
-					class="stop"
-					@click="stopDraft"
-				>Stop Draft</button>
+				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">
+					<i class="fas fa-stop"></i> Stop Draft
+				</button>
+				<button v-if="sessionOwner == userID && maxTimer > 0" class="stop" @click="pauseDraft">
+					<i class="fas fa-pause"></i> Pause Draft
+				</button>
 			</div>
 		</div>
 

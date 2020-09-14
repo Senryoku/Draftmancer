@@ -806,6 +806,33 @@ export default {
 				}
 			});
 
+			this.socket.on("pauseDraft", () => {
+				if (this.userID === this.sessionOwner) {
+					Swal.fire({
+						position: "center",
+						customClass: SwalCustomClasses,
+						icon: "info",
+						title: `Draft Paused`,
+						text: `Resume when you're ready.`,
+						showConfirmButton: true,
+						allowOutsideClick: false,
+						confirmButtonText: "Resume",
+					}).then(result => {
+						if (result.value) this.socket.emit("resumeDraft");
+					});
+				} else {
+					Swal.fire({
+						position: "center",
+						customClass: SwalCustomClasses,
+						icon: "info",
+						title: `Draft Paused`,
+						text: `Wait for the session owner to resume.`,
+						showConfirmButton: false,
+						allowOutsideClick: false,
+					});
+				}
+			});
+
 			this.socket.on("draftLog", draftLog => {
 				this.draftLogs.push(draftLog);
 				this.storeDraftLogs();
@@ -915,6 +942,10 @@ export default {
 					self.socket.emit("stopDraft");
 				}
 			});
+		},
+		pauseDraft: function() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("pauseDraft");
 		},
 		selectCard: function(e, c) {
 			this.selectedCard = c;

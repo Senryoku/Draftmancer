@@ -1223,8 +1223,11 @@ export function Session(id, owner) {
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	};
 
-	this.resumeDraft = function() {
+	this.resumeDraft = function(msg) {
+		if (!this.drafting) return;
+
 		console.warn(`Restarting draft for session ${this.id}.`);
+
 		this.forUsers(user =>
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
@@ -1233,7 +1236,7 @@ export function Session(id, owner) {
 		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
 			this.resumeCountdown();
 		}
-		this.emitMessage("Player reconnected", `Resuming draft...`);
+		this.emitMessage(msg.title, msg.text);
 	};
 
 	this.endDraft = function() {
@@ -1276,6 +1279,13 @@ export function Session(id, owner) {
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
+	};
+
+	this.pauseDraft = function() {
+		if (!this.drafting || !this.countdownInterval) return;
+
+		this.stopCountdown();
+		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
 	};
 
 	///////////////////// Traditional Draft End  //////////////////////
@@ -1377,7 +1387,8 @@ export function Session(id, owner) {
 		}
 
 		// Resume draft if everyone is here or broacast the new state.
-		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
+		if (Object.keys(this.disconnectedUsers).length == 0)
+			this.resumeDraft({ title: "Player reconnected", text: "Resuming draft..." });
 		else this.broadcastDisconnectedUsers();
 	};
 
