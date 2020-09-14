@@ -30,7 +30,7 @@ ArenaRarity = {
     5: "mythic"
 }
 
-ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = False
+ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceSymbology = False
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
     ForceDownload = Arg == "dl"

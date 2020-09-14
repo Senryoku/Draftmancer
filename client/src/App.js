@@ -23,6 +23,7 @@ import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
+import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import Collection from "./components/Collection.vue";
 import CardList from "./components/CardList.vue";
@@ -75,6 +76,7 @@ export default {
 		CardPool,
 		DraftLogPick,
 		DraftLog,
+		DraftLogHistory,
 		DraftLogLive,
 		Collection,
 		CardList,
@@ -118,10 +120,10 @@ export default {
 			},
 			colorBalance: true,
 			maxDuplicates: {
-				common: 8,
-				uncommon: 4,
-				rare: 2,
-				mythic: 1,
+				common: 16,
+				uncommon: 8,
+				rare: 4,
+				mythic: 2,
 			},
 			foil: false,
 			bots: 0,
@@ -135,8 +137,8 @@ export default {
 			draftLogRecipients: "everyone",
 			bracketLocked: false,
 			//
-			draftLog: undefined,
-			savedDraftLog: false,
+			draftLogs: [],
+			draftLogLive: null,
 			bracket: null,
 			virtualPlayersData: undefined,
 			booster: [],
@@ -361,7 +363,7 @@ export default {
 				this.boostersPerPlayer = parseInt(data);
 			});
 			this.socket.on("teamDraft", data => {
-				this.teamDraft = parseBoolean(data);
+				this.teamDraft = data;
 			});
 			this.socket.on("bots", data => {
 				this.bots = parseInt(data);
@@ -804,15 +806,40 @@ export default {
 				}
 			});
 
-			this.socket.on("draftLog", draftLog => {
-				if (draftLog.delayed && draftLog.delayed === true) {
-					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					this.draftLog = undefined;
-					this.savedDraftLog = true;
+			this.socket.on("pauseDraft", () => {
+				if (this.userID === this.sessionOwner) {
+					Swal.fire({
+						position: "center",
+						customClass: SwalCustomClasses,
+						icon: "info",
+						title: `Draft Paused`,
+						text: `Resume when you're ready.`,
+						showConfirmButton: true,
+						allowOutsideClick: false,
+						confirmButtonText: "Resume",
+					}).then(result => {
+						if (result.value) this.socket.emit("resumeDraft");
+					});
 				} else {
-					localStorage.setItem("draftLog", JSON.stringify(draftLog));
-					this.draftLog = draftLog;
+					Swal.fire({
+						position: "center",
+						customClass: SwalCustomClasses,
+						icon: "info",
+						title: `Draft Paused`,
+						text: `Wait for the session owner to resume.`,
+						showConfirmButton: false,
+						allowOutsideClick: false,
+					});
 				}
+			});
+
+			this.socket.on("draftLog", draftLog => {
+				this.draftLogs.push(draftLog);
+				this.storeDraftLogs();
+			});
+
+			this.socket.on("draftLogLive", draftLog => {
+				this.draftLogLive = draftLog;
 			});
 
 			this.socket.on("pickAlert", data => {
@@ -866,11 +893,11 @@ export default {
 		// Draft Methods
 		startDraft: function() {
 			if (this.userID != this.sessionOwner) return false;
-			if (this.sessionUsers.length + this.bots < 2) {
+			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
 				Swal.fire({
 					icon: "info",
 					title: "Not enough players",
-					text: "Can't start draft: Not enough players (min. 2 including bots).",
+					text: `Can't start draft: Not enough players (min. 2 including bots).`,
 					customClass: SwalCustomClasses,
 				});
 				return false;
@@ -915,6 +942,10 @@ export default {
 					self.socket.emit("stopDraft");
 				}
 			});
+		},
+		pauseDraft: function() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("pauseDraft");
 		},
 		selectCard: function(e, c) {
 			this.selectedCard = c;
@@ -1486,35 +1517,6 @@ export default {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		openLog: function(e) {
-			let file = e.target.files[0];
-			if (!file) {
-				return;
-			}
-			var reader = new FileReader();
-			const displayError = e => {
-				Swal.fire({
-					icon: "error",
-					title: "Parsing Error",
-					text: "An error occurred during parsing. Please make sure that you selected the correct file.",
-					footer: `Full error: ${e}`,
-					customClass: SwalCustomClasses,
-				});
-			};
-			reader.onload = e => {
-				try {
-					let contents = e.target.result;
-					let json = JSON.parse(contents);
-					if (json.users) {
-						this.draftLog = json;
-						this.displayedModal = "draftLog";
-					} else displayError("Missing required data.");
-				} catch (e) {
-					displayError(e);
-				}
-			};
-			reader.readAsText(file);
-		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
@@ -1660,7 +1662,7 @@ export default {
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog: function() {
+		shareSavedDraftLog: function(storedDraftLog) {
 			if (this.userID != this.sessionOwner) {
 				Swal.fire({
 					title: "You need to be the session owner to share logs.",
@@ -1669,26 +1671,22 @@ export default {
 				});
 				return;
 			}
-			let storedDraftLog = localStorage.getItem("draftLog");
-			if (!storedDraftLog) {
+			if (!storedDraftLog || !storedDraftLog.delayed) {
 				fireToast("error", "No saved draft log");
-				this.savedDraftLog = false;
 				return;
 			} else {
-				let parsedLogs = JSON.parse(storedDraftLog).draftLog;
-				if (parsedLogs.sessionID !== this.sessionID) {
+				if (storedDraftLog.sessionID !== this.sessionID) {
 					Swal.fire({
 						title: "Wrong Session ID",
-						text: `Can't share logs: The session ID of your saved draft log ('${parsedLogs.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
+						text: `Can't share logs: The session ID of your saved draft log ('${storedDraftLog.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
 						icon: "error",
 						customClass: SwalCustomClasses,
 					});
 					return;
 				}
-				this.savedDraftLog = false;
-				this.draftLog = parsedLogs;
-				this.socket.emit("shareDraftLog", this.draftLog);
-				localStorage.setItem("draftLog", JSON.stringify(this.draftLog));
+				storedDraftLog.delayed = false;
+				this.socket.emit("shareDraftLog", storedDraftLog);
+				this.storeDraftLogs();
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
@@ -1867,6 +1865,15 @@ export default {
 			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log`);
 			fireToast("success", "Default log path copied to clipboard!");
 		},
+		storeDraftLogs: function() {
+			while (this.draftLogs.length > 25) {
+				const idx = this.draftLogs.reduce((acc, cur, idx, src) => {
+					return cur.time < src[acc].time ? idx : acc;
+				}, 0);
+				this.draftLogs.splice(idx, 1);
+			}
+			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+		},
 	},
 	computed: {
 		DraftState: function() {
@@ -1983,11 +1990,20 @@ export default {
 				}
 			}
 
-			// Look for a previous draftLog
+			let tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			if (tmpDraftLogs) this.draftLogs = tmpDraftLogs;
+
+			// Look for a previously saved single draftLog (backward comp.)
 			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
 			if (tmpDraftLog) {
-				if (tmpDraftLog.delayed) this.savedDraftLog = true;
-				else this.draftLog = tmpDraftLog;
+				if (tmpDraftLog.delayed && tmpDraftLog.draftLog) {
+					// handle old delayed format
+					tmpDraftLog = tmpDraftLog.draftLog;
+					tmpDraftLog.delayed = true;
+				}
+				this.draftLogs.push(tmpDraftLog);
+				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				localStorage.removeItem("draftLog");
 			}
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;

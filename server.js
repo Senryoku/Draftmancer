@@ -384,13 +384,19 @@ io.on("connection", function(socket) {
 		const sess = Sessions[Connections[userID].sessionID];
 		if (!sess || sess.owner != this.userID || sess.drafting) return;
 
-		if (sess.users.size > 0 && sess.users.size + sess.bots >= 2) {
-			sess.startDraft();
-		} else {
+		if (sess.teamDraft && sess.users.size !== 6) {
+			const verb = sess.users.size < 6 ? "add" : "remove";
+			Connections[userID].socket.emit("message", {
+				title: `Wrong player count`,
+				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings.`,
+			});
+		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
 				text: `Can't start draft: Not enough players (min. 2 including bots).`,
 			});
+		} else {
+			sess.startDraft();
 		}
 	});
 
@@ -404,6 +410,24 @@ io.on("connection", function(socket) {
 		else if (sess.gridDraftState) sess.endGridDraft();
 		else if (sess.rochesterDraftState) sess.endRochesterDraft();
 		else sess.endDraft();
+	});
+
+	socket.on("pauseDraft", function() {
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID) return;
+
+		sess.pauseDraft();
+	});
+
+	socket.on("resumeDraft", function() {
+		const userID = this.userID;
+		if (!(userID in Connections)) return;
+		const sess = Sessions[Connections[userID].sessionID];
+		if (!sess || sess.owner != userID) return;
+
+		sess.resumeDraft({ title: "Draft Resumed" });
 	});
 
 	// Removes picked card from corresponding booster and notify other players.
@@ -502,8 +526,8 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(typeof teamDraft === 'boolean')) teamDraft = parseBoolean(teamDraft);
-		if (!(typeof teamDraft === 'boolean')) return;
+		if (!(typeof teamDraft === "boolean")) teamDraft = parseBoolean(teamDraft);
+		if (!(typeof teamDraft === "boolean")) return;
 
 		if (teamDraft == Sessions[sessionID].teamDraft) return;
 
@@ -870,7 +894,13 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(players.length === 8 && !Sessions[sessionID].teamDraft || players.length === 6 && Sessions[sessionID].teamDraft)	) return;
+		if (
+			!(
+				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
+				(players.length === 6 && Sessions[sessionID].teamDraft)
+			)
+		)
+			return;
 		Sessions[sessionID].generateBracket(players);
 		if (ack) ack({ code: 0 });
 	});
@@ -1001,13 +1031,7 @@ function removeUserFromSession(userID) {
 			// Keep session alive if the owner wasn't a player and is still connected.
 			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
 				deleteSession(sessionID);
-			} else {
-				// User was the owner of the session, transfer ownership to the first available users.
-				if (sess.owner == userID) {
-					sess.owner = sess.users.values().next().value;
-				}
-				sess.notifyUserChange();
-			}
+			} else sess.notifyUserChange();
 		} else if (userID === sess.owner && !sess.ownerIsPlayer && sess.users.size === 0) {
 			// User was a non-playing owner and alone in this session
 			deleteSession(sessionID);

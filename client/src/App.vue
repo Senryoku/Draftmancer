@@ -51,6 +51,12 @@
 					<label for="useCollection">Restrict to Collection</label>
 				</div>
 			</span>
+			<div>
+				<button
+					@click="displayedModal = 'draftLogs'"
+					v-tooltip="'Displays logs of your previous drafts'"
+				>Draft Logs</button>
+			</div>
 			<span>
 				<i
 					class="fas clickable"
@@ -231,7 +237,11 @@
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Draft:</strong>
-					<div class="inline" v-tooltip="'Add some dumb bots to your draft.'">
+					<div
+						class="inline"
+						:class="{disabled: teamDraft}"
+						v-tooltip="'Add some dumb bots to your draft.'"
+					>
 						<label for="bots">Bots</label>
 						<input
 							type="number"
@@ -316,11 +326,12 @@
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
 				Draft in progress!
-				<button
-					v-if="sessionOwner == userID"
-					class="stop"
-					@click="stopDraft"
-				>Stop Draft</button>
+				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">
+					<i class="fas fa-stop"></i> Stop Draft
+				</button>
+				<button v-if="sessionOwner == userID && maxTimer > 0" class="stop" @click="pauseDraft">
+					<i class="fas fa-pause"></i> Pause Draft
+				</button>
 			</div>
 		</div>
 
@@ -516,18 +527,6 @@
 					</li>
 				</ul>
 			</template>
-			<div>
-				<button
-					@click="shareSavedDraftLog"
-					v-show="savedDraftLog"
-					v-tooltip="'Reveal and share previous draft log with players in your session.'"
-				>Share saved Draft Log</button>
-				<button
-					@click="displayedModal = 'draftLog'"
-					v-show="draftLog"
-					v-tooltip="'Displays logs of your previous draft'"
-				>Draft Log</button>
-			</div>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
 					<input
@@ -579,9 +578,12 @@
 						</div>
 						<div>Booster #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
 					</div>
-					<div v-if="draftLog && draftLog.sessionID === sessionID" class="draft-watching-live-log">
+					<div
+						v-if="draftLogLive && draftLogLive.sessionID === sessionID"
+						class="draft-watching-live-log"
+					>
 						<draft-log-live
-							:draftlog="draftLog"
+							:draftlog="draftLogLive"
 							:show="['owner', 'everyone'].includes(draftLogRecipients)"
 							:language="language"
 						></draft-log-live>
@@ -1211,9 +1213,14 @@
 				</div>
 			</div>
 		</modal>
-		<modal v-if="displayedModal === 'draftLog' && draftLog" @close="displayedModal = ''">
-			<h2 slot="header">Draft Log</h2>
-			<draft-log slot="body" :draftlog="draftLog" :language="language"></draft-log>
+		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
+			<h2 slot="header">Draft Logs</h2>
+			<draft-log-history
+				slot="body"
+				:draftLogs="draftLogs"
+				:language="language"
+				@shareLog="shareSavedDraftLog"
+			></draft-log-history>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Statistics</h2>
@@ -1247,10 +1254,7 @@
 							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
 						</div>
 					</div>
-					<div
-						class="line"
-						v-bind:class="{ disabled: teamDraft || useCustomCardList}"
-					>
+					<div class="line" v-bind:class="{ disabled: teamDraft }">
 						<label for="max-players">Maximum Players</label>
 						<div class="right">
 							<input
@@ -1367,11 +1371,7 @@
 					>
 						<label for="team-draft">Team Draft</label>
 						<div class="right">
-							<input
-								type="checkbox"
-								id="team-draft"
-								v-model="teamDraft"
-							/>
+							<input type="checkbox" id="team-draft" v-model="teamDraft" />
 						</div>
 					</div>
 					<div
@@ -1585,6 +1585,7 @@
 			<bracket
 				slot="body"
 				:bracket="bracket"
+				:teamDraft="teamDraft"
 				:editable="userID === sessionOwner || !bracketLocked"
 				:locked="bracketLocked"
 				:fullcontrol="userID === sessionOwner"
@@ -1654,14 +1655,6 @@
 			</div>
 		</modal>
 		<footer>
-			<span>
-				<input type="file" id="log-input" @change="openLog" style="display: none;" accept=".txt" />
-				<a
-					onclick="document.querySelector('#log-input').click()"
-					v-tooltip="'Open a saved draft log.'"
-				>Open Draft Log</a>
-			</span>
-			<span>-</span>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<a>About</a>
 			</span>
