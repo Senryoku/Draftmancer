@@ -176,10 +176,10 @@ export function Session(id, owner) {
 	};
 	this.colorBalance = true;
 	this.maxDuplicates = {
-		common: 8,
-		uncommon: 4,
-		rare: 2,
-		mythic: 1,
+		common: 16,
+		uncommon: 8,
+		rare: 4,
+		mythic: 2,
 	};
 	this.foil = false;
 	this.useCustomCardList = false;
@@ -241,6 +241,10 @@ export function Session(id, owner) {
 		if (userID === this.owner && !this.ownerIsPlayer) return;
 
 		this.users.delete(userID);
+
+		// User was the owner of the session, transfer ownership to the first available users.
+		if (this.owner == userID) this.owner = this.users.values().next().value;
+
 		if (this.drafting) {
 			this.stopCountdown();
 			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
@@ -258,6 +262,7 @@ export function Session(id, owner) {
 
 			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
+					boostersPerPlayer: this.boostersPerPlayer,
 					customBoosters: this.customBoosters,
 				})
 			);
@@ -269,6 +274,7 @@ export function Session(id, owner) {
 			this.teamDraft = teamDraft;
 			if (teamDraft) {
 				this.maxPlayers = 6;
+				this.bots = 0;
 			} else {
 				this.maxPlayers = 8;
 			}
@@ -276,7 +282,8 @@ export function Session(id, owner) {
 			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
 					teamDraft: this.teamDraft,
-					maxPlayers: this.maxPlayers
+					maxPlayers: this.maxPlayers,
+					bots: this.bots,
 				})
 			);
 		}
@@ -1028,7 +1035,7 @@ export function Session(id, owner) {
 			Connections[this.owner].socket.emit("startDraft");
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients)) {
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			}
 		}
 
@@ -1117,7 +1124,7 @@ export function Session(id, owner) {
 			["owner", "everyone"].includes(this.draftLogRecipients) &&
 			this.owner in Connections
 		) {
-			Connections[this.owner].socket.emit("draftLog", this.draftLog);
+			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
 				cardID: cardID,
@@ -1220,8 +1227,11 @@ export function Session(id, owner) {
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	};
 
-	this.resumeDraft = function() {
+	this.resumeDraft = function(msg) {
+		if (!this.drafting) return;
+
 		console.warn(`Restarting draft for session ${this.id}.`);
+
 		this.forUsers(user =>
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
@@ -1230,7 +1240,7 @@ export function Session(id, owner) {
 		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
 			this.resumeCountdown();
 		}
-		this.emitMessage("Player reconnected", `Resuming draft...`);
+		this.emitMessage(msg.title, msg.text);
 	};
 
 	this.endDraft = function() {
@@ -1259,10 +1269,8 @@ export function Session(id, owner) {
 				break;
 			default:
 			case "delayed":
-				Connections[this.owner].socket.emit("draftLog", {
-					delayed: true,
-					draftLog: this.draftLog,
-				});
+				this.draftLog.delayed = true;
+				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				break;
 			case "everyone":
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
@@ -1275,6 +1283,13 @@ export function Session(id, owner) {
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
+	};
+
+	this.pauseDraft = function() {
+		if (!this.drafting || !this.countdownInterval) return;
+
+		this.stopCountdown();
+		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
 	};
 
 	///////////////////// Traditional Draft End  //////////////////////
@@ -1376,7 +1391,8 @@ export function Session(id, owner) {
 		}
 
 		// Resume draft if everyone is here or broacast the new state.
-		if (Object.keys(this.disconnectedUsers).length == 0) this.resumeDraft();
+		if (Object.keys(this.disconnectedUsers).length == 0)
+			this.resumeDraft({ title: "Player reconnected", text: "Resuming draft..." });
 		else this.broadcastDisconnectedUsers();
 	};
 
@@ -1397,7 +1413,7 @@ export function Session(id, owner) {
 			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
-				Connections[userID].socket.emit("draftLog", this.draftLog);
+				Connections[userID].socket.emit("draftLogLive", this.draftLog);
 		}
 	};
 

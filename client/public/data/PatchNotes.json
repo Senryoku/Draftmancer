@@ -1,5 +1,12 @@
 [
 	{
+		"date": "13/09/2020",
+		"notes": [
+			"Added a Draft Log History storing up to 25 logs.",
+			"Added a Team Draft option for 6 players with matching bracket (Contribution from Squerp)."
+		]
+	},
+	{
 		"date": "03/09/2020",
 		"notes": ["Sideboard can now be minimized to a single column to the right of the deck."]
 	},

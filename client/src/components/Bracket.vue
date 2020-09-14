@@ -15,8 +15,8 @@
 						<i class="fas fa-lock"></i> Lock
 					</label>
 				</span>
-				<button @click="$emit('generate')">{{!bracket.teamDraft ? "Re-Generate Single Elimination" : "Re-Generate"}} </button>
-				<button v-if="!bracket.teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
+				<button @click="$emit('generate')">{{!teamDraft ? "Re-Generate Single Elimination" : "Re-Generate Team Bracket"}} </button>
+				<button v-if="!teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
 			</div>
 			<div v-else-if="locked">
 				<span>
@@ -72,6 +72,7 @@ export default {
 	name: "Bracket",
 	props: {
 		bracket: { type: Object, required: true },
+		teamDraft: { type: Boolean, required: false },
 		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
