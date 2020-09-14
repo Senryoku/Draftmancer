@@ -779,6 +779,7 @@ describe("Checking sets", function() {
 		iko: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		akr: { common: 108, uncommon: 90, rare: 74, mythic: 31 },
+		znr: { common: 101, uncommon: 80, rare: 64, mythic: 20 },
 	};
 
 	beforeEach(function(done) {

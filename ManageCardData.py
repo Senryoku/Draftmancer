@@ -99,9 +99,10 @@ for path in MTGACardsFiles:
                     o['set'] = 'dom'
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Process AKR cards separately (except basics)
-                if o["set"] == "akr" and o['rarity'] != 1:
-                    AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
-                        o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
+                if o["set"] == "akr":
+                    if o['rarity'] != 1:
+                        AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
+                            o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
                 else:
                     # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                     # Adding name to disambiguate.
@@ -281,7 +282,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 else:
                     selection['rating'] = 0.5
                 if c['set'] == 'akr':
-                    selection['in_booster'] = c['booster']
+                    selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
                 elif not c['booster'] or 'Basic Land' in c['type_line']:
                     selection['in_booster'] = False
                     selection['rating'] = 0
