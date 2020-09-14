@@ -270,6 +270,7 @@ export function Session(id, owner) {
 			this.teamDraft = teamDraft;
 			if (teamDraft) {
 				this.maxPlayers = 6;
+				this.bots = 0;
 			} else {
 				this.maxPlayers = 8;
 			}
@@ -277,7 +278,8 @@ export function Session(id, owner) {
 			this.forUsers(u =>
 				Connections[u].socket.emit("sessionOptions", {
 					teamDraft: this.teamDraft,
-					maxPlayers: this.maxPlayers
+					maxPlayers: this.maxPlayers,
+					bots: this.bots,
 				})
 			);
 		}
@@ -972,10 +974,6 @@ export function Session(id, owner) {
 		// boostersPerPlayer works fine, what's the problem here?...
 		if (typeof this.bots != "number") {
 			this.bots = parseInt(this.bots);
-		}
-
-		if (this.teamDraft) {
-			this.bots = 0;
 		}
 
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;

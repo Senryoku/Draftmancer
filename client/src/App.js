@@ -866,11 +866,11 @@ export default {
 		// Draft Methods
 		startDraft: function() {
 			if (this.userID != this.sessionOwner) return false;
-			if (this.sessionUsers.length + this.bots < 2) {
+			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
 				Swal.fire({
 					icon: "info",
 					title: "Not enough players",
-					text: "Can't start draft: Not enough players (min. 2 including bots).",
+					text: `Can't start draft: Not enough players (min. 2 including bots).`,
 					customClass: SwalCustomClasses,
 				});
 				return false;

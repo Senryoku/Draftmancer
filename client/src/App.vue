@@ -237,7 +237,11 @@
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 					<strong>Draft:</strong>
-					<div v-if="!teamDraft" class="inline" v-tooltip="'Add some dumb bots to your draft.'">
+					<div
+						class="inline"
+						:class="{disabled: teamDraft}"
+						v-tooltip="'Add some dumb bots to your draft.'"
+					>
 						<label for="bots">Bots</label>
 						<input
 							type="number"
@@ -1249,10 +1253,7 @@
 							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
 						</div>
 					</div>
-					<div
-						class="line"
-						v-bind:class="{ disabled: teamDraft }"
-					>
+					<div class="line" v-bind:class="{ disabled: teamDraft }">
 						<label for="max-players">Maximum Players</label>
 						<div class="right">
 							<input
@@ -1369,11 +1370,7 @@
 					>
 						<label for="team-draft">Team Draft</label>
 						<div class="right">
-							<input
-								type="checkbox"
-								id="team-draft"
-								v-model="teamDraft"
-							/>
+							<input type="checkbox" id="team-draft" v-model="teamDraft" />
 						</div>
 					</div>
 					<div
