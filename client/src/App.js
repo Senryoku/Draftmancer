@@ -363,7 +363,7 @@ export default {
 				this.boostersPerPlayer = parseInt(data);
 			});
 			this.socket.on("teamDraft", data => {
-				this.teamDraft = parseBoolean(data);
+				this.teamDraft = data;
 			});
 			this.socket.on("bots", data => {
 				this.bots = parseInt(data);
