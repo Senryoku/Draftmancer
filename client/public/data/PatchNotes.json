@@ -1,5 +1,9 @@
 [
 	{
+		"date": "14/09/2020",
+		"notes": ["Zendikar Rising support!"]
+	},
+	{
 		"date": "13/09/2020",
 		"notes": [
 			"Added a Draft Log History storing up to 25 logs.",
