@@ -176,10 +176,10 @@ export function Session(id, owner) {
 	};
 	this.colorBalance = true;
 	this.maxDuplicates = {
-		common: 8,
-		uncommon: 4,
-		rare: 2,
-		mythic: 1,
+		common: 16,
+		uncommon: 8,
+		rare: 4,
+		mythic: 2,
 	};
 	this.foil = false;
 	this.useCustomCardList = false;
