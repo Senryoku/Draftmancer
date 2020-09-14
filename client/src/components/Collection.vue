@@ -115,14 +115,13 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
+			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					const set = completeSet ? card.set : "others";
-					if (!(card.set in stats) && completeSet)
-						stats[card.set] = baseSet(card.set, SetsInfos[card.set].fullName);
 					let categories = [set, "all"];
 					if (Constant.StandardSets.includes(card.set)) categories.push("standard");
 					for (let s of categories) {

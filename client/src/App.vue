@@ -1057,18 +1057,14 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>14 August 2020</em>
+							<p>Zendikar Rising is now available!</p>
 							<em>19 August 2020</em>
 							<p>
 								Grid Draft is now available! It's a draft variant for two players particularly suited
 								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
 								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
 								round. Try it out from the new "Other Game Modes" dropdown.
-							</p>
-							<em>06 August 2020</em>
-							<p>
-								You should now correctly find one Planeswalker in each War of the Spark booster, and one
-								legendary creature in each Dominaria pack. Also, you can now zoom on cards for extra
-								readability by right clicking!
 							</p>
 						</div>
 					</div>
@@ -1088,16 +1084,18 @@
 							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
 						</div>
 					</div>
+					<!--
 					<div class="container">
 						<div class="section-title">
 							<h2>Survey</h2>
 						</div>
 						<div class="welcome-section">
 							Answer a
-							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short 3-question survey</a>
+							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short survey</a>
 							to help us improve the draft app.
 						</div>
 					</div>
+					-->
 				</div>
 			</div>
 		</div>
