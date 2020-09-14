@@ -241,6 +241,10 @@ export function Session(id, owner) {
 		if (userID === this.owner && !this.ownerIsPlayer) return;
 
 		this.users.delete(userID);
+
+		// User was the owner of the session, transfer ownership to the first available users.
+		if (this.owner == userID) this.owner = this.users.values().next().value;
+
 		if (this.drafting) {
 			this.stopCountdown();
 			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);

@@ -1031,13 +1031,7 @@ function removeUserFromSession(userID) {
 			// Keep session alive if the owner wasn't a player and is still connected.
 			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
 				deleteSession(sessionID);
-			} else {
-				// User was the owner of the session, transfer ownership to the first available users.
-				if (sess.owner == userID) {
-					sess.owner = sess.users.values().next().value;
-				}
-				sess.notifyUserChange();
-			}
+			} else sess.notifyUserChange();
 		} else if (userID === sess.owner && !sess.ownerIsPlayer && sess.users.size === 0) {
 			// User was a non-playing owner and alone in this session
 			deleteSession(sessionID);
