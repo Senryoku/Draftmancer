@@ -364,14 +364,13 @@
 			</div>
 			<div
 				v-tooltip="'Maximum players can be adjusted in session settings.'"
-				style="flex: 0 3 auto; text-align: center; font-size: 0.8em"
+				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
 			>
 				Players<br />({{ sessionUsers.length }}/{{ maxPlayers }})
 			</div>
 			<i
 				v-if="userID == sessionOwner && !drafting"
 				class="fas fa-random clickable"
-				style="margin-left: 0.5em"
 				@click="randomizeSeating"
 				v-tooltip="'Randomize Seating Order.'"
 			></i>
