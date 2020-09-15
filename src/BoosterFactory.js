@@ -130,7 +130,8 @@ function rollSpecialCardRarity(cardCounts, targets, options) {
 	let pickedRarity = "uncommon";
 	if (
 		cardCounts["uncommon"] === 0 ||
-		(cardCounts["rare"] + cardCounts["mythic"] > 0 && Math.random() < targets.rare / targets.uncommon)
+		(cardCounts["rare"] + cardCounts["mythic"] > 0 &&
+			Math.random() < targets.rare / (targets.rare + targets.uncommon))
 	) {
 		if (
 			cardCounts["rare"] === 0 ||
@@ -192,6 +193,7 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	// At least one Legendary Creature per booster
+	// https://www.lethe.xyz/mtg/collation/dom.html
 	dom: (cardPool, landSlot, options) => {
 		const regex = /Legendary.*Creature/;
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
