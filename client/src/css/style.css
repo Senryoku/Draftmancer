@@ -2,16 +2,22 @@ body {
 	margin: 0;
 	margin-left: 0;
 	background-color: rgb(32, 32, 32);
-	background-image: url("../assets/img/m21-min.png");
-	background-position: 85% -50px;
+	background-image: url("../assets/img/nahiri-zendikar-min.png");
+	background-position: 90% 0;
 	background-repeat: no-repeat;
-	background-size: 40%;
 	color: #ddd;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 	position: relative;
 	min-height: calc(100vh - 2em);
 	padding-bottom: 2em;
+}
+
+@media (max-width: 1600px) {
+	body {
+		overflow-x: hidden;
+		background-position: 90% 5em;
+	}
 }
 
 a,
@@ -103,10 +109,10 @@ label {
 
 .bracket-player.teama,
 .player-list > .teama {
-  background: #21402e;
+	background: #21402e;
 }
 
 .bracket-player.teamb,
 .player-list > .teamb {
-  background: #222440;
+	background: #222440;
 }
