@@ -33,8 +33,8 @@
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<h2>{{ selectedLog.userName }}</h2>
 			<select v-model="displayOptions.category">
-				<option>Picks</option>
 				<option>Cards</option>
+				<option>Picks</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">
 				<i class="fas fa-clipboard-list"></i> Export in MTGA format
@@ -86,7 +86,7 @@ export default {
 		return {
 			displayOptions: {
 				detailsUserID: undefined,
-				category: "Picks",
+				category: "Cards",
 				textList: false,
 			},
 		};
