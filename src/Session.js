@@ -757,6 +757,7 @@ export function Session(id, owner) {
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
+		this.disconnectedUsers = {};
 	};
 
 	this.winstonNextRound = function() {
@@ -855,6 +856,7 @@ export function Session(id, owner) {
 		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
 		this.gridDraftState = null;
 		this.drafting = false;
+		this.disconnectedUsers = {};
 	};
 
 	this.gridDraftNextRound = function() {
@@ -927,6 +929,7 @@ export function Session(id, owner) {
 		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
 		this.rochesterDraftState = null;
 		this.drafting = false;
+		this.disconnectedUsers = {};
 	};
 
 	this.rochesterDraftNextRound = function() {
@@ -1279,6 +1282,7 @@ export function Session(id, owner) {
 
 		logSession("Draft", this);
 		this.boosters = [];
+		this.disconnectedUsers = {};
 
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
