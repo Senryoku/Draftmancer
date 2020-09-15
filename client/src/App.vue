@@ -579,7 +579,11 @@
 								:key="msg.timestamp"
 							>
 								<span class="chat-author">{{
-									msg.author in userByID ? userByID[msg.author].userName : "(Left)"
+									msg.author in userByID
+										? userByID[msg.author].userName
+										: msg.author === sessionOwner && sessionOwnerUsername
+										? sessionOwnerUsername
+										: "(Left)"
 								}}</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
