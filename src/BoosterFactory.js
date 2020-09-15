@@ -6,6 +6,16 @@ import { removeCardFromDict, pickCard } from "./cardUtils.js";
 
 // Generates booster for regular MtG Sets
 
+const mythicRate = 1.0 / 8.0;
+const foilRate = 15.0 / 63.0;
+// 1/16 chances of a foil basic land added to the common slot. Mythic to common
+const foilRarityRates = {
+	mythic: 1.0 / 128,
+	rare: 1.0 / 128 + 7.0 / 128,
+	uncommon: 1.0 / 16 + 3.0 / 16,
+	common: 1.0,
+};
+
 export function BoosterFactory(cardPool, landSlot, options) {
 	this.cardPool = cardPool;
 	this.landSlot = landSlot;
@@ -28,16 +38,6 @@ export function BoosterFactory(cardPool, landSlot, options) {
 	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
 	 */
 	this.generateBooster = function(targets) {
-		const mythicRate = 1.0 / 8.0;
-		const foilRate = 15.0 / 63.0;
-		// 1/16 chances of a foil basic land added to the common slot. Mythic to common
-		const foilRarityRates = {
-			mythic: 1.0 / 128,
-			rare: 1.0 / 128 + 7.0 / 128,
-			uncommon: 1.0 / 16 + 3.0 / 16,
-			common: 1.0,
-		};
-
 		let booster = [];
 
 		let addedFoils = 0;
@@ -112,45 +112,77 @@ export function BoosterFactory(cardPool, landSlot, options) {
 	};
 }
 
+function filterCardPool(cardPool, predicate) {
+	const specialCards = {};
+	const filteredCardPool = {};
+	for (let slot in cardPool) {
+		specialCards[slot] = {};
+		filteredCardPool[slot] = {};
+		for (let cid in cardPool[slot]) {
+			if (predicate(cid)) specialCards[slot][cid] = cardPool[slot][cid];
+			else filteredCardPool[slot][cid] = cardPool[slot][cid];
+		}
+	}
+	return [specialCards, filteredCardPool];
+}
+
+function rollSpecialCardRarity(cardCounts, targets, options) {
+	let pickedRarity = "uncommon";
+	if (
+		cardCounts["uncommon"] === 0 ||
+		(cardCounts["rare"] + cardCounts["mythic"] > 0 && Math.random() < targets.rare / targets.uncommon)
+	) {
+		if (
+			cardCounts["rare"] === 0 ||
+			(cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate)
+		)
+			pickedRarity = "mythic";
+		else pickedRarity = "rare";
+	}
+	return pickedRarity;
+}
+
+function countBySlot(cardPool) {
+	const counts = {};
+	for (let slot in cardPool) counts[slot] = Object.values(cardPool[slot]).reduce((acc, c) => acc + c, 0);
+	return counts;
+}
+
 // Set specific rules.
-// Neither DOM or WAR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
+// Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories = {
 	// Exactly one Planeswalker per booster
 	war: (cardPool, landSlot, options) => {
-		let planeswalkers = {};
-		let filteredCardPool = {};
-		for (let slot in cardPool) {
-			filteredCardPool[slot] = {};
-			for (let cid in cardPool[slot]) {
-				if (Cards[cid].type.includes("Planeswalker")) planeswalkers[cid] = cardPool[slot][cid];
-				else filteredCardPool[slot][cid] = cardPool[slot][cid];
-			}
-		}
+		const [planeswalkers, filteredCardPool] = filterCardPool(cardPool, cid =>
+			Cards[cid].type.includes("Planeswalker")
+		);
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.planeswalkers = planeswalkers;
 		factory.originalGenBooster = factory.generateBooster;
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
+			const plwCounts = countBySlot(this.planeswalkers);
 			// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
 			if (
 				((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
 					(!("rare" in targets) || targets["rare"] <= 0)) ||
-				Object.values(this.planeswalkers).length === 0 ||
-				Object.values(this.planeswalkers).every(arr => arr.length === 0)
+				Object.values(plwCounts).every(c => c === 0)
 			) {
 				return this.originalGenBooster(targets);
 			} else {
-				let updatedTargets = Object.assign({}, targets);
-				let pickedCID = pickCard(this.planeswalkers, []);
-				if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[Cards[pickedCID].rarity];
-				let booster = this.originalGenBooster(updatedTargets);
+				const pickedRarity = rollSpecialCardRarity(plwCounts, targets, options);
+				const pickedCID = pickCard(this.planeswalkers[pickedRarity], []);
+
+				const updatedTargets = Object.assign({}, targets);
+				if (pickedRarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[pickedRarity];
+
+				const booster = this.originalGenBooster(updatedTargets);
 				// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
-				if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
-					booster.unshift(pickedCID);
+				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
+						booster.findIndex(c => Cards[c].rarity === pickedRarity),
 						0,
 						pickedCID
 					);
@@ -159,36 +191,31 @@ export const SetSpecificFactories = {
 		};
 		return factory;
 	},
-	// Exactly one Legendary Creature per booster
+	// At least one Legendary Creature per booster
 	dom: (cardPool, landSlot, options) => {
-		let legendaryCreatures = {};
-		let filteredCardPool = {};
 		const regex = /Legendary.*Creature/;
-		for (let slot in cardPool) {
-			filteredCardPool[slot] = {};
-			for (let cid in cardPool[slot])
-				if (Cards[cid].type.match(regex)) legendaryCreatures[cid] = cardPool[slot][cid];
-				else filteredCardPool[slot][cid] = cardPool[slot][cid];
-		}
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.legendaryCreatures = legendaryCreatures;
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
+			const legendaryCounts = countBySlot(this.legendaryCreatures);
 			// Ignore the rule if there's no legendary creatures left
-			if (
-				Object.values(legendaryCreatures).length === 0 ||
-				Object.values(legendaryCreatures).every(arr => arr.length === 0)
-			) {
+			if (Object.values(legendaryCounts).every(c => c === 0)) {
 				return this.originalGenBooster(targets);
 			} else {
-				let updatedTargets = Object.assign({}, targets);
-				let pickedCID = pickCard(this.legendaryCreatures, []);
+				// Roll for legendary rarity
+				const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, options);
+				const pickedCID = pickCard(this.legendaryCreatures[pickedRarity], []);
 				removeCardFromDict(pickedCID, this.cardPool[Cards[pickedCID].rarity]);
-				if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[Cards[pickedCID].rarity];
-				let booster = this.originalGenBooster(updatedTargets);
-				// Insert the card in the appropriate slot
+
+				const updatedTargets = Object.assign({}, targets);
+				if (pickedRarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[pickedRarity];
+
+				const booster = this.originalGenBooster(updatedTargets);
+				// Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
 				booster.unshift(pickedCID);
 				return booster;
 			}
@@ -197,41 +224,35 @@ export const SetSpecificFactories = {
 	},
 	// Exactly one MDFC per booster
 	znr: (cardPool, landSlot, options) => {
-		let mdfc = {};
-		let filteredCardPool = {};
-		for (let slot in cardPool) {
-			filteredCardPool[slot] = {};
-			for (let cid in cardPool[slot]) {
-				// CHECK THIS
-				if (Cards[cid].name.includes("//")) mdfc[cid] = cardPool[slot][cid];
-				else filteredCardPool[slot][cid] = cardPool[slot][cid];
-			}
-		}
+		const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].name.includes("//"));
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-		factory.mdfc = mdfc;
+		factory.mdfcByRarity = mdfcByRarity;
 		factory.originalGenBooster = factory.generateBooster;
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
+			const mdfcCounts = countBySlot(this.mdfcByRarity);
 			// Ignore the rule if suitable rarities are ignored, or there's no mdfc left
 			if (
 				((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
 					(!("rare" in targets) || targets["rare"] <= 0)) ||
-				Object.values(this.mdfc).length === 0 ||
-				Object.values(this.mdfc).every(arr => arr.length === 0)
+				Object.values(mdfcCounts).every(c => c === 0)
 			) {
 				return this.originalGenBooster(targets);
 			} else {
+				// Roll for MDFC rarity
+				const pickedRarity = rollSpecialCardRarity(mdfcCounts, targets, options);
+				const pickedCID = pickCard(this.mdfcByRarity[pickedRarity], []);
+
 				let updatedTargets = Object.assign({}, targets);
-				let pickedCID = pickCard(this.mdfc, []);
-				if (Cards[pickedCID].rarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[Cards[pickedCID].rarity];
+				if (pickedRarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[pickedRarity];
+
 				let booster = this.originalGenBooster(updatedTargets);
 				// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
-				if (Cards[pickedCID].rarity === "rare" || Cards[pickedCID].rarity === "mythic")
-					booster.unshift(pickedCID);
+				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === Cards[pickedCID].rarity),
+						booster.findIndex(c => Cards[c].rarity === pickedRarity),
 						0,
 						pickedCID
 					);
