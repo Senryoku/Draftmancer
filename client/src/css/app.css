@@ -564,15 +564,16 @@ footer span {
 	padding: 0.5em;
 	display: flex;
 	justify-content: space-between;
-	align-items: baseline;
+	align-items: center;
 }
 
 ul.player-list {
-	display: inline-block;
+	display: inline-flex;
 	list-style: none;
-	margin: 0;
 	flex-grow: 2;
-	padding-left: 1.5em;
+	padding-left: 0;
+	margin: 0;
+	flex-wrap: wrap;
 }
 
 .player-list li {
@@ -582,10 +583,13 @@ ul.player-list {
 	align-items: baseline;
 	padding: 0.5em;
 	min-width: 6em;
-	margin-right: 1em;
+	max-width: 12em;
+	margin-right: 0.5em;
+	margin-left: 0.5em;
 	background: #282828;
 	border-radius: 5px;
 	transition: all 0.2s;
+	flex: 1 1 9.5em;
 }
 
 .player-list > li.draggable:hover {
@@ -594,10 +598,11 @@ ul.player-list {
 }
 
 .player-name {
-	max-width: 7.5em;
+	min-width: 5em;
+	flex: 1 1 auto;
 	overflow: hidden;
 	white-space: nowrap;
-	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 6em, transparent);
+	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 5em, transparent);
 }
 
 .move-player {

@@ -348,9 +348,8 @@
 				v-if="!ownerIsPlayer"
 				class="generic-container"
 				v-tooltip="'Non-playing session owner.'"
-				style="margin-right: 0.5em;"
+				style="flex: 0 3 auto; text-align: center;"
 			>
-				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 				<i
 					class="fas fa-crown subtle-gold"
 					v-tooltip="
@@ -359,19 +358,23 @@
 							: 'Session owner is disconnected.'
 					"
 				></i>
+				<br />
+				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
-			<div>
-				<span v-tooltip="'Maximum players can be adjusted in session settings.'"
-					>Players ({{ sessionUsers.length }}/{{ maxPlayers }})</span
-				>
-				<i
-					v-if="userID == sessionOwner && !drafting"
-					class="fas fa-random clickable"
-					@click="randomizeSeating"
-					v-tooltip="'Randomize Seating Order.'"
-				></i>
+			<div
+				v-tooltip="'Maximum players can be adjusted in session settings.'"
+				style="flex: 0 3 auto; text-align: center; font-size: 0.8em"
+			>
+				Players<br />({{ sessionUsers.length }}/{{ maxPlayers }})
 			</div>
+			<i
+				v-if="userID == sessionOwner && !drafting"
+				class="fas fa-random clickable"
+				style="margin-left: 0.5em"
+				@click="randomizeSeating"
+				v-tooltip="'Randomize Seating Order.'"
+			></i>
 			<template v-if="!drafting">
 				<draggable
 					tag="ul"
@@ -391,7 +394,7 @@
 						}"
 						:data-userid="id"
 					>
-						<span class="player-name">{{ userByID[id].userName }}</span>
+						<div class="player-name">{{ userByID[id].userName }}</div>
 						<template v-if="userID == sessionOwner">
 							<i
 								class="fas fa-chevron-left clickable move-player move-player-left"
@@ -495,7 +498,7 @@
 								v-tooltip="'Passing order'"
 							></i>
 						</template>
-						<span class="player-name">{{ user.userName }}</span>
+						<div class="player-name">{{ user.userName }}</div>
 						<template v-if="!user.isBot && !user.disconnected">
 							<div class="status-icons">
 								<i
