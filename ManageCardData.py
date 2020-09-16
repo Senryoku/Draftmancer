@@ -279,6 +279,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 # selection['subtypes'] = subtypes
                 if selection['name'] in CardRatings:
                     selection['rating'] = CardRatings[selection['name']]
+                elif selection['name'].split(" //")[0] in CardRatings:
+                    selection['rating'] = CardRatings[selection['name'].split(
+                        " //")[0]]
                 else:
                     selection['rating'] = 0.5
                 if c['set'] == 'akr':
