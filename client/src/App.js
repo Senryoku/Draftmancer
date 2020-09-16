@@ -1517,6 +1517,17 @@ export default {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
+		shareDeck: function() {
+			this.socket.emit(
+						"shareDeck",
+						{
+							deck: this.deck,
+							sideboard: this.sideboard,
+							lands: this.lands,
+						},
+			);
+			fireToast("success", "Deck now visible in logs, bracket, and seating order!");
+		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(

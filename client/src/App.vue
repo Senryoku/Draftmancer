@@ -863,6 +863,14 @@
 						>
 							<i class="fas fa-clipboard"></i> Export (Simple)
 						</button>
+						<button
+							v-if="deck.length > 0"
+							type="button"
+							@click="shareDeck()"
+							v-tooltip="'Share deck with other players'"
+						>
+							<i class="fas fa-share-square"></i> Share Deck
+						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
