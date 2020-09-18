@@ -37,14 +37,31 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
+function getPublicSessionData(sid) {
+	return {
+		id: sid,
+		description: Sessions[sid].description,
+		players: Sessions[sid].users.size,
+		maxPlayers: Sessions[sid].maxPlayers,
+	};
+}
+
 function getPublicSessions() {
 	let publicSessions = [];
 	for (let s in Sessions) {
 		if (Sessions[s].isPublic) {
-			publicSessions.push(s);
+			publicSessions.push(getPublicSessionData(s));
 		}
 	}
 	return publicSessions;
+}
+
+function updatePublicSession(sid) {
+	if (!(sid in Sessions) || !Sessions[sid].isPublic) {
+		io.emit("updatePublicSession", { id: sid, isPrivate: true });
+	} else {
+		io.emit("updatePublicSession", getPublicSessionData(sid));
+	}
 }
 
 // Prepare local custom card lists
@@ -858,8 +875,21 @@ io.on("connection", function(socket) {
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
 		}
-		// Update all clients
-		io.emit("publicSessions", getPublicSessions());
+		updatePublicSession(sessionID);
+	});
+
+	socket.on("setDescription", function(description) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (description === Sessions[sessionID].description) return;
+
+		Sessions[sessionID].description = description;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
+		}
+		updatePublicSession(sessionID);
 	});
 
 	socket.on("replaceDisconnectedPlayers", function() {
@@ -1009,13 +1039,14 @@ function addUserToSession(userID, sessionID) {
 	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID);
 
 	Sessions[sessionID].addUser(userID);
+	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
 function deleteSession(sessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
 	process.nextTick(() => {
 		delete Sessions[sessionID];
-		if (wasPublic) io.emit("publicSessions", getPublicSessions());
+		if (wasPublic) updatePublicSession(sessionID);
 	});
 }
 
@@ -1026,6 +1057,7 @@ function removeUserFromSession(userID) {
 		let sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
 			sess.remUser(userID);
+			if (sess.isPublic) updatePublicSession(sessionID);
 
 			Connections[userID].sessionID = null;
 			// Keep session alive if the owner wasn't a player and is still connected.

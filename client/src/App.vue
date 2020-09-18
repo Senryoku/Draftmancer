@@ -83,17 +83,6 @@
 					<label for="notification-input">Notifications</label>
 				</span>
 			</span>
-
-			<span class="generic-container">
-				<div v-show="publicSessions.length == 0" class="disable-warning">(No public sessions)</div>
-				<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="public-session-controls">
-					<label for="public-sessions">Public sessions</label>
-					<select id="public-sessions" v-model="selectedPublicSession" style="max-width: 10em">
-						<option v-for="s in publicSessions" :value="s" :key="s">{{ s }}</option>
-					</select>
-					<input type="button" value="Join" @click="joinPublicSession" />
-				</span>
-			</span>
 		</div>
 
 		<!-- Session Options -->
@@ -366,7 +355,9 @@
 				v-tooltip="'Maximum players can be adjusted in session settings.'"
 				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
 			>
-				Players<br />({{ sessionUsers.length }}/{{ maxPlayers }})
+				Players
+				<br />
+				({{ sessionUsers.length }}/{{ maxPlayers }})
 			</div>
 			<i
 				v-if="userID == sessionOwner && !drafting"
@@ -577,13 +568,15 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span class="chat-author">{{
-									msg.author in userByID
-										? userByID[msg.author].userName
-										: msg.author === sessionOwner && sessionOwnerUsername
-										? sessionOwnerUsername
-										: "(Left)"
-								}}</span>
+								<span class="chat-author">
+									{{
+										msg.author in userByID
+											? userByID[msg.author].userName
+											: msg.author === sessionOwner && sessionOwnerUsername
+											? sessionOwnerUsername
+											: "(Left)"
+									}}
+								</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
@@ -755,10 +748,9 @@
 								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
 							</template>
 							<template v-else-if="gridDraftState.currentPlayer === null">
-								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
-									>This was the last booster! Let me push these booster wrappers off the
-									table...</template
-								>
+								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
+									This was the last booster! Let me push these booster wrappers off the table...
+								</template>
 								<template v-else>Advancing to the next booster...</template>
 							</template>
 							<template v-else>
@@ -1087,6 +1079,49 @@
 								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
 								round. Try it out from the new "Other Game Modes" dropdown.
 							</p>
+						</div>
+					</div>
+					<div class="container">
+						<div class="section-title">
+							<h2>Public Sessions</h2>
+						</div>
+						<div class="welcome-section">
+							<template v-if="userID === sessionOwner">
+								<div v-if="isPublic" style="display: flex;">
+									<button @click="isPublic = false">Set session as Private</button>
+									<input
+										type="text"
+										placeholder="Session Description"
+										v-model="description"
+										style="flex-grow: 1"
+									/>
+								</div>
+								<div v-else>
+									<button @click="isPublic = true">Set session as Public</button>
+								</div>
+							</template>
+
+							<p v-if="publicSessions.length === 0">No public sessions</p>
+							<table v-else class="public-sessions">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Players</th>
+										<th>Description</th>
+										<th>Join</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="s in publicSessions" :key="s.id">
+										<td>{{ s.id }}</td>
+										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+										<td>{{ s.description }}</td>
+										<td>
+											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					<div class="container">
@@ -1441,9 +1476,9 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">{{
-										setsInfos[code].fullName
-									}}</option>
+									<option v-for="code in sets" :value="code" :key="code">
+										{{ setsInfos[code].fullName }}
+									</option>
 								</select>
 							</div>
 						</div>
