@@ -91,7 +91,12 @@
 				<span id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
-						<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
+						<input
+							:type="hideSessionID ? 'password' : 'text'"
+							id="session-id"
+							v-model="sessionID"
+							maxlength="50"
+						/>
 					</div>
 					<i
 						class="far fa-fw clickable"
@@ -1086,22 +1091,20 @@
 							<h2>Public Sessions</h2>
 						</div>
 						<div class="welcome-section">
-							<template v-if="userID === sessionOwner">
-								<div v-if="isPublic" style="display: flex;">
-									<button @click="isPublic = false">Set session as Private</button>
-									<input
-										type="text"
-										placeholder="Session Description"
-										v-model="description"
-										style="flex-grow: 1"
-									/>
-								</div>
-								<div v-else>
-									<button @click="isPublic = true">Set session as Public</button>
-								</div>
-							</template>
+							<div v-if="userID === sessionOwner" style="display: flex;">
+								<button @click="isPublic = !isPublic">
+									Set session as {{ isPublic ? "Private" : "Public" }}
+								</button>
+								<input
+									type="text"
+									placeholder="Session Description"
+									v-model="description"
+									style="flex-grow: 1"
+									maxlength="70"
+								/>
+							</div>
 
-							<p v-if="publicSessions.length === 0">No public sessions</p>
+							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
 							<table v-else class="public-sessions">
 								<thead>
 									<tr>
@@ -1287,6 +1290,26 @@
 						<label for="is-public">Public</label>
 						<div class="right">
 							<input type="checkbox" v-model="isPublic" id="is-public" />
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Public description for your session. Ex: Peasant Cube, will launch at 8pm. Matches played on Arena.</p>',
+						}"
+					>
+						<label for="session-desc">Description</label>
+						<div class="right">
+							<input
+								type="text"
+								id="session-desc"
+								placeholder="Session public description"
+								v-model="description"
+								maxlength="70"
+								style="width:90%"
+							/>
 						</div>
 					</div>
 					<div

@@ -253,7 +253,7 @@ export default {
 			this.socket.on("updatePublicSession", session => {
 				const idx = this.publicSessions.findIndex(s => s.id === session.id);
 				if (session.isPrivate) {
-					if (idx !== -1) delete this.publicSessions[idx];
+					if (idx !== -1) this.publicSessions.splice(idx, 1);
 				} else {
 					if (idx !== -1) this.publicSessions.splice(idx, 1, session);
 					else this.publicSessions.push(session);

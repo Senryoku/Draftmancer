@@ -885,7 +885,7 @@ io.on("connection", function(socket) {
 
 		if (description === Sessions[sessionID].description) return;
 
-		Sessions[sessionID].description = description;
+		Sessions[sessionID].description = description.substring(0, 70);
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
 		}

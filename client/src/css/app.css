@@ -415,8 +415,26 @@ footer span {
 	width: 100%;
 }
 
+.public-sessions thead {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+.public-sessions tr:nth-child(odd) {
+	background-color: rgba(255, 255, 255, 0.025);
+}
+
+.public-sessions tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.public-sessions tr td:nth-child(1) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 11em;
+}
+
 .public-sessions tr td:nth-child(3) {
-	width: 100%;
+	width: 80%;
+	word-break: break-all;
 }
 
 .public-sessions tr td:not(:nth-child(3)) {
