@@ -33,6 +33,7 @@
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<h2>{{ selectedLog.userName }}</h2>
 			<select v-model="displayOptions.category">
+				<option>Deck</option>
 				<option>Cards</option>
 				<option>Picks</option>
 			</select>
