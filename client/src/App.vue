@@ -1099,7 +1099,7 @@
 								<button @click="isPublic = !isPublic">Set session as {{ isPublic ? "Private" : "Public" }}</button>
 								<input
 									type="text"
-									placeholder="Session Description"
+									placeholder="Enter a description for your session"
 									v-model="description"
 									style="flex-grow: 1"
 									maxlength="70"
