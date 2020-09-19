@@ -49,7 +49,7 @@
 							<i class="fas fa-share-square"></i> Share with session and unlock
 						</button>
 					</template>
-					<button type="button" class="cancel" @click="deleteLog(draftLog)">
+					<button type="button" class="stop" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
 				</span>

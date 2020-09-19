@@ -12,6 +12,31 @@ import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
 
+export const optionProps = [
+	"ownerIsPlayer",
+	"setRestriction",
+	"isPublic",
+	"description",
+	"ignoreCollections",
+	"boostersPerPlayer",
+	"teamDraft",
+	"bots",
+	"maxTimer",
+	"maxPlayers",
+	"mythicPromotion",
+	"boosterContent",
+	"colorBalance",
+	"maxDuplicates",
+	"foil",
+	"useCustomCardList",
+	"customCardList",
+	"distributionMode",
+	"customBoosters",
+	"burnedCardsPerRound",
+	"draftLogRecipients",
+	"bracketLocked",
+];
+
 function Bracket(players) {
 	this.players = players;
 	this.results = [
@@ -152,7 +177,7 @@ export function RochesterDraftState(players, boosters) {
 	};
 }
 
-export function Session(id, owner) {
+export function Session(id, owner, options) {
 	this.id = id;
 	this.owner = owner;
 	this.users = new Set();
@@ -189,8 +214,10 @@ export function Session(id, owner) {
 	this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
-	this.bracket = undefined;
 	this.bracketLocked = false; // If set, only the owner can edit the results.
+	this.bracket = undefined;
+
+	if (options) for (let p in options) this[p] = options[p];
 
 	// Draft state
 	this.drafting = false;
@@ -311,32 +338,12 @@ export function Session(id, owner) {
 	};
 
 	this.syncSessionOptions = function(userID) {
-		Connections[userID].socket.emit("sessionOptions", {
+		const options = {
 			sessionOwner: this.owner,
-			ownerIsPlayer: this.ownerIsPlayer,
-			setRestriction: this.setRestriction,
-			isPublic: this.isPublic,
-			description: this.description,
-			ignoreCollections: this.ignoreCollections,
-			boostersPerPlayer: this.boostersPerPlayer,
-			teamDraft: this.teamDraft,
-			bots: this.bots,
-			maxTimer: this.maxTimer,
-			maxPlayers: this.maxPlayers,
-			mythicPromotion: this.mythicPromotion,
-			boosterContent: this.boosterContent,
-			colorBalance: this.colorBalance,
-			maxDuplicates: this.maxDuplicates,
-			foil: this.foil,
-			useCustomCardList: this.useCustomCardList,
-			customCardList: this.customCardList,
-			distributionMode: this.distributionMode,
-			customBoosters: this.customBoosters,
-			burnedCardsPerRound: this.burnedCardsPerRound,
-			draftLogRecipients: this.draftLogRecipients,
 			bracket: this.bracket,
-			bracketLocked: this.bracketLocked,
-		});
+		};
+		for (let p of optionProps) options[p] = this[p];
+		Connections[userID].socket.emit("sessionOptions", options);
 	};
 
 	// Returns current card pool according to all session options (Collections, setRestrictions...)

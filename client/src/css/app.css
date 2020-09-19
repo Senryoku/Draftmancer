@@ -126,15 +126,6 @@ footer span {
 	background-color: #2972b6;
 }
 
-#main-container button.cancel {
-	background-color: #d33;
-	text-shadow: 0 0 2px black;
-}
-
-#main-container button.cancel:hover {
-	background-color: #c22;
-}
-
 #main-container button.stop {
 	background-color: darkred;
 }

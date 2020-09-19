@@ -21,7 +21,7 @@ import uuidv1 from "uuid/v1.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
-import { Session, Sessions } from "./src/Session.js";
+import { Session, Sessions, optionProps } from "./src/Session.js";
 import Cards from "./src/Cards.js";
 import parseCardList from "./src/parseCardList.js";
 
@@ -1041,8 +1041,18 @@ function joinSession(sessionID, userID) {
 }
 
 function addUserToSession(userID, sessionID) {
-	if (Connections[userID].sessionID !== null) removeUserFromSession(userID);
-	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID);
+	const options = {};
+	if (Connections[userID].sessionID !== null) {
+		// Transfer session options to the new one if applicable
+		if (userID === Sessions[Connections[userID].sessionID].owner) {
+			for (let p of optionProps) {
+				options[p] = Sessions[Connections[userID].sessionID][p];
+			}
+		}
+		removeUserFromSession(userID);
+	}
+
+	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, options);
 
 	Sessions[sessionID].addUser(userID);
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);

@@ -717,7 +717,7 @@
 							</div>
 							<div class="winston-current-pile-options">
 								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
-								<button class="cancel" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
+								<button class="stop" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
 									Skip Pile
 									<span v-show="index === 2">and Draw</span>
 								</button>
