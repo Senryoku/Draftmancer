@@ -1076,22 +1076,6 @@
 				<div class="welcome-col">
 					<div class="container">
 						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<div class="welcome-section">
-							<em>14 August 2020</em>
-							<p>Zendikar Rising is now available!</p>
-							<em>19 August 2020</em>
-							<p>
-								Grid Draft is now available! It's a draft variant for two players particularly suited
-								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
-								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
-								round. Try it out from the new "Other Game Modes" dropdown.
-							</p>
-						</div>
-					</div>
-					<div class="container">
-						<div class="section-title">
 							<h2>Public Sessions</h2>
 						</div>
 						<div class="welcome-section">
@@ -1127,6 +1111,22 @@
 									</tr>
 								</tbody>
 							</table>
+						</div>
+					</div>
+					<div class="container">
+						<div class="section-title">
+							<h2>News</h2>
+						</div>
+						<div class="welcome-section">
+							<em>14 August 2020</em>
+							<p>Zendikar Rising is now available!</p>
+							<em>19 August 2020</em>
+							<p>
+								Grid Draft is now available! It's a draft variant for two players particularly suited
+								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
+								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
+								round. Try it out from the new "Other Game Modes" dropdown.
+							</p>
 						</div>
 					</div>
 					<!--
