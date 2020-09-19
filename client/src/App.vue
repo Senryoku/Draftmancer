@@ -1103,6 +1103,14 @@
 							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
 						</div>
 					</div>
+					<div class="container">
+						<div class="controls">
+							<h2>Survey #2</h2>
+						</div>
+						<div class="welcome-section">
+							Answer another <a href="https://forms.gle/SuXRha39cZaesvXT9">short survey</a> to tell us what features you want most!
+						</div>
+					</div>
 					<!--
 					<div class="container">
 						<div class="section-title">
