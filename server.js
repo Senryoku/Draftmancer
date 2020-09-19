@@ -43,6 +43,8 @@ function getPublicSessionData(sid) {
 		description: Sessions[sid].description,
 		players: Sessions[sid].users.size,
 		maxPlayers: Sessions[sid].maxPlayers,
+		cube: Sessions[sid].useCustomCardList,
+		sets: Sessions[sid].setRestriction,
 	};
 }
 
@@ -614,6 +616,7 @@ io.on("connection", function(socket) {
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("setRestriction", setRestriction);
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("customCardList", function(customCardList, ack) {
@@ -654,6 +657,7 @@ io.on("connection", function(socket) {
 				customCardList: Sessions[sessionID].customCardList,
 			});
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("loadFromCubeCobra", function(data, ack) {
@@ -690,6 +694,7 @@ io.on("connection", function(socket) {
 					customCardList: Sessions[sessionID].customCardList,
 				});
 			}
+			if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 
 			if (ack) ack({ code: 0 });
 		});
@@ -847,6 +852,7 @@ io.on("connection", function(socket) {
 					useCustomCardList: Sessions[sessionID].useCustomCardList,
 				});
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {

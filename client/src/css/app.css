@@ -413,6 +413,7 @@ footer span {
 
 .public-sessions {
 	width: 100%;
+	--invertedness: 100%;
 }
 
 .public-sessions thead {
@@ -426,18 +427,18 @@ footer span {
 	background-color: rgba(255, 255, 255, 0.05);
 }
 
-.public-sessions tr td:nth-child(1) {
+.public-sessions tr td.id {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 11em;
 }
 
-.public-sessions tr td:nth-child(3) {
+.public-sessions tr td.desc {
 	width: 80%;
 	word-break: break-all;
 }
 
-.public-sessions tr td:not(:nth-child(3)) {
+.public-sessions tr td:not(.desc) {
 	white-space: nowrap;
 	text-align: center;
 }

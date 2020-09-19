@@ -890,6 +890,16 @@ export default {
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
 		},
+		publicSessionSet: function(s) {
+			return s.cube
+				? "Cube"
+				: s.sets.length === 1
+				? `<img src="${this.setsInfos[s.sets[0]].icon}" class="icon" />`
+				: s.sets.length;
+		},
+		publicSessionSetTooltip: function(s) {
+			return s.cube ? "Cube" : s.sets.map(code => this.setsInfos[code].fullName).join(", ");
+		},
 		// Chat Methods
 		sendChatMessage: function() {
 			if (!this.currentChatMessage || this.currentChatMessage == "") return;
