@@ -1137,6 +1137,11 @@
 										<td class="desc">{{ s.description }}</td>
 										<td>
 											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+											<i
+												class="fas fa-check green"
+												v-tooltip="`You are in this session!`"
+												v-else
+											></i>
 										</td>
 									</tr>
 								</tbody>
