@@ -1881,6 +1881,10 @@ export default {
 			}
 			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
 		},
+		updateDescription: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDescription", this.description);
+		},
 	},
 	computed: {
 		DraftState: function() {
@@ -2084,10 +2088,6 @@ export default {
 		isPublic: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
-		},
-		description: function() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("setDescription", this.description);
 		},
 		boostersPerPlayer: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

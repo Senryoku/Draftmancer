@@ -1094,13 +1094,16 @@
 								<button @click="isPublic = !isPublic">
 									Set session as {{ isPublic ? "Private" : "Public" }}
 								</button>
-								<input
-									type="text"
-									placeholder="Enter a description for your session"
-									v-model="description"
-									style="flex-grow: 1"
-									maxlength="70"
-								/>
+								<form @submit.prevent="updateDescription" style="flex-grow: 1">
+									<input
+										type="text"
+										placeholder="Enter a description for your session"
+										v-model="description"
+										maxlength="70"
+										@blur="updateDescription"
+										style="box-sizing: border-box; width: 100%"
+									/>
+								</form>
 							</div>
 
 							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
@@ -1325,14 +1328,17 @@
 					>
 						<label for="session-desc">Description</label>
 						<div class="right">
-							<input
-								type="text"
-								id="session-desc"
-								placeholder="Session public description"
-								v-model="description"
-								maxlength="70"
-								style="width:90%"
-							/>
+							<form @submit.prevent="updateDescription">
+								<input
+									type="text"
+									id="session-desc"
+									placeholder="Session public description"
+									v-model="description"
+									maxlength="70"
+									style="width:90%"
+									@blur="updateDescription"
+								/>
+							</form>
 						</div>
 					</div>
 					<div

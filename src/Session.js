@@ -316,6 +316,7 @@ export function Session(id, owner) {
 			ownerIsPlayer: this.ownerIsPlayer,
 			setRestriction: this.setRestriction,
 			isPublic: this.isPublic,
+			description: this.description,
 			ignoreCollections: this.ignoreCollections,
 			boostersPerPlayer: this.boostersPerPlayer,
 			teamDraft: this.teamDraft,
