@@ -526,7 +526,7 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(typeof teamDraft === "boolean")) teamDraft = parseBoolean(teamDraft);
+		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
 		if (!(typeof teamDraft === "boolean")) return;
 
 		if (teamDraft == Sessions[sessionID].teamDraft) return;
