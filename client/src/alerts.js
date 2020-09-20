@@ -19,6 +19,6 @@ export function fireToast(type, title) {
 }
 
 export const ButtonColor = {
-	Safe: "",
-	Critical: "",
+	Safe: "#3085d6",
+	Critical: "#d33",
 };

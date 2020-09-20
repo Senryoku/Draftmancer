@@ -295,6 +295,7 @@ export default {
 							showConfirmButton: true,
 							allowOutsideClick: false,
 							confirmButtonText: "Stop draft",
+							confirmButtonColor: ButtonColor.Critical,
 						}).then(result => {
 							if (result.value) this.socket.emit("stopDraft");
 						});
