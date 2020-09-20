@@ -1148,7 +1148,7 @@
 							<em>September 14, 2020</em>
 							<ul>
 							<li>
-								<img src="img/sets/znr.svg" class="set-icon">
+								<img src="img/sets/znr.svg" class="set-icon" style="--invertedness: 100%">
 								Zendikar Rising is now available!
 							</li>
 							<li>
