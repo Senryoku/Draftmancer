@@ -37,32 +37,37 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
-function getPublicSessionData(sid) {
+function getPublicSessionData(s) {
 	return {
-		id: sid,
-		description: Sessions[sid].description,
-		players: Sessions[sid].users.size,
-		maxPlayers: Sessions[sid].maxPlayers,
-		cube: Sessions[sid].useCustomCardList,
-		sets: Sessions[sid].setRestriction,
+		id: s.id,
+		description: s.description,
+		players: s.users.size,
+		maxPlayers: s.maxPlayers,
+		cube: s.useCustomCardList,
+		sets: s.setRestriction,
 	};
 }
 
 function getPublicSessions() {
-	let publicSessions = [];
-	for (let s in Sessions) {
-		if (Sessions[s].isPublic) {
-			publicSessions.push(getPublicSessionData(s));
-		}
-	}
-	return publicSessions;
+	return Object.values(Sessions)
+		.filter(s => s.isPublic && !s.drafting)
+		.map(s => getPublicSessionData(s));
 }
 
 function updatePublicSession(sid) {
-	if (!(sid in Sessions) || !Sessions[sid].isPublic) {
+	const s = Sessions[sid];
+	if (!s || !s.isPublic || s.drafting) {
 		io.emit("updatePublicSession", { id: sid, isPrivate: true });
 	} else {
-		io.emit("updatePublicSession", getPublicSessionData(sid));
+		io.emit("updatePublicSession", getPublicSessionData(s));
+	}
+}
+
+// Set session to private once a draft is started and broadcast the new status.
+function startPublicSession(s) {
+	if (s.isPublic) {
+		s.isPublic = false;
+		updatePublicSession(s.id);
 	}
 }
 
@@ -255,6 +260,7 @@ io.on("connection", function(socket) {
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
 			sess.startGridDraft(boosterCount ? boosterCount : 18);
+			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -303,7 +309,10 @@ io.on("connection", function(socket) {
 				title: `Not enough players`,
 				text: `You need at least two players to start a Rochester Draft.`,
 			});
-		} else sess.startRochesterDraft();
+		} else {
+			sess.startRochesterDraft();
+			startPublicSession(sess);
+		}
 	});
 
 	socket.on("rochesterDraftPick", function(choice, ack) {
@@ -343,6 +352,7 @@ io.on("connection", function(socket) {
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
 			sess.startWinstonDraft(boosterCount ? boosterCount : 6);
+			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -416,6 +426,7 @@ io.on("connection", function(socket) {
 			});
 		} else {
 			sess.startDraft();
+			startPublicSession(sess);
 		}
 	});
 
