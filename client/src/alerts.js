@@ -17,3 +17,8 @@ export function fireToast(type, title) {
 		timer: 2000,
 	});
 }
+
+export const ButtonColor = {
+	Safe: "",
+	Critical: "",
+};

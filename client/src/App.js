@@ -11,7 +11,7 @@ import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import { SwalCustomClasses, fireToast } from "./alerts.js";
+import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
 import { Cards, genCard, loadCards, addLanguage } from "./Cards.js";
 import exportToMTGA from "./exportToMTGA.js";
 import parseCardList from "../../src/parseCardList.js";
@@ -440,8 +440,8 @@ export default {
 					text: `${ownerUsername} has initiated a ready check`,
 					customClass: SwalCustomClasses,
 					showCancelButton: true,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
+					confirmButtonColor: ButtonColor.Safe,
+					cancelButtonColor: ButtonColor.Critical,
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
 					allowOutsideClick: false,
@@ -920,8 +920,8 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#d33",
-					cancelButtonColor: "#3085d6",
+					confirmButtonColor: ButtonColor.Critical,
+					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
 				}).then(result => {
 					if (result.value) {
@@ -944,8 +944,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Stop the draft!",
 			}).then(result => {
 				if (result.value) {
@@ -1138,8 +1138,8 @@ export default {
 				inputValue: 6,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Winston Draft",
 			});
 
@@ -1201,8 +1201,8 @@ export default {
 				inputValue: 18,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Grid Draft",
 			});
 
@@ -1279,8 +1279,8 @@ export default {
 				inputValue: 6,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Glimpse Draft",
 				preConfirm: function() {
 					return new Promise(function(resolve) {
@@ -1331,8 +1331,8 @@ export default {
 								customClass: SwalCustomClasses,
 								showCancelButton: true,
 								showConfirmButton: true,
-								confirmButtonColor: "#3085d6",
-								cancelButtonColor: "#d33",
+								confirmButtonColor: ButtonColor.Safe,
+								cancelButtonColor: ButtonColor.Critical,
 								confirmButtonText: "Yes",
 								cancelButtonText: "No",
 							});
@@ -1398,8 +1398,8 @@ export default {
 						customClass: SwalCustomClasses,
 						showCancelButton: true,
 						showConfirmButton: true,
-						confirmButtonColor: "#3085d6",
-						cancelButtonColor: "#d33",
+						confirmButtonColor: ButtonColor.Safe,
+						cancelButtonColor: ButtonColor.Critical,
 						confirmButtonText: "Intersect",
 						cancelButtonText: "Latest Only",
 					});
@@ -1545,8 +1545,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Yes",
 			}).then(result => {
 				if (result.value) {
@@ -1564,8 +1564,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Remove player",
 			}).then(result => {
 				if (result.value) {
@@ -1605,8 +1605,8 @@ export default {
 				},
 				inputValue: 6,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
 			});
 
@@ -1622,8 +1622,8 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#d33",
-					cancelButtonColor: "#3085d6",
+					confirmButtonColor: ButtonColor.Critical,
+					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Start new game!",
 				}).then(result => {
 					if (result.value) {
