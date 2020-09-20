@@ -81,19 +81,6 @@
 					<label for="notification-input">Notifications</label>
 				</span>
 			</span>
-			<span class="generic-container">
-				<div v-show="publicSessions.length == 0" class="disable-warning">(No public sessions)</div>
-				<span
-					v-bind:class="{ disabled: drafting || publicSessions.length == 0 }"
-					id="public-session-controls"
-				>
-					<label for="public-sessions">Public sessions</label>
-					<select id="public-sessions" v-model="selectedPublicSession" style="max-width: 10em">
-						<option v-for="s in publicSessions" :value="s" :key="s">{{ s }}</option>
-					</select>
-					<input type="button" value="Join" @click="joinPublicSession" />
-				</span>
-			</span>
 		</div>
 
 		<!-- Session Options -->
@@ -569,11 +556,11 @@
 							>
 								<span class="chat-author">
 									{{
-										msg.author in userByID
-											? userByID[msg.author].userName
-											: msg.author === sessionOwner && sessionOwnerUsername
-											? sessionOwnerUsername
-											: "(Left)"
+									msg.author in userByID
+									? userByID[msg.author].userName
+									: msg.author === sessionOwner && sessionOwnerUsername
+									? sessionOwnerUsername
+									: "(Left)"
 									}}
 								</span>
 								<span class="chat-message">{{ msg.text }}</span>
@@ -1079,7 +1066,9 @@
 							<a @click="displayedModal = 'help'">FAQ / Help</a>
 							section.
 							<br />For any question/bug report/feature request you can email to
-							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+							<a
+								href="mailto:mtgadraft@gmail.com"
+							>mtgadraft@gmail.com</a>
 							or join the
 							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
 						</div>
@@ -1092,9 +1081,7 @@
 						</div>
 						<div class="welcome-section">
 							<div v-if="userID === sessionOwner" style="display: flex;">
-								<button @click="isPublic = !isPublic">
-									Set session as {{ isPublic ? "Private" : "Public" }}
-								</button>
+								<button @click="isPublic = !isPublic">Set session as {{ isPublic ? "Private" : "Public" }}</button>
 								<form @submit.prevent="updateDescription" style="flex-grow: 1">
 									<input
 										type="text"
@@ -1134,18 +1121,14 @@
 											<template v-else-if="s.sets.length === 1">
 												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
 											</template>
-											<template v-else-if="s.sets.length === 0"> All </template>
-											<template v-else> [{{ s.sets.length }}] </template>
+											<template v-else-if="s.sets.length === 0">All</template>
+											<template v-else>[{{ s.sets.length }}]</template>
 										</td>
 										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
 										<td class="desc">{{ s.description }}</td>
 										<td>
 											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
-											<i
-												class="fas fa-check green"
-												v-tooltip="`You are in this session!`"
-												v-else
-											></i>
+											<i class="fas fa-check green" v-tooltip="`You are in this session!`" v-else></i>
 										</td>
 									</tr>
 								</tbody>
