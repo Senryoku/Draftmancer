@@ -105,6 +105,7 @@ export default {
 			// Session options
 			ownerIsPlayer: true,
 			isPublic: false,
+			description: "",
 			ignoreCollections: false,
 			sessionUsers: [],
 			boostersPerPlayer: 3,
@@ -149,7 +150,6 @@ export default {
 			rochesterDraftState: null,
 
 			publicSessions: [],
-			selectedPublicSession: "",
 
 			// Front-end options & data
 			displayedModal: "",
@@ -248,6 +248,16 @@ export default {
 
 			this.socket.on("publicSessions", sessions => {
 				this.publicSessions = sessions;
+			});
+
+			this.socket.on("updatePublicSession", session => {
+				const idx = this.publicSessions.findIndex(s => s.id === session.id);
+				if (session.isPrivate) {
+					if (idx !== -1) this.publicSessions.splice(idx, 1);
+				} else {
+					if (idx !== -1) this.publicSessions.splice(idx, 1, session);
+					else this.publicSessions.push(session);
+				}
 			});
 
 			this.socket.on("setSession", sessionID => {
@@ -1632,9 +1642,6 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart");
 		},
-		joinPublicSession: function() {
-			this.sessionID = this.selectedPublicSession;
-		},
 		readyCheck: function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
@@ -1873,6 +1880,10 @@ export default {
 				this.draftLogs.splice(idx, 1);
 			}
 			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+		},
+		updateDescription: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDescription", this.description);
 		},
 	},
 	computed: {

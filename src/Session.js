@@ -16,6 +16,7 @@ export const optionProps = [
 	"ownerIsPlayer",
 	"setRestriction",
 	"isPublic",
+	"description",
 	"ignoreCollections",
 	"boostersPerPlayer",
 	"teamDraft",
@@ -186,6 +187,7 @@ export function Session(id, owner, options) {
 	this.ownerIsPlayer = true;
 	this.setRestriction = [constants.MTGSets[constants.MTGSets.length - 1]];
 	this.isPublic = false;
+	this.description = "";
 	this.ignoreCollections = false;
 	this.boostersPerPlayer = 3;
 	this.teamDraft = false;

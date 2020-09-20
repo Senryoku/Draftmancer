@@ -81,20 +81,6 @@
 					<label for="notification-input">Notifications</label>
 				</span>
 			</span>
-
-			<span class="generic-container">
-				<div v-show="publicSessions.length == 0" class="disable-warning">(No public sessions)</div>
-				<span
-					v-bind:class="{ disabled: drafting || publicSessions.length == 0 }"
-					id="public-session-controls"
-				>
-					<label for="public-sessions">Public sessions</label>
-					<select id="public-sessions" v-model="selectedPublicSession" style="max-width: 10em">
-						<option v-for="s in publicSessions" :value="s" :key="s">{{ s }}</option>
-					</select>
-					<input type="button" value="Join" @click="joinPublicSession" />
-				</span>
-			</span>
 		</div>
 
 		<!-- Session Options -->
@@ -103,7 +89,12 @@
 				<span id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
-						<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
+						<input
+							:type="hideSessionID ? 'password' : 'text'"
+							id="session-id"
+							v-model="sessionID"
+							maxlength="50"
+						/>
 					</div>
 					<i
 						class="far fa-fw clickable"
@@ -1066,24 +1057,6 @@
 							</ol>
 						</div>
 					</div>
-				</div>
-				<div class="welcome-col">
-					<div class="container">
-						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<div class="welcome-section">
-							<em>14 August 2020</em>
-							<p>Zendikar Rising is now available!</p>
-							<em>19 August 2020</em>
-							<p>
-								Grid Draft is now available! It's a draft variant for two players particularly suited
-								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
-								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
-								round. Try it out from the new "Other Game Modes" dropdown.
-							</p>
-						</div>
-					</div>
 					<div class="container">
 						<div class="section-title">
 							<h2>Help</h2>
@@ -1098,6 +1071,84 @@
 							>mtgadraft@gmail.com</a>
 							or join the
 							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
+						</div>
+					</div>
+				</div>
+				<div class="welcome-col">
+					<div class="container">
+						<div class="section-title">
+							<h2>Public Sessions</h2>
+						</div>
+						<div class="welcome-section">
+							<div v-if="userID === sessionOwner" style="display: flex;">
+								<button @click="isPublic = !isPublic">Set session as {{ isPublic ? "Private" : "Public" }}</button>
+								<form @submit.prevent="updateDescription" style="flex-grow: 1">
+									<input
+										type="text"
+										placeholder="Enter a description for your session"
+										v-model="description"
+										maxlength="70"
+										@blur="updateDescription"
+										style="box-sizing: border-box; width: 100%"
+									/>
+								</form>
+							</div>
+
+							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+							<table v-else class="public-sessions">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Set</th>
+										<th>Players</th>
+										<th>Description</th>
+										<th>Join</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="s in publicSessions" :key="s.id">
+										<td :title="s.id" class="id">{{ s.id }}</td>
+										<td
+											v-tooltip="
+												s.cube
+													? 'Cube'
+													: s.sets.map(code => setsInfos[code].fullName).join(', ')
+											"
+										>
+											<template v-if="s.cube">
+												<img src="./assets/img/cube.png" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 1">
+												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 0">All</template>
+											<template v-else>[{{ s.sets.length }}]</template>
+										</td>
+										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+										<td class="desc">{{ s.description }}</td>
+										<td>
+											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+											<i class="fas fa-check green" v-tooltip="`You are in this session!`" v-else></i>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="container">
+						<div class="section-title">
+							<h2>News</h2>
+						</div>
+						<div class="welcome-section">
+							<em>14 August 2020</em>
+							<p>Zendikar Rising is now available!</p>
+							<em>19 August 2020</em>
+							<p>
+								Grid Draft is now available! It's a draft variant for two players particularly suited
+								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
+								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
+								round. Try it out from the new "Other Game Modes" dropdown.
+							</p>
 						</div>
 					</div>
 					<div class="container">
@@ -1251,6 +1302,29 @@
 						<label for="is-public">Public</label>
 						<div class="right">
 							<input type="checkbox" v-model="isPublic" id="is-public" />
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Public description for your session. Ex: Peasant Cube, will launch at 8pm. Matches played on Arena.</p>',
+						}"
+					>
+						<label for="session-desc">Description</label>
+						<div class="right">
+							<form @submit.prevent="updateDescription">
+								<input
+									type="text"
+									id="session-desc"
+									placeholder="Session public description"
+									v-model="description"
+									maxlength="70"
+									style="width:90%"
+									@blur="updateDescription"
+								/>
+							</form>
 						</div>
 					</div>
 					<div
