@@ -1140,15 +1140,24 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
-							<em>14 August 2020</em>
-							<p>Zendikar Rising is now available!</p>
-							<em>19 August 2020</em>
-							<p>
-								Grid Draft is now available! It's a draft variant for two players particularly suited
-								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
-								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
-								round. Try it out from the new "Other Game Modes" dropdown.
-							</p>
+							<em>September 20, 2020</em>
+							<ul>
+								<li>New Public Sessions section (just above here).</li>
+								<li>Survey #2 has begun (link below here).</li>
+							</ul>
+							<em>September 14, 2020</em>
+							<ul>
+							<li>
+								<img src="img/sets/znr.svg" class="set-icon">
+								Zendikar Rising is now available!
+							</li>
+							<li>
+								Team Draft is now available! It's a draft variant for 6 players to play in 3v3 teams.
+								Great for smaller pods or to work with your friends to identify threats and build pools.
+								<a href="https://magic.wizards.com/en/articles/archive/how-play-limited/team-draft-2016-11-08">Learn more about the format here.</a>
+								Use the checkbox under Additional Session Options after clicking the Settings button.
+							</li>
+							</ul>
 						</div>
 					</div>
 					<div class="container">
