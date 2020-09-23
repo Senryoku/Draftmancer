@@ -1504,8 +1504,8 @@ export default {
 				input: "text",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: ButtonColor.Critical,
-				cancelButtonColor: ButtonColor.Safe,
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
 			}).then(result => {
 				if (result.value) {
