@@ -690,6 +690,17 @@ io.on("connection", function(socket) {
 				return;
 			}
 
+			if (body === "Cube not found.") {
+				if (ack)
+					ack({
+						type: "error",
+						title: "Cube not found.",
+						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+						error: err,
+					});
+				return;
+			}
+
 			let parsedList = parseCardList(Cards, body, data);
 
 			if (parsedList.error) {

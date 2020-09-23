@@ -1499,7 +1499,7 @@ export default {
 		importCubeCobra: function() {
 			Swal.fire({
 				title: "Import from Cube Cobra",
-				text: `Enter a cube id or an URL to import a cube directly from Cube Cobra`,
+				text: `Enter a Cube ID or an URL to import a cube directly from Cube Cobra`,
 				inputPlaceholder: "Cube ID/URL",
 				input: "text",
 				showCancelButton: true,
