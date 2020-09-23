@@ -1496,6 +1496,26 @@ export default {
 				this.useCustomCardList = true;
 			}
 		},
+		importCubeCobra: function() {
+			Swal.fire({
+				title: "Import from Cube Cobra",
+				text: `Enter a cube id or an URL to import a cube directly from Cube Cobra`,
+				inputPlaceholder: "Cube ID/URL",
+				input: "text",
+				showCancelButton: true,
+				customClass: SwalCustomClasses,
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
+				confirmButtonText: "Import",
+			}).then(result => {
+				if (result.value) {
+					const urlTest = result.value.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
+					console.log(urlTest);
+					if (urlTest) result.value = urlTest[1];
+					this.selectCube({ cubeCobraID: result.value });
+				}
+			});
+		},
 		selectCube: function(cube) {
 			const ack = r => {
 				if (r.type === "error") {
@@ -1516,6 +1536,7 @@ export default {
 					icon: "info",
 					title: `Loading Cube...`,
 					text: `Please wait as we retrieve the latest version from Cube Cobra...`,
+					footer: `CubeID: ${cube.cubeCobraID}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
