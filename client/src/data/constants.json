@@ -107,12 +107,12 @@
 		{
 			"name": "Arena Tinkerer's Cube",
 			"filename": "MTGATinkererCube.txt",
-			"description": "MTGA Tinkerer's Cube from September 2020. Review the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=_\"_blank\">card list</a>."
+			"description": "MTGA Official Tinkerer's Cube from September 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=_\"_blank\">Wizards announcement</a>."
 		},
 		{
 			"name": "Arena Historic Cube #1",
 			"filename": "ArenaHistoricCube1.txt",
-			"description": "MTGA Official Historic Cube from June 2020. Review the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=_\"_blank\">card list</a>."
+			"description": "MTGA Official Historic Cube from June 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=_\"_blank\">Wizards announcement</a>."
 		},
 		{
 			"name": "JiRock's Historic Cube 2.2",
