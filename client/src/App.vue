@@ -8,7 +8,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label>
-				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" />
+				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" delay="2" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
 					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
