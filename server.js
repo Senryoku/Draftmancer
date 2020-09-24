@@ -911,7 +911,8 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (description === Sessions[sessionID].description) return;
+		if (description === null || description === undefined || description === Sessions[sessionID].description)
+			return;
 
 		Sessions[sessionID].description = description.substring(0, 70);
 		for (let user of Sessions[sessionID].users) {
