@@ -107,6 +107,14 @@ export default function(cards, cardlist, options) {
 			cardList.length = cardList.cards.length;
 		}
 		if (options && options.name) cardList.name = options.name;
+		if (cardList.cards.length === 0)
+			return {
+				error: {
+					type: "error",
+					title: "Empty List",
+					text: `Supplied card list is empty.`,
+				},
+			};
 		return cardList;
 	} catch (e) {
 		return {
