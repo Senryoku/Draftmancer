@@ -8,7 +8,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label>
-				<input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
+				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" delay="2" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
 					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
@@ -92,11 +92,13 @@
 				<span id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
-						<input
-							:type="hideSessionID ? 'password' : 'text'"
-							id="session-id"
+						<delayed-input
 							v-model="sessionID"
+							autocomplete="off"
+							id="session-id"
+							:type="hideSessionID ? 'password' : 'text'"
 							maxlength="50"
+							:delay="2"
 						/>
 					</div>
 					<i
@@ -1093,16 +1095,13 @@
 								<button @click="isPublic = !isPublic">
 									Set session as {{ isPublic ? "Private" : "Public" }}
 								</button>
-								<form @submit.prevent="updateDescription" style="flex-grow: 1">
-									<input
-										type="text"
-										placeholder="Enter a description for your session"
-										v-model="description"
-										maxlength="70"
-										@blur="updateDescription"
-										style="box-sizing: border-box; width: 100%"
-									/>
-								</form>
+								<delayed-input
+									style="flex-grow: 1"
+									v-model="description"
+									type="text"
+									placeholder="Enter a description for your session"
+									maxlength="70"
+								/>
 							</div>
 
 							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
@@ -1339,17 +1338,14 @@
 					>
 						<label for="session-desc">Description</label>
 						<div class="right">
-							<form @submit.prevent="updateDescription">
-								<input
-									type="text"
-									id="session-desc"
-									placeholder="Session public description"
-									v-model="description"
-									maxlength="70"
-									style="width: 90%"
-									@blur="updateDescription"
-								/>
-							</form>
+							<delayed-input
+								id="session-desc"
+								v-model="description"
+								type="text"
+								placeholder="Session public description"
+								maxlength="70"
+								style="width: 90%"
+							/>
 						</div>
 					</div>
 					<div
