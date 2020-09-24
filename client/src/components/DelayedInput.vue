@@ -58,28 +58,40 @@ form {
 input {
 	width: calc(100% - 0.25em);
 	box-sizing: border-box;
+	--shadow-blur: 3px;
+	--shadow-width: 1px;
 }
 
 .dirty {
-	-webkit-box-shadow: 0px 0px 5px 0 #ffe645;
-	-moz-box-shadow: 0px 0px 5px 0 #ffe645;
-	box-shadow: 0px 0px 5px 0 #ffe645;
+	-webkit-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #c5b027;
+	-moz-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #c5b027;
+	box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #c5b027;
 }
 
 .updated {
-	animation: highlight 1s ease-out;
+	animation: highlight 1.5s linear;
 }
 
 @keyframes highlight {
 	0% {
-		-webkit-box-shadow: 0px 0px 5px 1px #00b309;
-		-moz-box-shadow: 0px 0px 5px 1px #00b309;
-		box-shadow: 0px 0px 5px 1px #00b309;
+		-webkit-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		-moz-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
 	}
-	50% {
-		-webkit-box-shadow: 0px 0px 5px 1px #00b309;
-		-moz-box-shadow: 0px 0px 5px 1px #00b309;
-		box-shadow: 0px 0px 5px 1px #00b309;
+	5% {
+		-webkit-box-shadow: 0px 0px 8px var(--shadow-width) #00da0b;
+		-moz-box-shadow: 0px 0px 8px var(--shadow-width) #00da0b;
+		box-shadow: 0px 0px 8px var(--shadow-width) #00da0b;
+	}
+	10% {
+		-webkit-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		-moz-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+	}
+	80% {
+		-webkit-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		-moz-box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
+		box-shadow: 0px 0px var(--shadow-blur) var(--shadow-width) #00b309;
 	}
 	100% {
 		-webkit-box-shadow: 0;
