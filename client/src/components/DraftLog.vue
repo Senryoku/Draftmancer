@@ -33,9 +33,9 @@
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<h2>{{ selectedLog.userName }}</h2>
 			<select v-model="displayOptions.category">
-				<option>Deck</option>
 				<option>Cards</option>
 				<option>Picks</option>
+				<option>Deck</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">
 				<i class="fas fa-clipboard-list"></i> Export in MTGA format
@@ -60,6 +60,16 @@
 						:language="language"
 						:group="`cardPool-${selectedLog.userID}`"
 						:key="`cardPool-${selectedLog.userID}`"
+					></card-pool>
+				</div>
+			</template>
+			<template v-else-if="displayOptions.category == 'Deck'">
+				<div class="card-container card-columns">
+					<card-pool
+						:cards="selectedLogDeck"
+						:language="language"
+						:group="`deck-${selectedLog.userID}`"
+						:key="`deck-${selectedLog.userID}`"
 					></card-pool>
 				</div>
 			</template>
@@ -161,6 +171,9 @@ export default {
 		selectedLogCards: function () {
 			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
+		selectedLogDeck: function () {
+			return this.selectedLog.deck
+		}
 		tableSumary: function () {
 			let tableSumary = [];
 			for (let userID in this.draftlog.users) {
