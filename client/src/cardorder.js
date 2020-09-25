@@ -40,7 +40,12 @@ const Comparators = {
 
 	// Arena puts creatures before non-creatures
 	type: (lhs, rhs) => {
-		return TypeOrder[lhs.type] - TypeOrder[rhs.type];
+		const getFirstType = c => {
+			const idx = c.type.indexOf(" //");
+			if (idx >= 0) return c.type.substr(0, idx);
+			else return c.type;
+		};
+		return TypeOrder[getFirstType(lhs)] - TypeOrder[getFirstType(rhs)];
 	},
 
 	// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
