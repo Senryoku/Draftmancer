@@ -184,7 +184,7 @@ export default {
 			return tableSummary;
 		},
 		teamDraft: function () {
-			return this.draftlog.teamDraft === "true";
+			return this.draftlog.teamDraft === true;
 		},
 	},
 	watch: {
