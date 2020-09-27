@@ -3,13 +3,19 @@
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
-			<ul :class="{ 'player-table': tableSummary.length <= 8, 'player-list': tableSummary.length > 8, 'six': tableSummary.length === 6 }">
+			<ul :class="{
+				'player-table': tableSummary.length <= 8,
+				'player-list': tableSummary.length > 8,
+				'six': tableSummary.length === 6,
+			}">
 				<li
 					v-for="(log, index) of tableSummary"
 					:key="index"
 					:class="{
 						clickable: log.userName != '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
+						teama: teamDraft && index % 2 === 0,
+						teamb: teamDraft && index % 2 === 1,
 					}"
 					@click="() => {
 						if (log.userName != '(empty)')
@@ -177,6 +183,9 @@ export default {
 				});
 			return tableSummary;
 		},
+		teamDraft: function () {
+			return this.draftlog.teamDraft === "true";
+		},
 	},
 	watch: {
 		draftlog: {
@@ -214,7 +223,6 @@ ul.player-table li {
 	position: relative;
 	padding: 0.5em;
 	border-radius: 0.2em;
-	background-color: #444;
 
 	display: inline-flex;
 	justify-content: space-between;
@@ -234,7 +242,7 @@ ul.player-table li.selected-player {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	background-color: #555;
+	font-weight: bold;
 }
 
 ul.player-table li:nth-child(1) {
