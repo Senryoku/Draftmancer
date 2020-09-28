@@ -1004,6 +1004,7 @@ export function Session(id, owner) {
 			setRestriction: this.setRestriction,
 			boosters: JSON.parse(JSON.stringify(this.boosters)),
 			users: {},
+			decks: {},
 		};
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
@@ -1264,6 +1265,18 @@ export function Session(id, owner) {
 			}
 		}
 
+		this.sendLogs();
+
+		logSession("Draft", this);
+		this.boosters = [];
+		this.disconnectedUsers = {};
+
+		this.forUsers(u => Connections[u].socket.emit("endDraft"));
+
+		console.log(`Session ${this.id} draft ended.`);
+	};
+
+	this.sendLogs = function() {
 		switch (this.draftLogRecipients) {
 			case "none":
 				break;
@@ -1278,16 +1291,8 @@ export function Session(id, owner) {
 			case "everyone":
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;
-		}
-
-		logSession("Draft", this);
-		this.boosters = [];
-		this.disconnectedUsers = {};
-
-		this.forUsers(u => Connections[u].socket.emit("endDraft"));
-
-		console.log(`Session ${this.id} draft ended.`);
-	};
+		}		
+	}
 
 	this.pauseDraft = function() {
 		if (!this.drafting || !this.countdownInterval) return;
@@ -1577,6 +1582,15 @@ export function Session(id, owner) {
 		this.bracket.results = results;
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
+
+	this.shareDeck = function(userID, deck, sideboard, lands) {
+		this.draftLog.decks[userID] = {
+			deck: deck,
+			sideboard: sideboard,
+			lands: lands,
+		};
+		this.sendLogs();
+	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
 	this.forUsers = function(fn) {

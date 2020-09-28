@@ -173,7 +173,7 @@ export default {
 		},
 		selectedLogDeck: function () {
 			return this.selectedLog.deck
-		}
+		},
 		tableSumary: function () {
 			let tableSumary = [];
 			for (let userID in this.draftlog.users) {
