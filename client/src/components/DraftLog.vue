@@ -35,7 +35,7 @@
 			<select v-model="displayOptions.category">
 				<option>Cards</option>
 				<option>Picks</option>
-				<option>Deck</option>
+				<option v-if="selectedLog.deck !== undefined">Deck</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">
 				<i class="fas fa-clipboard-list"></i> Export in MTGA format

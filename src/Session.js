@@ -1004,7 +1004,6 @@ export function Session(id, owner) {
 			setRestriction: this.setRestriction,
 			boosters: JSON.parse(JSON.stringify(this.boosters)),
 			users: {},
-			decks: {},
 		};
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
@@ -1584,11 +1583,16 @@ export function Session(id, owner) {
 	};
 
 	this.shareDeck = function(userID, deck, sideboard, lands) {
-		this.draftLog.decks[userID] = {
-			deck: deck,
-			sideboard: sideboard,
-			lands: lands,
-		};
+		if (this.draftLog === undefined || draftLog.users[userID] === undefined) {
+			console.log("Cannot find log for shared deck.");
+			return;
+		}
+		this.draftLog.users[userID].deck = deck;
+		//  {
+		// 	deck: deck,
+		// 	sideboard: sideboard,
+		// 	lands: lands,
+		// };
 		this.sendLogs();
 	}
 
