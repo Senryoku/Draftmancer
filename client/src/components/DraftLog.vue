@@ -172,7 +172,7 @@ export default {
 			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
 		selectedLogDeck: function () {
-			return this.selectedLog.deck
+			return this.selectedLog.deck.deck
 		},
 		tableSumary: function () {
 			let tableSumary = [];

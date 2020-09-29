@@ -1521,7 +1521,7 @@ export default {
 			this.socket.emit(
 						"shareDeck",
 						{
-							deck: this.deck,
+							deck: this.deck
 							sideboard: this.sideboard,
 							lands: this.lands,
 						},

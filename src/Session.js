@@ -1086,7 +1086,6 @@ export function Session(id, owner) {
 				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
 			}.`
 		);
-
 		this.draftLog.users[userID].picks.push({
 			pick: cardID,
 			burn: burnedCards,
@@ -1582,17 +1581,13 @@ export function Session(id, owner) {
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
-	this.shareDeck = function(userID, deck, sideboard, lands) {
-		if (this.draftLog === undefined || draftLog.users[userID] === undefined) {
+	this.shareDeck = function(userID, deck) {
+		console.log(userID);
+		if (this.draftLog === undefined || this.draftLog.users[userID] === undefined) {
 			console.log("Cannot find log for shared deck.");
 			return;
 		}
 		this.draftLog.users[userID].deck = deck;
-		//  {
-		// 	deck: deck,
-		// 	sideboard: sideboard,
-		// 	lands: lands,
-		// };
 		this.sendLogs();
 	}
 

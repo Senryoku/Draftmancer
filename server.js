@@ -771,12 +771,13 @@ io.on("connection", function(socket) {
 		}
 	});
 
-	socket.on("shareDeck", function(deck, sideboard, lands) {
+	socket.on("shareDeck", function(deck) {
 		if (!(this.userID in Connections)) return;
+		console.log(this.userID);
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions)) return;
 
-		Sessions[sessionID].shareDeck(deck, sideboard, lands);
+		Sessions[sessionID].shareDeck(this.userID, deck);
 	});
 
 	socket.on("setMaxDuplicates", function(maxDuplicates) {
