@@ -866,10 +866,10 @@
 						<button
 							v-if="deck.length > 0"
 							type="button"
-							@click="shareDeck()"
-							v-tooltip="'Share deck with other players'"
+							@click="shareDecklist()"
+							v-tooltip="'Share deck, lands, and sideboard with other players'"
 						>
-							<i class="fas fa-share-square"></i> Share Deck
+							<i class="fas fa-share-square"></i> Share Decklist
 						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"

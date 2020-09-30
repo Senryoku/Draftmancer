@@ -1581,13 +1581,12 @@ export function Session(id, owner) {
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
-	this.shareDeck = function(userID, deck) {
-		console.log(userID);
+	this.shareDecklist = function(userID, decklist) {
 		if (this.draftLog === undefined || this.draftLog.users[userID] === undefined) {
-			console.log("Cannot find log for shared deck.");
+			console.log("Cannot find log for shared decklist.");
 			return;
 		}
-		this.draftLog.users[userID].deck = deck;
+		this.draftLog.users[userID].decklist = decklist;
 		this.sendLogs();
 	}
 

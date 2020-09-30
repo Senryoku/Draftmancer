@@ -35,7 +35,7 @@
 			<select v-model="displayOptions.category">
 				<option>Cards</option>
 				<option>Picks</option>
-				<option v-if="selectedLog.deck !== undefined">Deck</option>
+				<option v-if="selectedLogDecklist !== undefined">Deck</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">
 				<i class="fas fa-clipboard-list"></i> Export in MTGA format
@@ -66,7 +66,7 @@
 			<template v-else-if="displayOptions.category == 'Deck'">
 				<div class="card-container card-columns">
 					<card-pool
-						:cards="selectedLogDeck"
+						:cards="selectedLogDecklist.deck"
 						:language="language"
 						:group="`deck-${selectedLog.userID}`"
 						:key="`deck-${selectedLog.userID}`"
@@ -171,8 +171,8 @@ export default {
 		selectedLogCards: function () {
 			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
-		selectedLogDeck: function () {
-			return this.selectedLog.deck.deck
+		selectedLogDecklist: function () {
+			return this.selectedLog.decklist;
 		},
 		tableSumary: function () {
 			let tableSumary = [];

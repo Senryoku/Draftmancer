@@ -1517,11 +1517,11 @@ export default {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		shareDeck: function() {
+		shareDecklist: function() {
 			this.socket.emit(
-						"shareDeck",
+						"shareDecklist",
 						{
-							deck: this.deck
+							deck: this.deck,
 							sideboard: this.sideboard,
 							lands: this.lands,
 						},
