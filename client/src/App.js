@@ -1527,8 +1527,8 @@ export default {
 		},
 		shareDecklist: function() {
 			this.socket.emit("shareDecklist", {
-				main: this.deck,
-				side: this.sideboard,
+				main: this.deck.map(c => c.id),
+				side: this.sideboard.map(c => c.id),
 				lands: this.lands,
 				timestamp: Date.now(),
 			});

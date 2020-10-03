@@ -6,6 +6,7 @@ import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./util
 import { Connections } from "./Connection.js";
 import Cards from "./Cards.js";
 import Bot from "./Bot.js";
+import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import { BoosterFactory, SetSpecificFactories } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
@@ -1586,7 +1587,7 @@ export function Session(id, owner) {
 			console.log("Cannot find log for shared decklist.");
 			return;
 		}
-		// TODO: add hashes
+		decklist = computeHashes(decklist);
 		this.draftLog.users[userID].decklist = decklist;
 		this.forUsers(uid => {
 			Connections[uid].socket.emit("shareDecklist", {

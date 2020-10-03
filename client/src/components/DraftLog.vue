@@ -77,10 +77,26 @@
 								<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 								{{ selectedLogDecklist.lands[c] }}
 							</span>
+							<div>
+								<button type="button" @click="exportDeck" v-tooltip="'Export deck and sideboard'">
+									<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
+								</button>
+								<button
+									type="button"
+									@click="exportDeck(false)"
+									v-tooltip="'Export without set information'"
+								>
+									<i class="fas fa-clipboard"></i> Export (Simple)
+								</button>
+							</div>
+							<template v-if="selectedLogDecklist.hashes">
+								<span>Cockatrice: {{ selectedLogDecklist.hashes.cockatrice }}</span>
+								<span>MWS: {{ selectedLogDecklist.hashes.mws }}</span>
+							</template>
 						</div>
 					</div>
 					<card-pool
-						:cards="selectedLogDecklist.main"
+						:cards="selectedLogDecklistMainboard"
 						:language="language"
 						:group="`deck-${selectedLog.userID}`"
 						:key="`deck-${selectedLog.userID}`"
@@ -89,7 +105,7 @@
 						<h2>Sideboard ({{ selectedLogDecklist.side.length }})</h2>
 					</div>
 					<card-pool
-						:cards="selectedLogDecklist.side"
+						:cards="selectedLogDecklistSideboard"
 						:language="language"
 						:group="`deck-${selectedLog.userID}`"
 						:key="`side-${selectedLog.userID}`"
@@ -179,6 +195,18 @@ export default {
 			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
 			fireToast("success", "Card list exported to clipboard!");
 		},
+		exportDeck: function (full = true) {
+			helper.copyToClipboard(
+				exportToMTGA(
+					this.selectedLogDecklistMainboard,
+					this.selectedLogDecklistSideboard,
+					this.language,
+					this.selectedLogDecklist.lands,
+					full
+				)
+			);
+			fireToast("success", "Deck exported to clipboard!");
+		},
 		colorsInCardIDList: function (cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cardids) return r;
@@ -199,6 +227,12 @@ export default {
 		},
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;
+		},
+		selectedLogDecklistMainboard: function () {
+			return this.selectedLogDecklist.main.map((cid) => genCard(cid));
+		},
+		selectedLogDecklistSideboard: function () {
+			return this.selectedLogDecklist.side.map((cid) => genCard(cid));
 		},
 		tableSumary: function () {
 			let tableSumary = [];
