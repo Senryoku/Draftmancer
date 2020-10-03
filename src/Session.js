@@ -1,7 +1,7 @@
 "use strict";
 
 import constants from "../client/src/data/constants.json";
-import { removeCardFromDict, pickCard } from "./cardUtils.js";
+import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
 import Cards from "./Cards.js";
@@ -441,10 +441,6 @@ export function Session(id, owner, options) {
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists whitout custom slots
 	this.generateBoosters = function(boosterQuantity, options = {}) {
-		const count_cards = function(coll) {
-			return Object.values(coll).reduce((acc, val) => acc + val, 0);
-		};
-
 		if (this.useCustomCardList) {
 			if (!this.customCardList.cards) {
 				this.emitMessage("Error generating boosters", "No custom card list provided.");
@@ -461,7 +457,7 @@ export function Session(id, owner, options) {
 							cardsByRarity[r][cardId] += 1;
 						else cardsByRarity[r][cardId] = 1;
 
-					const card_count = count_cards(cardsByRarity[r]);
+					const card_count = countCards(cardsByRarity[r]);
 					const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
 					if (card_count < card_target) {
 						const msg = `Not enough cards (${card_count}/${card_target} ${r}) in custom card list.`;
@@ -533,7 +529,7 @@ export function Session(id, owner, options) {
 					}
 				}
 
-				let card_count = count_cards(localCollection);
+				let card_count = countCards(localCollection);
 				let card_target = cardsPerBooster * boosterQuantity;
 				if (card_count < card_target) {
 					const msg = `Not enough cards (${card_count}/${card_target}) in custom list.`;
@@ -602,7 +598,7 @@ export function Session(id, owner, options) {
 				);
 				// Make sure we have enough cards
 				for (let slot of ["common", "uncommon", "rare"]) {
-					const card_count = count_cards(defaultFactory.cardPool[slot]);
+					const card_count = countCards(defaultFactory.cardPool[slot]);
 					const card_target = targets[slot] * boosterQuantity;
 					if (card_count < card_target) {
 						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
@@ -662,12 +658,12 @@ export function Session(id, owner, options) {
 									0
 								);
 								if (
-									count_cards(usedSets[boosterSet].cardPool["common"]) <
+									countCards(usedSets[boosterSet].cardPool["common"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["common"] ||
-									count_cards(usedSets[boosterSet].cardPool["uncommon"]) <
+									countCards(usedSets[boosterSet].cardPool["uncommon"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
-									count_cards(usedSets[boosterSet].cardPool["rare"]) +
-										count_cards(usedSets[boosterSet].cardPool["mythic"]) <
+									countCards(usedSets[boosterSet].cardPool["rare"]) +
+										countCards(usedSets[boosterSet].cardPool["mythic"]) <
 										multiplier * this.getVirtualPlayersCount() * targets["rare"]
 								) {
 									const msg = `Not enough cards in card pool for individual booster restriction '${boosterSet}'. Please check you Max. Duplicates setting.`;

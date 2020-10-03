@@ -2,7 +2,7 @@
 
 import Cards from "./Cards.js";
 import { isEmpty, shuffleArray } from "./utils.js";
-import { removeCardFromDict, pickCard } from "./cardUtils.js";
+import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 
 // Generates booster for regular MtG Sets
 
@@ -96,23 +96,22 @@ export function BoosterFactory(cardPool, landSlot, options) {
 			// x = (cr - as) / (r * (c + a))
 			// If cr < as, x = 0 is the best we can do.
 			// If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
-			const cardCount = dict => Object.values(dict).reduce((acc, val) => (acc += val), 0);
-			const seededCommons = pickedCommons.length;
+			const seededCommons = pickedCommons.length; // s
 			let monocolored = Object.keys(this.commonsByColor)
 				.filter(k => k.length === 1)
 				.map(k => this.commonsByColor[k])
 				.reduce((acc, val) => Object.assign(acc, val), {});
-			const c = cardCount(monocolored) + seededCommons;
+			const c = countCards(monocolored) + seededCommons;
 			let others = Object.keys(this.commonsByColor)
 				.filter(k => k.length !== 1)
 				.map(k => this.commonsByColor[k])
 				.reduce((acc, val) => Object.assign(acc, val), {});
-			const a = cardCount(others);
-			let remainingCommons = targets["common"] - addedFoils - seededCommons;
+			const a = countCards(others);
+			let remainingCommons = targets["common"] - addedFoils - seededCommons; // r
 			const x = (c * remainingCommons - a * seededCommons) / (remainingCommons * (c + a));
 			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
 				let pickedCard = pickCard(
-					(Math.random() < x && cardCount(monocolored) !== 0) || cardCount(others) === 0
+					(Math.random() < x && countCards(monocolored) !== 0) || countCards(others) === 0
 						? monocolored
 						: others,
 					pickedCommons

@@ -20,3 +20,7 @@ export function pickCard(dict, booster) {
 	removeCardFromDict(c, dict);
 	return c;
 }
+
+export function countCards(dict) {
+	return Object.values(dict).reduce((acc, val) => (acc += val), 0);
+}
