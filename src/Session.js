@@ -1289,8 +1289,8 @@ export function Session(id, owner) {
 			case "everyone":
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;
-		}		
-	}
+		}
+	};
 
 	this.pauseDraft = function() {
 		if (!this.drafting || !this.countdownInterval) return;
@@ -1586,9 +1586,17 @@ export function Session(id, owner) {
 			console.log("Cannot find log for shared decklist.");
 			return;
 		}
+		// TODO: add hashes
 		this.draftLog.users[userID].decklist = decklist;
-		this.sendLogs();
-	}
+		this.forUsers(uid => {
+			Connections[uid].socket.emit("shareDecklist", {
+				sessionID: this.id,
+				time: this.draftLog.time,
+				userID: userID,
+				decklist: decklist,
+			});
+		});
+	};
 
 	// Execute fn for each user. Owner included even if they're not playing.
 	this.forUsers = function(fn) {

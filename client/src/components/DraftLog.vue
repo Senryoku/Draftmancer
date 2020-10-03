@@ -11,15 +11,16 @@
 						clickable: log.userName != '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
 					}"
-					@click="() => {
-						if (log.userName != '(empty)')
-							displayOptions.detailsUserID = log.userID;
-					}"
+					@click="
+						() => {
+							if (log.userName != '(empty)') displayOptions.detailsUserID = log.userID;
+						}
+					"
 				>
 					<span>{{ log.userName }}</span>
 					<span class="color-list">
 						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
 							:key="c"
 							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
@@ -35,7 +36,7 @@
 			<select v-model="displayOptions.category">
 				<option>Cards</option>
 				<option>Picks</option>
-				<option v-if="selectedLogDecklist !== undefined">Deck</option>
+				<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
 			</select>
 			<button @click="exportSingleLog(selectedLog.userID)">
 				<i class="fas fa-clipboard-list"></i> Export in MTGA format
@@ -64,13 +65,38 @@
 				</div>
 			</template>
 			<template v-else-if="displayOptions.category == 'Deck'">
-				<div class="card-container card-columns">
+				<div class="card-container card-columns" v-if="selectedLogDecklist">
+					<div class="section-title">
+						<h2>Mainboard ({{ selectedLogDecklist.main.length }})</h2>
+						<div class="controls">
+							Added basics:
+							<span
+								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => selectedLogDecklist.lands[c] > 0)"
+								:key="c"
+							>
+								<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
+								{{ selectedLogDecklist.lands[c] }}
+							</span>
+						</div>
+					</div>
 					<card-pool
-						:cards="selectedLogDecklist.deck"
+						:cards="selectedLogDecklist.main"
 						:language="language"
 						:group="`deck-${selectedLog.userID}`"
 						:key="`deck-${selectedLog.userID}`"
 					></card-pool>
+					<div class="section-title">
+						<h2>Sideboard ({{ selectedLogDecklist.side.length }})</h2>
+					</div>
+					<card-pool
+						:cards="selectedLogDecklist.side"
+						:language="language"
+						:group="`deck-${selectedLog.userID}`"
+						:key="`side-${selectedLog.userID}`"
+					></card-pool>
+				</div>
+				<div class="card-container" v-else>
+					<p>{{ selectedLog.userName }} did not submit their decklist.</p>
 				</div>
 			</template>
 		</div>

@@ -838,6 +838,14 @@ export default {
 				this.storeDraftLogs();
 			});
 
+			this.socket.on("shareDecklist", data => {
+				const idx = this.draftLogs.findIndex(l => l.sessionID === data.sessionID && l.time === data.time);
+				if (idx && data.userID in this.draftLogs[idx].users) {
+					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
+					this.storeDraftLogs();
+				}
+			});
+
 			this.socket.on("draftLogLive", draftLog => {
 				this.draftLogLive = draftLog;
 			});
@@ -1518,14 +1526,12 @@ export default {
 			fireToast("success", "Deck exported to clipboard!");
 		},
 		shareDecklist: function() {
-			this.socket.emit(
-						"shareDecklist",
-						{
-							deck: this.deck,
-							sideboard: this.sideboard,
-							lands: this.lands,
-						},
-			);
+			this.socket.emit("shareDecklist", {
+				main: this.deck,
+				side: this.sideboard,
+				lands: this.lands,
+				timestamp: Date.now(),
+			});
 			fireToast("success", "Deck now visible in logs, bracket, and seating order!");
 		},
 		toggleSetRestriction: function(code) {
