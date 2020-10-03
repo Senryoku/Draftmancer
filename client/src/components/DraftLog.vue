@@ -107,7 +107,7 @@
 					<card-pool
 						:cards="selectedLogDecklistSideboard"
 						:language="language"
-						:group="`deck-${selectedLog.userID}`"
+						:group="`side-${selectedLog.userID}`"
 						:key="`side-${selectedLog.userID}`"
 					></card-pool>
 				</div>

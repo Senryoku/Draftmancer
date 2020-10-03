@@ -38,25 +38,13 @@
 				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 					<i class="fas fa-sort-amount-up fa-2x"></i>
 				</div>
-				<div
-					@click="sortByColor"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by color'"
-				>
+				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
 					<img src="../assets/img/sort-color.svg" />
 				</div>
-				<div
-					@click="sortByRarity"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by rarity'"
-				>
+				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
 					<img src="../assets/img/sort-rarity.svg" />
 				</div>
-				<div
-					@click="sortByType"
-					class="column-control clickable"
-					v-tooltip.right="'Sort cards by type'"
-				>
+				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
 					<img src="../assets/img/sort-type.svg" />
 				</div>
 			</div>
@@ -76,7 +64,7 @@ export default {
 	props: {
 		cards: { type: Array, required: true },
 		language: { type: String, required: true },
-		click: { type: Function },
+		click: { type: Function, default: () => {} },
 		group: { type: String },
 	},
 	data: function () {
