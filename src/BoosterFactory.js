@@ -78,21 +78,47 @@ export function BoosterFactory(cardPool, landSlot, options) {
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		if (this.options.colorBalance && targets["common"] >= 5) {
+      let seededCommons = 0;
 			for (let c of "WUBRG") {
 				if (this.commonsByColor[c] && !isEmpty(this.commonsByColor[c])) {
 					let pickedCard = pickCard(this.commonsByColor[c], pickedCommons);
 					removeCardFromDict(pickedCard, cardPool["common"]);
+          removeCardFromDict(pickedCard, this.commonsByColor[Cards[pickedCard].colors]);
 					pickedCommons.push(pickedCard);
+          seededCommons += 1;
 				}
 			}
-		}
-
-		for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
-			let pickedCard = pickCard(cardPool["common"], pickedCommons);
-			if (this.options.colorBalance)
-				removeCardFromDict(pickedCard, this.commonsByColor[Cards[pickedCard].colors]);
-			pickedCommons.push(pickedCard);
-		}
+      // a is the number of non-monocolor commons (often artifacts)
+      // c is the number of monocolored commons including the ones seeded already
+      // s is the number of commons seeded by color balancing
+      // r is the remaining commons to pick
+      // We want to maintain normal expected number of monocolored cards from not color balanciing:
+      // (r+s) * c / (c+a)
+      // We have s already and will take the remaining r with p(monocolored) = x
+      // s + r * x = (r+s) * c / (c + a)
+      // x = (cr - as) / (r * (c + a))
+      // If cr < as, x = 0 is the best we can do.
+      // If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
+      let monocolored = Object.keys(this.commonsByColor).filter(k => k.length === 1).map(k => this.commonsByColor[k]).flat()
+      let c = monocolored.length + seededCommons;
+      let others = Object.keys(this.commonsByColor).filter(k => k.length !== 1).map(k => this.commonsByColor[k]).flat()
+      let a = others.length;
+      let remainingCommons = targets["common"] - addedFoils - seededCommons;
+      let x = (c * remainingCommons - a * seededCommons) / (remainingCommons * (c + a));
+      for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
+        if (Math.random() < x && monocolored.length !== 0 || others.length === 0) {
+          let pickedCard = pickCard(monocolored, pickedCommons);
+        } else {
+          let pickedCard = pickCard(others, pickedCommons);
+        }
+        pickedCommons.push(pickedCard);
+      }
+		} else {
+      for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
+        let pickedCard = pickCard(cardPool["common"], pickedCommons);
+        pickedCommons.push(pickedCard);
+      }
+    }
 
 		// Shuffle commons to avoid obvious signals to other players when color balancing
 		shuffleArray(pickedCommons);
