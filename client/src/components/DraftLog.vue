@@ -3,13 +3,19 @@
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
-			<ul :class="{ 'player-table': tableSumary.length <= 8, 'player-list': tableSumary.length > 8 }">
+			<ul :class="{
+				'player-table': tableSummary.length <= 8,
+				'player-list': tableSummary.length > 8,
+				'six': tableSummary.length === 6,
+			}">
 				<li
-					v-for="(log, index) of tableSumary"
+					v-for="(log, index) of tableSummary"
 					:key="index"
 					:class="{
 						clickable: log.userName != '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
+						teama: teamDraft && index % 2 === 0,
+						teamb: teamDraft && index % 2 === 1,
 					}"
 					@click="() => {
 						if (log.userName != '(empty)')
@@ -160,22 +166,25 @@ export default {
 		selectedLogCards: function () {
 			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
-		tableSumary: function () {
-			let tableSumary = [];
+		tableSummary: function () {
+			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
-				tableSumary.push({
+				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
 					colors: this.colorsInCardIDList(this.draftlog.users[userID].cards),
 				});
 			}
-			while (Object.keys(tableSumary).length < 8)
-				tableSumary.push({
+			while (Object.keys(tableSummary).length < 6 || Object.keys(tableSummary).length === 7)
+				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",
 					colors: this.colorsInCardIDList([]),
 				});
-			return tableSumary;
+			return tableSummary;
+		},
+		teamDraft: function () {
+			return this.draftlog.teamDraft === true;
 		},
 	},
 	watch: {
@@ -198,18 +207,22 @@ ul.player-table {
 	flex-wrap: wrap;
 	list-style: none;
 	--margin: 1rem;
+	--halflength: 4;
+}
+
+ul.player-table.six {
+	--halflength: 3;
 }
 
 ul.player-list li,
 ul.player-table li {
-	width: calc(24% - 2 * var(--margin) - 1em);
-	max-width: calc(24% - 2 * var(--margin) - 1em);
+	width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	max-width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
 	border: 1px solid black;
 	margin: var(--margin);
 	position: relative;
 	padding: 0.5em;
 	border-radius: 0.2em;
-	background-color: #444;
 
 	display: inline-flex;
 	justify-content: space-between;
@@ -229,7 +242,7 @@ ul.player-table li.selected-player {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	background-color: #555;
+	font-weight: bold;
 }
 
 ul.player-table li:nth-child(1) {
@@ -257,6 +270,16 @@ ul.player-table li:nth-child(8) {
 	order: 1;
 }
 
+ul.player-table.six li:nth-child(4) {
+	order: 3;
+}
+ul.player-table.six li:nth-child(5) {
+	order: 2;
+}
+ul.player-table.six li:nth-child(6) {
+	order: 1;
+}
+
 ul.player-table li:nth-child(1):after,
 ul.player-table li:nth-child(2):after,
 ul.player-table li:nth-child(3):after {
@@ -271,7 +294,9 @@ ul.player-table li:nth-child(3):after {
 
 ul.player-table li:nth-child(5):after,
 ul.player-table li:nth-child(6):after,
-ul.player-table li:nth-child(7):after {
+ul.player-table li:nth-child(7):after,
+ul.player-table.six li:nth-child(4):after,
+ul.player-table.six li:nth-child(5):after {
 	position: absolute;
 	top: 0;
 	left: calc(-2rem + 1px);
@@ -281,7 +306,8 @@ ul.player-table li:nth-child(7):after {
 	content: "\f101";
 }
 
-ul.player-table li:nth-child(4):before {
+ul.player-table li:nth-child(4):before,
+ul.player-table.six li:nth-child(3):before {
 	position: absolute;
 	top: calc(-2rem - 2px);
 	left: calc(50%);
@@ -292,7 +318,8 @@ ul.player-table li:nth-child(4):before {
 	transform: translateX(-50%) rotate(-90deg);
 }
 
-ul.player-table li:nth-child(8):before {
+ul.player-table li:nth-child(8):before,
+ul.player-table.six li:nth-child(6):before {
 	position: absolute;
 	bottom: calc(-2rem - 2px);
 	left: calc(50%);
@@ -302,4 +329,11 @@ ul.player-table li:nth-child(8):before {
 	content: "\f100";
 	transform: translateX(-50%) rotate(90deg);
 }
+
+ul.player-table.six li:nth-child(3):after,
+ul.player-table.six li:nth-child(6):after,
+ul.player-table.six li:nth-child(4):before {
+	content: ""
+}
+
 </style>

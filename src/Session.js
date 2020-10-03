@@ -1013,6 +1013,7 @@ export function Session(id, owner, options) {
 			setRestriction: this.setRestriction,
 			boosters: JSON.parse(JSON.stringify(this.boosters)),
 			users: {},
+			teamDraft: this.teamDraft,
 		};
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
