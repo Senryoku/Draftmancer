@@ -8,7 +8,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label>
-				<input type="text" id="user-name" name="user-name" v-model="userName" maxlength="50" />
+				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" :delay="2" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
 					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
@@ -17,12 +17,13 @@
 							v-bind:value="lang.code"
 							:selected="lang.code === language"
 							:key="lang.code"
-							>{{ lang.name }}</option
 						>
+							{{ lang.name }}
+						</option>
 					</select>
 					<i
 						class="fas fa-spinner fa-spin"
-						style="position: absolute; margin-top: 0.6em; margin-left: 0.5em;"
+						style="position: absolute; margin-top: 0.6em; margin-left: 0.5em"
 						v-tooltip="'Loading language data...'"
 						v-if="loadingLanguages.length > 0"
 					></i>
@@ -30,7 +31,7 @@
 			</span>
 			<span>
 				<label for="file-input">MTGA Collection</label>
-				<input type="file" id="file-input" @change="parseMTGALog" style="display: none;" accept=".log" />
+				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
@@ -83,17 +84,6 @@
 					<label for="notification-input">Notifications</label>
 				</span>
 			</span>
-
-			<span class="generic-container">
-				<div v-show="publicSessions.length == 0" class="disable-warning">(No public sessions)</div>
-				<span v-bind:class="{ disabled: drafting || publicSessions.length == 0 }" id="public-session-controls">
-					<label for="public-sessions">Public sessions</label>
-					<select id="public-sessions" v-model="selectedPublicSession" style="max-width: 10em">
-						<option v-for="s in publicSessions" :value="s" :key="s">{{ s }}</option>
-					</select>
-					<input type="button" value="Join" @click="joinPublicSession" />
-				</span>
-			</span>
 		</div>
 
 		<!-- Session Options -->
@@ -102,7 +92,14 @@
 				<span id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
-						<input :type="hideSessionID ? 'password' : 'text'" id="session-id" v-model="sessionID" />
+						<delayed-input
+							v-model="sessionID"
+							autocomplete="off"
+							id="session-id"
+							:type="hideSessionID ? 'password' : 'text'"
+							maxlength="50"
+							:delay="2"
+						/>
 					</div>
 					<i
 						class="far fa-fw clickable"
@@ -139,7 +136,7 @@
 						type="file"
 						id="card-list-input-main"
 						@change="uploadFile($event, parseCustomCardList)"
-						style="display: none;"
+						style="display: none"
 						accept=".txt"
 					/>
 
@@ -211,7 +208,7 @@
 								</template>
 								<div
 									class="clickable"
-									style="text-align:center; padding: 0.5em; font-size:0.75em;"
+									style="text-align: center; padding: 0.5em; font-size: 0.75em"
 									slot="beforeList"
 									onclick="document.querySelector('#card-list-input-main').click()"
 								>
@@ -348,7 +345,7 @@
 				v-if="!ownerIsPlayer"
 				class="generic-container"
 				v-tooltip="'Non-playing session owner.'"
-				style="flex: 0 3 auto; text-align: center;"
+				style="flex: 0 3 auto; text-align: center"
 			>
 				<i
 					class="fas fa-crown subtle-gold"
@@ -366,7 +363,9 @@
 				v-tooltip="'Maximum players can be adjusted in session settings.'"
 				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
 			>
-				Players<br />({{ sessionUsers.length }}/{{ maxPlayers }})
+				Players
+				<br />
+				({{ sessionUsers.length }}/{{ maxPlayers }})
 			</div>
 			<i
 				v-if="userID == sessionOwner && !drafting"
@@ -436,7 +435,7 @@
 										class="fas fa-book yellow"
 										v-tooltip="
 											userByID[id].userName +
-												' has uploaded their collection, but is not using it.'
+											' has uploaded their collection, but is not using it.'
 										"
 									></i>
 								</template>
@@ -522,9 +521,8 @@
 									<i
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer)
+											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -577,13 +575,15 @@
 								:title="new Date(msg.timestamp)"
 								:key="msg.timestamp"
 							>
-								<span class="chat-author">{{
-									msg.author in userByID
-										? userByID[msg.author].userName
-										: msg.author === sessionOwner && sessionOwnerUsername
-										? sessionOwnerUsername
-										: "(Left)"
-								}}</span>
+								<span class="chat-author">
+									{{
+										msg.author in userByID
+											? userByID[msg.author].userName
+											: msg.author === sessionOwner && sessionOwnerUsername
+											? sessionOwnerUsername
+											: "(Left)"
+									}}
+								</span>
 								<span class="chat-message">{{ msg.text }}</span>
 							</li>
 						</ol>
@@ -642,8 +642,8 @@
 								value="Confirm Pick"
 								v-if="
 									selectedCard != undefined &&
-										(burningCards.length === burnedCardsPerRound ||
-											booster.length === 1 + burningCards.length)
+									(burningCards.length === burnedCardsPerRound ||
+										booster.length === 1 + burningCards.length)
 								"
 							/>
 							<span v-else>
@@ -719,7 +719,7 @@
 							</div>
 							<div class="winston-current-pile-options">
 								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
-								<button class="cancel" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
+								<button class="stop" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
 									Skip Pile
 									<span v-show="index === 2">and Draw</span>
 								</button>
@@ -755,10 +755,9 @@
 								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
 							</template>
 							<template v-else-if="gridDraftState.currentPlayer === null">
-								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
-									>This was the last booster! Let me push these booster wrappers off the
-									table...</template
-								>
+								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
+									This was the last booster! Let me push these booster wrappers off the table...
+								</template>
 								<template v-else>Advancing to the next booster...</template>
 							</template>
 							<template v-else>
@@ -839,8 +838,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing
+				(drafting && draftingState !== DraftState.Watching) ||
+				draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -919,9 +918,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-						((sideboard != undefined && sideboard.length > 0) ||
-							(drafting && draftingState !== DraftState.Watching) ||
-							draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -962,9 +961,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+				((sideboard != undefined && sideboard.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1079,24 +1078,6 @@
 							</ol>
 						</div>
 					</div>
-				</div>
-				<div class="welcome-col">
-					<div class="container">
-						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<div class="welcome-section">
-							<em>14 August 2020</em>
-							<p>Zendikar Rising is now available!</p>
-							<em>19 August 2020</em>
-							<p>
-								Grid Draft is now available! It's a draft variant for two players particularly suited
-								for cubes. 9-cards boosters are presented one by one in a 3x3 grid and players
-								alternatively chooses a row or a column of each booster, picking 2 or 3 cards each
-								round. Try it out from the new "Other Game Modes" dropdown.
-							</p>
-						</div>
-					</div>
 					<div class="container">
 						<div class="section-title">
 							<h2>Help</h2>
@@ -1111,18 +1092,111 @@
 							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
 						</div>
 					</div>
-					<!--
+				</div>
+				<div class="welcome-col">
 					<div class="container">
 						<div class="section-title">
-							<h2>Survey</h2>
+							<h2>Public Sessions</h2>
 						</div>
 						<div class="welcome-section">
-							Answer a
-							<a href="https://forms.gle/dQ9yTuggbk2wGcfKA" target="_blank">short survey</a>
-							to help us improve the draft app.
+							<div v-if="userID === sessionOwner" style="display: flex">
+								<button @click="isPublic = !isPublic">
+									Set session as {{ isPublic ? "Private" : "Public" }}
+								</button>
+								<delayed-input
+									style="flex-grow: 1"
+									v-model="description"
+									type="text"
+									placeholder="Enter a description for your session"
+									maxlength="70"
+								/>
+							</div>
+
+							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+							<table v-else class="public-sessions">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Set</th>
+										<th>Players</th>
+										<th>Description</th>
+										<th>Join</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="s in publicSessions" :key="s.id">
+										<td :title="s.id" class="id">{{ s.id }}</td>
+										<td
+											v-tooltip="
+												s.cube
+													? 'Cube'
+													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+											"
+										>
+											<template v-if="s.cube">
+												<img src="./assets/img/cube.png" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 1">
+												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 0">All</template>
+											<template v-else>[{{ s.sets.length }}]</template>
+										</td>
+										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+										<td class="desc">{{ s.description }}</td>
+										<td>
+											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+											<i
+												class="fas fa-check green"
+												v-tooltip="`You are in this session!`"
+												v-else
+											></i>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
-					-->
+					<div class="container">
+						<div class="section-title">
+							<h2>News</h2>
+						</div>
+						<div class="welcome-section">
+							<em>September 20, 2020</em>
+							<ul>
+								<li>New Public Sessions section (just above here).</li>
+								<li>Survey #2 has begun (link below here).</li>
+							</ul>
+							<em>September 14, 2020</em>
+							<ul>
+								<li>
+									<img src="img/sets/znr.svg" class="set-icon" style="--invertedness: 100%" />
+									Zendikar Rising is now available!
+								</li>
+								<li>
+									Team Draft is now available! It's a draft variant for 6 players to play in 3v3
+									teams. Great for smaller pods or to work with your friends to identify threats and
+									build pools.
+									<a
+										href="https://magic.wizards.com/en/articles/archive/how-play-limited/team-draft-2016-11-08"
+										>Learn more about the format here.</a
+									>
+									Use the checkbox under Additional Session Options after clicking the Settings
+									button.
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="container">
+						<div class="section-title">
+							<h2>Survey #2</h2>
+						</div>
+						<div class="welcome-section">
+							Answer another
+							<a href="https://forms.gle/SuXRha39cZaesvXT9" target="_blank">short survey</a> to tell us
+							what features you want most!
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1146,7 +1220,7 @@
 				</div>
 				<h2>Options Description</h2>
 				<div class="help-options">
-					<div style="width: 50%;">
+					<div style="width: 50%">
 						<strong>Session options</strong>
 						(Only accessible to the session owner, shared by everyone in your session)
 						<ul>
@@ -1201,7 +1275,7 @@
 							</li>
 						</ul>
 					</div>
-					<div style="width: 50%;">
+					<div style="width: 50%">
 						<strong>Personal options</strong>
 						<ul>
 							<li>
@@ -1266,6 +1340,26 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
+							content:
+								'<p>Public description for your session. Ex: Peasant Cube, will launch at 8pm. Matches played on Arena.</p>',
+						}"
+					>
+						<label for="session-desc">Description</label>
+						<div class="right">
+							<delayed-input
+								id="session-desc"
+								v-model="description"
+								type="text"
+								placeholder="Session public description"
+								maxlength="70"
+								style="width: 90%"
+							/>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
 							content: '<p>Is the session owner participating?</p>',
 						}"
 					>
@@ -1282,7 +1376,6 @@
 								type="number"
 								id="max-players"
 								min="1"
-								max="16"
 								step="1"
 								v-model.number="maxPlayers"
 							/>
@@ -1449,9 +1542,9 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">{{
-										setsInfos[code].fullName
-									}}</option>
+									<option v-for="code in sets" :value="code" :key="code">
+										{{ setsInfos[code].fullName }}
+									</option>
 								</select>
 							</div>
 						</div>
@@ -1498,7 +1591,7 @@
 				</div>
 				<div class="option-section option-custom-card-list">
 					<div class="option-column-title">Custom Card List</div>
-					<div style="display:flex; justify-content: space-between; align-items: center;">
+					<div style="display: flex; justify-content: space-between; align-items: center">
 						<div
 							v-tooltip.left="{
 								classes: 'option-tooltip',
@@ -1507,6 +1600,12 @@
 						>
 							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
 							<label for="use-custom-card-list">Use a Custom Card List</label>
+						</div>
+						<div>
+							<button @click="importCubeCobra">
+								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
+								Import From Cube Cobra
+							</button>
 						</div>
 						<div v-if="customCardList.length > 0">
 							<i
@@ -1533,7 +1632,7 @@
 						type="file"
 						id="card-list-input"
 						@change="uploadFile($event, parseCustomCardList)"
-						style="display: none;"
+						style="display: none"
 						accept=".txt"
 					/>
 					<div
@@ -1563,7 +1662,7 @@
 						<select name="featured-cubes" id="curated-cubes" v-model="selectedCube">
 							<option v-for="cube in cubeLists" :key="cube.filename" :value="cube">
 								{{ cube.name }}
-								<span v-if="cube.cubeCobraID" style="font-size:0.75em;">(Cube Cobra)</span>
+								<span v-if="cube.cubeCobraID" style="font-size: 0.75em">(Cube Cobra)</span>
 							</option>
 						</select>
 						<button @click="selectCube(selectedCube)" style="min-width: auto">
@@ -1649,7 +1748,7 @@
 		<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
 			<h2 slot="header">Support me</h2>
 			<div slot="body">
-				<div style="max-width: 50vw;">
+				<div style="max-width: 50vw">
 					<p>Hello there!</p>
 					<p>
 						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by

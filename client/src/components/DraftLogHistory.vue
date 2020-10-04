@@ -1,11 +1,10 @@
 <template>
 	<div class="draft-log-history">
-		<input type="file" id="log-input" @change="importLog" style="display: none;" accept=".txt" />
+		<input type="file" id="log-input" @change="importLog" style="display: none" accept=".txt" />
 		<div class="controls">
-			<button
-				onclick="document.querySelector('#log-input').click()"
-				v-tooltip="'Import a saved draft log.'"
-			>Import Draft Log</button>
+			<button onclick="document.querySelector('#log-input').click()" v-tooltip="'Import a saved draft log.'">
+				Import Draft Log
+			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
@@ -14,26 +13,23 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span>
-					<template v-if="!draftLog.delayed">
-						<i
-							class="fa fa-chevron-down clickable"
-							v-if="selectedLog !== draftLog"
-							@click="selectedLog = draftLog"
-						></i>
-						<i
-							class="fa fa-chevron-up clickable"
-							v-if="selectedLog === draftLog"
-							@click="selectedLog = null"
-						></i>
-					</template>
-					<template v-else>
-						<i class="fas fa-lock"></i>
-					</template>
-					Session '{{ draftLog.sessionID }}'
-					<span
-						v-if="draftLog.time"
-					>({{ new Date(draftLog.time).toLocaleString() }})</span>
+				<span
+					@click="selectedLog = draftLog.delayed || selectedLog === draftLog ? null : draftLog"
+					:class="{ clickable: !draftLog.delayed }"
+				>
+					<i
+						v-if="!draftLog.delayed"
+						class="fa"
+						:class="{
+							'fa-chevron-down': selectedLog !== draftLog,
+							'fa-chevron-up': selectedLog === draftLog,
+						}"
+					></i>
+					<i class="fas fa-lock" v-else></i>
+					<span>
+						Session '{{ draftLog.sessionID }}'
+						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
+					</span>
 				</span>
 				<span>
 					<template v-if="!draftLog.delayed">
@@ -43,13 +39,11 @@
 					</template>
 					<template v-else>
 						(Delayed: No one can review this log until you share it)
-						<button
-							@click="$emit('shareLog', draftLog)"
-						>
+						<button @click="$emit('shareLog', draftLog)">
 							<i class="fas fa-share-square"></i> Share with session and unlock
 						</button>
 					</template>
-					<button type="button" class="cancel" @click="deleteLog(draftLog)">
+					<button type="button" class="stop" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
 				</span>
@@ -67,7 +61,7 @@
 
 <script>
 import Swal from "sweetalert2";
-import { SwalCustomClasses } from "../alerts.js";
+import { ButtonColor, SwalCustomClasses } from "../alerts.js";
 import * as helper from "../helper.js";
 import { Cards } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
@@ -111,8 +105,8 @@ export default {
 				text: `Are you sure you want to delete draft log for session '${draftLog.sessionID}'? This cannot be reverted.`,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Delete",
 				cancelButtonText: "Cancel",
 				allowOutsideClick: false,
