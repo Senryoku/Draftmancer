@@ -1139,11 +1139,11 @@ app.get("/getCollection", (req, res) => {
 	}
 });
 
-app.get("/getCollection/:id", (req, res) => {
-	if (!req.params.id) {
+app.get("/getCollection/:sessionID", (req, res) => {
+	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.params.id].collection());
+		res.send(Sessions[req.params.sessionID].collection());
 	} else {
 		res.sendStatus(404);
 	}

@@ -1577,7 +1577,6 @@ export function Session(id, owner, options) {
 		} else {
 			this.bracket = new Bracket(players);
 		}
-		console.log(this.bracket);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
