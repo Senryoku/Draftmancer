@@ -2718,7 +2718,7 @@ describe("Set Specific Booster Rules", function() {
 				}
 			});
 		}
-		expect(Math.abs((kitesails - brutes)/(kitesails + brutes))).to.be.at.most(0.2);
+		expect(2*Math.abs((kitesails - brutes)/(kitesails, brutes))).to.be.at.most(0.2);
 		done();
 	});
 });
