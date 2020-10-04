@@ -2686,7 +2686,7 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("startDraft");
 	});
 
-	it(`1000 boosters have <=20% difference in a common artifact's count vs ca olored common's count while color balancing`, function(done) {
+	it(`1000 boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function(done) {
 		const trials = 1000;
 		const landSlot = null;
 		const BoosterFactoryOptions = {
@@ -2704,12 +2704,12 @@ describe("Set Specific Booster Rules", function() {
 				cardPoolByRarity[Cards[cid].rarity][cid] = trials;
 			}
 		}
-		const factory = SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions)
+		const factory = SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
 		let kitesails = 0;
 		let brutes = 0;
 		for (let i = 0; i < trials; i++) {
-			let booster = factory.generateBooster({common:10, uncommon:3, rare:1});
-			booster.forEach((id) => {
+			let booster = factory.generateBooster({ common: 10, uncommon: 3, rare: 1 });
+			booster.forEach(id => {
 				if (Cards[id].name === "Cliffhaven Kitesail") {
 					kitesails += 1;
 				}
@@ -2718,7 +2718,7 @@ describe("Set Specific Booster Rules", function() {
 				}
 			});
 		}
-		expect(2*Math.abs((kitesails - brutes)/(kitesails, brutes))).to.be.at.most(0.2);
+		expect(2 * Math.abs((kitesails - brutes) / (kitesails + brutes))).to.be.at.most(0.2);
 		done();
 	});
 });
