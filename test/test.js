@@ -7,6 +7,7 @@ import server from "../server.js";
 import { Connection, Connections } from "../src/Connection.js";
 import { Session, Sessions } from "../src/Session.js";
 import randomjs from "random-js";
+import { BoosterFactory, SetSpecificFactories } from "../src/BoosterFactory.js";
 
 const NODE_PORT = process.env.PORT | 3000;
 
@@ -2683,5 +2684,41 @@ describe("Set Specific Booster Rules", function() {
 			clients[ownerIdx].emit("stopDraft");
 		});
 		clients[ownerIdx].emit("startDraft");
+	});
+
+	it(`1000 boosters have <=20% difference in a common artifact's count vs ca olored common's count while color balancing`, function(done) {
+		const trials = 1000;
+		const landSlot = null;
+		const BoosterFactoryOptions = {
+			foil: false,
+			colorBalance: true,
+		};
+		const cardPoolByRarity = {
+			common: {},
+			uncommon: {},
+			rare: {},
+			mythic: {},
+		};
+		for (let cid in Cards) {
+			if (Cards[cid].in_booster && Cards[cid].set === "znr") {
+				cardPoolByRarity[Cards[cid].rarity][cid] = trials;
+			}
+		}
+		const factory = SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions)
+		let kitesails = 0;
+		let brutes = 0;
+		for (let i = 0; i < trials; i++) {
+			let booster = factory.generateBooster({common:10, uncommon:3, rare:1});
+			booster.forEach((id) => {
+				if (Cards[id].name === "Cliffhaven Kitesail") {
+					kitesails += 1;
+				}
+				if (Cards[id].name === "Murasa Brute") {
+					brutes += 1;
+				}
+			});
+		}
+		expect(2*Math.abs((kitesails - brutes)/(kitesails, brutes))).to.be.at.most(0.2);
+		done();
 	});
 });
