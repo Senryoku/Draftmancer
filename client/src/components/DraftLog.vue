@@ -66,50 +66,7 @@
 			</template>
 			<template v-else-if="displayOptions.category == 'Deck'">
 				<div class="card-container card-columns" v-if="selectedLogDecklist">
-					<div class="section-title">
-						<h2>Mainboard ({{ selectedLogDecklist.main.length }})</h2>
-						<div class="controls">
-							Added basics:
-							<span
-								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => selectedLogDecklist.lands[c] > 0)"
-								:key="c"
-							>
-								<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
-								{{ selectedLogDecklist.lands[c] }}
-							</span>
-							<div>
-								<button type="button" @click="exportDeck" v-tooltip="'Export deck and sideboard'">
-									<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
-								</button>
-								<button
-									type="button"
-									@click="exportDeck(false)"
-									v-tooltip="'Export without set information'"
-								>
-									<i class="fas fa-clipboard"></i> Export (Simple)
-								</button>
-							</div>
-							<template v-if="selectedLogDecklist.hashes">
-								<span>Cockatrice: {{ selectedLogDecklist.hashes.cockatrice }}</span>
-								<span>MWS: {{ selectedLogDecklist.hashes.mws }}</span>
-							</template>
-						</div>
-					</div>
-					<card-pool
-						:cards="selectedLogDecklistMainboard"
-						:language="language"
-						:group="`deck-${selectedLog.userID}`"
-						:key="`deck-${selectedLog.userID}`"
-					></card-pool>
-					<div class="section-title">
-						<h2>Sideboard ({{ selectedLogDecklist.side.length }})</h2>
-					</div>
-					<card-pool
-						:cards="selectedLogDecklistSideboard"
-						:language="language"
-						:group="`side-${selectedLog.userID}`"
-						:key="`side-${selectedLog.userID}`"
-					></card-pool>
+					<decklist :list="selectedLogDecklist" :language="language" />
 				</div>
 				<div class="card-container" v-else>
 					<p>{{ selectedLog.userName }} did not submit their decklist.</p>
@@ -126,11 +83,12 @@ import { Cards, genCard } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
 
 import CardPool from "./CardPool.vue";
+import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
 	name: "DraftLog",
-	components: { CardPool, DraftLogPick },
+	components: { CardPool, DraftLogPick, Decklist },
 	props: {
 		draftlog: { type: Object, required: true },
 		language: { type: String, required: true },
@@ -195,18 +153,6 @@ export default {
 			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		exportDeck: function (full = true) {
-			helper.copyToClipboard(
-				exportToMTGA(
-					this.selectedLogDecklistMainboard,
-					this.selectedLogDecklistSideboard,
-					this.language,
-					this.selectedLogDecklist.lands,
-					full
-				)
-			);
-			fireToast("success", "Deck exported to clipboard!");
-		},
 		colorsInCardIDList: function (cardids) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cardids) return r;
@@ -227,12 +173,6 @@ export default {
 		},
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;
-		},
-		selectedLogDecklistMainboard: function () {
-			return this.selectedLogDecklist.main.map((cid) => genCard(cid));
-		},
-		selectedLogDecklistSideboard: function () {
-			return this.selectedLogDecklist.side.map((cid) => genCard(cid));
 		},
 		tableSumary: function () {
 			let tableSumary = [];
