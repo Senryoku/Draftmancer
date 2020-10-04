@@ -1711,6 +1711,12 @@
 				:locked="bracketLocked"
 				:fullcontrol="userID === sessionOwner"
 				:sessionID="sessionID"
+				:language="language"
+				:draftlog="
+					draftLogs.length > 0 && draftLogs[draftLogs.length - 1].sessionID === sessionID
+						? draftLogs[draftLogs.length - 1]
+						: null
+				"
 				@updated="updateBracket"
 				@generate="generateBracket"
 				@generate-swiss="generateSwissBracket"

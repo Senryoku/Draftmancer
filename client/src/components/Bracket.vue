@@ -2,40 +2,41 @@
 <template>
 	<div v-if="bracket">
 		<div v-if="displayControls" class="controls">
-			<button
-				@click="copyLink"
-				v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'"
-			>
+			<button @click="copyLink" v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'">
 				<i class="fas fa-clipboard"></i> Copy Link to Clipboard
 			</button>
 			<div v-if="fullcontrol">
 				<span v-tooltip="'If set, only the owner will be able to enter results.'">
 					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
-					<label for="lock">
-						<i class="fas fa-lock"></i> Lock
-					</label>
+					<label for="lock"> <i class="fas fa-lock"></i> Lock </label>
 				</span>
-				<button @click="$emit('generate')">{{!teamDraft ? "Re-Generate Single Elimination" : "Re-Generate Team Bracket"}} </button>
+				<button @click="$emit('generate')">
+					{{ !teamDraft ? "Re-Generate Single Elimination" : "Re-Generate Team Bracket" }}
+				</button>
 				<button v-if="!teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
 			</div>
 			<div v-else-if="locked">
-				<span>
-					<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
-				</span>
+				<span> <i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results. </span>
 			</div>
 		</div>
 		<div class="bracket-columns">
 			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
 				<div v-for="(m, matchIndex) in col" :key="matchIndex" class="bracket-match">
-					<td class="bracket-match-num">{{m.index+1}}</td>
+					<td class="bracket-match-num">{{ m.index + 1 }}</td>
 					<td class="bracket-match-players">
 						<div v-for="(p, index) in m.players" :key="index">
 							<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-							<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{p.tbd}})</div>
+							<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{ p.tbd }})</div>
 							<div
 								class="bracket-player"
-								:class="{'bracket-winner': bracket.results[m.index][index] > bracket.results[m.index][(index + 1)%2],
-								teama: bracket.teamDraft && (index % 2 === 0), teamb: bracket.teamDraft && (index % 2 === 1)}"
+								:class="{
+									'bracket-winner':
+										bracket.results[m.index][index] > bracket.results[m.index][(index + 1) % 2],
+									teama: bracket.teamDraft && index % 2 === 0,
+									teamb: bracket.teamDraft && index % 2 === 1,
+									clickable: draftlog,
+								}"
+								@click="if (draftlog) selectedUser = p;"
 								v-else
 							>
 								<template v-if="colIndex === 2">
@@ -43,7 +44,9 @@
 									<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
 									<div v-else class="trophy"></div>
 								</template>
-								<div class="bracket-player-name" v-tooltip="'Current record: '+recordString(p)">{{p}}</div>
+								<div class="bracket-player-name" v-tooltip="'Current record: ' + recordString(p)">
+									{{ p }}
+								</div>
 								<template v-if="m.isValid()">
 									<input
 										v-if="editable"
@@ -53,13 +56,18 @@
 										min="0"
 										@change="emitUpdated"
 									/>
-									<div class="bracket-result" v-else>{{bracket.results[m.index][index]}}</div>
+									<div class="bracket-result" v-else>{{ bracket.results[m.index][index] }}</div>
 								</template>
 							</div>
 						</div>
 					</td>
 				</div>
 			</div>
+		</div>
+		<div v-if="draftlog && selectedUser">
+			<h1>{{ selectedUser }}'s deck</h1>
+			<decklist :list="selectedDeckList" v-if="selectedDeckList" :language="language" />
+			<div class="message" v-else>{{ selectedUser }} did not submit their deck.</div>
 		</div>
 	</div>
 	<div v-else>No valid bracket.</div>
@@ -68,8 +76,16 @@
 <script>
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
+import Decklist from "./Decklist.vue";
+
 export default {
 	name: "Bracket",
+	components: { Decklist },
+	data: () => {
+		return {
+			selectedUser: null,
+		};
+	},
 	props: {
 		bracket: { type: Object, required: true },
 		teamDraft: { type: Boolean, required: false },
@@ -78,6 +94,8 @@ export default {
 		locked: { type: Boolean, default: false },
 		fullcontrol: { type: Boolean, default: false },
 		sessionID: { type: String },
+		draftlog: { type: Object, default: null },
+		language: { type: String, required: true },
 	},
 	methods: {
 		teamWins: function (team) {
@@ -165,7 +183,7 @@ export default {
 				return this.bracket.players[idx] === "" ? { empty: true } : this.bracket.players[idx];
 			};
 
-			if(this.bracket.teamDraft) {
+			if (this.bracket.teamDraft) {
 				m[0].push(new Match(0, [playerOrEmpty(0), playerOrEmpty(3)]));
 				m[0].push(new Match(1, [playerOrEmpty(2), playerOrEmpty(5)]));
 				m[0].push(new Match(2, [playerOrEmpty(4), playerOrEmpty(1)]));
@@ -179,12 +197,7 @@ export default {
 			}
 
 			for (let i = 0; i < 4; ++i) {
-				m[0].push(
-					new Match(i, [
-						playerOrEmpty(2 * i),
-						playerOrEmpty(2 * i + 1)
-					])
-				);
+				m[0].push(new Match(i, [playerOrEmpty(2 * i), playerOrEmpty(2 * i + 1)]));
 			}
 			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
 			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
@@ -216,6 +229,11 @@ export default {
 					}
 				}
 			return r;
+		},
+		selectedDeckList: function () {
+			const log = Object.values(this.draftlog.users).find((u) => u.userName === this.selectedUser);
+			if (log) return log.decklist;
+			return null;
 		},
 	},
 };
@@ -260,7 +278,7 @@ export default {
 	width: 20rem;
 	padding: 0.5em;
 	margin: 0.5em;
-  border-radius: 8px;
+	border-radius: 8px;
 }
 
 .bracket-winner {

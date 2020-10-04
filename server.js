@@ -1175,6 +1175,21 @@ app.get("/getBracket/:sessionID", (req, res) => {
 	}
 });
 
+app.get("/getDraftLog/:sessionID", (req, res) => {
+	if (!req.params.sessionID) {
+		res.sendStatus(400);
+	} else if (
+		req.params.sessionID in Sessions &&
+		Sessions[req.params.sessionID].draftLog &&
+		!Sessions[req.params.sessionID].draftLog.delayed
+	) {
+		res.setHeader("Content-Type", "application/json");
+		res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
+	} else {
+		res.sendStatus(404);
+	}
+});
+
 // Debug endpoints
 
 const secretKey = process.env.SECRET_KEY || "1234";

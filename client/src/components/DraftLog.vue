@@ -3,11 +3,13 @@
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
-			<ul :class="{
-				'player-table': tableSummary.length <= 8,
-				'player-list': tableSummary.length > 8,
-				'six': tableSummary.length === 6,
-			}">
+			<ul
+				:class="{
+					'player-table': tableSummary.length <= 8,
+					'player-list': tableSummary.length > 8,
+					six: tableSummary.length === 6,
+				}"
+			>
 				<li
 					v-for="(log, index) of tableSummary"
 					:key="index"
@@ -74,9 +76,7 @@
 				<div class="card-container card-columns" v-if="selectedLogDecklist">
 					<decklist :list="selectedLogDecklist" :language="language" />
 				</div>
-				<div class="card-container" v-else>
-					<p>{{ selectedLog.userName }} did not submit their decklist.</p>
-				</div>
+				<div class="message" v-else>{{ selectedLog.userName }} did not submit their decklist.</div>
 			</template>
 		</div>
 	</div>
@@ -180,8 +180,8 @@ export default {
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;
 		},
-		tableSumary: function () {
-			let tableSumary = [];
+		tableSummary: function () {
+			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
 				tableSummary.push({
 					userID: userID,
@@ -230,8 +230,8 @@ ul.player-table.six {
 
 ul.player-list li,
 ul.player-table li {
-	width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
-	max-width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	max-width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
 	border: 1px solid black;
 	margin: var(--margin);
 	position: relative;
@@ -347,7 +347,6 @@ ul.player-table.six li:nth-child(6):before {
 ul.player-table.six li:nth-child(3):after,
 ul.player-table.six li:nth-child(6):after,
 ul.player-table.six li:nth-child(4):before {
-	content: ""
+	content: "";
 }
-
 </style>

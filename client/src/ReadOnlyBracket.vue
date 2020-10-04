@@ -1,10 +1,10 @@
 <template>
-	<div>
+	<div id="main-container">
 		<a href="/"><i class="fas fa-chevron-left"></i> Go back to MTGADraft </a>
 		<div class="main">
 			<div v-if="bracket">
 				<h1>Bracket for Session '{{ sessionID }}'</h1>
-				<bracket :bracket="bracket" :displayControls="false"></bracket>
+				<bracket :bracket="bracket" :displayControls="false" :draftlog="draftlog" language="en"></bracket>
 			</div>
 			<div class="error" v-else>
 				<h1>Error</h1>
@@ -20,6 +20,7 @@ import Vue from "vue";
 import VTooltip from "v-tooltip";
 import { getUrlVars } from "./helper.js";
 import Bracket from "./components/Bracket.vue";
+import { loadCards, addLanguage } from "./Cards.js";
 
 Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
@@ -33,9 +34,10 @@ export default {
 			sessionID: null,
 			response: null,
 			error: null,
+			draftlog: null,
 		};
 	},
-	mounted: async function() {
+	mounted: async function () {
 		let urlParamSession = getUrlVars()["session"];
 		if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 
@@ -53,11 +55,24 @@ export default {
 		} catch (e) {
 			this.error = "Client-side error.";
 		}
+
+		try {
+			const r = await fetch(`/getdraftlog/${this.sessionID}`);
+			if (r.status === 200) {
+				this.draftlog = await r.json();
+				await loadCards();
+				const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
+				addLanguage("en", DefaultLoc);
+			}
+		} catch (e) {
+			console.error("Client-side error: ", e);
+		}
 	},
 };
 </script>
 
 <style src="./css/style.css"></style>
+<style src="./css/app.css"></style>
 <style src="./css/tooltip.css"></style>
 <style>
 body {
