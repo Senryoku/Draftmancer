@@ -21,7 +21,7 @@ import uuidv1 from "uuid/v1.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
-import { Session, Sessions } from "./src/Session.js";
+import { Session, Sessions, optionProps } from "./src/Session.js";
 import Cards from "./src/Cards.js";
 import parseCardList from "./src/parseCardList.js";
 
@@ -37,14 +37,38 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
+function getPublicSessionData(s) {
+	return {
+		id: s.id,
+		description: s.description,
+		players: s.users.size,
+		maxPlayers: s.maxPlayers,
+		cube: s.useCustomCardList,
+		sets: s.setRestriction,
+	};
+}
+
 function getPublicSessions() {
-	let publicSessions = [];
-	for (let s in Sessions) {
-		if (Sessions[s].isPublic) {
-			publicSessions.push(s);
-		}
+	return Object.values(Sessions)
+		.filter(s => s.isPublic && !s.drafting)
+		.map(s => getPublicSessionData(s));
+}
+
+function updatePublicSession(sid) {
+	const s = Sessions[sid];
+	if (!s || !s.isPublic || s.drafting) {
+		io.emit("updatePublicSession", { id: sid, isPrivate: true });
+	} else {
+		io.emit("updatePublicSession", getPublicSessionData(s));
 	}
-	return publicSessions;
+}
+
+// Set session to private once a draft is started and broadcast the new status.
+function startPublicSession(s) {
+	if (s.isPublic) {
+		s.isPublic = false;
+		updatePublicSession(s.id);
+	}
 }
 
 // Prepare local custom card lists
@@ -236,6 +260,7 @@ io.on("connection", function(socket) {
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
 			sess.startGridDraft(boosterCount ? boosterCount : 18);
+			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -284,7 +309,10 @@ io.on("connection", function(socket) {
 				title: `Not enough players`,
 				text: `You need at least two players to start a Rochester Draft.`,
 			});
-		} else sess.startRochesterDraft();
+		} else {
+			sess.startRochesterDraft();
+			startPublicSession(sess);
+		}
 	});
 
 	socket.on("rochesterDraftPick", function(choice, ack) {
@@ -324,6 +352,7 @@ io.on("connection", function(socket) {
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
 			sess.startWinstonDraft(boosterCount ? boosterCount : 6);
+			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
@@ -397,6 +426,7 @@ io.on("connection", function(socket) {
 			});
 		} else {
 			sess.startDraft();
+			startPublicSession(sess);
 		}
 	});
 
@@ -526,7 +556,7 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(typeof teamDraft === "boolean")) teamDraft = parseBoolean(teamDraft);
+		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
 		if (!(typeof teamDraft === "boolean")) return;
 
 		if (teamDraft == Sessions[sessionID].teamDraft) return;
@@ -597,6 +627,7 @@ io.on("connection", function(socket) {
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("setRestriction", setRestriction);
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("customCardList", function(customCardList, ack) {
@@ -637,6 +668,7 @@ io.on("connection", function(socket) {
 				customCardList: Sessions[sessionID].customCardList,
 			});
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("loadFromCubeCobra", function(data, ack) {
@@ -658,6 +690,17 @@ io.on("connection", function(socket) {
 				return;
 			}
 
+			if (body === "Cube not found.") {
+				if (ack)
+					ack({
+						type: "error",
+						title: "Cube not found.",
+						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+						error: err,
+					});
+				return;
+			}
+
 			let parsedList = parseCardList(Cards, body, data);
 
 			if (parsedList.error) {
@@ -673,6 +716,7 @@ io.on("connection", function(socket) {
 					customCardList: Sessions[sessionID].customCardList,
 				});
 			}
+			if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 
 			if (ack) ack({ code: 0 });
 		});
@@ -839,6 +883,7 @@ io.on("connection", function(socket) {
 					useCustomCardList: Sessions[sessionID].useCustomCardList,
 				});
 		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
 	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {
@@ -867,8 +912,22 @@ io.on("connection", function(socket) {
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
 		}
-		// Update all clients
-		io.emit("publicSessions", getPublicSessions());
+		updatePublicSession(sessionID);
+	});
+
+	socket.on("setDescription", function(description) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (description === null || description === undefined || description === Sessions[sessionID].description)
+			return;
+
+		Sessions[sessionID].description = description.substring(0, 70);
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
+		}
+		updatePublicSession(sessionID);
 	});
 
 	socket.on("replaceDisconnectedPlayers", function() {
@@ -1014,17 +1073,28 @@ function joinSession(sessionID, userID) {
 }
 
 function addUserToSession(userID, sessionID) {
-	if (Connections[userID].sessionID !== null) removeUserFromSession(userID);
-	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID);
+	const options = {};
+	if (Connections[userID].sessionID !== null) {
+		// Transfer session options to the new one if applicable
+		if (userID === Sessions[Connections[userID].sessionID].owner) {
+			for (let p of optionProps) {
+				options[p] = Sessions[Connections[userID].sessionID][p];
+			}
+		}
+		removeUserFromSession(userID);
+	}
+
+	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, options);
 
 	Sessions[sessionID].addUser(userID);
+	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
 function deleteSession(sessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
 	process.nextTick(() => {
 		delete Sessions[sessionID];
-		if (wasPublic) io.emit("publicSessions", getPublicSessions());
+		if (wasPublic) updatePublicSession(sessionID);
 	});
 }
 
@@ -1035,6 +1105,7 @@ function removeUserFromSession(userID) {
 		let sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
 			sess.remUser(userID);
+			if (sess.isPublic) updatePublicSession(sessionID);
 
 			Connections[userID].sessionID = null;
 			// Keep session alive if the owner wasn't a player and is still connected.

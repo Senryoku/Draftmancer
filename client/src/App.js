@@ -11,12 +11,13 @@ import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import { SwalCustomClasses, fireToast } from "./alerts.js";
+import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
 import { Cards, genCard, loadCards, addLanguage } from "./Cards.js";
 import exportToMTGA from "./exportToMTGA.js";
 import parseCardList from "../../src/parseCardList.js";
 
 import Modal from "./components/Modal.vue";
+import DelayedInput from "./components/DelayedInput.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import BoosterCard from "./components/BoosterCard.vue";
@@ -70,6 +71,7 @@ VTooltip.options.defaultBoundariesElement = "window";
 export default {
 	components: {
 		Modal,
+		DelayedInput,
 		Card,
 		CardPlaceholder,
 		BoosterCard,
@@ -105,6 +107,7 @@ export default {
 			// Session options
 			ownerIsPlayer: true,
 			isPublic: false,
+			description: "",
 			ignoreCollections: false,
 			sessionUsers: [],
 			boostersPerPlayer: 3,
@@ -149,7 +152,6 @@ export default {
 			rochesterDraftState: null,
 
 			publicSessions: [],
-			selectedPublicSession: "",
 
 			// Front-end options & data
 			displayedModal: "",
@@ -250,6 +252,16 @@ export default {
 				this.publicSessions = sessions;
 			});
 
+			this.socket.on("updatePublicSession", session => {
+				const idx = this.publicSessions.findIndex(s => s.id === session.id);
+				if (session.isPrivate) {
+					if (idx !== -1) this.publicSessions.splice(idx, 1);
+				} else {
+					if (idx !== -1) this.publicSessions.splice(idx, 1, session);
+					else this.publicSessions.push(session);
+				}
+			});
+
 			this.socket.on("setSession", sessionID => {
 				this.sessionID = sessionID;
 				this.socket.query.sessionID = sessionID;
@@ -285,6 +297,7 @@ export default {
 							showConfirmButton: true,
 							allowOutsideClick: false,
 							confirmButtonText: "Stop draft",
+							confirmButtonColor: ButtonColor.Critical,
 						}).then(result => {
 							if (result.value) this.socket.emit("stopDraft");
 						});
@@ -430,8 +443,8 @@ export default {
 					text: `${ownerUsername} has initiated a ready check`,
 					customClass: SwalCustomClasses,
 					showCancelButton: true,
-					confirmButtonColor: "#3085d6",
-					cancelButtonColor: "#d33",
+					confirmButtonColor: ButtonColor.Safe,
+					cancelButtonColor: ButtonColor.Critical,
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
 					allowOutsideClick: false,
@@ -918,8 +931,8 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#d33",
-					cancelButtonColor: "#3085d6",
+					confirmButtonColor: ButtonColor.Critical,
+					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
 				}).then(result => {
 					if (result.value) {
@@ -942,8 +955,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Stop the draft!",
 			}).then(result => {
 				if (result.value) {
@@ -1136,8 +1149,8 @@ export default {
 				inputValue: 6,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Winston Draft",
 			});
 
@@ -1199,8 +1212,8 @@ export default {
 				inputValue: 18,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Grid Draft",
 			});
 
@@ -1277,8 +1290,8 @@ export default {
 				inputValue: 6,
 				customClass: SwalCustomClasses,
 				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Glimpse Draft",
 				preConfirm: function() {
 					return new Promise(function(resolve) {
@@ -1329,8 +1342,8 @@ export default {
 								customClass: SwalCustomClasses,
 								showCancelButton: true,
 								showConfirmButton: true,
-								confirmButtonColor: "#3085d6",
-								cancelButtonColor: "#d33",
+								confirmButtonColor: ButtonColor.Safe,
+								cancelButtonColor: ButtonColor.Critical,
 								confirmButtonText: "Yes",
 								cancelButtonText: "No",
 							});
@@ -1396,8 +1409,8 @@ export default {
 						customClass: SwalCustomClasses,
 						showCancelButton: true,
 						showConfirmButton: true,
-						confirmButtonColor: "#3085d6",
-						cancelButtonColor: "#d33",
+						confirmButtonColor: ButtonColor.Safe,
+						cancelButtonColor: ButtonColor.Critical,
 						confirmButtonText: "Intersect",
 						cancelButtonText: "Latest Only",
 					});
@@ -1493,6 +1506,26 @@ export default {
 				this.useCustomCardList = true;
 			}
 		},
+		importCubeCobra: function() {
+			Swal.fire({
+				title: "Import from Cube Cobra",
+				text: `Enter a Cube ID or an URL to import a cube directly from Cube Cobra`,
+				inputPlaceholder: "Cube ID/URL",
+				input: "text",
+				showCancelButton: true,
+				customClass: SwalCustomClasses,
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
+				confirmButtonText: "Import",
+			}).then(result => {
+				if (result.value) {
+					const urlTest = result.value.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
+					console.log(urlTest);
+					if (urlTest) result.value = urlTest[1];
+					this.selectCube({ cubeCobraID: result.value });
+				}
+			});
+		},
 		selectCube: function(cube) {
 			const ack = r => {
 				if (r.type === "error") {
@@ -1513,6 +1546,7 @@ export default {
 					icon: "info",
 					title: `Loading Cube...`,
 					text: `Please wait as we retrieve the latest version from Cube Cobra...`,
+					footer: `CubeID: ${cube.cubeCobraID}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
@@ -1552,8 +1586,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Yes",
 			}).then(result => {
 				if (result.value) {
@@ -1571,8 +1605,8 @@ export default {
 				icon: "warning",
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#d33",
-				cancelButtonColor: "#3085d6",
+				confirmButtonColor: ButtonColor.Critical,
+				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Remove player",
 			}).then(result => {
 				if (result.value) {
@@ -1612,8 +1646,8 @@ export default {
 				},
 				inputValue: 6,
 				customClass: SwalCustomClasses,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
 			});
 
@@ -1629,8 +1663,8 @@ export default {
 					icon: "warning",
 					showCancelButton: true,
 					customClass: SwalCustomClasses,
-					confirmButtonColor: "#d33",
-					cancelButtonColor: "#3085d6",
+					confirmButtonColor: ButtonColor.Critical,
+					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Start new game!",
 				}).then(result => {
 					if (result.value) {
@@ -1648,9 +1682,6 @@ export default {
 		distributeJumpstart: function() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart");
-		},
-		joinPublicSession: function() {
-			this.sessionID = this.selectedPublicSession;
 		},
 		readyCheck: function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -2094,6 +2125,10 @@ export default {
 		isPublic: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
+		},
+		description: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDescription", this.description);
 		},
 		boostersPerPlayer: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

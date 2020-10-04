@@ -126,15 +126,6 @@ footer span {
 	background-color: #2972b6;
 }
 
-#main-container button.cancel {
-	background-color: #d33;
-	text-shadow: 0 0 2px black;
-}
-
-#main-container button.cancel:hover {
-	background-color: #c22;
-}
-
 #main-container button.stop {
 	background-color: darkred;
 }
@@ -409,6 +400,43 @@ footer span {
 	background-color: #282828d0;
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
+}
+
+.public-sessions {
+	width: 100%;
+	--invertedness: 100%;
+}
+
+.public-sessions thead {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+.public-sessions tr:nth-child(odd) {
+	background-color: rgba(255, 255, 255, 0.025);
+}
+
+.public-sessions tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+.public-sessions tr td.id {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 11em;
+}
+
+.public-sessions tr td.desc {
+	width: 80%;
+	word-break: break-all;
+}
+
+.public-sessions tr td:not(.desc) {
+	white-space: nowrap;
+	text-align: center;
+}
+
+.public-sessions th,
+.public-sessions td {
+	padding: 0.25em;
 }
 
 /* ** Help Modal ** */
@@ -810,6 +838,7 @@ ul.player-list {
 	min-width: 200px;
 	min-height: 25px;
 	background-color: rgba(0, 0, 0, 0.1);
+	border-radius: 6px;
 }
 
 /**** Draft Spectator ****/

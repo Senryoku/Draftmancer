@@ -9,7 +9,7 @@
 				<table>
 					<caption>
 						{{
-						selectedSet.fullName
+							selectedSet.fullName
 						}}
 					</caption>
 					<tr>
@@ -45,7 +45,9 @@
 				</h3>
 				<div class="card-container">
 					<missing-card
-						v-for="card in selectedSet[missingCardsRarity].filter(c => (showNonBooster || c.in_booster) && c.count < 4)"
+						v-for="card in selectedSet[missingCardsRarity].filter(
+							(c) => (showNonBooster || c.in_booster) && c.count < 4
+						)"
 						:key="card.uniqueID"
 						:card="card"
 						:language="language"
@@ -115,7 +117,7 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
-			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constant.MTGSets.reverse()) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);

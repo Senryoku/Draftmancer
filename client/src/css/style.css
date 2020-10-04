@@ -107,11 +107,13 @@ label {
 	position: relative;
 }
 
+.teama,
 .bracket-player.teama,
 .player-list > .teama {
 	background: #21402e;
 }
 
+.teamb,
 .bracket-player.teamb,
 .player-list > .teamb {
 	background: #222440;

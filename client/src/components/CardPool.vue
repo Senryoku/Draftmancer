@@ -7,7 +7,7 @@
 		</div>
 		<draggable
 			v-for="(column, colIdx) in columns"
-			:key="`${_uid}_col_${colIdx}`"
+			:key="`col_${colIdx}`"
 			class="card-column drag-column"
 			:list="column"
 			:group="group"
@@ -16,7 +16,7 @@
 		>
 			<card
 				v-for="card in column"
-				:key="`${_uid}_card_${card.uniqueID}`"
+				:key="`card_${card.uniqueID}`"
 				:card="card"
 				:language="language"
 				@click="click($event, card)"
@@ -230,5 +230,12 @@ export default {
 
 .card-pool .card-column {
 	margin-right: 0.75em;
+	width: 200px;
+	min-width: 50px; /* Overrides drag-column value */
+	transition: width 0.25s ease;
+}
+
+.card-pool .card-column:empty {
+	width: 50px;
 }
 </style>
