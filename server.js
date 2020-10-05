@@ -809,12 +809,14 @@ io.on("connection", function(socket) {
 	socket.on("shareDraftLog", function(draftLog) {
 		if (!(this.userID in Connections)) return;
 		const sess = Sessions[Connections[this.userID].sessionID];
-		if (sess || sess.owner != this.userID) return;
+		if (!sess || sess.owner !== this.userID) return;
 
-		if (sess.draftLog.time === draftLog.time) sess.draftLog.delayed = false;
-		for (let user of sess.users) {
-			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
-		}
+		// Update local copy to be public
+		if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+			sess.draftLog.delayed = false;
+
+		// Send the full copy to everyone
+		for (let user of sess.users) if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
 	});
 
 	socket.on("shareDecklist", function(decklist) {
