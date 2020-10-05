@@ -74,31 +74,18 @@
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Deck'">
-					<div class="card-container card-columns" v-if="selectedLogDecklist">
-						<decklist :list="selectedLogDecklist" :language="language" />
+					<div class="card-container card-columns">
+						<decklist :list="selectedLogDecklist" :username="selectedLog.userName" :language="language" />
 					</div>
-					<div class="message" v-else>{{ selectedLog.userName }} did not submit their decklist.</div>
 				</template>
 			</template>
 			<template v-else>
-				<div class="message" v-if="selectedLogDecklist">
-					<h2>{{ selectedLog.userName }}'s Deck hashes</h2>
-					<table class="hashes">
-						<tr>
-							<td>Cockatrice</td>
-							<td>
-								<code>{{ selectedLogDecklist.hashes.cockatrice }}</code>
-							</td>
-						</tr>
-						<tr>
-							<td>MWS</td>
-							<td>
-								<code>{{ selectedLogDecklist.hashes.mws }}</code>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div class="message" v-else>{{ selectedLog.userName }} did not submit their decklist.</div>
+				<decklist
+					:list="selectedLogDecklist"
+					:username="selectedLog.userName"
+					:language="language"
+					:hashesonly="true"
+				/>
 			</template>
 		</div>
 	</div>
@@ -370,12 +357,5 @@ ul.player-table.six li:nth-child(3):after,
 ul.player-table.six li:nth-child(6):after,
 ul.player-table.six li:nth-child(4):before {
 	content: "";
-}
-
-.hashes {
-	margin: auto;
-}
-.hashes td {
-	padding: 0.5em;
 }
 </style>

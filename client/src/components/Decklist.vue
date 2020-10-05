@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="list && list.main && !hashesonly">
 		<div class="section-title">
 			<h2>Mainboard ({{ list.main.length }})</h2>
 			<div class="controls">
@@ -28,6 +28,24 @@
 		</div>
 		<card-pool :cards="sideboard" :language="language" :group="`side-${_uid}`" :key="`side-${_uid}`"></card-pool>
 	</div>
+	<div class="message" v-else-if="list && list.hashes">
+		<h2>{{ username }}'s Deck hashes</h2>
+		<table class="hashes">
+			<tr>
+				<td>Cockatrice</td>
+				<td>
+					<code>{{ list.hashes.cockatrice }}</code>
+				</td>
+			</tr>
+			<tr>
+				<td>MWS</td>
+				<td>
+					<code>{{ list.hashes.mws }}</code>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="message" v-else>{{ username }} did not submit their decklist.</div>
 </template>
 
 <script>
@@ -39,8 +57,10 @@ import CardPool from "./CardPool.vue";
 export default {
 	components: { CardPool },
 	props: {
-		list: { type: Object, required: true },
+		list: { type: Object },
+		username: { type: String, default: "Player" },
 		language: { type: String, required: true },
+		hashesonly: { type: Boolean, default: false },
 	},
 	computed: {
 		mainboard: function () {
@@ -52,17 +72,19 @@ export default {
 	},
 	methods: {
 		exportDeck: function (full = true) {
-			copyToClipboard(
-				exportToMTGA(
-					this.selectedLogDecklistMainboard,
-					this.selectedLogDecklistSideboard,
-					this.language,
-					this.selectedLogDecklist.lands,
-					full
-				)
-			);
+			copyToClipboard(exportToMTGA(this.list.main, this.list.side, this.language, this.list.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
 	},
 };
 </script>
+
+<style scoped>
+.hashes {
+	margin: auto;
+}
+
+.hashes td {
+	padding: 0.5em;
+}
+</style>

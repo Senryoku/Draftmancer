@@ -808,16 +808,18 @@ io.on("connection", function(socket) {
 
 	socket.on("shareDraftLog", function(draftLog) {
 		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		for (let user of Sessions[sessionID].users) {
+		const sess = Sessions[Connections[this.userID].sessionID];
+		if (sess || sess.owner != this.userID) return;
+
+		if (sess.draftLog.time === draftLog.time) sess.draftLog.delayed = false;
+		for (let user of sess.users) {
 			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
 		}
 	});
 
 	socket.on("shareDecklist", function(decklist) {
 		if (!(this.userID in Connections)) return;
-		console.log(this.userID);
+
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions)) return;
 
@@ -1178,13 +1180,11 @@ app.get("/getBracket/:sessionID", (req, res) => {
 app.get("/getDraftLog/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
-	} else if (
-		req.params.sessionID in Sessions &&
-		Sessions[req.params.sessionID].draftLog &&
-		!Sessions[req.params.sessionID].draftLog.delayed
-	) {
+	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
 		res.setHeader("Content-Type", "application/json");
-		res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
+		if (Sessions[req.params.sessionID].draftLog.delayed)
+			res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
+		else res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
 	} else {
 		res.sendStatus(404);
 	}

@@ -1285,6 +1285,25 @@ export function Session(id, owner, options) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
+	this.getStrippedLog = function() {
+		const strippedLog = {
+			sessionID: this.draftLog.sessionID,
+			time: this.draftLog.time,
+			delayed: true,
+			teamDraft: this.draftLog.teamDraft,
+			users: {},
+		};
+		for (let u in this.draftLog.users) {
+			strippedLog.users[u] = {
+				userID: this.draftLog.users[u].userID,
+				userName: this.draftLog.users[u].userName,
+			};
+			if (this.draftLog.users[u].decklist)
+				strippedLog.users[u].decklist = { hashes: this.draftLog.users[u].decklist.hashes };
+		}
+		return strippedLog;
+	};
+
 	this.sendLogs = function() {
 		switch (this.draftLogRecipients) {
 			case "none":
@@ -1296,18 +1315,7 @@ export function Session(id, owner, options) {
 			case "delayed": {
 				this.draftLog.delayed = true;
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				const strippedLog = {
-					sessionID: this.draftLog.sessionID,
-					time: this.draftLog.time,
-					delayed: true,
-					teamDraft: this.draftLog.teamDraft,
-					users: {},
-				};
-				for (let u in this.draftLog.users)
-					strippedLog.users[u] = {
-						userID: this.draftLog.users[u].userID,
-						userName: this.draftLog.users[u].userName,
-					};
+				const strippedLog = this.getStrippedLog();
 				for (let u of this.users) if (u !== this.owner) Connections[u].socket.emit("draftLog", strippedLog);
 				break;
 			}

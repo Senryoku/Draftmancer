@@ -34,9 +34,7 @@
 										bracket.results[m.index][index] > bracket.results[m.index][(index + 1) % 2],
 									teama: bracket.teamDraft && index % 2 === 0,
 									teamb: bracket.teamDraft && index % 2 === 1,
-									clickable: draftlog,
 								}"
-								@click="if (draftlog) selectedUser = p;"
 								v-else
 							>
 								<template v-if="colIndex === 2">
@@ -44,7 +42,12 @@
 									<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
 									<div v-else class="trophy"></div>
 								</template>
-								<div class="bracket-player-name" v-tooltip="'Current record: ' + recordString(p)">
+								<div
+									class="bracket-player-name"
+									v-tooltip="'Current record: ' + recordString(p)"
+									:class="{ clickable: draftlog }"
+									@click="if (draftlog) selectedUser = p;"
+								>
 									{{ p }}
 								</div>
 								<template v-if="m.isValid()">
@@ -66,8 +69,7 @@
 		</div>
 		<div v-if="draftlog && selectedUser">
 			<h1>{{ selectedUser }}'s deck</h1>
-			<decklist :list="selectedDeckList" v-if="selectedDeckList" :language="language" />
-			<div class="message" v-else>{{ selectedUser }} did not submit their deck.</div>
+			<decklist :list="selectedDeckList" :userName="selectedUser" :language="language" />
 		</div>
 	</div>
 	<div v-else>No valid bracket.</div>

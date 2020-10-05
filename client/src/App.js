@@ -141,6 +141,7 @@ export default {
 			bracketLocked: false,
 			//
 			draftLogs: [],
+			currentDraftLog: null,
 			draftLogLive: null,
 			bracket: null,
 			virtualPlayersData: undefined,
@@ -466,8 +467,7 @@ export default {
 				this.drafting = true;
 				this.setWinstonDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -527,8 +527,7 @@ export default {
 				this.drafting = true;
 
 				this.setWinstonDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -557,8 +556,7 @@ export default {
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -617,8 +615,7 @@ export default {
 				this.drafting = true;
 
 				this.setGridDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -647,8 +644,7 @@ export default {
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
 				this.setRochesterDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -694,8 +690,7 @@ export default {
 				this.drafting = true;
 
 				this.setRochesterDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -723,8 +718,7 @@ export default {
 
 				this.drafting = true;
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -751,8 +745,7 @@ export default {
 			this.socket.on("rejoinDraft", data => {
 				this.drafting = true;
 
-				this.clearDeck();
-				this.clearSideboard();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
@@ -851,8 +844,14 @@ export default {
 				const idx = this.draftLogs.findIndex(
 					l => l.sessionID === draftLog.sessionID && l.time === draftLog.time
 				);
-				if (idx) this.draftLogs.splice(idx, 1, draftLog);
-				else this.draftLogs.push(draftLog);
+				if (idx >= 0) {
+					if (this.currentDraftLog === this.draftLogs[idx]) this.currentDraftLog = draftLog;
+					this.draftLogs.splice(idx, 1, draftLog);
+				} else {
+					// Received a new draft log, consider it as the current one
+					this.currentDraftLog = draftLog;
+					this.draftLogs.push(draftLog);
+				}
 				this.storeDraftLogs();
 			});
 
@@ -873,8 +872,7 @@ export default {
 			});
 
 			this.socket.on("setCardSelection", data => {
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
 					this.addToDeck(genCard(cid));
 				}
@@ -902,6 +900,11 @@ export default {
 			this.socket.on("disableTimer", () => {
 				this.pickTimer = -1;
 			});
+		},
+		clearState: function() {
+			this.clearSideboard();
+			this.clearDeck();
+			this.currentDraftLog = null;
 		},
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
@@ -1571,7 +1574,7 @@ export default {
 				lands: this.lands,
 				timestamp: Date.now(),
 			});
-			fireToast("success", "Deck now visible in logs, bracket, and seating order!");
+			fireToast("success", "Deck now visible in logs and bracket!");
 		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))

@@ -863,12 +863,12 @@
 							<i class="fas fa-clipboard"></i> Export (Simple)
 						</button>
 						<button
-							v-if="deck.length > 0"
+							v-if="deck.length > 0 && currentDraftLog"
 							type="button"
 							@click="shareDecklist()"
-							v-tooltip="'Share deck, lands, and sideboard with other players'"
+							v-tooltip="'Share deck, lands, and sideboard with other players in your session.'"
 						>
-							<i class="fas fa-share-square"></i> Share Decklist
+							<i class="fas fa-share-square"></i> Share
 						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
@@ -1712,13 +1712,7 @@
 				:fullcontrol="userID === sessionOwner"
 				:sessionID="sessionID"
 				:language="language"
-				:draftlog="
-					draftLogs.length > 0 &&
-					draftLogs[draftLogs.length - 1].sessionID === sessionID &&
-					!draftLogs[draftLogs.length - 1].delayed
-						? draftLogs[draftLogs.length - 1]
-						: null
-				"
+				:draftlog="currentDraftLog"
 				@updated="updateBracket"
 				@generate="generateBracket"
 				@generate-swiss="generateSwissBracket"
