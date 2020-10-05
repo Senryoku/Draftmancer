@@ -69,7 +69,7 @@
 		</div>
 		<div v-if="draftlog && selectedUser">
 			<h1>{{ selectedUser }}'s deck</h1>
-			<decklist :list="selectedDeckList" :userName="selectedUser" :language="language" />
+			<decklist :list="selectedDeckList" :username="selectedUser" :language="language" />
 		</div>
 	</div>
 	<div v-else>No valid bracket.</div>

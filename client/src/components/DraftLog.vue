@@ -75,7 +75,12 @@
 				</template>
 				<template v-else-if="displayOptions.category == 'Deck'">
 					<div class="card-container card-columns">
-						<decklist :list="selectedLogDecklist" :username="selectedLog.userName" :language="language" />
+						<decklist
+							:list="selectedLogDecklist"
+							:username="selectedLog.userName"
+							:language="language"
+							:hashesonly="selectedLog.delayed"
+						/>
 					</div>
 				</template>
 			</template>
