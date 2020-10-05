@@ -40,41 +40,63 @@
 		</div>
 
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<h2>{{ selectedLog.userName }}</h2>
-			<select v-model="displayOptions.category">
-				<option>Cards</option>
-				<option>Picks</option>
-				<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
-			</select>
-			<button @click="exportSingleLog(selectedLog.userID)">
-				<i class="fas fa-clipboard-list"></i> Export in MTGA format
-			</button>
-			<button @click="downloadMPT(selectedLog.userID)">
-				<i class="fas fa-file-download"></i> Download in MTGO format
-			</button>
-			<button @click="submitToMPT(selectedLog.userID)">
-				<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
-			</button>
+			<template v-if="!draftlog.delayed">
+				<h2>{{ selectedLog.userName }}</h2>
+				<select v-model="displayOptions.category">
+					<option>Cards</option>
+					<option>Picks</option>
+					<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
+				</select>
+				<button @click="exportSingleLog(selectedLog.userID)">
+					<i class="fas fa-clipboard-list"></i> Export in MTGA format
+				</button>
+				<button @click="downloadMPT(selectedLog.userID)">
+					<i class="fas fa-file-download"></i> Download in MTGO format
+				</button>
+				<button @click="submitToMPT(selectedLog.userID)">
+					<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
+				</button>
 
-			<template v-if="displayOptions.category == 'Picks'">
-				<div v-for="(pick, index) in selectedLog.picks" :key="index">
-					<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
-					<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
-				</div>
+				<template v-if="displayOptions.category == 'Picks'">
+					<div v-for="(pick, index) in selectedLog.picks" :key="index">
+						<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
+						<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
+					</div>
+				</template>
+				<template v-else-if="displayOptions.category == 'Cards'">
+					<div class="card-container card-columns">
+						<card-pool
+							:cards="selectedLogCards"
+							:language="language"
+							:group="`cardPool-${selectedLog.userID}`"
+							:key="`cardPool-${selectedLog.userID}`"
+						></card-pool>
+					</div>
+				</template>
+				<template v-else-if="displayOptions.category == 'Deck'">
+					<div class="card-container card-columns" v-if="selectedLogDecklist">
+						<decklist :list="selectedLogDecklist" :language="language" />
+					</div>
+					<div class="message" v-else>{{ selectedLog.userName }} did not submit their decklist.</div>
+				</template>
 			</template>
-			<template v-else-if="displayOptions.category == 'Cards'">
-				<div class="card-container card-columns">
-					<card-pool
-						:cards="selectedLogCards"
-						:language="language"
-						:group="`cardPool-${selectedLog.userID}`"
-						:key="`cardPool-${selectedLog.userID}`"
-					></card-pool>
-				</div>
-			</template>
-			<template v-else-if="displayOptions.category == 'Deck'">
-				<div class="card-container card-columns" v-if="selectedLogDecklist">
-					<decklist :list="selectedLogDecklist" :language="language" />
+			<template v-else>
+				<div class="message" v-if="selectedLogDecklist">
+					<h2>{{ selectedLog.userName }}'s Deck hashes</h2>
+					<table class="hashes">
+						<tr>
+							<td>Cockatrice</td>
+							<td>
+								<code>{{ selectedLogDecklist.hashes.cockatrice }}</code>
+							</td>
+						</tr>
+						<tr>
+							<td>MWS</td>
+							<td>
+								<code>{{ selectedLogDecklist.hashes.mws }}</code>
+							</td>
+						</tr>
+					</table>
 				</div>
 				<div class="message" v-else>{{ selectedLog.userName }} did not submit their decklist.</div>
 			</template>
@@ -348,5 +370,12 @@ ul.player-table.six li:nth-child(3):after,
 ul.player-table.six li:nth-child(6):after,
 ul.player-table.six li:nth-child(4):before {
 	content: "";
+}
+
+.hashes {
+	margin: auto;
+}
+.hashes td {
+	padding: 0.5em;
 }
 </style>

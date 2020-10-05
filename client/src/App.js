@@ -847,7 +847,12 @@ export default {
 			});
 
 			this.socket.on("draftLog", draftLog => {
-				this.draftLogs.push(draftLog);
+				// Updates draft log if already present, or adds it to the list
+				const idx = this.draftLogs.findIndex(
+					l => l.sessionID === draftLog.sessionID && l.time === draftLog.time
+				);
+				if (idx) this.draftLogs.splice(idx, 1, draftLog);
+				else this.draftLogs.push(draftLog);
 				this.storeDraftLogs();
 			});
 

@@ -1293,10 +1293,24 @@ export function Session(id, owner, options) {
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				break;
 			default:
-			case "delayed":
+			case "delayed": {
 				this.draftLog.delayed = true;
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				const strippedLog = {
+					sessionID: this.draftLog.sessionID,
+					time: this.draftLog.time,
+					delayed: true,
+					teamDraft: this.draftLog.teamDraft,
+					users: {},
+				};
+				for (let u in this.draftLog.users)
+					strippedLog.users[u] = {
+						userID: this.draftLog.users[u].userID,
+						userName: this.draftLog.users[u].userName,
+					};
+				for (let u of this.users) if (u !== this.owner) Connections[u].socket.emit("draftLog", strippedLog);
 				break;
+			}
 			case "everyone":
 				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
 				break;

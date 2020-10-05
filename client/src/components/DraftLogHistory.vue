@@ -13,10 +13,7 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span
-					@click="selectedLog = draftLog.delayed || selectedLog === draftLog ? null : draftLog"
-					:class="{ clickable: !draftLog.delayed }"
-				>
+				<span @click="selectedLog = selectedLog === draftLog ? null : draftLog" class="clickable">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
@@ -37,23 +34,21 @@
 							<i class="fas fa-file-download"></i> Download
 						</button>
 					</template>
-					<template v-else>
+					<template v-else-if="draftLog.boosters">
+						<!-- User has the full logs ready to be shared -->
 						(Delayed: No one can review this log until you share it)
 						<button @click="$emit('shareLog', draftLog)">
 							<i class="fas fa-share-square"></i> Share with session and unlock
 						</button>
 					</template>
+					<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
 					<button type="button" class="stop" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
 				</span>
 			</div>
 			<transition-collapse-height>
-				<draft-log
-					v-if="!draftLog.delayed && selectedLog === draftLog"
-					:draftlog="draftLog"
-					:language="language"
-				></draft-log>
+				<draft-log v-if="selectedLog === draftLog" :draftlog="draftLog" :language="language"></draft-log>
 			</transition-collapse-height>
 		</div>
 	</div>

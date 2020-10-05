@@ -119,7 +119,7 @@ export default {
 				return this.records[p].wins === 3;
 			}
 		},
-		isSilver: function (p, index) {
+		isSilver: function (p /*, index*/) {
 			return !this.bracket.teamDraft && this.records[p].wins === 2;
 		},
 		emitUpdated: function () {
