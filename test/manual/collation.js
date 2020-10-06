@@ -15,7 +15,7 @@ const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoric
 import CustomSheetsTest from "../data/CustomSheets.json";
 import constants from "../../client/src/data/constants.json";
 
-describe.only("Statistical color balancing tests", function() {
+describe("Statistical color balancing tests", function() {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function(done) {
 		this.timeout(4000);
 		const trials = 10000;
