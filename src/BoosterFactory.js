@@ -16,6 +16,57 @@ const foilRarityRates = {
 	common: 1.0,
 };
 
+/*
+ Returns cardCount color balanced cards picked from cardPool.
+ cardPoolbyColor is an object containing the same cards as cardPool but organized by their color (will be kept in sync with cardPool). 
+ pickedCards can contain pre-selected cards for this slot.
+*/
+export function generateColorBalancedSlot(cardCount, cardPool, cardPoolbyColor, pickedCards = []) {
+	for (let c of "WUBRG") {
+		if (cardPoolbyColor[c] && !isEmpty(cardPoolbyColor[c])) {
+			let pickedCard = pickCard(cardPoolbyColor[c], pickedCards);
+			removeCardFromDict(pickedCard, cardPool);
+			pickedCards.push(pickedCard);
+		}
+	}
+	// a is the number of non-monocolor commons (often artifacts)
+	// c is the number of monocolored commons including the ones seeded already
+	// s is the number of commons seeded by color balancing
+	// r is the remaining commons to pick
+	// We want to maintain normal expected number of monocolored cards from not color balanciing:
+	// (r+s) * c / (c+a)
+	// We have s already and will take the remaining r with p(monocolored) = x
+	// s + r * x = (r+s) * c / (c + a)
+	// x = (cr - as) / (r * (c + a))
+	// If cr < as, x = 0 is the best we can do.
+	// If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
+	const seededMonocolors = pickedCards.length; // s
+	let monocolored = Object.keys(cardPoolbyColor)
+		.filter(k => k.length === 1)
+		.map(k => cardPoolbyColor[k])
+		.reduce((acc, val) => Object.assign(acc, val), {});
+	const c = countCards(monocolored) + seededMonocolors;
+	let others = Object.keys(cardPoolbyColor)
+		.filter(k => k.length !== 1)
+		.map(k => cardPoolbyColor[k])
+		.reduce((acc, val) => Object.assign(acc, val), {});
+	const a = countCards(others);
+	let remainingCards = cardCount - seededMonocolors; // r
+	const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
+	for (let i = pickedCards.length; i < cardCount; ++i) {
+		let pickedCard = pickCard(
+			(Math.random() < x && countCards(monocolored) !== 0) || countCards(others) === 0 ? monocolored : others,
+			pickedCards
+		);
+		pickedCards.push(pickedCard);
+		removeCardFromDict(pickedCard, cardPool);
+		removeCardFromDict(pickedCard, cardPoolbyColor[Cards[pickedCard].colors]);
+	}
+	// Shuffle to avoid obvious signals to other players
+	shuffleArray(pickedCards);
+	return pickedCards;
+}
+
 export function BoosterFactory(cardPool, landSlot, options) {
 	this.cardPool = cardPool;
 	this.landSlot = landSlot;
@@ -44,8 +95,8 @@ export function BoosterFactory(cardPool, landSlot, options) {
 		if (this.options.foil && Math.random() <= foilRate) {
 			const rarityCheck = Math.random();
 			for (let r in foilRarityRates)
-				if (rarityCheck <= foilRarityRates[r] && !isEmpty(cardPool[r])) {
-					let pickedCard = pickCard(cardPool[r]);
+				if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.cardPool[r])) {
+					let pickedCard = pickCard(this.cardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && Cards[pickedCard].rarity == "common")
 						removeCardFromDict(pickedCard, this.commonsByColor[Cards[pickedCard].colors]);
@@ -57,78 +108,38 @@ export function BoosterFactory(cardPool, landSlot, options) {
 
 		for (let i = 0; i < targets["rare"]; ++i) {
 			// 1 Rare/Mythic
-			if (isEmpty(cardPool["mythic"]) && isEmpty(cardPool["rare"])) {
+			if (isEmpty(this.cardPool["mythic"]) && isEmpty(this.cardPool["rare"])) {
 				const msg = `Not enough rare or mythic cards in collection.`;
 				this.onError("Error generating boosters", msg);
 				console.error(msg);
 				return false;
-			} else if (isEmpty(cardPool["mythic"])) {
-				booster.push(pickCard(cardPool["rare"]));
-			} else if (this.options.mythicPromotion && isEmpty(cardPool["rare"])) {
-				booster.push(pickCard(cardPool["mythic"]));
+			} else if (isEmpty(this.cardPool["mythic"])) {
+				booster.push(pickCard(this.cardPool["rare"]));
+			} else if (this.options.mythicPromotion && isEmpty(this.cardPool["rare"])) {
+				booster.push(pickCard(this.cardPool["mythic"]));
 			} else {
 				if (this.options.mythicPromotion && Math.random() <= mythicRate)
-					booster.push(pickCard(cardPool["mythic"]));
-				else booster.push(pickCard(cardPool["rare"]));
+					booster.push(pickCard(this.cardPool["mythic"]));
+				else booster.push(pickCard(this.cardPool["rare"]));
 			}
 		}
 
-		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pickCard(cardPool["uncommon"], booster));
+		for (let i = 0; i < targets["uncommon"]; ++i) booster.push(pickCard(this.cardPool["uncommon"], booster));
 
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
 		if (this.options.colorBalance && targets["common"] >= 5) {
-			for (let c of "WUBRG") {
-				if (this.commonsByColor[c] && !isEmpty(this.commonsByColor[c])) {
-					let pickedCard = pickCard(this.commonsByColor[c], pickedCommons);
-					removeCardFromDict(pickedCard, cardPool["common"]);
-					pickedCommons.push(pickedCard);
-				}
-			}
-			// a is the number of non-monocolor commons (often artifacts)
-			// c is the number of monocolored commons including the ones seeded already
-			// s is the number of commons seeded by color balancing
-			// r is the remaining commons to pick
-			// We want to maintain normal expected number of monocolored cards from not color balanciing:
-			// (r+s) * c / (c+a)
-			// We have s already and will take the remaining r with p(monocolored) = x
-			// s + r * x = (r+s) * c / (c + a)
-			// x = (cr - as) / (r * (c + a))
-			// If cr < as, x = 0 is the best we can do.
-			// If c or a are small, we need to ignore x and use remaning cards. Negative x acts like 0.
-			const seededCommons = pickedCommons.length; // s
-			let monocolored = Object.keys(this.commonsByColor)
-				.filter(k => k.length === 1)
-				.map(k => this.commonsByColor[k])
-				.reduce((acc, val) => Object.assign(acc, val), {});
-			const c = countCards(monocolored) + seededCommons;
-			let others = Object.keys(this.commonsByColor)
-				.filter(k => k.length !== 1)
-				.map(k => this.commonsByColor[k])
-				.reduce((acc, val) => Object.assign(acc, val), {});
-			const a = countCards(others);
-			let remainingCommons = targets["common"] - addedFoils - seededCommons; // r
-			const x = (c * remainingCommons - a * seededCommons) / (remainingCommons * (c + a));
-			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
-				let pickedCard = pickCard(
-					(Math.random() < x && countCards(monocolored) !== 0) || countCards(others) === 0
-						? monocolored
-						: others,
-					pickedCommons
-				);
-				pickedCommons.push(pickedCard);
-				removeCardFromDict(pickedCard, cardPool["common"]);
-				removeCardFromDict(pickedCard, this.commonsByColor[Cards[pickedCard].colors]);
-			}
+			pickedCommons = generateColorBalancedSlot(
+				targets["common"] - addedFoils,
+				this.cardPool["common"],
+				this.commonsByColor
+			);
 		} else {
 			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
-				let pickedCard = pickCard(cardPool["common"], pickedCommons);
+				let pickedCard = pickCard(this.cardPool["common"], pickedCommons);
 				pickedCommons.push(pickedCard);
 			}
 		}
-
-		// Shuffle commons to avoid obvious signals to other players when color balancing
-		shuffleArray(pickedCommons);
 		booster = booster.concat(pickedCommons);
 
 		if (this.landSlot) booster.push(this.landSlot.pick());

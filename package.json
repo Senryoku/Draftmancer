@@ -11,6 +11,7 @@
 		"start": "node --experimental-json-modules .",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "cross-env PORT=3001 mocha test --exit --experimental-json-modules",
+		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules",
 		"build": "npx webpack --config client/webpack.config.cjs --mode=production",
 		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress --info-verbosity verbose"
 	},
