@@ -840,7 +840,6 @@ export default {
 			});
 
 			this.socket.on("draftLog", draftLog => {
-				console.log(draftLog);
 				// Updates draft log if already present, or adds it to the list
 				const idx = this.draftLogs.findIndex(
 					l => l.sessionID === draftLog.sessionID && l.time === draftLog.time
