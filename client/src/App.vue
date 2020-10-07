@@ -435,7 +435,7 @@
 										class="fas fa-book yellow"
 										v-tooltip="
 											userByID[id].userName +
-											' has uploaded their collection, but is not using it.'
+												' has uploaded their collection, but is not using it.'
 										"
 									></i>
 								</template>
@@ -521,8 +521,9 @@
 									<i
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
+												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+												(rochesterDraftState &&
+													user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -642,8 +643,8 @@
 								value="Confirm Pick"
 								v-if="
 									selectedCard != undefined &&
-									(burningCards.length === burnedCardsPerRound ||
-										booster.length === 1 + burningCards.length)
+										(burningCards.length === burnedCardsPerRound ||
+											booster.length === 1 + burningCards.length)
 								"
 							/>
 							<span v-else>
@@ -838,8 +839,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-				(drafting && draftingState !== DraftState.Watching) ||
-				draftingState == DraftState.Brewing
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -911,9 +912,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+						((sideboard != undefined && sideboard.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -954,9 +955,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-				((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1123,7 +1124,7 @@
 											v-tooltip="
 												s.cube
 													? 'Cube'
-													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+													: s.sets.map(code => setsInfos[code].fullName).join(', ')
 											"
 										>
 											<template v-if="s.cube">
@@ -1535,7 +1536,7 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
-									<option v-for="code in sets" :value="code" :key="code">
+									<option v-for="code in sets.slice().reverse()" :value="code" :key="code">
 										{{ setsInfos[code].fullName }}
 									</option>
 								</select>

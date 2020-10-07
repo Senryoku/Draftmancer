@@ -46,7 +46,7 @@
 				<div class="card-container">
 					<missing-card
 						v-for="card in selectedSet[missingCardsRarity].filter(
-							(c) => (showNonBooster || c.in_booster) && c.count < 4
+							c => (showNonBooster || c.in_booster) && c.count < 4
 						)"
 						:key="card.uniqueID"
 						:card="card"
@@ -80,7 +80,7 @@ export default {
 		};
 	},
 	computed: {
-		collectionStats: function () {
+		collectionStats: function() {
 			if (!this.collection || !Cards || !SetsInfos) return null;
 			const baseSet = (setCode, fullName) => {
 				return {
@@ -117,7 +117,7 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
-			for (let s of Constant.MTGSets.reverse()) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constant.MTGSets.slice().reverse()) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);
@@ -129,7 +129,7 @@ export default {
 					for (let s of categories) {
 						stats[s][card.rarity].push(card);
 
-						const count = (target) => {
+						const count = target => {
 							target.total.all += 1;
 							target.total[card.rarity] += 1;
 							target.owned.all += card.count;
@@ -145,7 +145,7 @@ export default {
 			}
 			return stats;
 		},
-		selectedSet: function () {
+		selectedSet: function() {
 			return this.collectionStats[this.selectedSetCode];
 		},
 	},
