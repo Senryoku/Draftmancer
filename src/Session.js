@@ -1,7 +1,8 @@
 "use strict";
 
+import uuidv1 from "uuid/v1.js";
 import constants from "../client/src/data/constants.json";
-import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
+import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
 import Cards from "./Cards.js";
@@ -982,8 +983,7 @@ export function Session(id, owner, options) {
 		this.disconnectedUsers = {};
 		// Generate bots
 		this.botsInstances = [];
-		for (let i = 0; i < this.bots; ++i)
-			this.botsInstances.push(new Bot(`Bot #${i}`, [...this.users][i % this.users.size].concat(i)));
+		for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i}`, uuidv1()));
 
 		if (!this.generateBoosters(boosterQuantity, { useCustomBoosters: true })) {
 			this.drafting = false;
@@ -1520,20 +1520,33 @@ export function Session(id, owner, options) {
 	};
 
 	this.getSortedVirtualPlayers = function() {
-		if (this.botsInstances) {
-			let tmp = {};
+		if (this.botsInstances && this.botsInstances.length > 0) {
 			let humanPlayers = this.getSortedHumanPlayersIDs();
-			for (let idx = 0; idx < Math.max(humanPlayers.length, this.botsInstances.length); ++idx) {
-				if (idx < humanPlayers.length) {
-					let userID = humanPlayers[idx];
+			// Distribute bots evenly around the table
+			const order = Array(humanPlayers.length).fill(true);
+			let idx = 0;
+			for (let i = 0; i < this.botsInstances.length; ++i) {
+				// Search next human player
+				while (!order[idx]) idx = (idx + 1) % order.length;
+				++idx;
+				// Insert a bot right after
+				order.splice(idx, 0, false);
+			}
+			let humanIdx = 0;
+			let botIdx = 0;
+			let tmp = {}; // We rely on the order of addition to this object. I know.
+			for (let human of order) {
+				if (human) {
+					let userID = humanPlayers[humanIdx];
 					tmp[userID] = {
 						isBot: false,
 						disconnected: userID in this.disconnectedUsers,
 					};
-				}
-				if (idx < this.botsInstances.length) {
-					let bot = this.botsInstances[idx];
+					++humanIdx;
+				} else {
+					let bot = this.botsInstances[botIdx];
 					tmp[bot.id] = { isBot: true, instance: bot };
+					++botIdx;
 				}
 			}
 			return tmp;

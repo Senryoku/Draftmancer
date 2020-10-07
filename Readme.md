@@ -37,14 +37,13 @@ AWS_ENDPOINT=http://localhost:8000
 
 ### Tests
 
-- `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
-- `npm run manualtest` runs tests from the `test/manual` folder, it contains additional (and long) statistical tests.
+-   `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
+-   `npm run manualtest` runs tests from the `test/manual` folder, it contains additional (and long) statistical tests.
 
 ## TODOs
 
 ### Important
 
--   Improve bot distribution (they're clumping up at the end of the table when bots >> players)
 -   Cleanup draft state? (See Winston Draft State for a better example)
 
 ### Minor Improvements
