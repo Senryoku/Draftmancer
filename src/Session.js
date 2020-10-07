@@ -468,7 +468,6 @@ export function Session(id, owner, options) {
 					}
 				}
 
-				const cardsByColor = {};
 				// Color balance the largest slot
 				const colorBalancedSlot = Object.keys(this.customCardList.cardsPerBooster).reduce((max, curr) =>
 					this.customCardList.cardsPerBooster[curr] > this.customCardList.cardsPerBooster[max] ? curr : max
@@ -476,15 +475,10 @@ export function Session(id, owner, options) {
 				// Do not color balance if we don't have at least a 5 cards slot
 				const useColorBalance =
 					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
-				if (useColorBalance) {
-					for (let card in cardsByRarity[colorBalancedSlot]) {
-						if (!(Cards[card].colors in cardsByColor)) cardsByColor[Cards[card].colors] = {};
-						cardsByColor[Cards[card].colors][card] = cardsByRarity[colorBalancedSlot][card];
-					}
-				}
 
 				// Generate Boosters
 				this.boosters = [];
+				const colorBalanceCache = {};
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster = [];
 
@@ -493,7 +487,7 @@ export function Session(id, owner, options) {
 							const slot = generateColorBalancedSlot(
 								this.customCardList.cardsPerBooster[r],
 								cardsByRarity[colorBalancedSlot],
-								cardsByColor
+								colorBalanceCache
 							);
 							booster = booster.concat(slot);
 						} else {
@@ -518,13 +512,6 @@ export function Session(id, owner, options) {
 				}
 
 				const cardsPerBooster = options.cardsPerBooster || 15;
-				let cardsByColor = {};
-				if (this.colorBalance) {
-					for (let card in localCollection) {
-						if (!(Cards[card].colors in cardsByColor)) cardsByColor[Cards[card].colors] = {};
-						cardsByColor[Cards[card].colors][card] = localCollection[card];
-					}
-				}
 
 				let card_count = countCards(localCollection);
 				let card_target = cardsPerBooster * boosterQuantity;
@@ -536,11 +523,12 @@ export function Session(id, owner, options) {
 				}
 
 				this.boosters = [];
+				const colorBalanceCache = {};
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster = [];
 
 					if (this.colorBalance) {
-						booster = generateColorBalancedSlot(cardsPerBooster, localCollection, cardsByColor);
+						booster = generateColorBalancedSlot(cardsPerBooster, localCollection, colorBalanceCache);
 					} else {
 						for (let i = 0; i < cardsPerBooster; ++i) {
 							const pickedCard = pickCard(localCollection, booster);
