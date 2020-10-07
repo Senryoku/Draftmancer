@@ -883,6 +883,7 @@
 										:id="`${c}-mana`"
 										v-model.number="lands[c]"
 										min="0"
+										max="999"
 									/>
 								</label>
 							</template>
