@@ -104,9 +104,47 @@ describe("Statistical color balancing tests", function() {
 		}
 	}
 
+	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate WITHOUT color balancing`, function(done) {
+		this.timeout(80000);
+		const trials = 500;
+		const SessionInst = new Session("UniqueID");
+		SessionInst.useCustomCardList = true;
+		SessionInst.colorBalance = false;
+		SessionInst.customCardList = ArenaCube;
+		const trackedCards = {};
+		for (let i = 0; i < trials; i++) {
+			SessionInst.generateBoosters(3 * 8);
+			let boosters = SessionInst.boosters;
+			boosters.forEach(booster =>
+				booster.forEach(id => {
+					trackedCards[id] = trackedCards[id] ? trackedCards[id] + 1 : 1;
+				})
+			);
+		}
+		// Select 10 pairs of cards and compare their rates
+		const logTable = [];
+		for (let i = 0; i < 10; ++i) {
+			let id0 = getRandomKey(trackedCards);
+			let id1 = getRandomKey(trackedCards);
+			while (id1 === id0) id1 = getRandomKey(trackedCards);
+			const relativeDifference =
+				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+			logTable.push({
+				"1st Card Name": Cards[id0].name,
+				"1st Card Count": trackedCards[id0],
+				"2nd Card Name": Cards[id1].name,
+				"2nd Card Count": trackedCards[id1],
+				"Relative Difference": relativeDifference,
+			});
+			expect(relativeDifference).to.be.at.most(0.2);
+		}
+		console.table(logTable);
+		done();
+	});
+
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
 		this.timeout(8000);
-		const trials = 200;
+		const trials = 500;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;

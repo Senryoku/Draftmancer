@@ -512,7 +512,7 @@ export function Session(id, owner, options) {
 
 				const cardsPerBooster = options.cardsPerBooster || 15;
 
-				let card_count = countCards(localCollection);
+				let card_count = this.customCardList.cards.length;
 				let card_target = cardsPerBooster * boosterQuantity;
 				if (card_count < card_target) {
 					const msg = `Not enough cards (${card_count}/${card_target}) in custom list.`;

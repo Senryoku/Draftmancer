@@ -16,7 +16,8 @@ export function getRandom(arr) {
 }
 
 export function getRandomKey(dict) {
-	return Object.keys(dict)[random.integer(0, Object.keys(dict).length - 1)];
+	const keys = Object.keys(dict);
+	return keys[random.integer(0, keys.length - 1)];
 }
 
 // Returns [start, start + step, ..., end]
