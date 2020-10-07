@@ -292,6 +292,7 @@ export default {
 .bracket-empty {
 	color: grey;
 	pointer-events: none;
+	user-select: none;
 }
 
 .bracket-result {

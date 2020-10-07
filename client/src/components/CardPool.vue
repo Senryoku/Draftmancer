@@ -227,6 +227,7 @@ export default {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	pointer-events: none;
+	user-select: none;
 	opacity: 0.5;
 }
 
