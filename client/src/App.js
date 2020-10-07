@@ -1747,29 +1747,28 @@ export default {
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
+		prepareBracketPlayers: function(pairingOrder) {
+			const playerInfos = this.sessionUsers.map(u => {
+				return { userID: u.userID, userName: u.userName };
+			});
+			let players = [];
+			for (let i = 0; i < pairingOrder.length; ++i) {
+				if (pairingOrder[i] < playerInfos.length) players[i] = playerInfos[pairingOrder[i]];
+				else players[i] = null;
+			}
+			return players;
+		},
 		// Bracket (Server communication)
 		generateBracket: function() {
 			if (this.userID != this.sessionOwner) return;
-			const playerNames = this.sessionUsers.map(u => u.userName);
-			let players = [];
-			const pairingOrder = this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < pairingOrder.length; ++i) {
-				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
-				else players[i] = "";
-			}
+			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
 		generateSwissBracket: function() {
 			if (this.userID != this.sessionOwner) return;
-			const playerNames = this.sessionUsers.map(u => u.userName);
-			let players = [];
-			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < 8; ++i) {
-				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
-				else players[i] = "";
-			}
+			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateSwissBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});

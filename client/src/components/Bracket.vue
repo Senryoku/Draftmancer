@@ -48,7 +48,7 @@
 									:class="{ clickable: draftlog }"
 									@click="if (draftlog) selectedUser = p;"
 								>
-									{{ p }}
+									{{ p.userName }}
 								</div>
 								<template v-if="m.isValid()">
 									<input
@@ -68,8 +68,8 @@
 			</div>
 		</div>
 		<div v-if="draftlog && selectedUser">
-			<h1>{{ selectedUser }}'s deck</h1>
-			<decklist :list="selectedDeckList" :username="selectedUser" :language="language" />
+			<h1>{{ selectedUser.userName }}'s deck</h1>
+			<decklist :list="selectedDeckList" :username="selectedUser.userName" :language="language" />
 		</div>
 	</div>
 	<div v-else>No valid bracket.</div>
@@ -182,7 +182,7 @@ export default {
 			};
 
 			const playerOrEmpty = (idx) => {
-				return this.bracket.players[idx] === "" ? { empty: true } : this.bracket.players[idx];
+				return this.bracket.players[idx] ? this.bracket.players[idx] : { empty: true };
 			};
 
 			if (this.bracket.teamDraft) {
@@ -233,8 +233,8 @@ export default {
 			return r;
 		},
 		selectedDeckList: function () {
-			const log = Object.values(this.draftlog.users).find((u) => u.userName === this.selectedUser);
-			if (log) return log.decklist;
+			if (this.draftlog.users[this.selectedUser.userID])
+				return this.draftlog.users[this.selectedUser.userID].decklist;
 			return null;
 		},
 	},
@@ -291,6 +291,7 @@ export default {
 .bracket-tbd,
 .bracket-empty {
 	color: grey;
+	pointer-events: none;
 }
 
 .bracket-result {
