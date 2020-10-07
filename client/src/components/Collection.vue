@@ -2,7 +2,16 @@
 	<div v-if="collectionStats">
 		Select set:
 		<select v-model="selectedSetCode">
-			<option v-for="set in collectionStats" :key="set.code" :value="set.name">{{ set.fullName }}</option>
+			<option
+				v-for="set in ['all', 'standard', 'others']"
+				:key="collectionStats[set].code"
+				:value="collectionStats[set].name"
+				>{{ collectionStats[set].fullName }}</option
+			>
+			<option style="color:#888" disabled>————————————————</option>
+			<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">{{
+				collectionStats[set].fullName
+			}}</option>
 		</select>
 		<div class="set-stats">
 			<div v-if="selectedSet">
@@ -117,7 +126,7 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
-			for (let s of Constant.MTGSets.slice().reverse()) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);
@@ -147,6 +156,9 @@ export default {
 		},
 		selectedSet: function() {
 			return this.collectionStats[this.selectedSetCode];
+		},
+		sets: function() {
+			return Constant.MTGSets.slice().reverse();
 		},
 	},
 };
