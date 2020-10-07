@@ -406,6 +406,27 @@ describe("Single Draft (Two Players)", function() {
 		disconnect();
 	});
 
+	describe("With Bots and foils", function() {
+		connect();
+		it("Clients should receive the updated bot count.", function(done) {
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+		it("Clients should receive the updated session option (foil).", function(done) {
+			clients[nonOwnerIdx].once("sessionOptions", function(val) {
+				expect(val.foil).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setFoil", true);
+		});
+		startDraft();
+		endDraft();
+		disconnect();
+	});
+
 	describe("With Bots and Disconnect", function() {
 		connect();
 		it("Clients should receive the updated bot count.", function(done) {

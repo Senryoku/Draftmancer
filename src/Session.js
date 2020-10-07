@@ -8,7 +8,7 @@ import { Connections } from "./Connection.js";
 import Cards from "./Cards.js";
 import Bot from "./Bot.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
-import { BoosterFactory, generateColorBalancedSlot, SetSpecificFactories } from "./BoosterFactory.js";
+import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
@@ -478,18 +478,17 @@ export function Session(id, owner, options) {
 
 				// Generate Boosters
 				this.boosters = [];
-				const colorBalanceCache = {};
+				const colorBalancedSlotGenerator = useColorBalance
+					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot])
+					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster = [];
 
 					for (let r in this.customCardList.cardsPerBooster) {
 						if (useColorBalance && r === colorBalancedSlot) {
-							const slot = generateColorBalancedSlot(
-								this.customCardList.cardsPerBooster[r],
-								cardsByRarity[colorBalancedSlot],
-								colorBalanceCache
+							booster = booster.concat(
+								colorBalancedSlotGenerator.generate(this.customCardList.cardsPerBooster[r])
 							);
-							booster = booster.concat(slot);
 						} else {
 							for (let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i) {
 								const pickedCard = pickCard(cardsByRarity[r], booster);
@@ -523,20 +522,17 @@ export function Session(id, owner, options) {
 				}
 
 				this.boosters = [];
-				const colorBalanceCache = {};
-				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = [];
 
-					if (this.colorBalance) {
-						booster = generateColorBalancedSlot(cardsPerBooster, localCollection, colorBalanceCache);
-					} else {
-						for (let i = 0; i < cardsPerBooster; ++i) {
-							const pickedCard = pickCard(localCollection, booster);
-							booster.push(pickedCard);
-						}
+				if (this.colorBalance) {
+					const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection);
+					for (let i = 0; i < boosterQuantity; ++i)
+						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster));
+				} else {
+					for (let i = 0; i < boosterQuantity; ++i) {
+						let booster = [];
+						for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster));
+						this.boosters.push(booster);
 					}
-
-					this.boosters.push(booster);
 				}
 			}
 		} else {
