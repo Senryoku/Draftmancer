@@ -39,7 +39,7 @@
 							>
 								<template v-if="colIndex === 2">
 									<i v-if="isGold(p, index)" class="trophy gold fas fa-trophy"></i>
-									<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
+									<i v-else-if="isSilver(p)" class="trophy silver fas fa-trophy"></i>
 									<div v-else class="trophy"></div>
 								</template>
 								<div
@@ -121,7 +121,7 @@ export default {
 				return this.records[p].wins === 3;
 			}
 		},
-		isSilver: function (p /*, index*/) {
+		isSilver: function (p) {
 			return !this.bracket.teamDraft && this.records[p].wins === 2;
 		},
 		emitUpdated: function () {
