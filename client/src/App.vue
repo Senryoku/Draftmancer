@@ -1162,6 +1162,10 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>October 9, 2020</em>
+							<ul>
+								<li>Deck sharing now lets you show your deck to other players and viewers of the read-only bracket.</li>
+							</ul>
 							<em>September 20, 2020</em>
 							<ul>
 								<li>New Public Sessions section (just above here).</li>
