@@ -863,6 +863,14 @@
 						>
 							<i class="fas fa-clipboard"></i> Export (Simple)
 						</button>
+						<button
+							v-if="deck.length > 0 && currentDraftLog"
+							type="button"
+							@click="shareDecklist()"
+							v-tooltip="'Share deck, lands, and sideboard with other players in your session.'"
+						>
+							<i class="fas fa-share-square"></i> Share
+						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
@@ -1156,6 +1164,10 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>October 9, 2020</em>
+							<ul>
+								<li>Deck sharing now lets you show your deck to other players and viewers of the read-only bracket.</li>
+							</ul>
 							<em>September 20, 2020</em>
 							<ul>
 								<li>New Public Sessions section (just above here).</li>
@@ -1705,6 +1717,8 @@
 				:locked="bracketLocked"
 				:fullcontrol="userID === sessionOwner"
 				:sessionID="sessionID"
+				:language="language"
+				:draftlog="currentDraftLog"
 				@updated="updateBracket"
 				@generate="generateBracket"
 				@generate-swiss="generateSwissBracket"

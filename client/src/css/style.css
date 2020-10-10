@@ -118,3 +118,11 @@ label {
 .player-list > .teamb {
 	background: #222440;
 }
+
+.message {
+	background-color: #282828;
+	border-radius: 10px;
+	box-shadow: inset 0 0 8px #383838;
+	text-align: center;
+	padding: 1em;
+}

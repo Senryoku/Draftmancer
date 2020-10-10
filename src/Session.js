@@ -7,6 +7,7 @@ import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./util
 import { Connections } from "./Connection.js";
 import Cards from "./Cards.js";
 import Bot from "./Bot.js";
+import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
@@ -1064,7 +1065,6 @@ export function Session(id, owner, options) {
 				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
 			}.`
 		);
-
 		this.draftLog.users[userID].picks.push({
 			pick: cardID,
 			burn: burnedCards,
@@ -1242,21 +1242,7 @@ export function Session(id, owner, options) {
 			}
 		}
 
-		switch (this.draftLogRecipients) {
-			case "none":
-				break;
-			case "owner":
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				break;
-			default:
-			case "delayed":
-				this.draftLog.delayed = true;
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				break;
-			case "everyone":
-				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
-				break;
-		}
+		this.sendLogs();
 
 		logSession("Draft", this);
 		this.boosters = [];
@@ -1265,6 +1251,46 @@ export function Session(id, owner, options) {
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
+	};
+
+	this.getStrippedLog = function() {
+		const strippedLog = {
+			sessionID: this.draftLog.sessionID,
+			time: this.draftLog.time,
+			delayed: true,
+			teamDraft: this.draftLog.teamDraft,
+			users: {},
+		};
+		for (let u in this.draftLog.users) {
+			strippedLog.users[u] = {
+				userID: this.draftLog.users[u].userID,
+				userName: this.draftLog.users[u].userName,
+			};
+			if (this.draftLog.users[u].decklist)
+				strippedLog.users[u].decklist = { hashes: this.draftLog.users[u].decklist.hashes };
+		}
+		return strippedLog;
+	};
+
+	this.sendLogs = function() {
+		switch (this.draftLogRecipients) {
+			case "none":
+				break;
+			case "owner":
+				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				break;
+			default:
+			case "delayed": {
+				this.draftLog.delayed = true;
+				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				const strippedLog = this.getStrippedLog();
+				for (let u of this.users) if (u !== this.owner) Connections[u].socket.emit("draftLog", strippedLog);
+				break;
+			}
+			case "everyone":
+				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
+				break;
+		}
 	};
 
 	this.pauseDraft = function() {
@@ -1554,7 +1580,6 @@ export function Session(id, owner, options) {
 		} else {
 			this.bracket = new Bracket(players);
 		}
-		console.log(this.bracket);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	};
 
@@ -1567,6 +1592,23 @@ export function Session(id, owner, options) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+	};
+
+	this.shareDecklist = function(userID, decklist) {
+		if (this.draftLog === undefined || this.draftLog.users[userID] === undefined) {
+			console.log("Cannot find log for shared decklist.");
+			return;
+		}
+		decklist = computeHashes(decklist);
+		this.draftLog.users[userID].decklist = decklist;
+		this.forUsers(uid => {
+			Connections[uid].socket.emit("shareDecklist", {
+				sessionID: this.id,
+				time: this.draftLog.time,
+				userID: userID,
+				decklist: decklist,
+			});
+		});
 	};
 
 	// Execute fn for each user. Owner included even if they're not playing.

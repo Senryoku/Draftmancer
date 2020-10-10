@@ -3,11 +3,13 @@
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
-			<ul :class="{
-				'player-table': tableSummary.length <= 8,
-				'player-list': tableSummary.length > 8,
-				'six': tableSummary.length === 6,
-			}">
+			<ul
+				:class="{
+					'player-table': tableSummary.length <= 8,
+					'player-list': tableSummary.length > 8,
+					six: tableSummary.length === 6,
+				}"
+			>
 				<li
 					v-for="(log, index) of tableSummary"
 					:key="index"
@@ -17,15 +19,16 @@
 						teama: teamDraft && index % 2 === 0,
 						teamb: teamDraft && index % 2 === 1,
 					}"
-					@click="() => {
-						if (log.userName != '(empty)')
-							displayOptions.detailsUserID = log.userID;
-					}"
+					@click="
+						() => {
+							if (log.userName != '(empty)') displayOptions.detailsUserID = log.userID;
+						}
+					"
 				>
 					<span>{{ log.userName }}</span>
 					<span class="color-list">
 						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
 							:key="c"
 							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
@@ -37,36 +40,57 @@
 		</div>
 
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<h2>{{ selectedLog.userName }}</h2>
-			<select v-model="displayOptions.category">
-				<option>Cards</option>
-				<option>Picks</option>
-			</select>
-			<button @click="exportSingleLog(selectedLog.userID)">
-				<i class="fas fa-clipboard-list"></i> Export in MTGA format
-			</button>
-			<button @click="downloadMPT(selectedLog.userID)">
-				<i class="fas fa-file-download"></i> Download in MTGO format
-			</button>
-			<button @click="submitToMPT(selectedLog.userID)">
-				<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
-			</button>
+			<template v-if="!draftlog.delayed">
+				<h2>{{ selectedLog.userName }}</h2>
+				<select v-model="displayOptions.category">
+					<option>Cards</option>
+					<option>Picks</option>
+					<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
+				</select>
+				<button @click="exportSingleLog(selectedLog.userID)">
+					<i class="fas fa-clipboard-list"></i> Export in MTGA format
+				</button>
+				<button @click="downloadMPT(selectedLog.userID)">
+					<i class="fas fa-file-download"></i> Download in MTGO format
+				</button>
+				<button @click="submitToMPT(selectedLog.userID)">
+					<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
+				</button>
 
-			<template v-if="displayOptions.category == 'Picks'">
-				<div v-for="(pick, index) in selectedLog.picks" :key="index">
-					<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
-					<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
-				</div>
+				<template v-if="displayOptions.category == 'Picks'">
+					<div v-for="(pick, index) in selectedLog.picks" :key="index">
+						<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
+						<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
+					</div>
+				</template>
+				<template v-else-if="displayOptions.category == 'Cards'">
+					<div class="card-container card-columns">
+						<card-pool
+							:cards="selectedLogCards"
+							:language="language"
+							:group="`cardPool-${selectedLog.userID}`"
+							:key="`cardPool-${selectedLog.userID}`"
+						></card-pool>
+					</div>
+				</template>
+				<template v-else-if="displayOptions.category == 'Deck'">
+					<div class="card-container card-columns">
+						<decklist
+							:list="selectedLogDecklist"
+							:username="selectedLog.userName"
+							:language="language"
+							:hashesonly="selectedLog.delayed"
+						/>
+					</div>
+				</template>
 			</template>
-			<template v-else-if="displayOptions.category == 'Cards'">
-				<div class="card-container card-columns">
-					<card-pool
-						:cards="selectedLogCards"
-						:language="language"
-						:group="`cardPool-${selectedLog.userID}`"
-						:key="`cardPool-${selectedLog.userID}`"
-					></card-pool>
-				</div>
+			<template v-else>
+				<decklist
+					:list="selectedLogDecklist"
+					:username="selectedLog.userName"
+					:language="language"
+					:hashesonly="true"
+				/>
 			</template>
 		</div>
 	</div>
@@ -79,11 +103,12 @@ import { Cards, genCard } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
 
 import CardPool from "./CardPool.vue";
+import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
 	name: "DraftLog",
-	components: { CardPool, DraftLogPick },
+	components: { CardPool, DraftLogPick, Decklist },
 	props: {
 		draftlog: { type: Object, required: true },
 		language: { type: String, required: true },
@@ -166,6 +191,9 @@ export default {
 		selectedLogCards: function () {
 			return this.selectedLog.cards.map((cid) => genCard(cid));
 		},
+		selectedLogDecklist: function () {
+			return this.selectedLog.decklist;
+		},
 		tableSummary: function () {
 			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
@@ -216,8 +244,8 @@ ul.player-table.six {
 
 ul.player-list li,
 ul.player-table li {
-	width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
-	max-width: calc(100%/var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
+	max-width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
 	border: 1px solid black;
 	margin: var(--margin);
 	position: relative;
@@ -333,7 +361,6 @@ ul.player-table.six li:nth-child(6):before {
 ul.player-table.six li:nth-child(3):after,
 ul.player-table.six li:nth-child(6):after,
 ul.player-table.six li:nth-child(4):before {
-	content: ""
+	content: "";
 }
-
 </style>
