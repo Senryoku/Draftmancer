@@ -141,6 +141,7 @@ export default {
 			bracketLocked: false,
 			//
 			draftLogs: [],
+			currentDraftLog: null,
 			draftLogLive: null,
 			bracket: null,
 			virtualPlayersData: undefined,
@@ -466,8 +467,7 @@ export default {
 				this.drafting = true;
 				this.setWinstonDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -527,8 +527,7 @@ export default {
 				this.drafting = true;
 
 				this.setWinstonDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -557,8 +556,7 @@ export default {
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -617,8 +615,7 @@ export default {
 				this.drafting = true;
 
 				this.setGridDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -647,8 +644,7 @@ export default {
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
 				this.setRochesterDraftState(state);
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				this.playSound("start");
 				Swal.fire({
 					position: "center",
@@ -694,8 +690,7 @@ export default {
 				this.drafting = true;
 
 				this.setRochesterDraftState(data.state);
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
@@ -723,8 +718,7 @@ export default {
 
 				this.drafting = true;
 				this.stopReadyCheck();
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				Swal.fire({
 					position: "center",
 					icon: "success",
@@ -751,8 +745,7 @@ export default {
 			this.socket.on("rejoinDraft", data => {
 				this.drafting = true;
 
-				this.clearDeck();
-				this.clearSideboard();
+				this.clearState();
 				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
@@ -847,8 +840,27 @@ export default {
 			});
 
 			this.socket.on("draftLog", draftLog => {
-				this.draftLogs.push(draftLog);
+				// Updates draft log if already present, or adds it to the list
+				const idx = this.draftLogs.findIndex(
+					l => l.sessionID === draftLog.sessionID && l.time === draftLog.time
+				);
+				if (idx >= 0) {
+					if (this.currentDraftLog === this.draftLogs[idx]) this.currentDraftLog = draftLog;
+					this.draftLogs.splice(idx, 1, draftLog);
+				} else {
+					// Received a new draft log, consider it as the current one
+					this.currentDraftLog = draftLog;
+					this.draftLogs.push(draftLog);
+				}
 				this.storeDraftLogs();
+			});
+
+			this.socket.on("shareDecklist", data => {
+				const idx = this.draftLogs.findIndex(l => l.sessionID === data.sessionID && l.time === data.time);
+				if (idx && data.userID in this.draftLogs[idx].users) {
+					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
+					this.storeDraftLogs();
+				}
 			});
 
 			this.socket.on("draftLogLive", draftLog => {
@@ -860,8 +872,7 @@ export default {
 			});
 
 			this.socket.on("setCardSelection", data => {
-				this.clearSideboard();
-				this.clearDeck();
+				this.clearState();
 				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
 					this.addToDeck(genCard(cid));
 				}
@@ -889,6 +900,11 @@ export default {
 			this.socket.on("disableTimer", () => {
 				this.pickTimer = -1;
 			});
+		},
+		clearState: function() {
+			this.clearSideboard();
+			this.clearDeck();
+			this.currentDraftLog = null;
 		},
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
@@ -1551,6 +1567,15 @@ export default {
 			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
+		shareDecklist: function() {
+			this.socket.emit("shareDecklist", {
+				main: this.deck.map(c => c.id),
+				side: this.sideboard.map(c => c.id),
+				lands: this.lands,
+				timestamp: Date.now(),
+			});
+			fireToast("success", "Deck now visible in logs and bracket!");
+		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
@@ -1721,29 +1746,28 @@ export default {
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
+		prepareBracketPlayers: function(pairingOrder) {
+			const playerInfos = this.sessionUsers.map(u => {
+				return { userID: u.userID, userName: u.userName };
+			});
+			let players = [];
+			for (let i = 0; i < pairingOrder.length; ++i) {
+				if (pairingOrder[i] < playerInfos.length) players[i] = playerInfos[pairingOrder[i]];
+				else players[i] = null;
+			}
+			return players;
+		},
 		// Bracket (Server communication)
 		generateBracket: function() {
 			if (this.userID != this.sessionOwner) return;
-			const playerNames = this.sessionUsers.map(u => u.userName);
-			let players = [];
-			const pairingOrder = this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < pairingOrder.length; ++i) {
-				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
-				else players[i] = "";
-			}
+			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
 		generateSwissBracket: function() {
 			if (this.userID != this.sessionOwner) return;
-			const playerNames = this.sessionUsers.map(u => u.userName);
-			let players = [];
-			const pairingOrder = [0, 4, 2, 6, 1, 5, 3, 7];
-			for (let i = 0; i < 8; ++i) {
-				if (pairingOrder[i] < playerNames.length) players[i] = playerNames[pairingOrder[i]];
-				else players[i] = "";
-			}
+			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateSwissBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});

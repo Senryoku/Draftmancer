@@ -5,4 +5,4 @@ Vue.config.productionTip = false;
 
 new Vue({
 	render: h => h(ReadOnlyBracket),
-}).$mount("#read-only-bracket");
+}).$mount("#main-vue");

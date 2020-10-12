@@ -808,11 +808,24 @@ io.on("connection", function(socket) {
 
 	socket.on("shareDraftLog", function(draftLog) {
 		if (!(this.userID in Connections)) return;
+		const sess = Sessions[Connections[this.userID].sessionID];
+		if (!sess || sess.owner !== this.userID) return;
+
+		// Update local copy to be public
+		if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+			sess.draftLog.delayed = false;
+
+		// Send the full copy to everyone
+		for (let user of sess.users) if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
+	});
+
+	socket.on("shareDecklist", function(decklist) {
+		if (!(this.userID in Connections)) return;
+
 		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
-		}
+		if (!(sessionID in Sessions)) return;
+
+		Sessions[sessionID].shareDecklist(this.userID, decklist);
 	});
 
 	socket.on("setMaxDuplicates", function(maxDuplicates) {
@@ -1130,11 +1143,11 @@ app.get("/getCollection", (req, res) => {
 	}
 });
 
-app.get("/getCollection/:id", (req, res) => {
-	if (!req.params.id) {
+app.get("/getCollection/:sessionID", (req, res) => {
+	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.params.id].collection());
+		res.send(Sessions[req.params.sessionID].collection());
 	} else {
 		res.sendStatus(404);
 	}
@@ -1161,6 +1174,19 @@ app.get("/getBracket/:sessionID", (req, res) => {
 		//res.json(Sessions[req.params.sessionID].bracket); // Only works once for whatever reason?...
 		res.setHeader("Content-Type", "application/json");
 		res.send(JSON.stringify(Sessions[req.params.sessionID].bracket));
+	} else {
+		res.sendStatus(404);
+	}
+});
+
+app.get("/getDraftLog/:sessionID", (req, res) => {
+	if (!req.params.sessionID) {
+		res.sendStatus(400);
+	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
+		res.setHeader("Content-Type", "application/json");
+		if (Sessions[req.params.sessionID].draftLog.delayed)
+			res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
+		else res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
 	} else {
 		res.sendStatus(404);
 	}
