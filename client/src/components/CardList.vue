@@ -51,25 +51,25 @@ export default {
 		collection: { type: Object },
 	},
 	computed: {
-		isValid: function() {
+		isValid: function () {
 			return this.cardlist && this.cardlist.length;
 		},
-		rows: function() {
+		rows: function () {
 			if (this.cardlist.customSheets) return [];
-			return this.rowsByColor(this.cardlist.cards.map(cid => Cards[cid]));
+			return this.rowsByColor(this.cardlist.cards.map((cid) => Cards[cid]));
 		},
-		rowsBySlot: function() {
+		rowsBySlot: function () {
 			if (!this.cardlist.customSheets) return [];
 			let rowsBySlot = {};
 			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map(cid => Cards[cid]));
+				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map((cid) => Cards[cid]));
 			}
 			return rowsBySlot;
 		},
-		checkCollection: function() {
+		checkCollection: function () {
 			return !isEmpty(this.collection);
 		},
-		missing: function() {
+		missing: function () {
 			if (!this.checkCollection) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			for (let cid of this.flatCardList) {
@@ -80,17 +80,17 @@ export default {
 			}
 			return missing;
 		},
-		missingText: function() {
-			return ["common", "uncommon", "rare", "mythic"].map(r => `${this.missing[r]} ${r}s`).join(", ");
+		missingText: function () {
+			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
 		},
-		flatCardList: function() {
+		flatCardList: function () {
 			return this.cardlist.customSheets
 				? Object.values(this.cardlist.cards).reduce((acc, val) => acc.concat(val), [])
 				: this.cardlist.cards;
 		},
 	},
 	methods: {
-		download: function() {
+		download: function () {
 			let str = "";
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
@@ -106,7 +106,7 @@ export default {
 			}
 			download("Cube.txt", str);
 		},
-		rowsByColor: function(cards) {
+		rowsByColor: function (cards) {
 			let a = cards.reduce(
 				(acc, item) => {
 					const c = item.colors;
