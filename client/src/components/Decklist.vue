@@ -9,6 +9,11 @@
 					{{ list.lands[c] }}
 				</span>
 				<div>
+					<i
+						class="fas fa-chart-pie fa-lg clickable"
+						@click="displayStats = true"
+						v-tooltip="'Deck Statistics'"
+					></i>
 					<button type="button" @click="exportDeck" v-tooltip="'Export deck and sideboard'">
 						<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 					</button>
@@ -27,6 +32,10 @@
 			<h2>Sideboard ({{ list.side.length }})</h2>
 		</div>
 		<card-pool :cards="sideboard" :language="language" :group="`side-${_uid}`" :key="`side-${_uid}`"></card-pool>
+		<modal v-if="displayStats" @close="displayStats = false">
+			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
+			<card-stats slot="body" :cards="mainboard" :addedbasics="landcount"></card-stats>
+		</modal>
 	</div>
 	<div class="message" v-else-if="list && list.hashes">
 		<h2>{{ username }}'s Deck hashes</h2>
@@ -53,14 +62,23 @@ import { copyToClipboard } from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
 import { fireToast } from "../alerts.js";
 import { genCard } from "../Cards.js";
+import Modal from "./Modal.vue";
 import CardPool from "./CardPool.vue";
+
 export default {
-	components: { CardPool },
+	components: {
+		Modal,
+		CardPool,
+		CardStats: () => import("./CardStats.vue"),
+	},
 	props: {
 		list: { type: Object },
 		username: { type: String, default: "Player" },
 		language: { type: String, required: true },
 		hashesonly: { type: Boolean, default: false },
+	},
+	data: function () {
+		return { displayStats: false };
 	},
 	computed: {
 		mainboard: function () {
@@ -68,6 +86,9 @@ export default {
 		},
 		sideboard: function () {
 			return this.list.side.map((cid) => genCard(cid));
+		},
+		landcount: function () {
+			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 	},
 	methods: {
