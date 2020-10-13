@@ -1463,7 +1463,10 @@ export function Session(id, owner, options) {
 	// Countdown Methods
 
 	this.startCountdown = function() {
-		let dec = Math.floor(this.maxTimer / 15);
+		let cardsPerBooster = 15;
+		if (this.useCustomCardList && this.customCardList.customSheets)
+			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce((acc, c) => acc + c);
+		let dec = Math.floor(this.maxTimer / cardsPerBooster);
 		this.countdown = this.maxTimer - this.round * dec;
 		this.resumeCountdown();
 	};
