@@ -61,7 +61,7 @@
 				</button>
 				<button
 					@click="submitToMPT(selectedLog.userID)"
-					v-tooltip="`Submit ${selectedLog.userName}'s pick to MagicProTools and open it in a new tab.`"
+					v-tooltip="`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`"
 				>
 					<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
 				</button>
