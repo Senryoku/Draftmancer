@@ -1009,9 +1009,10 @@
 						</div>
 						<div class="welcome-section">
 							{{ userByID[sessionOwner].userName }} is the session owner
-							<i class="fas fa-crown subtle-gold"></i>
-							. Wait for them to select the options and launch a game!
+							<i class="fas fa-crown subtle-gold"></i>.
+							 Wait for them to select the options and launch a game!
 							<br />You can still customize your personal options on top of the page.
+							<br />Or, to make a new session that you own, change Session ID in the top left.
 						</div>
 					</div>
 					<div class="container" v-else>
