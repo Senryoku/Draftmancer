@@ -14,11 +14,21 @@
 						@click="displayStats = true"
 						v-tooltip="'Deck Statistics'"
 					></i>
-					<button type="button" @click="exportDeck" v-tooltip="'Export deck and sideboard'">
+					<button
+						type="button"
+						@click="exportDeck"
+						v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
+					>
 						<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
 					</button>
-					<button type="button" @click="exportDeck(false)" v-tooltip="'Export without set information'">
-						<i class="fas fa-clipboard"></i> Export (Simple)
+					<button
+						type="button"
+						@click="exportDeck(false)"
+						v-tooltip="
+							`Export ${username}'s deck and sideboard without set information, ready to be imported in MTGA or another program.`
+						"
+					>
+						<i class="fas fa-clipboard"></i> Export Deck (Simple)
 					</button>
 				</div>
 				<template v-if="list.hashes">

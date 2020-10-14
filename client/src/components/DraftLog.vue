@@ -47,14 +47,23 @@
 					<option>Picks</option>
 					<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
 				</select>
-				<button @click="exportSingleLog(selectedLog.userID)">
-					<i class="fas fa-clipboard-list"></i> Export in MTGA format
+				<button
+					@click="exportSingleLog(selectedLog.userID)"
+					v-tooltip="`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`"
+				>
+					<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
 				</button>
-				<button @click="downloadMPT(selectedLog.userID)">
-					<i class="fas fa-file-download"></i> Download in MTGO format
+				<button
+					@click="downloadMPT(selectedLog.userID)"
+					v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
+				>
+					<i class="fas fa-file-download"></i> Download log in MTGO format
 				</button>
-				<button @click="submitToMPT(selectedLog.userID)">
-					<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
+				<button
+					@click="submitToMPT(selectedLog.userID)"
+					v-tooltip="`Submit ${selectedLog.userName}'s pick to MagicProTools and open it in a new tab.`"
+				>
+					<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
 				</button>
 
 				<template v-if="displayOptions.category == 'Picks'">
