@@ -14,7 +14,7 @@ export function fireToast(type, title) {
 		title: title,
 		customClass: SwalCustomClasses,
 		showConfirmButton: false,
-		timer: 2000,
+		timer: 3000,
 	});
 }
 
