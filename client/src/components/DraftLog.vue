@@ -25,7 +25,10 @@
 						}
 					"
 				>
-					<span>{{ log.userName }}</span>
+					<div>
+						{{ log.userName }}
+						<i class="fas fa-clipboard-check green" v-if="log.hasDeck" v-tooltip="`${log.userName} submited their deck.`"></i>
+					</div>
 					<span class="color-list">
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
@@ -209,6 +212,7 @@ export default {
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
+					hasDeck: !!this.draftlog.users[userID].decklist,
 					colors: this.colorsInCardIDList(this.draftlog.users[userID].cards),
 				});
 			}

@@ -49,6 +49,7 @@
 									@click="if (draftlog) selectedUser = p;"
 								>
 									{{ p.userName }}
+									<i class="fas fa-clipboard-check green" v-if="hasDeckList(p.userID)" v-tooltip="`${p.userName} submited their deck. Click to review it.`"></i>
 								</div>
 								<template v-if="m.isValid()">
 									<input
@@ -141,6 +142,9 @@ export default {
 			);
 			fireToast("success", "Bracket Link copied to clipboard!");
 		},
+		hasDeckList: function(userID) {
+			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
+		}
 	},
 	computed: {
 		matches: function () {
