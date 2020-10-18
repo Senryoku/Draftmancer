@@ -968,7 +968,7 @@ export function Session(id, owner, options) {
 		this.disconnectedUsers = {};
 		// Generate bots
 		this.botsInstances = [];
-		for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i}`, uuidv1()));
+		for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i + 1}`, uuidv1()));
 
 		if (!this.generateBoosters(boosterQuantity, { useCustomBoosters: true })) {
 			this.drafting = false;
