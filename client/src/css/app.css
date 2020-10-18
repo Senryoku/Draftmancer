@@ -795,25 +795,18 @@ ul.player-list {
 	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 }
 
-.card-columns {
-	justify-content: flex-start;
-	position: relative;
-	padding: 0.75em;
-	min-height: 283.33px;
-}
-
 .card-column {
 	display: flex;
 	flex-direction: column;
-	padding-bottom: 275px;
 	margin-bottom: 0.5em;
+	min-height: 300px;
 }
 
 .card-column > div,
 .card-column > div {
-	height: 25px;
+	height: 0;
+	padding-bottom: 13.5%; /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
 	margin: 0;
-	/*overflow: hidden*/
 }
 
 .card-column > div:hover,
@@ -825,6 +818,7 @@ ul.player-list {
 .card-column > div:last-child,
 .card-column > div:last-child {
 	overflow: visible;
+	padding-bottom: 142.5%;
 }
 
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
@@ -841,7 +835,6 @@ ul.player-list {
 
 .drag-column {
 	min-width: 200px;
-	min-height: 25px;
 	background-color: rgba(0, 0, 0, 0.1);
 	border-radius: 6px;
 }

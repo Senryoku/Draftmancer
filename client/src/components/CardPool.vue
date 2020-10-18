@@ -1,28 +1,31 @@
 <template>
-	<div class="card-pool card-container card-columns">
+	<div class="card-pool card-container">
 		<div class="empty-warning" v-if="cards.length == 0">
 			<slot name="empty">
 				<h3>This card pool is currently empty!</h3>
 			</slot>
 		</div>
-		<draggable
-			v-for="(column, colIdx) in columns"
-			:key="`col_${colIdx}`"
-			class="card-column drag-column"
-			:list="column"
-			:group="group"
-			@change="change"
-			drag-class="drag"
-		>
-			<card
-				v-for="card in column"
-				:key="`card_${card.uniqueID}`"
-				:card="card"
-				:language="language"
-				@click="click($event, card)"
-			></card>
-		</draggable>
+		<div class="card-columns">
+			<draggable
+				v-for="(column, colIdx) in columns"
+				:key="`col_${colIdx}`"
+				class="card-column drag-column"
+				:list="column"
+				:group="group"
+				@change="change"
+				drag-class="drag"
+			>
+				<card
+					v-for="card in column"
+					:key="`card_${card.uniqueID}`"
+					:card="card"
+					:language="language"
+					@click="click($event, card)"
+				></card>
+			</draggable>
+		</div>
 		<div class="draggable-controls">
+			<!--
 			<div @click="addColumn" class="column-control clickable" v-tooltip.right="'Add a Column'">
 				<i class="fas fa-plus fa-2x"></i>
 			</div>
@@ -34,19 +37,18 @@
 			>
 				<i class="fas fa-minus fa-2x"></i>
 			</div>
-			<div class="sort-dropdown">
-				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
-					<i class="fas fa-sort-amount-up fa-2x"></i>
-				</div>
-				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
-					<img src="../assets/img/sort-color.svg" />
-				</div>
-				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
-					<img src="../assets/img/sort-rarity.svg" />
-				</div>
-				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
-					<img src="../assets/img/sort-type.svg" />
-				</div>
+			-->
+			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
+				<i class="fas fa-sort-amount-up fa-2x"></i>
+			</div>
+			<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
+				<img src="../assets/img/sort-color.svg" />
+			</div>
+			<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
+				<img src="../assets/img/sort-rarity.svg" />
+			</div>
+			<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
+				<img src="../assets/img/sort-type.svg" />
 			</div>
 		</div>
 	</div>
@@ -199,27 +201,26 @@ export default {
 	height: var(--controls-size);
 }
 
-.sort-dropdown {
-	max-height: calc(2 * var(--controls-padding) + var(--controls-size));
-	transition: 0.2s ease-out;
-	overflow: hidden;
-}
-
-.sort-dropdown:hover {
-	max-height: calc(4 * (2 * var(--controls-padding) + var(--controls-size) + var(--controls-margin)));
+.card-pool .card-image,
+.card-pool .card img {
+	width: 100%;
+	height: auto;
 }
 </style>
 
 <style scoped>
-/* 
- * This fixes the dragged image in Chrome (where overflow:visible is ignored) by setting the height explicitly
- * but also causes a distracting reflow. Commenting it until we find a better solution.
- */
-/*
-.drag {
-	height: 283.33px;
+.card-pool {
+	padding: 0.75em;
+	position: relative;
 }
-*/
+
+.card-columns {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+	flex-grow: 1;
+	min-height: calc(100vw/7);
+}
 
 .empty-warning {
 	position: absolute;
@@ -232,13 +233,9 @@ export default {
 }
 
 .card-pool .card-column {
-	margin-right: 0.75em;
-	width: 200px;
+	margin: 0 0.375em;
+	flex: 1 1 10%;
 	min-width: 50px; /* Overrides drag-column value */
 	transition: width 0.25s ease;
-}
-
-.card-pool .card-column:empty {
-	width: 50px;
 }
 </style>
