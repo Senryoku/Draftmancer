@@ -219,7 +219,6 @@ export default {
 	justify-content: flex-start;
 	position: relative;
 	flex-grow: 1;
-	min-height: calc(100vw/7);
 }
 
 .empty-warning {
