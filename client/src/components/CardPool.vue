@@ -206,8 +206,9 @@ export default {
 
 <style scoped>
 .card-pool {
-	padding: 0.75em;
 	position: relative;
+	box-sizing: border-box;
+	width: 100%;
 }
 
 .card-columns {

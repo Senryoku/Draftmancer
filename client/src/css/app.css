@@ -750,6 +750,7 @@ ul.player-list {
 	background-color: #282828;
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
+	padding: 0.5em;
 }
 
 .deck-container {
@@ -769,10 +770,6 @@ ul.player-list {
 .collapsed-sideboard h2 {
 	font-size: 20px;
 	line-height: 28px;
-}
-
-.collapsed-sideboard .card-column {
-	margin: 0 auto;
 }
 
 .selected img,
