@@ -24,31 +24,38 @@
 				></card>
 			</draggable>
 		</div>
-		<div class="draggable-controls">
-			<div @click="addColumn" class="column-control clickable" v-tooltip.right="'Add a Column'">
-				<i class="fas fa-plus fa-2x"></i>
+		<draggable
+			:group="group"
+			:list="tempColumn"
+			@change="change"
+			ghostClass="no-ghost"
+		>
+			<div slot="header" class="card-pool-controls">
+				<div @click="addColumn" class="column-control clickable add-column" v-tooltip.right="'Add a Column'">
+					<i class="fas fa-plus fa-2x"></i>
+				</div>
+				<div
+					v-show="columns.length > 1"
+					@click="remColumn"
+					class="column-control clickable"
+					v-tooltip.right="'Remove the last Column'"
+				>
+					<i class="fas fa-minus fa-2x"></i>
+				</div>
+				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
+					<i class="fas fa-sort-amount-up fa-2x"></i>
+				</div>
+				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
+					<img src="../assets/img/sort-color.svg" />
+				</div>
+				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
+					<img src="../assets/img/sort-rarity.svg" />
+				</div>
+				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
+					<img src="../assets/img/sort-type.svg" />
+				</div>
 			</div>
-			<div
-				v-show="columns.length > 1"
-				@click="remColumn"
-				class="column-control clickable"
-				v-tooltip.right="'Remove the last Column'"
-			>
-				<i class="fas fa-minus fa-2x"></i>
-			</div>
-			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
-				<i class="fas fa-sort-amount-up fa-2x"></i>
-			</div>
-			<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
-				<img src="../assets/img/sort-color.svg" />
-			</div>
-			<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
-				<img src="../assets/img/sort-rarity.svg" />
-			</div>
-			<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
-				<img src="../assets/img/sort-type.svg" />
-			</div>
-		</div>
+		</draggable>
 	</div>
 </template>
 
@@ -70,6 +77,7 @@ export default {
 	data: function () {
 		return {
 			columns: [[], [], [], [], [], [], []],
+			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */
 		};
 	},
 	mounted: function () {
@@ -170,6 +178,15 @@ export default {
 			this.columns.pop();
 		},
 	},
+	watch: {
+		tempColumn: function() {
+			// Immediatly transfer cards added to this temporary column to a new proper column
+			if(this.tempColumn.length > 0) {
+				this.columns.push(this.tempColumn);
+				this.tempColumn = [];
+			}
+		}
+	} 
 };
 </script>
 
@@ -178,29 +195,6 @@ export default {
 	--controls-margin: 0.4em;
 	--controls-padding: 8px;
 	--controls-size: 32px;
-}
-
-.column-control {
-	margin: 0 0 var(--controls-margin) 0;
-	background-color: rgba(0, 0, 0, 0.1);
-	border-radius: calc(var(--controls-padding) + var(--controls-size));
-	padding: var(--controls-padding);
-	width: var(--controls-size);
-	height: var(--controls-size);
-	text-align: center;
-}
-
-.column-control:hover {
-	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
-}
-
-.column-control:active {
-	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.5), 0 0 4px 0 rgba(255, 255, 255, 0.5);
-}
-
-.column-control img {
-	width: var(--controls-size);
-	height: var(--controls-size);
 }
 
 .card-pool .card-image,
@@ -236,7 +230,40 @@ export default {
 .card-pool .card-column {
 	margin: 0 0.375em;
 	flex: 1 1 10%;
-	min-width: 50px; /* Overrides drag-column value */
+	min-width: 0; /* Overrides drag-column value */
 	transition: width 0.25s ease;
+}
+
+.card-pool-controls {
+	height: 100%;
+}
+
+.column-control {
+	margin: 0 0 var(--controls-margin) 0;
+	background-color: rgba(0, 0, 0, 0.1);
+	border-radius: calc(var(--controls-padding) + var(--controls-size));
+	padding: var(--controls-padding);
+	width: var(--controls-size);
+	height: var(--controls-size);
+	text-align: center;
+}
+
+.column-control:hover {
+	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
+}
+
+.card ~ .card-pool-controls .add-column, /* Feedback when dropping cards on controls */
+.column-control:active {
+	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.5), 0 0 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+.column-control img {
+	width: var(--controls-size);
+	height: var(--controls-size);
+}
+
+/* Hides card when dragged to the controls area */
+.no-ghost {
+	display: none;
 }
 </style>

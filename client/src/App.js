@@ -1022,8 +1022,7 @@ export default {
 			this.selectCard(null, card);
 		},
 		dropBoosterCard: function(e, options) {
-			// Filter other events; Disable when we're not picking (probably useless
-			// buuuuut...)
+			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
 				e.dataTransfer.getData("isboostercard") !== "true" ||
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
