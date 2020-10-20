@@ -25,7 +25,6 @@
 			</draggable>
 		</div>
 		<div class="draggable-controls">
-			<!--
 			<div @click="addColumn" class="column-control clickable" v-tooltip.right="'Add a Column'">
 				<i class="fas fa-plus fa-2x"></i>
 			</div>
@@ -37,7 +36,6 @@
 			>
 				<i class="fas fa-minus fa-2x"></i>
 			</div>
-			-->
 			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
 				<i class="fas fa-sort-amount-up fa-2x"></i>
 			</div>
@@ -194,6 +192,10 @@ export default {
 
 .column-control:hover {
 	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
+}
+
+.column-control:active {
+	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.5), 0 0 4px 0 rgba(255, 255, 255, 0.5);
 }
 
 .column-control img {
