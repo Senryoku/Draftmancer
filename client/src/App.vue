@@ -912,7 +912,7 @@
 				>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
-						<p>Click on your cards to add them to your deck.</p>
+						<p>Click on cards in your sideboard to move them here.</p>
 					</template>
 				</card-pool>
 			</div>
@@ -990,7 +990,7 @@
 			>
 				<template v-slot:empty>
 					<h3>Your sideboard is currently empty!</h3>
-					<p>Click on cards in your deck to sideboard them.</p>
+					<p>Click on cards in your deck to move them here.</p>
 				</template>
 			</card-pool>
 		</div>
