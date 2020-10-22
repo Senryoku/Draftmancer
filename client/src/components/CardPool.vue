@@ -102,7 +102,7 @@ export default {
 				const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
 				let colIdx = 0;
 				while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
-				this.insertCard(this.columns[colIdx - 1], card);
+				this.insertCard(this.columns[Math.max(0, colIdx - 1)], card);
 			} else {
 				let columnIndex = Math.min(card.cmc, this.columns.length - 1);
 				let columnWithDuplicate = this.columns.findIndex(
