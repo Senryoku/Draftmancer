@@ -164,8 +164,6 @@ export default {
 			hideSessionID: getCookie("hideSessionID", "false") === "true",
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
-			loadingLanguages: [],
-			loadedLanguages: [],
 			sets: Constant.MTGSets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
@@ -1875,29 +1873,6 @@ export default {
 			return r;
 		},
 		// Misc.
-		fetchTranslation: function(lang) {
-			if (this.loadedLanguages.includes(lang)) {
-				if (this.language !== lang) this.language = lang;
-				return;
-			}
-
-			this.loadingLanguages.push(lang);
-			fetch(`data/MTGACards.${lang}.json`).then(response =>
-				response.json().then(json => {
-					this.loadTranslation(lang, json);
-					if (this.language !== lang) this.language = lang;
-				})
-			);
-		},
-		loadTranslation(lang, json) {
-			addLanguage(lang, json);
-			this.loadingLanguages.splice(lang, 1);
-			this.loadedLanguages.push(lang);
-		},
-		handleTranslation: function(lang, json) {
-			this.loadTranslation(lang, json);
-			if (this.language !== lang) this.language = lang;
-		},
 		checkNotificationPermission: function(e) {
 			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
 				Notification.requestPermission().then(function(permission) {
