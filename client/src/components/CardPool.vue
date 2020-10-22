@@ -1,5 +1,14 @@
 <template>
-	<div class="card-pool card-container">
+	<!-- Dummy draggable component to handle dropping card between columns -->
+	<draggable
+		:group="group"
+		:list="tempColumn"
+		@add="dropCard"
+		@change="change"
+		ghostClass="no-ghost"
+		draggable=".card"
+		class="card-pool card-container"
+	>
 		<div class="empty-warning" v-if="cards.length == 0">
 			<slot name="empty">
 				<h3>This card pool is currently empty!</h3>
@@ -24,39 +33,32 @@
 				></card>
 			</draggable>
 		</div>
-		<draggable
-			:group="group"
-			:list="tempColumn"
-			@change="change"
-			ghostClass="no-ghost"
-		>
-			<div slot="header" class="card-pool-controls">
-				<div @click="addColumn" class="column-control clickable add-column" v-tooltip.right="'Add a Column'">
-					<i class="fas fa-plus fa-2x"></i>
-				</div>
-				<div
-					v-show="columns.length > 1"
-					@click="remColumn"
-					class="column-control clickable"
-					v-tooltip.right="'Remove the last Column'"
-				>
-					<i class="fas fa-minus fa-2x"></i>
-				</div>
-				<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
-					<i class="fas fa-sort-amount-up fa-2x"></i>
-				</div>
-				<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
-					<img src="../assets/img/sort-color.svg" />
-				</div>
-				<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
-					<img src="../assets/img/sort-rarity.svg" />
-				</div>
-				<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
-					<img src="../assets/img/sort-type.svg" />
-				</div>
+		<div class="card-pool-controls">
+			<div @click="addColumn" class="column-control clickable add-column" v-tooltip.right="'Add a Column'">
+				<i class="fas fa-plus fa-2x"></i>
 			</div>
-		</draggable>
-	</div>
+			<div
+				v-show="columns.length > 1"
+				@click="remColumn"
+				class="column-control clickable"
+				v-tooltip.right="'Remove the last Column'"
+			>
+				<i class="fas fa-minus fa-2x"></i>
+			</div>
+			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
+				<i class="fas fa-sort-amount-up fa-2x"></i>
+			</div>
+			<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
+				<img src="../assets/img/sort-color.svg" />
+			</div>
+			<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
+				<img src="../assets/img/sort-rarity.svg" />
+			</div>
+			<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
+				<img src="../assets/img/sort-type.svg" />
+			</div>
+		</div>
+	</draggable>
 </template>
 
 <script>
@@ -177,16 +179,19 @@ export default {
 			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
-	},
-	watch: {
-		tempColumn: function() {
-			// Immediatly transfer cards added to this temporary column to a new proper column
+		dropCard: function(event) {
+			// Search for the nearest column.
+			const x = event.originalEvent.clientX;
+			const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
+			let colIdx = 0;
+			while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+			// Insert the new column there.
 			if(this.tempColumn.length > 0) {
-				this.columns.push(this.tempColumn);
+				this.columns.splice(colIdx, 0, this.tempColumn);
 				this.tempColumn = [];
 			}
 		}
-	} 
+	},
 };
 </script>
 
@@ -253,7 +258,6 @@ export default {
 	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
 }
 
-.card ~ .card-pool-controls .add-column, /* Feedback when dropping cards on controls */
 .column-control:active {
 	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.5), 0 0 4px 0 rgba(255, 255, 255, 0.5);
 }
