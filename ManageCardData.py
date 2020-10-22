@@ -40,7 +40,7 @@ if len(sys.argv) > 1:
     ForceJumpstart = Arg == "jmp"
     ForceSymbology = Arg == "symb"
 
-MTGADataFolder = "S:\MtGA\MTGA_Data\Downloads\Data"
+MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
 MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
 MTGALocalization = {}
@@ -155,18 +155,14 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
     cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         objects = ijson.items(file, 'item')
-        arena_cards = (o for o in objects if (
-            o['name'], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet or (o['name'].split(" //")[0], o['collector_number'], o['set'].lower()) in CardsCollectorNumberAndSet)
+        allcards = (o for o in objects)
 
         sys.stdout.write("Processing... ")
         sys.stdout.flush()
         copied = 0
-        for c in arena_cards:
+        for c in allcards:
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
-                                                            c['collector_number'], c['set'].lower())]
-            else:
-                c['arena_id'] = CardsCollectorNumberAndSet[(c['name'].split(" //")[0],
                                                             c['collector_number'], c['set'].lower())]
             cards.append(c)
             copied += 1
@@ -242,8 +238,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         arena_cards = json.loads(file.read())
         for c in arena_cards:
             translation = {}
-            if c['arena_id'] not in Translations[c['lang']]:
-                Translations[c['lang']][c['arena_id']] = {}
+            if c['lang'] not in Translations:
+                Translations[c['lang']] = {}
+            if c['id'] not in Translations[c['lang']]:
+                Translations[c['lang']][c['id']] = {}
                 if 'printed_name' in c:
                     translation['printed_name'] = c['printed_name']
                 elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
@@ -260,12 +258,12 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     'printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
                 translation['back']['image_uris'] = c['card_faces'][1]['image_uris']['border_crop']
 
-            Translations[c['lang']][c['arena_id']].update(translation)
+            Translations[c['lang']][c['id']].update(translation)
 
             if c['lang'] != 'en':
                 continue
-            if c['arena_id'] not in cards:
-                cards[c['arena_id']] = {}
+            if c['id'] not in cards:
+                cards[c['id']] = {'id': c['id']}
             if c['lang'] == 'en':
                 selection = {key: value for key, value in c.items() if key in {
                     'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
@@ -289,7 +287,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 elif not c['booster'] or 'Basic Land' in c['type_line']:
                     selection['in_booster'] = False
                     selection['rating'] = 0
-                cards[c['arena_id']].update(selection)
+                cards[c['id']].update(selection)
 
         for lang in Translations:
             with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
