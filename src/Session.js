@@ -1074,13 +1074,6 @@ export function Session(id, owner, options) {
 		Connections[userID].pickedCards.push(this.boosters[boosterIndex][cardIdx].name);
 		Connections[userID].pickedThisRound = true;
 
-		this.boosters[boosterIndex].splice(cardIdx, 1);
-
-		// Removes burned cards
-		if (burnedCards)
-			for (let burnIdx of burnedCards)
-				this.boosters[boosterIndex].splice(burnIdx, 1);
-
 		// Signal users
 		this.forUsers(u => {
 			Connections[u].socket.emit("updateUser", {
@@ -1100,9 +1093,16 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cardID: cardID,
+				card: this.boosters[boosterIndex][cardIdx],
 			});
 		}
+
+		this.boosters[boosterIndex].splice(cardIdx, 1);
+
+		// Removes burned cards
+		if (burnedCards)
+			for (let burnIdx of burnedCards)
+				this.boosters[boosterIndex].splice(burnIdx, 1);
 
 		++this.pickedCardsThisRound;
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {

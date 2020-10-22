@@ -11,7 +11,7 @@
 				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" :delay="2" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
-					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
+					<select v-model="language" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
 							v-bind:value="lang.code"
@@ -21,12 +21,6 @@
 							{{ lang.name }}
 						</option>
 					</select>
-					<i
-						class="fas fa-spinner fa-spin"
-						style="position: absolute; margin-top: 0.6em; margin-left: 0.5em"
-						v-tooltip="'Loading language data...'"
-						v-if="loadingLanguages.length > 0"
-					></i>
 				</div>
 			</span>
 			<span>
