@@ -39,7 +39,6 @@
 
 <script>
 import { download, isEmpty } from "../helper.js";
-import { Cards } from "./../Cards.js";
 import CardOrder from "../cardorder.js";
 import CardListColumn from "./CardListColumn.vue";
 
@@ -56,13 +55,13 @@ export default {
 		},
 		rows: function () {
 			if (this.cardlist.customSheets) return [];
-			return this.rowsByColor(this.cardlist.cards.map((cid) => Cards[cid]));
+			return this.rowsByColor(this.cardlist.cards);
 		},
 		rowsBySlot: function () {
 			if (!this.cardlist.customSheets) return [];
 			let rowsBySlot = {};
 			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map((cid) => Cards[cid]));
+				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot]);
 			}
 			return rowsBySlot;
 		},
@@ -72,10 +71,10 @@ export default {
 		missing: function () {
 			if (!this.checkCollection) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			for (let cid of this.flatCardList) {
-				if (!(cid in this.collection)) {
+			for (let c of this.flatCardList) {
+				if (!(c in this.collection)) {
 					missing.total += 1;
-					missing[Cards[cid].rarity] += 1;
+					missing[c.rarity] += 1;
 				}
 			}
 			return missing;
@@ -95,13 +94,13 @@ export default {
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
 					str += `[${slot}(${this.cardlist.cardsPerBooster[slot]})]\n`;
-					for (let cid of this.cardlist.cards[slot]) {
-						str += Cards[cid].name + "\n";
+					for (let c of this.cardlist.cards[slot]) {
+						str += c.name + "\n";
 					}
 				}
 			} else {
-				for (let cid of this.cardlist.cards) {
-					str += Cards[cid].name + "\n";
+				for (let c of this.cardlist.cards) {
+					str += c.name + "\n";
 				}
 			}
 			download("Cube.txt", str);

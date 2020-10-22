@@ -18,22 +18,21 @@
 			<clazy-load
 				:ratio="0"
 				margin="200px"
-				:src="back['image_uris']"
+				:src="backImageURI"
 				loadingClass="card-loading"
-				:title="back['printed_name']"
+				:title="backPrintedName"
 				class="flip-back"
 				:forceLoad="!lazyLoad"
 				v-if="hasBack"
 			>
-				<img :src="back['image_uris']" />
-				<card-placeholder slot="placeholder" :name="back['printed_name']"></card-placeholder>
+				<img :src="backImageURI" />
+				<card-placeholder slot="placeholder" :name="backPrintedName"></card-placeholder>
 			</clazy-load>
 		</div>
 	</div>
 </template>
 
 <script>
-import { Cards } from "./../Cards.js";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
 export default {
@@ -46,22 +45,28 @@ export default {
 	},
 	computed: {
 		imageURI: function () {
-			if (this.language in Cards[this.card.id].image_uris) return Cards[this.card.id].image_uris[this.language];
-			return Cards[this.card.id].image_uris["en"];
+			if (this.language in this.card.image_uris) return this.card.image_uris[this.language];
+			return this.card.image_uris["en"];
 		},
 		printedName: function () {
-			if (this.language in Cards[this.card.id].printed_name)
-				return Cards[this.card.id].printed_name[this.language];
-			return Cards[this.card.id].name;
+			if (this.language in this.card.printed_names)
+				return this.card.printed_names[this.language];
+			return this.card.name;
 		},
 		hasBack: function () {
-			return Cards[this.card.id].back !== null && Cards[this.card.id].back !== undefined;
+			return this.card.back !== null && this.card.back !== undefined;
 		},
 		back: function () {
 			if (!this.hasBack) return {};
-			if (this.language in Cards[this.card.id].back) return Cards[this.card.id].back[this.language];
-			return Cards[this.card.id].back["en"];
+			if (this.language in this.card.back) return this.card.back[this.language];
+			return this.card.back["en"];
 		},
+		backPrintedName: function() {
+			return this.language in this.card.printed_names ? this.card.printed_names[this.language] : this.card.printed_names['en'];
+		},
+		backImageURI: function() {
+			return this.language in this.card.image_uris ? this.card.image_uris[this.language] : this.card.image_uris['en'];
+		}
 	},
 };
 </script>

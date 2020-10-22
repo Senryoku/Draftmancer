@@ -12,7 +12,6 @@ import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
-import { Cards, genCard, loadCards, addLanguage } from "./Cards.js";
 import exportToMTGA from "./exportToMTGA.js";
 import parseCardList from "../../src/parseCardList.js";
 
@@ -67,6 +66,11 @@ const Sounds = {
 Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
 VTooltip.options.defaultBoundariesElement = "window";
+
+let UniqueID = 0;
+function genUniqueCard(card) {
+	return Object.assign({uniqueID: ++UniqueID}, card);
+}
 
 export default {
 	components: {
@@ -507,16 +511,15 @@ export default {
 				this.draftingState = DraftState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
-			this.socket.on("winstonDraftRandomCard", cid => {
-				const c = genCard(cid);
-				this.addToDeck(c);
+			this.socket.on("winstonDraftRandomCard", c => {
+				this.addToDeck(genUniqueCard(c));
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${Cards[cid].printed_name[this.language]} from the card pool!`,
+					title: `You drew ${c.printed_names[this.language]} from the card pool!`,
 					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
@@ -528,7 +531,7 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -616,7 +619,7 @@ export default {
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -691,7 +694,7 @@ export default {
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -746,7 +749,7 @@ export default {
 				this.drafting = true;
 
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
 					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
@@ -754,9 +757,8 @@ export default {
 				});
 
 				this.booster = [];
-				for (let cid of data.booster) {
-					this.booster.push(genCard(cid));
-				}
+				for (let c of data.booster)
+					this.booster.push(genUniqueCard(c));
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
 
@@ -787,8 +789,8 @@ export default {
 				// Only watching, not playing/receiving a boost ourself.
 				if (this.draftingState == DraftState.Watching) return;
 
-				for (let cid of data.booster) {
-					this.booster.push(genCard(cid));
+				for (let c of data.booster) {
+					this.booster.push(genUniqueCard(c));
 				}
 				this.playSound("next");
 				this.draftingState = DraftState.Picking;
@@ -868,13 +870,13 @@ export default {
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${Cards[data.cardID].printed_name[this.language]}!`);
+				fireToast("info", `${data.userName} picked ${data.card.printed_names[this.language]}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
 				this.clearState();
-				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
-					this.addToDeck(genCard(cid));
+				for (let c of data.reduce((acc, val) => acc.concat(val), [])) {
+					this.addToDeck(genUniqueCard(c));
 				}
 				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -1082,8 +1084,8 @@ export default {
 					this.socket.emit(
 						"pickCard",
 						{
-							selectedCard: this.selectedCard.id,
-							burnedCards: this.burningCards.map(c => c.id),
+							selectedCard: this.booster.findIndex(c => c === this.selectedCard),
+							burnedCards: this.burningCards.map(c => this.booster.findIndex(c2 => c === c2)),
 						},
 						answer => {
 							this.pickInFlight = false;
@@ -1126,7 +1128,7 @@ export default {
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				for (let cid of p) pile.push(genCard(cid));
+				for (let c of p) pile.push(genUniqueCard(c));
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
@@ -1185,10 +1187,10 @@ export default {
 			this.gridDraftState = state;
 			const booster = [];
 			let idx = 0;
-			for (let cid of this.gridDraftState.booster) {
-				if (cid in Cards) {
-					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === cid) booster.push(prevBooster[idx]);
-					else booster.push(genCard(cid));
+			for (let card of this.gridDraftState.booster) {
+				if (card) {
+					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id) booster.push(prevBooster[idx]);
+					else booster.push(genUniqueCard(card));
 				} else booster.push(null);
 				++idx;
 			}
@@ -1260,7 +1262,7 @@ export default {
 				this.rochesterDraftState.booster.length - 1 === state.booster.length
 			) {
 				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
-			} else for (let cid of state.booster) booster.push(genCard(cid));
+			} else for (let c of state.booster) booster.push(genUniqueCard(c));
 			state.booster = booster;
 			this.rochesterDraftState = state;
 		},
@@ -2018,13 +2020,6 @@ export default {
 		try {
 			let urlParamSession = getUrlVars()["session"];
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
-
-			await loadCards();
-
-			// Always load English as it's used as a backup
-			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
-			this.loadTranslation("en", DefaultLoc);
-			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
 
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);

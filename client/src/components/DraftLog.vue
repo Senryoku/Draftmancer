@@ -111,7 +111,6 @@
 <script>
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
-import { Cards, genCard } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
 
 import CardPool from "./CardPool.vue";
@@ -181,15 +180,15 @@ export default {
 		},
 		exportSingleLog: function (id) {
 			let cards = [];
-			for (let c of this.draftlog.users[id].cards) cards.push(Cards[c]);
+			for (let c of this.draftlog.users[id].cards) cards.push(c);
 			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		colorsInCardIDList: function (cardids) {
+		colorsInCardIDList: function (cards) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
-			if (!cardids) return r;
-			for (let card of cardids) {
-				for (let color of Cards[card].colors) {
+			if (!cards) return r;
+			for (let card of cards) {
+				for (let color of card.colors) {
 					r[color] += 1;
 				}
 			}
@@ -201,7 +200,7 @@ export default {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
 		selectedLogCards: function () {
-			return this.selectedLog.cards.map((cid) => genCard(cid));
+			return this.selectedLog.cards;
 		},
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;

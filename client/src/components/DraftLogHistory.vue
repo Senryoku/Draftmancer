@@ -37,7 +37,7 @@
 					<template v-else-if="draftLog.boosters">
 						<!-- User has the full logs ready to be shared -->
 						(Delayed: No one can review this log until you share it)
-						<button @click="$emit('shareLog', draftLog)">
+						<button @click="$emit('sharelog', draftLog)">
 							<i class="fas fa-share-square"></i> Share with session and unlock
 						</button>
 					</template>
@@ -58,7 +58,6 @@
 import Swal from "sweetalert2";
 import { ButtonColor, SwalCustomClasses } from "../alerts.js";
 import * as helper from "../helper.js";
-import { Cards } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
 import TransitionCollapseHeight from "./TransitionCollapseHeight.vue";
 import DraftLog from "./DraftLog.vue";
@@ -87,7 +86,7 @@ export default {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
 			for (let e in draftLog.users) {
 				let cards = [];
-				for (let c of draftLogFull.users[e].cards) cards.push(Cards[c]);
+				for (let c of draftLogFull.users[e].cards) cards.push(c);
 				draftLogFull.users[e].exportString = exportToMTGA(cards, null, this.language);
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));

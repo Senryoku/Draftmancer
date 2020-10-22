@@ -22,9 +22,9 @@ const foilRarityRates = {
 export function ColorBalancedSlot(_cardPool) {
 	this.cardPool = _cardPool;
 	this.cache = { byColor: {} };
-	for (let card in this.cardPool) {
-		if (!(Cards[card].colors in this.cache.byColor)) this.cache.byColor[Cards[card].colors] = {};
-		this.cache.byColor[Cards[card].colors][card] = this.cardPool[card];
+	for (let cid in this.cardPool) {
+		if (!(Cards[cid].colors in this.cache.byColor)) this.cache.byColor[Cards[cid].colors] = {};
+		this.cache.byColor[Cards[cid].colors][cid] = this.cardPool[cid];
 	}
 	this.cache.monocolored = Object.keys(this.cache.byColor)
 		.filter(k => k.length === 1)
@@ -38,12 +38,12 @@ export function ColorBalancedSlot(_cardPool) {
 	this.cache.othersCount = countCards(this.cache.others);
 
 	this.syncCache = function(pickedCard) {
-		removeCardFromDict(pickedCard, this.cache.byColor[Cards[pickedCard].colors]);
-		if (Cards[pickedCard].colors.length === 1) {
-			removeCardFromDict(pickedCard, this.cache.monocolored);
+		removeCardFromDict(pickedCard.id, this.cache.byColor[Cards[pickedCard].colors]);
+		if (pickedCard.colors.length === 1) {
+			removeCardFromDict(pickedCard.id, this.cache.monocolored);
 			--this.cache.monocoloredCount;
 		} else {
-			removeCardFromDict(pickedCard, this.cache.others);
+			removeCardFromDict(pickedCard.id, this.cache.others);
 			--this.cache.othersCount;
 		}
 	};
@@ -54,12 +54,12 @@ export function ColorBalancedSlot(_cardPool) {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && !isEmpty(this.cache.byColor[c])) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards);
-				removeCardFromDict(pickedCard, this.cardPool);
-				if (Cards[pickedCard].colors.length === 1) {
-					removeCardFromDict(pickedCard, this.cache.monocolored);
+				removeCardFromDict(pickedCard.id, this.cardPool);
+				if (pickedCard.colors.length === 1) {
+					removeCardFromDict(pickedCard.id, this.cache.monocolored);
 					--this.cache.monocoloredCount;
 				} else {
-					removeCardFromDict(pickedCard, this.cache.others);
+					removeCardFromDict(pickedCard.id, this.cache.others);
 					--this.cache.othersCount;
 				}
 				pickedCards.push(pickedCard);
@@ -87,8 +87,8 @@ export function ColorBalancedSlot(_cardPool) {
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
-			removeCardFromDict(pickedCard, this.cardPool);
-			removeCardFromDict(pickedCard, this.cache.byColor[Cards[pickedCard].colors]);
+			removeCardFromDict(pickedCard.id, this.cardPool);
+			removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
 		}
 		// Shuffle to avoid obvious signals to other players
 		shuffleArray(pickedCards);
@@ -122,6 +122,7 @@ export function BoosterFactory(cardPool, landSlot, options) {
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && Cards[pickedCard].rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
+					pickedCard.foil = true;
 					booster.push(pickedCard);
 					addedFoils += 1;
 					break;
@@ -271,8 +272,8 @@ export const SetSpecificFactories = {
 			} else {
 				// Roll for legendary rarity
 				const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, options);
-				const pickedCID = pickCard(this.legendaryCreatures[pickedRarity], []);
-				removeCardFromDict(pickedCID, this.cardPool[Cards[pickedCID].rarity]);
+				const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
+				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
 
 				const updatedTargets = Object.assign({}, targets);
 				if (pickedRarity === "mythic") --updatedTargets["rare"];
@@ -280,7 +281,7 @@ export const SetSpecificFactories = {
 
 				const booster = this.originalGenBooster(updatedTargets);
 				// Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
-				booster.unshift(pickedCID);
+				booster.unshift(pickedCard);
 				return booster;
 			}
 		};
@@ -316,7 +317,7 @@ export const SetSpecificFactories = {
 				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === pickedRarity),
+						booster.findIndex(c => c.rarity === pickedRarity),
 						0,
 						pickedCID
 					);
