@@ -3,7 +3,7 @@
 		<card
 			v-for="(card, index) in pick.booster"
 			:key="index"
-			:card="getCard(card)"
+			:card="card"
 			:language="language"
 			:class="{ 'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card) }"
 			:lazyLoad="true"
@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { Cards } from "./../Cards.js";
 import Card from "./Card.vue";
 
 export default {
@@ -21,11 +20,6 @@ export default {
 	props: {
 		pick: { type: Object, required: true },
 		language: { type: String, required: true },
-	},
-	methods: {
-		getCard: function (cid) {
-			return Cards[cid];
-		},
 	},
 };
 </script>

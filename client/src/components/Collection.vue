@@ -71,7 +71,6 @@
 <script>
 import Constant from "../data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
-import { Cards, genCard } from "./../Cards.js";
 import MissingCard from "./MissingCard.vue";
 
 export default {
@@ -127,6 +126,7 @@ export default {
 				others: baseSet("others", "Other Sets"),
 			};
 			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			// FIXME: Get Collection & Missing Cards from server!
 			for (let id in Cards) {
 				let card = genCard(id);
 				const completeSet = Constant.MTGSets.includes(card.set);

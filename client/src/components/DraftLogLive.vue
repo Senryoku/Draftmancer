@@ -46,7 +46,6 @@
 </template>
 
 <script>
-import { Cards } from "../Cards.js";
 import DraftLogPick from "./DraftLogPick.vue";
 
 export default {
@@ -84,8 +83,8 @@ export default {
 		}
 	},
 	methods: {
-		getCardName: function(cid) {
-			Cards[cid].printed_name[this.language];
+		getCardName: function(c) {
+			c.printed_names[this.language];
 		},
 		setPlayer: function(userID) {
 			if (!(userID in this.draftlog.users)) return;

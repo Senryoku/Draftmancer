@@ -72,18 +72,18 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
     with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
         json.dump(mana_symbols, outfile)
 
-Translations = {"en": {},
-                "es": {},
-                "fr": {},
-                "de": {},
-                "it": {},
-                "pt": {},
-                "ja": {},
-                "ko": {},
-                "ru": {},
-                "zhs": {},
-                "zht": {},
-                "ph": {}}
+MTGATranslations = {"en": {},
+                    "es": {},
+                    "fr": {},
+                    "de": {},
+                    "it": {},
+                    "pt": {},
+                    "ja": {},
+                    "ko": {},
+                    "ru": {},
+                    "zhs": {},
+                    "zht": {},
+                    "ph": {}}
 CardsCollectorNumberAndSet = {}
 CardNameToID = {}
 AKRCards = {}
@@ -115,7 +115,7 @@ for path in MTGACardsFiles:
                         MTGALocalization['en'][o['titleId']], collectorNumber, 'ajmp')] = o['grpid']
 
                 for lang in MTGALocalization:
-                    Translations[lang][o['grpid']] = {
+                    MTGATranslations[lang][o['grpid']] = {
                         'printed_name': MTGALocalization[lang][o['titleId']]}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
@@ -236,34 +236,38 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
         arena_cards = json.loads(file.read())
+        Translations = {}
         for c in arena_cards:
-            translation = {}
-            if c['lang'] not in Translations:
-                Translations[c['lang']] = {}
-            if c['id'] not in Translations[c['lang']]:
-                Translations[c['lang']][c['id']] = {}
-                if 'printed_name' in c:
-                    translation['printed_name'] = c['printed_name']
-                elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
-                    translation['printed_name'] = c['card_faces'][0]['printed_name']
-
-            if 'image_uris' in c and 'border_crop' in c['image_uris']:
-                translation['image_uris'] = c['image_uris']['border_crop']
-            elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
-                translation['image_uris'] = c['card_faces'][0]['image_uris']['border_crop']
-
-            if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
-                translation['back'] = {}
-                translation['back']['printed_name'] = c['card_faces'][1][
-                    'printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
-                translation['back']['image_uris'] = c['card_faces'][1]['image_uris']['border_crop']
-
-            Translations[c['lang']][c['id']].update(translation)
-
-            if c['lang'] != 'en':
-                continue
             if c['id'] not in cards:
                 cards[c['id']] = {'id': c['id']}
+
+            key = (c['name'], c['set'], c['collector_number'])
+            if key not in Translations:
+                Translations[key] = {
+                    'printed_names': {}, 'image_uris': {}}
+
+            if 'printed_name' in c:
+                Translations[key
+                             ]['printed_names'][c['lang']] = c['printed_name']
+            elif 'card_faces' in c and 'printed_name' in c['card_faces'][0]:
+                Translations[key]['printed_names'][c['lang']
+                                                   ] = c['card_faces'][0]['printed_name']
+
+            if 'image_uris' in c and 'border_crop' in c['image_uris']:
+                Translations[key]['image_uris'][c['lang']
+                                                ] = c['image_uris']['border_crop']
+            elif 'card_faces' in c and 'image_uris' in c['card_faces'][0] and 'border_crop' in c['card_faces'][0]['image_uris']:
+                Translations[key]['image_uris'][c['lang']
+                                                ] = c['card_faces'][0]['image_uris']['border_crop']
+
+            if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
+                Translations[key]['back'] = {
+                    'printed_names': {}, 'image_uris': {}}
+                Translations[key]['back']['printed_names'][c['lang']] = c['card_faces'][1][
+                    'printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
+                Translations[key]['back']['image_uris'][c['lang']
+                                                        ] = c['card_faces'][1]['image_uris']['border_crop']
+
             if c['lang'] == 'en':
                 selection = {key: value for key, value in c.items() if key in {
                     'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
@@ -289,13 +293,17 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     selection['rating'] = 0
                 cards[c['id']].update(selection)
 
-        for lang in Translations:
-            with open("client/public/data/MTGACards.{}.json".format(lang), 'w', encoding="utf8") as outfile:
-                json.dump(Translations[lang], outfile, ensure_ascii=False)
+        for cid in list(cards):
+            c = cards[cid]
+            if 'name' in c:
+                key = (c['name'], c['set'], c['collector_number'])
+                if key in Translations:
+                    c.update(Translations[key])
+            else:
+                del cards[cid]
 
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
-
 
 cards = {}
 with open(FinalDataPath, 'r', encoding="utf8") as file:
@@ -304,6 +312,8 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 # Retrieve basic land ids for each set
 BasicLandIDs = {}
 for cid in cards:
+    if 'name' not in cards[cid]:
+        print(cards[cid])
     if cards[cid]["name"] in ["Plains", "Island", "Swamp", "Mountain", "Forest"]:
         if(cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []

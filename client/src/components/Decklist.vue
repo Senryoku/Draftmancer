@@ -71,7 +71,6 @@
 import { copyToClipboard } from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
 import { fireToast } from "../alerts.js";
-import { genCard } from "../Cards.js";
 import Modal from "./Modal.vue";
 import CardPool from "./CardPool.vue";
 
@@ -92,10 +91,10 @@ export default {
 	},
 	computed: {
 		mainboard: function () {
-			return this.list.main.map((cid) => genCard(cid));
+			return this.list.main;
 		},
 		sideboard: function () {
-			return this.list.side.map((cid) => genCard(cid));
+			return this.list.side;
 		},
 		landcount: function () {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);

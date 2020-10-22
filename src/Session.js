@@ -1026,7 +1026,7 @@ export function Session(id, owner, options) {
 		this.nextBooster();
 	};
 
-	this.pickCard = function(userID, cardID, burnedCards) {
+	this.pickCard = function(userID, cardIdx, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
 		const boosterIndex = Connections[userID].boosterIndex;
@@ -1035,8 +1035,8 @@ export function Session(id, owner, options) {
 			console.error(err);
 			return { code: 2, error: err };
 		}
-		if (!this.boosters[boosterIndex].includes(cardID)) {
-			const err = `Session.pickCard: cardID ('${cardID}') not found in booster #${boosterIndex}.`;
+		if (cardIdx >= this.boosters[boosterIndex].length) {
+			const err = `Session.pickCard: cardID ('${cardIdx}') not found in booster #${boosterIndex}.`;
 			console.error(err);
 			return { code: 3, error: err };
 		}
@@ -1061,33 +1061,25 @@ export function Session(id, owner, options) {
 		console.log(
 			`Session ${this.id}: ${
 				Connections[userID].userName
-			} [${userID}] picked card ${cardID} from booster #${boosterIndex}, burning ${
+			} [${userID}] picked card '${this.boosters[boosterIndex][cardIdx].name}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
 			}.`
 		);
 		this.draftLog.users[userID].picks.push({
-			pick: cardID,
+			pick: this.boosters[boosterIndex][cardIdx],
 			burn: burnedCards,
 			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
 		});
 
-		Connections[userID].pickedCards.push(cardID);
+		Connections[userID].pickedCards.push(this.boosters[boosterIndex][cardIdx].name);
 		Connections[userID].pickedThisRound = true;
-		// Removes the first occurence of cardID
-		this.boosters[boosterIndex].splice(
-			this.boosters[boosterIndex].findIndex(c => c === cardID),
-			1
-		);
+
+		this.boosters[boosterIndex].splice(cardIdx, 1);
 
 		// Removes burned cards
-		if (burnedCards) {
-			for (let burnID of burnedCards) {
-				this.boosters[boosterIndex].splice(
-					this.boosters[boosterIndex].findIndex(c => c === burnID),
-					1
-				);
-			}
-		}
+		if (burnedCards)
+			for (let burnIdx of burnedCards)
+				this.boosters[boosterIndex].splice(burnIdx, 1);
 
 		// Signal users
 		this.forUsers(u => {

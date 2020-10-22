@@ -1320,7 +1320,7 @@
 				slot="body"
 				:draftLogs="draftLogs"
 				:language="language"
-				@shareLog="shareSavedDraftLog"
+				@sharelog="shareSavedDraftLog"
 			></draft-log-history>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">

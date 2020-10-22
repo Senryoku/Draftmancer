@@ -19,7 +19,6 @@
 
 <script>
 import Card from "./Card.vue";
-import { Cards } from "./../Cards.js";
 
 export default {
 	props: {
@@ -32,6 +31,7 @@ export default {
 	computed: {
 		missingCard: function () {
 			let r = {};
+			// FIXME
 			const collectionCards = Object.keys(this.collection).map((cid) => Cards[cid]);
 			for (let card of this.column) {
 				if (card.id in this.collection) {
