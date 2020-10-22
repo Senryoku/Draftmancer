@@ -95,15 +95,24 @@ export default {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
 		},
-		addCard: function (card) {
-			let columnIndex = Math.min(card.cmc, this.columns.length - 1);
-			let columnWithDuplicate = this.columns.findIndex(
-				(column) => column.findIndex((c) => c.name === card.name) > -1
-			);
-			if (columnWithDuplicate > -1) {
-				columnIndex = columnWithDuplicate;
+		addCard: function (card, event) {
+			if(event) {
+				// Search for the nearest column.
+				const x = event.clientX;
+				const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
+				let colIdx = 0;
+				while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+				this.insertCard(this.columns[colIdx - 1], card);
+			} else {
+				let columnIndex = Math.min(card.cmc, this.columns.length - 1);
+				let columnWithDuplicate = this.columns.findIndex(
+					(column) => column.findIndex((c) => c.name === card.name) > -1
+				);
+				if (columnWithDuplicate > -1) {
+					columnIndex = columnWithDuplicate;
+				}
+				this.insertCard(this.columns[columnIndex], card);
 			}
-			this.insertCard(this.columns[columnIndex], card);
 		},
 		insertCard: function (column, card) {
 			let duplicateIndex = column.findIndex((c) => c.name === card.name);

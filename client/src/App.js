@@ -1040,6 +1040,8 @@ export default {
 				);
 				return;
 			} else {
+				if(!options) options = {};
+				options.event = e;
 				this.pickCard(options);
 			}
 		},
@@ -1090,8 +1092,8 @@ export default {
 					);
 					this.draftingState = DraftState.Waiting;
 				}
-				if (options && options.toSideboard) this.addToSideboard(this.selectedCard);
-				else this.addToDeck(this.selectedCard);
+				if (options && options.toSideboard) this.addToSideboard(this.selectedCard, options);
+				else this.addToDeck(this.selectedCard, options);
 				this.selectedCard = undefined;
 				this.burningCards = [];
 			});
@@ -1781,15 +1783,15 @@ export default {
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck: function(card) {
+		addToDeck: function(card, options) {
 			// Handle column sync.
 			this.deck.push(card);
-			this.$refs.deckDisplay.addCard(card);
+			this.$refs.deckDisplay.addCard(card, options ? options.event : null);
 		},
-		addToSideboard: function(card) {
+		addToSideboard: function(card, options) {
 			// Handle column sync.
 			this.sideboard.push(card);
-			this.$refs.sideboardDisplay.addCard(card);
+			this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
