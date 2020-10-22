@@ -97,12 +97,7 @@ export default {
 		},
 		addCard: function (card, event) {
 			if(event) {
-				// Search for the nearest column.
-				const x = event.clientX;
-				const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
-				let colIdx = 0;
-				while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
-				this.insertCard(this.columns[Math.max(0, colIdx - 1)], card);
+				this.insertCard(this.getNearestColumn(event), card);
 			} else {
 				let columnIndex = Math.min(card.cmc, this.columns.length - 1);
 				let columnWithDuplicate = this.columns.findIndex(
@@ -188,19 +183,23 @@ export default {
 			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
+		getNearestColumn: function(event) {
+			// Search for the nearest column.
+			const x = event.clientX;
+			const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
+			let colIdx = 0;
+			while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+			// Returns it if we're within its horizontal boundaries
+			if(colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
+				return this.columns[colIdx - 1];
+			} else { // Creates a new one if card is dropped outside of existing columns
+				this.columns.splice(colIdx, 0, []);
+				return this.columns[colIdx];
+			}
+		},
 		dropCard: function(event) {
 			if(this.tempColumn.length > 0) {
-				// Search for the nearest column.
-				const x = event.originalEvent.clientX;
-				const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
-				let colIdx = 0;
-				while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
-				// Insert the new column there.
-				if(colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
-					this.columns[colIdx - 1] = this.columns[colIdx - 1].concat(this.tempColumn);
-				} else {
-					this.columns.splice(colIdx, 0, this.tempColumn);
-				}
+				this.getNearestColumn(event.originalEvent).push(...this.tempColumn);
 				this.tempColumn = [];
 			}
 		}
