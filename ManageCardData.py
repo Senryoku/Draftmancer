@@ -261,10 +261,11 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                                                 ] = c['card_faces'][0]['image_uris']['border_crop']
 
             if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
-                Translations[key]['back'] = {
-                    'printed_names': {}, 'image_uris': {}}
-                Translations[key]['back']['printed_names'][c['lang']] = c['card_faces'][1][
-                    'printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
+                if 'back' not in Translations[key]:
+                    Translations[key]['back'] = {
+                        'printed_names': {}, 'image_uris': {}}
+                Translations[key]['back']['printed_names'][c['lang']
+                                                           ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
                 Translations[key]['back']['image_uris'][c['lang']
                                                         ] = c['card_faces'][1]['image_uris']['border_crop']
 
@@ -312,8 +313,6 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 # Retrieve basic land ids for each set
 BasicLandIDs = {}
 for cid in cards:
-    if 'name' not in cards[cid]:
-        print(cards[cid])
     if cards[cid]["name"] in ["Plains", "Island", "Swamp", "Mountain", "Forest"]:
         if(cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []

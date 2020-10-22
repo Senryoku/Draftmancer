@@ -62,10 +62,10 @@ export default {
 			return this.card.back["en"];
 		},
 		backPrintedName: function() {
-			return this.language in this.card.printed_names ? this.card.printed_names[this.language] : this.card.printed_names['en'];
+			return this.language in this.card.back.printed_names ? this.card.back.printed_names[this.language] : this.card.back.printed_names['en'];
 		},
 		backImageURI: function() {
-			return this.language in this.card.image_uris ? this.card.image_uris[this.language] : this.card.image_uris['en'];
+			return this.language in this.card.back.image_uris ? this.card.back.image_uris[this.language] : this.card.back.image_uris['en'];
 		}
 	},
 };
