@@ -180,14 +180,18 @@ export default {
 			this.columns.pop();
 		},
 		dropCard: function(event) {
-			// Search for the nearest column.
-			const x = event.originalEvent.clientX;
-			const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
-			let colIdx = 0;
-			while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
-			// Insert the new column there.
 			if(this.tempColumn.length > 0) {
-				this.columns.splice(colIdx, 0, this.tempColumn);
+				// Search for the nearest column.
+				const x = event.originalEvent.clientX;
+				const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
+				let colIdx = 0;
+				while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+				// Insert the new column there.
+				if(colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
+					this.columns[colIdx - 1] = this.columns[colIdx - 1].concat(this.tempColumn);
+				} else {
+					this.columns.splice(colIdx, 0, this.tempColumn);
+				}
 				this.tempColumn = [];
 			}
 		}
