@@ -18,6 +18,7 @@ const io = socketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
 
+import { isEmpty } from "./utils.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
@@ -27,6 +28,10 @@ import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
+
+const MTGACards = {};
+for(let cid in Cards)
+	MTGACards[Cards[cid].arena_id] = Cards[cid];
 
 function shortguid() {
 	function s4() {
@@ -154,27 +159,32 @@ io.on("connection", function(socket) {
 		joinSession(sessionID, userID);
 	});
 
-	socket.on("setCollection", function(collection) {
+	socket.on("setCollection", function(collection, ack) {
 		let userID = this.userID;
 		if (!Connections[userID]) return;
 		let sessionID = Connections[userID].sessionID;
 
 		if (typeof collection !== "object" || collection === null) return;
 
+		let processedCollection = {}; 
 		// Remove unknown cards immediatly.
-		for (let id in collection)
-			if (!(id in Cards)) {
-				//console.log("Unknow card ID: ", id);
-				delete collection[id];
+		for (let aid in collection) {
+			if (aid in MTGACards) {
+				processedCollection[MTGACards[aid].id] = collection[aid];
 			}
+		}
 
-		Connections[userID].collection = collection;
+		Connections[userID].collection = processedCollection;
+
+		if(ack) ack({collection: processedCollection});
+
+		const hasCollection = !isEmpty(processedCollection);
 		if (Sessions[sessionID])
 			Sessions[sessionID].forUsers(user =>
 				Connections[user].socket.emit("updateUser", {
 					userID: userID,
 					updatedProperties: {
-						collection: collection,
+						collection: hasCollection,
 					},
 				})
 			);

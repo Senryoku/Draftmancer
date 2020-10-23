@@ -13,7 +13,7 @@ from itertools import groupby
 
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-FinalDataPath = 'client/public/data/MTGACards.json'
+FinalDataPath = 'data/MTGCards.json'
 SetsInfosPath = 'client/public/data/SetsInfos.json'
 BasicLandIDsPath = 'client/public/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
@@ -271,7 +271,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 
             if c['lang'] == 'en':
                 selection = {key: value for key, value in c.items() if key in {
-                    'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
+                    'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
                 if 'mana_cost' not in selection and "card_faces" in c:
                     selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
                 typeLine = c['type_line'].split(' — ')
@@ -287,6 +287,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                         " //")[0]]
                 else:
                     selection['rating'] = 0.5
+                selection['in_booster'] = True
                 if c['set'] == 'akr':
                     selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
                 elif not c['booster'] or 'Basic Land' in c['type_line']:
@@ -294,6 +295,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     selection['rating'] = 0
                 cards[c['id']].update(selection)
 
+        MTGACards = {}
         for cid in list(cards):
             c = cards[cid]
             if 'name' in c:
@@ -302,9 +304,14 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     c.update(Translations[key])
             else:
                 del cards[cid]
+            if 'arena_id' in c:
+                MTGACards[c['arena_id']] = c
 
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
+
+        with open("client/public/data/MTGACards.json", 'w', encoding="utf8") as outfile:
+            json.dump(MTGACards, outfile, ensure_ascii=False)
 
 cards = {}
 with open(FinalDataPath, 'r', encoding="utf8") as file:

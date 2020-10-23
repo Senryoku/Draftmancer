@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import MTGACards from "../../public/data/MTGACards.json";
 import Constant from "../data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 import MissingCard from "./MissingCard.vue";
@@ -89,7 +90,7 @@ export default {
 	},
 	computed: {
 		collectionStats: function() {
-			if (!this.collection || !Cards || !SetsInfos) return null;
+			if (!this.collection || !SetsInfos) return null;
 			const baseSet = (setCode, fullName) => {
 				return {
 					name: setCode,
@@ -127,8 +128,8 @@ export default {
 			};
 			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			// FIXME: Get Collection & Missing Cards from server!
-			for (let id in Cards) {
-				let card = genCard(id);
+			for (let id in MTGACards) {
+				const card = MTGACards[id];
 				const completeSet = Constant.MTGSets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;

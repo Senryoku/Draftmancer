@@ -19,23 +19,27 @@ export default function(cards, cardlist, options) {
 				`You should not specify a collector number without also specifying a set: '${line}'.`
 			);
 		}
-		let cardID = Object.keys(cards).find(
+		let cardIDs = Object.keys(cards).filter(
 			id =>
 				cards[id].name == name &&
 				(!set || cards[id].set === set) &&
 				(!number || cards[id].collector_number === number)
 		);
-		if (typeof cardID !== "undefined") {
-			return [count, cardID];
-		} else {
+		if (cardIDs.length === 0) {
 			// If not found, try doubled faced cards before giving up!
-			cardID = Object.keys(cards).find(
+			cardIDs = Object.keys(cards).filter(
 				id =>
 					cards[id].name.startsWith(name + " //") &&
 					(!set || cards[id].set === set) &&
 					(!number || cards[id].collector_number === number)
 			);
-			if (typeof cardID !== "undefined") return [count, cardID];
+		}
+		if (cardIDs.length > 0) {
+			return [count, cardIDs.reduce((best, cid) => {
+				if(cards[cid].collector_number < cards[best].collector_number)
+					return cid;
+				return best;
+			}, cardIDs[0])];
 		}
 
 		return [
