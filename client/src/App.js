@@ -1500,6 +1500,7 @@ export default {
 			});
 			let contents = await file.text();
 
+			// FIXME: Send to server
 			const cardList = parseCardList(Cards, contents, options);
 			if (cardList.error) {
 				Swal.fire({
