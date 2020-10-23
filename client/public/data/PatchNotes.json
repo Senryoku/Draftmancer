@@ -1,5 +1,9 @@
 [
 	{
+		"date": "22/10/2020",
+		"notes": ["Tweaked how decks are displayed to accomodate a wider range of screen resolutions."]
+	},
+	{
 		"date": "14/09/2020",
 		"notes": ["Zendikar Rising support!"]
 	},

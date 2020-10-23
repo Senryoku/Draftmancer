@@ -937,7 +937,7 @@
 					</div>
 				</div>
 				<div
-					class="card-container card-columns"
+					class="card-container"
 					@dragover="allowBoosterCardDrop($event)"
 					@drop="dropBoosterCard($event, { toSideboard: true })"
 				>
