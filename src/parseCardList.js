@@ -1,5 +1,6 @@
 export default function(cards, cardlist, options) {
 	const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
+	const CardsIds = Object.keys(cards);
 	const parseLine = line => {
 		line = line.trim();
 		let [, count, name, set, number] = line.match(lineRegex);
@@ -19,7 +20,7 @@ export default function(cards, cardlist, options) {
 				`You should not specify a collector number without also specifying a set: '${line}'.`
 			);
 		}
-		let cardIDs = Object.keys(cards).filter(
+		let cardIDs = CardsIds.filter(
 			id =>
 				cards[id].name == name &&
 				(!set || cards[id].set === set) &&
@@ -27,7 +28,7 @@ export default function(cards, cardlist, options) {
 		);
 		if (cardIDs.length === 0) {
 			// If not found, try doubled faced cards before giving up!
-			cardIDs = Object.keys(cards).filter(
+			cardIDs = CardsIds.filter(
 				id =>
 					cards[id].name.startsWith(name + " //") &&
 					(!set || cards[id].set === set) &&

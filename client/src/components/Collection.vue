@@ -128,13 +128,8 @@ export default {
 			};
 			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			// FIXME: Get Collection & Missing Cards from server!
-<<<<<<< HEAD
 			for (let id in MTGACards) {
 				const card = MTGACards[id];
-=======
-			for (let id in Cards) {
-				let card = genCard(id);
->>>>>>> dd70a974672f0bef601448bc3aeca987fc04950c
 				const completeSet = Constant.MTGSets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;

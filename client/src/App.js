@@ -25,7 +25,6 @@ import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
-import CardList from "./components/CardList.vue";
 import Bracket from "./components/Bracket.vue";
 import GridDraft from "./components/GridDraft.vue";
 import PatchNotes from "./components/PatchNotes.vue";
@@ -84,7 +83,7 @@ export default {
 		DraftLogHistory,
 		DraftLogLive,
 		Collection: () => import("./components/Collection.vue"),
-		CardList,
+		CardList: () => import("./components/CardList.vue"),
 		CardStats: () => import("./components/CardStats.vue"),
 		GridDraft,
 		Bracket,

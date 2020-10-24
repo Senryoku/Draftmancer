@@ -49,19 +49,25 @@ export default {
 		language: { type: String, required: true },
 		collection: { type: Object },
 	},
+	data: function () {
+		return { cards: null };
+	},
+	mounted: function () {
+		this.getCards();
+	},
 	computed: {
 		isValid: function () {
 			return this.cardlist && this.cardlist.length;
 		},
 		rows: function () {
 			if (this.cardlist.customSheets) return [];
-			return this.rowsByColor(this.cardlist.cards);
+			return this.rowsByColor(this.cards);
 		},
 		rowsBySlot: function () {
 			if (!this.cardlist.customSheets) return [];
 			let rowsBySlot = {};
 			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot]);
+				rowsBySlot[slot] = this.rowsByColor(this.cards); // FIXME
 			}
 			return rowsBySlot;
 		},
@@ -69,10 +75,10 @@ export default {
 			return !isEmpty(this.collection);
 		},
 		missing: function () {
-			if (!this.checkCollection) return null;
+			if (!this.checkCollection || !this.cards) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			for (let c of this.flatCardList) {
-				if (!(c in this.collection)) {
+			for (let c of this.cards) {
+				if (!(c.arena_id in this.collection)) {
 					missing.total += 1;
 					missing[c.rarity] += 1;
 				}
@@ -81,11 +87,6 @@ export default {
 		},
 		missingText: function () {
 			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
-		},
-		flatCardList: function () {
-			return this.cardlist.customSheets
-				? Object.values(this.cardlist.cards).reduce((acc, val) => acc.concat(val), [])
-				: this.cardlist.cards;
 		},
 	},
 	methods: {
@@ -106,6 +107,7 @@ export default {
 			download("Cube.txt", str);
 		},
 		rowsByColor: function (cards) {
+			if (!cards) return [];
 			let a = cards.reduce(
 				(acc, item) => {
 					const c = item.colors;
@@ -121,6 +123,31 @@ export default {
 			);
 			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
+		},
+		getCards: async function () {
+			console.log("GetCards");
+			if (!this.cardlist || !this.cardlist.cards) return;
+			const response = await fetch("/getCards", {
+				method: "POST",
+				mode: "cors",
+				cache: "no-cache",
+				credentials: "same-origin",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: JSON.stringify(this.cardlist.cards),
+			});
+			console.log(response);
+			this.cards = await response.json();
+			console.log(this.cards);
+		},
+	},
+	watch: {
+		cardlist: {
+			deep: true,
+			handler: "getCards",
 		},
 	},
 };

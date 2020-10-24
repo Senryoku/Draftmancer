@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import MTGACards from "../../public/data/MTGACards.json";
 import Card from "./Card.vue";
 
 export default {
@@ -32,9 +33,9 @@ export default {
 		missingCard: function () {
 			let r = {};
 			// FIXME
-			const collectionCards = Object.keys(this.collection).map((cid) => Cards[cid]);
+			const collectionCards = Object.keys(this.collection).map((cid) => MTGACards[cid]);
 			for (let card of this.column) {
-				if (card.id in this.collection) {
+				if (card.arena_id in this.collection) {
 					r[card.id] = "Present";
 				} else {
 					if (collectionCards.find((c) => c && c.name === card.name)) r[card.id] = "Equivalent";

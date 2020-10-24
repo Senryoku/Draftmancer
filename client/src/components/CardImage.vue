@@ -13,7 +13,7 @@
 				class="flip-front"
 			>
 				<img :src="imageURI" />
-				<card-placeholder slot="placeholder" :name="printedName"></card-placeholder>
+				<card-placeholder slot="placeholder" :cardname="printedName"></card-placeholder>
 			</clazy-load>
 			<clazy-load
 				:ratio="0"
@@ -26,7 +26,7 @@
 				v-if="hasBack"
 			>
 				<img :src="backImageURI" />
-				<card-placeholder slot="placeholder" :name="backPrintedName"></card-placeholder>
+				<card-placeholder slot="placeholder" :cardname="backPrintedName"></card-placeholder>
 			</clazy-load>
 		</div>
 	</div>
@@ -49,8 +49,7 @@ export default {
 			return this.card.image_uris["en"];
 		},
 		printedName: function () {
-			if (this.language in this.card.printed_names)
-				return this.card.printed_names[this.language];
+			if (this.language in this.card.printed_names) return this.card.printed_names[this.language];
 			return this.card.name;
 		},
 		hasBack: function () {
@@ -61,12 +60,16 @@ export default {
 			if (this.language in this.card.back) return this.card.back[this.language];
 			return this.card.back["en"];
 		},
-		backPrintedName: function() {
-			return this.language in this.card.back.printed_names ? this.card.back.printed_names[this.language] : this.card.back.printed_names['en'];
+		backPrintedName: function () {
+			return this.language in this.card.back.printed_names
+				? this.card.back.printed_names[this.language]
+				: this.card.back.name;
 		},
-		backImageURI: function() {
-			return this.language in this.card.back.image_uris ? this.card.back.image_uris[this.language] : this.card.back.image_uris['en'];
-		}
+		backImageURI: function () {
+			return this.language in this.card.back.image_uris
+				? this.card.back.image_uris[this.language]
+				: this.card.back.image_uris["en"];
+		},
 	},
 };
 </script>

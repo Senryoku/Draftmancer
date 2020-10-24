@@ -17,8 +17,9 @@ import socketIO from "socket.io";
 const io = socketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
+import bodyParser from "body-parser";
 
-import { isEmpty } from "./utils.js";
+import { isEmpty } from "./src/utils.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
@@ -28,6 +29,7 @@ import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 const MTGACards = {};
 for(let cid in Cards)
@@ -77,6 +79,8 @@ function startPublicSession(s) {
 }
 
 // Prepare local custom card lists
+console.log("Preparing local custom card lists...");
+console.time('PrepareCustomCardLists')
 const ParsedCubeLists = {};
 for (let cube of constants.CubeLists) {
 	if (cube.filename) {
@@ -89,6 +93,8 @@ for (let cube of constants.CubeLists) {
 		}
 	}
 }
+console.timeEnd('PrepareCustomCardLists')
+console.log("Done.");
 
 /////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
@@ -1170,6 +1176,16 @@ app.get("/getUsers/:sessionID", (req, res) => {
 		res.send(JSON.stringify([...Sessions[req.params.sessionID].users]));
 	} else {
 		res.sendStatus(404);
+	}
+});
+
+// Returns card data from a list of card ids
+app.post("/getCards", (req, res) => {
+	if (!req.body) {
+		res.sendStatus(400);
+	} else {
+		res.setHeader("Content-Type", "application/json");
+		res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
 	}
 });
 
