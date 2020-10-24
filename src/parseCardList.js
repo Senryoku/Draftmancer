@@ -37,7 +37,7 @@ export default function(cards, cardlist, options) {
 		}
 		if (cardIDs.length > 0) {
 			return [count, cardIDs.reduce((best, cid) => {
-				if(cards[cid].collector_number < cards[best].collector_number)
+				if(parseInt(cards[cid].collector_number) < parseInt(cards[best].collector_number))
 					return cid;
 				return best;
 			}, cardIDs[0])];

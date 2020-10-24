@@ -11,6 +11,7 @@ import glob
 import decimal
 from itertools import groupby
 
+ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'data/MTGCards.json'
@@ -141,6 +142,11 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     print("Downloading {}...".format(allcardURL))
     urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
+if not os.path.isfile(ScryfallSets) or ForceDownload:
+    urllib.request.urlretrieve("https://api.scryfall.com/sets", ScryfallSets)
+AllowedSets = [s['code'] for s in json.load(open(ScryfallSets, 'r', encoding="utf8"))[
+    'data'] if s['set_type'] in ['core', 'expansion', 'masters', 'draft_innovation']]
+
 
 # Handle decimals from Scryfall data? (Prices?)
 class DecimalEncoder(json.JSONEncoder):
@@ -161,6 +167,8 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.flush()
         copied = 0
         for c in allcards:
+            if c['oversized'] or c['set'] not in AllowedSets:
+                continue
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
