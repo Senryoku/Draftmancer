@@ -1,7 +1,6 @@
-import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import Cards from "./../src/Cards.js";
+import { Cards } from "./../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs } from "./src/common.js";
 

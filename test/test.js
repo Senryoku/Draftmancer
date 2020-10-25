@@ -3,7 +3,7 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import Cards from "./../src/Cards.js";
+import { Cards } from "./../src/Cards.js";
 import { Connections } from "../src/Connection.js";
 import { Sessions } from "../src/Session.js";
 import randomjs from "random-js";

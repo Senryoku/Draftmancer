@@ -10,6 +10,7 @@ import re
 import glob
 import decimal
 from itertools import groupby
+import functools
 
 ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
@@ -144,7 +145,7 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
     urllib.request.urlretrieve("https://api.scryfall.com/sets", ScryfallSets)
-AllowedSets = [s['code'] for s in json.load(open(ScryfallSets, 'r', encoding="utf8"))[
+PrimarySets = [s['code'] for s in json.load(open(ScryfallSets, 'r', encoding="utf8"))[
     'data'] if s['set_type'] in ['core', 'expansion', 'masters', 'draft_innovation']]
 
 
@@ -167,11 +168,12 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.flush()
         copied = 0
         for c in allcards:
-            if c['oversized'] or c['set'] not in AllowedSets:
+            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
                 continue
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
+
             cards.append(c)
             copied += 1
             sys.stdout.write("\b" * 100)  # return to start of line
@@ -243,9 +245,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     print("Generating card data cache...")
     with open(BulkDataArenaPath, 'r', encoding="utf8") as file:
         cards = {}
-        arena_cards = json.loads(file.read())
+        cardsByName = {}
+        all_cards = json.loads(file.read())
         Translations = {}
-        for c in arena_cards:
+        for c in all_cards:
             if c['id'] not in cards:
                 cards[c['id']] = {'id': c['id']}
 
@@ -278,6 +281,11 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                                                         ] = c['card_faces'][1]['image_uris']['border_crop']
 
             if c['lang'] == 'en':
+                if c['name'] in cardsByName:
+                    cardsByName[c['name']].append(c)
+                else:
+                    cardsByName[c['name']] = [c]
+
                 selection = {key: value for key, value in c.items() if key in {
                     'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
                 if 'mana_cost' not in selection and "card_faces" in c:
@@ -315,8 +323,27 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             if 'arena_id' in c:
                 MTGACards[c['arena_id']] = c
 
+        # Select the "best" (most recent, non special) printing of each card
+        def selectCard(a, b):
+            if 'arena_id' in a and 'arena_id' not in b:
+                return a
+            if 'arena_id' in b and 'arena_id' not in a:
+                return b
+            if a['set'] in PrimarySets and not b['set'] in PrimarySets:
+                return a
+            if a['set'] not in PrimarySets and b['set'] in PrimarySets:
+                return b
+            return a if a['released_at'] > b['released_at'] or (a['released_at'] == a['released_at'] and (a['collector_number'] < b['collector_number'] if not (a['collector_number'].isdigit() and b['collector_number'].isdigit()) else int(a['collector_number']) < int(b['collector_number']))) else b
+
+        for name in cardsByName:
+            cardsByName[name] = functools.reduce(
+                selectCard, cardsByName[name])['id']
+
         with open(FinalDataPath, 'w', encoding="utf8") as outfile:
             json.dump(cards, outfile, ensure_ascii=False)
+
+        with open("data/CardsByName.json", 'w', encoding="utf8") as outfile:
+            json.dump(cardsByName, outfile, ensure_ascii=False)
 
         with open("client/public/data/MTGACards.json", 'w', encoding="utf8") as outfile:
             json.dump(MTGACards, outfile, ensure_ascii=False)
@@ -444,6 +471,7 @@ for set, group in groups:
     else:
         setinfos[set]["fullName"] = set
     setinfos[set]["cardCount"] = len(cardList)
+    setinfos[set]["isPrimary"] = set in PrimarySets
     print('\t', set, ": ", len(cardList))
     cardList.sort(key=lambda c: c['rarity'])
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):

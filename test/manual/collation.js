@@ -3,7 +3,7 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import Cards from "./../../src/Cards.js";
+import { Cards } from "./../../src/Cards.js";
 //import server from "../../server.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";

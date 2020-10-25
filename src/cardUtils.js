@@ -1,6 +1,6 @@
 "use strict";
 
-import Cards from "./Cards.js";
+import { Cards } from "./Cards.js";
 import { getRandomKey } from "./utils.js";
 
 export function removeCardFromDict(cid, dict) {

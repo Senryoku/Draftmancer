@@ -13,7 +13,6 @@ import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } fro
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
-import parseCardList from "../../src/parseCardList.js";
 
 import Modal from "./components/Modal.vue";
 import DelayedInput from "./components/DelayedInput.vue";

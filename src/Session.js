@@ -5,7 +5,7 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import Cards from "./Cards.js";
+import { Cards } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";

@@ -24,16 +24,13 @@ import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
-import Cards from "./src/Cards.js";
+import {Cards, MTGACards} from "./src/Cards.js";
 import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-const MTGACards = {};
-for(let cid in Cards)
-	MTGACards[Cards[cid].arena_id] = Cards[cid];
 
 function shortguid() {
 	function s4() {

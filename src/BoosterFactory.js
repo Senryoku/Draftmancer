@@ -1,6 +1,6 @@
 "use strict";
 
-import Cards from "./Cards.js";
+import { Cards } from "./Cards.js";
 import { isEmpty, shuffleArray } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 

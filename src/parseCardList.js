@@ -1,3 +1,5 @@
+import { CardsByName } from "./Cards.js";
+
 export default function(cards, cardlist, options) {
 	const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
 	const CardsIds = Object.keys(cards);
@@ -20,6 +22,10 @@ export default function(cards, cardlist, options) {
 				`You should not specify a collector number without also specifying a set: '${line}'.`
 			);
 		}
+
+		if(!set && !number && name in CardsByName)
+			return [count, CardsByName[name].id];
+
 		let cardIDs = CardsIds.filter(
 			id =>
 				cards[id].name == name &&
