@@ -57,9 +57,10 @@ export default {
 
 .collection-warning {
 	pointer-events: all;
-}
-
-.collection-warning i {
+	position: absolute;
+	top: 0.55em;
+	left: -0.25em;
+	z-index: 1;
 	text-shadow: 0 0 3px black;
 }
 </style>

@@ -153,27 +153,24 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .card-list {
 	margin-left: 3em;
 	margin-right: 3em;
 }
 
 .category-wrapper {
-	column-count: 6;
-	column-gap: 1rem;
-	margin-bottom: 300px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+}
+
+.category-wrapper > .card-column {
+	margin-right: 1em;
 }
 
 .card-wrapper {
 	position: relative;
 	margin: 0;
-}
-
-.collection-warning {
-	position: absolute;
-	top: 0.55em;
-	left: -0.25em;
-	z-index: 1;
 }
 </style>
