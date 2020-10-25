@@ -864,9 +864,9 @@ export function Session(id, owner, options) {
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
-			if (s.boosters[0][idx] > 0) {
+			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
-				s.boosters[0][idx] = -1;
+				s.boosters[0][idx] = null;
 				++pickedCards;
 			}
 		}
