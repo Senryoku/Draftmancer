@@ -1036,7 +1036,7 @@ export function Session(id, owner, options) {
 			return { code: 2, error: err };
 		}
 		if (cardIdx >= this.boosters[boosterIndex].length) {
-			const err = `Session.pickCard: cardID ('${cardIdx}') not found in booster #${boosterIndex}.`;
+			const err = `Session.pickCard: Invalid card index ('${cardIdx}') for booster #${boosterIndex} (${this.boosters[boosterIndex]}).`;
 			console.error(err);
 			return { code: 3, error: err };
 		}
@@ -1049,11 +1049,10 @@ export function Session(id, owner, options) {
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-			(burnedCards.length !== this.burnedCardsPerRound &&
-				this.boosters[boosterIndex].length !== 1 + burnedCards.length) || // If there's enough cards left, the proper amount of burned card should be supplied
-				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+			burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - 1) ||
+			burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
 		) {
-			const err = `Session.pickCard: Invalid burned cards.`;
+			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
 			console.error(err);
 			return { code: 1, error: err };
 		}
@@ -1062,17 +1061,27 @@ export function Session(id, owner, options) {
 			`Session ${this.id}: ${
 				Connections[userID].userName
 			} [${userID}] picked card '${this.boosters[boosterIndex][cardIdx].name}' from booster #${boosterIndex}, burning ${
-				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
+				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
+
+		Connections[userID].pickedCards.push(this.boosters[boosterIndex][cardIdx]);
+		Connections[userID].pickedThisRound = true;
+
 		this.draftLog.users[userID].picks.push({
 			pick: cardIdx,
 			burn: burnedCards,
 			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
 		});
 
-		Connections[userID].pickedCards.push(this.boosters[boosterIndex][cardIdx].name);
-		Connections[userID].pickedThisRound = true;
+		let cardsToRemove = [cardIdx];
+		if (burnedCards) {
+			cardsToRemove = cardsToRemove.concat(burnedCards);
+			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
+		}
+
+		for (let idx of cardsToRemove)
+			this.boosters[boosterIndex].splice(idx, 1);
 
 		// Signal users
 		this.forUsers(u => {
@@ -1097,15 +1106,8 @@ export function Session(id, owner, options) {
 			});
 		}
 
-		this.boosters[boosterIndex].splice(cardIdx, 1);
-
-		// Removes burned cards
-		if (burnedCards)
-			for (let burnIdx of burnedCards)
-				this.boosters[boosterIndex].splice(burnIdx, 1);
-
 		++this.pickedCardsThisRound;
-		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
+		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) {
 			this.nextBooster();
 		}
 		return { code: 0 };
@@ -1136,7 +1138,7 @@ export function Session(id, owner, options) {
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
 		// Boosters are empty
-		if (this.boosters[0].length == 0) {
+		if (this.boosters[0].length === 0) {
 			this.round = 0;
 			// Remove empty boosters
 			this.boosters.splice(0, totalVirtualPlayers);

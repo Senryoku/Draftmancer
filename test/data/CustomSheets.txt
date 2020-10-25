@@ -1,0 +1,398 @@
+[Common(10)]
+Adventure Awaits
+Akoum Hellhound
+Akoum Hellhound
+Angelheart Protector
+Anticognition
+Ardent Electromancer
+Blood Beckoning
+Blood Price
+Broken Wings
+Bubble Snare
+Canopy Baloth
+Canopy Baloth
+Cascade Seer
+Chilling Trap
+Cleansing Wildfire
+Cleric of Chill Depths
+Cliffhaven Kitesail
+Cliffhaven Sell-Sword
+Cunning Geysermage
+Dauntless Survivor
+Dauntless Unity
+Deadly Alliance
+Deliberate
+Disenchant
+Drana's Silencer
+Dreadwurm
+Dreadwurm
+Expedition Champion
+Expedition Diviner
+Expedition Healer
+Expedition Skulker
+Farsight Adept
+Feed the Swarm
+Field Research
+Fissure Wizard
+Forest
+Forest
+Forest
+Forest
+Ghastly Gloomhunter
+Glacial Grasp
+Gnarlid Colony
+Grotag Bug-Catcher
+Guul Draz Mucklord
+Hagra Constrictor
+Highborn Vampire
+Inordinate Rage
+Into the Roil
+Into the Roil
+Island
+Island
+Island
+Island
+Joraga Visionary
+Kabira Outrider
+Kazandu Nectarpot
+Kazandu Nectarpot
+Kazandu Stomper
+Kor Celebrant
+Living Tempest
+Makindi Ox
+Makindi Ox
+Malakir Blood-Priest
+Marauding Blight-Priest
+Mesa Lynx
+Might of Murasa
+Mind Drain
+Molten Blast
+Mountain
+Mountain
+Mountain
+Mountain
+Murasa Brute
+Nahiri's Binding
+Negate
+Nimana Skitter-Sneak
+Nimana Skydancer
+Nissa's Zendikon
+Oblivion's Hunger
+Plains
+Plains
+Plains
+Plains
+Practiced Tactics
+Pressure Point
+Prowling Felidar
+Prowling Felidar
+Pyroclastic Hellion
+Rabid Bite
+Reclaim the Wastes
+Resolute Strike
+Risen Riptide
+Roil Eruption
+Roil Eruption
+Scale the Heights
+Scavenged Blade
+Scorch Rider
+Sea Gate Banneret
+Sea Gate Colossus
+Seafloor Stalker
+Shell Shield
+Shepherd of Heroes
+Sizzling Barrage
+Skyclave Sentinel
+Skyclave Squid
+Skyclave Squid
+Smite the Monstrous
+Sneaking Guide
+Spare Supplies
+Spitfire Lagac
+Spitfire Lagac
+Stonework Packbeast
+Strength of Solidarity
+Subtle Strike
+Swamp
+Swamp
+Swamp
+Swamp
+Synchronized Spellcraft
+Tajuru Blightblade
+Tajuru Snarecaster
+Tazeem Raptor
+Tazeem Roilmage
+Teeterpeak Ambusher
+Territorial Scythecat
+Territorial Scythecat
+Tormenting Voice
+Tuktuk Rubblefort
+Turntimber Ascetic
+Utility Knife
+Vanquish the Weak
+Zulaport Duelist
+[Uncommon(3)]
+Acquisitions Expert
+Akoum Warrior // Akoum Teeth
+Akoum Warrior // Akoum Teeth
+Allied Assault
+Attended Healer
+Bala Ged Recovery // Bala Ged Sanctuary
+Bala Ged Recovery // Bala Ged Sanctuary
+Base Camp
+Beyeen Veil // Beyeen Coast
+Beyeen Veil // Beyeen Coast
+Blackbloom Rogue // Blackbloom Bog
+Blackbloom Rogue // Blackbloom Bog
+Bloodchief's Thirst
+Bloodchief's Thirst
+Brushfire Elemental
+Brushfire Elemental
+Canyon Jerboa
+Canyon Jerboa
+Cinderclasm
+Cleric of Life's Bond
+Concerted Defense
+Demon's Disciple
+Emeria Captain
+Fearless Fledgling
+Fearless Fledgling
+Fireblade Charger
+Goma Fada Vanguard
+Grotag Night-Runner
+Iridescent Hornbeetle
+Journey to Oblivion
+Jwari Disruption // Jwari Ruins
+Jwari Disruption // Jwari Ruins
+Kabira Takedown // Kabira Plateau
+Kabira Takedown // Kabira Plateau
+Kargan Warleader
+Kargan Warleader
+Kazuul's Fury // Kazuul's Cliffs
+Kazuul's Fury // Kazuul's Cliffs
+Khalni Ambush // Khalni Territory
+Khalni Ambush // Khalni Territory
+Kitesail Cleric
+Kor Blademaster
+Lithoform Blight
+Lullmage's Domination
+Lullmage's Familiar
+Makindi Stampede // Makindi Mesas
+Makindi Stampede // Makindi Mesas
+Malakir Rebirth // Malakir Mire
+Malakir Rebirth // Malakir Mire
+Merfolk Falconer
+Merfolk Windrobber
+Mind Carver
+Moss-Pit Skeleton
+Murasa Rootgrazer
+Murasa Sproutling
+Paired Tactician
+Pelakka Predation // Pelakka Caverns
+Pelakka Predation // Pelakka Caverns
+Ravager's Mace
+Relic Amulet
+Relic Axe
+Relic Golem
+Relic Vial
+Rockslide Sorcerer
+Roiling Regrowth
+Roiling Regrowth
+Roost of Drakes
+Ruin Crab
+Ruin Crab
+Scion of the Swarm
+Sejiri Shelter // Sejiri Glacier
+Sejiri Shelter // Sejiri Glacier
+Shadow Stinger
+Shatterskull Minotaur
+Silundi Vision // Silundi Isle
+Silundi Vision // Silundi Isle
+Skyclave Cleric // Skyclave Basilica
+Skyclave Cleric // Skyclave Basilica
+Skyclave Geopede
+Skyclave Geopede
+Skyclave Pick-Axe
+Skyclave Pick-Axe
+Skyclave Plunder
+Skyclave Shadowcat
+Soaring Thought-Thief
+Song-Mad Treachery // Song-Mad Ruins
+Song-Mad Treachery // Song-Mad Ruins
+Spikefield Hazard // Spikefield Cave
+Spikefield Hazard // Spikefield Cave
+Spoils of Adventure
+Springmantle Cleric
+Sure-Footed Infiltrator
+Tangled Florahedron // Tangled Vale
+Tangled Florahedron // Tangled Vale
+Taunting Arbormage
+Thundering Rebuke
+Thundering Sparkmage
+Thwart the Grave
+Umara Mystic
+Umara Wizard // Umara Skyfalls
+Umara Wizard // Umara Skyfalls
+Vastwood Fortification // Vastwood Thicket
+Vastwood Fortification // Vastwood Thicket
+Vastwood Surge
+Veteran Adventurer
+Vine Gecko
+Windrider Wizard
+Zof Consumption // Zof Bloodbog
+Zof Consumption // Zof Bloodbog
+[Rare(1)]
+Akiri, Fearless Voyager
+Akiri, Fearless Voyager
+Archon of Emeria
+Archon of Emeria
+Archpriest of Iona
+Archpriest of Iona
+Branchloft Pathway // Boulderloft Pathway
+Branchloft Pathway // Boulderloft Pathway
+Branchloft Pathway // Boulderloft Pathway
+Branchloft Pathway // Boulderloft Pathway
+Brightclimb Pathway // Grimclimb Pathway
+Brightclimb Pathway // Grimclimb Pathway
+Brightclimb Pathway // Grimclimb Pathway
+Brightclimb Pathway // Grimclimb Pathway
+Charix, the Raging Isle
+Charix, the Raging Isle
+Charix, the Raging Isle
+Clearwater Pathway // Murkwater Pathway
+Clearwater Pathway // Murkwater Pathway
+Clearwater Pathway // Murkwater Pathway
+Clearwater Pathway // Murkwater Pathway
+Confounding Conundrum
+Confounding Conundrum
+Coralhelm Chronicler
+Coralhelm Chronicler
+Coveted Prize
+Coveted Prize
+Cragcrown Pathway // Timbercrown Pathway
+Cragcrown Pathway // Timbercrown Pathway
+Cragcrown Pathway // Timbercrown Pathway
+Cragcrown Pathway // Timbercrown Pathway
+Cragplate Baloth
+Cragplate Baloth
+Crawling Barrens
+Crawling Barrens
+Felidar Retreat
+Felidar Retreat
+Glasspool Mimic // Glasspool Shore
+Glasspool Mimic // Glasspool Shore
+Glasspool Mimic // Glasspool Shore
+Glasspool Mimic // Glasspool Shore
+Grakmaw, Skyclave Ravager
+Grakmaw, Skyclave Ravager
+Hagra Mauling // Hagra Broodpit
+Hagra Mauling // Hagra Broodpit
+Hagra Mauling // Hagra Broodpit
+Hagra Mauling // Hagra Broodpit
+Inscription of Abundance
+Inscription of Abundance
+Inscription of Insight
+Inscription of Insight
+Inscription of Ruin
+Inscription of Ruin
+Kargan Intimidator
+Kargan Intimidator
+Kaza, Roil Chaser
+Kaza, Roil Chaser
+Kazandu Mammoth // Kazandu Valley
+Kazandu Mammoth // Kazandu Valley
+Kazandu Mammoth // Kazandu Valley
+Kazandu Mammoth // Kazandu Valley
+Legion Angel
+Legion Angel
+Linvala, Shield of Sea Gate
+Linvala, Shield of Sea Gate
+Lotus Cobra
+Lotus Cobra
+Luminarch Aspirant
+Luminarch Aspirant
+Maddening Cacophony
+Maddening Cacophony
+Magmatic Channeler
+Magmatic Channeler
+Master of Winds
+Master of Winds
+Maul of the Skyclaves
+Maul of the Skyclaves
+Myriad Construct
+Myriad Construct
+Nahiri's Lithoforming
+Nahiri's Lithoforming
+Needleverge Pathway // Pillarverge Pathway
+Needleverge Pathway // Pillarverge Pathway
+Needleverge Pathway // Pillarverge Pathway
+Needleverge Pathway // Pillarverge Pathway
+Needleverge Pathway // Pillarverge Pathway
+Needleverge Pathway // Pillarverge Pathway
+Nighthawk Scavenger
+Nighthawk Scavenger
+Nimble Trapfinder
+Nimble Trapfinder
+Nullpriest of Oblivion
+Nullpriest of Oblivion
+Ondu Inversion // Ondu Skyruins
+Ondu Inversion // Ondu Skyruins
+Ondu Inversion // Ondu Skyruins
+Ondu Inversion // Ondu Skyruins
+Orah, Skyclave Hierophant
+Orah, Skyclave Hierophant
+Orah, Skyclave Hierophant
+Oran-Rief Ooze
+Oran-Rief Ooze
+Phylath, World Sculptor
+Phylath, World Sculptor
+Relic Robber
+Relic Robber
+Riverglide Pathway // Lavaglide Pathway
+Riverglide Pathway // Lavaglide Pathway
+Riverglide Pathway // Lavaglide Pathway
+Riverglide Pathway // Lavaglide Pathway
+Roiling Vortex
+Roiling Vortex
+Scute Swarm
+Scute Swarm
+Shadows' Verdict
+Shadows' Verdict
+Shatterskull Charger
+Shatterskull Charger
+Skyclave Apparition
+Skyclave Apparition
+Skyclave Relic
+Skyclave Relic
+Skyclave Shade
+Skyclave Shade
+Soul Shatter
+Soul Shatter
+Squad Commander
+Squad Commander
+Swarm Shambler
+Swarm Shambler
+Taborax, Hope's Demise
+Taborax, Hope's Demise
+Tajuru Paragon
+Tajuru Paragon
+Thieving Skydiver
+Thieving Skydiver
+Throne of Makindi
+Throne of Makindi
+Valakut Awakening // Valakut Stoneforge
+Valakut Awakening // Valakut Stoneforge
+Valakut Awakening // Valakut Stoneforge
+Valakut Awakening // Valakut Stoneforge
+Valakut Exploration
+Valakut Exploration
+Verazol, the Split Current
+Verazol, the Split Current
+Wayward Guide-Beast
+Wayward Guide-Beast
+Yasharn, Implacable Earth
+Yasharn, Implacable Earth
+Zagras, Thief of Heartbeats
+Zagras, Thief of Heartbeats
+Zareth San, the Trickster
+Zareth San, the Trickster

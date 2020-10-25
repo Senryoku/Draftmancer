@@ -17,8 +17,6 @@ import {
 	waitForClientDisconnects,
 } from "./src/common.js";
 
-import CustomSheetsTest from "./data/CustomSheets.json";
-
 const checkColorBalance = function(booster) {
 	for (let color of "WUBRG")
 		expect(
@@ -27,6 +25,11 @@ const checkColorBalance = function(booster) {
 };
 
 const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
+if(ArenaCube.error)
+	console.error(ArenaCube);
+const CustomSheetsTest = parseCardList(Cards, fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"));
+if(CustomSheetsTest.error)
+	console.error(CustomSheetsTest);
 
 describe("Inter client communication", function() {
 	let sender, receiver;
