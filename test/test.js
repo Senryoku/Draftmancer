@@ -20,9 +20,9 @@ import {
 import CustomSheetsTest from "./data/CustomSheets.json";
 
 const checkColorBalance = function(booster) {
-	for (let c of "WUBRG")
+	for (let color of "WUBRG")
 		expect(
-			booster.filter(cid => Cards[cid].rarity === "common" && Cards[cid].colors.includes(c)).length
+			booster.filter(card => card.rarity === "common" && card.colors.includes(color)).length
 		).to.be.at.least(1);
 };
 
@@ -303,7 +303,7 @@ describe("Single Draft (Two Players)", function() {
 					boosters[idx] = data;
 					if (receivedBoosters == clients.length) done();
 				});
-				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, () => {});
+				clients[c].emit("pickCard", { selectedCard: 0 }, () => {});
 			}
 		});
 	}
@@ -315,7 +315,7 @@ describe("Single Draft (Two Players)", function() {
 				const idx = c;
 				clients[c].on("nextBooster", function(data) {
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { selectedCard: boosters[idx][0] }, () => {});
+					this.emit("pickCard", { selectedCard: 0 }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -327,7 +327,7 @@ describe("Single Draft (Two Players)", function() {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0] }, () => {});
+				clients[c].emit("pickCard", { selectedCard: 0 }, () => {});
 			}
 		});
 	}
@@ -620,8 +620,8 @@ describe("Single Draft (Two Players)", function() {
 					boosters[idx] = data.booster;
 					let burned = [];
 					for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < data.booster.length; ++cidx)
-						burned.push(data.booster[cidx]);
-					this.emit("pickCard", { selectedCard: boosters[idx][0], burnedCards: burned }, () => {});
+						burned.push(cidx);
+					this.emit("pickCard", { selectedCard: 0, burnedCards: burned }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -632,8 +632,8 @@ describe("Single Draft (Two Players)", function() {
 			for (let c = 0; c < clients.length; ++c) {
 				let burned = [];
 				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < boosters[c].booster.length; ++cidx)
-					burned.push(boosters[c].booster[cidx]);
-				clients[c].emit("pickCard", { selectedCard: boosters[c].booster[0], burnedCards: burned }, () => {});
+					burned.push(cidx);
+				clients[c].emit("pickCard", { selectedCard: 0, burnedCards: burned }, () => {});
 			}
 		});
 		disconnect();
@@ -773,13 +773,7 @@ describe("Multiple Drafts", function() {
 						};
 					})()
 				);
-				clients[sess][c].emit(
-					"pickCard",
-					{
-						selectedCard: boosters[playersPerSession * sess + c].booster[0],
-					},
-					() => {}
-				);
+				clients[sess][c].emit("pickCard", { selectedCard: 0,}, () => {});
 			}
 		}
 	});
@@ -792,7 +786,7 @@ describe("Multiple Drafts", function() {
 				clients[sess][c].on("nextBooster", function(data) {
 					let idx = playersPerSession * sess + c;
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { selectedCard: boosters[idx][0] }, () => {});
+					this.emit("pickCard", { selectedCard: 0 }, () => {});
 				});
 				clients[sess][c].once("endDraft", function() {
 					draftEnded += 1;
@@ -803,11 +797,7 @@ describe("Multiple Drafts", function() {
 		}
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].emit(
-					"pickCard",
-					{ selectedCard: boosters[playersPerSession * sess + c].booster[0] },
-					() => {}
-				);
+				clients[sess][c].emit("pickCard", { selectedCard: 0 }, () => {});
 			}
 		}
 	});

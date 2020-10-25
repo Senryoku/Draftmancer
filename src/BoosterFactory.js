@@ -120,7 +120,7 @@ export function BoosterFactory(cardPool, landSlot, options) {
 				if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.cardPool[r])) {
 					let pickedCard = pickCard(this.cardPool[r]);
 					// Synchronize color balancing dictionary
-					if (this.options.colorBalance && Cards[pickedCard].rarity == "common")
+					if (this.options.colorBalance && pickedCard.rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
 					pickedCard.foil = true;
 					booster.push(pickedCard);
@@ -246,7 +246,7 @@ export const SetSpecificFactories = {
 				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === pickedRarity),
+						booster.findIndex(c => c.rarity === pickedRarity),
 						0,
 						pickedCID
 					);

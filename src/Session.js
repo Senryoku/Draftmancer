@@ -1051,7 +1051,7 @@ export function Session(id, owner, options) {
 			(burnedCards.length > this.burnedCardsPerRound ||
 			(burnedCards.length !== this.burnedCardsPerRound &&
 				this.boosters[boosterIndex].length !== 1 + burnedCards.length) || // If there's enough cards left, the proper amount of burned card should be supplied
-				burnedCards.some(c => !this.boosters[boosterIndex].includes(c)))
+				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
 		) {
 			const err = `Session.pickCard: Invalid burned cards.`;
 			console.error(err);
@@ -1066,7 +1066,7 @@ export function Session(id, owner, options) {
 			}.`
 		);
 		this.draftLog.users[userID].picks.push({
-			pick: this.boosters[boosterIndex][cardIdx],
+			pick: cardIdx,
 			burn: burnedCards,
 			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
 		});
