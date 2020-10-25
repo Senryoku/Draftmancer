@@ -384,9 +384,13 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                     if name in swaps:
                         name = swaps[name]
                     if name in CardNameToID:
-                        cid = CardNameToID[name]
+                        cid = None
+                        for c in cards:
+                            if 'arena_id' in cards[c] and cards[c]['arena_id'] == CardNameToID[name]:
+                                cid = cards[c]['id']
+                                break
                         # Some cards are labeled as JMP in Arena but not on Scryfall (Swaped cards). We can search for an alternative version.
-                        if str(cid) not in cards:
+                        if cid == None:
                             print("{} ({}) not found in cards...".format(name, cid))
                             candidates = [
                                 key for key, val in cards.items() if val['name'] == name and val['set'] != 'jmp']
