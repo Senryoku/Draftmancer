@@ -58,7 +58,7 @@ export const copyToClipboard = str => {
 	}
 };
 
-export function exportToMagicProTools(cardsdb, draftLog, userID) {
+export function exportToMagicProTools(draftLog, userID) {
 	let str = "";
 	str += `Event #: ${draftLog.sessionID}_${draftLog.time}\n`;
 	str += `Time: ${new Date(draftLog.time).toUTCString()}\n`;
@@ -83,9 +83,9 @@ export function exportToMagicProTools(cardsdb, draftLog, userID) {
 		}
 		lastLength = p.booster.length;
 		str += `Pack ${boosterNumber} pick ${pickNumber}:\n`;
-		for (let c of p.booster)
-			if (c == p.pick) str += `--> ${cardsdb[c].name}\n`;
-			else str += `    ${cardsdb[c].name}\n`;
+		for (let [idx, cid] of p.booster.entries())
+			if (idx == p.pick) str += `--> ${draftLog.carddata[cid].name}\n`;
+			else str += `    ${draftLog.carddata[cid].name}\n`;
 		str += "\n";
 		pickNumber += 1;
 	}

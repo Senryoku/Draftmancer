@@ -64,11 +64,6 @@ Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
 VTooltip.options.defaultBoundariesElement = "window";
 
-let UniqueID = 0;
-function genUniqueCard(card) {
-	return Object.assign({uniqueID: ++UniqueID}, card);
-}
-
 export default {
 	components: {
 		Modal,
@@ -507,7 +502,7 @@ export default {
 				fireToast("success", "Done drafting!");
 			});
 			this.socket.on("winstonDraftRandomCard", c => {
-				this.addToDeck(genUniqueCard(c));
+				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
@@ -526,7 +521,7 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -614,7 +609,7 @@ export default {
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -689,7 +684,7 @@ export default {
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -744,7 +739,7 @@ export default {
 				this.drafting = true;
 
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(genUniqueCard(c));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
 					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
@@ -753,7 +748,7 @@ export default {
 
 				this.booster = [];
 				for (let c of data.booster)
-					this.booster.push(genUniqueCard(c));
+					this.booster.push(c);
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
 
@@ -785,7 +780,7 @@ export default {
 				if (this.draftingState == DraftState.Watching) return;
 
 				for (let c of data.booster) {
-					this.booster.push(genUniqueCard(c));
+					this.booster.push(c);
 				}
 				this.playSound("next");
 				this.draftingState = DraftState.Picking;
@@ -871,7 +866,7 @@ export default {
 			this.socket.on("setCardSelection", data => {
 				this.clearState();
 				for (let c of data.reduce((acc, val) => acc.concat(val), [])) {
-					this.addToDeck(genUniqueCard(c));
+					this.addToDeck(c);
 				}
 				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -1123,7 +1118,7 @@ export default {
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				for (let c of p) pile.push(genUniqueCard(c));
+				for (let c of p) pile.push(c);
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
@@ -1185,7 +1180,7 @@ export default {
 			for (let card of this.gridDraftState.booster) {
 				if (card) {
 					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id) booster.push(prevBooster[idx]);
-					else booster.push(genUniqueCard(card));
+					else booster.push(card);
 				} else booster.push(null);
 				++idx;
 			}
@@ -1257,7 +1252,7 @@ export default {
 				this.rochesterDraftState.booster.length - 1 === state.booster.length
 			) {
 				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
-			} else for (let c of state.booster) booster.push(genUniqueCard(c));
+			} else for (let c of state.booster) booster.push(c);
 			state.booster = booster;
 			this.rochesterDraftState = state;
 		},

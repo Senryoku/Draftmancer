@@ -429,7 +429,7 @@
 										class="fas fa-book yellow"
 										v-tooltip="
 											userByID[id].userName +
-												' has uploaded their collection, but is not using it.'
+											' has uploaded their collection, but is not using it.'
 										"
 									></i>
 								</template>
@@ -515,9 +515,8 @@
 									<i
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer)
+											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -637,8 +636,8 @@
 								value="Confirm Pick"
 								v-if="
 									selectedCard != undefined &&
-										(burningCards.length === burnedCardsPerRound ||
-											booster.length === 1 + burningCards.length)
+									(burningCards.length === burnedCardsPerRound ||
+										booster.length === 1 + burningCards.length)
 								"
 							/>
 							<span v-else>
@@ -833,8 +832,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing
+				(drafting && draftingState !== DraftState.Watching) ||
+				draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -914,9 +913,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-						((sideboard != undefined && sideboard.length > 0) ||
-							(drafting && draftingState !== DraftState.Watching) ||
-							draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -957,9 +956,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+				((sideboard != undefined && sideboard.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1003,10 +1002,9 @@
 						</div>
 						<div class="welcome-section">
 							{{ userByID[sessionOwner].userName }} is the session owner
-							<i class="fas fa-crown subtle-gold"></i>.
-							 Wait for them to select the options and launch a game!
-							<br />You can still customize your personal options on top of the page.
-							<br />Or, to make a new session that you own, change Session ID in the top left.
+							<i class="fas fa-crown subtle-gold"></i>. Wait for them to select the options and launch a
+							game! <br />You can still customize your personal options on top of the page. <br />Or, to
+							make a new session that you own, change Session ID in the top left.
 						</div>
 					</div>
 					<div class="container" v-else>
@@ -1127,7 +1125,7 @@
 											v-tooltip="
 												s.cube
 													? 'Cube'
-													: s.sets.map(code => setsInfos[code].fullName).join(', ')
+													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
 											"
 										>
 											<template v-if="s.cube">
@@ -1161,7 +1159,10 @@
 						<div class="welcome-section">
 							<em>October 9, 2020</em>
 							<ul>
-								<li>Deck sharing now lets you show your deck to other players and viewers of the read-only bracket.</li>
+								<li>
+									Deck sharing now lets you show your deck to other players and viewers of the
+									read-only bracket.
+								</li>
 							</ul>
 							<em>September 20, 2020</em>
 							<ul>
@@ -1315,6 +1316,7 @@
 				:draftLogs="draftLogs"
 				:language="language"
 				@sharelog="shareSavedDraftLog"
+				@storelogs="storeDraftLogs"
 			></draft-log-history>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">

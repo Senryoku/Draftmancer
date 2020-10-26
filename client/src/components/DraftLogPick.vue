@@ -1,11 +1,11 @@
 <template>
 	<div class="card-container">
 		<card
-			v-for="(card, index) in pick.booster"
+			v-for="(cid, index) in pick.booster"
 			:key="index"
-			:card="card"
+			:card="carddata[cid]"
 			:language="language"
-			:class="{ 'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card) }"
+			:class="{ 'selected-high': pick.pick === index, burned: pick.burn && pick.burn.includes(index) }"
 			:lazyLoad="true"
 		></card>
 	</div>
@@ -19,6 +19,7 @@ export default {
 	components: { Card },
 	props: {
 		pick: { type: Object, required: true },
+		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
 	},
 };

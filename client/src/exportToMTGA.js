@@ -5,7 +5,8 @@ function exportCardToMTGA(c, language, full) {
 	if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
 	if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
 	if (set == "AJMP") set = "JMP"; // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
-	let name = c.printed_names[language];
+	let name = c.name;
+	if(language in c.printed_names) name = c.printed_names[language];
 	// FIXME: Workaround for a typo in MTGA
 	if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
 	let idx = name.indexOf("//");

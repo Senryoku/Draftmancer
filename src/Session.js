@@ -976,11 +976,16 @@ export function Session(id, owner, options) {
 		}
 
 		// Draft Log initialization
+		const carddata = {};
+		for(let c of this.boosters.flat())
+			carddata[c.id] = Cards[c.id];
 		this.draftLog = {
+			version: "2.0",
 			sessionID: this.id,
 			time: Date.now(),
 			setRestriction: this.setRestriction,
-			boosters: JSON.parse(JSON.stringify(this.boosters)),
+			boosters: this.boosters.map(b => b.map(c => c.id)),
+			carddata: carddata,
 			users: {},
 			teamDraft: this.teamDraft,
 		};
@@ -1071,7 +1076,7 @@ export function Session(id, owner, options) {
 		this.draftLog.users[userID].picks.push({
 			pick: cardIdx,
 			burn: burnedCards,
-			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
+			booster: this.boosters[boosterIndex].map(c => c.id),
 		});
 
 		let cardsToRemove = [cardIdx];
@@ -1115,17 +1120,17 @@ export function Session(id, owner, options) {
 
 	this.doBotPick = function(instance, boosterIndex) {
 		const removedIdx = instance.pick(this.boosters[boosterIndex]);
-		const startingBooster = JSON.parse(JSON.stringify(this.boosters[boosterIndex]));
+		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
 		const picked = this.boosters[boosterIndex][removedIdx];
 		this.boosters[boosterIndex].splice(removedIdx, 1);
 		const burned = [];
 		for (let i = 0; i < this.burnedCardsPerRound; ++i) {
 			const burnedIdx = instance.burn(this.boosters[boosterIndex]);
-			burned.push(this.boosters[boosterIndex][burnedIdx]);
+			burned.push(burnedIdx);
 			this.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
-			pick: picked,
+			pick: removedIdx,
 			burn: burned,
 			booster: startingBooster,
 		});
@@ -1225,14 +1230,10 @@ export function Session(id, owner, options) {
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
-				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards;
+				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards.map(c => c.id);
 			} else {
-				if (virtualPlayers[userID].disconnected) {
-					// This user has been replaced by a bot
-					this.draftLog.users[userID].cards = this.disconnectedUsers[userID].pickedCards;
-				} else {
-					this.draftLog.users[userID].cards = Connections[userID].pickedCards;
-				}
+				                                    // Has this user been replaced by a bot?
+				this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected ? this.disconnectedUsers[userID] : Connections[userID]).pickedCards.map(c => c.id);
 			}
 		}
 

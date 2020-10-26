@@ -8,6 +8,8 @@ export function removeCardFromDict(cid, dict) {
 	if (dict[cid] == 0) delete dict[cid];
 }
 
+let UniqueID = 0;
+
 // TODO: Prevent multiples by name?
 export function pickCard(dict, booster) {
 	let c = getRandomKey(dict);
@@ -19,7 +21,7 @@ export function pickCard(dict, booster) {
 		}
 	}
 	removeCardFromDict(c, dict);
-	return Cards[c];
+	return Object.assign({uniqueID: ++UniqueID}, Cards[c]);
 }
 
 export function countCards(dict) {
