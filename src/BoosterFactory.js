@@ -38,7 +38,7 @@ export function ColorBalancedSlot(_cardPool) {
 	this.cache.othersCount = countCards(this.cache.others);
 
 	this.syncCache = function(pickedCard) {
-		removeCardFromDict(pickedCard.id, this.cache.byColor[Cards[pickedCard].colors]);
+		removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
 		if (pickedCard.colors.length === 1) {
 			removeCardFromDict(pickedCard.id, this.cache.monocolored);
 			--this.cache.monocoloredCount;
