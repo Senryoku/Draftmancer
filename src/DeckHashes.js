@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { Cards } from "./Cards.js";
 import constants from "../client/src/data/constants.json";
 
 function decklistToArray(decklist, sidePrefix, nameFilter) {
@@ -9,11 +10,11 @@ function decklistToArray(decklist, sidePrefix, nameFilter) {
 		return nameFilter(name);
 	};
 
-	const main = [...decklist.main.map(c => filter(c.name))];
+	const main = [...decklist.main.map(cid => filter(Cards[cid].name))];
 	for (let c in decklist.lands)
 		for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(constants.BasicLandNames["en"][c]));
 
-	const side = [...decklist.side.map(c => sidePrefix + filter(c.name))];
+	const side = [...decklist.side.map(cid => sidePrefix + filter(Cards[cid].name))];
 	if (side.length > 0)
 		for (let c of ["W", "U", "B", "R", "G"])
 			for (let i = 0; i < 10; ++i) side.push(sidePrefix + filter(constants.BasicLandNames["en"][c]));

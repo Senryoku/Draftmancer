@@ -83,6 +83,7 @@ export default {
 	props: {
 		list: { type: Object },
 		username: { type: String, default: "Player" },
+		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
@@ -91,10 +92,10 @@ export default {
 	},
 	computed: {
 		mainboard: function () {
-			return this.list.main;
+			return this.list.main.map((cid) => this.carddata[cid]);
 		},
 		sideboard: function () {
-			return this.list.side;
+			return this.list.side.map((cid) => this.carddata[cid]);
 		},
 		landcount: function () {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);

@@ -98,6 +98,7 @@
 						<decklist
 							:list="selectedLogDecklist"
 							:username="selectedLog.userName"
+							:carddata="draftlog.carddata"
 							:language="language"
 							:hashesonly="selectedLog.delayed"
 						/>
@@ -108,6 +109,7 @@
 				<decklist
 					:list="selectedLogDecklist"
 					:username="selectedLog.userName"
+					:carddata="draftlog.carddata"
 					:language="language"
 					:hashesonly="true"
 				/>

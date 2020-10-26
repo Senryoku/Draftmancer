@@ -49,7 +49,11 @@
 									@click="if (draftlog) selectedUser = p;"
 								>
 									{{ p.userName }}
-									<i class="fas fa-clipboard-check green" v-if="hasDeckList(p.userID)" v-tooltip="`${p.userName} submited their deck. Click to review it.`"></i>
+									<i
+										class="fas fa-clipboard-check green"
+										v-if="hasDeckList(p.userID)"
+										v-tooltip="`${p.userName} submited their deck. Click to review it.`"
+									></i>
 								</div>
 								<template v-if="m.isValid()">
 									<input
@@ -70,7 +74,12 @@
 		</div>
 		<div v-if="draftlog && selectedUser">
 			<h1>{{ selectedUser.userName }}'s deck</h1>
-			<decklist :list="selectedDeckList" :username="selectedUser.userName" :language="language" />
+			<decklist
+				:list="selectedDeckList"
+				:carddata="draftlog.carddata"
+				:username="selectedUser.userName"
+				:language="language"
+			/>
 		</div>
 	</div>
 	<div v-else>No valid bracket.</div>
@@ -142,9 +151,9 @@ export default {
 			);
 			fireToast("success", "Bracket Link copied to clipboard!");
 		},
-		hasDeckList: function(userID) {
+		hasDeckList: function (userID) {
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
-		}
+		},
 	},
 	computed: {
 		matches: function () {
