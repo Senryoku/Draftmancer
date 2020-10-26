@@ -174,7 +174,8 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
-            if('arena_id' not in c and 'mtgo_id' not in c):
+            # Includes only cards available on Arena or MTGO, with the exception of the un-sets and Conspiracy
+            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns']):
                 continue
 
             cards.append(c)
