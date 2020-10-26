@@ -168,7 +168,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.flush()
         copied = 0
         for c in allcards:
-            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
+            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"] or c['set'] == 'akr':
                 continue
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
