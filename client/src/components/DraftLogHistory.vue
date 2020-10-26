@@ -51,7 +51,12 @@
 				</span>
 			</div>
 			<transition-collapse-height>
-				<draft-log v-if="selectedLog === draftLog" :draftlog="draftLog" :language="language"></draft-log>
+				<draft-log
+					v-if="selectedLog === draftLog"
+					:draftlog="draftLog"
+					:language="language"
+					@storelogs="$emit('storelogs')"
+				></draft-log>
 			</transition-collapse-height>
 		</div>
 	</div>
