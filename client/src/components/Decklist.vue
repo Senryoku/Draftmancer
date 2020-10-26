@@ -3,7 +3,7 @@
 		<div class="section-title">
 			<h2>Mainboard ({{ list.main.length }})</h2>
 			<div class="controls">
-				Added basics:
+				<span>Added basics:</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ list.lands[c] }}

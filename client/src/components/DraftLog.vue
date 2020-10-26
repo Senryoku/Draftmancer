@@ -49,30 +49,40 @@
 
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<template v-if="!draftlog.delayed">
-				<h2>{{ selectedLog.userName }}</h2>
-				<select v-model="displayOptions.category">
-					<option>Cards</option>
-					<option>Picks</option>
-					<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
-				</select>
-				<button
-					@click="exportSingleLog(selectedLog.userID)"
-					v-tooltip="`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`"
-				>
-					<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
-				</button>
-				<button
-					@click="downloadMPT(selectedLog.userID)"
-					v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
-				>
-					<i class="fas fa-file-download"></i> Download log in MTGO format
-				</button>
-				<button
-					@click="submitToMPT(selectedLog.userID)"
-					v-tooltip="`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`"
-				>
-					<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
-				</button>
+				<div class="section-title">
+					<h2>{{ selectedLog.userName }}</h2>
+					<div class="controls">
+						<select v-model="displayOptions.category">
+							<option>Cards</option>
+							<option>Picks</option>
+							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
+								Deck
+							</option>
+						</select>
+						<button
+							@click="exportSingleLog(selectedLog.userID)"
+							v-tooltip="
+								`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`
+							"
+						>
+							<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
+						</button>
+						<button
+							@click="downloadMPT(selectedLog.userID)"
+							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
+						>
+							<i class="fas fa-file-download"></i> Download log in MTGO format
+						</button>
+						<button
+							@click="submitToMPT(selectedLog.userID)"
+							v-tooltip="
+								`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`
+							"
+						>
+							<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
+						</button>
+					</div>
+				</div>
 
 				<template v-if="displayOptions.category == 'Picks'">
 					<div v-for="(pick, index) in selectedLog.picks" :key="index">
@@ -95,15 +105,13 @@
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Deck'">
-					<div class="card-container card-columns">
-						<decklist
-							:list="selectedLogDecklist"
-							:username="selectedLog.userName"
-							:carddata="draftlog.carddata"
-							:language="language"
-							:hashesonly="selectedLog.delayed"
-						/>
-					</div>
+					<decklist
+						:list="selectedLogDecklist"
+						:username="selectedLog.userName"
+						:carddata="draftlog.carddata"
+						:language="language"
+						:hashesonly="selectedLog.delayed"
+					/>
 				</template>
 			</template>
 			<template v-else>
