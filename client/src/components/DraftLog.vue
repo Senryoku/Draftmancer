@@ -27,7 +27,12 @@
 				>
 					<div>
 						{{ log.userName }}
-						<i class="fas fa-clipboard-check green" v-if="log.hasDeck" v-tooltip="`${log.userName} submited their deck.`"></i>
+						<i
+							class="fas fa-clipboard-check green"
+							v-if="log.hasDeck"
+							@click="displayOptions.category = 'Deck'"
+							v-tooltip="`${log.userName} submited their deck.`"
+						></i>
 					</div>
 					<span class="color-list">
 						<img
