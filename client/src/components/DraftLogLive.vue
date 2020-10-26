@@ -33,7 +33,13 @@
 								}
 							"
 						></i>
-						<h2>{{ getCardName(draftlog.users[player].picks[pick].pick) }}</h2>
+						<h2>
+							{{
+								getCardName(
+									draftlog.users[player].picks[pick].booster[draftlog.users[player].picks[pick].pick]
+								)
+							}}
+						</h2>
 					</span>
 				</div>
 				<template v-if="draftlog.users[player].picks.length === 0"
@@ -98,8 +104,8 @@ export default {
 		}
 	},
 	methods: {
-		getCardName: function (c) {
-			c.printed_names[this.language];
+		getCardName: function (cid) {
+			this.draftlog.carddata[cid].printed_names[this.language];
 		},
 		setPlayer: function (userID) {
 			if (!(userID in this.draftlog.users)) return;
