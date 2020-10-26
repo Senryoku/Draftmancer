@@ -12,6 +12,11 @@
 					v-else-if="missingCard[card.id] === 'Missing'"
 					v-tooltip="'You do not own this card in MTGA.'"
 				></i>
+				<i
+					class="fas fa-exclamation-triangle red"
+					v-else-if="missingCard[card.id] === 'NonExistent'"
+					v-tooltip="'This card is not available on MTGA.'"
+				></i>
 			</div>
 		</card>
 	</div>
@@ -32,13 +37,14 @@ export default {
 	computed: {
 		missingCard: function () {
 			let r = {};
-			// FIXME
-			const collectionCards = Object.keys(this.collection).map((cid) => MTGACards[cid]);
+			const MTGACardsArr = Object.values(MTGACards);
 			for (let card of this.column) {
 				if (card.arena_id in this.collection) {
 					r[card.id] = "Present";
 				} else {
-					if (collectionCards.find((c) => c && c.name === card.name)) r[card.id] = "Equivalent";
+					const alternates = MTGACardsArr.filter((c) => c && c.name === card.name && c.arena_id);
+					if (alternates.length === 0) r[card.id] = "NonExistent";
+					else if (alternates.some((c) => this.collection[c.arena_id] > 0)) r[card.id] = "Equivalent";
 					else r[card.id] = "Missing";
 				}
 			}
