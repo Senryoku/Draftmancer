@@ -647,7 +647,7 @@ describe("Multiple Drafts", function() {
 	let clients = [];
 	let sessionIDs = [];
 	const sessionCount = 4;
-	const playersPerSession = 7;
+	const playersPerSession = 8;
 	let boosters = [];
 
 	beforeEach(function(done) {
@@ -715,7 +715,7 @@ describe("Multiple Drafts", function() {
 	it("When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster", function(done) {
 		let sessionsCorrectlyStartedDrafting = 0;
 		for (let [sessionIdx, sessionClients] of clients.entries()) {
-			boosters.push([]);
+			boosters.push(null);
 			(() => {
 				let connectedClients = 0;
 				for (let c of sessionClients) {
@@ -732,7 +732,8 @@ describe("Multiple Drafts", function() {
 						boosters[playersPerSession * sessionIdx + sessionClients.findIndex(cl => cl == c)] = data;
 						if (
 							sessionsCorrectlyStartedDrafting == sessionCount &&
-							boosters.length == playersPerSession * sessionCount
+							boosters.length == playersPerSession * sessionCount &&
+							boosters.every(b => b !== null)
 						)
 							done();
 					});

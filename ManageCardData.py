@@ -174,6 +174,9 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
+            if('arena_id' not in c and 'mtgo_id' not in c):
+                continue
+
             cards.append(c)
             copied += 1
             sys.stdout.write("\b" * 100)  # return to start of line
