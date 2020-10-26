@@ -722,6 +722,7 @@ ul.player-list {
 	display: flex;
 	align-items: center;
 	margin-left: 1em;
+	margin-right: 1em;
 	min-height: 35px;
 }
 
@@ -736,10 +737,9 @@ ul.player-list {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	margin-left: 1.5em;
 }
 
-.controls > * {
+#main-container .controls > * {
 	margin-left: 1.5em;
 }
 
