@@ -923,7 +923,7 @@
 					<h2>Sideboard ({{ sideboard.length }})</h2>
 					<div class="controls">
 						<i
-							class="fas fa-chevron-down clickable"
+							class="fas fa-window-maximize clickable"
 							@click="collapseSideboard = false"
 							v-tooltip="'Maximize sideboard'"
 						></i>
@@ -966,7 +966,7 @@
 				<h2>Sideboard ({{ sideboard.length }})</h2>
 				<div class="controls">
 					<i
-						class="fas fa-chevron-up clickable"
+						class="fas fa-columns clickable"
 						@click="collapseSideboard = true"
 						v-tooltip="'Minimize sideboard'"
 					></i>
