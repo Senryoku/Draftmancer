@@ -2,7 +2,6 @@
 
 import fs from "fs";
 import parseCost from "./parseCost.js";
-import SetsInfos from "../client/public/data/SetsInfos.json";
 
 console.log("Loading Cards...");
 export const Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json"));
@@ -21,17 +20,15 @@ for(let cid in Cards)
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json"));
 for(let name in CardsByName)
 	CardsByName[name] = Cards[CardsByName[name]];
-/*
-for(let cid in Cards)
-	// Tries to select the "best" version of the card 
-	// TODO: Prioritize latest printing (add this infos to the db) and lowest collector number (within a set)
-	if(SetsInfos[Cards[cid].set].isPrimary || !CardsByName[Cards[cid].name])
-		CardsByName[Cards[cid].name] = Cards[cid];
-*/
 
 Object.freeze(Cards);
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);
+
+let UniqueID = 0;
+export function getUnique(cid) {
+	return Object.assign({uniqueID: ++UniqueID}, Cards[cid]);
+}
 
 console.log("Done.");
 

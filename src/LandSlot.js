@@ -1,5 +1,6 @@
 "use strict";
 
+import { getUnique } from "./Cards.js";
 import { getRandomKey, getRandom, range } from "./utils.js";
 import { removeCardFromDict } from "./cardUtils.js";
 import BasicLandIDs from "../client/public/data/BasicLandIDs.json";
@@ -9,7 +10,7 @@ function genBasicLandSlot(set) {
 		basicLandsIds: BasicLandIDs[set],
 		setup: () => {},
 		pick: function() {
-			return getRandom(this.basicLandsIds);
+			return getUnique(getRandom(this.basicLandsIds));
 		},
 	};
 }
@@ -34,7 +35,7 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 				removeCardFromDict(c, this.landsToDistribute);
 				return c;
 			} else {
-				return getRandom(this.basicLandsIds);
+				return getUnique(getRandom(this.basicLandsIds));
 			}
 		},
 	};

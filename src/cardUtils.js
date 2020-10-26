@@ -1,14 +1,12 @@
 "use strict";
 
-import { Cards } from "./Cards.js";
+import { getUnique } from "./Cards.js";
 import { getRandomKey } from "./utils.js";
 
 export function removeCardFromDict(cid, dict) {
 	dict[cid] -= 1;
 	if (dict[cid] == 0) delete dict[cid];
 }
-
-let UniqueID = 0;
 
 // TODO: Prevent multiples by name?
 export function pickCard(dict, booster) {
@@ -21,7 +19,7 @@ export function pickCard(dict, booster) {
 		}
 	}
 	removeCardFromDict(c, dict);
-	return Object.assign({uniqueID: ++UniqueID}, Cards[c]);
+	return getUnique(c);
 }
 
 export function countCards(dict) {
