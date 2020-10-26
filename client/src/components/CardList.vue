@@ -53,6 +53,7 @@ export default {
 		return { cards: null };
 	},
 	mounted: function () {
+		// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
 		this.getCards();
 	},
 	computed: {
@@ -125,7 +126,6 @@ export default {
 			return a;
 		},
 		getCards: async function () {
-			console.log("GetCards");
 			if (!this.cardlist || !this.cardlist.cards) return;
 			const response = await fetch("/getCards", {
 				method: "POST",
@@ -139,15 +139,7 @@ export default {
 				referrerPolicy: "no-referrer",
 				body: JSON.stringify(this.cardlist.cards),
 			});
-			console.log(response);
 			this.cards = await response.json();
-			console.log(this.cards);
-		},
-	},
-	watch: {
-		cardlist: {
-			deep: true,
-			handler: "getCards",
 		},
 	},
 };
