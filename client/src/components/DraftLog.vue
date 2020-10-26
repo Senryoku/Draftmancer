@@ -216,6 +216,7 @@ export default {
 			if (!this.draftlog.version || this.draftlog.version === "1.0") {
 				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
 				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
+				const updateCIDs = (arr) => arr.map((cid) => MTGACards[cid].id);
 				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
 				for (let u in this.draftlog.users) {
 					for (let p of this.draftlog.users[u].picks) {
@@ -225,13 +226,17 @@ export default {
 						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...
 						p.booster = p.booster.map((cid) => MTGACards[cid].id);
 					}
-					this.draftlog.users[u].cards = this.draftlog.users[u].cards.map((cid) => MTGACards[cid].id);
+					this.draftlog.users[u].cards = updateCIDs(this.draftlog.users[u].cards);
+					if (this.draftlog.users[u].decklist) {
+						this.draftlog.users[u].decklist.main = updateCIDs(this.draftlog.users[u].decklist.main);
+						this.draftlog.users[u].decklist.side = updateCIDs(this.draftlog.users[u].decklist.side);
+					}
 				}
 				this.draftlog.carddata = {};
 				for (let cid of this.draftlog.boosters.flat())
 					this.draftlog.carddata[MTGACards[cid].id] = MTGACards[cid];
 				for (let i = 0; i < this.draftlog.boosters.length; ++i)
-					this.draftlog.boosters[i] = this.draftlog.boosters[i].map((cid) => MTGACards[cid].id);
+					this.draftlog.boosters[i] = updateCIDs(this.draftlog.boosters[i]);
 				this.$set(this.draftlog, "version", "2.0");
 				this.$emit("storelogs");
 			}
