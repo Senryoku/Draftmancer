@@ -8,7 +8,7 @@
 			:class="'clickable pick-col pick-col-' + idx"
 			:style="'grid-area: pick-col-' + idx"
 		>
-			<transition name="fade" mode="out-in">
+			<transition :name="arrowTransition" mode="out-in">
 				<i
 					class="fas fa-chevron-circle-down fa-3x"
 					v-show="picking && isValidChoice(idx)"
@@ -22,7 +22,7 @@
 			:class="'clickable pick-row pick-row-' + idx"
 			:style="'grid-area: pick-row-' + idx"
 		>
-			<transition name="fade" mode="out-in">
+			<transition :name="arrowTransition" mode="out-in">
 				<i
 					class="fas fa-chevron-circle-right fa-3x"
 					v-show="picking && isValidChoice(3 + idx)"
@@ -64,11 +64,14 @@ export default {
 			// Use special card transition on pick and a simple fading between boosters.
 			return this.state.booster.some((c) => c === null) ? "card-select" : "fade";
 		},
+		arrowTransition: function () {
+			return this.state.booster.some((c) => c === null) ? "fade-delayed" : "fade";
+		},
 	},
 };
 </script>
 
-<style>
+<style scoped>
 .card-grid {
 	display: grid;
 
@@ -83,6 +86,8 @@ export default {
 	justify-content: center;
 	grid-template-columns: 3em 300px 300px 300px;
 	grid-template-rows: 4em 300px 300px 300px;
+
+	--animation-duration: 2.5s;
 }
 
 .pick-col-0:hover ~ .card-slot:nth-child(3n-4) > .card,
@@ -96,6 +101,19 @@ export default {
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 }
 
+.fade-delayed-enter-active,
+.fade-delayed-leave-active {
+	transition: opacity 0.5s;
+}
+.fade-delayed-enter,
+.fade-delayed-leave-to {
+	opacity: 0;
+}
+
+.fade-delayed-enter-active {
+	transition-delay: calc(var(--animation-duration) - 0.25s);
+}
+
 .card-select-enter-active {
 	transition: opacity 0.25s;
 }
@@ -105,43 +123,43 @@ export default {
 }
 
 .card-select-leave-active {
-	animation: card-select 1.5s ease-in;
+	animation: card-select var(--animation-duration) ease-in;
 }
 
 @keyframes card-select {
 	0% {
 		opacity: 1;
 	}
-	5% {
+	3% {
 		box-shadow: 0 0 40px 12px rgba(255, 255, 255, 1);
-		scale: 1.05;
+		transform: scale(1.05);
 		opacity: 1;
 	}
-	10% {
+	6% {
 		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
-		scale: 1;
+		transform: scale(1);
 		opacity: 1;
 	}
 	45% {
 		box-shadow: 0 0 25px 6px rgba(255, 255, 255, 0.8);
-		scale: 1;
-		opacity: 1;
-	}
-	80% {
-		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
-		scale: 1;
+		transform: scale(1);
 		opacity: 1;
 	}
 	85% {
-		scale: 1.025;
+		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
+		transform: scale(1);
 		opacity: 1;
 	}
 	90% {
-		scale: 1;
+		transform: scale(1.025);
+		opacity: 1;
+	}
+	95% {
+		transform: scale(1);
 		opacity: 1;
 	}
 	100% {
-		scale: 0;
+		transform: scale(0);
 		opacity: 0;
 	}
 }

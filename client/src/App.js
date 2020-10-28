@@ -595,7 +595,7 @@ export default {
 
 				// Next booster, add a slight delay so user can see the last pick.
 				if (this.gridDraftState.currentPlayer === null) {
-					setTimeout(doNextRound, 2000);
+					setTimeout(doNextRound, 2500);
 				} else doNextRound();
 			});
 			this.socket.on("gridDraftEnd", () => {
@@ -607,7 +607,7 @@ export default {
 						this.draftingState = DraftState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
-					this.gridDraftState.currentPlayer === null ? 2000 : 0
+					this.gridDraftState.currentPlayer === null ? 2500 : 0
 				);
 			});
 
