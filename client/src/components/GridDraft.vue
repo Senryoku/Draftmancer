@@ -13,6 +13,8 @@
 					class="fas fa-chevron-circle-down fa-3x"
 					v-show="picking && isValidChoice(idx)"
 					@click="$emit('pick', idx)"
+					@mouseenter="highlight($event, 'col', idx)"
+					@mouseleave="highlight($event, 'col', idx)"
 				></i>
 			</transition>
 		</div>
@@ -27,13 +29,15 @@
 					class="fas fa-chevron-circle-right fa-3x"
 					v-show="picking && isValidChoice(3 + idx)"
 					@click="$emit('pick', 3 + idx)"
+					@mouseenter="highlight($event, 'row', idx)"
+					@mouseleave="highlight($event, 'row', idx)"
 				></i>
 			</transition>
 		</div>
 		<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
 			<transition :name="cardTransition" mode="out-in">
 				<div v-if="c" :key="'card-container-' + c.uniqueID">
-					<card :card="c"></card>
+					<card :card="c" :class="`row-${Math.floor(idx / 3)} col-${idx % 3}`"></card>
 				</div>
 				<div v-else :key="'empty-' + idx">
 					<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
@@ -57,6 +61,12 @@ export default {
 				if (this.state.booster[idx]) ++validCards;
 			}
 			return validCards > 0;
+		},
+		highlight: function (event, type, index) {
+			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el) => {
+				if (event.type === "mouseenter") el.classList.add("highlight");
+				else if (event.type === "mouseleave") el.classList.remove("highlight");
+			});
 		},
 	},
 	computed: {
@@ -90,15 +100,8 @@ export default {
 	--animation-duration: 2.5s;
 }
 
-.pick-col-0:hover ~ .card-slot:nth-child(3n-4) > .card,
-.pick-col-1:hover ~ .card-slot:nth-child(3n-3) > .card,
-.pick-col-2:hover ~ .card-slot:nth-child(3n-2) > .card,
-.pick-row-0:hover ~ .card-slot:nth-child(n + 7):nth-child(-n + 10) > .card,
-.pick-row-1:hover ~ .card-slot:nth-child(n + 11):nth-child(-n + 13) > .card,
-.pick-row-2:hover ~ .card-slot:nth-child(n + 14):nth-child(-n + 17) > .card {
-	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+.highlight {
+	box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.5);
 }
 
 .fade-delayed-enter-active,
