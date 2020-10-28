@@ -8,7 +8,7 @@
 			:class="'clickable pick-col pick-col-' + idx"
 			:style="'grid-area: pick-col-' + idx"
 		>
-			<transition name="fade">
+			<transition name="fade" mode="out-in">
 				<i
 					class="fas fa-chevron-circle-down fa-3x"
 					v-show="picking && isValidChoice(idx)"
@@ -22,7 +22,7 @@
 			:class="'clickable pick-row pick-row-' + idx"
 			:style="'grid-area: pick-row-' + idx"
 		>
-			<transition name="fade">
+			<transition name="fade" mode="out-in">
 				<i
 					class="fas fa-chevron-circle-right fa-3x"
 					v-show="picking && isValidChoice(3 + idx)"
@@ -31,7 +31,7 @@
 			</transition>
 		</div>
 		<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
-			<transition name="fade" mode="out-in">
+			<transition :name="cardTransition" mode="out-in">
 				<div v-if="c" :key="'card-container-' + c.uniqueID">
 					<card :card="c"></card>
 				</div>
@@ -49,7 +49,7 @@ export default {
 	components: { Card },
 	props: { state: { type: Object, required: true }, picking: { type: Boolean, required: true } },
 	methods: {
-		isValidChoice: function(choice) {
+		isValidChoice: function (choice) {
 			let validCards = 0;
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
@@ -57,6 +57,12 @@ export default {
 				if (this.state.booster[idx]) ++validCards;
 			}
 			return validCards > 0;
+		},
+	},
+	computed: {
+		cardTransition: function () {
+			// Use special card transition on pick and a simple fading between boosters.
+			return this.state.booster.some((c) => c === null) ? "card-select" : "fade";
 		},
 	},
 };
@@ -88,5 +94,55 @@ export default {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+}
+
+.card-select-enter-active {
+	transition: opacity 0.25s;
+}
+
+.card-select-enter-from {
+	opacity: 0;
+}
+
+.card-select-leave-active {
+	animation: card-select 1.5s ease-in;
+}
+
+@keyframes card-select {
+	0% {
+		opacity: 1;
+	}
+	5% {
+		box-shadow: 0 0 40px 12px rgba(255, 255, 255, 1);
+		scale: 1.05;
+		opacity: 1;
+	}
+	10% {
+		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
+		scale: 1;
+		opacity: 1;
+	}
+	45% {
+		box-shadow: 0 0 25px 6px rgba(255, 255, 255, 0.8);
+		scale: 1;
+		opacity: 1;
+	}
+	80% {
+		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
+		scale: 1;
+		opacity: 1;
+	}
+	85% {
+		scale: 1.025;
+		opacity: 1;
+	}
+	90% {
+		scale: 1;
+		opacity: 1;
+	}
+	100% {
+		scale: 0;
+		opacity: 0;
+	}
 }
 </style>
