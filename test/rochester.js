@@ -1,15 +1,10 @@
 "use strict";
 
-import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards } from "./../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
-import parseCardList from "../src/parseCardList.js";
-
-const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
 
 describe("Rochester Draft", function() {
 	let clients = [];
@@ -154,7 +149,7 @@ describe("Rochester Draft", function() {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
-			clients[ownerIdx].emit("customCardList", ArenaCube);
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1");
 		});
 
 		startDraft();

@@ -643,45 +643,42 @@ io.on("connection", function(socket) {
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
-	socket.on("customCardList", function(customCardList, ack) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+	const useCustomCardList = function(session, list) {
+		session.setCustomCardList(list);
+		if (session.isPublic) updatePublicSession(session.id);
+	}
 
-		if (!customCardList.cards || (customCardList.customSheets && !customCardList.cardsPerBooster)) {
-			if (ack) ack({ code: 1, error: "Invalid data" });
+	const parseCustomCardList = function(session, txtlist, options, ack) {
+		let parsedList = null;
+		try {
+			parsedList = parseCardList(Cards, txtlist, options);
+		} catch(e) {
+			console.error(e);
+			if (ack) ack({type: "error", title: "Internal Error"});
 			return;
 		}
+
+		if (parsedList.error) {
+			if (ack) ack(parsedList.error);
+			return;
+		}
+
+		useCustomCardList(session, parsedList);
 
 		if (ack) ack({ code: 0 });
+	}
 
-		Sessions[sessionID].customCardList = customCardList;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", {
-					customCardList: customCardList,
-				});
-		}
-	});
-
-	socket.on("loadLocalCustomCardList", function(cubeName) {
+	socket.on("parseCustomCardList", function(customCardList, ack) {
 		if (!(this.userID in Connections)) return;
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(cubeName in ParsedCubeLists)) {
+		if (!customCardList) {
+			if (ack) ack({ code: 1, type: "error", title: "No list supplied." });
 			return;
 		}
 
-		Sessions[sessionID].useCustomCardList = true;
-		Sessions[sessionID].customCardList = ParsedCubeLists[cubeName];
-		for (let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit("sessionOptions", {
-				useCustomCardList: Sessions[sessionID].useCustomCardList,
-				customCardList: Sessions[sessionID].customCardList,
-			});
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	});
 
 	socket.on("loadFromCubeCobra", function(data, ack) {
@@ -714,25 +711,23 @@ io.on("connection", function(socket) {
 				return;
 			}
 
-			let parsedList = parseCardList(Cards, body, data);
-
-			if (parsedList.error) {
-				if (ack) ack(parsedList.error);
-				return;
-			}
-
-			Sessions[sessionID].useCustomCardList = true;
-			Sessions[sessionID].customCardList = parsedList;
-			for (let user of Sessions[sessionID].users) {
-				Connections[user].socket.emit("sessionOptions", {
-					useCustomCardList: Sessions[sessionID].useCustomCardList,
-					customCardList: Sessions[sessionID].customCardList,
-				});
-			}
-			if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-
-			if (ack) ack({ code: 0 });
+			parseCustomCardList(Sessions[sessionID], body, data, ack);
 		});
+	});
+
+	socket.on("loadLocalCustomCardList", function(cubeName, ack) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!(cubeName in ParsedCubeLists)) {
+			if (ack) ack({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
+			return;
+		}
+
+		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
+		
+		if (ack) ack({ code: 0 });
 	});
 
 	socket.on("ignoreCollections", function(ignoreCollections) {

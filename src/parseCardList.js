@@ -54,7 +54,7 @@ export default function(cards, cardlist, options) {
 				error: {
 					type: "error",
 					title: `Card not found`,
-					text: `Could not find '${name}' in our database. (Note: this app only supports cards from MTG Arena.)`,
+					text: `Could not find '${name}' in our database. If you think it should be there, please contact us via email or our Discord server.`,
 					footer: `Full line: '${line}'`,
 				},
 			},

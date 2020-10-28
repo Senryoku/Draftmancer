@@ -1483,7 +1483,7 @@ export default {
 				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
 			}
 		},
-		parseCustomCardList: async function(file, options) {
+		parseCustomCardList: async function(file) {
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
@@ -1493,20 +1493,19 @@ export default {
 			});
 			let contents = await file.text();
 
-			// FIXME: Send to server
-			const cardList = parseCardList(Cards, contents, options);
-			if (cardList.error) {
-				Swal.fire({
-					icon: "error",
-					title: cardList.error.title,
-					text: cardList.error.text,
-					footer: cardList.error.footer,
-					customClass: SwalCustomClasses,
-				});
-			} else {
-				this.customCardList = cardList;
-				this.useCustomCardList = true;
-			}
+			this.socket.emit("parseCustomCardList", contents, answer => {
+				if (answer.code === 0) {
+					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+				} else {
+					Swal.fire({
+						icon: "error",
+						title: answer.title,
+						text: answer.text,
+						footer: answer.footer,
+						customClass: SwalCustomClasses,
+					});
+				}
+			});
 		},
 		importCubeCobra: function() {
 			Swal.fire({
@@ -1538,6 +1537,8 @@ export default {
 						footer: r.footer,
 						customClass: SwalCustomClasses,
 					});
+				} else {
+					fireToast("success", `Card list loaded (${this.customCardList.length} cards)`);
 				}
 			};
 
@@ -2167,16 +2168,6 @@ export default {
 		useCustomCardList: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
-		},
-		customCardList: function() {
-			if (this.userID != this.sessionOwner || !this.customCardList.length || !this.socket) return;
-			this.socket.emit("customCardList", this.customCardList, answer => {
-				if (answer.code === 0) {
-					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
-				} else {
-					fireToast("error", `Error while uploading card list: ${answer.error}`);
-				}
-			});
 		},
 		burnedCardsPerRound: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

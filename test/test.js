@@ -24,12 +24,7 @@ const checkColorBalance = function(booster) {
 		).to.be.at.least(1);
 };
 
-const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
-if(ArenaCube.error)
-	console.error(ArenaCube);
-const CustomSheetsTest = parseCardList(Cards, fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"));
-if(CustomSheetsTest.error)
-	console.error(CustomSheetsTest);
+const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 
 describe("Inter client communication", function() {
 	let sender, receiver;
@@ -536,11 +531,10 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("setUseCustomCardList", true);
 		});
 		it("Clients should receive the updated customCardList.", function(done) {
-			clients[nonOwnerIdx].once("sessionOptions", function(val) {
-				expect(val.customCardList).to.deep.equal(ArenaCube);
+			clients[nonOwnerIdx].once("sessionOptions", function() {
 				done();
 			});
-			clients[ownerIdx].emit("customCardList", ArenaCube);
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1");
 		});
 		startDraft();
 		endDraft();
@@ -557,11 +551,10 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("setUseCustomCardList", true);
 		});
 		it("Clients should receive the updated customCardList.", function(done) {
-			clients[nonOwnerIdx].once("sessionOptions", function(val) {
-				expect(val.customCardList).to.deep.equal(CustomSheetsTest);
+			clients[nonOwnerIdx].once("sessionOptions", function() {
 				done();
 			});
-			clients[ownerIdx].emit("customCardList", CustomSheetsTest);
+			clients[ownerIdx].emit("parseCustomCardList", CustomSheetsTestFile);
 		});
 		startDraft();
 		endDraft();
