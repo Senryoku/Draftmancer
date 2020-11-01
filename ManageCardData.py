@@ -176,8 +176,8 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
-            # Includes only cards available on Arena or MTGO, with the exception of the un-sets and Conspiracy
-            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns'] and c['set'] not in PrimarySets):
+            # Includes only cards available on Arena or MTGO, with the exception of the un-sets and Conspiracy and some older sets
+            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns'] and c['set'] not in ['tsb', 'all', 'ice', 'lea']):
                 continue
 
             cards.append(c)
@@ -471,24 +471,25 @@ for set, group in groups:
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
         setinfos[set][rarity + "Count"] = len(rarityGroupList)
-for s in PrimarySets:
-    if s not in setinfos:
-        infos = next(x for x in SetsInfos if x['code'] == s)
-        setinfos[s] = {
-            "code": s,
-            "fullName": infos['name'],
-            "cardCount": infos['card_count'],
-            "isPrimary": True
-        }
-    icon_path = "img/sets/{}.svg".format(s if s != 'con' else 'conf')
-    if getIcon(s, icon_path) != None:
-        setinfos[s]['icon'] = icon_path
+# for s in PrimarySets:
+#    if s not in setinfos:
+#        infos = next(x for x in SetsInfos if x['code'] == s)
+#        setinfos[s] = {
+#            "code": s,
+#            "fullName": infos['name'],
+#            "cardCount": infos['card_count'],
+#            "isPrimary": True
+#        }
+#    icon_path = "img/sets/{}.svg".format(s if s != 'con' else 'conf')
+#    if getIcon(s, icon_path) != None:
+#        setinfos[s]['icon'] = icon_path
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
 constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
-constants['PrimarySets'] = PrimarySets
+constants['PrimarySets'] = [
+    s for s in PrimarySets if s in setinfos and s != 'tsb']
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

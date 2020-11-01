@@ -3,7 +3,7 @@
 		<div
 			v-for="s in primarySets"
 			:key="s.code"
-			class="set-button"
+			class="set-button clickable"
 			:class="{ 'selected-set': selected(s.code) }"
 			@click="toggle(s.code)"
 		>
@@ -52,6 +52,7 @@ export default {
 .set-button {
 	margin: 0.25em;
 	padding: 0.25em;
+	user-select: none;
 }
 
 .selected-set {

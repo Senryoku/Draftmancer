@@ -7,7 +7,6 @@ import { Cards } from "./../src/Cards.js";
 import { Connections } from "../src/Connection.js";
 import { Sessions } from "../src/Session.js";
 import randomjs from "random-js";
-import parseCardList from "../src/parseCardList.js";
 import {
 	connectClient,
 	makeClients,
@@ -16,6 +15,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 } from "./src/common.js";
+import Constants from "../client/src/data/constants.json";
 
 const checkColorBalance = function(booster) {
 	for (let color of "WUBRG")
@@ -371,6 +371,26 @@ describe("Single Draft (Two Players)", function() {
 		endDraft();
 		disconnect();
 	});
+
+	for(let set of Constants.PrimarySets) {
+		describe(`Drafting ${set}`, function() {
+			connect();
+			it("Clients should receive the updated setRestriction status.", function(done) {
+				let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+				let nonOwnerIdx = 1 - ownerIdx;
+				clients[nonOwnerIdx].once("setRestriction", function(setRestriction) {
+					expect(setRestriction.length).to.be.equal(1);
+					expect(setRestriction[0]).to.be.equal(set);
+					done();
+				});
+				clients[ownerIdx].emit("ignoreCollections", true);
+				clients[ownerIdx].emit("setRestriction", [set]);
+			});
+			startDraft();
+			endDraft();
+			disconnect();
+		});
+	}
 
 	describe("Without color balance", function() {
 		connect();
@@ -850,6 +870,7 @@ describe("Sealed", function() {
 });
 
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
+import { constants } from "buffer";
 
 describe("Jumpstart", function() {
 	let clients = [];
