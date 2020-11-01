@@ -27,6 +27,7 @@ import DraftLogLive from "./components/DraftLogLive.vue";
 import Bracket from "./components/Bracket.vue";
 import GridDraft from "./components/GridDraft.vue";
 import PatchNotes from "./components/PatchNotes.vue";
+import SetRestriction from "./components/SetRestriction.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
@@ -82,6 +83,7 @@ export default {
 		GridDraft,
 		Bracket,
 		PatchNotes,
+		SetRestriction,
 		draggable,
 		Multiselect,
 	},
@@ -126,7 +128,7 @@ export default {
 			},
 			foil: false,
 			bots: 0,
-			setRestriction: "",
+			setRestriction: [],
 			drafting: false,
 			useCustomCardList: false,
 			customCardList: {},
@@ -156,7 +158,7 @@ export default {
 			hideSessionID: getCookie("hideSessionID", "false") === "true",
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
-			sets: Constant.MTGSets,
+			sets: Constant.MTGASets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
@@ -747,8 +749,7 @@ export default {
 				});
 
 				this.booster = [];
-				for (let c of data.booster)
-					this.booster.push(c);
+				for (let c of data.booster) this.booster.push(c);
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
 
@@ -1032,7 +1033,7 @@ export default {
 				);
 				return;
 			} else {
-				if(!options) options = {};
+				if (!options) options = {};
 				options.event = e;
 				this.pickCard(options);
 			}
@@ -1179,7 +1180,8 @@ export default {
 			let idx = 0;
 			for (let card of this.gridDraftState.booster) {
 				if (card) {
-					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id) booster.push(prevBooster[idx]);
+					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id)
+						booster.push(prevBooster[idx]);
 					else booster.push(card);
 				} else booster.push(null);
 				++idx;

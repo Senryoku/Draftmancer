@@ -6,12 +6,13 @@
 				v-for="set in ['all', 'standard', 'others']"
 				:key="collectionStats[set].code"
 				:value="collectionStats[set].name"
-				>{{ collectionStats[set].fullName }}</option
 			>
-			<option style="color:#888" disabled>————————————————</option>
-			<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">{{
-				collectionStats[set].fullName
-			}}</option>
+				{{ collectionStats[set].fullName }}
+			</option>
+			<option style="color: #888" disabled>————————————————</option>
+			<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">
+				{{ collectionStats[set].fullName }}
+			</option>
 		</select>
 		<div class="set-stats">
 			<div v-if="selectedSet">
@@ -55,7 +56,7 @@
 				<div class="card-container">
 					<missing-card
 						v-for="card in selectedSet[missingCardsRarity].filter(
-							c => (showNonBooster || c.in_booster) && c.count < 4
+							(c) => (showNonBooster || c.in_booster) && c.count < 4
 						)"
 						:key="card.uniqueID"
 						:card="card"
@@ -85,11 +86,11 @@ export default {
 		return {
 			missingCardsRarity: "rare",
 			showNonBooster: false,
-			selectedSetCode: Constant.MTGSets[Constant.MTGSets.length - 1],
+			selectedSetCode: Constant.MTGASets[Constant.MTGASets.length - 1],
 		};
 	},
 	computed: {
-		collectionStats: function() {
+		collectionStats: function () {
 			if (!this.collection || !SetsInfos) return null;
 			const baseSet = (setCode, fullName) => {
 				return {
@@ -126,11 +127,11 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
-			for (let s of Constant.MTGSets) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constant.MTGASets) stats[s] = baseSet(s, SetsInfos[s].fullName);
 			// FIXME: Get Collection & Missing Cards from server!
 			for (let id in MTGACards) {
 				const card = MTGACards[id];
-				const completeSet = Constant.MTGSets.includes(card.set);
+				const completeSet = Constant.MTGASets.includes(card.set);
 				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					const set = completeSet ? card.set : "others";
@@ -139,7 +140,7 @@ export default {
 					for (let s of categories) {
 						stats[s][card.rarity].push(card);
 
-						const count = target => {
+						const count = (target) => {
 							target.total.all += 1;
 							target.total[card.rarity] += 1;
 							target.owned.all += card.count;
@@ -155,11 +156,11 @@ export default {
 			}
 			return stats;
 		},
-		selectedSet: function() {
+		selectedSet: function () {
 			return this.collectionStats[this.selectedSetCode];
 		},
-		sets: function() {
-			return Constant.MTGSets.slice().reverse();
+		sets: function () {
+			return Constant.MTGASets.slice().reverse();
 		},
 	},
 };

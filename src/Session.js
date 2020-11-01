@@ -187,7 +187,7 @@ export function Session(id, owner, options) {
 
 	// Options
 	this.ownerIsPlayer = true;
-	this.setRestriction = [constants.MTGSets[constants.MTGSets.length - 1]];
+	this.setRestriction = [constants.MTGASets[constants.MTGASets.length - 1]];
 	this.isPublic = false;
 	this.description = "";
 	this.ignoreCollections = false;
@@ -619,7 +619,7 @@ export function Session(id, owner, options) {
 								// Random booster from one of the sets in Card Pool
 								boosterSet =
 									this.setRestriction.length === 0
-										? getRandom(constants.MTGSets)
+										? getRandom(constants.MTGASets)
 										: getRandom(this.setRestriction);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
@@ -988,8 +988,7 @@ export function Session(id, owner, options) {
 
 		// Draft Log initialization
 		const carddata = {};
-		for(let c of this.boosters.flat())
-			carddata[c.id] = Cards[c.id];
+		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
 		this.draftLog = {
 			version: "2.0",
 			sessionID: this.id,
@@ -1065,8 +1064,8 @@ export function Session(id, owner, options) {
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-			burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - 1) ||
-			burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - 1) ||
+				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
 		) {
 			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
 			console.error(err);
@@ -1074,9 +1073,9 @@ export function Session(id, owner, options) {
 		}
 
 		console.log(
-			`Session ${this.id}: ${
-				Connections[userID].userName
-			} [${userID}] picked card '${this.boosters[boosterIndex][cardIdx].name}' from booster #${boosterIndex}, burning ${
+			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${
+				this.boosters[boosterIndex][cardIdx].name
+			}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
@@ -1096,8 +1095,7 @@ export function Session(id, owner, options) {
 			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 		}
 
-		for (let idx of cardsToRemove)
-			this.boosters[boosterIndex].splice(idx, 1);
+		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
 
 		// Signal users
 		this.forUsers(u => {
@@ -1243,8 +1241,11 @@ export function Session(id, owner, options) {
 			if (virtualPlayers[userID].isBot) {
 				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards.map(c => c.id);
 			} else {
-				                                    // Has this user been replaced by a bot?
-				this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected ? this.disconnectedUsers[userID] : Connections[userID]).pickedCards.map(c => c.id);
+				// Has this user been replaced by a bot?
+				this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
+					? this.disconnectedUsers[userID]
+					: Connections[userID]
+				).pickedCards.map(c => c.id);
 			}
 		}
 

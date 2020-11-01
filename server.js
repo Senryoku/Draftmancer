@@ -24,13 +24,12 @@ import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
-import {Cards, MTGACards} from "./src/Cards.js";
+import { Cards, MTGACards } from "./src/Cards.js";
 import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-
 
 function shortguid() {
 	function s4() {
@@ -77,7 +76,7 @@ function startPublicSession(s) {
 
 // Prepare local custom card lists
 console.log("Preparing local custom card lists...");
-console.time('PrepareCustomCardLists')
+console.time("PrepareCustomCardLists");
 const ParsedCubeLists = {};
 for (let cube of constants.CubeLists) {
 	if (cube.filename) {
@@ -90,7 +89,7 @@ for (let cube of constants.CubeLists) {
 		}
 	}
 }
-console.timeEnd('PrepareCustomCardLists')
+console.timeEnd("PrepareCustomCardLists");
 console.log("Done.");
 
 /////////////////////////////////////////////////////////////////
@@ -169,7 +168,7 @@ io.on("connection", function(socket) {
 
 		if (typeof collection !== "object" || collection === null) return;
 
-		let processedCollection = {}; 
+		let processedCollection = {};
 		// Remove unknown cards immediatly.
 		for (let aid in collection) {
 			if (aid in MTGACards) {
@@ -179,7 +178,7 @@ io.on("connection", function(socket) {
 
 		Connections[userID].collection = processedCollection;
 
-		if(ack) ack({collection: processedCollection});
+		if (ack) ack({ collection: processedCollection });
 
 		const hasCollection = !isEmpty(processedCollection);
 		if (Sessions[sessionID])
@@ -630,7 +629,7 @@ io.on("connection", function(socket) {
 
 		if (setRestriction.length > 0) {
 			for (let s of setRestriction) {
-				if (constants.MTGSets.indexOf(s) === -1) return;
+				if (constants.PrimarySets.indexOf(s) === -1) return;
 			}
 		}
 
@@ -646,15 +645,15 @@ io.on("connection", function(socket) {
 	const useCustomCardList = function(session, list) {
 		session.setCustomCardList(list);
 		if (session.isPublic) updatePublicSession(session.id);
-	}
+	};
 
 	const parseCustomCardList = function(session, txtlist, options, ack) {
 		let parsedList = null;
 		try {
 			parsedList = parseCardList(Cards, txtlist, options);
-		} catch(e) {
+		} catch (e) {
 			console.error(e);
-			if (ack) ack({type: "error", title: "Internal Error"});
+			if (ack) ack({ type: "error", title: "Internal Error" });
 			return;
 		}
 
@@ -666,7 +665,7 @@ io.on("connection", function(socket) {
 		useCustomCardList(session, parsedList);
 
 		if (ack) ack({ code: 0 });
-	}
+	};
 
 	socket.on("parseCustomCardList", function(customCardList, ack) {
 		if (!(this.userID in Connections)) return;
@@ -726,7 +725,7 @@ io.on("connection", function(socket) {
 		}
 
 		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
-		
+
 		if (ack) ack({ code: 0 });
 	});
 

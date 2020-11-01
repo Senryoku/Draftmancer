@@ -209,6 +209,7 @@
 									Upload a Custom Card List...
 								</div>
 							</multiselect>
+							<i class="fas fa-ellipsis-h clickable" @click="displayedModal = 'setRestriction'"></i>
 							<div
 								class="inline"
 								v-tooltip="
@@ -1308,6 +1309,10 @@
 					</div>
 				</div>
 			</div>
+		</modal>
+		<modal v-if="displayedModal === 'setRestriction'" @close="displayedModal = ''">
+			<h2 slot="header">Set Restriction</h2>
+			<set-restriction slot="body" :setrestriction="setRestriction"></set-restriction>
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
 			<h2 slot="header">Draft Logs</h2>

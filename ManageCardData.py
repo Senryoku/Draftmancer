@@ -145,11 +145,13 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
     urllib.request.urlretrieve("https://api.scryfall.com/sets", ScryfallSets)
-PrimarySets = [s['code'] for s in json.load(open(ScryfallSets, 'r', encoding="utf8"))[
-    'data'] if s['set_type'] in ['core', 'expansion', 'masters', 'draft_innovation']]
-
+SetsInfos = json.load(open(ScryfallSets, 'r', encoding="utf8"))['data']
+PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
+               in ['core', 'expansion', 'masters', 'draft_innovation']]
 
 # Handle decimals from Scryfall data? (Prices?)
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
@@ -175,7 +177,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                                                             c['collector_number'], c['set'].lower())]
 
             # Includes only cards available on Arena or MTGO, with the exception of the un-sets and Conspiracy
-            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns']):
+            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns'] and c['set'] not in PrimarySets):
                 continue
 
             cards.append(c)
@@ -413,27 +415,6 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
         json.dump(jumpstartBoosters, outfile, ensure_ascii=False)
     print("Jumpstart booster dumped to disk.")
 
-setFullNames = {
-    "ana": "Arena",
-    "akh": "Amonkhet",
-    "hou": "Hour of Devastation",
-    "m19": "Core Set 2019",
-    "xln": "Ixalan",
-    "rix": "Rivals of Ixalan",
-    "dom": "Dominaria",
-    "grn": "Guilds of Ravnica",
-    "rna": "Ravnica Allegiance",
-    "war": "War of the Spark",
-    "m20": "Core Set 2020",
-    "eld": "Throne of Eldraine",
-    "thb": "Theros: Beyond Death",
-    "m21": "Core Set 2021",
-    "iko": "Ikoria: Lair of Behemoths",
-    "jmp": "Jumpstart",
-    "akr": "Amonkhet Remastered",
-    "znr": "Zendikar Rising"
-}
-
 
 def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
     with open(svgPath, 'r') as inputFile:
@@ -456,13 +437,11 @@ print("Cards in database: ", len(array))
 array.sort(key=lambda c: c['set'])
 groups = groupby(array, lambda c: c['set'])
 setinfos = {}
-for set, group in groups:
-    cardList = list(group)
-    setinfos[set] = {}
-    # Get set icon
-    icon_path = "img/sets/{}.svg".format(set)
+
+
+def getIcon(set, icon_path):
     # con is a reserved keyword on windows; we don't need it anyway.
-    if not os.path.isfile("client/public/" + icon_path) and set != "con":
+    if not os.path.isfile("client/public/" + icon_path):
         response = requests.get(
             "https://api.scryfall.com/sets/{}".format(set))
         scryfall_set_data = json.loads(response.content)
@@ -471,20 +450,45 @@ for set, group in groups:
                 scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
             if set == "rna":
                 overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
-            setinfos[set]["icon"] = icon_path
+            return icon_path
     else:
-        setinfos[set]["icon"] = icon_path
-    if set in setFullNames:
-        setinfos[set]["fullName"] = setFullNames[set]
-    else:
-        setinfos[set]["fullName"] = set
-    setinfos[set]["cardCount"] = len(cardList)
-    setinfos[set]["isPrimary"] = set in PrimarySets
+        return icon_path
+    return None
+
+
+for set, group in groups:
+    cardList = list(group)
+    setinfos[set] = {"code": set,
+                     "fullName": next(x for x in SetsInfos if x['code'] == set)['name'],
+                     "cardCount": len(cardList),
+                     "isPrimary": set in PrimarySets
+                     }
+    icon_path = "img/sets/{}.svg".format(set if set != 'con' else 'conf')
+    if getIcon(set, icon_path) != None:
+        setinfos[set]['icon'] = icon_path
     print('\t', set, ": ", len(cardList))
     cardList.sort(key=lambda c: c['rarity'])
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
         setinfos[set][rarity + "Count"] = len(rarityGroupList)
-        # print('\t\t {}: {}'.format(rarity, len(rarityGroupList)))
+for s in PrimarySets:
+    if s not in setinfos:
+        infos = next(x for x in SetsInfos if x['code'] == s)
+        setinfos[s] = {
+            "code": s,
+            "fullName": infos['name'],
+            "cardCount": infos['card_count'],
+            "isPrimary": True
+        }
+    icon_path = "img/sets/{}.svg".format(s if s != 'con' else 'conf')
+    if getIcon(s, icon_path) != None:
+        setinfos[s]['icon'] = icon_path
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False)
+
+constants = {}
+with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
+    constants = json.loads(constantsFile.read())
+constants['PrimarySets'] = PrimarySets
+with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
+    json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
