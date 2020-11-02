@@ -166,11 +166,19 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         objects = ijson.items(file, 'item')
         allcards = (o for o in objects)
 
+        akr_candidates = {}
         sys.stdout.write("Processing... ")
         sys.stdout.flush()
         copied = 0
         for c in allcards:
-            # or c['set'] == 'akr':
+            # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
+            if c['name'] in AKRCards:
+                if c["name"] not in akr_candidates:
+                    akr_candidates[c["name"]] = {}
+                # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
+                if (c['set'].lower() in ['akh', 'hou']) or c['lang'] not in akr_candidates[c['name']] or (akr_candidates[c['name']][c['lang']]['set'] not in ['akh', 'hou'] and (c['released_at'] > akr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and akr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
+                    akr_candidates[c["name"]][c["lang"]] = c
+
             if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
                 continue
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
@@ -187,41 +195,27 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
             sys.stdout.write("Processing... " +
                              str(copied) + " cards added...")
         sys.stdout.write("\b" * 100)
-        sys.stdout.write(" " + str(copied) + " cards added.")
+        sys.stdout.write(" " + str(copied) + " cards added.\n")
 
-    # TODO: Get rid of that, instead just replace the art without messing the rest of the card data.
-    # Arena version of splits cards doesn't have any text, getting AKH/HOU cards by name instead
-    with open(BulkDataPath, 'r', encoding="utf8") as file:
-        print("\nExtracting AKR card data...")
-        objects = ijson.items(file, 'item')
-        akr_cards = (o for o in objects if o['name'] in AKRCards)
-        akr_candidates = {}
-        # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
-        for c in akr_cards:
-            if c["lang"] not in akr_candidates:
-                akr_candidates[c["lang"]] = {}
-            if (c['set'].lower() in ['akh', 'hou']) or c['name'] not in akr_candidates[c['lang']] or (akr_candidates[c['lang']][c['name']]['set'] not in ['akh', 'hou'] and c['released_at'] > akr_candidates[c["lang"]][c['name']]['released_at']):
-                c['arena_id'] = AKRCards[c["name"]][0]
-                c['collector_number'] = AKRCards[c["name"]][1]
-                # Force AKR cards to appear in boosters, excluding Regal Caracal (Buy-a-Box) and basics.
-                c['booster'] = c['collector_number'] != "339" and 'Basic Land' not in c['type_line']
-                c['rarity'] = AKRCards[c["name"]][2]  # Fix rarity shifts
-                akr_candidates[c["lang"]][c["name"]] = c
-        for l in akr_candidates.keys():
-            for c in akr_candidates[l].values():
-                c['set'] = "akr"
-                cards.append(c)
-
+        sys.stdout.write("Fixing AKR images...")
         MissingAKRCards = AKRCards
-        for name in akr_candidates["en"]:
+        for name in akr_candidates:
             del MissingAKRCards[name]
         if len(MissingAKRCards) > 0:
             print("MissingAKRCards: ", MissingAKRCards)
 
+        for c in cards:
+            if c['set'] == 'akr' and c['name'] in akr_candidates and c['lang'] in akr_candidates[c['name']]:
+                c['image_uris']['border_crop'] = akr_candidates[c['name']
+                                                                ][c['lang']]['image_uris']['border_crop']
+
+        sys.stdout.write(" Done!\n")
+
+    sys.stdout.write("Saving to BulkDataArenaPath...")
+    sys.stdout.flush()
     with open(BulkDataArenaPath, 'w') as outfile:
         json.dump(cards, outfile, cls=DecimalEncoder)
-
-    print("\nDone!")
+    print(" Done!")
 
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
