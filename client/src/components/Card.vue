@@ -9,6 +9,7 @@
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
 		@mouseleave="disableZoom"
+		@mouseenter="activateFoilEffect"
 	>
 		<card-image :card="card" :language="language" :lazyLoad="lazyLoad"></card-image>
 		<slot></slot>
@@ -25,6 +26,11 @@ export default {
 		language: { type: String, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
 	},
+	data: function () {
+		return {
+			foilInterval: null,
+		};
+	},
 	methods: {
 		toggleZoom: function (e) {
 			e.currentTarget.classList.toggle("zoomedin");
@@ -33,6 +39,28 @@ export default {
 		disableZoom: function (e) {
 			e.currentTarget.classList.remove("zoomedin");
 			e.preventDefault();
+
+			if (this.card.foil) {
+				document.removeEventListener("mousemove", this.foilEffect);
+				this.$el.style.setProperty("--foil-initial-top", `-16%`);
+				this.$el.style.setProperty("--foil-initial-left", `32%`);
+			}
+		},
+		activateFoilEffect: function (e) {
+			if (!this.card.foil) return;
+
+			document.addEventListener("mousemove", this.foilEffect);
+		},
+		foilEffect: function (e) {
+			let bounds = this.$el.getBoundingClientRect();
+			this.$el.style.setProperty(
+				"--foil-initial-top",
+				`${-(120 * (e.clientX - bounds.left)) / bounds.width + 30}%`
+			);
+			this.$el.style.setProperty(
+				"--foil-initial-left",
+				`${-(160 * (e.clientX - bounds.left)) / bounds.width + 70}%`
+			);
 		},
 	},
 };
@@ -44,6 +72,9 @@ export default {
 	position: relative;
 	text-align: center;
 	transition: transform 0.2s ease;
+
+	--foil-initial-top: -16%;
+	--foil-initial-left: 32%;
 }
 
 .fade-enter-active.card,
@@ -56,26 +87,25 @@ export default {
 	z-index: 2;
 	image-rendering: optimizeQuality;
 }
-</style>
 
-<style>
 .foil .card-image {
 	position: relative;
 	overflow: hidden;
 }
 
-.foil .card-image:after {
-	animation: foil 5s ease-in-out infinite;
-	animation-direction: alternate;
-	animation-fill-mode: both;
+.foil .card-image:after,
+.foil .card-image:before {
 	content: "";
 
 	position: absolute;
 	width: 100%;
 	padding-bottom: calc(1.41 * 200%);
-	opacity: 0;
+	top: var(--foil-initial-top);
+	left: var(--foil-initial-left);
 	transform: rotate(30deg);
+}
 
+.foil .card-image:after {
 	background: rgba(255, 255, 255, 0.5);
 	--saturation: 100%;
 	--lightness: 50%;
@@ -96,17 +126,6 @@ export default {
 }
 
 .foil .card-image:before {
-	animation: foil 5s ease-in-out infinite;
-	animation-direction: alternate;
-	animation-fill-mode: both;
-	content: "";
-
-	position: absolute;
-	width: 100%;
-	padding-bottom: calc(1.41 * 200%);
-	opacity: 0;
-	transform: rotate(30deg);
-
 	background: rgba(255, 255, 255, 0.25);
 	background: linear-gradient(
 		to right,
@@ -124,23 +143,31 @@ export default {
 	mix-blend-mode: lighten;
 	z-index: 1;
 }
+/*
+Foil animation: Now tied to cursor position.
+
+.foil:hover .card-image:after,
+.foil:hover .card-image:before {
+	animation: foil 4s linear infinite;
+}
 
 @keyframes foil {
 	0% {
-		opacity: 0;
-		top: 0;
-		left: 60%;
+		top: var(--foil-initial-top);
+		left: var(--foil-initial-left);
 	}
-	10% {
-		opacity: 1;
+	40% {
+		top: -80%;
+		left: -80%;
 	}
 	90% {
-		opacity: 1;
+		top: 0%;
+		left: 60%;
 	}
 	100% {
-		opacity: 0;
-		top: -100%;
-		left: -100%;
+		top: var(--foil-initial-top);
+		left: var(--foil-initial-left);
 	}
 }
+*/
 </style>
