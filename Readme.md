@@ -15,7 +15,7 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 
 ### Development tips
 
--   Running `nodemon` instead of `npm start` will restart the node server on any changes.
+-   Running `nodemon --experimental-json-modules` instead of `npm start` will restart the node server on any changes. (Install nodemon globally with `npm install nodemon -g`)
 -   Use `npm run build-dev` to watch for changes in the client js code and automatically re-build it.
 
 ### Setup DynamoDB (local)
@@ -46,17 +46,6 @@ AWS_ENDPOINT=http://localhost:8000
 
 -   Cleanup draft state? (See Winston Draft State for a better example)
 
-### Minor Improvements
-
--   Improve deck stats (Get some inspiration from MTGA)
--   Display foils as... foils in front end?
-
-## Check
-
-Features that may need some additional testing:
-
--   Rochester Draft / Grid Draft
-
 ## Notes on Arena Importer
 
 -   Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
@@ -66,3 +55,8 @@ Features that may need some additional testing:
 ## Custom Set format
 
 See cubeformat.html
+
+## Acknowledgement
+
+-   Card data and images provided by [Scryfall](https://scryfall.com/)
+-   Data used for automatic collation from https://github.com/taw/magic-sealed-data ; Used https://www.lethe.xyz/mtg/collation/ as reference for manual implementations.
