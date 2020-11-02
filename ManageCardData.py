@@ -185,8 +185,8 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
-            # Includes only cards available on Arena or MTGO, with the exception of the un-sets, Conspiracy, Battlebond, Mystery Booster and some older sets
-            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns', 'bbd', 'mb1'] and c['set'] not in ['tsb', 'all', 'ice', '2ed', 'leb', 'lea']):
+            # Includes only cards available on Arena or MTGO, with the exception of the un-sets, Conspiracy, Battlebond, Mystery Booster (mb1 & fmb1) and some older sets
+            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns', 'bbd', 'mb1', 'fmb1'] and c['set'] not in ['tsb', 'all', 'ice', '2ed', 'leb', 'lea']):
                 continue
 
             cards.append(c)
@@ -486,6 +486,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s != 'tsb']
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1']]  # Exclude some codes that are actually part of larger sets
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

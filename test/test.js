@@ -872,7 +872,6 @@ describe("Sealed", function() {
 });
 
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
-import { constants } from "buffer";
 
 describe("Jumpstart", function() {
 	let clients = [];
