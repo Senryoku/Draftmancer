@@ -1,136 +1,111 @@
 [Common(10)]
-Adventure Awaits
-Akoum Hellhound
-Akoum Hellhound
-Angelheart Protector
-Anticognition
-Ardent Electromancer
-Blood Beckoning
-Blood Price
-Broken Wings
-Bubble Snare
-Canopy Baloth
-Canopy Baloth
-Cascade Seer
-Chilling Trap
-Cleansing Wildfire
-Cleric of Chill Depths
-Cliffhaven Kitesail
-Cliffhaven Sell-Sword
-Cunning Geysermage
-Dauntless Survivor
-Dauntless Unity
-Deadly Alliance
-Deliberate
-Disenchant
-Drana's Silencer
-Dreadwurm
-Dreadwurm
-Expedition Champion
-Expedition Diviner
-Expedition Healer
-Expedition Skulker
-Farsight Adept
-Feed the Swarm
-Field Research
-Fissure Wizard
-Forest
-Forest
-Forest
-Forest
-Ghastly Gloomhunter
-Glacial Grasp
-Gnarlid Colony
-Grotag Bug-Catcher
-Guul Draz Mucklord
-Hagra Constrictor
-Highborn Vampire
-Inordinate Rage
-Into the Roil
-Into the Roil
-Island
-Island
-Island
-Island
-Joraga Visionary
-Kabira Outrider
-Kazandu Nectarpot
-Kazandu Nectarpot
-Kazandu Stomper
-Kor Celebrant
-Living Tempest
-Makindi Ox
-Makindi Ox
-Malakir Blood-Priest
-Marauding Blight-Priest
-Mesa Lynx
-Might of Murasa
-Mind Drain
-Molten Blast
-Mountain
-Mountain
-Mountain
-Mountain
-Murasa Brute
-Nahiri's Binding
-Negate
-Nimana Skitter-Sneak
-Nimana Skydancer
-Nissa's Zendikon
-Oblivion's Hunger
-Plains
-Plains
-Plains
-Plains
-Practiced Tactics
-Pressure Point
-Prowling Felidar
-Prowling Felidar
-Pyroclastic Hellion
-Rabid Bite
-Reclaim the Wastes
-Resolute Strike
-Risen Riptide
-Roil Eruption
-Roil Eruption
-Scale the Heights
-Scavenged Blade
-Scorch Rider
-Sea Gate Banneret
-Sea Gate Colossus
-Seafloor Stalker
-Shell Shield
-Shepherd of Heroes
-Sizzling Barrage
-Skyclave Sentinel
-Skyclave Squid
-Skyclave Squid
-Smite the Monstrous
-Sneaking Guide
-Spare Supplies
-Spitfire Lagac
-Spitfire Lagac
-Stonework Packbeast
-Strength of Solidarity
-Subtle Strike
-Swamp
-Swamp
-Swamp
-Swamp
-Synchronized Spellcraft
-Tajuru Blightblade
-Tajuru Snarecaster
-Tazeem Raptor
-Tazeem Roilmage
-Teeterpeak Ambusher
-Territorial Scythecat
-Territorial Scythecat
-Tormenting Voice
-Tuktuk Rubblefort
-Turntimber Ascetic
-Utility Knife
-Vanquish the Weak
-Zulaport Duelist
+4 Adventure Awaits
+4 Akoum Hellhound
+4 Angelheart Protector
+4 Anticognition
+4 Ardent Electromancer
+4 Blood Beckoning
+4 Blood Price
+4 Broken Wings
+4 Bubble Snare
+4 Canopy Baloth
+4 Cascade Seer
+4 Chilling Trap
+4 Cleansing Wildfire
+4 Cleric of Chill Depths
+4 Cliffhaven Kitesail
+4 Cliffhaven Sell-Sword
+4 Cunning Geysermage
+4 Dauntless Survivor
+4 Dauntless Unity
+4 Deadly Alliance
+4 Deliberate
+4 Disenchant
+4 Drana's Silencer
+4 Dreadwurm
+4 Expedition Champion
+4 Expedition Diviner
+4 Expedition Healer
+4 Expedition Skulker
+4 Farsight Adept
+4 Feed the Swarm
+4 Field Research
+4 Fissure Wizard
+4 Forest
+4 Ghastly Gloomhunter
+4 Glacial Grasp
+4 Gnarlid Colony
+4 Grotag Bug-Catcher
+4 Guul Draz Mucklord
+4 Hagra Constrictor
+4 Highborn Vampire
+4 Inordinate Rage
+4 Into the Roil
+4 Island
+4 Joraga Visionary
+4 Kabira Outrider
+4 Kazandu Nectarpot
+4 Kazandu Stomper
+4 Kor Celebrant
+4 Living Tempest
+4 Makindi Ox
+4 Malakir Blood-Priest
+4 Marauding Blight-Priest
+4 Mesa Lynx
+4 Might of Murasa
+4 Mind Drain
+4 Molten Blast
+4 Mountain
+4 Murasa Brute
+4 Nahiri's Binding
+4 Negate
+4 Nimana Skitter-Sneak
+4 Nimana Skydancer
+4 Nissa's Zendikon
+4 Oblivion's Hunger
+4 Plains
+4 Practiced Tactics
+4 Pressure Point
+4 Prowling Felidar
+4 Pyroclastic Hellion
+4 Rabid Bite
+4 Reclaim the Wastes
+4 Resolute Strike
+4 Risen Riptide
+4 Roil Eruption
+4 Scale the Heights
+4 Scavenged Blade
+4 Scorch Rider
+4 Sea Gate Banneret
+4 Sea Gate Colossus
+4 Seafloor Stalker
+4 Shell Shield
+4 Shepherd of Heroes
+4 Sizzling Barrage
+4 Skyclave Sentinel
+4 Skyclave Squid
+4 Smite the Monstrous
+4 Sneaking Guide
+4 Spare Supplies
+4 Spitfire Lagac
+4 Stonework Packbeast
+4 Strength of Solidarity
+4 Subtle Strike
+4 Swamp
+4 Synchronized Spellcraft
+4 Tajuru Blightblade
+4 Tajuru Snarecaster
+4 Tazeem Raptor
+4 Tazeem Roilmage
+4 Teeterpeak Ambusher
+4 Territorial Scythecat
+4 Tormenting Voice
+4 Tuktuk Rubblefort
+4 Turntimber Ascetic
+4 Utility Knife
+4 Vanquish the Weak
+4 Zulaport Duelist
+
 [Uncommon(3)]
 Acquisitions Expert
 Akoum Warrior // Akoum Teeth
