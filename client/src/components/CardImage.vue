@@ -77,14 +77,15 @@ export default {
 <style scoped>
 .card-image {
 	width: 200px;
-	height: 283.3333333333334px;
+	padding-bottom: 141%; /* Simulate a width relative height */
 	background-color: transparent;
 	perspective: 1000px;
+	border-radius: 3%;
 }
 
 img {
 	width: 200px;
-	border-radius: 6px;
+	border-radius: 3%;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;

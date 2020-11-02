@@ -218,7 +218,6 @@ export default {
 .card-pool .card-image,
 .card-pool .card img {
 	width: 100%;
-	height: auto;
 }
 </style>
 

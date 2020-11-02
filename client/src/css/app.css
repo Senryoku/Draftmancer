@@ -809,12 +809,10 @@ ul.player-list {
 .card-column > div:hover,
 .card-column > div:hover {
 	z-index: 999;
-	overflow: visible;
 }
 
 .card-column > div:last-child,
 .card-column > div:last-child {
-	overflow: visible;
 	padding-bottom: 142.5%;
 }
 

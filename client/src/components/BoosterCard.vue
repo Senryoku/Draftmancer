@@ -1,10 +1,5 @@
 <template>
-	<card
-		:card="card"
-		:language="language"
-		:class="{ selected: selected, burned: burned }"
-		class="booster-card"
-	>
+	<card :card="card" :language="language" :class="{ selected: selected, burned: burned }" class="booster-card">
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>
@@ -64,11 +59,11 @@ export default {
 </style>
 
 <style>
-.booster-card:not(.zoomedin) img {
+.booster-card:not(.zoomedin) {
 	transition: transform 0.08s ease-out;
 }
 
-.booster-card:hover:not(.zoomedin) img {
+.booster-card:hover:not(.zoomedin) {
 	transform: scale(1.08);
 	image-rendering: optimizeQuality;
 }
