@@ -9,11 +9,14 @@
 	"type": "module",
 	"scripts": {
 		"start": "node --experimental-json-modules .",
+		"start-dev": "nodemon --experimental-json-modules .",
+		"build": "npx webpack --config client/webpack.config.cjs --mode=production",
+		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress --info-verbosity verbose",
+		"dev-front": "concurrently --kill-others --raw \"npm run start\" \"npm run build-dev\"",
+		"dev": "concurrently --kill-others --raw \"npm run start-dev\" \"npm run build-dev\"",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "cross-env PORT=3001 mocha test --exit --experimental-json-modules",
-		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules",
-		"build": "npx webpack --config client/webpack.config.cjs --mode=production",
-		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress --info-verbosity verbose"
+		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules"
 	},
 	"repository": {
 		"type": "git",
@@ -48,6 +51,7 @@
 	},
 	"devDependencies": {
 		"chai": "^4.2.0",
+		"concurrently": "^5.3.0",
 		"cross-env": "^7.0.2",
 		"eslint": "^7.2.0",
 		"eslint-plugin-vue": "^6.2.2",
@@ -57,6 +61,6 @@
 		"vue-template-compiler": "^2.6.11",
 		"webpack": "^4.43.0",
 		"webpack-bundle-analyzer": "^3.8.0",
-		"webpack-cli": "^3.3.11"
+		"webpack-cli": "^3.3.12"
 	}
 }
