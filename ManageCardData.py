@@ -170,14 +170,15 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.flush()
         copied = 0
         for c in allcards:
-            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"] or c['set'] == 'akr':
+            # or c['set'] == 'akr':
+            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
                 continue
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
-            # Includes only cards available on Arena or MTGO, with the exception of the un-sets and Conspiracy and some older sets
-            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns'] and c['set'] not in ['tsb', 'all', 'ice', 'lea']):
+            # Includes only cards available on Arena or MTGO, with the exception of the un-sets, Conspiracy, Battlebond, Mystery Booster and some older sets
+            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns', 'bbd', 'mb1'] and c['set'] not in ['tsb', 'all', 'ice', '2ed', 'leb', 'lea']):
                 continue
 
             cards.append(c)
@@ -188,6 +189,7 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
         sys.stdout.write("\b" * 100)
         sys.stdout.write(" " + str(copied) + " cards added.")
 
+    # TODO: Get rid of that, instead just replace the art without messing the rest of the card data.
     # Arena version of splits cards doesn't have any text, getting AKH/HOU cards by name instead
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         print("\nExtracting AKR card data...")

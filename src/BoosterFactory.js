@@ -1,8 +1,9 @@
 "use strict";
 
-import { Cards } from "./Cards.js";
-import { isEmpty, shuffleArray } from "./utils.js";
+import { Cards, getUnique } from "./Cards.js";
+import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
+import constants from "../client/src/data/constants.json";
 
 // Generates booster for regular MtG Sets
 
@@ -327,3 +328,77 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 };
+
+/*
+ * Another collation method using data from https://github.com/taw/magic-sealed-data
+ */
+
+import PaperBoosterData from "../data/sealed_extended_data.json";
+
+function weightedRandomPick(arr, totalWeight, picked = []) {
+	let pick = randomInt(0, totalWeight);
+	let idx = 0;
+	let acc = arr[idx].weight;
+	while(acc < pick) {
+		++idx;
+		acc += arr[idx].weight;
+	}
+	if(arr[idx] in picked) return weightedRandomPick(arr, totalWeight, picked);
+	return arr[idx];
+}
+
+const CardsBySetAndCollectorNumber = {}
+for(let cid in Cards) {
+	CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
+}
+
+export const PaperBoosterFactories = {};
+// For some sets, this description is incomplete (One MDFC per pack isn't inforced for ZNR for example.)
+for(let set of PaperBoosterData.filter(s => !['znr'].includes(s.code))) {
+	if(!constants.PrimarySets.includes(set.code)) {
+		console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
+		continue;
+	}
+
+	for(let sheetName in set.sheets) {
+		for(let card of set.sheets[sheetName].cards) {
+			let num = card.number;
+			card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
+			if(!card.id) { // Special case for double faced cards
+				if(['a', '★'].includes(num[num.length - 1])) num = num.substr(0, num.length - 1)
+				card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
+			}
+			if(!card.id) console.log("Error! Could not find corresponding card:", card);
+		}
+	}
+	PaperBoosterFactories[set.code] = function(options = {}) {
+		let possibleContent = set.boosters;
+		if(!options.foil) { // (Attempt to) Filter out sheets with foils if option is disabled.
+			let nonFoil = set.boosters.filter(e => !Object.keys(e.sheets).some(s => s.includes("foil")));
+			if(nonFoil.length > 0) possibleContent = nonFoil;
+		}
+		return {
+			set: set,
+			options: options,
+			possibleContent: possibleContent,
+			generateBooster: function() {
+				const booster = [];
+				const boosterContent = weightedRandomPick(this.possibleContent, this.possibleContent.reduce((acc, val) => acc += val.weight, 0));
+				for(let sheetName in boosterContent.sheets) {
+					if(this.set.sheets.balance_colors) {
+						// TODO
+						let cardsToPick = boosterContent.sheets[sheetName];
+						for(let i = 0; i < cardsToPick; ++i) {
+							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
+						}
+					} else {
+						for(let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
+							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
+						}
+					}
+				}
+				return booster.map(c => c.foil ? Object.assign({foil: true}, getUnique(c.id)) : getUnique(c.id)).reverse();
+			}
+		};
+	}
+}

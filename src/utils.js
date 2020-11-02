@@ -7,6 +7,10 @@ export function isEmpty(obj) {
 	return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
 }
 
+export function randomInt(min, max) {
+	return random.integer(min, max);
+}
+
 export function negMod(m, n) {
 	return ((m % n) + n) % n;
 }

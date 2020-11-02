@@ -9,7 +9,7 @@ import { Cards } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
-import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories } from "./BoosterFactory.js";
+import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories, PaperBoosterFactories } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
@@ -359,20 +359,23 @@ export function Session(id, owner, options) {
 		Connections[userID].socket.emit("sessionOptions", options);
 	};
 
-	// Returns current card pool according to all session options (Collections, setRestrictions...)
-	this.cardPool = function() {
-		const user_list = [...this.users];
-		let cardPool = {};
+	// Returns true if the card pool is not restricted by players collections (and ignoreCollections is true or no-one is using their collection)
+	this.unrestrictedCardPool = function() {
+		if(this.ignoreCollections) return true;
 
-		// If none of the user has uploaded their collection/doesn't want to use it, or the ignoreCollections flag is set, return all cards.
-		let all_cards = true;
-		for (let i = 0; i < user_list.length; ++i) {
-			all_cards =
-				all_cards &&
-				(!Connections[user_list[i]].useCollection || isEmpty(Connections[user_list[i]].collection));
+		for (let userID in this.users) {
+			if(Connections[userID].useCollection && !isEmpty(Connections[userID].collection))
+				return false;
 		}
 
-		if (this.ignoreCollections || all_cards) {
+		return true;
+	}
+
+	// Returns current card pool according to all session options (Collections, setRestrictions...)
+	this.cardPool = function() {
+		let cardPool = {};
+
+		if (this.unrestrictedCardPool()) {
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
 				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
@@ -564,32 +567,38 @@ export function Session(id, owner, options) {
 
 			const getBoosterFactory = function(set, cardPool, landSlot, options) {
 				// Check for a special booster factory
-				return set && set in SetSpecificFactories
-					? SetSpecificFactories[set](cardPool, landSlot, options)
-					: new BoosterFactory(cardPool, landSlot, options);
+				if(set && options.paperBooster && set in PaperBoosterFactories)
+					return PaperBoosterFactories[set](options);
+				if(set && set in SetSpecificFactories)
+					return SetSpecificFactories[set](cardPool, landSlot, options);				
+				return new BoosterFactory(cardPool, landSlot, options);
 			};
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
-				let localCollection = this.cardPoolByRarity();
-				let defaultLandSlot = null;
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
-					defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
-				defaultFactory = getBoosterFactory(
-					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
-					localCollection,
-					defaultLandSlot,
-					BoosterFactoryOptions
-				);
-				// Make sure we have enough cards
-				for (let slot of ["common", "uncommon", "rare"]) {
-					const card_count = countCards(defaultFactory.cardPool[slot]);
-					const card_target = targets[slot] * boosterQuantity;
-					if (card_count < card_target) {
-						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-						this.emitMessage("Error generating boosters", msg);
-						console.warn(msg);
-						return false;
+				if(this.setRestriction.length === 1 && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
+				} else {
+					let localCollection = this.cardPoolByRarity();
+					let defaultLandSlot = null;
+					if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
+						defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
+					defaultFactory = getBoosterFactory(
+						this.setRestriction.length === 1 ? this.setRestriction[0] : null,
+						localCollection,
+						defaultLandSlot,
+						BoosterFactoryOptions
+					);
+					// Make sure we have enough cards
+					for (let slot of ["common", "uncommon", "rare"]) {
+						const card_count = countCards(defaultFactory.cardPool[slot]);
+						const card_target = targets[slot] * boosterQuantity;
+						if (card_count < card_target) {
+							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
+							this.emitMessage("Error generating boosters", msg);
+							console.warn(msg);
+							return false;
+						}
 					}
 				}
 			}
