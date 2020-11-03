@@ -185,8 +185,9 @@ if not os.path.isfile(BulkDataArenaPath) or ForceExtract:
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
                                                             c['collector_number'], c['set'].lower())]
 
+            # Always include non-english at this stage, makes sure we don't miss any and they'll be merged with their english version anyway.
             # Includes only cards available on Arena or MTGO, with the exception of the un-sets, Conspiracy, Battlebond, Mystery Booster (mb1 & fmb1) and some older sets
-            if('arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns', 'bbd', 'mb1', 'fmb1'] and c['set'] not in ['tsb', 'all', 'ice', '2ed', 'leb', 'lea']):
+            if(c['lang'] == 'en' and 'arena_id' not in c and 'mtgo_id' not in c and c['set'] not in ['ugl', 'unh', 'ust', 'und', 'cns', 'bbd', 'mb1', 'fmb1'] and c['set'] not in ['tsb', 'all', 'ice', '2ed', 'leb', 'lea']):
                 continue
 
             cards.append(c)
