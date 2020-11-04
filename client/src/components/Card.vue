@@ -44,23 +44,20 @@ export default {
 				document.removeEventListener("mousemove", this.foilEffect);
 				this.$el.style.setProperty("--foil-initial-top", `-16%`);
 				this.$el.style.setProperty("--foil-initial-left", `32%`);
+				this.$el.style.setProperty("--transform-rotation", `0`);
 			}
 		},
-		activateFoilEffect: function (e) {
+		activateFoilEffect: function () {
 			if (!this.card.foil) return;
 
 			document.addEventListener("mousemove", this.foilEffect);
 		},
 		foilEffect: function (e) {
 			let bounds = this.$el.getBoundingClientRect();
-			this.$el.style.setProperty(
-				"--foil-initial-top",
-				`${-(120 * (e.clientX - bounds.left)) / bounds.width + 30}%`
-			);
-			this.$el.style.setProperty(
-				"--foil-initial-left",
-				`${-(160 * (e.clientX - bounds.left)) / bounds.width + 70}%`
-			);
+			const factor = (e.clientX - bounds.left) / bounds.width;
+			this.$el.style.setProperty("--transform-rotation", `${-20 + 40 * factor}deg`);
+			this.$el.style.setProperty("--foil-initial-top", `${-(120 * factor) + 30}%`);
+			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
 	},
 };
@@ -73,6 +70,7 @@ export default {
 	text-align: center;
 	transition: transform 0.2s ease;
 
+	--transform-rotation: 0;
 	--foil-initial-top: -16%;
 	--foil-initial-left: 32%;
 }
@@ -91,6 +89,8 @@ export default {
 .foil .card-image {
 	position: relative;
 	overflow: hidden;
+	perspective: 1000px;
+	transform: rotate3d(-0.5, 0.86602540378, 0, var(--transform-rotation));
 }
 
 .foil .card-image:after,
