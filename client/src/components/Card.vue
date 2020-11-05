@@ -42,6 +42,7 @@ export default {
 
 			if (this.card.foil) {
 				document.removeEventListener("mousemove", this.foilEffect);
+				this.$el.style.setProperty("--brightness", `100%`);
 				this.$el.style.setProperty("--foil-initial-top", `-16%`);
 				this.$el.style.setProperty("--foil-initial-left", `32%`);
 				this.$el.style.setProperty("--transform-rotation", `0`);
@@ -55,6 +56,7 @@ export default {
 		foilEffect: function (e) {
 			let bounds = this.$el.getBoundingClientRect();
 			const factor = (e.clientX - bounds.left) / bounds.width;
+			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
 			this.$el.style.setProperty("--transform-rotation", `${-20 + 40 * factor}deg`);
 			this.$el.style.setProperty("--foil-initial-top", `${-(120 * factor) + 30}%`);
 			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
@@ -70,6 +72,7 @@ export default {
 	text-align: center;
 	transition: transform 0.2s ease;
 
+	--brightness: 100%;
 	--transform-rotation: 0;
 	--foil-initial-top: -16%;
 	--foil-initial-left: 32%;
@@ -89,8 +92,14 @@ export default {
 .foil .card-image {
 	position: relative;
 	overflow: hidden;
-	perspective: 1000px;
-	transform: rotate3d(-0.5, 0.86602540378, 0, var(--transform-rotation));
+	filter: brightness(var(--brightness));
+	transform: perspective(1000px) rotate3d(-0.5, 0.86602540378, 0, var(--transform-rotation));
+}
+
+.foil:not(:hover) .card-image,
+.foil:not(:hover) .card-image:after,
+.foil:not(:hover) .card-image:before {
+	transition: all 0.5s ease-out;
 }
 
 .foil .card-image:after,
