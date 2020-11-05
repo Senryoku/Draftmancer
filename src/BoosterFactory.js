@@ -17,6 +17,12 @@ const foilRarityRates = {
 	common: 1.0,
 };
 
+export const DefaultBoosterTargets = {
+	common: 10,
+	uncommon: 3,
+	rare: 1,
+};
+
 /*
  Provides color balancing for the supplied cardPool
 */

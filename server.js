@@ -788,6 +788,7 @@ io.on("connection", function(socket) {
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		// Validate input (a value for each rarity and at least one card)
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
+		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
 
 		Sessions[sessionID].boosterContent = boosterContent;

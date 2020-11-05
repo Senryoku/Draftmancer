@@ -9,7 +9,7 @@ import { Cards } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
-import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories, PaperBoosterFactories } from "./BoosterFactory.js";
+import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories, PaperBoosterFactories, DefaultBoosterTargets } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
@@ -197,11 +197,7 @@ export function Session(id, owner, options) {
 	this.maxTimer = 75;
 	this.maxPlayers = 8;
 	this.mythicPromotion = true;
-	this.boosterContent = {
-		common: 10,
-		uncommon: 3,
-		rare: 1,
-	};
+	this.boosterContent = DefaultBoosterTargets;
 	this.colorBalance = true;
 	this.maxDuplicates = {
 		common: 16,
@@ -567,8 +563,6 @@ export function Session(id, owner, options) {
 
 			const getBoosterFactory = function(set, cardPool, landSlot, options) {
 				// Check for a special booster factory
-				if(set && options.paperBooster && set in PaperBoosterFactories)
-					return PaperBoosterFactories[set](options);
 				if(set && set in SetSpecificFactories)
 					return SetSpecificFactories[set](cardPool, landSlot, options);				
 				return new BoosterFactory(cardPool, landSlot, options);
@@ -576,7 +570,8 @@ export function Session(id, owner, options) {
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
-				if(this.setRestriction.length === 1 && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+				// Don't compute cardPoolByRarity if it's not necessary
+				if(this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
 					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
 				} else {
 					let localCollection = this.cardPoolByRarity();
@@ -609,8 +604,7 @@ export function Session(id, owner, options) {
 				const usedSets = {};
 
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-				const addLandSlot =
-					this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
+				const addLandSlot = this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
 				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
 					defaultFactory.landSlot =
 						this.setRestriction.length === 0

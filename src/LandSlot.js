@@ -33,7 +33,7 @@ function landSlotHandler(basicLandsIds, commonLandsIds, rate) {
 			if (Math.random() <= this.rate && Object.keys(this.landsToDistribute).length > 0) {
 				let c = getRandomKey(this.landsToDistribute);
 				removeCardFromDict(c, this.landsToDistribute);
-				return c;
+				return getUnique(c);
 			} else {
 				return getUnique(getRandom(this.basicLandsIds));
 			}
