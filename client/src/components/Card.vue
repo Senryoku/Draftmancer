@@ -93,7 +93,7 @@ export default {
 	position: relative;
 	overflow: hidden;
 	filter: brightness(var(--brightness));
-	transform: perspective(1000px) rotate3d(-0.5, 0.86602540378, 0, var(--transform-rotation));
+	transform: perspective(1000px) rotate3d(-0.342, 0.94, 0, var(--transform-rotation));
 }
 
 .foil:not(:hover) .card-image,
