@@ -666,12 +666,12 @@ export function Session(id, owner, options) {
 					boosterFactories.push(playerBoosterFactories);
 				}
 
-				// Generate Boosters
-				this.boosters = [];
 				// Implements distribution mode 'shufflePlayerBoosters'
 				if (this.distributionMode === "shufflePlayerBoosters")
 					for (let rules of boosterFactories) shuffleArray(rules);
 
+				// Generate Boosters
+				this.boosters = [];
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterFactories[p][b];
@@ -682,6 +682,15 @@ export function Session(id, owner, options) {
 				}
 
 				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(this.boosters);
+
+				// Boosters within a round much be of the same length.
+				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
+				if (this.distributionMode !== "regular") {
+					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
+						console.error("Inconsistent booster sizes.")
+						return false;
+					}
+				}
 			} else {
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {

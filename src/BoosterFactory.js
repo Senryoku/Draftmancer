@@ -333,6 +333,53 @@ export const SetSpecificFactories = {
 		};
 		return factory;
 	},
+	cmr: (cardPool, landSlot, options) => {
+		// TODO
+		/*
+		Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
+		Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
+		Each Commander Legends Draft Booster contains 20 Magic cards + one ad/token, with two legends, at least one rare, and one foil.
+		*/
+		const regex = /Legendary.*Creature/;
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
+		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.legendaryCreatures = legendaryCreatures;
+		// Not using the suplied cardpool here
+		factory.generateBooster = function(targets) {
+			// TODO! CMR boosters are larger by default
+			if(targets === DefaultBoosterTargets) targets = {
+				common: 12,
+				uncommon: 6,
+				rare: 2,
+			};
+			const legendaryCounts = countBySlot(this.legendaryCreatures);
+			// Ignore the rule if there's no legendary creatures left
+			if (Object.values(legendaryCounts).every(c => c === 0)) {
+				return this.originalGenBooster(targets);
+			} else {
+				// Roll for legendary rarity
+				const pickedRarities = [(legendaryCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate) ? 'mythic' : 'rare', rollSpecialCardRarity(legendaryCounts, targets, options)];
+				const updatedTargets = Object.assign({}, targets);
+				const pickedCards = [];
+				for(let pickedRarity of pickedRarities) {
+					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
+					removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
+
+					if (pickedRarity === "mythic") --updatedTargets["rare"];
+					else --updatedTargets[pickedRarity];
+
+					pickedCards.push(pickedCard);
+				}
+
+				const booster = this.originalGenBooster(updatedTargets);
+				for(let c of pickedCards)
+					booster.unshift(c);
+				return booster;
+			}
+		};
+		return factory;
+	}
 };
 
 /*
