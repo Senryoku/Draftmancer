@@ -687,7 +687,9 @@ export function Session(id, owner, options) {
 				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
 				if (this.distributionMode !== "regular") {
 					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
-						console.error("Inconsistent booster sizes.")
+						const msg = `Inconsistent booster sizes`;
+						this.emitMessage("Error generating boosters", msg);
+						console.error(msg)
 						return false;
 					}
 				}
