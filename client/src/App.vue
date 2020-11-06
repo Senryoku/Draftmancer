@@ -603,7 +603,7 @@
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</div>
-						<div>Booster #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
+						<div>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
@@ -631,7 +631,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster</h2>
 						<div class="controls">
-							<span>Booster #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i>
 								{{ pickTimer }}
@@ -744,7 +744,7 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Booster #{{
+							Pack #{{
 								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
 							}}
 							/
@@ -784,7 +784,7 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Booster #{{ rochesterDraftState.boosterNumber + 1 }}/{{
+							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
 								rochesterDraftState.boosterCount
 							}}
 							- Pick #{{ rochesterDraftState.pickNumber + 1 }}
