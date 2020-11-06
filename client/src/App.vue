@@ -1164,34 +1164,27 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>November 06, 2020</em>
+							<ul>
+								<li>
+									Implemented support for cards outside of MtG: Arena! Try drafting some
+									<img
+										data-v-7f621d22=""
+										src="img/sets/mb1.svg"
+										class="set-icon"
+										style="--invertedness: 100%"
+									/>
+									Mystery Boosters or any Vintage Cube! This is a massive rewrite, so if you spot any
+									problem, please get in touch via email or
+									<a href="https://discord.gg/XscXXNw" target="_blank">our Discord</a>.
+								</li>
+								<li>Added a new setting allowing for multiple picks per pack.</li>
+							</ul>
 							<em>October 9, 2020</em>
 							<ul>
 								<li>
 									Deck sharing now lets you show your deck to other players and viewers of the
 									read-only bracket.
-								</li>
-							</ul>
-							<em>September 20, 2020</em>
-							<ul>
-								<li>New Public Sessions section (just above here).</li>
-								<li>Survey #2 has begun (link below here).</li>
-							</ul>
-							<em>September 14, 2020</em>
-							<ul>
-								<li>
-									<img src="img/sets/znr.svg" class="set-icon" style="--invertedness: 100%" />
-									Zendikar Rising is now available!
-								</li>
-								<li>
-									Team Draft is now available! It's a draft variant for 6 players to play in 3v3
-									teams. Great for smaller pods or to work with your friends to identify threats and
-									build pools.
-									<a
-										href="https://magic.wizards.com/en/articles/archive/how-play-limited/team-draft-2016-11-08"
-										>Learn more about the format here.</a
-									>
-									Use the checkbox under Additional Session Options after clicking the Settings
-									button.
 								</li>
 							</ul>
 						</div>
