@@ -64,9 +64,11 @@ const Sounds = {
 	readyCheck: new Audio("sound/drop_003.ogg"),
 };
 
-Vue.use(VTooltip);
-VTooltip.options.defaultPlacement = "bottom-start";
-VTooltip.options.defaultBoundariesElement = "window";
+Vue.use(VTooltip, {
+	defaultPlacement: "bottom-start",
+	defaultBoundariesElement: "window",
+	defaultDelay: 250
+});
 
 export default {
 	components: {
