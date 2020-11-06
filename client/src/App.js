@@ -160,6 +160,7 @@ export default {
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
 			sets: Constant.MTGASets,
+			primarySets: Constant.PrimarySets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
