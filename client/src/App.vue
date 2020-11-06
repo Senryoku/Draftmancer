@@ -1318,7 +1318,7 @@
 		</modal>
 		<modal v-if="displayedModal === 'setRestriction'" @close="displayedModal = ''">
 			<h2 slot="header">Card Pool</h2>
-			<set-restriction slot="body" :setrestriction="setRestriction"></set-restriction>
+			<set-restriction slot="body" v-model="setRestriction"></set-restriction>
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
 			<h2 slot="header">Draft Logs</h2>
