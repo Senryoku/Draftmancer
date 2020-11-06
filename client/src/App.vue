@@ -929,7 +929,7 @@
 					<h2>Sideboard ({{ sideboard.length }})</h2>
 					<div class="controls">
 						<i
-							class="fas fa-window-maximize clickable"
+							class="far fa-window-maximize clickable"
 							@click="collapseSideboard = false"
 							v-tooltip="'Maximize sideboard'"
 						></i>
