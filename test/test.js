@@ -301,7 +301,7 @@ describe("Single Draft (Two Players)", function() {
 					boosters[idx] = data;
 					if (receivedBoosters == clients.length) done();
 				});
-				clients[c].emit("pickCard", { selectedCard: 0 }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
 			}
 		});
 	}
@@ -313,7 +313,7 @@ describe("Single Draft (Two Players)", function() {
 				const idx = c;
 				clients[c].on("nextBooster", function(data) {
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { selectedCard: 0 }, () => {});
+					this.emit("pickCard", { pickedCards: [0] }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -325,7 +325,7 @@ describe("Single Draft (Two Players)", function() {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { selectedCard: 0 }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
 			}
 		});
 	}
@@ -637,7 +637,7 @@ describe("Single Draft (Two Players)", function() {
 					let burned = [];
 					for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < data.booster.length; ++cidx)
 						burned.push(cidx);
-					this.emit("pickCard", { selectedCard: 0, burnedCards: burned }, () => {});
+					this.emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -649,9 +649,101 @@ describe("Single Draft (Two Players)", function() {
 				let burned = [];
 				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < boosters[c].booster.length; ++cidx)
 					burned.push(cidx);
-				clients[c].emit("pickCard", { selectedCard: 0, burnedCards: burned }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 			}
 		});
+		disconnect();
+	});
+
+	describe("Draft mixing multiple picks and burning", function() {
+		connect();
+		it("Clients should receive the updated bot count.", function(done) {
+			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+
+		for(let pickPerRound = 1; pickPerRound < 5; ++pickPerRound) {
+			for(let burnPerRound = 0; burnPerRound < 5; ++burnPerRound) {
+				it(`Clients should receive the updated pick count (${pickPerRound}).`, function(done) {
+					clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
+						expect(sessionOptions.pickedCardsPerRound).to.equal(pickPerRound);
+						done();
+					});
+					clients[ownerIdx].emit("setPickedCardsPerRound", pickPerRound);
+				});
+
+				it(`Clients should receive the updated burn count (${burnPerRound}).`, function(done) {
+					clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
+						expect(sessionOptions.burnedCardsPerRound).to.equal(burnPerRound);
+						done();
+					});
+					clients[ownerIdx].emit("setBurnedCardsPerRound", burnPerRound);
+				});
+
+				it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
+					let connectedClients = 0;
+					let receivedBoosters = 0;
+					let index = 0;
+					for (let c of clients) {
+						c.once("startDraft", function() {
+							connectedClients += 1;
+							if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+						});
+		
+						(() => {
+							const _idx = index;
+							c.once("nextBooster", function(data) {
+								expect(boosters).not.include(data);
+								boosters[_idx] = data;
+								receivedBoosters += 1;
+								if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+							});
+						})();
+						++index;
+					}
+					clients[ownerIdx].emit("startDraft");
+				});
+		
+				it("Pick enough times, and the draft should end.", function(done) {
+					this.timeout(20000);
+					let draftEnded = 0;
+					for (let c = 0; c < clients.length; ++c) {
+						clients[c].on("nextBooster", function(data) {
+							let idx = c;
+							boosters[idx] = data.booster;
+							let cidx = 0;
+							let picked = [];
+							while (cidx < pickPerRound && cidx < data.booster.length)
+								picked.push(cidx++);
+							let burned = [];
+							while (burned.length < burnPerRound && cidx < data.booster.length)
+								burned.push(cidx++);
+							this.emit("pickCard", { pickedCards: picked, burnedCards: burned }, () => {});
+						});
+						clients[c].once("endDraft", function() {
+							draftEnded += 1;
+							this.removeListener("nextBooster");
+							if (draftEnded == clients.length) done();
+						});
+					}
+					for (let c = 0; c < clients.length; ++c) {
+						let cidx = 0;
+						let picked = [];
+						while (cidx < pickPerRound && cidx < boosters[c].booster.length)
+							picked.push(cidx++);
+						let burned = [];
+						while (burned.length < burnPerRound && cidx < boosters[c].booster.length)
+							burned.push(cidx++);
+							clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, () => {});
+					}
+				});
+			}
+		}
 		disconnect();
 	});
 });
@@ -792,7 +884,7 @@ describe("Multiple Drafts", function() {
 						};
 					})()
 				);
-				clients[sess][c].emit("pickCard", { selectedCard: 0,}, () => {});
+				clients[sess][c].emit("pickCard", { pickedCards: [0],}, () => {});
 			}
 		}
 	});
@@ -805,7 +897,7 @@ describe("Multiple Drafts", function() {
 				clients[sess][c].on("nextBooster", function(data) {
 					let idx = playersPerSession * sess + c;
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { selectedCard: 0 }, () => {});
+					this.emit("pickCard", { pickedCards: [0] }, () => {});
 				});
 				clients[sess][c].once("endDraft", function() {
 					draftEnded += 1;
@@ -816,7 +908,7 @@ describe("Multiple Drafts", function() {
 		}
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
-				clients[sess][c].emit("pickCard", { selectedCard: 0 }, () => {});
+				clients[sess][c].emit("pickCard", { pickedCards: [0] }, () => {});
 			}
 		}
 	});

@@ -636,13 +636,14 @@
 								@click="pickCard"
 								value="Confirm Pick"
 								v-if="
-									selectedCard != undefined &&
-									(burningCards.length === burnedCardsPerRound ||
-										booster.length === 1 + burningCards.length)
+									selectedCards.length === cardsToPick && burningCards.length === cardsToBurnThisRound
 								"
 							/>
 							<span v-else>
-								Pick a card
+								<span v-if="cardsToPick === 1">Pick a card</span>
+								<span v-else>
+									Pick {{ cardsToPick }} cards ({{ selectedCards.length }} / {{ cardsToPick }})
+								</span>
 								<span v-if="cardsToBurnThisRound > 0">
 									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 										burningCards.length
@@ -659,7 +660,7 @@
 							:language="language"
 							:canbeburned="burnedCardsPerRound > 0"
 							:burned="burningCards.includes(card)"
-							:class="{ selected: selectedCard === card }"
+							:class="{ selected: selectedCards.includes(card) }"
 							@click.native="selectCard($event, card)"
 							@dblclick.native="doubleClickCard($event, card)"
 							@burn="burnCard($event, card)"
@@ -798,7 +799,12 @@
 								}}...
 							</template>
 						</span>
-						<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
+						<input
+							type="button"
+							@click="pickCard"
+							value="Confirm Pick"
+							v-if="selectedCards.length === cardsToPick"
+						/>
 					</div>
 				</div>
 				<transition-group name="fade" tag="div" class="booster card-container">
@@ -809,7 +815,7 @@
 							:card="card"
 							:language="language"
 							:canbeburned="false"
-							:class="{ selected: selectedCard === card }"
+							:class="{ selected: selectedCards.includes(card) }"
 							@click.native="selectCard($event, card)"
 							@dblclick.native="doubleClickCard($event, card)"
 							draggable
@@ -1555,6 +1561,26 @@
 									</option>
 								</select>
 							</div>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>How many cards to pick each round. Useful for Commander Legends for example (2 cards per round).</p><p>Default is 1.</p>',
+						}"
+					>
+						<label for="picked-cards-per-round">Picked cards per round</label>
+						<div class="right">
+							<input
+								type="number"
+								id="picked-cards-per-round"
+								class="small-number-input"
+								min="1"
+								step="1"
+								v-model.number="pickedCardsPerRound"
+							/>
 						</div>
 					</div>
 					<div

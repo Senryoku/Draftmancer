@@ -484,7 +484,7 @@ io.on("connection", function(socket) {
 			return;
 		}
 
-		const r = Sessions[sessionID].pickCard(userID, data.selectedCard, data.burnedCards);
+		const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 		if (ack) ack(r);
 	});
 
@@ -896,6 +896,21 @@ io.on("connection", function(socket) {
 				});
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+	});
+
+	socket.on("setPickedCardsPerRound", function(pickedCardsPerRound) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
+		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
+
+		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
+		}
 	});
 
 	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {

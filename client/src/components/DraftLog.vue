@@ -229,7 +229,7 @@ export default {
 				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
 				for (let u in this.draftlog.users) {
 					for (let p of this.draftlog.users[u].picks) {
-						p.pick = p.booster.findIndex((cid) => cid === p.pick);
+						p.pick = [p.booster.findIndex((cid) => cid === p.pick)];
 						for (let i = 0; i < p.burn.length; ++i)
 							p.burn[i] = p.booster.findIndex((cid) => cid === p.burn[i]);
 						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...

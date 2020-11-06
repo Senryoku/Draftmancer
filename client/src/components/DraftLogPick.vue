@@ -5,7 +5,7 @@
 			:key="index"
 			:card="carddata[cid]"
 			:language="language"
-			:class="{ 'selected-high': pick.pick === index, burned: pick.burn && pick.burn.includes(index) }"
+			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
 			:lazyLoad="true"
 		></card>
 	</div>

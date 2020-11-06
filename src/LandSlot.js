@@ -1,7 +1,7 @@
 "use strict";
 
 import { getUnique } from "./Cards.js";
-import { getRandomKey, getRandom, range } from "./utils.js";
+import { getRandomKey, getRandom } from "./utils.js";
 import { removeCardFromDict } from "./cardUtils.js";
 import BasicLandIDs from "../client/public/data/BasicLandIDs.json";
 

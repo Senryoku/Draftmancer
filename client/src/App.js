@@ -132,6 +132,7 @@ export default {
 			drafting: false,
 			useCustomCardList: false,
 			customCardList: {},
+			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
 			maxTimer: 75,
 			pickTimer: 75,
@@ -173,7 +174,7 @@ export default {
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 			// Draft Booster
 			pickInFlight: false,
-			selectedCard: undefined,
+			selectedCards: [],
 			burningCards: [],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
@@ -756,7 +757,7 @@ export default {
 				this.pickedThisRound = data.pickedThisRound;
 				if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
 				else this.draftingState = DraftState.Picking;
-				this.selectedCard = undefined;
+				this.selectedCards = [];
 				this.burningCards = [];
 
 				Swal.fire({
@@ -861,7 +862,7 @@ export default {
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${data.card.printed_names[this.language]}!`);
+				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language]).join(', ')}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
@@ -970,12 +971,17 @@ export default {
 			this.socket.emit("pauseDraft");
 		},
 		selectCard: function(e, c) {
-			this.selectedCard = c;
-			this.restoreCard(null, c);
+			if(!this.selectedCards.includes(c)) {
+				if(this.selectedCards.length === this.cardsToPick)
+					this.selectedCards.shift();
+				this.selectedCards.push(c);
+				this.restoreCard(null, c);
+			}
 		},
 		burnCard: function(e, c) {
 			if (this.burningCards.includes(c)) return;
-			if (this.selectedCard === c) this.selectCard(null, null);
+			if (this.selectedCards.includes(c)) 
+				this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
@@ -997,7 +1003,7 @@ export default {
 
 			// A better (?) solution would be something like
 			// 		let cardid = e.dataTransfer.getData("text");
-			// 		if (this.selectedCard && cardid == this.selectedCard.id)
+			// 		if (this.selectedCards && cardid == this.selectedCards.id)
 			// {
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
@@ -1023,13 +1029,13 @@ export default {
 				return;
 			e.preventDefault();
 			let cardid = e.dataTransfer.getData("text");
-			if (!this.selectedCard) {
-				console.error(`dropBoosterCard error: this.selectedCard === ${this.selectedCard}`);
+			if (this.selectedCards.length === 0) {
+				console.error(`dropBoosterCard error: this.selectedCards === ${this.selectedCards}`);
 				return;
 			}
-			if (cardid != this.selectedCard.id) {
+			if (!this.selectedCards.some(c => cardid === c.id)) {
 				console.error(
-					`dropBoosterCard error: cardid (${cardid}) != this.selectedCard.id (${this.selectedCard.id})`
+					`dropBoosterCard error: cardid (${cardid}) != this.selectedCards.id (${this.selectedCards.id})`
 				);
 				return;
 			} else {
@@ -1040,13 +1046,20 @@ export default {
 		},
 		pickCard: function(options) {
 			if (
-				this.pickInFlight || // We already send a pick request and are
-				// waiting for an anwser
-				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) ||
-				!this.selectedCard
+				this.pickInFlight || // We already send a pick request and are waiting for an anwser
+				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) 
 			)
 				return;
-			if (!this.validBurnedCardCount) {
+
+			if (this.selectedCards.length !== this.cardsToPick) {
+				fireToast(
+					"error",
+					`You need to pick ${this.cardsToPick - this.selectedCards.length} more card(s).`
+				);
+				return;
+			}
+
+			if (this.burningCards.length !== this.cardsToBurnThisRound) {
 				fireToast(
 					"error",
 					`You need to burn ${this.cardsToBurnThisRound - this.burningCards.length} more card(s).`
@@ -1064,7 +1077,7 @@ export default {
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.rochesterDraftState.booster.findIndex(c => c === this.selectedCard),
+						this.selectedCards.map(c => this.rochesterDraftState.booster.findIndex(c2 => c === c2)),
 						answer => {
 							this.pickInFlight = false;
 							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
@@ -1075,7 +1088,7 @@ export default {
 					this.socket.emit(
 						"pickCard",
 						{
-							selectedCard: this.booster.findIndex(c => c === this.selectedCard),
+							pickedCards: this.selectedCards.map(c => this.booster.findIndex(c2 => c === c2)),
 							burnedCards: this.burningCards.map(c => this.booster.findIndex(c2 => c === c2)),
 						},
 						answer => {
@@ -1085,9 +1098,9 @@ export default {
 					);
 					this.draftingState = DraftState.Waiting;
 				}
-				if (options && options.toSideboard) this.addToSideboard(this.selectedCard, options);
-				else this.addToDeck(this.selectedCard, options);
-				this.selectedCard = undefined;
+				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
+				else this.addToDeck(this.selectedCards, options);
+				this.selectedCards = [];
 				this.burningCards = [];
 			});
 			this.pickInFlight = true;
@@ -1095,21 +1108,17 @@ export default {
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
 			// Forces a random card if none is selected
-			if (!this.selectedCard) {
-				const randomIdx = Math.floor(Math.random() * this.booster.length);
-				this.selectedCard = this.booster[randomIdx];
+			while(this.selectedCards.length < this.cardsToPick) {
+				let randomIdx;
+				do randomIdx = Math.floor(Math.random() * this.booster.length)
+				while(this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
+				this.selectedCards.push(this.booster[randomIdx]);
 			}
 			// Forces random cards to burn if there isn't enough selected already
-			while (
-				1 + this.burningCards.length < this.booster.length &&
-				this.burningCards.length < this.burnedCardsPerRound
-			) {
+			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * this.booster.length);
-				while (
-					this.booster[randomIdx] === this.selectedCard ||
-					this.burningCards.includes(this.booster[randomIdx])
-				);
+				while (this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
 				this.burningCards.push(this.booster[randomIdx]);
 			}
 			this.pickCard();
@@ -1780,14 +1789,22 @@ export default {
 		},
 		// Deck/Sideboard management
 		addToDeck: function(card, options) {
-			// Handle column sync.
-			this.deck.push(card);
-			this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+			if(Array.isArray(card)) 
+				for(let c of card) this.addToDeck(c, options)
+			else {
+				// Handle column sync.
+				this.deck.push(card);
+				this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+			}
 		},
 		addToSideboard: function(card, options) {
-			// Handle column sync.
-			this.sideboard.push(card);
-			this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+			if(Array.isArray(card))
+				for(let c of card) this.addToSideboard(c, options)
+			else {
+				// Handle column sync.
+				this.sideboard.push(card);
+				this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+			}
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
@@ -1911,16 +1928,11 @@ export default {
 		ReadyState: function() {
 			return ReadyState;
 		},
-		validBurnedCardCount: function() {
-			// Allows for burning less cards only if we're finishing the booster
-			return (
-				this.burningCards.length <= this.burnedCardsPerRound &&
-				(this.burningCards.length === this.burnedCardsPerRound ||
-					this.booster.length === this.burningCards.length + 1)
-			);
+		cardsToPick: function() {
+			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound: function() {
-			return Math.min(this.burnedCardsPerRound, this.booster.length - 1);
+			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		winstonCanSkipPile: function() {
 			const s = this.winstonDraftState;
@@ -2170,6 +2182,10 @@ export default {
 		useCustomCardList: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
+		},
+		pickedCardsPerRound: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setPickedCardsPerRound", this.pickedCardsPerRound);
 		},
 		burnedCardsPerRound: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

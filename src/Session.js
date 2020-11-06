@@ -34,6 +34,7 @@ export const optionProps = [
 	"customCardList",
 	"distributionMode",
 	"customBoosters",
+	"pickedCardsPerRound",
 	"burnedCardsPerRound",
 	"draftLogRecipients",
 	"bracketLocked",
@@ -210,6 +211,7 @@ export function Session(id, owner, options) {
 	this.customCardList = {};
 	this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
+	this.pickedCardsPerRound = 1;
 	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
 	this.bracketLocked = false; // If set, only the owner can edit the results.
@@ -1055,7 +1057,7 @@ export function Session(id, owner, options) {
 		this.nextBooster();
 	};
 
-	this.pickCard = function(userID, cardIdx, burnedCards) {
+	this.pickCard = function(userID, pickedCards, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
 		const boosterIndex = Connections[userID].boosterIndex;
@@ -1064,8 +1066,8 @@ export function Session(id, owner, options) {
 			console.error(err);
 			return { code: 2, error: err };
 		}
-		if (cardIdx >= this.boosters[boosterIndex].length) {
-			const err = `Session.pickCard: Invalid card index ('${cardIdx}') for booster #${boosterIndex} (${this.boosters[boosterIndex]}).`;
+		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length)) {
+			const err = `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`;
 			console.error(err);
 			return { code: 3, error: err };
 		}
@@ -1075,10 +1077,21 @@ export function Session(id, owner, options) {
 			return { code: 4, error: err };
 		}
 
+		if(pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length) || 
+			pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+		{
+			console.error({"pickedCards.length": pickedCards.length, "this.pickedCardsPerRound":this.pickedCardsPerRound, "this.boosters[boosterIndex].length": this.boosters[boosterIndex].length});
+			console.error("pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length ", pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length));
+			console.error("pickedCards.some(idx => idx >= this.boosters[boosterIndex].length) ", pickedCards.some(idx => idx >= this.boosters[boosterIndex].length));
+			const err = `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`;
+			console.error(err);
+			return { code: 1, error: err };
+		}
+
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - 1) ||
+				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
 				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
 		) {
 			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
@@ -1088,22 +1101,23 @@ export function Session(id, owner, options) {
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${
-				this.boosters[boosterIndex][cardIdx].name
+				pickedCards.map(idx => this.boosters[boosterIndex][idx].name)
 			}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
 
-		Connections[userID].pickedCards.push(this.boosters[boosterIndex][cardIdx]);
+		for(let idx of pickedCards)
+			Connections[userID].pickedCards.push(this.boosters[boosterIndex][idx]);
 		Connections[userID].pickedThisRound = true;
 
 		this.draftLog.users[userID].picks.push({
-			pick: cardIdx,
+			pick: pickedCards,
 			burn: burnedCards,
 			booster: this.boosters[boosterIndex].map(c => c.id),
 		});
 
-		let cardsToRemove = [cardIdx];
+		let cardsToRemove = pickedCards;
 		if (burnedCards) {
 			cardsToRemove = cardsToRemove.concat(burnedCards);
 			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
@@ -1130,7 +1144,7 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				card: this.boosters[boosterIndex][cardIdx],
+				cards: pickedCards.map(idx=>this.boosters[boosterIndex][idx].name),
 			});
 		}
 
@@ -1142,18 +1156,21 @@ export function Session(id, owner, options) {
 	};
 
 	this.doBotPick = function(instance, boosterIndex) {
-		const removedIdx = instance.pick(this.boosters[boosterIndex]);
 		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
-		const picked = this.boosters[boosterIndex][removedIdx];
-		this.boosters[boosterIndex].splice(removedIdx, 1);
+		const picked = [];
+		for (let i = 0; i < this.pickedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
+			const pickedIdx = instance.pick(this.boosters[boosterIndex]);
+			picked.push(pickedIdx);
+			this.boosters[boosterIndex].splice(pickedIdx, 1);
+		}
 		const burned = [];
-		for (let i = 0; i < this.burnedCardsPerRound; ++i) {
+		for (let i = 0; i < this.burnedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
 			const burnedIdx = instance.burn(this.boosters[boosterIndex]);
 			burned.push(burnedIdx);
 			this.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
-			pick: removedIdx,
+			pick: picked,
 			burn: burned,
 			booster: startingBooster,
 		});
@@ -1198,9 +1215,9 @@ export function Session(id, owner, options) {
 						console.error(this.disconnectedUsers[userID]);
 						this.disconnectedUsers[userID].bot = new Bot("Bot", userID);
 					}
-					const pickedCard = this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
+					const pickedCards = this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
 					this.disconnectedUsers[userID].pickedThisRound = true;
-					this.disconnectedUsers[userID].pickedCards.push(pickedCard);
+					this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
 					++this.pickedCardsThisRound;
 				} else {
@@ -1459,11 +1476,11 @@ export function Session(id, owner, options) {
 
 			// Immediately pick cards
 			if (!this.disconnectedUsers[uid].pickedThisRound) {
-				const pickedCard = this.doBotPick(
+				const pickedCards = this.doBotPick(
 					this.disconnectedUsers[uid].bot,
 					this.disconnectedUsers[uid].boosterIndex
 				);
-				this.disconnectedUsers[uid].pickedCards.push(pickedCard);
+				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 				++this.pickedCardsThisRound;
 			}
