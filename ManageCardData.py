@@ -316,17 +316,25 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     def selectCard(a, b):
         if 'arena_id' in a and 'arena_id' not in b:
             return a
-        if 'arena_id' in b and 'arena_id' not in a:
+        if 'arena_id' not in a and 'arena_id' in b:
             return b
         if a['set'] in PrimarySets and not b['set'] in PrimarySets:
             return a
         if a['set'] not in PrimarySets and b['set'] in PrimarySets:
+            return b
+        if not a['promo'] and b['promo']:
+            return a
+        if a['promo'] and not b['promo']:
             return b
         return a if a['released_at'] > b['released_at'] or (a['released_at'] == a['released_at'] and (a['collector_number'] < b['collector_number'] if not (a['collector_number'].isdigit() and b['collector_number'].isdigit()) else int(a['collector_number']) < int(b['collector_number']))) else b
 
     for name in cardsByName:
         cardsByName[name] = functools.reduce(
             selectCard, cardsByName[name])['id']
+    # Handle both references to the full names for just the front face
+    for name in list(cardsByName):
+        if " // " in name and name.split(" //")[0] not in cardsByName:
+            cardsByName[name.split(" //")[0]] = cardsByName[name]
 
     with open(FinalDataPath, 'w', encoding="utf8") as outfile:
         json.dump(cards, outfile, ensure_ascii=False)
