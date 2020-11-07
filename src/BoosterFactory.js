@@ -379,7 +379,7 @@ export const SetSpecificFactories = {
 				for(let pickedRarity of pickedRarities) {
 					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
 					removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
-					booster.splice(updatedTargets.rare, 0, pickedCard);
+					booster.unshift(pickedCard);
 				}
 
 				// One random foil
