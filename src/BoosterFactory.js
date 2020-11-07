@@ -382,12 +382,18 @@ export const SetSpecificFactories = {
 					booster.splice(updatedTargets.rare, 0, pickedCard);
 				}
 
-				// One random foil (probability of each rarity unknown)
-				const foilRarity = rollSpecialCardRarity(this.completeCardPool, targets, options);
-				const pickedCard = pickCard(this.completeCardPool[foilRarity], []);
-				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
-				removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
-				booster.unshift(Object.assign({foil: true}, pickedCard));
+				// One random foil
+				let foilRarity = "common";
+				const rarityCheck = Math.random();
+				for (let r in foilRarityRates)
+					if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.completeCardPool[r])) {
+						foilRarity = r;
+						break;
+					}
+				const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
+				if(pickedFoil.id in this.cardPool[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				if(pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+				booster.unshift(Object.assign({foil: true}, pickedFoil));
 
 				return booster;
 			}
