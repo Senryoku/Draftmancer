@@ -426,9 +426,7 @@ for(let cid in Cards) {
 }
 
 export const PaperBoosterFactories = {};
-// For some sets, this description is incomplete (One MDFC per pack isn't inforced for ZNR for example.)
-const excludedSets = ['znr'];
-for(let set of PaperBoosterData.filter(s => !excludedSets.includes(s.code))) {
+for(let set of PaperBoosterData) {
 	if(!constants.PrimarySets.includes(set.code)) {
 		console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
 		continue;
