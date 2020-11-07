@@ -342,39 +342,53 @@ export const SetSpecificFactories = {
 		*/
 		const regex = /Legendary.*Creature/;
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
+		delete filteredCardPool["common"]["a69e6d8f-f742-4508-a83a-38ae84be228c"]; // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.completeCardPool = cardPool;
 		factory.originalGenBooster = factory.generateBooster;
 		factory.legendaryCreatures = legendaryCreatures;
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
-			// TODO! CMR boosters are larger by default
+			// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil 
+			// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
 			if(targets === DefaultBoosterTargets) targets = {
-				common: 12,
-				uncommon: 6,
-				rare: 2,
+				common: 13,
+				uncommon: 3,
+				rare: 1,
 			};
 			const legendaryCounts = countBySlot(this.legendaryCreatures);
 			// Ignore the rule if there's no legendary creatures left
 			if (Object.values(legendaryCounts).every(c => c === 0)) {
 				return this.originalGenBooster(targets);
 			} else {
-				// Roll for legendary rarity
-				const pickedRarities = [(legendaryCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate) ? 'mythic' : 'rare', rollSpecialCardRarity(legendaryCounts, targets, options)];
-				const updatedTargets = Object.assign({}, targets);
-				const pickedCards = [];
-				for(let pickedRarity of pickedRarities) {
-					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
-					removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
+				let updatedTargets = Object.assign({}, targets);
 
-					if (pickedRarity === "mythic") --updatedTargets["rare"];
-					else --updatedTargets[pickedRarity];
-
-					pickedCards.push(pickedCard);
+				let booster = [];
+				// Prismatic Piper instead of a common in about 1 of every 6 packs
+				if(Math.random() < 1/6) {
+					--updatedTargets.common;
+					booster = this.originalGenBooster(updatedTargets);
+					booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
+				} else {
+					booster = this.originalGenBooster(updatedTargets);
 				}
 
-				const booster = this.originalGenBooster(updatedTargets);
-				for(let c of pickedCards)
-					booster.unshift(c);
+				// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
+				const pickedRarities = [rollSpecialCardRarity(legendaryCounts, targets, options), rollSpecialCardRarity(legendaryCounts, targets, options)];
+				while(pickedRarities[0] === "mythic" && pickedRarities[1] === "mythic" && (legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0)) pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, options);
+				for(let pickedRarity of pickedRarities) {
+					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
+					removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+					booster.splice(updatedTargets.rare, 0, pickedCard);
+				}
+
+				// One random foil (probability of each rarity unknown)
+				const foilRarity = rollSpecialCardRarity(this.completeCardPool, targets, options);
+				const pickedCard = pickCard(this.completeCardPool[foilRarity], []);
+				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
+				removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+				booster.unshift(Object.assign({foil: true}, pickedCard));
+
 				return booster;
 			}
 		};
