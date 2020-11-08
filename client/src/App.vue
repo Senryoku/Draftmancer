@@ -876,28 +876,13 @@
 							@click="displayedModal = 'deckStats'"
 							v-tooltip="'Deck Statistics'"
 						></i>
-						<span v-show="draftingState == DraftState.Brewing">
-							<input type="checkbox" id="autoLand" v-model="autoLand" />
-							<label
-								for="autoLand"
-								v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
-								>Auto. Land</label
-							>
-							<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
-								<label class="land-input" :key="c">
-									<img :src="`img/mana/${c}.svg`" class="mana-icon" />
-									<input
-										class="small-number-input"
-										type="number"
-										:id="`${c}-mana`"
-										v-model.number="lands[c]"
-										min="0"
-										max="999"
-									/>
-								</label>
-							</template>
-							Adding {{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
-						</span>
+						<land-control
+							v-show="draftingState == DraftState.Brewing"
+							:lands="lands"
+							v-bind:autoland.sync="autoLand"
+							@update:lands="(c, n) => (lands[c] = n)"
+						>
+						</land-control>
 					</div>
 				</div>
 

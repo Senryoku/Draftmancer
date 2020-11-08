@@ -26,6 +26,7 @@ import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import Bracket from "./components/Bracket.vue";
 import GridDraft from "./components/GridDraft.vue";
+import LandControl from "./components/LandControl.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import SetRestriction from "./components/SetRestriction.vue";
 
@@ -83,6 +84,7 @@ export default {
 		CardList: () => import("./components/CardList.vue"),
 		CardStats: () => import("./components/CardStats.vue"),
 		GridDraft,
+		LandControl,
 		Bracket,
 		PatchNotes,
 		SetRestriction,
