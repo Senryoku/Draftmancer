@@ -361,7 +361,7 @@ export function Session(id, owner, options) {
 	this.unrestrictedCardPool = function() {
 		if(this.ignoreCollections) return true;
 
-		for (let userID in this.users) {
+		for (let userID of this.users) {
 			if(Connections[userID].useCollection && !isEmpty(Connections[userID].collection))
 				return false;
 		}
@@ -570,10 +570,12 @@ export function Session(id, owner, options) {
 				return new BoosterFactory(cardPool, landSlot, options);
 			};
 
+			const boosterSpecificRules = options.useCustomBoosters && this.customBoosters.some(v => v !== "");
+
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				// Don't compute cardPoolByRarity if it's not necessary
-				if(this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+				if(!boosterSpecificRules && this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
 					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
 				} else {
 					let localCollection = this.cardPoolByRarity();
@@ -601,7 +603,7 @@ export function Session(id, owner, options) {
 			}
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (options.useCustomBoosters && this.customBoosters.some(v => v !== "")) {
+			if (boosterSpecificRules) {
 				const boosterFactories = [];
 				const usedSets = {};
 
