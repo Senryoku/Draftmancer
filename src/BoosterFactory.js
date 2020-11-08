@@ -416,7 +416,10 @@ function weightedRandomPick(arr, totalWeight, picked = []) {
 		++idx;
 		acc += arr[idx].weight;
 	}
-	if(arr[idx] in picked) return weightedRandomPick(arr, totalWeight, picked);
+	// Duplicate protection (allows duplicates between foil and non-foil)
+	// Not sure if we should checks ids or (set, number) here.
+	if(picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+		 return weightedRandomPick(arr, totalWeight, picked);
 	return arr[idx];
 }
 
