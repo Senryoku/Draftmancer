@@ -248,14 +248,16 @@ export function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
-	axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
-		localSess.draftLog, 
-		{
-			headers: {
-				'access-key': PersistenceKey,
+	if(type === "Draft") {
+		axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
+			localSess.draftLog, 
+			{
+				headers: {
+					'access-key': PersistenceKey,
+				}
 			}
-		}
-	);
+		);
+	}
 
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",
