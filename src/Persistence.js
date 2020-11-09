@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
 }
-import AWS from "aws-sdk";
 
 import { Connection, Connections } from "./Connection.js";
 import { Session, Sessions, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
@@ -21,130 +20,96 @@ const MixInstance = MixPanelToken
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
 
-const TableNames = {
-	Connections: process.env.TABLENAME_CONNECTIONS ? process.env.TABLENAME_CONNECTIONS : "mtga-draft-connections",
-	Sessions: process.env.TABLENAME_SESSIONS ? process.env.TABLENAME_SESSIONS : "mtga-draft-sessions",
-	DraftLogs: process.env.TABLENAME_SESSIONLOGS ? process.env.TABLENAME_SESSIONLOGS : "mtga-draft-session-logs",
-};
+import axios from "axios";
 
-AWS.config.update({
-	region: process.env.AWS_REGION,
-	endpoint: process.env.AWS_ENDPOINT,
-});
-
-const docClient = new AWS.DynamoDB.DocumentClient();
-
-function filterEmptyStr(obj) {
-	if (obj === "") return "(EmptyString)";
-	return obj;
-}
-
-function restoreEmptyStr(obj) {
-	if (obj === "(EmptyString)") return "";
-	if (Array.isArray(obj)) {
-		let r = [];
-		for (let i of obj) {
-			r.push(restoreEmptyStr(i));
-		}
-		return r;
-	}
-	return obj;
-}
-
-// Connections and Session are obsolete after two days
-function isObsolete(item) {
-	return Math.floor((Date.now() - item.timestamp) / 1000 / 60 / 60 / 24) > 2;
-}
+const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ? process.env.PERSISTENCE_STORE_URL : "http://localhost:3008";
+const PersistenceKey = process.env.PERSISTENCE_KEY ? process.env.PERSISTENCE_KEY : "1234";
 
 async function requestSavedConnections() {
-	var connectionsRequestParams = {
-		TableName: TableNames["Connections"],
-		ConsistentRead: true,
-		ReturnConsumedCapacity: "TOTAL",
-	};
 	let InactiveConnections = {};
 
 	try {
-		const data = await docClient.scan(connectionsRequestParams).promise();
-
-		for (let c of data.Items) {
-			const restoredID = restoreEmptyStr(c.userID);
-			InactiveConnections[restoredID] = new Connection(null, restoredID, restoreEmptyStr(c.data.userName));
-			for (let prop of Object.getOwnPropertyNames(c.data)) {
-				InactiveConnections[restoredID][prop] = restoreEmptyStr(c.data[prop]);
+		const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
+			headers: {
+				'access-key': PersistenceKey,
+				'Accept-Encoding': 'gzip, deflate'
 			}
-
-			if (isObsolete(c))
-				docClient.delete({ TableName: TableNames["Connections"], Key: { userID: c.userID } }, err => {
-					if (err) console.log(err);
-					else console.log("Deleted obsolete connection ", c.userID);
-				});
+		});
+		if(response.status !== 200) {
+			console.error(`Error ${response.status}: ${response.statusText}`);
+			console.error(`Data: `, response.data)
+		} else {
+			const connections = response.data;
+			if(connections && connections.length > 0) {
+				for (let c of connections) {
+					InactiveConnections[c.userID] = new Connection(null, c.userID, c.userName);
+					for (let prop of Object.getOwnPropertyNames(c)) {
+						InactiveConnections[c.userID][prop] = c[prop];
+					}
+				}
+				console.log(`Restored ${connections.length} saved connections.`);
+			}
 		}
-		console.log(`Restored ${data.Count} saved connections.`, data.ConsumedCapacity);
 	} catch (err) {
-		console.log("error: ", err);
+		console.log("Error (requestSavedConnections): ", err);
 	}
 
 	return InactiveConnections;
 }
 
 async function requestSavedSessions() {
-	var connections = {
-		TableName: TableNames["Sessions"],
-		ConsistentRead: true,
-		ReturnConsumedCapacity: "TOTAL",
-	};
-
 	let InactiveSessions = {};
 	try {
-		const data = await docClient.scan(connections).promise();
-
-		for (let s of data.Items) {
-			const fixedID = restoreEmptyStr(s.id);
-			if (s.data.bracket) s.data.bracket.players = s.data.bracket.players.map(n => restoreEmptyStr(n));
-
-			InactiveSessions[fixedID] = new Session(fixedID, null);
-			for (let prop of Object.getOwnPropertyNames(s.data).filter(
-				p => !["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
-			)) {
-				InactiveSessions[fixedID][prop] = restoreEmptyStr(s.data[prop]);
+		const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
+			headers: {
+		  		'access-key': PersistenceKey,
+				'Accept-Encoding': 'gzip, deflate'
 			}
+		});
+		if(response.status !== 200) {
+			console.error(`Error ${response.status}: ${response.statusText}`);
+			console.error(`Data: `, response.data)
+		} else {
+			if(response.data && response.data.length > 0) {
+				for (let s of response.data) {
+					InactiveSessions[s.id] = new Session(s.id, null);
+					for (let prop of Object.getOwnPropertyNames(s).filter(
+						p => !["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
+					)) {
+						InactiveSessions[s.id][prop] = s[prop];
+					}
 
-			const copyProps = (obj, target) => {
-				for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
-			};
+					const copyProps = (obj, target) => {
+						for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
+					};
 
-			if (s.data.botsInstances) {
-				InactiveSessions[fixedID].botsInstances = [];
-				for (let bot of s.data.botsInstances) {
-					const newBot = new Bot(bot.name, bot.id);
-					copyProps(bot, newBot);
-					InactiveSessions[fixedID].botsInstances.push(newBot);
+					if (s.botsInstances) {
+						InactiveSessions[s.id].botsInstances = [];
+						for (let bot of s.botsInstances) {
+							const newBot = new Bot(bot.name, bot.id);
+							copyProps(bot, newBot);
+							InactiveSessions[s.id].botsInstances.push(newBot);
+						}
+					}
+
+					if (s.winstonDraftState) {
+						InactiveSessions[s.id].winstonDraftState = new WinstonDraftState();
+						copyProps(s.winstonDraftState, InactiveSessions[s.id].winstonDraftState);
+					}
+
+					if (s.gridDraftState) {
+						InactiveSessions[s.id].gridDraftState = new GridDraftState();
+						copyProps(s.gridDraftState, InactiveSessions[s.id].gridDraftState);
+					}
+
+					if (s.rochesterDraftState) {
+						InactiveSessions[s.id].rochesterDraftState = new RochesterDraftState();
+						copyProps(s.rochesterDraftState, InactiveSessions[s.id].rochesterDraftState);
+					}
 				}
+				console.log(`Restored ${response.data.length} saved sessions.`);
 			}
-
-			if (s.data.winstonDraftState) {
-				InactiveSessions[fixedID].winstonDraftState = new WinstonDraftState();
-				copyProps(s.data.winstonDraftState, InactiveSessions[fixedID].winstonDraftState);
-			}
-
-			if (s.data.gridDraftState) {
-				InactiveSessions[fixedID].gridDraftState = new GridDraftState();
-				copyProps(s.data.gridDraftState, InactiveSessions[fixedID].gridDraftState);
-			}
-
-			if (s.data.rochesterDraftState) {
-				InactiveSessions[fixedID].rochesterDraftState = new RochesterDraftState();
-				copyProps(s.data.rochesterDraftState, InactiveSessions[fixedID].rochesterDraftState);
-			}
-
-			if (isObsolete(s))
-				docClient.delete({ TableName: TableNames["Sessions"], Key: { id: s.id } }, err => {
-					if (err) console.log(err);
-					else console.log("Deleted obsolete session ", s.id);
-				});
 		}
-		console.log(`Restored ${data.Count} saved sessions.`, data.ConsumedCapacity);
 	} catch (err) {
 		console.log("error: ", err);
 	}
@@ -152,9 +117,7 @@ async function requestSavedSessions() {
 	return InactiveSessions;
 }
 
-async function dumpToDynamoDB(exitOnCompletion = false) {
-	let ConsumedCapacity = 0;
-
+async function tempDump(exitOnCompletion = false) {
 	// Avoid user interaction during saving
 	// (Disconnecting the socket would be better, but explicitly
 	// disconnecting socket prevents their automatic reconnection)
@@ -170,69 +133,48 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 		}
 	}
 
-	const batchWrite = async function(table, Items) {
-		console.log(`batchWrite of length ${Items.length} to ${table}.`);
-		const params = {
-			RequestItems: {},
-			ReturnConsumedCapacity: "TOTAL",
-		};
-		params.RequestItems[table] = Items;
-
-		try {
-			const putResult = await docClient.batchWrite(params).promise();
-			if (putResult.ConsumedCapacity) return putResult.ConsumedCapacity[0].CapacityUnits;
-		} catch (err) {
-			console.log("error: ", err);
-		}
-		return 0;
-	};
-
 	let Promises = [];
 
-	let ConnectionsRequests = [];
+	let PoDConnections = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
-		const Item = {
-			userID: filterEmptyStr(userID),
-			timestamp: Date.now(),
-			data: {},
-		};
+		const PoDConnection = {};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) Item.data[prop] = c[prop];
+			if (!(c[prop] instanceof Function)) PoDConnection[prop] = c[prop];
 		}
 
-		ConnectionsRequests.push({ PutRequest: { Item: Item } });
-
-		if (ConnectionsRequests.length === 25) {
-			Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
-			ConnectionsRequests = [];
-		}
-	}
-	if (ConnectionsRequests.length > 0) {
-		Promises.push(batchWrite(TableNames["Connections"], ConnectionsRequests));
-		ConnectionsRequests = [];
+		PoDConnections.push(PoDConnection);
 	}
 
-	let SessionsRequests = [];
+	try {
+		Promises.push(axios.post(`${PersistenceStoreURL}/temp/connections`, 
+			PoDConnections, 
+			{
+				headers: {
+					'access-key': PersistenceKey,
+				}
+			}
+		));
+	} catch (err) {
+		console.log("Error: ", err);
+	}
+	
+	let PoDSessions = [];
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
-		const Item = {
-			id: filterEmptyStr(sessionID),
-			timestamp: Date.now(),
-			data: {},
-		};
+		const PoDSession = {};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			p => !["users", "countdownInterval", "botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) Item.data[prop] = s[prop];
+			if (!(s[prop] instanceof Function)) PoDSession[prop] = s[prop];
 		}
 
 		if (s.drafting) {
 			// Flag every user as disconnected so they can reconnect later
 			for (let userID of s.users) {
-				Item.data.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+				PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
 			const copyProps = (obj, target) => {
@@ -241,75 +183,54 @@ async function dumpToDynamoDB(exitOnCompletion = false) {
 			};
 
 			if (s.botsInstances) {
-				Item.data.botsInstances = [];
+				PoDSession.botsInstances = [];
 				for (let bot of s.botsInstances) {
 					let podbot = {};
 					copyProps(bot, podbot);
-					Item.data.botsInstances.push(podbot);
+					PoDSession.botsInstances.push(podbot);
 				}
 			}
 
 			if (s.winstonDraftState) {
-				Item.data.winstonDraftState = {};
-				copyProps(s.winstonDraftState, Item.data.winstonDraftState);
+				PoDSession.winstonDraftState = {};
+				copyProps(s.winstonDraftState, PoDSession.winstonDraftState);
 			}
 
 			if (s.gridDraftState) {
-				Item.data.gridDraftState = {};
-				copyProps(s.gridDraftState, Item.data.gridDraftState);
+				PoDSession.gridDraftState = {};
+				copyProps(s.gridDraftState, PoDSession.gridDraftState);
 			}
 
 			if (s.rochesterDraftState) {
-				Item.data.rochesterDraftState = {};
-				copyProps(s.rochesterDraftState, Item.data.rochesterDraftState);
+				PoDSession.rochesterDraftState = {};
+				copyProps(s.rochesterDraftState, PoDSession.rochesterDraftState);
 			}
 		}
 
-		SessionsRequests.push({ PutRequest: { Item: Item } });
-		if (SessionsRequests.length === 25) {
-			Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
-			SessionsRequests = [];
-		}
+		PoDSessions.push(PoDSession);
 	}
 
-	if (SessionsRequests.length > 0) {
-		Promises.push(batchWrite(TableNames["Sessions"], SessionsRequests));
-		SessionsRequests = [];
+	try {
+		Promises.push(axios.post(`${PersistenceStoreURL}/temp/sessions`, 
+			PoDSessions, 
+			{
+				headers: {
+					'access-key': PersistenceKey,
+				}
+			}
+		));
+	} catch (err) {
+		console.log("Error: ", err);
 	}
 
 	console.log("Waiting for all promises to return...");
-	await Promise.all(Promises).then(vals => {
-		console.log("All batchWrites returned.");
-		for (let v of vals) ConsumedCapacity += v;
+	await Promise.all(Promises).then(() => {
+		console.log("All temp store returned.");
 	});
 
-	console.log(`dumpToDynamoDB: done. Total ConsumedCapacity: ${ConsumedCapacity}`);
 	if (exitOnCompletion) process.exit(0);
 }
 
-async function logSessionToDynamoDB(type, localSess) {
-	if (DisablePersistence) return;
-	const params = {
-		TableName: TableNames.DraftLogs,
-		ReturnConsumedCapacity: "TOTAL",
-		Item: {
-			id: filterEmptyStr(localSess.id),
-			time: new Date().getTime(),
-			type: type === "" ? null : type,
-			session: localSess,
-		},
-	};
-
-	try {
-		const putResult = await docClient.put(params).promise();
-		console.log(
-			`Saved session log '${type}' '${localSess.id}' (ConsumedCapacity : ${putResult.ConsumedCapacity.CapacityUnits})`
-		);
-	} catch (err) {
-		console.error("saveDraftlog error: ", err);
-		console.error(params);
-	}
-}
 
 export function logSession(type, session) {
 	if (!MixInstance) return;
@@ -327,7 +248,14 @@ export function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
-	//logSessionToDynamoDB(type, localSess);
+	axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
+		localSess.draftLog, 
+		{
+			headers: {
+				'access-key': PersistenceKey,
+			}
+		}
+	);
 
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",
@@ -384,8 +312,8 @@ if (!DisablePersistence) {
 	 */
 	process.on("SIGTERM", () => {
 		console.log("Received SIGTERM.");
-		dumpToDynamoDB(true);
-		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		tempDump(true);
+		// Gives tempDump 20sec. to finish saving everything.
 		setTimeout(() => {
 			process.exit(0);
 		}, 20000);
@@ -393,8 +321,8 @@ if (!DisablePersistence) {
 
 	process.on("SIGINT", () => {
 		console.log("Received SIGINT.");
-		dumpToDynamoDB(true);
-		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		tempDump(true);
+		// Gives tempDump 20sec. to finish saving everything.
 		setTimeout(() => {
 			process.exit(0);
 		}, 20000);
@@ -403,13 +331,17 @@ if (!DisablePersistence) {
 	process.on("uncaughtException", err => {
 		console.error("Uncaught Exception thrown: ");
 		console.error(err);
-		dumpToDynamoDB(true);
-		// Gives dumpToDynamoDB 20sec. to finish saving everything.
+		tempDump(true);
+		// Gives tempDump 20sec. to finish saving everything.
 		setTimeout(() => {
 			process.exit(1);
 		}, 20000);
 	});
 
-	InactiveSessions = requestSavedSessions();
 	InactiveConnections = requestSavedConnections();
+	InactiveSessions = requestSavedSessions();
+	Promise.all([InactiveConnections, InactiveSessions]).then((values) => {
+		InactiveConnections = values[0];
+		InactiveSessions = values[1];
+	});
 }
