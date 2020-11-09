@@ -1062,44 +1062,27 @@ export function Session(id, owner, options) {
 	this.pickCard = function(userID, pickedCards, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
+		const reportError = (code, err) => {
+			console.error(err);
+			return { code: code, error: err };
+		};
+
 		const boosterIndex = Connections[userID].boosterIndex;
-		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length) {
-			const err = `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`;
-			console.error(err);
-			return { code: 2, error: err };
-		}
-		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length)) {
-			const err = `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 3, error: err };
-		}
-		if (Connections[userID].pickedThisRound) {
-			const err = `Session.pickCard: User '${userID}' already picked a card this round.`;
-			console.error(err);
-			return { code: 4, error: err };
-		}
-
-		if(pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length) || 
-			pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
-		{
-			console.error({"pickedCards.length": pickedCards.length, "this.pickedCardsPerRound":this.pickedCardsPerRound, "this.boosters[boosterIndex].length": this.boosters[boosterIndex].length});
-			console.error("pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length ", pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length));
-			console.error("pickedCards.some(idx => idx >= this.boosters[boosterIndex].length) ", pickedCards.some(idx => idx >= this.boosters[boosterIndex].length));
-			const err = `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 1, error: err };
-		}
-
+		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length)
+			return reportError(2, `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
+		if(!pickedCards || pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length))
+			return reportError(1, `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`);
+		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+			return reportError(3, `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`);
+		if (Connections[userID].pickedThisRound)
+			return reportError(4, `Session.pickCard: User '${userID}' already picked a card this round.`);
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
-				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
-		) {
-			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 1, error: err };
-		}
+			burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
+			burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+		)
+			return reportError(5, `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`);
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${
@@ -1120,10 +1103,9 @@ export function Session(id, owner, options) {
 		});
 
 		let cardsToRemove = pickedCards;
-		if (burnedCards) {
+		if (burnedCards)
 			cardsToRemove = cardsToRemove.concat(burnedCards);
-			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
-		}
+		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
 
