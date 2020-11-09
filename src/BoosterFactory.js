@@ -477,17 +477,20 @@ for(let set of PaperBoosterData) {
 				for(let sheetName in boosterContent.sheets) {
 					if(this.set.sheets[sheetName].balance_colors) {
 						const sheet = this.set.colorBalancedSheets[sheetName];
+						const pickedCards = [];
 						for(let color of "WUBRG") {
-							booster.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, booster));
+							pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, booster));
 						}
-						const cardsToPick = boosterContent.sheets[sheetName] - booster.length;
+						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
 						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * booster.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
 						for(let i = 0; i < cardsToPick; ++i) {
 							if(Math.random() < x)
-								booster.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, booster));
+								pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, booster));
 							else
-								booster.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, booster));
+								pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, booster));
 						}
+						shuffleArray(pickedCards);
+						booster.push(...pickedCards);
 					} else {
 						for(let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
 							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
