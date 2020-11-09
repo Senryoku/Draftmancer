@@ -20,7 +20,6 @@ import Vue from "vue";
 import VTooltip from "v-tooltip";
 import { getUrlVars } from "./helper.js";
 import Bracket from "./components/Bracket.vue";
-import { loadCards, addLanguage } from "./Cards.js";
 
 Vue.use(VTooltip);
 VTooltip.options.defaultPlacement = "bottom-start";
@@ -54,18 +53,6 @@ export default {
 			}
 		} catch (e) {
 			this.error = "Client-side error.";
-		}
-
-		try {
-			const r = await fetch(`/getdraftlog/${this.sessionID}`);
-			if (r.status === 200) {
-				this.draftlog = await r.json();
-				await loadCards();
-				const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
-				addLanguage("en", DefaultLoc);
-			}
-		} catch (e) {
-			console.error("Client-side error: ", e);
 		}
 	},
 };

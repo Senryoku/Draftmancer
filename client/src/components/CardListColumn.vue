@@ -12,14 +12,19 @@
 					v-else-if="missingCard[card.id] === 'Missing'"
 					v-tooltip="'You do not own this card in MTGA.'"
 				></i>
+				<i
+					class="fas fa-exclamation-triangle red"
+					v-else-if="missingCard[card.id] === 'NonExistent'"
+					v-tooltip="'This card is not available on MTGA.'"
+				></i>
 			</div>
 		</card>
 	</div>
 </template>
 
 <script>
+import MTGACards from "../../public/data/MTGACards.json";
 import Card from "./Card.vue";
-import { Cards } from "./../Cards.js";
 
 export default {
 	props: {
@@ -32,12 +37,14 @@ export default {
 	computed: {
 		missingCard: function () {
 			let r = {};
-			const collectionCards = Object.keys(this.collection).map((cid) => Cards[cid]);
+			const MTGACardsArr = Object.values(MTGACards);
 			for (let card of this.column) {
-				if (card.id in this.collection) {
+				if (card.arena_id in this.collection) {
 					r[card.id] = "Present";
 				} else {
-					if (collectionCards.find((c) => c && c.name === card.name)) r[card.id] = "Equivalent";
+					const alternates = MTGACardsArr.filter((c) => c && c.name === card.name && c.arena_id);
+					if (alternates.length === 0) r[card.id] = "NonExistent";
+					else if (alternates.some((c) => this.collection[c.arena_id] > 0)) r[card.id] = "Equivalent";
 					else r[card.id] = "Missing";
 				}
 			}
@@ -56,9 +63,10 @@ export default {
 
 .collection-warning {
 	pointer-events: all;
-}
-
-.collection-warning i {
+	position: absolute;
+	top: 0.55em;
+	left: -0.25em;
+	z-index: 1;
 	text-shadow: 0 0 3px black;
 }
 </style>

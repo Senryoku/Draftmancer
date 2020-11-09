@@ -5,9 +5,9 @@ export default function parseCost(cost) {
 		cmc: 0,
 		colors: [],
 	};
+	if (!cost || cost === "") return r;
 	// Use only the first part of split cards
 	if (cost.includes("//")) cost = cost.split("//")[0].trim();
-	if (!cost || cost === "") return r;
 	let symbols = cost.match(/({[^}]+})/g);
 	for (let s of symbols) {
 		r.cmc += ManaSymbols[s].cmc;

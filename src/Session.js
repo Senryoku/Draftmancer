@@ -5,11 +5,11 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import Cards from "./Cards.js";
+import { Cards } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
-import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories } from "./BoosterFactory.js";
+import { BoosterFactory, ColorBalancedSlot, SetSpecificFactories, PaperBoosterFactories, DefaultBoosterTargets } from "./BoosterFactory.js";
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
@@ -34,6 +34,7 @@ export const optionProps = [
 	"customCardList",
 	"distributionMode",
 	"customBoosters",
+	"pickedCardsPerRound",
 	"burnedCardsPerRound",
 	"draftLogRecipients",
 	"bracketLocked",
@@ -187,7 +188,7 @@ export function Session(id, owner, options) {
 
 	// Options
 	this.ownerIsPlayer = true;
-	this.setRestriction = [constants.MTGSets[constants.MTGSets.length - 1]];
+	this.setRestriction = [constants.MTGASets[constants.MTGASets.length - 1]];
 	this.isPublic = false;
 	this.description = "";
 	this.ignoreCollections = false;
@@ -197,11 +198,7 @@ export function Session(id, owner, options) {
 	this.maxTimer = 75;
 	this.maxPlayers = 8;
 	this.mythicPromotion = true;
-	this.boosterContent = {
-		common: 10,
-		uncommon: 3,
-		rare: 1,
-	};
+	this.boosterContent = DefaultBoosterTargets;
 	this.colorBalance = true;
 	this.maxDuplicates = {
 		common: 16,
@@ -214,6 +211,7 @@ export function Session(id, owner, options) {
 	this.customCardList = {};
 	this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
+	this.pickedCardsPerRound = 1;
 	this.burnedCardsPerRound = 0;
 	this.draftLogRecipients = "everyone";
 	this.bracketLocked = false; // If set, only the owner can edit the results.
@@ -299,6 +297,17 @@ export function Session(id, owner, options) {
 		}
 	};
 
+	this.setCustomCardList = function(cardList) {
+		this.useCustomCardList = true;
+		this.customCardList = cardList;
+		for (let user of this.users) {
+			Connections[user].socket.emit("sessionOptions", {
+				useCustomCardList: this.useCustomCardList,
+				customCardList: this.customCardList,
+			});
+		}
+	};
+
 	this.setTeamDraft = function(teamDraft) {
 		if (this.teamDraft != teamDraft) {
 			this.teamDraft = teamDraft;
@@ -348,20 +357,23 @@ export function Session(id, owner, options) {
 		Connections[userID].socket.emit("sessionOptions", options);
 	};
 
-	// Returns current card pool according to all session options (Collections, setRestrictions...)
-	this.cardPool = function() {
-		const user_list = [...this.users];
-		let cardPool = {};
+	// Returns true if the card pool is not restricted by players collections (and ignoreCollections is true or no-one is using their collection)
+	this.unrestrictedCardPool = function() {
+		if(this.ignoreCollections) return true;
 
-		// If none of the user has uploaded their collection/doesn't want to use it, or the ignoreCollections flag is set, return all cards.
-		let all_cards = true;
-		for (let i = 0; i < user_list.length; ++i) {
-			all_cards =
-				all_cards &&
-				(!Connections[user_list[i]].useCollection || isEmpty(Connections[user_list[i]].collection));
+		for (let userID of this.users) {
+			if(Connections[userID].useCollection && !isEmpty(Connections[userID].collection))
+				return false;
 		}
 
-		if (this.ignoreCollections || all_cards) {
+		return true;
+	}
+
+	// Returns current card pool according to all session options (Collections, setRestrictions...)
+	this.cardPool = function() {
+		let cardPool = {};
+
+		if (this.unrestrictedCardPool()) {
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
 				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
@@ -553,44 +565,50 @@ export function Session(id, owner, options) {
 
 			const getBoosterFactory = function(set, cardPool, landSlot, options) {
 				// Check for a special booster factory
-				return set && set in SetSpecificFactories
-					? SetSpecificFactories[set](cardPool, landSlot, options)
-					: new BoosterFactory(cardPool, landSlot, options);
+				if(set && set in SetSpecificFactories)
+					return SetSpecificFactories[set](cardPool, landSlot, options);				
+				return new BoosterFactory(cardPool, landSlot, options);
 			};
+
+			const boosterSpecificRules = options.useCustomBoosters && this.customBoosters.some(v => v !== "");
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
-				let localCollection = this.cardPoolByRarity();
-				let defaultLandSlot = null;
-				if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
-					defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
-				defaultFactory = getBoosterFactory(
-					this.setRestriction.length === 1 ? this.setRestriction[0] : null,
-					localCollection,
-					defaultLandSlot,
-					BoosterFactoryOptions
-				);
-				// Make sure we have enough cards
-				for (let slot of ["common", "uncommon", "rare"]) {
-					const card_count = countCards(defaultFactory.cardPool[slot]);
-					const card_target = targets[slot] * boosterQuantity;
-					if (card_count < card_target) {
-						const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-						this.emitMessage("Error generating boosters", msg);
-						console.warn(msg);
-						return false;
+				// Don't compute cardPoolByRarity if it's not necessary
+				if(!boosterSpecificRules && this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
+				} else {
+					let localCollection = this.cardPoolByRarity();
+					let defaultLandSlot = null;
+					if (this.setRestriction.length === 1 && this.setRestriction[0] in SpecialLandSlots)
+						defaultLandSlot = SpecialLandSlots[this.setRestriction[0]];
+					defaultFactory = getBoosterFactory(
+						this.setRestriction.length === 1 ? this.setRestriction[0] : null,
+						localCollection,
+						defaultLandSlot,
+						BoosterFactoryOptions
+					);
+					// Make sure we have enough cards
+					for (let slot of ["common", "uncommon", "rare"]) {
+						const card_count = countCards(defaultFactory.cardPool[slot]);
+						const card_target = targets[slot] * boosterQuantity;
+						if (card_count < card_target) {
+							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
+							this.emitMessage("Error generating boosters", msg);
+							console.warn(msg);
+							return false;
+						}
 					}
 				}
 			}
 
 			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (options.useCustomBoosters && this.customBoosters.some(v => v !== "")) {
+			if (boosterSpecificRules) {
 				const boosterFactories = [];
 				const usedSets = {};
 
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-				const addLandSlot =
-					this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
+				const addLandSlot = this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
 				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
 					defaultFactory.landSlot =
 						this.setRestriction.length === 0
@@ -608,7 +626,7 @@ export function Session(id, owner, options) {
 								// Random booster from one of the sets in Card Pool
 								boosterSet =
 									this.setRestriction.length === 0
-										? getRandom(constants.MTGSets)
+										? getRandom(constants.MTGASets)
 										: getRandom(this.setRestriction);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
@@ -652,12 +670,12 @@ export function Session(id, owner, options) {
 					boosterFactories.push(playerBoosterFactories);
 				}
 
-				// Generate Boosters
-				this.boosters = [];
 				// Implements distribution mode 'shufflePlayerBoosters'
 				if (this.distributionMode === "shufflePlayerBoosters")
 					for (let rules of boosterFactories) shuffleArray(rules);
 
+				// Generate Boosters
+				this.boosters = [];
 				for (let b = 0; b < this.boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterFactories[p][b];
@@ -668,6 +686,17 @@ export function Session(id, owner, options) {
 				}
 
 				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(this.boosters);
+
+				// Boosters within a round much be of the same length.
+				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
+				if (this.distributionMode !== "regular") {
+					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
+						const msg = `Inconsistent booster sizes`;
+						this.emitMessage("Error generating boosters", msg);
+						console.error(msg)
+						return false;
+					}
+				}
 			} else {
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
@@ -864,9 +893,9 @@ export function Session(id, owner, options) {
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
-			if (s.boosters[0][idx] > 0) {
+			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
-				s.boosters[0][idx] = -1;
+				s.boosters[0][idx] = null;
 				++pickedCards;
 			}
 		}
@@ -976,11 +1005,15 @@ export function Session(id, owner, options) {
 		}
 
 		// Draft Log initialization
+		const carddata = {};
+		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
 		this.draftLog = {
+			version: "2.0",
 			sessionID: this.id,
 			time: Date.now(),
 			setRestriction: this.setRestriction,
-			boosters: JSON.parse(JSON.stringify(this.boosters)),
+			boosters: this.boosters.map(b => b.map(c => c.id)),
+			carddata: carddata,
 			users: {},
 			teamDraft: this.teamDraft,
 		};
@@ -1026,7 +1059,7 @@ export function Session(id, owner, options) {
 		this.nextBooster();
 	};
 
-	this.pickCard = function(userID, cardID, burnedCards) {
+	this.pickCard = function(userID, pickedCards, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
 		const boosterIndex = Connections[userID].boosterIndex;
@@ -1035,8 +1068,8 @@ export function Session(id, owner, options) {
 			console.error(err);
 			return { code: 2, error: err };
 		}
-		if (!this.boosters[boosterIndex].includes(cardID)) {
-			const err = `Session.pickCard: cardID ('${cardID}') not found in booster #${boosterIndex}.`;
+		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length)) {
+			const err = `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`;
 			console.error(err);
 			return { code: 3, error: err };
 		}
@@ -1046,48 +1079,53 @@ export function Session(id, owner, options) {
 			return { code: 4, error: err };
 		}
 
+		if(pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length) || 
+			pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+		{
+			console.error({"pickedCards.length": pickedCards.length, "this.pickedCardsPerRound":this.pickedCardsPerRound, "this.boosters[boosterIndex].length": this.boosters[boosterIndex].length});
+			console.error("pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length ", pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length));
+			console.error("pickedCards.some(idx => idx >= this.boosters[boosterIndex].length) ", pickedCards.some(idx => idx >= this.boosters[boosterIndex].length));
+			const err = `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`;
+			console.error(err);
+			return { code: 1, error: err };
+		}
+
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-			(burnedCards.length !== this.burnedCardsPerRound &&
-				this.boosters[boosterIndex].length !== 1 + burnedCards.length) || // If there's enough cards left, the proper amount of burned card should be supplied
-				burnedCards.some(c => !this.boosters[boosterIndex].includes(c)))
+				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
+				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
 		) {
-			const err = `Session.pickCard: Invalid burned cards.`;
+			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
 			console.error(err);
 			return { code: 1, error: err };
 		}
 
 		console.log(
-			`Session ${this.id}: ${
-				Connections[userID].userName
-			} [${userID}] picked card ${cardID} from booster #${boosterIndex}, burning ${
-				burnedCards && burnedCards.length > 0 ? burnedCards : "nothing"
+			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${
+				pickedCards.map(idx => this.boosters[boosterIndex][idx].name)
+			}' from booster #${boosterIndex}, burning ${
+				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
+
+		for(let idx of pickedCards)
+			Connections[userID].pickedCards.push(this.boosters[boosterIndex][idx]);
+		Connections[userID].pickedThisRound = true;
+
 		this.draftLog.users[userID].picks.push({
-			pick: cardID,
+			pick: pickedCards,
 			burn: burnedCards,
-			booster: JSON.parse(JSON.stringify(this.boosters[boosterIndex])),
+			booster: this.boosters[boosterIndex].map(c => c.id),
 		});
 
-		Connections[userID].pickedCards.push(cardID);
-		Connections[userID].pickedThisRound = true;
-		// Removes the first occurence of cardID
-		this.boosters[boosterIndex].splice(
-			this.boosters[boosterIndex].findIndex(c => c === cardID),
-			1
-		);
-
-		// Removes burned cards
+		let cardsToRemove = pickedCards;
 		if (burnedCards) {
-			for (let burnID of burnedCards) {
-				this.boosters[boosterIndex].splice(
-					this.boosters[boosterIndex].findIndex(c => c === burnID),
-					1
-				);
-			}
+			cardsToRemove = cardsToRemove.concat(burnedCards);
+			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 		}
+
+		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
 
 		// Signal users
 		this.forUsers(u => {
@@ -1108,26 +1146,29 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cardID: cardID,
+				cards: pickedCards.map(idx=>this.boosters[boosterIndex][idx].name),
 			});
 		}
 
 		++this.pickedCardsThisRound;
-		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) {
+		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) {
 			this.nextBooster();
 		}
 		return { code: 0 };
 	};
 
 	this.doBotPick = function(instance, boosterIndex) {
-		const removedIdx = instance.pick(this.boosters[boosterIndex]);
-		const startingBooster = JSON.parse(JSON.stringify(this.boosters[boosterIndex]));
-		const picked = this.boosters[boosterIndex][removedIdx];
-		this.boosters[boosterIndex].splice(removedIdx, 1);
+		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
+		const picked = [];
+		for (let i = 0; i < this.pickedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
+			const pickedIdx = instance.pick(this.boosters[boosterIndex]);
+			picked.push(pickedIdx);
+			this.boosters[boosterIndex].splice(pickedIdx, 1);
+		}
 		const burned = [];
-		for (let i = 0; i < this.burnedCardsPerRound; ++i) {
+		for (let i = 0; i < this.burnedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
 			const burnedIdx = instance.burn(this.boosters[boosterIndex]);
-			burned.push(this.boosters[boosterIndex][burnedIdx]);
+			burned.push(burnedIdx);
 			this.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
@@ -1144,7 +1185,7 @@ export function Session(id, owner, options) {
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
 		// Boosters are empty
-		if (this.boosters[0].length == 0) {
+		if (this.boosters[0].length === 0) {
 			this.round = 0;
 			// Remove empty boosters
 			this.boosters.splice(0, totalVirtualPlayers);
@@ -1176,9 +1217,9 @@ export function Session(id, owner, options) {
 						console.error(this.disconnectedUsers[userID]);
 						this.disconnectedUsers[userID].bot = new Bot("Bot", userID);
 					}
-					const pickedCard = this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
+					const pickedCards = this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
 					this.disconnectedUsers[userID].pickedThisRound = true;
-					this.disconnectedUsers[userID].pickedCards.push(pickedCard);
+					this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
 					++this.pickedCardsThisRound;
 				} else {
@@ -1231,14 +1272,13 @@ export function Session(id, owner, options) {
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
-				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards;
+				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards.map(c => c.id);
 			} else {
-				if (virtualPlayers[userID].disconnected) {
-					// This user has been replaced by a bot
-					this.draftLog.users[userID].cards = this.disconnectedUsers[userID].pickedCards;
-				} else {
-					this.draftLog.users[userID].cards = Connections[userID].pickedCards;
-				}
+				// Has this user been replaced by a bot?
+				this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
+					? this.disconnectedUsers[userID]
+					: Connections[userID]
+				).pickedCards.map(c => c.id);
 			}
 		}
 
@@ -1438,11 +1478,11 @@ export function Session(id, owner, options) {
 
 			// Immediately pick cards
 			if (!this.disconnectedUsers[uid].pickedThisRound) {
-				const pickedCard = this.doBotPick(
+				const pickedCards = this.doBotPick(
 					this.disconnectedUsers[uid].bot,
 					this.disconnectedUsers[uid].boosterIndex
 				);
-				this.disconnectedUsers[uid].pickedCards.push(pickedCard);
+				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 				++this.pickedCardsThisRound;
 			}

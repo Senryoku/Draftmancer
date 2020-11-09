@@ -17,16 +17,19 @@ import socketIO from "socket.io";
 const io = socketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
+import bodyParser from "body-parser";
 
+import { isEmpty } from "./src/utils.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
-import Cards from "./src/Cards.js";
+import { Cards, MTGACards } from "./src/Cards.js";
 import parseCardList from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
+app.use(bodyParser.json());
 
 function shortguid() {
 	function s4() {
@@ -72,6 +75,8 @@ function startPublicSession(s) {
 }
 
 // Prepare local custom card lists
+console.log("Preparing local custom card lists...");
+console.time("PrepareCustomCardLists");
 const ParsedCubeLists = {};
 for (let cube of constants.CubeLists) {
 	if (cube.filename) {
@@ -84,6 +89,8 @@ for (let cube of constants.CubeLists) {
 		}
 	}
 }
+console.timeEnd("PrepareCustomCardLists");
+console.log("Done.");
 
 /////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
@@ -154,27 +161,32 @@ io.on("connection", function(socket) {
 		joinSession(sessionID, userID);
 	});
 
-	socket.on("setCollection", function(collection) {
+	socket.on("setCollection", function(collection, ack) {
 		let userID = this.userID;
 		if (!Connections[userID]) return;
 		let sessionID = Connections[userID].sessionID;
 
 		if (typeof collection !== "object" || collection === null) return;
 
+		let processedCollection = {};
 		// Remove unknown cards immediatly.
-		for (let id in collection)
-			if (!(id in Cards)) {
-				//console.log("Unknow card ID: ", id);
-				delete collection[id];
+		for (let aid in collection) {
+			if (aid in MTGACards) {
+				processedCollection[MTGACards[aid].id] = collection[aid];
 			}
+		}
 
-		Connections[userID].collection = collection;
+		Connections[userID].collection = processedCollection;
+
+		if (ack) ack({ collection: processedCollection });
+
+		const hasCollection = !isEmpty(processedCollection);
 		if (Sessions[sessionID])
 			Sessions[sessionID].forUsers(user =>
 				Connections[user].socket.emit("updateUser", {
 					userID: userID,
 					updatedProperties: {
-						collection: collection,
+						collection: hasCollection,
 					},
 				})
 			);
@@ -472,7 +484,7 @@ io.on("connection", function(socket) {
 			return;
 		}
 
-		const r = Sessions[sessionID].pickCard(userID, data.selectedCard, data.burnedCards);
+		const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 		if (ack) ack(r);
 	});
 
@@ -617,7 +629,7 @@ io.on("connection", function(socket) {
 
 		if (setRestriction.length > 0) {
 			for (let s of setRestriction) {
-				if (constants.MTGSets.indexOf(s) === -1) return;
+				if (constants.PrimarySets.indexOf(s) === -1) return;
 			}
 		}
 
@@ -630,45 +642,42 @@ io.on("connection", function(socket) {
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	});
 
-	socket.on("customCardList", function(customCardList, ack) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+	const useCustomCardList = function(session, list) {
+		session.setCustomCardList(list);
+		if (session.isPublic) updatePublicSession(session.id);
+	};
 
-		if (!customCardList.cards || (customCardList.customSheets && !customCardList.cardsPerBooster)) {
-			if (ack) ack({ code: 1, error: "Invalid data" });
+	const parseCustomCardList = function(session, txtlist, options, ack) {
+		let parsedList = null;
+		try {
+			parsedList = parseCardList(Cards, txtlist, options);
+		} catch (e) {
+			console.error(e);
+			if (ack) ack({ type: "error", title: "Internal Error" });
 			return;
 		}
+
+		if (parsedList.error) {
+			if (ack) ack(parsedList.error);
+			return;
+		}
+
+		useCustomCardList(session, parsedList);
 
 		if (ack) ack({ code: 0 });
+	};
 
-		Sessions[sessionID].customCardList = customCardList;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", {
-					customCardList: customCardList,
-				});
-		}
-	});
-
-	socket.on("loadLocalCustomCardList", function(cubeName) {
+	socket.on("parseCustomCardList", function(customCardList, ack) {
 		if (!(this.userID in Connections)) return;
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
-		if (!(cubeName in ParsedCubeLists)) {
+		if (!customCardList) {
+			if (ack) ack({ code: 1, type: "error", title: "No list supplied." });
 			return;
 		}
 
-		Sessions[sessionID].useCustomCardList = true;
-		Sessions[sessionID].customCardList = ParsedCubeLists[cubeName];
-		for (let user of Sessions[sessionID].users) {
-			Connections[user].socket.emit("sessionOptions", {
-				useCustomCardList: Sessions[sessionID].useCustomCardList,
-				customCardList: Sessions[sessionID].customCardList,
-			});
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	});
 
 	socket.on("loadFromCubeCobra", function(data, ack) {
@@ -701,25 +710,23 @@ io.on("connection", function(socket) {
 				return;
 			}
 
-			let parsedList = parseCardList(Cards, body, data);
-
-			if (parsedList.error) {
-				if (ack) ack(parsedList.error);
-				return;
-			}
-
-			Sessions[sessionID].useCustomCardList = true;
-			Sessions[sessionID].customCardList = parsedList;
-			for (let user of Sessions[sessionID].users) {
-				Connections[user].socket.emit("sessionOptions", {
-					useCustomCardList: Sessions[sessionID].useCustomCardList,
-					customCardList: Sessions[sessionID].customCardList,
-				});
-			}
-			if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-
-			if (ack) ack({ code: 0 });
+			parseCustomCardList(Sessions[sessionID], body, data, ack);
 		});
+	});
+
+	socket.on("loadLocalCustomCardList", function(cubeName, ack) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!(cubeName in ParsedCubeLists)) {
+			if (ack) ack({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
+			return;
+		}
+
+		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
+
+		if (ack) ack({ code: 0 });
 	});
 
 	socket.on("ignoreCollections", function(ignoreCollections) {
@@ -781,6 +788,7 @@ io.on("connection", function(socket) {
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		// Validate input (a value for each rarity and at least one card)
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
+		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
 
 		Sessions[sessionID].boosterContent = boosterContent;
@@ -888,6 +896,21 @@ io.on("connection", function(socket) {
 				});
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+	});
+
+	socket.on("setPickedCardsPerRound", function(pickedCardsPerRound) {
+		if (!(this.userID in Connections)) return;
+		const sessionID = Connections[this.userID].sessionID;
+		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
+		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
+
+		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
+		for (let user of Sessions[sessionID].users) {
+			if (user != this.userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
+		}
 	});
 
 	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {
@@ -1160,6 +1183,16 @@ app.get("/getUsers/:sessionID", (req, res) => {
 		res.send(JSON.stringify([...Sessions[req.params.sessionID].users]));
 	} else {
 		res.sendStatus(404);
+	}
+});
+
+// Returns card data from a list of card ids
+app.post("/getCards", (req, res) => {
+	if (!req.body) {
+		res.sendStatus(400);
+	} else {
+		res.setHeader("Content-Type", "application/json");
+		res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
 	}
 });
 

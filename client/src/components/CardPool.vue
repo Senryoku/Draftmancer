@@ -25,8 +25,8 @@
 				drag-class="drag"
 			>
 				<card
-					v-for="card in column"
-					:key="`card_${card.uniqueID}`"
+					v-for="(card, index) in column"
+					:key="`card_${card.uniqueID ? card.uniqueID : index}`"
 					:card="card"
 					:language="language"
 					@click="click($event, card)"
@@ -79,7 +79,7 @@ export default {
 	data: function () {
 		return {
 			columns: [[], [], [], [], [], [], []],
-			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */
+			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */,
 		};
 	},
 	mounted: function () {
@@ -96,7 +96,7 @@ export default {
 			for (let card of this.cards) this.addCard(card);
 		},
 		addCard: function (card, event) {
-			if(event) {
+			if (event) {
 				this.insertCard(this.getNearestColumn(event), card);
 			} else {
 				let columnIndex = Math.min(card.cmc, this.columns.length - 1);
@@ -183,26 +183,27 @@ export default {
 			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
 			this.columns.pop();
 		},
-		getNearestColumn: function(event) {
+		getNearestColumn: function (event) {
 			// Search for the nearest column.
 			const x = event.clientX;
 			const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
 			let colIdx = 0;
-			while(colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+			while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
 			// Returns it if we're within its horizontal boundaries
-			if(colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
+			if (colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
 				return this.columns[colIdx - 1];
-			} else { // Creates a new one if card is dropped outside of existing columns
+			} else {
+				// Creates a new one if card is dropped outside of existing columns
 				this.columns.splice(colIdx, 0, []);
 				return this.columns[colIdx];
 			}
 		},
-		dropCard: function(event) {
-			if(this.tempColumn.length > 0) {
+		dropCard: function (event) {
+			if (this.tempColumn.length > 0) {
 				this.getNearestColumn(event.originalEvent).push(...this.tempColumn);
 				this.tempColumn = [];
 			}
-		}
+		},
 	},
 };
 </script>
@@ -217,7 +218,6 @@ export default {
 .card-pool .card-image,
 .card-pool .card img {
 	width: 100%;
-	height: auto;
 }
 </style>
 

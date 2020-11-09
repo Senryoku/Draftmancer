@@ -3,7 +3,7 @@
 		<div class="section-title">
 			<h2>Mainboard ({{ list.main.length }})</h2>
 			<div class="controls">
-				Added basics:
+				<span>Added basics:</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ list.lands[c] }}
@@ -71,7 +71,6 @@
 import { copyToClipboard } from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
 import { fireToast } from "../alerts.js";
-import { genCard } from "../Cards.js";
 import Modal from "./Modal.vue";
 import CardPool from "./CardPool.vue";
 
@@ -84,6 +83,7 @@ export default {
 	props: {
 		list: { type: Object },
 		username: { type: String, default: "Player" },
+		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
@@ -92,10 +92,10 @@ export default {
 	},
 	computed: {
 		mainboard: function () {
-			return this.list.main.map((cid) => genCard(cid));
+			return this.list.main.map((cid) => this.carddata[cid]);
 		},
 		sideboard: function () {
-			return this.list.side.map((cid) => genCard(cid));
+			return this.list.side.map((cid) => this.carddata[cid]);
 		},
 		landcount: function () {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);

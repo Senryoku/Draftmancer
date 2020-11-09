@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import Cards from "./Cards.js";
+import { Cards } from "./Cards.js";
 import constants from "../client/src/data/constants.json";
 
 function decklistToArray(decklist, sidePrefix, nameFilter) {

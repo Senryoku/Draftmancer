@@ -1,7 +1,5 @@
 "use strict";
 
-import Cards from "./Cards.js";
-
 export default function Bot(name, id) {
 	this.name = name;
 	this.id = id; // Used for sorting
@@ -11,7 +9,7 @@ export default function Bot(name, id) {
 		let maxScore = 0;
 		let bestPick = 0;
 		for (let idx = 0; idx < booster.length; ++idx) {
-			let c = Cards[booster[idx]];
+			let c = booster[idx];
 			// TODO: Rate cards
 			let score = c.rating;
 			for (let color of c.colors) {
@@ -22,7 +20,7 @@ export default function Bot(name, id) {
 				bestPick = idx;
 			}
 		}
-		for (let color of Cards[booster[bestPick]].colors) {
+		for (let color of booster[bestPick].colors) {
 			this.pickedColors[color] += 1;
 		}
 		this.cards.push(booster[bestPick]);
@@ -31,7 +29,7 @@ export default function Bot(name, id) {
 		return bestPick;
 	};
 	// TODO: Chooses which card to burn.
-	this.burn = function(booster) {
+	this.burn = function() {
 		return 0;
 	};
 }

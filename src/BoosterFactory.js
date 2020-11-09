@@ -1,8 +1,9 @@
 "use strict";
 
-import Cards from "./Cards.js";
-import { isEmpty, shuffleArray } from "./utils.js";
+import { Cards, getUnique } from "./Cards.js";
+import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
+import constants from "../client/src/data/constants.json";
 
 // Generates booster for regular MtG Sets
 
@@ -16,15 +17,21 @@ const foilRarityRates = {
 	common: 1.0,
 };
 
+export const DefaultBoosterTargets = {
+	common: 10,
+	uncommon: 3,
+	rare: 1,
+};
+
 /*
  Provides color balancing for the supplied cardPool
 */
 export function ColorBalancedSlot(_cardPool) {
 	this.cardPool = _cardPool;
 	this.cache = { byColor: {} };
-	for (let card in this.cardPool) {
-		if (!(Cards[card].colors in this.cache.byColor)) this.cache.byColor[Cards[card].colors] = {};
-		this.cache.byColor[Cards[card].colors][card] = this.cardPool[card];
+	for (let cid in this.cardPool) {
+		if (!(Cards[cid].colors in this.cache.byColor)) this.cache.byColor[Cards[cid].colors] = {};
+		this.cache.byColor[Cards[cid].colors][cid] = this.cardPool[cid];
 	}
 	this.cache.monocolored = Object.keys(this.cache.byColor)
 		.filter(k => k.length === 1)
@@ -38,12 +45,12 @@ export function ColorBalancedSlot(_cardPool) {
 	this.cache.othersCount = countCards(this.cache.others);
 
 	this.syncCache = function(pickedCard) {
-		removeCardFromDict(pickedCard, this.cache.byColor[Cards[pickedCard].colors]);
-		if (Cards[pickedCard].colors.length === 1) {
-			removeCardFromDict(pickedCard, this.cache.monocolored);
+		removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
+		if (pickedCard.colors.length === 1) {
+			removeCardFromDict(pickedCard.id, this.cache.monocolored);
 			--this.cache.monocoloredCount;
 		} else {
-			removeCardFromDict(pickedCard, this.cache.others);
+			removeCardFromDict(pickedCard.id, this.cache.others);
 			--this.cache.othersCount;
 		}
 	};
@@ -54,12 +61,12 @@ export function ColorBalancedSlot(_cardPool) {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && !isEmpty(this.cache.byColor[c])) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards);
-				removeCardFromDict(pickedCard, this.cardPool);
-				if (Cards[pickedCard].colors.length === 1) {
-					removeCardFromDict(pickedCard, this.cache.monocolored);
+				removeCardFromDict(pickedCard.id, this.cardPool);
+				if (pickedCard.colors.length === 1) {
+					removeCardFromDict(pickedCard.id, this.cache.monocolored);
 					--this.cache.monocoloredCount;
 				} else {
-					removeCardFromDict(pickedCard, this.cache.others);
+					removeCardFromDict(pickedCard.id, this.cache.others);
 					--this.cache.othersCount;
 				}
 				pickedCards.push(pickedCard);
@@ -87,8 +94,8 @@ export function ColorBalancedSlot(_cardPool) {
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
-			removeCardFromDict(pickedCard, this.cardPool);
-			removeCardFromDict(pickedCard, this.cache.byColor[Cards[pickedCard].colors]);
+			removeCardFromDict(pickedCard.id, this.cardPool);
+			removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
 		}
 		// Shuffle to avoid obvious signals to other players
 		shuffleArray(pickedCards);
@@ -120,8 +127,9 @@ export function BoosterFactory(cardPool, landSlot, options) {
 				if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.cardPool[r])) {
 					let pickedCard = pickCard(this.cardPool[r]);
 					// Synchronize color balancing dictionary
-					if (this.options.colorBalance && Cards[pickedCard].rarity == "common")
+					if (this.options.colorBalance && pickedCard.rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
+					pickedCard.foil = true;
 					booster.push(pickedCard);
 					addedFoils += 1;
 					break;
@@ -245,7 +253,7 @@ export const SetSpecificFactories = {
 				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === pickedRarity),
+						booster.findIndex(c => c.rarity === pickedRarity),
 						0,
 						pickedCID
 					);
@@ -271,8 +279,8 @@ export const SetSpecificFactories = {
 			} else {
 				// Roll for legendary rarity
 				const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, options);
-				const pickedCID = pickCard(this.legendaryCreatures[pickedRarity], []);
-				removeCardFromDict(pickedCID, this.cardPool[Cards[pickedCID].rarity]);
+				const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
+				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
 
 				const updatedTargets = Object.assign({}, targets);
 				if (pickedRarity === "mythic") --updatedTargets["rare"];
@@ -280,7 +288,7 @@ export const SetSpecificFactories = {
 
 				const booster = this.originalGenBooster(updatedTargets);
 				// Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
-				booster.unshift(pickedCID);
+				booster.unshift(pickedCard);
 				return booster;
 			}
 		};
@@ -316,7 +324,7 @@ export const SetSpecificFactories = {
 				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
 				else
 					booster.splice(
-						booster.findIndex(c => Cards[c].rarity === pickedRarity),
+						booster.findIndex(c => c.rarity === pickedRarity),
 						0,
 						pickedCID
 					);
@@ -325,4 +333,169 @@ export const SetSpecificFactories = {
 		};
 		return factory;
 	},
+	cmr: (cardPool, landSlot, options) => {
+		// TODO
+		/*
+		Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
+		Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
+		Each Commander Legends Draft Booster contains 20 Magic cards + one ad/token, with two legends, at least one rare, and one foil.
+		*/
+		const regex = /Legendary.*Creature/;
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
+		delete filteredCardPool["common"]["a69e6d8f-f742-4508-a83a-38ae84be228c"]; // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.completeCardPool = cardPool;
+		factory.originalGenBooster = factory.generateBooster;
+		factory.legendaryCreatures = legendaryCreatures;
+		// Not using the suplied cardpool here
+		factory.generateBooster = function(targets) {
+			// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil 
+			// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
+			if(targets === DefaultBoosterTargets) targets = {
+				common: 13,
+				uncommon: 3,
+				rare: 1,
+			};
+			const legendaryCounts = countBySlot(this.legendaryCreatures);
+			// Ignore the rule if there's no legendary creatures left
+			if (Object.values(legendaryCounts).every(c => c === 0)) {
+				return this.originalGenBooster(targets);
+			} else {
+				let updatedTargets = Object.assign({}, targets);
+
+				let booster = [];
+				// Prismatic Piper instead of a common in about 1 of every 6 packs
+				if(Math.random() < 1/6) {
+					--updatedTargets.common;
+					booster = this.originalGenBooster(updatedTargets);
+					booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
+				} else {
+					booster = this.originalGenBooster(updatedTargets);
+				}
+
+				// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
+				const pickedRarities = [rollSpecialCardRarity(legendaryCounts, targets, options), rollSpecialCardRarity(legendaryCounts, targets, options)];
+				while(pickedRarities[0] === "mythic" && pickedRarities[1] === "mythic" && (legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0)) pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, options);
+				for(let pickedRarity of pickedRarities) {
+					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
+					removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+					booster.unshift(pickedCard);
+				}
+
+				// One random foil
+				let foilRarity = "common";
+				const rarityCheck = Math.random();
+				for (let r in foilRarityRates)
+					if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.completeCardPool[r])) {
+						foilRarity = r;
+						break;
+					}
+				const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
+				if(pickedFoil.id in this.cardPool[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				if(pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+				booster.unshift(Object.assign({foil: true}, pickedFoil));
+
+				return booster;
+			}
+		};
+		return factory;
+	}
 };
+
+/*
+ * Another collation method using data from https://github.com/taw/magic-sealed-data
+ */
+
+import PaperBoosterData from "../data/sealed_extended_data.json";
+
+function weightedRandomPick(arr, totalWeight, picked = []) {
+	let pick = randomInt(0, totalWeight);
+	let idx = 0;
+	let acc = arr[idx].weight;
+	while(acc < pick) {
+		++idx;
+		acc += arr[idx].weight;
+	}
+	// Duplicate protection (allows duplicates between foil and non-foil)
+	// Not sure if we should checks ids or (set, number) here.
+	if(picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+		 return weightedRandomPick(arr, totalWeight, picked);
+	return arr[idx];
+}
+
+const CardsBySetAndCollectorNumber = {}
+for(let cid in Cards) {
+	CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
+}
+
+export const PaperBoosterFactories = {};
+for(let set of PaperBoosterData) {
+	if(!constants.PrimarySets.includes(set.code)) {
+		console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
+		continue;
+	}
+
+	set.colorBalancedSheets = {}
+	for(let sheetName in set.sheets) {
+		for(let card of set.sheets[sheetName].cards) {
+			let num = card.number;
+			card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
+			if(!card.id) { // Special case for double faced cards
+				if(['a', '★'].includes(num[num.length - 1])) num = num.substr(0, num.length - 1)
+				card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
+			}
+			if(!card.id) console.log("Error! Could not find corresponding card:", card);
+		}
+		if(set.sheets[sheetName].balance_colors) {
+			set.colorBalancedSheets[sheetName] = {"W": {cards: [], total_weight: 0}, "U": {cards: [], total_weight: 0}, "B": {cards: [], total_weight: 0}, "R": {cards: [], total_weight: 0}, "G": {cards: [], total_weight: 0}, "Mono": {cards: [], total_weight: 0}, "Others": {cards: [], total_weight: 0}};
+			for(let c of set.sheets[sheetName].cards) {
+				if(Cards[c.id].colors.length === 1) {
+					set.colorBalancedSheets[sheetName][Cards[c.id].colors[0]].cards.push(c);
+					set.colorBalancedSheets[sheetName][Cards[c.id].colors[0]].total_weight += c.weight;
+					set.colorBalancedSheets[sheetName]["Mono"].cards.push(c);
+					set.colorBalancedSheets[sheetName]["Mono"].total_weight += c.weight;
+				} else {
+					set.colorBalancedSheets[sheetName]["Others"].cards.push(c);
+					set.colorBalancedSheets[sheetName]["Others"].total_weight += c.weight;
+				}
+			}
+		}
+	}
+	PaperBoosterFactories[set.code] = function(options = {}) {
+		let possibleContent = set.boosters;
+		if(!options.foil) { // (Attempt to) Filter out sheets with foils if option is disabled.
+			let nonFoil = set.boosters.filter(e => !Object.keys(e.sheets).some(s => s.includes("foil")));
+			if(nonFoil.length > 0) possibleContent = nonFoil;
+		}
+		return {
+			set: set,
+			options: options,
+			possibleContent: possibleContent,
+			generateBooster: function() {
+				const booster = [];
+				const boosterContent = weightedRandomPick(this.possibleContent, this.possibleContent.reduce((acc, val) => acc += val.weight, 0));
+				for(let sheetName in boosterContent.sheets) {
+					if(this.set.sheets[sheetName].balance_colors) {
+						const sheet = this.set.colorBalancedSheets[sheetName];
+						for(let color of "WUBRG") {
+							booster.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, booster));
+						}
+						const cardsToPick = boosterContent.sheets[sheetName] - booster.length;
+						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * booster.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
+						for(let i = 0; i < cardsToPick; ++i) {
+							if(Math.random() < x)
+								booster.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, booster));
+							else
+								booster.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, booster));
+						}
+					} else {
+						for(let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
+							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
+						}
+					}
+				}
+				return booster.map(c => c.foil ? Object.assign({foil: true}, getUnique(c.id)) : getUnique(c.id)).reverse();
+			}
+		};
+	}
+}

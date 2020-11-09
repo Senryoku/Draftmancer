@@ -1,7 +1,5 @@
-import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import Cards from "./../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs } from "./src/common.js";
 
@@ -11,25 +9,25 @@ describe("Set Specific Booster Rules", function() {
 
 	const validateDOMBooster = function(booster) {
 		const regex = /Legendary.*Creature/;
-		expect(booster.map(cid => Cards[cid].set).every(s => s === "dom")).to.be.true;
+		expect(booster.map(c => c.set).every(s => s === "dom")).to.be.true;
 		let LCCount = booster.reduce((acc, val) => {
-			return acc + Cards[val].type.match(regex) ? 1 : 0;
+			return acc + val.type.match(regex) ? 1 : 0;
 		}, 0);
 		expect(LCCount).to.gte(1);
 	};
 
 	const validateWARBooster = function(booster) {
-		expect(booster.map(cid => Cards[cid].set).every(s => s === "war")).to.be.true;
+		expect(booster.map(c => c.set).every(s => s === "war")).to.be.true;
 		let PLCount = booster.reduce((acc, val) => {
-			return acc + Cards[val].type.includes("Planeswalker") ? 1 : 0;
+			return acc + val.type.includes("Planeswalker") ? 1 : 0;
 		}, 0);
 		expect(PLCount).to.equal(1);
 	};
 
 	const validateZNRBooster = function(booster) {
-		expect(booster.map(cid => Cards[cid].set).every(s => s === "znr")).to.be.true;
+		expect(booster.map(c => c.set).every(s => s === "znr")).to.be.true;
 		let PLCount = booster.reduce((acc, val) => {
-			return acc + Cards[val].name.includes("//") ? 1 : 0;
+			return acc + val.name.includes("//") ? 1 : 0;
 		}, 0);
 		expect(PLCount).to.equal(1);
 	};

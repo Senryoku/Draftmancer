@@ -12,9 +12,7 @@ import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
-import { Cards, genCard, loadCards, addLanguage } from "./Cards.js";
 import exportToMTGA from "./exportToMTGA.js";
-import parseCardList from "../../src/parseCardList.js";
 
 import Modal from "./components/Modal.vue";
 import DelayedInput from "./components/DelayedInput.vue";
@@ -26,11 +24,10 @@ import DraftLogPick from "./components/DraftLogPick.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
-import Collection from "./components/Collection.vue";
-import CardList from "./components/CardList.vue";
 import Bracket from "./components/Bracket.vue";
 import GridDraft from "./components/GridDraft.vue";
 import PatchNotes from "./components/PatchNotes.vue";
+import SetRestriction from "./components/SetRestriction.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
@@ -82,12 +79,13 @@ export default {
 		DraftLog,
 		DraftLogHistory,
 		DraftLogLive,
-		Collection,
-		CardList,
+		Collection: () => import("./components/Collection.vue"),
+		CardList: () => import("./components/CardList.vue"),
 		CardStats: () => import("./components/CardStats.vue"),
 		GridDraft,
 		Bracket,
 		PatchNotes,
+		SetRestriction,
 		draggable,
 		Multiselect,
 	},
@@ -132,10 +130,11 @@ export default {
 			},
 			foil: false,
 			bots: 0,
-			setRestriction: "",
+			setRestriction: [],
 			drafting: false,
 			useCustomCardList: false,
 			customCardList: {},
+			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
 			maxTimer: 75,
 			pickTimer: 75,
@@ -162,9 +161,8 @@ export default {
 			hideSessionID: getCookie("hideSessionID", "false") === "true",
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
-			loadingLanguages: [],
-			loadedLanguages: [],
-			sets: Constant.MTGSets,
+			sets: Constant.MTGASets,
+			primarySets: Constant.PrimarySets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
@@ -179,7 +177,7 @@ export default {
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 			// Draft Booster
 			pickInFlight: false,
-			selectedCard: undefined,
+			selectedCards: [],
 			burningCards: [],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
@@ -509,8 +507,7 @@ export default {
 				this.draftingState = DraftState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
-			this.socket.on("winstonDraftRandomCard", cid => {
-				const c = genCard(cid);
+			this.socket.on("winstonDraftRandomCard", c => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
@@ -518,7 +515,7 @@ export default {
 				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${Cards[cid].printed_name[this.language]} from the card pool!`,
+					title: `You drew ${c.printed_names[this.language]} from the card pool!`,
 					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
@@ -530,7 +527,7 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -618,7 +615,7 @@ export default {
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -693,7 +690,7 @@ export default {
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this is necessary...
 				this.$nextTick(() => {
 					this.$refs.deckDisplay.sync();
@@ -748,7 +745,7 @@ export default {
 				this.drafting = true;
 
 				this.clearState();
-				for (let cid of data.pickedCards) this.addToDeck(genCard(cid));
+				for (let c of data.pickedCards) this.addToDeck(c);
 				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
 				this.$nextTick(() => {
 					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
@@ -756,16 +753,14 @@ export default {
 				});
 
 				this.booster = [];
-				for (let cid of data.booster) {
-					this.booster.push(genCard(cid));
-				}
+				for (let c of data.booster) this.booster.push(c);
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
 
 				this.pickedThisRound = data.pickedThisRound;
 				if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
 				else this.draftingState = DraftState.Picking;
-				this.selectedCard = undefined;
+				this.selectedCards = [];
 				this.burningCards = [];
 
 				Swal.fire({
@@ -789,8 +784,8 @@ export default {
 				// Only watching, not playing/receiving a boost ourself.
 				if (this.draftingState == DraftState.Watching) return;
 
-				for (let cid of data.booster) {
-					this.booster.push(genCard(cid));
+				for (let c of data.booster) {
+					this.booster.push(c);
 				}
 				this.playSound("next");
 				this.draftingState = DraftState.Picking;
@@ -870,13 +865,13 @@ export default {
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${Cards[data.cardID].printed_name[this.language]}!`);
+				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language]).join(', ')}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
 				this.clearState();
-				for (let cid of data.reduce((acc, val) => acc.concat(val), [])) {
-					this.addToDeck(genCard(cid));
+				for (let c of data.reduce((acc, val) => acc.concat(val), [])) {
+					this.addToDeck(c);
 				}
 				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
@@ -979,12 +974,17 @@ export default {
 			this.socket.emit("pauseDraft");
 		},
 		selectCard: function(e, c) {
-			this.selectedCard = c;
-			this.restoreCard(null, c);
+			if(!this.selectedCards.includes(c)) {
+				if(this.selectedCards.length === this.cardsToPick)
+					this.selectedCards.shift();
+				this.selectedCards.push(c);
+				this.restoreCard(null, c);
+			}
 		},
 		burnCard: function(e, c) {
 			if (this.burningCards.includes(c)) return;
-			if (this.selectedCard === c) this.selectCard(null, null);
+			if (this.selectedCards.includes(c)) 
+				this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
@@ -1006,7 +1006,7 @@ export default {
 
 			// A better (?) solution would be something like
 			// 		let cardid = e.dataTransfer.getData("text");
-			// 		if (this.selectedCard && cardid == this.selectedCard.id)
+			// 		if (this.selectedCards && cardid == this.selectedCards.id)
 			// {
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
@@ -1032,30 +1032,37 @@ export default {
 				return;
 			e.preventDefault();
 			let cardid = e.dataTransfer.getData("text");
-			if (!this.selectedCard) {
-				console.error(`dropBoosterCard error: this.selectedCard === ${this.selectedCard}`);
+			if (this.selectedCards.length === 0) {
+				console.error(`dropBoosterCard error: this.selectedCards === ${this.selectedCards}`);
 				return;
 			}
-			if (cardid != this.selectedCard.id) {
+			if (!this.selectedCards.some(c => cardid === c.id)) {
 				console.error(
-					`dropBoosterCard error: cardid (${cardid}) != this.selectedCard.id (${this.selectedCard.id})`
+					`dropBoosterCard error: cardid (${cardid}) != this.selectedCards.id (${this.selectedCards.id})`
 				);
 				return;
 			} else {
-				if(!options) options = {};
+				if (!options) options = {};
 				options.event = e;
 				this.pickCard(options);
 			}
 		},
 		pickCard: function(options) {
 			if (
-				this.pickInFlight || // We already send a pick request and are
-				// waiting for an anwser
-				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) ||
-				!this.selectedCard
+				this.pickInFlight || // We already send a pick request and are waiting for an anwser
+				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) 
 			)
 				return;
-			if (!this.validBurnedCardCount) {
+
+			if (this.selectedCards.length !== this.cardsToPick) {
+				fireToast(
+					"error",
+					`You need to pick ${this.cardsToPick - this.selectedCards.length} more card(s).`
+				);
+				return;
+			}
+
+			if (this.burningCards.length !== this.cardsToBurnThisRound) {
 				fireToast(
 					"error",
 					`You need to burn ${this.cardsToBurnThisRound - this.burningCards.length} more card(s).`
@@ -1073,7 +1080,7 @@ export default {
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.rochesterDraftState.booster.findIndex(c => c === this.selectedCard),
+						this.selectedCards.map(c => this.rochesterDraftState.booster.findIndex(c2 => c === c2)),
 						answer => {
 							this.pickInFlight = false;
 							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
@@ -1084,8 +1091,8 @@ export default {
 					this.socket.emit(
 						"pickCard",
 						{
-							selectedCard: this.selectedCard.id,
-							burnedCards: this.burningCards.map(c => c.id),
+							pickedCards: this.selectedCards.map(c => this.booster.findIndex(c2 => c === c2)),
+							burnedCards: this.burningCards.map(c => this.booster.findIndex(c2 => c === c2)),
 						},
 						answer => {
 							this.pickInFlight = false;
@@ -1094,9 +1101,9 @@ export default {
 					);
 					this.draftingState = DraftState.Waiting;
 				}
-				if (options && options.toSideboard) this.addToSideboard(this.selectedCard, options);
-				else this.addToDeck(this.selectedCard, options);
-				this.selectedCard = undefined;
+				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
+				else this.addToDeck(this.selectedCards, options);
+				this.selectedCards = [];
 				this.burningCards = [];
 			});
 			this.pickInFlight = true;
@@ -1104,21 +1111,17 @@ export default {
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
 			// Forces a random card if none is selected
-			if (!this.selectedCard) {
-				const randomIdx = Math.floor(Math.random() * this.booster.length);
-				this.selectedCard = this.booster[randomIdx];
+			while(this.selectedCards.length < this.cardsToPick) {
+				let randomIdx;
+				do randomIdx = Math.floor(Math.random() * this.booster.length)
+				while(this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
+				this.selectedCards.push(this.booster[randomIdx]);
 			}
 			// Forces random cards to burn if there isn't enough selected already
-			while (
-				1 + this.burningCards.length < this.booster.length &&
-				this.burningCards.length < this.burnedCardsPerRound
-			) {
+			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * this.booster.length);
-				while (
-					this.booster[randomIdx] === this.selectedCard ||
-					this.burningCards.includes(this.booster[randomIdx])
-				);
+				while (this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
 				this.burningCards.push(this.booster[randomIdx]);
 			}
 			this.pickCard();
@@ -1128,7 +1131,7 @@ export default {
 			const piles = [];
 			for (let p of state.piles) {
 				let pile = [];
-				for (let cid of p) pile.push(genCard(cid));
+				for (let c of p) pile.push(c);
 				piles.push(pile);
 			}
 			this.winstonDraftState.piles = piles;
@@ -1187,10 +1190,11 @@ export default {
 			this.gridDraftState = state;
 			const booster = [];
 			let idx = 0;
-			for (let cid of this.gridDraftState.booster) {
-				if (cid in Cards) {
-					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === cid) booster.push(prevBooster[idx]);
-					else booster.push(genCard(cid));
+			for (let card of this.gridDraftState.booster) {
+				if (card) {
+					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id)
+						booster.push(prevBooster[idx]);
+					else booster.push(card);
 				} else booster.push(null);
 				++idx;
 			}
@@ -1262,7 +1266,7 @@ export default {
 				this.rochesterDraftState.booster.length - 1 === state.booster.length
 			) {
 				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
-			} else for (let cid of state.booster) booster.push(genCard(cid));
+			} else for (let c of state.booster) booster.push(c);
 			state.booster = booster;
 			this.rochesterDraftState = state;
 		},
@@ -1493,7 +1497,7 @@ export default {
 				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
 			}
 		},
-		parseCustomCardList: async function(file, options) {
+		parseCustomCardList: async function(file) {
 			Swal.fire({
 				position: "center",
 				customClass: SwalCustomClasses,
@@ -1503,19 +1507,19 @@ export default {
 			});
 			let contents = await file.text();
 
-			const cardList = parseCardList(Cards, contents, options);
-			if (cardList.error) {
-				Swal.fire({
-					icon: "error",
-					title: cardList.error.title,
-					text: cardList.error.text,
-					footer: cardList.error.footer,
-					customClass: SwalCustomClasses,
-				});
-			} else {
-				this.customCardList = cardList;
-				this.useCustomCardList = true;
-			}
+			this.socket.emit("parseCustomCardList", contents, answer => {
+				if (answer.code === 0) {
+					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+				} else {
+					Swal.fire({
+						icon: "error",
+						title: answer.title,
+						text: answer.text,
+						footer: answer.footer,
+						customClass: SwalCustomClasses,
+					});
+				}
+			});
 		},
 		importCubeCobra: function() {
 			Swal.fire({
@@ -1547,6 +1551,8 @@ export default {
 						footer: r.footer,
 						customClass: SwalCustomClasses,
 					});
+				} else {
+					fireToast("success", `Card list loaded (${this.customCardList.length} cards)`);
 				}
 			};
 
@@ -1786,14 +1792,22 @@ export default {
 		},
 		// Deck/Sideboard management
 		addToDeck: function(card, options) {
-			// Handle column sync.
-			this.deck.push(card);
-			this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+			if(Array.isArray(card)) 
+				for(let c of card) this.addToDeck(c, options)
+			else {
+				// Handle column sync.
+				this.deck.push(card);
+				this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+			}
 		},
 		addToSideboard: function(card, options) {
-			// Handle column sync.
-			this.sideboard.push(card);
-			this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+			if(Array.isArray(card))
+				for(let c of card) this.addToSideboard(c, options)
+			else {
+				// Handle column sync.
+				this.sideboard.push(card);
+				this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+			}
 		},
 		deckToSideboard: function(e, c) {
 			// From deck to sideboard
@@ -1875,29 +1889,6 @@ export default {
 			return r;
 		},
 		// Misc.
-		fetchTranslation: function(lang) {
-			if (this.loadedLanguages.includes(lang)) {
-				if (this.language !== lang) this.language = lang;
-				return;
-			}
-
-			this.loadingLanguages.push(lang);
-			fetch(`data/MTGACards.${lang}.json`).then(response =>
-				response.json().then(json => {
-					this.loadTranslation(lang, json);
-					if (this.language !== lang) this.language = lang;
-				})
-			);
-		},
-		loadTranslation(lang, json) {
-			addLanguage(lang, json);
-			this.loadingLanguages.splice(lang, 1);
-			this.loadedLanguages.push(lang);
-		},
-		handleTranslation: function(lang, json) {
-			this.loadTranslation(lang, json);
-			if (this.language !== lang) this.language = lang;
-		},
 		checkNotificationPermission: function(e) {
 			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
 				Notification.requestPermission().then(function(permission) {
@@ -1940,16 +1931,11 @@ export default {
 		ReadyState: function() {
 			return ReadyState;
 		},
-		validBurnedCardCount: function() {
-			// Allows for burning less cards only if we're finishing the booster
-			return (
-				this.burningCards.length <= this.burnedCardsPerRound &&
-				(this.burningCards.length === this.burnedCardsPerRound ||
-					this.booster.length === this.burningCards.length + 1)
-			);
+		cardsToPick: function() {
+			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound: function() {
-			return Math.min(this.burnedCardsPerRound, this.booster.length - 1);
+			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		winstonCanSkipPile: function() {
 			const s = this.winstonDraftState;
@@ -2020,13 +2006,6 @@ export default {
 		try {
 			let urlParamSession = getUrlVars()["session"];
 			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
-
-			await loadCards();
-
-			// Always load English as it's used as a backup
-			const DefaultLoc = (await import("../public/data/MTGACards.en.json")).default;
-			this.loadTranslation("en", DefaultLoc);
-			if (!(this.language in this.loadedLanguages)) this.fetchTranslation(this.language);
 
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);
@@ -2207,15 +2186,9 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
 		},
-		customCardList: function() {
-			if (this.userID != this.sessionOwner || !this.customCardList.length || !this.socket) return;
-			this.socket.emit("customCardList", this.customCardList, answer => {
-				if (answer.code === 0) {
-					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
-				} else {
-					fireToast("error", `Error while uploading card list: ${answer.error}`);
-				}
-			});
+		pickedCardsPerRound: function() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setPickedCardsPerRound", this.pickedCardsPerRound);
 		},
 		burnedCardsPerRound: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

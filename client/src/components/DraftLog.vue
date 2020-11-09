@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="draftlog.version === '2.0'">
 		<p>Click on a player to display the details of their draft.</p>
 
 		<div>
@@ -49,35 +49,49 @@
 
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<template v-if="!draftlog.delayed">
-				<h2>{{ selectedLog.userName }}</h2>
-				<select v-model="displayOptions.category">
-					<option>Cards</option>
-					<option>Picks</option>
-					<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">Deck</option>
-				</select>
-				<button
-					@click="exportSingleLog(selectedLog.userID)"
-					v-tooltip="`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`"
-				>
-					<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
-				</button>
-				<button
-					@click="downloadMPT(selectedLog.userID)"
-					v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
-				>
-					<i class="fas fa-file-download"></i> Download log in MTGO format
-				</button>
-				<button
-					@click="submitToMPT(selectedLog.userID)"
-					v-tooltip="`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`"
-				>
-					<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
-				</button>
+				<div class="section-title">
+					<h2>{{ selectedLog.userName }}</h2>
+					<div class="controls">
+						<select v-model="displayOptions.category">
+							<option>Cards</option>
+							<option>Picks</option>
+							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
+								Deck
+							</option>
+						</select>
+						<button
+							@click="exportSingleLog(selectedLog.userID)"
+							v-tooltip="
+								`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`
+							"
+						>
+							<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
+						</button>
+						<button
+							@click="downloadMPT(selectedLog.userID)"
+							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
+						>
+							<i class="fas fa-file-download"></i> Download log in MTGO format
+						</button>
+						<button
+							@click="submitToMPT(selectedLog.userID)"
+							v-tooltip="
+								`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`
+							"
+						>
+							<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
+						</button>
+					</div>
+				</div>
 
 				<template v-if="displayOptions.category == 'Picks'">
 					<div v-for="(pick, index) in selectedLog.picks" :key="index">
-						<h3>Pick {{ index + 1 }}: {{ getCard(pick.pick).name }}</h3>
-						<draft-log-pick :pick="pick" :language="language"></draft-log-pick>
+						<h3>Pick {{ index + 1 }}: {{ draftlog.carddata[pick.booster[pick.pick]].name }}</h3>
+						<draft-log-pick
+							:pick="pick"
+							:carddata="draftlog.carddata"
+							:language="language"
+						></draft-log-pick>
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Cards'">
@@ -91,33 +105,37 @@
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Deck'">
-					<div class="card-container card-columns">
-						<decklist
-							:list="selectedLogDecklist"
-							:username="selectedLog.userName"
-							:language="language"
-							:hashesonly="selectedLog.delayed"
-						/>
-					</div>
+					<decklist
+						:list="selectedLogDecklist"
+						:username="selectedLog.userName"
+						:carddata="draftlog.carddata"
+						:language="language"
+						:hashesonly="selectedLog.delayed"
+					/>
 				</template>
 			</template>
 			<template v-else>
 				<decklist
 					:list="selectedLogDecklist"
 					:username="selectedLog.userName"
+					:carddata="draftlog.carddata"
 					:language="language"
 					:hashesonly="true"
 				/>
 			</template>
 		</div>
 	</div>
+	<div v-else>
+		<h2>Incompatible draft log version</h2>
+		<button @click="updateToV2">Convert Draft Log to latest version</button>
+	</div>
 </template>
 
 <script>
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
-import { Cards, genCard } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
+import parseCost from "../../../src/parseCost.js";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
@@ -145,11 +163,8 @@ export default {
 			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
 				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 		},
-		getCard: function (cid) {
-			return Cards[cid];
-		},
 		downloadMPT: function (id) {
-			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(Cards, this.draftlog, id));
+			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
 		submitToMPT: function (id) {
 			fetch("https://magicprotools.com/api/draft/add", {
@@ -160,7 +175,7 @@ export default {
 				},
 				referrer: "https://mtgadraft.herokuapp.com",
 				body: `draft=${encodeURI(
-					helper.exportToMagicProTools(Cards, this.draftlog, id)
+					helper.exportToMagicProTools(this.draftlog, id)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
@@ -185,20 +200,55 @@ export default {
 			});
 		},
 		exportSingleLog: function (id) {
-			let cards = [];
-			for (let c of this.draftlog.users[id].cards) cards.push(Cards[c]);
-			helper.copyToClipboard(exportToMTGA(cards, null, this.language), null, "\t");
+			helper.copyToClipboard(
+				exportToMTGA(
+					this.draftlog.users[id].cards.map((cid) => this.draftlog.carddata[cid]),
+					null,
+					this.language
+				),
+				null,
+				"\t"
+			);
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		colorsInCardIDList: function (cardids) {
+		colorsInCardList: function (cards) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
-			if (!cardids) return r;
-			for (let card of cardids) {
-				for (let color of Cards[card].colors) {
+			if (!cards) return r;
+			for (let cid of cards) {
+				for (let color of this.draftlog.carddata[cid].colors) {
 					r[color] += 1;
 				}
 			}
 			return r;
+		},
+		updateToV2: async function () {
+			if (!this.draftlog.version || this.draftlog.version === "1.0") {
+				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
+				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
+				const updateCIDs = (arr) => arr.map((cid) => MTGACards[cid].id);
+				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
+				for (let u in this.draftlog.users) {
+					for (let p of this.draftlog.users[u].picks) {
+						p.pick = [p.booster.findIndex((cid) => cid === p.pick)];
+						for (let i = 0; i < p.burn.length; ++i)
+							p.burn[i] = p.booster.findIndex((cid) => cid === p.burn[i]);
+						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...
+						p.booster = p.booster.map((cid) => MTGACards[cid].id);
+					}
+					this.draftlog.users[u].cards = updateCIDs(this.draftlog.users[u].cards);
+					if (this.draftlog.users[u].decklist) {
+						this.draftlog.users[u].decklist.main = updateCIDs(this.draftlog.users[u].decklist.main);
+						this.draftlog.users[u].decklist.side = updateCIDs(this.draftlog.users[u].decklist.side);
+					}
+				}
+				this.draftlog.carddata = {};
+				for (let cid of this.draftlog.boosters.flat())
+					this.draftlog.carddata[MTGACards[cid].id] = MTGACards[cid];
+				for (let i = 0; i < this.draftlog.boosters.length; ++i)
+					this.draftlog.boosters[i] = updateCIDs(this.draftlog.boosters[i]);
+				this.$set(this.draftlog, "version", "2.0");
+				this.$emit("storelogs");
+			}
 		},
 	},
 	computed: {
@@ -206,7 +256,7 @@ export default {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
 		selectedLogCards: function () {
-			return this.selectedLog.cards.map((cid) => genCard(cid));
+			return this.selectedLog.cards.map((cid) => this.draftlog.carddata[cid]);
 		},
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;
@@ -218,14 +268,14 @@ export default {
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
 					hasDeck: !!this.draftlog.users[userID].decklist,
-					colors: this.colorsInCardIDList(this.draftlog.users[userID].cards),
+					colors: this.colorsInCardList(this.draftlog.users[userID].cards),
 				});
 			}
 			while (Object.keys(tableSummary).length < 6 || Object.keys(tableSummary).length === 7)
 				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",
-					colors: this.colorsInCardIDList([]),
+					colors: this.colorsInCardList([]),
 				});
 			return tableSummary;
 		},

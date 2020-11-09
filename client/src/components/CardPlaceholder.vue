@@ -1,13 +1,13 @@
 <template functional>
 	<div class="card-placeholder">
-		<div class="card-name" v-if="name">{{ props.name }}</div>
+		<div class="card-name" v-if="props.cardname">{{ props.cardname }}</div>
 	</div>
 </template>
 
 <script>
 export default {
 	name: "CardPlaceholder",
-	props: { name: { type: String } },
+	props: { cardname: { type: String } },
 };
 </script>
 

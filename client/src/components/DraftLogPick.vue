@@ -1,18 +1,17 @@
 <template>
 	<div class="card-container">
 		<card
-			v-for="(card, index) in pick.booster"
+			v-for="(cid, index) in pick.booster"
 			:key="index"
-			:card="getCard(card)"
+			:card="carddata[cid]"
 			:language="language"
-			:class="{ 'selected-high': pick.pick === card, burned: pick.burn && pick.burn.includes(card) }"
+			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
 			:lazyLoad="true"
 		></card>
 	</div>
 </template>
 
 <script>
-import { Cards } from "./../Cards.js";
 import Card from "./Card.vue";
 
 export default {
@@ -20,12 +19,8 @@ export default {
 	components: { Card },
 	props: {
 		pick: { type: Object, required: true },
+		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
-	},
-	methods: {
-		getCard: function (cid) {
-			return Cards[cid];
-		},
 	},
 };
 </script>

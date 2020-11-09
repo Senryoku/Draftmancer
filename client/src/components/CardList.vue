@@ -39,7 +39,6 @@
 
 <script>
 import { download, isEmpty } from "../helper.js";
-import { Cards } from "./../Cards.js";
 import CardOrder from "../cardorder.js";
 import CardListColumn from "./CardListColumn.vue";
 
@@ -50,19 +49,26 @@ export default {
 		language: { type: String, required: true },
 		collection: { type: Object },
 	},
+	data: function () {
+		return { cards: null };
+	},
+	mounted: function () {
+		// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
+		this.getCards();
+	},
 	computed: {
 		isValid: function () {
 			return this.cardlist && this.cardlist.length;
 		},
 		rows: function () {
 			if (this.cardlist.customSheets) return [];
-			return this.rowsByColor(this.cardlist.cards.map((cid) => Cards[cid]));
+			return this.rowsByColor(this.cards);
 		},
 		rowsBySlot: function () {
 			if (!this.cardlist.customSheets) return [];
 			let rowsBySlot = {};
 			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cardlist.cards[slot].map((cid) => Cards[cid]));
+				rowsBySlot[slot] = this.rowsByColor(this.cards); // FIXME
 			}
 			return rowsBySlot;
 		},
@@ -70,23 +76,18 @@ export default {
 			return !isEmpty(this.collection);
 		},
 		missing: function () {
-			if (!this.checkCollection) return null;
+			if (!this.checkCollection || !this.cards) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			for (let cid of this.flatCardList) {
-				if (!(cid in this.collection)) {
+			for (let c of this.cards) {
+				if (!(c.arena_id in this.collection)) {
 					missing.total += 1;
-					missing[Cards[cid].rarity] += 1;
+					missing[c.rarity] += 1;
 				}
 			}
 			return missing;
 		},
 		missingText: function () {
 			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
-		},
-		flatCardList: function () {
-			return this.cardlist.customSheets
-				? Object.values(this.cardlist.cards).reduce((acc, val) => acc.concat(val), [])
-				: this.cardlist.cards;
 		},
 	},
 	methods: {
@@ -95,18 +96,19 @@ export default {
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
 					str += `[${slot}(${this.cardlist.cardsPerBooster[slot]})]\n`;
-					for (let cid of this.cardlist.cards[slot]) {
-						str += Cards[cid].name + "\n";
+					for (let c of this.cardlist.cards[slot]) {
+						str += c.name + "\n";
 					}
 				}
 			} else {
-				for (let cid of this.cardlist.cards) {
-					str += Cards[cid].name + "\n";
+				for (let c of this.cardlist.cards) {
+					str += c.name + "\n";
 				}
 			}
 			download("Cube.txt", str);
 		},
 		rowsByColor: function (cards) {
+			if (!cards) return [];
 			let a = cards.reduce(
 				(acc, item) => {
 					const c = item.colors;
@@ -123,31 +125,44 @@ export default {
 			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
 		},
+		getCards: async function () {
+			if (!this.cardlist || !this.cardlist.cards) return;
+			const response = await fetch("/getCards", {
+				method: "POST",
+				mode: "cors",
+				cache: "no-cache",
+				credentials: "same-origin",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: JSON.stringify(this.cardlist.cards),
+			});
+			this.cards = await response.json();
+		},
 	},
 };
 </script>
 
-<style>
+<style scoped>
 .card-list {
 	margin-left: 3em;
 	margin-right: 3em;
 }
 
 .category-wrapper {
-	column-count: 6;
-	column-gap: 1rem;
-	margin-bottom: 300px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+}
+
+.category-wrapper > .card-column {
+	margin-right: 1em;
 }
 
 .card-wrapper {
 	position: relative;
 	margin: 0;
-}
-
-.collection-warning {
-	position: absolute;
-	top: 0.55em;
-	left: -0.25em;
-	z-index: 1;
 }
 </style>

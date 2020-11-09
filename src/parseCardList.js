@@ -1,5 +1,8 @@
+import { CardsByName } from "./Cards.js";
+
 export default function(cards, cardlist, options) {
 	const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
+	const CardsIds = Object.keys(cards);
 	const parseLine = line => {
 		line = line.trim();
 		let [, count, name, set, number] = line.match(lineRegex);
@@ -19,23 +22,31 @@ export default function(cards, cardlist, options) {
 				`You should not specify a collector number without also specifying a set: '${line}'.`
 			);
 		}
-		let cardID = Object.keys(cards).find(
+
+		if(!set && !number && name in CardsByName)
+			return [count, CardsByName[name].id];
+
+		let cardIDs = CardsIds.filter(
 			id =>
 				cards[id].name == name &&
 				(!set || cards[id].set === set) &&
 				(!number || cards[id].collector_number === number)
 		);
-		if (typeof cardID !== "undefined") {
-			return [count, cardID];
-		} else {
+		if (cardIDs.length === 0) {
 			// If not found, try doubled faced cards before giving up!
-			cardID = Object.keys(cards).find(
+			cardIDs = CardsIds.filter(
 				id =>
 					cards[id].name.startsWith(name + " //") &&
 					(!set || cards[id].set === set) &&
 					(!number || cards[id].collector_number === number)
 			);
-			if (typeof cardID !== "undefined") return [count, cardID];
+		}
+		if (cardIDs.length > 0) {
+			return [count, cardIDs.reduce((best, cid) => {
+				if(parseInt(cards[cid].collector_number) < parseInt(cards[best].collector_number))
+					return cid;
+				return best;
+			}, cardIDs[0])];
 		}
 
 		return [
@@ -43,7 +54,7 @@ export default function(cards, cardlist, options) {
 				error: {
 					type: "error",
 					title: `Card not found`,
-					text: `Could not find '${name}' in our database. (Note: this app only supports cards from MTG Arena.)`,
+					text: `Could not find '${name}' in our database. If you think it should be there, please contact us via email or our Discord server.`,
 					footer: `Full line: '${line}'`,
 				},
 			},

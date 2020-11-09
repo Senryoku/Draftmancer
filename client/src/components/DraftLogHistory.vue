@@ -29,26 +29,34 @@
 					</span>
 				</span>
 				<span>
-					<template v-if="!draftLog.delayed">
-						<button type="button" @click="downloadLog(draftLog)">
-							<i class="fas fa-file-download"></i> Download
-						</button>
+					<template v-if="draftLog.version === '2.0'">
+						<template v-if="!draftLog.delayed">
+							<button type="button" @click="downloadLog(draftLog)">
+								<i class="fas fa-file-download"></i> Download
+							</button>
+						</template>
+						<template v-else-if="draftLog.boosters">
+							<!-- User has the full logs ready to be shared -->
+							(Delayed: No one can review this log until you share it)
+							<button @click="$emit('sharelog', draftLog)">
+								<i class="fas fa-share-square"></i> Share with session and unlock
+							</button>
+						</template>
+						<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
 					</template>
-					<template v-else-if="draftLog.boosters">
-						<!-- User has the full logs ready to be shared -->
-						(Delayed: No one can review this log until you share it)
-						<button @click="$emit('shareLog', draftLog)">
-							<i class="fas fa-share-square"></i> Share with session and unlock
-						</button>
-					</template>
-					<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
+					<template v-else>(Incompatible draft log version)</template>
 					<button type="button" class="stop" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>
 				</span>
 			</div>
 			<transition-collapse-height>
-				<draft-log v-if="selectedLog === draftLog" :draftlog="draftLog" :language="language"></draft-log>
+				<draft-log
+					v-if="selectedLog === draftLog"
+					:draftlog="draftLog"
+					:language="language"
+					@storelogs="$emit('storelogs')"
+				></draft-log>
 			</transition-collapse-height>
 		</div>
 	</div>
@@ -58,7 +66,6 @@
 import Swal from "sweetalert2";
 import { ButtonColor, SwalCustomClasses } from "../alerts.js";
 import * as helper from "../helper.js";
-import { Cards } from "../Cards.js";
 import exportToMTGA from "../exportToMTGA.js";
 import TransitionCollapseHeight from "./TransitionCollapseHeight.vue";
 import DraftLog from "./DraftLog.vue";
@@ -85,10 +92,12 @@ export default {
 	methods: {
 		downloadLog: function (draftLog) {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
-			for (let e in draftLog.users) {
-				let cards = [];
-				for (let c of draftLogFull.users[e].cards) cards.push(Cards[c]);
-				draftLogFull.users[e].exportString = exportToMTGA(cards, null, this.language);
+			for (let uid in draftLog.users) {
+				draftLogFull.users[uid].exportString = exportToMTGA(
+					draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
+					null,
+					this.language
+				);
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},

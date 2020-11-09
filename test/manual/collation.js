@@ -3,7 +3,7 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import Cards from "./../../src/Cards.js";
+import { Cards } from "./../../src/Cards.js";
 //import server from "../../server.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";
@@ -12,7 +12,7 @@ import { getRandom, getRandomKey } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 
 const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
-import CustomSheetsTest from "../data/CustomSheets.json";
+const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 import constants from "../../client/src/data/constants.json";
 
 describe("Statistical color balancing tests", function() {
@@ -40,11 +40,11 @@ describe("Statistical color balancing tests", function() {
 		let brutes = 0;
 		for (let i = 0; i < trials; i++) {
 			let booster = factory.generateBooster({ common: 10, uncommon: 3, rare: 1 });
-			booster.forEach(id => {
-				if (Cards[id].name === "Cliffhaven Kitesail") {
+			booster.forEach(card => {
+				if (card.name === "Cliffhaven Kitesail") {
 					kitesails += 1;
 				}
-				if (Cards[id].name === "Murasa Brute") {
+				if (card.name === "Murasa Brute") {
 					brutes += 1;
 				}
 			});
@@ -57,8 +57,8 @@ describe("Statistical color balancing tests", function() {
 
 	{
 		// Random set, or all of them
-		let s = getRandom(constants.MTGSets);
-		//for (let s of constants.MTGSets)
+		let s = getRandom(constants.MTGASets);
+		//for (let s of constants.MTGASets)
 		{
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
 				this.timeout(8000);
@@ -69,13 +69,13 @@ describe("Statistical color balancing tests", function() {
 				SessionInst.setRestriction = [s];
 				const trackedCards = {};
 				for (let cid of Object.keys(SessionInst.cardPoolByRarity().common))
-					if (!(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(parseInt(cid))))
+					if (!(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid)))
 						trackedCards[cid] = 0;
 				for (let i = 0; i < trials; i++) {
 					SessionInst.generateBoosters(3 * 8);
 					SessionInst.boosters.forEach(booster =>
-						booster.forEach(id => {
-							if (id in trackedCards) ++trackedCards[id];
+						booster.forEach(card => {
+							if (card.id in trackedCards) ++trackedCards[card.id];
 						})
 					);
 				}
@@ -116,13 +116,14 @@ describe("Statistical color balancing tests", function() {
 			SessionInst.generateBoosters(3 * 8);
 			let boosters = SessionInst.boosters;
 			boosters.forEach(booster =>
-				booster.forEach(id => {
-					trackedCards[id] = trackedCards[id] ? trackedCards[id] + 1 : 1;
+				booster.forEach(card => {
+					trackedCards[card.id] = trackedCards[card.id] ? trackedCards[card.id] + 1 : 1;
 				})
 			);
 		}
 		// Select 10 pairs of cards and compare their rates
 		const logTable = [];
+		let maxRelativeDifference = 0;
 		for (let i = 0; i < 10; ++i) {
 			let id0 = getRandomKey(trackedCards);
 			let id1 = getRandomKey(trackedCards);
@@ -136,9 +137,10 @@ describe("Statistical color balancing tests", function() {
 				"2nd Card Count": trackedCards[id1],
 				"Relative Difference": relativeDifference,
 			});
-			expect(relativeDifference).to.be.at.most(0.2);
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 		}
 		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
 	});
 
@@ -154,13 +156,14 @@ describe("Statistical color balancing tests", function() {
 			SessionInst.generateBoosters(3 * 8);
 			let boosters = SessionInst.boosters;
 			boosters.forEach(booster =>
-				booster.forEach(id => {
-					trackedCards[id] = trackedCards[id] ? trackedCards[id] + 1 : 1;
+				booster.forEach(card => {
+					trackedCards[card.id] = trackedCards[card.id] ? trackedCards[card.id] + 1 : 1;
 				})
 			);
 		}
 		// Select 10 pairs of cards and compare their rates
 		const logTable = [];
+		let maxRelativeDifference = 0;
 		for (let i = 0; i < 10; ++i) {
 			let id0 = getRandomKey(trackedCards);
 			let id1 = getRandomKey(trackedCards);
@@ -174,9 +177,10 @@ describe("Statistical color balancing tests", function() {
 				"2nd Card Count": trackedCards[id1],
 				"Relative Difference": relativeDifference,
 			});
-			expect(relativeDifference).to.be.at.most(0.2);
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 		}
 		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
 	});
 
@@ -186,20 +190,21 @@ describe("Statistical color balancing tests", function() {
 		const SessionInst = new Session("UniqueID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
-		SessionInst.customCardList = CustomSheetsTest;
+		SessionInst.setCustomCardList(parseCardList(Cards, CustomSheetsTestFile));
 		const trackedCards = {};
-		for (let cid of CustomSheetsTest.cards.common) trackedCards[cid] = 0;
+		for (let cid of SessionInst.customCardList.cards.Common) trackedCards[cid] = 0;
 		for (let i = 0; i < trials; i++) {
 			SessionInst.generateBoosters(3 * 8);
 			let boosters = SessionInst.boosters;
 			boosters.forEach(booster =>
-				booster.forEach(id => {
-					if (id in trackedCards) ++trackedCards[id];
+				booster.forEach(card => {
+					if (card.id in trackedCards) ++trackedCards[card.id];
 				})
 			);
 		}
 		// Select 10 pairs of cards and compare their rates
 		const logTable = [];
+		let maxRelativeDifference = 0;
 		for (let i = 0; i < 10; ++i) {
 			let id0 = getRandomKey(trackedCards);
 			let id1 = getRandomKey(trackedCards);
@@ -213,9 +218,10 @@ describe("Statistical color balancing tests", function() {
 				"2nd Card Count": trackedCards[id1],
 				"Relative Difference": relativeDifference,
 			});
-			expect(relativeDifference).to.be.at.most(0.2);
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 		}
 		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
 	});
 });

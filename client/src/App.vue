@@ -11,7 +11,7 @@
 				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" :delay="2" />
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
-					<select @change="fetchTranslation($event.target.value)" name="language" id="select-language">
+					<select v-model="language" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
 							v-bind:value="lang.code"
@@ -21,12 +21,6 @@
 							{{ lang.name }}
 						</option>
 					</select>
-					<i
-						class="fas fa-spinner fa-spin"
-						style="position: absolute; margin-top: 0.6em; margin-left: 0.5em"
-						v-tooltip="'Loading language data...'"
-						v-if="loadingLanguages.length > 0"
-					></i>
 				</div>
 			</span>
 			<span>
@@ -215,6 +209,7 @@
 									Upload a Custom Card List...
 								</div>
 							</multiselect>
+							<i class="fas fa-ellipsis-h clickable" @click="displayedModal = 'setRestriction'"></i>
 							<div
 								class="inline"
 								v-tooltip="
@@ -641,13 +636,14 @@
 								@click="pickCard"
 								value="Confirm Pick"
 								v-if="
-									selectedCard != undefined &&
-									(burningCards.length === burnedCardsPerRound ||
-										booster.length === 1 + burningCards.length)
+									selectedCards.length === cardsToPick && burningCards.length === cardsToBurnThisRound
 								"
 							/>
 							<span v-else>
-								Pick a card
+								<span v-if="cardsToPick === 1">Pick a card</span>
+								<span v-else>
+									Pick {{ cardsToPick }} cards ({{ selectedCards.length }} / {{ cardsToPick }})
+								</span>
 								<span v-if="cardsToBurnThisRound > 0">
 									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 										burningCards.length
@@ -664,7 +660,7 @@
 							:language="language"
 							:canbeburned="burnedCardsPerRound > 0"
 							:burned="burningCards.includes(card)"
-							:class="{ selected: selectedCard === card }"
+							:class="{ selected: selectedCards.includes(card) }"
 							@click.native="selectCard($event, card)"
 							@dblclick.native="doubleClickCard($event, card)"
 							@burn="burnCard($event, card)"
@@ -803,7 +799,12 @@
 								}}...
 							</template>
 						</span>
-						<input type="button" @click="pickCard" value="Confirm Pick" v-if="selectedCard != undefined" />
+						<input
+							type="button"
+							@click="pickCard"
+							value="Confirm Pick"
+							v-if="selectedCards.length === cardsToPick"
+						/>
 					</div>
 				</div>
 				<transition-group name="fade" tag="div" class="booster card-container">
@@ -814,7 +815,7 @@
 							:card="card"
 							:language="language"
 							:canbeburned="false"
-							:class="{ selected: selectedCard === card }"
+							:class="{ selected: selectedCards.includes(card) }"
 							@click.native="selectCard($event, card)"
 							@dblclick.native="doubleClickCard($event, card)"
 							draggable
@@ -1163,34 +1164,27 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>November 06, 2020</em>
+							<ul>
+								<li>
+									Implemented support for cards outside of MtG: Arena! Try drafting some
+									<img
+										data-v-7f621d22=""
+										src="img/sets/mb1.svg"
+										class="set-icon"
+										style="--invertedness: 100%"
+									/>
+									Mystery Boosters or any Vintage Cube! This is a massive rewrite, so if you spot any
+									problem, please get in touch via email or
+									<a href="https://discord.gg/XscXXNw" target="_blank">our Discord</a>.
+								</li>
+								<li>Added a new setting allowing for multiple picks per pack.</li>
+							</ul>
 							<em>October 9, 2020</em>
 							<ul>
 								<li>
 									Deck sharing now lets you show your deck to other players and viewers of the
 									read-only bracket.
-								</li>
-							</ul>
-							<em>September 20, 2020</em>
-							<ul>
-								<li>New Public Sessions section (just above here).</li>
-								<li>Survey #2 has begun (link below here).</li>
-							</ul>
-							<em>September 14, 2020</em>
-							<ul>
-								<li>
-									<img src="img/sets/znr.svg" class="set-icon" style="--invertedness: 100%" />
-									Zendikar Rising is now available!
-								</li>
-								<li>
-									Team Draft is now available! It's a draft variant for 6 players to play in 3v3
-									teams. Great for smaller pods or to work with your friends to identify threats and
-									build pools.
-									<a
-										href="https://magic.wizards.com/en/articles/archive/how-play-limited/team-draft-2016-11-08"
-										>Learn more about the format here.</a
-									>
-									Use the checkbox under Additional Session Options after clicking the Settings
-									button.
 								</li>
 							</ul>
 						</div>
@@ -1315,13 +1309,18 @@
 				</div>
 			</div>
 		</modal>
+		<modal v-if="displayedModal === 'setRestriction'" @close="displayedModal = ''">
+			<h2 slot="header">Card Pool</h2>
+			<set-restriction slot="body" v-model="setRestriction"></set-restriction>
+		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
 			<h2 slot="header">Draft Logs</h2>
 			<draft-log-history
 				slot="body"
 				:draftLogs="draftLogs"
 				:language="language"
-				@shareLog="shareSavedDraftLog"
+				@sharelog="shareSavedDraftLog"
+				@storelogs="storeDraftLogs"
 			></draft-log-history>
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
@@ -1550,11 +1549,40 @@
 								<select class="right" v-model="customBoosters[index]">
 									<option value>(Default)</option>
 									<option value="random">Random Set from Card Pool</option>
+									<option style="color: #888" disabled>————————————————</option>
 									<option v-for="code in sets.slice().reverse()" :value="code" :key="code">
+										{{ setsInfos[code].fullName }}
+									</option>
+									<option style="color: #888" disabled>————————————————</option>
+									<option
+										v-for="code in primarySets.filter((s) => !sets.includes(s))"
+										:value="code"
+										:key="code"
+									>
 										{{ setsInfos[code].fullName }}
 									</option>
 								</select>
 							</div>
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>How many cards to pick each round. Useful for Commander Legends for example (2 cards per round).</p><p>Default is 1.</p>',
+						}"
+					>
+						<label for="picked-cards-per-round">Picked cards per round</label>
+						<div class="right">
+							<input
+								type="number"
+								id="picked-cards-per-round"
+								class="small-number-input"
+								min="1"
+								step="1"
+								v-model.number="pickedCardsPerRound"
+							/>
 						</div>
 					</div>
 					<div
