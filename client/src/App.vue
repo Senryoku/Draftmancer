@@ -740,9 +740,7 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{
-								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
-							}}
+							Pack #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }}
 							/
 							{{ gridDraftState.boosterCount }}
 						</span>
@@ -780,10 +778,8 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
-								rochesterDraftState.boosterCount
-							}}
-							- Pick #{{ rochesterDraftState.pickNumber + 1 }}
+							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+							Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
 						<span>
 							<template v-if="userID === rochesterDraftState.currentPlayer">
@@ -879,7 +875,7 @@
 						<land-control
 							v-show="draftingState == DraftState.Brewing"
 							:lands="lands"
-							v-bind:autoland.sync="autoLand"
+							:autoland.sync="autoLand"
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>

@@ -24,7 +24,7 @@
 				<input
 					type="checkbox"
 					id="autoLand"
-					:value="autoland"
+					:checked="autoland"
 					@change="$emit('update:autoland', $event.target.checked)"
 				/>
 				<label for="autoLand">Auto. Land</label>
@@ -42,7 +42,7 @@
 					type="number"
 					:id="`${c}-mana`"
 					:value="lands[c]"
-					@input="$emit('update:lands', c, parseInt($event.data))"
+					@input="$emit('update:lands', c, parseInt($event.target.value))"
 					min="0"
 					max="999"
 				/>
