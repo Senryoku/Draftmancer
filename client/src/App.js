@@ -1259,15 +1259,6 @@ export default {
 			}
 		},
 		setRochesterDraftState: function(state) {
-			let booster = [];
-			if (
-				this.rochesterDraftState &&
-				this.rochesterDraftState.booster &&
-				this.rochesterDraftState.booster.length - 1 === state.booster.length
-			) {
-				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
-			} else for (let c of state.booster) booster.push(c);
-			state.booster = booster;
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function() {
@@ -1932,6 +1923,7 @@ export default {
 			return ReadyState;
 		},
 		cardsToPick: function() {
+			if(this.rochesterDraftState) return 1;
 			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound: function() {

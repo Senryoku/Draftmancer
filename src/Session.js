@@ -91,7 +91,7 @@ function SwissBracket(players) {
 // Cache for cards organized by set.
 const BoosterCardsBySet = {};
 for (let cid in Cards) {
-	if (Cards[cid].in_booster) {
+	if (Cards[cid].in_booster || Cards[cid].set === 'und') { // Force cache for Unsanctionec (UND) as it's not a draft product originally
 		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
 		BoosterCardsBySet[Cards[cid].set].push(cid);
 	}

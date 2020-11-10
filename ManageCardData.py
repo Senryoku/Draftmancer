@@ -485,6 +485,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1']]  # Exclude some codes that are actually part of larger sets
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'tsr']]  # Exclude some codes that are actually part of larger sets, and TSR that's not out yet
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

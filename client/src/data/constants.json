@@ -185,7 +185,6 @@
         }
     ],
     "PrimarySets": [
-        "tsr",
         "cmr",
         "plist",
         "znr",
