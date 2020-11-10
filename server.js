@@ -1101,7 +1101,7 @@ function joinSession(sessionID, userID) {
 
 function addUserToSession(userID, sessionID) {
 	const options = {};
-	if (Connections[userID].sessionID !== null) {
+	if (Connections[userID].sessionID !== null && Connections[userID].sessionID in Sessions) {
 		// Transfer session options to the new one if applicable
 		if (userID === Sessions[Connections[userID].sessionID].owner) {
 			for (let p of optionProps) {
