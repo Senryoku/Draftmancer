@@ -626,7 +626,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster</h2>
 						<div class="controls">
-							<span>Pack #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i>
 								{{ pickTimer }}
@@ -647,7 +647,7 @@
 								<span v-if="cardsToBurnThisRound > 0">
 									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 										burningCards.length
-									}}/{{ cardsToBurnThisRound }})
+									}}/{{ cardsToBurnThisRound }}).
 								</span>
 							</span>
 						</div>
@@ -742,9 +742,7 @@
 						<span>
 							Pack #{{
 								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
-							}}
-							/
-							{{ gridDraftState.boosterCount }}
+							}}/{{ gridDraftState.boosterCount }}
 						</span>
 						<span>
 							<template v-if="userID === gridDraftState.currentPlayer">
@@ -782,8 +780,7 @@
 						<span>
 							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
 								rochesterDraftState.boosterCount
-							}}
-							- Pick #{{ rochesterDraftState.pickNumber + 1 }}
+							}}, Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
 						<span>
 							<template v-if="userID === rochesterDraftState.currentPlayer">
