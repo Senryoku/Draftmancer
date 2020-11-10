@@ -408,7 +408,7 @@ export const SetSpecificFactories = {
 
 import PaperBoosterData from "../data/sealed_extended_data.json";
 
-function weightedRandomPick(arr, totalWeight, picked = []) {
+function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
 	let pick = randomInt(0, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
@@ -418,8 +418,8 @@ function weightedRandomPick(arr, totalWeight, picked = []) {
 	}
 	// Duplicate protection (allows duplicates between foil and non-foil)
 	// Not sure if we should checks ids or (set, number) here.
-	if(picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
-		 return weightedRandomPick(arr, totalWeight, picked);
+	if(attempt < 10 && picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+		 return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
 	return arr[idx];
 }
 
