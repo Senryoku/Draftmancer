@@ -626,7 +626,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster</h2>
 						<div class="controls">
-							<span>Pack #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i>
 								{{ pickTimer }}
@@ -647,7 +647,7 @@
 								<span v-if="cardsToBurnThisRound > 0">
 									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 										burningCards.length
-									}}/{{ cardsToBurnThisRound }})
+									}}/{{ cardsToBurnThisRound }}).
 								</span>
 							</span>
 						</div>
@@ -740,9 +740,9 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }}
-							/
-							{{ gridDraftState.boosterCount }}
+							Pack #{{
+								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
+							}}/{{ gridDraftState.boosterCount }}
 						</span>
 						<span>
 							<template v-if="userID === gridDraftState.currentPlayer">
@@ -778,7 +778,7 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }},
 							Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
 						<template v-if="userID === rochesterDraftState.currentPlayer">
@@ -1568,10 +1568,10 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>How many cards to pick each round. Useful for Commander Legends for example (2 cards per round).</p><p>Default is 1.</p>',
+								'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p>',
 						}"
 					>
-						<label for="picked-cards-per-round">Picked cards per round</label>
+						<label for="picked-cards-per-round">Picked cards per booster</label>
 						<div class="right">
 							<input
 								type="number"
@@ -1588,10 +1588,10 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player and 2 burned cards per round.</p><p>Default is 0.</p>',
+								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
 						}"
 					>
-						<label for="burned-cards-per-round">Burned cards per round</label>
+						<label for="burned-cards-per-round">Burned cards per booster</label>
 						<div class="right">
 							<input
 								type="number"
