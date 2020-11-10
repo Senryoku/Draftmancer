@@ -18,23 +18,6 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 -   Running `nodemon --experimental-json-modules` instead of `npm start` will restart the node server on any changes. (Install nodemon globally with `npm install nodemon -g`)
 -   Use `npm run build-dev` to watch for changes in the client js code and automatically re-build it.
 
-### Setup DynamoDB (local)
-
-Persistence can be disabled by setting environment variable DISABLE_PERSISTENCE to TRUE.
-
--   Download [DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
--   Extract and run `java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb`
--   Setup environment variables, for development create a '.env' file at the root of MTGADraft with the following:
-
-```
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=...
-AWS_ENDPOINT=http://localhost:8000
-```
-
--   Run `node createDynamoDBTables.js`
-
 ### Tests
 
 -   `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
