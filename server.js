@@ -319,7 +319,7 @@ io.on("connection", function(socket) {
 		if (sess.users.size < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
-				text: `You need at least 2 human players to start a Rochester Draft. Bots are not supported!`,
+				text: `You need at least 2 players to start a Rochester Draft. Bots are not supported!`,
 			});
 		} else {
 			sess.startRochesterDraft();
