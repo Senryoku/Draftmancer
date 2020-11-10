@@ -24,6 +24,14 @@ const checkColorBalance = function(booster) {
 		).to.be.at.least(1);
 };
 
+const checkDuplicates = function(booster) {
+	// Foils can be duplicates
+	let sorted = [...booster].sort((lhs, rhs) => lhs.id < rhs.id ? -1 : 1);
+	for(let idx = 0; idx < sorted.length - 1; ++idx) {
+		expect(sorted[idx].id !== sorted[idx + 1].id || sorted[idx].foil !== sorted[idx + 1].foil).to.be.true;
+	}
+}
+
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 
 describe("Inter client communication", function() {
@@ -363,8 +371,11 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
 		});
 		startDraft();
-		it("Boosters are color balanced.", function(done) {
-			for (let b of Sessions[sessionID].boosters) checkColorBalance(b);
+		it("Boosters are color balanced and contain no duplicate.", function(done) {
+			for (let b of Sessions[sessionID].boosters) {
+				checkColorBalance(b);
+				checkDuplicates(b);
+			}
 			done();
 		});
 		singlePick();
@@ -373,7 +384,7 @@ describe("Single Draft (Two Players)", function() {
 	});
 
 	for(let set of Constants.PrimarySets) {
-		describe.skip(`Drafting ${set}`, function() {
+		describe(`Drafting ${set}`, function() {
 			connect();
 			it("Clients should receive the updated setRestriction status.", function(done) {
 				let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
@@ -387,6 +398,18 @@ describe("Single Draft (Two Players)", function() {
 				clients[ownerIdx].emit("setRestriction", [set]);
 			});
 			startDraft();
+			it("All cards in booster should be of the desired set.", function(done) {
+				for(let b of Sessions[sessionID].boosters) {
+					checkDuplicates(b);
+					expect(b.every(c => c.set === set || (
+						(set === 'mb1' && c.set === 'fmb1') ||
+						(set === 'tsp' && c.set === 'tsb') ||
+						(set === 'frf' && c.set === 'ktk') ||
+						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr'))
+						))).to.be.true;
+				}
+				done();
+			});
 			endDraft();
 			disconnect();
 		});
@@ -841,6 +864,13 @@ describe("Multiple Drafts", function() {
 							sessionsCorrectlyStartedDrafting == sessionCount &&
 							boostersReceived == playersPerSession * sessionCount
 						) {
+							it("Boosters are color balanced and contain no duplicate.", function(done) {
+								for (let b of Sessions[sessionIDs[sessionIdx]].boosters) {
+									checkColorBalance(b);
+									checkDuplicates(b);
+								}
+								done();
+							});
 							done();
 						}
 					});
