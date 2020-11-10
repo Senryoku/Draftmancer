@@ -740,9 +740,7 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{
-								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
-							}}
+							Pack #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }}
 							/
 							{{ gridDraftState.boosterCount }}
 						</span>
@@ -780,16 +778,22 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
-								rochesterDraftState.boosterCount
-							}}
-							- Pick #{{ rochesterDraftState.pickNumber + 1 }}
+							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+							Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
-						<span>
-							<template v-if="userID === rochesterDraftState.currentPlayer">
-								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
-							</template>
-							<template v-else>
+						<template v-if="userID === rochesterDraftState.currentPlayer">
+							<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
+							<span>
+								<input
+									type="button"
+									@click="pickCard"
+									value="Confirm Pick"
+									v-if="selectedCards.length === cardsToPick"
+								/>
+							</span>
+						</template>
+						<template v-else>
+							<span>
 								<i class="fas fa-spinner fa-spin"></i>
 								Waiting for
 								{{
@@ -797,14 +801,8 @@
 										? userByID[rochesterDraftState.currentPlayer].userName
 										: "(Disconnected)"
 								}}...
-							</template>
-						</span>
-						<input
-							type="button"
-							@click="pickCard"
-							value="Confirm Pick"
-							v-if="selectedCards.length === cardsToPick"
-						/>
+							</span>
+						</template>
 					</div>
 				</div>
 				<transition-group name="fade" tag="div" class="booster card-container">
