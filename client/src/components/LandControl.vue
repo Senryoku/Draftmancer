@@ -1,7 +1,7 @@
 <template>
 	<dropdown
 		v-tooltip.top="
-			'Control basic lands added on export. Auto. Land will complete your deck to 40 cards with basic lands.'
+			'Controls basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards with basic lands.'
 		"
 	>
 		<template v-slot:handle>

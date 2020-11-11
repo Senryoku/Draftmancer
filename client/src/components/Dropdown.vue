@@ -1,5 +1,5 @@
 <template>
-	<span class="dropdown-container">
+	<span class="dropdown-container" @mouseenter="updateHeight">
 		<div class="handle"><slot name="handle"></slot></div>
 		<div class="dropdown">
 			<div class="content" ref="content">
@@ -10,7 +10,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+	methods: {
+		updateHeight: function () {
+			this.$el.style = `--unrolled-height: calc(0.5em + ${this.$refs.content.clientHeight}px);`;
+		},
+	},
+};
 </script>
 
 <style scoped>
