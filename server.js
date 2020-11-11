@@ -484,8 +484,14 @@ io.on("connection", function(socket) {
 			return;
 		}
 
-		const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
-		if (ack) ack(r);
+		try {
+			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
+			if (ack) ack(r);
+		} catch(err) {
+			console.error("Error in pickCard:", err);
+			console.error(Sessions[sessionID]);
+			if (ack) ack({ code: 500, error: "Internal server error." });
+		}
 	});
 
 	// Session options
