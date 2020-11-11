@@ -122,12 +122,7 @@ export default {
 				rare: 1,
 			},
 			colorBalance: true,
-			maxDuplicates: {
-				common: 16,
-				uncommon: 8,
-				rare: 4,
-				mythic: 2,
-			},
+			maxDuplicates: null,
 			foil: false,
 			bots: 0,
 			setRestriction: [],
@@ -1914,6 +1909,17 @@ export default {
 			}
 			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
 		},
+		toggleLimitDuplicates: function() {
+			if(this.maxDuplicates !== null)
+				this.maxDuplicates = null;
+			else
+				this.maxDuplicates = {
+					common: 8,
+					uncommon: 4,
+					rare: 2,
+					mythic: 1,
+				};
+		}
 	},
 	computed: {
 		DraftState: function() {

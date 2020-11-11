@@ -200,12 +200,7 @@ export function Session(id, owner, options) {
 	this.mythicPromotion = true;
 	this.boosterContent = DefaultBoosterTargets;
 	this.colorBalance = true;
-	this.maxDuplicates = {
-		common: 16,
-		uncommon: 8,
-		rare: 4,
-		mythic: 2,
-	};
+	this.maxDuplicates = null;
 	this.foil = false;
 	this.useCustomCardList = false;
 	this.customCardList = {};
@@ -376,11 +371,11 @@ export function Session(id, owner, options) {
 		if (this.unrestrictedCardPool()) {
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
-				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
+				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
 			} else {
 				// Use cache otherwise
 				for (let set of this.setRestriction)
-					for (let c of BoosterCardsBySet[set]) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
+					for (let c of BoosterCardsBySet[set]) cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
 			}
 			return cardPool;
 		}
@@ -444,7 +439,7 @@ export function Session(id, owner, options) {
 			rare: {},
 			mythic: {},
 		};
-		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates[Cards[id].rarity];
+		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates ? this.maxDuplicates[Cards[id].rarity] : 99;
 		return local;
 	};
 
@@ -575,7 +570,12 @@ export function Session(id, owner, options) {
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				// Don't compute cardPoolByRarity if it's not necessary
-				if(!boosterSpecificRules && this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+				if(!boosterSpecificRules && 
+					this.setRestriction.length === 1 && 
+					this.boosterContent === DefaultBoosterTargets && 
+					this.maxDuplicates === null &&
+					this.setRestriction[0] in PaperBoosterFactories && 
+					this.unrestrictedCardPool()) {
 					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
 				} else {
 					let localCollection = this.cardPoolByRarity();

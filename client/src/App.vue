@@ -1444,24 +1444,32 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.</p>',
+								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default: Off.</p>',
 						}"
 					>
-						<div class="option-column-title">Max. duplicate copies</div>
-						<div class="line" v-for="r in ['common', 'uncommon', 'rare', 'mythic']" :key="r">
-							<label :for="'max-duplicates-' + r" class="capitalized">{{ r }}s</label>
-							<div class="right">
-								<input
-									class="small-number-input"
-									type="number"
-									:id="'max-duplicates-' + r"
-									min="1"
-									max="16"
-									step="1"
-									v-model.number="maxDuplicates[r]"
-								/>
-							</div>
+						<div class="option-column-title">
+							<input
+								type="checkbox"
+								:checked="maxDuplicates !== null"
+								@click="toggleLimitDuplicates"
+							/><label for="max-duplicate-title">Limit duplicates</label>
 						</div>
+						<template v-if="maxDuplicates !== null">
+							<div class="line" v-for="r in Object.keys(maxDuplicates)" :key="r">
+								<label :for="'max-duplicates-' + r" class="capitalized">{{ r }}s</label>
+								<div class="right">
+									<input
+										class="small-number-input"
+										type="number"
+										:id="'max-duplicates-' + r"
+										min="1"
+										max="16"
+										step="1"
+										v-model.number="maxDuplicates[r]"
+									/>
+								</div>
+							</div>
+						</template>
 					</div>
 					<div
 						class="line"
