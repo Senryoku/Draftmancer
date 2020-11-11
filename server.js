@@ -276,7 +276,7 @@ io.on("connection", function(socket) {
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
-				text: `Grid Draft can only be played with exactly 2 players.`,
+				text: `Grid Draft can only be played with exactly 2 players. Bots are not supported!`,
 			});
 		}
 	});
@@ -319,7 +319,7 @@ io.on("connection", function(socket) {
 		if (sess.users.size < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
-				text: `You need at least two players to start a Rochester Draft.`,
+				text: `Rochester Draft can only be played with at least 2 players. Bots are not supported!`,
 			});
 		} else {
 			sess.startRochesterDraft();
@@ -368,7 +368,7 @@ io.on("connection", function(socket) {
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
-				text: `Winston Draft can only be played with exactly 2 players.`,
+				text: `Winston Draft can only be played with exactly 2 players. Bots are not supported!`,
 			});
 		}
 	});
