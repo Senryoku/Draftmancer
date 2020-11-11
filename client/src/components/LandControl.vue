@@ -19,7 +19,6 @@
 			</span>
 		</div>
 		<div class="dropdown">
-			<span>Adding {{ totalLands }} basic lands.</span>
 			<span>
 				<input
 					type="checkbox"
@@ -57,11 +56,6 @@ export default {
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
-	},
-	computed: {
-		totalLands: function () {
-			return Object.values(this.lands).reduce((acc, val) => (acc += val), 0);
-		},
 	},
 	methods: {
 		add: function (c) {

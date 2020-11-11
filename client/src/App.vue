@@ -841,7 +841,15 @@
 		>
 			<div class="deck">
 				<div class="section-title">
-					<h2>Deck ({{ deck.length }})</h2>
+					<h2 style="min-width: 8em">
+						Deck ({{ deck.length
+						}}<span
+							v-show="totalLands > 0"
+							v-tooltip="'Added basics on export (Not shown in decklist below).'"
+						>
+							+ {{ totalLands }}</span
+						>)
+					</h2>
 					<div class="controls">
 						<button
 							v-if="deck.length > 0"
