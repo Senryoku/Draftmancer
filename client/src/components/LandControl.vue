@@ -1,11 +1,10 @@
 <template>
-	<span
-		class="basic-land-control"
+	<dropdown
 		v-tooltip.top="
 			'Control basic lands added on export. Auto. Land will complete your deck to 40 cards with basic lands.'
 		"
 	>
-		<div class="always-visible">
+		<template v-slot:handle>
 			<span v-if="Object.values(lands).every((n) => n === 0)"> No basic land added. </span>
 			<span
 				v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => lands[c] > 0)"
@@ -17,8 +16,8 @@
 				<img :src="`img/mana/${c}.svg`" class="mana-icon" />
 				{{ lands[c] }}
 			</span>
-		</div>
-		<div class="dropdown">
+		</template>
+		<template v-slot:dropdown>
 			<span>
 				<input
 					type="checkbox"
@@ -47,12 +46,15 @@
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
-		</div>
-	</span>
+		</template>
+	</dropdown>
 </template>
 
 <script>
+import Dropdown from "./Dropdown.vue";
+
 export default {
+	components: { Dropdown },
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
@@ -69,51 +71,8 @@ export default {
 </script>
 
 <style scoped>
-.basic-land-control {
-	position: relative;
-	display: inline-block;
-	background-color: #444;
-	border-radius: 8px 8px 0 0;
-	box-shadow: 0 2px 4px 0 #444;
-	min-width: 12em;
-}
-
-.always-visible {
-	margin: 0.25em 0.5em;
-	text-align: center;
-}
-
-.always-visible .mana-icon {
+.mana-icon {
 	vertical-align: text-top;
-}
-
-.always-visible span {
-	margin: 0 0.25em;
-}
-
-.dropdown {
-	position: absolute;
-	display: flex;
-	flex-direction: column;
-	top: 100%;
-	z-index: 1;
-	background-color: #444;
-	width: 100%;
-	box-sizing: border-box;
-	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
-	border-radius: 0 0 8px 8px;
-	max-height: 0;
-	overflow: hidden;
-	transition: all 0.2s ease-in-out;
-	padding: 0 0.5em;
-	text-align: center;
-}
-
-.basic-land-control:active .dropdown,
-.basic-land-control:hover .dropdown {
-	max-height: 500px;
-	z-index: 1;
-	padding: 0.5em;
 }
 
 .land-input {

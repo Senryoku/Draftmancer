@@ -18,6 +18,7 @@ import Modal from "./components/Modal.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
+import Dropdown from "./components/Dropdown.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
@@ -74,6 +75,7 @@ export default {
 		DelayedInput,
 		Card,
 		CardPlaceholder,
+		Dropdown,
 		BoosterCard,
 		CardPool,
 		DraftLogPick,
