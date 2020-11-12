@@ -1141,10 +1141,12 @@ export function Session(id, owner, options) {
 
 	this.doBotPick = function(instance, boosterIndex) {
 		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
-		const picked = [];
+		const pickedIndices = [];
+		const pickedCards = [];
 		for (let i = 0; i < this.pickedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
 			const pickedIdx = instance.pick(this.boosters[boosterIndex]);
-			picked.push(pickedIdx);
+			pickedIndices.push(pickedIdx);
+			pickedCards.push(this.boosters[boosterIndex][pickedIdx]);
 			this.boosters[boosterIndex].splice(pickedIdx, 1);
 		}
 		const burned = [];
@@ -1154,11 +1156,11 @@ export function Session(id, owner, options) {
 			this.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
-			pick: picked,
+			pick: pickedIndices,
 			burn: burned,
 			booster: startingBooster,
 		});
-		return picked;
+		return pickedCards;
 	};
 
 	this.nextBooster = function() {
