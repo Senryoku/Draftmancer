@@ -1901,7 +1901,7 @@ export default {
 			fireToast("success", "Default log path copied to clipboard!");
 		},
 		storeDraftLogs: function() {
-			while (this.draftLogs.length > 25) {
+			while (this.draftLogs.length > 10) {
 				const idx = this.draftLogs.reduce((acc, cur, idx, src) => {
 					return cur.time < src[acc].time ? idx : acc;
 				}, 0);

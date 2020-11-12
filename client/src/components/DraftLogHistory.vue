@@ -5,7 +5,7 @@
 			<button onclick="document.querySelector('#log-input').click()" v-tooltip="'Import a saved draft log.'">
 				Import Draft Log
 			</button>
-			<span>({{ draftLogs.length }} / 25 logs)</span>
+			<span>({{ draftLogs.length }} / 10 logs)</span>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
 			No saved draft logs.
