@@ -198,7 +198,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         for c in ScryfallCards:
             handled += 1
 
-            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
+            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "art_series"]:
                 continue
 
             # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
@@ -211,7 +211,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             if c['name'] in KLRCards:
                 if c["name"] not in klr_candidates:
                     klr_candidates[c["name"]] = {}
-                # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
+                # Prioritize version of cards from Kaladesh (KLD) of Aether Revolt (AER)
                 if (c['set'].lower() in ['kld', 'aer']) or c['lang'] not in klr_candidates[c['name']] or (klr_candidates[c['name']][c['lang']]['set'] not in ['kld', 'aer'] and (c['released_at'] > klr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and klr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
                     klr_candidates[c["name"]][c["lang"]] = c
 
@@ -316,6 +316,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             selection['in_booster'] = True
             if c['set'] == 'akr':
                 selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
+            elif c['set'] == 'klr':
+                # Exclude Buy-a-Box (Sculpting Steel, 302)
+                selection['in_booster'] = 'Basic Land' not in c['type_line'] and int(
+                    c['collector_number']) < 302
             elif not c['booster'] or 'Basic Land' in c['type_line']:
                 selection['in_booster'] = False
                 selection['rating'] = 0
