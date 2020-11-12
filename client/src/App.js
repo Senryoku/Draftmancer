@@ -6,6 +6,7 @@ import draggable from "vuedraggable";
 import VTooltip from "v-tooltip";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
+import LZString from "./lz-string.min.js";
 
 import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
@@ -1901,13 +1902,14 @@ export default {
 			fireToast("success", "Default log path copied to clipboard!");
 		},
 		storeDraftLogs: function() {
-			while (this.draftLogs.length > 10) {
+			while (this.draftLogs.length > 25) {
 				const idx = this.draftLogs.reduce((acc, cur, idx, src) => {
 					return cur.time < src[acc].time ? idx : acc;
 				}, 0);
 				this.draftLogs.splice(idx, 1);
 			}
-			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+			console.log("Stored Draft Logs.");
+			localStorage.setItem("draftLogs", LZString.compressToUTF16(JSON.stringify(this.draftLogs)));
 		},
 		toggleLimitDuplicates: function() {
 			if(this.maxDuplicates !== null)
@@ -2025,19 +2027,28 @@ export default {
 				}
 			}
 
-			let tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			let tmpDraftLogs;
+			//console.log("Draft Logs Local Size: ", encodeURI(localStorage.getItem("draftLogs")).split(/%..|./).length - 1)
+			try {
+				tmpDraftLogs = JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("draftLogs")));
+			} catch(err) {
+				// Fallback if logs were not compressed
+				console.log("Draft Logs were not compressed.");
+				tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			}
 			if (tmpDraftLogs) this.draftLogs = tmpDraftLogs;
 
 			// Look for a previously saved single draftLog (backward comp.)
-			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
+			let tmpDraftLog = localStorage.getItem("draftLog")
 			if (tmpDraftLog) {
+				tmpDraftLog = JSON.parse(tmpDraftLog);
 				if (tmpDraftLog.delayed && tmpDraftLog.draftLog) {
 					// handle old delayed format
 					tmpDraftLog = tmpDraftLog.draftLog;
 					tmpDraftLog.delayed = true;
 				}
 				this.draftLogs.push(tmpDraftLog);
-				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				this.storeDraftLogs();
 				localStorage.removeItem("draftLog");
 			}
 
