@@ -205,13 +205,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             if c['name'] in AKRCards:
                 if c["name"] not in akr_candidates:
                     akr_candidates[c["name"]] = {}
-                # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
+                # Prioritize version of cards from Amonkhet (AKH) or Hour of Devastation (HOU)
                 if (c['set'].lower() in ['akh', 'hou']) or c['lang'] not in akr_candidates[c['name']] or (akr_candidates[c['name']][c['lang']]['set'] not in ['akh', 'hou'] and (c['released_at'] > akr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and akr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
                     akr_candidates[c["name"]][c["lang"]] = c
             if c['name'] in KLRCards:
                 if c["name"] not in klr_candidates:
                     klr_candidates[c["name"]] = {}
-                # Prioritize version of cards from Kaladesh (KLD) of Aether Revolt (AER)
+                # Prioritize version of cards from Kaladesh (KLD) or Aether Revolt (AER)
                 if (c['set'].lower() in ['kld', 'aer']) or c['lang'] not in klr_candidates[c['name']] or (klr_candidates[c['name']][c['lang']]['set'] not in ['kld', 'aer'] and (c['released_at'] > klr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and klr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
                     klr_candidates[c["name"]][c["lang"]] = c
 
