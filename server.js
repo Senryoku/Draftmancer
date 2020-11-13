@@ -1301,23 +1301,22 @@ app.get("/getStatus/:key", (req, res) => {
 
 // Used by Discord Bot
 app.get("/getSessions/:key", (req, res) => {
-	let localSess = {};
-	for(let sid in Sessions)
-		localSess[sid] = {
-			id: sid,
-			drafting: Sessions[sid].drafting,
-			users: Sessions[sid].users,
-			maxPlayers: Sessions[sid].maxPlayers,
-			useCustomCardList: Sessions[sid].useCustomCardList,
-			customCardList: Sessions[sid].customCardList ? {
-				name: Sessions[sid].customCardList.name, 
-				length: Sessions[sid].customCardList.length, 
-			} : null,
-			setRestriction: Sessions[sid].setRestriction,
-		};
-
 	if (req.params.key === secretKey) {
-		res.json(localSess);
+		let localSess = {};
+		for(let sid in Sessions)
+			localSess[sid] = {
+				id: sid,
+				drafting: Sessions[sid].drafting,
+				users: Sessions[sid].users,
+				maxPlayers: Sessions[sid].maxPlayers,
+				useCustomCardList: Sessions[sid].useCustomCardList,
+				customCardList: Sessions[sid].customCardList ? {
+					name: Sessions[sid].customCardList.name, 
+					length: Sessions[sid].customCardList.length, 
+				} : null,
+				setRestriction: Sessions[sid].setRestriction,
+			};
+		returnJSON(res, localSess);
 	} else {
 		res.sendStatus(401).end();
 	}
