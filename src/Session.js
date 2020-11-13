@@ -1107,8 +1107,6 @@ export function Session(id, owner, options) {
 			cardsToRemove = cardsToRemove.concat(burnedCards);
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
-		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
-
 		// Signal users
 		this.forUsers(u => {
 			Connections[u].socket.emit("updateUser", {
@@ -1119,7 +1117,7 @@ export function Session(id, owner, options) {
 			});
 		});
 
-		// Update draft log for live display if owner in not playing
+		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
 		if (
 			!this.ownerIsPlayer &&
 			["owner", "everyone"].includes(this.draftLogRecipients) &&
@@ -1128,9 +1126,11 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cards: pickedCards.map(idx=>this.boosters[boosterIndex][idx].name),
+				cards: pickedCards.map(idx => this.boosters[boosterIndex][idx]),
 			});
 		}
+
+		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
 
 		++this.pickedCardsThisRound;
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) {
@@ -1279,7 +1279,7 @@ export function Session(id, owner, options) {
 
 	this.getStrippedLog = function() {
 		const strippedLog = {
-			version: this.draftLog.version,
+			version: this.draftLog.version,	
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
 			delayed: true,

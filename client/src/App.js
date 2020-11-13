@@ -861,7 +861,7 @@ export default {
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language]).join(', ')}!`);
+				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language] ? s.printed_names[this.language] : s.name).join(', ')}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
