@@ -288,8 +288,8 @@ describe("Single Draft (Two Players)", function() {
 				const _idx = c;
 				(() => {
 					clients[c].once("nextBooster", function(data) {
-						expect(boosters).not.include(data);
-						boosters[_idx] = data;
+						expect(boosters).not.include(data.booster);
+						boosters[_idx] = data.booster;
 						receivedBoosters += 1;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
@@ -303,11 +303,11 @@ describe("Single Draft (Two Players)", function() {
 		it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 			let receivedBoosters = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				const idx = c;
 				clients[c].once("nextBooster", function(data) {
+					const idx = c;
 					receivedBoosters += 1;
-					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
-					boosters[idx] = data;
+					expect(data.booster.length).to.equal(boosters[idx].length - 1);
+					boosters[idx] = data.booster;
 					if (receivedBoosters == clients.length) done();
 				});
 				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
@@ -322,7 +322,7 @@ describe("Single Draft (Two Players)", function() {
 				const idx = c;
 				clients[c].on("nextBooster", function(data) {
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { pickedCards: [0] }, () => {});
+					this.emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[idx].length)] }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -334,12 +334,12 @@ describe("Single Draft (Two Players)", function() {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[c].length)] }, () => {});
 			}
 		});
 	}
 
-	describe("With a third player and  color balance", function() {
+	describe("With a third player and color balance", function() {
 		connect();
 		it("3 clients with different userID should be connected.", function(done) {
 			let idx = clients.push(
@@ -602,6 +602,75 @@ describe("Single Draft (Two Players)", function() {
 		});
 		startDraft();
 		endDraft();
+		disconnect();
+	});
+
+	describe("Using an observer and bots.", function() {
+		connect();
+		it("Clients should receive the updated ownerIsPlayer.", function(done) {
+			clients[nonOwnerIdx].once("sessionOptions", function(val) {
+				expect(val.ownerIsPlayer).to.equal(false);
+				done();
+			});
+			clients[ownerIdx].emit("setOwnerIsPlayer", false);
+		});
+		it("Clients should receive the updated bot count.", function(done) {
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+
+		it("When session owner launches draft, players should receive a startDraft event", function(done) {
+			let connectedClients = 0;
+			let receivedBoosters = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+
+				clients[c].once("startDraft", function() {
+					connectedClients += 1;
+					if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
+				});
+
+				const _idx = nonOwnerIdx;
+				(() => {
+					clients[c].once("nextBooster", function(data) {
+						expect(boosters).not.include(data.booster);
+						boosters[_idx] = data.booster;
+						receivedBoosters += 1;
+						if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
+					});
+				})();
+			}
+			clients[ownerIdx].emit("startDraft");
+		});
+
+		it("Pick until the draft ends.", function(done) {
+			let draftEnded = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+
+				const idx = c;
+				clients[c].on("nextBooster", function(data) {
+					boosters[idx] = data.booster;
+					this.emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[idx].length)] }, () => {});
+				});
+				clients[c].once("endDraft", function() {
+					draftEnded += 1;
+					this.removeListener("nextBooster");
+					if (draftEnded == clients.length - 1) {
+						boosters = [];
+						done();
+					}
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+				clients[c].emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[c].length)] }, () => {});
+			}
+		});
+
 		disconnect();
 	});
 
