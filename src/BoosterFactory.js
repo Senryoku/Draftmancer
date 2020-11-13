@@ -334,7 +334,11 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	cmr: (cardPool, landSlot, options) => {
-		// TODO
+		// TODO Add the "Foil Etched" commanders to the foil slot.
+		// They shouldn't be in the card pool at all for now, Probable algorithm: 
+		// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic']) 
+		// (rate unknown atm; probably the ratio between the size of both pools) then pick a card normaly in the selected pool.
+		// List here: https://mtg.gamepedia.com/Commander_Legends#Notable_cards
 		/*
 		Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
 		Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
