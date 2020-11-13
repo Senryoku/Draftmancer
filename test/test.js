@@ -153,7 +153,7 @@ describe("Sets content", function() {
 		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		akr: { common: 108, uncommon: 90, rare: 74, mythic: 31 },
 		znr: { common: 101, uncommon: 80, rare: 64, mythic: 20 },
-		klr: { common: 104, uncommon: 92, rare: 75, mythic: 16 - 1 }, // Exclude the Buy-a-Box mythic
+		klr: { common: 104, uncommon: 97, rare: 63, mythic: 23 - 1 }, // Exclude the Buy-a-Box mythic
 	};
 
 	beforeEach(function(done) {

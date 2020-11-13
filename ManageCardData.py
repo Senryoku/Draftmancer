@@ -314,12 +314,8 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             else:
                 selection['rating'] = 0.5
             selection['in_booster'] = True
-            if c['set'] == 'akr':
+            if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
-            elif c['set'] == 'klr':
-                # Exclude Buy-a-Box (Sculpting Steel, 302)
-                selection['in_booster'] = 'Basic Land' not in c['type_line'] and int(
-                    c['collector_number']) < 302
             elif not c['booster'] or 'Basic Land' in c['type_line']:
                 selection['in_booster'] = False
                 selection['rating'] = 0
