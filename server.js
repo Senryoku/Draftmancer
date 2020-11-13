@@ -823,10 +823,12 @@ io.on("connection", function(socket) {
 	socket.on("shareDraftLog", function(draftLog) {
 		if (!(this.userID in Connections)) return;
 		const sess = Sessions[Connections[this.userID].sessionID];
-		if (!sess || sess.owner !== this.userID) return;
+		if (!draftLog || !sess || sess.owner !== this.userID) return;
 
 		// Update local copy to be public
-		if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+		if(!sess.draftLog && sess.id === draftLog.sessionID)
+			sess.draftLog = draftLog;
+		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
