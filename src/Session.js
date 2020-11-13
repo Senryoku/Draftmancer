@@ -1279,6 +1279,7 @@ export function Session(id, owner, options) {
 
 	this.getStrippedLog = function() {
 		const strippedLog = {
+			version: this.draftLog.version,
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
 			delayed: true,
