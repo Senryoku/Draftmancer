@@ -134,6 +134,11 @@ io.on("connection", function(socket) {
 			});
 		}
 	});
+	
+	socket.on("error", function(err) {
+		console.error("Socket.io error: ")
+		console.error(err);
+	});
 
 	// Personnal options
 

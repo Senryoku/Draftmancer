@@ -155,7 +155,7 @@ async function tempDump(exitOnCompletion = false) {
 					'access-key': PersistenceKey,
 				}
 			}
-		));
+		).catch((err) => console.error("Error storing connections: ", err.message)));
 	} catch (err) {
 		console.log("Error: ", err);
 	}
@@ -218,7 +218,7 @@ async function tempDump(exitOnCompletion = false) {
 					'access-key': PersistenceKey,
 				}
 			}
-		));
+		).catch((err) => console.error("Error storing sessions: ", err.message)));
 	} catch (err) {
 		console.log("Error: ", err);
 	}
@@ -248,7 +248,7 @@ export function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
-	if(type === "Draft") {
+	if(type === "Draft" && !DisablePersistence) {
 		axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
 			localSess.draftLog, 
 			{
@@ -256,7 +256,7 @@ export function logSession(type, session) {
 					'access-key': PersistenceKey,
 				}
 			}
-		);
+		).catch((err) => console.error("Error storing logs: ", err.message));
 	}
 
 	let mixdata = {
