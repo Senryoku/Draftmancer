@@ -361,7 +361,7 @@ describe("Single Draft (Two Players)", function() {
 			nonOwnerIdx = 1 - ownerIdx;
 			clients[ownerIdx].emit("setColorBalance", true);
 			clients[ownerIdx].emit("ignoreCollections", true);
-			clients[nonOwnerIdx].on("setRestriction", () => {
+			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				expect(Object.keys(localCollection["common"]).length).to.equal(101);
 				expect(Object.keys(localCollection["uncommon"]).length).to.equal(80);
