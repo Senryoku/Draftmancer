@@ -193,7 +193,7 @@ describe("Sets content", function() {
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		expect(Object.keys(Connections).length).to.equal(2);
+		expect(Object.keys(Connections)).to.have.lengthOf(2);
 		done();
 	});
 
@@ -209,7 +209,7 @@ describe("Sets content", function() {
 							.map(cid => Cards[cid].set)
 							.every(s => s === set)
 					).to.be.true;
-					expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
+					expect(Object.keys(localCollection[r])).to.have.lengthOf(sets[set][r]);
 				}
 				done();
 			});
@@ -363,10 +363,10 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				expect(Object.keys(localCollection["common"]).length).to.equal(101);
-				expect(Object.keys(localCollection["uncommon"]).length).to.equal(80);
-				expect(Object.keys(localCollection["rare"]).length).to.equal(53);
-				expect(Object.keys(localCollection["mythic"]).length).to.equal(15);
+				expect(Object.keys(localCollection["common"])).to.have.lengthOf(101);
+				expect(Object.keys(localCollection["uncommon"])).to.have.lengthOf(80);
+				expect(Object.keys(localCollection["rare"])).to.have.lengthOf(53);
+				expect(Object.keys(localCollection["mythic"])).to.have.lengthOf(15);
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
@@ -391,7 +391,7 @@ describe("Single Draft (Two Players)", function() {
 				let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 				let nonOwnerIdx = 1 - ownerIdx;
 				clients[nonOwnerIdx].once("setRestriction", function(setRestriction) {
-					expect(setRestriction.length).to.be.equal(1);
+					expect(setRestriction).to.have.lengthOf(1);
 					expect(setRestriction[0]).to.be.equal(set);
 					done();
 				});
