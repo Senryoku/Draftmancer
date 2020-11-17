@@ -257,62 +257,54 @@
 					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'">Draft</button>
 				</span>
 				<span>
-					<div class="game-modes-button" :class="{ disabled: sessionOwner != userID }">
-						<span class="game-modes-button-text">
+					<dropdown :class="{ disabled: sessionOwner != userID }">
+						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
-						</span>
-						<div class="game-modes-dropdown">
-							<div class="game-modes-container">
-								<span class="game-modes-cat">Draft</span>
-								<button
-									@click="startWinstonDraft()"
-									v-tooltip.left="
-										'Starts a Winston Draft. This is a draft variant for only two players.'
-									"
-								>
-									Winston (2p.)
-								</button>
-								<button
-									@click="startGridDraft()"
-									v-tooltip.left="
-										'Starts a Grid Draft. This is a draft variant for only two players.'
-									"
-								>
-									Grid (2p.)
-								</button>
-								<button
-									@click="startGlimpseDraft()"
-									v-tooltip.left="
-										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
-									"
-								>
-									Glimpse/Burn
-								</button>
-								<button
-									@click="startRochesterDraft()"
-									v-tooltip.left="
-										'Starts a Rochester Draft. Every players picks from a single booster.'
-									"
-								>
-									Rochester
-								</button>
-								<span class="game-modes-cat">Sealed</span>
-								<button
-									@click="sealedDialog"
-									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
-								>
-									Sealed
-								</button>
-								<button
-									@click="deckWarning(distributeJumpstart)"
-									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
-								>
-									Jumpstart
-								</button>
-							</div>
-						</div>
-					</div>
+						</template>
+						<template v-slot:dropdown>
+							<span class="game-modes-cat">Draft</span>
+							<button
+								@click="startWinstonDraft()"
+								v-tooltip.left="'Starts a Winston Draft. This is a draft variant for only two players.'"
+							>
+								Winston (2p.)
+							</button>
+							<button
+								@click="startGridDraft()"
+								v-tooltip.left="'Starts a Grid Draft. This is a draft variant for only two players.'"
+							>
+								Grid (2p.)
+							</button>
+							<button
+								@click="startGlimpseDraft()"
+								v-tooltip.left="
+									'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
+								"
+							>
+								Glimpse/Burn
+							</button>
+							<button
+								@click="startRochesterDraft()"
+								v-tooltip.left="'Starts a Rochester Draft. Every players picks from a single booster.'"
+							>
+								Rochester
+							</button>
+							<span class="game-modes-cat">Sealed</span>
+							<button
+								@click="sealedDialog"
+								v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+							>
+								Sealed
+							</button>
+							<button
+								@click="deckWarning(distributeJumpstart)"
+								v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+							>
+								Jumpstart
+							</button>
+						</template>
+					</dropdown>
 				</span>
 				<span
 					v-tooltip="'More session options'"
@@ -843,7 +835,15 @@
 		>
 			<div class="deck">
 				<div class="section-title">
-					<h2>Deck ({{ deck.length }})</h2>
+					<h2 style="min-width: 8em">
+						Deck ({{ deck.length
+						}}<span
+							v-show="totalLands > 0"
+							v-tooltip="'Added basics on export (Not shown in decklist below).'"
+						>
+							+ {{ totalLands }}</span
+						>)
+					</h2>
 					<div class="controls">
 						<button
 							v-if="deck.length > 0"
@@ -874,28 +874,13 @@
 							@click="displayedModal = 'deckStats'"
 							v-tooltip="'Deck Statistics'"
 						></i>
-						<span v-show="draftingState == DraftState.Brewing">
-							<input type="checkbox" id="autoLand" v-model="autoLand" />
-							<label
-								for="autoLand"
-								v-tooltip="'If set, will complete your deck to 40 cards with basic lands.'"
-								>Auto. Land</label
-							>
-							<template v-for="c in ['W', 'U', 'B', 'R', 'G']">
-								<label class="land-input" :key="c">
-									<img :src="`img/mana/${c}.svg`" class="mana-icon" />
-									<input
-										class="small-number-input"
-										type="number"
-										:id="`${c}-mana`"
-										v-model.number="lands[c]"
-										min="0"
-										max="999"
-									/>
-								</label>
-							</template>
-							Adding {{ totalLands }} basic lands for a total of {{ deck.length + totalLands }} cards
-						</span>
+						<land-control
+							v-show="draftingState == DraftState.Brewing"
+							:lands="lands"
+							:autoland.sync="autoLand"
+							@update:lands="(c, n) => (lands[c] = n)"
+						>
+						</land-control>
 					</div>
 				</div>
 

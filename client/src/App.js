@@ -19,6 +19,7 @@ import Modal from "./components/Modal.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
+import Dropdown from "./components/Dropdown.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
@@ -27,6 +28,7 @@ import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import Bracket from "./components/Bracket.vue";
 import GridDraft from "./components/GridDraft.vue";
+import LandControl from "./components/LandControl.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import SetRestriction from "./components/SetRestriction.vue";
 
@@ -74,6 +76,7 @@ export default {
 		DelayedInput,
 		Card,
 		CardPlaceholder,
+		Dropdown,
 		BoosterCard,
 		CardPool,
 		DraftLogPick,
@@ -84,6 +87,7 @@ export default {
 		CardList: () => import("./components/CardList.vue"),
 		CardStats: () => import("./components/CardStats.vue"),
 		GridDraft,
+		LandControl,
 		Bracket,
 		PatchNotes,
 		SetRestriction,

@@ -534,51 +534,11 @@ footer span {
 	width: 12em;
 }
 
-.game-modes-dropdown {
-	position: absolute;
-	top: 100%;
-	z-index: 1;
-	background-color: #444;
-	width: 100%;
-	box-sizing: border-box;
-	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
-	border-radius: 0 0 8px 8px;
-	max-height: 0;
-	overflow: hidden;
-	transition: all 0.2s ease-in-out;
-}
-
-.game-modes-container {
-	display: flex;
-	flex-direction: column;
-	padding: 0.5em;
-	padding-top: 0;
-}
-
 .game-modes-cat {
 	text-align: center;
 	font-variant: small-caps;
 	font-size: 0.75em;
 	margin-top: 0.5em;
-}
-
-.game-modes-button {
-	position: relative;
-	display: inline-block;
-	background-color: #444;
-	border-radius: 8px 8px 0 0;
-	box-shadow: 0 2px 4px 0 #444;
-}
-
-.game-modes-button-text {
-	margin-left: 0.5em;
-	margin-right: 0.5em;
-	line-height: 1.75em;
-}
-
-.game-modes-button:focus > .game-modes-dropdown,
-.game-modes-button:hover > .game-modes-dropdown {
-	max-height: calc(5 * 3em + 2em);
 }
 
 .setting-button {
