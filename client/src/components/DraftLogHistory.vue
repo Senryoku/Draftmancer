@@ -120,7 +120,7 @@ export default {
 						this.draftLogs.findIndex((e) => e === draftLog),
 						1
 					);
-					localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+					this.$emit("storelogs");
 				}
 			});
 		},
@@ -144,7 +144,7 @@ export default {
 					if (json.users) {
 						this.draftLogs.push(json);
 						this.selectedLog = json;
-						localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+						this.$emit("storelogs");
 					} else displayError("Missing required data.");
 				} catch (e) {
 					displayError(e);

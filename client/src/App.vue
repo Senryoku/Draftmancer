@@ -618,7 +618,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster</h2>
 						<div class="controls">
-							<span>Pack #{{ boosterNumber }}, Pick {{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i>
 								{{ pickTimer }}
@@ -639,7 +639,7 @@
 								<span v-if="cardsToBurnThisRound > 0">
 									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
 										burningCards.length
-									}}/{{ cardsToBurnThisRound }})
+									}}/{{ cardsToBurnThisRound }}).
 								</span>
 							</span>
 						</div>
@@ -732,9 +732,9 @@
 					<h2>Grid Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount) }}
-							/
-							{{ gridDraftState.boosterCount }}
+							Pack #{{
+								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
+							}}/{{ gridDraftState.boosterCount }}
 						</span>
 						<span>
 							<template v-if="userID === gridDraftState.currentPlayer">
@@ -770,14 +770,22 @@
 					<h2>Rochester Draft</h2>
 					<div class="controls">
 						<span>
-							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }} -
+							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }},
 							Pick #{{ rochesterDraftState.pickNumber + 1 }}
 						</span>
-						<span>
-							<template v-if="userID === rochesterDraftState.currentPlayer">
-								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
-							</template>
-							<template v-else>
+						<template v-if="userID === rochesterDraftState.currentPlayer">
+							<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
+							<span>
+								<input
+									type="button"
+									@click="pickCard"
+									value="Confirm Pick"
+									v-if="selectedCards.length === cardsToPick"
+								/>
+							</span>
+						</template>
+						<template v-else>
+							<span>
 								<i class="fas fa-spinner fa-spin"></i>
 								Waiting for
 								{{
@@ -785,14 +793,8 @@
 										? userByID[rochesterDraftState.currentPlayer].userName
 										: "(Disconnected)"
 								}}...
-							</template>
-						</span>
-						<input
-							type="button"
-							@click="pickCard"
-							value="Confirm Pick"
-							v-if="selectedCards.length === cardsToPick"
-						/>
+							</span>
+						</template>
 					</div>
 				</div>
 				<transition-group name="fade" tag="div" class="booster card-container">
@@ -1427,24 +1429,32 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default values attempt to mimic a real booster box.</p>',
+								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default: Off.</p>',
 						}"
 					>
-						<div class="option-column-title">Max. duplicate copies</div>
-						<div class="line" v-for="r in ['common', 'uncommon', 'rare', 'mythic']" :key="r">
-							<label :for="'max-duplicates-' + r" class="capitalized">{{ r }}s</label>
-							<div class="right">
-								<input
-									class="small-number-input"
-									type="number"
-									:id="'max-duplicates-' + r"
-									min="1"
-									max="16"
-									step="1"
-									v-model.number="maxDuplicates[r]"
-								/>
-							</div>
+						<div class="option-column-title">
+							<input
+								type="checkbox"
+								:checked="maxDuplicates !== null"
+								@click="toggleLimitDuplicates"
+							/><label for="max-duplicate-title">Limit duplicates</label>
 						</div>
+						<template v-if="maxDuplicates !== null">
+							<div class="line" v-for="r in Object.keys(maxDuplicates)" :key="r">
+								<label :for="'max-duplicates-' + r" class="capitalized">{{ r }}s</label>
+								<div class="right">
+									<input
+										class="small-number-input"
+										type="number"
+										:id="'max-duplicates-' + r"
+										min="1"
+										max="16"
+										step="1"
+										v-model.number="maxDuplicates[r]"
+									/>
+								</div>
+							</div>
+						</template>
 					</div>
 					<div
 						class="line"
@@ -1551,10 +1561,10 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>How many cards to pick each round. Useful for Commander Legends for example (2 cards per round).</p><p>Default is 1.</p>',
+								'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p>',
 						}"
 					>
-						<label for="picked-cards-per-round">Picked cards per round</label>
+						<label for="picked-cards-per-round">Picked cards per booster</label>
 						<div class="right">
 							<input
 								type="number"
@@ -1571,10 +1581,10 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card each round, you will also remove this number of cards from the draft.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player and 2 burned cards per round.</p><p>Default is 0.</p>',
+								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
 						}"
 					>
-						<label for="burned-cards-per-round">Burned cards per round</label>
+						<label for="burned-cards-per-round">Burned cards per booster</label>
 						<div class="right">
 							<input
 								type="number"

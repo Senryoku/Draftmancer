@@ -88,6 +88,7 @@ MTGATranslations = {"en": {},
 CardsCollectorNumberAndSet = {}
 CardNameToID = {}
 AKRCards = {}
+KLRCards = {}
 for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
@@ -103,6 +104,10 @@ for path in MTGACardsFiles:
                 if o["set"] == "akr":
                     if o['rarity'] != 1:
                         AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
+                            o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
+                if o["set"] == "klr":
+                    if o['rarity'] != 1:
+                        KLRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
                             o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
                 else:
                     # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
@@ -126,6 +131,7 @@ for path in MTGACardsFiles:
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
+print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -184,6 +190,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         ScryfallCards = (o for o in objects)
 
         akr_candidates = {}
+        klr_candidates = {}
         sys.stdout.write("PreProcessing... ")
         sys.stdout.flush()
         copied = 0
@@ -191,16 +198,22 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         for c in ScryfallCards:
             handled += 1
 
-            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "artseries"]:
+            if c['oversized'] or c['layout'] in ["token", "double_faced_token", "emblem", "art_series"]:
                 continue
 
             # Tag this card as a candidate for AKR card images (to avoid using MTGA images)
             if c['name'] in AKRCards:
                 if c["name"] not in akr_candidates:
                     akr_candidates[c["name"]] = {}
-                # Prioritize version of cards from Amonkhet (AKH) of Hour of Devastation (HOU)
+                # Prioritize version of cards from Amonkhet (AKH) or Hour of Devastation (HOU)
                 if (c['set'].lower() in ['akh', 'hou']) or c['lang'] not in akr_candidates[c['name']] or (akr_candidates[c['name']][c['lang']]['set'] not in ['akh', 'hou'] and (c['released_at'] > akr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and akr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
                     akr_candidates[c["name"]][c["lang"]] = c
+            if c['name'] in KLRCards:
+                if c["name"] not in klr_candidates:
+                    klr_candidates[c["name"]] = {}
+                # Prioritize version of cards from Kaladesh (KLD) or Aether Revolt (AER)
+                if (c['set'].lower() in ['kld', 'aer']) or c['lang'] not in klr_candidates[c['name']] or (klr_candidates[c['name']][c['lang']]['set'] not in ['kld', 'aer'] and (c['released_at'] > klr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and klr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
+                    klr_candidates[c["name"]][c["lang"]] = c
 
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
@@ -221,15 +234,23 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             "PreProcessing done! {}/{} cards added.\n".format(copied, handled))
 
         sys.stdout.write("Fixing AKR images...")
-        MissingAKRCards = AKRCards
+        MissingAKRCards = AKRCards.copy()
         for name in akr_candidates:
             del MissingAKRCards[name]
         if len(MissingAKRCards) > 0:
             print("MissingAKRCards: ", MissingAKRCards)
+        MissingKLRCards = KLRCards.copy()
+        for name in klr_candidates:
+            del MissingKLRCards[name]
+        if len(MissingKLRCards) > 0:
+            print("MissingAKRCards: ", MissingKLRCards)
 
         for c in all_cards:
             if c['set'] == 'akr' and c['name'] in akr_candidates and c['lang'] in akr_candidates[c['name']]:
                 c['image_uris']['border_crop'] = akr_candidates[c['name']
+                                                                ][c['lang']]['image_uris']['border_crop']
+            if c['set'] == 'klr' and c['name'] in klr_candidates and c['lang'] in klr_candidates[c['name']]:
+                c['image_uris']['border_crop'] = klr_candidates[c['name']
                                                                 ][c['lang']]['image_uris']['border_crop']
 
         sys.stdout.write(" Done!\n")
@@ -293,7 +314,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             else:
                 selection['rating'] = 0.5
             selection['in_booster'] = True
-            if c['set'] == 'akr':
+            if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
             elif not c['booster'] or 'Basic Land' in c['type_line']:
                 selection['in_booster'] = False
@@ -431,7 +452,6 @@ setinfos = {}
 
 
 def getIcon(set, icon_path):
-    # con is a reserved keyword on windows; we don't need it anyway.
     if not os.path.isfile("client/public/" + icon_path):
         response = requests.get(
             "https://api.scryfall.com/sets/{}".format(set))
@@ -458,6 +478,7 @@ for set, group in groups:
                      }
     if 'block' in setdata:
         setinfos[set]["block"] = setdata['block']
+    # con is a reserved keyword on windows
     icon_path = "img/sets/{}.svg".format(set if set != 'con' else 'conf')
     if getIcon(set, icon_path) != None:
         setinfos[set]['icon'] = icon_path
@@ -466,18 +487,6 @@ for set, group in groups:
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
         setinfos[set][rarity + "Count"] = len(rarityGroupList)
-# for s in PrimarySets:
-#    if s not in setinfos:
-#        infos = next(x for x in SetsInfos if x['code'] == s)
-#        setinfos[s] = {
-#            "code": s,
-#            "fullName": infos['name'],
-#            "cardCount": infos['card_count'],
-#            "isPrimary": True
-#        }
-#    icon_path = "img/sets/{}.svg".format(s if s != 'con' else 'conf')
-#    if getIcon(s, icon_path) != None:
-#        setinfos[s]['icon'] = icon_path
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
@@ -485,6 +494,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1']]  # Exclude some codes that are actually part of larger sets
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'tsr']]  # Exclude some codes that are actually part of larger sets, and TSR that's not out yet
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

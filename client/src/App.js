@@ -6,6 +6,7 @@ import draggable from "vuedraggable";
 import VTooltip from "v-tooltip";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
+import LZString from "./lz-string.min.js";
 
 import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
@@ -126,12 +127,7 @@ export default {
 				rare: 1,
 			},
 			colorBalance: true,
-			maxDuplicates: {
-				common: 16,
-				uncommon: 8,
-				rare: 4,
-				mythic: 2,
-			},
+			maxDuplicates: null,
 			foil: false,
 			bots: 0,
 			setRestriction: [],
@@ -869,7 +865,7 @@ export default {
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language]).join(', ')}!`);
+				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language] ? s.printed_names[this.language] : s.name).join(', ')}!`);
 			});
 
 			this.socket.on("setCardSelection", data => {
@@ -1220,7 +1216,7 @@ export default {
 
 			const { value: boosterCount } = await Swal.fire({
 				title: "Grid Draft",
-				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, picking 2 or 3 cards each round. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
+				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
@@ -1263,15 +1259,6 @@ export default {
 			}
 		},
 		setRochesterDraftState: function(state) {
-			let booster = [];
-			if (
-				this.rochesterDraftState &&
-				this.rochesterDraftState.booster &&
-				this.rochesterDraftState.booster.length - 1 === state.booster.length
-			) {
-				booster = this.rochesterDraftState.booster.filter(c => state.booster.includes(c.id));
-			} else for (let c of state.booster) booster.push(c);
-			state.booster = booster;
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function() {
@@ -1925,8 +1912,20 @@ export default {
 				}, 0);
 				this.draftLogs.splice(idx, 1);
 			}
-			localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+			console.log("Stored Draft Logs.");
+			localStorage.setItem("draftLogs", LZString.compressToUTF16(JSON.stringify(this.draftLogs)));
 		},
+		toggleLimitDuplicates: function() {
+			if(this.maxDuplicates !== null)
+				this.maxDuplicates = null;
+			else
+				this.maxDuplicates = {
+					common: 8,
+					uncommon: 4,
+					rare: 2,
+					mythic: 1,
+				};
+		}
 	},
 	computed: {
 		DraftState: function() {
@@ -1936,6 +1935,7 @@ export default {
 			return ReadyState;
 		},
 		cardsToPick: function() {
+			if(this.rochesterDraftState) return 1;
 			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound: function() {
@@ -2031,19 +2031,28 @@ export default {
 				}
 			}
 
-			let tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			let tmpDraftLogs;
+			//console.log("Draft Logs Local Size: ", encodeURI(localStorage.getItem("draftLogs")).split(/%..|./).length - 1)
+			try {
+				tmpDraftLogs = JSON.parse(LZString.decompressFromUTF16(localStorage.getItem("draftLogs")));
+			} catch(err) {
+				// Fallback if logs were not compressed
+				console.log("Draft Logs were not compressed.");
+				tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
+			}
 			if (tmpDraftLogs) this.draftLogs = tmpDraftLogs;
 
 			// Look for a previously saved single draftLog (backward comp.)
-			let tmpDraftLog = JSON.parse(localStorage.getItem("draftLog"));
+			let tmpDraftLog = localStorage.getItem("draftLog")
 			if (tmpDraftLog) {
+				tmpDraftLog = JSON.parse(tmpDraftLog);
 				if (tmpDraftLog.delayed && tmpDraftLog.draftLog) {
 					// handle old delayed format
 					tmpDraftLog = tmpDraftLog.draftLog;
 					tmpDraftLog.delayed = true;
 				}
 				this.draftLogs.push(tmpDraftLog);
-				localStorage.setItem("draftLogs", JSON.stringify(this.draftLogs));
+				this.storeDraftLogs();
 				localStorage.removeItem("draftLog");
 			}
 

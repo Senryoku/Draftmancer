@@ -59,7 +59,8 @@
         "iko",
         "m21",
         "akr",
-        "znr"
+        "znr",
+        "klr"
     ],
     "StandardSets": [
         "eld",
@@ -185,8 +186,8 @@
         }
     ],
     "PrimarySets": [
-        "tsr",
         "cmr",
+        "klr",
         "plist",
         "znr",
         "akr",

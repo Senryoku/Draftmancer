@@ -5,7 +5,7 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import { Cards } from "./Cards.js";
+import { Cards, getUnique } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -91,7 +91,7 @@ function SwissBracket(players) {
 // Cache for cards organized by set.
 const BoosterCardsBySet = {};
 for (let cid in Cards) {
-	if (Cards[cid].in_booster) {
+	if (Cards[cid].in_booster || Cards[cid].set === 'und') { // Force cache for Unsanctionec (UND) as it's not a draft product originally
 		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
 		BoosterCardsBySet[Cards[cid].set].push(cid);
 	}
@@ -200,12 +200,7 @@ export function Session(id, owner, options) {
 	this.mythicPromotion = true;
 	this.boosterContent = DefaultBoosterTargets;
 	this.colorBalance = true;
-	this.maxDuplicates = {
-		common: 16,
-		uncommon: 8,
-		rare: 4,
-		mythic: 2,
-	};
+	this.maxDuplicates = null;
 	this.foil = false;
 	this.useCustomCardList = false;
 	this.customCardList = {};
@@ -376,11 +371,11 @@ export function Session(id, owner, options) {
 		if (this.unrestrictedCardPool()) {
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
-				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
+				for (let c in Cards) if (Cards[c].in_booster) cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
 			} else {
 				// Use cache otherwise
 				for (let set of this.setRestriction)
-					for (let c of BoosterCardsBySet[set]) cardPool[c] = this.maxDuplicates[Cards[c].rarity];
+					for (let c of BoosterCardsBySet[set]) cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
 			}
 			return cardPool;
 		}
@@ -444,7 +439,7 @@ export function Session(id, owner, options) {
 			rare: {},
 			mythic: {},
 		};
-		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates[Cards[id].rarity];
+		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates ? this.maxDuplicates[Cards[id].rarity] : 99;
 		return local;
 	};
 
@@ -575,7 +570,12 @@ export function Session(id, owner, options) {
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
 				// Don't compute cardPoolByRarity if it's not necessary
-				if(!boosterSpecificRules && this.setRestriction.length === 1 && this.boosterContent === DefaultBoosterTargets && this.setRestriction[0] in PaperBoosterFactories && this.unrestrictedCardPool()) {
+				if(!boosterSpecificRules && 
+					this.setRestriction.length === 1 && 
+					this.boosterContent === DefaultBoosterTargets && 
+					this.maxDuplicates === null &&
+					this.setRestriction[0] in PaperBoosterFactories && 
+					this.unrestrictedCardPool()) {
 					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
 				} else {
 					let localCollection = this.cardPoolByRarity();
@@ -1062,44 +1062,27 @@ export function Session(id, owner, options) {
 	this.pickCard = function(userID, pickedCards, burnedCards) {
 		if (!this.drafting || !this.users.has(userID)) return;
 
+		const reportError = (code, err) => {
+			console.error(err);
+			return { code: code, error: err };
+		};
+
 		const boosterIndex = Connections[userID].boosterIndex;
-		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length) {
-			const err = `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`;
-			console.error(err);
-			return { code: 2, error: err };
-		}
-		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length)) {
-			const err = `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 3, error: err };
-		}
-		if (Connections[userID].pickedThisRound) {
-			const err = `Session.pickCard: User '${userID}' already picked a card this round.`;
-			console.error(err);
-			return { code: 4, error: err };
-		}
-
-		if(pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length) || 
-			pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
-		{
-			console.error({"pickedCards.length": pickedCards.length, "this.pickedCardsPerRound":this.pickedCardsPerRound, "this.boosters[boosterIndex].length": this.boosters[boosterIndex].length});
-			console.error("pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length ", pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length));
-			console.error("pickedCards.some(idx => idx >= this.boosters[boosterIndex].length) ", pickedCards.some(idx => idx >= this.boosters[boosterIndex].length));
-			const err = `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 1, error: err };
-		}
-
+		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length)
+			return reportError(2, `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
+		if(!pickedCards || pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length))
+			return reportError(1, `Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`);
+		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+			return reportError(3, `Session.pickCard: Invalid card index [${pickedCards.join(', ')}] for booster #${boosterIndex} (${this.boosters[boosterIndex].length}).`);
+		if (Connections[userID].pickedThisRound)
+			return reportError(4, `Session.pickCard: User '${userID}' already picked a card this round.`);
 		if (
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
-				burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
-				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
-		) {
-			const err = `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`;
-			console.error(err);
-			return { code: 1, error: err };
-		}
+			burnedCards.length !== Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
+			burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+		)
+			return reportError(5, `Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`);
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${
@@ -1120,12 +1103,9 @@ export function Session(id, owner, options) {
 		});
 
 		let cardsToRemove = pickedCards;
-		if (burnedCards) {
+		if (burnedCards)
 			cardsToRemove = cardsToRemove.concat(burnedCards);
-			cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
-		}
-
-		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
+		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		// Signal users
 		this.forUsers(u => {
@@ -1137,7 +1117,7 @@ export function Session(id, owner, options) {
 			});
 		});
 
-		// Update draft log for live display if owner in not playing
+		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
 		if (
 			!this.ownerIsPlayer &&
 			["owner", "everyone"].includes(this.draftLogRecipients) &&
@@ -1146,9 +1126,11 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cards: pickedCards.map(idx=>this.boosters[boosterIndex][idx].name),
+				cards: pickedCards.map(idx => this.boosters[boosterIndex][idx]),
 			});
 		}
+
+		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
 
 		++this.pickedCardsThisRound;
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) {
@@ -1159,10 +1141,12 @@ export function Session(id, owner, options) {
 
 	this.doBotPick = function(instance, boosterIndex) {
 		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
-		const picked = [];
+		const pickedIndices = [];
+		const pickedCards = [];
 		for (let i = 0; i < this.pickedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
 			const pickedIdx = instance.pick(this.boosters[boosterIndex]);
-			picked.push(pickedIdx);
+			pickedIndices.push(pickedIdx);
+			pickedCards.push(this.boosters[boosterIndex][pickedIdx]);
 			this.boosters[boosterIndex].splice(pickedIdx, 1);
 		}
 		const burned = [];
@@ -1172,11 +1156,11 @@ export function Session(id, owner, options) {
 			this.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
-			pick: picked,
+			pick: pickedIndices,
 			burn: burned,
 			booster: startingBooster,
 		});
-		return picked;
+		return pickedCards;
 	};
 
 	this.nextBooster = function() {
@@ -1295,6 +1279,7 @@ export function Session(id, owner, options) {
 
 	this.getStrippedLog = function() {
 		const strippedLog = {
+			version: this.draftLog.version,	
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
 			delayed: true,
@@ -1377,7 +1362,7 @@ export function Session(id, owner, options) {
 			Connections[user].socket.emit(
 				"setCardSelection",
 				boosters
-					.map(b => b.cards)
+					.map(b => b.cards.map(cid => getUnique(cid)))
 					.reduce((arr, val) => {
 						arr.push(val);
 						return arr;

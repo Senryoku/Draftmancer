@@ -334,7 +334,11 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	cmr: (cardPool, landSlot, options) => {
-		// TODO
+		// TODO Add the "Foil Etched" commanders to the foil slot.
+		// They shouldn't be in the card pool at all for now, Probable algorithm: 
+		// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic']) 
+		// (rate unknown atm; probably the ratio between the size of both pools) then pick a card normaly in the selected pool.
+		// List here: https://mtg.gamepedia.com/Commander_Legends#Notable_cards
 		/*
 		Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
 		Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
@@ -408,7 +412,7 @@ export const SetSpecificFactories = {
 
 import PaperBoosterData from "../data/sealed_extended_data.json";
 
-function weightedRandomPick(arr, totalWeight, picked = []) {
+function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
 	let pick = randomInt(0, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
@@ -418,8 +422,8 @@ function weightedRandomPick(arr, totalWeight, picked = []) {
 	}
 	// Duplicate protection (allows duplicates between foil and non-foil)
 	// Not sure if we should checks ids or (set, number) here.
-	if(picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
-		 return weightedRandomPick(arr, totalWeight, picked);
+	if(attempt < 10 && picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+		 return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
 	return arr[idx];
 }
 
@@ -477,17 +481,20 @@ for(let set of PaperBoosterData) {
 				for(let sheetName in boosterContent.sheets) {
 					if(this.set.sheets[sheetName].balance_colors) {
 						const sheet = this.set.colorBalancedSheets[sheetName];
+						const pickedCards = [];
 						for(let color of "WUBRG") {
-							booster.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, booster));
+							pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
 						}
-						const cardsToPick = boosterContent.sheets[sheetName] - booster.length;
+						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
 						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * booster.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
 						for(let i = 0; i < cardsToPick; ++i) {
 							if(Math.random() < x)
-								booster.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, booster));
+								pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
 							else
-								booster.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, booster));
+								pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards));
 						}
+						shuffleArray(pickedCards);
+						booster.push(...pickedCards);
 					} else {
 						for(let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
 							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));

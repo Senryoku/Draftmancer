@@ -134,6 +134,11 @@ io.on("connection", function(socket) {
 			});
 		}
 	});
+	
+	socket.on("error", function(err) {
+		console.error("Socket.io error: ")
+		console.error(err);
+	});
 
 	// Personnal options
 
@@ -276,7 +281,7 @@ io.on("connection", function(socket) {
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
-				text: `Grid Draft can only be played with exactly 2 players.`,
+				text: `Grid Draft can only be played with exactly 2 players. Bots are not supported!`,
 			});
 		}
 	});
@@ -319,7 +324,7 @@ io.on("connection", function(socket) {
 		if (sess.users.size < 2) {
 			Connections[userID].socket.emit("message", {
 				title: `Not enough players`,
-				text: `You need at least two players to start a Rochester Draft.`,
+				text: `Rochester Draft can only be played with at least 2 players. Bots are not supported!`,
 			});
 		} else {
 			sess.startRochesterDraft();
@@ -368,7 +373,7 @@ io.on("connection", function(socket) {
 		} else {
 			Connections[userID].socket.emit("message", {
 				title: `2 Players Only`,
-				text: `Winston Draft can only be played with exactly 2 players.`,
+				text: `Winston Draft can only be played with exactly 2 players. Bots are not supported!`,
 			});
 		}
 	});
@@ -484,8 +489,14 @@ io.on("connection", function(socket) {
 			return;
 		}
 
-		const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
-		if (ack) ack(r);
+		try {
+			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
+			if (ack) ack(r);
+		} catch(err) {
+			console.error("Error in pickCard:", err);
+			console.error(Sessions[sessionID]);
+			if (ack) ack({ code: 500, error: "Internal server error." });
+		}
 	});
 
 	// Session options
@@ -817,10 +828,12 @@ io.on("connection", function(socket) {
 	socket.on("shareDraftLog", function(draftLog) {
 		if (!(this.userID in Connections)) return;
 		const sess = Sessions[Connections[this.userID].sessionID];
-		if (!sess || sess.owner !== this.userID) return;
+		if (!draftLog || !sess || sess.owner !== this.userID) return;
 
 		// Update local copy to be public
-		if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+		if(!sess.draftLog && sess.id === draftLog.sessionID)
+			sess.draftLog = draftLog;
+		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
@@ -1101,7 +1114,7 @@ function joinSession(sessionID, userID) {
 
 function addUserToSession(userID, sessionID) {
 	const options = {};
-	if (Connections[userID].sessionID !== null) {
+	if (Connections[userID].sessionID !== null && Connections[userID].sessionID in Sessions) {
 		// Transfer session options to the new one if applicable
 		if (userID === Sessions[Connections[userID].sessionID].owner) {
 			for (let p of optionProps) {
@@ -1253,7 +1266,7 @@ function returnJSON(res, data) {
 	express_json_cache = null; // Enable garbage collection
 }
 
-app.get("/getSessions/:key", (req, res) => {
+app.get("/getSessionsDebug/:key", (req, res) => {
 	if (req.params.key === secretKey) {
 		returnJSON(res, Sessions);
 	} else {
@@ -1288,6 +1301,29 @@ app.get("/getStatus/:key", (req, res) => {
 			draftingPlayers: draftingPlayers,
 			canRestart: draftingSessions === 0,
 		});
+	} else {
+		res.sendStatus(401).end();
+	}
+});
+
+// Used by Discord Bot
+app.get("/getSessions/:key", (req, res) => {
+	if (req.params.key === secretKey) {
+		let localSess = {};
+		for(let sid in Sessions)
+			localSess[sid] = {
+				id: sid,
+				drafting: Sessions[sid].drafting,
+				users: Sessions[sid].users,
+				maxPlayers: Sessions[sid].maxPlayers,
+				useCustomCardList: Sessions[sid].useCustomCardList,
+				customCardList: Sessions[sid].customCardList ? {
+					name: Sessions[sid].customCardList.name, 
+					length: Sessions[sid].customCardList.length, 
+				} : null,
+				setRestriction: Sessions[sid].setRestriction,
+			};
+		returnJSON(res, localSess);
 	} else {
 		res.sendStatus(401).end();
 	}

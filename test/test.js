@@ -24,6 +24,14 @@ const checkColorBalance = function(booster) {
 		).to.be.at.least(1);
 };
 
+const checkDuplicates = function(booster) {
+	// Foils can be duplicates
+	let sorted = [...booster].sort((lhs, rhs) => lhs.id < rhs.id ? -1 : 1);
+	for(let idx = 0; idx < sorted.length - 1; ++idx) {
+		expect(sorted[idx].id !== sorted[idx + 1].id || sorted[idx].foil !== sorted[idx + 1].foil).to.be.true;
+	}
+}
+
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 
 describe("Inter client communication", function() {
@@ -145,6 +153,7 @@ describe("Sets content", function() {
 		m21: { common: 111, uncommon: 80, rare: 53, mythic: 15 },
 		akr: { common: 108, uncommon: 90, rare: 74, mythic: 31 },
 		znr: { common: 101, uncommon: 80, rare: 64, mythic: 20 },
+		klr: { common: 104, uncommon: 97, rare: 63, mythic: 23 - 1 }, // Exclude the Buy-a-Box mythic
 	};
 
 	beforeEach(function(done) {
@@ -184,7 +193,7 @@ describe("Sets content", function() {
 	});
 
 	it("2 clients with different userID should be connected.", function(done) {
-		expect(Object.keys(Connections).length).to.equal(2);
+		expect(Object.keys(Connections)).to.have.lengthOf(2);
 		done();
 	});
 
@@ -200,7 +209,7 @@ describe("Sets content", function() {
 							.map(cid => Cards[cid].set)
 							.every(s => s === set)
 					).to.be.true;
-					expect(Object.keys(localCollection[r]).length).to.equal(sets[set][r]);
+					expect(Object.keys(localCollection[r])).to.have.lengthOf(sets[set][r]);
 				}
 				done();
 			});
@@ -279,8 +288,8 @@ describe("Single Draft (Two Players)", function() {
 				const _idx = c;
 				(() => {
 					clients[c].once("nextBooster", function(data) {
-						expect(boosters).not.include(data);
-						boosters[_idx] = data;
+						expect(boosters).not.include(data.booster);
+						boosters[_idx] = data.booster;
 						receivedBoosters += 1;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
@@ -294,11 +303,11 @@ describe("Single Draft (Two Players)", function() {
 		it("Once everyone in a session has picked a card, receive next boosters.", function(done) {
 			let receivedBoosters = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				const idx = c;
 				clients[c].once("nextBooster", function(data) {
+					const idx = c;
 					receivedBoosters += 1;
-					expect(data.booster.length).to.equal(boosters[idx].booster.length - 1);
-					boosters[idx] = data;
+					expect(data.booster.length).to.equal(boosters[idx].length - 1);
+					boosters[idx] = data.booster;
 					if (receivedBoosters == clients.length) done();
 				});
 				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
@@ -313,7 +322,7 @@ describe("Single Draft (Two Players)", function() {
 				const idx = c;
 				clients[c].on("nextBooster", function(data) {
 					boosters[idx] = data.booster;
-					this.emit("pickCard", { pickedCards: [0] }, () => {});
+					this.emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[idx].length)] }, () => {});
 				});
 				clients[c].once("endDraft", function() {
 					draftEnded += 1;
@@ -325,12 +334,12 @@ describe("Single Draft (Two Players)", function() {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[c].length)] }, () => {});
 			}
 		});
 	}
 
-	describe("With a third player and  color balance", function() {
+	describe("With a third player and color balance", function() {
 		connect();
 		it("3 clients with different userID should be connected.", function(done) {
 			let idx = clients.push(
@@ -352,19 +361,22 @@ describe("Single Draft (Two Players)", function() {
 			nonOwnerIdx = 1 - ownerIdx;
 			clients[ownerIdx].emit("setColorBalance", true);
 			clients[ownerIdx].emit("ignoreCollections", true);
-			clients[nonOwnerIdx].on("setRestriction", () => {
+			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				expect(Object.keys(localCollection["common"]).length).to.equal(101);
-				expect(Object.keys(localCollection["uncommon"]).length).to.equal(80);
-				expect(Object.keys(localCollection["rare"]).length).to.equal(53);
-				expect(Object.keys(localCollection["mythic"]).length).to.equal(15);
+				expect(Object.keys(localCollection["common"])).to.have.lengthOf(101);
+				expect(Object.keys(localCollection["uncommon"])).to.have.lengthOf(80);
+				expect(Object.keys(localCollection["rare"])).to.have.lengthOf(53);
+				expect(Object.keys(localCollection["mythic"])).to.have.lengthOf(15);
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
 		});
 		startDraft();
-		it("Boosters are color balanced.", function(done) {
-			for (let b of Sessions[sessionID].boosters) checkColorBalance(b);
+		it("Boosters are color balanced and contain no duplicate.", function(done) {
+			for (let b of Sessions[sessionID].boosters) {
+				checkColorBalance(b);
+				checkDuplicates(b);
+			}
 			done();
 		});
 		singlePick();
@@ -373,13 +385,13 @@ describe("Single Draft (Two Players)", function() {
 	});
 
 	for(let set of Constants.PrimarySets) {
-		describe.skip(`Drafting ${set}`, function() {
+		describe(`Drafting ${set}`, function() {
 			connect();
 			it("Clients should receive the updated setRestriction status.", function(done) {
 				let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 				let nonOwnerIdx = 1 - ownerIdx;
 				clients[nonOwnerIdx].once("setRestriction", function(setRestriction) {
-					expect(setRestriction.length).to.be.equal(1);
+					expect(setRestriction).to.have.lengthOf(1);
 					expect(setRestriction[0]).to.be.equal(set);
 					done();
 				});
@@ -387,6 +399,18 @@ describe("Single Draft (Two Players)", function() {
 				clients[ownerIdx].emit("setRestriction", [set]);
 			});
 			startDraft();
+			it("All cards in booster should be of the desired set.", function(done) {
+				for(let b of Sessions[sessionID].boosters) {
+					checkDuplicates(b);
+					expect(b.every(c => c.set === set || (
+						(set === 'mb1' && c.set === 'fmb1') ||
+						(set === 'tsp' && c.set === 'tsb') ||
+						(set === 'frf' && c.set === 'ktk') ||
+						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr'))
+						))).to.be.true;
+				}
+				done();
+			});
 			endDraft();
 			disconnect();
 		});
@@ -578,6 +602,75 @@ describe("Single Draft (Two Players)", function() {
 		});
 		startDraft();
 		endDraft();
+		disconnect();
+	});
+
+	describe("Using an observer and bots.", function() {
+		connect();
+		it("Clients should receive the updated ownerIsPlayer.", function(done) {
+			clients[nonOwnerIdx].once("sessionOptions", function(val) {
+				expect(val.ownerIsPlayer).to.equal(false);
+				done();
+			});
+			clients[ownerIdx].emit("setOwnerIsPlayer", false);
+		});
+		it("Clients should receive the updated bot count.", function(done) {
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+
+		it("When session owner launches draft, players should receive a startDraft event", function(done) {
+			let connectedClients = 0;
+			let receivedBoosters = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+
+				clients[c].once("startDraft", function() {
+					connectedClients += 1;
+					if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
+				});
+
+				const _idx = nonOwnerIdx;
+				(() => {
+					clients[c].once("nextBooster", function(data) {
+						expect(boosters).not.include(data.booster);
+						boosters[_idx] = data.booster;
+						receivedBoosters += 1;
+						if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
+					});
+				})();
+			}
+			clients[ownerIdx].emit("startDraft");
+		});
+
+		it("Pick until the draft ends.", function(done) {
+			let draftEnded = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+
+				const idx = c;
+				clients[c].on("nextBooster", function(data) {
+					boosters[idx] = data.booster;
+					this.emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[idx].length)] }, () => {});
+				});
+				clients[c].once("endDraft", function() {
+					draftEnded += 1;
+					this.removeListener("nextBooster");
+					if (draftEnded == clients.length - 1) {
+						boosters = [];
+						done();
+					}
+				});
+			}
+			for (let c = 0; c < clients.length; ++c) {
+				if(c === ownerIdx) continue; // Owner doesn't play in this mode
+				clients[c].emit("pickCard", { pickedCards: [Math.floor(Math.random() * boosters[c].length)] }, () => {});
+			}
+		});
+
 		disconnect();
 	});
 
@@ -841,6 +934,13 @@ describe("Multiple Drafts", function() {
 							sessionsCorrectlyStartedDrafting == sessionCount &&
 							boostersReceived == playersPerSession * sessionCount
 						) {
+							it("Boosters are color balanced and contain no duplicate.", function(done) {
+								for (let b of Sessions[sessionIDs[sessionIdx]].boosters) {
+									checkColorBalance(b);
+									checkDuplicates(b);
+								}
+								done();
+							});
 							done();
 						}
 					});

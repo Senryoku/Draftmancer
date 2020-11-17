@@ -3,6 +3,7 @@
 		v-tooltip.top="
 			'Controls basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards with basic lands.'
 		"
+		class="land-control"
 	>
 		<template v-slot:handle>
 			<span v-if="Object.values(lands).every((n) => n === 0)"> No basic land added. </span>
@@ -18,7 +19,7 @@
 			</span>
 		</template>
 		<template v-slot:dropdown>
-			<span>
+			<span class="header">
 				<input
 					type="checkbox"
 					id="autoLand"
@@ -34,15 +35,17 @@
 					class="mana-icon clickable"
 					@click="add(c)"
 					@contextmenu.prevent="rem(c)"
+					:class="{ 'fade-out': lands[c] <= 0 }"
 				/>
 				<input
 					class="small-number-input"
 					type="number"
 					:id="`${c}-mana`"
 					:value="lands[c]"
-					@input="$emit('update:lands', c, parseInt($event.target.value))"
+					@input="$emit('update:lands', c, $event.target.value === '' ? 0 : parseInt($event.target.value))"
 					min="0"
 					max="999"
+					onclick="this.select();"
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
@@ -71,6 +74,21 @@ export default {
 </script>
 
 <style scoped>
+.land-control {
+	background-image: url("../assets/img/Land_symbol.svg");
+	background-repeat: no-repeat;
+	background-size: 1.5em;
+	background-position: 0.5em;
+}
+
+.fas.disabled {
+	background: none;
+}
+
+.fade-out {
+	opacity: 0.5;
+}
+
 .mana-icon {
 	vertical-align: text-top;
 }
@@ -85,9 +103,14 @@ export default {
 	height: 1.4em;
 }
 
-.land-input input[type="number"] {
+#main-container .land-input input[type="number"] {
 	-moz-appearance: textfield;
-	-webkit-appearance: none;
-	margin: 0;
+	-webkit-appearance: textfield;
+	widows: 2em;
+	text-align: center;
+}
+
+.header {
+	margin: 0.25em 0;
 }
 </style>
