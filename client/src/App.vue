@@ -208,8 +208,20 @@
 								>
 									Upload a Custom Card List...
 								</div>
+								<div
+									class="clickable"
+									style="text-align: center; padding: 0.5em; font-size: 0.75em"
+									slot="afterList"
+									@click="displayedModal = 'setRestriction'"
+								>
+									More sets...
+								</div>
 							</multiselect>
-							<i class="fas fa-ellipsis-h clickable" @click="displayedModal = 'setRestriction'"></i>
+							<i
+								class="fas fa-ellipsis-h clickable"
+								@click="displayedModal = 'setRestriction'"
+								v-tooltip="'View all sets'"
+							></i>
 							<div
 								class="inline"
 								v-tooltip="
