@@ -850,7 +850,7 @@
 					<h2 style="min-width: 8em">
 						Deck ({{ deck.length
 						}}<span
-							v-show="totalLands > 0"
+							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Added basics on export (Not shown in decklist below).'"
 						>
 							+ {{ totalLands }}</span
