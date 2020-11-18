@@ -1,7 +1,20 @@
 [
 	{
+		"date": "17/11/2020",
+		"notes": ["Updated basic land controls."]
+	},
+	{
+		"date": "12/11/2020",
+		"notes": ["Kaladesh Remastered support."]
+	},
+	{
 		"date": "06/11/2020",
-		"notes": ["Implemented support for cards outside of MtG: Arena! Try drafting some Mystery Boosters or any Vintage Cube!", "Allow for multiple picks per pack, Commander Legends will be playable as intended!", "Updated the Draft Logs to support the new features, older logs needs to be converted to the new format.", "New fancy foil effect."]
+		"notes": [
+			"Implemented support for cards outside of MtG: Arena! Try drafting some Mystery Boosters or any Vintage Cube!",
+			"Allow for multiple picks per pack, Commander Legends will be playable as intended!",
+			"Updated the Draft Logs to support the new features, older logs needs to be converted to the new format.",
+			"New fancy foil effect."
+		]
 	},
 	{
 		"date": "22/10/2020",
