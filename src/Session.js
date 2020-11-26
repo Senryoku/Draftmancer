@@ -568,8 +568,8 @@ export function Session(id, owner, options) {
 			const boosterSpecificRules = options.useCustomBoosters && this.customBoosters.some(v => v !== "");
 
 			// If the default rule will be used, initialize it
-			if (!options.useCustomBoosters || !this.customBoosters.every(v => v !== "")) {
-				// Don't compute cardPoolByRarity if it's not necessary
+			if (!options.useCustomBoosters || this.customBoosters.some(v => v === "")) {
+				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 				if(!boosterSpecificRules && 
 					this.setRestriction.length === 1 && 
 					this.boosterContent === DefaultBoosterTargets && 
@@ -606,13 +606,14 @@ export function Session(id, owner, options) {
 			if (boosterSpecificRules) {
 				const boosterFactories = [];
 				const usedSets = {};
+				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot = this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
 				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
 					defaultFactory.landSlot =
 						this.setRestriction.length === 0
-							? BasicLandSlots["m20"] // Totally arbitrary
+							? defaultBasics
 							: BasicLandSlots[this.setRestriction[0]];
 
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
@@ -632,11 +633,10 @@ export function Session(id, owner, options) {
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterSet]) {
 								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-								const landSlot =
-									boosterSet in SpecialLandSlots
+								const landSlot = boosterSet in SpecialLandSlots
 										? SpecialLandSlots[boosterSet]
-										: addLandSlot
-										? BasicLandSlots[boosterSet]
+										: addLandSlot &&  boosterSet !== "cmr" // Exception for Commander Legends as the booster size will be wrong anyway.
+										? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
 										: null;
 								usedSets[boosterSet] = getBoosterFactory(
 									boosterSet,
@@ -689,11 +689,12 @@ export function Session(id, owner, options) {
 
 				// Boosters within a round much be of the same length.
 				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
-				if (this.distributionMode !== "regular") {
+				if (this.distributionMode !== "regular"  || this.customBoosters.some(v => v === "random")) {
 					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
 						this.emitMessage("Error generating boosters", msg);
 						console.error(msg)
+						//console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
 						return false;
 					}
 				}
