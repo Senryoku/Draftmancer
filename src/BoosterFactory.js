@@ -413,7 +413,7 @@ export const SetSpecificFactories = {
 import PaperBoosterData from "../data/sealed_extended_data.json";
 
 function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
-	let pick = randomInt(0, totalWeight);
+	let pick = randomInt(1, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
 	while(acc < pick) {
@@ -486,7 +486,7 @@ for(let set of PaperBoosterData) {
 							pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
 						}
 						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
-						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * booster.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
+						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * pickedCards.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
 						for(let i = 0; i < cardsToPick; ++i) {
 							if(Math.random() < x)
 								pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
