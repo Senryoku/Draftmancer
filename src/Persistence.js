@@ -151,6 +151,8 @@ async function tempDump(exitOnCompletion = false) {
 		Promises.push(axios.post(`${PersistenceStoreURL}/temp/connections`, 
 			PoDConnections, 
 			{
+				maxContentLength: Infinity,
+				maxBodyLength: Infinity,
 				headers: {
 					'access-key': PersistenceKey,
 				}
@@ -214,6 +216,8 @@ async function tempDump(exitOnCompletion = false) {
 		Promises.push(axios.post(`${PersistenceStoreURL}/temp/sessions`, 
 			PoDSessions, 
 			{
+				maxContentLength: Infinity,
+				maxBodyLength: Infinity,
 				headers: {
 					'access-key': PersistenceKey,
 				}
