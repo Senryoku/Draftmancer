@@ -295,12 +295,12 @@ export function Session(id, owner, options) {
 	this.setCustomCardList = function(cardList) {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
-		for (let user of this.users) {
-			Connections[user].socket.emit("sessionOptions", {
+		this.forUsers(u =>
+			Connections[u].socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
-			});
-		}
+			})
+		);
 	};
 
 	this.setTeamDraft = function(teamDraft) {
