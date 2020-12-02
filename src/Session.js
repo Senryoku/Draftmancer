@@ -448,7 +448,7 @@ export function Session(id, owner, options) {
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
 	//  - targets: Overrides session boosterContent setting
-	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists whitout custom slots
+	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	this.generateBoosters = function(boosterQuantity, options = {}) {
 		if (this.useCustomCardList) {
 			if (!this.customCardList.cards) {
@@ -566,16 +566,14 @@ export function Session(id, owner, options) {
 			};
 
 			const boosterSpecificRules = options.useCustomBoosters && this.customBoosters.some(v => v !== "");
+			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && this.maxDuplicates === null && this.unrestrictedCardPool();
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || this.customBoosters.some(v => v === "")) {
 				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
-				if(!boosterSpecificRules && 
+				if(acceptPaperBoosterFactories &&
 					this.setRestriction.length === 1 && 
-					this.boosterContent === DefaultBoosterTargets && 
-					this.maxDuplicates === null &&
-					this.setRestriction[0] in PaperBoosterFactories && 
-					this.unrestrictedCardPool()) {
+					this.setRestriction[0] in PaperBoosterFactories) {
 					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
 				} else {
 					let localCollection = this.cardPoolByRarity();
@@ -602,8 +600,17 @@ export function Session(id, owner, options) {
 				}
 			}
 
-			// Do we have some booster specific rules? (total boosterQuantity is ignored in this case)
-			if (boosterSpecificRules) {
+			// Simple case, generate all boosters using the default rule
+			if(!boosterSpecificRules) {
+				this.boosters = [];
+				for (let i = 0; i < boosterQuantity; ++i) {
+					let booster = defaultFactory.generateBooster(targets);
+					if (booster) this.boosters.push(booster);
+					else return false;
+				}
+			} else {
+				// Booster specific rules
+				// (boosterQuantity is ignored in this case and this.boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
 				const boosterFactories = [];
 				const usedSets = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
@@ -611,10 +618,9 @@ export function Session(id, owner, options) {
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot = this.distributionMode !== "regular" || this.customBoosters.some(v => v === "random");
 				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
-					defaultFactory.landSlot =
-						this.setRestriction.length === 0
-							? defaultBasics
-							: BasicLandSlots[this.setRestriction[0]];
+					defaultFactory.landSlot = this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
+						? defaultBasics
+						: BasicLandSlots[this.setRestriction[0]];
 
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
 					const playerBoosterFactories = [];
@@ -627,41 +633,37 @@ export function Session(id, owner, options) {
 								// Random booster from one of the sets in Card Pool
 								boosterSet =
 									this.setRestriction.length === 0
-										? getRandom(constants.MTGASets)
+										? getRandom(constants.PrimarySets)
 										: getRandom(this.setRestriction);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterSet]) {
-								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-								const landSlot = boosterSet in SpecialLandSlots
-										? SpecialLandSlots[boosterSet]
-										: addLandSlot &&  boosterSet !== "cmr" // Exception for Commander Legends as the booster size will be wrong anyway.
-										? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
-										: null;
-								usedSets[boosterSet] = getBoosterFactory(
-									boosterSet,
-									this.setByRarity(boosterSet),
-									landSlot,
-									BoosterFactoryOptions
-								);
-								// Check if we have enough card, considering maxDuplicate is a limiting factor
-								const multiplier = this.customBoosters.reduce(
-									(a, v) => (v == boosterSet ? a + 1 : a),
-									0
-								);
-								if (
-									countCards(usedSets[boosterSet].cardPool["common"]) <
-										multiplier * this.getVirtualPlayersCount() * targets["common"] ||
-									countCards(usedSets[boosterSet].cardPool["uncommon"]) <
-										multiplier * this.getVirtualPlayersCount() * targets["uncommon"] ||
-									countCards(usedSets[boosterSet].cardPool["rare"]) +
-										countCards(usedSets[boosterSet].cardPool["mythic"]) <
-										multiplier * this.getVirtualPlayersCount() * targets["rare"]
-								) {
-									const msg = `Not enough cards in card pool for individual booster restriction '${boosterSet}'. Please check you Max. Duplicates setting.`;
-									this.emitMessage("Error generating boosters", msg, true, 0);
-									console.warn(msg);
-									return false;
+								// Use the corresponding PaperBoosterFactories if possible
+								if(acceptPaperBoosterFactories && boosterSet in PaperBoosterFactories) {
+									usedSets[boosterSet] = PaperBoosterFactories[boosterSet](BoosterFactoryOptions);;
+								} else {
+									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
+									const landSlot = boosterSet in SpecialLandSlots
+											? SpecialLandSlots[boosterSet]
+											: addLandSlot &&  boosterSet !== "cmr" // Exception for Commander Legends as the booster size will be wrong anyway.
+											? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
+											: null;
+									usedSets[boosterSet] = getBoosterFactory(
+										boosterSet,
+										this.setByRarity(boosterSet),
+										landSlot,
+										BoosterFactoryOptions
+									);
+									// Check if we have enough card, considering maxDuplicate is a limiting factor
+									const multiplier = this.customBoosters.reduce((a, v) => (v == boosterSet ? a + 1 : a), 0);
+									for (let slot of ["common", "uncommon", "rare"]) {
+										if (countCards(usedSets[boosterSet].cardPool[slot]) < multiplier * this.getVirtualPlayersCount() * targets[slot]) {
+											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
+											this.emitMessage("Error generating boosters", msg, true, 0);
+											console.warn(msg);
+											return false;
+										}
+									}
 								}
 							}
 							playerBoosterFactories.push(usedSets[boosterSet]);
@@ -694,16 +696,9 @@ export function Session(id, owner, options) {
 						const msg = `Inconsistent booster sizes`;
 						this.emitMessage("Error generating boosters", msg);
 						console.error(msg)
-						//console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
+						console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
 						return false;
 					}
-				}
-			} else {
-				this.boosters = [];
-				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = defaultFactory.generateBooster(targets);
-					if (booster) this.boosters.push(booster);
-					else return false;
 				}
 			}
 		}
