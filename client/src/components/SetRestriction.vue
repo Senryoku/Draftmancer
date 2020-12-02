@@ -103,7 +103,7 @@ export default {
 					].map((s) => SetsInfos[s]),
 				},
 			],
-			irregularSets: ["cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn"],
+			irregularSets: ["cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn", "all"],
 		};
 	},
 	props: {
