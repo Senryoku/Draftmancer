@@ -696,7 +696,7 @@ export function Session(id, owner, options) {
 						const msg = `Inconsistent booster sizes`;
 						this.emitMessage("Error generating boosters", msg);
 						console.error(msg)
-						console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
+						//console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
 						return false;
 					}
 				}

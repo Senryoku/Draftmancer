@@ -57,6 +57,13 @@
 						@click="toggle(s.code)"
 					>
 						<span><img :src="s.icon" class="set-icon" /> {{ s.fullName }}</span>
+						<div
+							v-if="irregularSets.includes(s.code)"
+							class="irregular yellow"
+							v-tooltip="'Boosters of this set aren\'t regular 15 cards packs.'"
+						>
+							<i class="fas fa-exclamation-triangle"></i>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -96,6 +103,7 @@ export default {
 					].map((s) => SetsInfos[s]),
 				},
 			],
+			irregularSets: ["cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn"],
 		};
 	},
 	props: {
@@ -200,6 +208,7 @@ export default {
 }
 
 .set-button {
+	position: relative;
 	margin: 0.25em;
 	padding: 0.5em;
 	border-radius: 0.3em;
@@ -210,5 +219,12 @@ export default {
 .selected-set {
 	background-color: #283828;
 	box-shadow: 0 0 5px 2px green;
+}
+
+.irregular {
+	position: absolute;
+	top: 0;
+	right: 0;
+	opacity: 0.5;
 }
 </style>
