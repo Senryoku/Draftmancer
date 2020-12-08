@@ -13,13 +13,13 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span @click="selectedLog = selectedLog === draftLog ? null : draftLog" class="clickable">
+				<span @click="toggle(idx)" class="clickable">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
 						:class="{
-							'fa-chevron-down': selectedLog !== draftLog,
-							'fa-chevron-up': selectedLog === draftLog,
+							'fa-chevron-down': expandedLogs[idx],
+							'fa-chevron-up': !expandedLogs[idx],
 						}"
 					></i>
 					<i class="fas fa-lock" v-else></i>
@@ -50,30 +50,29 @@
 					</button>
 				</span>
 			</div>
-			<transition-collapse-height>
+			<transition name="scale">
 				<draft-log
-					v-if="selectedLog === draftLog"
+					v-if="expandedLogs[idx]"
 					:draftlog="draftLog"
 					:language="language"
 					@storelogs="$emit('storelogs')"
 				></draft-log>
-			</transition-collapse-height>
+			</transition>
 		</div>
 	</div>
 </template>
 
 <script>
+import Vue from "vue";
 import Swal from "sweetalert2";
 import { ButtonColor, SwalCustomClasses } from "../alerts.js";
 import * as helper from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
-import TransitionCollapseHeight from "./TransitionCollapseHeight.vue";
 import DraftLog from "./DraftLog.vue";
 
 export default {
 	components: {
 		DraftLog,
-		TransitionCollapseHeight,
 	},
 	props: {
 		draftLogs: { type: Array, required: true },
@@ -81,7 +80,7 @@ export default {
 	},
 	data: () => {
 		return {
-			selectedLog: null,
+			expandedLogs: {},
 		};
 	},
 	computed: {
@@ -143,7 +142,12 @@ export default {
 					let json = JSON.parse(contents);
 					if (json.users) {
 						this.draftLogs.push(json);
-						this.selectedLog = json;
+						this.expandedLogs = {};
+						Vue.set(
+							this.expandedLogs,
+							this.orderedLogs.findIndex((e) => e === json),
+							!this.expandedLogs[json]
+						);
 						this.$emit("storelogs");
 					} else displayError("Missing required data.");
 				} catch (e) {
@@ -151,6 +155,9 @@ export default {
 				}
 			};
 			reader.readAsText(file);
+		},
+		toggle: function (idx) {
+			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
 	},
 };
@@ -178,5 +185,17 @@ export default {
 
 .empty-history {
 	text-align: center;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+	transform-origin: top center;
+	transition: all 0.2s ease-out;
+}
+
+.scale-enter,
+.scale-leave-to {
+	transform: scale(1, 0);
+	opacity: 0;
 }
 </style>
