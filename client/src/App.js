@@ -6,7 +6,7 @@ import draggable from "vuedraggable";
 import VTooltip from "v-tooltip";
 import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
-import LZString from "./lz-string-asyncish.js";
+import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
@@ -1914,10 +1914,13 @@ export default {
 				}, 0);
 				this.draftLogs.splice(idx, 1);
 			}
-			LZString.compressToUTF16(JSON.stringify(this.draftLogs), (str) => { 
-				localStorage.setItem("draftLogs", str);
+
+			let worker = new LogStoreWorker();
+			worker.onmessage = e => {
+				localStorage.setItem("draftLogs", e.data);
 				console.log("Stored Draft Logs.");
-			}, 0);
+			};
+			worker.postMessage(["compress", this.draftLogs]);
 		},
 		toggleLimitDuplicates: function() {
 			if(this.maxDuplicates !== null)
@@ -2035,35 +2038,12 @@ export default {
 				}
 			}
 
-			//console.log("Draft Logs Local Size: ", encodeURI(localStorage.getItem("draftLogs")).split(/%..|./).length - 1)
-			LZString.decompressFromUTF16(localStorage.getItem("draftLogs"), (str) => {
-				let tmpDraftLogs;
-				try {
-					tmpDraftLogs = JSON.parse(str);
-				} catch(err) {
-					// Fallback if logs were not compressed (backward comp.)
-					console.log("Draft Logs were not compressed.");
-					tmpDraftLogs = JSON.parse(localStorage.getItem("draftLogs"));
-				}
-				if (tmpDraftLogs) {
-					this.draftLogs = tmpDraftLogs;
-					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`)
-				}
-	
-				// Look for a previously saved single draftLog (backward comp.)
-				let tmpDraftLog = localStorage.getItem("draftLog")
-				if (tmpDraftLog) {
-					tmpDraftLog = JSON.parse(tmpDraftLog);
-					if (tmpDraftLog.delayed && tmpDraftLog.draftLog) {
-						// handle old delayed format
-						tmpDraftLog = tmpDraftLog.draftLog;
-						tmpDraftLog.delayed = true;
-					}
-					this.draftLogs.push(tmpDraftLog);
-					this.storeDraftLogs();
-					localStorage.removeItem("draftLog");
-				}
-			}, 0);
+			let worker = new LogStoreWorker();
+			worker.onmessage = e => {
+				this.draftLogs = e.data;
+				console.log(`Loaded ${this.draftLogs.length} saved draft logs.`)
+			};
+			worker.postMessage(["decompress", localStorage.getItem("draftLogs")]);
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
