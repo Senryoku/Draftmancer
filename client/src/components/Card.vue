@@ -45,7 +45,8 @@ export default {
 				this.$el.style.setProperty("--brightness", `100%`);
 				this.$el.style.setProperty("--foil-initial-top", `-16%`);
 				this.$el.style.setProperty("--foil-initial-left", `32%`);
-				this.$el.style.setProperty("--transform-rotation", `0`);
+				this.$el.style.setProperty("--transform-rotation-x", `0`);
+				this.$el.style.setProperty("--transform-rotation-y", `0`);
 			}
 		},
 		activateFoilEffect: function () {
@@ -56,9 +57,13 @@ export default {
 		foilEffect: function (e) {
 			let bounds = this.$el.getBoundingClientRect();
 			const factor = (e.clientX - bounds.left) / bounds.width;
+			const factorY = (e.clientY - bounds.top) / bounds.height;
+			const ratio = bounds.width / bounds.height;
+			const rotScale = (v) => -20 + 40 * v;
 			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
-			this.$el.style.setProperty("--transform-rotation", `${-20 + 40 * factor}deg`);
-			this.$el.style.setProperty("--foil-initial-top", `${-(120 * factor) + 30}%`);
+			this.$el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
+			this.$el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
+			this.$el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
 			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
 	},
@@ -73,9 +78,10 @@ export default {
 	transition: transform 0.2s ease;
 
 	--brightness: 100%;
-	--transform-rotation: 0;
-	--foil-initial-top: -16%;
-	--foil-initial-left: 32%;
+	--transform-rotation-x: 0;
+	--transform-rotation-y: 0;
+	--foil-initial-top: 0%;
+	--foil-initial-left: 0%;
 }
 
 .fade-enter-active.card,
@@ -93,7 +99,8 @@ export default {
 	position: relative;
 	overflow: hidden;
 	filter: brightness(var(--brightness));
-	transform: perspective(1000px) rotate3d(-0.342, 0.94, 0, var(--transform-rotation));
+	transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
+		rotate3d(1, 0, 0, var(--transform-rotation-y));
 }
 
 .foil:not(:hover) .card-image,
@@ -108,9 +115,9 @@ export default {
 
 	position: absolute;
 	width: 100%;
-	padding-bottom: calc(1.41 * 200%);
-	top: var(--foil-initial-top);
-	left: var(--foil-initial-left);
+	padding-bottom: calc(1.41 * 300%);
+	top: calc(-75% + var(--foil-initial-top));
+	left: calc(0% + var(--foil-initial-left));
 	transform: rotate(30deg);
 }
 
@@ -152,31 +159,4 @@ export default {
 	mix-blend-mode: lighten;
 	z-index: 1;
 }
-/*
-Foil animation: Now tied to cursor position.
-
-.foil:hover .card-image:after,
-.foil:hover .card-image:before {
-	animation: foil 4s linear infinite;
-}
-
-@keyframes foil {
-	0% {
-		top: var(--foil-initial-top);
-		left: var(--foil-initial-left);
-	}
-	40% {
-		top: -80%;
-		left: -80%;
-	}
-	90% {
-		top: 0%;
-		left: 60%;
-	}
-	100% {
-		top: var(--foil-initial-top);
-		left: var(--foil-initial-left);
-	}
-}
-*/
 </style>
