@@ -85,10 +85,13 @@
 				</div>
 
 				<template v-if="displayOptions.category == 'Picks'">
-					<div v-for="(pick, index) in selectedLog.picks" :key="index">
-						<h3>Pick {{ index + 1 }}: {{ draftlog.carddata[pick.booster[pick.pick]].name }}</h3>
+					<div v-for="p in picks" :key="p.key">
+						<h3>
+							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
+							{{ draftlog.carddata[p.data.booster[p.data.pick]].name }}
+						</h3>
 						<draft-log-pick
-							:pick="pick"
+							:pick="p.data"
 							:carddata="draftlog.carddata"
 							:language="language"
 						></draft-log-pick>
@@ -281,6 +284,26 @@ export default {
 		},
 		teamDraft: function () {
 			return this.draftlog.teamDraft === true;
+		},
+		picks: function () {
+			if (!this.selectedLog) return [];
+			let r = [];
+			let currPick = 0;
+			let currBooster = 0;
+			while (currPick < this.selectedLog.picks.length) {
+				let boosterSize = this.selectedLog.picks[currPick].booster.length;
+				for (let i = 0; i < boosterSize; ++i) {
+					r.push({
+						key: currPick,
+						data: this.selectedLog.picks[currPick],
+						packNumber: currBooster,
+						pickNumber: i,
+					});
+					++currPick;
+				}
+				++currBooster;
+			}
+			return r;
 		},
 	},
 	watch: {

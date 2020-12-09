@@ -119,6 +119,7 @@ export default {
 						this.draftLogs.findIndex((e) => e === draftLog),
 						1
 					);
+					this.expandedLogs = {};
 					this.$emit("storelogs");
 				}
 			});
