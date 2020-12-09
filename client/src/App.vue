@@ -628,7 +628,7 @@
 					class="container"
 				>
 					<div id="booster-controls" class="section-title">
-						<h2>Your Booster</h2>
+						<h2>Your Booster ({{ booster.length }})</h2>
 						<div class="controls">
 							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
