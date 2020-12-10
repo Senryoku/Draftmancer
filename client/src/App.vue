@@ -1431,6 +1431,7 @@
 									max="16"
 									step="1"
 									v-model.number="boosterContent[r]"
+									@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
 								/>
 							</div>
 						</div>
@@ -1463,6 +1464,7 @@
 										max="16"
 										step="1"
 										v-model.number="maxDuplicates[r]"
+										@change="if (maxDuplicates[r] < 1) maxDuplicates[r] = 1;"
 									/>
 								</div>
 							</div>
@@ -1515,6 +1517,7 @@
 								max="25"
 								step="1"
 								v-model.number="boostersPerPlayer"
+								@change="if (boostersPerPlayer < 0) boostersPerPlayer = 1;"
 							/>
 						</div>
 					</div>
@@ -1585,6 +1588,7 @@
 								min="1"
 								step="1"
 								v-model.number="pickedCardsPerRound"
+								@change="if (pickedCardsPerRound < 1) pickedCardsPerRound = 1;"
 							/>
 						</div>
 					</div>
@@ -1606,6 +1610,7 @@
 								max="24"
 								step="1"
 								v-model.number="burnedCardsPerRound"
+								@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
 							/>
 						</div>
 					</div>

@@ -567,7 +567,7 @@ io.on("connection", function(socket) {
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 
 		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
-		if (!Number.isInteger(boostersPerPlayer)) return;
+		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
 
 		if (boostersPerPlayer == Sessions[sessionID].boostersPerPlayer) return;
 
@@ -798,8 +798,10 @@ io.on("connection", function(socket) {
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
 		// Validate input (a value for each rarity and at least one card)
+		if(boosterContent === null || !(typeof boosterContent  === 'object')) return;
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
 		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
+		if(Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
 
 		Sessions[sessionID].boosterContent = boosterContent;
@@ -853,6 +855,10 @@ io.on("connection", function(socket) {
 		if (!(this.userID in Connections)) return;
 		const sessionID = Connections[this.userID].sessionID;
 		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
+
+		if(maxDuplicates !== null && !(typeof maxDuplicates  === 'object')) return;
+		if((maxDuplicates !== null && typeof maxDuplicates  === 'object') && Object.values(maxDuplicates).some(i => !Number.isInteger(i))) return;
+
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
 		for (let user of Sessions[sessionID].users) {
 			if (user != this.userID)

@@ -278,7 +278,7 @@ export function Session(id, owner, options) {
 	};
 
 	this.setBoostersPerPlayer = function(boostersPerPlayer) {
-		if (this.boostersPerPlayer != boostersPerPlayer) {
+		if (this.boostersPerPlayer != boostersPerPlayer && boostersPerPlayer > 0) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
