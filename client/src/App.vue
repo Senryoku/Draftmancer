@@ -1209,11 +1209,6 @@
 						<a href="cubeformat.html" target="_blank">More informations here</a>
 						.
 					</p>
-					<strong>Will MTGADraft support cards from outside Arena?</strong>
-					<p>
-						Probably not. MTGADraft was designed from the start with Arena in mind and supporting decades of
-						cards brings a lot of complexity.
-					</p>
 				</div>
 				<h2>Options Description</h2>
 				<div class="help-options">
