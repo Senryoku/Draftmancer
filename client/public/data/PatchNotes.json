@@ -1,5 +1,21 @@
 [
 	{
+		"date": "16/12/2020",
+		"notes": ["Added a crude import deck list feature."]
+	},
+	{
+		"date": "14/12/2020",
+		"notes": ["Added December 2020 Arena Cube."]
+	},
+	{
+		"date": "08/12/2020",
+		"notes": ["Optimizations and visual tweaks."]
+	},
+	{
+		"date": "27/11/2020",
+		"notes": ["Fixed a collation bug."]
+	},
+	{
 		"date": "17/11/2020",
 		"notes": ["Updated basic land controls."]
 	},

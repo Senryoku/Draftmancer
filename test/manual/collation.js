@@ -11,7 +11,7 @@ import parseCardList from "../../src/parseCardList.js";
 import { getRandom, getRandomKey } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 
-const ArenaCube = parseCardList(Cards, fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
+const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 import constants from "../../client/src/data/constants.json";
 
@@ -190,7 +190,7 @@ describe("Statistical color balancing tests", function() {
 		const SessionInst = new Session("UniqueID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
-		SessionInst.setCustomCardList(parseCardList(Cards, CustomSheetsTestFile));
+		SessionInst.setCustomCardList(parseCardList(CustomSheetsTestFile));
 		const trackedCards = {};
 		for (let cid of SessionInst.customCardList.cards.Common) trackedCards[cid] = 0;
 		for (let i = 0; i < trials; i++) {

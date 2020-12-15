@@ -24,12 +24,13 @@ import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
-import { Cards, MTGACards } from "./src/Cards.js";
-import parseCardList from "./src/parseCardList.js";
+import { Cards, MTGACards, getUnique } from "./src/Cards.js";
+import { parseLine, parseCardList} from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(bodyParser.text({type:"text/*"}));
 
 function shortguid() {
 	function s4() {
@@ -80,7 +81,7 @@ console.time("PrepareCustomCardLists");
 const ParsedCubeLists = {};
 for (let cube of constants.CubeLists) {
 	if (cube.filename) {
-		ParsedCubeLists[cube.name] = parseCardList(Cards, fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
+		ParsedCubeLists[cube.name] = parseCardList(fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
 			name: cube.name,
 		});
 		if (ParsedCubeLists[cube.name].error) {
@@ -661,7 +662,7 @@ io.on("connection", function(socket) {
 	const parseCustomCardList = function(session, txtlist, options, ack) {
 		let parsedList = null;
 		try {
-			parsedList = parseCardList(Cards, txtlist, options);
+			parsedList = parseCardList(txtlist, options);
 		} catch (e) {
 			console.error(e);
 			if (ack) ack({ type: "error", title: "Internal Error" });
@@ -1210,8 +1211,42 @@ app.post("/getCards", (req, res) => {
 	if (!req.body) {
 		res.sendStatus(400);
 	} else {
-		res.setHeader("Content-Type", "application/json");
-		res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
+		try {
+			res.setHeader("Content-Type", "application/json");
+			res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
+		} catch(e) {
+			res.sendStatus(500);
+		}
+	}
+});
+
+app.post("/getDeck", (req, res) => {
+	if (!req.body) {
+		res.status(400).send({error: {message: `Bad request.`}});
+	} else {
+		try {
+			let r = {deck: [], sideboard: []}
+			const lines = req.body.split(/\r\n|\n/);
+			let target = r.deck;
+			for(let line of lines) {
+				line = line.trim();
+				if(line === "Deck") target = r.deck;
+				if(line === "Sideboard" || (line === "" && r.deck.length > 0)) target = r.sideboard;
+				if(["", "Deck", "Sideboard"].includes(line)) continue;
+				let [count, cardID] = parseLine(line);
+				if (typeof cardID !== "undefined") {
+					for (let i = 0; i < count; ++i) target.push(getUnique(cardID));
+				} else {
+					res.status(400).send({error: {message: `Error on line '${line}'`}});
+					return;
+				}
+			}
+			res.setHeader("Content-Type", "application/json");
+			res.send(JSON.stringify(r));
+		} catch(e) {
+			console.log(e);
+			res.sendStatus(500);
+		}
 	}
 });
 

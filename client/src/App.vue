@@ -1186,12 +1186,12 @@
 					</div>
 					<div class="container">
 						<div class="section-title">
-							<h2>Survey #2</h2>
+							<h2>Tools</h2>
 						</div>
 						<div class="welcome-section">
-							Answer another
-							<a href="https://forms.gle/SuXRha39cZaesvXT9" target="_blank">short survey</a> to tell us
-							what features you want most!
+							<ul>
+								<li><a @click="displayedModal = 'importdeck'">Import deck list</a></li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -1297,6 +1297,17 @@
 						</ul>
 					</div>
 				</div>
+			</div>
+		</modal>
+		<modal v-if="displayedModal === 'importdeck'" @close="displayedModal = ''">
+			<h2 slot="header">Import Deck List</h2>
+			<div slot="body">
+				<form @submit.prevent="importDeck">
+					<div>
+						<textarea placeholder="Paste list here..." rows="15" cols="40" id="decklist-text"></textarea>
+					</div>
+					<div><button type="submit">Import</button></div>
+				</form>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'setRestriction'" @close="displayedModal = ''">

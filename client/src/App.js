@@ -877,7 +877,7 @@ export default {
 				// Hide waiting popup for sealed
 				if (Swal.isVisible()) Swal.close();
 			});
-
+			
 			this.socket.on("timer", data => {
 				if (data.countdown == 0) this.forcePick(this.booster);
 				if (data.countdown < 10) {
@@ -1576,6 +1576,41 @@ export default {
 				timestamp: Date.now(),
 			});
 			fireToast("success", "Deck now visible in logs and bracket!");
+		},
+		importDeck: async function() {
+			const response = await fetch("/getDeck", {
+				method: "POST",
+				mode: "cors",
+				cache: "no-cache",
+				credentials: "same-origin",
+				headers: {
+					"Content-Type": "text/plain",
+				},
+				redirect: "follow",
+				referrerPolicy: "no-referrer",
+				body: document.querySelector('#decklist-text').value,
+			});
+			if(response.status === 200) {
+				let data = await response.json();
+				if(data && !data.error) {
+					this.clearState();
+					for (let c of data.deck)
+						this.addToDeck(c);
+					for (let c of data.sideboard)
+						this.addToSideboard(c);
+					this.draftingState = DraftState.Brewing;
+				}
+				fireToast("success", "Successfully imported deck!")
+			} else if(response.status === 400) {
+				let data = await response.json();
+				if(data.error) {
+					fireToast("error", `Error importing deck: ${data.error.message}`)
+				} else {
+					fireToast("error", "Error importing deck.")
+				}
+			} else {
+				fireToast("error", "Error importing deck.")
+			}
 		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
