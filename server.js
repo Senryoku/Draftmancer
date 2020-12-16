@@ -1285,6 +1285,7 @@ const secretKey = process.env.SECRET_KEY || "1234";
 
 var express_json_cache = []; // Clear this before calling
 app.set("json replacer", function(key, value) {
+	if(!express_json_cache) express_json_cache = [];
 	// Deal with sets
 	if (typeof value === "object" && value instanceof Set) {
 		return [...value];
