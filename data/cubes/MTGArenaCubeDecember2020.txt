@@ -1,51 +1,91 @@
 Adanto Vanguard
-All That Glitters
+Aerial Responder
 Alseid of Life's Bounty
 Ancestral Blade
+Angel of Invention
+Angel of Sanctions
+Anointed Procession
+Approach of the Second Sun
 Arrester's Zeal
-Baffling End
 Banishing Light
+Basri Ket
+Basri's Lieutenant
 Benalish Marshal
+Cast Out
+Cathars' Crusade
+Cleansing Nova
+Countless Gears Renegade
 Dauntless Bodyguard
 Dawn of Hope
 Divine Visitation
-Elspeth Conquers Death
 Elspeth, Sun's Nemesis
+Emeria's Call
+Fairgrounds Warden
+Fearless Fledgling
+Felidar Retreat
 Fight as One
+Fragmentize
 Giant Killer
+Glass Casket
+Glory-Bound Initiate
 Gods Willing
+Grateful Apparition
 Hanged Executioner
 Harmonious Archon
 Heliod, Sun-Crowned
+Heliod's Intervention
 History of Benalia
+Idol of Endurance
+Isamaru, Hound of Konda
+Kabira Takedown
 Kinjalli's Sunwing
 Legion's Landing
 Loyal Pegasus
+Luminarch Aspirant
 Lyra Dawnbringer
+Mangara, the Diplomat
+Maul of the Skyclaves
 Mentor of the Meek
+Mikaeus, the Lunarch
 Ministrant of Obligation
-Pacifism
+Ondu Inversion
+Overwhelming Splendor
 Pride of Conquerors
 Ranger of Eos
 Realm-Cloaked Giant
 Remorseful Cleric
 Resplendent Angel
+Sacred Cat
 Seal Away
+Seasoned Hallowblade
+Sejiri Shelter
+Selfless Savior
 Settle the Wreckage
 Shalai, Voice of Plenty
 Shepherd of the Flock
+Skyclave Apparition
+Skyclave Cleric
 Skymarcher Aspirant
+Sram's Expertise
+Swift Response
 Thalia, Guardian of Thraben
 The Birth of Meletis
 Unbreakable Formation
+Valorous Stance
 Venerated Loxodon
+Wrath of God
 Alirios, Enraptured
+Baral's Expertise
 Body Double
 Boon of the Wish-Giver
 Brazen Borrower
 Brineborn Cutthroat
+Censor
+Champion of Wits
 Chart a Course
+Curiosity
 Curious Obsession
+Disallow
 Disdainful Stroke
 Dive Down
 Dungeon Geists
@@ -54,8 +94,13 @@ Essence Scatter
 Exclusion Mage
 Fblthp, the Lost
 Folio of Fancies
+Glasspool Mimic
+Hieroglyphic Illumination
 Hypnotic Sprite
+Inscription of Insight
+Into the Roil
 Jace, Wielder of Mysteries
+Lay Claim
 Merfolk Secretkeeper
 Merfolk Trickster
 Midnight Clock
@@ -63,70 +108,128 @@ Mythos of Illuna
 Negate
 Neutralize
 Nightveil Sprite
+Nimble Obstructionist
+Ominous Seas
 Opt
+Pact of Negation
 Patient Rebuilding
 Pteramander
 Reconnaissance Mission
+Ruin Crab
+Scholar of the Lost Trove
+Sea Gate Restoration
+Sea Gate Stormcaller
 Sea-Dasher Octopus
 Search for Azcanta
 Shark Typhoon
 Silent Departure
+Silundi Vision
 Siren Stormtamer
+Slither Blade
 Spark Double
 Spectral Sailor
 Spell Pierce
 Sphinx of Foresight
+Sublime Epiphany
+Supreme Will
 Talrand, Sky Summoner
+Teferi, Master of Time
+Teferi's Tutelage
 Tetsuko Umezawa, Fugitive
 Tezzeret, Artifice Master
 Thassa, Deep-Dwelling
 Thassa's Intervention
 Thassa's Oracle
+Thirst for Knowledge
 Thirst for Meaning
+Thryx, the Sudden Storm
+Torrential Gearhulk
+Umara Wizard
 Voracious Greatshark
+Waker of Waves
 Warkite Marauder
 Winged Words
 Witching Well
+Acquisitions Expert
+Agadeem's Awakening
 Agonizing Remorse
+Archfiend of Ifnir
+Archfiend's Vessel
 Ayara, First of Locthwain
 Bastion of Remembrance
+Blackbloom Rogue
+Blood Artist
 Blood for Bones
+Bloodchief's Thirst
 Bolas's Citadel
 Brain Maggot
+Call of the Death-Dweller
 Chainer's Edict
+Command the Dreadhorde
+Cruel Reality
+Cry of the Carnarium
 Cryptbreaker
+Demonic Embrace
+Demonic Pact
 Disfigure
+Dread Wanderer
 Dreadhorde Invasion
 Dusk Legion Zealot
+Eliminate
 Elspeth's Nightmare
 Epic Downfall
 Erebos's Intervention
+Exquisite Blood
+Fatal Push
+Feed the Swarm
 Foulmire Knight
+Gifted Aetherborn
 God-Eternal Bontu
+Gonti, Lord of Luxury
 Gravebreaker Lamia
 Gray Merchant of Asphodel
 Gutterbones
+Hagra Mauling
 Heartless Act
+Inscription of Ruin
 Knight of the Ebon Legion
+Languish
+Liliana, Waker of the Dead
+Massacre Wurm
 Midnight Reaper
 Murderous Rider
 Mythos of Nethroi
 Nightmare Shepherd
+Noxious Gearhulk
+Nullpriest of Oblivion
 Orzhov Enforcer
+Pelakka Predation
 Pharika's Spawn
 Phyrexian Arena
+Phyrexian Obliterator
 Plaguecrafter
 Priest of Forgotten Gods
 Rankle, Master of Pranks
 Reassembling Skeleton
 Rotting Regisaur
+Skyclave Shade
 Stitcher's Supplier
 The Eldest Reborn
+Thoughtseize
 Unburial Rites
+Vengeful Rebel
+Village Rites
+Vito, Thorn of the Dusk Rose
+Void Beckoner
 Vraska's Contempt
 Whisper, Blood Liturgist
+Witch of the Moors
+Witch's Cauldron
 Woe Strider
+Abrade
 Act of Treason
+Akoum Hellhound
+Akoum Warrior
 Anax, Hardened in the Forge
 Banefire
 Bonecrusher Giant
@@ -135,147 +238,269 @@ Captivating Crew
 Cathartic Reunion
 Chandra, Acolyte of Flame
 Chandra, Awakened Inferno
+Chandra, Heart of Fire
+Chandra, Torch of Defiance
+Chandra's Incinerator
 Claim the Firstborn
 Crash Through
+Deem Worthy
 Devil's Play
 Dire Fleet Daredevil
+Double Vision
 Dragonmaster Outcast
+Dualcaster Mage
+Earthshaker Khenra
+Electrodominance
 Embercleave
 Embereth Shieldbreaker
 Experimental Frenzy
 Fanatical Firebrand
 Ghitu Lavarunner
+Glorybringer
 Goblin Banneret
 Goblin Chainwhirler
 Grim Initiate
+Grim Lavamancer
+Hazoret the Fervent
+Hellrider
 Jaya's Immolating Inferno
+Kazuul's Fury
 Lava Coil
 Light Up the Stage
+Lightning Axe
 Lightning Strike
+Magma Jet
+Magmaquake
+Magmatic Channeler
+Moraug, Fury of Akoum
 Ox of Agonas
 Phoenix of Ash
+Pillar of Flame
 Purphoros's Intervention
 Rampaging Ferocidon
+Reckless Rage
 Rekindling Phoenix
+Repeated Reverberation
 Rimrock Knight
 Robber of the Rich
+Roil Eruption
 Sarkhan the Masterless
 Scorch Spitter
 Scorching Dragonfire
+Shatterskull Smashing
 Shock
 Siege-Gang Commander
 Skewer the Critics
+Soul-Scar Mage
+Spikefield Hazard
+Sweltering Suns
+Thundering Rebuke
 Tibalt, Rakish Instigator
 Torbran, Thane of Red Fell
 Underworld Rage-Hound
+Valakut Awakening
 Viashino Pyromancer
 Weaponize the Monsters
+Young Pyromancer
+Armorcraft Judge
+Ashaya, Soul of the Wild
+Bala Ged Recovery
 Beanstalk Giant
+Blossoming Defense
+Branching Evolution
 Chainweb Aracnir
+Collected Company
+Cultivate
 Dryad Greenseeker
 Dryad of the Ilysian Grove
+Elder Gargaroth
 Elvish Reclaimer
 Elvish Rejuvenator
+Explore
+Fauna Shaman
+Finale of Devastation
+Garruk, Unleashed
+Garruk's Uprising
+Gemrazer
+Giant Growth
+Gilded Goose
+Heroic Intervention
+Hornet Queen
 Ilysian Caryatid
 Imperious Perfect
 Incubation Druid
+Inscription of Abundance
 Jadelight Ranger
+Kazandu Mammoth
 Kogla, the Titan Ape
 Llanowar Elves
+Llanowar Visionary
+Lotus Cobra
 Nessian Hornbeetle
 Once Upon a Time
+Oracle of Mul Daya
+Oviya Pashiri, Sage Lifecrafter
 Paradise Druid
 Pelt Collector
 Planewide Celebration
+Primal Might
 Questing Beast
 Ram Through
 Reclamation Sage
+Resilient Khenra
 Return of the Wildspeaker
+Rhonas the Indomitable
+Rishkar, Peema Renegade
+Rishkar's Expertise
 Savage Stomp
+Scavenging Ooze
+Scute Swarm
+Selvala, Heart of the Wilds
 Song of Freyalise
+Swarm Shambler
+Tangled Florahedron
 Tendershoot Dryad
 The First Iroan Games
 The Great Henge
+Thragtusk
 Thrashing Brontodon
+Turntimber Symbiosis
+Ulvenwald Hydra
+Vastwood Fortification
+Vastwood Surge
+Verdurous Gearhulk
+Vivien Reid
 Vivien, Arkbow Ranger
+Vizier of the Menagerie
 Voracious Hydra
 Wayward Swordtooth
 Wildborn Preserver
 Wilderness Reclamation
+Wilt
 Wolfwillow Haven
-Fauna Shaman
-Finale of Devastation
-Gemrazer
-Giant Growth
-Gilded Goose
+Ajani, the Greathearted
 Ashiok, Dream Render
+Assassin's Trophy
 Atris, Oracle of Half-Truths
 Aurelia, Exemplar of Justice
+Back for More
+Bedevil
+Brushfire Elemental
+Cloudblazer
+Conclave Mentor
 Corpse Knight
 Crackling Drake
 Cruel Celebrant
 Domri, Anarch of Bolas
+Domri's Ambush
+Doom Foretold
 Escape to the Wilds
-Feather, the Redeemed
+Experimental Overload
 Fiend Artisan
+Find // Finality
+Goblin Electromancer
 Growth Spiral
 Heroic Reinforcements
+Hidden Stockpile
+Honored Crop-Captain
+Hostage Taker
 Hydroid Krasis
 Integrity // Intervention
 Judith, the Scourge Diva
+Keruga, the Macrosage
 Kiora, Behemoth Beckoner
 Knight of Autumn
 Kroxa, Titan of Death's Hunger
+Lurrus of the Dream-Den
 Mayhem Devil
 Mirari's Wake
 Niv-Mizzet Reborn
+Obosh, the Preypiercer
+Phylath, World Sculptor
 Polukranos, Unchained
-Rhys the Redeemed
+Radha, Heart of Keld
+Rashmi, Eternities Crafter
 Rielle, the Everwise
 Saheeli, Sublime Artificer
 Skycat Sovereign
 Slaughter-Priest of Mogis
+Sphinx's Revelation
 Sprite Dragon
 Staggering Insight
 Tajic, Legion's Edge
+The Scarab God
 Thief of Sanity
 Thought Erasure
 Trostani Discordant
 Vraska, Golgari Queen
+Warrant // Warden
+Yorion, Sky Nomad
+Animation Module
 Bag of Holding
+Bomat Courier
 Chromatic Lantern
+Chromatic Orrery
 Crystalline Giant
+Cultivator's Caravan
+Filigree Familiar
+God-Pharaoh's Gift
 Golden Egg
 Golos, Tireless Pilgrim
+Hedron Archive
 Helm of the Host
 Icy Manipulator
 Karn, Scion of Urza
+Key to the City
+Lifecrafter's Bestiary
+Lithoform Engine
+Mazemind Tome
 Mind Stone
+Oketra's Monument
+Palladium Myr
+Perilous Myr
+Perilous Vault
 Platinum Angel
+Prophetic Prism
+Ratchet Bomb
 Shadowspear
 Sigiled Sword of Valeron
 Skittering Surveyor
+Skyclave Relic
+Skysovereign, Consul Flagship
+Solemn Simulacrum
 Stonecoil Serpent
 The Immortal Sun
+Throne of the God-Pharaoh
 Traxos, Scourge of Kroog
 Treasure Map
+Ugin, the Spirit Dragon
 Ulamog, the Ceaseless Hunger
 Witch's Oven
+Aether Hub
 Arch of Orazca
 Blast Zone
 Blood Crypt
+Blooming Marsh
 Bonders' Enclave
+Botanical Sanctum
+Branchloft Pathway
 Breeding Pool
+Brightclimb Pathway
+Canyon Slough
 Castle Ardenvale
 Castle Embereth
 Castle Garenbrig
 Castle Locthwain
 Castle Vantress
 Clifftop Retreat
+Concealed Courtyard
+Cragcrown Pathway
+Crawling Barrens
 Dragonskull Summit
 Drowned Catacomb
 Evolving Wilds
 Fabled Passage
+Fetid Pools
 Field of Ruin
 Field of the Dead
 Glacial Fortress
@@ -283,15 +508,24 @@ Godless Shrine
 Hallowed Fountain
 Hinterland Harbor
 Indatha Triome
+Inspiring Vantage
+Irrigated Farmland
 Isolated Chapel
+Karn's Bastion
 Ketria Triome
 Labyrinth of Skophos
 Lotus Field
+Mirrodin's Core
+Needleverge Pathway
 Overgrown Tomb
 Raugrin Triome
+Riverglide Pathway
 Rootbound Crag
 Sacred Foundry
 Savai Triome
+Scattered Groves
+Sheltered Thicket
+Spirebluff Canal
 Steam Vents
 Stomping Ground
 Sulfur Falls
@@ -305,241 +539,12 @@ Temple of Mystery
 Watery Grave
 Woodland Cemetery
 Zagoth Triome
-Aerial Responder
-Ancestral Blade
-Angel of Invention
-Angel of Sanctions
-Anointed Procession
-Approach of the Second Sun
-Basri Ket
-Basri's Lieutenant
-Cathars' Crusade
-Cleansing Nova
-Countless Gears Renegade
-Emeria's Call
-Fearless Fledgling
-Felidar Retreat
-Fragmentize
-Glass Casket
-Glory-Bound Initiate
-Grateful Apparition
-Heliod's Intervention
-Idol of Endurance
-Isamaru, Hound of Konda
-Kabira Takedown
-Luminarch Aspirant
-Mangara, the Diplomat
-Maul of the Skyclaves
-Mikaeus, the Lunarch
-Ondu Inversion
-Overwhelming Splendor
-Sacred Cat
-Seasoned Hallowblade
-Sejiri Shelter
-Selfless Savior
-Skyclave Apparition
-Skyclave Cleric
-Sram's Expertise
-Swift Response
-Valorous Stance
-Wrath of God
-Baral's Expertise
-Censor
-Champion of Wits
+Elspeth Conquers Death
 Commit // Memory
-Curiosity
-Disallow
-Glasspool Mimic
-Hieroglyphic Illumination
-Inscription of Insight
-Into the Roil
-Lay Claim
-Nimble Obstructionist
-Ominous Seas
-Pact of Negation
-Ruin Crab
-Sea Gate Restoration
-Scholar of the Lost Trove
-Sea Gate Stormcaller
-Silundi Vision
-Slither Blade
-Sublime Epiphany
-Supreme Will
-Teferi's Tutelage
-Teferi, Master of Time
-Thirst for Knowledge
-Thryx, the Sudden Storm
-Torrential Gearhulk
-Umara Wizard
-Waker of Waves
-Acquisitions Expert
-Agadeem's Awakening
-Archfiend of Ifnir
-Archfiend's Vessel
-Blackbloom Rogue
-Blood Artist
-Bloodchief's Thirst
-Call of the Death-Dweller
-Command the Dreadhorde
-Cruel Reality
-Cry of the Carnarium
-Demonic Embrace
-Demonic Pact
-Dread Wanderer
-Eliminate
-Exquisite Blood
-Fatal Push
-Feed the Swarm
-Gifted Aetherborn
-Gonti, Lord of Luxury
-Hagra Mauling
-Inscription of Ruin
-Languish
-Liliana, Waker of the Dead
-Massacre Wurm
 Never // Return
-Noxious Gearhulk
-Nullpriest of Oblivion
-Pelakka Predation
-Phyrexian Obliterator
-Skyclave Shade
-Thoughtseize
-Vengeful Rebel
-Village Rites
-Vito, Thorn of the Dusk Rose
-Void Beckoner
-Witch of the Moors
-Witch's Cauldron
-Abrade
-Akoum Hellhound
-Akoum Warrior
-Bomat Courier
-Chandra's Incinerator
-Chandra, Heart of Fire
-Chandra, Torch of Defiance
-Deem Worthy
-Double Vision
-Dualcaster Mage
-Earthshaker Khenra
-Electrodominance
-Glorybringer
-Grim Lavamancer
-Hazoret the Fervent
-Hellrider
 Insult // Injury
-Kazuul's Fury
-Lightning Axe
-Pillar of Flame
-Reckless Rage
-Repeated Reverberation
-Roil Eruption
-Shatterskull Smashing
-Soul-Scar Mage
-Spikefield Hazard
-Sweltering Suns
-Thundering Rebuke
-Valakut Awakening
-Young Pyromancer
-Armorcraft Judge
-Ashaya, Soul of the Wild
-Bala Ged Recovery
-Blossoming Defense
-Branching Evolution
-Collected Company
-Cultivate
-Elder Gargaroth
-Explore
-Garruk's Uprising
-Garruk, Unleashed
-Heroic Intervention
-Hornet Queen
-Inscription of Abundance
-Kazandu Mammoth
-Lifecrafter's Bestiary
-Llanowar Visionary
-Lotus Cobra
 Mouth // Feed
-Oracle of Mul Daya
-Oviya Pashiri, Sage Lifecrafter
-Primal Might
-Resilient Khenra
-Rhonas the Indomitable
-Rishkar's Expertise
-Rishkar, Peema Renegade
-Scavenging Ooze
-Scute Swarm
-Selvala, Heart of the Wilds
-Swarm Shambler
-Tangled Florahedron
-Thragtusk
-Turntimber Symbiosis
-Vastwood Fortification
-Vastwood Surge
-Verdurous Gearhulk
-Vivien Reid
-Vizier of the Menagerie
-Ajani, the Greathearted
-Assassin's Trophy
-Back for More
-Bedevil
-Blooming Marsh
-Botanical Sanctum
-Branchloft Pathway
-Brightclimb Pathway
-Brushfire Elemental
-Canyon Slough
-Cloudblazer
-Concealed Courtyard
-Conclave Mentor
-Cragcrown Pathway
-Domri's Ambush
-Doom Foretold
-Experimental Overload
-Fetid Pools
-Find // Finality
-Goblin Electromancer
-Honored Crop-Captain
-Hostage Taker
-Hidden Stockpile
-Inspiring Vantage
-Irrigated Farmland
-Keruga, the Macrosage
-Lurrus of the Dream-Den
-Needleverge Pathway
-Obosh, the Preypiercer
-Phylath, World Sculptor
-Radha, Heart of Keld
-Rashmi, Eternities Crafter
-Riverglide Pathway
-Scattered Groves
-Sheltered Thicket
-Sphinx's Revelation
-Spirebluff Canal
+Feather, the Redeemed
+Rhys the Redeemed
 Spring // Mind
 Start // Finish
-The Scarab God
-Warrant // Warden
-Aether Hub
-Animation Module
-Chromatic Lantern
-Chromatic Orrery
-Crawling Barrens
-Filigree Familiar
-God-Pharaoh's Gift
-Hedron Archive
-Karn's Bastion
-Key to the City
-Lithoform Engine
-Mazemind Tome
-Mirrodin's Core
-Oketra's Monument
-Palladium Myr
-Perilous Myr
-Perilous Vault
-Prophetic Prism
-Ratchet Bomb
-Skyclave Relic
-Skysovereign, Consul Flagship
-Solemn Simulacrum
-Throne of the God-Pharaoh
-Ugin, the Spirit Dragon
