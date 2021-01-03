@@ -1181,8 +1181,7 @@ export function Session(id, owner, options) {
 		this.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
 
 		let index = 0;
-		const evenRound = (this.boosters.length / totalVirtualPlayers) % 2 == 0;
-		const boosterOffset = evenRound ? -this.round : this.round;
+		const boosterOffset = this.boosterNumber % 2 == 0 ? -this.round : this.round;
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
