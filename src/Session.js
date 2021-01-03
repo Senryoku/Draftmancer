@@ -982,11 +982,6 @@ export function Session(id, owner, options) {
 		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
 
-		// boostersPerPlayer works fine, what's the problem here?...
-		if (typeof this.bots != "number") {
-			this.bots = parseInt(this.bots);
-		}
-
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
