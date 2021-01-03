@@ -1313,10 +1313,13 @@ export default {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
 					this.boostersPerPlayer = r.value.boostersPerPlayer;
 					this.burnedCardsPerRound = r.value.burnedCardsPerRound;
-					// Draft didn't start, restore previous values.
-					if (!this.startDraft()) {
-						[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
-					}
+					// Wait to make sure reactive values are correctly propagated to the server
+					this.$nextTick(() => {
+						// Draft didn't start, restore previous values.
+						if (!this.startDraft()) {
+							[this.boostersPerPlayer, this.burnedCardsPerRound] = prev;
+						}
+					});
 				}
 			});
 		},
