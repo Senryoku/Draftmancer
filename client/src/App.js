@@ -500,7 +500,7 @@ export default {
 				cardView.$mount();
 				Swal.fire({
 					position: "center",
-					title: `You drew ${c.printed_names[this.language]} from the card pool!`,
+					title: `You drew ${this.language in c.printed_names ? c.printed_names[this.language] : c.name} from the card pool!`,
 					html: cardView.$el,
 					customClass: SwalCustomClasses,
 					showConfirmButton: true,
