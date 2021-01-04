@@ -1,5 +1,13 @@
 [
 	{
+		"date": "04/01/2021",
+		"notes": [
+			"Happy new year :]",
+			"Player count and some notifications in page title.",
+			"Multiple small bug fixes."
+		]
+	},
+	{
 		"date": "16/12/2020",
 		"notes": ["Added a crude import deck list feature."]
 	},
