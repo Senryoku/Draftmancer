@@ -175,6 +175,7 @@ export default {
 				Notification.permission == "granted" &&
 				getCookie("enableNotifications", "false") === "true",
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
+			titleNotification: null,
 			// Draft Booster
 			pickInFlight: false,
 			selectedCards: [],
@@ -457,32 +458,16 @@ export default {
 			this.socket.on("setReady", (userID, readyState) => {
 				if (!this.pendingReadyCheck) return;
 				if (userID in this.userByID) this.userByID[userID].readyState = readyState;
-				if (this.sessionUsers.every(u => u.readyState === ReadyState.Ready))
+				if (this.sessionUsers.every(u => u.readyState === ReadyState.Ready)) {
 					fireToast("success", "Everybody is ready!");
+					this.pushTitleNotification("✔️");
+				}
 			});
 
 			// Winston Draft
 			this.socket.on("startWinstonDraft", state => {
-				setCookie("userID", this.userID);
-				this.drafting = true;
+				startDraftSetup("Winston draft");
 				this.setWinstonDraftState(state);
-				this.stopReadyCheck();
-				this.clearState();
-				this.playSound("start");
-				Swal.fire({
-					position: "center",
-					icon: "success",
-					title: "Starting Winston Draft!",
-					customClass: SwalCustomClasses,
-					showConfirmButton: false,
-					timer: 1500,
-				});
-
-				if (this.enableNotifications) {
-					new Notification("Now drafting!", {
-						body: `Your Winston draft '${this.sessionID}' is starting!`,
-					});
-				}
 			});
 			this.socket.on("winstonDraftSync", winstonDraftState => {
 				this.setWinstonDraftState(winstonDraftState);
@@ -549,28 +534,10 @@ export default {
 
 			// Grid Draft
 			this.socket.on("startGridDraft", state => {
-				setCookie("userID", this.userID);
-				this.drafting = true;
+				startDraftSetup("Grid draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
-				this.stopReadyCheck();
-				this.clearState();
-				this.playSound("start");
-				Swal.fire({
-					position: "center",
-					icon: "success",
-					title: "Starting Grid Draft!",
-					customClass: SwalCustomClasses,
-					showConfirmButton: false,
-					timer: 1500,
-				});
-
-				if (this.enableNotifications) {
-					new Notification("Now drafting!", {
-						body: `Your Grid draft '${this.sessionID}' is starting!`,
-					});
-				}
 			});
 			this.socket.on("gridDraftSync", gridDraftState => {
 				this.setGridDraftState(gridDraftState);
@@ -637,28 +604,10 @@ export default {
 
 			// Rochester Draft
 			this.socket.on("startRochesterDraft", state => {
-				setCookie("userID", this.userID);
-				this.drafting = true;
+				startDraftSetup("Rochester draft")
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
 				this.setRochesterDraftState(state);
-				this.stopReadyCheck();
-				this.clearState();
-				this.playSound("start");
-				Swal.fire({
-					position: "center",
-					icon: "success",
-					title: "Starting Rochester Draft!",
-					customClass: SwalCustomClasses,
-					showConfirmButton: false,
-					timer: 1500,
-				});
-
-				if (this.enableNotifications) {
-					new Notification("Now drafting!", {
-						body: `Your Rochester draft '${this.sessionID}' is starting!`,
-					});
-				}
 			});
 			this.socket.on("rochesterDraftSync", state => {
 				this.setRochesterDraftState(state);
@@ -710,8 +659,7 @@ export default {
 				});
 			});
 
-			// Standard Draft
-			this.socket.on("startDraft", () => {
+			const startDraftSetup = (name = "draft") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
 
@@ -731,9 +679,15 @@ export default {
 
 				if (this.enableNotifications) {
 					new Notification("Now drafting!", {
-						body: `Your draft '${this.sessionID}' is starting!`,
+						body: `Your ${name} '${this.sessionID}' is starting!`,
 					});
 				}
+				this.pushTitleNotification("🏁");
+			}
+
+			// Standard Draft
+			this.socket.on("startDraft", () => {
+				startDraftSetup();
 
 				// Are we just an Organizer, and not a player?
 				if (!this.virtualPlayers.map(u => u.userID).includes(this.userID)) {
@@ -1751,6 +1705,7 @@ export default {
 			for (let u of this.sessionUsers) u.readyState = ReadyState.Unknown;
 
 			this.playSound("readyCheck");
+			this.pushTitleNotification("❔");
 		},
 		stopReadyCheck: function() {
 			this.pendingReadyCheck = false;
@@ -1929,6 +1884,20 @@ export default {
 				});
 			}
 		},
+		pushTitleNotification: function(msg) {
+			if(this.titleNotification) {
+				clearTimeout(this.titleNotification.timeout);
+				this.titleNotification = null;
+			}
+			this.titleNotification = {
+				timeout: setTimeout(() => {
+					this.titleNotification = null;
+					document.title = this.pageTitle;
+				}, 3000), 
+				message: msg
+			};
+			document.title = this.pageTitle;
+		},
 		sessionURLToClipboard: function() {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
@@ -2049,6 +2018,10 @@ export default {
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
+
+		pageTitle: function() {
+			return `MTGA Draft (${this.sessionUsers.length}/${this.maxPlayers}) ${this.titleNotification ? this.titleNotification.message : ""}`;
+		}
 	},
 	mounted: async function() {
 		// Load all card informations
@@ -2238,5 +2211,15 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 		},
+		sessionUsers: function(newV, oldV) {
+			document.title = this.pageTitle;
+			if(oldV.length > 0) {
+				if(oldV.length < newV.length) {
+					if(newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
+					else this.pushTitleNotification("😀➕");
+				}
+				if(oldV.length > newV.length) this.pushTitleNotification("🙁➖");
+			}
+		}
 	},
 };
