@@ -1699,7 +1699,7 @@
 							$event.target.classList.add('dropzone-highlight');
 						"
 					>
-						Drop a Custom Card List or click to browse.
+						Upload a Custom Card List file by dropping it here or by clicking to browse your computer.
 					</div>
 					<div
 						class="option-cube-select"
