@@ -28,7 +28,13 @@ const checkDuplicates = function(booster) {
 	// Foils can be duplicates
 	let sorted = [...booster].sort((lhs, rhs) => lhs.id < rhs.id ? -1 : 1);
 	for(let idx = 0; idx < sorted.length - 1; ++idx) {
-		expect(sorted[idx].id !== sorted[idx + 1].id || sorted[idx].foil !== sorted[idx + 1].foil).to.be.true;
+		const test = sorted[idx].id === sorted[idx + 1].id && sorted[idx].foil === sorted[idx + 1].foil;
+		if(test) {
+			console.error("Duplicates found: ");
+			console.error(sorted[idx]);
+			console.error(sorted[idx + 1]);
+		}
+		expect(test).to.be.false;
 	}
 }
 

@@ -486,9 +486,12 @@ for(let set of PaperBoosterData) {
 							pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
 						}
 						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
+						// Compensate the color balancing to keep a uniform distribution of cards within the sheet.
 						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * pickedCards.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
 						for(let i = 0; i < cardsToPick; ++i) {
-							if(Math.random() < x)
+							//                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
+							//                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
+							if(Math.random() < x || sheet["Others"].cards.length === 1 && pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
 								pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
 							else
 								pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards));
