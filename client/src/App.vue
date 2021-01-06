@@ -1054,13 +1054,13 @@
 									activated.
 								</li>
 								<li>
-									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA logs</a>
-									located at
+									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA log</a>
+									file "Player.log" located in
 									<tt
 										class="clickable"
 										@click="logPathToClipboard"
 										v-tooltip="'Copy path to clipboard'"
-										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\Player.log</tt
+										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 									>
 									(Note:
 									<a
