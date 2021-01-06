@@ -43,7 +43,7 @@
 				<div
 					v-show="hasCollection"
 					class="inline"
-					v-tooltip="'Uncheck this to draft using every cards. Ignored when using a Custom Card List.'"
+					v-tooltip="'Uncheck to draft with all cards from the played set(s). Ignored when using a Custom Card List.'"
 				>
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
