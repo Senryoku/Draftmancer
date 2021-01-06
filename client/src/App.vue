@@ -408,7 +408,7 @@
 							<i
 								v-if="id === sessionOwner"
 								class="fas fa-crown subtle-gold"
-								v-tooltip="`${userByID[id].userName} is the session's owner.`"
+								v-tooltip="`${userByID[id].userName} is the session owner.`"
 							></i>
 							<template v-if="userID === sessionOwner && id != sessionOwner">
 								<i
