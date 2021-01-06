@@ -1055,7 +1055,7 @@
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA log</a>
-									file "Player.log" located at
+									file "Player.log" located in
 									<tt
 										class="clickable"
 										@click="logPathToClipboard"
