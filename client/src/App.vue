@@ -43,7 +43,7 @@
 				<div
 					v-show="hasCollection"
 					class="inline"
-					v-tooltip="'Uncheck this to draft using every cards. Ignored when using a Custom Card List.'"
+					v-tooltip="'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'"
 				>
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
@@ -408,7 +408,7 @@
 							<i
 								v-if="id === sessionOwner"
 								class="fas fa-crown subtle-gold"
-								v-tooltip="`${userByID[id].userName} is the session's owner.`"
+								v-tooltip="`${userByID[id].userName} is the session owner.`"
 							></i>
 							<template v-if="userID === sessionOwner && id != sessionOwner">
 								<i
