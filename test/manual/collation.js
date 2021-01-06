@@ -224,4 +224,86 @@ describe("Statistical color balancing tests", function() {
 		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
 	});
+
+	it(`Modal Double Faced Uncommons of Zendikar Rising should have an apparition rate similar to Single Faced Uncommons' (<= 20% relative difference)`, function(done) {
+		this.timeout(8000);
+		const trials = 10000;
+		const SessionInst = new Session("UniqueID");
+		SessionInst.colorBalance = true;
+		SessionInst.setRestriction = ["znr"];
+		//SessionInst.foil = true;
+		const trackedCards = {};
+		for (let cid of Object.keys(SessionInst.cardPoolByRarity().uncommon))
+			trackedCards[cid] = 0;
+		for (let i = 0; i < trials; i++) {
+			SessionInst.generateBoosters(3 * 8);
+			SessionInst.boosters.forEach(booster =>
+				booster.forEach(card => {
+					if (card.id in trackedCards) ++trackedCards[card.id];
+				})
+			);
+		}
+		// Select 10 pairs of cards and compare their rates
+		const logTable = [];
+		let maxRelativeDifference = 0;
+		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
+		for(let id0 of MDFCs) {
+			let id1 = getRandomKey(trackedCards);
+			while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
+			const relativeDifference =
+				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+			logTable.push({
+				"1st Card Name": Cards[id0].name,
+				"1st Card Count": trackedCards[id0],
+				"2nd Card Name": Cards[id1].name,
+				"2nd Card Count": trackedCards[id1],
+				"Relative Difference": relativeDifference,
+			});
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+		}
+		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
+		done();
+	});
+
+	it(`Modal Double Faced Rares of Zendikar Rising should have an apparition rate similar to Single Faced Rares' (<= 20% relative difference)`, function(done) {
+		this.timeout(8000);
+		const trials = 10000;
+		const SessionInst = new Session("UniqueID");
+		SessionInst.colorBalance = true;
+		SessionInst.setRestriction = ["znr"];
+		//SessionInst.foil = true;
+		const trackedCards = {};
+		for (let cid of Object.keys(SessionInst.cardPoolByRarity().rare))
+			trackedCards[cid] = 0;
+		for (let i = 0; i < trials; i++) {
+			SessionInst.generateBoosters(3 * 8);
+			SessionInst.boosters.forEach(booster =>
+				booster.forEach(card => {
+					if (card.id in trackedCards) ++trackedCards[card.id];
+				})
+			);
+		}
+		// Select 10 pairs of cards and compare their rates
+		const logTable = [];
+		let maxRelativeDifference = 0;
+		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
+		for(let id0 of MDFCs) {
+			let id1 = getRandomKey(trackedCards);
+			while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
+			const relativeDifference =
+				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+			logTable.push({
+				"1st Card Name": Cards[id0].name,
+				"1st Card Count": trackedCards[id0],
+				"2nd Card Name": Cards[id1].name,
+				"2nd Card Count": trackedCards[id1],
+				"Relative Difference": relativeDifference,
+			});
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+		}
+		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
+		done();
+	});
 });
