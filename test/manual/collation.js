@@ -8,7 +8,7 @@ import { Cards } from "./../../src/Cards.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";
 import parseCardList from "../../src/parseCardList.js";
-import { getRandom, getRandomKey } from "../../src/utils.js";
+import { getRandomKey } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
@@ -55,6 +55,43 @@ describe("Statistical color balancing tests", function() {
 		done();
 	});
 
+	function runTrials(SessionInst, trials, trackedCards) {
+		const all = trackedCards === null;
+		if(trackedCards === null) trackedCards = {};
+		for (let i = 0; i < trials; i++) {
+			SessionInst.generateBoosters(3 * 8);
+			SessionInst.boosters.forEach(booster =>
+				booster.forEach(card => {
+					if(card.id in trackedCards) ++trackedCards[card.id];
+					else if(all) trackedCards[card.id] = 1;
+				})
+			);
+		}
+		return trackedCards;
+	}
+
+	function compareRandomCards(trackedCards) {
+		// Select 10 pairs of cards and compare their rates
+		const logTable = [];
+		let maxRelativeDifference = 0;
+		for (let i = 0; i < 10; ++i) {
+			let id0 = getRandomKey(trackedCards);
+			let id1 = getRandomKey(trackedCards);
+			while (id1 === id0) id1 = getRandomKey(trackedCards);
+			const relativeDifference = 2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+			logTable.push({
+				"1st Card Name": Cards[id0].name,
+				"1st Card Count": trackedCards[id0],
+				"2nd Card Name": Cards[id1].name,
+				"2nd Card Count": trackedCards[id1],
+				"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
+			});
+			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+		}
+		console.table(logTable);
+		expect(maxRelativeDifference).to.be.at.most(0.2);
+	}
+
 	{
 		// Random set, or all of them
 		//let s = getRandom(constants.MTGASets);
@@ -67,38 +104,9 @@ describe("Statistical color balancing tests", function() {
 				SessionInst.colorBalance = true;
 				SessionInst.useCustomCardList = false;
 				SessionInst.setRestriction = [s];
-				const trackedCards = {};
-				for (let cid of Object.keys(SessionInst.cardPoolByRarity().common))
-					if (!(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid)))
-						trackedCards[cid] = 0;
-				for (let i = 0; i < trials; i++) {
-					SessionInst.generateBoosters(3 * 8);
-					SessionInst.boosters.forEach(booster =>
-						booster.forEach(card => {
-							if (card.id in trackedCards) ++trackedCards[card.id];
-						})
-					);
-				}
-				// Select 10 pairs of cards and compare their rates
-				const logTable = [];
-				let maxRelativeDifference = 0;
-				for (let i = 0; i < 10; ++i) {
-					let id0 = getRandomKey(trackedCards);
-					let id1 = getRandomKey(trackedCards);
-					while (id1 === id0) id1 = getRandomKey(trackedCards);
-					const relativeDifference =
-						2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-					logTable.push({
-						"1st Card Name": Cards[id0].name,
-						"1st Card Count": trackedCards[id0],
-						"2nd Card Name": Cards[id1].name,
-						"2nd Card Count": trackedCards[id1],
-						"Relative Difference": relativeDifference,
-					});
-					maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
-				}
-				console.table(logTable);
-				expect(maxRelativeDifference).to.be.at.most(0.2);
+				const trackedCards = Object.keys(SessionInst.cardPoolByRarity().common).filter(cid => !(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid))).reduce((o, key) => ({ ...o, [key]: 0}), {});
+				runTrials(SessionInst, trials, trackedCards);
+				compareRandomCards(trackedCards);
 				done();
 			});
 		}
@@ -111,36 +119,8 @@ describe("Statistical color balancing tests", function() {
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = false;
 		SessionInst.customCardList = ArenaCube;
-		const trackedCards = {};
-		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			let boosters = SessionInst.boosters;
-			boosters.forEach(booster =>
-				booster.forEach(card => {
-					trackedCards[card.id] = trackedCards[card.id] ? trackedCards[card.id] + 1 : 1;
-				})
-			);
-		}
-		// Select 10 pairs of cards and compare their rates
-		const logTable = [];
-		let maxRelativeDifference = 0;
-		for (let i = 0; i < 10; ++i) {
-			let id0 = getRandomKey(trackedCards);
-			let id1 = getRandomKey(trackedCards);
-			while (id1 === id0) id1 = getRandomKey(trackedCards);
-			const relativeDifference =
-				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-			logTable.push({
-				"1st Card Name": Cards[id0].name,
-				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
-				"2nd Card Count": trackedCards[id1],
-				"Relative Difference": relativeDifference,
-			});
-			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
-		}
-		console.table(logTable);
-		expect(maxRelativeDifference).to.be.at.most(0.2);
+		const trackedCards = runTrials(SessionInst, trials, null);
+		compareRandomCards(trackedCards);
 		done();
 	});
 
@@ -151,36 +131,8 @@ describe("Statistical color balancing tests", function() {
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
 		SessionInst.customCardList = ArenaCube;
-		const trackedCards = {};
-		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			let boosters = SessionInst.boosters;
-			boosters.forEach(booster =>
-				booster.forEach(card => {
-					trackedCards[card.id] = trackedCards[card.id] ? trackedCards[card.id] + 1 : 1;
-				})
-			);
-		}
-		// Select 10 pairs of cards and compare their rates
-		const logTable = [];
-		let maxRelativeDifference = 0;
-		for (let i = 0; i < 10; ++i) {
-			let id0 = getRandomKey(trackedCards);
-			let id1 = getRandomKey(trackedCards);
-			while (id1 === id0) id1 = getRandomKey(trackedCards);
-			const relativeDifference =
-				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-			logTable.push({
-				"1st Card Name": Cards[id0].name,
-				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
-				"2nd Card Count": trackedCards[id1],
-				"Relative Difference": relativeDifference,
-			});
-			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
-		}
-		console.table(logTable);
-		expect(maxRelativeDifference).to.be.at.most(0.2);
+		const trackedCards = runTrials(SessionInst, trials, null);
+		compareRandomCards(trackedCards);
 		done();
 	});
 
@@ -191,37 +143,9 @@ describe("Statistical color balancing tests", function() {
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
 		SessionInst.setCustomCardList(parseCardList(CustomSheetsTestFile));
-		const trackedCards = {};
-		for (let cid of SessionInst.customCardList.cards.Common) trackedCards[cid] = 0;
-		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			let boosters = SessionInst.boosters;
-			boosters.forEach(booster =>
-				booster.forEach(card => {
-					if (card.id in trackedCards) ++trackedCards[card.id];
-				})
-			);
-		}
-		// Select 10 pairs of cards and compare their rates
-		const logTable = [];
-		let maxRelativeDifference = 0;
-		for (let i = 0; i < 10; ++i) {
-			let id0 = getRandomKey(trackedCards);
-			let id1 = getRandomKey(trackedCards);
-			while (id1 === id0) id1 = getRandomKey(trackedCards);
-			const relativeDifference =
-				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-			logTable.push({
-				"1st Card Name": Cards[id0].name,
-				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
-				"2nd Card Count": trackedCards[id1],
-				"Relative Difference": relativeDifference,
-			});
-			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
-		}
-		console.table(logTable);
-		expect(maxRelativeDifference).to.be.at.most(0.2);
+		const trackedCards = SessionInst.customCardList.cards.Common.reduce((o, key) => ({ ...o, [key]: 0}), {});
+		runTrials(SessionInst, trials, trackedCards);
+		compareRandomCards(trackedCards);
 		done();
 	});
 
@@ -231,19 +155,9 @@ describe("Statistical color balancing tests", function() {
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["znr"];
-		//SessionInst.foil = true;
-		const trackedCards = {};
-		for (let cid of Object.keys(SessionInst.cardPoolByRarity().uncommon))
-			trackedCards[cid] = 0;
-		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			SessionInst.boosters.forEach(booster =>
-				booster.forEach(card => {
-					if (card.id in trackedCards) ++trackedCards[card.id];
-				})
-			);
-		}
-		// Select 10 pairs of cards and compare their rates
+		const trackedCards = Object.keys(SessionInst.cardPoolByRarity().uncommon).reduce((o, key) => ({ ...o, [key]: 0}), {});
+		runTrials(SessionInst, trials, trackedCards);
+		
 		const logTable = [];
 		let maxRelativeDifference = 0;
 		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
@@ -257,7 +171,7 @@ describe("Statistical color balancing tests", function() {
 				"1st Card Count": trackedCards[id0],
 				"2nd Card Name": Cards[id1].name,
 				"2nd Card Count": trackedCards[id1],
-				"Relative Difference": relativeDifference,
+				"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
 			});
 			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 		}
@@ -272,19 +186,9 @@ describe("Statistical color balancing tests", function() {
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["znr"];
-		//SessionInst.foil = true;
-		const trackedCards = {};
-		for (let cid of Object.keys(SessionInst.cardPoolByRarity().rare))
-			trackedCards[cid] = 0;
-		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			SessionInst.boosters.forEach(booster =>
-				booster.forEach(card => {
-					if (card.id in trackedCards) ++trackedCards[card.id];
-				})
-			);
-		}
-		// Select 10 pairs of cards and compare their rates
+		const trackedCards = Object.keys(SessionInst.cardPoolByRarity().rare).reduce((o, key) => ({ ...o, [key]: 0}), {});
+		runTrials(SessionInst, trials, trackedCards);
+		
 		const logTable = [];
 		let maxRelativeDifference = 0;
 		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
@@ -298,7 +202,7 @@ describe("Statistical color balancing tests", function() {
 				"1st Card Count": trackedCards[id0],
 				"2nd Card Name": Cards[id1].name,
 				"2nd Card Count": trackedCards[id1],
-				"Relative Difference": relativeDifference,
+				"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
 			});
 			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 		}
