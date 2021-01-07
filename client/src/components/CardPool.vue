@@ -1,64 +1,95 @@
 <template>
-	<!-- Dummy draggable component to handle dropping card between columns -->
-	<draggable
-		:group="group"
-		:list="tempColumn"
-		@add="dropCard"
-		@change="change"
-		ghostClass="no-ghost"
-		draggable=".card"
-		class="card-pool card-container"
-	>
-		<div class="empty-warning" v-if="cards.length == 0">
-			<slot name="empty">
-				<h3>This card pool is currently empty!</h3>
-			</slot>
-		</div>
-		<div class="card-columns">
-			<draggable
-				v-for="(column, colIdx) in columns"
-				:key="`col_${colIdx}`"
-				class="card-column drag-column"
-				:list="column"
-				:group="group"
-				@change="change"
-				drag-class="drag"
-			>
-				<card
-					v-for="(card, index) in column"
-					:key="`card_${card.uniqueID ? card.uniqueID : index}`"
-					:card="card"
-					:language="language"
-					@click="click($event, card)"
-				></card>
-			</draggable>
-		</div>
-		<div class="card-pool-controls">
-			<div @click="addColumn" class="column-control clickable add-column" v-tooltip.right="'Add a Column'">
-				<i class="fas fa-plus fa-2x"></i>
-			</div>
-			<div
-				v-show="columns.length > 1"
-				@click="remColumn"
-				class="column-control clickable"
-				v-tooltip.right="'Remove the last Column'"
-			>
-				<i class="fas fa-minus fa-2x"></i>
-			</div>
-			<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
-				<i class="fas fa-sort-amount-up fa-2x"></i>
-			</div>
-			<div @click="sortByColor" class="column-control clickable" v-tooltip.right="'Sort cards by color'">
-				<img src="../assets/img/sort-color.svg" />
-			</div>
-			<div @click="sortByRarity" class="column-control clickable" v-tooltip.right="'Sort cards by rarity'">
-				<img src="../assets/img/sort-rarity.svg" />
-			</div>
-			<div @click="sortByType" class="column-control clickable" v-tooltip.right="'Sort cards by type'">
-				<img src="../assets/img/sort-type.svg" />
+	<div class="card-pool">
+		<div class="section-title">
+			<h2 style="min-width: 8em">
+				<slot name="title">Card Pool ({{ cards.length }})</slot>
+			</h2>
+			<div class="controls">
+				<slot name="controls"></slot>
+				<dropdown>
+					<template v-slot:handle>Layout</template>
+					<template v-slot:dropdown>
+						<div>
+							Columns
+							<div>
+								<i
+									class="fas fa-minus fa-lg clickable"
+									@click="remColumn"
+									v-tooltip="'Remove the last column'"
+									:class="{ disabled: columns.length <= 1 }"
+								></i>
+								{{ columns.length }}
+								<i
+									class="fas fa-plus fa-lg clickable"
+									@click="addColumn"
+									v-tooltip="'Add a column'"
+								></i>
+							</div>
+						</div>
+						<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
+							<i class="fas fa-sort-amount-up fa-2x"></i>
+						</div>
+						<div
+							@click="sortByColor"
+							class="column-control clickable"
+							v-tooltip.right="'Sort cards by color'"
+						>
+							<img src="../assets/img/sort-color.svg" />
+						</div>
+						<div
+							@click="sortByRarity"
+							class="column-control clickable"
+							v-tooltip.right="'Sort cards by rarity'"
+						>
+							<img src="../assets/img/sort-rarity.svg" />
+						</div>
+						<div
+							@click="sortByType"
+							class="column-control clickable"
+							v-tooltip.right="'Sort cards by type'"
+						>
+							<img src="../assets/img/sort-type.svg" />
+						</div>
+					</template>
+				</dropdown>
 			</div>
 		</div>
-	</draggable>
+		<!-- Dummy draggable component to handle dropping card between columns -->
+		<draggable
+			:group="group"
+			:list="tempColumn"
+			@add="dropCard"
+			@change="change"
+			ghostClass="no-ghost"
+			draggable=".card"
+			class="card-pool card-container"
+		>
+			<div class="empty-warning" v-if="cards.length == 0">
+				<slot name="empty">
+					<h3>This card pool is currently empty!</h3>
+				</slot>
+			</div>
+			<div class="card-columns">
+				<draggable
+					v-for="(column, colIdx) in columns"
+					:key="`col_${colIdx}`"
+					class="card-column drag-column"
+					:list="column"
+					:group="group"
+					@change="change"
+					drag-class="drag"
+				>
+					<card
+						v-for="(card, index) in column"
+						:key="`card_${card.uniqueID ? card.uniqueID : index}`"
+						:card="card"
+						:language="language"
+						@click="click($event, card)"
+					></card>
+				</draggable>
+			</div>
+		</draggable>
+	</div>
 </template>
 
 <script>
@@ -66,10 +97,11 @@ import Vue from "vue";
 import draggable from "vuedraggable";
 import CardOrder from "../cardorder.js";
 import Card from "./Card.vue";
+import Dropdown from "./Dropdown.vue";
 
 export default {
 	name: "CardPool",
-	components: { draggable, Card },
+	components: { draggable, Card, Dropdown },
 	props: {
 		cards: { type: Array, required: true },
 		language: { type: String, required: true },

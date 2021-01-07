@@ -43,7 +43,9 @@
 				<div
 					v-show="hasCollection"
 					class="inline"
-					v-tooltip="'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'"
+					v-tooltip="
+						'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'
+					"
 				>
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
@@ -846,8 +848,16 @@
 			"
 		>
 			<div class="deck">
-				<div class="section-title">
-					<h2 style="min-width: 8em">
+				<card-pool
+					:cards="deck"
+					:language="language"
+					:click="deckToSideboard"
+					ref="deckDisplay"
+					group="deck"
+					@dragover.native="allowBoosterCardDrop($event)"
+					@drop.native="dropBoosterCard($event)"
+				>
+					<template v-slot:title>
 						Deck ({{ deck.length
 						}}<span
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
@@ -855,8 +865,8 @@
 						>
 							+ {{ totalLands }}</span
 						>)
-					</h2>
-					<div class="controls">
+					</template>
+					<template v-slot:controls>
 						<button
 							v-if="deck.length > 0"
 							type="button"
@@ -893,18 +903,7 @@
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>
-					</div>
-				</div>
-
-				<card-pool
-					:cards="deck"
-					:language="language"
-					:click="deckToSideboard"
-					ref="deckDisplay"
-					group="deck"
-					@dragover.native="allowBoosterCardDrop($event)"
-					@drop.native="dropBoosterCard($event)"
-				>
+					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
 						<p>Click on cards in your sideboard to move them here.</p>
@@ -955,6 +954,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- Full size Sideboard -->
 		<div
 			v-show="
 				!collapseSideboard &&
@@ -964,16 +964,6 @@
 			"
 			class="container"
 		>
-			<div class="section-title">
-				<h2>Sideboard ({{ sideboard.length }})</h2>
-				<div class="controls">
-					<i
-						class="fas fa-columns clickable"
-						@click="collapseSideboard = true"
-						v-tooltip="'Minimize sideboard'"
-					></i>
-				</div>
-			</div>
 			<card-pool
 				:cards="sideboard"
 				:language="language"
@@ -983,6 +973,14 @@
 				@dragover.native="allowBoosterCardDrop($event)"
 				@drop.native="dropBoosterCard($event, { toSideboard: true })"
 			>
+				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
+				<template v-slot:controls>
+					<i
+						class="fas fa-columns clickable"
+						@click="collapseSideboard = true"
+						v-tooltip="'Minimize sideboard'"
+					></i>
+				</template>
 				<template v-slot:empty>
 					<h3>Your sideboard is currently empty!</h3>
 					<p>Click on cards in your deck to move them here.</p>
