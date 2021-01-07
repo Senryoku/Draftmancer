@@ -1191,9 +1191,6 @@
 							<ul>
 								<li>
 									<a @click="displayedModal = 'importdeck'">Card List Importer</a>
-									(Load a deck list or card pool to tinker around with.
-									<a href="https://mtgadraft.herokuapp.com/cubeformat.html" target="_blank">Learn about the supported structure</a>
-									, you can also separate cards in "Mainboard" and "Sideboard".)
 								</li>
 							</ul>
 						</div>
@@ -1304,11 +1301,11 @@
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'importdeck'" @close="displayedModal = ''">
-			<h2 slot="header">Import Deck List</h2>
+			<h2 slot="header">Card List Importer</h2>
 			<div slot="body">
 				<form @submit.prevent="importDeck">
 					<div>
-						<textarea placeholder="Paste list here..." rows="15" cols="40" id="decklist-text"></textarea>
+						<textarea placeholder="Paste cards here... any list MTGA accepts should work" rows="15" cols="40" id="decklist-text"></textarea>
 					</div>
 					<div><button type="submit">Import</button></div>
 				</form>
