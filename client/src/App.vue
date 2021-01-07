@@ -1045,8 +1045,8 @@
 							<h2>Collection Import</h2>
 						</div>
 						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards already
-							owned by everyone. (Session owner can bypass this feature by enabling "Ignore Collections"):
+							Each player can import their MTGA collection to restrict the card pool to cards they own. (Session owners
+							can bypass this feature by enabling "Ignore Collections"):
 							<ol>
 								<li>
 									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work.
@@ -1070,10 +1070,6 @@
 										<i class="fas fa-external-link-alt"></i>
 									</a>
 									).
-								</li>
-								<li>
-									Make use of your extracted cards here. Once the cards change in MTGA, you have to upload the
-									file again to see the most recent version.
 								</li>
 							</ol>
 						</div>
