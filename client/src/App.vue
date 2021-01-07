@@ -1193,7 +1193,12 @@
 						</div>
 						<div class="welcome-section">
 							<ul>
-								<li><a @click="displayedModal = 'importdeck'">Import deck list</a></li>
+								<li>
+									<a @click="displayedModal = 'importdeck'">Card List Importer</a>
+									(Load a deck list or card pool to tinker around with.
+									<a href="https://mtgadraft.herokuapp.com/cubeformat.html" target="_blank">Learn about the supported structure</a>
+									, you can also separate cards in "Mainboard" and "Sideboard".)
+								</li>
 							</ul>
 						</div>
 					</div>
