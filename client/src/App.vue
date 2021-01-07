@@ -1049,13 +1049,12 @@
 							owned by everyone. (Session owner can bypass this feature by enabling "Ignore Collections"):
 							<ol>
 								<li>
-									Enable Detailed logs in game, the toggle can be found in Options > View Account >
-									Detailed Logs (Plugin Support), importing your collection won't work without this
-									activated.
+									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work.
+									The toggle can be found in "Options > Account > Detailed Logs (Plugin Support)".
 								</li>
 								<li>
-									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA log</a>
-									file "Player.log" located in
+									<a onclick="document.querySelector('#file-input').click()">Upload</a>
+									your MTGA log file "Player.log" located in
 									<tt
 										class="clickable"
 										@click="logPathToClipboard"
@@ -1071,6 +1070,10 @@
 										<i class="fas fa-external-link-alt"></i>
 									</a>
 									).
+								</li>
+								<li>
+									Make use of your extracted cards here. Once the cards change in MTGA, you have to upload the
+									file again to see the most recent version.
 								</li>
 							</ol>
 						</div>
