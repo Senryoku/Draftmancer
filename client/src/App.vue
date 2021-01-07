@@ -277,46 +277,56 @@
 							<i class="fas fa-caret-down"></i>
 						</template>
 						<template v-slot:dropdown>
-							<span class="game-modes-cat">Draft</span>
-							<button
-								@click="startWinstonDraft()"
-								v-tooltip.left="'Starts a Winston Draft. This is a draft variant for only two players.'"
-							>
-								Winston (2p.)
-							</button>
-							<button
-								@click="startGridDraft()"
-								v-tooltip.left="'Starts a Grid Draft. This is a draft variant for only two players.'"
-							>
-								Grid (2p.)
-							</button>
-							<button
-								@click="startGlimpseDraft()"
-								v-tooltip.left="
-									'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
-								"
-							>
-								Glimpse/Burn
-							</button>
-							<button
-								@click="startRochesterDraft()"
-								v-tooltip.left="'Starts a Rochester Draft. Every players picks from a single booster.'"
-							>
-								Rochester
-							</button>
-							<span class="game-modes-cat">Sealed</span>
-							<button
-								@click="sealedDialog"
-								v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
-							>
-								Sealed
-							</button>
-							<button
-								@click="deckWarning(distributeJumpstart)"
-								v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
-							>
-								Jumpstart
-							</button>
+							<div class="game-modes-cat">
+								<span class="game-modes-cat-title">Draft</span>
+								<button
+									@click="startWinstonDraft()"
+									v-tooltip.left="
+										'Starts a Winston Draft. This is a draft variant for only two players.'
+									"
+								>
+									Winston (2p.)
+								</button>
+								<button
+									@click="startGridDraft()"
+									v-tooltip.left="
+										'Starts a Grid Draft. This is a draft variant for only two players.'
+									"
+								>
+									Grid (2p.)
+								</button>
+								<button
+									@click="startGlimpseDraft()"
+									v-tooltip.left="
+										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
+									"
+								>
+									Glimpse/Burn
+								</button>
+								<button
+									@click="startRochesterDraft()"
+									v-tooltip.left="
+										'Starts a Rochester Draft. Every players picks from a single booster.'
+									"
+								>
+									Rochester
+								</button>
+							</div>
+							<div class="game-modes-cat">
+								<span class="game-modes-cat-title">Sealed</span>
+								<button
+									@click="sealedDialog"
+									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+								>
+									Sealed
+								</button>
+								<button
+									@click="deckWarning(distributeJumpstart)"
+									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+								>
+									Jumpstart
+								</button>
+							</div>
 						</template>
 					</dropdown>
 				</span>

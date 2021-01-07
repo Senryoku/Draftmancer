@@ -109,8 +109,4 @@ export default {
 	widows: 2em;
 	text-align: center;
 }
-
-.header {
-	margin: 0.25em 0;
-}
 </style>

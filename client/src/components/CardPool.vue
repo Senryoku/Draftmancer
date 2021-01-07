@@ -9,9 +9,9 @@
 				<dropdown>
 					<template v-slot:handle>Layout</template>
 					<template v-slot:dropdown>
-						<div>
-							Columns
-							<div>
+						<div class="section">
+							<div class="header">Columns</div>
+							<div style="display: flex; justify-content: space-evenly">
 								<i
 									class="fas fa-minus fa-lg clickable"
 									@click="remColumn"
@@ -26,29 +26,37 @@
 								></i>
 							</div>
 						</div>
-						<div @click="sync" class="column-control clickable" v-tooltip.right="'Sort cards by CMC'">
-							<i class="fas fa-sort-amount-up fa-2x"></i>
+						<div class="section">
+							<span><i class="fas fa-check-square"></i> Two Rows Layout</span>
 						</div>
-						<div
-							@click="sortByColor"
-							class="column-control clickable"
-							v-tooltip.right="'Sort cards by color'"
-						>
-							<img src="../assets/img/sort-color.svg" />
-						</div>
-						<div
-							@click="sortByRarity"
-							class="column-control clickable"
-							v-tooltip.right="'Sort cards by rarity'"
-						>
-							<img src="../assets/img/sort-rarity.svg" />
-						</div>
-						<div
-							@click="sortByType"
-							class="column-control clickable"
-							v-tooltip.right="'Sort cards by type'"
-						>
-							<img src="../assets/img/sort-type.svg" />
+						<div class="section">
+							<div class="header">Sort</div>
+							<div style="display: grid; grid-template-columns: auto auto; margin: auto">
+								<div @click="sync" class="sort-button clickable" v-tooltip.right="'Sort cards by CMC'">
+									<i class="fas fa-sort-amount-up fa-2x"></i>
+								</div>
+								<div
+									@click="sortByColor"
+									class="sort-button clickable"
+									v-tooltip.right="'Sort cards by color'"
+								>
+									<img src="../assets/img/sort-color.svg" />
+								</div>
+								<div
+									@click="sortByRarity"
+									class="sort-button clickable"
+									v-tooltip.right="'Sort cards by rarity'"
+								>
+									<img src="../assets/img/sort-rarity.svg" />
+								</div>
+								<div
+									@click="sortByType"
+									class="sort-button clickable"
+									v-tooltip.right="'Sort cards by type'"
+								>
+									<img src="../assets/img/sort-type.svg" />
+								</div>
+							</div>
 						</div>
 					</template>
 				</dropdown>
@@ -241,12 +249,6 @@ export default {
 </script>
 
 <style>
-:root {
-	--controls-margin: 0.4em;
-	--controls-padding: 8px;
-	--controls-size: 32px;
-}
-
 .card-pool .card-image,
 .card-pool .card img {
 	width: 100%;
@@ -284,31 +286,31 @@ export default {
 	transition: width 0.25s ease;
 }
 
-.card-pool-controls {
-	height: 100%;
+.section {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 0.5rem;
 }
 
-.column-control {
-	margin: 0 0 var(--controls-margin) 0;
+.header {
+	font-variant: small-caps;
+	font-size: 0.75em;
+	margin: 0 0 0 0.25rem;
+}
+
+.sort-button {
+	margin: 0.25em 0.5em;
 	background-color: rgba(0, 0, 0, 0.1);
-	border-radius: calc(var(--controls-padding) + var(--controls-size));
-	padding: var(--controls-padding);
-	width: var(--controls-size);
-	height: var(--controls-size);
+	border-radius: 0.25em;
+	padding: 8px;
+	width: 32px;
+	height: 32px;
 	text-align: center;
 }
 
-.column-control:hover {
-	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.25);
-}
-
-.column-control:active {
-	box-shadow: inset 0 0 4px 0 rgba(255, 255, 255, 0.5), 0 0 4px 0 rgba(255, 255, 255, 0.5);
-}
-
-.column-control img {
-	width: var(--controls-size);
-	height: var(--controls-size);
+.sort-button img {
+	width: 32px;
+	height: 32px;
 }
 
 /* Hides card when dragged to the controls area */
