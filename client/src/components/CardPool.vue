@@ -27,7 +27,7 @@
 							</div>
 						</div>
 						<div class="section">
-							<span @click="toggleTwoRowsLayout">
+							<span @click="toggleTwoRowsLayout" class="clickable">
 								<i
 									class="fas"
 									:class="{
@@ -41,12 +41,18 @@
 						<div class="section">
 							<div class="header">Sort</div>
 							<div style="display: grid; grid-template-columns: auto auto; margin: auto">
-								<div @click="sync" class="sort-button clickable" v-tooltip.left="'Sort cards by CMC'">
+								<div
+									@click="sortByCMC"
+									class="sort-button clickable"
+									:class="{ 'selected-sort': options.sort === 'cmc' }"
+									v-tooltip.left="'Sort cards by CMC'"
+								>
 									<i class="fas fa-sort-amount-up fa-2x"></i>
 								</div>
 								<div
 									@click="sortByColor"
 									class="sort-button clickable"
+									:class="{ 'selected-sort': options.sort === 'color' }"
 									v-tooltip.right="'Sort cards by color'"
 								>
 									<img src="../assets/img/sort-color.svg" />
@@ -54,6 +60,7 @@
 								<div
 									@click="sortByRarity"
 									class="sort-button clickable"
+									:class="{ 'selected-sort': options.sort === 'rarity' }"
 									v-tooltip.left="'Sort cards by rarity'"
 								>
 									<img src="../assets/img/sort-rarity.svg" />
@@ -61,6 +68,7 @@
 								<div
 									@click="sortByType"
 									class="sort-button clickable"
+									:class="{ 'selected-sort': options.sort === 'type' }"
 									v-tooltip.right="'Sort cards by type'"
 								>
 									<img src="../assets/img/sort-type.svg" />
@@ -380,6 +388,10 @@ export default {
 .sort-button img {
 	width: 32px;
 	height: 32px;
+}
+
+.selected-sort {
+	box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
 }
 
 /* Hides card when dragged to the controls area */
