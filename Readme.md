@@ -37,7 +37,9 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 
 ## Custom Set format
 
-See cubeformat.html
+See [cubeformat.html](https://github.com/Senryoku/MTGADraft/blob/master/client/public/cubeformat.html).
+
+The "Card List Importer" accepts cards based on the same syntax.
 
 ## Acknowledgement
 
