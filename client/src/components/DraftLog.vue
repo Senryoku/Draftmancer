@@ -303,6 +303,7 @@ export default {
 						pickNumber: i,
 					});
 					++currPick;
+					if (currPick >= this.selectedLog.picks.length) break;
 				}
 				++currBooster;
 			}
