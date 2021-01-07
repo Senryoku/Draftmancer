@@ -1,5 +1,5 @@
 <template>
-	<div class="card-pool">
+	<div>
 		<div class="section-title">
 			<h2 style="min-width: 8em">
 				<slot name="title">Card Pool ({{ cards.length }})</slot>
@@ -16,9 +16,9 @@
 									class="fas fa-minus fa-lg clickable"
 									@click="remColumn"
 									v-tooltip="'Remove the last column'"
-									:class="{ disabled: columns.length <= 1 }"
+									:class="{ disabled: rows[0].length <= 1 }"
 								></i>
-								{{ columns.length }}
+								{{ rows[0].length }}
 								<i
 									class="fas fa-plus fa-lg clickable"
 									@click="addColumn"
@@ -27,12 +27,21 @@
 							</div>
 						</div>
 						<div class="section">
-							<span><i class="fas fa-check-square"></i> Two Rows Layout</span>
+							<span @click="toggleTwoRowsLayout">
+								<i
+									class="fas"
+									:class="{
+										'fa-check-square': layout === 'TwoRows',
+										'fa-square': layout !== 'TwoRows',
+									}"
+								></i>
+								Two Rows</span
+							>
 						</div>
 						<div class="section">
 							<div class="header">Sort</div>
 							<div style="display: grid; grid-template-columns: auto auto; margin: auto">
-								<div @click="sync" class="sort-button clickable" v-tooltip.right="'Sort cards by CMC'">
+								<div @click="sync" class="sort-button clickable" v-tooltip.left="'Sort cards by CMC'">
 									<i class="fas fa-sort-amount-up fa-2x"></i>
 								</div>
 								<div
@@ -45,7 +54,7 @@
 								<div
 									@click="sortByRarity"
 									class="sort-button clickable"
-									v-tooltip.right="'Sort cards by rarity'"
+									v-tooltip.left="'Sort cards by rarity'"
 								>
 									<img src="../assets/img/sort-rarity.svg" />
 								</div>
@@ -70,16 +79,16 @@
 			@change="change"
 			ghostClass="no-ghost"
 			draggable=".card"
-			class="card-pool card-container"
+			class="card-pool"
 		>
 			<div class="empty-warning" v-if="cards.length == 0">
 				<slot name="empty">
 					<h3>This card pool is currently empty!</h3>
 				</slot>
 			</div>
-			<div class="card-columns">
+			<div class="card-columns" v-for="(row, index) in rows" :key="index">
 				<draggable
-					v-for="(column, colIdx) in columns"
+					v-for="(column, colIdx) in row"
 					:key="`col_${colIdx}`"
 					class="card-column drag-column"
 					:list="column"
@@ -118,35 +127,48 @@ export default {
 	},
 	data: function () {
 		return {
-			columns: [[], [], [], [], [], [], []],
+			options: {
+				layout: "default",
+				columnCount: 7,
+				sort: "cmc",
+			},
+			rows: [[[], [], [], [], [], [], []]],
 			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */,
 		};
 	},
 	mounted: function () {
+		let options = localStorage.getItem("card-pool-options");
+		if (options) this.options = JSON.parse(options);
 		this.sync();
 	},
 	methods: {
 		reset: function () {
-			const colCount = Math.max(1, this.columns.length);
-			this.columns = [];
-			for (let i = 0; i < colCount; ++i) this.columns.push([]);
+			const colCount = Math.max(1, this.options.columnCount);
+			this.rows = [[]];
+			for (let i = 0; i < colCount; ++i) this.rows[0].push([]);
+			if (this.layout === "TwoRows") {
+				this.rows.push([]);
+				for (let i = 0; i < colCount; ++i) this.rows[1].push([]);
+			}
 		},
 		sync: function () {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
 		},
+		selectRow: function (card) {
+			return this.layout === "TwoRows" && !card.type.includes("Creature") ? this.rows[1] : this.rows[0];
+		},
 		addCard: function (card, event) {
 			if (event) {
 				this.insertCard(this.getNearestColumn(event), card);
 			} else {
-				let columnIndex = Math.min(card.cmc, this.columns.length - 1);
-				let columnWithDuplicate = this.columns.findIndex(
-					(column) => column.findIndex((c) => c.name === card.name) > -1
-				);
+				let columnIndex = Math.min(card.cmc, this.rows[0].length - 1);
+				const row = this.selectRow(card);
+				let columnWithDuplicate = row.findIndex((column) => column.findIndex((c) => c.name === card.name) > -1);
 				if (columnWithDuplicate > -1) {
 					columnIndex = columnWithDuplicate;
 				}
-				this.insertCard(this.columns[columnIndex], card);
+				this.insertCard(row[columnIndex], card);
 			}
 		},
 		insertCard: function (column, card) {
@@ -166,30 +188,43 @@ export default {
 			let sorted = [...this.cards].sort(comparator);
 			let columnIndex = 0;
 			for (let idx = 0; idx < sorted.length - 1; ++idx) {
-				this.columns[columnIndex].push(sorted[idx]);
+				const row = this.selectRow(sorted[idx]);
+				row[columnIndex].push(sorted[idx]);
 				if (comparator(sorted[idx], sorted[idx + 1]))
-					columnIndex = Math.min(columnIndex + 1, this.columns.length - 1);
+					columnIndex = Math.min(columnIndex + 1, this.rows[0].length - 1);
 			}
-			this.columns[columnIndex].push(sorted[sorted.length - 1]);
-			for (let col of this.columns) columnSorter(col);
+			this.rows[0][columnIndex].push(sorted[sorted.length - 1]);
+			for (let col of this.rows[0]) columnSorter(col);
+		},
+		sortByCMC: function () {
+			this.options.sort = "cmc";
+			this.sort(CardOrder.Comparators.cmc);
+			this.saveOptions();
 		},
 		sortByColor: function () {
+			this.options.sort = "color";
 			this.sort(CardOrder.Comparators.color);
+			this.saveOptions();
 		},
 		sortByRarity: function () {
+			this.options.sort = "rarity";
 			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
+			this.saveOptions();
 		},
 		sortByType: function () {
+			this.options.sort = "type";
 			this.sort(CardOrder.Comparators.type);
+			this.saveOptions();
 		},
 		remCard: function (card) {
-			for (let col of this.columns) {
-				let idx = col.indexOf(card);
-				if (idx >= 0) {
-					col.splice(idx, 1);
-					break;
+			for (let row of this.rows)
+				for (let col of row) {
+					let idx = col.indexOf(card);
+					if (idx >= 0) {
+						col.splice(idx, 1);
+						return;
+					}
 				}
-			}
 		},
 		change: function (e) {
 			// Sync. source array when adding/removing cards by drag & drop
@@ -201,41 +236,49 @@ export default {
 			if (e.added) this.cards.push(e.added.element);
 		},
 		addColumn: function () {
-			this.columns.push([]);
-			Vue.set(
-				this.columns,
-				this.columns.length - 1,
-				this.columns[this.columns.length - 2].filter((c) => c.cmc > this.columns.length - 2)
-			);
-			Vue.set(
-				this.columns,
-				this.columns.length - 2,
-				this.columns[this.columns.length - 2].filter((c) => c.cmc <= this.columns.length - 2)
-			);
+			for (let row of this.rows) {
+				row.push([]);
+				Vue.set(
+					row,
+					row.length - 1,
+					row[row.length - 2].filter((c) => c.cmc > row.length - 2)
+				);
+				Vue.set(
+					row,
+					row.length - 2,
+					row[row.length - 2].filter((c) => c.cmc <= row.length - 2)
+				);
+			}
+			this.saveOptions();
 		},
 		remColumn: function () {
-			if (this.columns.length < 2) return;
-			Vue.set(
-				this.columns,
-				this.columns.length - 2,
-				[].concat(this.columns[this.columns.length - 2], this.columns[this.columns.length - 1])
-			);
-			CardOrder.orderByArenaInPlace(this.columns[this.columns.length - 2]);
-			this.columns.pop();
+			if (this.rows[0].length < 2) return;
+			for (let row of this.rows) {
+				Vue.set(row, row.length - 2, [].concat(row[row.length - 2], row[row.length - 1]));
+				CardOrder.orderByArenaInPlace(row[row.length - 2]);
+				row.pop();
+			}
+			this.saveOptions();
 		},
 		getNearestColumn: function (event) {
 			// Search for the nearest column.
 			const x = event.clientX;
-			const columns = this.$el.querySelector(".card-columns").querySelectorAll(".card-column");
+			const y = event.clientY;
+			// Find surrounding row
+			const rows = this.$el.querySelectorAll(".card-columns");
+			let rowIdx = 0;
+			while (rowIdx < rows.length - 1 && rows[rowIdx + 1].getBoundingClientRect().top < y) ++rowIdx;
+			//
+			const columns = rows[rowIdx].querySelectorAll(".card-column");
 			let colIdx = 0;
 			while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
 			// Returns it if we're within its horizontal boundaries
 			if (colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
-				return this.columns[colIdx - 1];
+				return this.rows[rowIdx][colIdx - 1];
 			} else {
 				// Creates a new one if card is dropped outside of existing columns
-				this.columns.splice(colIdx, 0, []);
-				return this.columns[colIdx];
+				for (let row of this.rows) row.splice(colIdx, 0, []);
+				return this.rows[rowIdx][colIdx];
 			}
 		},
 		dropCard: function (event) {
@@ -243,6 +286,27 @@ export default {
 				this.getNearestColumn(event.originalEvent).push(...this.tempColumn);
 				this.tempColumn = [];
 			}
+		},
+		toggleTwoRowsLayout: function () {
+			if (this.layout === "TwoRows") {
+				for (let i = 0; i < this.rows[0].length; ++i) {
+					this.rows[0][i] = this.rows[0][i].concat(this.rows[1][i]);
+				}
+				this.rows.pop();
+				this.layout = "default";
+			} else {
+				this.rows.push([]);
+				for (let i = 0; i < this.rows[0].length; ++i) {
+					this.rows[1].push(this.rows[0][i].filter((c) => !c.type.includes("Creature")));
+					this.rows[0][i] = this.rows[0][i].filter((c) => c.type.includes("Creature"));
+				}
+				this.layout = "TwoRows";
+			}
+			this.saveOptions();
+		},
+		saveOptions: function () {
+			this.options.columnCount = this.rows[0].length;
+			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
 		},
 	},
 };
@@ -260,6 +324,10 @@ export default {
 	position: relative;
 	box-sizing: border-box;
 	width: 100%;
+	background-color: #282828;
+	border-radius: 10px;
+	box-shadow: inset 0 0 8px #383838;
+	padding: 0.5em;
 }
 
 .card-columns {
@@ -267,6 +335,7 @@ export default {
 	justify-content: flex-start;
 	position: relative;
 	flex-grow: 1;
+	margin-bottom: 0.5em;
 }
 
 .empty-warning {
