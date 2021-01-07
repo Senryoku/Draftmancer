@@ -1045,17 +1045,16 @@
 							<h2>Collection Import</h2>
 						</div>
 						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards already
-							owned by everyone. (Session owner can bypass this feature by enabling "Ignore Collections"):
+							Each player can import their MTGA collection to restrict the card pool to cards they own. (Session owners
+							can bypass this feature by enabling "Ignore Collections"):
 							<ol>
 								<li>
-									Enable Detailed logs in game, the toggle can be found in Options > View Account >
-									Detailed Logs (Plugin Support), importing your collection won't work without this
-									activated.
+									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work.
+									The toggle can be found in "Options > Account > Detailed Logs (Plugin Support)".
 								</li>
 								<li>
-									<a onclick="document.querySelector('#file-input').click()">Upload your MTGA log</a>
-									file "Player.log" located in
+									<a onclick="document.querySelector('#file-input').click()">Upload</a>
+									your MTGA log file "Player.log" located in
 									<tt
 										class="clickable"
 										@click="logPathToClipboard"
@@ -1190,7 +1189,9 @@
 						</div>
 						<div class="welcome-section">
 							<ul>
-								<li><a @click="displayedModal = 'importdeck'">Import deck list</a></li>
+								<li>
+									<a @click="displayedModal = 'importdeck'">Card List Importer</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -1239,7 +1240,7 @@
 						</ul>
 						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
-							More
+							Settings
 							<i class="fa-bars fa"></i>
 						</span>
 						for some additional options:
@@ -1300,11 +1301,11 @@
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'importdeck'" @close="displayedModal = ''">
-			<h2 slot="header">Import Deck List</h2>
+			<h2 slot="header">Card List Importer</h2>
 			<div slot="body">
 				<form @submit.prevent="importDeck">
 					<div>
-						<textarea placeholder="Paste list here..." rows="15" cols="40" id="decklist-text"></textarea>
+						<textarea placeholder="Paste cards here... any list MTGA accepts should work" rows="15" cols="40" id="decklist-text"></textarea>
 					</div>
 					<div><button type="submit">Import</button></div>
 				</form>
