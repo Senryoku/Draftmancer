@@ -14,7 +14,7 @@
 							<div style="display: flex; justify-content: space-evenly">
 								<i
 									class="fas fa-minus fa-lg clickable"
-									@click="remColumn"
+									@click="remColumn()"
 									v-tooltip="'Remove the last column'"
 									:class="{ disabled: rows[0].length <= 1 }"
 								></i>
@@ -26,7 +26,7 @@
 								></i>
 							</div>
 						</div>
-						<div class="section">
+						<div class="section section-left-align">
 							<span @click="toggleTwoRowsLayout" class="clickable">
 								<i
 									class="fas"
@@ -35,8 +35,18 @@
 										'fa-square': options.layout !== 'TwoRows',
 									}"
 								></i>
-								Two Rows</span
-							>
+								Two Rows
+							</span>
+							<span @click="toggleDisplayHeaders" class="clickable">
+								<i
+									class="fas"
+									:class="{
+										'fa-check-square': options.displayHeaders,
+										'fa-square': !options.displayHeaders,
+									}"
+								></i>
+								Column Headers
+							</span>
 						</div>
 						<div class="section">
 							<div class="header">Sort</div>
@@ -94,6 +104,13 @@
 					<h3>This card pool is currently empty!</h3>
 				</slot>
 			</div>
+			<div class="column-headers" v-show="options.displayHeaders">
+				<div class="column-header" v-for="index in rows[0].length" :key="index">
+					<span>{{ cardsPerColumn[index - 1] }}</span>
+					<span v-html="columnNames[index - 1]"></span>
+					<i class="fas fa-times clickable" @click="remColumn(index - 1)"></i>
+				</div>
+			</div>
 			<div class="card-columns" v-for="(row, index) in rows" :key="index">
 				<draggable
 					v-for="(column, colIdx) in row"
@@ -139,6 +156,7 @@ export default {
 				layout: "default",
 				columnCount: 7,
 				sort: "cmc",
+				displayHeaders: true,
 			},
 			rows: [[[], [], [], [], [], [], []]],
 			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */,
@@ -270,12 +288,15 @@ export default {
 			}
 			this.saveOptions();
 		},
-		remColumn: function () {
+		remColumn: function (index) {
 			if (this.rows[0].length < 2) return;
+			console.log(index);
+			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
+			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
 			for (let row of this.rows) {
-				Vue.set(row, row.length - 2, [].concat(row[row.length - 2], row[row.length - 1]));
-				CardOrder.orderByArenaInPlace(row[row.length - 2]);
-				row.pop();
+				Vue.set(row, other, [].concat(row[other], row[index]));
+				CardOrder.orderByArenaInPlace(row[other]);
+				row.splice(index, 1);
 			}
 			this.saveOptions();
 		},
@@ -323,9 +344,53 @@ export default {
 			}
 			this.saveOptions();
 		},
+		toggleDisplayHeaders: function () {
+			this.options.displayHeaders = !this.options.displayHeaders;
+			this.saveOptions();
+		},
 		saveOptions: function () {
 			this.options.columnCount = this.rows[0].length;
 			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
+		},
+	},
+	computed: {
+		columnNames: function () {
+			let r = [];
+			switch (this.options.sort) {
+				default:
+				case "cmc":
+					for (let i = 0; i < this.rows[0].length; ++i)
+						r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
+					break;
+				case "color":
+					for (let c of "WUBRGCM") r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+					break;
+				case "rarity":
+					r = ["Mythic", "Rare", "Uncommon", "Common"];
+					break;
+				case "type":
+					r = [
+						"Creature",
+						"Planeswalker",
+						"Enchantment",
+						"Artifact",
+						"Instant",
+						"Sorcery",
+						"Land",
+						"Basic Land",
+					];
+					break;
+			}
+			while (r.length < this.rows[0].length) r.push("");
+			return r;
+		},
+		cardsPerColumn: function () {
+			let r = [];
+			for (let i = 0; i < this.rows[0].length; ++i) {
+				r.push(0);
+				for (let row of this.rows) r[i] += row[i].length;
+			}
+			return r;
 		},
 	},
 };
@@ -349,14 +414,6 @@ export default {
 	padding: 0.5em;
 }
 
-.card-columns {
-	display: flex;
-	justify-content: flex-start;
-	position: relative;
-	flex-grow: 1;
-	margin-bottom: 0.5em;
-}
-
 .empty-warning {
 	position: absolute;
 	top: 50%;
@@ -365,6 +422,32 @@ export default {
 	pointer-events: none;
 	user-select: none;
 	opacity: 0.5;
+}
+
+.column-headers {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+	flex-grow: 1;
+}
+
+.column-header {
+	flex: 1 1 10%;
+	display: flex;
+	justify-content: space-between;
+	padding: 0.2em 0.5em 0 0.5em;
+	background-color: #333;
+	border-radius: 6px 6px 0 0;
+	margin: 0 0.375em;
+	box-shadow: 0 6px 0 #333;
+}
+
+.card-columns {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+	flex-grow: 1;
+	margin-bottom: 0.5em;
 }
 
 .card-pool .card-column {
@@ -378,6 +461,12 @@ export default {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 0.5rem;
+}
+
+.section-left-align {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
 }
 
 .header {

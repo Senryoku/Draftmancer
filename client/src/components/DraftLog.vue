@@ -332,6 +332,10 @@ export default {
 	padding: 0.5em;
 }
 
+.mana-icon {
+	vertical-align: middle;
+}
+
 ul.player-table {
 	display: flex;
 	flex-wrap: wrap;
