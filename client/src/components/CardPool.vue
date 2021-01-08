@@ -106,8 +106,8 @@
 			</div>
 			<div class="column-headers" v-show="options.displayHeaders">
 				<div class="column-header" v-for="index in rows[0].length" :key="index">
-					<span>{{ cardsPerColumn[index - 1] }}</span>
-					<span v-html="columnNames[index - 1]"></span>
+					<span class="column-header-count">{{ cardsPerColumn[index - 1] }}</span>
+					<span class="column-header-name" v-html="columnNames[index - 1]"></span>
 					<i class="fas fa-times clickable" @click="remColumn(index - 1)"></i>
 				</div>
 			</div>
@@ -182,7 +182,9 @@ export default {
 			for (let card of this.cards) this.addCard(card);
 		},
 		selectRow: function (card) {
-			return this.options.layout === "TwoRows" && !card.type.includes("Creature") ? this.rows[1] : this.rows[0];
+			return this.options.layout === "TwoRows" && !card.type.includes("Creature") && this.options.sort !== "type"
+				? this.rows[1]
+				: this.rows[0];
 		},
 		defaultColumnIdx: function (card) {
 			let columnIndex = card.cmc;
@@ -308,7 +310,7 @@ export default {
 			const rows = this.$el.querySelectorAll(".card-columns");
 			let rowIdx = 0;
 			while (rowIdx < rows.length - 1 && rows[rowIdx + 1].getBoundingClientRect().top < y) ++rowIdx;
-			//
+			// Select column directly to the left or bellow the event
 			const columns = rows[rowIdx].querySelectorAll(".card-column");
 			let colIdx = 0;
 			while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
@@ -318,6 +320,7 @@ export default {
 			} else {
 				// Creates a new one if card is dropped outside of existing columns
 				for (let row of this.rows) row.splice(colIdx, 0, []);
+				this.saveOptions(); // Update cached columnCount
 				return this.rows[rowIdx][colIdx];
 			}
 		},
@@ -335,12 +338,14 @@ export default {
 				this.rows.pop();
 				this.options.layout = "default";
 			} else {
-				this.rows.push([]);
-				for (let i = 0; i < this.rows[0].length; ++i) {
-					this.rows[1].push(this.rows[0][i].filter((c) => !c.type.includes("Creature")));
-					this.rows[0][i] = this.rows[0][i].filter((c) => c.type.includes("Creature"));
-				}
+				const prev = this.rows[0];
+				this.rows = [[], []];
 				this.options.layout = "TwoRows";
+				for (let i = 0; i < prev.length; ++i) {
+					this.rows[0].push([]);
+					this.rows[1].push([]);
+					for (let c of prev[i]) this.selectRow(c)[i].push(c);
+				}
 			}
 			this.saveOptions();
 		},
@@ -349,7 +354,7 @@ export default {
 			this.saveOptions();
 		},
 		saveOptions: function () {
-			this.options.columnCount = this.rows[0].length;
+			this.options.columnCount = Math.max(2, Math.min(this.rows[0].length, 32));
 			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
 		},
 	},
@@ -359,26 +364,68 @@ export default {
 			switch (this.options.sort) {
 				default:
 				case "cmc":
-					for (let i = 0; i < this.rows[0].length; ++i)
-						r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
+					for (let i = 0; i < this.rows[0].length; ++i) {
+						let v = [
+							...new Set(
+								this.rows
+									.map((row) => row[i])
+									.flat()
+									.map((c) => c.cmc)
+							),
+						];
+						if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
+						else r.push("");
+					}
 					break;
 				case "color":
-					for (let c of "WUBRGCM") r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+					for (let i = 0; i < this.rows[0].length; ++i) {
+						let v = [
+							...new Set(
+								this.rows
+									.map((row) => row[i])
+									.flat()
+									.map((c) => c.colors)
+									.flat()
+							),
+						];
+						let c = "M";
+						if (v.length === 1) c = v[0];
+						else if (v.length === 0) c = "C";
+						r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+					}
 					break;
 				case "rarity":
-					r = ["Mythic", "Rare", "Uncommon", "Common"];
+					for (let i = 0; i < this.rows[0].length; ++i) {
+						let v = [
+							...new Set(
+								this.rows
+									.map((row) => row[i])
+									.flat()
+									.map((c) => c.rarity)
+							),
+						];
+						if (v.length === 1) r.push(v[0]);
+						else r.push("");
+					}
 					break;
 				case "type":
-					r = [
-						"Creature",
-						"Planeswalker",
-						"Enchantment",
-						"Artifact",
-						"Instant",
-						"Sorcery",
-						"Land",
-						"Basic Land",
-					];
+					for (let i = 0; i < this.rows[0].length; ++i) {
+						let v = [
+							...new Set(
+								this.rows
+									.map((row) => row[i])
+									.flat()
+									.map((c) => c.type)
+							),
+						];
+						if (v.length === 1) r.push(v[0].split(" ").pop());
+						else {
+							// Try with simpler types
+							v = [...new Set(v.map((t) => t.split(" ").pop()))];
+							if (v.length === 1) r.push(v[0]);
+							else r.push("");
+						}
+					}
 					break;
 			}
 			while (r.length < this.rows[0].length) r.push("");
@@ -435,11 +482,15 @@ export default {
 	flex: 1 1 10%;
 	display: flex;
 	justify-content: space-between;
-	padding: 0.2em 0.5em 0 0.5em;
+	padding: 0.2em 0.5em 0.1em 0.5em;
 	background-color: #333;
 	border-radius: 6px 6px 0 0;
 	margin: 0 0.375em;
 	box-shadow: 0 6px 0 #333;
+}
+
+.column-header-name {
+	text-transform: capitalize;
 }
 
 .card-columns {
