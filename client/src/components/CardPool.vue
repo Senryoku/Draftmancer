@@ -31,8 +31,8 @@
 								<i
 									class="fas"
 									:class="{
-										'fa-check-square': layout === 'TwoRows',
-										'fa-square': layout !== 'TwoRows',
+										'fa-check-square': options.layout === 'TwoRows',
+										'fa-square': options.layout !== 'TwoRows',
 									}"
 								></i>
 								Two Rows</span
@@ -154,7 +154,7 @@ export default {
 			const colCount = Math.max(1, this.options.columnCount);
 			this.rows = [[]];
 			for (let i = 0; i < colCount; ++i) this.rows[0].push([]);
-			if (this.layout === "TwoRows") {
+			if (this.options.layout === "TwoRows") {
 				this.rows.push([]);
 				for (let i = 0; i < colCount; ++i) this.rows[1].push([]);
 			}
@@ -164,13 +164,28 @@ export default {
 			for (let card of this.cards) this.addCard(card);
 		},
 		selectRow: function (card) {
-			return this.layout === "TwoRows" && !card.type.includes("Creature") ? this.rows[1] : this.rows[0];
+			return this.options.layout === "TwoRows" && !card.type.includes("Creature") ? this.rows[1] : this.rows[0];
+		},
+		defaultColumnIdx: function (card) {
+			let columnIndex = card.cmc;
+			switch (this.options.sort) {
+				case "color":
+					columnIndex = CardOrder.colorOrder(card.colors);
+					break;
+				case "rarity":
+					columnIndex = CardOrder.rarityOrder(card.rarity);
+					break;
+				case "type":
+					columnIndex = CardOrder.typeOrder(card.type);
+					break;
+			}
+			return Math.min(columnIndex, this.rows[0].length - 1);
 		},
 		addCard: function (card, event) {
 			if (event) {
 				this.insertCard(this.getNearestColumn(event), card);
 			} else {
-				let columnIndex = Math.min(card.cmc, this.rows[0].length - 1);
+				let columnIndex = this.defaultColumnIdx(card);
 				const row = this.selectRow(card);
 				let columnWithDuplicate = row.findIndex((column) => column.findIndex((c) => c.name === card.name) > -1);
 				if (columnWithDuplicate > -1) {
@@ -193,16 +208,12 @@ export default {
 		sort: function (comparator, columnSorter = CardOrder.orderByArenaInPlace) {
 			this.reset();
 			if (this.cards.length === 0) return;
-			let sorted = [...this.cards].sort(comparator);
-			let columnIndex = 0;
-			for (let idx = 0; idx < sorted.length - 1; ++idx) {
-				const row = this.selectRow(sorted[idx]);
-				row[columnIndex].push(sorted[idx]);
-				if (comparator(sorted[idx], sorted[idx + 1]))
-					columnIndex = Math.min(columnIndex + 1, this.rows[0].length - 1);
+			for (let card of this.cards) {
+				const row = this.selectRow(card);
+				const col = row[this.defaultColumnIdx(card)];
+				col.push(card);
 			}
-			this.rows[0][columnIndex].push(sorted[sorted.length - 1]);
-			for (let col of this.rows[0]) columnSorter(col);
+			for (let row of this.rows) for (let col of row) columnSorter(col);
 		},
 		sortByCMC: function () {
 			this.options.sort = "cmc";
@@ -296,19 +307,19 @@ export default {
 			}
 		},
 		toggleTwoRowsLayout: function () {
-			if (this.layout === "TwoRows") {
+			if (this.options.layout === "TwoRows") {
 				for (let i = 0; i < this.rows[0].length; ++i) {
 					this.rows[0][i] = this.rows[0][i].concat(this.rows[1][i]);
 				}
 				this.rows.pop();
-				this.layout = "default";
+				this.options.layout = "default";
 			} else {
 				this.rows.push([]);
 				for (let i = 0; i < this.rows[0].length; ++i) {
 					this.rows[1].push(this.rows[0][i].filter((c) => !c.type.includes("Creature")));
 					this.rows[0][i] = this.rows[0][i].filter((c) => c.type.includes("Creature"));
 				}
-				this.layout = "TwoRows";
+				this.options.layout = "TwoRows";
 			}
 			this.saveOptions();
 		},

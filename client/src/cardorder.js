@@ -30,6 +30,32 @@ const TypeOrder = {
 	"Basic Land": 7,
 };
 
+function colorOrder(colors) {
+	if(colors.length === 1) return ColorOrder[colors[0]];
+	else if(colors.length === 0) return 5;
+	else return 6;
+}
+
+function rarityOrder(rarity) {
+	return RarityOrder[rarity];
+}
+
+function getFirstType(type) {
+	const idx = type.indexOf(" //");
+	if (idx >= 0) return type.substr(0, idx);
+	else return type;
+};
+
+function typeOrder(type) {
+	const fullType = getFirstType(type);
+	const simpleType = fullType.split(" ").pop();
+	if(fullType in TypeOrder)
+		return TypeOrder[getFirstType(type)];
+	else if(simpleType in TypeOrder)
+		return TypeOrder[simpleType];
+	else return 1;
+}
+
 const Comparators = {
 	// Arena counts each X as 100 basically
 	// Arena uses the front half of split cards here
@@ -40,12 +66,7 @@ const Comparators = {
 
 	// Arena puts creatures before non-creatures
 	type: (lhs, rhs) => {
-		const getFirstType = c => {
-			const idx = c.type.indexOf(" //");
-			if (idx >= 0) return c.type.substr(0, idx);
-			else return c.type;
-		};
-		return TypeOrder[getFirstType(lhs)] - TypeOrder[getFirstType(rhs)];
+		return typeOrder(lhs.type) - typeOrder(rhs.type);
 	},
 
 	// Arena does W U B R G WU WB UB UR BR BG RG RW GW GB WUB UBR BRG RGW GWU WRB URG WBG URW BGU, ??, WUBRG, no colors
@@ -61,7 +82,7 @@ const Comparators = {
 	},
 
 	rarity: (lhs, rhs) => {
-		return RarityOrder[lhs.rarity] - RarityOrder[rhs.rarity];
+		return rarityOrder(lhs.rarity) - rarityOrder(rhs.rarity);
 	},
 
 	name: (lhs, rhs) => {
@@ -193,4 +214,7 @@ export default {
 	orderByArenaInPlace,
 	orderByArena,
 	isOrdered,
+	colorOrder,
+	rarityOrder,
+	typeOrder
 };
