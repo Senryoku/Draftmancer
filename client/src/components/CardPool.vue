@@ -7,7 +7,32 @@
 			<div class="controls">
 				<slot name="controls"></slot>
 				<dropdown>
-					<template v-slot:handle>Layout</template>
+					<template v-slot:handle>
+						<i
+							class="fas fa-sort-amount-up handle-icon clickable"
+							@click="sortByCMC"
+							v-if="options.sort === 'cmc'"
+						></i>
+						<img
+							src="../assets/img/sort-color.svg"
+							class="handle-icon clickable"
+							@click="sortByColor"
+							v-else-if="options.sort === 'color'"
+						/>
+						<img
+							src="../assets/img/sort-rarity.svg"
+							class="handle-icon clickable"
+							@click="sortByRarity"
+							v-else-if="options.sort === 'rarity'"
+						/>
+						<img
+							src="../assets/img/sort-type.svg"
+							class="handle-icon clickable"
+							@click="sortByType"
+							v-else-if="options.sort === 'type'"
+						/>
+						Layout
+					</template>
 					<template v-slot:dropdown>
 						<div class="section">
 							<div class="header">Columns</div>
@@ -469,6 +494,13 @@ export default {
 	pointer-events: none;
 	user-select: none;
 	opacity: 0.5;
+}
+
+.handle-icon {
+	width: 1em;
+	position: absolute;
+	left: 5px;
+	top: 5px;
 }
 
 .column-headers {
