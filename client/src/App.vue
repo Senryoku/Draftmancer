@@ -910,6 +910,8 @@
 							v-show="draftingState == DraftState.Brewing"
 							:lands="lands"
 							:autoland.sync="autoLand"
+							:otherbasics="basicsInDeck"
+							@removebasics="removeBasicsFromDeck"
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>

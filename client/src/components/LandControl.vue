@@ -43,6 +43,13 @@
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
+			<button
+				v-if="otherbasics"
+				@click="$emit('removebasics')"
+				style="white-space: normal; height: auto; line-height: 1em; padding: 0.5em"
+			>
+				Remove other basics from deck
+			</button>
 		</template>
 	</dropdown>
 </template>
@@ -56,6 +63,7 @@ export default {
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
+		otherbasics: { type: Boolean },
 	},
 	methods: {
 		add: function (c) {

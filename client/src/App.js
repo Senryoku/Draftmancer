@@ -1864,6 +1864,14 @@ export default {
 				}
 			}
 		},
+		removeBasicsFromDeck: function() {
+			this.deck = this.deck.filter(c => c.type !== "Basic Land");
+			this.sideboard = this.sideboard.filter(c => c.type !== "Basic Land");
+			this.$nextTick(() => {
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
+			});
+		},
 		colorsInCardPool: function(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			for (let card of pool) {
@@ -2011,6 +2019,9 @@ export default {
 			let addedLands = 0;
 			for (let c in this.lands) addedLands += this.lands[c];
 			return addedLands;
+		},
+		basicsInDeck: function() {
+			return this.deck.some(c => c.type === "Basic Land") || this.sideboard.some(c => c.type === "Basic Land");
 		},
 
 		userByID: function() {
