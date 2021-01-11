@@ -382,68 +382,74 @@ export default {
 				default:
 				case "cmc":
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						let v = [
-							...new Set(
-								this.rows
-									.map((row) => row[i])
-									.flat()
-									.map((c) => c.cmc)
-							),
-						];
-						if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
-						else r.push("");
+						let cards = this.rows.map((row) => row[i]).flat();
+						if (cards.length === 0 && i <= 20) {
+							r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
+						} else {
+							let v = [...new Set(cards.map((c) => c.cmc))];
+							if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
+							else r.push("");
+						}
 					}
 					break;
-				case "color":
+				case "color": {
+					const defaultValues = "WUBRGCM";
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						let v = [
-							...new Set(
-								this.rows
-									.map((row) => row[i])
-									.flat()
-									.map((c) => c.colors)
-									.flat()
-							),
-						];
-						let c = "M";
-						if (v.length === 1) c = v[0];
-						else if (v.length === 0) c = "C";
-						r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+						const cards = this.rows.map((row) => row[i]).flat();
+						if (cards.length === 0 && i < defaultValues.length) {
+							r.push(`<img class="mana-icon" src="img/mana/${defaultValues[i]}.svg">`);
+						} else {
+							let v = [...new Set(cards.map((c) => c.colors).flat())];
+							let c = "M";
+							if (v.length === 1) c = v[0];
+							else if (v.length === 0) c = "C";
+							r.push(`<img class="mana-icon" src="img/mana/${c}.svg">`);
+						}
 					}
 					break;
-				case "rarity":
+				}
+				case "rarity": {
+					const defaultValues = ["Mythic", "Rare", "Uncommon", "Common"];
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						let v = [
-							...new Set(
-								this.rows
-									.map((row) => row[i])
-									.flat()
-									.map((c) => c.rarity)
-							),
-						];
-						if (v.length === 1) r.push(v[0]);
-						else r.push("");
-					}
-					break;
-				case "type":
-					for (let i = 0; i < this.rows[0].length; ++i) {
-						let v = [
-							...new Set(
-								this.rows
-									.map((row) => row[i])
-									.flat()
-									.map((c) => c.type)
-							),
-						];
-						if (v.length === 1) r.push(v[0].split(" ").pop());
-						else {
-							// Try with simpler types
-							v = [...new Set(v.map((t) => t.split(" ").pop()))];
+						let cards = this.rows.map((row) => row[i]).flat();
+						if (cards.length === 0 && i < defaultValues.length) {
+							r.push(defaultValues[i]);
+						} else {
+							let v = [...new Set(cards.map((c) => c.rarity))];
 							if (v.length === 1) r.push(v[0]);
 							else r.push("");
 						}
 					}
 					break;
+				}
+				case "type": {
+					const defaultValues = [
+						"Creature",
+						"Planeswalker",
+						"Enchantment",
+						"Artifact",
+						"Instant",
+						"Sorcery",
+						"Land",
+						"Basic Land",
+					];
+					for (let i = 0; i < this.rows[0].length; ++i) {
+						const cards = this.rows.map((row) => row[i]).flat();
+						if (cards.length === 0 && i < defaultValues.length) {
+							r.push(defaultValues[i]);
+						} else {
+							let v = [...new Set(cards.map((c) => c.type))];
+							if (v.length === 1) r.push(v[0].split(" ").pop());
+							else {
+								// Try with simpler types
+								v = [...new Set(v.map((t) => t.split(" ").pop()))];
+								if (v.length === 1) r.push(v[0]);
+								else r.push("");
+							}
+						}
+					}
+					break;
+				}
 			}
 			while (r.length < this.rows[0].length) r.push("");
 			return r;
