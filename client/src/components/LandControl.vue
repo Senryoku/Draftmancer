@@ -20,13 +20,7 @@
 		</template>
 		<template v-slot:dropdown>
 			<span class="header">
-				<input
-					type="checkbox"
-					id="autoLand"
-					:checked="autoland"
-					@change="$emit('update:autoland', $event.target.checked)"
-				/>
-				<label for="autoLand">Auto. Land</label>
+				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Auto. Land" />
 			</span>
 			<div class="land-input" v-for="c in ['W', 'U', 'B', 'R', 'G']" :key="c">
 				<i class="fas fa-minus fa-lg clickable" @click="rem(c)" :class="{ disabled: lands[c] <= 0 }"></i>
@@ -55,9 +49,10 @@
 
 <script>
 import Dropdown from "./Dropdown.vue";
+import Checkbox from "./Checkbox.vue";
 
 export default {
-	components: { Dropdown },
+	components: { Dropdown, Checkbox },
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },

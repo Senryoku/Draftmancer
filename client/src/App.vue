@@ -1464,6 +1464,7 @@
 								type="checkbox"
 								:checked="maxDuplicates !== null"
 								@click="toggleLimitDuplicates"
+								id="max-duplicate-title"
 							/><label for="max-duplicate-title">Limit duplicates</label>
 						</div>
 						<template v-if="maxDuplicates !== null">

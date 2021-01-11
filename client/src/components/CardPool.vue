@@ -52,26 +52,17 @@
 							</div>
 						</div>
 						<div class="section section-left-align">
-							<span @click="toggleTwoRowsLayout" class="clickable">
-								<i
-									class="fas"
-									:class="{
-										'fa-check-square': options.layout === 'TwoRows',
-										'fa-square': options.layout !== 'TwoRows',
-									}"
-								></i>
-								Two Rows
-							</span>
-							<span @click="toggleDisplayHeaders" class="clickable">
-								<i
-									class="fas"
-									:class="{
-										'fa-check-square': options.displayHeaders,
-										'fa-square': !options.displayHeaders,
-									}"
-								></i>
-								Column Headers
-							</span>
+							<checkbox
+								:value="options.layout === 'TwoRows'"
+								@toggle="toggleTwoRowsLayout"
+								label="Two Rows"
+							/>
+
+							<checkbox
+								:value="options.displayHeaders"
+								@toggle="toggleDisplayHeaders"
+								label="Column Headers"
+							/>
 						</div>
 						<div class="section">
 							<div class="header">Sort</div>
@@ -165,10 +156,11 @@ import draggable from "vuedraggable";
 import CardOrder from "../cardorder.js";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
+import Checkbox from "./Checkbox.vue";
 
 export default {
 	name: "CardPool",
-	components: { draggable, Card, Dropdown },
+	components: { draggable, Card, Dropdown, Checkbox },
 	props: {
 		cards: { type: Array, required: true },
 		language: { type: String, required: true },
