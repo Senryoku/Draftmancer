@@ -2049,12 +2049,15 @@ export default {
 				}
 			}
 
-			let worker = new LogStoreWorker();
-			worker.onmessage = e => {
-				this.draftLogs = e.data;
-				console.log(`Loaded ${this.draftLogs.length} saved draft logs.`)
-			};
-			worker.postMessage(["decompress", localStorage.getItem("draftLogs")]);
+			const storedLogs = localStorage.getItem("draftLogs");
+			if(storedLogs) {
+				let worker = new LogStoreWorker();
+				worker.onmessage = e => {
+					this.draftLogs = e.data;
+					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`)
+				};
+				worker.postMessage(["decompress", storedLogs]);
+			}
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
