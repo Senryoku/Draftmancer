@@ -342,6 +342,9 @@ export default {
 			}
 		},
 		dropCard: function (event) {
+			// TODO: When dropping a card outside of the card pool, an event is still triggered (since the surrounding draggable is the last valid drop zone),
+			// but with a dragEnd event instead of a  drop event. The dragEnd event doesn't have valid coordinates and a new 0th column is created.
+			// Handle this correctly by reverting the drag event entirely.
 			if (this.tempColumn.length > 0) {
 				this.getNearestColumn(event.originalEvent).push(...this.tempColumn);
 				this.tempColumn = [];
