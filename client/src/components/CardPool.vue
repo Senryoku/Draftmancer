@@ -220,7 +220,7 @@ export default {
 		},
 		addCard: function (card, event) {
 			if (event) {
-				this.insertCard(this.getNearestColumn(event), card);
+				this.insertCard(this.getColumnFromCoordinates(event), card);
 			} else {
 				let columnIndex = this.defaultColumnIdx(card);
 				const row = this.selectRow(card);
@@ -319,8 +319,8 @@ export default {
 			}
 			this.saveOptions();
 		},
-		getNearestColumn: function (event) {
-			// Search for the nearest column.
+		getColumnFromCoordinates: function (event) {
+			// Search for the column at the supplied coordinates, creating a new one if necessary.
 			const x = event.clientX;
 			const y = event.clientY;
 			// Find surrounding row
@@ -342,11 +342,29 @@ export default {
 			}
 		},
 		dropCard: function (event) {
-			// TODO: When dropping a card outside of the card pool, an event is still triggered (since the surrounding draggable is the last valid drop zone),
-			// but with a dragEnd event instead of a  drop event. The dragEnd event doesn't have valid coordinates and a new 0th column is created.
-			// Handle this correctly by reverting the drag event entirely.
+			// Triggered when the last valid position of a card after a drop event is within the dummy draggable element surrounding the columns.
+			// This is either:
+			//   An invalid drop (outside of the card pool bounds): Revert the operation.
+			//   Between two existing columns: Create a new one and insert the card.
 			if (this.tempColumn.length > 0) {
-				this.getNearestColumn(event.originalEvent).push(...this.tempColumn);
+				// Revert all events that ended outside of the card pool bounds.
+				const bounds = this.$el.getBoundingClientRect();
+				if (
+					event.originalEvent.clientX < bounds.left ||
+					event.originalEvent.clientX > bounds.right ||
+					event.originalEvent.clientY < bounds.top ||
+					event.originalEvent.clientY > bounds.bottom ||
+					event.originalEvent.type === "dragend" // (a valid final drop location will trigger an event of type 'drop')
+				) {
+					// Insert the card in its original column, at its original index (oldDraggableIndex)
+					this.getColumnFromCoordinates({
+						clientX: event.from.getBoundingClientRect().left + 1,
+						clientY: event.from.getBoundingClientRect().top + 1,
+					}).splice(event.oldDraggableIndex, 0, ...this.tempColumn);
+				} else {
+					console.log("New?");
+					this.getColumnFromCoordinates(event.originalEvent).push(...this.tempColumn);
+				}
 				this.tempColumn = [];
 			}
 		},
