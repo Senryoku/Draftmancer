@@ -260,4 +260,8 @@ tr:nth-child(even) {
 .table-number {
 	text-align: center;
 }
+
+.mana-icon {
+	vertical-align: middle;
+}
 </style>

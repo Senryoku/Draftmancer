@@ -20,13 +20,7 @@
 		</template>
 		<template v-slot:dropdown>
 			<span class="header">
-				<input
-					type="checkbox"
-					id="autoLand"
-					:checked="autoland"
-					@change="$emit('update:autoland', $event.target.checked)"
-				/>
-				<label for="autoLand">Auto. Land</label>
+				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Auto. Land" />
 			</span>
 			<div class="land-input" v-for="c in ['W', 'U', 'B', 'R', 'G']" :key="c">
 				<i class="fas fa-minus fa-lg clickable" @click="rem(c)" :class="{ disabled: lands[c] <= 0 }"></i>
@@ -49,18 +43,27 @@
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
+			<button
+				v-if="otherbasics"
+				@click="$emit('removebasics')"
+				style="white-space: normal; height: auto; line-height: 1em; padding: 0.5em"
+			>
+				Remove other basics from deck
+			</button>
 		</template>
 	</dropdown>
 </template>
 
 <script>
 import Dropdown from "./Dropdown.vue";
+import Checkbox from "./Checkbox.vue";
 
 export default {
-	components: { Dropdown },
+	components: { Dropdown, Checkbox },
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
+		otherbasics: { type: Boolean },
 	},
 	methods: {
 		add: function (c) {
@@ -108,9 +111,5 @@ export default {
 	-webkit-appearance: textfield;
 	widows: 2em;
 	text-align: center;
-}
-
-.header {
-	margin: 0.25em 0;
 }
 </style>

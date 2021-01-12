@@ -195,7 +195,6 @@ footer span {
 .mana-icon {
 	display: inline-block;
 	height: 1em;
-	vertical-align: middle;
 }
 
 .land-input {
@@ -536,10 +535,15 @@ footer span {
 }
 
 .game-modes-cat {
+	margin-bottom: 0.5em;
+	display: flex;
+	flex-direction: column;
+}
+
+.game-modes-cat-title {
 	text-align: center;
 	font-variant: small-caps;
 	font-size: 0.75em;
-	margin-top: 0.5em;
 }
 
 .setting-button {

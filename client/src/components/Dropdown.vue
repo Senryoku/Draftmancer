@@ -13,7 +13,7 @@
 export default {
 	methods: {
 		updateHeight: function () {
-			this.$el.style = `--unrolled-height: calc(0.5em + ${this.$refs.content.clientHeight}px);`;
+			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px);`;
 		},
 	},
 };
@@ -62,7 +62,7 @@ export default {
 }
 
 .content {
-	margin: 0 0.5em 0.5em 0.5em;
+	margin: 0.5em;
 	display: flex;
 	flex-direction: column;
 }

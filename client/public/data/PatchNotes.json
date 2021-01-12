@@ -1,5 +1,15 @@
 [
 	{
+		"date": "11/01/2021",
+		"notes": [
+			"New Layout menu.",
+			"Added a Two Rows layout option, reserving the first row to creatures.",
+			"Improved sorting: More consistent and correctly used when inserting new cards.",
+			"Added optional column header displaying cards count and sort information.",
+			"Added a way to remove basic lands from the card pool (so all basics can be controled from the menu)."
+		]
+	},
+	{
 		"date": "04/01/2021",
 		"notes": [
 			"Happy new year :]",

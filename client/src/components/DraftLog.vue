@@ -1,7 +1,6 @@
 <template>
 	<div v-if="draftlog.version === '2.0'">
 		<p>Click on a player to display the details of their draft.</p>
-
 		<div>
 			<ul
 				:class="{
@@ -98,23 +97,27 @@
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Cards'">
-					<div class="card-container card-columns">
+					<div class="log-container">
 						<card-pool
 							:cards="selectedLogCards"
 							:language="language"
 							:group="`cardPool-${selectedLog.userID}`"
 							:key="`cardPool-${selectedLog.userID}`"
-						></card-pool>
+						>
+							<template v-slot:title>Cards ({{ selectedLogCards.length }})</template>
+						</card-pool>
 					</div>
 				</template>
 				<template v-else-if="displayOptions.category == 'Deck'">
-					<decklist
-						:list="selectedLogDecklist"
-						:username="selectedLog.userName"
-						:carddata="draftlog.carddata"
-						:language="language"
-						:hashesonly="selectedLog.delayed"
-					/>
+					<div class="log-container">
+						<decklist
+							:list="selectedLogDecklist"
+							:username="selectedLog.userName"
+							:carddata="draftlog.carddata"
+							:language="language"
+							:hashesonly="selectedLog.delayed"
+						/>
+					</div>
 				</template>
 			</template>
 			<template v-else>
@@ -322,6 +325,17 @@ export default {
 </script>
 
 <style scoped>
+.log-container {
+	background-color: #282828;
+	border-radius: 10px;
+	box-shadow: inset 0 0 8px #383838;
+	padding: 0.5em;
+}
+
+.mana-icon {
+	vertical-align: middle;
+}
+
 ul.player-table {
 	display: flex;
 	flex-wrap: wrap;

@@ -43,7 +43,9 @@
 				<div
 					v-show="hasCollection"
 					class="inline"
-					v-tooltip="'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'"
+					v-tooltip="
+						'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'
+					"
 				>
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
@@ -275,46 +277,56 @@
 							<i class="fas fa-caret-down"></i>
 						</template>
 						<template v-slot:dropdown>
-							<span class="game-modes-cat">Draft</span>
-							<button
-								@click="startWinstonDraft()"
-								v-tooltip.left="'Starts a Winston Draft. This is a draft variant for only two players.'"
-							>
-								Winston (2p.)
-							</button>
-							<button
-								@click="startGridDraft()"
-								v-tooltip.left="'Starts a Grid Draft. This is a draft variant for only two players.'"
-							>
-								Grid (2p.)
-							</button>
-							<button
-								@click="startGlimpseDraft()"
-								v-tooltip.left="
-									'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
-								"
-							>
-								Glimpse/Burn
-							</button>
-							<button
-								@click="startRochesterDraft()"
-								v-tooltip.left="'Starts a Rochester Draft. Every players picks from a single booster.'"
-							>
-								Rochester
-							</button>
-							<span class="game-modes-cat">Sealed</span>
-							<button
-								@click="sealedDialog"
-								v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
-							>
-								Sealed
-							</button>
-							<button
-								@click="deckWarning(distributeJumpstart)"
-								v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
-							>
-								Jumpstart
-							</button>
+							<div class="game-modes-cat">
+								<span class="game-modes-cat-title">Draft</span>
+								<button
+									@click="startWinstonDraft()"
+									v-tooltip.left="
+										'Starts a Winston Draft. This is a draft variant for only two players.'
+									"
+								>
+									Winston (2p.)
+								</button>
+								<button
+									@click="startGridDraft()"
+									v-tooltip.left="
+										'Starts a Grid Draft. This is a draft variant for only two players.'
+									"
+								>
+									Grid (2p.)
+								</button>
+								<button
+									@click="startGlimpseDraft()"
+									v-tooltip.left="
+										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
+									"
+								>
+									Glimpse/Burn
+								</button>
+								<button
+									@click="startRochesterDraft()"
+									v-tooltip.left="
+										'Starts a Rochester Draft. Every players picks from a single booster.'
+									"
+								>
+									Rochester
+								</button>
+							</div>
+							<div class="game-modes-cat">
+								<span class="game-modes-cat-title">Sealed</span>
+								<button
+									@click="sealedDialog"
+									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+								>
+									Sealed
+								</button>
+								<button
+									@click="deckWarning(distributeJumpstart)"
+									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+								>
+									Jumpstart
+								</button>
+							</div>
 						</template>
 					</dropdown>
 				</span>
@@ -846,8 +858,16 @@
 			"
 		>
 			<div class="deck">
-				<div class="section-title">
-					<h2 style="min-width: 8em">
+				<card-pool
+					:cards="deck"
+					:language="language"
+					:click="deckToSideboard"
+					ref="deckDisplay"
+					group="deck"
+					@dragover.native="allowBoosterCardDrop($event)"
+					@drop.native="dropBoosterCard($event)"
+				>
+					<template v-slot:title>
 						Deck ({{ deck.length
 						}}<span
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
@@ -855,8 +875,8 @@
 						>
 							+ {{ totalLands }}</span
 						>)
-					</h2>
-					<div class="controls">
+					</template>
+					<template v-slot:controls>
 						<button
 							v-if="deck.length > 0"
 							type="button"
@@ -890,21 +910,12 @@
 							v-show="draftingState == DraftState.Brewing"
 							:lands="lands"
 							:autoland.sync="autoLand"
+							:otherbasics="basicsInDeck"
+							@removebasics="removeBasicsFromDeck"
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>
-					</div>
-				</div>
-
-				<card-pool
-					:cards="deck"
-					:language="language"
-					:click="deckToSideboard"
-					ref="deckDisplay"
-					group="deck"
-					@dragover.native="allowBoosterCardDrop($event)"
-					@drop.native="dropBoosterCard($event)"
-				>
+					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
 						<p>Click on cards in your sideboard to move them here.</p>
@@ -955,6 +966,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- Full size Sideboard -->
 		<div
 			v-show="
 				!collapseSideboard &&
@@ -964,16 +976,6 @@
 			"
 			class="container"
 		>
-			<div class="section-title">
-				<h2>Sideboard ({{ sideboard.length }})</h2>
-				<div class="controls">
-					<i
-						class="fas fa-columns clickable"
-						@click="collapseSideboard = true"
-						v-tooltip="'Minimize sideboard'"
-					></i>
-				</div>
-			</div>
 			<card-pool
 				:cards="sideboard"
 				:language="language"
@@ -983,6 +985,14 @@
 				@dragover.native="allowBoosterCardDrop($event)"
 				@drop.native="dropBoosterCard($event, { toSideboard: true })"
 			>
+				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
+				<template v-slot:controls>
+					<i
+						class="fas fa-columns clickable"
+						@click="collapseSideboard = true"
+						v-tooltip="'Minimize sideboard'"
+					></i>
+				</template>
 				<template v-slot:empty>
 					<h3>Your sideboard is currently empty!</h3>
 					<p>Click on cards in your deck to move them here.</p>
@@ -1457,6 +1467,7 @@
 								type="checkbox"
 								:checked="maxDuplicates !== null"
 								@click="toggleLimitDuplicates"
+								id="max-duplicate-title"
 							/><label for="max-duplicate-title">Limit duplicates</label>
 						</div>
 						<template v-if="maxDuplicates !== null">
