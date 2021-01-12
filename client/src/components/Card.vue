@@ -11,7 +11,7 @@
 		@mouseleave="disableZoom"
 		@mouseenter="activateFoilEffect"
 	>
-		<card-image :card="card" :language="language" :lazyLoad="lazyLoad"></card-image>
+		<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
 		<slot></slot>
 	</div>
 </template>
@@ -55,10 +55,11 @@ export default {
 			document.addEventListener("mousemove", this.foilEffect);
 		},
 		foilEffect: function (e) {
-			let bounds = this.$el.getBoundingClientRect();
+			const bounds = this.$el.getBoundingClientRect();
 			const factor = (e.clientX - bounds.left) / bounds.width;
 			const factorY = (e.clientY - bounds.top) / bounds.height;
-			const ratio = bounds.width / bounds.height;
+			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
+			const ratio = imageBounds.width / imageBounds.height;
 			const rotScale = (v) => -20 + 40 * v;
 			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
 			this.$el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
