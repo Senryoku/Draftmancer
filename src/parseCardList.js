@@ -1,7 +1,6 @@
-import { Cards, CardsByName } from "./Cards.js";
+import { Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\w+))?)?\s*$/;
-const CardsIds = Object.keys(Cards);
 
 export const parseLine = line => {
 	line = line.trim();
@@ -38,24 +37,25 @@ export const parseLine = line => {
 		);
 	}
 
+	// Only the name is supplied, get the prefered version of the card
 	if(!set && !number && name in CardsByName)
-		return [count, CardsByName[name].id];
+		return [count, CardsByName[name]];
 
-	let cardIDs = CardsIds.filter(
+	// Search for the correct set and collector number
+	let candidates = [];
+
+	if(name in CardVersionsByName) {
+		candidates = CardVersionsByName[name]
+	} else if (name.split(" //")[0] in CardVersionsByName) { // If not found, try doubled faced cards before giving up!
+		candidates = CardVersionsByName[name.split(" //")[0]];
+	}
+
+	let cardIDs = candidates.filter(
 		id =>
-		Cards[id].name == name &&
 			(!set || Cards[id].set === set) &&
 			(!number || Cards[id].collector_number === number)
 	);
-	if (cardIDs.length === 0) {
-		// If not found, try doubled faced cards before giving up!
-		cardIDs = CardsIds.filter(
-			id =>
-			Cards[id].name.startsWith(name + " //") &&
-				(!set || Cards[id].set === set) &&
-				(!number || Cards[id].collector_number === number)
-		);
-	}
+
 	if (cardIDs.length > 0) {
 		return [count, cardIDs.reduce((best, cid) => {
 			if(parseInt(Cards[cid].collector_number) < parseInt(Cards[best].collector_number))
@@ -63,13 +63,15 @@ export const parseLine = line => {
 			return best;
 		}, cardIDs[0])];
 	}
+	
+	const message = (name in CardsByName ? `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.` : `Could not find '${name}' in our database.`) + ` If you think it should be there, please contact us via email or our Discord server.`;
 
 	return [
 		{
 			error: {
 				type: "error",
 				title: `Card not found`,
-				text: `Could not find '${name}' in our database. If you think it should be there, please contact us via email or our Discord server.`,
+				text: message,
 				footer: `Full line: '${line}'`,
 			},
 		},
@@ -77,7 +79,7 @@ export const parseLine = line => {
 	];
 };
 
-export function parseCardList(cardlist, options) {
+export function parseCardList(cardlist, options) {	
 	try {
 		const lines = cardlist.split(/\r\n|\n/);
 		let cardList = {};
