@@ -65,6 +65,5 @@ export default {
 
 .booster-card:hover:not(.zoomedin) {
 	transform: scale(1.08);
-	image-rendering: optimizeQuality;
 }
 </style>
