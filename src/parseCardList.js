@@ -5,7 +5,22 @@ const CardsIds = Object.keys(Cards);
 
 export const parseLine = line => {
 	line = line.trim();
-	let [, count, name, set, number] = line.match(lineRegex);
+	const match = line.match(lineRegex);
+	if(!match) {
+		return [
+			{
+				error: {
+					type: "error",
+					title: `Syntax Error`,
+					text: `The line '${line}' doesn't match the card syntax.`,
+					footer: `Full line: '${line}'`,
+				},
+			},
+			undefined,
+		];
+	}
+
+	let [, count, name, set, number] = match;
 	count = parseInt(count);
 	if (!Number.isInteger(count)) count = 1;
 
