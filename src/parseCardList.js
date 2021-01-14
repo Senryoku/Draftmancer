@@ -1,6 +1,6 @@
 import { Cards, CardsByName } from "./Cards.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\d+))?)?\s*$/;
+const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\w+))?)?\s*$/;
 const CardsIds = Object.keys(Cards);
 
 export const parseLine = line => {
