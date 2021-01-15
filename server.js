@@ -141,92 +141,87 @@ io.on("connection", function(socket) {
 		console.error(err);
 	});
 
-	// Personnal options
-
-	socket.on("setUserName", function(userName) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-
-		Connections[userID].userName = userName;
-		Sessions[sessionID].forUsers(user =>
-			Connections[user].socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					userName: userName,
-				},
-			})
-		);
-	});
-
 	socket.on("setSession", function(sessionID) {
-		let userID = this.userID;
-
-		if (sessionID == Connections[userID].sessionID) return;
-
+		const userID = this.userID;
+		if (sessionID === Connections[userID].sessionID) return;
 		joinSession(sessionID, userID);
 	});
 
-	socket.on("setCollection", function(collection, ack) {
-		let userID = this.userID;
-		if (!Connections[userID]) return;
-		let sessionID = Connections[userID].sessionID;
+	const socketCallbacks = {
+		// Personnal options
+		"setUserName": function(userID, sessionID, userName) {
+			Connections[userID].userName = userName;
+			Sessions[sessionID].forUsers(user =>
+				Connections[user].socket.emit("updateUser", {
+					userID: userID,
+					updatedProperties: {
+						userName: userName,
+					},
+				})
+			);
+		},
+		"setCollection": function(userID, sessionID, collection, ack) {
+			if (typeof collection !== "object" || collection === null) return;
 
-		if (typeof collection !== "object" || collection === null) return;
-
-		let processedCollection = {};
-		// Remove unknown cards immediatly.
-		for (let aid in collection) {
-			if (aid in MTGACards) {
-				processedCollection[MTGACards[aid].id] = collection[aid];
+			let processedCollection = {};
+			// Remove unknown cards immediatly.
+			for (let aid in collection) {
+				if (aid in MTGACards) {
+					processedCollection[MTGACards[aid].id] = collection[aid];
+				}
 			}
+
+			Connections[userID].collection = processedCollection;
+
+			if (ack) ack({ collection: processedCollection });
+
+			const hasCollection = !isEmpty(processedCollection);
+			if (Sessions[sessionID])
+				Sessions[sessionID].forUsers(user =>
+					Connections[user].socket.emit("updateUser", {
+						userID: userID,
+						updatedProperties: {
+							collection: hasCollection,
+						},
+					})
+				);
+		},
+		"useCollection": function(userID, sessionID, useCollection) {
+			if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
+	
+			Connections[userID].useCollection = useCollection;
+			if (Sessions[sessionID])
+				Sessions[sessionID].forUsers(user =>
+					Connections[user].socket.emit("updateUser", {
+						userID: userID,
+						updatedProperties: {
+							useCollection: useCollection,
+						},
+					})
+				);
+		},
+		"chatMessage": function(userID, sessionID, message) {
+			// Limits chat message length
+			message.text = message.text.substring(0, Math.min(255, message.text.length));
+			Sessions[sessionID].forUsers(user => Connections[user].socket.emit("chatMessage", message));
 		}
+	}
 
-		Connections[userID].collection = processedCollection;
+	function prepareSocketCallback(callback) {
+		return function() {
+			const userID = this.userID;
+			if (!(userID in Connections)) return;
+			const sessionID = Connections[userID].sessionID;
+			if (!(sessionID in Sessions)) return;
+			callback(userID, sessionID, ...arguments);
+		};
+	}
 
-		if (ack) ack({ collection: processedCollection });
+	for(let key in socketCallbacks) {
+		socket.on(key, prepareSocketCallback(socketCallbacks[key]));
+	}
 
-		const hasCollection = !isEmpty(processedCollection);
-		if (Sessions[sessionID])
-			Sessions[sessionID].forUsers(user =>
-				Connections[user].socket.emit("updateUser", {
-					userID: userID,
-					updatedProperties: {
-						collection: hasCollection,
-					},
-				})
-			);
-	});
-
-	socket.on("useCollection", function(useCollection) {
-		let userID = this.userID;
-		if (!Connections[userID]) return;
-		let sessionID = Connections[userID].sessionID;
-
-		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
-
-		Connections[userID].useCollection = useCollection;
-		if (Sessions[sessionID])
-			Sessions[sessionID].forUsers(user =>
-				Connections[user].socket.emit("updateUser", {
-					userID: userID,
-					updatedProperties: {
-						useCollection: useCollection,
-					},
-				})
-			);
-	});
-
-	socket.on("chatMessage", function(message) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!Sessions[sessionID]) return;
-
-		// Limits chat message length
-		message.text = message.text.substring(0, Math.min(255, message.text.length));
-
-		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("chatMessage", message));
-	});
+	// TODO
 
 	socket.on("setOwnerIsPlayer", function(val) {
 		const userID = this.userID;
