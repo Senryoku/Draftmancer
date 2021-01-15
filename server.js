@@ -96,6 +96,31 @@ console.log("Done.");
 /////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
 
+const useCustomCardList = function(session, list) {
+	session.setCustomCardList(list);
+	if (session.isPublic) updatePublicSession(session.id);
+};
+
+const parseCustomCardList = function(session, txtlist, options, ack) {
+	let parsedList = null;
+	try {
+		parsedList = parseCardList(txtlist, options);
+	} catch (e) {
+		console.error(e);
+		if (ack) ack({ type: "error", title: "Internal Error" });
+		return;
+	}
+
+	if (parsedList.error) {
+		if (ack) ack(parsedList.error);
+		return;
+	}
+
+	useCustomCardList(session, parsedList);
+
+	if (ack) ack({ code: 0 });
+};
+
 const socketCallbacks = {
 	// Personnal options
 	"setUserName": function(userID, sessionID, userName) {
@@ -247,6 +272,9 @@ const socketCallbacks = {
 			else ack({ code: 0 });
 		}
 	},
+	"shareDecklist": function(userID, sessionID, decklist) {
+		Sessions[sessionID].shareDecklist(userID, decklist);
+	}
 }
 
 const ownerSocketCallbacks = {
@@ -457,12 +485,252 @@ const ownerSocketCallbacks = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
+	"parseCustomCardList": function(userID, sessionID, customCardList, ack) {
+		if (!customCardList) {
+			if (ack) ack({ code: 1, type: "error", title: "No list supplied." });
+			return;
+		}
+		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
+	},
+	"loadFromCubeCobra": function(userID, sessionID, data, ack) {
+		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID}
+		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
+			if (err) {
+				if (ack)
+					ack({
+						type: "error",
+						title: "Error",
+						text: "Couldn't retrieve the card list from Cube Cobra.",
+						footer: `Full error: ${err}`,
+						error: err,
+					});
+				return;
+			}
+
+			if (body === "Cube not found.") {
+				if (ack)
+					ack({
+						type: "error",
+						title: "Cube not found.",
+						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+						error: err,
+					});
+				return;
+			}
+
+			parseCustomCardList(Sessions[sessionID], body, data, ack);
+		});
+	},
+	"loadLocalCustomCardList": function(userID, sessionID, cubeName, ack) {
+		if (!(cubeName in ParsedCubeLists)) {
+			if (ack) ack({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
+			return;
+		}
+
+		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
+
+		if (ack) ack({ code: 0 });
+	},
+	"ignoreCollections": function(userID, sessionID, ignoreCollections) {
+		Sessions[sessionID].ignoreCollections = ignoreCollections;
+		for (let user of Sessions[sessionID].users) {
+			if (user != userID)
+				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
+		}
+	},
+	"setPickTimer": function(userID, sessionID, timerValue) {
+		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
+		if (!Number.isInteger(timerValue) || timerValue < 0) return;
+
+		Sessions[sessionID].maxTimer = timerValue;
+		for (let user of Sessions[sessionID].users) {
+			if (user != userID) Connections[user].socket.emit("setPickTimer", timerValue);
+		}
+	},
+	"setMaxPlayers": function(userID, sessionID, maxPlayers) {
+		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
+		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
+
+		Sessions[sessionID].maxPlayers = maxPlayers;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
+		}
+	},
+	"setMythicPromotion": function(userID, sessionID, mythicPromotion) {
+		if (typeof mythicPromotion !== "boolean") return;
+
+		Sessions[sessionID].mythicPromotion = mythicPromotion;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID)
+				Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
+		}
+	},
+	"setBoosterContent": function(userID, sessionID, boosterContent) {
+		// Validate input (a value for each rarity and at least one card)
+		if(boosterContent === null || !(typeof boosterContent  === 'object')) return;
+		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
+		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
+		if(Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
+		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
+
+		Sessions[sessionID].boosterContent = boosterContent;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID)
+				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
+		}
+	},
+	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {
+		if (typeof draftLogRecipients !== "string") return;
+		draftLogRecipients = draftLogRecipients.toLowerCase();
+		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
+		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID)
+				Connections[user].socket.emit("sessionOptions", {
+					draftLogRecipients: draftLogRecipients,
+				});
+		}
+	},
+	"setMaxDuplicates": function(userID, sessionID, maxDuplicates) {
+		if(maxDuplicates !== null && !(typeof maxDuplicates  === 'object')) return;
+		if((maxDuplicates !== null && typeof maxDuplicates  === 'object') && Object.values(maxDuplicates).some(i => !Number.isInteger(i))) return;
+
+		Sessions[sessionID].maxDuplicates = maxDuplicates;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID)
+				Connections[user].socket.emit("sessionOptions", {
+					maxDuplicates: maxDuplicates,
+				});
+		}
+	},
+	"setColorBalance": function(userID, sessionID, colorBalance) {
+		if (colorBalance === Sessions[sessionID].colorBalance) return;
+
+		Sessions[sessionID].colorBalance = colorBalance;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					colorBalance: Sessions[sessionID].colorBalance,
+				});
+		}
+	},
+	"setFoil": function(userID, sessionID, foil) {
+		if (foil === Sessions[sessionID].foil) return;
+
+		Sessions[sessionID].foil = foil;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					foil: Sessions[sessionID].foil,
+				});
+		}
+	},
+	"setUseCustomCardList": function(userID, sessionID, useCustomCardList) {
+		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
+
+		Sessions[sessionID].useCustomCardList = useCustomCardList;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					useCustomCardList: Sessions[sessionID].useCustomCardList,
+				});
+		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+	},
+	"setPickedCardsPerRound": function(userID, sessionID, pickedCardsPerRound) {
+		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
+		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
+
+		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
+		}
+	},
+	"setBurnedCardsPerRound": function(userID, sessionID, burnedCardsPerRound) {
+		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
+		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
+
+		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
+		}
+	},
+	"setPublic": function(userID, sessionID, isPublic) {
+		if (isPublic == Sessions[sessionID].isPublic) return;
+
+		Sessions[sessionID].isPublic = isPublic;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
+		}
+		updatePublicSession(sessionID);
+	},
+	"setDescription": function(userID, sessionID, description) {
+		if (description === null || description === undefined || description === Sessions[sessionID].description)
+			return;
+
+		Sessions[sessionID].description = description.substring(0, 70);
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
+		}
+		updatePublicSession(sessionID);
+	},
+	"replaceDisconnectedPlayers": function(userID, sessionID) {
+		Sessions[sessionID].replaceDisconnectedPlayers();
+	},
+	"distributeSealed": function(userID, sessionID, boostersPerPlayer) {
+		if (isNaN(boostersPerPlayer)) return;
+		Sessions[sessionID].distributeSealed(boostersPerPlayer);
+	},
+	"distributeJumpstart": function(userID, sessionID) {
+		Sessions[sessionID].distributeJumpstart();
+	},
+	"generateBracket": function(userID, sessionID, players, ack) {
+		if(!(
+			(players.length === 8 && !Sessions[sessionID].teamDraft) ||
+			(players.length === 6 && Sessions[sessionID].teamDraft)
+		))
+			return;
+		Sessions[sessionID].generateBracket(players);
+		if (ack) ack({ code: 0 });
+	},
+	"generateSwissBracket": function(userID, sessionID, players, ack) {
+		if (players.length !== 8) return;
+		Sessions[sessionID].generateSwissBracket(players);
+		if (ack) ack({ code: 0 });
+	},
+	"updateBracket": function(userID, sessionID, results) {
+		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock)
+			return;
+		Sessions[sessionID].updateBracket(results);
+	},
+	"lockBracket": function(userID, sessionID, bracketLocked) {
+		Sessions[sessionID].bracketLocked = bracketLocked;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
+		}
+	},
+	"shareDraftLog": function(userID, sessionID, draftLog) {
+		const sess = Sessions[sessionID];
+		if (!draftLog) return;
+
+		// Update local copy to be public
+		if(!sess.draftLog && sess.id === draftLog.sessionID)
+			sess.draftLog = draftLog;
+		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+			sess.draftLog.delayed = false;
+
+		// Send the full copy to everyone
+		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("draftLog", draftLog);
+	},
 };
 
 function prepareSocketCallback(callback, ownerOnly = false) {
 	return function() {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
-		const ack = (arguments.length > 0 && typeof(arguments[arguments.length - 1]) === "function") ? arguments[arguments.length - 1] : null;
+		const ack = (arguments.length > 0 && arguments[arguments.length - 1] instanceof Function) ? arguments[arguments.length - 1] : null;
 		const userID = this.userID;
 		if (!(userID in Connections)) {
 			if(ack) ack({ code: 1, error: "Internal error. User does not exist." });
@@ -537,408 +805,6 @@ io.on("connection", function(socket) {
 
 	for(let key in ownerSocketCallbacks)
 		socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
-
-	// TODO
-
-	const useCustomCardList = function(session, list) {
-		session.setCustomCardList(list);
-		if (session.isPublic) updatePublicSession(session.id);
-	};
-
-	const parseCustomCardList = function(session, txtlist, options, ack) {
-		let parsedList = null;
-		try {
-			parsedList = parseCardList(txtlist, options);
-		} catch (e) {
-			console.error(e);
-			if (ack) ack({ type: "error", title: "Internal Error" });
-			return;
-		}
-
-		if (parsedList.error) {
-			if (ack) ack(parsedList.error);
-			return;
-		}
-
-		useCustomCardList(session, parsedList);
-
-		if (ack) ack({ code: 0 });
-	};
-
-	socket.on("parseCustomCardList", function(customCardList, ack) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!customCardList) {
-			if (ack) ack({ code: 1, type: "error", title: "No list supplied." });
-			return;
-		}
-
-		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
-	});
-
-	socket.on("loadFromCubeCobra", function(data, ack) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID}
-		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-			if (err) {
-				if (ack)
-					ack({
-						type: "error",
-						title: "Error",
-						text: "Couldn't retrieve the card list from Cube Cobra.",
-						footer: `Full error: ${err}`,
-						error: err,
-					});
-				return;
-			}
-
-			if (body === "Cube not found.") {
-				if (ack)
-					ack({
-						type: "error",
-						title: "Cube not found.",
-						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-						error: err,
-					});
-				return;
-			}
-
-			parseCustomCardList(Sessions[sessionID], body, data, ack);
-		});
-	});
-
-	socket.on("loadLocalCustomCardList", function(cubeName, ack) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!(cubeName in ParsedCubeLists)) {
-			if (ack) ack({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
-			return;
-		}
-
-		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
-
-		if (ack) ack({ code: 0 });
-	});
-
-	socket.on("ignoreCollections", function(ignoreCollections) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		Sessions[sessionID].ignoreCollections = ignoreCollections;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
-		}
-	});
-
-	socket.on("setPickTimer", function(timerValue) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
-		if (!Number.isInteger(timerValue) || timerValue < 0) return;
-
-		Sessions[sessionID].maxTimer = timerValue;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("setPickTimer", timerValue);
-		}
-	});
-
-	socket.on("setMaxPlayers", function(maxPlayers) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
-		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
-
-		Sessions[sessionID].maxPlayers = maxPlayers;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
-		}
-	});
-
-	socket.on("setMythicPromotion", function(mythicPromotion) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		if (typeof mythicPromotion !== "boolean") return;
-
-		Sessions[sessionID].mythicPromotion = mythicPromotion;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
-		}
-	});
-
-	socket.on("setBoosterContent", function(boosterContent) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		// Validate input (a value for each rarity and at least one card)
-		if(boosterContent === null || !(typeof boosterContent  === 'object')) return;
-		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
-		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
-		if(Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
-		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
-
-		Sessions[sessionID].boosterContent = boosterContent;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
-		}
-	});
-
-	socket.on("setDraftLogRecipients", function(draftLogRecipients) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		if (typeof draftLogRecipients !== "string") return;
-		draftLogRecipients = draftLogRecipients.toLowerCase();
-		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
-		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", {
-					draftLogRecipients: draftLogRecipients,
-				});
-		}
-	});
-
-	socket.on("shareDraftLog", function(draftLog) {
-		if (!(this.userID in Connections)) return;
-		const sess = Sessions[Connections[this.userID].sessionID];
-		if (!draftLog || !sess || sess.owner !== this.userID) return;
-
-		// Update local copy to be public
-		if(!sess.draftLog && sess.id === draftLog.sessionID)
-			sess.draftLog = draftLog;
-		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
-			sess.draftLog.delayed = false;
-
-		// Send the full copy to everyone
-		for (let user of sess.users) if (user != this.userID) Connections[user].socket.emit("draftLog", draftLog);
-	});
-
-	socket.on("shareDecklist", function(decklist) {
-		if (!(this.userID in Connections)) return;
-
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions)) return;
-
-		Sessions[sessionID].shareDecklist(this.userID, decklist);
-	});
-
-	socket.on("setMaxDuplicates", function(maxDuplicates) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if(maxDuplicates !== null && !(typeof maxDuplicates  === 'object')) return;
-		if((maxDuplicates !== null && typeof maxDuplicates  === 'object') && Object.values(maxDuplicates).some(i => !Number.isInteger(i))) return;
-
-		Sessions[sessionID].maxDuplicates = maxDuplicates;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID)
-				Connections[user].socket.emit("sessionOptions", {
-					maxDuplicates: maxDuplicates,
-				});
-		}
-	});
-
-	socket.on("setColorBalance", function(colorBalance) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (colorBalance == Sessions[sessionID].colorBalance) return;
-
-		Sessions[sessionID].colorBalance = colorBalance;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					colorBalance: Sessions[sessionID].colorBalance,
-				});
-		}
-	});
-
-	socket.on("setFoil", function(foil) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (foil == Sessions[sessionID].foil) return;
-
-		Sessions[sessionID].foil = foil;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					foil: Sessions[sessionID].foil,
-				});
-		}
-	});
-
-	socket.on("setUseCustomCardList", function(useCustomCardList) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
-
-		Sessions[sessionID].useCustomCardList = useCustomCardList;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					useCustomCardList: Sessions[sessionID].useCustomCardList,
-				});
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-	});
-
-	socket.on("setPickedCardsPerRound", function(pickedCardsPerRound) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
-		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
-
-		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
-		}
-	});
-
-	socket.on("setBurnedCardsPerRound", function(burnedCardsPerRound) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
-		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
-
-		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
-		}
-	});
-
-	socket.on("setPublic", function(isPublic) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (isPublic == Sessions[sessionID].isPublic) return;
-
-		Sessions[sessionID].isPublic = isPublic;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
-		}
-		updatePublicSession(sessionID);
-	});
-
-	socket.on("setDescription", function(description) {
-		if (!(this.userID in Connections)) return;
-		const sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (description === null || description === undefined || description === Sessions[sessionID].description)
-			return;
-
-		Sessions[sessionID].description = description.substring(0, 70);
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
-		}
-		updatePublicSession(sessionID);
-	});
-
-	socket.on("replaceDisconnectedPlayers", function() {
-		if (!(this.userID in Connections)) return;
-		let sessionID = Connections[this.userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-		Sessions[sessionID].replaceDisconnectedPlayers();
-	});
-
-	socket.on("distributeSealed", function(boostersPerPlayer) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (isNaN(boostersPerPlayer)) return;
-		Sessions[sessionID].distributeSealed(boostersPerPlayer);
-	});
-
-	socket.on("distributeJumpstart", function() {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		Sessions[sessionID].distributeJumpstart();
-	});
-
-	socket.on("generateBracket", function(players, ack) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (
-			!(
-				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
-				(players.length === 6 && Sessions[sessionID].teamDraft)
-			)
-		)
-			return;
-		Sessions[sessionID].generateBracket(players);
-		if (ack) ack({ code: 0 });
-	});
-
-	socket.on("generateSwissBracket", function(players, ack) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		if (players.length !== 8) return;
-		Sessions[sessionID].generateSwissBracket(players);
-		if (ack) ack({ code: 0 });
-	});
-
-	socket.on("updateBracket", function(results) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || (Sessions[sessionID].owner != this.userID && Sessions[sessionID].bracketLock))
-			return;
-
-		Sessions[sessionID].updateBracket(results);
-	});
-
-	socket.on("lockBracket", function(bracketLocked) {
-		const userID = this.userID;
-		if (!(userID in Connections)) return;
-		const sessionID = Connections[userID].sessionID;
-		if (!(sessionID in Sessions) || Sessions[sessionID].owner != this.userID) return;
-
-		Sessions[sessionID].bracketLocked = bracketLocked;
-		for (let user of Sessions[sessionID].users) {
-			if (user != this.userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
-		}
-	});
 
 	joinSession(query.sessionID, query.userID);
 	socket.emit("publicSessions", getPublicSessions());
