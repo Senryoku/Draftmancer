@@ -277,6 +277,7 @@ const socketCallbacks = {
 	}
 }
 
+// Socket callback available only to session owners
 const ownerSocketCallbacks = {
 	"setOwnerIsPlayer": function(userID, sessionID, val) {
 		const sess = Sessions[sessionID];
@@ -294,7 +295,7 @@ const ownerSocketCallbacks = {
 			if (user != userID) Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	},
 	"readyCheck": function(userID, sessionID, ack) {
-		const sess = Sessions[Connections[userID].sessionID];
+		const sess = Sessions[sessionID];
 		if (sess.drafting) {
 			if (ack) ack({ code: 1 });
 			return;
