@@ -1008,12 +1008,12 @@ app.get("/bracket", (req, res) => {
 });
 
 app.get("/getBracket/:sessionID", (req, res) => {
-	if (!req.params.sessionID) {
+	const sid = req.params.sessionID;
+	if (!sid) {
 		res.sendStatus(400);
-	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].bracket) {
-		//res.json(Sessions[req.params.sessionID].bracket); // Only works once for whatever reason?...
+	} else if (sid in Sessions && Sessions[sid].bracket) {
 		res.setHeader("Content-Type", "application/json");
-		res.send(JSON.stringify(Sessions[req.params.sessionID].bracket));
+		res.send(JSON.stringify(Sessions[sid].bracket));
 	} else {
 		res.sendStatus(404);
 	}

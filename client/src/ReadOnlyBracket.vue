@@ -44,6 +44,8 @@ export default {
 			this.response = await fetch(`/getBracket/${this.sessionID}`);
 			if (this.response.status === 200) {
 				this.bracket = await this.response.json();
+				const logResponse = await fetch(`/getDraftLog/${this.sessionID}`);
+				if (logResponse.status === 200) this.draftlog = await logResponse.json();
 			} else {
 				if (this.response.status === 404) {
 					this.error = `Bracket not found. Please note that sessions are automatically deleted when there's no player left.`;
