@@ -128,17 +128,17 @@ export default {
 			if (this.bracket.teamDraft) {
 				return this.teamWins(index) >= 5;
 			} else {
-				return this.records[p].wins === 3;
+				return this.records[p.userID].wins === 3;
 			}
 		},
 		isSilver: function (p) {
-			return !this.bracket.teamDraft && this.records[p].wins === 2;
+			return !this.bracket.teamDraft && this.records[p.userID].wins === 2;
 		},
 		emitUpdated: function () {
 			this.$emit("updated");
 		},
-		recordString: function (player) {
-			return `${this.records[player].wins} - ${this.records[player].losses}`;
+		recordString: function (p) {
+			return `${this.records[p.userID].wins} - ${this.records[p.userID].losses}`;
 		},
 		lock: function (e) {
 			this.$emit("lock", e.target.checked);
@@ -230,17 +230,17 @@ export default {
 		},
 		records: function () {
 			let r = {};
-			for (let p of this.bracket.players) r[p] = { wins: 0, losses: 0 };
+			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
 			for (let col of this.matches)
 				for (let m of col) {
 					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
 						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-						r[m.players[winIdx]].wins += 1;
-						r[m.players[(winIdx + 1) % 2]].losses += 1;
+						r[m.players[winIdx].userID].wins += 1;
+						r[m.players[(winIdx + 1) % 2].userID].losses += 1;
 					} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
-						r[m.players[0]].wins += 1;
+						r[m.players[0].userID].wins += 1;
 					} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
-						r[m.players[1]].wins += 1;
+						r[m.players[1].userID].wins += 1;
 					}
 				}
 			return r;
