@@ -144,19 +144,24 @@
 	},
 	"CubeLists": [
 		{
+			"name": "Arena Tinkerer's Cube #2",
+			"filename": "TinkerersCubeJanuary2021.txt",
+			"description": "MTGA Official Tinkerer's Cube from January 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>. Card list from <a href=\"https://cubecobra.com/cube/list/tinkererjanuary21\" target=\"_blank\">Cube Cobra</a>"
+		},
+		{
 			"name": "Arena Historic Cube #2",
 			"filename": "MTGArenaCubeDecember2020.txt",
-			"description": "MTGA Official Historic Cube from December 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtg-arena-state-game-december-2020-12-07\" target=_\"_blank\">Wizards announcement</a>."
+			"description": "MTGA Official Historic Cube from December 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtg-arena-state-game-december-2020-12-07\" target=\"_blank\">Wizards announcement</a>."
 		},
 		{
 			"name": "Jank Divers Peasant Cube",
 			"cubeCobraID": "jdgp",
-			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=_\"_blank\">Discord</a>."
+			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
 		},
 		{
 			"name": "Jank Divers Unrestricted Cube",
 			"cubeCobraID": "jdpu",
-			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=_\"_blank\">Discord</a>."
+			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
 		},
 		{
 			"name": "JiRock's Historic Cube",
@@ -166,12 +171,12 @@
 		{
 			"name": "Arena Tinkerer's Cube",
 			"filename": "MTGATinkererCube.txt",
-			"description": "MTGA Official Tinkerer's Cube from September 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=_\"_blank\">Wizards announcement</a>."
+			"description": "MTGA Official Tinkerer's Cube from September 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>."
 		},
 		{
 			"name": "Arena Historic Cube #1",
 			"filename": "ArenaHistoricCube1.txt",
-			"description": "MTGA Official Historic Cube from June 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=_\"_blank\">Wizards announcement</a>."
+			"description": "MTGA Official Historic Cube from June 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=\"_blank\">Wizards announcement</a>."
 		},
 		{
 			"name": "JiRock's Historic Cube 2.2",
