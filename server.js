@@ -274,7 +274,12 @@ const socketCallbacks = {
 	},
 	"shareDecklist": function(userID, sessionID, decklist) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
-	}
+	},
+	"updateBracket": function(userID, sessionID, results) {
+		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock)
+			return;
+		Sessions[sessionID].updateBracket(results);
+	},
 }
 
 // Socket callback available only to session owners
@@ -700,11 +705,6 @@ const ownerSocketCallbacks = {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateSwissBracket(players);
 		if (ack) ack({ code: 0 });
-	},
-	"updateBracket": function(userID, sessionID, results) {
-		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock)
-			return;
-		Sessions[sessionID].updateBracket(results);
 	},
 	"lockBracket": function(userID, sessionID, bracketLocked) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
