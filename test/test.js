@@ -41,6 +41,7 @@ const checkDuplicates = function(booster) {
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 
 describe("Inter client communication", function() {
+	const sessionID = "sessionID";
 	let sender, receiver;
 
 	beforeEach(function(done) {
@@ -58,12 +59,12 @@ describe("Inter client communication", function() {
 		expect(Object.keys(Connections).length).to.equal(0);
 		sender = connectClient({
 			userID: "sender",
-			sessionID: "sessionID",
+			sessionID: sessionID,
 			userName: "sender",
 		});
 		receiver = connectClient({
 			userID: "receiver",
-			sessionID: "sessionID",
+			sessionID: sessionID,
 			userName: "receiver",
 		});
 		enableLogs(false);
@@ -140,6 +141,15 @@ describe("Inter client communication", function() {
 				done();
 			});
 			sender.emit("setMaxDuplicates", newMaxDuplicates);
+		});
+		it("Removing non-owner.", function(done) {
+			receiver.once("setSession", function(newID) {
+				expect(Sessions[sessionID].users.size).to.equal(1);
+				expect(Sessions[sessionID].users).to.not.include(receiver.query.userID);
+				expect(newID).to.not.equal(sessionID);
+				done();
+			});
+			sender.emit("removePlayer", receiver.query.userID);
 		});
 	});
 });
