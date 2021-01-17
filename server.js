@@ -406,17 +406,17 @@ const ownerSocketCallbacks = {
 			)
 		);
 	},
-	"removePlayer": function(userID, sessionID) {
-		if (userID === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userID)) return;
+	"removePlayer": function(userID, sessionID, userToRemove) {
+		if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
 
-		removeUserFromSession(userID);
+		removeUserFromSession(userToRemove);
 		Sessions[sessionID].replaceDisconnectedPlayers();
 		Sessions[sessionID].notifyUserChange();
 
 		const newSession = shortguid();
-		joinSession(newSession, userID);
-		Connections[userID].socket.emit("setSession", newSession);
-		Connections[userID].socket.emit("message", {
+		joinSession(newSession, userToRemove);
+		Connections[userToRemove].socket.emit("setSession", newSession);
+		Connections[userToRemove].socket.emit("message", {
 			title: "Removed from session",
 			text: `You've been removed from session '${sessionID}' by its owner.`,
 		});
