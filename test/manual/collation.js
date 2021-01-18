@@ -301,7 +301,11 @@ describe("Statistical color balancing tests", function() {
 			const results = [0];
 			let totalDupes = 0;
 			for (let i = 0; i < trials; i++) {
-				let cards = populate().sort();
+				let cards = populate();
+				if(typeof(cards[0]) === "number")
+					cards = cards.sort((a, b) => a - b);
+				else 
+					cards = cards.sort();
 				//console.error(cards)
 				expect(cards.length === 3 * 8);
 				let duplicates = 0;
