@@ -251,9 +251,6 @@ describe("Statistical color balancing tests", function() {
 			const results = rares.reduce((o, key) => ({ ...o, [key]: 0}), {});
 			for(let r of rares) results[r] = 0;
 			func(results);
-			for(let i = 0; i < trials; ++i) {
-				results[rares[Math.floor(Math.random() * rares.length)]] += 1;
-			}
 			//console.table(results)
 			const countMean = mean(Object.values(results));
 			const diffFromMean = [...Object.values(results)];
@@ -332,7 +329,7 @@ describe("Statistical color balancing tests", function() {
 			const rares = Object.values(SessionInst.cardPoolByRarity().rare);
 			describe(`Using ${set} (${rares.length} rares)`, function() {
 				it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
-					const engine = randomjs.MersenneTwister19937.autoSeed();
+					const engine = randomjs.nodeCrypto; //randomjs.MersenneTwister19937.autoSeed();
 					const distribution = randomjs.integer(0, rares.length - 1);
 					Expected = countDuplicates(() => {
 						let cards = [];
