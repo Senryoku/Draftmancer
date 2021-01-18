@@ -296,7 +296,7 @@ describe("Statistical color balancing tests", function() {
 	});
 
 	describe("Duplicate tests.", function() {
-		const trials = 10000;
+		const trials = 2000;
 		function countDuplicates(populate) {
 			const results = [0];
 			let totalDupes = 0;
@@ -306,57 +306,97 @@ describe("Statistical color balancing tests", function() {
 					cards = cards.sort((a, b) => a - b);
 				else
 					cards = cards.sort();
-				//console.error(cards)
-				expect(cards.length).equal(3 * 8);
 				let duplicates = 0;
 				for(let i = 0; i < cards.length - 1; ++i)
 					if(cards[i] === cards[i + 1]) 
 						++duplicates;
-				//console.error(duplicates);
 				while(results.length <= duplicates) results.push(0);
 				++results[duplicates];
 				totalDupes += duplicates;
-				//console.error(results);
 			}
 			console.table(results);
 			console.error("Mean: ", totalDupes / trials);
 			return results;
 		}
 
-		for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
-			let Expected;
-			let Observed;
-			const SessionInst = new Session("UniqueID");
-			SessionInst.colorBalance = true;
-			SessionInst.setRestriction = [set];
-			SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
-			const rares = Object.values(SessionInst.cardPoolByRarity().rare);
-			describe(`Using ${set} (${rares.length} rares)`, function() {
-				it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
-					const engine = randomjs.nodeCrypto; //randomjs.MersenneTwister19937.autoSeed();
-					const distribution = randomjs.integer(0, rares.length - 1);
-					Expected = countDuplicates(() => {
-						let cards = [];
-						for(let j = 0; j < 3 * 8; ++j)
-							cards.push(distribution(engine))
-						return cards;
+		describe("Without mythic.", function() {
+			for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
+				let Expected;
+				let Observed;
+				const SessionInst = new Session("UniqueID");
+				SessionInst.colorBalance = true;
+				SessionInst.setRestriction = [set];
+				SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
+				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				describe(`Using ${set} (${rares.length} rares)`, function() {
+					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
+						const engine = randomjs.nodeCrypto;
+						const distribution = randomjs.integer(0, rares.length - 1);
+						Expected = countDuplicates(() => {
+							let cards = [];
+							for(let j = 0; j < 3 * 8; ++j)
+								cards.push(distribution(engine))
+							expect(cards.length).equal(3 * 8);
+							return cards;
+						});
+						done();
 					});
-					done();
-				});
-				it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
-					this.timeout(80000);
-					Observed = countDuplicates(() => {
-						SessionInst.generateBoosters(3 * 8);
-						return SessionInst.boosters.flat().filter(c => c.rarity === "rare").map(c => c.name);
+					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
+						this.timeout(80000);
+						Observed = countDuplicates(() => {
+							SessionInst.generateBoosters(3 * 8);
+							const cards = SessionInst.boosters.flat().filter(c => c.rarity === "rare").map(c => c.name);
+							expect(cards.length).equal(3 * 8);
+							return cards;
+						});
+						done();
 					});
-					done();
+					it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
+						const cs = chiSquare(Observed, Expected);
+						console.error("Chi-Square: ", cs)
+						done();
+					});
 				});
-				it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
-					const cs = chiSquare(Observed, Expected);
-					console.error("Chi-Square: ", cs)
-					done();
+			}
+		});
+	
+		describe("Accounting for mythics.", function() {
+			for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
+				let Expected;
+				let Observed;
+				const SessionInst = new Session("UniqueID");
+				SessionInst.colorBalance = true;
+				SessionInst.setRestriction = [set];
+				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				describe(`Using ${set} (${rares.length} rares)`, function() {
+					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
+						const engine = randomjs.nodeCrypto;
+						const distribution = randomjs.integer(0, rares.length - 1);
+						const mythicDistribution = randomjs.integer(0, 7);
+						Expected = countDuplicates(() => {
+							let cards = [];
+							for(let j = 0; j < 3 * 8; ++j)
+								if(mythicDistribution(engine) > 0)
+									cards.push(distribution(engine))
+							return cards;
+						});
+						done();
+					});
+					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
+						this.timeout(80000);
+						Observed = countDuplicates(() => {
+							SessionInst.generateBoosters(3 * 8);
+							return SessionInst.boosters.flat().filter(c => c.rarity === "rare").map(c => c.name);
+						});
+						done();
+					});
+					it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
+						const cs = chiSquare(Observed, Expected);
+						console.error("Chi-Square: ", cs)
+						done();
+					});
 				});
-			});
-		}
+			}
+		});
 	});
 });
