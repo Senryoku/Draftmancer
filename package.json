@@ -41,7 +41,7 @@
 		"random-js": "^2.1.0",
 		"request": "^2.88.2",
 		"socket.io": "^2.3.0",
-		"sweetalert2": "^9.15.1",
+		"sweetalert2": "^9.17.2",
 		"uuid": "^3.3.3",
 		"v-tooltip": "^2.0.3",
 		"vue": "^2.6.11",

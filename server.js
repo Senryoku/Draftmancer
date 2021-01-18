@@ -685,9 +685,9 @@ const ownerSocketCallbacks = {
 	"replaceDisconnectedPlayers": function(userID, sessionID) {
 		Sessions[sessionID].replaceDisconnectedPlayers();
 	},
-	"distributeSealed": function(userID, sessionID, boostersPerPlayer) {
+	"distributeSealed": function(userID, sessionID, boostersPerPlayer, customBoosters) {
 		if (isNaN(boostersPerPlayer)) return;
-		Sessions[sessionID].distributeSealed(boostersPerPlayer);
+		Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
 	},
 	"distributeJumpstart": function(userID, sessionID) {
 		Sessions[sessionID].distributeJumpstart();
