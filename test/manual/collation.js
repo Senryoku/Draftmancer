@@ -319,7 +319,7 @@ describe("Statistical color balancing tests", function() {
 			return results;
 		}
 
-		for(let set of ["znr", "eld"]) {
+		for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
 			let Expected;
 			let Observed;
 			const SessionInst = new Session("UniqueID");
