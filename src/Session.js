@@ -566,7 +566,7 @@ export function Session(id, owner, options) {
 			};
 
 			const boosterSpecificRules = options.useCustomBoosters && this.customBoosters.some(v => v !== "");
-			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && this.maxDuplicates === null && this.unrestrictedCardPool();
+			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && BoosterFactoryOptions.mythicPromotion && this.maxDuplicates === null && this.unrestrictedCardPool();
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || this.customBoosters.some(v => v === "")) {

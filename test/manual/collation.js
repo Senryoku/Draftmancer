@@ -239,7 +239,7 @@ describe("Statistical color balancing tests", function() {
 		return x2;
 	}	
 
-	describe.only("Uniformity of rares tests", function() {
+	describe("Uniformity of rares tests", function() {
 		const trials = 10000;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
@@ -304,10 +304,10 @@ describe("Statistical color balancing tests", function() {
 				let cards = populate();
 				if(typeof(cards[0]) === "number")
 					cards = cards.sort((a, b) => a - b);
-				else 
+				else
 					cards = cards.sort();
 				//console.error(cards)
-				expect(cards.length === 3 * 8);
+				expect(cards.length).equal(3 * 8);
 				let duplicates = 0;
 				for(let i = 0; i < cards.length - 1; ++i)
 					if(cards[i] === cards[i + 1]) 
