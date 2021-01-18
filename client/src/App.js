@@ -1634,27 +1634,65 @@ export default {
 		},
 		sealedDialog: async function() {
 			if (this.userID != this.sessionOwner) return;
-			const { value: boosterCount } = await Swal.fire({
+
+			Swal.fire({
 				title: "Start Sealed",
-				showCancelButton: true,
-				text: "How many boosters for each player (default is 6)?",
-				inputPlaceholder: "Booster count",
-				input: "number",
-				inputAttributes: {
-					min: 4,
-					max: 12,
-					step: 1,
-				},
+				html: `
+					<p>How many boosters for each player (default is 6)?
+					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
+					<p>(Optional) Customize the set of each booster:
+					<div id="input-customBoosters" style="
+						display: grid;
+						grid-template-columns: 1fr 1fr 1fr;
+						grid-column-gap: 0.5em;
+					"></div></p>`,
 				inputValue: 6,
 				customClass: SwalCustomClasses,
+				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
+				preConfirm: function() {
+					return new Promise(function(resolve) {
+						resolve({
+							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
+							customBoosters: [...document.getElementById("input-customBoosters").querySelectorAll("select")].map(s => s.value),
+						});
+					});
+				},
+				onOpen: (el) => {
+					let customBoostersEl = el.querySelector("#input-customBoosters");
+					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
+					// Create the set selects according to the number of booster per player
+					function updateCustomBoosterInput(target) {
+						while(customBoostersEl.children.length < target) {
+							let sel = document.createElement("select");
+							sel.classList.add("swal2-input");
+							sel.style.margin = "0.5em auto";
+							const addOption = (val, txt) => {
+								let op = document.createElement("option");
+								op.value = val;
+								op.innerHTML = txt;
+								sel.appendChild(op);
+							};
+							addOption("", "(Default)");
+							addOption("random", "Random set from Card Pool");
+							for(let s of Constant.PrimarySets)
+								addOption(s, SetsInfos[s].fullName);
+							customBoostersEl.appendChild(sel);
+						}
+						while(customBoostersEl.children.length > target) customBoostersEl.removeChild(customBoostersEl.lastChild);
+					}
+					updateCustomBoosterInput(boostersPerPlayerEl.value);
+					boostersPerPlayerEl.addEventListener("change", function(e) {
+						updateCustomBoosterInput(e.target.value);
+					});
+				}
+			}).then(r => {
+				if (r.isConfirmed) {
+					this.deckWarning(this.distributeSealed, [r.value.boostersPerPlayer, r.value.customBoosters]);
+				}
 			});
-
-			if (boosterCount) {
-				this.deckWarning(this.distributeSealed, boosterCount);
-			}
 		},
 		deckWarning: function(call, options) {
 			if (this.deck.length > 0) {
@@ -1669,16 +1707,17 @@ export default {
 					confirmButtonText: "Start new game!",
 				}).then(result => {
 					if (result.value) {
-						call(options);
+						call(...options);
 					}
 				});
 			} else {
-				call(options);
+				call(...options);
 			}
 		},
-		distributeSealed: function(boosterCount) {
-			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("distributeSealed", boosterCount);
+		distributeSealed: function(boosterCount, customBoosters) {
+			if (this.userID !== this.sessionOwner) return;
+			const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
+			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
 		},
 		distributeJumpstart: function() {
 			if (this.userID != this.sessionOwner) return;

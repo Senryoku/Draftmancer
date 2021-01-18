@@ -38,6 +38,10 @@ footer span {
 	background: #282828 !important;
 }
 
+select.swal2-input option {
+	background-color: #282828;
+}
+
 #main-container {
 	padding: 1em;
 	padding-top: 0.5em;
