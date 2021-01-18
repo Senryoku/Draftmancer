@@ -3,6 +3,7 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
+import randomjs from "random-js";
 import { Cards } from "./../../src/Cards.js";
 //import server from "../../server.js";
 import { Session } from "../../src/Session.js";
@@ -14,6 +15,7 @@ import { SpecialLandSlots } from "../../src/LandSlot.js";
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 import constants from "../../client/src/data/constants.json";
+import { format } from "path";
 
 describe("Statistical color balancing tests", function() {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function(done) {
@@ -209,5 +211,192 @@ describe("Statistical color balancing tests", function() {
 		console.table(logTable);
 		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
+	});
+	
+	function mean(arr) {
+		return arr.reduce((a,b) => a + b) / arr.length; 
+	}
+	
+	function chiSquare(observed, expected) {
+		while(observed.length < expected.length) observed.push(0);
+		while(expected.length < observed.length) expected.push(0);
+		let x2 = 0;
+		for(let i = 0; i < observed.length; ++i) {
+			const n = observed[i] - expected[i];
+			x2 += n * n / expected[i];
+		}
+		return x2;
+	}
+
+	function chiSquareUniformTest(observed) {
+		let x2 = 0;
+		const total = observed.reduce((a, b) => a + b);
+		const expected = total / observed.length;
+		for(let i = 0; i < observed.length; ++i) {
+			const n = observed[i] - expected;
+			x2 += n * n / expected;
+		}
+		return x2;
+	}	
+
+	describe("Uniformity of rares tests", function() {
+		const trials = 10000;
+		const SessionInst = new Session("UniqueID");
+		SessionInst.colorBalance = true;
+		SessionInst.setRestriction = ["znr"];
+		const rares = Object.keys(SessionInst.cardPoolByRarity().rare); // 64
+		const chiSquareCriticalValue63 = 82.529; // For 63 Degrees of Freedom and Significance Level 0.05
+
+		function checkUniformity(done, func) {
+			const results = rares.reduce((o, key) => ({ ...o, [key]: 0}), {});
+			for(let r of rares) results[r] = 0;
+			func(results);
+			//console.table(results)
+			const countMean = mean(Object.values(results));
+			const diffFromMean = [...Object.values(results)];
+			for(let i = 0; i < diffFromMean.length; ++i) diffFromMean[i] = Math.abs(diffFromMean[i] - countMean);
+			//console.table(diffFromMean)
+			const meanDeviation = mean(diffFromMean);
+			const chiSquareResult = chiSquareUniformTest(Object.values(results));
+			console.table([["Mean: ", countMean], ["Mean Deviation:", meanDeviation], ["Chi Squared Uniformity Test: ", chiSquareResult]]);
+			expect(chiSquareResult).lte(chiSquareCriticalValue63);
+			done();
+		}
+
+		it(`Basic uniform distribution using Math.random()`, function(done) {
+			checkUniformity(done, (results) => {
+				for(let i = 0; i < trials; ++i) {
+					results[rares[Math.floor(Math.random() * rares.length)]] += 1;
+				}
+			});
+		});
+		it(`Basic uniform distribution using randomjs(nodeCrypto) integer`, function(done) {
+			checkUniformity(done, (results) => {
+				const random = new randomjs.Random(randomjs.nodeCrypto);
+				for(let i = 0; i < trials; ++i) {
+					results[rares[random.integer(0, rares.length - 1)]] += 1;
+				}
+			});
+		});
+		it(`Basic uniform distribution using randomjs(MersenneTwister19937) integer`, function(done) {
+			checkUniformity(done, (results) => {
+				const engine = randomjs.MersenneTwister19937.autoSeed();
+				const distribution = randomjs.integer(0, rares.length - 1);
+				for(let i = 0; i < trials; ++i) {
+					results[rares[distribution(engine)]] += 1;
+				}
+			});
+		});
+		it(`Uniform distribution test using generateBooster`, function(done) {
+			this.timeout(8000);
+			checkUniformity(done, (results) => {
+				runTrials(SessionInst, trials, results);
+			});
+		});
+	});
+
+	describe("Duplicate tests.", function() {
+		const trials = 2000;
+		function countDuplicates(populate) {
+			const results = [0];
+			let totalDupes = 0;
+			for (let i = 0; i < trials; i++) {
+				let cards = populate();
+				if(typeof(cards[0]) === "number")
+					cards = cards.sort((a, b) => a - b);
+				else
+					cards = cards.sort();
+				let duplicates = 0;
+				for(let i = 0; i < cards.length - 1; ++i)
+					if(cards[i] === cards[i + 1]) 
+						++duplicates;
+				while(results.length <= duplicates) results.push(0);
+				++results[duplicates];
+				totalDupes += duplicates;
+			}
+			console.table(results);
+			console.error("Mean: ", totalDupes / trials);
+			return results;
+		}
+
+		describe("Without mythic.", function() {
+			for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
+				let Expected;
+				let Observed;
+				const SessionInst = new Session("UniqueID");
+				SessionInst.colorBalance = true;
+				SessionInst.setRestriction = [set];
+				SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
+				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				describe(`Using ${set} (${rares.length} rares)`, function() {
+					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
+						const engine = randomjs.nodeCrypto;
+						const distribution = randomjs.integer(0, rares.length - 1);
+						Expected = countDuplicates(() => {
+							let cards = [];
+							for(let j = 0; j < 3 * 8; ++j)
+								cards.push(distribution(engine))
+							expect(cards.length).equal(3 * 8);
+							return cards;
+						});
+						done();
+					});
+					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
+						this.timeout(80000);
+						Observed = countDuplicates(() => {
+							SessionInst.generateBoosters(3 * 8);
+							const cards = SessionInst.boosters.flat().filter(c => c.rarity === "rare").map(c => c.name);
+							expect(cards.length).equal(3 * 8);
+							return cards;
+						});
+						done();
+					});
+					it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
+						const cs = chiSquare(Observed, Expected);
+						console.error("Chi-Square: ", cs)
+						done();
+					});
+				});
+			}
+		});
+	
+		describe("Accounting for mythics.", function() {
+			for(let set of ["znr", "eld", "thb", "iko", "m21"]) {
+				let Expected;
+				let Observed;
+				const SessionInst = new Session("UniqueID");
+				SessionInst.colorBalance = true;
+				SessionInst.setRestriction = [set];
+				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				describe(`Using ${set} (${rares.length} rares)`, function() {
+					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
+						const engine = randomjs.nodeCrypto;
+						const distribution = randomjs.integer(0, rares.length - 1);
+						const mythicDistribution = randomjs.integer(0, 7);
+						Expected = countDuplicates(() => {
+							let cards = [];
+							for(let j = 0; j < 3 * 8; ++j)
+								if(mythicDistribution(engine) > 0)
+									cards.push(distribution(engine))
+							return cards;
+						});
+						done();
+					});
+					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
+						this.timeout(80000);
+						Observed = countDuplicates(() => {
+							SessionInst.generateBoosters(3 * 8);
+							return SessionInst.boosters.flat().filter(c => c.rarity === "rare").map(c => c.name);
+						});
+						done();
+					});
+					it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
+						const cs = chiSquare(Observed, Expected);
+						console.error("Chi-Square: ", cs)
+						done();
+					});
+				});
+			}
+		});
 	});
 });
