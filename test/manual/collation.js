@@ -217,7 +217,7 @@ describe("Statistical color balancing tests", function() {
 		return arr.reduce((a,b) => a + b) / arr.length; 
 	}
 	
-	function chiSquared(observed, expected) {
+	function chiSquare(observed, expected) {
 		while(observed.length < expected.length) observed.push(0);
 		while(expected.length < observed.length) expected.push(0);
 		let x2 = 0;
@@ -228,7 +228,7 @@ describe("Statistical color balancing tests", function() {
 		return x2;
 	}
 
-	function chiSquaredUniformTest(observed) {
+	function chiSquareUniformTest(observed) {
 		let x2 = 0;
 		const total = observed.reduce((a, b) => a + b);
 		const expected = total / observed.length;
@@ -245,7 +245,7 @@ describe("Statistical color balancing tests", function() {
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["znr"];
 		const rares = Object.keys(SessionInst.cardPoolByRarity().rare); // 64
-		const chiSquaredCriticalValue63 = 82.529; // For 63 Degrees of Freedom and Significance Level 0.05
+		const chiSquareCriticalValue63 = 82.529; // For 63 Degrees of Freedom and Significance Level 0.05
 
 		function checkUniformity(done, func) {
 			const results = rares.reduce((o, key) => ({ ...o, [key]: 0}), {});
@@ -257,9 +257,9 @@ describe("Statistical color balancing tests", function() {
 			for(let i = 0; i < diffFromMean.length; ++i) diffFromMean[i] = Math.abs(diffFromMean[i] - countMean);
 			//console.table(diffFromMean)
 			const meanDeviation = mean(diffFromMean);
-			const chiSquared = chiSquaredUniformTest(Object.values(results));
-			console.table([["Mean: ", countMean], ["Mean Deviation:", meanDeviation], ["Chi Squared Uniformity test: ", chiSquared]]);
-			expect(chiSquared).lte(chiSquaredCriticalValue63);
+			const chiSquareResult = chiSquareUniformTest(Object.values(results));
+			console.table([["Mean: ", countMean], ["Mean Deviation:", meanDeviation], ["Chi Squared Uniformity Test: ", chiSquareResult]]);
+			expect(chiSquareResult).lte(chiSquareCriticalValue63);
 			done();
 		}
 
@@ -295,7 +295,7 @@ describe("Statistical color balancing tests", function() {
 		});
 	});
 
-	describe.only("Duplicate tests.", function() {
+	describe("Duplicate tests.", function() {
 		const trials = 10000;
 		function countDuplicates(populate) {
 			const results = [0];
@@ -352,8 +352,8 @@ describe("Statistical color balancing tests", function() {
 					done();
 				});
 				it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
-					const cs = chiSquared(Observed, Expected);
-					console.error("Chi-Squared: ", cs)
+					const cs = chiSquare(Observed, Expected);
+					console.error("Chi-Square: ", cs)
 					done();
 				});
 			});
