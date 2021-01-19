@@ -315,8 +315,8 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 selection['rating'] = 0.5
             selection['in_booster'] = True
             if c['set'] == 'akr' or c['set'] == 'klr':
-                selection['in_booster'] = c['booster'] and 'Basic Land' not in c['type_line']
-            elif not c['booster'] or 'Basic Land' in c['type_line']:
+                selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
+            elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
             cards[c['id']].update(selection)
@@ -373,7 +373,7 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 # Retrieve basic land ids for each set
 BasicLandIDs = {}
 for cid in cards:
-    if cards[cid]["name"] in ["Plains", "Island", "Swamp", "Mountain", "Forest"]:
+    if cards[cid]["type"].startswith("Basic"):
         if(cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []
         BasicLandIDs[cards[cid]["set"]].append(cid)
