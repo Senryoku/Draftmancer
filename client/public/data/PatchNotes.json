@@ -1,5 +1,9 @@
 [
 	{
+		"date": "2X/01/2021",
+		"notes": ["Added Kaldheim support."]
+	},
+	{
 		"date": "18/01/2021",
 		"notes": ["Minor bug fixes.", "Added a way to customize the set of each booster of a sealed pool individually."]
 	},
