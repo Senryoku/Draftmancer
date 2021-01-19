@@ -1,6 +1,6 @@
 "use strict";
 
-import { getUnique } from "./Cards.js";
+import { getUnique, Cards } from "./Cards.js";
 import { getRandomKey, getRandom } from "./utils.js";
 import { removeCardFromDict } from "./cardUtils.js";
 import BasicLandIDs from "../client/public/data/BasicLandIDs.json";
@@ -114,7 +114,7 @@ export const SpecialLandSlots = {
 		1 / 2
 	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
 	khm: landSlotHandler(
-		BasicLandIDs["khm"],
+		BasicLandIDs["khm"].filter(cid => Cards[cid]["type"].startsWith("Basic Snow")),
 		[
 			// Dual Snow Taplands
 			"8702d6b9-bb01-4841-a76d-4a576066c772", // Alpine Meadow
@@ -127,11 +127,11 @@ export const SpecialLandSlots = {
 			"35ebe245-ebb5-493c-b9c1-56fbfda9bd66", // Sulfurous Mire
 			"f2392fbb-d9c4-4688-b99c-4e7614c60c12", // Volatile Fjord
 			"b2dd0b71-5a60-418c-82fc-f13d1b5075d0", // Woodland Chasm
-			// Others?
-			"f09d98db-0176-41a7-b99b-ead29876cdab", // Shimmerdrift Vale 
+			// Others? TODO: Check if this is actually in the land slot.
+			"f09d98db-0176-41a7-b99b-ead29876cdab", // Shimmerdrift Vale
 		  ],
-		1 / 2
-	), // Snow-Covered Only? Duals?
+		1 / 2 // TODO: Check this value.
+	), // Always one snow-covered land, either basic or tapped
 };
 
 export const BasicLandSlots = {};
