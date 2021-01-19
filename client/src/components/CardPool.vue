@@ -362,7 +362,6 @@ export default {
 						clientY: event.from.getBoundingClientRect().top + 1,
 					}).splice(event.oldDraggableIndex, 0, ...this.tempColumn);
 				} else {
-					console.log("New?");
 					this.getColumnFromCoordinates(event.originalEvent).push(...this.tempColumn);
 				}
 				this.tempColumn = [];
