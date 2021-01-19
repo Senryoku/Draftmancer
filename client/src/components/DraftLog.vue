@@ -262,7 +262,10 @@ export default {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
 		selectedLogCards: function () {
-			return this.selectedLog.cards.map((cid) => this.draftlog.carddata[cid]);
+			let uniqueID = 0;
+			return this.selectedLog.cards.map((cid) =>
+				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
+			);
 		},
 		selectedLogDecklist: function () {
 			return this.selectedLog.decklist;

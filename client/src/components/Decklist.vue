@@ -90,10 +90,12 @@ export default {
 	},
 	computed: {
 		mainboard: function () {
-			return this.list.main.map((cid) => this.carddata[cid]);
+			let uniqueID = 0;
+			return this.list.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		sideboard: function () {
-			return this.list.side.map((cid) => this.carddata[cid]);
+			let uniqueID = 0;
+			return this.list.side.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		landcount: function () {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
