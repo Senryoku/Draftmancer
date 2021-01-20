@@ -132,7 +132,7 @@ export default {
 			for (let id in MTGACards) {
 				const card = MTGACards[id];
 				const completeSet = Constant.MTGASets.includes(card.set);
-				if (card && !["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(card["name"])) {
+				if (card && !card["type"].startsWith("Basic")) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					const set = completeSet ? card.set : "others";
 					let categories = [set, "all"];

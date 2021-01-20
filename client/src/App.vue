@@ -1055,12 +1055,13 @@
 							<h2>Collection Import</h2>
 						</div>
 						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards they own. (Session owners
-							can bypass this feature by enabling "Ignore Collections"):
+							Each player can import their MTGA collection to restrict the card pool to cards they own.
+							(Session owners can bypass this feature by enabling "Ignore Collections"):
 							<ol>
 								<li>
-									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work.
-									The toggle can be found in "Options > Account > Detailed Logs (Plugin Support)".
+									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
+									work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
+									Support)".
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload</a>
@@ -1168,6 +1169,18 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>January 20, 2021</em>
+							<ul>
+								<li>
+									<img src="img/sets/khm.svg" class="set-icon" style="--invertedness: 100%" />
+									Kaldheim is now available!<br />
+									<span style="font-size: 0.9em"
+										><i class="fas fa-exclamation-triangle yellow"></i> A few cards are still
+										missing their English version or a high-quality picture, this will be fixed in
+										the upcoming days.</span
+									>
+								</li>
+							</ul>
 							<em>November 06, 2020</em>
 							<ul>
 								<li>
@@ -1183,13 +1196,6 @@
 									<a href="https://discord.gg/XscXXNw" target="_blank">our Discord</a>.
 								</li>
 								<li>Added a new setting allowing for multiple picks per pack.</li>
-							</ul>
-							<em>October 9, 2020</em>
-							<ul>
-								<li>
-									Deck sharing now lets you show your deck to other players and viewers of the
-									read-only bracket.
-								</li>
 							</ul>
 						</div>
 					</div>
@@ -1315,7 +1321,12 @@
 			<div slot="body">
 				<form @submit.prevent="importDeck">
 					<div>
-						<textarea placeholder="Paste cards here... any list MTGA accepts should work" rows="15" cols="40" id="decklist-text"></textarea>
+						<textarea
+							placeholder="Paste cards here... any list MTGA accepts should work"
+							rows="15"
+							cols="40"
+							id="decklist-text"
+						></textarea>
 					</div>
 					<div><button type="submit">Import</button></div>
 				</form>
