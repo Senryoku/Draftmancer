@@ -1172,8 +1172,13 @@
 							<em>January 20, 2021</em>
 							<ul>
 								<li>
-									Kaldheim is now available! Some cards are still not available in English or in great
-									quality, this will come in the upcoming days.
+									<img src="img/sets/khm.svg" class="set-icon" style="--invertedness: 100%" />
+									Kaldheim is now available!<br />
+									<span style="font-size: 0.9em"
+										><i class="fas fa-exclamation-triangle yellow"></i> A few cards are still
+										missing their English version or a good image, this will be fixed in the
+										upcoming days.</span
+									>
 								</li>
 							</ul>
 							<em>November 06, 2020</em>
