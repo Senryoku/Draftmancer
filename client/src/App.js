@@ -1694,7 +1694,7 @@ export default {
 				}
 			});
 		},
-		deckWarning: function(call, options) {
+		deckWarning: function(call, options = []) {
 			if (this.deck.length > 0) {
 				Swal.fire({
 					title: "Are you sure?",
