@@ -1169,9 +1169,12 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
-							<em>January 2X, 2021</em>
+							<em>January 20, 2021</em>
 							<ul>
-								<li>Kaldheim is now available!</li>
+								<li>
+									Kaldheim is now available! Some cards are still not available in English or in great
+									quality, this will come in the upcoming days.
+								</li>
 							</ul>
 							<em>November 06, 2020</em>
 							<ul>
