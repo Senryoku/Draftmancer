@@ -1176,8 +1176,8 @@
 									Kaldheim is now available!<br />
 									<span style="font-size: 0.9em"
 										><i class="fas fa-exclamation-triangle yellow"></i> A few cards are still
-										missing their English version or a good image, this will be fixed in the
-										upcoming days.</span
+										missing their English version or a high-quality picture, this will be fixed in
+										the upcoming days.</span
 									>
 								</li>
 							</ul>
