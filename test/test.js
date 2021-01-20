@@ -154,7 +154,7 @@ describe("Inter client communication", function() {
 	});
 });
 
-describe.only("Sets content", function() {
+describe("Sets content", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 
