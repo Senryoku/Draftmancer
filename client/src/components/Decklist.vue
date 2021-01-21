@@ -1,6 +1,12 @@
 <template>
 	<div v-if="list && list.main && !hashesonly">
-		<card-pool :cards="mainboard" :language="language" :group="`deck-${_uid}`" :key="`deck-${_uid}`">
+		<card-pool
+			:cards="mainboard"
+			:language="language"
+			:group="`deck-${_uid}`"
+			:key="`deck-${_uid}`"
+			ref="mainboardComponent"
+		>
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<span>Added basics:</span>
@@ -37,7 +43,13 @@
 				</template>
 			</template>
 		</card-pool>
-		<card-pool :cards="sideboard" :language="language" :group="`side-${_uid}`" :key="`side-${_uid}`">
+		<card-pool
+			:cards="sideboard"
+			:language="language"
+			:group="`side-${_uid}`"
+			:key="`side-${_uid}`"
+			ref="sideboardComponent"
+		>
 			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
@@ -109,6 +121,14 @@ export default {
 		copyHash: function (hash) {
 			copyToClipboard(hash);
 			fireToast("success", "Hash copied to clipboard!");
+		},
+	},
+	watch: {
+		list: function () {
+			this.$nextTick(() => {
+				this.$refs.mainboardComponent.sync();
+				this.$refs.sideboardComponent.sync();
+			});
 		},
 	},
 };
