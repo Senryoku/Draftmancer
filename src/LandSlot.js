@@ -127,11 +127,9 @@ export const SpecialLandSlots = {
 			"35ebe245-ebb5-493c-b9c1-56fbfda9bd66", // Sulfurous Mire
 			"f2392fbb-d9c4-4688-b99c-4e7614c60c12", // Volatile Fjord
 			"b2dd0b71-5a60-418c-82fc-f13d1b5075d0", // Woodland Chasm
-			// Others? TODO: Check if this is actually in the land slot.
-			"f09d98db-0176-41a7-b99b-ead29876cdab", // Shimmerdrift Vale
 		  ],
 		1 / 2 // TODO: Check this value.
-	), // Always one snow-covered land, either basic or tapped
+	), // Always one snow-covered land, either basic or tapped. Shimmerdrift Vale (f09d98db-0176-41a7-b99b-ead29876cdab) appears in the common slot
 };
 
 export const BasicLandSlots = {};
