@@ -1538,15 +1538,16 @@
 					>
 						<label for="boosters-per-player">Boosters per Player</label>
 						<div class="right">
-							<input
+							<delayed-input
 								type="number"
 								id="boosters-per-player"
 								class="small-number-input"
 								min="1"
 								max="25"
 								step="1"
+								:delay="0.1"
 								v-model.number="boostersPerPlayer"
-								@change="if (boostersPerPlayer < 0) boostersPerPlayer = 1;"
+								:validate="(v) => Math.max(1, Math.min(v, 25))"
 							/>
 						</div>
 					</div>

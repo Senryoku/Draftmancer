@@ -7,6 +7,8 @@
 			:type="$attrs.type"
 			:placeholder="$attrs.placeholder"
 			:maxlength="$attrs.maxlength"
+			:min="$attrs.min"
+			:max="$attrs.max"
 		/>
 	</form>
 </template>
@@ -15,9 +17,11 @@
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 export default {
 	props: {
-		value: { type: String, required: true },
+		value: { required: true },
 		inputstyle: { type: String },
 		delay: { type: Number, default: 0 },
+		validate: { type: Function },
+		waitOnEmpty: { type: Boolean, default: true },
 	},
 	data: function () {
 		return {
@@ -30,6 +34,7 @@ export default {
 	},
 	methods: {
 		update: function (e) {
+			if (this.validate) this.inputEl.value = this.validate(this.inputEl.value);
 			this.$emit("input", this.inputEl.value);
 			this.inputEl.classList.remove("dirty");
 			this.inputEl.classList.add("updated");
@@ -38,7 +43,8 @@ export default {
 		modified: function (e) {
 			this.inputEl.classList.add("dirty");
 			this.inputEl.classList.remove("updated");
-			if (this.delay > 0) {
+			//                    Avoid automatically validating & propagating changes when the input is empty
+			if (this.delay > 0 && !(this.waitOnEmpty && this.inputEl.value === "")) {
 				clearTimeout(this.timeout);
 				this.timeout = setTimeout(() => {
 					this.update();
