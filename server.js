@@ -849,6 +849,7 @@ function joinSession(sessionID, userID) {
 			return;
 		}
 
+		const bracketLink = sess.bracket ? `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank">here</a>.` : "";
 		// Session exists and is drafting
 		if (sess.drafting) {
 			console.log(
@@ -859,13 +860,11 @@ function joinSession(sessionID, userID) {
 			if (userID in sess.disconnectedUsers) {
 				sess.reconnectUser(userID);
 			} else {
-				let msg = `This session (${sessionID}) is currently drafting. Please wait for them to finish.`;
-				if(Sessions[sessionID].bracket) msg += `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank">here</a>.`;
-				refuse(msg);
+				refuse(`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`);
 			}
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
-			refuse(`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).`);
+			refuse(`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`);
 		} else {
 			addUserToSession(userID, sessionID);
 		}
