@@ -818,7 +818,7 @@ function joinSession(sessionID, userID) {
 	const refuse = msg => {
 		Connections[userID].socket.emit("message", {
 			title: "Cannot join session",
-			text: msg,
+			html: msg,
 		});
 		if (Connections[userID].sessionID === null) sessionID = shortguid();
 		else sessionID = Connections[userID].sessionID;
@@ -859,7 +859,9 @@ function joinSession(sessionID, userID) {
 			if (userID in sess.disconnectedUsers) {
 				sess.reconnectUser(userID);
 			} else {
-				refuse(`This session (${sessionID}) is currently drafting. Please wait for them to finish.`);
+				let msg = `This session (${sessionID}) is currently drafting. Please wait for them to finish.`;
+				if(Sessions[sessionID].bracket) msg += `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank">here</a>.`;
+				refuse(msg);
 			}
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full

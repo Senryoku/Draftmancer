@@ -2126,7 +2126,7 @@ export default {
 			history.replaceState(
 				{ sessionID: this.sessionID },
 				`MTGADraft Session ${this.sessionID}`,
-				`?session=${this.sessionID}`
+				`?session=${encodeURI(this.sessionID)}`
 			);
 			setCookie("sessionID", this.sessionID);
 		},
