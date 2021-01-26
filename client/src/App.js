@@ -814,8 +814,9 @@ export default {
 				}
 			});
 
-			this.socket.on("draftLogLive", draftLog => {
-				this.draftLogLive = draftLog;
+			this.socket.on("draftLogLive", data => {
+				if(data.log) this.draftLogLive = data.log;
+				if(data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
 			});
 
 			this.socket.on("pickAlert", data => {

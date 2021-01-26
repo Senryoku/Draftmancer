@@ -1044,7 +1044,7 @@ export function Session(id, owner, options) {
 			Connections[this.owner].socket.emit("startDraft");
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients)) {
-				Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
+				Connections[this.owner].socket.emit("draftLogLive", {log: this.draftLog});
 			}
 		}
 
@@ -1090,11 +1090,12 @@ export function Session(id, owner, options) {
 			Connections[userID].pickedCards.push(this.boosters[boosterIndex][idx]);
 		Connections[userID].pickedThisRound = true;
 
-		this.draftLog.users[userID].picks.push({
+		const pickData = {
 			pick: pickedCards,
 			burn: burnedCards,
 			booster: this.boosters[boosterIndex].map(c => c.id),
-		});
+		};
+		this.draftLog.users[userID].picks.push(pickData);
 
 		let cardsToRemove = pickedCards;
 		if (burnedCards)
@@ -1117,7 +1118,7 @@ export function Session(id, owner, options) {
 			["owner", "everyone"].includes(this.draftLogRecipients) &&
 			this.owner in Connections
 		) {
-			Connections[this.owner].socket.emit("draftLogLive", this.draftLog);
+			Connections[this.owner].socket.emit("draftLogLive", {userID: userID, pick: pickData});
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
 				cards: pickedCards.map(idx => this.boosters[boosterIndex][idx]),
@@ -1444,7 +1445,7 @@ export function Session(id, owner, options) {
 			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
-				Connections[userID].socket.emit("draftLogLive", this.draftLog);
+				Connections[userID].socket.emit("draftLogLive", {log: this.draftLog});
 		}
 	};
 
