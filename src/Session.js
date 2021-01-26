@@ -999,36 +999,12 @@ export function Session(id, owner, options) {
 		}
 
 		// Draft Log initialization
-		const carddata = {};
-		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
-		this.draftLog = {
-			version: "2.0",
-			sessionID: this.id,
-			time: Date.now(),
-			setRestriction: this.setRestriction,
-			boosters: this.boosters.map(b => b.map(c => c.id)),
-			carddata: carddata,
-			users: {},
-			teamDraft: this.teamDraft,
-		};
-		let virtualPlayers = this.getSortedVirtualPlayers();
-		for (let userID in virtualPlayers) {
-			if (virtualPlayers[userID].isBot) {
-				this.draftLog.users[userID] = {
-					isBot: true,
-					userName: virtualPlayers[userID].instance.name,
-					userID: virtualPlayers[userID].instance.id,
-					picks: [],
-				};
-			} else {
-				this.draftLog.users[userID] = {
-					userName: Connections[userID].userName,
-					userID: userID,
-					picks: [],
-				};
-			}
-		}
+		this.initLogs("draft");
+		this.draftLog.teamDraft = this.teamDraft;
+		for (let userID in this.draftLog.users)
+			this.draftLog.users[userID].picks = [];
 
+		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
@@ -1271,6 +1247,36 @@ export function Session(id, owner, options) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
+	this.initLogs = function(type) {
+		const carddata = {};
+		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		this.draftLog = {
+			version: "2.0",
+			type: type,
+			sessionID: this.id,
+			time: Date.now(),
+			setRestriction: this.setRestriction,
+			boosters: this.boosters.map(b => b.map(c => c.id)),
+			carddata: carddata,
+			users: {},
+		};
+		let virtualPlayers = this.getSortedVirtualPlayers();
+		for (let userID in virtualPlayers) {
+			if (virtualPlayers[userID].isBot) {
+				this.draftLog.users[userID] = {
+					isBot: true,
+					userName: virtualPlayers[userID].instance.name,
+					userID: virtualPlayers[userID].instance.id,
+				};
+			} else {
+				this.draftLog.users[userID] = {
+					userName: Connections[userID].userName,
+					userID: userID,
+				};
+			}
+		}
+	}
+
 	this.getStrippedLog = function() {
 		const strippedLog = {
 			version: this.draftLog.version,	
@@ -1331,14 +1337,21 @@ export function Session(id, owner, options) {
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		})) return;
 
+		this.initLogs("sealed");
+		const carddata = {};
+		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		this.draftLog.boosters = this.boosters.map(b => b.map(c => c.id));
+		this.draftLog.carddata = carddata;
+
 		let idx = 0;
-		for (let user of this.users) {
-			Connections[user].socket.emit(
-				"setCardSelection",
-				this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer)
-			);
+		for (let userID of this.users) {
+			const cards =  this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
+			Connections[userID].socket.emit("setCardSelection", cards);
+			this.draftLog.users[userID].cards = cards.map(c => c.id);
 			++idx;
 		}
+
+		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
