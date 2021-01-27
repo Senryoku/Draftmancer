@@ -1339,11 +1339,7 @@ export function Session(id, owner, options) {
 		})) return;
 
 		this.initLogs("sealed");
-		const carddata = {};
-		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
 		this.draftLog.customBoosters = customBoosters;
-		this.draftLog.boosters = this.boosters.map(b => b.map(c => c.id));
-		this.draftLog.carddata = carddata;
 
 		let idx = 0;
 		for (let userID of this.users) {
