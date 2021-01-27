@@ -1247,6 +1247,15 @@ export function Session(id, owner, options) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
+	this.pauseDraft = function() {
+		if (!this.drafting || !this.countdownInterval) return;
+
+		this.stopCountdown();
+		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
+	};
+
+	///////////////////// Traditional Draft End  //////////////////////
+
 	this.initLogs = function(type = 'draft') {
 		const carddata = {};
 		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
@@ -1256,6 +1265,7 @@ export function Session(id, owner, options) {
 			sessionID: this.id,
 			time: Date.now(),
 			setRestriction: this.setRestriction,
+			useCustomBoosters: this.useCustomBoosters,
 			boosters: this.boosters.map(b => b.map(c => c.id)),
 			carddata: carddata,
 			users: {},
@@ -1318,15 +1328,6 @@ export function Session(id, owner, options) {
 		}
 	};
 
-	this.pauseDraft = function() {
-		if (!this.drafting || !this.countdownInterval) return;
-
-		this.stopCountdown();
-		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
-	};
-
-	///////////////////// Traditional Draft End  //////////////////////
-
 	this.distributeSealed = function(boostersPerPlayer, customBoosters) {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
@@ -1340,6 +1341,7 @@ export function Session(id, owner, options) {
 		this.initLogs("sealed");
 		const carddata = {};
 		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		this.draftLog.customBoosters = customBoosters;
 		this.draftLog.boosters = this.boosters.map(b => b.map(c => c.id));
 		this.draftLog.carddata = carddata;
 
