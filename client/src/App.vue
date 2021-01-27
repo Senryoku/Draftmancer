@@ -52,8 +52,11 @@
 				</div>
 			</span>
 			<div>
-				<button @click="displayedModal = 'draftLogs'" v-tooltip="'Displays logs of your previous drafts'">
-					Draft Logs
+				<button
+					@click="displayedModal = 'draftLogs'"
+					v-tooltip="'Displays logs of your previous drafts and sealed'"
+				>
+					Game Logs
 				</button>
 			</div>
 			<span>
@@ -1337,7 +1340,7 @@
 			<set-restriction slot="body" v-model="setRestriction"></set-restriction>
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
-			<h2 slot="header">Draft Logs</h2>
+			<h2 slot="header">Game Logs</h2>
 			<draft-log-history
 				slot="body"
 				:draftLogs="draftLogs"

@@ -277,6 +277,7 @@ export default {
 			return this.selectedLog.decklist;
 		},
 		tableSummary: function () {
+			// Aggregate information about each player
 			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
 				tableSummary.push({
@@ -290,7 +291,8 @@ export default {
 						: null,
 				});
 			}
-			while (Object.keys(tableSummary).length < 6 || Object.keys(tableSummary).length === 7)
+			// Add empty seats to better visualize the draft table
+			while (this.type === "draft" && Object.keys(tableSummary).length < 8)
 				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",

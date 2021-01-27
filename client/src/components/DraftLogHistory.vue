@@ -6,6 +6,10 @@
 				Import Draft Log
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
+			<span v-if="draftLogs.length >= 25"
+				><i class="fas fa-exclamation-triangle yellow"></i> Your history is full, new logs will overwrite the
+				oldest ones.</span
+			>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
 			No saved draft logs.
@@ -24,8 +28,8 @@
 					></i>
 					<i class="fas fa-lock" v-else></i>
 					<span>
-						{{ draftLog.type ? draftLog.type[0].toUpperCase() + draftLog.type.substring(1) : "Draft" }}
-						of Session '{{ draftLog.sessionID }}'
+						{{ printableType(draftLog.type) }}
+						- Session '{{ draftLog.sessionID }}'
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
 					</span>
 				</span>
@@ -160,6 +164,9 @@ export default {
 		},
 		toggle: function (idx) {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
+		},
+		printableType: function (type) {
+			return type ? type[0].toUpperCase() + type.substring(1) : "Draft";
 		},
 	},
 };
