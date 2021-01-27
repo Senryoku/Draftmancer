@@ -24,7 +24,8 @@
 					></i>
 					<i class="fas fa-lock" v-else></i>
 					<span>
-						Session '{{ draftLog.sessionID }}'
+						{{ draftLog.type ? draftLog.type[0].toUpperCase() + draftLog.type.substring(1) : "Draft" }}
+						of Session '{{ draftLog.sessionID }}'
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
 					</span>
 				</span>

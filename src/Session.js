@@ -1247,7 +1247,7 @@ export function Session(id, owner, options) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
-	this.initLogs = function(type) {
+	this.initLogs = function(type = 'draft') {
 		const carddata = {};
 		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
 		this.draftLog = {
@@ -1260,7 +1260,7 @@ export function Session(id, owner, options) {
 			carddata: carddata,
 			users: {},
 		};
-		let virtualPlayers = this.getSortedVirtualPlayers();
+		let virtualPlayers = type === 'draft' ? this.getSortedVirtualPlayers() : this.getSortedHumanPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
 				this.draftLog.users[userID] = {
@@ -1347,7 +1347,7 @@ export function Session(id, owner, options) {
 		for (let userID of this.users) {
 			const cards =  this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
 			Connections[userID].socket.emit("setCardSelection", cards);
-			this.draftLog.users[userID].cards = cards.map(c => c.id);
+			this.draftLog.users[userID].cards = cards.flat().map(c => c.id);
 			++idx;
 		}
 
@@ -1548,7 +1548,7 @@ export function Session(id, owner, options) {
 	};
 
 	// Includes disconnected players!
-	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
+	// Distribute order has to be deterministic (especially for the reconnect feature), uses this.userOrder
 	this.getSortedHumanPlayersIDs = function() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
 		return this.userOrder.filter(e => players.includes(e));

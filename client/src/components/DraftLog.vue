@@ -1,26 +1,27 @@
 <template>
 	<div v-if="draftlog.version === '2.0'">
-		<p>Click on a player to display the details of their draft.</p>
+		<!-- Table -->
 		<div>
+			<p>Click on a player to display their details.</p>
 			<ul
 				:class="{
-					'player-table': tableSummary.length <= 8,
-					'player-list': tableSummary.length > 8,
-					six: tableSummary.length === 6,
+					'player-table': type === 'draft' && tableSummary.length <= 8,
+					'player-list-log': type !== 'draft' || tableSummary.length > 8,
+					six: type === 'draft' && tableSummary.length === 6,
 				}"
 			>
 				<li
 					v-for="(log, index) of tableSummary"
 					:key="index"
 					:class="{
-						clickable: log.userName != '(empty)',
+						clickable: log.userName !== '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
-						teama: teamDraft && index % 2 === 0,
-						teamb: teamDraft && index % 2 === 1,
+						teama: type === 'draft' && teamDraft && index % 2 === 0,
+						teamb: type === 'draft' && teamDraft && index % 2 === 1,
 					}"
 					@click="
 						() => {
-							if (log.userName != '(empty)') displayOptions.detailsUserID = log.userID;
+							if (log.userName !== '(empty)') displayOptions.detailsUserID = log.userID;
 						}
 					"
 				>
@@ -31,9 +32,10 @@
 							v-if="log.hasDeck"
 							@click="displayOptions.category = 'Deck'"
 							v-tooltip="`${log.userName} submited their deck.`"
+							style="margin: 0 0.5em"
 						></i>
 					</div>
-					<span class="color-list">
+					<span class="color-list" v-if="log.colors">
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
 							:key="c"
@@ -46,6 +48,7 @@
 			</ul>
 		</div>
 
+		<!-- Cards of selected player -->
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
 			<template v-if="!draftlog.delayed">
 				<div class="section-title">
@@ -53,7 +56,7 @@
 					<div class="controls">
 						<select v-model="displayOptions.category">
 							<option>Cards</option>
-							<option>Picks</option>
+							<option v-if="type === 'draft'">Picks</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -83,7 +86,7 @@
 					</div>
 				</div>
 
-				<template v-if="displayOptions.category == 'Picks'">
+				<template v-if="displayOptions.category === 'Picks'">
 					<div v-for="p in picks" :key="p.key">
 						<h3>
 							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
@@ -96,7 +99,7 @@
 						></draft-log-pick>
 					</div>
 				</template>
-				<template v-else-if="displayOptions.category == 'Cards'">
+				<template v-else-if="displayOptions.category === 'Cards'">
 					<div class="log-container">
 						<card-pool
 							:cards="selectedLogCards"
@@ -108,7 +111,7 @@
 						</card-pool>
 					</div>
 				</template>
-				<template v-else-if="displayOptions.category == 'Deck'">
+				<template v-else-if="displayOptions.category === 'Deck'">
 					<div class="log-container">
 						<decklist
 							:list="selectedLogDecklist"
@@ -258,6 +261,9 @@ export default {
 		},
 	},
 	computed: {
+		type: function () {
+			return this.draftlog.type ? this.draftlog.type : "draft";
+		},
 		selectedLog: function () {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
@@ -277,7 +283,11 @@ export default {
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
 					hasDeck: !!this.draftlog.users[userID].decklist,
-					colors: this.colorsInCardList(this.draftlog.users[userID].cards),
+					colors: this.draftlog.users[userID].decklist
+						? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
+						: this.type === "draft"
+						? this.colorsInCardList(this.draftlog.users[userID].cards)
+						: null,
 				});
 			}
 			while (Object.keys(tableSummary).length < 6 || Object.keys(tableSummary).length === 7)
@@ -292,7 +302,7 @@ export default {
 			return this.draftlog.teamDraft === true;
 		},
 		picks: function () {
-			if (!this.selectedLog) return [];
+			if (!this.selectedLog || this.type !== "draft") return [];
 			let r = [];
 			let currPick = 0;
 			let currBooster = 0;
@@ -336,9 +346,10 @@ export default {
 }
 
 .mana-icon {
-	vertical-align: middle;
+	vertical-align: sub;
 }
 
+ul.player-list-log,
 ul.player-table {
 	display: flex;
 	flex-wrap: wrap;
@@ -346,27 +357,30 @@ ul.player-table {
 	--margin: 1rem;
 	--halflength: 4;
 }
-
 ul.player-table.six {
 	--halflength: 3;
 }
 
-ul.player-list li,
+ul.player-list-log li,
+ul.player-table li {
+	display: inline-flex;
+	justify-content: space-between;
+
+	border: 1px solid black;
+	margin: var(--margin);
+	padding: 0.5em;
+	border-radius: 0.2em;
+	background-color: #484848;
+}
+
 ul.player-table li {
 	width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
 	max-width: calc(100% / var(--halflength) - 1% - 2 * var(--margin) - 1em);
-	border: 1px solid black;
-	margin: var(--margin);
 	position: relative;
-	padding: 0.5em;
-	border-radius: 0.2em;
-
-	display: inline-flex;
-	justify-content: space-between;
 }
 
-ul.player-list > li {
-	margin-right: 0.5em;
+ul.player-list-log > li {
+	margin-right: 0.75em;
 }
 
 .color-list > img {
@@ -374,7 +388,7 @@ ul.player-list > li {
 	margin-right: 0.25em;
 }
 
-ul.player-list li.selected-player,
+ul.player-list-log li.selected-player,
 ul.player-table li.selected-player {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
