@@ -1393,7 +1393,8 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Is the session owner participating?</p>',
+							content:
+								'<p>Is the session owner participating?<br>If not, the owner will still be able to observe the picks of each player (as long as the logs are available). Mostly useful to tournament organizers.</p>',
 						}"
 					>
 						<label for="is-owner-player">Session owner is playing</label>
@@ -1514,6 +1515,24 @@
 						<label for="option-foil">Foil</label>
 						<div class="right">
 							<input type="checkbox" v-model="foil" id="option-foil" />
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Controls who is going to receive the game logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the game log. Useful for tournaments.</p>',
+						}"
+					>
+						<label for="draft-log-recipients">Send game logs to</label>
+						<div class="right">
+							<select v-model="draftLogRecipients" id="draft-log-recipients">
+								<option value="everyone">Everyone</option>
+								<option value="owner">Owner only</option>
+								<option value="delayed">Owner only, delayed</option>
+								<option value="none">No-one</option>
+							</select>
 						</div>
 					</div>
 				</div>
@@ -1645,24 +1664,6 @@
 								v-model.number="burnedCardsPerRound"
 								@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
 							/>
-						</div>
-					</div>
-					<div
-						class="line"
-						v-tooltip.right="{
-							classes: 'option-tooltip',
-							content:
-								'<p>Controls who is going to receive the draft logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the draft log. Useful for tournaments.</p>',
-						}"
-					>
-						<label for="draft-log-recipients">Send draft logs to</label>
-						<div class="right">
-							<select v-model="draftLogRecipients" id="draft-log-recipients">
-								<option value="everyone">Everyone</option>
-								<option value="owner">Owner only</option>
-								<option value="delayed">Owner only, delayed</option>
-								<option value="none">No-one</option>
-							</select>
 						</div>
 					</div>
 				</div>
