@@ -288,7 +288,7 @@ export default {
 					hasDeck: !!this.draftlog.users[userID].decklist,
 					colors: this.draftlog.users[userID].decklist
 						? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
-						: this.type === "Draft"
+						: this.type.includes("Draft")
 						? this.colorsInCardList(this.draftlog.users[userID].cards)
 						: null,
 				});
