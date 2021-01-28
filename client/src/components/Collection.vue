@@ -128,7 +128,6 @@ export default {
 				others: baseSet("others", "Other Sets"),
 			};
 			for (let s of Constant.MTGASets) stats[s] = baseSet(s, SetsInfos[s].fullName);
-			// FIXME: Get Collection & Missing Cards from server!
 			for (let id in MTGACards) {
 				const card = MTGACards[id];
 				const completeSet = Constant.MTGASets.includes(card.set);

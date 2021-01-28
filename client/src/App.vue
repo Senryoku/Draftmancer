@@ -1174,18 +1174,14 @@
 						<div class="welcome-section">
 							<em>January 28, 2021</em>
 							<ul>
-								<li>Extended logs to other game modes.</li>
+								<li>Extended logs and share deck feature to other game modes.</li>
+								<li>Collection viewer updated for Kaldheim.</li>
 							</ul>
 							<em>January 20, 2021</em>
 							<ul>
 								<li>
 									<img src="img/sets/khm.svg" class="set-icon" style="--invertedness: 100%" />
 									Kaldheim is now available!<br />
-									<span style="font-size: 0.9em"
-										><i class="fas fa-exclamation-triangle yellow"></i> A few cards are still
-										missing their English version or a high-quality picture, this will be fixed in
-										the upcoming days.</span
-									>
 								</li>
 							</ul>
 						</div>
