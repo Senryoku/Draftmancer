@@ -1172,6 +1172,10 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>January 28, 2021</em>
+							<ul>
+								<li>Extended logs to other game modes.</li>
+							</ul>
 							<em>January 20, 2021</em>
 							<ul>
 								<li>
@@ -1183,22 +1187,6 @@
 										the upcoming days.</span
 									>
 								</li>
-							</ul>
-							<em>November 06, 2020</em>
-							<ul>
-								<li>
-									Implemented support for cards outside of MtG: Arena! Try drafting some
-									<img
-										data-v-7f621d22=""
-										src="img/sets/mb1.svg"
-										class="set-icon"
-										style="--invertedness: 100%"
-									/>
-									Mystery Boosters or any Vintage Cube! This is a massive rewrite, so if you spot any
-									problem, please get in touch via email or
-									<a href="https://discord.gg/XscXXNw" target="_blank">our Discord</a>.
-								</li>
-								<li>Added a new setting allowing for multiple picks per pack.</li>
 							</ul>
 						</div>
 					</div>

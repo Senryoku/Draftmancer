@@ -1,5 +1,9 @@
 [
 	{
+		"date": "28/01/2021",
+		"notes": ["Extended logs to other game modes."]
+	},
+	{
 		"date": "20/01/2021",
 		"notes": ["Added preliminary Kaldheim support."]
 	},
