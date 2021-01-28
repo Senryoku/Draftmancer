@@ -755,12 +755,20 @@ export function Session(id, owner, options) {
 			});
 			Connections[user].socket.emit("startWinstonDraft", this.winstonDraftState);
 		}
+
+		this.initLogs("Winston Draft");
+		for (let userID in this.draftLog.users)
+			this.draftLog.users[userID].picks = [];
+
 		this.winstonNextRound();
 		return true;
 	};
 
 	this.endWinstonDraft = function() {
 		logSession("WinstonDraft", this);
+		for(let uid of this.users)
+			this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+		this.sendLogs();
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.winstonDraftState = null;
 		this.drafting = false;
@@ -796,24 +804,36 @@ export function Session(id, owner, options) {
 			return false;
 		}
 
+
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
 		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
 			s.piles[s.currentPile].push(s.cardPool.pop());
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
-			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", s.cardPool.pop());
+			const card = s.cardPool.pop();
+			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
+			this.draftLog.users[s.currentPlayer()].picks.push({
+				randomCard: card.id,
+				piles: [...s.piles]
+			});
 			this.winstonNextRound();
 		} else {
 			++s.currentPile;
 			if (s.piles[s.currentPile].length === 0) this.winstonSkipPile();
 			else for (let user of this.users) Connections[user].socket.emit("winstonDraftSync", s.syncData());
 		}
+		
+
 		return true;
 	};
 
 	this.winstonTakePile = function() {
 		const s = this.winstonDraftState;
 		if (!this.drafting || !s) return false;
+		this.draftLog.users[s.currentPlayer()].picks.push({
+			pickedPile: s.currentPile,
+			piles: [...s.piles]
+		});
 		Connections[s.currentPlayer()].pickedCards = Connections[s.currentPlayer()].pickedCards.concat(
 			s.piles[s.currentPile]
 		);
@@ -855,11 +875,18 @@ export function Session(id, owner, options) {
 			Connections[user].socket.emit("startGridDraft", this.gridDraftState.syncData());
 		}
 
+		this.initLogs("Grid Draft");
+		for (let userID in this.draftLog.users)
+			this.draftLog.users[userID].picks = [];
+
 		return true;
 	};
 
 	this.endGridDraft = function() {
 		logSession("GridDraft", this);
+		for(let uid of this.users)
+			this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+		this.sendLogs();
 		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
 		this.gridDraftState = null;
 		this.drafting = false;
@@ -888,16 +915,21 @@ export function Session(id, owner, options) {
 		const s = this.gridDraftState;
 		if (!this.drafting || !s) return false;
 
+		const log = { pick: [], booster: s.boosters[0].map(c => c ? c.id : null)};
+
 		let pickedCards = 0;
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+				log.pick.push(idx);
 				s.boosters[0][idx] = null;
 				++pickedCards;
 			}
 		}
+
+		this.draftLog.users[s.currentPlayer()].picks.push(log);
 
 		if (pickedCards === 0) return false;
 
@@ -928,12 +960,20 @@ export function Session(id, owner, options) {
 			Connections[user].socket.emit("startRochesterDraft", this.rochesterDraftState.syncData());
 		}
 
+		this.initLogs("Rochester Draft");
+		for (let userID in this.draftLog.users)
+			this.draftLog.users[userID].picks = [];
+
 		return true;
 	};
 
 	this.endRochesterDraft = function() {
 		logSession("RochesterDraft", this);
-		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
+		for(let uid of this.users) {
+			this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			Connections[uid].socket.emit("rochesterDraftEnd");
+		}
+		this.sendLogs();
 		this.rochesterDraftState = null;
 		this.drafting = false;
 		this.disconnectedUsers = {};
@@ -962,8 +1002,13 @@ export function Session(id, owner, options) {
 		const s = this.rochesterDraftState;
 		if (!this.drafting || !s) return false;
 
-		const cid = s.boosters[0][idx];
-		Connections[s.currentPlayer()].pickedCards.push(cid);
+		Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+		 
+		this.draftLog.users[s.currentPlayer()].picks.push({
+			pick: [idx],
+			booster: s.boosters[0].map(c => c.id),
+		});
+
 		s.boosters[0].splice(idx, 1);
 		/*
 		const msg = {
@@ -999,36 +1044,12 @@ export function Session(id, owner, options) {
 		}
 
 		// Draft Log initialization
-		const carddata = {};
-		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
-		this.draftLog = {
-			version: "2.0",
-			sessionID: this.id,
-			time: Date.now(),
-			setRestriction: this.setRestriction,
-			boosters: this.boosters.map(b => b.map(c => c.id)),
-			carddata: carddata,
-			users: {},
-			teamDraft: this.teamDraft,
-		};
-		let virtualPlayers = this.getSortedVirtualPlayers();
-		for (let userID in virtualPlayers) {
-			if (virtualPlayers[userID].isBot) {
-				this.draftLog.users[userID] = {
-					isBot: true,
-					userName: virtualPlayers[userID].instance.name,
-					userID: virtualPlayers[userID].instance.id,
-					picks: [],
-				};
-			} else {
-				this.draftLog.users[userID] = {
-					userName: Connections[userID].userName,
-					userID: userID,
-					picks: [],
-				};
-			}
-		}
+		this.initLogs("Draft");
+		this.draftLog.teamDraft = this.teamDraft;
+		for (let userID in this.draftLog.users)
+			this.draftLog.users[userID].picks = [];
 
+		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
@@ -1271,6 +1292,48 @@ export function Session(id, owner, options) {
 		console.log(`Session ${this.id} draft ended.`);
 	};
 
+	this.pauseDraft = function() {
+		if (!this.drafting || !this.countdownInterval) return;
+
+		this.stopCountdown();
+		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
+	};
+
+	///////////////////// Traditional Draft End  //////////////////////
+
+	this.initLogs = function(type = 'Draft') {
+		const carddata = {};
+		if(this.boosters) 
+			for (let c of this.boosters.flat()) 
+				carddata[c.id] = Cards[c.id];
+		this.draftLog = {
+			version: "2.0",
+			type: type,
+			sessionID: this.id,
+			time: Date.now(),
+			setRestriction: this.setRestriction,
+			useCustomBoosters: this.useCustomBoosters,
+			boosters: this.boosters.map(b => b.map(c => c.id)),
+			carddata: carddata,
+			users: {},
+		};
+		let virtualPlayers = type === 'Draft' ? this.getSortedVirtualPlayers() : this.getSortedHumanPlayers();
+		for (let userID in virtualPlayers) {
+			if (virtualPlayers[userID].isBot) {
+				this.draftLog.users[userID] = {
+					isBot: true,
+					userName: virtualPlayers[userID].instance.name,
+					userID: virtualPlayers[userID].instance.id,
+				};
+			} else {
+				this.draftLog.users[userID] = {
+					userName: Connections[userID].userName,
+					userID: userID,
+				};
+			}
+		}
+	}
+
 	this.getStrippedLog = function() {
 		const strippedLog = {
 			version: this.draftLog.version,	
@@ -1312,15 +1375,6 @@ export function Session(id, owner, options) {
 		}
 	};
 
-	this.pauseDraft = function() {
-		if (!this.drafting || !this.countdownInterval) return;
-
-		this.stopCountdown();
-		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
-	};
-
-	///////////////////// Traditional Draft End  //////////////////////
-
 	this.distributeSealed = function(boostersPerPlayer, customBoosters) {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
@@ -1331,14 +1385,18 @@ export function Session(id, owner, options) {
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		})) return;
 
+		this.initLogs("Sealed");
+		this.draftLog.customBoosters = customBoosters;
+
 		let idx = 0;
-		for (let user of this.users) {
-			Connections[user].socket.emit(
-				"setCardSelection",
-				this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer)
-			);
+		for (let userID of this.users) {
+			const cards =  this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
+			Connections[userID].socket.emit("setCardSelection", cards);
+			this.draftLog.users[userID].cards = cards.flat().map(c => c.id);
 			++idx;
 		}
+
+		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
@@ -1356,17 +1414,23 @@ export function Session(id, owner, options) {
 	this.distributeJumpstart = function() {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
+		this.initLogs("Jumpstart");
+		this.draftLog.carddata = {};
+
 		for (let user of this.users) {
 			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-			Connections[user].socket.emit(
-				"setCardSelection",
-				boosters
-					.map(b => b.cards.map(cid => getUnique(cid)))
-					.reduce((arr, val) => {
-						arr.push(val);
-						return arr;
-					}, [])
-			);
+			const cards = boosters
+				.map(b => b.cards.map(cid => getUnique(cid)))
+				.reduce((arr, val) => {
+					arr.push(val);
+					return arr;
+				}, []);
+
+			this.draftLog.users[user].cards = cards.flat().map(c => c.id);
+			for(let cid of this.draftLog.users[user].cards)
+				this.draftLog.carddata[cid] = Cards[cid];
+
+			Connections[user].socket.emit("setCardSelection", cards);
 			Connections[user].socket.emit("message", {
 				icon: "success",
 				imageUrl: "/img/2JumpstartBoosters-min.png",
@@ -1376,6 +1440,8 @@ export function Session(id, owner, options) {
 				timer: 2000,
 			});
 		}
+
+		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
@@ -1535,7 +1601,7 @@ export function Session(id, owner, options) {
 	};
 
 	// Includes disconnected players!
-	// Distribute order has to be deterministic (especially for the reconnect feature), sorting by ID is an easy solution...
+	// Distribute order has to be deterministic (especially for the reconnect feature), uses this.userOrder
 	this.getSortedHumanPlayersIDs = function() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
 		return this.userOrder.filter(e => players.includes(e));

@@ -9,7 +9,7 @@
 		>
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
-				<span>Added basics:</span>
+				<span v-if="landcount > 0">Added basics:</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ list.lands[c] }}

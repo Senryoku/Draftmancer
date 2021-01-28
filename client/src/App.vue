@@ -52,8 +52,11 @@
 				</div>
 			</span>
 			<div>
-				<button @click="displayedModal = 'draftLogs'" v-tooltip="'Displays logs of your previous drafts'">
-					Draft Logs
+				<button
+					@click="displayedModal = 'draftLogs'"
+					v-tooltip="'Displays logs of your previous drafts and sealed'"
+				>
+					Game Logs
 				</button>
 			</div>
 			<span>
@@ -1169,6 +1172,10 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>January 28, 2021</em>
+							<ul>
+								<li>Extended logs to other game modes.</li>
+							</ul>
 							<em>January 20, 2021</em>
 							<ul>
 								<li>
@@ -1180,22 +1187,6 @@
 										the upcoming days.</span
 									>
 								</li>
-							</ul>
-							<em>November 06, 2020</em>
-							<ul>
-								<li>
-									Implemented support for cards outside of MtG: Arena! Try drafting some
-									<img
-										data-v-7f621d22=""
-										src="img/sets/mb1.svg"
-										class="set-icon"
-										style="--invertedness: 100%"
-									/>
-									Mystery Boosters or any Vintage Cube! This is a massive rewrite, so if you spot any
-									problem, please get in touch via email or
-									<a href="https://discord.gg/XscXXNw" target="_blank">our Discord</a>.
-								</li>
-								<li>Added a new setting allowing for multiple picks per pack.</li>
 							</ul>
 						</div>
 					</div>
@@ -1337,7 +1328,7 @@
 			<set-restriction slot="body" v-model="setRestriction"></set-restriction>
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
-			<h2 slot="header">Draft Logs</h2>
+			<h2 slot="header">Game Logs</h2>
 			<draft-log-history
 				slot="body"
 				:draftLogs="draftLogs"
@@ -1390,7 +1381,8 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Is the session owner participating?</p>',
+							content:
+								'<p>Is the session owner participating?<br>If not, the owner will still be able to observe the picks of each player (as long as the logs are available). Mostly useful to tournament organizers.</p>',
 						}"
 					>
 						<label for="is-owner-player">Session owner is playing</label>
@@ -1511,6 +1503,24 @@
 						<label for="option-foil">Foil</label>
 						<div class="right">
 							<input type="checkbox" v-model="foil" id="option-foil" />
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Controls who is going to receive the game logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the game log. Useful for tournaments.</p>',
+						}"
+					>
+						<label for="draft-log-recipients">Send game logs to</label>
+						<div class="right">
+							<select v-model="draftLogRecipients" id="draft-log-recipients">
+								<option value="everyone">Everyone</option>
+								<option value="owner">Owner only</option>
+								<option value="delayed">Owner only, delayed</option>
+								<option value="none">No-one</option>
+							</select>
 						</div>
 					</div>
 				</div>
@@ -1642,24 +1652,6 @@
 								v-model.number="burnedCardsPerRound"
 								@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
 							/>
-						</div>
-					</div>
-					<div
-						class="line"
-						v-tooltip.right="{
-							classes: 'option-tooltip',
-							content:
-								'<p>Controls who is going to receive the draft logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the draft log. Useful for tournaments.</p>',
-						}"
-					>
-						<label for="draft-log-recipients">Send draft logs to</label>
-						<div class="right">
-							<select v-model="draftLogRecipients" id="draft-log-recipients">
-								<option value="everyone">Everyone</option>
-								<option value="owner">Owner only</option>
-								<option value="delayed">Owner only, delayed</option>
-								<option value="none">No-one</option>
-							</select>
 						</div>
 					</div>
 				</div>
