@@ -166,7 +166,7 @@ export default {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
 		printableType: function (type) {
-			return type ? type[0].toUpperCase() + type.substring(1) : "Draft";
+			return type ? type : "Draft";
 		},
 	},
 };

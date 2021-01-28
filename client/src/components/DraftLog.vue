@@ -5,8 +5,8 @@
 			<p>Click on a player to display their details.</p>
 			<ul
 				:class="{
-					'player-table': type === 'draft' && tableSummary.length <= 8,
-					'player-list-log': type !== 'draft' || tableSummary.length > 8,
+					'player-table': type === 'Draft' && tableSummary.length <= 8,
+					'player-list-log': type !== 'Draft' || tableSummary.length > 8,
 					six: type === 'draft' && tableSummary.length === 6,
 				}"
 			>
@@ -16,8 +16,8 @@
 					:class="{
 						clickable: log.userName !== '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
-						teama: type === 'draft' && teamDraft && index % 2 === 0,
-						teamb: type === 'draft' && teamDraft && index % 2 === 1,
+						teama: type === 'Draft' && teamDraft && index % 2 === 0,
+						teamb: type === 'Draft' && teamDraft && index % 2 === 1,
 					}"
 					@click="
 						() => {
@@ -56,7 +56,7 @@
 					<div class="controls">
 						<select v-model="displayOptions.category">
 							<option>Cards</option>
-							<option v-if="type === 'draft'">Picks</option>
+							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -90,12 +90,13 @@
 					<div v-for="p in picks" :key="p.key">
 						<h3>
 							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
-							{{ draftlog.carddata[p.data.booster[p.data.pick]].name }}
+							{{ p.data.pick.map((idx) => draftlog.carddata[p.data.booster[idx]].name).join(", ") }}
 						</h3>
 						<draft-log-pick
 							:pick="p.data"
 							:carddata="draftlog.carddata"
 							:language="language"
+							:type="draftlog.type"
 						></draft-log-pick>
 					</div>
 				</template>
@@ -262,7 +263,7 @@ export default {
 	},
 	computed: {
 		type: function () {
-			return this.draftlog.type ? this.draftlog.type : "draft";
+			return this.draftlog.type ? this.draftlog.type : "Draft";
 		},
 		selectedLog: function () {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
@@ -286,13 +287,13 @@ export default {
 					hasDeck: !!this.draftlog.users[userID].decklist,
 					colors: this.draftlog.users[userID].decklist
 						? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
-						: this.type === "draft"
+						: this.type === "Draft"
 						? this.colorsInCardList(this.draftlog.users[userID].cards)
 						: null,
 				});
 			}
 			// Add empty seats to better visualize the draft table
-			while (this.type === "draft" && Object.keys(tableSummary).length < 8)
+			while (this.type === "Draft" && Object.keys(tableSummary).length < 8)
 				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",
@@ -304,25 +305,65 @@ export default {
 			return this.draftlog.teamDraft === true;
 		},
 		picks: function () {
-			if (!this.selectedLog || this.type !== "draft") return [];
-			let r = [];
-			let currPick = 0;
-			let currBooster = 0;
-			while (currPick < this.selectedLog.picks.length) {
-				let boosterSize = this.selectedLog.picks[currPick].booster.length;
-				for (let i = 0; i < boosterSize; ++i) {
-					r.push({
-						key: currPick,
-						data: this.selectedLog.picks[currPick],
-						packNumber: currBooster,
-						pickNumber: i,
-					});
-					++currPick;
-					if (currPick >= this.selectedLog.picks.length) break;
+			if (!this.selectedLog || !this.type.includes("Draft")) return [];
+			switch (this.type) {
+				default:
+					return [];
+				case "Draft": {
+					let r = [];
+					let currPick = 0;
+					let currBooster = 0;
+					// FIX ME: Broken if picking/burning multiple cards!
+					while (currPick < this.selectedLog.picks.length) {
+						let boosterSize = this.selectedLog.picks[currPick].booster.length;
+						for (let i = 0; i < boosterSize; ++i) {
+							r.push({
+								key: currPick,
+								data: this.selectedLog.picks[currPick],
+								packNumber: currBooster,
+								pickNumber: i,
+							});
+							++currPick;
+							if (currPick >= this.selectedLog.picks.length) break;
+						}
+						++currBooster;
+					}
+					return r;
 				}
-				++currBooster;
+				case "Rochester Draft": {
+					let r = [];
+					let currPick = 0;
+					let currBooster = 0;
+					while (currPick < this.selectedLog.picks.length) {
+						let boosterSize = this.selectedLog.picks[currPick].booster.length / 2;
+						for (let i = 0; i < boosterSize; ++i) {
+							r.push({
+								key: currPick,
+								data: this.selectedLog.picks[currPick],
+								packNumber: currBooster,
+								pickNumber: i,
+							});
+							++currPick;
+							if (currPick >= this.selectedLog.picks.length) break;
+						}
+						++currBooster;
+					}
+					return r;
+				}
+				case "Winston Draft": // TODO
+					return [];
+				case "Grid Draft": {
+					let key = 0;
+					return this.selectedLog.picks.map((p) => {
+						return {
+							key: key,
+							data: p,
+							packNumber: key++,
+							pickNumber: 0,
+						};
+					});
+				}
 			}
-			return r;
 		},
 	},
 	watch: {
