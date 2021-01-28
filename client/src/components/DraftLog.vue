@@ -7,7 +7,7 @@
 				:class="{
 					'player-table': type === 'Draft' && tableSummary.length <= 8,
 					'player-list-log': type !== 'Draft' || tableSummary.length > 8,
-					six: type === 'draft' && tableSummary.length === 6,
+					six: type === 'Draft' && tableSummary.length === 6,
 				}"
 			>
 				<li
@@ -288,7 +288,7 @@ export default {
 					hasDeck: !!this.draftlog.users[userID].decklist,
 					colors: this.draftlog.users[userID].decklist
 						? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
-						: this.type.includes("Draft")
+						: this.type === "Draft"
 						? this.colorsInCardList(this.draftlog.users[userID].cards)
 						: null,
 				});
