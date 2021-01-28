@@ -1,5 +1,15 @@
 <template>
-	<div class="card-container grid3x3" v-if="type === 'Grid Draft'">
+	<div class="card-container" v-if="type === 'Draft' || type === 'Rochester Draft'">
+		<card
+			v-for="(cid, index) in pick.booster"
+			:key="index"
+			:card="carddata[cid]"
+			:language="language"
+			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
+			:lazyLoad="true"
+		></card>
+	</div>
+	<div class="card-container grid3x3" v-else-if="type === 'Grid Draft'">
 		<template v-for="(cid, index) in pick.booster">
 			<card
 				v-if="cid"
@@ -12,18 +22,8 @@
 			<i v-else :key="index" class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
 		</template>
 	</div>
-	<div class="card-container" v-else-if="type === 'Winston Draft'">WIP</div>
-	<!-- Draft & Rochester Draft -->
-	<div class="card-container" v-else>
-		<card
-			v-for="(cid, index) in pick.booster"
-			:key="index"
-			:card="carddata[cid]"
-			:language="language"
-			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
-			:lazyLoad="true"
-		></card>
-	</div>
+	<!-- Winston Draft; Fail safe -->
+	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
 <script>

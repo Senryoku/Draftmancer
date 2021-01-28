@@ -56,6 +56,7 @@
 					<div class="controls">
 						<select v-model="displayOptions.category">
 							<option>Cards</option>
+							<!-- Winston Draft picks display is not implemented -->
 							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
