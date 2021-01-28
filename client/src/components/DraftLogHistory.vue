@@ -2,8 +2,8 @@
 	<div class="draft-log-history">
 		<input type="file" id="log-input" @change="importLog" style="display: none" accept=".txt" />
 		<div class="controls">
-			<button onclick="document.querySelector('#log-input').click()" v-tooltip="'Import a saved draft log.'">
-				Import Draft Log
+			<button onclick="document.querySelector('#log-input').click()" v-tooltip="'Import a saved game log.'">
+				Import Game Log
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 			<span v-if="draftLogs.length >= 25"

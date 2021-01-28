@@ -214,7 +214,7 @@ const socketCallbacks = {
 			else ack({ code: 0 });
 		}
 	},
-	"rochesterDraftPick": function(userID, sessionID, choice, ack) {
+	"rochesterDraftPick": function(userID, sessionID, choices, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.rochesterDraftState) {
 			if (ack) ack({ code: 3, error: "Not drafting." });
@@ -226,7 +226,7 @@ const socketCallbacks = {
 			return;
 		}
 
-		const r = sess.rochesterDraftPick(choice);
+		const r = sess.rochesterDraftPick(choices[0]);
 
 		if (ack) {
 			if (!r) ack({ code: 1, error: "Internal error." });

@@ -305,48 +305,31 @@ export default {
 			return this.draftlog.teamDraft === true;
 		},
 		picks: function () {
-			if (!this.selectedLog || !this.type.includes("Draft")) return [];
+			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
 					return [];
+				case "Rochester Draft":
 				case "Draft": {
+					// Infer PackNumber & PickNumber
 					let r = [];
 					let currPick = 0;
-					let currBooster = 0;
-					// FIX ME: Broken if picking/burning multiple cards!
+					let currBooster = -1;
+					let lastSize = 0;
+					let currPickNumber = 0;
 					while (currPick < this.selectedLog.picks.length) {
-						let boosterSize = this.selectedLog.picks[currPick].booster.length;
-						for (let i = 0; i < boosterSize; ++i) {
-							r.push({
-								key: currPick,
-								data: this.selectedLog.picks[currPick],
-								packNumber: currBooster,
-								pickNumber: i,
-							});
-							++currPick;
-							if (currPick >= this.selectedLog.picks.length) break;
-						}
-						++currBooster;
-					}
-					return r;
-				}
-				case "Rochester Draft": {
-					let r = [];
-					let currPick = 0;
-					let currBooster = 0;
-					while (currPick < this.selectedLog.picks.length) {
-						let boosterSize = this.selectedLog.picks[currPick].booster.length / 2;
-						for (let i = 0; i < boosterSize; ++i) {
-							r.push({
-								key: currPick,
-								data: this.selectedLog.picks[currPick],
-								packNumber: currBooster,
-								pickNumber: i,
-							});
-							++currPick;
-							if (currPick >= this.selectedLog.picks.length) break;
-						}
-						++currBooster;
+						if (this.selectedLog.picks[currPick].booster.length > lastSize) {
+							++currBooster;
+							currPickNumber = 0;
+						} else ++currPickNumber;
+						r.push({
+							key: currPick,
+							data: this.selectedLog.picks[currPick],
+							packNumber: currBooster,
+							pickNumber: currPickNumber,
+						});
+						lastSize = this.selectedLog.picks[currPick].booster.length;
+						++currPick;
 					}
 					return r;
 				}

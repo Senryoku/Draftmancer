@@ -969,10 +969,11 @@ export function Session(id, owner, options) {
 
 	this.endRochesterDraft = function() {
 		logSession("RochesterDraft", this);
-		for(let uid of this.users)
+		for(let uid of this.users) {
 			this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			Connections[uid].socket.emit("rochesterDraftEnd");
+		}
 		this.sendLogs();
-		for (let user of this.users) Connections[user].socket.emit("rochesterDraftEnd");
 		this.rochesterDraftState = null;
 		this.drafting = false;
 		this.disconnectedUsers = {};
@@ -1300,9 +1301,11 @@ export function Session(id, owner, options) {
 
 	///////////////////// Traditional Draft End  //////////////////////
 
-	this.initLogs = function(type = 'draft') {
+	this.initLogs = function(type = 'Draft') {
 		const carddata = {};
-		for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		if(this.boosters) 
+			for (let c of this.boosters.flat()) 
+				carddata[c.id] = Cards[c.id];
 		this.draftLog = {
 			version: "2.0",
 			type: type,
@@ -1314,7 +1317,7 @@ export function Session(id, owner, options) {
 			carddata: carddata,
 			users: {},
 		};
-		let virtualPlayers = type === 'draft' ? this.getSortedVirtualPlayers() : this.getSortedHumanPlayers();
+		let virtualPlayers = type === 'Draft' ? this.getSortedVirtualPlayers() : this.getSortedHumanPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
 				this.draftLog.users[userID] = {
@@ -1411,17 +1414,23 @@ export function Session(id, owner, options) {
 	this.distributeJumpstart = function() {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
+		this.initLogs("Jumpstart");
+		this.draftLog.carddata = {};
+
 		for (let user of this.users) {
 			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-			Connections[user].socket.emit(
-				"setCardSelection",
-				boosters
-					.map(b => b.cards.map(cid => getUnique(cid)))
-					.reduce((arr, val) => {
-						arr.push(val);
-						return arr;
-					}, [])
-			);
+			const cards = boosters
+				.map(b => b.cards.map(cid => getUnique(cid)))
+				.reduce((arr, val) => {
+					arr.push(val);
+					return arr;
+				}, []);
+
+			this.draftLog.users[user].cards = cards.flat().map(c => c.id);
+			for(let cid of this.draftLog.users[user].cards)
+				this.draftLog.carddata[cid] = Cards[cid];
+
+			Connections[user].socket.emit("setCardSelection", cards);
 			Connections[user].socket.emit("message", {
 				icon: "success",
 				imageUrl: "/img/2JumpstartBoosters-min.png",
@@ -1431,6 +1440,8 @@ export function Session(id, owner, options) {
 				timer: 2000,
 			});
 		}
+
+		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {

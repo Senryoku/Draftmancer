@@ -101,7 +101,7 @@ describe("Rochester Draft", function() {
 				// Pick randomly and retry on error
 				const pick = state => {
 					const cl = clients[c];
-					cl.emit("rochesterDraftPick", Math.floor(Math.random() * state.booster.length), response => {
+					cl.emit("rochesterDraftPick", [Math.floor(Math.random() * state.booster.length)], response => {
 						if (response.code !== 0) pick(state);
 					});
 				};
@@ -116,7 +116,7 @@ describe("Rochester Draft", function() {
 			}
 			// Pick the first card
 			let currPlayer = clients.findIndex(c => c.query.userID == rochesterDraftState.currentPlayer);
-			clients[currPlayer].emit("rochesterDraftPick", 0);
+			clients[currPlayer].emit("rochesterDraftPick", [0]);
 		});
 	};
 
