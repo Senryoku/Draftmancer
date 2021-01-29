@@ -73,6 +73,7 @@
 						<button
 							@click="downloadMPT(selectedLog.userID)"
 							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
+							v-if="type === 'Draft'"
 						>
 							<i class="fas fa-file-download"></i> Download log in MTGO format
 						</button>
@@ -81,6 +82,7 @@
 							v-tooltip="
 								`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`
 							"
+							v-if="type === 'Draft'"
 						>
 							<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
 						</button>
