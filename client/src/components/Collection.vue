@@ -76,7 +76,7 @@
 						v-for="card in selectedSet[missingCardsRarity].filter(
 							(c) => (showNonBooster || c.in_booster) && c.count < 4
 						)"
-						:key="card.uniqueID"
+						:key="card.arena_id"
 						:card="card"
 						:language="language"
 					></missing-card>
