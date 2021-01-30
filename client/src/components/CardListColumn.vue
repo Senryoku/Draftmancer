@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import MTGACards from "../../public/data/MTGACards.json";
+import MTGAAlternates from "../MTGAAlternates.js";
 import Card from "./Card.vue";
 
 export default {
@@ -37,14 +37,13 @@ export default {
 	computed: {
 		missingCard: function () {
 			let r = {};
-			const MTGACardsArr = Object.values(MTGACards);
 			for (let card of this.column) {
 				if (card.arena_id in this.collection) {
 					r[card.id] = "Present";
 				} else {
-					const alternates = MTGACardsArr.filter((c) => c && c.name === card.name && c.arena_id);
-					if (alternates.length === 0) r[card.id] = "NonExistent";
-					else if (alternates.some((c) => this.collection[c.arena_id] > 0)) r[card.id] = "Equivalent";
+					const alternates = MTGAAlternates[card.name];
+					if (!alternates || alternates.length === 0) r[card.id] = "NonExistent";
+					else if (alternates.some((cid) => this.collection[cid] > 0)) r[card.id] = "Equivalent";
 					else r[card.id] = "Missing";
 				}
 			}
