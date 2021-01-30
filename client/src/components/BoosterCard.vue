@@ -34,7 +34,7 @@ export default {
 		selected: { type: Boolean, default: false },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
-		collectionStatus: { type: String, default: null },
+		collectionStatus: { type: Number, default: null },
 	},
 	methods: {
 		burnCard: function (e) {
