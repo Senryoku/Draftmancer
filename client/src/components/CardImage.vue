@@ -100,6 +100,12 @@ img {
 	pointer-events: auto;
 }
 
+.booster .flip-button {
+	top: -0.75em;
+	right: -0.9em;
+	padding: 0.5em;
+}
+
 .flip-icon {
 	transition: transform 0.2s, text-shadow 0.2s;
 	transform: rotateX(45deg) skewX(-10deg);
