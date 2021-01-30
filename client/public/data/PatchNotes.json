@@ -1,5 +1,11 @@
 [
 	{
+		"date": "30/01/2021",
+		"notes": [
+			"Added a reminder of the number of owned copies of each card while drafting (when applicable and if a MTGA Collection has been uploaded). Can be disabled in the Collection statistics panel."
+		]
+	},
+	{
 		"date": "28/01/2021",
 		"notes": ["Extended logs to other game modes.", "Collection viewer updated for Kaldheim."]
 	},

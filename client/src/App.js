@@ -161,6 +161,7 @@ export default {
 			hideSessionID: getCookie("hideSessionID", "false") === "true",
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
+			displayCollectionStatus: getCookie("displayCollectionStatus", "true") === "true",
 			sets: Constant.MTGASets,
 			primarySets: Constant.PrimarySets,
 			cubeLists: Constant.CubeLists,
@@ -1284,6 +1285,10 @@ export default {
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
+		collectionStatus: function(card) {
+			if(!this.displayCollectionStatus || !this.collection || !card.arena_id || card.type.includes("Basic")) return null;
+			return card.arena_id in this.collection ? this.collection[card.arena_id] : 0;
+		},
 		parseMTGALog: function(e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -2157,6 +2162,9 @@ export default {
 		},
 		hideSessionID: function() {
 			setCookie("hideSessionID", this.hideSessionID.toString());
+		},
+		displayCollectionStatus: function() {
+			setCookie("displayCollectionStatus", this.displayCollectionStatus.toString());
 		},
 		collapseSideboard: function() {
 			setCookie("collapseSideboard", this.collapseSideboard.toString());

@@ -686,6 +686,7 @@
 							@restore="restoreCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
+							:collectionStatus="collectionStatus(card)"
 						></booster-card>
 					</div>
 				</div>
@@ -837,6 +838,7 @@
 							@dblclick.native="doubleClickCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
+							:collectionStatus="collectionStatus(card)"
 						></booster-card>
 					</template>
 					<template v-else>
@@ -845,6 +847,7 @@
 							:key="`card-booster-${card.uniqueID}`"
 							:card="card"
 							:language="language"
+							:collectionStatus="collectionStatus(card)"
 						></booster-card>
 					</template>
 				</transition-group>
@@ -1335,7 +1338,13 @@
 		</modal>
 		<modal v-if="displayedModal === 'collection'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Statistics</h2>
-			<collection slot="body" :collection="collection" :language="language"></collection>
+			<collection
+				slot="body"
+				:collection="collection"
+				:language="language"
+				:displaycollectionstatus="displayCollectionStatus"
+				@display-collection-status="displayCollectionStatus = $event"
+			></collection>
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 			<h2 slot="header">Additional Session Options</h2>

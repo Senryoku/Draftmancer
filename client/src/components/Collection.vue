@@ -1,23 +1,41 @@
 <template>
 	<div v-if="collectionStats">
-		Select set:
-		<select v-model="selectedSetCode">
-			<option
-				v-for="set in ['all', 'standard', 'others']"
-				:key="collectionStats[set].code"
-				:value="collectionStats[set].name"
-			>
-				{{ collectionStats[set].fullName }}
-			</option>
-			<option style="color: #888" disabled>————————————————</option>
-			<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">
-				{{ collectionStats[set].fullName }}
-			</option>
-		</select>
+		<div style="display: flex; justify-content: space-between">
+			<div>
+				Select set:
+				<select v-model="selectedSetCode">
+					<option
+						v-for="set in ['all', 'standard', 'others']"
+						:key="collectionStats[set].code"
+						:value="collectionStats[set].name"
+					>
+						{{ collectionStats[set].fullName }}
+					</option>
+					<option style="color: #888" disabled>————————————————</option>
+					<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">
+						{{ collectionStats[set].fullName }}
+					</option>
+				</select>
+			</div>
+			<div>
+				<input
+					type="checkbox"
+					@change="$emit('display-collection-status', $event.target.checked)"
+					:checked="displaycollectionstatus"
+					id="display-collection-status"
+				/><label for="display-collection-status">Display collection status while drafting</label>
+			</div>
+		</div>
 		<div class="set-stats">
 			<div v-if="selectedSet">
 				<table>
 					<caption>
+						<img
+							v-if="selectedSet.icon"
+							:src="selectedSet.icon"
+							class="set-icon"
+							style="--invertedness: 100%"
+						/>
 						{{
 							selectedSet.fullName
 						}}
@@ -81,6 +99,7 @@ export default {
 	props: {
 		collection: { type: Object, required: true },
 		language: { type: String, required: true },
+		displaycollectionstatus: { type: Boolean, required: true },
 	},
 	data: () => {
 		return {
@@ -127,7 +146,10 @@ export default {
 				standard: baseSet("standard", "Standard"),
 				others: baseSet("others", "Other Sets"),
 			};
-			for (let s of Constant.MTGASets) stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constant.MTGASets) {
+				stats[s] = baseSet(s, SetsInfos[s].fullName);
+				stats[s].icon = SetsInfos[s].icon;
+			}
 			for (let id in MTGACards) {
 				const card = MTGACards[id];
 				const completeSet = Constant.MTGASets.includes(card.set);
