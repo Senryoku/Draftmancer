@@ -215,8 +215,14 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 if (c['set'].lower() in ['kld', 'aer']) or c['lang'] not in klr_candidates[c['name']] or (klr_candidates[c['name']][c['lang']]['set'] not in ['kld', 'aer'] and (c['released_at'] > klr_candidates[c["name"]][c['lang']]['released_at'] or (c['frame'] == "2015" and klr_candidates[c["name"]][c['lang']]['frame'] == "1997"))):
                     klr_candidates[c["name"]][c["lang"]] = c
 
+            frontName = c['name']
+            if ' //' in frontName:
+                frontName = frontName.split(' //')[0]
             if ((c['name'], c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
                 c['arena_id'] = CardsCollectorNumberAndSet[(c['name'],
+                                                            c['collector_number'], c['set'].lower())]
+            elif ((frontName, c['collector_number'], c['set'].lower()) in CardsCollectorNumberAndSet):
+                c['arena_id'] = CardsCollectorNumberAndSet[(frontName,
                                                             c['collector_number'], c['set'].lower())]
 
             # [FIXME] Workaround for duplicates in m21 card pool
