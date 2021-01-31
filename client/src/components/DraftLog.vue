@@ -399,7 +399,7 @@ ul.player-table li {
 	margin: var(--margin);
 	padding: 0.5em;
 	border-radius: 0.2em;
-	background-color: #484848;
+	background-color: #555;
 }
 
 ul.player-table li {
