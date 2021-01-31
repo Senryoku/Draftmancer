@@ -28,7 +28,7 @@
 					></i>
 					<i class="fas fa-lock" v-else></i>
 					<span>
-						{{ printableType(draftLog.type) }}
+						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
 					</span>
@@ -165,8 +165,10 @@ export default {
 		toggle: function (idx) {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
-		printableType: function (type) {
-			return type ? type : "Draft";
+		printableType: function (draftLog) {
+			let r = draftLog.type ? draftLog.type : "Draft";
+			if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
+			return r;
 		},
 	},
 };

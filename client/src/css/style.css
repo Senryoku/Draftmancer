@@ -109,13 +109,15 @@ label {
 
 .teama,
 .bracket-player.teama,
-.player-list > .teama {
+.player-list > .teama,
+ul.player-table > li.teama {
 	background: #21402e;
 }
 
 .teamb,
 .bracket-player.teamb,
-.player-list > .teamb {
+.player-list > .teamb,
+ul.player-table > li.teamb {
 	background: #222440;
 }
 

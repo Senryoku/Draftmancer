@@ -296,7 +296,7 @@ export default {
 				});
 			}
 			// Add empty seats to better visualize the draft table
-			while (this.type === "Draft" && Object.keys(tableSummary).length < 8)
+			while ((this.type === "Draft" && tableSummary.length < 6) || tableSummary.length === 7)
 				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",
@@ -305,7 +305,7 @@ export default {
 			return tableSummary;
 		},
 		teamDraft: function () {
-			return this.draftlog.teamDraft === true;
+			return this.draftlog.teamDraft;
 		},
 		picks: function () {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
