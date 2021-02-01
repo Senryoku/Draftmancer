@@ -225,9 +225,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 c['arena_id'] = CardsCollectorNumberAndSet[(frontName,
                                                             c['collector_number'], c['set'].lower())]
 
-            # [FIXME] Workaround for duplicates in m21 card pool
-            if(c['set'] == 'm21' and 'arena_id' not in c and 'mtgo_id' not in c):
-                continue
+            # Workaround for Teferi, Master of Time (M21) variations (exclude all except the first one from boosters)
+            if(c['set'] == 'm21' and c['collector_number'] in ['275', '276', '277']):
+                c['booster'] = False
 
             all_cards.append(c)
             copied += 1
