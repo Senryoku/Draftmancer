@@ -110,7 +110,7 @@ export const SpecialLandSlots = {
 			"8d011b0f-1681-4a51-9f5d-47ad135d03fe",
 			"366ac097-39cb-4401-87c7-1dd73bf34329",
 			"86367edc-9587-4f3b-aa95-c3a2bfc8c6f4"
-		  ],
+		],
 		1 / 2
 	), // Gain Lands; Radiant Fountain (72030) is found in the common slot
 	khm: landSlotHandler(
@@ -127,8 +127,8 @@ export const SpecialLandSlots = {
 			"35ebe245-ebb5-493c-b9c1-56fbfda9bd66", // Sulfurous Mire
 			"f2392fbb-d9c4-4688-b99c-4e7614c60c12", // Volatile Fjord
 			"b2dd0b71-5a60-418c-82fc-f13d1b5075d0", // Woodland Chasm
-		  ],
-		1 / 2 // TODO: Check this value.
+		],
+		5 / 12
 	), // Always one snow-covered land, either basic or tapped. Shimmerdrift Vale (f09d98db-0176-41a7-b99b-ead29876cdab) appears in the common slot
 };
 
