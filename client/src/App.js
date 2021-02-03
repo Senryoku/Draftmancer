@@ -1286,7 +1286,7 @@ export default {
 			this.socket.emit("setCollection", this.collection);
 		},
 		collectionStatus: function(card) {
-			if(!this.displayCollectionStatus || !this.collection || !card.arena_id || card.type.includes("Basic")) return null;
+			if(!this.displayCollectionStatus || !this.hasCollection || !card.arena_id || card.type.includes("Basic")) return null;
 			return card.arena_id in this.collection ? this.collection[card.arena_id] : 0;
 		},
 		parseMTGALog: function(e) {
