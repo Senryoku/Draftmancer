@@ -317,7 +317,7 @@ const ownerSocketCallbacks = {
 			const verb = sess.users.size < 6 ? "add" : "remove";
 			Connections[userID].socket.emit("message", {
 				title: `Wrong player count`,
-				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings.`,
+				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`,
 			});
 		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
 			Connections[userID].socket.emit("message", {
