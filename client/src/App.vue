@@ -661,10 +661,10 @@
 							<span v-else>
 								<span v-if="cardsToPick === 1">Pick a card</span>
 								<span v-else>
-									Pick {{ cardsToPick }} cards ({{ selectedCards.length }} / {{ cardsToPick }})
+									Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
 								</span>
 								<span v-if="cardsToBurnThisRound > 0">
-									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+									and remove {{ cardsToBurnThisRound }} card(s) from the pool ({{
 										burningCards.length
 									}}/{{ cardsToBurnThisRound }}).
 								</span>
