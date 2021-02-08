@@ -706,10 +706,13 @@ ul.player-list {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-}
-
-#main-container .controls > * {
+	gap: 1.5em;
 	margin-left: 1.5em;
+}
+@supports not (gap: 1.5em) {
+	#main-container .controls > * {
+		margin-left: 1.5em;
+	}
 }
 
 .card-container {

@@ -1012,17 +1012,19 @@ export default {
 				return;
 
 			if (this.selectedCards.length !== this.cardsToPick) {
+				const value = this.cardsToPick - this.selectedCards.length;
 				fireToast(
 					"error",
-					`You need to pick ${this.cardsToPick - this.selectedCards.length} more card(s).`
+					`You need to pick ${value} more ${value > 1 ? 'cards' : 'card'}.`
 				);
 				return;
 			}
 
 			if (this.burningCards.length !== this.cardsToBurnThisRound) {
+				const value = this.cardsToBurnThisRound - this.burningCards.length;
 				fireToast(
 					"error",
-					`You need to burn ${this.cardsToBurnThisRound - this.burningCards.length} more card(s).`
+					`You need to burn ${value} more ${value > 1 ? 'cards' : 'card'}.`
 				);
 				return;
 			}
