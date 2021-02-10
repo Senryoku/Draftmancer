@@ -57,6 +57,7 @@ select.swal2-input option {
 #main-container input[type="button"],
 #main-container input[type="number"],
 #main-container button,
+.standard-input,
 .check-button + label {
 	color: #ddd;
 	background-color: #555;

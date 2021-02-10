@@ -1647,7 +1647,7 @@ export default {
 				title: "Start Sealed",
 				html: `
 					<p>How many boosters for each player (default is 6)?
-					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
+					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block" placeholder="Boosters per Player"></p>
 					<p>(Optional) Customize the set of each booster:
 					<div id="input-customBoosters" style="
 						display: grid;
@@ -1660,6 +1660,7 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
+				width: '800px',
 				preConfirm: function() {
 					return new Promise(function(resolve) {
 						resolve({
@@ -1675,17 +1676,27 @@ export default {
 					function updateCustomBoosterInput(target) {
 						while(customBoostersEl.children.length < target) {
 							let sel = document.createElement("select");
-							sel.classList.add("swal2-input");
+							sel.classList.add("standard-input");
 							sel.style.margin = "0.5em auto";
 							const addOption = (val, txt) => {
 								let op = document.createElement("option");
 								op.value = val;
 								op.innerHTML = txt;
 								sel.appendChild(op);
+								return op;
+							};
+							const addSeparator = () => {
+								const separator = addOption("", "————————————————");
+								separator.style="color: #888";
+								separator.disabled = true;
 							};
 							addOption("", "(Default)");
 							addOption("random", "Random set from Card Pool");
-							for(let s of Constant.PrimarySets)
+							addSeparator();
+							for(let s of Constant.MTGASets)
+								addOption(s, SetsInfos[s].fullName);
+							addSeparator();
+							for(let s of Constant.PrimarySets.filter(s => !(s in Constant.MTGASets)))
 								addOption(s, SetsInfos[s].fullName);
 							customBoostersEl.appendChild(sel);
 						}
