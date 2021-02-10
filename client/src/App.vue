@@ -922,6 +922,11 @@
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>
+						<div v-if="neededWildcards" v-tooltip.top="`Wildcards needed to craft this deck.`">
+							<span v-for="(value, rarity) in neededWildcards" :key="rarity">
+								<img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /> {{ value }}
+							</span>
+						</div>
 					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>

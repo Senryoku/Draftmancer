@@ -2070,6 +2070,22 @@ export default {
 		basicsInDeck: function() {
 			return this.deck.some(c => c.type === "Basic Land") || this.sideboard.some(c => c.type === "Basic Land");
 		},
+		neededWildcards: function() {
+			if(!this.hasCollection || !this.deck || this.deck.length === 0) return null;
+			const r = {common:0, uncommon:0, rare:0, mythic:0};
+			const counts = {};
+			for(let card of this.deck) {
+				if(!('arena_id' in card)) return null;
+				if(!(card.arena_id in counts)) counts[card.arena_id] = {rarity: card.rarity, count: 0};
+				++counts[card.arena_id].count;
+			}
+			for(let cid in counts)
+				r[counts[cid].rarity] += Math.max(0, counts[cid].count - (cid in this.collection ? this.collection[cid] : 0));
+			for(let rarity in r)
+				if(r[rarity] === 0)
+					delete r[rarity];
+			return r;
+		},
 
 		userByID: function() {
 			let r = {};
