@@ -11,9 +11,15 @@
 
 <script>
 export default {
+	props: {
+		minwidth: { type: String, default: "12em" },
+	},
+	mounted: function () {
+		this.updateHeight();
+	},
 	methods: {
 		updateHeight: function () {
-			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px);`;
+			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px); --min-width: ${this.minwidth}`;
 		},
 	},
 };
@@ -26,8 +32,9 @@ export default {
 	background-color: #444;
 	border-radius: 8px 8px 0 0;
 	box-shadow: 0 2px 4px 0 #444;
-	min-width: 12em;
+	min-width: var(--min-width);
 
+	--min-width: 12em;
 	--unrolled-height: 500px;
 }
 

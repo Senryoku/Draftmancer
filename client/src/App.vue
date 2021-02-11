@@ -922,11 +922,29 @@
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>
-						<div v-if="neededWildcards" v-tooltip.top="`Wildcards needed to craft this deck.`">
-							<span v-for="(value, rarity) in neededWildcards" :key="rarity">
-								<img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /> {{ value }}
-							</span>
-						</div>
+						<dropdown
+							v-if="displayWildcardInfo && neededWildcards"
+							v-tooltip.top="`Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`"
+							minwidth="10em"
+						>
+							<template v-slot:handle>
+								<img class="wildcard-icon" :src="`img/wc_rm.png`" />
+								{{ rmWildcardsNeeded.main }} ({{ rmWildcardsNeeded.side }})
+								<template v-if="collectionInfos && collectionInfos.wildcards">
+									/ {{ collectionInfos.wildcards.rare + collectionInfos.wildcards.mythic }}
+								</template>
+							</template>
+							<template v-slot:dropdown>
+								<span v-for="(value, rarity) in neededWildcards.main" :key="rarity">
+									<img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /> {{ value }} ({{
+										neededWildcards.side[rarity]
+									}})
+									<template v-if="collectionInfos && collectionInfos.wildcards">
+										/ {{ collectionInfos.wildcards[rarity] }}
+									</template>
+								</span>
+							</template>
+						</dropdown>
 					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
