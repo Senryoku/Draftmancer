@@ -935,14 +935,17 @@
 								</template>
 							</template>
 							<template v-slot:dropdown>
-								<span v-for="(value, rarity) in neededWildcards.main" :key="rarity">
-									<img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /> {{ value }} ({{
-										neededWildcards.side[rarity]
-									}})
-									<template v-if="collectionInfos && collectionInfos.wildcards">
-										/ {{ collectionInfos.wildcards[rarity] }}
-									</template>
-								</span>
+								<table style="margin: auto">
+									<tr v-for="(value, rarity) in neededWildcards.main" :key="rarity">
+										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
+										<td>{{ value }}</td>
+										<td>({{ neededWildcards.side[rarity] }})</td>
+										<template v-if="collectionInfos && collectionInfos.wildcards">
+											<td>/</td>
+											<td>{{ collectionInfos.wildcards[rarity] }}</td>
+										</template>
+									</tr>
+								</table>
 							</template>
 						</dropdown>
 					</template>
