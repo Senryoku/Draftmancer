@@ -1210,14 +1210,23 @@
 			<h2 slot="header">Help</h2>
 			<div slot="body">
 				<h2>FAQ</h2>
-				<div>
+				<div class="faq">
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the options.
 						<a href="cubeformat.html" target="_blank">More informations here</a>
 						.
 					</p>
+					<strong>How can we adjust the packs content for cubes?</strong>
+					<p>
+						The <a href="cubeformat.html" target="_blank">Cube Format</a> allows to fine tune the packs content (see the 'Custom Card Slots' section).
+						<br />
+						To change the overall number of cards in a pack without going into more details, you can add the following line on top of your cube file and replace <tt>CardPerBooster</tt> by the desired value:
+						<pre>[SlotName(CardPerBooster)]</pre>
+					</p>
+					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank">Help section of the MTGADraft Discord</a>!
 				</div>
+				<br />
 				<h2>Options Description</h2>
 				<div class="help-options">
 					<div style="width: 50%">
@@ -1280,7 +1289,7 @@
 						<ul>
 							<li>
 								<span class="option-name">Language</span>
-								: Adjusts the display language of cards. (Only affects cards)
+								: Adjusts the display language of cards. (Only affects cards; Some cards are not available in all languages)
 							</li>
 							<li>
 								<span class="option-name">Restrict to Collection</span>
@@ -1295,7 +1304,7 @@
 							</li>
 							<li>
 								<span class="option-name">Notifications</span>
-								: If enabled, you will be notified when a draft is launched.
+								: Enable to receive desktop notifications when a draft is launched or you have to make a pick.
 							</li>
 							<li>
 								<span class="option-name">Session ID</span>
@@ -1513,7 +1522,7 @@
 					</div>
 					<div
 						class="line"
-						v-tooltip.right="{
+						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
 								'<p>Controls who is going to receive the game logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the game log. Useful for tournaments.</p>',

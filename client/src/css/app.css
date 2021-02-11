@@ -446,6 +446,10 @@ select.swal2-input option {
 
 /* ** Help Modal ** */
 
+.faq p {
+	margin-left: 2em;
+}
+
 .help-options {
 	display: flex;
 }
