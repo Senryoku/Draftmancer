@@ -2025,6 +2025,13 @@ export default {
 			for(let cid in counts)
 				r[counts[cid].rarity] += Math.min(4, Math.max(0, counts[cid].count - (cid in this.collection ? this.collection[cid] : 0)));
 			return r;
+		},
+		wildcardCost: function(card) {
+			if(!this.hasCollection || !card.arena_id) return false;
+			if(!(card.arena_id in this.collection)) return true;
+			if(this.collection[card.id] >= 4) return false;
+			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
+			return currentCount >= this.collection[card.arena_id];
 		}
 	},
 	computed: {
@@ -2108,8 +2115,13 @@ export default {
 			if(!main && !side) return null;
 			return {main: main, side: side};
 		},
-		rmWildcardsNeeded: function() {
-			return {main: this.neededWildcards.main.rare + this.neededWildcards.main.mythic, side: this.neededWildcards.side.rare + this.neededWildcards.side.mythic};
+		deckSummary: function() {
+			const r = {};
+			for(let c of this.deck) {
+				if(!(c.id in r)) r[c.id] = 0;
+				++r[c.id];
+			}
+			return r;
 		},
 		displayWildcardInfo: function() {
 			return this.displayCollectionStatus && this.neededWildcards && (Object.values(this.neededWildcards.main).some(v => v > 0) || Object.values(this.neededWildcards.side).some(v => v > 0));

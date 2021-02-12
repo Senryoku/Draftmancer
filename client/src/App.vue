@@ -687,7 +687,8 @@
 							@restore="restoreCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
-							:collectionStatus="collectionStatus(card)"
+							:collectionstatus="collectionStatus(card)"
+							:wildcardneeded="wildcardCost(card)"
 						></booster-card>
 					</div>
 				</div>
@@ -925,14 +926,19 @@
 						<dropdown
 							v-if="displayWildcardInfo && neededWildcards"
 							v-tooltip.top="`Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`"
-							minwidth="10em"
+							minwidth="8em"
 						>
 							<template v-slot:handle>
-								<img class="wildcard-icon" :src="`img/wc_rm.png`" />
-								{{ rmWildcardsNeeded.main }} ({{ rmWildcardsNeeded.side }})
-								<template v-if="collectionInfos && collectionInfos.wildcards">
-									/ {{ collectionInfos.wildcards.rare + collectionInfos.wildcards.mythic }}
-								</template>
+								<span style="display: flex; justify-content: space-around">
+									<span>
+										<img class="wildcard-icon" :src="`img/wc_rare.png`" />
+										{{ neededWildcards.main.rare }}
+									</span>
+									<span>
+										<img class="wildcard-icon" :src="`img/wc_mythic.png`" />
+										{{ neededWildcards.main.mythic }}
+									</span>
+								</span>
 							</template>
 							<template v-slot:dropdown>
 								<table style="margin: auto">
