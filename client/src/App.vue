@@ -942,7 +942,14 @@
 							</template>
 							<template v-slot:dropdown>
 								<table style="margin: auto">
-									<tr v-for="(value, rarity) in neededWildcards.main" :key="rarity">
+									<tr
+										v-for="(value, rarity) in neededWildcards.main"
+										:key="rarity"
+										:class="{
+											yellow:
+												collectionInfos.wildcards && collectionInfos.wildcards[rarity] < value,
+										}"
+									>
 										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
 										<td>{{ value }}</td>
 										<td>({{ neededWildcards.side[rarity] }})</td>
