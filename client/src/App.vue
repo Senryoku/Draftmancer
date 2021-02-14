@@ -688,7 +688,7 @@
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
 							:hasenoughwildcards="hasEnoughWildcards(card)"
-							:wildcardneeded="wildcardCost(card)"
+							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 						></booster-card>
 					</div>
 				</div>
