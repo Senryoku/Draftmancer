@@ -915,7 +915,7 @@
 							v-tooltip="'Deck Statistics'"
 						></i>
 						<land-control
-							v-show="draftingState == DraftState.Brewing"
+							v-if="draftingState === DraftState.Brewing"
 							:lands="lands"
 							:autoland.sync="autoLand"
 							:otherbasics="basicsInDeck"
