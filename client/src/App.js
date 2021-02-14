@@ -1290,10 +1290,6 @@ export default {
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
-		collectionStatus: function(card) {
-			if(!this.displayCollectionStatus || !this.hasCollection || !card.arena_id || card.type.includes("Basic")) return null;
-			return card.arena_id in this.collection ? this.collection[card.arena_id] : 0;
-		},
 		parseMTGALog: function(e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -1363,7 +1359,6 @@ export default {
 						const inventoryStart = contents.indexOf("{", contents.indexOf("PlayerInventory.GetPlayerInventory", collectionEnd));
 						const inventoryEnd = contents.indexOf("\n", inventoryStart);
 						const inventoryStr = contents.slice(inventoryStart, inventoryEnd);
-						console.log(inventoryStr);
 						const rawInventory = JSON.parse(inventoryStr)["payload"];
 						const inventory = {
 							wildcards: {
@@ -2032,7 +2027,12 @@ export default {
 			if(this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
 			return currentCount >= this.collection[card.arena_id];
-		}
+		},
+		hasEnoughWildcards: function(card) {
+			if(!this.neededWildcards || !this.collectionInfos || !this.collectionInfos.wildcards) return true;
+			const needed = this.neededWildcards.main[card.rarity] || 0;
+			return needed < this.collectionInfos.wildcards[card.rarity];
+		},
 	},
 	computed: {
 		DraftState: function() {

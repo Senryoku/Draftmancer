@@ -687,7 +687,7 @@
 							@restore="restoreCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
-							:collectionstatus="collectionStatus(card)"
+							:hasenoughwildcards="hasEnoughWildcards(card)"
 							:wildcardneeded="wildcardCost(card)"
 						></booster-card>
 					</div>
@@ -930,11 +930,23 @@
 						>
 							<template v-slot:handle>
 								<span style="display: flex; justify-content: space-around">
-									<span>
+									<span
+										:class="{
+											yellow:
+												collectionInfos.wildcards &&
+												collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
+										}"
+									>
 										<img class="wildcard-icon" :src="`img/wc_rare.png`" />
 										{{ neededWildcards.main.rare }}
 									</span>
-									<span>
+									<span
+										:class="{
+											yellow:
+												collectionInfos.wildcards &&
+												collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
+										}"
+									>
 										<img class="wildcard-icon" :src="`img/wc_mythic.png`" />
 										{{ neededWildcards.main.mythic }}
 									</span>
@@ -954,8 +966,10 @@
 										<td>{{ value }}</td>
 										<td>({{ neededWildcards.side[rarity] }})</td>
 										<template v-if="collectionInfos && collectionInfos.wildcards">
-											<td>/</td>
-											<td>{{ collectionInfos.wildcards[rarity] }}</td>
+											<td style="font-size: 0.75em; color: #bbb">/</td>
+											<td style="font-size: 0.75em; color: #bbb">
+												{{ collectionInfos.wildcards[rarity] }}
+											</td>
 										</template>
 									</tr>
 								</table>
