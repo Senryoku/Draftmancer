@@ -2040,7 +2040,7 @@ export default {
 			return currentCount >= this.collection[card.arena_id];
 		},
 		hasEnoughWildcards: function(card) {
-			if(!this.neededWildcards || !this.collectionInfos || !this.collectionInfos.wildcards) return true;
+			if(!this.neededWildcards || !this.neededWildcards.main || !this.collectionInfos || !this.collectionInfos.wildcards) return true;
 			const needed = this.neededWildcards.main[card.rarity] || 0;
 			return needed < this.collectionInfos.wildcards[card.rarity];
 		},
@@ -2135,7 +2135,9 @@ export default {
 			return r;
 		},
 		displayWildcardInfo: function() {
-			return this.displayCollectionStatus && this.neededWildcards && (Object.values(this.neededWildcards.main).some(v => v > 0) || Object.values(this.neededWildcards.side).some(v => v > 0));
+			return this.displayCollectionStatus && this.neededWildcards && 
+				((this.neededWildcards.main && Object.values(this.neededWildcards.main).some(v => v > 0)) ||
+				 (this.neededWildcards.side && Object.values(this.neededWildcards.side).some(v => v > 0)));
 		},
 
 		userByID: function() {
