@@ -16,6 +16,7 @@
 		"dev": "concurrently --kill-others --raw \"npm run start-dev\" \"npm run build-dev\"",
 		"logs": "heroku logs --app mtgadraft -t --source app",
 		"test": "cross-env PORT=3001 mocha test --exit --experimental-json-modules",
+		"test-bail": "cross-env PORT=3001 mocha test --exit --experimental-json-modules -bail",
 		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules"
 	},
 	"repository": {

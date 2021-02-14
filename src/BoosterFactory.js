@@ -434,7 +434,7 @@ for(let cid in Cards) {
 
 export const PaperBoosterFactories = {};
 for(let set of PaperBoosterData) {
-	if(!constants.PrimarySets.includes(set.code)) {
+	if(!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
 		console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
 		continue;
 	}

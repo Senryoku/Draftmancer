@@ -631,6 +631,17 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
+	"setCollationType": function(userID, sessionID, preferedCollation) {
+		if (preferedCollation === Sessions[sessionID].preferedCollation || !['Paper', 'MTGA'].includes(preferedCollation)) return;
+
+		Sessions[sessionID].preferedCollation = preferedCollation;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					preferedCollation: Sessions[sessionID].preferedCollation,
+				});
+		}
+	},
 	"setUseCustomCardList": function(userID, sessionID, useCustomCardList) {
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 

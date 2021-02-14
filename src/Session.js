@@ -202,6 +202,7 @@ export function Session(id, owner, options) {
 	this.colorBalance = true;
 	this.maxDuplicates = null;
 	this.foil = false;
+	this.preferedCollation = 'MTGA'; // Unused! (And thus not exposed client-side)
 	this.useCustomCardList = false;
 	this.customCardList = {};
 	this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
@@ -568,15 +569,37 @@ export function Session(id, owner, options) {
 
 			const customBoosters = options.customBoosters ? options.customBoosters : this.customBoosters; // Use override value if provided via options 
 			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some(v => v !== "");
-			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && BoosterFactoryOptions.mythicPromotion && this.maxDuplicates === null && this.unrestrictedCardPool();
+			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && 
+				BoosterFactoryOptions.mythicPromotion && 
+				this.maxDuplicates === null && 
+				this.unrestrictedCardPool();
+			const isPaperBoosterFactoryAvailable = (set) => {
+				return set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories
+			};
+			const getPaperBoosterFactory = (set) => {
+				// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
+				//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
+				//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.
+				// Hacking this in for now by forcing arena collation for affected sets.
+				if(['iko', 'klr', 'akr'].includes(set)) return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions)
+				else return PaperBoosterFactories[set](BoosterFactoryOptions);
+
+				// Proper implementation:
+				/*
+				// Is Arena Collation available?              Is it the prefered choice, or our only one?                           MTGA collations don't have foil sheets.
+				if(`${set}-arena` in PaperBoosterFactories && (this.preferedCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil)
+					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
+				return PaperBoosterFactories[set](BoosterFactoryOptions);
+				*/
+			};
 
 			// If the default rule will be used, initialize it
 			if (!options.useCustomBoosters || customBoosters.some(v => v === "")) {
 				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 				if(acceptPaperBoosterFactories &&
 					this.setRestriction.length === 1 && 
-					this.setRestriction[0] in PaperBoosterFactories) {
-					defaultFactory = PaperBoosterFactories[this.setRestriction[0]](BoosterFactoryOptions);
+					isPaperBoosterFactoryAvailable(this.setRestriction[0])) {
+					defaultFactory = getPaperBoosterFactory(this.setRestriction[0]);
 				} else {
 					let localCollection = this.cardPoolByRarity();
 					let defaultLandSlot = null;
@@ -642,8 +665,8 @@ export function Session(id, owner, options) {
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterSet]) {
 								// Use the corresponding PaperBoosterFactories if possible
-								if(acceptPaperBoosterFactories && boosterSet in PaperBoosterFactories) {
-									usedSets[boosterSet] = PaperBoosterFactories[boosterSet](BoosterFactoryOptions);;
+								if(acceptPaperBoosterFactories && isPaperBoosterFactoryAvailable(boosterSet)) {
+									usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
 								} else {
 									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 									const landSlot = boosterSet in SpecialLandSlots
