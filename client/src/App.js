@@ -1705,10 +1705,10 @@ export default {
 							addOption("", "(Default)");
 							addOption("random", "Random set from Card Pool");
 							addSeparator();
-							for(let s of Constant.MTGASets)
+							for(let s of Constant.MTGASets.slice().reverse())
 								addOption(s, SetsInfos[s].fullName);
 							addSeparator();
-							for(let s of Constant.PrimarySets.filter(s => !(s in Constant.MTGASets)))
+							for(let s of Constant.PrimarySets.filter(s => !Constant.MTGASets.includes(s)))
 								addOption(s, SetsInfos[s].fullName);
 							customBoostersEl.appendChild(sel);
 						}
