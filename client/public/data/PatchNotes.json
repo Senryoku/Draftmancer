@@ -1,5 +1,9 @@
 [
 	{
+		"date": "14/02/2021",
+		"notes": ["Implemented wildcard tracking while drafting and brewing."]
+	},
+	{
 		"date": "30/01/2021",
 		"notes": [
 			"Added a reminder of the number of owned copies of each card while drafting (when applicable and if a MTGA Collection has been uploaded). Can be disabled in the Collection statistics panel."
