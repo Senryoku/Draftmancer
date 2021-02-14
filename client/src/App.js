@@ -2024,6 +2024,7 @@ export default {
 			const counts = {};
 			for(let card of cards) {
 				if(!('arena_id' in card)) return null;
+				if(card.type.includes("Basic")) continue;
 				if(!(card.arena_id in counts)) counts[card.arena_id] = {rarity: card.rarity, count: 0};
 				++counts[card.arena_id].count;
 			}
@@ -2032,7 +2033,7 @@ export default {
 			return r;
 		},
 		wildcardCost: function(card) {
-			if(!this.hasCollection || !card.arena_id) return false;
+			if(!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
 			if(!(card.arena_id in this.collection)) return true;
 			if(this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
