@@ -1505,7 +1505,6 @@ export default {
 			}).then(result => {
 				if (result.value) {
 					const urlTest = result.value.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
-					console.log(urlTest);
 					if (urlTest) result.value = urlTest[1];
 					this.selectCube({ cubeCobraID: result.value });
 				}
