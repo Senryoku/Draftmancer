@@ -687,7 +687,8 @@
 							@restore="restoreCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
-							:collectionStatus="collectionStatus(card)"
+							:hasenoughwildcards="hasEnoughWildcards(card)"
+							:wildcardneeded="wildcardCost(card)"
 						></booster-card>
 					</div>
 				</div>
@@ -922,6 +923,58 @@
 							@update:lands="(c, n) => (lands[c] = n)"
 						>
 						</land-control>
+						<dropdown
+							v-if="displayWildcardInfo && neededWildcards"
+							v-tooltip.top="`Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`"
+							minwidth="8em"
+						>
+							<template v-slot:handle>
+								<span style="display: flex; justify-content: space-around">
+									<span
+										:class="{
+											yellow:
+												collectionInfos.wildcards &&
+												collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
+										}"
+									>
+										<img class="wildcard-icon" :src="`img/wc_rare.png`" />
+										{{ neededWildcards.main.rare }}
+									</span>
+									<span
+										:class="{
+											yellow:
+												collectionInfos.wildcards &&
+												collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
+										}"
+									>
+										<img class="wildcard-icon" :src="`img/wc_mythic.png`" />
+										{{ neededWildcards.main.mythic }}
+									</span>
+								</span>
+							</template>
+							<template v-slot:dropdown>
+								<table style="margin: auto">
+									<tr
+										v-for="(value, rarity) in neededWildcards.main"
+										:key="rarity"
+										:class="{
+											yellow:
+												collectionInfos.wildcards && collectionInfos.wildcards[rarity] < value,
+										}"
+									>
+										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
+										<td>{{ value }}</td>
+										<td>({{ neededWildcards.side[rarity] }})</td>
+										<template v-if="collectionInfos && collectionInfos.wildcards">
+											<td style="font-size: 0.75em; color: #bbb">/</td>
+											<td style="font-size: 0.75em; color: #bbb">
+												{{ collectionInfos.wildcards[rarity] }}
+											</td>
+										</template>
+									</tr>
+								</table>
+							</template>
+						</dropdown>
 					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>

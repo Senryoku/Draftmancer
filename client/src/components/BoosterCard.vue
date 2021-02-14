@@ -1,16 +1,16 @@
 <template>
 	<card :card="card" :language="language" :class="{ selected: selected, burned: burned }" class="booster-card">
 		<div
-			v-if="collectionStatus !== null"
+			v-if="wildcardneeded"
 			class="collection-status"
-			:class="{ warn: collectionStatus === 0 }"
-			v-tooltip="
-				`You own ${collectionStatus > 0 ? collectionStatus : 'no'} ${
-					collectionStatus > 1 ? 'copies' : 'copy'
-				} of this card on MTGA.`
+			v-tooltip.top="
+				`Playing this card will cost you a wildcard. ${
+					hasenoughwildcards ? '' : 'Not enough wildcards of this type!'
+				}`
 			"
 		>
-			{{ collectionStatus }}/4
+			<i class="fas fa-exclamation-triangle yellow missing-warning" v-if="!hasenoughwildcards"></i>
+			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.png`" />
 		</div>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
@@ -34,7 +34,8 @@ export default {
 		selected: { type: Boolean, default: false },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
-		collectionStatus: { type: Number, default: null },
+		wildcardneeded: { type: Boolean, default: false },
+		hasenoughwildcards: { type: Boolean, default: true },
 	},
 	methods: {
 		burnCard: function (e) {
@@ -57,6 +58,15 @@ export default {
 	transition: transform 0.08s ease-out;
 }
 
+.missing-warning {
+	position: absolute;
+	left: -0.5em;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 0.7em;
+	opacity: 70%;
+}
+
 .fade-enter-active.card,
 .fade-leave-active.card {
 	transition: transform 0.5s ease, opacity 0.5s ease;
@@ -75,7 +85,7 @@ export default {
 	left: 1rem;
 	top: -0.8rem;
 	font-family: Calibri;
-	color: #999;
+	color: #888;
 	background-color: black;
 	font-size: 0.8em;
 	width: 2.5rem;

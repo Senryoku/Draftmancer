@@ -103,6 +103,9 @@ export default {
 			userName: getCookie("userName", `Anonymous_${randomStr4()}`),
 			useCollection: true,
 			collection: {},
+			collectionInfos: {
+				wildcards: {common:0, uncommon:0, rare:0, mythic:0}
+			},
 			socket: undefined,
 
 			// Session status
@@ -1287,10 +1290,6 @@ export default {
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
-		collectionStatus: function(card) {
-			if(!this.displayCollectionStatus || !this.hasCollection || !card.arena_id || card.type.includes("Basic")) return null;
-			return card.arena_id in this.collection ? this.collection[card.arena_id] : 0;
-		},
 		parseMTGALog: function(e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -1349,16 +1348,28 @@ export default {
 				const parseCollection = function(contents, startIdx = null) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
 					try {
-						const call_idx = startIdx
+						const callIdx = startIdx
 							? contents.lastIndexOf(rpcName, startIdx)
 							: contents.lastIndexOf(rpcName);
-						const collection_start = contents.indexOf("{", call_idx);
-						const collection_end = contents.indexOf("}}", collection_start) + 2;
-						const collStr = contents.slice(collection_start, collection_end);
-						const collJson = JSON.parse(collStr)["payload"];
-						// for (let c of Object.keys(collJson).filter((c) => !(c in
-						// Cards))) console.log(c, " not found.");
-						return collJson;
+						const collectionStart = contents.indexOf("{", callIdx);
+						const collectionEnd = contents.indexOf("}}", collectionStart) + 2;
+						const collectionStr = contents.slice(collectionStart, collectionEnd);
+						const collection = JSON.parse(collectionStr)["payload"];
+
+						const inventoryStart = contents.indexOf("{", contents.indexOf("PlayerInventory.GetPlayerInventory", collectionEnd));
+						const inventoryEnd = contents.indexOf("\n", inventoryStart);
+						const inventoryStr = contents.slice(inventoryStart, inventoryEnd);
+						const rawInventory = JSON.parse(inventoryStr)["payload"];
+						const inventory = {
+							wildcards: {
+								common: Math.max(0, rawInventory.wcCommon),
+								uncommon: Math.max(0, rawInventory.wcUncommon),
+								rare: Math.max(0, rawInventory.wcRare),
+								mythic: Math.max(0, rawInventory.wcMythic)
+							}
+						};
+
+						return {collection, inventory};
 					} catch (e) {
 						Swal.fire({
 							icon: "error",
@@ -1372,7 +1383,7 @@ export default {
 					}
 				};
 
-				let collection = null;
+				let result = null;
 				if (playerIds.size > 1) {
 					const swalResult = await Swal.fire({
 						icon: "question",
@@ -1398,17 +1409,19 @@ export default {
 						for (let i = 1; i < collections.length; ++i)
 							cardids = Object.keys(collections[i]).filter(id => cardids.includes(id));
 						// Find min amount of each card
-						collection = {};
-						for (let id of cardids) collection[id] = collections[0][id];
+						result = {};
+						for (let id of cardids) result[id] = collections[0][id];
 						for (let i = 1; i < collections.length; ++i)
-							for (let id of cardids) collection[id] = Math.min(collection[id], collections[i][id]);
-					} else collection = parseCollection(contents);
-				} else collection = parseCollection(contents);
+							for (let id of cardids) result[id] = Math.min(result[id], collections[i][id]);
+					} else result = parseCollection(contents);
+				} else result = parseCollection(contents);
 
-				if (collection !== null) {
-					localStorage.setItem("Collection", JSON.stringify(collection));
+				if (result !== null) {
+					localStorage.setItem("Collection", JSON.stringify(result.collection));
+					localStorage.setItem("CollectionInfos", JSON.stringify(result.inventory));
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					this.setCollection(collection);
+					this.setCollection(result.collection);
+					this.collectionInfos = result.inventory;
 					Swal.fire({
 						position: "top-end",
 						icon: "success",
@@ -2005,7 +2018,32 @@ export default {
 					rare: 2,
 					mythic: 1,
 				};
-		}
+		},
+		countMissing: function(cards) {
+			if(!this.hasCollection || !cards) return null;
+			const r = {common: 0, uncommon: 0, rare: 0, mythic: 0};
+			const counts = {};
+			for(let card of cards) {
+				if(!('arena_id' in card)) return null;
+				if(!(card.arena_id in counts)) counts[card.arena_id] = {rarity: card.rarity, count: 0};
+				++counts[card.arena_id].count;
+			}
+			for(let cid in counts)
+				r[counts[cid].rarity] += Math.min(4, Math.max(0, counts[cid].count - (cid in this.collection ? this.collection[cid] : 0)));
+			return r;
+		},
+		wildcardCost: function(card) {
+			if(!this.hasCollection || !card.arena_id) return false;
+			if(!(card.arena_id in this.collection)) return true;
+			if(this.collection[card.id] >= 4) return false;
+			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
+			return currentCount >= this.collection[card.arena_id];
+		},
+		hasEnoughWildcards: function(card) {
+			if(!this.neededWildcards || !this.collectionInfos || !this.collectionInfos.wildcards) return true;
+			const needed = this.neededWildcards.main[card.rarity] || 0;
+			return needed < this.collectionInfos.wildcards[card.rarity];
+		},
 	},
 	computed: {
 		DraftState: function() {
@@ -2081,6 +2119,24 @@ export default {
 		basicsInDeck: function() {
 			return this.deck.some(c => c.type === "Basic Land") || this.sideboard.some(c => c.type === "Basic Land");
 		},
+		neededWildcards: function() {
+			if(!this.hasCollection) return null;
+			const main = this.countMissing(this.deck);
+			const side = this.countMissing(this.sideboard);
+			if(!main && !side) return null;
+			return {main: main, side: side};
+		},
+		deckSummary: function() {
+			const r = {};
+			for(let c of this.deck) {
+				if(!(c.id in r)) r[c.id] = 0;
+				++r[c.id];
+			}
+			return r;
+		},
+		displayWildcardInfo: function() {
+			return this.displayCollectionStatus && this.neededWildcards && (Object.values(this.neededWildcards.main).some(v => v > 0) || Object.values(this.neededWildcards.side).some(v => v > 0));
+		},
 
 		userByID: function() {
 			let r = {};
@@ -2107,12 +2163,20 @@ export default {
 			this.useCollection = getCookie("useCollection", "true") === "true";
 
 			// Look for a locally stored collection
-			let localStorageCollection = localStorage.getItem("Collection");
+			const localStorageCollection = localStorage.getItem("Collection");
 			if (localStorageCollection) {
 				try {
 					let json = JSON.parse(localStorageCollection);
 					this.setCollection(json);
 					console.log("Loaded collection from local storage");
+				} catch (e) {
+					console.error(e);
+				}
+			}
+			const localStorageCollectionInfos = localStorage.getItem("CollectionInfos");
+			if (localStorageCollectionInfos) {
+				try {
+					this.collectionInfos = JSON.parse(localStorageCollectionInfos);
 				} catch (e) {
 					console.error(e);
 				}
