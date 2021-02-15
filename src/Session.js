@@ -569,7 +569,7 @@ export function Session(id, owner, options) {
 
 			const customBoosters = options.customBoosters ? options.customBoosters : this.customBoosters; // Use override value if provided via options 
 			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some(v => v !== "");
-			const acceptPaperBoosterFactories = this.boosterContent === DefaultBoosterTargets && 
+			const acceptPaperBoosterFactories = targets === DefaultBoosterTargets && 
 				BoosterFactoryOptions.mythicPromotion && 
 				this.maxDuplicates === null && 
 				this.unrestrictedCardPool();
