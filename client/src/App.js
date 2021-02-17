@@ -129,6 +129,7 @@ export default {
 				uncommon: 3,
 				rare: 1,
 			},
+			usePredeterminedBoosters: false,
 			colorBalance: true,
 			maxDuplicates: null,
 			foil: false,
@@ -1590,6 +1591,22 @@ export default {
 				fireToast("error", "Error importing deck.");
 			}
 		},
+		uploadBoosters: function() {
+			if(this.sessionOwner !== this.userID) return;
+			const text = document.querySelector('#upload-booster-text').value;
+			this.socket.emit("setBoosters", text, (response) => {
+				console.log(response);
+				if(response.error) {
+					Swal.fire({
+						icon: response.error.type, 
+						title: response.error.title, 
+						text: response.error.text, 
+						footer: response.error.footer, 
+						customClass: SwalCustomClasses,
+					});
+				}
+			});
+		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
@@ -2273,6 +2290,10 @@ export default {
 		description: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDescription", this.description);
+		},
+		mythicPromotion: function() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setUsePredeterminedBoosters", this.usePredeterminedBoosters);
 		},
 		boostersPerPlayer: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

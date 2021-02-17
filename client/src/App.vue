@@ -1385,6 +1385,26 @@
 				</form>
 			</div>
 		</modal>
+		<modal v-if="displayedModal === 'uploadBoosters'" @close="displayedModal = ''">
+			<h2 slot="header">Upload Boosters</h2>
+			<div slot="body">
+				<form @submit.prevent="uploadBoosters">
+					<div>
+						<div>
+							Paste your boosters card list here. One card per line, each booster separated by a blank line.<br>
+							Make sure each booster has the same number of cards and the total booster count is suitable for your settings.
+						</div>
+						<textarea
+							placeholder="Paste cards here..."
+							rows="15"
+							cols="40"
+							id="upload-booster-text"
+						></textarea>
+					</div>
+					<div><button type="submit">Upload</button></div>
+				</form>
+			</div>
+		</modal>
 		<modal v-if="displayedModal === 'setRestriction'" @close="displayedModal = ''">
 			<h2 slot="header">Card Pool</h2>
 			<set-restriction slot="body" v-model="setRestriction"></set-restriction>
@@ -1478,6 +1498,7 @@
 							content:
 								'<p>If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.</p>',
 						}"
+						:class="{ disabled: usePredeterminedBoosters }"
 					>
 						<label for="color-balance">Color Balance</label>
 						<div class="right">
@@ -1486,7 +1507,7 @@
 					</div>
 					<div
 						class="line"
-						v-bind:class="{ disabled: useCustomCardList }"
+						:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
@@ -1499,8 +1520,22 @@
 						</div>
 					</div>
 					<div
+						class="line"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Upload your own boosters.</p>',
+						}"
+					>
+						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
+						<div class="right">
+							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
+							<button @click="displayedModal = 'uploadBoosters'"><i class="fas fa-upload"></i> Upload Boosters</button>
+						</div>
+					</div>
+					<div
 						class="option-section"
-						v-bind:class="{ disabled: useCustomCardList }"
+						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
@@ -1526,7 +1561,7 @@
 					</div>
 					<div
 						class="option-section"
-						v-bind:class="{ disabled: useCustomCardList }"
+						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
@@ -1561,7 +1596,7 @@
 					</div>
 					<div
 						class="line"
-						v-bind:class="{ disabled: useCustomCardList }"
+						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
@@ -1629,7 +1664,7 @@
 							/>
 						</div>
 					</div>
-					<div class="option-section" v-bind:class="{ disabled: useCustomCardList }">
+					<div class="option-section" v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }">
 						<div class="option-column-title">Individual Booster Set</div>
 						<div
 							class="line"
@@ -1723,7 +1758,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="option-section option-custom-card-list">
+				<div class="option-section option-custom-card-list" :class="{ disabled: usePredeterminedBoosters }">
 					<div class="option-column-title">Custom Card List</div>
 					<div style="display: flex; justify-content: space-between; align-items: center">
 						<div

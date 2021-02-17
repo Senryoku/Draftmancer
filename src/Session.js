@@ -27,9 +27,11 @@ export const optionProps = [
 	"maxPlayers",
 	"mythicPromotion",
 	"boosterContent",
+	"usePredeterminedBoosters",
 	"colorBalance",
 	"maxDuplicates",
 	"foil",
+	"preferedCollation",
 	"useCustomCardList",
 	"customCardList",
 	"distributionMode",
@@ -199,6 +201,7 @@ export function Session(id, owner, options) {
 	this.maxPlayers = 8;
 	this.mythicPromotion = true;
 	this.boosterContent = DefaultBoosterTargets;
+	this.usePredeterminedBoosters = false;
 	this.colorBalance = true;
 	this.maxDuplicates = null;
 	this.foil = false;
@@ -452,6 +455,23 @@ export function Session(id, owner, options) {
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
 	this.generateBoosters = function(boosterQuantity, options = {}) {
+		// Use pre-determined boosters; Make sure supplied booster are correct.
+		if(this.usePredeterminedBoosters) {
+			if(!this.boosters) {
+				this.emitMessage("No Provided Boosters", `Please upload your boosters in the session settings to use Pre-determined boosters.`);
+				return false;
+			}
+			if(this.boosters.length !== boosterQuantity) {
+				this.emitMessage("Incorrect Provided Boosters", `Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`);
+				return false;
+			}
+			if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
+				this.emitMessage("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
+				return false;
+			}
+			return true;
+		}
+
 		if (this.useCustomCardList) {
 			if (!this.customCardList.cards) {
 				this.emitMessage("Error generating boosters", "No custom card list provided.");
@@ -1731,6 +1751,9 @@ export function Session(id, owner, options) {
 	this.forUsers = function(fn) {
 		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
 		for (let user of this.users) fn(user);
+	};
+	this.forNonOwners = function(fn) {
+		for (let uid of this.users) if(uid !== this.owner) fn(uid);
 	};
 }
 

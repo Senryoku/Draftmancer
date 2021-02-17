@@ -585,6 +585,38 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
+	"setUsePredeterminedBoosters": function(userID, sessionID, value) {
+		Sessions[sessionID].usePredeterminedBoosters = value;
+		Sessions[sessionID].forNonOwners(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
+	},
+	"setBoosters": function(userID, sessionID, text, ack) {
+		try {
+			let boosters = [];
+			let booster = [];
+			for(let line of text.split('\n')) {
+				if(!line || line === "") {
+					boosters.push(booster);
+					booster = [];
+				} else {
+					let [count, cardID] = parseLine(line);
+					if (typeof cardID !== "undefined") {
+						for (let i = 0; i < count; ++i) 
+							booster.push(getUnique(cardID));
+					} else {
+						ack(count);
+						return;
+					}
+				}
+			}
+			if(booster.length > 0) boosters.push(booster);
+
+			Sessions[sessionID].boosters = boosters;
+			Sessions[sessionID].usePredeterminedBoosters = true;
+			Sessions[sessionID].forUsers(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true }));
+		} catch(e) {
+			ack({error: {title: "Internal error."}});
+		}
+	},
 	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {
 		if (typeof draftLogRecipients !== "string") return;
 		draftLogRecipients = draftLogRecipients.toLowerCase();

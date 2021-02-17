@@ -2,7 +2,7 @@ import { Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\S+))?)?\s*$/;
 
-export const parseLine = line => {
+export function parseLine(line) {
 	line = line.trim();
 	const match = line.match(lineRegex);
 	if(!match) {
