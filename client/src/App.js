@@ -2291,7 +2291,7 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDescription", this.description);
 		},
-		mythicPromotion: function() {
+		usePredeterminedBoosters: function() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUsePredeterminedBoosters", this.usePredeterminedBoosters);
 		},
