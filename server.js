@@ -596,6 +596,7 @@ const ownerSocketCallbacks = {
 			let booster = [];
 			for(let line of text.split('\n')) {
 				if(!line || line === "") {
+					if(booster.length === 0) continue;
 					boosters.push(booster);
 					booster = [];
 				} else {
