@@ -1577,16 +1577,17 @@ export default {
 						this.addToSideboard(c);
 					this.draftingState = DraftState.Brewing;
 				}
-				fireToast("success", "Successfully imported deck!")
+				fireToast("success", "Successfully imported deck!");
+				this.displayedModal = null;
 			} else if(response.status === 400) {
 				let data = await response.json();
 				if(data.error) {
-					fireToast("error", `Error importing deck: ${data.error.message}`)
+					fireToast("error", `Error importing deck: ${data.error.message}`);
 				} else {
-					fireToast("error", "Error importing deck.")
+					fireToast("error", "Error importing deck.");
 				}
 			} else {
-				fireToast("error", "Error importing deck.")
+				fireToast("error", "Error importing deck.");
 			}
 		},
 		toggleSetRestriction: function(code) {
