@@ -1530,7 +1530,8 @@
 						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
 						<div class="right">
 							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
-							<button @click="displayedModal = 'uploadBoosters'"><i class="fas fa-upload"></i> Upload Boosters</button>
+							<button @click="displayedModal = 'uploadBoosters'"><i class="fas fa-upload"></i> Upload</button>
+							<button @click="shuffleUploadedBoosters" v-tooltip="'Shuffle the boosters before distributing them.'">Shuffle</button>
 						</div>
 					</div>
 					<div

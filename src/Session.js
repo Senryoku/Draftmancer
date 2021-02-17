@@ -458,15 +458,15 @@ export function Session(id, owner, options) {
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if(this.usePredeterminedBoosters) {
 			if(!this.boosters) {
-				this.emitMessage("No Provided Boosters", `Please upload your boosters in the session settings to use Pre-determined boosters.`);
+				this.emitError("No Provided Boosters", `Please upload your boosters in the session settings to use Pre-determined boosters.`);
 				return false;
 			}
 			if(this.boosters.length !== boosterQuantity) {
-				this.emitMessage("Incorrect Provided Boosters", `Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`);
+				this.emitError("Incorrect Provided Boosters", `Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`);
 				return false;
 			}
 			if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
-				this.emitMessage("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
+				this.emitError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
 				return false;
 			}
 			return true;
@@ -474,7 +474,7 @@ export function Session(id, owner, options) {
 
 		if (this.useCustomCardList) {
 			if (!this.customCardList.cards) {
-				this.emitMessage("Error generating boosters", "No custom card list provided.");
+				this.emitError("Error generating boosters", "No custom card list provided.");
 				return false;
 			}
 			// List is using custom booster slots
@@ -492,7 +492,7 @@ export function Session(id, owner, options) {
 					const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
 					if (card_count < card_target) {
 						const msg = `Not enough cards (${card_count}/${card_target} ${r}) in custom card list.`;
-						this.emitMessage("Error generating boosters", msg);
+						this.emitError("Error generating boosters", msg);
 						console.warn(msg);
 						return false;
 					}
@@ -546,7 +546,7 @@ export function Session(id, owner, options) {
 				let card_target = cardsPerBooster * boosterQuantity;
 				if (card_count < card_target) {
 					const msg = `Not enough cards (${card_count}/${card_target}) in custom list.`;
-					this.emitMessage("Error generating boosters", msg);
+					this.emitError("Error generating boosters", msg);
 					console.warn(msg);
 					return false;
 				}
@@ -574,7 +574,7 @@ export function Session(id, owner, options) {
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
 				onError: (...args) => {
-					this.emitMessage(...args);
+					this.emitError(...args);
 				},
 			};
 
@@ -637,7 +637,7 @@ export function Session(id, owner, options) {
 						const card_target = targets[slot] * boosterQuantity;
 						if (card_count < card_target) {
 							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-							this.emitMessage("Error generating boosters", msg);
+							this.emitError("Error generating boosters", msg);
 							console.warn(msg);
 							return false;
 						}
@@ -705,7 +705,7 @@ export function Session(id, owner, options) {
 									for (let slot of ["common", "uncommon", "rare"]) {
 										if (countCards(usedSets[boosterSet].cardPool[slot]) < multiplier * this.getVirtualPlayersCount() * targets[slot]) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-											this.emitMessage("Error generating boosters", msg, true, 0);
+											this.emitError("Error generating boosters", msg, true, 0);
 											console.warn(msg);
 											return false;
 										}
@@ -740,7 +740,7 @@ export function Session(id, owner, options) {
 				if (this.distributionMode !== "regular"  || customBoosters.some(v => v === "random")) {
 					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
-						this.emitMessage("Error generating boosters", msg);
+						this.emitError("Error generating boosters", msg);
 						console.error(msg)
 						//console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
 						return false;
@@ -1708,6 +1708,16 @@ export function Session(id, owner, options) {
 				timer: timer,
 			})
 		);
+	};
+
+	this.emitError = function(title, text, showConfirmButton = true, timer = 0) {
+		Connections[this.owner].socket.emit("message", {
+			icon: "error",
+			title: title,
+			text: text,
+			showConfirmButton: showConfirmButton,
+			timer: timer,
+		});
 	};
 
 	this.generateBracket = function(players) {

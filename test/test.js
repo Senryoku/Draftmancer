@@ -333,7 +333,7 @@ describe("Single Draft (Two Players)", function() {
 	}
 
 	function endDraft() {
-		it("Do it enough times, and all the drafts should end.", function(done) {
+		it("Pick enough times, and the draft should end.", function(done) {
 			let draftEnded = 0;
 			for (let c = 0; c < clients.length; ++c) {
 				const idx = c;
@@ -854,6 +854,76 @@ describe("Single Draft (Two Players)", function() {
 				});
 			}
 		}
+		disconnect();
+	});
+
+	describe.only("Pre-Determined Boosters", function() {	
+		connect();
+		it("Receive error on invalid card list.", function(done) {
+			clients[ownerIdx].emit("setBoosters", "Invalid Card!", (r) => {
+				if(r.error) done();
+			});
+		});
+		it("Receive error on invalid card list.", function(done) {
+			clients[ownerIdx].emit("setBoosters", "Another\n\nInvalid Cards!\n", (r) => {
+				if(r.error) done();
+			});
+		});
+	
+		it("Expect error on valid booster list but with wrong booster count.", function(done) {
+			clients[ownerIdx].emit("setBoosters", "15 Forest\n\n15 Forest", (r) => {
+				expect(r.code === 0);
+				expect(!r.error);
+				clients[ownerIdx].on("message", (r) => { 
+					if(r.icon === "error") {
+						clients[ownerIdx].removeListener("message");
+						expect(!Sessions[sessionID].drafting);
+						done();
+					}
+				});
+				clients[ownerIdx].emit("startDraft");
+			});
+		});
+	
+		it("Expect error on valid booster list but with inconsistent sizes.", function(done) {
+			clients[ownerIdx].emit("setBoosters", "15 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest", (r) => {
+				expect(r.code === 0);
+				expect(!r.error);
+				clients[ownerIdx].on("message", (r) => { 
+					if(r.icon === "error") {
+						clients[ownerIdx].removeListener("message");
+						expect(!Sessions[sessionID].drafting);
+						done();
+					}
+				});
+				clients[ownerIdx].emit("startDraft");
+			});
+		});
+	
+		it("Sumbit valid booster list", function(done) {
+			clients[ownerIdx].emit("setBoosters", "15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest", (r) => {
+				expect(r.code === 0);
+				expect(!r.error);
+				expect(Sessions[sessionID].usePredeterminedBoosters);
+				done();
+			});
+		});
+		
+		startDraft();
+		endDraft();
+	
+		it("Turn off usePredeterminedBoosters", function(done) {
+			expect(Sessions[sessionID].usePredeterminedBoosters);
+			clients[ownerIdx].emit("setUsePredeterminedBoosters", false, (r) => {
+				expect(r.code === 0);
+				expect(!Sessions[sessionID].usePredeterminedBoosters);
+				done();
+			});
+		});
+		
+		startDraft();
+		endDraft();
+
 		disconnect();
 	});
 });

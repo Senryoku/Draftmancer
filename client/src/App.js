@@ -1595,7 +1595,6 @@ export default {
 			if(this.sessionOwner !== this.userID) return;
 			const text = document.querySelector('#upload-booster-text').value;
 			this.socket.emit("setBoosters", text, (response) => {
-				console.log(response);
 				if(response.error) {
 					Swal.fire({
 						icon: response.error.type, 
@@ -1604,6 +1603,19 @@ export default {
 						footer: response.error.footer, 
 						customClass: SwalCustomClasses,
 					});
+				} else {
+					fireToast("success", "Boosters successfuly uploaded!");
+					this.displayedModal = "sessionOptions";
+				}
+			});
+		},
+		shuffleUploadedBoosters: function() {
+			if(this.sessionOwner !== this.userID) return;
+			this.socket.emit("shuffleBoosters", (response) => {
+				if(response.error) {
+					fireToast(response.error.type, response.error.title);
+				} else {
+					fireToast("success", "Boosters successfuly shuffled!");
 				}
 			});
 		},

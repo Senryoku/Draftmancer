@@ -19,7 +19,7 @@ import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
 import bodyParser from "body-parser";
 
-import { isEmpty } from "./src/utils.js";
+import { isEmpty, shuffleArray } from "./src/utils.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
@@ -585,9 +585,10 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
-	"setUsePredeterminedBoosters": function(userID, sessionID, value) {
+	"setUsePredeterminedBoosters": function(userID, sessionID, value, ack) {
 		Sessions[sessionID].usePredeterminedBoosters = value;
 		Sessions[sessionID].forNonOwners(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
+		if(ack) ack({code: 0});
 	},
 	"setBoosters": function(userID, sessionID, text, ack) {
 		try {
@@ -613,8 +614,17 @@ const ownerSocketCallbacks = {
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;
 			Sessions[sessionID].forUsers(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true }));
+			ack({ code: 0 });
 		} catch(e) {
-			ack({error: {title: "Internal error."}});
+			ack({ error: {title: "Internal error."} });
+		}
+	},
+	"shuffleBoosters": function(userID, sessionID, ack) {
+		if(!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
+			if(ack) ack({ error: {type:"error", title: "No boosters to shuffle."}});
+		} else {
+			shuffleArray(Sessions[sessionID].boosters);
+			if(ack) ack({ code: 0 });
 		}
 	},
 	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {
