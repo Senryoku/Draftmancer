@@ -1196,7 +1196,7 @@ export default {
 			});
 
 			if (boosterCount) {
-				this.socket.emit("startGridDraft", boosterCount);
+				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
 		gridDraftPick: function(choice) {

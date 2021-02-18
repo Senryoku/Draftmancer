@@ -347,7 +347,8 @@ const ownerSocketCallbacks = {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
-			sess.startGridDraft(boosterCount ? boosterCount : 18);
+			if(typeof boosterCount === "string") boosterCount = parseInt(boosterCount);
+			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
 			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {

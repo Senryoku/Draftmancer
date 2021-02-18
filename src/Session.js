@@ -131,7 +131,7 @@ export function GridDraftState(players, boosters) {
 	if (boosters) {
 		for (let booster of boosters) {
 			if (booster.length > 9) booster.length = 9;
-			if (booster.length < 9) this.error = true;
+			if (booster.length < 9) this.error = {title: "Not enough cards in boosters.", text: "At least one booster has less than 9 cards."};
 			shuffleArray(booster);
 			this.boosters.push(booster);
 		}
@@ -910,6 +910,13 @@ export function Session(id, owner, options) {
 
 		this.disconnectedUsers = {};
 		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		if(this.gridDraftState.error) {
+			this.emitError(this.gridDraftState.error.title, this.gridDraftState.error.text);
+			this.gridDraftState = null;
+			this.drafting = false;
+			return;
+		}
+
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
