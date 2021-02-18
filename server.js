@@ -616,9 +616,14 @@ const ownerSocketCallbacks = {
 				ack({ error: {title: "Empty list" }});
 				return;
 			}
-			if(boosters.some(b => b.length !== boosters[0].length)) {
-				ack({ error: {title: "Inconsistent booster sizes", text: `All boosters must be of the same size.` }});
-				return;
+			for(let i = 1; i < boosters.length; ++i) {
+				if(boosters[i].length !== boosters[0].length) {
+					ack({ error: {
+						title: "Inconsistent booster sizes", 
+						text: `All boosters must be of the same size. Booster #${i+1} has ${boosters[i].length} cards, expected ${boosters[0].length}.`
+					}});
+					return;
+				}
 			}
 
 			Sessions[sessionID].boosters = boosters;
