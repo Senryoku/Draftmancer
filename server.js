@@ -611,6 +611,15 @@ const ownerSocketCallbacks = {
 				}
 			}
 			if(booster.length > 0) boosters.push(booster);
+			
+			if(boosters.length === 0) {
+				ack({ error: {title: "Empty list" }});
+				return;
+			}
+			if(boosters.some(b => b.length !== boosters[0].length)) {
+				ack({ error: {title: "Inconsistent booster sizes", text: `All boosters must be of the same size.` }});
+				return;
+			}
 
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;

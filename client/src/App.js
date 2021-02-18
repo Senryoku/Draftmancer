@@ -1597,7 +1597,7 @@ export default {
 			this.socket.emit("setBoosters", text, (response) => {
 				if(response.error) {
 					Swal.fire({
-						icon: response.error.type, 
+						icon: "error", 
 						title: response.error.title, 
 						text: response.error.text, 
 						footer: response.error.footer, 

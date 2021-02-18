@@ -857,7 +857,7 @@ describe("Single Draft (Two Players)", function() {
 		disconnect();
 	});
 
-	describe.only("Pre-Determined Boosters", function() {	
+	describe("Pre-Determined Boosters", function() {	
 		connect();
 		it("Receive error on invalid card list.", function(done) {
 			clients[ownerIdx].emit("setBoosters", "Invalid Card!", (r) => {
@@ -887,16 +887,8 @@ describe("Single Draft (Two Players)", function() {
 	
 		it("Expect error on valid booster list but with inconsistent sizes.", function(done) {
 			clients[ownerIdx].emit("setBoosters", "15 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest\n\n18 Forest", (r) => {
-				expect(r.code === 0);
-				expect(!r.error);
-				clients[ownerIdx].on("message", (r) => { 
-					if(r.icon === "error") {
-						clients[ownerIdx].removeListener("message");
-						expect(!Sessions[sessionID].drafting);
-						done();
-					}
-				});
-				clients[ownerIdx].emit("startDraft");
+				expect(r.error);
+				done();
 			});
 		});
 	
