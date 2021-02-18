@@ -36,10 +36,18 @@
 					<i class="fas fa-clipboard"></i> Export Deck (Simple)
 				</button>
 				<template v-if="list.hashes">
-					<span @click="copyHash(list.hashes.cockatrice)" class="clickable"
+					<span
+						@click="copyHash(list.hashes.cockatrice)"
+						class="clickable"
+						v-tooltip.top="'Copy hash to clipboard.'"
 						>Cockatrice: {{ list.hashes.cockatrice }}</span
 					>
-					<span @click="copyHash(list.hashes.cockatrice)" class="clickable">MWS: {{ list.hashes.mws }}</span>
+					<span
+						@click="copyHash(list.hashes.cockatrice)"
+						class="clickable"
+						v-tooltip.top="'Copy hash to clipboard.'"
+						>MWS: {{ list.hashes.mws }}</span
+					>
 				</template>
 			</template>
 		</card-pool>
@@ -62,13 +70,21 @@
 		<table class="hashes">
 			<tr>
 				<td>Cockatrice</td>
-				<td>
+				<td
+					@click="copyHash(list.hashes.cockatrice)"
+					class="clickable"
+					v-tooltip.right="'Copy hash to clipboard.'"
+				>
 					<code>{{ list.hashes.cockatrice }}</code>
 				</td>
 			</tr>
 			<tr>
 				<td>MWS</td>
-				<td>
+				<td
+					@click="copyHash(list.hashes.cockatrice)"
+					class="clickable"
+					v-tooltip.right="'Copy hash to clipboard.'"
+				>
 					<code>{{ list.hashes.mws }}</code>
 				</td>
 			</tr>
