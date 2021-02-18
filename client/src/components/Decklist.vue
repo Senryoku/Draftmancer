@@ -42,10 +42,7 @@
 						v-tooltip.top="'Copy hash to clipboard.'"
 						>Cockatrice: {{ list.hashes.cockatrice }}</span
 					>
-					<span
-						@click="copyHash(list.hashes.cockatrice)"
-						class="clickable"
-						v-tooltip.top="'Copy hash to clipboard.'"
+					<span @click="copyHash(list.hashes.mws)" class="clickable" v-tooltip.top="'Copy hash to clipboard.'"
 						>MWS: {{ list.hashes.mws }}</span
 					>
 				</template>
@@ -80,11 +77,7 @@
 			</tr>
 			<tr>
 				<td>MWS</td>
-				<td
-					@click="copyHash(list.hashes.cockatrice)"
-					class="clickable"
-					v-tooltip.right="'Copy hash to clipboard.'"
-				>
+				<td @click="copyHash(list.hashes.mws)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
 					<code>{{ list.hashes.mws }}</code>
 				</td>
 			</tr>
