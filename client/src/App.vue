@@ -1385,7 +1385,7 @@
 				</form>
 			</div>
 		</modal>
-		<modal v-if="displayedModal === 'uploadBoosters'" @close="displayedModal = ''">
+		<modal v-show="displayedModal === 'uploadBoosters'" @close="displayedModal = 'sessionOptions'">
 			<h2 slot="header">Upload Boosters</h2>
 			<div slot="body">
 				<form @submit.prevent="uploadBoosters">
