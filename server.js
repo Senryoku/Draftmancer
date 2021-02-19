@@ -601,10 +601,13 @@ const ownerSocketCallbacks = {
 					boosters.push(booster);
 					booster = [];
 				} else {
-					let [count, cardID] = parseLine(line);
+					let [count, cardID, foil] = parseLine(line);
 					if (typeof cardID !== "undefined") {
-						for (let i = 0; i < count; ++i) 
-							booster.push(getUnique(cardID));
+						for (let i = 0; i < count; ++i) {
+							let card = getUnique(cardID);
+							if(foil) card.foil = true;
+							booster.push(card);
+						}
 					} else {
 						ack(count);
 						return;
