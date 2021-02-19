@@ -402,6 +402,7 @@
 							teama: teamDraft && idx % 2 === 0,
 							teamb: teamDraft && idx % 2 === 1,
 							draggable: userID === sessionOwner && !drafting,
+							self: userID === id,
 							bot: userByID[id].isBot,
 						}"
 						:data-userid="id"
