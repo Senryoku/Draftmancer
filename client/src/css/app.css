@@ -604,9 +604,15 @@ ul.player-list {
 	box-shadow: inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
 }
 
+.player-list > li.draggable {
+	transform: translateY(0);
+}
 .player-list > li.draggable:hover {
-	translate: 0 -3px;
+	transform: translateY(-3px);
 	box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
+}
+.player-list > li.draggable.self:hover {
+	box-shadow: inset 0 0 5px 0px rgba(255, 255, 255, 0.3), 3px 3px 5px 0 rgba(0, 0, 0, 0.75);
 }
 
 .player-list li.bot {
