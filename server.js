@@ -19,7 +19,7 @@ import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
 import bodyParser from "body-parser";
 
-import { isEmpty } from "./src/utils.js";
+import { isEmpty, shuffleArray } from "./src/utils.js";
 import constants from "./client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
@@ -347,7 +347,8 @@ const ownerSocketCallbacks = {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
-			sess.startGridDraft(boosterCount ? boosterCount : 18);
+			if(typeof boosterCount === "string") boosterCount = parseInt(boosterCount);
+			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
 			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
@@ -583,6 +584,66 @@ const ownerSocketCallbacks = {
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID)
 				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
+		}
+	},
+	"setUsePredeterminedBoosters": function(userID, sessionID, value, ack) {
+		Sessions[sessionID].usePredeterminedBoosters = value;
+		Sessions[sessionID].forNonOwners(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
+		if(ack) ack({code: 0});
+	},
+	"setBoosters": function(userID, sessionID, text, ack) {
+		try {
+			let boosters = [];
+			let booster = [];
+			for(let line of text.split('\n')) {
+				if(!line || line === "") {
+					if(booster.length === 0) continue;
+					boosters.push(booster);
+					booster = [];
+				} else {
+					let [count, cardID, foil] = parseLine(line);
+					if (typeof cardID !== "undefined") {
+						for (let i = 0; i < count; ++i) {
+							let card = getUnique(cardID);
+							if(foil) card.foil = true;
+							booster.push(card);
+						}
+					} else {
+						ack(count);
+						return;
+					}
+				}
+			}
+			if(booster.length > 0) boosters.push(booster);
+			
+			if(boosters.length === 0) {
+				ack({ error: {title: "Empty list" }});
+				return;
+			}
+			for(let i = 1; i < boosters.length; ++i) {
+				if(boosters[i].length !== boosters[0].length) {
+					ack({ error: {
+						title: "Inconsistent booster sizes", 
+						text: `All boosters must be of the same size. Booster #${i+1} has ${boosters[i].length} cards, expected ${boosters[0].length}.`
+					}});
+					return;
+				}
+			}
+
+			Sessions[sessionID].boosters = boosters;
+			Sessions[sessionID].usePredeterminedBoosters = true;
+			Sessions[sessionID].forUsers(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true }));
+			ack({ code: 0 });
+		} catch(e) {
+			ack({ error: {title: "Internal error."} });
+		}
+	},
+	"shuffleBoosters": function(userID, sessionID, ack) {
+		if(!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
+			if(ack) ack({ error: {type:"error", title: "No boosters to shuffle."}});
+		} else {
+			shuffleArray(Sessions[sessionID].boosters);
+			if(ack) ack({ code: 0 });
 		}
 	},
 	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {

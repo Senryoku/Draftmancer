@@ -1,8 +1,9 @@
 import { Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+(\S+))?)?\s*$/;
+const lineRegex = /^(?:(\d+)\s+)?([^(+\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?\s*$/;
 
-export const parseLine = line => {
+// Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
+export function parseLine(line) {
 	line = line.trim();
 	const match = line.match(lineRegex);
 	if(!match) {
@@ -19,7 +20,7 @@ export const parseLine = line => {
 		];
 	}
 
-	let [, count, name, set, number] = match;
+	let [, count, name, set, number, foil] = match;
 	count = parseInt(count);
 	if (!Number.isInteger(count)) count = 1;
 
@@ -39,7 +40,7 @@ export const parseLine = line => {
 
 	// Only the name is supplied, get the prefered version of the card
 	if(!set && !number && name in CardsByName)
-		return [count, CardsByName[name]];
+		return [count, CardsByName[name], !!foil];
 
 	// Search for the correct set and collector number
 	let candidates = [];
@@ -61,7 +62,7 @@ export const parseLine = line => {
 			if(parseInt(Cards[cid].collector_number) < parseInt(Cards[best].collector_number))
 				return cid;
 			return best;
-		}, cardIDs[0])];
+		}, cardIDs[0]), !!foil];
 	}
 	
 	const message = (name in CardsByName ? `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.` : `Could not find '${name}' in our database.`) + ` If you think it should be there, please contact us via email or our Discord server.`;
@@ -76,6 +77,7 @@ export const parseLine = line => {
 			},
 		},
 		undefined,
+		undefined
 	];
 };
 

@@ -27,9 +27,11 @@ export const optionProps = [
 	"maxPlayers",
 	"mythicPromotion",
 	"boosterContent",
+	"usePredeterminedBoosters",
 	"colorBalance",
 	"maxDuplicates",
 	"foil",
+	"preferedCollation",
 	"useCustomCardList",
 	"customCardList",
 	"distributionMode",
@@ -129,7 +131,7 @@ export function GridDraftState(players, boosters) {
 	if (boosters) {
 		for (let booster of boosters) {
 			if (booster.length > 9) booster.length = 9;
-			if (booster.length < 9) this.error = true;
+			if (booster.length < 9) this.error = {title: "Not enough cards in boosters.", text: "At least one booster has less than 9 cards."};
 			shuffleArray(booster);
 			this.boosters.push(booster);
 		}
@@ -199,6 +201,7 @@ export function Session(id, owner, options) {
 	this.maxPlayers = 8;
 	this.mythicPromotion = true;
 	this.boosterContent = DefaultBoosterTargets;
+	this.usePredeterminedBoosters = false;
 	this.colorBalance = true;
 	this.maxDuplicates = null;
 	this.foil = false;
@@ -452,9 +455,26 @@ export function Session(id, owner, options) {
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
 	this.generateBoosters = function(boosterQuantity, options = {}) {
+		// Use pre-determined boosters; Make sure supplied booster are correct.
+		if(this.usePredeterminedBoosters) {
+			if(!this.boosters) {
+				this.emitError("No Provided Boosters", `Please upload your boosters in the session settings to use Pre-determined boosters.`);
+				return false;
+			}
+			if(this.boosters.length !== boosterQuantity) {
+				this.emitError("Incorrect Provided Boosters", `Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`);
+				return false;
+			}
+			if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
+				this.emitError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
+				return false;
+			}
+			return true;
+		}
+
 		if (this.useCustomCardList) {
 			if (!this.customCardList.cards) {
-				this.emitMessage("Error generating boosters", "No custom card list provided.");
+				this.emitError("Error generating boosters", "No custom card list provided.");
 				return false;
 			}
 			// List is using custom booster slots
@@ -472,7 +492,7 @@ export function Session(id, owner, options) {
 					const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
 					if (card_count < card_target) {
 						const msg = `Not enough cards (${card_count}/${card_target} ${r}) in custom card list.`;
-						this.emitMessage("Error generating boosters", msg);
+						this.emitError("Error generating boosters", msg);
 						console.warn(msg);
 						return false;
 					}
@@ -526,7 +546,7 @@ export function Session(id, owner, options) {
 				let card_target = cardsPerBooster * boosterQuantity;
 				if (card_count < card_target) {
 					const msg = `Not enough cards (${card_count}/${card_target}) in custom list.`;
-					this.emitMessage("Error generating boosters", msg);
+					this.emitError("Error generating boosters", msg);
 					console.warn(msg);
 					return false;
 				}
@@ -554,7 +574,7 @@ export function Session(id, owner, options) {
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
 				onError: (...args) => {
-					this.emitMessage(...args);
+					this.emitError(...args);
 				},
 			};
 
@@ -617,7 +637,7 @@ export function Session(id, owner, options) {
 						const card_target = targets[slot] * boosterQuantity;
 						if (card_count < card_target) {
 							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-							this.emitMessage("Error generating boosters", msg);
+							this.emitError("Error generating boosters", msg);
 							console.warn(msg);
 							return false;
 						}
@@ -685,7 +705,7 @@ export function Session(id, owner, options) {
 									for (let slot of ["common", "uncommon", "rare"]) {
 										if (countCards(usedSets[boosterSet].cardPool[slot]) < multiplier * this.getVirtualPlayersCount() * targets[slot]) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-											this.emitMessage("Error generating boosters", msg, true, 0);
+											this.emitError("Error generating boosters", msg, true, 0);
 											console.warn(msg);
 											return false;
 										}
@@ -720,7 +740,7 @@ export function Session(id, owner, options) {
 				if (this.distributionMode !== "regular"  || customBoosters.some(v => v === "random")) {
 					if(this.boosters.some(b => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
-						this.emitMessage("Error generating boosters", msg);
+						this.emitError("Error generating boosters", msg);
 						console.error(msg)
 						//console.error(this.boosters.map((b) => [b[0].name, b[0].set, b.length]))
 						return false;
@@ -890,6 +910,13 @@ export function Session(id, owner, options) {
 
 		this.disconnectedUsers = {};
 		this.gridDraftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		if(this.gridDraftState.error) {
+			this.emitError(this.gridDraftState.error.title, this.gridDraftState.error.text);
+			this.gridDraftState = null;
+			this.drafting = false;
+			return;
+		}
+
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
@@ -1690,6 +1717,16 @@ export function Session(id, owner, options) {
 		);
 	};
 
+	this.emitError = function(title, text, showConfirmButton = true, timer = 0) {
+		Connections[this.owner].socket.emit("message", {
+			icon: "error",
+			title: title,
+			text: text,
+			showConfirmButton: showConfirmButton,
+			timer: timer,
+		});
+	};
+
 	this.generateBracket = function(players) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
@@ -1731,6 +1768,9 @@ export function Session(id, owner, options) {
 	this.forUsers = function(fn) {
 		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
 		for (let user of this.users) fn(user);
+	};
+	this.forNonOwners = function(fn) {
+		for (let uid of this.users) if(uid !== this.owner) fn(uid);
 	};
 }
 

@@ -129,6 +129,7 @@ export default {
 				uncommon: 3,
 				rare: 1,
 			},
+			usePredeterminedBoosters: false,
 			colorBalance: true,
 			maxDuplicates: null,
 			foil: false,
@@ -1195,7 +1196,7 @@ export default {
 			});
 
 			if (boosterCount) {
-				this.socket.emit("startGridDraft", boosterCount);
+				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
 		gridDraftPick: function(choice) {
@@ -1589,6 +1590,34 @@ export default {
 			} else {
 				fireToast("error", "Error importing deck.");
 			}
+		},
+		uploadBoosters: function() {
+			if(this.sessionOwner !== this.userID) return;
+			const text = document.querySelector('#upload-booster-text').value;
+			this.socket.emit("setBoosters", text, (response) => {
+				if(response.error) {
+					Swal.fire({
+						icon: "error", 
+						title: response.error.title, 
+						text: response.error.text, 
+						footer: response.error.footer, 
+						customClass: SwalCustomClasses,
+					});
+				} else {
+					fireToast("success", "Boosters successfuly uploaded!");
+					this.displayedModal = "sessionOptions";
+				}
+			});
+		},
+		shuffleUploadedBoosters: function() {
+			if(this.sessionOwner !== this.userID) return;
+			this.socket.emit("shuffleBoosters", (response) => {
+				if(response.error) {
+					fireToast(response.error.type, response.error.title);
+				} else {
+					fireToast("success", "Boosters successfuly shuffled!");
+				}
+			});
 		},
 		toggleSetRestriction: function(code) {
 			if (this.setRestriction.includes(code))
@@ -2273,6 +2302,10 @@ export default {
 		description: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDescription", this.description);
+		},
+		usePredeterminedBoosters: function() {
+			if (this.userID !== this.sessionOwner || !this.socket) return;
+			this.socket.emit("setUsePredeterminedBoosters", this.usePredeterminedBoosters);
 		},
 		boostersPerPlayer: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
