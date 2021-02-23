@@ -1968,8 +1968,8 @@ export default {
 			this.deck = this.deck.filter(c => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter(c => c.type !== "Basic Land");
 			this.$nextTick(() => {
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay.filterBasics();
+				this.$refs.sideboardDisplay.filterBasics();
 			});
 		},
 		colorsInCardPool: function(pool) {

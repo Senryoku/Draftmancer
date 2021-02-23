@@ -198,6 +198,16 @@ export default {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
 		},
+		filterBasics: function () {
+			// Removes basics without affecting other cards ordering.
+			for (let r of this.rows)
+				for (let i = 0; i < r.length; ++i)
+					r.splice(
+						i,
+						1,
+						r[i].filter((c) => c.type !== "Basic Land")
+					);
+		},
 		selectRow: function (card) {
 			return this.options.layout === "TwoRows" && !card.type.includes("Creature") && this.options.sort !== "type"
 				? this.rows[1]
