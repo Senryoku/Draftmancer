@@ -490,6 +490,7 @@
 						:class="{
 							teama: teamDraft && idx % 2 === 0,
 							teamb: teamDraft && idx % 2 === 1,
+							self: userID === user.userID,
 							bot: user.isBot,
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
