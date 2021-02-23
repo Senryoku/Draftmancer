@@ -1967,10 +1967,8 @@ export default {
 		removeBasicsFromDeck: function() {
 			this.deck = this.deck.filter(c => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter(c => c.type !== "Basic Land");
-			this.$nextTick(() => {
-				this.$refs.deckDisplay.filterBasics();
-				this.$refs.sideboardDisplay.filterBasics();
-			});
+			this.$refs.deckDisplay.filterBasics();
+			this.$refs.sideboardDisplay.filterBasics();
 		},
 		colorsInCardPool: function(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
