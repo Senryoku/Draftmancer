@@ -23,7 +23,7 @@
 					@change="$emit('display-collection-status', $event.target.checked)"
 					:checked="displaycollectionstatus"
 					id="display-collection-status"
-				/><label for="display-collection-status">Display collection status while drafting</label>
+				/><label for="display-collection-status">Highlight required wildcards in games</label>
 			</div>
 		</div>
 		<div class="set-stats">
