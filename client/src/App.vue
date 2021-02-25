@@ -1269,8 +1269,7 @@
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the options.
-						<a href="cubeformat.html" target="_blank">More informations here</a>
-						.
+						<a href="cubeformat.html" target="_blank">More informations here</a>.
 					</p>
 					<strong>How can we adjust the packs content for cubes?</strong>
 					<p>
