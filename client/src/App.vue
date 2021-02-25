@@ -1312,7 +1312,7 @@
 						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
 							Settings
-							<i class="fa-bars fa"></i>
+							<i class="fas fa-cog"></i>
 						</span>
 						for some additional options:
 						<ul>
