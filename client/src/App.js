@@ -628,6 +628,7 @@ export default {
 						});
 					}
 					this.draftingState = DraftState.RochesterPicking;
+					this.selectedCards = [];
 				} else {
 					this.draftingState = DraftState.RochesterWaiting;
 				}

@@ -686,6 +686,7 @@ ul.player-list {
 }
 
 .booster-cards-leave-active {
+	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.5s;
 }
 
@@ -696,7 +697,7 @@ ul.player-list {
 }
 
 .booster-cards-leave-to.selected {
-	transform: translateY(250px) translateX(-100px);
+	transform: translateY(250px) translateX(-100px); /* translateX compensates for width change */
 	z-index: 2;
 	opacity: 0;
 	width: 0;
