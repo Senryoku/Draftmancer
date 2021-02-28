@@ -685,9 +685,14 @@ ul.player-list {
 	opacity: 0;
 }
 
+.booster-cards-enter-active,
 .booster-cards-leave-active {
 	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.5s;
+}
+
+.booster-cards-enter.wait {
+	opacity: 0;
 }
 
 .booster-cards-leave-active.selected {
