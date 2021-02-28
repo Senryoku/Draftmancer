@@ -629,18 +629,9 @@
 						></draft-log-live>
 					</div>
 				</div>
-				<div v-if="draftingState == DraftState.Waiting" key="draft-waiting" class="pick-waiting">
-					<span class="spinner"></span>
-					<span v-show="pickTimer >= 0">
-						(
-						<i class="fas fa-clock"></i>
-						{{ pickTimer }})
-					</span>
-					Waiting for other players to pick...
-				</div>
 				<div
-					v-if="draftingState == DraftState.Picking"
-					key="draft-picking"
+					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
+					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 					id="booster-container"
 					class="container"
 				>
@@ -649,9 +640,9 @@
 						<div class="controls">
 							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-								<i class="fas fa-clock"></i>
-								{{ pickTimer }}
+								<i class="fas fa-clock"></i> {{ pickTimer }}
 							</span>
+							<template v-if="draftingState == DraftState.Picking">
 							<input
 								type="button"
 								@click="pickCard"
@@ -672,9 +663,15 @@
 									}}/{{ cardsToBurnThisRound }}).
 								</span>
 							</span>
+							</template>
+							<template v-else>
+								<i class="fas fa-spinner fa-spin"></i>
+								Waiting for other players to pick...
+							</template>
 						</div>
 					</div>
-					<div class="booster card-container">
+					<transition-group tag="div" name="booster-cards" class="booster card-container" :class="{'booster-waiting': draftingState === DraftState.Waiting}">
+						<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting"><div class="spinner"></div>{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} / {{virtualPlayers.length}}</div>
 						<booster-card
 							v-for="card in booster"
 							:key="`card-booster-${card.uniqueID}`"
@@ -692,7 +689,7 @@
 							:hasenoughwildcards="hasEnoughWildcards(card)"
 							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 						></booster-card>
-					</div>
+					</transition-group>
 				</div>
 			</transition>
 			<!-- Winston Draft -->

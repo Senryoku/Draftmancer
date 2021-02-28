@@ -684,7 +684,7 @@ ul.player-list {
 	transform: translateX(-50px);
 	opacity: 0;
 }
-
+/*
 .slide-fade-right-leave-active .selected,
 .slide-fade-left-leave-active .selected {
 	transition: all 0.3s ease-in, opacity 0.2s ease-in !important;
@@ -695,11 +695,81 @@ ul.player-list {
 	z-index: 2;
 	opacity: 0;
 }
+*/
+
+.booster-cards-leave-active {
+	transition: all 0.5s;
+}
+
+.booster-cards-leave-active.selected {
+	transition: all 0.5s;
+	width: 200px;
+	overflow: visible;
+}
+
+.booster-cards-leave-to.selected {
+	transform: translateY(250px) translateX(-100px);
+	z-index: 2;
+	opacity: 0;
+	width: 0;
+	margin: 0;
+}
+
+.booster-cards-leave-active.burned {
+	animation: card-select 0.5s;
+}
+
+.booster-cards-leave-to.burned {
+	margin: 0;
+}
+
+@keyframes card-select {
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	25% {
+		transform: scale(1.025);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	75% {
+		opacity: 1;
+	}
+	100% {
+		transform: scale(0);
+		opacity: 0;
+	}
+}
 
 /**** Draft ****/
 
-.pick-waiting {
-	padding: 2em;
+.booster-waiting {
+	position: relative;
+	min-height: 5em;
+}
+
+.booster-waiting .wait {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	z-index: 2;
+	font-size: 2em;
+	line-height: 2em;
+	font-family: Calibri;
+}
+
+.booster-waiting {
+	pointer-events: none;
+	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #222 10px, #222 20px);
+}
+
+.booster-waiting .card {
+	filter: brightness(50%);
 }
 
 #chrono {
@@ -849,9 +919,9 @@ ul.player-list {
 
 .spinner {
 	display: inline-block;
-	width: 2em;
-	height: 2em;
-	margin-left: 1.5em;
+	width: 2rem;
+	height: 2rem;
+	margin-right: 1rem;
 }
 
 .spinner:not(:required):after {
@@ -859,20 +929,22 @@ ul.player-list {
 	content: "";
 	display: inline-block;
 	font-size: 8px;
-	width: 1em;
-	height: 1em;
+	width: 1rem;
+	height: 1rem;
 	-webkit-animation: spinner 1500ms infinite linear;
 	-moz-animation: spinner 1500ms infinite linear;
 	-ms-animation: spinner 1500ms infinite linear;
 	-o-animation: spinner 1500ms infinite linear;
 	animation: spinner 1500ms infinite linear;
-	border-radius: 0.5em;
-	-webkit-box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0,
-		var(--spinner-color) 0 1.5em 0 0, var(--spinner-color) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
-		rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
-	box-shadow: var(--spinner-color) 1.5em 0 0 0, var(--spinner-color) 1.1em 1.1em 0 0, var(--spinner-color) 0 1.5em 0 0,
-		var(--spinner-color) -1.1em 1.1em 0 0, var(--spinner-color) -1.5em 0 0 0, var(--spinner-color) -1.1em -1.1em 0 0,
-		var(--spinner-color) 0 -1.5em 0 0, var(--spinner-color) 1.1em -1.1em 0 0;
+	border-radius: 0.5rem;
+	-webkit-box-shadow: var(--spinner-color) 1.5rem 0 0 0, var(--spinner-color) 1.1rem 1.1rem 0 0,
+		var(--spinner-color) 0 1.5rem 0 0, var(--spinner-color) -1.1rem 1.1rem 0 0, rgba(0, 0, 0, 0.5) -1.5rem 0 0 0,
+		rgba(0, 0, 0, 0.5) -1.1rem -1.1rem 0 0, var(--spinner-color) 0 -1.5rem 0 0,
+		var(--spinner-color) 1.1rem -1.1rem 0 0;
+	box-shadow: var(--spinner-color) 1.5rem 0 0 0, var(--spinner-color) 1.1rem 1.1rem 0 0,
+		var(--spinner-color) 0 1.5rem 0 0, var(--spinner-color) -1.1rem 1.1rem 0 0, var(--spinner-color) -1.5rem 0 0 0,
+		var(--spinner-color) -1.1rem -1.1rem 0 0, var(--spinner-color) 0 -1.5rem 0 0,
+		var(--spinner-color) 1.1rem -1.1rem 0 0;
 }
 
 .loading {
