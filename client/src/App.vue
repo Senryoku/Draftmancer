@@ -671,7 +671,11 @@
 						</div>
 					</div>
 					<transition-group tag="div" name="booster-cards" class="booster card-container" :class="{'booster-waiting': draftingState === DraftState.Waiting}">
-						<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting"><div class="spinner"></div>{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} / {{virtualPlayers.length}}</div>
+						<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
+							<i class="fas passing-order" :class="{'fa-angle-double-left': boosterNumber % 2 == 1, 'fa-angle-double-right': boosterNumber % 2 == 0}"></i>
+							<div class="spinner"></div>{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} / {{virtualPlayers.length}}
+							<i class="fas passing-order" :class="{'fa-angle-double-left': boosterNumber % 2 == 1, 'fa-angle-double-right': boosterNumber % 2 == 0}"></i>
+						</div>
 						<booster-card
 							v-for="card in booster"
 							:key="`card-booster-${card.uniqueID}`"

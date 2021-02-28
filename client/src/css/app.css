@@ -716,14 +716,14 @@ ul.player-list {
 }
 
 .booster-cards-leave-active.burned {
-	animation: card-select 0.5s;
+	animation: card-burn 0.5s;
 }
 
 .booster-cards-leave-to.burned {
 	margin: 0;
 }
 
-@keyframes card-select {
+@keyframes card-burn {
 	0% {
 		transform: scale(1);
 		opacity: 1;
@@ -761,6 +761,56 @@ ul.player-list {
 	font-size: 2em;
 	line-height: 2em;
 	font-family: Calibri;
+}
+
+.booster-waiting .wait .passing-order {
+	margin: 0 2em;
+}
+
+.booster-waiting .wait .passing-order.fa-angle-double-right {
+	animation: passing-order-right 3s infinite;
+}
+
+@keyframes passing-order-right {
+	0% {
+		transform: translateX(-2em);
+		opacity: 0;
+	}
+	25% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	75% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	100% {
+		transform: translateX(2em);
+		opacity: 0;
+	}
+}
+
+.booster-waiting .wait .passing-order.fa-angle-double-left {
+	animation: passing-order-left 3s infinite;
+}
+
+@keyframes passing-order-left {
+	0% {
+		transform: translateX(2em);
+		opacity: 0;
+	}
+	25% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	75% {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	100% {
+		transform: translateX(-2em);
+		opacity: 0;
+	}
 }
 
 .booster-waiting {
