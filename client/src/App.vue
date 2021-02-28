@@ -1076,7 +1076,7 @@
 						</div>
 						<div class="welcome-section">
 							{{ userByID[sessionOwner].userName }} is the session owner
-							<i class="fas fa-crown subtle-gold"></i>. Wait for them to select the options and launch a
+							(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
 							game! <br />You can still customize your personal options on top of the page. <br />Or, to
 							make a new session that you own, change Session ID in the top left.
 						</div>
@@ -1269,12 +1269,11 @@
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the options.
-						<a href="cubeformat.html" target="_blank">More informations here</a>
-						.
+						<a href="cubeformat.html" target="_blank">More information</a>
 					</p>
 					<strong>How can we adjust the packs content for cubes?</strong>
 					<p>
-						The <a href="cubeformat.html" target="_blank">Cube Format</a> allows to fine tune the packs content (see the 'Custom Card Slots' section).
+						The <a href="cubeformat.html" target="_blank">Cube Format</a> allows to fine tune the packs content (see the "Custom Card Slots" section).
 						<br />
 						To change the overall number of cards in a pack without going into more details, you can add the following line on top of your cube file and replace <tt>CardPerBooster</tt> by the desired value:
 						<pre>[SlotName(CardPerBooster)]</pre>
@@ -1295,47 +1294,47 @@
 							</li>
 							<li>
 								<span class="option-name">Set(s)</span>
-								: Select one or multiple sets to draft using only with cards from these sets.
+								: Select one or multiple sets to draft with. Out of all chosen sets, mixed boosters will be generated for all players.
 							</li>
 							<li>
 								<span class="option-name">Bots</span>
 								: Adds virtual players to your draft. They are
-								<strong>pretty dumb</strong>
-								, but they are doing their best :(
+								<strong>pretty dumb</strong>,
+								but they are doing their best. :(
 							</li>
 							<li>
 								<span class="option-name">Pick Timer</span>
-								: Maximum time in seconds allowed to pick a card in each booster. 0 means the timer is
+								: Maximum time in seconds allowed to pick a card in each booster. "0" means the timer is
 								disabled.
 							</li>
 						</ul>
 						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
 							Settings
-							<i class="fa-bars fa"></i>
+							<i class="fas fa-cog"></i>
 						</span>
 						for some additional options:
 						<ul>
 							<li>
 								<span class="option-name">Public</span>
 								: Flags your session as public. It will appear in the "Public Sessions" menu so anyone
-								can directly join.
+								can join directly.
 							</li>
 							<li>
 								<span class="option-name">Color Balance</span>
 								: If set, the system will attempt to smooth out the color distribution in each pack, as
-								opposed to being completely random. (Also affects sealed and cube)
+								opposed to being completely random. This also affects sealed and cube!
 							</li>
 							<li>
-								<span class="option-name">Custom card list</span>
-								: Submit a custom card list (one English card name by line) to draft your own cube.
-								(Collections are ignored in this mode)
-								<a href="cubeformat.html" target="_blank">More information here</a>
+								<span class="option-name">Custom Card List</span>
+								: Submit a custom card list (one English card name per line) to draft your own cube.
+								Collections are ignored in this mode.
+								<a href="cubeformat.html" target="_blank">More information</a>
 							</li>
 							<li>
 								<span class="option-name">Foil</span>
-								: If enabled, each pack will have a chance to contain a 'foil' card of any rarity in
-								place of one common.
+								: If enabled, each pack will have a chance to contain a shiny foil card of any rarity and
+								replaces a common - like in paper.
 							</li>
 						</ul>
 					</div>
@@ -1344,22 +1343,22 @@
 						<ul>
 							<li>
 								<span class="option-name">Language</span>
-								: Adjusts the display language of cards. (Only affects cards; Some cards are not available in all languages)
+								: Adjusts the display language of cards (not the page UI!). Some cards are not available in all languages.
 							</li>
 							<li>
 								<span class="option-name">Restrict to Collection</span>
 								: If unchecked, your collection will not limit the cards available in the selected sets.
-								If every players unchecks this, you will draft using every cards. (Ignored if "Ignore
-								Collections" is enabled in the session, or when using a Custom Card List)
+								If every players unchecks this, you will draft using all cards. This setting is ignored if "Ignore
+								Collections" is enabled by the session owner, when using a Custom Card List or Pre-Determined Boosters.
 							</li>
 							<li>
 								<span class="option-name">Pick on Double Click</span>
-								: Allows you to double click on booster cards during draft to pick without having to
+								: Allows you to double click on cards during draft to pick without having to
 								confirm.
 							</li>
 							<li>
 								<span class="option-name">Notifications</span>
-								: Enable to receive desktop notifications when a draft is launched or you have to make a pick.
+								: Enable this to receive desktop notifications when a draft is starting or you receive a new pack to make a pick.
 							</li>
 							<li>
 								<span class="option-name">Session ID</span>
