@@ -762,6 +762,7 @@ export function Session(id, owner, options) {
 					userName: u.userName,
 					collection: !isEmpty(u.collection),
 					useCollection: u.useCollection,
+					pickedThisRound: u.pickedThisRound
 				});
 			}
 		}

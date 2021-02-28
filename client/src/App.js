@@ -281,7 +281,7 @@ export default {
 
 			this.socket.on("sessionUsers", users => {
 				for (let u of users) {
-					u.pickedThisRound = false;
+					if(!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
