@@ -842,7 +842,8 @@
 							@dblclick.native="doubleClickCard($event, card)"
 							draggable
 							@dragstart.native="dragBoosterCard($event, card)"
-							:collectionStatus="collectionStatus(card)"
+							:hasenoughwildcards="hasEnoughWildcards(card)"
+							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 						></booster-card>
 					</template>
 					<template v-else>
@@ -851,7 +852,8 @@
 							:key="`card-booster-${card.uniqueID}`"
 							:card="card"
 							:language="language"
-							:collectionStatus="collectionStatus(card)"
+							:hasenoughwildcards="hasEnoughWildcards(card)"
+							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 						></booster-card>
 					</template>
 				</transition-group>
