@@ -743,18 +743,23 @@ ul.player-list {
 
 .booster-waiting {
 	position: relative;
-	min-height: 5em;
+	min-height: 306px;
 }
 
 .booster-waiting .wait {
 	position: absolute;
+	display: flex;
+	align-items: center;
+	text-align: center;
 	top: 50%;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);
 	z-index: 2;
-	font-size: 2em;
-	line-height: 2em;
+	font-size: 2.5em;
+	line-height: 1.5em;
 	font-family: Calibri;
+	text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+	font-weight: 600;
 }
 
 .booster-waiting .wait .passing-order {
@@ -965,7 +970,6 @@ ul.player-list {
 	display: inline-block;
 	width: 2rem;
 	height: 2rem;
-	margin-right: 1rem;
 }
 
 .spinner:not(:required):after {
