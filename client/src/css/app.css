@@ -684,18 +684,6 @@ ul.player-list {
 	transform: translateX(-50px);
 	opacity: 0;
 }
-/*
-.slide-fade-right-leave-active .selected,
-.slide-fade-left-leave-active .selected {
-	transition: all 0.3s ease-in, opacity 0.2s ease-in !important;
-}
-.slide-fade-right-leave-to .selected,
-.slide-fade-left-leave-to .selected {
-	transform: translateY(250px);
-	z-index: 2;
-	opacity: 0;
-}
-*/
 
 .booster-cards-leave-active {
 	transition: all 0.5s;

@@ -830,7 +830,7 @@
 						</template>
 					</div>
 				</div>
-				<transition-group name="fade" tag="div" class="booster card-container">
+				<transition-group name="booster-cards" tag="div" class="booster card-container">
 					<template v-if="userID === rochesterDraftState.currentPlayer">
 						<booster-card
 							v-for="card in rochesterDraftState.booster"
