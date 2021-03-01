@@ -3,7 +3,9 @@ import { Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 const lineRegex = /^(?:(\d+)\s+)?([^(+\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?\s*$/;
 
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
-export function parseLine(line) {
+// Possible options:
+//  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
+export function parseLine(line, options = {fallbackToCardName: false}) {
 	line = line.trim();
 	const match = line.match(lineRegex);
 	if(!match) {
@@ -63,9 +65,12 @@ export function parseLine(line) {
 				return cid;
 			return best;
 		}, cardIDs[0]), !!foil];
-	}
+	} else if(options && options.fallbackToCardName && name in CardsByName)
+		return [count, CardsByName[name], !!foil];
 	
-	const message = (name in CardsByName ? `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.` : `Could not find '${name}' in our database.`) + ` If you think it should be there, please contact us via email or our Discord server.`;
+	const message = (name in CardsByName ? 
+		`Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.` : 
+		`Could not find '${name}' in our database.`) + ` If you think it should be there, please contact us via email or our Discord server.`;
 
 	return [
 		{
@@ -112,7 +117,7 @@ export function parseCardList(cardlist, options) {
 				line += 1;
 				while (line < lines.length && lines[line].trim()[0] !== "[") {
 					if (lines[line]) {
-						let [count, cardID] = parseLine(lines[line].trim());
+						let [count, cardID] = parseLine(lines[line].trim(), options);
 						if (typeof cardID !== "undefined") {
 							for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
 							cardCount += count;
@@ -129,7 +134,7 @@ export function parseCardList(cardlist, options) {
 			};
 			for (let line of lines) {
 				if (line) {
-					let [count, cardID] = parseLine(line);
+					let [count, cardID] = parseLine(line, options);
 					if (typeof cardID !== "undefined") {
 						for (let i = 0; i < count; ++i) cardList.cards.push(cardID);
 					} else return count; // Return error from parseLine
@@ -157,6 +162,23 @@ export function parseCardList(cardlist, options) {
 			},
 		};
 	}
+}
+
+const XMageLine = /(\d+) \[([^:]+):([^\]]+)\] (.*)/i;
+export function XMageToArena(txt) {
+	let r = "";
+	for(let line of txt.split("\n")) {
+		if(line === "") {
+			r+= "\n"; 
+		} else {
+			const match = XMageLine.exec(line);
+			if(!match)
+				return false;
+			else
+				r += `${match[1]} ${match[4]} (${match[2]}) ${match[3]}\n`;
+		}
+	}
+	return r;
 }
 
 export default parseCardList;

@@ -25,7 +25,7 @@ import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
 import { Cards, MTGACards, getUnique } from "./src/Cards.js";
-import { parseLine, parseCardList} from "./src/parseCardList.js";
+import { parseLine, parseCardList, XMageToArena} from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -500,32 +500,82 @@ const ownerSocketCallbacks = {
 		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	},
 	"loadFromCubeCobra": function(userID, sessionID, data, ack) {
-		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID}
-		request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-			if (err) {
-				if (ack)
-					ack({
-						type: "error",
-						title: "Error",
-						text: "Couldn't retrieve the card list from Cube Cobra.",
-						footer: `Full error: ${err}`,
-						error: err,
-					});
-				return;
+		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
+		// Xmage (.dck) format
+		request({ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
+			try {
+				if (err) {
+					if (ack)
+						ack({
+							type: "error",
+							title: "Error",
+							text: "Couldn't retrieve the card list from Cube Cobra.",
+							footer: `Full error: ${err}`,
+							error: err,
+						});
+					return;
+				} else if(res.statusCode !== 200) {
+					if (ack)
+						ack({
+							type: "error",
+							title: "Error retrieving cube.",
+							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+						});
+					return;
+				} else if(res.req.path.includes("404")) { // Missing cube redirects to /404
+					if (ack)
+						ack({
+							type: "error",
+							title: "Cube not found.",
+							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+							error: err,
+						});
+					return;
+				} else {
+						let converted = XMageToArena(body);
+						if(!converted) {
+							// Fallback to plain text list
+							request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
+								try {
+									if (err) {
+										if (ack)
+											ack({
+												type: "error",
+												title: "Error",
+												text: "Couldn't retrieve the card list from Cube Cobra.",
+												footer: `Full error: ${err}`,
+												error: err,
+											});
+										return;
+									} else if(res.statusCode !== 200) {
+										if (ack)
+											ack({
+												type: "error",
+												title: "Error retrieving cube.",
+												text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+											});
+										return;
+									} else if(body === "Cube not found.") {
+										if (ack)
+											ack({
+												type: "error",
+												title: "Cube not found.",
+												text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+												error: err,
+											});
+										return;
+									} else {
+										parseCustomCardList(Sessions[sessionID], body, data, ack);
+									}
+								} catch(e) {
+									if(ack) ack({type: "error", title: "Internal server error."});
+								}
+							});
+						} else parseCustomCardList(Sessions[sessionID], converted, Object.assign({fallbackToCardName: true}, data), ack);
+				}
+			} catch(e) {
+				if(ack) ack({type: "error", title: "Internal server error."});
 			}
-
-			if (body === "Cube not found.") {
-				if (ack)
-					ack({
-						type: "error",
-						title: "Cube not found.",
-						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-						error: err,
-					});
-				return;
-			}
-
-			parseCustomCardList(Sessions[sessionID], body, data, ack);
 		});
 	},
 	"loadLocalCustomCardList": function(userID, sessionID, cubeName, ack) {

@@ -1,7 +1,10 @@
 [
 	{
 		"date": "01/03/2021",
-		"notes": ["Tweaked booster passing animations."]
+		"notes": [
+			"Tweaked booster passing animations.",
+			"Import exact cards (matching set and collector number) from Cube Cobra when possible."
+		]
 	},
 	{
 		"date": "23/02/2021",
