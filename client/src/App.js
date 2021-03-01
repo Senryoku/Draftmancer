@@ -281,7 +281,7 @@ export default {
 
 			this.socket.on("sessionUsers", users => {
 				for (let u of users) {
-					u.pickedThisRound = false;
+					if(!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
@@ -628,6 +628,7 @@ export default {
 						});
 					}
 					this.draftingState = DraftState.RochesterPicking;
+					this.selectedCards = [];
 				} else {
 					this.draftingState = DraftState.RochesterWaiting;
 				}
@@ -748,6 +749,8 @@ export default {
 				}
 				this.playSound("next");
 				this.draftingState = DraftState.Picking;
+				this.selectedCards = [];
+				this.burningCards = [];
 			});
 
 			this.socket.on("endDraft", () => {
@@ -1066,8 +1069,8 @@ export default {
 				}
 				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
 				else this.addToDeck(this.selectedCards, options);
-				this.selectedCards = [];
-				this.burningCards = [];
+				// Removes picked & burned cards for animation
+				this.booster = this.booster.filter(c => !this.selectedCards.includes(c) && !this.burningCards.includes(c) );
 			});
 			this.pickInFlight = true;
 		},
