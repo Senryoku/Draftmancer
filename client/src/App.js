@@ -2060,7 +2060,7 @@ export default {
 				++counts[card.arena_id].count;
 			}
 			for(let cid in counts)
-				r[counts[cid].rarity] += Math.min(4, Math.max(0, counts[cid].count - (cid in this.collection ? this.collection[cid] : 0)));
+				r[counts[cid].rarity] += Math.max(0, Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0));
 			return r;
 		},
 		wildcardCost: function(card) {
