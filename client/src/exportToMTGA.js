@@ -7,8 +7,6 @@ function exportCardToMTGA(c, language, full) {
 	if (set == "AJMP") set = "JMP"; // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
 	let name = c.name;
 	if(language in c.printed_names) name = c.printed_names[language];
-	// FIXME: Workaround for a typo in MTGA
-	if (name === "Lurrus of the Dream-Den") name = "Lurrus of the Dream Den";
 	let idx = name.indexOf("//");
 	// Ravnica Splits cards needs both names to be imported, others don't
 	if (idx != -1) {
