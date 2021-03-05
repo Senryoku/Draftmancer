@@ -403,6 +403,18 @@ export const SetSpecificFactories = {
 			}
 		};
 		return factory;
+	},
+	// One Timeshifted Card ("special" rarity) per booster.
+	tsr: (cardPool, landSlot, options) => {
+		const factory = new BoosterFactory(cardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.generateBooster = function(targets) {
+			let booster = this.originalGenBooster(targets);
+			const timeshifted = pickCard(this.cardPool["special"], []);
+			booster.push(timeshifted);
+			return booster;
+		};
+		return factory;
 	}
 };
 

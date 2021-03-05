@@ -1234,6 +1234,13 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
+							<em>February 05, 2021</em>
+							<ul>
+								<li>
+									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+									Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
+								</li>
+							</ul>
 							<em>January 28, 2021</em>
 							<ul>
 								<li>Extended logs and share deck feature to other game modes.</li>
