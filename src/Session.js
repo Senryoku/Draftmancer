@@ -429,10 +429,12 @@ export function Session(id, owner, options) {
 			uncommon: {},
 			rare: {},
 			mythic: {},
-			special: {} // TSR timeshifted cards
 		};
 		const cardPool = this.cardPool();
-		for (let c in cardPool) cardPoolByRarity[Cards[c].rarity][c] = cardPool[c];
+		for (let cid in cardPool) {
+			if(!(Cards[cid].rarity in cardPoolByRarity)) cardPoolByRarity[Cards[cid].rarity] = {};
+			cardPoolByRarity[Cards[cid].rarity][cid] = cardPool[cid];
+		}
 		return cardPoolByRarity;
 	};
 
@@ -443,9 +445,11 @@ export function Session(id, owner, options) {
 			uncommon: {},
 			rare: {},
 			mythic: {},
-			special: {} // TSR timeshifted cards
 		};
-		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates ? this.maxDuplicates[Cards[id].rarity] : 99;
+		for (let cid of BoosterCardsBySet[set]) {
+			if(!(Cards[cid].rarity in local)) local[Cards[cid].rarity] = {};
+			local[Cards[cid].rarity][cid] = this.maxDuplicates ? this.maxDuplicates[Cards[cid].rarity] : 99;
+		}
 		return local;
 	};
 
