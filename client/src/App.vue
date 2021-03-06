@@ -1234,7 +1234,7 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
-							<em>February 05, 2021</em>
+							<em>March 06, 2021</em>
 							<ul>
 								<li>
 									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />

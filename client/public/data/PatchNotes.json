@@ -1,5 +1,9 @@
 [
 	{
+		"date": "06/03/2021",
+		"notes": ["Time Spiral Remastered support."]
+	},
+	{
 		"date": "01/03/2021",
 		"notes": [
 			"Tweaked booster passing animations.",
