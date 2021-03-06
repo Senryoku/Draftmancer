@@ -203,6 +203,7 @@
         }
     ],
     "PrimarySets": [
+        "tsr",
         "khm",
         "cmr",
         "klr",

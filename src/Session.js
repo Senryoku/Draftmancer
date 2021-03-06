@@ -429,6 +429,7 @@ export function Session(id, owner, options) {
 			uncommon: {},
 			rare: {},
 			mythic: {},
+			special: {} // TSR timeshifted cards
 		};
 		const cardPool = this.cardPool();
 		for (let c in cardPool) cardPoolByRarity[Cards[c].rarity][c] = cardPool[c];
@@ -442,6 +443,7 @@ export function Session(id, owner, options) {
 			uncommon: {},
 			rare: {},
 			mythic: {},
+			special: {} // TSR timeshifted cards
 		};
 		for (let id of BoosterCardsBySet[set]) local[Cards[id].rarity][id] = this.maxDuplicates ? this.maxDuplicates[Cards[id].rarity] : 99;
 		return local;
@@ -691,7 +693,7 @@ export function Session(id, owner, options) {
 									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 									const landSlot = boosterSet in SpecialLandSlots
 											? SpecialLandSlots[boosterSet]
-											: addLandSlot &&  boosterSet !== "cmr" // Exception for Commander Legends as the booster size will be wrong anyway.
+											: addLandSlot && !["cmr", "tsr"].includes(boosterSet) // Exception for Commander Legends as the booster size will be wrong anyway, and TSR that already has 15 cards.
 											? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
 											: null;
 									usedSets[boosterSet] = getBoosterFactory(

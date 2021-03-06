@@ -403,6 +403,19 @@ export const SetSpecificFactories = {
 			}
 		};
 		return factory;
+	},
+	// One Timeshifted Card ("special" rarity) per booster.
+	// Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
+	tsr: (cardPool, landSlot, options) => {
+		const factory = new BoosterFactory(cardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.generateBooster = function(targets) {
+			let booster = this.originalGenBooster(targets);
+			const timeshifted = pickCard(this.cardPool["special"], []);
+			booster.push(timeshifted);
+			return booster;
+		};
+		return factory;
 	}
 };
 
