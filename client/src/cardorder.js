@@ -11,6 +11,7 @@ const RarityOrder = {
 	rare: 1,
 	uncommon: 2,
 	common: 3,
+	other: 4
 };
 
 const TypeOrder = {
@@ -37,6 +38,7 @@ function colorOrder(colors) {
 }
 
 function rarityOrder(rarity) {
+	if(!(rarity in RarityOrder)) return RarityOrder["other"];
 	return RarityOrder[rarity];
 }
 
