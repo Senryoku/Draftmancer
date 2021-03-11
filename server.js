@@ -107,18 +107,18 @@ const parseCustomCardList = function(session, txtlist, options, ack) {
 		parsedList = parseCardList(txtlist, options);
 	} catch (e) {
 		console.error(e);
-		if (ack) ack({ type: "error", title: "Internal Error" });
+		ack?.({ type: "error", title: "Internal Error" });
 		return;
 	}
 
 	if (parsedList.error) {
-		if (ack) ack(parsedList.error);
+		ack?.(parsedList.error);
 		return;
 	}
 
 	useCustomCardList(session, parsedList);
 
-	if (ack) ack({ code: 0 });
+	ack?.({ code: 0 });
 };
 
 const socketCallbacks = {
@@ -147,7 +147,7 @@ const socketCallbacks = {
 
 		Connections[userID].collection = processedCollection;
 
-		if (ack) ack({ collection: processedCollection });
+		ack?.({ collection: processedCollection });
 
 		const hasCollection = !isEmpty(processedCollection);
 		if (Sessions[sessionID])
@@ -188,89 +188,81 @@ const socketCallbacks = {
 		// Moves to next round when each player have picked a card.
 		try {
 			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
-			if (ack) ack(r);
+			ack?.(r);
 		} catch(err) {
 			console.error("Error in pickCard:", err);
 			console.error(Sessions[sessionID]);
-			if (ack) ack({ code: 500, error: "Internal server error." });
+			ack?.({ code: 500, error: "Internal server error." });
 		}
 	},
 	"gridDraftPick": function(userID, sessionID, choice, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.gridDraftState) {
-			if (ack) ack({ code: 3, error: "Not drafting." });
+			ack?.({ code: 3, error: "Not drafting." });
 			return;
 		}
 
 		if (userID !== sess.gridDraftState.currentPlayer()) {
-			if (ack) ack({ code: 4, error: "Not your turn." });
+			ack?.({ code: 4, error: "Not your turn." });
 			return;
 		}
 
 		const r = sess.gridDraftPick(choice);
 
-		if (ack) {
-			if (!r) ack({ code: 1, error: "Internal error." });
-			else ack({ code: 0 });
-		}
+		if (!r) ack?.({ code: 1, error: "Internal error." });
+		else ack?.({ code: 0 });
 	},
 	"rochesterDraftPick": function(userID, sessionID, choices, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.rochesterDraftState) {
-			if (ack) ack({ code: 3, error: "Not drafting." });
+			ack?.({ code: 3, error: "Not drafting." });
 			return;
 		}
 
 		if (userID != sess.rochesterDraftState.currentPlayer()) {
-			if (ack) ack({ code: 4, error: "Not your turn." });
+			ack?.({ code: 4, error: "Not your turn." });
 			return;
 		}
 
 		const r = sess.rochesterDraftPick(choices[0]);
 
-		if (ack) {
-			if (!r) ack({ code: 1, error: "Internal error." });
-			else ack({ code: 0 });
-		}
+		if (!r) ack?.({ code: 1, error: "Internal error." });
+		else ack?.({ code: 0 });
 	},
 	// Winston Draft
 	"winstonDraftTakePile": function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.winstonDraftState) {
-			if (ack) ack({ code: 2, error: "Not drafting." });
+			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
 
 		if (userID != sess.winstonDraftState.currentPlayer()) {
-			if (ack) ack({ code: 3, error: "Not your turn." });
+			ack?.({ code: 3, error: "Not your turn." });
 			return;
 		}
 
 		const r = sess.winstonTakePile();
 
-		if (ack) {
-			if (!r) ack({ code: 1, error: "Internal error." });
-			else ack({ code: 0 });
-		}
+		if (!r) ack?.({ code: 1, error: "Internal error." });
+		else ack?.({ code: 0 });
 	},
 	"winstonDraftSkipPile": function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.winstonDraftState) {
-			if (ack) ack({ code: 1, error: "Not drafting." });
+			ack?.({ code: 1, error: "Not drafting." });
 			return;
 		}
 
 		if (userID !== sess.winstonDraftState.currentPlayer()) {
-			if (ack) ack({ code: 1, error: "Not your turn." });
+			ack?.({ code: 1, error: "Not your turn." });
 			return;
 		}
 
 		const r = sess.winstonSkipPile();
 
-		if (ack) {
-			if (!r) ack({ code: 1, error: "This is your only choice!" });
-			else ack({ code: 0 });
-		}
+		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
+		else ack?.({ code: 0 });
 	},
 	"shareDecklist": function(userID, sessionID, decklist) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
@@ -302,11 +294,11 @@ const ownerSocketCallbacks = {
 	"readyCheck": function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) {
-			if (ack) ack({ code: 1 });
+			ack?.({ code: 1 });
 			return;
 		}
 
-		if (ack) ack({ code: 0 });
+		ack?.({ code: 0 });
 		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("readyCheck");
 	},
 	"startDraft": function(userID, sessionID) {
@@ -494,7 +486,7 @@ const ownerSocketCallbacks = {
 	},
 	"parseCustomCardList": function(userID, sessionID, customCardList, ack) {
 		if (!customCardList) {
-			if (ack) ack({ code: 1, type: "error", title: "No list supplied." });
+			ack?.({ code: 1, type: "error", title: "No list supplied." });
 			return;
 		}
 		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
@@ -505,31 +497,28 @@ const ownerSocketCallbacks = {
 		request({ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
 			try {
 				if (err) {
-					if (ack)
-						ack({
-							type: "error",
-							title: "Error",
-							text: "Couldn't retrieve the card list from Cube Cobra.",
-							footer: `Full error: ${err}`,
-							error: err,
-						});
+					ack?.({
+						type: "error",
+						title: "Error",
+						text: "Couldn't retrieve the card list from Cube Cobra.",
+						footer: `Full error: ${err}`,
+						error: err,
+					});
 					return;
 				} else if(res.statusCode !== 200) {
-					if (ack)
-						ack({
-							type: "error",
-							title: "Error retrieving cube.",
-							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-						});
+					ack?.({
+						type: "error",
+						title: "Error retrieving cube.",
+						text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+					});
 					return;
 				} else if(res.req.path.includes("404")) { // Missing cube redirects to /404
-					if (ack)
-						ack({
-							type: "error",
-							title: "Cube not found.",
-							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-							error: err,
-						});
+					ack?.({
+						type: "error",
+						title: "Cube not found.",
+						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+						error: err,
+					});
 					return;
 				} else {
 						let converted = XMageToArena(body);
@@ -538,55 +527,52 @@ const ownerSocketCallbacks = {
 							request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
 								try {
 									if (err) {
-										if (ack)
-											ack({
-												type: "error",
-												title: "Error",
-												text: "Couldn't retrieve the card list from Cube Cobra.",
-												footer: `Full error: ${err}`,
-												error: err,
-											});
+										ack?.({
+											type: "error",
+											title: "Error",
+											text: "Couldn't retrieve the card list from Cube Cobra.",
+											footer: `Full error: ${err}`,
+											error: err,
+										});
 										return;
 									} else if(res.statusCode !== 200) {
-										if (ack)
-											ack({
-												type: "error",
-												title: "Error retrieving cube.",
-												text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-											});
+										ack?.({
+											type: "error",
+											title: "Error retrieving cube.",
+											text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+										});
 										return;
 									} else if(body === "Cube not found.") {
-										if (ack)
-											ack({
-												type: "error",
-												title: "Cube not found.",
-												text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-												error: err,
-											});
+										ack?.({
+											type: "error",
+											title: "Cube not found.",
+											text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+											error: err,
+										});
 										return;
 									} else {
 										parseCustomCardList(Sessions[sessionID], body, data, ack);
 									}
 								} catch(e) {
-									if(ack) ack({type: "error", title: "Internal server error."});
+									ack?.({type: "error", title: "Internal server error."});
 								}
 							});
 						} else parseCustomCardList(Sessions[sessionID], converted, Object.assign({fallbackToCardName: true}, data), ack);
 				}
 			} catch(e) {
-				if(ack) ack({type: "error", title: "Internal server error."});
+				ack?.({type: "error", title: "Internal server error."});
 			}
 		});
 	},
 	"loadLocalCustomCardList": function(userID, sessionID, cubeName, ack) {
 		if (!(cubeName in ParsedCubeLists)) {
-			if (ack) ack({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
+			ack?.({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
 			return;
 		}
 
 		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
 
-		if (ack) ack({ code: 0 });
+		ack?.({ code: 0 });
 	},
 	"ignoreCollections": function(userID, sessionID, ignoreCollections) {
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
@@ -639,7 +625,7 @@ const ownerSocketCallbacks = {
 	"setUsePredeterminedBoosters": function(userID, sessionID, value, ack) {
 		Sessions[sessionID].usePredeterminedBoosters = value;
 		Sessions[sessionID].forNonOwners(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
-		if(ack) ack({code: 0});
+		ack?.({code: 0});
 	},
 	"setBoosters": function(userID, sessionID, text, ack) {
 		try {
@@ -659,7 +645,7 @@ const ownerSocketCallbacks = {
 							booster.push(card);
 						}
 					} else {
-						ack(count);
+						ack?.(count);
 						return;
 					}
 				}
@@ -667,12 +653,12 @@ const ownerSocketCallbacks = {
 			if(booster.length > 0) boosters.push(booster);
 			
 			if(boosters.length === 0) {
-				ack({ error: {title: "Empty list" }});
+				ack?.({ error: {title: "Empty list" }});
 				return;
 			}
 			for(let i = 1; i < boosters.length; ++i) {
 				if(boosters[i].length !== boosters[0].length) {
-					ack({ error: {
+					ack?.({ error: {
 						title: "Inconsistent booster sizes", 
 						text: `All boosters must be of the same size. Booster #${i+1} has ${boosters[i].length} cards, expected ${boosters[0].length}.`
 					}});
@@ -683,17 +669,17 @@ const ownerSocketCallbacks = {
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;
 			Sessions[sessionID].forUsers(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true }));
-			ack({ code: 0 });
+			ack?.({ code: 0 });
 		} catch(e) {
-			ack({ error: {title: "Internal error."} });
+			ack?.({ error: {title: "Internal error."} });
 		}
 	},
 	"shuffleBoosters": function(userID, sessionID, ack) {
 		if(!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
-			if(ack) ack({ error: {type:"error", title: "No boosters to shuffle."}});
+			ack?.({ error: {type:"error", title: "No boosters to shuffle."}});
 		} else {
 			shuffleArray(Sessions[sessionID].boosters);
-			if(ack) ack({ code: 0 });
+			ack?.({ code: 0 });
 		}
 	},
 	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {
@@ -821,12 +807,12 @@ const ownerSocketCallbacks = {
 		))
 			return;
 		Sessions[sessionID].generateBracket(players);
-		if (ack) ack({ code: 0 });
+		ack?.({ code: 0 });
 	},
 	"generateSwissBracket": function(userID, sessionID, players, ack) {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateSwissBracket(players);
-		if (ack) ack({ code: 0 });
+		ack?.({ code: 0 });
 	},
 	"lockBracket": function(userID, sessionID, bracketLocked) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
@@ -856,19 +842,24 @@ function prepareSocketCallback(callback, ownerOnly = false) {
 		const ack = (arguments.length > 0 && arguments[arguments.length - 1] instanceof Function) ? arguments[arguments.length - 1] : null;
 		const userID = this.userID;
 		if (!(userID in Connections)) {
-			if(ack) ack({ code: 1, error: "Internal error. User does not exist." });
+			ack?.({ code: 1, error: "Internal error. User does not exist." });
 			return;
 		}
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions)) {
-			if(ack) ack({ code: 1, error: "Internal error. Session does not exist." }); 
+			ack?.({ code: 1, error: "Internal error. Session does not exist." }); 
 			return;
 		}
 		if(ownerOnly && Sessions[sessionID].owner !== userID) {
-			if(ack) ack({ code: 401, error: "Unautorized. Must be session owner." }); 
+			ack?.({ code: 401, error: "Unautorized. Must be session owner." }); 
 			return;
 		}
-		callback(userID, sessionID, ...arguments);
+		try {
+			callback(userID, sessionID, ...arguments);
+		} catch(e) {
+			ack?.({ code: 500, error: "Internal server error." });
+			console.error(e);
+		}
 	};
 }
 
