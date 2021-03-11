@@ -573,7 +573,7 @@ export function Session(id, owner, options) {
 			}
 		} else {
 			// Standard draft boosters
-			const targets = options.targets || this.boosterContent;
+			const targets = options?.targets ?? this.boosterContent;
 
 			const BoosterFactoryOptions = {
 				foil: this.foil,
@@ -593,7 +593,7 @@ export function Session(id, owner, options) {
 				return new BoosterFactory(cardPool, landSlot, options);
 			};
 
-			const customBoosters = options.customBoosters ? options.customBoosters : this.customBoosters; // Use override value if provided via options 
+			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options 
 			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some(v => v !== "");
 			const acceptPaperBoosterFactories = targets === DefaultBoosterTargets && 
 				BoosterFactoryOptions.mythicPromotion && 
@@ -610,17 +610,17 @@ export function Session(id, owner, options) {
 				if(['iko', 'klr', 'akr'].includes(set)) return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions)
 				else return PaperBoosterFactories[set](BoosterFactoryOptions);
 
-				// Proper implementation:
+				// Proper-ish implementation:
 				/*
 				// Is Arena Collation available?              Is it the prefered choice, or our only one?                           MTGA collations don't have foil sheets.
-				if(`${set}-arena` in PaperBoosterFactories && (this.preferedCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil)
+				if(`${set}-arena` in PaperBoosterFactories && (this.preferedCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
 					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
 				return PaperBoosterFactories[set](BoosterFactoryOptions);
 				*/
 			};
 
 			// If the default rule will be used, initialize it
-			if (!options.useCustomBoosters || customBoosters.some(v => v === "")) {
+			if (!options?.useCustomBoosters || customBoosters.some(v => v === "")) {
 				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 				if(acceptPaperBoosterFactories &&
 					this.setRestriction.length === 1 && 
@@ -662,7 +662,7 @@ export function Session(id, owner, options) {
 			} else {
 				// Booster specific rules
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
-				const boostersPerPlayer = options.boostersPerPlayer ? options.boostersPerPlayer : this.boostersPerPlayer; // Allow overriding via options
+				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
 				const boosterFactories = [];
 				const usedSets = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
@@ -789,12 +789,12 @@ export function Session(id, owner, options) {
 	///////////////////// Winston Draft //////////////////////
 
 	this.startWinstonDraft = function(boosterCount) {
-		if (this.users.size != 2) return false;
+		if (this.users.size !== 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(boosterCount)) {
 			this.drafting = false;
-			return;
+			return false;
 		}
 		this.disconnectedUsers = {};
 		this.winstonDraftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
@@ -912,7 +912,7 @@ export function Session(id, owner, options) {
 			})
 		) {
 			this.drafting = false;
-			return;
+			return false;
 		}
 
 		this.disconnectedUsers = {};
@@ -921,7 +921,7 @@ export function Session(id, owner, options) {
 			this.emitError(this.gridDraftState.error.title, this.gridDraftState.error.text);
 			this.gridDraftState = null;
 			this.drafting = false;
-			return;
+			return false;
 		}
 
 		for (let user of this.users) {
