@@ -159,14 +159,21 @@ export default {
 					let categories = [set, "all"];
 					if (Constant.StandardSets.includes(card.set)) categories.push("standard");
 					for (let s of categories) {
+						if (!(card.rarity in stats[s])) {
+							stats[s][card.rarity] = [];
+							console.log(card);
+						}
 						stats[s][card.rarity].push(card);
 
 						const count = (target) => {
 							target.total.all += 1;
+							if (!(card.rarity in target.total)) target.total[card.rarity] = 0;
 							target.total[card.rarity] += 1;
 							target.owned.all += card.count;
+							if (!(card.rarity in target.owned)) target.owned[card.rarity] = 0;
 							target.owned[card.rarity] += card.count;
 							target.owned.unique.all += card.count > 0 ? 1 : 0;
+							if (!(card.rarity in target.owned.unique)) target.owned.unique[card.rarity] = 0;
 							target.owned.unique[card.rarity] += card.count > 0 ? 1 : 0;
 						};
 
