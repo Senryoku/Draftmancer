@@ -319,7 +319,6 @@ export default {
 		},
 		remColumn: function (index) {
 			if (this.rows[0].length < 2) return;
-			console.log(index);
 			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
 			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
 			for (let row of this.rows) {
