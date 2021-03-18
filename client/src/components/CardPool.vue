@@ -400,7 +400,14 @@ export default {
 			this.saveOptions();
 		},
 		saveOptions: function () {
-			this.options.columnCount = Math.max(2, Math.min(this.rows[0].length, 32));
+			// Trying to circumvent a rare issue.
+			const columnCount =
+				this.rows && this.rows[0] && this.rows[0].length
+					? this.rows[0].length
+					: this.options.columnCount
+					? this.options.columnCount
+					: 7;
+			this.options.columnCount = Math.max(2, Math.min(columnCount, 32));
 			localStorage.setItem("card-pool-options", JSON.stringify(this.options));
 		},
 	},
