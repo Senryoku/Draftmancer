@@ -546,7 +546,7 @@ export function Session(id, owner, options) {
 					else localCollection[cardId] = 1;
 				}
 
-				const cardsPerBooster = options.cardsPerBooster || 15;
+				const cardsPerBooster = options.cardsPerBooster ?? 15;
 
 				let card_count = this.customCardList.cards.length;
 				let card_target = cardsPerBooster * boosterQuantity;
@@ -593,7 +593,7 @@ export function Session(id, owner, options) {
 				return new BoosterFactory(cardPool, landSlot, options);
 			};
 
-			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options 
+			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
 			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some(v => v !== "");
 			const acceptPaperBoosterFactories = targets === DefaultBoosterTargets && 
 				BoosterFactoryOptions.mythicPromotion && 
@@ -730,8 +730,8 @@ export function Session(id, owner, options) {
 
 				// Generate Boosters
 				this.boosters = [];
-				for (let b = 0; b < boostersPerPlayer; ++b) {
-					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
+				for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
+					for (let b = 0; b < boostersPerPlayer; ++b) {
 						const rule = boosterFactories[p][b];
 						const booster = rule.generateBooster(targets);
 						if (booster) this.boosters.push(booster);
@@ -1447,7 +1447,7 @@ export function Session(id, owner, options) {
 
 		let idx = 0;
 		for (let userID of this.users) {
-			const cards =  this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
+			const cards = this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
 			Connections[userID].socket.emit("setCardSelection", cards);
 			this.draftLog.users[userID].cards = cards.flat().map(c => c.id);
 			++idx;
