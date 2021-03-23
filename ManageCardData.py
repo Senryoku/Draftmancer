@@ -319,7 +319,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     " //")[0]]
             else:
                 selection['rating'] = 0.5
-            selection['in_booster'] = c['booster'] and not selection['collector_number'].endswith("b")
+            selection['in_booster'] = c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b"))  # Exclude melded cards from boosters
+            if not (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")):
+                print(selection)
             if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
             elif not c['booster'] or c['type_line'].startswith("Basic"):
