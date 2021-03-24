@@ -1153,7 +1153,7 @@ describe("Sealed", function() {
 
 	it(`Clients should receive the updated booster spec. (${CustomBoosters})`, function(done) {
 		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
-		clients[ownerIdx - 1].once("sessionOptions", function(data) {
+		clients[(ownerIdx + 1) % 2].once("sessionOptions", function(data) {
 			expect(data.customBoosters).to.eql(CustomBoosters);
 			done();
 		});
