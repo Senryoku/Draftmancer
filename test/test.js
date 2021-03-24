@@ -578,6 +578,13 @@ describe("Single Draft (Two Players)", function() {
 			});
 
 			startDraft();
+			if(distributionMode === "regular") {
+				it("Boosters should be in specified order.", function(done) {
+					for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
+						expect(Sessions[sessionID].boosters[idx].every(c => CustomBoosters[idx] === "" || c.set === CustomBoosters[idx]))
+					done();
+				});
+			}
 			endDraft();
 		}
 		disconnect();
@@ -1136,6 +1143,31 @@ describe("Sealed", function() {
 		for (let client of clients)
 			client.once("setCardSelection", boosters => {
 				expect(boosters.length).to.equal(boosterCount);
+				++receivedPools;
+				if (receivedPools === clients.length) done();
+			});
+		clients[ownerIdx].emit("distributeSealed", boosterCount);
+	});
+
+	const CustomBoosters = ["m19", "m20", "m21"]
+
+	it(`Clients should receive the updated booster spec. (${CustomBoosters})`, function(done) {
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx - 1].once("sessionOptions", function(data) {
+			expect(data.customBoosters).to.eql(CustomBoosters);
+			done();
+		});
+		clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
+	});
+
+	it(`Clients should receive a card pool with the correct boosters.`, function(done) {
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		let receivedPools = 0;
+		for (let client of clients)
+			client.once("setCardSelection", boosters => {
+				expect(boosters.length).to.equal(boosterCount);
+				for(let idx = 0; idx < boosters.length; ++idx)
+					expect(boosters[idx].every(c => c.set === CustomBoosters[idx]));
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});

@@ -730,8 +730,8 @@ export function Session(id, owner, options) {
 
 				// Generate Boosters
 				this.boosters = [];
-				for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
-					for (let b = 0; b < boostersPerPlayer; ++b) {
+				for (let b = 0; b < boostersPerPlayer; ++b) {
+					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterFactories[p][b];
 						const booster = rule.generateBooster(targets);
 						if (booster) this.boosters.push(booster);
@@ -1447,9 +1447,14 @@ export function Session(id, owner, options) {
 
 		let idx = 0;
 		for (let userID of this.users) {
-			const cards = this.boosters.slice(idx * boostersPerPlayer, (idx + 1) * boostersPerPlayer);
-			Connections[userID].socket.emit("setCardSelection", cards);
-			this.draftLog.users[userID].cards = cards.flat().map(c => c.id);
+			const playersBoosters = [];
+			let currIdx = idx;
+			while(currIdx < this.boosters.length) {
+				playersBoosters.push(this.boosters[currIdx]);
+				currIdx += this.users.size;
+			}
+			Connections[userID].socket.emit("setCardSelection", playersBoosters);
+			this.draftLog.users[userID].cards = playersBoosters.flat().map(c => c.id);
 			++idx;
 		}
 

@@ -105,7 +105,7 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
 		clients[ownerIdx].once("startDraft", function() {
 			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
-				if (idx % 3 === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
+				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
 				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
 			clients[ownerIdx].once("endDraft", function() {
 				done();
@@ -122,7 +122,7 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
 		clients[ownerIdx].once("startDraft", function() {
 			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
-				if (idx % 3 === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
+				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
 				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
 			clients[ownerIdx].once("endDraft", function() {
 				done();
