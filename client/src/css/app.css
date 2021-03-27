@@ -414,7 +414,11 @@ select.swal2-input option {
 }
 
 .welcome-section ul {
-	margin-top: 0.25em;
+	margin: 0;
+}
+
+.welcome-section .news:not(:last-child) {
+	margin-bottom: 1em;
 }
 
 .public-sessions {
