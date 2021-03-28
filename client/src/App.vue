@@ -343,7 +343,7 @@
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
-				MTGADraft.tk - Drafting...
+				MTGADraft.tk - {{ gameModeName }}
 			</div>
 			<div v-if="drafting && sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
 				<button class="stop" @click="stopDraft">
