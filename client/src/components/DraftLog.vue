@@ -186,7 +186,7 @@ export default {
 					Accept: "application/json, text/plain, */*",
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				referrer: "https://mtgadraft.herokuapp.com",
+				referrer: "https://www.mtgadraft.tk",
 				body: `draft=${encodeURI(
 					helper.exportToMagicProTools(this.draftlog, id)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,

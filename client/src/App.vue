@@ -343,11 +343,13 @@
 				</span>
 			</div>
 			<div v-show="drafting" id="draft-in-progress">
-				Draft in progress!
-				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">
+				MTGADraft.tk - Drafting...
+			</div>
+			<div v-if="drafting && sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
+				<button class="stop" @click="stopDraft">
 					<i class="fas fa-stop"></i> Stop Draft
 				</button>
-				<button v-if="sessionOwner == userID && maxTimer > 0" class="stop" @click="pauseDraft">
+				<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
 					<i class="fas fa-pause"></i> Pause Draft
 				</button>
 			</div>
@@ -1235,6 +1237,13 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>March 28, 2021</em>
+								<p>
+									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
+									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								</p>
+							</div>
+							<div class="news">
 								<em>March 06, 2021</em>
 								<ul>
 									<li>
@@ -1248,15 +1257,6 @@
 								<ul>
 									<li>Extended logs and share deck feature to other game modes.</li>
 									<li>Collection viewer updated for Kaldheim.</li>
-								</ul>
-								</div>
-							<div class="news">
-								<em>January 20, 2021</em>
-								<ul>
-									<li>
-										<img src="img/sets/khm.svg" class="set-icon" style="--invertedness: 100%" />
-										Kaldheim is now available!<br />
-									</li>
 								</ul>
 							</div>
 						</div>

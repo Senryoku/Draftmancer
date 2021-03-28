@@ -421,6 +421,10 @@ select.swal2-input option {
 	margin-bottom: 1em;
 }
 
+.welcome-section .news p {
+	margin: 0 0 0 1em;
+}
+
 .public-sessions {
 	width: 100%;
 	--invertedness: 100%;
