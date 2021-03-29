@@ -511,6 +511,21 @@ select.swal2-input option {
 	text-shadow: 0px 0px 10px black;
 }
 
+#url-remainder {
+	position: absolute;
+	left: 0em;
+	top: 50%;
+	transform: translateY(-50%);
+	font-variant: small-caps;
+	font-weight: bold;
+	font-size: 1.5em;
+	color: #888;
+	background-color: #222;
+	mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
+	-webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
+	padding: 0.35em 6em 0.35em 0.5em;
+}
+
 #draft-in-progress {
 	position: absolute;
 	top: 50%;
@@ -520,10 +535,14 @@ select.swal2-input option {
 	transform: translate(-50%, -50%);
 	font-variant: small-caps;
 	font-size: 1.5em;
-	text-shadow: 0px 0px 10px black;
 	background-color: #222;
-	box-shadow: 0 0 0.25em 0.25em #222;
-	padding: 0 0.5em;
+	mask-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em),
+		linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
+	-webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em),
+		linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
+	mask-composite: intersect;
+	-webkit-mask-composite: source-in;
+	padding: 0.35em 6em 0.35em 6em;
 }
 
 .main-controls {

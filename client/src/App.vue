@@ -342,17 +342,22 @@
 					<i class="fas fa-cog"></i>
 				</span>
 			</div>
-			<div v-show="drafting" id="draft-in-progress">
-				MTGADraft.tk - {{ gameModeName }}
-			</div>
-			<div v-if="drafting && sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
-				<button class="stop" @click="stopDraft">
-					<i class="fas fa-stop"></i> Stop Draft
-				</button>
-				<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
-					<i class="fas fa-pause"></i> Pause Draft
-				</button>
-			</div>
+			<template v-if="drafting">
+				<div id="url-remainder">
+					MTGADraft.tk
+				</div>
+				<div id="draft-in-progress">
+					{{ gameModeName }}
+				</div>
+				<div v-if="sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
+					<button class="stop" @click="stopDraft">
+						<i class="fas fa-stop"></i> Stop Draft
+					</button>
+					<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
+						<i class="fas fa-pause"></i> Pause Draft
+					</button>
+				</div>
+			</template>
 		</div>
 
 		<!-- Session Players -->
@@ -1068,7 +1073,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome to MTGADraft!</h1>
+			<h1>Welcome to MTGADraft.tk!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
