@@ -2083,6 +2083,14 @@ export default {
 		ReadyState: function() {
 			return ReadyState;
 		},
+		gameModeName: function() {
+			if(this.rochesterDraftState) return "Rochester Draft";
+			if(this.winstonDraftState) return "Winston Draft";
+			if(this.gridDraftState) return "Grid Draft";
+			if(this.useCustomCardList) return "Cube Draft";
+			if(this.burnedCardsPerRound > 0) return "Glimpse Draft";
+			return "Draft";
+		},
 		cardsToPick: function() {
 			if(this.rochesterDraftState) return 1;
 			return Math.min(this.pickedCardsPerRound, this.booster.length);

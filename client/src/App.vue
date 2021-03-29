@@ -342,15 +342,22 @@
 					<i class="fas fa-cog"></i>
 				</span>
 			</div>
-			<div v-show="drafting" id="draft-in-progress">
-				Draft in progress!
-				<button v-if="sessionOwner == userID" class="stop" @click="stopDraft">
-					<i class="fas fa-stop"></i> Stop Draft
-				</button>
-				<button v-if="sessionOwner == userID && maxTimer > 0" class="stop" @click="pauseDraft">
-					<i class="fas fa-pause"></i> Pause Draft
-				</button>
-			</div>
+			<template v-if="drafting">
+				<div id="url-remainder">
+					MTGADraft.tk
+				</div>
+				<div id="draft-in-progress">
+					{{ gameModeName }}
+				</div>
+				<div v-if="sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
+					<button class="stop" @click="stopDraft">
+						<i class="fas fa-stop"></i> Stop Draft
+					</button>
+					<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
+						<i class="fas fa-pause"></i> Pause Draft
+					</button>
+				</div>
+			</template>
 		</div>
 
 		<!-- Session Players -->
@@ -1066,7 +1073,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome to MTGADraft!</h1>
+			<h1>Welcome to MTGADraft.tk!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
@@ -1234,25 +1241,29 @@
 							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
-							<em>March 06, 2021</em>
-							<ul>
-								<li>
-									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
-								</li>
-							</ul>
-							<em>January 28, 2021</em>
-							<ul>
-								<li>Extended logs and share deck feature to other game modes.</li>
-								<li>Collection viewer updated for Kaldheim.</li>
-							</ul>
-							<em>January 20, 2021</em>
-							<ul>
-								<li>
-									<img src="img/sets/khm.svg" class="set-icon" style="--invertedness: 100%" />
-									Kaldheim is now available!<br />
-								</li>
-							</ul>
+							<div class="news">
+								<em>March 28, 2021</em>
+								<p>
+									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
+									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								</p>
+							</div>
+							<div class="news">
+								<em>March 06, 2021</em>
+								<ul>
+									<li>
+										<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+										Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
+									</li>
+								</ul>
+							</div>
+							<div class="news">
+								<em>January 28, 2021</em>
+								<ul>
+									<li>Extended logs and share deck feature to other game modes.</li>
+									<li>Collection viewer updated for Kaldheim.</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 					<div class="container">
