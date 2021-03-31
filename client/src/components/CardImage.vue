@@ -3,6 +3,9 @@
 		<div v-if="hasBack" class="flip-button">
 			<i class="fas fa-sync flip-icon"></i>
 		</div>
+		<div v-if="card.layout === 'flip'" class="vertical-flip-button">
+			<i class="fas fa-sync vertical-flip-icon"> </i>
+		</div>
 		<div class="flip-container">
 			<clazy-load
 				:ratio="0"
@@ -93,7 +96,8 @@ img {
 	user-select: none;
 }
 
-.flip-button {
+.flip-button,
+.vertical-flip-button {
 	position: absolute;
 	top: -0.25em;
 	right: -0.4em;
@@ -101,7 +105,8 @@ img {
 	pointer-events: auto;
 }
 
-.booster .flip-button {
+.booster .flip-button,
+.booster .vertical-flip-button {
 	top: -0.75em;
 	right: -0.9em;
 	padding: 0.5em;
@@ -127,6 +132,25 @@ img {
 
 .flip-button:hover ~ .flip-container {
 	transform: rotateY(180deg);
+}
+
+.vertical-flip-icon {
+	transition: transform 0.2s, text-shadow 0.2s;
+	color: white;
+	text-shadow: 0 0 4px black, 0 4px 0 black;
+}
+
+.vertical-flip-button:hover .vertical-flip-icon {
+	transform: rotateZ(180deg);
+}
+
+.vertical-flip-button ~ .flip-container div img {
+	transform-origin: center;
+	transition: transform 0.2s;
+}
+
+.vertical-flip-button:hover ~ .flip-container div img {
+	transform: rotateZ(180deg);
 }
 
 .flip-front,

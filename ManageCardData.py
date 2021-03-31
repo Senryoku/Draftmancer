@@ -327,6 +327,8 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
+            if c['layout'] in ['flip', 'split']:
+                selection['layout'] = c['layout']
             cards[c['id']].update(selection)
 
     MTGACards = {}
