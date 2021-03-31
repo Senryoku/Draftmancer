@@ -111,6 +111,10 @@ img {
 	right: -0.4em;
 	z-index: 1;
 	pointer-events: auto;
+
+	-ms-transform: translateZ(0); /* IE 9 */
+	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+	transform: translateZ(0);
 }
 
 .booster .flip-button,
@@ -167,6 +171,7 @@ img {
 
 .vertical-flip-button:hover .vertical-flip-icon {
 	transform: rotateZ(180deg);
+	text-shadow: 0 0 4px black, 0 -4px 0 black;
 }
 
 .vertical-flip-button ~ .flip-container div img {
@@ -191,10 +196,12 @@ img {
 
 .split-button:hover .split-icon {
 	transform: rotateZ(90deg);
+	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
 .split-left-button:hover .split-left-icon {
 	transform: rotateZ(-90deg) scaleX(-1);
+	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
 .split-button ~ .flip-container div img,
