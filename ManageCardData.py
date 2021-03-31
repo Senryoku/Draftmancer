@@ -328,7 +328,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 selection['in_booster'] = False
                 selection['rating'] = 0
             if c['layout'] in ['flip', 'split']:
-                selection['layout'] = c['layout']
+                if c['layout'] == 'split' and 'Aftermath' in c['keywords']:
+                    selection['layout'] = 'split-left'
+                elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
+                    selection['layout'] = c['layout']
             cards[c['id']].update(selection)
 
     MTGACards = {}

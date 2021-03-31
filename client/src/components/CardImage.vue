@@ -6,6 +6,12 @@
 		<div v-if="card.layout === 'flip'" class="vertical-flip-button">
 			<i class="fas fa-sync vertical-flip-icon"> </i>
 		</div>
+		<div v-if="card.layout === 'split'" class="split-button">
+			<i class="fas fa-sync split-icon"> </i>
+		</div>
+		<div v-if="card.layout === 'split-left'" class="split-left-button">
+			<i class="fas fa-sync split-left-icon"> </i>
+		</div>
 		<div class="flip-container">
 			<clazy-load
 				:ratio="0"
@@ -97,7 +103,9 @@ img {
 }
 
 .flip-button,
-.vertical-flip-button {
+.vertical-flip-button,
+.split-button,
+.split-left-button {
 	position: absolute;
 	top: -0.25em;
 	right: -0.4em;
@@ -134,6 +142,23 @@ img {
 	transform: rotateY(180deg);
 }
 
+.flip-front,
+.flip-back {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	-webkit-backface-visibility: hidden; /* Safari */
+	backface-visibility: hidden;
+
+	-ms-transform: translateZ(0); /* IE 9 */
+	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
+	transform: translateZ(0);
+}
+
+.flip-back {
+	transform: rotateY(180deg) translateZ(0);
+}
+
 .vertical-flip-icon {
 	transition: transform 0.2s, text-shadow 0.2s;
 	color: white;
@@ -153,20 +178,36 @@ img {
 	transform: rotateZ(180deg);
 }
 
-.flip-front,
-.flip-back {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	-webkit-backface-visibility: hidden; /* Safari */
-	backface-visibility: hidden;
-
-	-ms-transform: translateZ(0); /* IE 9 */
-	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
-	transform: translateZ(0);
+.split-icon,
+.split-left-icon {
+	transition: transform 0.2s, text-shadow 0.2s;
+	color: white;
+	text-shadow: 0 0 4px black, 0 4px 0 black;
 }
 
-.flip-back {
-	transform: rotateY(180deg) translateZ(0);
+.split-left-icon {
+	transform: scaleX(-1);
+}
+
+.split-button:hover .split-icon {
+	transform: rotateZ(90deg);
+}
+
+.split-left-button:hover .split-left-icon {
+	transform: rotateZ(-90deg) scaleX(-1);
+}
+
+.split-button ~ .flip-container div img,
+.split-left-button ~ .flip-container div img {
+	transform-origin: center;
+	transition: transform 0.2s;
+}
+
+.split-button:hover ~ .flip-container div img {
+	transform: scale(1.41) rotateZ(90deg);
+}
+
+.split-left-button:hover ~ .flip-container div img {
+	transform: scale(1.41) rotateZ(-90deg);
 }
 </style>
