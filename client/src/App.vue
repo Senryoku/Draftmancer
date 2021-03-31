@@ -252,7 +252,7 @@
 							id="bots"
 							class="small-number-input"
 							min="0"
-							max="7"
+							:max="Math.max(7, maxPlayers - 1)"
 							step="1"
 							v-model.number="bots"
 						/>
