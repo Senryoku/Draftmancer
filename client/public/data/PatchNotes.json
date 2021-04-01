@@ -1,5 +1,9 @@
 [
 	{
+		"date": "31/03/2021",
+		"notes": ["Front-end support for flip, split and meld cards."]
+	},
+	{
 		"date": "06/03/2021",
 		"notes": ["Time Spiral Remastered support."]
 	},

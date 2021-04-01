@@ -264,6 +264,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     cardsByName = {}
     Translations = {}
     print("Generating card data cache...")
+    meldCards = []
     for c in all_cards:
         if c['id'] not in cards:
             cards[c['id']] = {'id': c['id']}
@@ -320,13 +321,22 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             else:
                 selection['rating'] = 0.5
             selection['in_booster'] = c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b"))  # Exclude melded cards from boosters
-            if not (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")):
-                print(selection)
             if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
             elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
+
+            if c['layout'] == "split":
+                if 'Aftermath' in c['keywords']:
+                    selection['layout'] = 'split-left'
+                elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
+                    selection['layout'] = 'split'
+            if c['layout'] == "flip":
+                selection['layout'] = 'flip'
+            if c['layout'] == 'meld':  # Defer dealing with meld cards until we have all the relevant information
+                meldCards.append(c)
+
             cards[c['id']].update(selection)
 
     MTGACards = {}
@@ -340,6 +350,12 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             del cards[cid]
         if 'arena_id' in c:
             MTGACards[c['arena_id']] = c
+
+    # Set result of melding cards as their back
+    for c in meldCards:
+        if [a for a in c['all_parts'] if a['id'] == c['id']][0]['component'] == 'meld_part':
+            meldResult = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
+            cards[c['id']]['back'] = {'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
