@@ -143,7 +143,7 @@ img {
 }
 
 .flip-button:hover ~ .flip-container {
-	transform: rotateY(180deg);
+	transform: rotateY(-180deg);
 }
 
 .flip-front,
