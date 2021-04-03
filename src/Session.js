@@ -659,9 +659,11 @@ export function Session(id, owner, options) {
 				const usedSets = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
+				 // Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX that already have 15 cards.
+				const irregularSets = ["cmr", "tsr", "stx"];
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot = this.distributionMode !== "regular" || customBoosters.some(v => v === "random");
-				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
+				if (addLandSlot && defaultFactory && !defaultFactory.landSlot && !(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0])))
 					defaultFactory.landSlot = this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
 						? defaultBasics
 						: BasicLandSlots[this.setRestriction[0]];
@@ -689,7 +691,7 @@ export function Session(id, owner, options) {
 									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 									const landSlot = boosterSet in SpecialLandSlots
 											? SpecialLandSlots[boosterSet]
-											: addLandSlot && !["cmr", "tsr"].includes(boosterSet) // Exception for Commander Legends as the booster size will be wrong anyway, and TSR that already has 15 cards.
+											: addLandSlot && !irregularSets.includes(boosterSet)
 											? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
 											: null;
 									usedSets[boosterSet] = getBoosterFactory(
