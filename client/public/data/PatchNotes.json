@@ -1,5 +1,9 @@
 [
 	{
+		"date": "04/04/2021",
+		"notes": ["Strixhaven: School of Mages support."]
+	},
+	{
 		"date": "03/04/2021",
 		"notes": [
 			"Made exact card version (set & collector number) matching optional when importing cubes from Cube Cobra to improve compatibility with MTGA by default."
