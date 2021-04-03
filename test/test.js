@@ -424,7 +424,8 @@ describe("Single Draft (Two Players)", function() {
 						(set === 'mb1' && c.set === 'fmb1') ||
 						(set === 'tsp' && c.set === 'tsb') ||
 						(set === 'frf' && c.set === 'ktk') ||
-						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr'))
+						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr')) ||
+						(set === 'stx' && c.set === 'sta')
 						))).to.be.true;
 				}
 				done();
