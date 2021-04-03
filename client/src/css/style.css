@@ -2,15 +2,25 @@ body {
 	margin: 0;
 	margin-left: 0;
 	background-color: rgb(32, 32, 32);
-	background-image: url("../assets/img/nahiri-zendikar-min.png");
-	background-position: 90% 0;
-	background-repeat: no-repeat;
 	color: #ddd;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-
 	position: relative;
 	min-height: calc(100vh - 2em);
 	padding-bottom: 2em;
+}
+
+.backgound-image {
+	position: absolute;
+	right: 5em;
+	top: 0;
+	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
+		url("../assets/img/stx-bg-cropped-min.png");
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	z-index: -1;
+	width: 60em;
+	height: 26em;
 }
 
 @media (max-width: 1600px) {
