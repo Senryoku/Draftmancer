@@ -570,6 +570,7 @@ export function Session(id, owner, options) {
 				foil: this.foil,
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
+				maxDuplicates: this.maxDuplicates,
 				onError: (...args) => {
 					this.emitError(...args);
 				},

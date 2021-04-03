@@ -424,7 +424,7 @@ export const SetSpecificFactories = {
 		factory.originalGenBooster = factory.generateBooster;
 		factory.mysticalArchiveCardPool = {};
 		for(let cid of BoosterCardsBySet["sta"])
-			factory.mysticalArchiveCardPool[cid] = options.duplicateLimit ?? 99;
+			factory.mysticalArchiveCardPool[cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
 		factory.generateBooster = function(targets) {
 			let booster = this.originalGenBooster(targets);
 			const archive = pickCard(this.mysticalArchiveCardPool, []);
