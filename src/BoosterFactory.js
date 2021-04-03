@@ -199,7 +199,7 @@ function filterCardPool(cardPool, predicate) {
 function rollSpecialCardRarity(cardCounts, targets, options) {
 	let pickedRarity = options.minRarity ?? "uncommon";
 	
-	const rand = Math.random() * targets.common + targets.uncommon + targets.rare;
+	const rand = Math.random() * (targets.common + targets.uncommon + targets.rare);
 	if(rand < targets.rare) pickedRarity = "rare";
 	else if(rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
 	
@@ -424,16 +424,21 @@ export const SetSpecificFactories = {
 		for(let cid of BoosterCardsBySet["sta"])
 			factory.mysticalArchiveCardPool[cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
 		factory.generateBooster = function(targets) {
+			let booster = [];
 			const lessonsCounts = countBySlot(this.lessonsByRarity);
-			const pickedRarity = rollSpecialCardRarity(lessonsCounts, targets, options);
-			const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
+			if (Object.values(lessonsCounts).every(c => c === 0)) {
+				booster = this.originalGenBooster(targets);
+			} else {
+				const pickedRarity = rollSpecialCardRarity(lessonsCounts, targets, Object.assign({minRarity: "common"}, options));
+				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
-			let updatedTargets = Object.assign({}, targets);
-			if (pickedRarity === "mythic") --updatedTargets["rare"];
-			else --updatedTargets[pickedRarity];
+				let updatedTargets = Object.assign({}, targets);
+				if (pickedRarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[pickedRarity];
 
-			let booster = this.originalGenBooster(updatedTargets);
-			booster = insertInBooster(pickedLesson, booster);
+				booster = this.originalGenBooster(updatedTargets);
+				booster = insertInBooster(pickedLesson, booster);
+			}
 	
 			const archive = pickCard(this.mysticalArchiveCardPool, []);
 			booster.push(archive);
