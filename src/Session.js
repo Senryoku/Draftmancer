@@ -5,7 +5,7 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import { Cards, getUnique } from "./Cards.js";
+import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -88,15 +88,6 @@ function SwissBracket(players) {
 		[0, 0],
 	];
 	this.swiss = true;
-}
-
-// Cache for cards organized by set.
-const BoosterCardsBySet = {};
-for (let cid in Cards) {
-	if (Cards[cid].in_booster || Cards[cid].set === 'und') { // Force cache for Unsanctionec (UND) as it's not a draft product originally
-		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
-		BoosterCardsBySet[Cards[cid].set].push(cid);
-	}
 }
 
 export function WinstonDraftState(players, boosters) {

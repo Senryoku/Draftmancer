@@ -1,6 +1,6 @@
 "use strict";
 
-import { Cards, getUnique } from "./Cards.js";
+import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 import constants from "../client/src/data/constants.json";
@@ -413,6 +413,22 @@ export const SetSpecificFactories = {
 			let booster = this.originalGenBooster(targets);
 			const timeshifted = pickCard(this.cardPool["special"], []);
 			booster.push(timeshifted);
+			return booster;
+		};
+		return factory;
+	},
+	// Strixhaven: One card from the Mystical Archive (sta)
+	// Note: This isn't limited by the session collections
+	stx: (cardPool, landSlot, options) => {
+		const factory = new BoosterFactory(cardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.mysticalArchiveCardPool = {};
+		for(let cid of BoosterCardsBySet["sta"])
+			factory.mysticalArchiveCardPool[cid] = options.duplicateLimit ?? 99;
+		factory.generateBooster = function(targets) {
+			let booster = this.originalGenBooster(targets);
+			const archive = pickCard(this.mysticalArchiveCardPool, []);
+			booster.push(archive);
 			return booster;
 		};
 		return factory;
