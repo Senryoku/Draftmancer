@@ -1937,6 +1937,8 @@
 				</p>
 				<h3>Patch Notes</h3>
 				<patch-notes></patch-notes>
+				<h3>Notice</h3>
+				<p>MTGADraft is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
