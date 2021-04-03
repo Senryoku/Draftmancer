@@ -493,76 +493,82 @@ const ownerSocketCallbacks = {
 	},
 	"loadFromCubeCobra": function(userID, sessionID, data, ack) {
 		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
-		// Xmage (.dck) format
-		request({ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-			try {
-				if (err) {
-					ack?.({
-						type: "error",
-						title: "Error",
-						text: "Couldn't retrieve the card list from Cube Cobra.",
-						footer: `Full error: ${err}`,
-						error: err,
-					});
-					return;
-				} else if(res.statusCode !== 200) {
-					ack?.({
-						type: "error",
-						title: "Error retrieving cube.",
-						text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-					});
-					return;
-				} else if(res.req.path.includes("404")) { // Missing cube redirects to /404
-					ack?.({
-						type: "error",
-						title: "Cube not found.",
-						text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-						error: err,
-					});
-					return;
-				} else {
-						let converted = XMageToArena(body);
-						if(!converted) {
-							// Fallback to plain text list
-							request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-								try {
-									if (err) {
-										ack?.({
-											type: "error",
-											title: "Error",
-											text: "Couldn't retrieve the card list from Cube Cobra.",
-											footer: `Full error: ${err}`,
-											error: err,
-										});
-										return;
-									} else if(res.statusCode !== 200) {
-										ack?.({
-											type: "error",
-											title: "Error retrieving cube.",
-											text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-										});
-										return;
-									} else if(body === "Cube not found.") {
-										ack?.({
-											type: "error",
-											title: "Cube not found.",
-											text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-											error: err,
-										});
-										return;
-									} else {
-										parseCustomCardList(Sessions[sessionID], body, data, ack);
-									}
-								} catch(e) {
-									ack?.({type: "error", title: "Internal server error."});
-								}
-							});
-						} else parseCustomCardList(Sessions[sessionID], converted, Object.assign({fallbackToCardName: true}, data), ack);
+		// Plain text card list
+		const fromTextList = (userID, sessionID, data, ack) => {
+			request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
+				try {
+					if (err) {
+						ack?.({
+							type: "error",
+							title: "Error",
+							text: "Couldn't retrieve the card list from Cube Cobra.",
+							footer: `Full error: ${err}`,
+							error: err,
+						});
+						return;
+					} else if(res.statusCode !== 200) {
+						ack?.({
+							type: "error",
+							title: "Error retrieving cube.",
+							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+						});
+						return;
+					} else if(body === "Cube not found.") {
+						ack?.({
+							type: "error",
+							title: "Cube not found.",
+							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+							error: err,
+						});
+						return;
+					} else {
+						parseCustomCardList(Sessions[sessionID], body, data, ack);
+					}
+				} catch(e) {
+					ack?.({type: "error", title: "Internal server error."});
 				}
-			} catch(e) {
-				ack?.({type: "error", title: "Internal server error."});
-			}
-		});
+			});
+		}
+		if(data.matchVersions) {
+			// Xmage (.dck) format
+			request({ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
+				try {
+					if (err) {
+						ack?.({
+							type: "error",
+							title: "Error",
+							text: "Couldn't retrieve the card list from Cube Cobra.",
+							footer: `Full error: ${err}`,
+							error: err,
+						});
+						return;
+					} else if(res.statusCode !== 200) {
+						ack?.({
+							type: "error",
+							title: "Error retrieving cube.",
+							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+						});
+						return;
+					} else if(res.req.path.includes("404")) { // Missing cube redirects to /404
+						ack?.({
+							type: "error",
+							title: "Cube not found.",
+							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+							error: err,
+						});
+						return;
+					} else {
+						let converted = XMageToArena(body);
+						if(!converted) fromTextList(userID, sessionID, data, ack); // Fallback to plain text list
+						else parseCustomCardList(Sessions[sessionID], converted, Object.assign({fallbackToCardName: true}, data), ack);
+					}
+				} catch(e) {
+					ack?.({type: "error", title: "Internal server error."});
+				}
+			});
+		} else {
+			fromTextList(userID, sessionID, data, ack);
+		}
 	},
 	"loadLocalCustomCardList": function(userID, sessionID, cubeName, ack) {
 		if (!(cubeName in ParsedCubeLists)) {

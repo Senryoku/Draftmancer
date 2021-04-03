@@ -1,5 +1,11 @@
 [
 	{
+		"date": "03/04/2021",
+		"notes": [
+			"Made exact card version (set & collector number) matching optional when importing cubes from Cube Cobra to improve compatibility with MTGA by default."
+		]
+	},
+	{
 		"date": "31/03/2021",
 		"notes": ["Front-end support for flip, split and meld cards."]
 	},

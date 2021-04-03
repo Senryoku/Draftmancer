@@ -1496,22 +1496,38 @@ export default {
 			});
 		},
 		importCubeCobra: function() {
+			const defaultMatchCardVersions = localStorage.getItem("cubecobra-match-versions", "false") === "true";
+			const defaultCubeID = localStorage.getItem("cubecobra-cubeID", "");
 			Swal.fire({
 				title: "Import from Cube Cobra",
-				text: `Enter a Cube ID or an URL to import a cube directly from Cube Cobra`,
+				html: `<p>Enter a Cube ID or an URL to import a cube directly from Cube Cobra</p>
+				<input type="checkbox" id="input-match-card-versions" ${defaultMatchCardVersions ? "checked": ""}><label for="input-match-card-versions">Match exact card versions</label>`,
 				inputPlaceholder: "Cube ID/URL",
 				input: "text",
+				inputValue: defaultCubeID,
 				showCancelButton: true,
 				customClass: SwalCustomClasses,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
+				preConfirm: function(cubeCobraID) {
+					const matchVersions = document.getElementById("input-match-card-versions").checked;
+					localStorage.setItem("cubecobra-match-versions", matchVersions.toString());
+					if(cubeCobraID) { // Convert from URL to cubeID if necessary.
+						const urlTest = cubeCobraID.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
+						if (urlTest) cubeCobraID = urlTest[1];
+					}
+					localStorage.setItem("cubecobra-cubeID", cubeCobraID);
+					return new Promise(function(resolve) {
+						resolve({
+							cubeCobraID: cubeCobraID,
+							matchVersions: matchVersions,
+						});
+					});
+				},
 			}).then(result => {
-				if (result.value) {
-					const urlTest = result.value.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
-					if (urlTest) result.value = urlTest[1];
-					this.selectCube({ cubeCobraID: result.value });
-				}
+				if (result.value && result.value.cubeCobraID)
+					this.selectCube(result.value);
 			});
 		},
 		selectCube: function(cube) {
@@ -1540,7 +1556,7 @@ export default {
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
-				this.socket.emit("loadFromCubeCobra", { cubeID: cube.cubeCobraID, name: cube.name }, ack);
+				this.socket.emit("loadFromCubeCobra", { cubeID: cube.cubeCobraID, name: cube.name, matchVersions: cube.matchVersions }, ack);
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
