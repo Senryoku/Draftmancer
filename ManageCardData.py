@@ -315,7 +315,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             subtypes = []  # Unused for now
             if len(typeLine) > 1:
                 subtypes = typeLine[1].split()
-            # selection['subtypes'] = subtypes
+            selection['subtypes'] = subtypes
             if selection['name'] in CardRatings:
                 selection['rating'] = CardRatings[selection['name']]
             elif selection['name'].split(" //")[0] in CardRatings:
