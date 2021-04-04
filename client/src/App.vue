@@ -886,6 +886,7 @@
 					group="deck"
 					@dragover.native="allowBoosterCardDrop($event)"
 					@drop.native="dropBoosterCard($event)"
+					:filter="deckFilter"
 				>
 					<template v-slot:title>
 						Deck ({{ deck.length
@@ -987,6 +988,9 @@
 								</table>
 							</template>
 						</dropdown>
+						<div class="input-delete-icon">
+							<input type="text" placeholder="Search..." v-model="deckFilter" /><span @click="deckFilter = ''"><i class="fas fa-times-circle"></i></span>
+						</div>
 					</template>
 					<template v-slot:empty>
 						<h3>Your deck is currently empty!</h3>
@@ -1033,6 +1037,7 @@
 							:card="card"
 							:language="language"
 							@click="sideboardToDeck($event, card)"
+							:filter="deckFilter"
 						></card>
 					</draggable>
 				</div>
@@ -1056,6 +1061,7 @@
 				group="deck"
 				@dragover.native="allowBoosterCardDrop($event)"
 				@drop.native="dropBoosterCard($event, { toSideboard: true })"
+				:filter="deckFilter"
 			>
 				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
 				<template v-slot:controls>

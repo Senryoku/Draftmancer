@@ -138,3 +138,28 @@ ul.player-table > li.teamb {
 	text-align: center;
 	padding: 1em;
 }
+
+.input-delete-icon {
+	position: relative;
+}
+
+.input-delete-icon span {
+	position: absolute;
+	display: block;
+	top: 50%;
+	right: 0.5em;
+	width: 1em;
+	height: 1em;
+	transform: translateY(-50%);
+	cursor: pointer;
+	opacity: 70%;
+}
+
+.input-delete-icon span:hover {
+	opacity: 100%;
+}
+
+.input-delete-icon input {
+	padding-right: 16px;
+	box-sizing: border-box;
+}

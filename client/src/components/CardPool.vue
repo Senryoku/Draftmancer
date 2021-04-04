@@ -143,6 +143,7 @@
 						:card="card"
 						:language="language"
 						@click="click($event, card)"
+						:filter="filter"
 					></card>
 				</draggable>
 			</div>
@@ -166,6 +167,7 @@ export default {
 		language: { type: String, required: true },
 		click: { type: Function, default: () => {} },
 		group: { type: String },
+		filter: { type: String },
 	},
 	data: function () {
 		return {

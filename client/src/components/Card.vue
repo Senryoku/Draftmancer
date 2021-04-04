@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="card"
-		:class="{ foil: card.foil }"
+		:class="{ foil: card.foil, faded: isFiltered }"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
 		@click="$emit('click')"
@@ -25,11 +25,22 @@ export default {
 		card: { type: Object, required: true },
 		language: { type: String, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
+		filter: { type: String },
 	},
 	data: function () {
 		return {
 			foilInterval: null,
 		};
+	},
+	computed: {
+		isFiltered: function () {
+			if (!this.filter || this.filter === "") return false;
+			return !(
+				this.card.name.includes(this.filter) ||
+				this.card.type.includes(this.filter) ||
+				this.card.subtypes.some((t) => t.includes(this.filter))
+			);
+		},
 	},
 	methods: {
 		toggleZoom: function (e) {
@@ -70,6 +81,21 @@ export default {
 	},
 };
 </script>
+
+<style>
+/*
+Can't be applied to .faded directly as it creates a bug with the rotation handle position.
+See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning
+*/
+.faded .card-image i,
+.faded .card-image img {
+	filter: brightness(50%) /*blur(2px)*/;
+}
+
+.card-image img {
+	transition: filter 0.2s;
+}
+</style>
 
 <style scoped>
 .card {

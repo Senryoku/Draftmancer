@@ -189,6 +189,7 @@ export default {
 			// stay in sync with their CardPool display)
 			deck: [],
 			sideboard: [],
+			deckFilter: "",
 			collapseSideboard: getCookie("collapseSideboard", "false") === "true",
 			autoLand: true,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
