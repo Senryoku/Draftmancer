@@ -419,14 +419,16 @@ export const SetSpecificFactories = {
 	},
 	// Strixhaven: One card from the Mystical Archive (sta)
 	// Note: This isn't limited by the session collections
+	// And one lesson. Neither card affects other rarities in the pack.
 	stx: (cardPool, landSlot, options) => {
 		const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson"));
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.lessonsByRarity = lessons;
 		factory.mysticalArchiveCardPool = {};
-		for(let cid of BoosterCardsBySet["sta"])
+		for(let cid of BoosterCardsBySet["sta"]) {
 			factory.mysticalArchiveCardPool[cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+		}
 		factory.generateBooster = function(targets) {
 			let booster = [];
 			const lessonsCounts = countBySlot(this.lessonsByRarity);
@@ -435,12 +437,7 @@ export const SetSpecificFactories = {
 			} else {
 				const pickedRarity = rollSpecialCardRarity(lessonsCounts, targets, Object.assign({minRarity: "common"}, options));
 				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
-
-				let updatedTargets = Object.assign({}, targets);
-				if (pickedRarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[pickedRarity];
-
-				booster = this.originalGenBooster(updatedTargets);
+				booster = this.originalGenBooster(targets);
 				booster = insertInBooster(pickedLesson, booster);
 			}
 	
