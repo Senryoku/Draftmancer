@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="section-title">
-			<h2 style="min-width: 8em">
+			<h2 style="min-width: 7em">
 				<slot name="title">Card Pool ({{ cards.length }})</slot>
 			</h2>
 			<div class="controls">

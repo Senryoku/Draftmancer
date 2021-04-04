@@ -898,34 +898,37 @@
 						>)
 					</template>
 					<template v-slot:controls>
-						<button
-							v-if="deck.length > 0"
-							type="button"
-							@click="exportDeck"
-							v-tooltip="'Export deck and sideboard'"
-						>
-							<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
-						</button>
-						<button
-							v-if="deck.length > 0"
-							type="button"
-							@click="exportDeck(false)"
-							v-tooltip="'Export without set information'"
-						>
-							<i class="fas fa-clipboard"></i> Export (Simple)
-						</button>
+						<div style="font-variant: small-caps;">
+							Export
+							<button
+								v-if="deck.length > 0"
+								type="button"
+								@click="exportDeck"
+								v-tooltip.top="'Export deck and sideboard'"
+							>
+								<img class="set-icon" src="./assets/img/mtga-icon.png" style="-webkit-filter: drop-shadow(1px 1px 0 #AAA) drop-shadow(-1px -1px 0 #AAA); filter: drop-shadow(1px 1px 0 #AAA) drop-shadow(-1px -1px 0 #AAA);" /> MTGA
+							</button>
+							<button
+								v-if="deck.length > 0"
+								type="button"
+								@click="exportDeck(false)"
+								v-tooltip.top="'Export without set information'"
+							>
+								<i class="fas fa-clipboard"></i> Simple
+							</button>
+						</div>
 						<button
 							v-if="deck.length > 0 && currentDraftLog"
 							type="button"
 							@click="shareDecklist()"
-							v-tooltip="'Share deck, lands, and sideboard with other players in your session.'"
+							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
 						>
 							<i class="fas fa-share-square"></i> Share
 						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
-							v-tooltip="'Deck Statistics'"
+							v-tooltip.top="'Deck Statistics'"
 						></i>
 						<land-control
 							v-if="draftingState === DraftState.Brewing"
