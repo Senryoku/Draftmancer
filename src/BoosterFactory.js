@@ -437,8 +437,7 @@ export const SetSpecificFactories = {
 				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
 				let updatedTargets = Object.assign({}, targets);
-				if (pickedRarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[pickedRarity];
+				if (updatedTargets["common"] > 0) --updatedTargets["common"];
 
 				booster = this.originalGenBooster(updatedTargets);
 				booster = insertInBooster(pickedLesson, booster);
