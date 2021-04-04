@@ -440,7 +440,7 @@ export const SetSpecificFactories = {
 				if (updatedTargets["common"] > 0) --updatedTargets["common"];
 
 				booster = this.originalGenBooster(updatedTargets);
-				booster = insertInBooster(pickedLesson, booster);
+				booster.push(pickedLesson);
 			}
 	
 			const archive = pickCard(this.mysticalArchiveCardPool, []);
