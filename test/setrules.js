@@ -32,6 +32,18 @@ describe("Set Specific Booster Rules", function() {
 		expect(PLCount).to.equal(1);
 	};
 
+	const validateSTXBooster = function(booster) {
+		expect(booster.map(c => c.set).every(s => s === "stx" || s === "sta")).to.be.true;
+		let ArchiveCount = booster.reduce((acc, val) => {
+			return acc + val.set === "sta" ? 1 : 0;
+		}, 0);
+		expect(ArchiveCount).to.equal(1);
+		let LessonCount = booster.reduce((acc, val) => {
+			return acc + val.subtypes.includes("Lesson") ? 1 : 0;
+		}, 0);
+		expect(LessonCount).to.equal(1);
+	};
+
 	beforeEach(function(done) {
 		disableLogs();
 		done();

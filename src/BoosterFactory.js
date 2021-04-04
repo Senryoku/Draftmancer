@@ -1,6 +1,6 @@
 "use strict";
 
-import { Cards, getUnique } from "./Cards.js";
+import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 import constants from "../client/src/data/constants.json";
@@ -197,19 +197,25 @@ function filterCardPool(cardPool, predicate) {
 }
 
 function rollSpecialCardRarity(cardCounts, targets, options) {
-	let pickedRarity = "uncommon";
-	if (
-		cardCounts["uncommon"] === 0 ||
-		(cardCounts["rare"] + cardCounts["mythic"] > 0 &&
-			Math.random() < targets.rare / (targets.rare + targets.uncommon))
-	) {
-		if (
-			cardCounts["rare"] === 0 ||
-			(cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate)
-		)
+	let pickedRarity = options.minRarity ?? "uncommon";
+
+	let total = targets.rare;
+	if(pickedRarity === "common") total += targets.common;
+	if(pickedRarity === "common" || pickedRarity === "uncommon") total += targets.uncommon;
+
+	const rand = Math.random() * total;
+	if(rand < targets.rare) pickedRarity = "rare";
+	else if(rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
+	
+	if(pickedRarity === "rare") {
+		if(cardCounts["rare"] === 0 ||
+		  (cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate))
 			pickedRarity = "mythic";
-		else pickedRarity = "rare";
 	}
+
+	if(cardCounts[pickedRarity] === 0) 
+		pickedRarity = Object.keys(cardCounts).find(v => cardCounts[v] > 0);
+
 	return pickedRarity;
 }
 
@@ -217,6 +223,14 @@ function countBySlot(cardPool) {
 	const counts = {};
 	for (let slot in cardPool) counts[slot] = Object.values(cardPool[slot]).reduce((acc, c) => acc + c, 0);
 	return counts;
+}
+
+function insertInBooster(card, booster) {
+	let boosterByRarity = {mythic:[], rare:[], uncommon:[], common:[]};
+	for(let c of booster) boosterByRarity[c.rarity].push(c)
+	boosterByRarity[card.rarity].push(card);
+	shuffleArray(boosterByRarity[card.rarity]);
+	return Object.values(boosterByRarity).flat();
 }
 
 // Set specific rules.
@@ -242,21 +256,14 @@ export const SetSpecificFactories = {
 				return this.originalGenBooster(targets);
 			} else {
 				const pickedRarity = rollSpecialCardRarity(plwCounts, targets, options);
-				const pickedCID = pickCard(this.planeswalkers[pickedRarity], []);
+				const pickedPL = pickCard(this.planeswalkers[pickedRarity], []);
 
 				const updatedTargets = Object.assign({}, targets);
 				if (pickedRarity === "mythic") --updatedTargets["rare"];
 				else --updatedTargets[pickedRarity];
 
-				const booster = this.originalGenBooster(updatedTargets);
-				// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
-				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
-				else
-					booster.splice(
-						booster.findIndex(c => c.rarity === pickedRarity),
-						0,
-						pickedCID
-					);
+				let booster = this.originalGenBooster(updatedTargets);
+				booster = insertInBooster(pickedPL, booster);
 				return booster;
 			}
 		};
@@ -313,21 +320,14 @@ export const SetSpecificFactories = {
 			} else {
 				// Roll for MDFC rarity
 				const pickedRarity = rollSpecialCardRarity(mdfcCounts, targets, options);
-				const pickedCID = pickCard(this.mdfcByRarity[pickedRarity], []);
+				const pickedMDFC = pickCard(this.mdfcByRarity[pickedRarity], []);
 
 				let updatedTargets = Object.assign({}, targets);
 				if (pickedRarity === "mythic") --updatedTargets["rare"];
 				else --updatedTargets[pickedRarity];
 
 				let booster = this.originalGenBooster(updatedTargets);
-				// Insert the card in the appropriate slot (FIXME: Not perfect if there's a foil...)
-				if (pickedRarity === "rare" || pickedRarity === "mythic") booster.unshift(pickedCID);
-				else
-					booster.splice(
-						booster.findIndex(c => c.rarity === pickedRarity),
-						0,
-						pickedCID
-					);
+				booster = insertInBooster(pickedMDFC, booster);
 				return booster;
 			}
 		};
@@ -413,6 +413,39 @@ export const SetSpecificFactories = {
 			let booster = this.originalGenBooster(targets);
 			const timeshifted = pickCard(this.cardPool["special"], []);
 			booster.push(timeshifted);
+			return booster;
+		};
+		return factory;
+	},
+	// Strixhaven: One card from the Mystical Archive (sta)
+	// Note: This isn't limited by the session collections
+	stx: (cardPool, landSlot, options) => {
+		const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson"));
+		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.lessonsByRarity = lessons;
+		factory.mysticalArchiveCardPool = {};
+		for(let cid of BoosterCardsBySet["sta"])
+			factory.mysticalArchiveCardPool[cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+		factory.generateBooster = function(targets) {
+			let booster = [];
+			const lessonsCounts = countBySlot(this.lessonsByRarity);
+			if (Object.values(lessonsCounts).every(c => c === 0)) {
+				booster = this.originalGenBooster(targets);
+			} else {
+				const pickedRarity = rollSpecialCardRarity(lessonsCounts, targets, Object.assign({minRarity: "common"}, options));
+				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
+
+				let updatedTargets = Object.assign({}, targets);
+				if (pickedRarity === "mythic") --updatedTargets["rare"];
+				else --updatedTargets[pickedRarity];
+
+				booster = this.originalGenBooster(updatedTargets);
+				booster = insertInBooster(pickedLesson, booster);
+			}
+	
+			const archive = pickCard(this.mysticalArchiveCardPool, []);
+			booster.push(archive);
 			return booster;
 		};
 		return factory;

@@ -172,6 +172,7 @@ describe("Sets content", function() {
 		klr: { common: 104, uncommon: 97, rare: 63, mythic: 23 - 1 }, // Exclude the Buy-a-Box mythic
 		khm: { common: 111, uncommon: 80, rare: 64, mythic: 20}, 
 		tsr: { common: 121, uncommon: 100, rare: 53, mythic: 15}, 
+		stx: { common: 105, uncommon: 80, rare: 69, mythic: 21}, 
 	};
 
 	beforeEach(function(done) {
@@ -424,7 +425,8 @@ describe("Single Draft (Two Players)", function() {
 						(set === 'mb1' && c.set === 'fmb1') ||
 						(set === 'tsp' && c.set === 'tsb') ||
 						(set === 'frf' && c.set === 'ktk') ||
-						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr'))
+						(set === 'dgm' && (c.set === 'gtc' || c.set === 'rtr')) ||
+						(set === 'stx' && c.set === 'sta')
 						))).to.be.true;
 				}
 				done();

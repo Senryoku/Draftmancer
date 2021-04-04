@@ -5,7 +5,7 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import { Cards, getUnique } from "./Cards.js";
+import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -88,15 +88,6 @@ function SwissBracket(players) {
 		[0, 0],
 	];
 	this.swiss = true;
-}
-
-// Cache for cards organized by set.
-const BoosterCardsBySet = {};
-for (let cid in Cards) {
-	if (Cards[cid].in_booster || Cards[cid].set === 'und') { // Force cache for Unsanctionec (UND) as it's not a draft product originally
-		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
-		BoosterCardsBySet[Cards[cid].set].push(cid);
-	}
 }
 
 export function WinstonDraftState(players, boosters) {
@@ -579,6 +570,7 @@ export function Session(id, owner, options) {
 				foil: this.foil,
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
+				maxDuplicates: this.maxDuplicates,
 				onError: (...args) => {
 					this.emitError(...args);
 				},
@@ -667,9 +659,11 @@ export function Session(id, owner, options) {
 				const usedSets = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
+				 // Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX that already have 15 cards.
+				const irregularSets = ["cmr", "tsr", "stx"];
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot = this.distributionMode !== "regular" || customBoosters.some(v => v === "random");
-				if (addLandSlot && defaultFactory && !defaultFactory.landSlot)
+				if (addLandSlot && defaultFactory && !defaultFactory.landSlot && !(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0])))
 					defaultFactory.landSlot = this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
 						? defaultBasics
 						: BasicLandSlots[this.setRestriction[0]];
@@ -697,7 +691,7 @@ export function Session(id, owner, options) {
 									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
 									const landSlot = boosterSet in SpecialLandSlots
 											? SpecialLandSlots[boosterSet]
-											: addLandSlot && !["cmr", "tsr"].includes(boosterSet) // Exception for Commander Legends as the booster size will be wrong anyway, and TSR that already has 15 cards.
+											: addLandSlot && !irregularSets.includes(boosterSet)
 											? (BasicLandSlots[boosterSet] ? BasicLandSlots[boosterSet] : defaultBasics)
 											: null;
 									usedSets[boosterSet] = getBoosterFactory(

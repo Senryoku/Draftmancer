@@ -294,8 +294,11 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                     'printed_names': {}, 'image_uris': {}}
             Translations[key]['back']['printed_names'][c['lang']
                                                        ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
-            Translations[key]['back']['image_uris'][c['lang']
-                                                    ] = c['card_faces'][1]['image_uris']['border_crop']
+            if 'image_uris' not in c['card_faces'][1]:  # Temp workaround while STX data is still incomplete
+                print("/!\ {}: Missing back side image.".format(c['name']))
+            else:
+                Translations[key]['back']['image_uris'][c['lang']
+                                                        ] = c['card_faces'][1]['image_uris']['border_crop']
 
         if c['lang'] == 'en':
             if c['name'] in cardsByName:
@@ -312,7 +315,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             subtypes = []  # Unused for now
             if len(typeLine) > 1:
                 subtypes = typeLine[1].split()
-            # selection['subtypes'] = subtypes
+            selection['subtypes'] = subtypes
             if selection['name'] in CardRatings:
                 selection['rating'] = CardRatings[selection['name']]
             elif selection['name'].split(" //")[0] in CardRatings:
@@ -518,6 +521,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'stx']]  # Exclude some codes that are actually part of larger sets, and STX isn't out yet
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1), or aren't out yet
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

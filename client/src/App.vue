@@ -1242,6 +1242,10 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>April 04, 2021</em>
+								<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
+							</div>
+							<div class="news">
 								<em>March 28, 2021</em>
 								<p>
 									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
@@ -1250,19 +1254,10 @@
 							</div>
 							<div class="news">
 								<em>March 06, 2021</em>
-								<ul>
-									<li>
-										<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-										Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
-									</li>
-								</ul>
-							</div>
-							<div class="news">
-								<em>January 28, 2021</em>
-								<ul>
-									<li>Extended logs and share deck feature to other game modes.</li>
-									<li>Collection viewer updated for Kaldheim.</li>
-								</ul>
+								<p>
+									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+									Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
+								</p>
 							</div>
 						</div>
 					</div>
