@@ -198,8 +198,12 @@ function filterCardPool(cardPool, predicate) {
 
 function rollSpecialCardRarity(cardCounts, targets, options) {
 	let pickedRarity = options.minRarity ?? "uncommon";
-	
-	const rand = Math.random() * (targets.common + targets.uncommon + targets.rare);
+
+	let total = targets.rare;
+	if(pickedRarity === "common") total += targets.common;
+	if(pickedRarity === "common" || pickedRarity === "uncommon") total += targets.uncommon;
+
+	const rand = Math.random() * total;
 	if(rand < targets.rare) pickedRarity = "rare";
 	else if(rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
 	

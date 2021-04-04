@@ -9,7 +9,7 @@ import { Cards } from "./../../src/Cards.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";
 import parseCardList from "../../src/parseCardList.js";
-import { getRandomKey } from "../../src/utils.js";
+import { getRandomKey, getRandom } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
@@ -99,6 +99,7 @@ describe("Statistical color balancing tests", function() {
 		//let s = getRandom(constants.MTGASets);
 		for (let s of constants.MTGASets)
 		{
+			if(s === "stx") continue; // There's too few common lesson for that.
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
 				this.timeout(8000);
 				const trials = 500;
@@ -151,65 +152,72 @@ describe("Statistical color balancing tests", function() {
 		done();
 	});
 
-	it(`Modal Double Faced Uncommons of Zendikar Rising should have an apparition rate similar to Single Faced Uncommons' (<= 20% relative difference)`, function(done) {
-		this.timeout(8000);
-		const trials = 10000;
-		const SessionInst = new Session("UniqueID");
-		SessionInst.colorBalance = true;
-		SessionInst.setRestriction = ["znr"];
-		const trackedCards = Object.keys(SessionInst.cardPoolByRarity().uncommon).reduce((o, key) => ({ ...o, [key]: 0}), {});
-		runTrials(SessionInst, trials, trackedCards);
-		
-		const logTable = [];
-		let maxRelativeDifference = 0;
-		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
-		for(let id0 of MDFCs) {
-			let id1 = getRandomKey(trackedCards);
-			while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
-			const relativeDifference =
-				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-			logTable.push({
-				"1st Card Name": Cards[id0].name,
-				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
-				"2nd Card Count": trackedCards[id1],
-				"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
-			});
-			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
-		}
-		console.table(logTable);
-		expect(maxRelativeDifference).to.be.at.most(0.2);
-		done();
-	});
+	for(let rarity of ['uncommon', 'rare']) {
+		it(`Modal Double Faced ${rarity}s of Zendikar Rising should have an apparition rate similar to Single Faced ${rarity}s' (<= 20% relative difference)`, function(done) {
+			this.timeout(8000);
+			const trials = 10000;
+			const SessionInst = new Session("UniqueID");
+			SessionInst.colorBalance = true;
+			SessionInst.setRestriction = ["znr"];
+			const trackedCards = Object.keys(SessionInst.cardPoolByRarity()[rarity]).reduce((o, key) => ({ ...o, [key]: 0}), {});
+			runTrials(SessionInst, trials, trackedCards);
+			
+			const logTable = [];
+			let maxRelativeDifference = 0;
+			const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
+			for(let id0 of MDFCs) {
+				let id1 = getRandomKey(trackedCards);
+				while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
+				const relativeDifference =
+					2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+				logTable.push({
+					"1st Card Name": Cards[id0].name,
+					"1st Card Count": trackedCards[id0],
+					"2nd Card Name": Cards[id1].name,
+					"2nd Card Count": trackedCards[id1],
+					"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
+				});
+				maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+			}
+			console.table(logTable);
+			expect(maxRelativeDifference).to.be.at.most(0.2);
+			done();
+		});
+	}
 
-	it(`Modal Double Faced Rares of Zendikar Rising should have an apparition rate similar to Single Faced Rares' (<= 20% relative difference)`, function(done) {
+	// There's not enough common lesson to approch the standard apparition rate.
+	it(`Lessons of STX should have an apparition rate similar (but not exact) to other cards of the same rarity (<= 30% relative difference)`, function(done) {
 		this.timeout(8000);
-		const trials = 10000;
+		const trials = 1000;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
-		SessionInst.setRestriction = ["znr"];
-		const trackedCards = Object.keys(SessionInst.cardPoolByRarity().rare).reduce((o, key) => ({ ...o, [key]: 0}), {});
+		SessionInst.setRestriction = ["stx"];
+		const trackedCards = SessionInst.cardPool();
 		runTrials(SessionInst, trials, trackedCards);
 		
-		const logTable = [];
-		let maxRelativeDifference = 0;
-		const MDFCs = Object.keys(trackedCards).filter(cid => Cards[cid].name.includes("//"));
-		for(let id0 of MDFCs) {
-			let id1 = getRandomKey(trackedCards);
-			while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
-			const relativeDifference =
-				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
-			logTable.push({
-				"1st Card Name": Cards[id0].name,
-				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
-				"2nd Card Count": trackedCards[id1],
-				"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
-			});
-			maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+		for(let rarity of ["common", "uncommon", "rare", "mythic"]) {
+			const logTable = [];
+			let maxRelativeDifference = 0;
+			let candidates = Object.keys(trackedCards).filter(cid => Cards[cid].rarity === rarity);
+			const Lessons = candidates.filter(cid => Cards[cid].subtypes.includes("Lesson"));
+			candidates = candidates.filter(cid => !Cards[cid].subtypes.includes("Lesson"));
+			for(let id0 of Lessons) {
+				let id1 = getRandom(candidates);
+				while (Lessons.includes(id1) || id1 === id0) id1 = getRandom(candidates);
+				const relativeDifference =
+					2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
+				logTable.push({
+					"1st Card Name": Cards[id0].name,
+					"1st Card Count": trackedCards[id0],
+					"2nd Card Name": Cards[id1].name,
+					"2nd Card Count": trackedCards[id1],
+					"Relative Difference (%)": Math.round((10000.0 * relativeDifference)) / 100.0,
+				});
+				maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
+			}
+			console.table(logTable);
+			expect(maxRelativeDifference).to.be.at.most(0.3);
 		}
-		console.table(logTable);
-		expect(maxRelativeDifference).to.be.at.most(0.2);
 		done();
 	});
 	
