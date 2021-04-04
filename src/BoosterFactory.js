@@ -424,9 +424,9 @@ export const SetSpecificFactories = {
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.lessonsByRarity = lessons;
-		factory.mysticalArchiveCardPool = {};
+		factory.mysticalArchiveByRarity = {uncommon:{}, rare:{}, mythic:{}};
 		for(let cid of BoosterCardsBySet["sta"])
-			factory.mysticalArchiveCardPool[cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+			factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
 		factory.generateBooster = function(targets) {
 			let booster = [];
 			const lessonsCounts = countBySlot(this.lessonsByRarity);
@@ -443,7 +443,9 @@ export const SetSpecificFactories = {
 				booster.push(pickedLesson);
 			}
 	
-			const archive = pickCard(this.mysticalArchiveCardPool, []);
+			const rarityRoll = Math.random();
+			const archiveRarity = rarityRoll < 0.066 ? "mythic" : (rarityRoll < 0.066 + 0.264 ? "rare" : "uncommon");
+			const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
 			booster.push(archive);
 			return booster;
 		};
