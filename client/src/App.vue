@@ -1156,7 +1156,7 @@
 									(Note:
 									<a
 										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-										target="_blank"
+										target="_blank" rel="noopener nofollow"
 									>
 										AppData folder is hidden by default
 										<i class="fas fa-external-link-alt"></i>
@@ -1294,16 +1294,16 @@
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the options.
-						<a href="cubeformat.html" target="_blank">More information</a>
+						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 					</p>
 					<strong>How can we adjust the packs content for cubes?</strong>
 					<p>
-						The <a href="cubeformat.html" target="_blank">Cube Format</a> allows to fine tune the packs content (see the "Custom Card Slots" section).
+						The <a href="cubeformat.html" target="_blank" rel="noopener nofollow">Cube Format</a> allows to fine tune the packs content (see the "Custom Card Slots" section).
 						<br />
 						To change the overall number of cards in a pack without going into more details, you can add the following line on top of your cube file and replace <tt>CardPerBooster</tt> by the desired value:
 						<pre>[SlotName(CardPerBooster)]</pre>
 					</p>
-					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank">Help section of the MTGADraft Discord</a>!
+					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
 				</div>
 				<br />
 				<h2>Options Description</h2>
@@ -1354,7 +1354,7 @@
 								<span class="option-name">Custom Card List</span>
 								: Submit a custom card list (one English card name per line) to draft your own cube.
 								Collections are ignored in this mode.
-								<a href="cubeformat.html" target="_blank">More information</a>
+								<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 							</li>
 							<li>
 								<span class="option-name">Foil</span>
@@ -1875,7 +1875,7 @@
 						<div v-if="selectedCube.cubeCobraID">
 							<a
 								:href="`https://cubecobra.com/cube/overview/${selectedCube.cubeCobraID}`"
-								target="_blank"
+								target="_blank" rel="noopener nofollow"
 							>
 								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
 								Cube Cobra page
@@ -1885,11 +1885,11 @@
 					</div>
 					<div class="option-info">
 						You can find more cubes or craft your own on
-						<a href="https://www.cubetutor.com/" target="_blank">Cube Tutor</a>
+						<a href="https://www.cubetutor.com/" target="_blank" rel="noopener nofollow">Cube Tutor</a>
 						or
-						<a href="https://cubecobra.com/" target="_blank">Cube Cobra</a>
+						<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow">Cube Cobra</a>
 						<br />Customize your list even further by using all features of the
-						<a href="cubeformat.html" target="_blank">
+						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">
 							<i class="fas fa-external-link-alt"></i>
 							format
 						</a>
@@ -1928,7 +1928,7 @@
 			<div slot="body">
 				<p>
 					Developped by
-					<a href="https://senryoku.github.io/" target="_blank">Senryoku</a>
+					<a href="https://senryoku.github.io/" target="_blank" rel="noopener nofollow">Senryoku</a>
 					(contact in French or English:
 					<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 					) using
@@ -1958,7 +1958,7 @@
 						<em>PayPal</em>
 						:
 					</p>
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" rel="noopener nofollow">
 						<input type="hidden" name="cmd" value="_s-xclick" />
 						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
 						<input type="hidden" name="lc" value="en_US" />
@@ -1981,7 +1981,7 @@
 			</span>
 			<span>
 				Made by
-				<a href="http://senryoku.github.io/" target="_blank">Senryoku</a>
+				<a href="http://senryoku.github.io/" target="_blank" rel="noopener nofollow">Senryoku</a>
 			</span>
 			<span>
 				<a @click="displayedModal = 'donation'">
@@ -1994,7 +1994,7 @@
 			</span>
 			<span>
 				Get
-				<a href="https://magic.wizards.com/fr/mtgarena" target="_blank">Magic: The Gathering Arena</a>
+				<a href="https://magic.wizards.com/fr/mtgarena" target="_blank" rel="noopener nofollow">Magic: The Gathering Arena</a>
 			</span>
 		</footer>
 		<div

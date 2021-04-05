@@ -1119,7 +1119,7 @@ export default {
 
 			const { value: boosterCount } = await Swal.fire({
 				title: "Winston Draft",
-				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
+				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {

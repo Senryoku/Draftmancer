@@ -968,7 +968,7 @@ function joinSession(sessionID, userID) {
 			return;
 		}
 
-		const bracketLink = sess.bracket ? `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank">here</a>.` : "";
+		const bracketLink = sess.bracket ? `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank" rel="noopener nofollow">here</a>.` : "";
 		// Session exists and is drafting
 		if (sess.drafting) {
 			console.log(
