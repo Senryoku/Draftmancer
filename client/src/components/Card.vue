@@ -36,11 +36,7 @@ export default {
 		isFiltered: function () {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
-			return !(
-				this.card.name.toLowerCase().includes(filter) ||
-				this.card.type.toLowerCase().includes(filter) ||
-				this.card.subtypes.join(" ").toLowerCase().includes(filter)
-			);
+			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
 		},
 	},
 	methods: {
@@ -78,6 +74,13 @@ export default {
 			this.$el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
 			this.$el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
 			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
+		},
+		passFilter: function (card, filter) {
+			return (
+				card.name.toLowerCase().includes(filter) ||
+				card.type.toLowerCase().includes(filter) ||
+				card.subtypes.join(" ").toLowerCase().includes(filter)
+			);
 		},
 	},
 };
