@@ -35,10 +35,11 @@ export default {
 	computed: {
 		isFiltered: function () {
 			if (!this.filter || this.filter === "") return false;
+			const filter = this.filter.toLowerCase();
 			return !(
-				this.card.name.includes(this.filter) ||
-				this.card.type.includes(this.filter) ||
-				this.card.subtypes.some((t) => t.includes(this.filter))
+				this.card.name.toLowerCase().includes(filter) ||
+				this.card.type.toLowerCase().includes(filter) ||
+				this.card.subtypes.some((t) => t.toLowerCase().includes(filter))
 			);
 		},
 	},
