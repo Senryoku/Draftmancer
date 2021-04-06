@@ -2,8 +2,7 @@
 	<div
 		class="card"
 		:class="{ foil: card.foil, faded: isFiltered }"
-		:data-arena-id="card.id"
-		:data-cmc="card.cmc"
+		:title="title"
 		@click="$emit('click')"
 		@dblclick="$emit('dblclick')"
 		:key="`card-${card.uniqueID}`"
@@ -37,6 +36,11 @@ export default {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
 			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
+		},
+		title: function () {
+			return `${this.card.name}\n${this.card.type}${
+				this.card.subtypes.length > 0 ? " — " : ""
+			}${this.card.subtypes.join(" ")}\n${this.card.oracle_text}`;
 		},
 	},
 	methods: {
@@ -79,7 +83,8 @@ export default {
 			return (
 				card.name.toLowerCase().includes(filter) ||
 				card.type.toLowerCase().includes(filter) ||
-				card.subtypes.join(" ").toLowerCase().includes(filter)
+				card.subtypes.join(" ").toLowerCase().includes(filter) ||
+				card.oracle_text.toLowerCase().includes(filter)
 			);
 		},
 	},

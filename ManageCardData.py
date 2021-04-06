@@ -299,7 +299,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         # Handle back side of double sided cards
         if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
             if 'back' not in Translations[key]:
-                Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}}
+                Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}, 'oracle_text': c['card_faces'][1]['oracle_text']}
                 Translations[key]['back']['type'], Translations[key]['back']['subtypes'] = handleTypeLine(c['card_faces'][1]['type_line'])
             Translations[key]['back']['printed_names'][c['lang']
                                                        ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
@@ -316,9 +316,12 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 cardsByName[c['name']] = [c]
 
             selection = {key: value for key, value in c.items() if key in {
-                'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
-            if 'mana_cost' not in selection and "card_faces" in c:
-                selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
+                'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number', 'oracle_text'}}
+            if "card_faces" in c:
+                if 'mana_cost' not in selection:
+                    selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
+                if 'oracle_text' not in selection:
+                    selection["oracle_text"] = c["card_faces"][0]["oracle_text"]
             selection['type'], selection['subtypes'] = handleTypeLine(c['type_line'].split(" //")[0])
             if selection['name'] in CardRatings:
                 selection['rating'] = CardRatings[selection['name']]
@@ -361,9 +364,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     # Set result of melding cards as their back
     for c in meldCards:
         if [a for a in c['all_parts'] if a['id'] == c['id']][0]['component'] == 'meld_part':
-            meldResult = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
-            cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
-                                      'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
+            cards[c['id']]['back'] = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
