@@ -2,9 +2,27 @@
 
 import fs from "fs";
 import parseCost from "./parseCost.js";
+import StreamObject from "stream-json/streamers/StreamObject.js";
 
 console.log("Loading Cards...");
-export const Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json"));
+
+export const Cards = {};
+
+const cardsPromise = new Promise((resolve, reject) => {
+	const jsonStream = StreamObject.withParser();
+
+	jsonStream.on('data', ({key, value}) => {
+		Cards[key] = value;
+	});
+
+	jsonStream.on('end', () => {
+		resolve();
+	});
+
+	fs.createReadStream("./data/MTGCards.json").pipe(jsonStream.input);
+});
+
+await cardsPromise;
 
 console.log("Preparing Cards and caches...");
 
