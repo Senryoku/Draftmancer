@@ -1,20 +1,24 @@
 <template functional>
 	<div class="card-placeholder">
-		<div class="card-name" v-if="props.cardname">{{ props.cardname }}</div>
+		<div class="card-name" v-if="props.card.name">{{ props.card.name }}</div>
+		<div class="card-type" v-if="props.card.type">{{ $options.typeLine(props.card) }}</div>
 	</div>
 </template>
 
 <script>
 export default {
 	name: "CardPlaceholder",
-	props: { cardname: { type: String } },
+	props: { card: { type: Object } },
+	typeLine(card) {
+		return `${card.type}${card.subtypes.length > 0 ? " — " : ""}${card.subtypes.join(" ")}`;
+	},
 };
 </script>
 
 <style>
 .card-placeholder {
-	width: 200px;
-	height: 283.333px;
+	position: relative;
+	padding-top: 140%;
 	border-radius: 5px;
 	background: url("../assets/img/cardback.png");
 	background-repeat: no-repeat;
@@ -22,10 +26,39 @@ export default {
 }
 
 .card-placeholder .card-name {
-	height: 20px;
-	width: calc(100% - 5px);
-	padding-top: 5px;
-	padding-left: 5px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+
+	height: calc(0.7 * 13.5%);
+
+	display: flex;
+	justify-content: space-around;
+	white-space: nowrap;
+	align-items: center;
+	padding: 0 0.25em;
+
+	background-color: rgba(0, 0, 0, 0.25);
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.card-placeholder .card-type {
+	position: absolute;
+	top: 56.5%;
+	left: 0;
+	right: 0;
+	height: 5.5%;
+	overflow: hidden;
+
+	padding: 0.25em 1em;
+	text-align: left;
+	font-size: 0.8em;
 	background-color: rgba(0, 0, 0, 0.25);
 	-webkit-user-select: none;
 	-moz-user-select: none;
