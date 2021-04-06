@@ -420,7 +420,7 @@ export const SetSpecificFactories = {
 	// Strixhaven: One card from the Mystical Archive (sta)
 	// Note: This isn't limited by the session collections
 	stx: (cardPool, landSlot, options) => {
-		const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson"));
+		const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon");
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.lessonsByRarity = lessons;
@@ -433,7 +433,10 @@ export const SetSpecificFactories = {
 			if (Object.values(lessonsCounts).every(c => c === 0)) {
 				booster = this.originalGenBooster(targets);
 			} else {
-				const pickedRarity = rollSpecialCardRarity(lessonsCounts, targets, Object.assign({minRarity: "common"}, options));
+				const rarityRoll = Math.random();
+				const pickedRarity = rarityRoll < 0.006 && lessonsCounts["mythic"] > 0 ? "mythic" : 
+					rarityRoll < 0.08 && lessonsCounts["rare"] > 0 ? "rare" : 
+					"common";
 				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
 				let updatedTargets = Object.assign({}, targets);
