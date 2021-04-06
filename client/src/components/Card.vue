@@ -39,7 +39,7 @@ export default {
 			return !(
 				this.card.name.toLowerCase().includes(filter) ||
 				this.card.type.toLowerCase().includes(filter) ||
-				this.card.subtypes.some((t) => t.toLowerCase().includes(filter))
+				this.card.subtypes.join(" ").toLowerCase().includes(filter)
 			);
 		},
 	},
