@@ -1,1 +1,1 @@
-web: node --experimental-json-modules .
+web: node --experimental-json-modules . --max-old-space-size=512
