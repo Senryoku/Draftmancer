@@ -1,7 +1,15 @@
 [
 	{
+		"date": "07/04/2021",
+		"notes": ["Tweaked Strixhaven pack collation."]
+	},
+	{
+		"date": "06/04/2021",
+		"notes": ["Minor improvements to the search feature."]
+	},
+	{
 		"date": "04/04/2021",
-		"notes": ["Strixhaven: School of Mages support."]
+		"notes": ["Strixhaven: School of Mages support.", "Search in deck/sideboard feature."]
 	},
 	{
 		"date": "03/04/2021",
