@@ -2,27 +2,26 @@
 
 import fs from "fs";
 import parseCost from "./parseCost.js";
-import StreamObject from "stream-json/streamers/StreamObject.js";
+import JSONSteam from "JSONStream";
 
 console.log("Loading Cards...");
 
 export const Cards = {};
 
 const cardsPromise = new Promise((resolve, reject) => {
-	const jsonStream = StreamObject.withParser();
-
-	jsonStream.on('data', ({key, value}) => {
-		Cards[key] = value;
+	const stream = JSONSteam.parse('$*');
+	stream.on('data', function(entry) {
+		Cards[entry.key] = entry.value;
 	});
-
-	jsonStream.on('end', () => {
-		resolve();
-	});
-
-	fs.createReadStream("./data/MTGCards.json").pipe(jsonStream.input);
+	stream.on('end', resolve);
+	fs.createReadStream("./data/MTGCards.json").pipe(stream);
 });
 
+let used = process.memoryUsage().heapUsed / 1024 / 1024;
+console.log(`Heap usage before cards parsing: ${Math.round(used * 100) / 100} MB`);
 await cardsPromise;
+used = process.memoryUsage().heapUsed / 1024 / 1024;
+console.log(`Heap usage after cards parsing: ${Math.round(used * 100) / 100} MB`);
 
 console.log("Preparing Cards and caches...");
 
