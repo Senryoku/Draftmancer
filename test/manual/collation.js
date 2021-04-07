@@ -185,10 +185,9 @@ describe("Statistical color balancing tests", function() {
 		});
 	}
 
-	// There's not enough common lesson to approch the standard apparition rate.
-	it(`Lessons of STX should have an apparition rate similar (but not exact) to other cards of the same rarity (<= 30% relative difference)`, function(done) {
+	it(`Lessons of STX should have an apparition rate similar to other cards of the same rarity (<= 20% relative difference)`, function(done) {
 		this.timeout(8000);
-		const trials = 1000;
+		const trials = 5000;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["stx"];
@@ -216,7 +215,7 @@ describe("Statistical color balancing tests", function() {
 				maxRelativeDifference = Math.max(maxRelativeDifference, relativeDifference);
 			}
 			console.table(logTable);
-			expect(maxRelativeDifference).to.be.at.most(0.3);
+			expect(maxRelativeDifference).to.be.at.most(0.2);
 		}
 		done();
 	});
