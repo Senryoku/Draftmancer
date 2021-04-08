@@ -99,7 +99,6 @@ describe("Statistical color balancing tests", function() {
 		//let s = getRandom(constants.MTGASets);
 		for (let s of constants.MTGASets)
 		{
-			if(s === "stx") continue; // There's too few common lesson for that.
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
 				this.timeout(8000);
 				const trials = 500;
