@@ -1,7 +1,7 @@
 <template functional>
 	<div class="card-placeholder">
-		<div class="card-name" v-if="props.card.name">{{ props.card.name }}</div>
-		<div class="card-type" v-if="props.card.type">{{ $options.typeLine(props.card) }}</div>
+		<div class="card-name" v-if="props.card && props.card.name">{{ props.card.name }}</div>
+		<div class="card-type" v-if="props.card && props.card.type">{{ $options.typeLine(props.card) }}</div>
 	</div>
 </template>
 

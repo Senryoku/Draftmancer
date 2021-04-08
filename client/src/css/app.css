@@ -1262,6 +1262,7 @@ ul.player-list {
 .winston-pile {
 	margin: 0 1em 0 1em;
 	padding: 0.5em;
+	width: 250px;
 }
 
 .winston-pile .card-image,
@@ -1288,7 +1289,7 @@ ul.player-list {
 
 .winston-pile-status {
 	box-sizing: border-box;
-	width: 200px;
+	width: 100%;
 	padding: 0.5em;
 	text-align: center;
 }
