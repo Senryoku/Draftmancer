@@ -128,6 +128,7 @@ export function GridDraftState(players, boosters) {
 		}
 	}
 	this.boosterCount = this.boosters.length;
+	this.lastPicks = [];
 
 	this.currentPlayer = function() {
 		return this.players[[0, 1, 1, 0][this.round % 4]];
@@ -138,6 +139,7 @@ export function GridDraftState(players, boosters) {
 			currentPlayer: this.currentPlayer(),
 			booster: this.boosters[0],
 			boosterCount: this.boosterCount,
+			lastPicks: this.lastPicks
 		};
 	};
 }
@@ -968,21 +970,27 @@ export function Session(id, owner, options) {
 
 		const log = { pick: [], booster: s.boosters[0].map(c => c ? c.id : null)};
 
-		let pickedCards = 0;
+		let pickedCards = [];
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+				pickedCards.push(s.boosters[0][idx]);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
-				++pickedCards;
 			}
 		}
 
 		this.draftLog.users[s.currentPlayer()].picks.push(log);
+		s.lastPicks.unshift({
+			userName: Connections[s.currentPlayer()].userName,
+			round: s.round,
+			cards: pickedCards
+		});
+		if(s.lastPicks.length > 2) s.lastPicks.pop();
 
-		if (pickedCards === 0) return false;
+		if (pickedCards.length === 0) return false;
 
 		this.gridDraftNextRound();
 		return true;

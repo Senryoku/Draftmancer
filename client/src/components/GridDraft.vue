@@ -1,48 +1,61 @@
 <template>
-	<div class="card-grid">
-		<div style="grid-area: empty"></div>
+	<div class="grid-draft">
+		<div class="card-grid">
+			<div style="grid-area: empty"></div>
 
-		<div
-			v-for="idx in [0, 1, 2]"
-			:key="'pick-col-' + idx"
-			:class="'clickable pick-col pick-col-' + idx"
-			:style="'grid-area: pick-col-' + idx"
-		>
-			<transition :name="arrowTransition" mode="out-in">
-				<i
-					class="fas fa-chevron-circle-down fa-3x"
-					v-show="picking && isValidChoice(idx)"
-					@click="$emit('pick', idx)"
-					@mouseenter="highlight($event, 'col', idx)"
-					@mouseleave="highlight($event, 'col', idx)"
-				></i>
-			</transition>
+			<div
+				v-for="idx in [0, 1, 2]"
+				:key="'pick-col-' + idx"
+				:class="'clickable pick-col pick-col-' + idx"
+				:style="'grid-area: pick-col-' + idx"
+			>
+				<transition :name="arrowTransition" mode="out-in">
+					<i
+						class="fas fa-chevron-circle-down fa-3x"
+						v-show="picking && isValidChoice(idx)"
+						@click="$emit('pick', idx)"
+						@mouseenter="highlight($event, 'col', idx)"
+						@mouseleave="highlight($event, 'col', idx)"
+					></i>
+				</transition>
+			</div>
+			<div
+				v-for="idx in [0, 1, 2]"
+				:key="'pick-row-' + idx"
+				:class="'clickable pick-row pick-row-' + idx"
+				:style="'grid-area: pick-row-' + idx"
+			>
+				<transition :name="arrowTransition" mode="out-in">
+					<i
+						class="fas fa-chevron-circle-right fa-3x"
+						v-show="picking && isValidChoice(3 + idx)"
+						@click="$emit('pick', 3 + idx)"
+						@mouseenter="highlight($event, 'row', idx)"
+						@mouseleave="highlight($event, 'row', idx)"
+					></i>
+				</transition>
+			</div>
+			<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
+				<transition :name="cardTransition" mode="out-in">
+					<div v-if="c" :key="'card-container-' + c.uniqueID">
+						<card :card="c" :class="`row-${Math.floor(idx / 3)} col-${idx % 3}`"></card>
+					</div>
+					<div v-else :key="'empty-' + idx">
+						<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
+					</div>
+				</transition>
+			</div>
 		</div>
-		<div
-			v-for="idx in [0, 1, 2]"
-			:key="'pick-row-' + idx"
-			:class="'clickable pick-row pick-row-' + idx"
-			:style="'grid-area: pick-row-' + idx"
-		>
-			<transition :name="arrowTransition" mode="out-in">
-				<i
-					class="fas fa-chevron-circle-right fa-3x"
-					v-show="picking && isValidChoice(3 + idx)"
-					@click="$emit('pick', 3 + idx)"
-					@mouseenter="highlight($event, 'row', idx)"
-					@mouseleave="highlight($event, 'row', idx)"
-				></i>
-			</transition>
-		</div>
-		<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
-			<transition :name="cardTransition" mode="out-in">
-				<div v-if="c" :key="'card-container-' + c.uniqueID">
-					<card :card="c" :class="`row-${Math.floor(idx / 3)} col-${idx % 3}`"></card>
+		<div class="last-picks" v-if="state.lastPicks && state.lastPicks.length > 0">
+			<span class="last-picks-title">Last Picks</span>
+			<transition-group tag="div" name="vertical-queue" style="display: flex; flex-direction: column;">
+				<div v-for="p in state.lastPicks" class="pick-remainder vertical-queue-item" :key="p.round" >
+					{{ p.userName }}
+					<div class="card-column">
+						<card v-for="c in p.cards" :card="c" :key="c.uniqueID"></card>
+					</div>
 				</div>
-				<div v-else :key="'empty-' + idx">
-					<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
-				</div>
-			</transition>
+			</transition-group>
 		</div>
 	</div>
 </template>
@@ -82,6 +95,10 @@ export default {
 </script>
 
 <style scoped>
+.grid-draft {
+	position: relative;
+}
+
 .card-grid {
 	display: grid;
 
@@ -98,6 +115,54 @@ export default {
 	grid-template-rows: 4em 300px 300px 300px;
 
 	--animation-duration: 2.5s;
+}
+
+.last-picks {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	flex-direction: column;
+	justify-content: center;
+
+	opacity: 0.25;
+	transition: opacity 0.5s;
+}
+
+/* Hide last picks on screens too narrow for them to fit */
+@media only screen and (max-width: 1200px) {
+	.last-picks {
+		display: none;
+	}
+}
+
+/* Adjust positions on narrow but still large enough screens */
+@media only screen and (min-width: 1200px) and (max-width: 1400px) {
+	.card-grid {
+		margin-right: 200px;
+	}
+}
+
+@media only screen and (min-width: 1600px) {
+	.last-picks {
+		margin-right: 60px;
+	}
+}
+
+ .last-picks:hover {
+	 opacity: 1;
+ }
+
+.last-picks-title {
+	font-variant: small-caps;
+	margin: 0.5em;
+}
+
+.pick-remainder {
+	padding: 0.5em;
 }
 
 .highlight {
@@ -165,5 +230,33 @@ export default {
 		transform: scale(0);
 		opacity: 0;
 	}
+}
+
+.vertical-queue-item {
+	transition: transform 1s;
+}
+
+
+.vertical-queue-item {
+  transition: all 1s;
+  display: inline-block;
+}
+
+.vertical-queue-enter, .vertical-queue-leave-to {
+  opacity: 0;
+  z-index: -1;
+}
+
+.vertical-queue-enter {
+  transform: translateY(-400px);
+}
+
+.vertical-queue-leave-to {
+  transform: translateY(400px);
+}
+
+.vertical-queue-leave-active {
+  position: absolute;
+  bottom: 0;
 }
 </style>

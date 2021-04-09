@@ -1,5 +1,9 @@
 [
 	{
+		"date": "09/04/2021",
+		"notes": ["Added last picks remainder in Grid Draft."]
+	},
+	{
 		"date": "07/04/2021",
 		"notes": ["Tweaked Strixhaven pack collation."]
 	},
