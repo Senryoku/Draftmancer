@@ -155,6 +155,7 @@ export function RochesterDraftState(players, boosters) {
 		}
 	}
 	this.boosterCount = this.boosters.length;
+	this.lastPicks = [];
 
 	this.currentPlayer = function() {
 		const startingDirection = Math.floor(this.boosterNumber / this.players.length) % 2;
@@ -171,6 +172,7 @@ export function RochesterDraftState(players, boosters) {
 			currentPlayer: this.currentPlayer(),
 			booster: this.boosters[0],
 			boosterCount: this.boosterCount,
+			lastPicks: this.lastPicks
 		};
 	};
 }
@@ -1068,15 +1070,15 @@ export function Session(id, owner, options) {
 			booster: s.boosters[0].map(c => c.id),
 		});
 
+		s.lastPicks.unshift({
+			userName: Connections[s.currentPlayer()].userName,
+			round: s.lastPicks.length === 0 ? 0 : s.lastPicks[0].round + 1,
+			cards: [s.boosters[0][idx]]
+		});
+		if(s.lastPicks.length > 2) s.lastPicks.pop();
+
 		s.boosters[0].splice(idx, 1);
-		/*
-		const msg = {
-			author: s.currentPlayer(),
-			timestamp: Date.now(),
-			text: `I picked ${Cards[cid].name}!`,
-		};
-		this.forUsers(user => Connections[user].socket.emit("chatMessage", msg));
-		*/
+		
 		this.rochesterDraftNextRound();
 		return true;
 	};

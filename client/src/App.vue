@@ -805,66 +805,69 @@
 				></grid-draft>
 			</div>
 			<!-- Rochester Draft -->
-			<div v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
-				<div class="section-title controls">
-					<h2>Rochester Draft</h2>
-					<div class="controls">
-						<span>
-							Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }},
-							Pick #{{ rochesterDraftState.pickNumber + 1 }}
-						</span>
-						<template v-if="userID === rochesterDraftState.currentPlayer">
-							<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
+			<div class="rochester-container" v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+				<div style="flex-grow: 1">
+					<div class="section-title controls">
+						<h2>Rochester Draft</h2>
+						<div class="controls">
 							<span>
-								<input
-									type="button"
-									@click="pickCard"
-									value="Confirm Pick"
-									v-if="selectedCards.length === cardsToPick"
-								/>
+								Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }},
+								Pick #{{ rochesterDraftState.pickNumber + 1 }}
 							</span>
+							<template v-if="userID === rochesterDraftState.currentPlayer">
+								<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
+								<span>
+									<input
+										type="button"
+										@click="pickCard"
+										value="Confirm Pick"
+										v-if="selectedCards.length === cardsToPick"
+									/>
+								</span>
+							</template>
+							<template v-else>
+								<span>
+									<i class="fas fa-spinner fa-spin"></i>
+									Waiting for
+									{{
+										rochesterDraftState.currentPlayer in userByID
+											? userByID[rochesterDraftState.currentPlayer].userName
+											: "(Disconnected)"
+									}}...
+								</span>
+							</template>
+						</div>
+					</div>
+					<transition-group name="booster-cards" tag="div" class="booster card-container">
+						<template v-if="userID === rochesterDraftState.currentPlayer">
+							<booster-card
+								v-for="card in rochesterDraftState.booster"
+								:key="`card-booster-${card.uniqueID}`"
+								:card="card"
+								:language="language"
+								:canbeburned="false"
+								:class="{ selected: selectedCards.includes(card) }"
+								@click.native="selectCard($event, card)"
+								@dblclick.native="doubleClickCard($event, card)"
+								draggable
+								@dragstart.native="dragBoosterCard($event, card)"
+								:hasenoughwildcards="hasEnoughWildcards(card)"
+								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+							></booster-card>
 						</template>
 						<template v-else>
-							<span>
-								<i class="fas fa-spinner fa-spin"></i>
-								Waiting for
-								{{
-									rochesterDraftState.currentPlayer in userByID
-										? userByID[rochesterDraftState.currentPlayer].userName
-										: "(Disconnected)"
-								}}...
-							</span>
+							<booster-card
+								v-for="card in rochesterDraftState.booster"
+								:key="`card-booster-${card.uniqueID}`"
+								:card="card"
+								:language="language"
+								:hasenoughwildcards="hasEnoughWildcards(card)"
+								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+							></booster-card>
 						</template>
-					</div>
+					</transition-group>
 				</div>
-				<transition-group name="booster-cards" tag="div" class="booster card-container">
-					<template v-if="userID === rochesterDraftState.currentPlayer">
-						<booster-card
-							v-for="card in rochesterDraftState.booster"
-							:key="`card-booster-${card.uniqueID}`"
-							:card="card"
-							:language="language"
-							:canbeburned="false"
-							:class="{ selected: selectedCards.includes(card) }"
-							@click.native="selectCard($event, card)"
-							@dblclick.native="doubleClickCard($event, card)"
-							draggable
-							@dragstart.native="dragBoosterCard($event, card)"
-							:hasenoughwildcards="hasEnoughWildcards(card)"
-							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-						></booster-card>
-					</template>
-					<template v-else>
-						<booster-card
-							v-for="card in rochesterDraftState.booster"
-							:key="`card-booster-${card.uniqueID}`"
-							:card="card"
-							:language="language"
-							:hasenoughwildcards="hasEnoughWildcards(card)"
-							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-						></booster-card>
-					</template>
-				</transition-group>
+				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 			</div>
 		</template>
 

@@ -31,6 +31,7 @@ import GridDraft from "./components/GridDraft.vue";
 import LandControl from "./components/LandControl.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import SetRestriction from "./components/SetRestriction.vue";
+import PickSummary from "./components/PickSummary.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
@@ -91,6 +92,7 @@ export default {
 		Bracket,
 		PatchNotes,
 		SetRestriction,
+		PickSummary,
 		draggable,
 		Multiselect,
 	},

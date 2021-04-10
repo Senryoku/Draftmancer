@@ -1294,6 +1294,11 @@ ul.player-list {
 	text-align: center;
 }
 
+.rochester-container {
+	display: flex;
+	align-items: flex-start;
+}
+
 /**** Set Multiselect ****/
 
 .multiselect {
