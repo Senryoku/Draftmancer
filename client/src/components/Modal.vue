@@ -39,6 +39,7 @@ export default {
 		},
 	},
 	mounted: function () {
+		document.activeElement.blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
 	beforeDestroy: function () {
