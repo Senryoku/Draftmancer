@@ -82,3 +82,13 @@ export function shuffleArray(array, start = 0, end = array.length) {
 		[array[i], array[j]] = [array[j], array[i]];
 	}
 }
+
+export function bytesToMB(bytes) { return Math.round(bytes / 1024 / 1024 * 100) / 100; }
+
+export function memoryReport() {
+	const mem = process.memoryUsage();
+	console.log(`Memory usage`);
+	console.log(`	RSS         ${bytesToMB(mem.rss)} MB`);
+	console.log(`	Heap used   ${bytesToMB(mem.heapUsed)} MB`);
+	console.log(`	Heap total  ${bytesToMB(mem.heapTotal)} MB`);
+}

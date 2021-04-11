@@ -2,9 +2,30 @@
 
 import fs from "fs";
 import parseCost from "./parseCost.js";
+import JSONStream from "JSONStream";
+import { memoryReport } from "./utils.js";
 
 console.log("Loading Cards...");
-export const Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json"));
+memoryReport();
+console.time("Parsing Cards");
+
+export let Cards = {};
+if (process.env.NODE_ENV !== "production") {
+	Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json"));
+} else {
+	const cardsPromise = new Promise((resolve, reject) => {
+		const stream = JSONStream.parse('$*');
+		stream.on('data', function(entry) {
+			Cards[entry.key] = entry.value;
+		});
+		stream.on('end', resolve);
+		fs.createReadStream("./data/MTGCards.json").pipe(stream);
+	});
+	await cardsPromise;
+}
+
+console.timeEnd("Parsing Cards");
+memoryReport();
 
 console.log("Preparing Cards and caches...");
 
