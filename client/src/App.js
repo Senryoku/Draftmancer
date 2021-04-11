@@ -12,7 +12,7 @@ import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import { ButtonColor, SwalCustomClasses, fireToast } from "./alerts.js";
+import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
 
 import Modal from "./components/Modal.vue";
@@ -68,7 +68,7 @@ const Sounds = {
 Vue.use(VTooltip, {
 	defaultPlacement: "bottom-start",
 	defaultBoundariesElement: "window",
-	defaultDelay: 250
+	defaultDelay: 250,
 });
 
 export default {
@@ -224,8 +224,7 @@ export default {
 
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
-				Swal.fire({
-					customClass: SwalCustomClasses,
+				Alert.fire({
 					icon: "error",
 					title: "Disconnected!",
 					showConfirmButton: false,
@@ -235,8 +234,7 @@ export default {
 			this.socket.on("reconnect", attemptNumber => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 
-				Swal.fire({
-					customClass: SwalCustomClasses,
+				Alert.fire({
 					icon: "warning",
 					title: "Reconnected!",
 					timer: 1500,
@@ -298,9 +296,8 @@ export default {
 
 				if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
 					if (this.userID === this.sessionOwner) {
-						Swal.fire({
+						Alert.fire({
 							position: "center",
-							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
@@ -312,9 +309,8 @@ export default {
 							if (result.value) this.socket.emit("stopDraft");
 						});
 					} else {
-						Swal.fire({
+						Alert.fire({
 							position: "center",
-							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${data.disconnectedUserNames.join(
@@ -326,9 +322,8 @@ export default {
 					}
 				} else {
 					if (this.userID === this.sessionOwner) {
-						Swal.fire({
+						Alert.fire({
 							position: "center",
-							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
@@ -339,9 +334,8 @@ export default {
 							if (result.value) this.socket.emit("replaceDisconnectedPlayers");
 						});
 					} else {
-						Swal.fire({
+						Alert.fire({
 							position: "center",
-							customClass: SwalCustomClasses,
 							icon: "error",
 							title: `Player(s) disconnected`,
 							text: `Wait for ${data.disconnectedUserNames.join(
@@ -413,7 +407,7 @@ export default {
 
 				if (data.allowOutsideClick === undefined) data.allowOutsideClick = true;
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: data.icon,
 					title: data.title,
@@ -421,7 +415,6 @@ export default {
 					html: data.html,
 					imageUrl: data.imageUrl,
 					imageHeight: 300,
-					customClass: SwalCustomClasses,
 					showConfirmButton: data.showConfirmButton,
 					timer: data.timer,
 					allowOutsideClick: data.allowOutsideClick,
@@ -446,12 +439,11 @@ export default {
 						? this.sessionOwnerUsername
 						: "Session owner";
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "question",
 					title: "Are you ready?",
 					text: `${ownerUsername} has initiated a ready check`,
-					customClass: SwalCustomClasses,
 					showCancelButton: true,
 					confirmButtonColor: ButtonColor.Safe,
 					cancelButtonColor: ButtonColor.Critical,
@@ -506,11 +498,10 @@ export default {
 				const ComponentClass = Vue.extend(Card);
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					title: `You drew ${this.language in c.printed_names ? c.printed_names[this.language] : c.name} from the card pool!`,
 					html: cardView.$el,
-					customClass: SwalCustomClasses,
 					showConfirmButton: true,
 				});
 			});
@@ -530,11 +521,10 @@ export default {
 				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
 				else this.draftingState = DraftState.WinstonWaiting;
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Reconnected to the Winston draft!",
-					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -600,11 +590,10 @@ export default {
 				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
 				else this.draftingState = DraftState.GridWaiting;
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Reconnected to the Grid draft!",
-					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -658,11 +647,10 @@ export default {
 				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
 				else this.draftingState = DraftState.RochesterWaiting;
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Reconnected to the Rochester draft!",
-					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -675,11 +663,10 @@ export default {
 				this.drafting = true;
 				this.stopReadyCheck();
 				this.clearState();
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Now drafting!",
-					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -726,11 +713,10 @@ export default {
 				this.selectedCards = [];
 				this.burningCards = [];
 
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Reconnected to the draft!",
-					customClass: SwalCustomClasses,
 					showConfirmButton: false,
 					timer: 1500,
 				});
@@ -757,12 +743,11 @@ export default {
 			});
 
 			this.socket.on("endDraft", () => {
-				Swal.fire({
+				Alert.fire({
 					position: "center",
 					icon: "success",
 					title: "Done drafting!",
 					showConfirmButton: false,
-					customClass: SwalCustomClasses,
 					timer: 1500,
 				});
 				this.drafting = false;
@@ -776,9 +761,8 @@ export default {
 
 			this.socket.on("pauseDraft", () => {
 				if (this.userID === this.sessionOwner) {
-					Swal.fire({
+					Alert.fire({
 						position: "center",
-						customClass: SwalCustomClasses,
 						icon: "info",
 						title: `Draft Paused`,
 						text: `Resume when you're ready.`,
@@ -789,9 +773,8 @@ export default {
 						if (result.value) this.socket.emit("resumeDraft");
 					});
 				} else {
-					Swal.fire({
+					Alert.fire({
 						position: "center",
-						customClass: SwalCustomClasses,
 						icon: "info",
 						title: `Draft Paused`,
 						text: `Wait for the session owner to resume.`,
@@ -887,22 +870,20 @@ export default {
 		startDraft: function() {
 			if (this.userID != this.sessionOwner) return false;
 			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
-				Swal.fire({
+				Alert.fire({
 					icon: "info",
 					title: "Not enough players",
 					text: `Can't start draft: Not enough players (min. 2 including bots).`,
-					customClass: SwalCustomClasses,
 				});
 				return false;
 			}
 
 			if (this.deck.length > 0) {
-				Swal.fire({
+				Alert.fire({
 					title: "Are you sure?",
 					text: "Launching a new draft will reset everyones cards/deck!",
 					icon: "warning",
 					showCancelButton: true,
-					customClass: SwalCustomClasses,
 					confirmButtonColor: ButtonColor.Critical,
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
@@ -921,12 +902,11 @@ export default {
 		stopDraft: function() {
 			if (this.userID != this.sessionOwner) return;
 			const self = this;
-			Swal.fire({
+			Alert.fire({
 				title: "Are you sure?",
 				text: "Do you really want to stop the draft for all players?",
 				icon: "warning",
 				showCancelButton: true,
-				customClass: SwalCustomClasses,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Stop the draft!",
@@ -1109,17 +1089,16 @@ export default {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
-				Swal.fire({
+				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
 					text:
 						"Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
-					customClass: SwalCustomClasses,
 				});
 				return;
 			}
 
-			const { value: boosterCount } = await Swal.fire({
+			const { value: boosterCount } = await Alert.fire({
 				title: "Winston Draft",
 				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
 				inputPlaceholder: "Booster count",
@@ -1130,7 +1109,6 @@ export default {
 					step: 1,
 				},
 				inputValue: 6,
-				customClass: SwalCustomClasses,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
@@ -1173,17 +1151,16 @@ export default {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
-				Swal.fire({
+				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
 					text:
 						"Non-playing owner is not supported in Grid Draft for now. The 'Session owner is playing' option needs to be active.",
-					customClass: SwalCustomClasses,
 				});
 				return;
 			}
 
-			const { value: boosterCount } = await Swal.fire({
+			const { value: boosterCount } = await Alert.fire({
 				title: "Grid Draft",
 				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
 				inputPlaceholder: "Booster count",
@@ -1194,7 +1171,6 @@ export default {
 					step: 1,
 				},
 				inputValue: 18,
-				customClass: SwalCustomClasses,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
@@ -1234,12 +1210,11 @@ export default {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
-				Swal.fire({
+				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
 					text:
 						"Non-playing owner is not supported in Rochester Draft for now. The 'Session owner is playing' option needs to be active.",
-					customClass: SwalCustomClasses,
 				});
 				return;
 			}
@@ -1254,7 +1229,7 @@ export default {
 			let burnedCardsPerRound = 2;
 			if (this.burnedCardsPerRound > 0) burnedCardsPerRound = this.burnedCardsPerRound;
 
-			Swal.fire({
+			Alert.fire({
 				title: "Glimpse Draft",
 				html: `
 					<p>Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft (typically 2) alongside each pick. It's mostly used for small and medium sized groups where a regular draft makes not much sense.</p>
@@ -1263,7 +1238,6 @@ export default {
 					<p>How many burned cards per pick (default is 2)?
 					<input type="number" value="${burnedCardsPerRound}" min="1" max="13" step="1" id="input-burnedCardsPerRound" class="swal2-input" placeholder="Burned Cards"></p>`,
 				inputValue: 6,
-				customClass: SwalCustomClasses,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
@@ -1313,11 +1287,10 @@ export default {
 					if (m) {
 						let name = `${m[1]}#${m[2]}`;
 						if (name != this.userName) {
-							const swalResult = await Swal.fire({
+							const swalResult = await Alert.fire({
 								icon: "question",
 								title: "User Name",
 								text: `Found display name '${name}', do you want to use it as your User Name?`,
-								customClass: SwalCustomClasses,
 								showCancelButton: true,
 								showConfirmButton: true,
 								confirmButtonColor: ButtonColor.Safe,
@@ -1340,12 +1313,11 @@ export default {
 					contents.indexOf("DETAILED LOGS: DISABLED") !== -1 &&
 					contents.indexOf("DETAILED LOGS: ENABLED") === -1
 				) {
-					Swal.fire({
+					Alert.fire({
 						icon: "error",
 						title: "Detailed logs disabled",
 						text:
 							"Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
-						customClass: SwalCustomClasses,
 					});
 					return null;
 				}
@@ -1378,13 +1350,12 @@ export default {
 
 						return {collection, inventory};
 					} catch (e) {
-						Swal.fire({
+						Alert.fire({
 							icon: "error",
 							title: "Parsing Error",
 							text:
 								"An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
 							footer: "Full error: " + e,
-							customClass: SwalCustomClasses,
 						});
 						return null;
 					}
@@ -1392,11 +1363,10 @@ export default {
 
 				let result = null;
 				if (playerIds.size > 1) {
-					const swalResult = await Swal.fire({
+					const swalResult = await Alert.fire({
 						icon: "question",
 						title: "Multiple Accounts",
 						text: `Looks like there are collections from multiple accounts (${playerIds.size}) in these logs, do you want to intersect them all, or just import the latest?`,
-						customClass: SwalCustomClasses,
 						showCancelButton: true,
 						showConfirmButton: true,
 						confirmButtonColor: ButtonColor.Safe,
@@ -1429,11 +1399,10 @@ export default {
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
 					this.setCollection(result.collection);
 					this.collectionInfos = result.inventory;
-					Swal.fire({
+					Alert.fire({
 						position: "top-end",
 						icon: "success",
 						title: "Collection updated",
-						customClass: SwalCustomClasses,
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1475,9 +1444,8 @@ export default {
 			}
 		},
 		parseCustomCardList: async function(file) {
-			Swal.fire({
+			Alert.fire({
 				position: "center",
-				customClass: SwalCustomClasses,
 				icon: "info",
 				title: "Parsing card list...",
 				showConfirmButton: false,
@@ -1488,12 +1456,11 @@ export default {
 				if (answer.code === 0) {
 					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
 				} else {
-					Swal.fire({
+					Alert.fire({
 						icon: "error",
 						title: answer.title,
 						text: answer.text,
 						footer: answer.footer,
-						customClass: SwalCustomClasses,
 					});
 				}
 			});
@@ -1501,7 +1468,7 @@ export default {
 		importCubeCobra: function() {
 			const defaultMatchCardVersions = localStorage.getItem("cubecobra-match-versions", "false") === "true";
 			const defaultCubeID = localStorage.getItem("cubecobra-cubeID", "");
-			Swal.fire({
+			Alert.fire({
 				title: "Import from Cube Cobra",
 				html: `<p>Enter a Cube ID or an URL to import a cube directly from Cube Cobra</p>
 				<input type="checkbox" id="input-match-card-versions" ${defaultMatchCardVersions ? "checked": ""}><label for="input-match-card-versions">Match exact card versions</label>`,
@@ -1509,7 +1476,6 @@ export default {
 				input: "text",
 				inputValue: defaultCubeID,
 				showCancelButton: true,
-				customClass: SwalCustomClasses,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
@@ -1536,12 +1502,11 @@ export default {
 		selectCube: function(cube) {
 			const ack = r => {
 				if (r.type === "error") {
-					Swal.fire({
+					Alert.fire({
 						icon: "error",
 						title: r.title,
 						text: r.text,
 						footer: r.footer,
-						customClass: SwalCustomClasses,
 					});
 				} else {
 					fireToast("success", `Card list loaded (${this.customCardList.length} cards)`);
@@ -1549,9 +1514,8 @@ export default {
 			};
 
 			if (cube.cubeCobraID) {
-				Swal.fire({
+				Alert.fire({
 					position: "center",
-					customClass: SwalCustomClasses,
 					icon: "info",
 					title: `Loading Cube...`,
 					text: `Please wait as we retrieve the latest version from Cube Cobra...`,
@@ -1618,12 +1582,11 @@ export default {
 			const text = document.querySelector('#upload-booster-text').value;
 			this.socket.emit("setBoosters", text, (response) => {
 				if(response.error) {
-					Swal.fire({
+					Alert.fire({
 						icon: "error", 
 						title: response.error.title, 
 						text: response.error.text, 
 						footer: response.error.footer, 
-						customClass: SwalCustomClasses,
 					});
 				} else {
 					fireToast("success", "Boosters successfuly uploaded!");
@@ -1653,12 +1616,11 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find(u => u.userID === newOwnerID);
 			if (!user) return;
-			Swal.fire({
+			Alert.fire({
 				title: "Are you sure?",
 				text: `Do you want to surrender session ownership to ${user.userName}?`,
 				icon: "warning",
 				showCancelButton: true,
-				customClass: SwalCustomClasses,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Yes",
@@ -1672,12 +1634,11 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find(u => u.userID === userID);
 			if (!user) return;
-			Swal.fire({
+			Alert.fire({
 				title: "Are you sure?",
 				text: `Do you want to remove player '${user.userName}' from the session? They'll still be able to rejoin if they want.`,
 				icon: "warning",
 				showCancelButton: true,
-				customClass: SwalCustomClasses,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Remove player",
@@ -1707,7 +1668,7 @@ export default {
 		sealedDialog: async function() {
 			if (this.userID != this.sessionOwner) return;
 
-			Swal.fire({
+			Alert.fire({
 				title: "Start Sealed",
 				html: `
 					<p>How many boosters for each player (default is 6)?
@@ -1719,7 +1680,6 @@ export default {
 						grid-column-gap: 0.5em;
 					"></div></p>`,
 				inputValue: 6,
-				customClass: SwalCustomClasses,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
@@ -1779,12 +1739,11 @@ export default {
 		},
 		deckWarning: function(call, options = []) {
 			if (this.deck.length > 0) {
-				Swal.fire({
+				Alert.fire({
 					title: "Are you sure?",
 					text: "Lauching another game will reset everyone's cards/deck!",
 					icon: "warning",
 					showCancelButton: true,
-					customClass: SwalCustomClasses,
 					confirmButtonColor: ButtonColor.Critical,
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Start new game!",
@@ -1836,10 +1795,9 @@ export default {
 		},
 		shareSavedDraftLog: function(storedDraftLog) {
 			if (this.userID != this.sessionOwner) {
-				Swal.fire({
+				Alert.fire({
 					title: "You need to be the session owner to share logs.",
 					icon: "error",
-					customClass: SwalCustomClasses,
 				});
 				return;
 			}
@@ -1848,11 +1806,10 @@ export default {
 				return;
 			} else {
 				if (storedDraftLog.sessionID !== this.sessionID) {
-					Swal.fire({
+					Alert.fire({
 						title: "Wrong Session ID",
 						text: `Can't share logs: The session ID of your saved draft log ('${storedDraftLog.sessionID}') doesn't match the id of yout current session ('${this.sessionID}').`,
 						icon: "error",
-						customClass: SwalCustomClasses,
 					});
 					return;
 				}

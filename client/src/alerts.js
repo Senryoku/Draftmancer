@@ -22,3 +22,7 @@ export const ButtonColor = {
 	Safe: "#3085d6",
 	Critical: "#d33",
 };
+
+export const Alert = Swal.mixin({
+	customClass: SwalCustomClasses,
+});

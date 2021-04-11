@@ -70,7 +70,7 @@
 <script>
 import Vue from "vue";
 import Swal from "sweetalert2";
-import { ButtonColor, SwalCustomClasses } from "../alerts.js";
+import { ButtonColor, Alert } from "../alerts.js";
 import * as helper from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
 import DraftLog from "./DraftLog.vue";
@@ -106,12 +106,11 @@ export default {
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
 		deleteLog: function (draftLog) {
-			Swal.fire({
+			Alert.fire({
 				position: "center",
 				icon: "question",
 				title: "Delete log?",
 				text: `Are you sure you want to delete draft log for session '${draftLog.sessionID}'? This cannot be reverted.`,
-				customClass: SwalCustomClasses,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
@@ -134,12 +133,11 @@ export default {
 			if (!file) return;
 			const reader = new FileReader();
 			const displayError = (e) => {
-				Swal.fire({
+				Alert.fire({
 					icon: "error",
 					title: "Parsing Error",
 					text: "An error occurred during parsing. Please make sure that you selected the correct file.",
 					footer: `Full error: ${e}`,
-					customClass: SwalCustomClasses,
 				});
 			};
 			reader.onload = (e) => {
