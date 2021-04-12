@@ -225,7 +225,7 @@
 							<i
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
-								v-tooltip="'View all sets'"
+								v-tooltip="'More sets'"
 							></i>
 							<div
 								class="inline"
@@ -1269,7 +1269,7 @@
 								<em>March 06, 2021</em>
 								<p>
 									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
+									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
 								</p>
 							</div>
 						</div>
