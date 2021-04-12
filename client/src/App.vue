@@ -1323,7 +1323,7 @@
 							</li>
 							<li>
 								<span class="option-name">Set(s)</span>
-								: Select one or multiple sets to draft with. Out of all chosen sets, mixed boosters will be generated for all players.
+								: Select one or multiple sets to draft with. All chosen sets will form the card pool out of which mixed boosters will be generated for all players. If you want every player to receive certain pure set boosters in a particular order (e.g. for original block drafts) you have to use the "Individual Booster Set" option in settings instead!
 							</li>
 							<li>
 								<span class="option-name">Bots</span>
