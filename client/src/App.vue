@@ -1328,21 +1328,26 @@
 			<div slot="body">
 				<div>
 					<div class="section-title">
-						<h2>As Player</h2>
+						<h2>As a Player</h2>
 					</div>
-					<div>
-						<em>{{ userByID[sessionOwner].userName }}</em> is the session owner
-						(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
-						game! <br />You can still customize your personal options on top of the page. <br />Or, to
-						make a new session that you own, change "Session ID" in the top left.
-					</div>
+					<p>
+						Customize your personal options, like your User Name or Card Language on top of the page.
+						<br />
+						<span v-if="userID !== sessionOwner">
+							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
+							<ul>
+								<li>Wait for them to select the settings and launch a game!</li>
+								<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
+							</ul>
+						</span>
+					</p>
 				</div>
-				<div class="container">
+				<div>
 					<div class="section-title">
-						<h2>As organiser (currently {{ userByID[sessionOwner].userName }})</h2>
+						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently {{ userByID[sessionOwner].userName }})</span></h2>
 					</div>
-					<div>
-						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>).
+					<p>
+						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
 						<ol>
 							<li>Session owner chooses an arbitrary Session ID.</li>
 							<li>
@@ -1354,18 +1359,17 @@
 								.
 							</li>
 							<li>
-								Owner sets the desired options. (Take a look at
-								<a @click="displayedModal = 'sessionOptions'">all of them</a>)
+								Owner sets the desired settings. (Take a look at
+								<a @click="displayedModal = 'sessionOptions'"><i class="fas fa-cog"></i> all of them</a>)
 							</li>
 							<li>
-								Ready check is performed to make sure everybody is set (
-								<i class="fas fa-user-check"></i>).
+								Ready check is performed to make sure everybody is set (<i class="fas fa-user-check"></i>).
 							</li>
 							<li>
 								Once all confirmed, the session owner launches the desired game mode.
 							</li>
 						</ol>
-					</div>
+					</p>
 				</div>
 			</div>
 		</modal>
