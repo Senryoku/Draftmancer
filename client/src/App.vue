@@ -1123,13 +1123,14 @@
 								</li>
 								<li>
 									Owner sets the desired options. (Take a look at
-									<a @click="displayedModal = 'sessionOptions'">all of them</a>
-									.)
+									<a @click="displayedModal = 'sessionOptions'">all of them</a>)
 								</li>
 								<li>
-									Once everyone is ready (use the ready check
-									<i class="fas fa-user-check"></i>
-									to make sure!), session owner launches the desired game mode.
+									Ready check is performed to make sure everybody is set (
+									<i class="fas fa-user-check"></i>).
+								</li>
+								<li>
+									Once all confirmed, the session owner launches the desired game mode.
 								</li>
 							</ol>
 						</div>
