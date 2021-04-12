@@ -25,6 +25,7 @@
 			</span>
 			<span>
 				<label for="file-input">MTGA Collection</label>
+				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'"></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
 					onclick="document.querySelector('#file-input').click()"
@@ -1092,100 +1093,48 @@
 			</p>
 			<div class="welcome-cols">
 				<div class="welcome-col">
-					<div class="container" v-if="userID !== sessionOwner && sessionOwner in userByID">
-						<div class="section-title">
-							<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
-						</div>
-						<div class="welcome-section">
-							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner
-							(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
-							game! <br />You can still customize your personal options on top of the page. <br />Or, to
-							make a new session that you own, change "Session ID" in the top left.
-						</div>
-					</div>
-					<div class="container" v-else>
-						<div class="section-title">
-							<h2>Basic setup</h2>
-						</div>
-						<div class="welcome-section">
-							One player takes the role of owner of the session (designated with
-							<i class="fas fa-crown subtle-gold"></i>
-							).
-							<ol>
-								<li>Session owner chooses an arbitrary Session ID.</li>
-								<li>
-									Other players join the session by entering its ID or by following the
-									<a @click="sessionURLToClipboard">
-										Session Link
-										<i class="fas fa-share-square"></i>
-									</a>
-									.
-								</li>
-								<li>
-									Owner sets the desired options. (Take a look at
-									<a @click="displayedModal = 'sessionOptions'">all of them</a>)
-								</li>
-								<li>
-									Ready check is performed to make sure everybody is set (
-									<i class="fas fa-user-check"></i>).
-								</li>
-								<li>
-									Once all confirmed, the session owner launches the desired game mode.
-								</li>
-							</ol>
-						</div>
-					</div>
 					<div class="container">
 						<div class="section-title">
-							<h2>Collection Import</h2>
+							<h2>News</h2>
 						</div>
 						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards they own.
-							(Session owners can bypass this feature by enabling "Ignore Collections"):
-							<ol>
-								<li>
-									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
-									work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
-									Support)".
-								</li>
-								<li>
-									<a onclick="document.querySelector('#file-input').click()">Upload</a>
-									your MTGA log file "Player.log" located in
-									<tt
-										class="clickable"
-										@click="logPathToClipboard"
-										v-tooltip="'Copy path to clipboard'"
-										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
-									>
-									(Note:
-									<a
-										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-										target="_blank" rel="noopener nofollow"
-									>
-										AppData folder is hidden by default
-										<i class="fas fa-external-link-alt"></i>
-									</a>
-									).
-								</li>
-							</ol>
+							<div class="news">
+								<em>April 04, 2021</em>
+								<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
+							</div>
+							<div class="news">
+								<em>March 28, 2021</em>
+								<p>
+									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
+									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								</p>
+							</div>
+							<div class="news">
+								<em>March 06, 2021</em>
+								<p>
+									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
+								</p>
+							</div>
 						</div>
 					</div>
+				</div>
+				<div class="welcome-col">
 					<div class="container">
 						<div class="section-title">
 							<h2>Help</h2>
 						</div>
 						<div class="welcome-section">
-							Visit the
-							<a @click="displayedModal = 'help'">FAQ / Help</a>
-							section.
-							<br />For any question/bug report/feature request you can email to
+							<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-question-circle"></i> Get Started</a> guide.<br />
+							<br />
+							Visit the <a @click="displayedModal = 'help'">FAQ / Help</a> section.<br />
+							<br />
+							For any question/bug report/feature request you can email to
 							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 							or join the
-							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
+							<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 						</div>
 					</div>
-				</div>
-				<div class="welcome-col">
 					<div class="container">
 						<div class="section-title">
 							<h2>Public Sessions</h2>
@@ -1247,31 +1196,6 @@
 									</tr>
 								</tbody>
 							</table>
-						</div>
-					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<div class="welcome-section">
-							<div class="news">
-								<em>April 04, 2021</em>
-								<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
-							</div>
-							<div class="news">
-								<em>March 28, 2021</em>
-								<p>
-									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
-								</p>
-							</div>
-							<div class="news">
-								<em>March 06, 2021</em>
-								<p>
-									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
-								</p>
-							</div>
 						</div>
 					</div>
 					<div class="container">
@@ -1397,6 +1321,85 @@
 						</ul>
 					</div>
 				</div>
+			</div>
+		</modal>
+		<modal v-if="displayedModal === 'gettingStarted'" @close="displayedModal = ''">
+			<h2 slot="header">Getting Started</h2>
+			<div slot="body">
+				<div>
+					<div class="section-title">
+						<h2>As Player</h2>
+					</div>
+					<div>
+						<em>{{ userByID[sessionOwner].userName }}</em> is the session owner
+						(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
+						game! <br />You can still customize your personal options on top of the page. <br />Or, to
+						make a new session that you own, change "Session ID" in the top left.
+					</div>
+				</div>
+				<div class="container">
+					<div class="section-title">
+						<h2>As organiser (currently {{ userByID[sessionOwner].userName }})</h2>
+					</div>
+					<div>
+						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>).
+						<ol>
+							<li>Session owner chooses an arbitrary Session ID.</li>
+							<li>
+								Other players join the session by entering its ID or by following the
+								<a @click="sessionURLToClipboard">
+									Session Link
+									<i class="fas fa-share-square"></i>
+								</a>
+								.
+							</li>
+							<li>
+								Owner sets the desired options. (Take a look at
+								<a @click="displayedModal = 'sessionOptions'">all of them</a>)
+							</li>
+							<li>
+								Ready check is performed to make sure everybody is set (
+								<i class="fas fa-user-check"></i>).
+							</li>
+							<li>
+								Once all confirmed, the session owner launches the desired game mode.
+							</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</modal>
+		<modal v-if="displayedModal === 'collectionHelp'" @close="displayedModal = ''">
+			<h2 slot="header">Collection Import Help</h2>
+			<div slot="body">
+				Each player can import their MTGA collection to restrict the card pool to cards they own.
+				(Session owners can bypass this feature by enabling "Ignore Collections"):
+				<ol>
+					<li>
+						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
+						work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
+						Support)".
+					</li>
+					<li>
+						<a onclick="document.querySelector('#file-input').click()">Upload</a>
+						your MTGA log file "Player.log" located in
+						<tt
+							class="clickable"
+							@click="logPathToClipboard"
+							v-tooltip="'Copy path to clipboard'"
+							>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
+						>
+						(Note:
+						<a
+							href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
+							target="_blank" rel="noopener nofollow"
+						>
+							AppData folder is hidden by default
+							<i class="fas fa-external-link-alt"></i>
+						</a>
+						).
+					</li>
+				</ol>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'importdeck'" @close="displayedModal = ''">
@@ -1995,6 +1998,10 @@
 			</span>
 			<span>
 				<a href="mailto:mtgadraft@gmail.com">Contact</a>
+			</span>
+			<span>
+				<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i></a>
+				<a href="https://github.com/Senryoku/MTGADraft"><i class="fab fa-github"></i></a>
 			</span>
 			<span>
 				Get
