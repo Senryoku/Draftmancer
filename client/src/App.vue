@@ -225,7 +225,7 @@
 							<i
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
-								v-tooltip="'View all sets'"
+								v-tooltip="'More sets'"
 							></i>
 							<div
 								class="inline"
@@ -1097,10 +1097,10 @@
 							<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
 						</div>
 						<div class="welcome-section">
-							{{ userByID[sessionOwner].userName }} is the session owner
+							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner
 							(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
 							game! <br />You can still customize your personal options on top of the page. <br />Or, to
-							make a new session that you own, change Session ID in the top left.
+							make a new session that you own, change "Session ID" in the top left.
 						</div>
 					</div>
 					<div class="container" v-else>
@@ -1123,13 +1123,14 @@
 								</li>
 								<li>
 									Owner sets the desired options. (Take a look at
-									<a @click="displayedModal = 'sessionOptions'">all of them</a>
-									.)
+									<a @click="displayedModal = 'sessionOptions'">all of them</a>)
 								</li>
 								<li>
-									Once everyone is ready (use the ready check
-									<i class="fas fa-user-check"></i>
-									to make sure!), session owner launches the desired game mode.
+									Ready check is performed to make sure everybody is set (
+									<i class="fas fa-user-check"></i>).
+								</li>
+								<li>
+									Once all confirmed, the session owner launches the desired game mode.
 								</li>
 							</ol>
 						</div>
@@ -1268,7 +1269,7 @@
 								<em>March 06, 2021</em>
 								<p>
 									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the <i class="fas fa-ellipsis-h"></i> 'More sets...' menu)<br />
+									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
 								</p>
 							</div>
 						</div>
@@ -1322,7 +1323,7 @@
 							</li>
 							<li>
 								<span class="option-name">Set(s)</span>
-								: Select one or multiple sets to draft with. Out of all chosen sets, mixed boosters will be generated for all players.
+								: Select one or multiple sets to draft with. All chosen sets will form the card pool out of which mixed boosters will be generated for all players. If you want every player to receive certain pure set boosters in a particular order (e.g. for original block drafts) you have to use the "Individual Booster Set" option in settings instead!
 							</li>
 							<li>
 								<span class="option-name">Bots</span>
