@@ -69,7 +69,6 @@
 
 <script>
 import Vue from "vue";
-import Swal from "sweetalert2";
 import { ButtonColor, Alert } from "../alerts.js";
 import * as helper from "../helper.js";
 import exportToMTGA from "../exportToMTGA.js";
