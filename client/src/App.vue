@@ -1145,13 +1145,14 @@
 							<ol>
 								<li>
 									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
-									work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
-									Support)".
+									work. The toggle can be found in <em>Options > Account > Detailed Logs (Plugin
+									Support)</em>.
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload</a>
 									your MTGA log file "Player.log". It is located here:
-										<ul>
+									  <ul>
+										<li>
 									  	  <i class="fab fa-windows"></i>
 									 	  <tt
 											class="clickable"
@@ -1159,8 +1160,8 @@
 											v-tooltip="'Copy Windows path to clipboard'"
 											>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 										  >
-										</ul>
-										<ul>
+										</li>
+										<li>
 										  <i class="fab fa-apple"></i>
 										  <tt
 											class="clickable"
@@ -1168,9 +1169,10 @@
 											v-tooltip="'Copy macOS path to clipboard'"
 											>~/Library/Logs/Wizards Of The Coast/MTGA/</tt
 										   >
-										</ul>
+										</li>
+									  </ul>
 										Note: The containing folders are hidden by default.<br>
-										Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i>: <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i>: <kbd>⇧⌘G</kbd>)
+										Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
 								</li>
 							</ol>
 						</div>
