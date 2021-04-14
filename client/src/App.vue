@@ -1388,7 +1388,7 @@
 								<i class="fab fa-windows"></i>
 								<tt
 									class="clickable"
-									@click="toClipboard('C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\', 'Default log path copied to clipboard! (Windows)')" 
+									@click="toClipboard('%userprofile%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\', 'Default log path copied to clipboard! (Windows)')" 
 									v-tooltip="'Copy path to clipboard'"
 									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 								>
