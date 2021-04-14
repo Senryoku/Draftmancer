@@ -1156,7 +1156,7 @@
 									  	  <i class="fab fa-windows"></i>
 									 	  <tt
 											class="clickable"
-											@click="logPathToClipboard"
+											@click="logWinPathToClipboard"
 											v-tooltip="'Copy Windows path to clipboard'"
 											>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 										  >
@@ -1165,7 +1165,7 @@
 										  <i class="fab fa-apple"></i>
 										  <tt
 											class="clickable"
-											@click="logPathToClipboard"
+											@click="logMacPathToClipboard"
 											v-tooltip="'Copy macOS path to clipboard'"
 											>/Users/{username}/Library/Logs/Wizards Of The Coast/MTGA/</tt
 										   >
