@@ -1150,22 +1150,27 @@
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload</a>
-									your MTGA log file "Player.log" located in
-									<tt
-										class="clickable"
-										@click="logPathToClipboard"
-										v-tooltip="'Copy path to clipboard'"
-										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
-									>
-									(Note:
-									<a
-										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-										target="_blank" rel="noopener nofollow"
-									>
-										AppData folder is hidden by default
-										<i class="fas fa-external-link-alt"></i>
-									</a>
-									).
+									your MTGA log file "Player.log". It is located here:
+										<ul>
+									  	  <i class="fab fa-windows"></i>
+									 	   <tt
+											class="clickable"
+											@click="logPathToClipboard"
+											v-tooltip="'Copy Windows path to clipboard'"
+											>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
+										    >
+										</ul>
+										<ul>
+										  <i class="fab fa-apple"></i>
+										  <tt
+											class="clickable"
+											@click="logPathToClipboard"
+											v-tooltip="'Copy macOS path to clipboard'"
+											>~/Library/Logs/Wizards Of The Coast/MTGA/</tt
+										  >
+										</ul>
+										Note: The containing folders are hidden by default.<br>
+										Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i>: <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i>: <kbd>⇧⌘G>/kbd>)
 								</li>
 							</ol>
 						</div>
