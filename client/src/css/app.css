@@ -380,29 +380,28 @@ select.swal2-input option {
 	font-size: 1.4rem;
 }
 
-.welcome-cols {
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
+.welcome-sections {
+	width: 85%;
+	margin: auto;
 }
 
 @media (orientation: portrait) {
-	.welcome-cols {
+	.welcome-sections {
+		display: flex;
 		flex-direction: column;
-	}
-
-	.welcome-col {
-		width: 100%;
 	}
 }
 
 @media (orientation: landscape) {
-	.welcome-cols {
-		flex-direction: row;
-	}
-
-	.welcome-col {
-		width: 48%;
+	.welcome-sections {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-rows: auto auto auto;
+		gap: 0 1em;
+		grid-template-areas:
+			"News News Help"
+			"News News Tools"
+			"PublicSessions PublicSessions PublicSessions";
 	}
 }
 
@@ -423,6 +422,10 @@ select.swal2-input option {
 
 .welcome-section .news p {
 	margin: 0 0 0 1em;
+}
+
+.welcome-alt {
+	background-color: #202020e0;
 }
 
 .public-sessions {

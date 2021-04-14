@@ -1091,124 +1091,120 @@
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
 			</p>
-			<div class="welcome-cols">
-				<div class="welcome-col">
-					<div class="container">
-						<div class="section-title">
-							<h2>News</h2>
+			<div class="welcome-sections">
+				<div class="container" style="grid-area: News;">
+					<div class="section-title">
+						<h2>News</h2>
+					</div>
+					<div class="welcome-section">
+						<div class="news">
+							<em>April 04, 2021</em>
+							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
 						</div>
-						<div class="welcome-section">
-							<div class="news">
-								<em>April 04, 2021</em>
-								<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
-							</div>
-							<div class="news">
-								<em>March 28, 2021</em>
-								<p>
-									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
-								</p>
-							</div>
-							<div class="news">
-								<em>March 06, 2021</em>
-								<p>
-									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
-								</p>
-							</div>
+						<div class="news">
+							<em>March 28, 2021</em>
+							<p>
+								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
+								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+							</p>
+						</div>
+						<div class="news">
+							<em>March 06, 2021</em>
+							<p>
+								<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+								Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
+							</p>
 						</div>
 					</div>
 				</div>
-				<div class="welcome-col">
-					<div class="container">
-						<div class="section-title">
-							<h2>Help</h2>
-						</div>
-						<div class="welcome-section">
-							<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-info-circle"></i> Get Started</a> guide.<br />
-							<br />
-							Visit the <a @click="displayedModal = 'help'">FAQ / Help</a> section.<br />
-							<br />
-							For any question/bug report/feature request you can email to
-							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-							or join the
-							<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
-						</div>
+				<div class="container" style="grid-area: Help;">
+					<div class="section-title">
+						<h2>Help</h2>
 					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>Public Sessions</h2>
+					<div class="welcome-section welcome-alt">
+						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-info-circle"></i> Get Started</a> guide.<br />
+						<br />
+						Visit the <a @click="displayedModal = 'help'">FAQ / Help</a> section.<br />
+						<br />
+						For any question/bug report/feature request you can email to
+						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+						or join the
+						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+					</div>
+				</div>
+				<div class="container" style="grid-area: PublicSessions;">
+					<div class="section-title">
+						<h2>Public Sessions</h2>
+					</div>
+					<div class="welcome-section">
+						<div v-if="userID === sessionOwner" style="display: flex">
+							<button @click="isPublic = !isPublic">
+								Set session as {{ isPublic ? "Private" : "Public" }}
+							</button>
+							<delayed-input
+								style="flex-grow: 1"
+								v-model="description"
+								type="text"
+								placeholder="Enter a description for your session"
+								maxlength="70"
+							/>
 						</div>
-						<div class="welcome-section">
-							<div v-if="userID === sessionOwner" style="display: flex">
-								<button @click="isPublic = !isPublic">
-									Set session as {{ isPublic ? "Private" : "Public" }}
-								</button>
-								<delayed-input
-									style="flex-grow: 1"
-									v-model="description"
-									type="text"
-									placeholder="Enter a description for your session"
-									maxlength="70"
-								/>
-							</div>
 
-							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
-							<table v-else class="public-sessions">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Set</th>
-										<th>Players</th>
-										<th>Description</th>
-										<th>Join</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="s in publicSessions" :key="s.id">
-										<td :title="s.id" class="id">{{ s.id }}</td>
-										<td
-											v-tooltip="
-												s.cube
-													? 'Cube'
-													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
-											"
-										>
-											<template v-if="s.cube">
-												<img src="./assets/img/cube.png" class="set-icon" />
-											</template>
-											<template v-else-if="s.sets.length === 1">
-												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
-											</template>
-											<template v-else-if="s.sets.length === 0">All</template>
-											<template v-else>[{{ s.sets.length }}]</template>
-										</td>
-										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
-										<td class="desc">{{ s.description }}</td>
-										<td>
-											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
-											<i
-												class="fas fa-check green"
-												v-tooltip="`You are in this session!`"
-												v-else
-											></i>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+						<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+						<table v-else class="public-sessions">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Set</th>
+									<th>Players</th>
+									<th>Description</th>
+									<th>Join</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="s in publicSessions" :key="s.id">
+									<td :title="s.id" class="id">{{ s.id }}</td>
+									<td
+										v-tooltip="
+											s.cube
+												? 'Cube'
+												: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+										"
+									>
+										<template v-if="s.cube">
+											<img src="./assets/img/cube.png" class="set-icon" />
+										</template>
+										<template v-else-if="s.sets.length === 1">
+											<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+										</template>
+										<template v-else-if="s.sets.length === 0">All</template>
+										<template v-else>[{{ s.sets.length }}]</template>
+									</td>
+									<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+									<td class="desc">{{ s.description }}</td>
+									<td>
+										<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+										<i
+											class="fas fa-check green"
+											v-tooltip="`You are in this session!`"
+											v-else
+										></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>Tools</h2>
-						</div>
-						<div class="welcome-section">
-							<ul>
-								<li>
-									<a @click="displayedModal = 'importdeck'">Card List Importer</a>
-								</li>
-							</ul>
-						</div>
+				</div>
+				<div class="container" style="grid-area: Tools;">
+					<div class="section-title">
+						<h2>Tools</h2>
+					</div>
+					<div class="welcome-section welcome-alt">
+						<ul>
+							<li>
+								<a @click="displayedModal = 'importdeck'">Card List Importer</a>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
