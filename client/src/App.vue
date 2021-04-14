@@ -1150,7 +1150,7 @@
 								</li>
 								<li>
 									<a onclick="document.querySelector('#file-input').click()">Upload</a>
-									your MTGA log file "Player.log". It is located here:
+									your MTGA log file called "Player.log". Its location is OS-specific:
 									  <ul>
 										<li>
 									  	  <i class="fab fa-windows"></i>
@@ -1167,7 +1167,7 @@
 											class="clickable"
 											@click="logPathToClipboard"
 											v-tooltip="'Copy macOS path to clipboard'"
-											>~/Library/Logs/Wizards Of The Coast/MTGA/</tt
+											>/Users/{username}/Library/Logs/Wizards Of The Coast/MTGA/</tt
 										   >
 										</li>
 									  </ul>
