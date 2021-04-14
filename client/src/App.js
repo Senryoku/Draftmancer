@@ -1994,9 +1994,13 @@ export default {
 		disconnectedReminder: function() {
 			fireToast("error", "Disconnected from server!");
 		},
-		logPathToClipboard: function() {
+		logWinPathToClipboard: function() {
 			copyToClipboard(`C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\`);
-			fireToast("success", "Default log path copied to clipboard!");
+			fireToast("success", "Default log path (<i class="fab fa-windows"></i>) copied to clipboard!");
+		},
+		logMacPathToClipboard: function() {
+			copyToClipboard(`~/Library/Logs/Wizards Of The Coast/MTGA/`);
+			fireToast("success", "Default log path (<i class="fab fa-apple"></i>) copied to clipboard!");
 		},
 		storeDraftLogs: function() {
 			// Limits saved draft logs to 25
