@@ -1202,7 +1202,7 @@
 					<div class="welcome-section welcome-alt">
 						<ul>
 							<li>
-								<a @click="displayedModal = 'importdeck'">Card List Importer</a>
+								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
 							</li>
 						</ul>
 					</div>
