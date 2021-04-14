@@ -1405,7 +1405,7 @@
 							<li>
 								<i class="fab fa-apple"></i>
 								<tt class="clickable" 
-									@click="toClipboard('~/Library/Logs/Wizards Of The Coast/MTGA/', 'Default log path copied to clipboard! (MacOS)')" 
+									@click="toClipboard('~/Library/Logs/Wizards Of The Coast/MTGA/', 'Default log path copied to clipboard! (macOS)')" 
 									v-tooltip="'Copy macOS path to clipboard'" >
 									/Users/{username}/Library/Logs/Wizards Of The Coast/MTGA/
 								</tt>
