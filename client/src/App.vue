@@ -1155,7 +1155,7 @@
 							<thead>
 								<tr>
 									<th>ID</th>
-									<th>Set</th>
+									<th>Set(s)</th>
 									<th>Players</th>
 									<th>Description</th>
 									<th>Join</th>
