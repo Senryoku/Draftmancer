@@ -1099,7 +1099,7 @@
 					<div class="welcome-section">
 						<div class="news">
 							<em>April 04, 2021</em>
-							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
+							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages (STX) support!</p>
 						</div>
 						<div class="news">
 							<em>March 28, 2021</em>
