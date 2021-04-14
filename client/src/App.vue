@@ -1375,33 +1375,47 @@
 		</modal>
 		<modal v-if="displayedModal === 'collectionHelp'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Import Help</h2>
-			<div slot="body">
+			<div slot="body" style="font-size: 1.1em">
 				Each player can import their MTGA collection to restrict the card pool to cards they own.
 				(Session owners can bypass this feature by enabling "Ignore Collections"):
 				<ol>
 					<li>
 						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
-						work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
-						Support)".
+						work. The toggle can be found in <em>Options > Account > Detailed Logs (Plugin
+						Support)</em>.
 					</li>
 					<li>
 						<a onclick="document.querySelector('#file-input').click()">Upload</a>
 						your MTGA log file "Player.log" located in
-						<tt
-							class="clickable"
-							@click="logPathToClipboard"
-							v-tooltip="'Copy path to clipboard'"
-							>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
-						>
-						(Note:
-						<a
-							href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-							target="_blank" rel="noopener nofollow"
-						>
-							AppData folder is hidden by default
-							<i class="fas fa-external-link-alt"></i>
-						</a>
-						).
+						<ul>
+							<li>
+								<i class="fab fa-windows"></i>
+								<tt
+									class="clickable"
+									@click="toClipboard('C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\', 'Default log path copied to clipboard! (Windows)')" 
+									v-tooltip="'Copy path to clipboard'"
+									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
+								>
+								(Note:
+								<a
+									href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
+									target="_blank" rel="noopener nofollow"
+								>
+									AppData folder is hidden by default
+									<i class="fas fa-external-link-alt"></i>
+								</a>
+								).
+							</li>
+							<li>
+								<i class="fab fa-apple"></i>
+								<tt class="clickable" 
+									@click="toClipboard('~/Library/Logs/Wizards Of The Coast/MTGA/', 'Default log path copied to clipboard! (MacOS)')" 
+									v-tooltip="'Copy macOS path to clipboard'" >
+									/Users/{username}/Library/Logs/Wizards Of The Coast/MTGA/
+								</tt>
+							</li>
+						</ul>
+						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
 					</li>
 				</ol>
 			</div>
