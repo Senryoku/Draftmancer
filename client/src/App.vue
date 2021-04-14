@@ -1200,7 +1200,7 @@
 						<h2>Tools</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<ul>
+						<ul style="list-style-type: none">
 							<li>
 								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
 							</li>
@@ -2014,10 +2014,6 @@
 				<a href="mailto:mtgadraft@gmail.com" title="Email"><i class="fas fa-envelope fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
 				<a href="https://discord.gg/XscXXNw" title="Discord" target="_blank" rel="noopener nofollow"><i class="fab fa-discord fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
 				<a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"><i class="fab fa-github fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
-			</span>
-			<span>
-				Get
-				<a href="https://magic.wizards.com/fr/mtgarena" target="_blank" rel="noopener nofollow">Magic: The Gathering Arena</a>
 			</span>
 		</footer>
 		<div
