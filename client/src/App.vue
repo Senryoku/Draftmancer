@@ -25,7 +25,7 @@
 			</span>
 			<span>
 				<label for="file-input">MTGA Collection</label>
-				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'"></i>
+				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'" v-tooltip="'Collection Import Help'"></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
 					onclick="document.querySelector('#file-input').click()"
@@ -1125,7 +1125,7 @@
 							<h2>Help</h2>
 						</div>
 						<div class="welcome-section">
-							<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-question-circle"></i> Get Started</a> guide.<br />
+							<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-info-circle"></i> Get Started</a> guide.<br />
 							<br />
 							Visit the <a @click="displayedModal = 'help'">FAQ / Help</a> section.<br />
 							<br />
