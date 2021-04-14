@@ -1153,12 +1153,12 @@
 									your MTGA log file "Player.log". It is located here:
 										<ul>
 									  	  <i class="fab fa-windows"></i>
-									 	   <tt
+									 	  <tt
 											class="clickable"
 											@click="logPathToClipboard"
 											v-tooltip="'Copy Windows path to clipboard'"
 											>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
-										    >
+										  >
 										</ul>
 										<ul>
 										  <i class="fab fa-apple"></i>
@@ -1167,7 +1167,7 @@
 											@click="logPathToClipboard"
 											v-tooltip="'Copy macOS path to clipboard'"
 											>~/Library/Logs/Wizards Of The Coast/MTGA/</tt
-										  >
+										   >
 										</ul>
 										Note: The containing folders are hidden by default.<br>
 										Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i>: <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i>: <kbd>⇧⌘G>/kbd>)
