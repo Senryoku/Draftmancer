@@ -2015,11 +2015,9 @@
 				</a>
 			</span>
 			<span>
-				<a href="mailto:mtgadraft@gmail.com">Contact</a>
-			</span>
-			<span>
-				<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i></a>
-				<a href="https://github.com/Senryoku/MTGADraft"><i class="fab fa-github"></i></a>
+				<a href="mailto:mtgadraft@gmail.com"><i class="fas fa-envelope fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
+				<a href="https://discord.gg/XscXXNw" target="_blank" rel="noopener nofollow"><i class="fab fa-discord fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
+				<a href="https://github.com/Senryoku/MTGADraft" target="_blank" rel="noopener nofollow"><i class="fab fa-github fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
 			</span>
 			<span>
 				Get
