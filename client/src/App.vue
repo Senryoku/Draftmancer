@@ -992,6 +992,7 @@
 										</template>
 									</tr>
 								</table>
+								<div v-if="collectionInfos.vaultProgress" v-tooltip.right="'Vault Progress'" style="display:flex; align-items: center; justify-content: space-evenly; margin: 0.25em 0 0 0"><img src="./assets/img/vault.png" style="height: 1.5rem;"><span style="font-size:0.8em">{{collectionInfos.vaultProgress}}%</span></div>
 							</template>
 						</dropdown>
 						<div class="input-delete-icon">

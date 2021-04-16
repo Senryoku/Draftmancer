@@ -106,7 +106,7 @@ export default {
 			useCollection: true,
 			collection: {},
 			collectionInfos: {
-				wildcards: {common:0, uncommon:0, rare:0, mythic:0}
+				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
 			},
 			socket: undefined,
 
@@ -282,7 +282,7 @@ export default {
 
 			this.socket.on("sessionUsers", users => {
 				for (let u of users) {
-					if(!u.pickedThisRound) u.pickedThisRound = false;
+					if (!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
@@ -500,7 +500,9 @@ export default {
 				cardView.$mount();
 				Alert.fire({
 					position: "center",
-					title: `You drew ${this.language in c.printed_names ? c.printed_names[this.language] : c.name} from the card pool!`,
+					title: `You drew ${
+						this.language in c.printed_names ? c.printed_names[this.language] : c.name
+					} from the card pool!`,
 					html: cardView.$el,
 					showConfirmButton: true,
 				});
@@ -601,7 +603,7 @@ export default {
 
 			// Rochester Draft
 			this.socket.on("startRochesterDraft", state => {
-				startDraftSetup("Rochester draft")
+				startDraftSetup("Rochester draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
 				this.setRochesterDraftState(state);
@@ -679,7 +681,7 @@ export default {
 					});
 				}
 				this.pushTitleNotification("🏁");
-			}
+			};
 
 			// Standard Draft
 			this.socket.on("startDraft", () => {
@@ -809,12 +811,17 @@ export default {
 			});
 
 			this.socket.on("draftLogLive", data => {
-				if(data.log) this.draftLogLive = data.log;
-				if(data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
+				if (data.log) this.draftLogLive = data.log;
+				if (data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
 			});
 
 			this.socket.on("pickAlert", data => {
-				fireToast("info", `${data.userName} picked ${data.cards.map(s => s.printed_names[this.language] ? s.printed_names[this.language] : s.name).join(', ')}!`);
+				fireToast(
+					"info",
+					`${data.userName} picked ${data.cards
+						.map(s => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
+						.join(", ")}!`
+				);
 			});
 
 			this.socket.on("setCardSelection", data => {
@@ -826,7 +833,7 @@ export default {
 				// Hide waiting popup for sealed
 				if (Swal.isVisible()) Swal.close();
 			});
-			
+
 			this.socket.on("timer", data => {
 				if (data.countdown == 0) this.forcePick(this.booster);
 				if (data.countdown < 10) {
@@ -921,17 +928,15 @@ export default {
 			this.socket.emit("pauseDraft");
 		},
 		selectCard: function(e, c) {
-			if(!this.selectedCards.includes(c)) {
-				if(this.selectedCards.length === this.cardsToPick)
-					this.selectedCards.shift();
+			if (!this.selectedCards.includes(c)) {
+				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
 				this.selectedCards.push(c);
 				this.restoreCard(null, c);
 			}
 		},
 		burnCard: function(e, c) {
 			if (this.burningCards.includes(c)) return;
-			if (this.selectedCards.includes(c)) 
-				this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
+			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
@@ -997,25 +1002,19 @@ export default {
 		pickCard: function(options) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
-				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking) 
+				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
 			)
 				return;
 
 			if (this.selectedCards.length !== this.cardsToPick) {
 				const value = this.cardsToPick - this.selectedCards.length;
-				fireToast(
-					"error",
-					`You need to pick ${value} more ${value > 1 ? 'cards' : 'card'}.`
-				);
+				fireToast("error", `You need to pick ${value} more ${value > 1 ? "cards" : "card"}.`);
 				return;
 			}
 
 			if (this.burningCards.length !== this.cardsToBurnThisRound) {
 				const value = this.cardsToBurnThisRound - this.burningCards.length;
-				fireToast(
-					"error",
-					`You need to burn ${value} more ${value > 1 ? 'cards' : 'card'}.`
-				);
+				fireToast("error", `You need to burn ${value} more ${value > 1 ? "cards" : "card"}.`);
 				return;
 			}
 
@@ -1053,24 +1052,32 @@ export default {
 				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
 				else this.addToDeck(this.selectedCards, options);
 				// Removes picked & burned cards for animation
-				this.booster = this.booster.filter(c => !this.selectedCards.includes(c) && !this.burningCards.includes(c) );
+				this.booster = this.booster.filter(
+					c => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
+				);
 			});
 			this.pickInFlight = true;
 		},
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
 			// Forces a random card if none is selected
-			while(this.selectedCards.length < this.cardsToPick) {
+			while (this.selectedCards.length < this.cardsToPick) {
 				let randomIdx;
-				do randomIdx = Math.floor(Math.random() * this.booster.length)
-				while(this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
+				do randomIdx = Math.floor(Math.random() * this.booster.length);
+				while (
+					this.selectedCards.includes(this.booster[randomIdx]) ||
+					this.burningCards.includes(this.booster[randomIdx])
+				);
 				this.selectedCards.push(this.booster[randomIdx]);
 			}
 			// Forces random cards to burn if there isn't enough selected already
 			while (this.burningCards.length < this.cardsToBurnThisRound) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * this.booster.length);
-				while (this.selectedCards.includes(this.booster[randomIdx]) || this.burningCards.includes(this.booster[randomIdx]));
+				while (
+					this.selectedCards.includes(this.booster[randomIdx]) ||
+					this.burningCards.includes(this.booster[randomIdx])
+				);
 				this.burningCards.push(this.booster[randomIdx]);
 			}
 			this.pickCard();
@@ -1335,20 +1342,25 @@ export default {
 						const collectionStr = contents.slice(collectionStart, collectionEnd);
 						const collection = JSON.parse(collectionStr)["payload"];
 
-						const inventoryStart = contents.indexOf("{", contents.indexOf("PlayerInventory.GetPlayerInventory", collectionEnd));
+						const inventoryStart = contents.indexOf(
+							"{",
+							contents.indexOf("PlayerInventory.GetPlayerInventory", collectionEnd)
+						);
 						const inventoryEnd = contents.indexOf("\n", inventoryStart);
 						const inventoryStr = contents.slice(inventoryStart, inventoryEnd);
 						const rawInventory = JSON.parse(inventoryStr)["payload"];
+						console.log(rawInventory);
 						const inventory = {
 							wildcards: {
 								common: Math.max(0, rawInventory.wcCommon),
 								uncommon: Math.max(0, rawInventory.wcUncommon),
 								rare: Math.max(0, rawInventory.wcRare),
-								mythic: Math.max(0, rawInventory.wcMythic)
-							}
+								mythic: Math.max(0, rawInventory.wcMythic),
+							},
+							vaultProgress: Math.max(0, rawInventory.vaultProgress),
 						};
 
-						return {collection, inventory};
+						return { collection, inventory };
 					} catch (e) {
 						Alert.fire({
 							icon: "error",
@@ -1471,7 +1483,9 @@ export default {
 			Alert.fire({
 				title: "Import from Cube Cobra",
 				html: `<p>Enter a Cube ID or an URL to import a cube directly from Cube Cobra</p>
-				<input type="checkbox" id="input-match-card-versions" ${defaultMatchCardVersions ? "checked": ""}><label for="input-match-card-versions">Match exact card versions</label>`,
+				<input type="checkbox" id="input-match-card-versions" ${
+					defaultMatchCardVersions ? "checked" : ""
+				}><label for="input-match-card-versions">Match exact card versions</label>`,
 				inputPlaceholder: "Cube ID/URL",
 				input: "text",
 				inputValue: defaultCubeID,
@@ -1482,7 +1496,8 @@ export default {
 				preConfirm: function(cubeCobraID) {
 					const matchVersions = document.getElementById("input-match-card-versions").checked;
 					localStorage.setItem("cubecobra-match-versions", matchVersions.toString());
-					if(cubeCobraID) { // Convert from URL to cubeID if necessary.
+					if (cubeCobraID) {
+						// Convert from URL to cubeID if necessary.
 						const urlTest = cubeCobraID.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
 						if (urlTest) cubeCobraID = urlTest[1];
 					}
@@ -1495,8 +1510,7 @@ export default {
 					});
 				},
 			}).then(result => {
-				if (result.value && result.value.cubeCobraID)
-					this.selectCube(result.value);
+				if (result.value && result.value.cubeCobraID) this.selectCube(result.value);
 			});
 		},
 		selectCube: function(cube) {
@@ -1523,7 +1537,11 @@ export default {
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
-				this.socket.emit("loadFromCubeCobra", { cubeID: cube.cubeCobraID, name: cube.name, matchVersions: cube.matchVersions }, ack);
+				this.socket.emit(
+					"loadFromCubeCobra",
+					{ cubeID: cube.cubeCobraID, name: cube.name, matchVersions: cube.matchVersions },
+					ack
+				);
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
@@ -1552,23 +1570,21 @@ export default {
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
-				body: document.querySelector('#decklist-text').value,
+				body: document.querySelector("#decklist-text").value,
 			});
-			if(response.status === 200) {
+			if (response.status === 200) {
 				let data = await response.json();
-				if(data && !data.error) {
+				if (data && !data.error) {
 					this.clearState();
-					for (let c of data.deck)
-						this.addToDeck(c);
-					for (let c of data.sideboard)
-						this.addToSideboard(c);
+					for (let c of data.deck) this.addToDeck(c);
+					for (let c of data.sideboard) this.addToSideboard(c);
 					this.draftingState = DraftState.Brewing;
 				}
 				fireToast("success", "Successfully imported deck!");
 				this.displayedModal = null;
-			} else if(response.status === 400) {
+			} else if (response.status === 400) {
 				let data = await response.json();
-				if(data.error) {
+				if (data.error) {
 					fireToast("error", `Error importing deck: ${data.error.message}`);
 				} else {
 					fireToast("error", "Error importing deck.");
@@ -1578,15 +1594,15 @@ export default {
 			}
 		},
 		uploadBoosters: function() {
-			if(this.sessionOwner !== this.userID) return;
-			const text = document.querySelector('#upload-booster-text').value;
-			this.socket.emit("setBoosters", text, (response) => {
-				if(response.error) {
+			if (this.sessionOwner !== this.userID) return;
+			const text = document.querySelector("#upload-booster-text").value;
+			this.socket.emit("setBoosters", text, response => {
+				if (response.error) {
 					Alert.fire({
-						icon: "error", 
-						title: response.error.title, 
-						text: response.error.text, 
-						footer: response.error.footer, 
+						icon: "error",
+						title: response.error.title,
+						text: response.error.text,
+						footer: response.error.footer,
 					});
 				} else {
 					fireToast("success", "Boosters successfuly uploaded!");
@@ -1595,9 +1611,9 @@ export default {
 			});
 		},
 		shuffleUploadedBoosters: function() {
-			if(this.sessionOwner !== this.userID) return;
-			this.socket.emit("shuffleBoosters", (response) => {
-				if(response.error) {
+			if (this.sessionOwner !== this.userID) return;
+			this.socket.emit("shuffleBoosters", response => {
+				if (response.error) {
 					fireToast(response.error.type, response.error.title);
 				} else {
 					fireToast("success", "Boosters successfuly shuffled!");
@@ -1684,21 +1700,23 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
-				width: '900px',
+				width: "900px",
 				preConfirm: function() {
 					return new Promise(function(resolve) {
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
-							customBoosters: [...document.getElementById("input-customBoosters").querySelectorAll("select")].map(s => s.value),
+							customBoosters: [
+								...document.getElementById("input-customBoosters").querySelectorAll("select"),
+							].map(s => s.value),
 						});
 					});
 				},
-				onOpen: (el) => {
+				onOpen: el => {
 					let customBoostersEl = el.querySelector("#input-customBoosters");
 					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
 					// Create the set selects according to the number of booster per player
 					function updateCustomBoosterInput(target) {
-						while(customBoostersEl.children.length < target) {
+						while (customBoostersEl.children.length < target) {
 							let sel = document.createElement("select");
 							sel.classList.add("standard-input");
 							sel.style.margin = "0.5em auto";
@@ -1711,26 +1729,26 @@ export default {
 							};
 							const addSeparator = () => {
 								const separator = addOption("", "————————————————");
-								separator.style="color: #888";
+								separator.style = "color: #888";
 								separator.disabled = true;
 							};
 							addOption("", "(Default)");
 							addOption("random", "Random set from Card Pool");
 							addSeparator();
-							for(let s of Constant.MTGASets.slice().reverse())
-								addOption(s, SetsInfos[s].fullName);
+							for (let s of Constant.MTGASets.slice().reverse()) addOption(s, SetsInfos[s].fullName);
 							addSeparator();
-							for(let s of Constant.PrimarySets.filter(s => !Constant.MTGASets.includes(s)))
+							for (let s of Constant.PrimarySets.filter(s => !Constant.MTGASets.includes(s)))
 								addOption(s, SetsInfos[s].fullName);
 							customBoostersEl.appendChild(sel);
 						}
-						while(customBoostersEl.children.length > target) customBoostersEl.removeChild(customBoostersEl.lastChild);
+						while (customBoostersEl.children.length > target)
+							customBoostersEl.removeChild(customBoostersEl.lastChild);
 					}
 					updateCustomBoosterInput(boostersPerPlayerEl.value);
 					boostersPerPlayerEl.addEventListener("change", function(e) {
 						updateCustomBoosterInput(e.target.value);
 					});
-				}
+				},
 			}).then(r => {
 				if (r.isConfirmed) {
 					this.deckWarning(this.distributeSealed, [r.value.boostersPerPlayer, r.value.customBoosters]);
@@ -1856,8 +1874,7 @@ export default {
 		},
 		// Deck/Sideboard management
 		addToDeck: function(card, options) {
-			if(Array.isArray(card)) 
-				for(let c of card) this.addToDeck(c, options)
+			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
 				this.deck.push(card);
@@ -1865,8 +1882,7 @@ export default {
 			}
 		},
 		addToSideboard: function(card, options) {
-			if(Array.isArray(card))
-				for(let c of card) this.addToSideboard(c, options)
+			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
@@ -1970,7 +1986,7 @@ export default {
 			}
 		},
 		pushTitleNotification: function(msg) {
-			if(this.titleNotification) {
+			if (this.titleNotification) {
 				clearTimeout(this.titleNotification.timeout);
 				this.titleNotification = null;
 			}
@@ -1978,8 +1994,8 @@ export default {
 				timeout: setTimeout(() => {
 					this.titleNotification = null;
 					document.title = this.pageTitle;
-				}, 3000), 
-				message: msg
+				}, 3000),
+				message: msg,
 			};
 			document.title = this.pageTitle;
 		},
@@ -2015,8 +2031,7 @@ export default {
 			worker.postMessage(["compress", this.draftLogs]);
 		},
 		toggleLimitDuplicates: function() {
-			if(this.maxDuplicates !== null)
-				this.maxDuplicates = null;
+			if (this.maxDuplicates !== null) this.maxDuplicates = null;
 			else
 				this.maxDuplicates = {
 					common: 8,
@@ -2026,28 +2041,37 @@ export default {
 				};
 		},
 		countMissing: function(cards) {
-			if(!this.hasCollection || !cards) return null;
-			const r = {common: 0, uncommon: 0, rare: 0, mythic: 0};
+			if (!this.hasCollection || !cards) return null;
+			const r = { common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			const counts = {};
-			for(let card of cards) {
-				if(!('arena_id' in card)) return null;
-				if(card.type.includes("Basic")) continue;
-				if(!(card.arena_id in counts)) counts[card.arena_id] = {rarity: card.rarity, count: 0};
+			for (let card of cards) {
+				if (!("arena_id" in card)) return null;
+				if (card.type.includes("Basic")) continue;
+				if (!(card.arena_id in counts)) counts[card.arena_id] = { rarity: card.rarity, count: 0 };
 				++counts[card.arena_id].count;
 			}
-			for(let cid in counts)
-				r[counts[cid].rarity] += Math.max(0, Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0));
+			for (let cid in counts)
+				r[counts[cid].rarity] += Math.max(
+					0,
+					Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0)
+				);
 			return r;
 		},
 		wildcardCost: function(card) {
-			if(!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
-			if(!(card.arena_id in this.collection)) return true;
-			if(this.collection[card.id] >= 4) return false;
+			if (!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
+			if (!(card.arena_id in this.collection)) return true;
+			if (this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
 			return currentCount >= this.collection[card.arena_id];
 		},
 		hasEnoughWildcards: function(card) {
-			if(!this.neededWildcards || !this.neededWildcards.main || !this.collectionInfos || !this.collectionInfos.wildcards) return true;
+			if (
+				!this.neededWildcards ||
+				!this.neededWildcards.main ||
+				!this.collectionInfos ||
+				!this.collectionInfos.wildcards
+			)
+				return true;
 			const needed = this.neededWildcards.main[card.rarity] || 0;
 			return needed < this.collectionInfos.wildcards[card.rarity];
 		},
@@ -2060,15 +2084,15 @@ export default {
 			return ReadyState;
 		},
 		gameModeName: function() {
-			if(this.rochesterDraftState) return "Rochester Draft";
-			if(this.winstonDraftState) return "Winston Draft";
-			if(this.gridDraftState) return "Grid Draft";
-			if(this.useCustomCardList) return "Cube Draft";
-			if(this.burnedCardsPerRound > 0) return "Glimpse Draft";
+			if (this.rochesterDraftState) return "Rochester Draft";
+			if (this.winstonDraftState) return "Winston Draft";
+			if (this.gridDraftState) return "Grid Draft";
+			if (this.useCustomCardList) return "Cube Draft";
+			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
 		},
 		cardsToPick: function() {
-			if(this.rochesterDraftState) return 1;
+			if (this.rochesterDraftState) return 1;
 			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound: function() {
@@ -2135,24 +2159,27 @@ export default {
 			return this.deck.some(c => c.type === "Basic Land") || this.sideboard.some(c => c.type === "Basic Land");
 		},
 		neededWildcards: function() {
-			if(!this.hasCollection) return null;
+			if (!this.hasCollection) return null;
 			const main = this.countMissing(this.deck);
 			const side = this.countMissing(this.sideboard);
-			if(!main && !side) return null;
-			return {main: main, side: side};
+			if (!main && !side) return null;
+			return { main: main, side: side };
 		},
 		deckSummary: function() {
 			const r = {};
-			for(let c of this.deck) {
-				if(!(c.id in r)) r[c.id] = 0;
+			for (let c of this.deck) {
+				if (!(c.id in r)) r[c.id] = 0;
 				++r[c.id];
 			}
 			return r;
 		},
 		displayWildcardInfo: function() {
-			return this.displayCollectionStatus && this.neededWildcards && 
+			return (
+				this.displayCollectionStatus &&
+				this.neededWildcards &&
 				((this.neededWildcards.main && Object.values(this.neededWildcards.main).some(v => v > 0)) ||
-				 (this.neededWildcards.side && Object.values(this.neededWildcards.side).some(v => v > 0)));
+					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some(v => v > 0)))
+			);
 		},
 
 		userByID: function() {
@@ -2162,8 +2189,10 @@ export default {
 		},
 
 		pageTitle: function() {
-			return `MTGA Draft (${this.sessionUsers.length}/${this.maxPlayers}) ${this.titleNotification ? this.titleNotification.message : ""}`;
-		}
+			return `MTGA Draft (${this.sessionUsers.length}/${this.maxPlayers}) ${
+				this.titleNotification ? this.titleNotification.message : ""
+			}`;
+		},
 	},
 	mounted: async function() {
 		// Load all card informations
@@ -2200,11 +2229,11 @@ export default {
 			}
 
 			const storedLogs = localStorage.getItem("draftLogs");
-			if(storedLogs) {
+			if (storedLogs) {
 				let worker = new LogStoreWorker();
 				worker.onmessage = e => {
 					this.draftLogs = e.data;
-					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`)
+					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
 				};
 				worker.postMessage(["decompress", storedLogs]);
 			}
@@ -2373,13 +2402,13 @@ export default {
 		},
 		sessionUsers: function(newV, oldV) {
 			document.title = this.pageTitle;
-			if(oldV.length > 0) {
-				if(oldV.length < newV.length) {
-					if(newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
+			if (oldV.length > 0) {
+				if (oldV.length < newV.length) {
+					if (newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
 					else this.pushTitleNotification("😀➕");
 				}
-				if(oldV.length > newV.length) this.pushTitleNotification("🙁➖");
+				if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
 			}
-		}
+		},
 	},
 };
