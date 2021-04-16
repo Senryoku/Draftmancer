@@ -1217,7 +1217,7 @@
 				<div class="faq">
 					<strong>Can we play cube?</strong>
 					<p>
-						Yes! You can import custom list of cards in text format in the options.
+						Yes! You can import custom list of cards in text format in the settings.
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 					</p>
 					<strong>How can we adjust the packs content for cubes?</strong>
@@ -1477,7 +1477,7 @@
 			></collection>
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
-			<h2 slot="header">Additional Session Options</h2>
+			<h2 slot="header">Additional Session Settings</h2>
 			<div slot="body" class="session-options-container" :class="{ disabled: userID != sessionOwner }">
 				<div class="option-column option-column-left">
 					<div
@@ -1676,7 +1676,7 @@
 					</div>
 				</div>
 				<div class="option-column option-column-right">
-					<h4>Draft Specific Options</h4>
+					<h4>Draft Specific Settings</h4>
 					<div
 						class="line"
 						v-tooltip.right="{
