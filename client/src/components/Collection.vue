@@ -1,5 +1,5 @@
 <template>
-	<div v-if="collectionStats">
+	<div v-if="collectionStats" style="position: relative">
 		<div style="display: flex; justify-content: space-between">
 			<div>
 				Select set:
@@ -25,6 +25,19 @@
 					id="display-collection-status"
 				/><label for="display-collection-status">Highlight required wildcards in games</label>
 			</div>
+		</div>
+		<div class="resources">
+			<h3>Resources</h3>
+			<table style="margin: auto">
+				<tr v-for="(value, rarity) in collectionInfos.wildcards" :key="rarity">
+					<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
+					<td>{{ value }}</td>
+				</tr>
+				<tr v-if="collectionInfos.vaultProgress" v-tooltip.left="'Vault Progress'">
+					<td><img src="../assets/img/vault.png" style="height: 1rem" /></td>
+					<td>{{ collectionInfos.vaultProgress }}%</td>
+				</tr>
+			</table>
 		</div>
 		<div class="set-stats">
 			<div v-if="selectedSet">
@@ -98,6 +111,7 @@ export default {
 	components: { MissingCard },
 	props: {
 		collection: { type: Object, required: true },
+		collectionInfos: { type: Object, required: true },
 		language: { type: String, required: true },
 		displaycollectionstatus: { type: Boolean, required: true },
 	},
@@ -193,3 +207,27 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+.resources {
+	float: right;
+	margin-top: 2em;
+	margin-right: 1em;
+
+	background: #444;
+	padding: 1em;
+}
+
+.resources h3 {
+	margin: 0;
+}
+
+.resources table {
+	margin: 0.25em;
+	text-align: right;
+}
+
+.resources tr {
+	margin: 0.1em;
+}
+</style>

@@ -1455,6 +1455,7 @@
 			<collection
 				slot="body"
 				:collection="collection"
+				:collectionInfos="collectionInfos"
 				:language="language"
 				:displaycollectionstatus="displayCollectionStatus"
 				@display-collection-status="displayCollectionStatus = $event"
