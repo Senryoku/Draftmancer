@@ -38,9 +38,10 @@
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
+					class="flat"
 					id="collection-stats"
 				>
-					Stats
+					<i class="fas fa-chart-bar"></i> Stats
 				</button>
 				<div
 					v-show="hasCollection"
@@ -56,9 +57,10 @@
 			<div>
 				<button
 					@click="displayedModal = 'draftLogs'"
+					class="flat"
 					v-tooltip="'Displays logs of your previous drafts and sealed'"
 				>
-					Game Logs
+					<i class="fas fa-list"></i> Game Logs
 				</button>
 			</div>
 			<span>
@@ -335,14 +337,14 @@
 						</template>
 					</dropdown>
 				</span>
-				<span
+				<button
 					v-tooltip="'More session settings'"
 					@click="displayedModal = 'sessionOptions'"
-					class="setting-button clickable"
+					class="setting-button flat"
 				>
 					Settings
 					<i class="fas fa-cog"></i>
-				</span>
+				</button>
 			</div>
 			<template v-if="drafting">
 				<div id="url-remainder">

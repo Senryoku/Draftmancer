@@ -75,7 +75,12 @@ select.swal2-input option {
 #main-container input[type="button"]:active,
 #main-container button:active {
 	box-shadow: inset 2px 2px 8px -3px #000, inset -2px -2px 8px -3px #888;
-	transform: translateY(2px);
+	transform: translateY(1px);
+}
+
+#main-container button.flat {
+	box-shadow: initial;
+	background-color: #383838;
 }
 
 #main-container .button,
