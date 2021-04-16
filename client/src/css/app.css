@@ -1337,6 +1337,10 @@ ul.player-list {
 	--invertedness: 0%;
 }
 
+.set-option {
+	font-weight: initial;
+}
+
 .multiselect__option::after {
 	line-height: 36px;
 	font-size: 10px;

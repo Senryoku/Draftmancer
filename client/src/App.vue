@@ -200,7 +200,7 @@
 									</span>
 								</template>
 								<template slot="option" slot-scope="{ option }">
-									<span class="multiselect__option">
+									<span class="multiselect__option set-option">
 										<img class="set-icon padded-icon" :src="setsInfos[option].icon" />
 										{{ setsInfos[option].fullName }}
 									</span>
