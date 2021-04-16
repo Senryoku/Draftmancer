@@ -24,7 +24,7 @@
 				</div>
 			</span>
 			<span>
-				<label for="file-input">MTGA Collection</label>
+				<label :for="hasCollection ? 'collection-stats' : 'file-input'">MTGA Collection</label>
 				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'" v-tooltip="'Collection Import Help'"></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
@@ -38,6 +38,7 @@
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
+					id="collection-stats"
 				>
 					Stats
 				</button>
