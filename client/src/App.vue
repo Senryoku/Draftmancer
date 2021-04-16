@@ -335,7 +335,7 @@
 					</dropdown>
 				</span>
 				<span
-					v-tooltip="'More session options'"
+					v-tooltip="'More session settings'"
 					@click="displayedModal = 'sessionOptions'"
 					class="setting-button clickable"
 				>
@@ -1122,9 +1122,9 @@
 						<h2>Help</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-info-circle"></i> Get Started</a> guide.<br />
+						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a> guide<br />
 						<br />
-						Visit the <a @click="displayedModal = 'help'">FAQ / Help</a> section.<br />
+						<a @click="displayedModal = 'help'"><i class="fas fa-info-circle"></i> FAQ / Settings Description</a><br />
 						<br />
 						For any question/bug report/feature request you can email to
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
@@ -1200,7 +1200,7 @@
 						<h2>Tools</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<ul style="list-style-type: none">
+						<ul>
 							<li>
 								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
 							</li>
@@ -1230,10 +1230,10 @@
 					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
 				</div>
 				<br />
-				<h2>Options Description</h2>
+				<h2>Settings Description</h2>
 				<div class="help-options">
 					<div style="width: 50%">
-						<strong>Session options</strong>
+						<strong>Session settings</strong>
 						(Only accessible to the session owner, shared by everyone in your session)
 						<ul>
 							<li>
@@ -1262,7 +1262,7 @@
 							Settings
 							<i class="fas fa-cog"></i>
 						</span>
-						for some additional options:
+						for some additional settings:
 						<ul>
 							<li>
 								<span class="option-name">Public</span>
@@ -1288,7 +1288,7 @@
 						</ul>
 					</div>
 					<div style="width: 50%">
-						<strong>Personal options</strong>
+						<strong>Personal settings</strong>
 						<ul>
 							<li>
 								<span class="option-name">Language</span>
@@ -1327,7 +1327,7 @@
 						<h2>As a Player</h2>
 					</div>
 					<p>
-						Customize your personal options, like your User Name or Card Language on top of the page.
+						Customize your personal settings, like your User Name or Card Language on top of the page.
 						<br />
 						<span v-if="userID !== sessionOwner">
 							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
