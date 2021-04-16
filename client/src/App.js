@@ -857,6 +857,7 @@ export default {
 		clearState: function() {
 			this.clearSideboard();
 			this.clearDeck();
+			this.deckFilter = "";
 			this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			this.currentDraftLog = null;
 		},
@@ -1349,7 +1350,6 @@ export default {
 						const inventoryEnd = contents.indexOf("\n", inventoryStart);
 						const inventoryStr = contents.slice(inventoryStart, inventoryEnd);
 						const rawInventory = JSON.parse(inventoryStr)["payload"];
-						console.log(rawInventory);
 						const inventory = {
 							wildcards: {
 								common: Math.max(0, rawInventory.wcCommon),
