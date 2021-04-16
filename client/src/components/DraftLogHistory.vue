@@ -34,6 +34,10 @@
 					</span>
 				</span>
 				<span>
+					<button class="flat" @click="toggle(idx)">
+						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
+						<template v-else> <i class="far fa-eye"></i> Review</template>
+					</button>
 					<template v-if="draftLog.version === '2.0'">
 						<template v-if="!draftLog.delayed">
 							<button type="button" @click="downloadLog(draftLog)">
