@@ -22,7 +22,9 @@ const DisablePersistence = typeof global.it === "function" || process.env.DISABL
 
 import axios from "axios";
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ? process.env.PERSISTENCE_STORE_URL : "http://localhost:3008";
+const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL
+	? process.env.PERSISTENCE_STORE_URL
+	: "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ? process.env.PERSISTENCE_KEY : "1234";
 
 async function requestSavedConnections() {
@@ -31,16 +33,16 @@ async function requestSavedConnections() {
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
 			headers: {
-				'access-key': PersistenceKey,
-				'Accept-Encoding': 'gzip, deflate'
-			}
+				"access-key": PersistenceKey,
+				"Accept-Encoding": "gzip, deflate",
+			},
 		});
-		if(response.status !== 200) {
+		if (response.status !== 200) {
 			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data)
+			console.error(`Data: `, response.data);
 		} else {
 			const connections = response.data;
-			if(connections && connections.length > 0) {
+			if (connections && connections.length > 0) {
 				for (let c of connections) {
 					InactiveConnections[c.userID] = new Connection(null, c.userID, c.userName);
 					for (let prop of Object.getOwnPropertyNames(c)) {
@@ -62,19 +64,20 @@ async function requestSavedSessions() {
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
 			headers: {
-		  		'access-key': PersistenceKey,
-				'Accept-Encoding': 'gzip, deflate'
-			}
+				"access-key": PersistenceKey,
+				"Accept-Encoding": "gzip, deflate",
+			},
 		});
-		if(response.status !== 200) {
+		if (response.status !== 200) {
 			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data)
+			console.error(`Data: `, response.data);
 		} else {
-			if(response.data && response.data.length > 0) {
+			if (response.data && response.data.length > 0) {
 				for (let s of response.data) {
 					InactiveSessions[s.id] = new Session(s.id, null);
 					for (let prop of Object.getOwnPropertyNames(s).filter(
-						p => !["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
+						p =>
+							!["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
 					)) {
 						InactiveSessions[s.id][prop] = s[prop];
 					}
@@ -148,20 +151,21 @@ async function tempDump(exitOnCompletion = false) {
 	}
 
 	try {
-		Promises.push(axios.post(`${PersistenceStoreURL}/temp/connections`, 
-			PoDConnections, 
-			{
-				maxContentLength: Infinity,
-				maxBodyLength: Infinity,
-				headers: {
-					'access-key': PersistenceKey,
-				}
-			}
-		).catch((err) => console.error("Error storing connections: ", err.message)));
+		Promises.push(
+			axios
+				.post(`${PersistenceStoreURL}/temp/connections`, PoDConnections, {
+					maxContentLength: Infinity,
+					maxBodyLength: Infinity,
+					headers: {
+						"access-key": PersistenceKey,
+					},
+				})
+				.catch(err => console.error("Error storing connections: ", err.message))
+		);
 	} catch (err) {
 		console.log("Error: ", err);
 	}
-	
+
 	let PoDSessions = [];
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
@@ -213,16 +217,17 @@ async function tempDump(exitOnCompletion = false) {
 	}
 
 	try {
-		Promises.push(axios.post(`${PersistenceStoreURL}/temp/sessions`, 
-			PoDSessions, 
-			{
-				maxContentLength: Infinity,
-				maxBodyLength: Infinity,
-				headers: {
-					'access-key': PersistenceKey,
-				}
-			}
-		).catch((err) => console.error("Error storing sessions: ", err.message)));
+		Promises.push(
+			axios
+				.post(`${PersistenceStoreURL}/temp/sessions`, PoDSessions, {
+					maxContentLength: Infinity,
+					maxBodyLength: Infinity,
+					headers: {
+						"access-key": PersistenceKey,
+					},
+				})
+				.catch(err => console.error("Error storing sessions: ", err.message))
+		);
 	} catch (err) {
 		console.log("Error: ", err);
 	}
@@ -234,7 +239,6 @@ async function tempDump(exitOnCompletion = false) {
 
 	if (exitOnCompletion) process.exit(0);
 }
-
 
 export function logSession(type, session) {
 	if (!MixInstance) return;
@@ -252,6 +256,7 @@ export function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
+	/*
 	if(type === "Draft" && !DisablePersistence) {
 		axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
 			localSess.draftLog, 
@@ -262,6 +267,7 @@ export function logSession(type, session) {
 			}
 		).catch((err) => console.error("Error storing logs: ", err.message));
 	}
+	*/
 
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",
@@ -346,7 +352,7 @@ if (!DisablePersistence) {
 
 	InactiveConnections = requestSavedConnections();
 	InactiveSessions = requestSavedSessions();
-	Promise.all([InactiveConnections, InactiveSessions]).then((values) => {
+	Promise.all([InactiveConnections, InactiveSessions]).then(values => {
 		InactiveConnections = values[0];
 		InactiveSessions = values[1];
 	});
