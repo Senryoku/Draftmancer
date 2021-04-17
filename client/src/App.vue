@@ -24,7 +24,8 @@
 				</div>
 			</span>
 			<span>
-				<label for="file-input">MTGA Collection</label>
+				<label :for="hasCollection ? 'collection-stats' : 'file-input'">MTGA Collection</label>
+				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'" v-tooltip="'Collection Import Help'"></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
 					onclick="document.querySelector('#file-input').click()"
@@ -37,8 +38,10 @@
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
+					class="flat"
+					id="collection-stats"
 				>
-					Stats
+					<i class="fas fa-chart-bar"></i> Stats
 				</button>
 				<div
 					v-show="hasCollection"
@@ -54,9 +57,10 @@
 			<div>
 				<button
 					@click="displayedModal = 'draftLogs'"
+					class="flat"
 					v-tooltip="'Displays logs of your previous drafts and sealed'"
 				>
-					Game Logs
+					<i class="fas fa-list"></i> Game Logs
 				</button>
 			</div>
 			<span>
@@ -333,14 +337,14 @@
 						</template>
 					</dropdown>
 				</span>
-				<span
-					v-tooltip="'More session options'"
+				<button
+					v-tooltip="'More session settings'"
 					@click="displayedModal = 'sessionOptions'"
-					class="setting-button clickable"
+					class="setting-button flat"
 				>
 					Settings
 					<i class="fas fa-cog"></i>
-				</span>
+				</button>
 			</div>
 			<template v-if="drafting">
 				<div id="url-remainder">
@@ -1091,201 +1095,120 @@
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
 			</p>
-			<div class="welcome-cols">
-				<div class="welcome-col">
-					<div class="container" v-if="userID !== sessionOwner && sessionOwner in userByID">
-						<div class="section-title">
-							<h2>Wait for {{ userByID[sessionOwner].userName }}</h2>
-						</div>
-						<div class="welcome-section">
-							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner
-							(<i class="fas fa-crown subtle-gold"></i>). Wait for them to select the options and launch a
-							game! <br />You can still customize your personal options on top of the page. <br />Or, to
-							make a new session that you own, change "Session ID" in the top left.
-						</div>
+			<div class="welcome-sections">
+				<div class="container" style="grid-area: News;">
+					<div class="section-title">
+						<h2>News</h2>
 					</div>
-					<div class="container" v-else>
-						<div class="section-title">
-							<h2>Basic setup</h2>
+					<div class="welcome-section">
+						<div class="news">
+							<em>April 04, 2021</em>
+							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages (STX) support!</p>
 						</div>
-						<div class="welcome-section">
-							One player takes the role of owner of the session (designated with
-							<i class="fas fa-crown subtle-gold"></i>
-							).
-							<ol>
-								<li>Session owner chooses an arbitrary Session ID.</li>
-								<li>
-									Other players join the session by entering its ID or by following the
-									<a @click="sessionURLToClipboard">
-										Session Link
-										<i class="fas fa-share-square"></i>
-									</a>
-									.
-								</li>
-								<li>
-									Owner sets the desired options. (Take a look at
-									<a @click="displayedModal = 'sessionOptions'">all of them</a>)
-								</li>
-								<li>
-									Ready check is performed to make sure everybody is set (
-									<i class="fas fa-user-check"></i>).
-								</li>
-								<li>
-									Once all confirmed, the session owner launches the desired game mode.
-								</li>
-							</ol>
+						<div class="news">
+							<em>March 28, 2021</em>
+							<p>
+								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
+								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+							</p>
 						</div>
-					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>Collection Import</h2>
-						</div>
-						<div class="welcome-section">
-							Each player can import their MTGA collection to restrict the card pool to cards they own.
-							(Session owners can bypass this feature by enabling "Ignore Collections"):
-							<ol>
-								<li>
-									Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
-									work. The toggle can be found in "Options > Account > Detailed Logs (Plugin
-									Support)".
-								</li>
-								<li>
-									<a onclick="document.querySelector('#file-input').click()">Upload</a>
-									your MTGA log file "Player.log" located in
-									<tt
-										class="clickable"
-										@click="logPathToClipboard"
-										v-tooltip="'Copy path to clipboard'"
-										>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
-									>
-									(Note:
-									<a
-										href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-										target="_blank" rel="noopener nofollow"
-									>
-										AppData folder is hidden by default
-										<i class="fas fa-external-link-alt"></i>
-									</a>
-									).
-								</li>
-							</ol>
-						</div>
-					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>Help</h2>
-						</div>
-						<div class="welcome-section">
-							Visit the
-							<a @click="displayedModal = 'help'">FAQ / Help</a>
-							section.
-							<br />For any question/bug report/feature request you can email to
-							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-							or join the
-							<a href="https://discord.gg/XscXXNw">MTGADraft Discord</a>.
+						<div class="news">
+							<em>March 06, 2021</em>
+							<p>
+								<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
+								Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
+							</p>
 						</div>
 					</div>
 				</div>
-				<div class="welcome-col">
-					<div class="container">
-						<div class="section-title">
-							<h2>Public Sessions</h2>
+				<div class="container" style="grid-area: Help;">
+					<div class="section-title">
+						<h2>Help</h2>
+					</div>
+					<div class="welcome-section welcome-alt">
+						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a> guide<br />
+						<br />
+						<a @click="displayedModal = 'help'"><i class="fas fa-info-circle"></i> FAQ / Settings Description</a><br />
+						<br />
+						For any question/bug report/feature request you can email to
+						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+						or join the
+						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+					</div>
+				</div>
+				<div class="container" style="grid-area: PublicSessions;">
+					<div class="section-title">
+						<h2>Public Sessions</h2>
+					</div>
+					<div class="welcome-section">
+						<div v-if="userID === sessionOwner" style="display: flex">
+							<button @click="isPublic = !isPublic">
+								Set session as {{ isPublic ? "Private" : "Public" }}
+							</button>
+							<delayed-input
+								style="flex-grow: 1"
+								v-model="description"
+								type="text"
+								placeholder="Enter a description for your session"
+								maxlength="70"
+							/>
 						</div>
-						<div class="welcome-section">
-							<div v-if="userID === sessionOwner" style="display: flex">
-								<button @click="isPublic = !isPublic">
-									Set session as {{ isPublic ? "Private" : "Public" }}
-								</button>
-								<delayed-input
-									style="flex-grow: 1"
-									v-model="description"
-									type="text"
-									placeholder="Enter a description for your session"
-									maxlength="70"
-								/>
-							</div>
 
-							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
-							<table v-else class="public-sessions">
-								<thead>
-									<tr>
-										<th>ID</th>
-										<th>Set</th>
-										<th>Players</th>
-										<th>Description</th>
-										<th>Join</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="s in publicSessions" :key="s.id">
-										<td :title="s.id" class="id">{{ s.id }}</td>
-										<td
-											v-tooltip="
-												s.cube
-													? 'Cube'
-													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
-											"
-										>
-											<template v-if="s.cube">
-												<img src="./assets/img/cube.png" class="set-icon" />
-											</template>
-											<template v-else-if="s.sets.length === 1">
-												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
-											</template>
-											<template v-else-if="s.sets.length === 0">All</template>
-											<template v-else>[{{ s.sets.length }}]</template>
-										</td>
-										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
-										<td class="desc">{{ s.description }}</td>
-										<td>
-											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
-											<i
-												class="fas fa-check green"
-												v-tooltip="`You are in this session!`"
-												v-else
-											></i>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+						<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+						<table v-else class="public-sessions">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Set(s)</th>
+									<th>Players</th>
+									<th>Description</th>
+									<th>Join</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="s in publicSessions" :key="s.id">
+									<td :title="s.id" class="id">{{ s.id }}</td>
+									<td
+										v-tooltip="
+											s.cube
+												? 'Cube'
+												: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+										"
+									>
+										<template v-if="s.cube">
+											<img src="./assets/img/cube.png" class="set-icon" />
+										</template>
+										<template v-else-if="s.sets.length === 1">
+											<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+										</template>
+										<template v-else-if="s.sets.length === 0">All</template>
+										<template v-else>[{{ s.sets.length }}]</template>
+									</td>
+									<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+									<td class="desc">{{ s.description }}</td>
+									<td>
+										<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+										<i
+											class="fas fa-check green"
+											v-tooltip="`You are in this session!`"
+											v-else
+										></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>News</h2>
-						</div>
-						<div class="welcome-section">
-							<div class="news">
-								<em>April 04, 2021</em>
-								<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages support!</p>
-							</div>
-							<div class="news">
-								<em>March 28, 2021</em>
-								<p>
-									Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-									<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
-								</p>
-							</div>
-							<div class="news">
-								<em>March 06, 2021</em>
-								<p>
-									<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
-									Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
-								</p>
-							</div>
-						</div>
+				</div>
+				<div class="container" style="grid-area: Tools;">
+					<div class="section-title">
+						<h2>Tools</h2>
 					</div>
-					<div class="container">
-						<div class="section-title">
-							<h2>Tools</h2>
-						</div>
-						<div class="welcome-section">
-							<ul>
-								<li>
-									<a @click="displayedModal = 'importdeck'">Card List Importer</a>
-								</li>
-							</ul>
-						</div>
+					<div class="welcome-section welcome-alt">
+						<ul>
+							<li>
+								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -1298,7 +1221,7 @@
 				<div class="faq">
 					<strong>Can we play cube?</strong>
 					<p>
-						Yes! You can import custom list of cards in text format in the options.
+						Yes! You can import custom list of cards in text format in the settings.
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 					</p>
 					<strong>How can we adjust the packs content for cubes?</strong>
@@ -1311,10 +1234,10 @@
 					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
 				</div>
 				<br />
-				<h2>Options Description</h2>
+				<h2>Settings Description</h2>
 				<div class="help-options">
 					<div style="width: 50%">
-						<strong>Session options</strong>
+						<strong>Session settings</strong>
 						(Only accessible to the session owner, shared by everyone in your session)
 						<ul>
 							<li>
@@ -1343,7 +1266,7 @@
 							Settings
 							<i class="fas fa-cog"></i>
 						</span>
-						for some additional options:
+						for some additional settings:
 						<ul>
 							<li>
 								<span class="option-name">Public</span>
@@ -1369,7 +1292,7 @@
 						</ul>
 					</div>
 					<div style="width: 50%">
-						<strong>Personal options</strong>
+						<strong>Personal settings</strong>
 						<ul>
 							<li>
 								<span class="option-name">Language</span>
@@ -1398,6 +1321,103 @@
 						</ul>
 					</div>
 				</div>
+			</div>
+		</modal>
+		<modal v-if="displayedModal === 'gettingStarted'" @close="displayedModal = ''">
+			<h2 slot="header">Getting Started</h2>
+			<div slot="body">
+				<div>
+					<div class="section-title">
+						<h2>As a Player</h2>
+					</div>
+					<p>
+						Customize your personal settings, like your User Name or Card Language on top of the page.
+						<br />
+						<span v-if="userID !== sessionOwner">
+							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
+							<ul>
+								<li>Wait for them to select the settings and launch a game!</li>
+								<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
+							</ul>
+						</span>
+					</p>
+				</div>
+				<div>
+					<div class="section-title">
+						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently {{ userByID[sessionOwner].userName }})</span></h2>
+					</div>
+					<p>
+						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
+						<ol>
+							<li>Session owner chooses an arbitrary Session ID.</li>
+							<li>
+								Other players join the session by entering its ID or by following the
+								<a @click="sessionURLToClipboard">
+									Session Link
+									<i class="fas fa-share-square"></i>
+								</a>
+								.
+							</li>
+							<li>
+								Owner sets the desired settings. (Take a look at
+								<a @click="displayedModal = 'sessionOptions'"><i class="fas fa-cog"></i> all of them</a>)
+							</li>
+							<li>
+								Ready check is performed to make sure everybody is set (<i class="fas fa-user-check"></i>).
+							</li>
+							<li>
+								Once all confirmed, the session owner launches the desired game mode.
+							</li>
+						</ol>
+					</p>
+				</div>
+			</div>
+		</modal>
+		<modal v-if="displayedModal === 'collectionHelp'" @close="displayedModal = ''">
+			<h2 slot="header">Collection Import Help</h2>
+			<div slot="body" style="font-size: 1.1em">
+				Each player can import their MTGA collection to restrict the card pool to cards they own.
+				(Session owners can bypass this feature by enabling "Ignore Collections"):
+				<ol>
+					<li>
+						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
+						work. The toggle can be found in <em>Options > Account > Detailed Logs (Plugin
+						Support)</em>.
+					</li>
+					<li>
+						<a onclick="document.querySelector('#file-input').click()">Upload</a>
+						your MTGA log file "Player.log" located in
+						<ul>
+							<li>
+								<i class="fab fa-windows"></i>
+								<tt
+									class="clickable"
+									@click="toClipboard('%userprofile%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\', 'Default log path copied to clipboard! (Windows)')" 
+									v-tooltip="'Copy Windows path to clipboard'"
+									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
+								>
+								(Note:
+								<a
+									href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
+									target="_blank" rel="noopener nofollow"
+								>
+									AppData folder is hidden by default
+									<i class="fas fa-external-link-alt"></i>
+								</a>
+								).
+							</li>
+							<li>
+								<i class="fab fa-apple"></i>
+								<tt class="clickable" 
+									@click="toClipboard('~/Library/Logs/Wizards Of The Coast/MTGA/', 'Default log path copied to clipboard! (macOS)')" 
+									v-tooltip="'Copy macOS path to clipboard'" >
+									Home/Library/Logs/Wizards Of The Coast/MTGA/
+								</tt>
+							</li>
+						</ul>
+						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
+					</li>
+				</ol>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'importdeck'" @close="displayedModal = ''">
@@ -1462,7 +1482,7 @@
 			></collection>
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
-			<h2 slot="header">Additional Session Options</h2>
+			<h2 slot="header">Additional Session Settings</h2>
 			<div slot="body" class="session-options-container" :class="{ disabled: userID != sessionOwner }">
 				<div class="option-column option-column-left">
 					<div
@@ -1661,7 +1681,7 @@
 					</div>
 				</div>
 				<div class="option-column option-column-right">
-					<h4>Draft Specific Options</h4>
+					<h4>Draft Specific Settings</h4>
 					<div
 						class="line"
 						v-tooltip.right="{
@@ -1996,11 +2016,9 @@
 				</a>
 			</span>
 			<span>
-				<a href="mailto:mtgadraft@gmail.com">Contact</a>
-			</span>
-			<span>
-				Get
-				<a href="https://magic.wizards.com/fr/mtgarena" target="_blank" rel="noopener nofollow">Magic: The Gathering Arena</a>
+				<a href="mailto:mtgadraft@gmail.com" title="Email"><i class="fas fa-envelope fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
+				<a href="https://discord.gg/XscXXNw" title="Discord" target="_blank" rel="noopener nofollow"><i class="fab fa-discord fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
+				<a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"><i class="fab fa-github fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
 			</span>
 		</footer>
 		<div

@@ -75,7 +75,12 @@ select.swal2-input option {
 #main-container input[type="button"]:active,
 #main-container button:active {
 	box-shadow: inset 2px 2px 8px -3px #000, inset -2px -2px 8px -3px #888;
-	transform: translateY(2px);
+	transform: translateY(1px);
+}
+
+#main-container button.flat {
+	box-shadow: initial;
+	background-color: #383838;
 }
 
 #main-container .button,
@@ -380,34 +385,33 @@ select.swal2-input option {
 	font-size: 1.4rem;
 }
 
-.welcome-cols {
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
+.welcome-sections {
+	width: 85%;
+	margin: auto;
 }
 
 @media (orientation: portrait) {
-	.welcome-cols {
+	.welcome-sections {
+		display: flex;
 		flex-direction: column;
-	}
-
-	.welcome-col {
-		width: 100%;
 	}
 }
 
 @media (orientation: landscape) {
-	.welcome-cols {
-		flex-direction: row;
-	}
-
-	.welcome-col {
-		width: 48%;
+	.welcome-sections {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		grid-template-rows: auto auto auto;
+		gap: 0 1em;
+		grid-template-areas:
+			"News News Help"
+			"News News Tools"
+			"PublicSessions PublicSessions PublicSessions";
 	}
 }
 
 .welcome-section {
-	padding: 0.5em;
+	padding: 0.75em;
 	background-color: #282828d0;
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
@@ -415,6 +419,8 @@ select.swal2-input option {
 
 .welcome-section ul {
 	margin: 0;
+	padding: 0;
+	list-style-type: none;
 }
 
 .welcome-section .news:not(:last-child) {
@@ -423,6 +429,10 @@ select.swal2-input option {
 
 .welcome-section .news p {
 	margin: 0 0 0 1em;
+}
+
+.welcome-alt {
+	background-color: #202020e0;
 }
 
 .public-sessions {
