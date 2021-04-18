@@ -1420,7 +1420,7 @@
 								</tt>
 							</li>
 						</ul>
-						It's easiest to copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
+						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
 					</li>
 				</ol>
 			</div>
