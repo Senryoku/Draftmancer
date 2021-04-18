@@ -342,8 +342,8 @@
 					@click="displayedModal = 'sessionOptions'"
 					class="setting-button flat"
 				>
-					Settings
 					<i class="fas fa-cog"></i>
+					Settings
 				</button>
 			</div>
 			<template v-if="drafting">
@@ -1263,8 +1263,8 @@
 						</ul>
 						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
-							Settings
 							<i class="fas fa-cog"></i>
+							Settings
 						</span>
 						for some additional settings:
 						<ul>
