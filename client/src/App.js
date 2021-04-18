@@ -102,7 +102,7 @@ export default {
 
 			// User Data
 			userID: guid(),
-			userName: getCookie("userName", `Anonymous_${randomStr4()}`),
+			userName: getCookie("userName", `Player_${randomStr4()}`),
 			useCollection: true,
 			collection: {},
 			collectionInfos: {
