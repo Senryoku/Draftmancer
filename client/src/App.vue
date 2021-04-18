@@ -1386,7 +1386,21 @@
 					</li>
 					<li>
 						<a onclick="document.querySelector('#file-input').click()">Upload</a>
-						your MTGA log file "Player.log" located in
+						your MTGA log file "Player.log". Its location is OS-specific:
+						(Note on hidden system folders in
+						<a
+							href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
+							target="_blank" rel="noopener nofollow"
+							>
+							Windows	<i class="fas fa-external-link-alt"></i>
+							</a>
+						and <a
+							href="https://appletoolbox.com/how-to-show-your-user-library-in-macos-high-sierra-and-sierra/"
+							target="_blank" rel="noopener nofollow"
+							>
+							macOS <i class="fas fa-external-link-alt"></i>
+							</a>
+						)
 						<ul>
 							<li>
 								<i class="fab fa-windows"></i>
@@ -1396,15 +1410,6 @@
 									v-tooltip="'Copy Windows path to clipboard'"
 									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 								>
-								(Note:
-								<a
-									href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-									target="_blank" rel="noopener nofollow"
-								>
-									AppData folder is hidden by default
-									<i class="fas fa-external-link-alt"></i>
-								</a>
-								).
 							</li>
 							<li>
 								<i class="fab fa-apple"></i>
@@ -1415,7 +1420,7 @@
 								</tt>
 							</li>
 						</ul>
-						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
+						It's easiest to copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
 					</li>
 				</ol>
 			</div>
