@@ -275,9 +275,9 @@
 							v-model.number="maxTimer"
 						/>
 					</div>
-					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'">Draft</button>
+					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">Draft</button>
 				</span>
-				<span>
+				<span v-show="userID === sessionOwner">
 					<dropdown :class="{ disabled: sessionOwner != userID }">
 						<template v-slot:handle>
 							Other Game Modes
