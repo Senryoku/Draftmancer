@@ -913,7 +913,7 @@
 								@click="exportDeck"
 								v-tooltip.top="'Export deck and sideboard'"
 							>
-								<img class="set-icon" src="./assets/img/mtga-icon.png" style="-webkit-filter: drop-shadow(1px 1px 0 #AAA) drop-shadow(-1px -1px 0 #AAA); filter: drop-shadow(1px 1px 0 #AAA) drop-shadow(-1px -1px 0 #AAA);" /> MTGA
+								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
 								v-if="deck.length > 0"
