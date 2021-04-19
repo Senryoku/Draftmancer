@@ -33,7 +33,7 @@
 					<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
 					<td>{{ value }}</td>
 				</tr>
-				<tr v-if="collectionInfos.vaultProgress" v-tooltip.left="'Vault Progress. For every 100% you'll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'">
+				<tr v-if="collectionInfos.vaultProgress" v-tooltip.left="'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'">
 					<td><img src="../assets/img/vault.png" style="height: 1rem" /></td>
 					<td>{{ collectionInfos.vaultProgress }}%</td>
 				</tr>
