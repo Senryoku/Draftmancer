@@ -1337,7 +1337,7 @@
 					</div>
 					<p>
 						Customize your personal settings, like your User Name or Card Language on top of the page.<br />
-						There are also settings to enable e.g. sound alerts and web notifications in the upper right.
+						There are also toggles to enable e.g. sound alerts and notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
 							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
