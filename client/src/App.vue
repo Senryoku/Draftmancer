@@ -1231,6 +1231,11 @@
 						To change the overall number of cards in a pack without going into more details, you can add the following line on top of your cube file and replace <tt>CardPerBooster</tt> by the desired value:
 						<pre>[SlotName(CardPerBooster)]</pre>
 					</p>
+					<strong>What is the Vault? When does it progress further?</strong>
+					<p>
+						Each time a player receives a fifth copy of a card, that card is not added to his collection. Instead, the Vault Progress increases.<br />
+						Once you reach 100%, a icon is displayed in the client and you can open the Vault in order to request your reward: 1 mythic, 2 rare and 3 uncommon wildcards (per 100%)
+					</p>
 					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
 				</div>
 				<br />
