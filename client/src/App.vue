@@ -373,7 +373,7 @@
 				style="flex: 0 3 auto; text-align: center"
 			>
 				<i
-					class="fas fa-crown subtle-gold"
+					class="fas fa-user-graduate"
 					v-tooltip="
 						sessionOwnerUsername
 							? `${sessionOwnerUsername} is the session owner.`
@@ -434,7 +434,7 @@
 						<div class="status-icons">
 							<i
 								v-if="id === sessionOwner"
-								class="fas fa-crown subtle-gold"
+								class="fas fa-user-graduate"
 								v-tooltip="`${userByID[id].userName} is the session owner.`"
 							></i>
 							<template v-if="userID === sessionOwner && id != sessionOwner">
@@ -528,12 +528,12 @@
 							<div class="status-icons">
 								<i
 									v-if="user.userID === sessionOwner"
-									class="fas fa-crown subtle-gold"
+									class="fas fa-user-graduate"
 									v-tooltip="`${user.userName} is the session's owner.`"
 								></i>
 								<template v-if="userID === sessionOwner && user.userID != sessionOwner">
 									<i
-										class="fas fa-user-plus clickable subtle-gold"
+										class="fas fa-graduation-cap clickable"
 										v-if="ownerIsPlayer"
 										v-tooltip="`Give session ownership to ${user.userName}`"
 										@click="setSessionOwner(user.userID)"
@@ -1335,7 +1335,7 @@
 						There are also toggles to enable e.g. sound alerts and notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
-							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
+							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-user-graduate"></i>):
 							<ul>
 								<li>Wait for them to select the settings and launch a game!</li>
 								<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
@@ -1345,10 +1345,10 @@
 				</div>
 				<div>
 					<div class="section-title">
-						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
+						<h2>As Session owner <i class="fas fa-user-graduate"></i></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
 					</div>
 					<p>
-						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
+						One player takes the role of owner of the session (designated with <i class="fas fa-user-graduate"></i>), by default the first connected player.
 						<ol>
 							<li>Session owner chooses an arbitrary Session ID.</li>
 							<li>
