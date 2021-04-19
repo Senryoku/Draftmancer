@@ -1328,10 +1328,11 @@
 			<div slot="body">
 				<div>
 					<div class="section-title">
-						<h2>As a Player</h2>
+						<h2>As a Player <i class="fas fa-user"></i> <span v-if="userID != sessionOwner">(That's you!)</span></h2>
 					</div>
 					<p>
-						Customize your personal settings, like your User Name or Card Language on top of the page.
+						Customize your personal settings, like your User Name or Card Language on top of the page.<br />
+						There are also settings to enable e.g. sound alerts and web notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
 							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
