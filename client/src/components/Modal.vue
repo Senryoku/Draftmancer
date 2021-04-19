@@ -82,6 +82,7 @@ export default {
 .modal-header {
 	position: relative;
 	text-align: center;
+	padding-right: 2em;
 }
 
 .modal-header h2 {
