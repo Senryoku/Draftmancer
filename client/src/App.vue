@@ -342,8 +342,8 @@
 					@click="displayedModal = 'sessionOptions'"
 					class="setting-button flat"
 				>
-					Settings
 					<i class="fas fa-cog"></i>
+					Settings
 				</button>
 			</div>
 			<template v-if="drafting">
@@ -1263,8 +1263,8 @@
 						</ul>
 						Click on
 						<span @click="displayedModal = 'sessionOptions'" class="clickable">
-							Settings
 							<i class="fas fa-cog"></i>
+							Settings
 						</span>
 						for some additional settings:
 						<ul>
@@ -1344,7 +1344,7 @@
 				</div>
 				<div>
 					<div class="section-title">
-						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently {{ userByID[sessionOwner].userName }})</span></h2>
+						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
 					</div>
 					<p>
 						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
