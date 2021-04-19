@@ -1102,18 +1102,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>April 04, 2021</em>
+							<em>April 4, 2021</em>
 							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages (STX) support!</p>
 						</div>
 						<div class="news">
 							<em>March 28, 2021</em>
 							<p>
 								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfer over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
 							</p>
 						</div>
 						<div class="news">
-							<em>March 06, 2021</em>
+							<em>March 6, 2021</em>
 							<p>
 								<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
 								Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
