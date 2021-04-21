@@ -996,7 +996,7 @@
 										</template>
 									</tr>
 								</table>
-								<div v-if="collectionInfos.vaultProgress" v-tooltip.right="'Vault Progress'" style="display:flex; align-items: center; justify-content: space-evenly; margin: 0.25em 0 0 0"><img src="./assets/img/vault.png" style="height: 1.5rem;"><span style="font-size:0.8em">{{collectionInfos.vaultProgress}}%</span></div>
+								<div v-if="collectionInfos.vaultProgress" v-tooltip.right="'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'" style="display:flex; align-items: center; justify-content: space-evenly; margin: 0.25em 0 0 0"><img src="./assets/img/vault.png" style="height: 1.5rem;"><span style="font-size:0.8em">{{collectionInfos.vaultProgress}}%</span></div>
 							</template>
 						</dropdown>
 						<div class="input-delete-icon" v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'">
@@ -1102,18 +1102,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>April 04, 2021</em>
+							<em>April 4, 2021</em>
 							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages (STX) support!</p>
 						</div>
 						<div class="news">
 							<em>March 28, 2021</em>
 							<p>
 								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfert over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfer over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
 							</p>
 						</div>
 						<div class="news">
-							<em>March 06, 2021</em>
+							<em>March 6, 2021</em>
 							<p>
 								<img src="img/sets/tsr.svg" class="set-icon" style="--invertedness: 100%" />
 								Time Spiral Remastered (TSR) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
@@ -1328,10 +1328,11 @@
 			<div slot="body">
 				<div>
 					<div class="section-title">
-						<h2>As a Player</h2>
+						<h2>As a Player <i class="fas fa-user"></i> <span v-if="userID != sessionOwner">(That's you!)</span></h2>
 					</div>
 					<p>
-						Customize your personal settings, like your User Name or Card Language on top of the page.
+						Customize your personal settings, like your User Name or Card Language on top of the page.<br />
+						There are also toggles to enable e.g. sound alerts and notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
 							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
