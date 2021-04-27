@@ -6,7 +6,7 @@ function exportCardToMTGA(c, language, full) {
 	if (set == "CON") set = "CONF"; // CON is called CONF in MTGA
 	if (set == "AJMP") set = "JMP"; // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
 	let name = c.name;
-	if(language in c.printed_names) name = c.printed_names[language];
+	if (language in c.printed_names) name = c.printed_names[language];
 	let idx = name.indexOf("//");
 	// Ravnica Splits cards needs both names to be imported, others don't
 	if (idx != -1) {
@@ -26,6 +26,15 @@ export default function exportToMTGA(deck, sideboard, language, lands, full = tr
 	}
 	if (sideboard && sideboard.length > 0) {
 		str += full ? "\nSideboard\n" : "\n";
+		sideboard = [...sideboard].sort((a, b) =>
+			a.subtypes.includes("Lesson")
+				? b.subtypes.includes("Lesson")
+					? 0
+					: -1
+				: b.subtypes.includes("Lesson")
+				? 1
+				: 0
+		);
 		for (let c of sideboard) str += exportCardToMTGA(c, language, full);
 		// Add some basic lands to the sideboard
 		for (let c of ["W", "U", "B", "R", "G"]) str += `10 ${Constant.BasicLandNames[language][c]}\n`;
