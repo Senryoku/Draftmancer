@@ -1345,7 +1345,7 @@
 				</div>
 				<div>
 					<div class="section-title">
-						<h2>As Session owner <i class="fas fa-user-graduate"></i></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
+						<h2>As Session owner <i class="fas fa-user-graduate"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
 					</div>
 					<p>
 						One player takes the role of owner of the session (designated with <i class="fas fa-user-graduate"></i>), by default the first connected player.
