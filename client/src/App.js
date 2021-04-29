@@ -1975,13 +1975,16 @@ export default {
 			return r;
 		},
 		// Misc.
-		checkNotificationPermission: function(e) {
-			if (e.target.checked && typeof Notification !== "undefined" && Notification.permission != "granted") {
+		toggleNotifications: function() {
+			this.enableNotifications = !this.enableNotifications;
+			if (
+				this.enableNotifications &&
+				typeof Notification !== "undefined" &&
+				Notification.permission !== "granted"
+			) {
 				Notification.requestPermission().then(function(permission) {
 					this.notificationPermission = permission;
-					if (permission != "granted") {
-						this.enableNotifications = false;
-					}
+					if (permission !== "granted") this.enableNotifications = false;
 				});
 			}
 		},
@@ -2010,7 +2013,7 @@ export default {
 		disconnectedReminder: function() {
 			fireToast("error", "Disconnected from server!");
 		},
-		toClipboard(data, message = 'Copied to clipboard!') {
+		toClipboard(data, message = "Copied to clipboard!") {
 			copyToClipboard(data);
 			fireToast("success", message);
 		},

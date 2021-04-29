@@ -63,29 +63,23 @@
 					<i class="fas fa-list"></i> Game Logs
 				</button>
 			</div>
-			<span>
+			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em;">
+				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
+					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
+					<label for="pickOnDblclick">Pick on Double Click</label>
+				</div>
+				<div style="min-width: 20px;">
 				<i
 					class="fas clickable"
 					:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
 					@click="enableSound = !enableSound"
 					v-tooltip="'Toggle sound.'"
-				></i>
-				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
-					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
-					<label for="pickOnDblclick">Pick on Double Click</label>
-				</div>
-				<span
-					:class="{ disabled: notificationPermission == 'denied' }"
-					v-tooltip="'Enable to get desktop notifications when your draft starts.'"
-				>
-					<input
-						type="checkbox"
-						v-model="enableNotifications"
-						@change="checkNotificationPermission"
-						id="notification-input"
-					/>
-					<label for="notification-input">Notifications</label>
-				</span>
+				/></div>
+				<div style="min-width: 20px; text-align:center;">
+				<i v-tooltip="'Enable to get desktop notifications when your draft starts.'"
+					class="fas clickable"
+					:class="{ disabled: notificationPermission == 'denied', 'fa-bell': enableNotifications, 'fa-bell-slash': !enableNotifications }"
+					@click="toggleNotifications" /></div>
 			</span>
 		</div>
 
