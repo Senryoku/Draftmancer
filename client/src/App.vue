@@ -1328,16 +1328,15 @@
 			<div slot="body">
 				<div>
 					<div class="section-title">
-						<h2>As a Player <i class="fas fa-user"></i> <span v-if="userID != sessionOwner">(That's you!)</span></h2>
+						<h2>As Player <i class="fas fa-user"></i> <span v-if="userID != sessionOwner">(That's you!)</span></h2>
 					</div>
 					<p>
 						Customize your personal settings, like your User Name or Card Language on top of the page.<br />
 						There are also toggles to enable e.g. sound alerts and notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
-							<em>{{ userByID[sessionOwner].userName }}</em> is the session owner (<i class="fas fa-crown subtle-gold"></i>):
 							<ul>
-								<li>Wait for them to select the settings and launch a game!</li>
+								<li>Wait for the session owner (<em>{{ userByID[sessionOwner].userName }} <i class="fas fa-crown subtle-gold"></i></em>) to select the settings and launch the game!</li>
 								<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
 							</ul>
 						</span>
@@ -1360,8 +1359,8 @@
 								.
 							</li>
 							<li>
-								Owner sets the desired settings. (Take a look at
-								<a @click="displayedModal = 'sessionOptions'"><i class="fas fa-cog"></i> all of them</a>)
+								Owner configures the game. (Take a look at all
+								<a @click="displayedModal = 'sessionOptions'"><i class="fas fa-cog"></i> Settings</a>)
 							</li>
 							<li>
 								Ready check is performed to make sure everybody is set (<i class="fas fa-user-check"></i>).
