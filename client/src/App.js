@@ -1980,7 +1980,7 @@ export default {
 			}
 		},
 		pushNotification(title, data) {
-			if (this.enableNotifications) {
+			if (this.enableNotifications && !document.hasFocus()) {
 				new Notification(title, data);
 			}
 		},
