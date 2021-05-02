@@ -1977,12 +1977,12 @@ export default {
 		// Misc.
 		toggleNotifications: function() {
 			this.enableNotifications = !this.enableNotifications;
-			if (
-				this.enableNotifications &&
-				typeof Notification !== "undefined" &&
-				Notification.permission !== "granted"
-			) {
-				Notification.requestPermission().then(function(permission) {
+			if (typeof Notification === "undefined") {
+				this.notificationPermission = "unavailable";
+				return;
+			}
+			if (this.enableNotifications && Notification.permission !== "granted") {
+				Notification.requestPermission().then(permission => {
 					this.notificationPermission = permission;
 					if (permission !== "granted") this.enableNotifications = false;
 				});
