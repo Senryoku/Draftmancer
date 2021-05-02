@@ -173,7 +173,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r'<[^>]*?data-name="([^"]+)"[^>]*?data-rating="([^"]+)">', text)
+                r"(?ms)data-name=\"([^\"]+)\".*?<td>[^<]+<\/td>.*?<td>([\d.]+)<\/td>", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
