@@ -426,11 +426,9 @@ export default {
 
 				this.initReadyCheck();
 
-				if (this.enableNotifications) {
-					new Notification("Are you ready?", {
-						body: `${this.userByID[this.sessionOwner].userName} has initiated a ready check`,
-					});
-				}
+				this.pushNotification("Are you ready?", {
+					body: `${this.userByID[this.sessionOwner].userName} has initiated a ready check`,
+				});
 
 				const ownerUsername =
 					this.sessionOwner in this.userByID
@@ -476,11 +474,9 @@ export default {
 				if (this.userID === currentPlayer) {
 					this.playSound("next");
 					fireToast("success", "Your turn!");
-					if (this.enableNotifications) {
-						new Notification("Your turn!", {
-							body: `This is your turn to pick.`,
-						});
-					}
+					this.pushNotification("Your turn!", {
+						body: `This is your turn to pick.`,
+					});
 					this.draftingState = DraftState.WinstonPicking;
 				} else {
 					this.draftingState = DraftState.WinstonWaiting;
@@ -548,11 +544,9 @@ export default {
 					if (this.userID === state.currentPlayer) {
 						this.playSound("next");
 						fireToast("success", "Your turn!");
-						if (this.enableNotifications) {
-							new Notification("Your turn!", {
-								body: `This is your turn to pick.`,
-							});
-						}
+						this.pushNotification("Your turn!", {
+							body: `This is your turn to pick.`,
+						});
 						this.draftingState = DraftState.GridPicking;
 					} else {
 						this.draftingState = DraftState.GridWaiting;
@@ -616,11 +610,9 @@ export default {
 				if (this.userID === state.currentPlayer) {
 					this.playSound("next");
 					fireToast("success", "Your turn!");
-					if (this.enableNotifications) {
-						new Notification("Your turn!", {
-							body: `This is your turn to pick.`,
-						});
-					}
+					this.pushNotification("Your turn!", {
+						body: `This is your turn to pick.`,
+					});
 					this.draftingState = DraftState.RochesterPicking;
 					this.selectedCards = [];
 				} else {
@@ -675,11 +667,9 @@ export default {
 
 				this.playSound("start");
 
-				if (this.enableNotifications) {
-					new Notification("Now drafting!", {
-						body: `Your ${name} '${this.sessionID}' is starting!`,
-					});
-				}
+				this.pushNotification("Now drafting!", {
+					body: `Your ${name} '${this.sessionID}' is starting!`,
+				});
 				this.pushTitleNotification("🏁");
 			};
 
@@ -832,6 +822,7 @@ export default {
 				this.draftingState = DraftState.Brewing;
 				// Hide waiting popup for sealed
 				if (Swal.isVisible()) Swal.close();
+				this.pushNotification("Cards received!");
 			});
 
 			this.socket.on("timer", data => {
@@ -1986,6 +1977,11 @@ export default {
 					this.notificationPermission = permission;
 					if (permission !== "granted") this.enableNotifications = false;
 				});
+			}
+		},
+		pushNotification(title, data) {
+			if (this.enableNotifications) {
+				new Notification(title, data);
 			}
 		},
 		pushTitleNotification: function(msg) {
