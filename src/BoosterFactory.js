@@ -200,21 +200,22 @@ function rollSpecialCardRarity(cardCounts, targets, options) {
 	let pickedRarity = options.minRarity ?? "uncommon";
 
 	let total = targets.rare;
-	if(pickedRarity === "common") total += targets.common;
-	if(pickedRarity === "common" || pickedRarity === "uncommon") total += targets.uncommon;
+	if (pickedRarity === "common") total += targets.common;
+	if (pickedRarity === "common" || pickedRarity === "uncommon") total += targets.uncommon;
 
 	const rand = Math.random() * total;
-	if(rand < targets.rare) pickedRarity = "rare";
-	else if(rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
-	
-	if(pickedRarity === "rare") {
-		if(cardCounts["rare"] === 0 ||
-		  (cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate))
+	if (rand < targets.rare) pickedRarity = "rare";
+	else if (rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
+
+	if (pickedRarity === "rare") {
+		if (
+			cardCounts["rare"] === 0 ||
+			(cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate)
+		)
 			pickedRarity = "mythic";
 	}
 
-	if(cardCounts[pickedRarity] === 0) 
-		pickedRarity = Object.keys(cardCounts).find(v => cardCounts[v] > 0);
+	if (cardCounts[pickedRarity] === 0) pickedRarity = Object.keys(cardCounts).find(v => cardCounts[v] > 0);
 
 	return pickedRarity;
 }
@@ -226,8 +227,8 @@ function countBySlot(cardPool) {
 }
 
 function insertInBooster(card, booster) {
-	let boosterByRarity = {mythic:[], rare:[], uncommon:[], common:[]};
-	for(let c of booster) boosterByRarity[c.rarity].push(c)
+	let boosterByRarity = { mythic: [], rare: [], uncommon: [], common: [] };
+	for (let c of booster) boosterByRarity[c.rarity].push(c);
 	boosterByRarity[card.rarity].push(card);
 	shuffleArray(boosterByRarity[card.rarity]);
 	return Object.values(boosterByRarity).flat();
@@ -335,8 +336,8 @@ export const SetSpecificFactories = {
 	},
 	cmr: (cardPool, landSlot, options) => {
 		// TODO Add the "Foil Etched" commanders to the foil slot.
-		// They shouldn't be in the card pool at all for now, Probable algorithm: 
-		// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic']) 
+		// They shouldn't be in the card pool at all for now, Probable algorithm:
+		// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic'])
 		// (rate unknown atm; probably the ratio between the size of both pools) then pick a card normaly in the selected pool.
 		// List here: https://mtg.gamepedia.com/Commander_Legends#Notable_cards
 		/*
@@ -353,13 +354,14 @@ export const SetSpecificFactories = {
 		factory.legendaryCreatures = legendaryCreatures;
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
-			// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil 
+			// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
 			// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
-			if(targets === DefaultBoosterTargets) targets = {
-				common: 13,
-				uncommon: 3,
-				rare: 1,
-			};
+			if (targets === DefaultBoosterTargets)
+				targets = {
+					common: 13,
+					uncommon: 3,
+					rare: 1,
+				};
 			const legendaryCounts = countBySlot(this.legendaryCreatures);
 			// Ignore the rule if there's no legendary creatures left
 			if (Object.values(legendaryCounts).every(c => c === 0)) {
@@ -369,7 +371,7 @@ export const SetSpecificFactories = {
 
 				let booster = [];
 				// Prismatic Piper instead of a common in about 1 of every 6 packs
-				if(Math.random() < 1/6) {
+				if (Math.random() < 1 / 6) {
 					--updatedTargets.common;
 					booster = this.originalGenBooster(updatedTargets);
 					booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
@@ -378,9 +380,17 @@ export const SetSpecificFactories = {
 				}
 
 				// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
-				const pickedRarities = [rollSpecialCardRarity(legendaryCounts, targets, options), rollSpecialCardRarity(legendaryCounts, targets, options)];
-				while(pickedRarities[0] === "mythic" && pickedRarities[1] === "mythic" && (legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0)) pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, options);
-				for(let pickedRarity of pickedRarities) {
+				const pickedRarities = [
+					rollSpecialCardRarity(legendaryCounts, targets, options),
+					rollSpecialCardRarity(legendaryCounts, targets, options),
+				];
+				while (
+					pickedRarities[0] === "mythic" &&
+					pickedRarities[1] === "mythic" &&
+					(legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0)
+				)
+					pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, options);
+				for (let pickedRarity of pickedRarities) {
 					const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
 					removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
 					booster.unshift(pickedCard);
@@ -395,9 +405,11 @@ export const SetSpecificFactories = {
 						break;
 					}
 				const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
-				if(pickedFoil.id in this.cardPool[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
-				if(pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity]) removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
-				booster.unshift(Object.assign({foil: true}, pickedFoil));
+				if (pickedFoil.id in this.cardPool[pickedFoil.rarity])
+					removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+				if (pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity])
+					removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+				booster.unshift(Object.assign({ foil: true }, pickedFoil));
 
 				return booster;
 			}
@@ -420,23 +432,34 @@ export const SetSpecificFactories = {
 	// Strixhaven: One card from the Mystical Archive (sta)
 	// Note: This isn't limited by the session collections
 	stx: (cardPool, landSlot, options) => {
-		const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon");
+		const mythicPromotion = options?.mythicPromotion ?? true;
+		const [lessons, filteredCardPool] = filterCardPool(
+			cardPool,
+			cid => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon"
+		);
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.lessonsByRarity = lessons;
-		factory.mysticalArchiveByRarity = {uncommon:{}, rare:{}, mythic:{}};
-		for(let cid of BoosterCardsBySet["sta"])
+		factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+		for (let cid of BoosterCardsBySet["sta"])
 			factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
 		factory.generateBooster = function(targets) {
 			let booster = [];
+			const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
+
+			// Lesson
 			const lessonsCounts = countBySlot(this.lessonsByRarity);
 			if (Object.values(lessonsCounts).every(c => c === 0)) {
 				booster = this.originalGenBooster(targets);
 			} else {
 				const rarityRoll = Math.random();
-				const pickedRarity = rarityRoll < 0.006 && lessonsCounts["mythic"] > 0 ? "mythic" : 
-					rarityRoll < 0.08 && lessonsCounts["rare"] > 0 ? "rare" : 
-					"common";
+				const pickedRarity = allowRares
+					? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
+						? "mythic"
+						: rarityRoll < 0.08 && lessonsCounts["rare"] > 0
+						? "rare"
+						: "common"
+					: "common";
 				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
 				let updatedTargets = Object.assign({}, targets);
@@ -445,15 +468,23 @@ export const SetSpecificFactories = {
 				booster = this.originalGenBooster(updatedTargets);
 				booster.push(pickedLesson);
 			}
-	
+
+			// Mystical Archive
 			const rarityRoll = Math.random();
-			const archiveRarity = rarityRoll < 0.066 ? "mythic" : (rarityRoll < 0.066 + 0.264 ? "rare" : "uncommon");
+			const archiveRarity = allowRares
+				? mythicPromotion && rarityRoll < 0.066
+					? "mythic"
+					: rarityRoll < 0.066 + 0.264
+					? "rare"
+					: "uncommon"
+				: "uncommon";
 			const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
 			booster.push(archive);
+
 			return booster;
 		};
 		return factory;
-	}
+	},
 };
 
 /*
@@ -466,44 +497,55 @@ function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
 	let pick = randomInt(1, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
-	while(acc < pick) {
+	while (acc < pick) {
 		++idx;
 		acc += arr[idx].weight;
 	}
 	// Duplicate protection (allows duplicates between foil and non-foil)
 	// Not sure if we should checks ids or (set, number) here.
-	if(attempt < 10 && picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
-		 return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
+	if (attempt < 10 && picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+		return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
 	return arr[idx];
 }
 
-const CardsBySetAndCollectorNumber = {}
-for(let cid in Cards) {
+const CardsBySetAndCollectorNumber = {};
+for (let cid in Cards) {
 	CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
 }
 
 export const PaperBoosterFactories = {};
-for(let set of PaperBoosterData) {
-	if(!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
-		console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
+for (let set of PaperBoosterData) {
+	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
+		console.log(
+			`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`
+		);
 		continue;
 	}
 
-	set.colorBalancedSheets = {}
-	for(let sheetName in set.sheets) {
-		for(let card of set.sheets[sheetName].cards) {
+	set.colorBalancedSheets = {};
+	for (let sheetName in set.sheets) {
+		for (let card of set.sheets[sheetName].cards) {
 			let num = card.number;
 			card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
-			if(!card.id) { // Special case for double faced cards
-				if(['a', '★'].includes(num[num.length - 1])) num = num.substr(0, num.length - 1)
+			if (!card.id) {
+				// Special case for double faced cards
+				if (["a", "★"].includes(num[num.length - 1])) num = num.substr(0, num.length - 1);
 				card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
 			}
-			if(!card.id) console.log("Error! Could not find corresponding card:", card);
+			if (!card.id) console.log("Error! Could not find corresponding card:", card);
 		}
-		if(set.sheets[sheetName].balance_colors) {
-			set.colorBalancedSheets[sheetName] = {"W": {cards: [], total_weight: 0}, "U": {cards: [], total_weight: 0}, "B": {cards: [], total_weight: 0}, "R": {cards: [], total_weight: 0}, "G": {cards: [], total_weight: 0}, "Mono": {cards: [], total_weight: 0}, "Others": {cards: [], total_weight: 0}};
-			for(let c of set.sheets[sheetName].cards) {
-				if(Cards[c.id].colors.length === 1) {
+		if (set.sheets[sheetName].balance_colors) {
+			set.colorBalancedSheets[sheetName] = {
+				W: { cards: [], total_weight: 0 },
+				U: { cards: [], total_weight: 0 },
+				B: { cards: [], total_weight: 0 },
+				R: { cards: [], total_weight: 0 },
+				G: { cards: [], total_weight: 0 },
+				Mono: { cards: [], total_weight: 0 },
+				Others: { cards: [], total_weight: 0 },
+			};
+			for (let c of set.sheets[sheetName].cards) {
+				if (Cards[c.id].colors.length === 1) {
 					set.colorBalancedSheets[sheetName][Cards[c.id].colors[0]].cards.push(c);
 					set.colorBalancedSheets[sheetName][Cards[c.id].colors[0]].total_weight += c.weight;
 					set.colorBalancedSheets[sheetName]["Mono"].cards.push(c);
@@ -517,9 +559,10 @@ for(let set of PaperBoosterData) {
 	}
 	PaperBoosterFactories[set.code] = function(options = {}) {
 		let possibleContent = set.boosters;
-		if(!options.foil) { // (Attempt to) Filter out sheets with foils if option is disabled.
+		if (!options.foil) {
+			// (Attempt to) Filter out sheets with foils if option is disabled.
 			let nonFoil = set.boosters.filter(e => !Object.keys(e.sheets).some(s => s.includes("foil")));
-			if(nonFoil.length > 0) possibleContent = nonFoil;
+			if (nonFoil.length > 0) possibleContent = nonFoil;
 		}
 		return {
 			set: set,
@@ -527,35 +570,59 @@ for(let set of PaperBoosterData) {
 			possibleContent: possibleContent,
 			generateBooster: function() {
 				const booster = [];
-				const boosterContent = weightedRandomPick(this.possibleContent, this.possibleContent.reduce((acc, val) => acc += val.weight, 0));
-				for(let sheetName in boosterContent.sheets) {
-					if(this.set.sheets[sheetName].balance_colors) {
+				const boosterContent = weightedRandomPick(
+					this.possibleContent,
+					this.possibleContent.reduce((acc, val) => (acc += val.weight), 0)
+				);
+				for (let sheetName in boosterContent.sheets) {
+					if (this.set.sheets[sheetName].balance_colors) {
 						const sheet = this.set.colorBalancedSheets[sheetName];
 						const pickedCards = [];
-						for(let color of "WUBRG") {
-							pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
+						for (let color of "WUBRG") {
+							pickedCards.push(
+								weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards)
+							);
 						}
 						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
 						// Compensate the color balancing to keep a uniform distribution of cards within the sheet.
-						const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * pickedCards.length) / (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
-						for(let i = 0; i < cardsToPick; ++i) {
+						const x =
+							(sheet["Mono"].total_weight * cardsToPick -
+								sheet["Others"].total_weight * pickedCards.length) /
+							(cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
+						for (let i = 0; i < cardsToPick; ++i) {
 							//                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
 							//                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
-							if(Math.random() < x || sheet["Others"].cards.length === 1 && pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
-								pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
+							if (
+								Math.random() < x ||
+								(sheet["Others"].cards.length === 1 &&
+									pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
+							)
+								pickedCards.push(
+									weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards)
+								);
 							else
-								pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards));
+								pickedCards.push(
+									weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards)
+								);
 						}
 						shuffleArray(pickedCards);
 						booster.push(...pickedCards);
 					} else {
-						for(let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
-							booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
+						for (let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
+							booster.push(
+								weightedRandomPick(
+									this.set.sheets[sheetName].cards,
+									this.set.sheets[sheetName].total_weight,
+									booster
+								)
+							);
 						}
 					}
 				}
-				return booster.map(c => c.foil ? Object.assign({foil: true}, getUnique(c.id)) : getUnique(c.id)).reverse();
-			}
+				return booster
+					.map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id)))
+					.reverse();
+			},
 		};
-	}
+	};
 }
