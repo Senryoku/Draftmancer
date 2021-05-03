@@ -58,7 +58,6 @@ describe("Set Specific Booster Rules", function() {
 		let queries = [];
 		for (let i = 0; i < 8; ++i)
 			queries.push({
-				userID: "sameID",
 				sessionID: sessionID,
 				userName: "DontCare",
 			});

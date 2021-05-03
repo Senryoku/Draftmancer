@@ -12,10 +12,17 @@ const ioOptions = {
 	reconnection: false,
 };
 
+let UniqueUserID = 0;
+
 export function connectClient(query) {
+	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
+
 	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions));
 	r.on("alreadyConnected", function(newID) {
 		this.query.userID = newID;
+	});
+	r.on("stillAlive", function(ack) {
+		if (ack) ack();
 	});
 	return r;
 }
