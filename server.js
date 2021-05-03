@@ -11,7 +11,7 @@ import request from "request";
 import compression from "compression";
 import express from "express";
 const app = express();
-import http from "http";
+import http, { Server } from "http";
 const httpServer = http.Server(app);
 import socketIO from "socket.io";
 const io = socketIO(httpServer);
@@ -25,12 +25,12 @@ import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
 import { Cards, MTGACards, getUnique } from "./src/Cards.js";
-import { parseLine, parseCardList, XMageToArena} from "./src/parseCardList.js";
+import { parseLine, parseCardList, XMageToArena } from "./src/parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(bodyParser.text({type:"text/*"}));
+app.use(bodyParser.text({ type: "text/*" }));
 
 function shortguid() {
 	function s4() {
@@ -123,7 +123,7 @@ const parseCustomCardList = function(session, txtlist, options, ack) {
 
 const socketCallbacks = {
 	// Personnal options
-	"setUserName": function(userID, sessionID, userName) {
+	setUserName: function(userID, sessionID, userName) {
 		Connections[userID].userName = userName;
 		Sessions[sessionID].forUsers(user =>
 			Connections[user].socket.emit("updateUser", {
@@ -134,7 +134,7 @@ const socketCallbacks = {
 			})
 		);
 	},
-	"setCollection": function(userID, sessionID, collection, ack) {
+	setCollection: function(userID, sessionID, collection, ack) {
 		if (typeof collection !== "object" || collection === null) return;
 
 		let processedCollection = {};
@@ -160,7 +160,7 @@ const socketCallbacks = {
 				})
 			);
 	},
-	"useCollection": function(userID, sessionID, useCollection) {
+	useCollection: function(userID, sessionID, useCollection) {
 		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
 
 		Connections[userID].useCollection = useCollection;
@@ -174,28 +174,28 @@ const socketCallbacks = {
 				})
 			);
 	},
-	"chatMessage": function(userID, sessionID, message) {
+	chatMessage: function(userID, sessionID, message) {
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
 		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("chatMessage", message));
 	},
-	"setReady": function(userID, sessionID, readyState) {
+	setReady: function(userID, sessionID, readyState) {
 		const sess = Sessions[sessionID];
 		sess.forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
 	},
 
-	"pickCard": function(userID, sessionID, data, ack) {
+	pickCard: function(userID, sessionID, data, ack) {
 		// Removes picked card from corresponding booster and notify other players.
 		// Moves to next round when each player have picked a card.
 		try {
 			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
-		} catch(err) {
+		} catch (err) {
 			console.error("Error in pickCard:", err);
 			console.error(Sessions[sessionID]);
 			ack?.({ code: 500, error: "Internal server error." });
 		}
 	},
-	"gridDraftPick": function(userID, sessionID, choice, ack) {
+	gridDraftPick: function(userID, sessionID, choice, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.gridDraftState) {
 			ack?.({ code: 3, error: "Not drafting." });
@@ -212,7 +212,7 @@ const socketCallbacks = {
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
-	"rochesterDraftPick": function(userID, sessionID, choices, ack) {
+	rochesterDraftPick: function(userID, sessionID, choices, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.rochesterDraftState) {
 			ack?.({ code: 3, error: "Not drafting." });
@@ -230,7 +230,7 @@ const socketCallbacks = {
 		else ack?.({ code: 0 });
 	},
 	// Winston Draft
-	"winstonDraftTakePile": function(userID, sessionID, ack) {
+	winstonDraftTakePile: function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.winstonDraftState) {
 			ack?.({ code: 2, error: "Not drafting." });
@@ -247,7 +247,7 @@ const socketCallbacks = {
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
-	"winstonDraftSkipPile": function(userID, sessionID, ack) {
+	winstonDraftSkipPile: function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting || !sess.winstonDraftState) {
 			ack?.({ code: 1, error: "Not drafting." });
@@ -264,19 +264,18 @@ const socketCallbacks = {
 		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
 		else ack?.({ code: 0 });
 	},
-	"shareDecklist": function(userID, sessionID, decklist) {
+	shareDecklist: function(userID, sessionID, decklist) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
 	},
-	"updateBracket": function(userID, sessionID, results) {
-		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock)
-			return;
+	updateBracket: function(userID, sessionID, results) {
+		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock) return;
 		Sessions[sessionID].updateBracket(results);
 	},
-}
+};
 
 // Socket callback available only to session owners
 const ownerSocketCallbacks = {
-	"setOwnerIsPlayer": function(userID, sessionID, val) {
+	setOwnerIsPlayer: function(userID, sessionID, val) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 
@@ -291,7 +290,7 @@ const ownerSocketCallbacks = {
 		for (let user of sess.users)
 			if (user != userID) Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	},
-	"readyCheck": function(userID, sessionID, ack) {
+	readyCheck: function(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) {
 			ack?.({ code: 1 });
@@ -301,7 +300,7 @@ const ownerSocketCallbacks = {
 		ack?.({ code: 0 });
 		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("readyCheck");
 	},
-	"startDraft": function(userID, sessionID) {
+	startDraft: function(userID, sessionID) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 
@@ -321,7 +320,7 @@ const ownerSocketCallbacks = {
 			startPublicSession(sess);
 		}
 	},
-	"stopDraft": function(userID, sessionID) {
+	stopDraft: function(userID, sessionID) {
 		const sess = Sessions[sessionID];
 		if (!sess.drafting) return;
 		if (sess.winstonDraftState) sess.endWinstonDraft();
@@ -329,17 +328,17 @@ const ownerSocketCallbacks = {
 		else if (sess.rochesterDraftState) sess.endRochesterDraft();
 		else sess.endDraft();
 	},
-	"pauseDraft": function(userID, sessionID) {
+	pauseDraft: function(userID, sessionID) {
 		Sessions[sessionID].pauseDraft();
 	},
-	"resumeDraft": function(userID, sessionID) {
+	resumeDraft: function(userID, sessionID) {
 		Sessions[sessionID].resumeDraft({ title: "Draft Resumed" });
 	},
-	"startGridDraft": function(userID, sessionID, boosterCount) {
+	startGridDraft: function(userID, sessionID, boosterCount) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
-			if(typeof boosterCount === "string") boosterCount = parseInt(boosterCount);
+			if (typeof boosterCount === "string") boosterCount = parseInt(boosterCount);
 			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
 			startPublicSession(sess);
 		} else {
@@ -349,7 +348,7 @@ const ownerSocketCallbacks = {
 			});
 		}
 	},
-	"startRochesterDraft": function(userID, sessionID) {
+	startRochesterDraft: function(userID, sessionID) {
 		const sess = Sessions[sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 
@@ -363,7 +362,7 @@ const ownerSocketCallbacks = {
 			startPublicSession(sess);
 		}
 	},
-	"startWinstonDraft": function(userID, sessionID, boosterCount) {
+	startWinstonDraft: function(userID, sessionID, boosterCount) {
 		const sess = Sessions[sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
@@ -377,7 +376,7 @@ const ownerSocketCallbacks = {
 		}
 	},
 	// Session Settings
-	"setSessionOwner": function(userID, sessionID, newOwnerID) {
+	setSessionOwner: function(userID, sessionID, newOwnerID) {
 		const sess = Sessions[sessionID];
 		if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
 
@@ -399,7 +398,7 @@ const ownerSocketCallbacks = {
 			)
 		);
 	},
-	"removePlayer": function(userID, sessionID, userToRemove) {
+	removePlayer: function(userID, sessionID, userToRemove) {
 		if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
 
 		removeUserFromSession(userToRemove);
@@ -414,15 +413,13 @@ const ownerSocketCallbacks = {
 			text: `You've been removed from session '${sessionID}' by its owner.`,
 		});
 	},
-	"setSeating": function(userID, sessionID, seating) {
-		if (!Sessions[sessionID].setSeating(seating)) 
-			Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
+	setSeating: function(userID, sessionID, seating) {
+		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
-	"randomizeSeating": function(userID, sessionID) {
-		if (!Sessions[sessionID].randomizeSeating()) 
-			Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
+	randomizeSeating: function(userID, sessionID) {
+		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
-	"boostersPerPlayer": function(userID, sessionID, boostersPerPlayer) {
+	boostersPerPlayer: function(userID, sessionID, boostersPerPlayer) {
 		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
 		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
 
@@ -430,7 +427,7 @@ const ownerSocketCallbacks = {
 
 		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
 	},
-	"teamDraft": function(userID, sessionID, teamDraft) {
+	teamDraft: function(userID, sessionID, teamDraft) {
 		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
 		if (!(typeof teamDraft === "boolean")) return;
 
@@ -438,7 +435,7 @@ const ownerSocketCallbacks = {
 
 		Sessions[sessionID].setTeamDraft(teamDraft);
 	},
-	"setDistributionMode": function(userID, sessionID, distributionMode) {
+	setDistributionMode: function(userID, sessionID, distributionMode) {
 		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
 
 		Sessions[sessionID].distributionMode = distributionMode;
@@ -447,16 +444,15 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
 		}
 	},
-	"setCustomBoosters": function(userID, sessionID, customBoosters) {
+	setCustomBoosters: function(userID, sessionID, customBoosters) {
 		if (!Array.isArray(customBoosters)) return;
 
 		Sessions[sessionID].customBoosters = customBoosters;
 		for (let user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
+			if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
 		}
 	},
-	"bots": function(userID, sessionID, bots) {
+	bots: function(userID, sessionID, bots) {
 		if (!Number.isInteger(bots)) bots = parseInt(bots);
 		if (!Number.isInteger(bots)) return;
 
@@ -467,7 +463,7 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("bots", bots);
 		}
 	},
-	"setRestriction": function(userID, sessionID, setRestriction) {
+	setRestriction: function(userID, sessionID, setRestriction) {
 		if (!Array.isArray(setRestriction)) return;
 
 		if (setRestriction.length > 0) {
@@ -484,93 +480,107 @@ const ownerSocketCallbacks = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	"parseCustomCardList": function(userID, sessionID, customCardList, ack) {
+	parseCustomCardList: function(userID, sessionID, customCardList, ack) {
 		if (!customCardList) {
 			ack?.({ code: 1, type: "error", title: "No list supplied." });
 			return;
 		}
 		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	},
-	"loadFromCubeCobra": function(userID, sessionID, data, ack) {
+	loadFromCubeCobra: function(userID, sessionID, data, ack) {
 		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
 		// Plain text card list
 		const fromTextList = (userID, sessionID, data, ack) => {
-			request({ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-				try {
-					if (err) {
-						ack?.({
-							type: "error",
-							title: "Error",
-							text: "Couldn't retrieve the card list from Cube Cobra.",
-							footer: `Full error: ${err}`,
-							error: err,
-						});
-						return;
-					} else if(res.statusCode !== 200) {
-						ack?.({
-							type: "error",
-							title: "Error retrieving cube.",
-							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-						});
-						return;
-					} else if(body === "Cube not found.") {
-						ack?.({
-							type: "error",
-							title: "Cube not found.",
-							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-							error: err,
-						});
-						return;
-					} else {
-						parseCustomCardList(Sessions[sessionID], body, data, ack);
+			request(
+				{ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 },
+				(err, res, body) => {
+					try {
+						if (err) {
+							ack?.({
+								type: "error",
+								title: "Error",
+								text: "Couldn't retrieve the card list from Cube Cobra.",
+								footer: `Full error: ${err}`,
+								error: err,
+							});
+							return;
+						} else if (res.statusCode !== 200) {
+							ack?.({
+								type: "error",
+								title: "Error retrieving cube.",
+								text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+							});
+							return;
+						} else if (body === "Cube not found.") {
+							ack?.({
+								type: "error",
+								title: "Cube not found.",
+								text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+								error: err,
+							});
+							return;
+						} else {
+							parseCustomCardList(Sessions[sessionID], body, data, ack);
+						}
+					} catch (e) {
+						ack?.({ type: "error", title: "Internal server error." });
 					}
-				} catch(e) {
-					ack?.({type: "error", title: "Internal server error."});
 				}
-			});
-		}
-		if(data.matchVersions) {
+			);
+		};
+		if (data.matchVersions) {
 			// Xmage (.dck) format
-			request({ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 }, (err, res, body) => {
-				try {
-					if (err) {
-						ack?.({
-							type: "error",
-							title: "Error",
-							text: "Couldn't retrieve the card list from Cube Cobra.",
-							footer: `Full error: ${err}`,
-							error: err,
-						});
-						return;
-					} else if(res.statusCode !== 200) {
-						ack?.({
-							type: "error",
-							title: "Error retrieving cube.",
-							text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
-						});
-						return;
-					} else if(res.req.path.includes("404")) { // Missing cube redirects to /404
-						ack?.({
-							type: "error",
-							title: "Cube not found.",
-							text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
-							error: err,
-						});
-						return;
-					} else {
-						let converted = XMageToArena(body);
-						if(!converted) fromTextList(userID, sessionID, data, ack); // Fallback to plain text list
-						else parseCustomCardList(Sessions[sessionID], converted, Object.assign({fallbackToCardName: true}, data), ack);
+			request(
+				{ url: `https://cubecobra.com/cube/download/xmage/${data.cubeID}`, timeout: 3000 },
+				(err, res, body) => {
+					try {
+						if (err) {
+							ack?.({
+								type: "error",
+								title: "Error",
+								text: "Couldn't retrieve the card list from Cube Cobra.",
+								footer: `Full error: ${err}`,
+								error: err,
+							});
+							return;
+						} else if (res.statusCode !== 200) {
+							ack?.({
+								type: "error",
+								title: "Error retrieving cube.",
+								text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
+							});
+							return;
+						} else if (res.req.path.includes("404")) {
+							// Missing cube redirects to /404
+							ack?.({
+								type: "error",
+								title: "Cube not found.",
+								text: `Cube '${data.cubeID}' not found on Cube Cobra.`,
+								error: err,
+							});
+							return;
+						} else {
+							let converted = XMageToArena(body);
+							if (!converted) fromTextList(userID, sessionID, data, ack);
+							// Fallback to plain text list
+							else
+								parseCustomCardList(
+									Sessions[sessionID],
+									converted,
+									Object.assign({ fallbackToCardName: true }, data),
+									ack
+								);
+						}
+					} catch (e) {
+						ack?.({ type: "error", title: "Internal server error." });
 					}
-				} catch(e) {
-					ack?.({type: "error", title: "Internal server error."});
 				}
-			});
+			);
 		} else {
 			fromTextList(userID, sessionID, data, ack);
 		}
 	},
-	"loadLocalCustomCardList": function(userID, sessionID, cubeName, ack) {
+	loadLocalCustomCardList: function(userID, sessionID, cubeName, ack) {
 		if (!(cubeName in ParsedCubeLists)) {
 			ack?.({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
 			return;
@@ -580,14 +590,14 @@ const ownerSocketCallbacks = {
 
 		ack?.({ code: 0 });
 	},
-	"ignoreCollections": function(userID, sessionID, ignoreCollections) {
+	ignoreCollections: function(userID, sessionID, ignoreCollections) {
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
 		for (let user of Sessions[sessionID].users) {
 			if (user != userID)
 				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
 		}
 	},
-	"setPickTimer": function(userID, sessionID, timerValue) {
+	setPickTimer: function(userID, sessionID, timerValue) {
 		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
 		if (!Number.isInteger(timerValue) || timerValue < 0) return;
 
@@ -596,7 +606,7 @@ const ownerSocketCallbacks = {
 			if (user != userID) Connections[user].socket.emit("setPickTimer", timerValue);
 		}
 	},
-	"setMaxPlayers": function(userID, sessionID, maxPlayers) {
+	setMaxPlayers: function(userID, sessionID, maxPlayers) {
 		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
 		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
 
@@ -605,41 +615,42 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
 		}
 	},
-	"setMythicPromotion": function(userID, sessionID, mythicPromotion) {
+	setMythicPromotion: function(userID, sessionID, mythicPromotion) {
 		if (typeof mythicPromotion !== "boolean") return;
 
 		Sessions[sessionID].mythicPromotion = mythicPromotion;
 		for (let user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
+			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
 		}
 	},
-	"setBoosterContent": function(userID, sessionID, boosterContent) {
+	setBoosterContent: function(userID, sessionID, boosterContent) {
 		// Validate input (a value for each rarity and at least one card)
-		if(boosterContent === null || !(typeof boosterContent  === 'object')) return;
+		if (boosterContent === null || !(typeof boosterContent === "object")) return;
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
-		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r])) return;
-		if(Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
+		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r]))
+			return;
+		if (Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
 
 		Sessions[sessionID].boosterContent = boosterContent;
 		for (let user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
+			if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
-	"setUsePredeterminedBoosters": function(userID, sessionID, value, ack) {
+	setUsePredeterminedBoosters: function(userID, sessionID, value, ack) {
 		Sessions[sessionID].usePredeterminedBoosters = value;
-		Sessions[sessionID].forNonOwners(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
-		ack?.({code: 0});
+		Sessions[sessionID].forNonOwners(uid =>
+			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
+		);
+		ack?.({ code: 0 });
 	},
-	"setBoosters": function(userID, sessionID, text, ack) {
+	setBoosters: function(userID, sessionID, text, ack) {
 		try {
 			let boosters = [];
 			let booster = [];
-			for(let line of text.split('\n')) {
-				if(!line || line === "") {
-					if(booster.length === 0) continue;
+			for (let line of text.split("\n")) {
+				if (!line || line === "") {
+					if (booster.length === 0) continue;
 					boosters.push(booster);
 					booster = [];
 				} else {
@@ -647,7 +658,7 @@ const ownerSocketCallbacks = {
 					if (typeof cardID !== "undefined") {
 						for (let i = 0; i < count; ++i) {
 							let card = getUnique(cardID);
-							if(foil) card.foil = true;
+							if (foil) card.foil = true;
 							booster.push(card);
 						}
 					} else {
@@ -656,39 +667,45 @@ const ownerSocketCallbacks = {
 					}
 				}
 			}
-			if(booster.length > 0) boosters.push(booster);
-			
-			if(boosters.length === 0) {
-				ack?.({ error: {title: "Empty list" }});
+			if (booster.length > 0) boosters.push(booster);
+
+			if (boosters.length === 0) {
+				ack?.({ error: { title: "Empty list" } });
 				return;
 			}
-			for(let i = 1; i < boosters.length; ++i) {
-				if(boosters[i].length !== boosters[0].length) {
-					ack?.({ error: {
-						title: "Inconsistent booster sizes", 
-						text: `All boosters must be of the same size. Booster #${i+1} has ${boosters[i].length} cards, expected ${boosters[0].length}.`
-					}});
+			for (let i = 1; i < boosters.length; ++i) {
+				if (boosters[i].length !== boosters[0].length) {
+					ack?.({
+						error: {
+							title: "Inconsistent booster sizes",
+							text: `All boosters must be of the same size. Booster #${i + 1} has ${
+								boosters[i].length
+							} cards, expected ${boosters[0].length}.`,
+						},
+					});
 					return;
 				}
 			}
 
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;
-			Sessions[sessionID].forUsers(uid => Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true }));
+			Sessions[sessionID].forUsers(uid =>
+				Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true })
+			);
 			ack?.({ code: 0 });
-		} catch(e) {
-			ack?.({ error: {title: "Internal error."} });
+		} catch (e) {
+			ack?.({ error: { title: "Internal error." } });
 		}
 	},
-	"shuffleBoosters": function(userID, sessionID, ack) {
-		if(!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
-			ack?.({ error: {type:"error", title: "No boosters to shuffle."}});
+	shuffleBoosters: function(userID, sessionID, ack) {
+		if (!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
+			ack?.({ error: { type: "error", title: "No boosters to shuffle." } });
 		} else {
 			shuffleArray(Sessions[sessionID].boosters);
 			ack?.({ code: 0 });
 		}
 	},
-	"setDraftLogRecipients": function(userID, sessionID, draftLogRecipients) {
+	setDraftLogRecipients: function(userID, sessionID, draftLogRecipients) {
 		if (typeof draftLogRecipients !== "string") return;
 		draftLogRecipients = draftLogRecipients.toLowerCase();
 		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
@@ -700,9 +717,14 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	"setMaxDuplicates": function(userID, sessionID, maxDuplicates) {
-		if(maxDuplicates !== null && !(typeof maxDuplicates  === 'object')) return;
-		if((maxDuplicates !== null && typeof maxDuplicates  === 'object') && Object.values(maxDuplicates).some(i => !Number.isInteger(i))) return;
+	setMaxDuplicates: function(userID, sessionID, maxDuplicates) {
+		if (maxDuplicates !== null && !(typeof maxDuplicates === "object")) return;
+		if (
+			maxDuplicates !== null &&
+			typeof maxDuplicates === "object" &&
+			Object.values(maxDuplicates).some(i => !Number.isInteger(i))
+		)
+			return;
 
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
 		for (let user of Sessions[sessionID].users) {
@@ -712,7 +734,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	"setColorBalance": function(userID, sessionID, colorBalance) {
+	setColorBalance: function(userID, sessionID, colorBalance) {
 		if (colorBalance === Sessions[sessionID].colorBalance) return;
 
 		Sessions[sessionID].colorBalance = colorBalance;
@@ -723,7 +745,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	"setFoil": function(userID, sessionID, foil) {
+	setFoil: function(userID, sessionID, foil) {
 		if (foil === Sessions[sessionID].foil) return;
 
 		Sessions[sessionID].foil = foil;
@@ -734,8 +756,12 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	"setCollationType": function(userID, sessionID, preferedCollation) {
-		if (preferedCollation === Sessions[sessionID].preferedCollation || !['Paper', 'MTGA'].includes(preferedCollation)) return;
+	setCollationType: function(userID, sessionID, preferedCollation) {
+		if (
+			preferedCollation === Sessions[sessionID].preferedCollation ||
+			!["Paper", "MTGA"].includes(preferedCollation)
+		)
+			return;
 
 		Sessions[sessionID].preferedCollation = preferedCollation;
 		for (let user of Sessions[sessionID].users) {
@@ -745,7 +771,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	"setUseCustomCardList": function(userID, sessionID, useCustomCardList) {
+	setUseCustomCardList: function(userID, sessionID, useCustomCardList) {
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
 		Sessions[sessionID].useCustomCardList = useCustomCardList;
@@ -757,7 +783,7 @@ const ownerSocketCallbacks = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	"setPickedCardsPerRound": function(userID, sessionID, pickedCardsPerRound) {
+	setPickedCardsPerRound: function(userID, sessionID, pickedCardsPerRound) {
 		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
 		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
 
@@ -767,7 +793,7 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
 		}
 	},
-	"setBurnedCardsPerRound": function(userID, sessionID, burnedCardsPerRound) {
+	setBurnedCardsPerRound: function(userID, sessionID, burnedCardsPerRound) {
 		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
 		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
 
@@ -777,7 +803,7 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
 		}
 	},
-	"setPublic": function(userID, sessionID, isPublic) {
+	setPublic: function(userID, sessionID, isPublic) {
 		if (isPublic == Sessions[sessionID].isPublic) return;
 
 		Sessions[sessionID].isPublic = isPublic;
@@ -786,7 +812,7 @@ const ownerSocketCallbacks = {
 		}
 		updatePublicSession(sessionID);
 	},
-	"setDescription": function(userID, sessionID, description) {
+	setDescription: function(userID, sessionID, description) {
 		if (description === null || description === undefined || description === Sessions[sessionID].description)
 			return;
 
@@ -796,44 +822,45 @@ const ownerSocketCallbacks = {
 		}
 		updatePublicSession(sessionID);
 	},
-	"replaceDisconnectedPlayers": function(userID, sessionID) {
+	replaceDisconnectedPlayers: function(userID, sessionID) {
 		Sessions[sessionID].replaceDisconnectedPlayers();
 	},
-	"distributeSealed": function(userID, sessionID, boostersPerPlayer, customBoosters) {
+	distributeSealed: function(userID, sessionID, boostersPerPlayer, customBoosters) {
 		if (isNaN(boostersPerPlayer)) return;
 		Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
 	},
-	"distributeJumpstart": function(userID, sessionID) {
+	distributeJumpstart: function(userID, sessionID) {
 		Sessions[sessionID].distributeJumpstart();
 	},
-	"generateBracket": function(userID, sessionID, players, ack) {
-		if(!(
-			(players.length === 8 && !Sessions[sessionID].teamDraft) ||
-			(players.length === 6 && Sessions[sessionID].teamDraft)
-		))
+	generateBracket: function(userID, sessionID, players, ack) {
+		if (
+			!(
+				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
+				(players.length === 6 && Sessions[sessionID].teamDraft)
+			)
+		)
 			return;
 		Sessions[sessionID].generateBracket(players);
 		ack?.({ code: 0 });
 	},
-	"generateSwissBracket": function(userID, sessionID, players, ack) {
+	generateSwissBracket: function(userID, sessionID, players, ack) {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateSwissBracket(players);
 		ack?.({ code: 0 });
 	},
-	"lockBracket": function(userID, sessionID, bracketLocked) {
+	lockBracket: function(userID, sessionID, bracketLocked) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
 		}
 	},
-	"shareDraftLog": function(userID, sessionID, draftLog) {
+	shareDraftLog: function(userID, sessionID, draftLog) {
 		const sess = Sessions[sessionID];
 		if (!draftLog) return;
 
 		// Update local copy to be public
-		if(!sess.draftLog && sess.id === draftLog.sessionID)
-			sess.draftLog = draftLog;
+		if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
 		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
 			sess.draftLog.delayed = false;
 
@@ -845,7 +872,10 @@ const ownerSocketCallbacks = {
 function prepareSocketCallback(callback, ownerOnly = false) {
 	return function() {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
-		const ack = (arguments.length > 0 && arguments[arguments.length - 1] instanceof Function) ? arguments[arguments.length - 1] : null;
+		const ack =
+			arguments.length > 0 && arguments[arguments.length - 1] instanceof Function
+				? arguments[arguments.length - 1]
+				: null;
 		const userID = this.userID;
 		if (!(userID in Connections)) {
 			ack?.({ code: 1, error: "Internal error. User does not exist." });
@@ -853,23 +883,23 @@ function prepareSocketCallback(callback, ownerOnly = false) {
 		}
 		const sessionID = Connections[userID].sessionID;
 		if (!(sessionID in Sessions)) {
-			ack?.({ code: 1, error: "Internal error. Session does not exist." }); 
+			ack?.({ code: 1, error: "Internal error. Session does not exist." });
 			return;
 		}
-		if(ownerOnly && Sessions[sessionID].owner !== userID) {
-			ack?.({ code: 401, error: "Unautorized. Must be session owner." }); 
+		if (ownerOnly && Sessions[sessionID].owner !== userID) {
+			ack?.({ code: 401, error: "Unautorized. Must be session owner." });
 			return;
 		}
 		try {
 			callback(userID, sessionID, ...arguments);
-		} catch(e) {
+		} catch (e) {
 			ack?.({ code: 500, error: "Internal server error." });
 			console.error(e);
 		}
 	};
 }
 
-io.on("connection", function(socket) {
+io.on("connection", async function(socket) {
 	const query = socket.handshake.query;
 	console.log(
 		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
@@ -877,9 +907,19 @@ io.on("connection", function(socket) {
 
 	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
-		query.userID = uuidv1();
-		console.warn(`${query.userName} is now ${query.userID}.`);
-		socket.emit("alreadyConnected", query.userID);
+		// For some reason sockets doesn't always cleanly disconnects.
+		// Give 5sec. for the original socket to respond or we'll close it.
+		(targetSocket => {
+			const timeout = setTimeout(() => {
+				targetSocket.disconnect();
+			}, 5000);
+			targetSocket.emit("stillAlive", () => {
+				clearTimeout(timeout);
+			});
+		})(Connections[query.userID].socket);
+		socket.emit("alreadyConnected", uuidv1());
+		socket.disconnect();
+		return;
 	}
 
 	socket.userID = query.userID;
@@ -908,9 +948,9 @@ io.on("connection", function(socket) {
 			});
 		}
 	});
-	
+
 	socket.on("error", function(err) {
-		console.error("Socket.io error: ")
+		console.error("Socket.io error: ");
 		console.error(err);
 	});
 
@@ -920,11 +960,9 @@ io.on("connection", function(socket) {
 		joinSession(sessionID, userID);
 	});
 
-	for(let key in socketCallbacks)
-		socket.on(key, prepareSocketCallback(socketCallbacks[key]));
+	for (let key in socketCallbacks) socket.on(key, prepareSocketCallback(socketCallbacks[key]));
 
-	for(let key in ownerSocketCallbacks)
-		socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
+	for (let key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
 	joinSession(query.sessionID, query.userID);
 	socket.emit("publicSessions", getPublicSessions());
@@ -968,7 +1006,11 @@ function joinSession(sessionID, userID) {
 			return;
 		}
 
-		const bracketLink = sess.bracket ? `<br />Bracket is available <a href="/bracket?session=${encodeURI(sessionID)}" target="_blank" rel="noopener nofollow">here</a>.` : "";
+		const bracketLink = sess.bracket
+			? `<br />Bracket is available <a href="/bracket?session=${encodeURI(
+					sessionID
+			  )}" target="_blank" rel="noopener nofollow">here</a>.`
+			: "";
 		// Session exists and is drafting
 		if (sess.drafting) {
 			console.log(
@@ -979,11 +1021,15 @@ function joinSession(sessionID, userID) {
 			if (userID in sess.disconnectedUsers) {
 				sess.reconnectUser(userID);
 			} else {
-				refuse(`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`);
+				refuse(
+					`This session (${sessionID}) is currently drafting. Please wait for them to finish.${bracketLink}`
+				);
 			}
 		} else if (sess.getHumanPlayerCount() >= sess.maxPlayers) {
 			// Session exists and is full
-			refuse(`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`);
+			refuse(
+				`This session (${sessionID}) is full (${sess.users.size}/${sess.maxPlayers} players).${bracketLink}`
+			);
 		} else {
 			addUserToSession(userID, sessionID);
 		}
@@ -1087,7 +1133,7 @@ app.post("/getCards", (req, res) => {
 		try {
 			res.setHeader("Content-Type", "application/json");
 			res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
-		} catch(e) {
+		} catch (e) {
 			res.sendStatus(500);
 		}
 	}
@@ -1095,28 +1141,28 @@ app.post("/getCards", (req, res) => {
 
 app.post("/getDeck", (req, res) => {
 	if (!req.body) {
-		res.status(400).send({error: {message: `Bad request.`}});
+		res.status(400).send({ error: { message: `Bad request.` } });
 	} else {
 		try {
-			let r = {deck: [], sideboard: []}
+			let r = { deck: [], sideboard: [] };
 			const lines = req.body.split(/\r\n|\n/);
 			let target = r.deck;
-			for(let line of lines) {
+			for (let line of lines) {
 				line = line.trim();
-				if(line === "Deck") target = r.deck;
-				if(line === "Sideboard" || (line === "" && r.deck.length > 0)) target = r.sideboard;
-				if(["", "Deck", "Sideboard"].includes(line)) continue;
+				if (line === "Deck") target = r.deck;
+				if (line === "Sideboard" || (line === "" && r.deck.length > 0)) target = r.sideboard;
+				if (["", "Deck", "Sideboard"].includes(line)) continue;
 				let [count, cardID] = parseLine(line);
 				if (typeof cardID !== "undefined") {
 					for (let i = 0; i < count; ++i) target.push(getUnique(cardID));
 				} else {
-					res.status(400).send({error: {message: `Error on line '${line}'`}});
+					res.status(400).send({ error: { message: `Error on line '${line}'` } });
 					return;
 				}
 			}
 			res.setHeader("Content-Type", "application/json");
 			res.send(JSON.stringify(r));
-		} catch(e) {
+		} catch (e) {
 			console.log(e);
 			res.sendStatus(500);
 		}
@@ -1158,7 +1204,7 @@ const secretKey = process.env.SECRET_KEY || "1234";
 
 var express_json_cache = []; // Clear this before calling
 app.set("json replacer", function(key, value) {
-	if(!express_json_cache) express_json_cache = [];
+	if (!express_json_cache) express_json_cache = [];
 	// Deal with sets
 	if (typeof value === "object" && value instanceof Set) {
 		return [...value];
@@ -1225,17 +1271,19 @@ app.get("/getStatus/:key", (req, res) => {
 app.get("/getSessions/:key", (req, res) => {
 	if (req.params.key === secretKey) {
 		let localSess = {};
-		for(let sid in Sessions)
+		for (let sid in Sessions)
 			localSess[sid] = {
 				id: sid,
 				drafting: Sessions[sid].drafting,
 				users: Sessions[sid].users,
 				maxPlayers: Sessions[sid].maxPlayers,
 				useCustomCardList: Sessions[sid].useCustomCardList,
-				customCardList: Sessions[sid].customCardList ? {
-					name: Sessions[sid].customCardList.name, 
-					length: Sessions[sid].customCardList.length, 
-				} : null,
+				customCardList: Sessions[sid].customCardList
+					? {
+							name: Sessions[sid].customCardList.name,
+							length: Sessions[sid].customCardList.length,
+					  }
+					: null,
 				setRestriction: Sessions[sid].setRestriction,
 			};
 		returnJSON(res, localSess);
