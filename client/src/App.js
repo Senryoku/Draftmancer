@@ -244,28 +244,9 @@ export default {
 			});
 
 			this.socket.on("alreadyConnected", newID => {
-				Alert.fire({
-					position: "center",
-					icon: "warning",
-					title: "Already Connected",
-					html: `Looks like you already have an active connection.
-<p><strong>If you experienced a network problem and are trying to rejoin a game, please Retry in a few seconds.</strong><p>
-<p>If you're trying to play as multiple players at once, use Get new UserID, but note that the reconnect feature may not work as expected.</p>`,
-					showCancelButton: true,
-					confirmButtonColor: ButtonColor.Safe,
-					cancelButtonColor: ButtonColor.Critical,
-					confirmButtonText: "Retry",
-					cancelButtonText: "Get new UserID",
-					allowOutsideClick: false,
-				}).then(result => {
-					if (result.isConfirmed) {
-						this.socket.connect();
-					} else {
-						this.userID = newID;
-						this.socket.query.userID = newID;
-						this.socket.connect();
-					}
-				});
+				this.userID = newID;
+				this.socket.query.userID = newID;
+				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
 			this.socket.on("stillAlive", ack => {

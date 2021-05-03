@@ -908,18 +908,30 @@ io.on("connection", async function(socket) {
 	if (query.userID in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
 		// For some reason sockets doesn't always cleanly disconnects.
-		// Give 5sec. for the original socket to respond or we'll close it.
-		(targetSocket => {
-			const timeout = setTimeout(() => {
-				targetSocket.disconnect();
-			}, 5000);
-			targetSocket.emit("stillAlive", () => {
-				clearTimeout(timeout);
-			});
-		})(Connections[query.userID].socket);
-		socket.emit("alreadyConnected", uuidv1());
-		socket.disconnect();
-		return;
+		// Give 3sec. for the original socket to respond or we'll close it.
+		// Ask the user to wait while we test the previous connection...
+		socket.emit("message", {
+			title: "Connecting...",
+			allowOutsideClick: false,
+		});
+		await new Promise(resolve => {
+			(targetSocket => {
+				const timeout = setTimeout(() => {
+					// Previous connection did not respond in time, close it and continue as normal.
+					targetSocket.disconnect();
+					process.nextTick(() => {
+						resolve();
+					});
+				}, 3000);
+				targetSocket.emit("stillAlive", () => {
+					// Previous connection is still alive, generate a new userID.
+					clearTimeout(timeout);
+					query.userID = uuidv1();
+					socket.emit("alreadyConnected", query.userID);
+					resolve();
+				});
+			})(Connections[query.userID].socket);
+		});
 	}
 
 	socket.userID = query.userID;

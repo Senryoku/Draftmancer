@@ -4,7 +4,8 @@
 		"notes": [
 			"Many cosmetic tweaks.",
 			"STA/STX bot ratings.",
-			"Setting Rare booster content to zero will now also prevent lessons/mystical archives from STX to be rares."
+			"Setting Rare booster content to zero will now also prevent lessons/mystical archives from STX to be rares.",
+			"Tried to improve the reconnect mechanism."
 		]
 	},
 	{
