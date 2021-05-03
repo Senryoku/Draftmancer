@@ -432,11 +432,13 @@
 								v-tooltip="`${userByID[id].userName} is the session owner.`"
 							></i>
 							<template v-if="userID === sessionOwner && id != sessionOwner">
-								<i
-									class="fas fa-user-plus clickable subtle-gold"
+								<img
+									src="./assets/img/silhouette_crown_test1.png"
+									class="clickable"
+									style="height: 14px; filter: invert(1);"
 									v-tooltip="`Give session ownership to ${userByID[id].userName}`"
 									@click="setSessionOwner(id)"
-								></i>
+								/>
 								<i
 									class="fas fa-user-slash clickable red"
 									v-tooltip="`Remove ${userByID[id].userName} from the session`"
