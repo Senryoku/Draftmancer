@@ -433,9 +433,9 @@
 							></i>
 							<template v-if="userID === sessionOwner && id != sessionOwner">
 								<img
-									src="./assets/img/silhouette_crown_test1.png"
+									src="./assets/img/pass_ownership.png"
 									class="clickable"
-									style="height: 14px; filter: invert(1);"
+									style="height: 18px; margin-top: -4px;"
 									v-tooltip="`Give session ownership to ${userByID[id].userName}`"
 									@click="setSessionOwner(id)"
 								/>
