@@ -430,7 +430,6 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	// Strixhaven: One card from the Mystical Archive (sta)
-	// Note: This isn't limited by the session collections
 	stx: (cardPool, landSlot, options) => {
 		const mythicPromotion = options?.mythicPromotion ?? true;
 		const [lessons, filteredCardPool] = filterCardPool(
@@ -440,9 +439,23 @@ export const SetSpecificFactories = {
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.lessonsByRarity = lessons;
-		factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
-		for (let cid of BoosterCardsBySet["sta"])
-			factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+
+		// Filter STA cards according to session collections
+		if (options.session && !options.session.unrestrictedCardPool()) {
+			const STACards = options.session.restrictedCollection(["sta"]);
+			factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+			for (let cid in STACards)
+				factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] = Math.min(
+					options.maxDuplicates?.[Cards[cid].rarity] ?? 99,
+					STACards[cid]
+				);
+		} else {
+			factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+			for (let cid of BoosterCardsBySet["sta"])
+				factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] =
+					options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+		}
+
 		factory.generateBooster = function(targets) {
 			let booster = [];
 			const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
@@ -470,16 +483,22 @@ export const SetSpecificFactories = {
 			}
 
 			// Mystical Archive
+			const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
 			const rarityRoll = Math.random();
 			const archiveRarity = allowRares
-				? mythicPromotion && rarityRoll < 0.066
+				? mythicPromotion && archiveCounts["mythic"] > 0 && rarityRoll < 0.066
 					? "mythic"
-					: rarityRoll < 0.066 + 0.264
+					: archiveCounts["rare"] > 0 && rarityRoll < 0.066 + 0.264
 					? "rare"
 					: "uncommon"
 				: "uncommon";
-			const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
-			booster.push(archive);
+			if (archiveCounts[archiveRarity] > 0) {
+				const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
+				booster.push(archive);
+			} else {
+				this.onError("Error generating boosters", "Not enough Mystical Archive cards.");
+				return false;
+			}
 
 			return booster;
 		};

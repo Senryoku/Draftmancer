@@ -326,13 +326,16 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 selection['rating'] = CardRatings[selection['name'].split(
                     " //")[0]]
             else:
+
                 selection['rating'] = 0.5
-            selection['in_booster'] = c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b"))  # Exclude melded cards from boosters
+            selection['in_booster'] = (c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")))  # Exclude melded cards from boosters
             if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
             elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
+            if c['set'] == 'sta':  # Force STA in booster
+                selection['in_booster'] = True
 
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:

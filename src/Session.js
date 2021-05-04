@@ -410,12 +410,13 @@ export class Session {
 		}
 
 		// Restricts collection according to this.setRestriction
-		cardPool = this.collection();
-		if (this.setRestriction.length > 0) {
-			for (let c in cardPool) {
-				if (!this.setRestriction.includes(Cards[c].set)) delete cardPool[c];
-			}
-		}
+		return this.restrictedCollection(this.setRestriction);
+	}
+
+	restrictedCollection(sets) {
+		const cardPool = this.collection();
+		console.log("restrictedCollection ", sets);
+		if (sets && sets.length > 0) for (let c in cardPool) if (!sets.includes(Cards[c].set)) delete cardPool[c];
 		return cardPool;
 	}
 
@@ -614,6 +615,7 @@ export class Session {
 				onError: (...args) => {
 					this.emitError(...args);
 				},
+				session: this,
 			};
 
 			let defaultFactory = null;
