@@ -76,7 +76,7 @@
 					v-tooltip="'Toggle sound.'"
 				/></div>
 				<div style="min-width: 20px; text-align:center;">
-				<i v-tooltip="notificationPermission === 'denied' ? 'Notifications for this domain are blocked in your browser' : 'Enable to get desktop notifications when your draft starts.'"
+				<i v-tooltip="notificationPermission === 'denied' ? 'Notifications for this domain are blocked in your browser' : 'Toggle desktop notifications'"
 					class="fas clickable"
 					:class="{ 'greyed-out': notificationPermission === 'denied', 'fa-bell': enableNotifications, 'fa-bell-slash': !enableNotifications }"
 					@click="toggleNotifications" /></div>
