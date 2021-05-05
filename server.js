@@ -11,7 +11,7 @@ import request from "request";
 import compression from "compression";
 import express from "express";
 const app = express();
-import http, { Server } from "http";
+import http from "http";
 const httpServer = http.Server(app);
 import socketIO from "socket.io";
 const io = socketIO(httpServer);
@@ -1111,7 +1111,7 @@ app.get("/getCollection", (req, res) => {
 	if (!req.cookies.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.cookies.sessionID].collection());
+		res.send(Sessions[req.cookies.sessionID].collection(false));
 	} else {
 		res.sendStatus(404);
 	}
@@ -1121,10 +1121,33 @@ app.get("/getCollection/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.params.sessionID].collection());
+		res.send(Sessions[req.params.sessionID].collection(false));
 	} else {
 		res.sendStatus(404);
 	}
+});
+
+function returnCollectionPlainText(res, sid) {
+	if (!sid) {
+		res.sendStatus(400);
+	} else if (sid in Sessions) {
+		const coll = Sessions[sid].collection(false);
+		let r = "";
+		for (let cid in coll) r += `${coll[cid]} ${Cards[cid].name}\n`;
+		res.set("Content-disposition", `attachment; filename=collection_${sid}`);
+		res.set("Content-Type", "text/plain");
+		res.send(r);
+	} else {
+		res.sendStatus(404);
+	}
+}
+
+app.get("/getCollectionPlainText/", (req, res) => {
+	returnCollectionPlainText(res, req.cookies.sessionID);
+});
+
+app.get("/getCollectionPlainText/:sessionID", (req, res) => {
+	returnCollectionPlainText(res, req.params.sessionID);
 });
 
 app.get("/getUsers/:sessionID", (req, res) => {

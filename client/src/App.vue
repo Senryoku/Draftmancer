@@ -1200,9 +1200,12 @@
 						<h2>Tools</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<ul>
+						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
 							<li>
 								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
+							</li>
+							<li v-tooltip="'Download the intersection of the collections of players in the session in text format.'">
+								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"><i class="fas fa-file-download"></i> Download Session Collection</a>
 							</li>
 						</ul>
 					</div>

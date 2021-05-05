@@ -5,7 +5,7 @@ import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
+import { Cards, getUnique, BoosterCardsBySet, MTGACardIDs } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -421,7 +421,7 @@ export class Session {
 	}
 
 	// Compute user collections intersection (taking into account each user preferences)
-	collection() {
+	collection(inBoosterOnly = true) {
 		const user_list = [...this.users];
 		let intersection = [];
 		let collection = {};
@@ -433,8 +433,12 @@ export class Session {
 
 		let arrays = [];
 		// Start from the first user's collection, or the list of all cards if not available/used
-		if (!useCollection[0]) arrays.push(Object.keys(Cards).filter(c => Cards[c].in_booster));
-		else arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
+		if (!useCollection[0])
+			if (inBoosterOnly) arrays.push(MTGACardIDs.filter(c => Cards[c].in_booster));
+			else arrays.push(MTGACardIDs);
+		else if (inBoosterOnly)
+			arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
+		else arrays.push(Object.keys(Connections[user_list[0]].collection));
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push(Object.keys(Connections[user_list[i]].collection));
 		intersection = arrayIntersect(arrays);
