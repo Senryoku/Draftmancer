@@ -113,6 +113,8 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	--transform-rotation-y: 0;
 	--foil-initial-top: 0%;
 	--foil-initial-left: 0%;
+
+	user-select: none;
 }
 
 .fade-enter-active.card,
