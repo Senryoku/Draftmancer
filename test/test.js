@@ -448,6 +448,23 @@ describe("Single Draft (Two Players)", function() {
 		});
 	}
 
+	describe(`Drafting without set restriction`, function() {
+		connect();
+		it("Clients should receive the updated setRestriction status.", function(done) {
+			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			let nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("setRestriction", function(setRestriction) {
+				expect(setRestriction).to.have.lengthOf(0);
+				done();
+			});
+			clients[ownerIdx].emit("ignoreCollections", true);
+			clients[ownerIdx].emit("setRestriction", []);
+		});
+		startDraft();
+		endDraft();
+		disconnect();
+	});
+
 	describe("Without color balance", function() {
 		connect();
 		it("Clients should receive the updated colorBalance status.", function(done) {
