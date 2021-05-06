@@ -235,6 +235,8 @@ export default {
 
 			this.socket.on("reconnect", attemptNumber => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
+				// Re-sync collection on reconnect.
+				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
 
 				Alert.fire({
 					icon: "warning",
