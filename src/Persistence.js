@@ -19,6 +19,7 @@ const MixInstance = MixPanelToken
 
 //                         Testing in mocha                   Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
+const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 
@@ -240,9 +241,7 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-export function logSession(type, session) {
-	if (!MixInstance) return;
-
+function saveLog(type, session) {
 	let localSess = JSON.parse(JSON.stringify(session));
 	localSess.users = [...session.users]; // Stringifying doesn't support Sets
 	// Anonymize Draft Log
@@ -256,22 +255,24 @@ export function logSession(type, session) {
 					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
 	}
 
-	/*
-	if(type === "Draft" && !DisablePersistence) {
-		axios.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, 
-			localSess.draftLog, 
-			{
+	if (type === "Draft" && !DisablePersistence) {
+		axios
+			.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, localSess.draftLog, {
 				headers: {
-					'access-key': PersistenceKey,
-				}
-			}
-		).catch((err) => console.error("Error storing logs: ", err.message));
+					"access-key": PersistenceKey,
+				},
+			})
+			.catch(err => console.error("Error storing logs: ", err.message));
 	}
-	*/
+}
 
+export function logSession(type, session) {
+	if (SaveLogs) saveLog(type, session);
+
+	if (!MixInstance) return;
 	let mixdata = {
 		distinct_id: process.env.NODE_ENV || "development",
-		playerCount: localSess.users.length,
+		playerCount: session.users.size,
 	};
 	for (let prop of [
 		"boostersPerPlayer",
@@ -295,9 +296,8 @@ export function logSession(type, session) {
 		"burnedCardsPerRound",
 		"bracketLocked",
 	])
-		mixdata[prop] = localSess[prop];
-	if (localSess.customCardList && localSess.customCardList.name)
-		mixdata.customCardListName = localSess.customCardList.name;
+		mixdata[prop] = session[prop];
+	if (session.customCardList && session.customCardList.name) mixdata.customCardListName = session.customCardList.name;
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 

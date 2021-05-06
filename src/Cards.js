@@ -47,13 +47,16 @@ for (let cid in Cards) {
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json"));
 
 // Cache for cards organized by set.
+export const CardsBySet = {};
 export const BoosterCardsBySet = {};
 for (let cid in Cards) {
 	if (Cards[cid].in_booster || Cards[cid].set === "und" || Cards[cid].set === "sta") {
-		// Force cache for Unsanctionec (UND) as it's not a draft product originally and Mystical Archives (STA)
+		// Force cache for Unsanctioned (UND) as it's not a draft product originally and Mystical Archives (STA)
 		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
 		BoosterCardsBySet[Cards[cid].set].push(cid);
 	}
+	if (!(Cards[cid].set in CardsBySet)) CardsBySet[Cards[cid].set] = [];
+	CardsBySet[Cards[cid].set].push(cid);
 }
 
 export const CardIDs = Object.keys(Cards);
@@ -64,6 +67,7 @@ Object.freeze(MTGACards);
 Object.freeze(CardsByName);
 Object.freeze(CardVersionsByName);
 Object.freeze(BoosterCardsBySet);
+Object.freeze(CardsBySet);
 Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 
