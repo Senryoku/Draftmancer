@@ -266,6 +266,16 @@ function saveLog(type, session) {
 	}
 }
 
+export function dumpError(name, data) {
+	axios
+		.post(`${PersistenceStoreURL}/store/${name}`, data, {
+			headers: {
+				"access-key": PersistenceKey,
+			},
+		})
+		.catch(err => console.error("Error dumping error(wup): ", err.message));
+}
+
 export function logSession(type, session) {
 	if (SaveLogs) saveLog(type, session);
 

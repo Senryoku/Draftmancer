@@ -21,7 +21,7 @@ import bodyParser from "body-parser";
 
 import { isEmpty, shuffleArray } from "./src/utils.js";
 import constants from "./client/src/data/constants.json";
-import { InactiveConnections, InactiveSessions } from "./src/Persistence.js";
+import { InactiveConnections, InactiveSessions, dumpError } from "./src/Persistence.js";
 import { Connection, Connections } from "./src/Connection.js";
 import { Session, Sessions, optionProps } from "./src/Session.js";
 import { Cards, MTGACards, getUnique } from "./src/Cards.js";
@@ -190,9 +190,14 @@ const socketCallbacks = {
 			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
 		} catch (err) {
-			console.error("Error in pickCard:", err);
-			console.error(Sessions[sessionID]);
 			ack?.({ code: 500, error: "Internal server error." });
+			console.error("Error in pickCard:", err);
+			const data = {
+				boosters: Sessions[sessionID].boosters,
+				sessionProps: {},
+			};
+			for (let p of optionProps) data.sessionProps[p] = Sessions[sessionID][p];
+			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
 		}
 	},
 	gridDraftPick: function(userID, sessionID, choice, ack) {
