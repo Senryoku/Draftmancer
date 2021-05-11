@@ -462,49 +462,46 @@ export const SetSpecificFactories = {
 
 			// Lesson
 			const lessonsCounts = countBySlot(this.lessonsByRarity);
-			if (Object.values(lessonsCounts).every(c => c === 0)) {
-				booster = this.originalGenBooster(targets);
-			} else {
-				const rarityRoll = Math.random();
-				const pickedRarity = allowRares
-					? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
-						? "mythic"
-						: rarityRoll < 0.08 && lessonsCounts["rare"] > 0
-						? "rare"
-						: "common"
-					: "common";
+			const rarityRoll = Math.random();
+			const pickedRarity = allowRares
+				? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
+					? "mythic"
+					: rarityRoll < 0.08 && lessonsCounts["rare"] > 0
+					? "rare"
+					: "common"
+				: "common";
 
-				if (lessonsCounts[pickedRarity] <= 0) {
-					this.onError("Error generating boosters", "Not enough Lessons available.");
-					return false;
-				}
-
-				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
-
-				let updatedTargets = Object.assign({}, targets);
-				if (updatedTargets["common"] > 0) --updatedTargets["common"];
-
-				booster = this.originalGenBooster(updatedTargets);
-				booster.push(pickedLesson);
+			if (lessonsCounts[pickedRarity] <= 0) {
+				this.onError("Error generating boosters", "Not enough Lessons available.");
+				return false;
 			}
+
+			const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
+
+			let updatedTargets = Object.assign({}, targets);
+			if (updatedTargets["common"] > 0) --updatedTargets["common"];
+
+			booster = this.originalGenBooster(updatedTargets);
+			booster.push(pickedLesson);
 
 			// Mystical Archive
 			const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
-			const rarityRoll = Math.random();
+			const archiveRarityRoll = Math.random();
 			const archiveRarity = allowRares
-				? mythicPromotion && archiveCounts["mythic"] > 0 && rarityRoll < 0.066
+				? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
 					? "mythic"
-					: archiveCounts["rare"] > 0 && rarityRoll < 0.066 + 0.264
+					: archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
 					? "rare"
 					: "uncommon"
 				: "uncommon";
-			if (archiveCounts[archiveRarity] > 0) {
-				const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
-				booster.push(archive);
-			} else {
+
+			if (archiveCounts[archiveRarity] <= 0) {
 				this.onError("Error generating boosters", "Not enough Mystical Archive cards.");
 				return false;
 			}
+
+			const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
+			booster.push(archive);
 
 			return booster;
 		};
