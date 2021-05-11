@@ -473,6 +473,12 @@ export const SetSpecificFactories = {
 						? "rare"
 						: "common"
 					: "common";
+
+				if (lessonsCounts[pickedRarity] <= 0) {
+					this.onError("Error generating boosters", "Not enough Lessons available.");
+					return false;
+				}
+
 				const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
 				let updatedTargets = Object.assign({}, targets);
