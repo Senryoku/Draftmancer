@@ -196,9 +196,11 @@ img {
 
 .split-button:hover ~ .flip-container div img {
 	transform: scale(1.41) rotateZ(90deg);
+	z-index: 100;
 }
 
 .split-left-button:hover ~ .flip-container div img {
 	transform: scale(1.41) rotateZ(-90deg);
+	z-index: 100;
 }
 </style>
