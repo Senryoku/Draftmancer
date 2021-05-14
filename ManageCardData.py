@@ -488,15 +488,18 @@ setinfos = {}
 
 def getIcon(set, icon_path):
     if not os.path.isfile("client/public/" + icon_path):
-        response = requests.get(
-            "https://api.scryfall.com/sets/{}".format(set))
-        scryfall_set_data = json.loads(response.content)
-        if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
-            urllib.request.urlretrieve(
-                scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
-            if set == "rna":
-                overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
-            return icon_path
+        try:
+            response = requests.get(
+                "https://api.scryfall.com/sets/{}".format(set))
+            scryfall_set_data = json.loads(response.content)
+            if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
+                urllib.request.urlretrieve(
+                    scryfall_set_data['icon_svg_uri'], "client/public/" + icon_path)
+                if set == "rna":
+                    overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
+                return icon_path
+        except:
+            print("Error getting set '{}' icon:".format(set), sys.exc_info()[0])
     else:
         return icon_path
     return None
@@ -529,6 +532,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'mh2', 'afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1), or aren't out yet (mh2, afr)
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
