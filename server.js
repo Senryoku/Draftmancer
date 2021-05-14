@@ -924,6 +924,7 @@ io.on("connection", async function(socket) {
 				const timeout = setTimeout(() => {
 					// Previous connection did not respond in time, close it and continue as normal.
 					targetSocket.disconnect();
+					// Wait for the socket to be properly disconnected and the previous Connection deleted.
 					process.nextTick(() => {
 						resolve();
 					});
@@ -954,14 +955,14 @@ io.on("connection", async function(socket) {
 
 	socket.on("disconnect", function() {
 		const userID = this.userID;
-		if (userID in Connections) {
+		if (userID in Connections && Connections[userID].socket === this) {
 			console.log(
 				`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length -
 					1} players online)`
 			);
 			removeUserFromSession(userID);
 			process.nextTick(() => {
-				delete Connections[userID];
+				if (Connections[userID].socket === this) delete Connections[userID];
 			});
 		}
 	});
