@@ -196,7 +196,7 @@ export default {
 }
 
 .set-selection > div {
-	flex-basis: 14em;
+	flex-basis: 16em;
 	display: flex;
 	align-items: center;
 }
