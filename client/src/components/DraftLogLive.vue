@@ -6,15 +6,7 @@
 					<h2>Live Review: {{ draftlog.users[player].userName }}</h2>
 					<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
 						<label>Pick #</label>
-						<i
-							:class="{ disabled: pick <= 0 }"
-							class="fas fa-chevron-left clickable"
-							@click="
-								() => {
-									--pick;
-								}
-							"
-						></i>
+						<i :class="{ disabled: pick <= 0 }" class="fas fa-chevron-left clickable" @click="prevPick"></i>
 						<select v-model="pick">
 							<option
 								v-for="index in draftlog.users[player].picks.length"
@@ -27,19 +19,9 @@
 						<i
 							:class="{ disabled: pick >= draftlog.users[player].picks.length - 1 }"
 							class="fas fa-chevron-right clickable"
-							@click="
-								() => {
-									++pick;
-								}
-							"
+							@click="nextPick"
 						></i>
-						<h2>
-							{{
-								getCardName(
-									draftlog.users[player].picks[pick].booster[draftlog.users[player].picks[pick].pick]
-								)
-							}}
-						</h2>
+						<h2>{{ pickNames }}</h2>
 					</span>
 				</div>
 				<template v-if="draftlog.users[player].picks.length === 0"
@@ -105,12 +87,29 @@ export default {
 	},
 	methods: {
 		getCardName: function (cid) {
-			this.draftlog.carddata[cid].printed_names[this.language];
+			return this.language in this.draftlog.carddata[cid].printed_names
+				? this.draftlog.carddata[cid].printed_names[this.language]
+				: this.draftlog.carddata[cid].name;
 		},
 		setPlayer: function (userID) {
 			if (!(userID in this.draftlog.users)) return;
 			this.player = userID;
 			this.pick = Math.max(0, Math.min(this.pick, this.draftlog.users[userID].picks.length - 1));
+		},
+		prevPick() {
+			this.pick = Math.max(0, this.pick - 1);
+		},
+		nextPick() {
+			this.pick = Math.min(this.pick + 1, this.draftlog.users[this.player].picks.length - 1);
+		},
+	},
+	computed: {
+		pickNames() {
+			const pick = this.draftlog.users[this.player].picks[this.pick];
+			return pick.pick
+				.map((idx) => pick.booster[idx])
+				.map(this.getCardName)
+				.join(", ");
 		},
 	},
 };
