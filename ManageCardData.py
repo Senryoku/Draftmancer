@@ -335,7 +335,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
                 selection['in_booster'] = False
                 selection['rating'] = 0
             if c['set'] == 'sta':  # Force STA in booster
-                selection['in_booster'] = True
+                selection['in_booster'] = not selection['collector_number'].endswith("e")
 
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:

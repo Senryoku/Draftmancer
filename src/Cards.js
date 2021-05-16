@@ -50,8 +50,8 @@ export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json")
 export const CardsBySet = {};
 export const BoosterCardsBySet = {};
 for (let cid in Cards) {
-	if (Cards[cid].in_booster || Cards[cid].set === "und" || Cards[cid].set === "sta") {
-		// Force cache for Unsanctioned (UND) as it's not a draft product originally and Mystical Archives (STA)
+	if (Cards[cid].in_booster || Cards[cid].set === "und") {
+		// Force cache for Unsanctioned (UND) as it's not a draft product originally
 		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
 		BoosterCardsBySet[Cards[cid].set].push(cid);
 	}
