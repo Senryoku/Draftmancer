@@ -29,11 +29,14 @@
 				</template>
 				<template v-else>
 					<div v-if="pick < draftlog.users[player].picks.length">
-						<draft-log-pick
-							:pick="draftlog.users[player].picks[pick]"
-							:carddata="draftlog.carddata"
-							:language="language"
-						></draft-log-pick>
+						<transition :name="'slide-fade-' + pickTransition" mode="out-in">
+							<draft-log-pick
+								:key="`${player}-${pick}`"
+								:pick="draftlog.users[player].picks[pick]"
+								:carddata="draftlog.carddata"
+								:language="language"
+							></draft-log-pick>
+						</transition>
 						<div class="container">
 							<card-pool
 								:cards="selectedPlayerCards"
@@ -75,6 +78,7 @@ export default {
 			player: undefined,
 			pick: 0,
 			eventListeners: [],
+			pickTransition: "right",
 		};
 	},
 	mounted() {
@@ -131,6 +135,12 @@ export default {
 				.map((p) => p.pick.map((idx) => p.booster[idx]))
 				.flat()
 				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
+		},
+	},
+	watch: {
+		pick(n, o) {
+			if (n < o) this.pickTransition = "right";
+			else this.pickTransition = "left";
 		},
 	},
 };
