@@ -1,4 +1,8 @@
-[
+[[
+	{
+		"date": "16/05/2021",
+		"notes": ["Improved spectator view for organizer."]
+	},
 	{
 		"date": "11/05/2021",
 		"notes": ["Fixed a bug in STX collation when Lessons in collection(s) were insufficient."]
