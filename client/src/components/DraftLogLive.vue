@@ -113,6 +113,10 @@ export default {
 		nextPick() {
 			this.pick = Math.min(this.pick + 1, this.draftlog.users[this.player].picks.length - 1);
 		},
+		newPick(data) {
+			// Skip to last pick if we're spectating this player
+			if (data.userID === this.player) this.pick = this.draftlog.users[this.player].picks.length - 1;
+		},
 	},
 	computed: {
 		pickNames() {

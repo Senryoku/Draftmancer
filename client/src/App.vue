@@ -633,6 +633,7 @@
 							:draftlog="draftLogLive"
 							:show="['owner', 'everyone'].includes(draftLogRecipients)"
 							:language="language"
+							ref="draftloglive"
 						></draft-log-live>
 					</div>
 				</div>
