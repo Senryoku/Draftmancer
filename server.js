@@ -852,6 +852,11 @@ const ownerSocketCallbacks = {
 		Sessions[sessionID].generateSwissBracket(players);
 		ack?.({ code: 0 });
 	},
+	generateDoubleBracket(userID, sessionID, players, ack) {
+		if (players.length !== 8) return;
+		Sessions[sessionID].generateDoubleBracket(players);
+		ack?.({ code: 0 });
+	},
 	lockBracket(userID, sessionID, bracketLocked) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
 		for (let user of Sessions[sessionID].users) {

@@ -1945,6 +1945,7 @@
 				@updated="updateBracket"
 				@generate="generateBracket"
 				@generate-swiss="generateSwissBracket"
+				@generate-double="generateDoubleBracket"
 				@lock="lockBracket"
 			></bracket>
 		</modal>
