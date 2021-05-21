@@ -120,7 +120,7 @@ export default {
 		language: { type: String, required: true },
 	},
 	methods: {
-		teamWins: function (team) {
+		teamWins(team) {
 			let total = 0;
 			for (let col of this.matches) {
 				for (let m of col) {
@@ -134,10 +134,10 @@ export default {
 			}
 			return total;
 		},
-		lock: function (e) {
+		lock(e) {
 			this.$emit("lock", e.target.checked);
 		},
-		copyLink: function () {
+		copyLink() {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
@@ -225,18 +225,22 @@ export default {
 		records() {
 			let r = {};
 			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
-			for (let col of this.matches)
-				for (let m of col) {
-					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-						r[m.players[winIdx].userID].wins += 1;
-						r[m.players[(winIdx + 1) % 2].userID].losses += 1;
-					} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
-						r[m.players[0].userID].wins += 1;
-					} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
-						r[m.players[1].userID].wins += 1;
-					}
+			const countMatch = (m) => {
+				if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
+					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+					r[m.players[winIdx].userID].wins += 1;
+					r[m.players[(winIdx + 1) % 2].userID].losses += 1;
+				} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
+					r[m.players[0].userID].wins += 1;
+				} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
+					r[m.players[1].userID].wins += 1;
 				}
+			};
+			for (let col of this.matches) for (let m of col) countMatch(m);
+			if (this.bracket.double) {
+				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
+				countMatch(this.final);
+			}
 			return r;
 		},
 		selectedDeckList: function () {
@@ -261,74 +265,5 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-}
-
-.bracket-match {
-	margin: 0.5em;
-}
-
-.bracket-match-num {
-	vertical-align: middle;
-	min-width: 1.5em;
-}
-
-.bracket-match-players {
-	background: #333;
-	border-radius: 1em;
-	padding: 0.5em;
-}
-
-.bracket-player {
-	display: flex;
-	background: #2c2c2c;
-	justify-content: space-between;
-	height: 2em;
-	line-height: 2em;
-	width: 20rem;
-	padding: 0.5em;
-	margin: 0.5em;
-	border-radius: 8px;
-}
-
-.bracket-winner {
-	font-weight: bold;
-	box-shadow: 0 0 4px 4px #bbb;
-}
-
-.bracket-tbd,
-.bracket-empty {
-	color: grey;
-	pointer-events: none;
-	user-select: none;
-}
-
-.bracket-result {
-	font-size: 2em;
-	min-width: 32px;
-	text-align: right;
-}
-
-.bracket-player-name {
-	font-size: 1.5em;
-	max-width: 15rem;
-	overflow: hidden;
-}
-
-.trophy {
-	height: 32px;
-	width: 32px;
-	font-size: 32px;
-}
-
-.gold {
-	color: gold;
-}
-
-.silver {
-	color: silver;
-}
-
-.result-input {
-	width: 2.2em;
 }
 </style>

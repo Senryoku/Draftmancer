@@ -53,8 +53,8 @@
 <script>
 export default {
 	props: {
-		editable: { type: Boolean },
 		value: { type: Array },
+		editable: { type: Boolean },
 		match: { type: Object, required: true },
 		bracket: { type: Object },
 		records: { type: Object, required: true },
@@ -62,10 +62,10 @@ export default {
 		final: { type: Boolean, default: false },
 	},
 	methods: {
-		hasDeckList: function (userID) {
+		hasDeckList(userID) {
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
-		isGold: function (p, index) {
+		isGold(p, index) {
 			if (this.bracket.teamDraft) {
 				return this.teamWins(index) >= 5;
 			} else if (this.bracket.double) {
@@ -74,11 +74,11 @@ export default {
 				return this.records[p.userID].wins === 3;
 			}
 		},
-		isSilver: function (p, index) {
+		isSilver(p, index) {
 			if (this.bracket.double) return this.final && this.value[index] < this.value[(index + 1) % 2];
 			return !this.bracket.teamDraft && this.records[p.userID].wins === 2;
 		},
-		recordString: function (p) {
+		recordString(p) {
 			return `${this.records[p.userID].wins} - ${this.records[p.userID].losses}`;
 		},
 	},
