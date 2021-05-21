@@ -57,7 +57,7 @@ export default {
 		match: { type: Object, required: true },
 		bracket: { type: Object, required: true },
 		records: { type: Object, required: true },
-		teamrecords: { type: Object, required: true },
+		teamrecords: { type: Array, required: true },
 		draftlog: { type: Object, default: null },
 		final: { type: Boolean, default: false },
 	},
