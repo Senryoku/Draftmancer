@@ -8,7 +8,7 @@
 				<div
 					class="bracket-player"
 					:class="{
-						'bracket-winner': value[index] > value[(index + 1) % 2],
+						'bracket-winner': result[index] > result[(index + 1) % 2],
 						teama: bracket.teamDraft && index % 2 === 0,
 						teamb: bracket.teamDraft && index % 2 === 1,
 					}"
@@ -37,11 +37,11 @@
 							v-if="editable"
 							class="result-input"
 							type="number"
-							v-model.number="value[index]"
+							:value="result[index]"
 							min="0"
-							@change="$emit('updated')"
+							@change="$emit('updated', index, $event.target.value)"
 						/>
-						<div class="bracket-result" v-else>{{ value[index] }}</div>
+						<div class="bracket-result" v-else>{{ result[index] }}</div>
 					</template>
 				</div>
 			</div>
@@ -52,7 +52,7 @@
 <script>
 export default {
 	props: {
-		value: { type: Array },
+		result: { type: Array, required: true },
 		editable: { type: Boolean, default: false },
 		match: { type: Object, required: true },
 		bracket: { type: Object, required: true },
@@ -69,13 +69,13 @@ export default {
 			if (this.bracket.teamDraft) {
 				return this.teamrecords[index] >= 5;
 			} else if (this.bracket.double) {
-				return this.final && this.value[index] > this.value[(index + 1) % 2];
+				return this.final && this.result[index] > this.result[(index + 1) % 2];
 			} else {
 				return this.records[p.userID].wins === 3;
 			}
 		},
 		isSilver(p, index) {
-			if (this.bracket.double) return this.final && this.value[index] < this.value[(index + 1) % 2];
+			if (this.bracket.double) return this.final && this.result[index] < this.result[(index + 1) % 2];
 			return !this.bracket.teamDraft && this.records[p.userID].wins === 2;
 		},
 		recordString(p) {

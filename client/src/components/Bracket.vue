@@ -29,14 +29,14 @@
 					v-for="m in col"
 					:key="m.index"
 					:match="m"
+					:result="bracket.results[m.index]"
 					:bracket="bracket"
 					:records="records"
 					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:final="!bracket.double && colIndex === 2"
 					:editable="editable"
-					v-model="bracket.results[m.index]"
-					@updated="$emit('updated')"
+					@updated="(index, value) => $emit('updated', m.index, index, value)"
 					@selectuser="(userID) => (selectedUser = userID)"
 				/>
 			</div>
@@ -44,14 +44,14 @@
 				<BracketMatch
 					:key="final.index"
 					:match="final"
+					:result="bracket.results[final.index]"
 					:bracket="bracket"
 					:records="records"
 					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:final="true"
 					:editable="editable"
-					v-model="bracket.results[final.index]"
-					@updated="$emit('updated')"
+					@updated="(index, value) => $emit('updated', final.index, index, value)"
 					@selectuser="(userID) => (selectedUser = userID)"
 				/>
 			</div>
@@ -63,13 +63,13 @@
 					v-for="m in col"
 					:key="m.index"
 					:match="m"
+					:result="bracket.results[m.index]"
 					:bracket="bracket"
 					:records="records"
 					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:editable="editable"
-					v-model="bracket.results[m.index]"
-					@updated="$emit('updated')"
+					@updated="(index, value) => $emit('updated', m.index, index, value)"
 					@selectuser="(userID) => (selectedUser = userID)"
 				/>
 			</div>

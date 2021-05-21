@@ -1875,8 +1875,9 @@ export default {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
-		updateBracket: function() {
+		updateBracket: function(matchIndex, index, value) {
 			if (this.userID != this.sessionOwner && this.bracketLocked) return;
+			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
 		lockBracket: function(val) {
