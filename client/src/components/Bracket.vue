@@ -37,7 +37,7 @@
 					:final="!bracket.double && colIndex === 2"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', m.index, index, value)"
-					@selectuser="(userID) => (selectedUser = userID)"
+					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
 			<div class="bracket-column" v-if="bracket.double">
@@ -52,7 +52,7 @@
 					:final="true"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', final.index, index, value)"
-					@selectuser="(userID) => (selectedUser = userID)"
+					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
 		</div>
@@ -70,7 +70,7 @@
 					:draftlog="draftlog"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', m.index, index, value)"
-					@selectuser="(userID) => (selectedUser = userID)"
+					@selectuser="(user) => (selectedUser = user)"
 				/>
 			</div>
 		</div>
@@ -113,7 +113,7 @@ export default {
 	},
 	props: {
 		bracket: { type: Object, required: true },
-		teamDraft: { type: Boolean, required: false },
+		teamDraft: { type: Boolean, required: true },
 		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
@@ -214,6 +214,7 @@ export default {
 		records() {
 			let r = {};
 			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
+
 			const countMatch = (m) => {
 				if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
 					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
@@ -225,11 +226,13 @@ export default {
 					r[m.players[1].userID].wins += 1;
 				}
 			};
+
 			for (let col of this.matches) for (let m of col) countMatch(m);
 			if (this.bracket.double) {
 				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
 				countMatch(this.final);
 			}
+
 			return r;
 		},
 		teamRecords() {
@@ -245,7 +248,7 @@ export default {
 			return r;
 		},
 		selectedDeckList: function () {
-			if (this.draftlog.users[this.selectedUser.userID])
+			if (this.draftlog && this.selectedUser && this.draftlog.users[this.selectedUser.userID])
 				return this.draftlog.users[this.selectedUser.userID].decklist;
 			return null;
 		},

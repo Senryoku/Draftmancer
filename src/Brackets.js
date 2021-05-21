@@ -1,78 +1,28 @@
 export class Bracket {
-	constructor(players) {
+	constructor(players, matchCount = 7) {
 		this.players = players;
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
+		this.results = [];
+		for (let i = 0; i < matchCount; ++i) this.results.push([0, 0]);
 	}
 }
 
 export class TeamBracket extends Bracket {
 	constructor(players) {
-		super(players);
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
+		super(players, 9);
 		this.teamDraft = true;
 	}
 }
 
 export class SwissBracket extends Bracket {
 	constructor(players) {
-		super(players);
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
+		super(players, 12);
 		this.swiss = true;
 	}
 }
 
 export class DoubleBracket extends Bracket {
 	constructor(players) {
-		super(players);
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			// Lower
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			// Final
-			[0, 0],
-		];
+		super(players, 14);
 		this.double = true;
 	}
 }
