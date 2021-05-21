@@ -8,8 +8,7 @@
 				<div
 					class="bracket-player"
 					:class="{
-						'bracket-winner':
-							bracket.results[match.index][index] > bracket.results[match.index][(index + 1) % 2],
+						'bracket-winner': value[index] > value[(index + 1) % 2],
 						teama: bracket.teamDraft && index % 2 === 0,
 						teamb: bracket.teamDraft && index % 2 === 1,
 					}"
@@ -54,10 +53,11 @@
 export default {
 	props: {
 		value: { type: Array },
-		editable: { type: Boolean },
+		editable: { type: Boolean, default: false },
 		match: { type: Object, required: true },
-		bracket: { type: Object },
+		bracket: { type: Object, required: true },
 		records: { type: Object, required: true },
+		teamrecords: { type: Object, required: true },
 		draftlog: { type: Object, default: null },
 		final: { type: Boolean, default: false },
 	},
@@ -67,7 +67,7 @@ export default {
 		},
 		isGold(p, index) {
 			if (this.bracket.teamDraft) {
-				return this.teamWins(index) >= 5;
+				return this.teamrecords[index] >= 5;
 			} else if (this.bracket.double) {
 				return this.final && this.value[index] > this.value[(index + 1) % 2];
 			} else {

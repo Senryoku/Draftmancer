@@ -31,6 +31,7 @@
 					:match="m"
 					:bracket="bracket"
 					:records="records"
+					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:final="!bracket.double && colIndex === 2"
 					:editable="editable"
@@ -45,6 +46,7 @@
 					:match="final"
 					:bracket="bracket"
 					:records="records"
+					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:final="true"
 					:editable="editable"
@@ -63,6 +65,7 @@
 					:match="m"
 					:bracket="bracket"
 					:records="records"
+					:teamrecords="teamRecords"
 					:draftlog="draftlog"
 					:editable="editable"
 					v-model="bracket.results[m.index]"
@@ -120,20 +123,6 @@ export default {
 		language: { type: String, required: true },
 	},
 	methods: {
-		teamWins(team) {
-			let total = 0;
-			for (let col of this.matches) {
-				for (let m of col) {
-					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-						if (winIdx === team) {
-							total += 1;
-						}
-					}
-				}
-			}
-			return total;
-		},
 		lock(e) {
 			this.$emit("lock", e.target.checked);
 		},
@@ -240,6 +229,18 @@ export default {
 			if (this.bracket.double) {
 				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
 				countMatch(this.final);
+			}
+			return r;
+		},
+		teamRecords() {
+			let r = [0, 0];
+			for (let col of this.matches) {
+				for (let m of col) {
+					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
+						const teamIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+						r[teamIdx] += 1;
+					}
+				}
 			}
 			return r;
 		},
