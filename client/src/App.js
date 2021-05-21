@@ -435,16 +435,16 @@ export default {
 
 				this.initReadyCheck();
 
-				this.pushNotification("Are you ready?", {
-					body: `${this.userByID[this.sessionOwner].userName} has initiated a ready check`,
-				});
-
 				const ownerUsername =
 					this.sessionOwner in this.userByID
 						? this.userByID[this.sessionOwner].userName
 						: this.sessionOwnerUsername
 						? this.sessionOwnerUsername
 						: "Session owner";
+
+				this.pushNotification("Are you ready?", {
+					body: `${ownerUsername} has initiated a ready check`,
+				});
 
 				Alert.fire({
 					position: "center",
