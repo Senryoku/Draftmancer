@@ -753,6 +753,10 @@ ul.player-list {
 	overflow: visible;
 }
 
+.booster-cards-leave-active.selected .card-image {
+	width: 200px;
+}
+
 .booster-cards-leave-to.selected {
 	transform: translateY(250px) translateX(-100px); /* translateX compensates for width change */
 	z-index: 2;

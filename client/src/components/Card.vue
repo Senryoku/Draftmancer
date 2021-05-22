@@ -69,7 +69,10 @@ export default {
 			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
 			const factor = (e.clientX - bounds.left) / bounds.width;
 			const factorY = (e.clientY - bounds.top) / bounds.height;
-			if (!this.$refs.image) return;
+			if (!this.$refs.image) {
+				document.removeEventListener("mousemove", this.foilEffect);
+				return;
+			}
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
 			const rotScale = (v) => -20 + 40 * v;
