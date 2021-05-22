@@ -69,6 +69,7 @@ export default {
 			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
 			const factor = (e.clientX - bounds.left) / bounds.width;
 			const factorY = (e.clientY - bounds.top) / bounds.height;
+			if (!this.$refs.image) return;
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
 			const rotScale = (v) => -20 + 40 * v;
@@ -132,6 +133,10 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	filter: brightness(var(--brightness));
 	transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
 		rotate3d(1, 0, 0, var(--transform-rotation-y));
+}
+
+.card-column .foil .card-image {
+	padding-bottom: 141.5%;
 }
 
 .foil:not(:hover) .card-image,
