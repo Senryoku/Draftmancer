@@ -39,6 +39,7 @@ export default {
 	position: fixed;
 	top: 10vh;
 	height: 80vh;
+	min-width: min(90vw, calc(0.71 * 80vh));
 	max-width: min(90vw, calc(2 * 0.71 * 80vh));
 	z-index: 999;
 	pointer-events: none;
