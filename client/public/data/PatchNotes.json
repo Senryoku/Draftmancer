@@ -1,5 +1,9 @@
 [
 	{
+		"date": "22/05/2021",
+		"notes": ["Updated card zoom on right-click to be more legible."]
+	},
+	{
 		"date": "16/05/2021",
 		"notes": ["Improved spectator view for organizer."]
 	},
