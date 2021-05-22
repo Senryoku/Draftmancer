@@ -235,9 +235,15 @@ img {
 .layout-split {
 	transform: translate(-50%, -25%) scale(1.41) rotateZ(90deg);
 }
+.right .layout-split {
+	transform: translate(-150%, -25%) scale(1.41) rotateZ(90deg);
+}
 
 .layout-split-left {
 	transform: translate(150%, -25%) scale(1.41) rotateZ(-90deg);
+}
+.right .layout-split-left {
+	transform: translate(50%, -25%) scale(1.41) rotateZ(-90deg);
 }
 
 .layout-split-left img,

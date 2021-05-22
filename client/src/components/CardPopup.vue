@@ -1,7 +1,13 @@
 <template>
 	<transition name="zoom">
-		<div class="card-popup" :class="{ left: position === 'left', right: position === 'right' }" v-show="display">
-			<CardImage v-if="card" :language="language" :card="card" :fixedLayout="true" />
+		<div
+			class="card-popup"
+			:class="{ left: position === 'left', right: position === 'right' }"
+			v-if="card"
+			v-show="display"
+			style="-webkit-transform: translateZ(0)"
+		>
+			<CardImage :language="language" :card="card" :fixedLayout="true" />
 		</div>
 	</transition>
 </template>
@@ -25,20 +31,6 @@ export default {
 		this.$root.$on("closecardpopup", () => {
 			this.display = false;
 		});
-	},
-	computed: {
-		imageURI: function () {
-			if (this.language in this.card.image_uris) return this.card.image_uris[this.language];
-			return this.card.image_uris["en"];
-		},
-		hasBack: function () {
-			return this.card.back !== null && this.card.back !== undefined;
-		},
-		backImageURI: function () {
-			return this.language in this.card.back.image_uris
-				? this.card.back.image_uris[this.language]
-				: this.card.back.image_uris["en"];
-		},
 	},
 };
 </script>
