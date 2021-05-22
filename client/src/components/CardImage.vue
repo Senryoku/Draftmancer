@@ -54,6 +54,9 @@
 		<div class="card-image" v-if="hasBack">
 			<img :src="backImageURI" />
 		</div>
+		<div class="card-image" v-if="card.layout === 'flip'">
+			<img :src="imageURI" style="transform: rotate(180deg)" />
+		</div>
 	</div>
 </template>
 
@@ -89,7 +92,6 @@ export default {
 <style scoped>
 .card-image {
 	width: 100%;
-	padding-bottom: 141%; /* Simulate a width relative height */
 	background-color: transparent;
 	perspective: 1000px;
 	border-radius: 3%;
@@ -227,23 +229,24 @@ img {
 	width: 100%;
 }
 
+.layout-flip,
 .layout-back {
 	display: flex;
 	gap: 5px;
 }
 
 .layout-split {
-	transform: translate(-50%, -25%) scale(1.41) rotateZ(90deg);
+	transform: translate(50%) scale(1.41) rotateZ(90deg);
 }
 .right .layout-split {
-	transform: translate(-150%, -25%) scale(1.41) rotateZ(90deg);
+	transform: translate(-50%) scale(1.41) rotateZ(90deg);
 }
 
 .layout-split-left {
-	transform: translate(150%, -25%) scale(1.41) rotateZ(-90deg);
+	transform: translate(50%) scale(1.41) rotateZ(-90deg);
 }
 .right .layout-split-left {
-	transform: translate(50%, -25%) scale(1.41) rotateZ(-90deg);
+	transform: translate(-50%) scale(1.41) rotateZ(-90deg);
 }
 
 .layout-split-left img,

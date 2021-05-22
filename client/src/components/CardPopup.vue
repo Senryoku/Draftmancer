@@ -38,22 +38,28 @@ export default {
 
 <style scoped>
 .card-popup {
+	--image-height: 70vh;
+
 	position: fixed;
-	top: 10vh;
-	height: 80vh;
-	min-width: min(90vw, calc(0.71 * 80vh));
-	max-width: min(90vw, calc(2 * 0.71 * 80vh));
+	top: 15vh;
+	height: var(--image-height);
+	min-width: min(90vw, calc(0.71 * var(--image-height)));
+	max-width: min(90vw, calc(2 * 0.71 * var(--image-height)));
 	z-index: 999;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
 
 .card-popup.right {
-	right: 5vw;
+	right: 2.5vw;
 }
 
 .card-popup.left {
-	left: 5vw;
+	left: 2.5vw;
+}
+
+.card-popup >>> img {
+	max-height: var(--image-height);
 }
 
 .zoom-enter-active,

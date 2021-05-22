@@ -110,6 +110,7 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	position: relative;
 	text-align: center;
 	width: 200px;
+	height: 282px;
 
 	--brightness: 100%;
 	--transform-rotation-x: 0;
