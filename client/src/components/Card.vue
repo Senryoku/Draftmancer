@@ -66,6 +66,9 @@ export default {
 		},
 		foilEffect: function (e) {
 			const bounds = this.$el.getBoundingClientRect();
+			const style = this.$el.currentStyle || window.getComputedStyle(this.$el);
+			bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
+			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
 			const factor = (e.clientX - bounds.left) / bounds.width;
 			const factorY = (e.clientY - bounds.top) / bounds.height;
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
