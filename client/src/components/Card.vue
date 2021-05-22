@@ -8,13 +8,11 @@
 		@dblclick="$emit('dblclick')"
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
-		@mouseleave="disableZoom"
+		@mouseleave="mouseLeave"
 		@mouseenter="activateFoilEffect"
 	>
-		<div class="zoom-container">
-			<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
-			<slot></slot>
-		</div>
+		<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
+		<slot></slot>
 	</div>
 </template>
 
@@ -43,12 +41,12 @@ export default {
 	},
 	methods: {
 		toggleZoom: function (e) {
-			e.currentTarget.classList.toggle("zoomedin");
 			e.preventDefault();
+			this.$root.$emit("togglecardpopup", e, this.card);
 		},
-		disableZoom: function (e) {
-			e.currentTarget.classList.remove("zoomedin");
+		mouseLeave: function (e) {
 			e.preventDefault();
+			this.$root.$emit("closecardpopup");
 
 			if (this.card.foil) {
 				document.removeEventListener("mousemove", this.foilEffect);
@@ -71,6 +69,10 @@ export default {
 			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
 			const factor = (e.clientX - bounds.left) / bounds.width;
 			const factorY = (e.clientY - bounds.top) / bounds.height;
+			if (!this.$refs.image) {
+				document.removeEventListener("mousemove", this.foilEffect);
+				return;
+			}
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
 			const rotScale = (v) => -20 + 40 * v;
@@ -111,6 +113,8 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	display: inline-block;
 	position: relative;
 	text-align: center;
+	width: 200px;
+	height: 282px;
 
 	--brightness: 100%;
 	--transform-rotation-x: 0;
@@ -126,24 +130,16 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	transition: transform 0.25s ease, opacity 0.5s;
 }
 
-.zoom-container {
-	transition: transform 0.2s ease;
-}
-
-.card.zoomedin {
-	z-index: 2;
-}
-
-.card.zoomedin .zoom-container {
-	transform: scale(1.75) !important;
-}
-
 .foil .card-image {
 	position: relative;
 	overflow: hidden;
 	filter: brightness(var(--brightness));
 	transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
 		rotate3d(1, 0, 0, var(--transform-rotation-y));
+}
+
+.card-column .foil .card-image {
+	padding-bottom: 141.5%;
 }
 
 .foil:not(:hover) .card-image,

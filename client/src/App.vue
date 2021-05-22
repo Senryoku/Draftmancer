@@ -2008,6 +2008,7 @@
 				</div>
 			</div>
 		</modal>
+		<CardPopup :language="language" />
 		<footer>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<a>About</a>
