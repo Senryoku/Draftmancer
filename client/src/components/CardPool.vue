@@ -136,6 +136,7 @@
 					:group="group"
 					@change="change"
 					drag-class="drag"
+					:animation="200"
 				>
 					<card
 						v-for="(card, index) in column"

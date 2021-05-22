@@ -11,8 +11,10 @@
 		@mouseleave="disableZoom"
 		@mouseenter="activateFoilEffect"
 	>
-		<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
-		<slot></slot>
+		<div class="zoom-container">
+			<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
+			<slot></slot>
+		</div>
 	</div>
 </template>
 
@@ -106,7 +108,6 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	display: inline-block;
 	position: relative;
 	text-align: center;
-	transition: transform 0.2s ease;
 
 	--brightness: 100%;
 	--transform-rotation-x: 0;
@@ -122,9 +123,16 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	transition: transform 0.25s ease, opacity 0.5s;
 }
 
+.zoom-container {
+	transition: transform 0.2s ease;
+}
+
 .card.zoomedin {
-	transform: scale(1.75) !important;
 	z-index: 2;
+}
+
+.card.zoomedin .zoom-container {
+	transform: scale(1.75) !important;
 }
 
 .foil .card-image {

@@ -969,12 +969,13 @@ ul.player-list {
 	margin: 0;
 }
 
+/* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
 .card-column .card:hover {
 	z-index: 999;
 }
 
 .card-column .card:last-child {
-	padding-bottom: 142.5%;
+	margin-bottom: 142.5%;
 }
 
 /* Only use this hover rule on desktop (hover capabilities and a mouse or equivalent device) */
