@@ -23,8 +23,10 @@ export default {
 	},
 	created() {
 		this.$root.$on("togglecardpopup", (event, card) => {
-			this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
-			this.card = card;
+			if (!this.display) {
+				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
+				this.card = card;
+			}
 			this.display = !this.display;
 		});
 		this.$root.$on("closecardpopup", () => {
