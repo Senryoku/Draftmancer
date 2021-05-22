@@ -8,13 +8,11 @@
 		@dblclick="$emit('dblclick')"
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
-		@mouseleave="disableZoom"
+		@mouseleave="mouseLeave"
 		@mouseenter="activateFoilEffect"
 	>
-		<div class="zoom-container">
-			<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
-			<slot></slot>
-		</div>
+		<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
+		<slot></slot>
 	</div>
 </template>
 
@@ -43,12 +41,12 @@ export default {
 	},
 	methods: {
 		toggleZoom: function (e) {
-			e.currentTarget.classList.toggle("zoomedin");
 			e.preventDefault();
+			this.$root.$emit("togglecardpopup", e, this.card);
 		},
-		disableZoom: function (e) {
-			e.currentTarget.classList.remove("zoomedin");
+		mouseLeave: function (e) {
 			e.preventDefault();
+			this.$root.$emit("closecardpopup");
 
 			if (this.card.foil) {
 				document.removeEventListener("mousemove", this.foilEffect);
@@ -111,6 +109,7 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	display: inline-block;
 	position: relative;
 	text-align: center;
+	width: 200px;
 
 	--brightness: 100%;
 	--transform-rotation-x: 0;
@@ -124,18 +123,6 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 .fade-enter-active.card,
 .fade-leave-active.card {
 	transition: transform 0.25s ease, opacity 0.5s;
-}
-
-.zoom-container {
-	transition: transform 0.2s ease;
-}
-
-.card.zoomedin {
-	z-index: 2;
-}
-
-.card.zoomedin .zoom-container {
-	transform: scale(1.75) !important;
 }
 
 .foil .card-image {

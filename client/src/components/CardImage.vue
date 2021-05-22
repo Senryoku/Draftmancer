@@ -1,5 +1,5 @@
 <template>
-	<div class="card-image">
+	<div class="card-image" v-if="!fixedLayout">
 		<div v-if="hasBack" class="flip-button">
 			<i class="fas fa-sync flip-icon"></i>
 		</div>
@@ -38,6 +38,23 @@
 			</clazy-load>
 		</div>
 	</div>
+	<div
+		v-else
+		class="fixed-layout"
+		:class="{
+			'layout-back': hasBack,
+			'layout-flip': card.layout === 'flip',
+			'layout-split': card.layout === 'split',
+			'layout-split-left': card.layout === 'split-left',
+		}"
+	>
+		<div class="card-image">
+			<img :src="imageURI" />
+		</div>
+		<div class="card-image" v-if="hasBack">
+			<img :src="backImageURI" />
+		</div>
+	</div>
 </template>
 
 <script>
@@ -50,6 +67,7 @@ export default {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
 		lazyLoad: { type: Boolean, default: false },
+		fixedLayout: { type: Boolean, default: false },
 	},
 	computed: {
 		imageURI: function () {
@@ -70,7 +88,7 @@ export default {
 
 <style scoped>
 .card-image {
-	width: 200px;
+	width: 100%;
 	padding-bottom: 141%; /* Simulate a width relative height */
 	background-color: transparent;
 	perspective: 1000px;
@@ -78,7 +96,7 @@ export default {
 }
 
 img {
-	width: 200px;
+	width: 100%;
 	border-radius: 3%;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -202,5 +220,28 @@ img {
 .split-left-button:hover ~ .flip-container div img {
 	transform: scale(1.41) rotateZ(-90deg);
 	z-index: 100;
+}
+
+/* Fixed Layouts (Used by CardPopup) */
+.fixed-layout {
+	width: 100%;
+}
+
+.layout-back {
+	display: flex;
+	gap: 5px;
+}
+
+.layout-split {
+	transform: translate(-50%, -25%) scale(1.41) rotateZ(90deg);
+}
+
+.layout-split-left {
+	transform: translate(150%, -25%) scale(1.41) rotateZ(-90deg);
+}
+
+.layout-split-left img,
+.layout-split img {
+	max-height: calc(90vw / 1.41);
 }
 </style>
