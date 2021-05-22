@@ -5,7 +5,6 @@
 			:class="{ left: position === 'left', right: position === 'right' }"
 			v-if="card"
 			v-show="display"
-			style="-webkit-transform: translateZ(0)"
 		>
 			<CardImage :language="language" :card="card" :fixedLayout="true" />
 		</div>
@@ -54,10 +53,6 @@ export default {
 	left: 5vw;
 }
 
-.card-popup .card {
-	width: 100%;
-}
-
 .zoom-enter-active,
 .zoom-leave-active {
 	transition: all 0.15s ease;
@@ -66,6 +61,14 @@ export default {
 .zoom-enter,
 .zoom-leave-to {
 	opacity: 0;
-	transform: scale(0);
+}
+.zoom-enter.left,
+.zoom-leave-to.left {
+	left: -5vw;
+}
+
+.zoom-enter.right,
+.zoom-leave-to.right {
+	right: -5vw;
 }
 </style>
