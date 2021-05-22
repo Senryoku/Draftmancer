@@ -19,6 +19,7 @@ import {
 import JumpstartBoosters from "../data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
+import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 
 export const optionProps = [
 	"ownerIsPlayer",
@@ -47,60 +48,6 @@ export const optionProps = [
 	"draftLogRecipients",
 	"bracketLocked",
 ];
-
-class Bracket {
-	constructor(players) {
-		this.players = players;
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
-	}
-}
-
-class TeamBracket {
-	constructor(players) {
-		this.players = players;
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
-		this.teamDraft = true;
-	}
-}
-
-class SwissBracket {
-	constructor(players) {
-		this.players = players;
-		this.results = [
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
-		];
-		this.swiss = true;
-	}
-}
 
 export class WinstonDraftState {
 	constructor(players, boosters) {
@@ -1815,6 +1762,11 @@ export class Session {
 
 	generateSwissBracket(players) {
 		this.bracket = new SwissBracket(players);
+		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+	}
+
+	generateDoubleBracket(players) {
+		this.bracket = new DoubleBracket(players);
 		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 

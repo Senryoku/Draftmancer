@@ -13,63 +13,65 @@
 				<button @click="$emit('generate')">
 					{{ !teamDraft ? "Re-Generate Single Elimination" : "Re-Generate Team Bracket" }}
 				</button>
+				<button @click="$emit('generate-double')" v-if="!teamDraft">
+					{{ "Re-Generate Double Elimination" }}
+				</button>
 				<button v-if="!teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
 			</div>
 			<div v-else-if="locked">
 				<span> <i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results. </span>
 			</div>
 		</div>
+		<h2 v-if="bracket.double">Upper Bracket</h2>
 		<div class="bracket-columns">
 			<div class="bracket-column" v-for="(col, colIndex) in matches" :key="colIndex">
-				<div v-for="(m, matchIndex) in col" :key="matchIndex" class="bracket-match">
-					<td class="bracket-match-num">{{ m.index + 1 }}</td>
-					<td class="bracket-match-players">
-						<div v-for="(p, index) in m.players" :key="index">
-							<div class="bracket-player bracket-empty" v-if="p.empty">(Empty)</div>
-							<div class="bracket-player bracket-tbd" v-else-if="p.tbd">(TBD {{ p.tbd }})</div>
-							<div
-								class="bracket-player"
-								:class="{
-									'bracket-winner':
-										bracket.results[m.index][index] > bracket.results[m.index][(index + 1) % 2],
-									teama: bracket.teamDraft && index % 2 === 0,
-									teamb: bracket.teamDraft && index % 2 === 1,
-								}"
-								v-else
-							>
-								<template v-if="colIndex === 2">
-									<i v-if="isGold(p, index)" class="trophy gold fas fa-trophy"></i>
-									<i v-else-if="isSilver(p)" class="trophy silver fas fa-trophy"></i>
-									<div v-else class="trophy"></div>
-								</template>
-								<div
-									class="bracket-player-name"
-									v-tooltip="'Current record: ' + recordString(p)"
-									:class="{ clickable: draftlog }"
-									@click="if (draftlog) selectedUser = p;"
-								>
-									{{ p.userName }}
-									<i
-										class="fas fa-clipboard-check green"
-										v-if="hasDeckList(p.userID)"
-										v-tooltip="`${p.userName} submited their deck. Click to review it.`"
-									></i>
-								</div>
-								<template v-if="m.isValid()">
-									<input
-										v-if="editable"
-										class="result-input"
-										type="number"
-										v-model.number="bracket.results[m.index][index]"
-										min="0"
-										@change="emitUpdated"
-									/>
-									<div class="bracket-result" v-else>{{ bracket.results[m.index][index] }}</div>
-								</template>
-							</div>
-						</div>
-					</td>
-				</div>
+				<BracketMatch
+					v-for="m in col"
+					:key="m.index"
+					:match="m"
+					:result="bracket.results[m.index]"
+					:bracket="bracket"
+					:records="records"
+					:teamrecords="teamRecords"
+					:draftlog="draftlog"
+					:final="!bracket.double && colIndex === 2"
+					:editable="editable"
+					@updated="(index, value) => $emit('updated', m.index, index, value)"
+					@selectuser="(user) => (selectedUser = user)"
+				/>
+			</div>
+			<div class="bracket-column" v-if="bracket.double">
+				<BracketMatch
+					:key="final.index"
+					:match="final"
+					:result="bracket.results[final.index]"
+					:bracket="bracket"
+					:records="records"
+					:teamrecords="teamRecords"
+					:draftlog="draftlog"
+					:final="true"
+					:editable="editable"
+					@updated="(index, value) => $emit('updated', final.index, index, value)"
+					@selectuser="(user) => (selectedUser = user)"
+				/>
+			</div>
+		</div>
+		<h2 v-if="bracket.double">Lower Bracket</h2>
+		<div class="bracket-columns" v-if="bracket.double">
+			<div class="bracket-column" v-for="(col, colIndex) in lowerBracket" :key="colIndex">
+				<BracketMatch
+					v-for="m in col"
+					:key="m.index"
+					:match="m"
+					:result="bracket.results[m.index]"
+					:bracket="bracket"
+					:records="records"
+					:teamrecords="teamRecords"
+					:draftlog="draftlog"
+					:editable="editable"
+					@updated="(index, value) => $emit('updated', m.index, index, value)"
+					@selectuser="(user) => (selectedUser = user)"
+				/>
 			</div>
 		</div>
 		<div v-if="draftlog && selectedUser">
@@ -89,10 +91,21 @@
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
+import BracketMatch from "./BracketMatch.vue";
+
+class Match {
+	constructor(index, players) {
+		this.index = index;
+		this.players = players;
+	}
+	isValid() {
+		return !this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd;
+	}
+}
 
 export default {
 	name: "Bracket",
-	components: { Decklist },
+	components: { Decklist, BracketMatch },
 	data: () => {
 		return {
 			selectedUser: null,
@@ -100,7 +113,7 @@ export default {
 	},
 	props: {
 		bracket: { type: Object, required: true },
-		teamDraft: { type: Boolean, required: false },
+		teamDraft: { type: Boolean, required: true },
 		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
@@ -110,40 +123,10 @@ export default {
 		language: { type: String, required: true },
 	},
 	methods: {
-		teamWins: function (team) {
-			let total = 0;
-			for (let col of this.matches) {
-				for (let m of col) {
-					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-						if (winIdx === team) {
-							total += 1;
-						}
-					}
-				}
-			}
-			return total;
-		},
-		isGold: function (p, index) {
-			if (this.bracket.teamDraft) {
-				return this.teamWins(index) >= 5;
-			} else {
-				return this.records[p.userID].wins === 3;
-			}
-		},
-		isSilver: function (p) {
-			return !this.bracket.teamDraft && this.records[p.userID].wins === 2;
-		},
-		emitUpdated: function () {
-			this.$emit("updated");
-		},
-		recordString: function (p) {
-			return `${this.records[p.userID].wins} - ${this.records[p.userID].losses}`;
-		},
-		lock: function (e) {
+		lock(e) {
 			this.$emit("lock", e.target.checked);
 		},
-		copyLink: function () {
+		copyLink() {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
@@ -154,66 +137,49 @@ export default {
 		hasDeckList: function (userID) {
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
+
+		winner(match) {
+			if (match.players[0].empty && match.players[1].empty) return { empty: true };
+			if (match.players[0].empty) return match.players[1];
+			if (match.players[1].empty) return match.players[0];
+			if (!this.bracket.results || this.bracket.results[match.index][0] === this.bracket.results[match.index][1])
+				return { tbd: "W" + (match.index + 1) };
+			if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1]) return match.players[0];
+			else return match.players[1];
+		},
+		loser(match) {
+			if (match.players[0].empty || match.players[1].empty) return { empty: true };
+			if (!this.bracket.results || this.bracket.results[match.index][0] === this.bracket.results[match.index][1])
+				return { tbd: "L" + (match.index + 1) };
+			if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1]) return match.players[1];
+			else return match.players[0];
+		},
+		getPlayer(idx) {
+			return this.bracket.players[idx] ? this.bracket.players[idx] : { empty: true };
+		},
 	},
 	computed: {
-		matches: function () {
+		matches() {
 			let m = [[], [], []];
-			const Match = function (index, players) {
-				this.index = index;
-				this.players = players;
-				this.isValid = function () {
-					return (
-						!this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd
-					);
-				};
-			};
-
-			const winner = (match) => {
-				if (match.players[0].empty && match.players[1].empty) return { empty: true };
-				if (match.players[0].empty) return match.players[1];
-				if (match.players[1].empty) return match.players[0];
-				if (
-					!this.bracket.results ||
-					this.bracket.results[match.index][0] === this.bracket.results[match.index][1]
-				)
-					return { tbd: "W" + (match.index + 1) };
-				if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1])
-					return match.players[0];
-				else return match.players[1];
-			};
-
-			const loser = (match) => {
-				if (match.players[0].empty || match.players[1].empty) return { empty: true };
-				if (
-					!this.bracket.results ||
-					this.bracket.results[match.index][0] === this.bracket.results[match.index][1]
-				)
-					return { tbd: "L" + (match.index + 1) };
-				if (this.bracket.results[match.index][0] > this.bracket.results[match.index][1])
-					return match.players[1];
-				else return match.players[0];
-			};
-
-			const playerOrEmpty = (idx) => {
-				return this.bracket.players[idx] ? this.bracket.players[idx] : { empty: true };
-			};
+			const getPlayer = this.getPlayer;
+			const winner = this.winner;
+			const loser = this.loser;
 
 			if (this.bracket.teamDraft) {
-				m[0].push(new Match(0, [playerOrEmpty(0), playerOrEmpty(3)]));
-				m[0].push(new Match(1, [playerOrEmpty(2), playerOrEmpty(5)]));
-				m[0].push(new Match(2, [playerOrEmpty(4), playerOrEmpty(1)]));
-				m[1].push(new Match(3, [playerOrEmpty(0), playerOrEmpty(5)]));
-				m[1].push(new Match(4, [playerOrEmpty(2), playerOrEmpty(1)]));
-				m[1].push(new Match(5, [playerOrEmpty(4), playerOrEmpty(3)]));
-				m[2].push(new Match(6, [playerOrEmpty(0), playerOrEmpty(1)]));
-				m[2].push(new Match(7, [playerOrEmpty(2), playerOrEmpty(3)]));
-				m[2].push(new Match(8, [playerOrEmpty(4), playerOrEmpty(5)]));
+				m[0].push(new Match(0, [getPlayer(0), getPlayer(3)]));
+				m[0].push(new Match(1, [getPlayer(2), getPlayer(5)]));
+				m[0].push(new Match(2, [getPlayer(4), getPlayer(1)]));
+				m[1].push(new Match(3, [getPlayer(0), getPlayer(5)]));
+				m[1].push(new Match(4, [getPlayer(2), getPlayer(1)]));
+				m[1].push(new Match(5, [getPlayer(4), getPlayer(3)]));
+				m[2].push(new Match(6, [getPlayer(0), getPlayer(1)]));
+				m[2].push(new Match(7, [getPlayer(2), getPlayer(3)]));
+				m[2].push(new Match(8, [getPlayer(4), getPlayer(5)]));
 				return m;
 			}
 
-			for (let i = 0; i < 4; ++i) {
-				m[0].push(new Match(i, [playerOrEmpty(2 * i), playerOrEmpty(2 * i + 1)]));
-			}
+			for (let i = 0; i < 4; ++i) m[0].push(new Match(i, [getPlayer(2 * i), getPlayer(2 * i + 1)]));
+
 			m[1].push(new Match(4, [winner(m[0][0]), winner(m[0][1])]));
 			m[1].push(new Match(5, [winner(m[0][2]), winner(m[0][3])]));
 			if (this.bracket.swiss) {
@@ -228,25 +194,61 @@ export default {
 			}
 			return m;
 		},
-		records: function () {
+		lowerBracket() {
+			if (!this.bracket.double) return [];
+			let m = [[], [], [], []];
+			for (let i = 0; i < 2; ++i) {
+				m[0].push(
+					new Match(7 + i, [this.loser(this.matches[0][2 * i]), this.loser(this.matches[0][2 * i + 1])])
+				);
+				m[1].push(new Match(9 + i, [this.winner(m[0][i]), this.loser(this.matches[1][i])]));
+			}
+			m[2].push(new Match(11, [this.winner(m[1][0]), this.winner(m[1][1])]));
+			m[3].push(new Match(12, [this.winner(m[2][0]), this.loser(this.matches[2][0])]));
+			return m;
+		},
+		final() {
+			if (!this.bracket.double) return null;
+			return new Match(13, [this.winner(this.matches[2][0]), this.winner(this.lowerBracket[3][0])]);
+		},
+		records() {
 			let r = {};
 			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
-			for (let col of this.matches)
+
+			const countMatch = (m) => {
+				if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
+					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+					r[m.players[winIdx].userID].wins += 1;
+					r[m.players[(winIdx + 1) % 2].userID].losses += 1;
+				} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
+					r[m.players[0].userID].wins += 1;
+				} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
+					r[m.players[1].userID].wins += 1;
+				}
+			};
+
+			for (let col of this.matches) for (let m of col) countMatch(m);
+			if (this.bracket.double) {
+				for (let col of this.lowerBracket) for (let m of col) countMatch(m);
+				countMatch(this.final);
+			}
+
+			return r;
+		},
+		teamRecords() {
+			let r = [0, 0];
+			for (let col of this.matches) {
 				for (let m of col) {
 					if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
-						let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
-						r[m.players[winIdx].userID].wins += 1;
-						r[m.players[(winIdx + 1) % 2].userID].losses += 1;
-					} else if (m.players[1].empty && !m.players[0].empty && !m.players[0].tbd) {
-						r[m.players[0].userID].wins += 1;
-					} else if (m.players[0].empty && !m.players[1].empty && !m.players[1].tbd) {
-						r[m.players[1].userID].wins += 1;
+						const teamIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
+						r[teamIdx] += 1;
 					}
 				}
+			}
 			return r;
 		},
 		selectedDeckList: function () {
-			if (this.draftlog.users[this.selectedUser.userID])
+			if (this.draftlog && this.selectedUser && this.draftlog.users[this.selectedUser.userID])
 				return this.draftlog.users[this.selectedUser.userID].decklist;
 			return null;
 		},
@@ -267,74 +269,5 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-}
-
-.bracket-match {
-	margin: 0.5em;
-}
-
-.bracket-match-num {
-	vertical-align: middle;
-	min-width: 1.5em;
-}
-
-.bracket-match-players {
-	background: #333;
-	border-radius: 1em;
-	padding: 0.5em;
-}
-
-.bracket-player {
-	display: flex;
-	background: #2c2c2c;
-	justify-content: space-between;
-	height: 2em;
-	line-height: 2em;
-	width: 20rem;
-	padding: 0.5em;
-	margin: 0.5em;
-	border-radius: 8px;
-}
-
-.bracket-winner {
-	font-weight: bold;
-	box-shadow: 0 0 4px 4px #bbb;
-}
-
-.bracket-tbd,
-.bracket-empty {
-	color: grey;
-	pointer-events: none;
-	user-select: none;
-}
-
-.bracket-result {
-	font-size: 2em;
-	min-width: 32px;
-	text-align: right;
-}
-
-.bracket-player-name {
-	font-size: 1.5em;
-	max-width: 15rem;
-	overflow: hidden;
-}
-
-.trophy {
-	height: 32px;
-	width: 32px;
-	font-size: 32px;
-}
-
-.gold {
-	color: gold;
-}
-
-.silver {
-	color: silver;
-}
-
-.result-input {
-	width: 2.2em;
 }
 </style>

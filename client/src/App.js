@@ -1868,8 +1868,16 @@ export default {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
-		updateBracket: function() {
+		generateDoubleBracket: function() {
+			if (this.userID != this.sessionOwner || this.teamDraft) return;
+			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
+			this.socket.emit("generateDoubleBracket", players, answer => {
+				if (answer.code === 0) this.displayedModal = "bracket";
+			});
+		},
+		updateBracket: function(matchIndex, index, value) {
 			if (this.userID != this.sessionOwner && this.bracketLocked) return;
+			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
 		lockBracket: function(val) {
