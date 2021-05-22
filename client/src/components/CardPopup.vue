@@ -18,14 +18,7 @@ export default {
 	},
 	created() {
 		this.$root.$on("togglecardpopup", (event, card) => {
-			console.log("gotit!");
-			console.log(event);
-			console.log(event.clientX, window.innerWidth / 2);
-			if (event.clientX < window.innerWidth / 2) {
-				this.position = "right";
-			} else {
-				this.position = "left";
-			}
+			this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 			this.card = card;
 			this.display = !this.display;
 		});
