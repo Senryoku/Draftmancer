@@ -129,6 +129,7 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 .foil .card-image {
 	position: relative;
 	overflow: hidden;
+	padding-bottom: 141.5%;
 	filter: brightness(var(--brightness));
 	transform: perspective(1000px) rotate3d(0, 1, 0, var(--transform-rotation-x))
 		rotate3d(1, 0, 0, var(--transform-rotation-y));
