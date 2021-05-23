@@ -1039,7 +1039,7 @@
 						:list="sideboard"
 						group="deck"
 						@change="$refs.sideboardDisplay.sync() /* Sync sideboard card-pool */"
-						drag-class="drag"
+						:animation="200"
 					>
 						<card
 							v-for="card in sideboard"

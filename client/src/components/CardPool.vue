@@ -135,7 +135,6 @@
 					:list="column"
 					:group="group"
 					@change="change"
-					drag-class="drag"
 					:animation="200"
 				>
 					<card
