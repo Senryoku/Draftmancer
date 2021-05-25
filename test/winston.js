@@ -13,7 +13,7 @@ describe("Winston Draft", function() {
 	var nonOwnerIdx;
 
 	const getCurrentPlayer = () => {
-		const currentPlayerID = Sessions[sessionID].winstonDraftState.currentPlayer();
+		const currentPlayerID = Sessions[sessionID].draftState.currentPlayer();
 		const currentPlayerIdx = clients.findIndex(c => c.query.userID == currentPlayerID);
 		return clients[currentPlayerIdx];
 	};

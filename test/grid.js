@@ -94,7 +94,7 @@ describe("Grid Draft", function() {
 					if (draftEnded == clients.length) done();
 				});
 			}
-			let currentPlayerID = Sessions[sessionID].gridDraftState.currentPlayer();
+			let currentPlayerID = Sessions[sessionID].draftState.currentPlayer();
 			let currentPlayerIdx = clients.findIndex(c => c.query.userID == currentPlayerID);
 			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
 		});

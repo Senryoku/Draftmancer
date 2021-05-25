@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
+import { Session, Sessions, DraftState, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
 import Bot from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -23,10 +23,8 @@ const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL
-	? process.env.PERSISTENCE_STORE_URL
-	: "http://localhost:3008";
-const PersistenceKey = process.env.PERSISTENCE_KEY ? process.env.PERSISTENCE_KEY : "1234";
+const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
+const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 async function requestSavedConnections() {
 	let InactiveConnections = {};
@@ -77,8 +75,7 @@ async function requestSavedSessions() {
 				for (let s of response.data) {
 					InactiveSessions[s.id] = new Session(s.id, null);
 					for (let prop of Object.getOwnPropertyNames(s).filter(
-						p =>
-							!["botsInstances", "winstonDraftState", "gridDraftState", "rochesterDraftState"].includes(p)
+						p => !["botsInstances", "draftState"].includes(p)
 					)) {
 						InactiveSessions[s.id][prop] = s[prop];
 					}
@@ -96,19 +93,26 @@ async function requestSavedSessions() {
 						}
 					}
 
-					if (s.winstonDraftState) {
-						InactiveSessions[s.id].winstonDraftState = new WinstonDraftState();
-						copyProps(s.winstonDraftState, InactiveSessions[s.id].winstonDraftState);
-					}
-
-					if (s.gridDraftState) {
-						InactiveSessions[s.id].gridDraftState = new GridDraftState();
-						copyProps(s.gridDraftState, InactiveSessions[s.id].gridDraftState);
-					}
-
-					if (s.rochesterDraftState) {
-						InactiveSessions[s.id].rochesterDraftState = new RochesterDraftState();
-						copyProps(s.rochesterDraftState, InactiveSessions[s.id].rochesterDraftState);
+					if (s.draftState) {
+						switch (s.draftState.type) {
+							case "draft": {
+								InactiveSessions[s.id].draftState = new DraftState();
+								break;
+							}
+							case "winston": {
+								InactiveSessions[s.id].draftState = new WinstonDraftState();
+								break;
+							}
+							case "grid": {
+								InactiveSessions[s.id].draftState = new GridDraftState();
+								break;
+							}
+							case "rochester": {
+								InactiveSessions[s.id].draftState = new RochesterDraftState();
+								break;
+							}
+						}
+						copyProps(s.draftState, InactiveSessions[s.id].draftState);
 					}
 				}
 				console.log(`Restored ${response.data.length} saved sessions.`);
@@ -173,7 +177,7 @@ async function tempDump(exitOnCompletion = false) {
 		const PoDSession = {};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
-			p => !["users", "countdownInterval", "botsInstances", "winstonDraftState", "gridDraftState"].includes(p)
+			p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
 		)) {
 			if (!(s[prop] instanceof Function)) PoDSession[prop] = s[prop];
 		}
@@ -198,19 +202,9 @@ async function tempDump(exitOnCompletion = false) {
 				}
 			}
 
-			if (s.winstonDraftState) {
-				PoDSession.winstonDraftState = {};
-				copyProps(s.winstonDraftState, PoDSession.winstonDraftState);
-			}
-
-			if (s.gridDraftState) {
-				PoDSession.gridDraftState = {};
-				copyProps(s.gridDraftState, PoDSession.gridDraftState);
-			}
-
-			if (s.rochesterDraftState) {
-				PoDSession.rochesterDraftState = {};
-				copyProps(s.rochesterDraftState, PoDSession.rochesterDraftState);
+			if (s.draftState) {
+				PoDSession.draftState = {};
+				copyProps(s.draftState, PoDSession.draftState);
 			}
 		}
 
