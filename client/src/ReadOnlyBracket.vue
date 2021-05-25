@@ -3,7 +3,15 @@
 		<a href="/"><i class="fas fa-chevron-left"></i> Go back to MTGADraft </a>
 		<div class="main">
 			<div v-if="bracket">
-				<h1>Bracket for Session '{{ sessionID }}'</h1>
+				<h1>
+					Bracket for Session '{{ sessionID }}'
+					<span v-if="bracket" style="font-size: 0.8em; font-weight: 1">
+						(<template v-if="teamDraft">Team Draft</template>
+						<template v-else-if="bracket.double">Double Elimination</template>
+						<template v-else-if="bracket.swiss">3-Round Swiss</template>
+						<template v-else>Single Elimination</template>)
+					</span>
+				</h1>
 				<bracket :bracket="bracket" :displayControls="false" :draftlog="draftlog" language="en"></bracket>
 			</div>
 			<div class="error" v-else>

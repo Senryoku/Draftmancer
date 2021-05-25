@@ -5,22 +5,35 @@
 			<button @click="copyLink" v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'">
 				<i class="fas fa-clipboard"></i> Copy Link to Clipboard
 			</button>
-			<div v-if="fullcontrol">
+			<template v-if="fullcontrol">
 				<span v-tooltip="'If set, only the owner will be able to enter results.'">
 					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
 					<label for="lock"> <i class="fas fa-lock"></i> Lock </label>
 				</span>
-				<button @click="$emit('generate')">
-					{{ !teamDraft ? "Re-Generate Single Elimination" : "Re-Generate Team Bracket" }}
-				</button>
-				<button @click="$emit('generate-double')" v-if="!teamDraft">
-					{{ "Re-Generate Double Elimination" }}
-				</button>
-				<button v-if="!teamDraft" @click="$emit('generate-swiss')">Re-Generate 3-Round Swiss</button>
-			</div>
-			<div v-else-if="locked">
-				<span> <i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results. </span>
-			</div>
+				<span>
+					Type:
+					<template v-if="teamDraft"> Team Draft </template>
+					<template v-else>
+						<select v-model="typeToGenerate">
+							<option value="single">Single Elimination</option>
+							<option value="double">Double Elimination</option>
+							<option value="swiss">3-Round Swiss</option>
+						</select>
+					</template>
+					<button @click="regenerate">Re-Generate</button>
+				</span>
+			</template>
+			<template v-else>
+				<span style="font-size: 1.5em">
+					<template v-if="teamDraft">Team Draft</template>
+					<template v-else-if="bracket.double">Double Elimination</template>
+					<template v-else-if="bracket.swiss">3-Round Swiss</template>
+					<template v-else>Single Elimination</template>
+				</span>
+			</template>
+			<span v-if="!fullcontrol && locked">
+				<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
+			</span>
 		</div>
 		<h2 v-if="bracket.double">Upper Bracket</h2>
 		<div class="bracket-columns">
@@ -106,9 +119,17 @@ class Match {
 export default {
 	name: "Bracket",
 	components: { Decklist, BracketMatch },
-	data: () => {
+	data(inst) {
+		const type = !inst.bracket
+			? "single"
+			: inst.bracket.double
+			? "double"
+			: inst.bracket.swiss
+			? "swiss"
+			: "single";
 		return {
 			selectedUser: null,
+			typeToGenerate: type,
 		};
 	},
 	props: {
@@ -156,6 +177,15 @@ export default {
 		},
 		getPlayer(idx) {
 			return this.bracket.players[idx] ? this.bracket.players[idx] : { empty: true };
+		},
+		regenerate() {
+			if (this.teamDraft || this.typeToGenerate === "single") {
+				this.$emit("generate");
+			} else if (this.typeToGenerate === "double") {
+				this.$emit("generate-double");
+			} else if (this.typeToGenerate === "swiss") {
+				this.$emit("generate-swiss");
+			}
 		},
 	},
 	computed: {
