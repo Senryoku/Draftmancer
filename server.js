@@ -336,7 +336,7 @@ const ownerSocketCallbacks = {
 		Sessions[sessionID].pauseDraft();
 	},
 	resumeDraft(userID, sessionID) {
-		Sessions[sessionID].resumeDraft({ title: "Draft Resumed" });
+		Sessions[sessionID].resumeDraft();
 	},
 	startGridDraft(userID, sessionID, boosterCount) {
 		const sess = Sessions[sessionID];

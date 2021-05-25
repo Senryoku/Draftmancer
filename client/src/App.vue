@@ -656,7 +656,7 @@
 					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
 					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 					class="container"
-					:class="{'disabled': waitingForDisconnectedUsers}"
+					:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
 				>
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
@@ -722,7 +722,7 @@
 			<!-- Winston Draft -->
 			<div
 				class="container"
-				:class="{'disabled': waitingForDisconnectedUsers}"
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
 				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 			>
 				<div class="section-title">
@@ -785,7 +785,7 @@
 			</div>
 			<!-- Grid Draft -->
 			<div 
-				:class="{'disabled': waitingForDisconnectedUsers}"
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
 				v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
 			>
 				<div class="section-title">
@@ -827,7 +827,7 @@
 			<!-- Rochester Draft -->
 			<div
 				class="rochester-container"
-				:class="{'disabled': waitingForDisconnectedUsers}"
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
 				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
 			>
 				<div style="flex-grow: 1">
@@ -893,6 +893,24 @@
 				</div>
 				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 			</div>
+			<transition name="fade">
+				<div v-if="draftPaused && !waitingForDisconnectedUsers" class="disconnected-user-popup-container">
+					<div class="disconnected-user-popup">
+						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>
+						<h1>Draft Paused</h1>
+						<template v-if="userID === sessionOwner">
+							Resume when you're ready.
+							
+							<div style="margin-top: 1em;">
+								<button @click="socket.emit('resumeDraft')">Resume</button>
+							</div>
+						</template>
+						<template v-else>
+							Wait for the session owner to resume.
+						</template>
+					</div>
+				</div>
+			</transition>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">

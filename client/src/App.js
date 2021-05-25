@@ -161,6 +161,7 @@ export default {
 			winstonDraftState: null,
 			gridDraftState: null,
 			rochesterDraftState: null,
+			draftPaused: false,
 
 			publicSessions: [],
 
@@ -308,7 +309,7 @@ export default {
 				this.disconnectedUsers = data.disconnectedUsers;
 			});
 
-			this.socket.on("resumeDraft", data => {
+			this.socket.on("resumeOnReconnection", data => {
 				this.disconnectedUsers = {};
 				fireToast("success", data.msg.title, data.msg.text);
 			});
@@ -717,28 +718,12 @@ export default {
 			});
 
 			this.socket.on("pauseDraft", () => {
-				if (this.userID === this.sessionOwner) {
-					Alert.fire({
-						position: "center",
-						icon: "info",
-						title: `Draft Paused`,
-						text: `Resume when you're ready.`,
-						showConfirmButton: true,
-						allowOutsideClick: false,
-						confirmButtonText: "Resume",
-					}).then(result => {
-						if (result.value) this.socket.emit("resumeDraft");
-					});
-				} else {
-					Alert.fire({
-						position: "center",
-						icon: "info",
-						title: `Draft Paused`,
-						text: `Wait for the session owner to resume.`,
-						showConfirmButton: false,
-						allowOutsideClick: false,
-					});
-				}
+				this.draftPaused = true;
+			});
+
+			this.socket.on("resumeDraft", () => {
+				this.draftPaused = false;
+				fireToast("success", "Draft Resumed");
 			});
 
 			this.socket.on("draftLog", draftLog => {
