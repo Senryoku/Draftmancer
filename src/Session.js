@@ -1285,7 +1285,7 @@ export class Session {
 			this.draftState.round = 0;
 			// Remove empty boosters
 			this.boosters.splice(0, totalVirtualPlayers);
-			++this.draftState.round;
+			++this.draftState.boosterNumber;
 		}
 
 		// End draft if there is no more booster to distribute
@@ -1297,7 +1297,7 @@ export class Session {
 		this.draftState.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
 
 		let index = 0;
-		const boosterOffset = this.draftState.round % 2 == 0 ? -this.draftState.round : this.draftState.round;
+		const boosterOffset = this.draftState.boosterNumber % 2 == 0 ? -this.draftState.round : this.draftState.round;
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
@@ -1322,7 +1322,7 @@ export class Session {
 					Connections[userID].boosterIndex = boosterIndex;
 					Connections[userID].socket.emit("nextBooster", {
 						booster: this.boosters[boosterIndex],
-						boosterNumber: this.draftState.round,
+						boosterNumber: this.draftState.boosterNumber,
 						pickNumber: this.draftState.round + 1,
 					});
 				}
@@ -1332,7 +1332,7 @@ export class Session {
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("nextBooster", {
-				boosterNumber: this.draftState.round,
+				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.round + 1,
 			});
 		}
@@ -1618,7 +1618,7 @@ export class Session {
 				pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				booster: this.boosters[Connections[userID].boosterIndex],
-				boosterNumber: this.draftState.round,
+				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.round,
 			});
 			delete this.disconnectedUsers[userID];
@@ -1642,7 +1642,7 @@ export class Session {
 		if (this.drafting) {
 			Connections[userID].socket.emit("startDraft");
 			Connections[userID].socket.emit("nextBooster", {
-				boosterNumber: this.draftState.round,
+				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.round,
 			});
 			// Update draft log for live display if owner in not playing
