@@ -2036,6 +2036,7 @@
 				</p>
 				<h3>Patch Notes</h3>
 				<patch-notes></patch-notes>
+				<span style="font-size: 0.8em">(detailed changes can be found on <a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"><i class="fab fa-github" style="vertical-align: baseline; padding: 0px 0.25em;"></i>GitHub</a>)</span>
 				<h3>Notice</h3>
 				<p>MTGADraft is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
 			</div>
