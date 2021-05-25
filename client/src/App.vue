@@ -555,7 +555,13 @@
 									></i>
 								</template>
 								<template v-else>
-									<template v-if="user.pickedThisRound">
+									<template v-if="user.userID in disconnectedUsers">
+										<i
+											class="fas fa-times red"
+											v-tooltip="user.userName + ' is disconnected.'"
+										></i>
+									</template>
+									<template v-else-if="user.pickedThisRound">
 										<i
 											class="fas fa-check green"
 											v-tooltip="user.userName + ' has picked a card.'"
@@ -620,7 +626,7 @@
 		</div>
 
 		<!-- Draft Controls -->
-		<template v-if="drafting">
+		<div v-if="drafting" id="booster-container">
 			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
@@ -643,8 +649,8 @@
 				<div
 					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
 					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
-					id="booster-container"
 					class="container"
+					:class="{disabled: waitingForDisconnectedUsers}"
 				>
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
@@ -709,8 +715,8 @@
 			</transition>
 			<!-- Winston Draft -->
 			<div
-				id="booster-container"
 				class="container"
+				:class="{disabled: waitingForDisconnectedUsers}"
 				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 			>
 				<div class="section-title">
@@ -772,7 +778,10 @@
 				</div>
 			</div>
 			<!-- Grid Draft -->
-			<div id="booster-container" v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
+			<div 
+				:class="{disabled: waitingForDisconnectedUsers}"
+				v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
+			>
 				<div class="section-title">
 					<h2>Grid Draft</h2>
 					<div class="controls">
@@ -810,7 +819,11 @@
 				></grid-draft>
 			</div>
 			<!-- Rochester Draft -->
-			<div id="booster-container" class="rochester-container" v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+			<div
+				class="rochester-container"
+				:class="{disabled: waitingForDisconnectedUsers}"
+				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
+			>
 				<div style="flex-grow: 1">
 					<div class="section-title controls">
 						<h2>Rochester Draft</h2>
@@ -874,7 +887,7 @@
 				</div>
 				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 			</div>
-		</template>
+		</div>
 
 		<!-- Brewing controls (Deck & Sideboard) -->
 		<div

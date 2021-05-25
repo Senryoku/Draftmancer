@@ -224,11 +224,13 @@ export class Session {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(u => this.disconnectedUsers[u].userName);
+		const disconnectedUsersData = {};
+		for (let uid in this.disconnectedUsers)
+			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers(u =>
 			Connections[u].socket.emit("userDisconnected", {
 				owner: this.owner,
-				disconnectedUserNames: disconnectedUserNames,
+				disconnectedUsers: disconnectedUsersData,
 			})
 		);
 	}
@@ -1332,7 +1334,11 @@ export class Session {
 		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
 			this.resumeCountdown();
 		}
-		this.emitMessage(msg.title, msg.text);
+		this.forUsers(u =>
+			Connections[u].socket.emit("resumeDraft", {
+				msg,
+			})
+		);
 	}
 
 	endDraft() {
@@ -1618,9 +1624,7 @@ export class Session {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		this.notifyUserChange();
-		this.resumeCountdown();
-		this.emitMessage("Resuming draft", `Disconnected player(s) has been replaced by bot(s).`);
+		this.resumeDraft({ title: "Resuming draft", text: `Disconnected player(s) has been replaced by bot(s).` });
 
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) this.nextBooster();
 	}
