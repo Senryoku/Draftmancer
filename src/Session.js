@@ -50,13 +50,15 @@ export const optionProps = [
 	"draftPaused",
 ];
 
-export class IDraftState {}
+export class IDraftState {
+	constructor(type) {
+		this.type = type;
+	}
+}
 
 export class DraftState extends IDraftState {
 	constructor(boosters) {
-		super();
-
-		this.type = "draft";
+		super("draft");
 		this.boosters = boosters;
 		this.pickNumber = 0;
 		this.boosterNumber = 1;
@@ -66,9 +68,7 @@ export class DraftState extends IDraftState {
 
 export class WinstonDraftState extends IDraftState {
 	constructor(players, boosters) {
-		super();
-
-		this.type = "winston";
+		super("winston");
 		this.players = players;
 		this.round = -1; // Will be immedialty incremented
 		this.cardPool = [];
@@ -98,9 +98,7 @@ export class WinstonDraftState extends IDraftState {
 
 export class GridDraftState extends IDraftState {
 	constructor(players, boosters) {
-		super();
-
-		this.type = "grid";
+		super("grid");
 		this.players = players;
 		this.round = 0;
 		this.boosters = []; // 3x3 Grid, Row-Major order
@@ -137,9 +135,7 @@ export class GridDraftState extends IDraftState {
 
 export class RochesterDraftState extends IDraftState {
 	constructor(players, boosters) {
-		super();
-
-		this.type = "rochester";
+		super("rochester");
 		this.players = players;
 		this.pickNumber = 0;
 		this.boosterNumber = 0;
