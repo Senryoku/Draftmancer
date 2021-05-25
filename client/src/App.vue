@@ -435,13 +435,13 @@
 								<template v-if="userID === sessionOwner && id != sessionOwner">
 									<img
 										src="./assets/img/pass_ownership.svg"
-										class="clickable disabled-on-disconnected-user"
+										class="clickable"
 										style="height: 18px; margin-top: -4px;"
 										v-tooltip="`Give session ownership to ${userByID[id].userName}`"
 										@click="setSessionOwner(id)"
 									/>
 									<i
-										class="fas fa-user-slash clickable red disabled-on-disconnected-user"
+										class="fas fa-user-slash clickable red"
 										v-tooltip="`Remove ${userByID[id].userName} from the session`"
 										@click="removePlayer(id)"
 									></i>

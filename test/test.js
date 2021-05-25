@@ -538,11 +538,8 @@ describe("Single Draft (Two Players)", function() {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function(done) {
-			clients[ownerIdx].on("message", function(data) {
-				if (data.title == "Player reconnected") {
-					this.removeListener("message");
-					done();
-				}
+			clients[ownerIdx].on("resumeOnReconnection", function() {
+				done();
 			});
 			clients[nonOwnerIdx].connect();
 		});
@@ -568,7 +565,7 @@ describe("Single Draft (Two Players)", function() {
 		});
 
 		it("Owner chooses to replace by bots.", function(done) {
-			clients[ownerIdx].once("message", function(state) {
+			clients[ownerIdx].once("resumeOnReconnection", function() {
 				done();
 			});
 			clients[ownerIdx].emit("replaceDisconnectedPlayers");
