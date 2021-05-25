@@ -42,6 +42,20 @@ select.swal2-input option {
 	background-color: #282828;
 }
 
+.disconnected-user-popup-open {
+	overflow-y: auto !important;
+}
+
+.disconnected-user-popup {
+	position: absolute;
+	z-index: 0;
+	border-radius: 0.5em;
+}
+
+.disconnected-user-popup-container {
+	position: relative;
+}
+
 #main-container {
 	padding: 1em;
 	padding-top: 0.5em;

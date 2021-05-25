@@ -348,10 +348,10 @@
 					{{ gameModeName }}
 				</div>
 				<div v-if="sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
-					<button class="stop" @click="stopDraft">
+					<button class="stop disabled-on-disconnected-user" @click="stopDraft">
 						<i class="fas fa-stop"></i> Stop Draft
 					</button>
-					<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
+					<button v-if="maxTimer > 0" class="stop disabled-on-disconnected-user" @click="pauseDraft">
 						<i class="fas fa-pause"></i> Pause Draft
 					</button>
 				</div>
@@ -435,13 +435,13 @@
 								<template v-if="userID === sessionOwner && id != sessionOwner">
 									<img
 										src="./assets/img/pass_ownership.svg"
-										class="clickable"
+										class="clickable disabled-on-disconnected-user"
 										style="height: 18px; margin-top: -4px;"
 										v-tooltip="`Give session ownership to ${userByID[id].userName}`"
 										@click="setSessionOwner(id)"
 									/>
 									<i
-										class="fas fa-user-slash clickable red"
+										class="fas fa-user-slash clickable red disabled-on-disconnected-user"
 										v-tooltip="`Remove ${userByID[id].userName} from the session`"
 										@click="removePlayer(id)"
 									></i>
@@ -530,14 +530,15 @@
 									v-tooltip="`${user.userName} is the session's owner.`"
 								></i>
 								<template v-if="userID === sessionOwner && user.userID != sessionOwner">
-									<i
-										class="fas fa-user-plus clickable subtle-gold"
-										v-if="ownerIsPlayer"
+									<img
+										src="./assets/img/pass_ownership.svg"
+										class="clickable disabled-on-disconnected-user"
+										style="height: 18px; margin-top: -4px;"
 										v-tooltip="`Give session ownership to ${user.userName}`"
 										@click="setSessionOwner(user.userID)"
-									></i>
+									/>
 									<i
-										class="fas fa-user-slash clickable red"
+										class="fas fa-user-slash clickable red disabled-on-disconnected-user"
 										v-tooltip="`Remove ${user.userName} from the session`"
 										@click="removePlayer(user.userID)"
 									></i>
@@ -708,8 +709,9 @@
 			</transition>
 			<!-- Winston Draft -->
 			<div
-				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
+				id="booster-container"
 				class="container"
+				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 			>
 				<div class="section-title">
 					<h2>Winston Draft</h2>
@@ -770,7 +772,7 @@
 				</div>
 			</div>
 			<!-- Grid Draft -->
-			<div v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
+			<div id="booster-container" v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
 				<div class="section-title">
 					<h2>Grid Draft</h2>
 					<div class="controls">
@@ -808,7 +810,7 @@
 				></grid-draft>
 			</div>
 			<!-- Rochester Draft -->
-			<div class="rochester-container" v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+			<div id="booster-container" class="rochester-container" v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
 				<div style="flex-grow: 1">
 					<div class="section-title controls">
 						<h2>Rochester Draft</h2>

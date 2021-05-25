@@ -12,7 +12,7 @@ import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import { ButtonColor, Alert, fireToast } from "./alerts.js";
+import { ButtonColor, Alert, fireToast, SwalCustomClasses } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
 
 import Modal from "./components/Modal.vue";
@@ -305,56 +305,70 @@ export default {
 				if (!this.drafting) return;
 				this.sessionOwner = data.owner;
 
+				// Setup a Swal covering only the draft portion
+				// Important: Every interaction opening another Swal should be disabled (use the disabled-on-disconnected-user css class)
+				const target = "#booster-container";
+				const commonAlert = {
+					target: target,
+					customClass: Object.assign({ container: "disconnected-user-popup" }, SwalCustomClasses),
+					position: "center",
+					icon: "error",
+					title: `Player(s) disconnected`,
+					allowOutsideClick: false,
+					allowEscapeKey: false,
+					// Override Swal2 disabled scroll
+					onOpen: () => {
+						document.body.classList.add("disconnected-user-popup-open");
+						document.querySelector(target).classList.add("disconnected-user-popup-container");
+					},
+					onDestroy: () => {
+						document.body.classList.remove("disconnected-user-popup-open");
+						document.querySelector(target).classList.remove("disconnected-user-popup-container");
+					},
+				};
+
 				if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
 					if (this.userID === this.sessionOwner) {
-						Alert.fire({
-							position: "center",
-							icon: "error",
-							title: `Player(s) disconnected`,
-							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
-							showConfirmButton: true,
-							allowOutsideClick: false,
-							confirmButtonText: "Stop draft",
-							confirmButtonColor: ButtonColor.Critical,
-						}).then(result => {
+						Alert.fire(
+							Object.assign(commonAlert, {
+								text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
+								showConfirmButton: true,
+								confirmButtonText: "Stop draft",
+								confirmButtonColor: ButtonColor.Critical,
+							})
+						).then(result => {
 							if (result.value) this.socket.emit("stopDraft");
 						});
 					} else {
-						Alert.fire({
-							position: "center",
-							icon: "error",
-							title: `Player(s) disconnected`,
-							text: `Wait for ${data.disconnectedUserNames.join(
-								", "
-							)} to come back or for the session owner to stop the draft.`,
-							showConfirmButton: false,
-							allowOutsideClick: false,
-						});
+						Alert.fire(
+							Object.assign(commonAlert, {
+								text: `Wait for ${data.disconnectedUserNames.join(
+									", "
+								)} to come back or for the session owner to stop the draft.`,
+								showConfirmButton: false,
+							})
+						);
 					}
 				} else {
 					if (this.userID === this.sessionOwner) {
-						Alert.fire({
-							position: "center",
-							icon: "error",
-							title: `Player(s) disconnected`,
-							text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
-							showConfirmButton: true,
-							allowOutsideClick: false,
-							confirmButtonText: "Replace them by bot(s)",
-						}).then(result => {
+						Alert.fire(
+							Object.assign(commonAlert, {
+								text: `Wait for ${data.disconnectedUserNames.join(", ")} to come back or...`,
+								showConfirmButton: true,
+								confirmButtonText: "Replace them by bot(s)",
+							})
+						).then(result => {
 							if (result.value) this.socket.emit("replaceDisconnectedPlayers");
 						});
 					} else {
-						Alert.fire({
-							position: "center",
-							icon: "error",
-							title: `Player(s) disconnected`,
-							text: `Wait for ${data.disconnectedUserNames.join(
-								", "
-							)} to come back or for the owner to replace them by bot(s).`,
-							showConfirmButton: false,
-							allowOutsideClick: false,
-						});
+						Alert.fire(
+							Object.assign(commonAlert, {
+								text: `Wait for ${data.disconnectedUserNames.join(
+									", "
+								)} to come back or for the owner to replace them by bot(s).`,
+								showConfirmButton: false,
+							})
+						);
 					}
 				}
 			});
