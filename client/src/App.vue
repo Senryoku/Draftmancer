@@ -351,7 +351,7 @@
 					<button class="stop" @click="stopDraft">
 						<i class="fas fa-stop"></i> Stop Draft
 					</button>
-					<button v-if="maxTimer > 0" class="stop" @click="pauseDraft">
+					<button v-if="maxTimer > 0" class="stop" :class="{'opaque-disabled': waitingForDisconnectedUsers}" @click="pauseDraft">
 						<i class="fas fa-pause"></i> Pause Draft
 					</button>
 				</div>
@@ -530,20 +530,27 @@
 									v-tooltip="`${user.userName} is the session's owner.`"
 								></i>
 								<template v-if="userID === sessionOwner && user.userID != sessionOwner">
-									<i
-										class="fas fa-user-plus clickable subtle-gold"
-										v-if="ownerIsPlayer"
+									<img
+										src="./assets/img/pass_ownership.svg"
+										class="clickable"
+										:class="{'opaque-disabled': user.userID in disconnectedUsers }"
+										style="height: 18px; margin-top: -4px;"
 										v-tooltip="`Give session ownership to ${user.userName}`"
 										@click="setSessionOwner(user.userID)"
-									></i>
+									/>
 									<i
 										class="fas fa-user-slash clickable red"
+										:class="{'opaque-disabled': user.userID in disconnectedUsers }"
 										v-tooltip="`Remove ${user.userName} from the session`"
 										@click="removePlayer(user.userID)"
 									></i>
 								</template>
 								<template v-if="winstonDraftState || gridDraftState || rochesterDraftState">
-									<i
+									<i v-if="user.userID in disconnectedUsers"
+										class="fas fa-times red"
+										v-tooltip="user.userName + ' is disconnected.'"
+									></i>
+									<i v-else
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
 											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
@@ -554,7 +561,13 @@
 									></i>
 								</template>
 								<template v-else>
-									<template v-if="user.pickedThisRound">
+									<template v-if="user.userID in disconnectedUsers">
+										<i
+											class="fas fa-times red"
+											v-tooltip="user.userName + ' is disconnected.'"
+										></i>
+									</template>
+									<template v-else-if="user.pickedThisRound">
 										<i
 											class="fas fa-check green"
 											v-tooltip="user.userName + ' has picked a card.'"
@@ -619,7 +632,7 @@
 		</div>
 
 		<!-- Draft Controls -->
-		<template v-if="drafting">
+		<div v-if="drafting" id="draft-container" class="generic-container">
 			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
@@ -642,8 +655,8 @@
 				<div
 					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
 					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
-					id="booster-container"
 					class="container"
+					:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
 				>
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
@@ -708,8 +721,9 @@
 			</transition>
 			<!-- Winston Draft -->
 			<div
-				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 				class="container"
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 			>
 				<div class="section-title">
 					<h2>Winston Draft</h2>
@@ -770,7 +784,10 @@
 				</div>
 			</div>
 			<!-- Grid Draft -->
-			<div v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting">
+			<div 
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+				v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
+			>
 				<div class="section-title">
 					<h2>Grid Draft</h2>
 					<div class="controls">
@@ -808,7 +825,11 @@
 				></grid-draft>
 			</div>
 			<!-- Rochester Draft -->
-			<div class="rochester-container" v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting">
+			<div
+				class="rochester-container"
+				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
+			>
 				<div style="flex-grow: 1">
 					<div class="section-title controls">
 						<h2>Rochester Draft</h2>
@@ -872,7 +893,49 @@
 				</div>
 				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 			</div>
-		</template>
+			<transition name="fade">
+				<div v-if="draftPaused && !waitingForDisconnectedUsers" class="disconnected-user-popup-container">
+					<div class="disconnected-user-popup">
+						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>
+						<h1>Draft Paused</h1>
+						<template v-if="userID === sessionOwner">
+							Resume when you're ready.
+							
+							<div style="margin-top: 1em;">
+								<button @click="socket.emit('resumeDraft')">Resume</button>
+							</div>
+						</template>
+						<template v-else>
+							Wait for the session owner to resume.
+						</template>
+					</div>
+				</div>
+			</transition>
+			<!-- Disconnected User(s) Modal -->
+			<transition name="fade">
+				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
+					<div class="disconnected-user-popup">
+						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>
+						<h1>Player(s) disconnected</h1>
+						
+						<div v-if="this.winstonDraftState || this.gridDraftState || this.rochesterDraftState">
+							{{`Wait for ${disconnectedUserNames} to come back...`}}
+						</div>
+						<div v-else>
+							<template v-if="userID === sessionOwner">
+								{{`Wait for ${disconnectedUserNames} to come back, or...`}}
+								<div style="margin-top: 1em;">
+									<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">Replace them by bot(s)</button>
+								</div>
+							</template>
+							<template v-else>
+								{{`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`}}
+							</template>
+						</div>
+					</div>
+				</div>
+			</transition>
+		</div>
 
 		<!-- Brewing controls (Deck & Sideboard) -->
 		<div
@@ -1039,7 +1102,7 @@
 						:list="sideboard"
 						group="deck"
 						@change="$refs.sideboardDisplay.sync() /* Sync sideboard card-pool */"
-						drag-class="drag"
+						:animation="200"
 					>
 						<card
 							v-for="card in sideboard"

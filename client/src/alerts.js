@@ -6,12 +6,13 @@ export const SwalCustomClasses = {
 	content: "custom-swal-content",
 };
 
-export function fireToast(type, title) {
+export function fireToast(type, title, text) {
 	Swal.fire({
 		toast: true,
 		position: "top-end",
 		icon: type,
 		title: title,
+		text: text,
 		customClass: SwalCustomClasses,
 		showConfirmButton: false,
 		timer: 3000,

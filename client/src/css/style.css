@@ -103,10 +103,19 @@ label {
 	border-radius: 0.2em;
 }
 
+.no-event {
+	pointer-events: none;
+}
+
 .disabled {
 	pointer-events: none;
 	opacity: 0.3;
 	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #383838 10px, #383838 20px);
+}
+
+.opaque-disabled {
+	pointer-events: none;
+	filter: brightness(0.4);
 }
 
 .greyed-out {

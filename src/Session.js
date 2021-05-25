@@ -47,6 +47,7 @@ export const optionProps = [
 	"burnedCardsPerRound",
 	"draftLogRecipients",
 	"bracketLocked",
+	"draftPaused",
 ];
 
 export class WinstonDraftState {
@@ -195,6 +196,7 @@ export class Session {
 		this.countdown = 75;
 		this.countdownInterval = null;
 		this.disconnectedUsers = {};
+		this.draftPaused = false;
 
 		this.winstonDraftState = null;
 		this.gridDraftState = null;
@@ -224,11 +226,13 @@ export class Session {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUserNames = Object.keys(this.disconnectedUsers).map(u => this.disconnectedUsers[u].userName);
+		const disconnectedUsersData = {};
+		for (let uid in this.disconnectedUsers)
+			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers(u =>
 			Connections[u].socket.emit("userDisconnected", {
 				owner: this.owner,
-				disconnectedUserNames: disconnectedUserNames,
+				disconnectedUsers: disconnectedUsersData,
 			})
 		);
 	}
@@ -1318,10 +1322,10 @@ export class Session {
 		if (this.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	}
 
-	resumeDraft(msg) {
+	resumeOnReconnection(msg) {
 		if (!this.drafting) return;
 
-		console.warn(`Restarting draft for session ${this.id}.`);
+		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
 
 		this.forUsers(user =>
 			Connections[user].socket.emit("sessionOptions", {
@@ -1329,10 +1333,14 @@ export class Session {
 			})
 		);
 
-		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) {
+		if (!this.draftPaused && !this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState)
 			this.resumeCountdown();
-		}
-		this.emitMessage(msg.title, msg.text);
+
+		this.forUsers(u =>
+			Connections[u].socket.emit("resumeOnReconnection", {
+				msg,
+			})
+		);
 	}
 
 	endDraft() {
@@ -1366,9 +1374,19 @@ export class Session {
 	pauseDraft() {
 		if (!this.drafting || !this.countdownInterval) return;
 
+		this.draftPaused = true;
+
 		this.stopCountdown();
 		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
 	}
+
+	resumeDraft() {
+		if (!this.drafting || !this.draftPaused) return;
+		if (!this.winstonDraftState && !this.gridDraftState && !this.rochesterDraftState) this.resumeCountdown();
+		this.draftPaused = false;
+		this.forUsers(u => Connections[u].socket.emit("resumeDraft"));
+	}
+
 	///////////////////// Traditional Draft End  //////////////////////
 
 	initLogs(type = "Draft") {
@@ -1565,7 +1583,7 @@ export class Session {
 
 		// Resume draft if everyone is here or broacast the new state.
 		if (Object.keys(this.disconnectedUsers).length == 0)
-			this.resumeDraft({ title: "Player reconnected", text: "Resuming draft..." });
+			this.resumeOnReconnection({ title: "Player reconnected", text: "Resuming draft..." });
 		else this.broadcastDisconnectedUsers();
 	}
 
@@ -1618,9 +1636,10 @@ export class Session {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
-		this.notifyUserChange();
-		this.resumeCountdown();
-		this.emitMessage("Resuming draft", `Disconnected player(s) has been replaced by bot(s).`);
+		this.resumeOnReconnection({
+			title: "Resuming draft",
+			text: `Disconnected player(s) has been replaced by bot(s).`,
+		});
 
 		if (this.pickedCardsThisRound == this.getHumanPlayerCount()) this.nextBooster();
 	}

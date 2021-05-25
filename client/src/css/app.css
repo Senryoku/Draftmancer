@@ -42,6 +42,33 @@ select.swal2-input option {
 	background-color: #282828;
 }
 
+.disconnected-user-popup-container {
+	position: absolute;
+	user-select: none;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 600;
+	border-radius: 0.5em;
+	background-color: #00000060;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.disconnected-user-popup {
+	background-color: #222222;
+	text-align: center;
+	padding: 2em;
+	border-radius: 0.5em;
+	min-width: 30%;
+}
+
+.disconnected-user-popup h1 {
+	margin-top: 0;
+}
+
 #main-container {
 	padding: 1em;
 	padding-top: 0.5em;
@@ -816,6 +843,7 @@ ul.player-list {
 	font-family: Calibri;
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 	font-weight: 600;
+	white-space: nowrap;
 }
 
 .booster-waiting .wait .passing-order {
