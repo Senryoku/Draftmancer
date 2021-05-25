@@ -967,10 +967,9 @@
 						>)
 					</template>
 					<template v-slot:controls>
-						<div style="font-variant: small-caps;">
+						<div style="font-variant: small-caps;" v-if="deck.length > 0">
 							Export
 							<button
-								v-if="deck.length > 0"
 								type="button"
 								@click="exportDeck"
 								v-tooltip.top="'Export deck and sideboard'"
@@ -978,7 +977,6 @@
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
-								v-if="deck.length > 0"
 								type="button"
 								@click="exportDeck(false)"
 								v-tooltip.top="'Export without set information'"
