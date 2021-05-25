@@ -993,7 +993,7 @@ export class Session {
 
 	gridDraftPick(choice) {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof GridDraftState)) return;
+		if (!this.drafting || !s || !(s instanceof GridDraftState)) return false;
 
 		const log = { pick: [], booster: s.boosters[0].map(c => (c ? c.id : null)) };
 

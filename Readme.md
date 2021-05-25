@@ -23,12 +23,6 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 -   `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
 -   `npm run manualtest` runs tests from the `test/manual` folder, it contains additional (and long) statistical tests.
 
-## TODOs
-
-### Important
-
--   Cleanup draft state? (See Winston Draft State for a better example)
-
 ## Notes on Arena Importer
 
 -   Splits Cards (Ravnica) needs both card names, e.g. Discovery // Dispersal
