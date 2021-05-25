@@ -201,12 +201,12 @@ const socketCallbacks = {
 	},
 	gridDraftPick(userID, sessionID, choice, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.gridDraftState) {
+		if (!sess.drafting || !sess.draftState) {
 			ack?.({ code: 3, error: "Not drafting." });
 			return;
 		}
 
-		if (userID !== sess.gridDraftState.currentPlayer()) {
+		if (userID !== sess.draftState.currentPlayer()) {
 			ack?.({ code: 4, error: "Not your turn." });
 			return;
 		}
@@ -218,12 +218,12 @@ const socketCallbacks = {
 	},
 	rochesterDraftPick(userID, sessionID, choices, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.rochesterDraftState) {
+		if (!sess.drafting || !sess.draftState) {
 			ack?.({ code: 3, error: "Not drafting." });
 			return;
 		}
 
-		if (userID != sess.rochesterDraftState.currentPlayer()) {
+		if (userID != sess.draftState.currentPlayer()) {
 			ack?.({ code: 4, error: "Not your turn." });
 			return;
 		}
@@ -236,12 +236,12 @@ const socketCallbacks = {
 	// Winston Draft
 	winstonDraftTakePile(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.winstonDraftState) {
+		if (!sess.drafting || !sess.draftState) {
 			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
 
-		if (userID != sess.winstonDraftState.currentPlayer()) {
+		if (userID != sess.draftState.currentPlayer()) {
 			ack?.({ code: 3, error: "Not your turn." });
 			return;
 		}
@@ -253,12 +253,12 @@ const socketCallbacks = {
 	},
 	winstonDraftSkipPile(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.winstonDraftState) {
+		if (!sess.drafting || !sess.draftState) {
 			ack?.({ code: 1, error: "Not drafting." });
 			return;
 		}
 
-		if (userID !== sess.winstonDraftState.currentPlayer()) {
+		if (userID !== sess.draftState.currentPlayer()) {
 			ack?.({ code: 1, error: "Not your turn." });
 			return;
 		}
@@ -325,12 +325,7 @@ const ownerSocketCallbacks = {
 		}
 	},
 	stopDraft(userID, sessionID) {
-		const sess = Sessions[sessionID];
-		if (!sess.drafting) return;
-		if (sess.winstonDraftState) sess.endWinstonDraft();
-		else if (sess.gridDraftState) sess.endGridDraft();
-		else if (sess.rochesterDraftState) sess.endRochesterDraft();
-		else sess.endDraft();
+		Sessions[sessionID].endDraft();
 	},
 	pauseDraft(userID, sessionID) {
 		Sessions[sessionID].pauseDraft();
