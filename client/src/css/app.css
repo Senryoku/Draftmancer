@@ -42,18 +42,30 @@ select.swal2-input option {
 	background-color: #282828;
 }
 
-.disconnected-user-popup-open {
-	overflow-y: auto !important;
+.disconnected-user-popup-container {
+	position: absolute;
+	user-select: none;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 600;
+	border-radius: 0.5em;
+	background-color: #00000060;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .disconnected-user-popup {
-	position: absolute;
-	z-index: 0;
+	background-color: #222222;
+	text-align: center;
+	padding: 2em;
 	border-radius: 0.5em;
 }
 
-.disconnected-user-popup-container {
-	position: relative;
+.disconnected-user-popup h1 {
+	margin-top: 0;
 }
 
 #main-container {
@@ -830,6 +842,7 @@ ul.player-list {
 	font-family: Calibri;
 	text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 	font-weight: 600;
+	white-space: nowrap;
 }
 
 .booster-waiting .wait .passing-order {

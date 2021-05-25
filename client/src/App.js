@@ -12,7 +12,7 @@ import Constant from "./data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
-import { ButtonColor, Alert, fireToast, SwalCustomClasses } from "./alerts.js";
+import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
 
 import Modal from "./components/Modal.vue";
@@ -306,82 +306,10 @@ export default {
 				if (!this.drafting) return;
 				this.sessionOwner = data.owner;
 				this.disconnectedUsers = data.disconnectedUsers;
-				const disconnectedUserNames = Object.values(data.disconnectedUsers).map(u => u.userName);
-
-				// Setup a Swal covering only the draft portion
-				// Using a Swal here is an easy solution, but janky one (because it could be closed by opening another one), should be replaced by a custom component.
-				// Important: Every interaction opening another Swal should be disabled (use the disabled-on-disconnected-user css class)
-				const target = "#booster-container";
-				const commonAlert = {
-					target: target,
-					customClass: Object.assign({ container: "disconnected-user-popup" }, SwalCustomClasses),
-					position: "center",
-					icon: "error",
-					title: `Player(s) disconnected`,
-					allowOutsideClick: false,
-					allowEscapeKey: false,
-					// Override Swal2 disabled scroll
-					onRender: () => {
-						document.body.classList.add("disconnected-user-popup-open");
-						const t = document.querySelector(target);
-						if (t) t.classList.add("disconnected-user-popup-container");
-					},
-					onDestroy: () => {
-						document.body.classList.remove("disconnected-user-popup-open");
-						const t = document.querySelector(target);
-						if (t) t.classList.remove("disconnected-user-popup-container");
-					},
-				};
-
-				if (this.winstonDraftState || this.gridDraftState || this.rochesterDraftState) {
-					if (this.userID === this.sessionOwner) {
-						Alert.fire(
-							Object.assign(commonAlert, {
-								text: `Wait for ${disconnectedUserNames.join(", ")} to come back or...`,
-								showConfirmButton: true,
-								confirmButtonText: "Stop draft",
-								confirmButtonColor: ButtonColor.Critical,
-							})
-						).then(result => {
-							if (result.value) this.socket.emit("stopDraft");
-						});
-					} else {
-						Alert.fire(
-							Object.assign(commonAlert, {
-								text: `Wait for ${disconnectedUserNames.join(
-									", "
-								)} to come back or for the session owner to stop the draft.`,
-								showConfirmButton: false,
-							})
-						);
-					}
-				} else {
-					if (this.userID === this.sessionOwner) {
-						Alert.fire(
-							Object.assign(commonAlert, {
-								text: `Wait for ${disconnectedUserNames.join(", ")} to come back or...`,
-								showConfirmButton: true,
-								confirmButtonText: "Replace them by bot(s)",
-							})
-						).then(result => {
-							if (result.value) this.socket.emit("replaceDisconnectedPlayers");
-						});
-					} else {
-						Alert.fire(
-							Object.assign(commonAlert, {
-								text: `Wait for ${disconnectedUserNames.join(
-									", "
-								)} to come back or for the owner to replace them by bot(s).`,
-								showConfirmButton: false,
-							})
-						);
-					}
-				}
 			});
 
 			this.socket.on("resumeDraft", data => {
 				this.disconnectedUsers = {};
-				// Use Toast to dismiss disconnected Swal (yep, janky :))
 				fireToast("success", data.msg.title, data.msg.text);
 			});
 
@@ -886,6 +814,7 @@ export default {
 			});
 		},
 		clearState: function() {
+			this.disconnectedUsers = {};
 			this.clearSideboard();
 			this.clearDeck();
 			this.deckFilter = "";
@@ -2157,6 +2086,11 @@ export default {
 		waitingForDisconnectedUsers() {
 			if (!this.drafting) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
+		},
+		disconnectedUserNames() {
+			return Object.values(this.disconnectedUsers)
+				.map(u => u.userName)
+				.join(", ");
 		},
 		virtualPlayers() {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
