@@ -120,6 +120,18 @@ const parseCustomCardList = function(session, txtlist, options, ack) {
 	ack?.({ code: 0 });
 };
 
+const checkDraftAction = function(userID, sess, type, ack) {
+	if (!sess.drafting || sess.draftState?.type !== type) {
+		ack?.({ code: 2, error: "Not drafting." });
+		return false;
+	}
+	if (sess.draftState.currentPlayer && userID !== sess.draftState.currentPlayer()) {
+		ack?.({ code: 3, error: "Not your turn." });
+		return false;
+	}
+	return true;
+};
+
 const socketCallbacks = {
 	// Personnal options
 	setUserName(userID, sessionID, userName) {
@@ -149,37 +161,34 @@ const socketCallbacks = {
 		ack?.({ collection: processedCollection });
 
 		const hasCollection = !isEmpty(processedCollection);
-		if (Sessions[sessionID])
-			Sessions[sessionID].forUsers(user =>
-				Connections[user].socket.emit("updateUser", {
-					userID: userID,
-					updatedProperties: {
-						collection: hasCollection,
-					},
-				})
-			);
+		Sessions[sessionID].forUsers(user =>
+			Connections[user].socket.emit("updateUser", {
+				userID: userID,
+				updatedProperties: {
+					collection: hasCollection,
+				},
+			})
+		);
 	},
 	useCollection(userID, sessionID, useCollection) {
 		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
 
 		Connections[userID].useCollection = useCollection;
-		if (Sessions[sessionID])
-			Sessions[sessionID].forUsers(user =>
-				Connections[user].socket.emit("updateUser", {
-					userID: userID,
-					updatedProperties: {
-						useCollection: useCollection,
-					},
-				})
-			);
+		Sessions[sessionID].forUsers(user =>
+			Connections[user].socket.emit("updateUser", {
+				userID: userID,
+				updatedProperties: {
+					useCollection: useCollection,
+				},
+			})
+		);
 	},
 	chatMessage(userID, sessionID, message) {
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
 		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("chatMessage", message));
 	},
 	setReady(userID, sessionID, readyState) {
-		const sess = Sessions[sessionID];
-		sess.forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
+		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
 	},
 
 	pickCard(userID, sessionID, data, ack) {
@@ -200,70 +209,34 @@ const socketCallbacks = {
 		}
 	},
 	gridDraftPick(userID, sessionID, choice, ack) {
-		const sess = Sessions[sessionID];
-		if (!sess.drafting || sess.draftState?.type !== "grid") {
-			ack?.({ code: 2, error: "Not drafting." });
-			return;
-		}
+		if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
-		if (userID !== sess.draftState.currentPlayer()) {
-			ack?.({ code: 3, error: "Not your turn." });
-			return;
-		}
-
-		const r = sess.gridDraftPick(choice);
+		const r = Sessions[sessionID].gridDraftPick(choice);
 
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
 	rochesterDraftPick(userID, sessionID, choices, ack) {
-		const sess = Sessions[sessionID];
-		if (!sess.drafting || sess.draftState?.type !== "rochester") {
-			ack?.({ code: 2, error: "Not drafting." });
-			return;
-		}
+		if (!checkDraftAction(userID, Sessions[sessionID], "rochester", ack)) return;
 
-		if (userID != sess.draftState.currentPlayer()) {
-			ack?.({ code: 3, error: "Not your turn." });
-			return;
-		}
-
-		const r = sess.rochesterDraftPick(choices[0]);
+		const r = Sessions[sessionID].rochesterDraftPick(choices[0]);
 
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
 	// Winston Draft
 	winstonDraftTakePile(userID, sessionID, ack) {
-		const sess = Sessions[sessionID];
-		if (!sess.drafting || sess.draftState?.type !== "winston") {
-			ack?.({ code: 2, error: "Not drafting." });
-			return;
-		}
+		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
-		if (userID != sess.draftState.currentPlayer()) {
-			ack?.({ code: 3, error: "Not your turn." });
-			return;
-		}
-
-		const r = sess.winstonTakePile();
+		const r = Sessions[sessionID].winstonTakePile();
 
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
 	winstonDraftSkipPile(userID, sessionID, ack) {
-		const sess = Sessions[sessionID];
-		if (!sess.drafting || sess.draftState?.type !== "winston") {
-			ack?.({ code: 2, error: "Not drafting." });
-			return;
-		}
+		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
-		if (userID !== sess.draftState.currentPlayer()) {
-			ack?.({ code: 3, error: "Not your turn." });
-			return;
-		}
-
-		const r = sess.winstonSkipPile();
+		const r = Sessions[sessionID].winstonSkipPile();
 
 		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
 		else ack?.({ code: 0 });
