@@ -1,5 +1,12 @@
 [
 	{
+		"date": "25/05/2021",
+		"notes": [
+			"Re-worked disconnected user display/draft pause to allow interracting with the rest of the application.",
+			"Tweak bracket display."
+		]
+	},
+	{
 		"date": "22/05/2021",
 		"notes": ["Updated card zoom on right-click to be more legible.", "Double elimination brackets."]
 	},
