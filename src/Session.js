@@ -950,8 +950,7 @@ export class Session {
 		this.boosters = [];
 		if (this.draftState.error) {
 			this.emitError(this.draftState.error.title, this.draftState.error.text);
-			this.draftState = null;
-			this.drafting = false;
+			this.cleanDraftState();
 			return false;
 		}
 
@@ -1398,6 +1397,7 @@ export class Session {
 	}
 
 	stopDraft() {
+		if (!this.drafting || !this.draftState) return;
 		switch (this.draftState.type) {
 			case "winston":
 				this.endWinstonDraft();
