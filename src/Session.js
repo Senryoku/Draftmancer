@@ -53,10 +53,11 @@ export const optionProps = [
 export class IDraftState {}
 
 export class DraftState extends IDraftState {
-	constructor() {
+	constructor(boosters) {
 		super();
 
 		this.type = "draft";
+		this.boosters = boosters;
 		this.round = 0;
 		this.boosterNumber = 1;
 		this.pickedCardsThisRound = 0;
@@ -829,6 +830,7 @@ export class Session {
 		}
 		this.disconnectedUsers = {};
 		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.boosters = [];
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
@@ -942,6 +944,7 @@ export class Session {
 
 		this.disconnectedUsers = {};
 		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.boosters = [];
 		if (this.draftState.error) {
 			this.emitError(this.draftState.error.title, this.draftState.error.text);
 			this.draftState = null;
@@ -1037,6 +1040,7 @@ export class Session {
 
 		this.disconnectedUsers = {};
 		this.draftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.boosters = [];
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
@@ -1153,12 +1157,13 @@ export class Session {
 			}
 		}
 
-		this.draftState = new DraftState();
+		this.draftState = new DraftState(this.boosters);
+		this.boosters = [];
 		this.nextBooster();
 	}
 
 	pickCard(userID, pickedCards, burnedCards) {
-		if (!this.drafting || !this.users.has(userID)) return;
+		if (!this.drafting || this.draftState?.type !== "draft" || !this.users.has(userID)) return;
 
 		const reportError = (code, err) => {
 			console.error(err);
@@ -1166,21 +1171,21 @@ export class Session {
 		};
 
 		const boosterIndex = Connections[userID].boosterIndex;
-		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.boosters.length)
+		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.draftState.boosters.length)
 			return reportError(2, `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
 		if (
 			!pickedCards ||
-			pickedCards.length !== Math.min(this.pickedCardsPerRound, this.boosters[boosterIndex].length)
+			pickedCards.length !== Math.min(this.pickedCardsPerRound, this.draftState.boosters[boosterIndex].length)
 		)
 			return reportError(
 				1,
-				`Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.boosters[boosterIndex].length}).`
+				`Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.draftState.boosters[boosterIndex].length}).`
 			);
-		if (pickedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+		if (pickedCards.some(idx => idx >= this.draftState.boosters[boosterIndex].length))
 			return reportError(
 				3,
 				`Session.pickCard: Invalid card index [${pickedCards.join(", ")}] for booster #${boosterIndex} (${
-					this.boosters[boosterIndex].length
+					this.draftState.boosters[boosterIndex].length
 				}).`
 			);
 		if (Connections[userID].pickedThisRound)
@@ -1189,29 +1194,32 @@ export class Session {
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
 				burnedCards.length !==
-					Math.min(this.burnedCardsPerRound, this.boosters[boosterIndex].length - pickedCards.length) ||
-				burnedCards.some(idx => idx >= this.boosters[boosterIndex].length))
+					Math.min(
+						this.burnedCardsPerRound,
+						this.draftState.boosters[boosterIndex].length - pickedCards.length
+					) ||
+				burnedCards.some(idx => idx >= this.draftState.boosters[boosterIndex].length))
 		)
 			return reportError(
 				5,
-				`Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.boosters[boosterIndex].length}).`
+				`Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.draftState.boosters[boosterIndex].length}).`
 			);
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
-				idx => this.boosters[boosterIndex][idx].name
+				idx => this.draftState.boosters[boosterIndex][idx].name
 			)}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
 
-		for (let idx of pickedCards) Connections[userID].pickedCards.push(this.boosters[boosterIndex][idx]);
+		for (let idx of pickedCards) Connections[userID].pickedCards.push(this.draftState.boosters[boosterIndex][idx]);
 		Connections[userID].pickedThisRound = true;
 
 		const pickData = {
 			pick: pickedCards,
 			burn: burnedCards,
-			booster: this.boosters[boosterIndex].map(c => c.id),
+			booster: this.draftState.boosters[boosterIndex].map(c => c.id),
 		};
 		this.draftLog.users[userID].picks.push(pickData);
 
@@ -1238,11 +1246,11 @@ export class Session {
 			Connections[this.owner].socket.emit("draftLogLive", { userID: userID, pick: pickData });
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cards: pickedCards.map(idx => this.boosters[boosterIndex][idx]),
+				cards: pickedCards.map(idx => this.draftState.boosters[boosterIndex][idx]),
 			});
 		}
 
-		for (let idx of cardsToRemove) this.boosters[boosterIndex].splice(idx, 1);
+		for (let idx of cardsToRemove) this.draftState.boosters[boosterIndex].splice(idx, 1);
 
 		++this.draftState.pickedCardsThisRound;
 		if (this.draftState.pickedCardsThisRound === this.getHumanPlayerCount()) {
@@ -1252,20 +1260,20 @@ export class Session {
 	}
 
 	doBotPick(instance, boosterIndex) {
-		const startingBooster = this.boosters[boosterIndex].map(c => c.id);
+		const startingBooster = this.draftState.boosters[boosterIndex].map(c => c.id);
 		const pickedIndices = [];
 		const pickedCards = [];
-		for (let i = 0; i < this.pickedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
-			const pickedIdx = instance.pick(this.boosters[boosterIndex]);
+		for (let i = 0; i < this.pickedCardsPerRound && this.draftState.boosters[boosterIndex].length > 0; ++i) {
+			const pickedIdx = instance.pick(this.draftState.boosters[boosterIndex]);
 			pickedIndices.push(pickedIdx);
-			pickedCards.push(this.boosters[boosterIndex][pickedIdx]);
-			this.boosters[boosterIndex].splice(pickedIdx, 1);
+			pickedCards.push(this.draftState.boosters[boosterIndex][pickedIdx]);
+			this.draftState.boosters[boosterIndex].splice(pickedIdx, 1);
 		}
 		const burned = [];
-		for (let i = 0; i < this.burnedCardsPerRound && this.boosters[boosterIndex].length > 0; ++i) {
-			const burnedIdx = instance.burn(this.boosters[boosterIndex]);
+		for (let i = 0; i < this.burnedCardsPerRound && this.draftState.boosters[boosterIndex].length > 0; ++i) {
+			const burnedIdx = instance.burn(this.draftState.boosters[boosterIndex]);
 			burned.push(burnedIdx);
-			this.boosters[boosterIndex].splice(burnedIdx, 1);
+			this.draftState.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
 			pick: pickedIndices,
@@ -1281,15 +1289,15 @@ export class Session {
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
 		// Boosters are empty
-		if (this.boosters[0].length === 0) {
+		if (this.draftState.boosters[0].length === 0) {
 			this.draftState.round = 0;
 			// Remove empty boosters
-			this.boosters.splice(0, totalVirtualPlayers);
+			this.draftState.boosters.splice(0, totalVirtualPlayers);
 			++this.draftState.boosterNumber;
 		}
 
 		// End draft if there is no more booster to distribute
-		if (this.boosters.length == 0) {
+		if (this.draftState.boosters.length == 0) {
 			this.endDraft();
 			return;
 		}
@@ -1321,7 +1329,7 @@ export class Session {
 					Connections[userID].pickedThisRound = false;
 					Connections[userID].boosterIndex = boosterIndex;
 					Connections[userID].socket.emit("nextBooster", {
-						booster: this.boosters[boosterIndex],
+						booster: this.draftState.boosters[boosterIndex],
 						boosterNumber: this.draftState.boosterNumber,
 						pickNumber: this.draftState.round + 1,
 					});
@@ -1399,7 +1407,6 @@ export class Session {
 		this.sendLogs();
 
 		logSession("Draft", this);
-		this.boosters = [];
 		this.disconnectedUsers = {};
 
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
@@ -1617,7 +1624,7 @@ export class Session {
 			Connections[userID].socket.emit("rejoinDraft", {
 				pickedThisRound: this.disconnectedUsers[userID].pickedThisRound,
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				booster: this.boosters[Connections[userID].boosterIndex],
+				booster: this.draftState.boosters[Connections[userID].boosterIndex],
 				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.round,
 			});

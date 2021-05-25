@@ -201,13 +201,13 @@ const socketCallbacks = {
 	},
 	gridDraftPick(userID, sessionID, choice, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.draftState) {
-			ack?.({ code: 3, error: "Not drafting." });
+		if (!sess.drafting || sess.draftState?.type !== "grid") {
+			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
 
 		if (userID !== sess.draftState.currentPlayer()) {
-			ack?.({ code: 4, error: "Not your turn." });
+			ack?.({ code: 3, error: "Not your turn." });
 			return;
 		}
 
@@ -218,13 +218,13 @@ const socketCallbacks = {
 	},
 	rochesterDraftPick(userID, sessionID, choices, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.draftState) {
-			ack?.({ code: 3, error: "Not drafting." });
+		if (!sess.drafting || sess.draftState?.type !== "rochester") {
+			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
 
 		if (userID != sess.draftState.currentPlayer()) {
-			ack?.({ code: 4, error: "Not your turn." });
+			ack?.({ code: 3, error: "Not your turn." });
 			return;
 		}
 
@@ -236,7 +236,7 @@ const socketCallbacks = {
 	// Winston Draft
 	winstonDraftTakePile(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.draftState) {
+		if (!sess.drafting || sess.draftState?.type !== "winston") {
 			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
@@ -253,13 +253,13 @@ const socketCallbacks = {
 	},
 	winstonDraftSkipPile(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
-		if (!sess.drafting || !sess.draftState) {
-			ack?.({ code: 1, error: "Not drafting." });
+		if (!sess.drafting || sess.draftState?.type !== "winston") {
+			ack?.({ code: 2, error: "Not drafting." });
 			return;
 		}
 
 		if (userID !== sess.draftState.currentPlayer()) {
-			ack?.({ code: 1, error: "Not your turn." });
+			ack?.({ code: 3, error: "Not your turn." });
 			return;
 		}
 
