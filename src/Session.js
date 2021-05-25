@@ -58,7 +58,7 @@ export class DraftState extends IDraftState {
 
 		this.type = "draft";
 		this.boosters = boosters;
-		this.round = 0;
+		this.pickNumber = 0;
 		this.boosterNumber = 1;
 		this.pickedCardsThisRound = 0;
 	}
@@ -211,16 +211,15 @@ export class Session {
 
 		if (options) for (let p in options) this[p] = options[p];
 
+		this.boosters = [];
 		// Draft state
 		this.drafting = false;
+		this.draftState = null;
+		// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
 		this.disconnectedUsers = {};
 		this.draftPaused = false;
 		this.countdown = 75;
 		this.countdownInterval = null;
-
-		this.boosters = [];
-
-		this.draftState = null;
 	}
 
 	addUser(userID) {
@@ -819,6 +818,12 @@ export class Session {
 		});
 	}
 
+	cleanDraftState() {
+		this.draftState = null;
+		this.drafting = false;
+		this.disconnectedUsers = {};
+	}
+
 	///////////////////// Winston Draft //////////////////////
 	startWinstonDraft(boosterCount) {
 		if (this.users.size !== 2) return false;
@@ -851,9 +856,7 @@ export class Session {
 		for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
 		this.sendLogs();
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
-		this.draftState = null;
-		this.drafting = false;
-		this.disconnectedUsers = {};
+		this.cleanDraftState();
 	}
 
 	winstonNextRound() {
@@ -971,9 +974,7 @@ export class Session {
 		for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
 		this.sendLogs();
 		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
-		this.draftState = null;
-		this.drafting = false;
-		this.disconnectedUsers = {};
+		this.cleanDraftState();
 	}
 
 	gridDraftNextRound() {
@@ -1064,9 +1065,7 @@ export class Session {
 			Connections[uid].socket.emit("rochesterDraftEnd");
 		}
 		this.sendLogs();
-		this.draftState = null;
-		this.drafting = false;
-		this.disconnectedUsers = {};
+		this.cleanDraftState();
 	}
 
 	rochesterDraftNextRound() {
@@ -1284,13 +1283,14 @@ export class Session {
 	}
 
 	nextBooster() {
-		this.stopCountdown();
+		if (this.draftState?.type !== "draft") return;
 
+		this.stopCountdown();
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
 		// Boosters are empty
 		if (this.draftState.boosters[0].length === 0) {
-			this.draftState.round = 0;
+			this.draftState.pickNumber = 0;
 			// Remove empty boosters
 			this.draftState.boosters.splice(0, totalVirtualPlayers);
 			++this.draftState.boosterNumber;
@@ -1305,7 +1305,8 @@ export class Session {
 		this.draftState.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
 
 		let index = 0;
-		const boosterOffset = this.draftState.boosterNumber % 2 == 0 ? -this.draftState.round : this.draftState.round;
+		const boosterOffset =
+			this.draftState.boosterNumber % 2 == 0 ? -this.draftState.pickNumber : this.draftState.pickNumber;
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
@@ -1331,7 +1332,7 @@ export class Session {
 					Connections[userID].socket.emit("nextBooster", {
 						booster: this.draftState.boosters[boosterIndex],
 						boosterNumber: this.draftState.boosterNumber,
-						pickNumber: this.draftState.round + 1,
+						pickNumber: this.draftState.pickNumber + 1,
 					});
 				}
 			}
@@ -1341,12 +1342,12 @@ export class Session {
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("nextBooster", {
 				boosterNumber: this.draftState.boosterNumber,
-				pickNumber: this.draftState.round + 1,
+				pickNumber: this.draftState.pickNumber + 1,
 			});
 		}
 
 		this.startCountdown(); // Starts countdown now that everyone has their booster
-		++this.draftState.round;
+		++this.draftState.pickNumber;
 
 		// Everyone is disconnected...
 		if (this.draftState.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
@@ -1373,25 +1374,8 @@ export class Session {
 	}
 
 	endDraft() {
-		if (!this.drafting || !this.draftState) return;
-
-		switch (this.draftState.type) {
-			case "winston":
-				this.endWinstonDraft();
-				break;
-			case "grid":
-				this.endGridDraft();
-				break;
-			case "rochester":
-				this.endRochesterDraft();
-				break;
-		}
-
-		this.drafting = false;
-		this.draftState = null;
-		this.stopCountdown();
-
-		let virtualPlayers = this.getSortedVirtualPlayers();
+		if (!this.drafting || this.draftState?.type !== "draft") return;
+		const virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
 				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards.map(c => c.id);
@@ -1405,13 +1389,30 @@ export class Session {
 		}
 
 		this.sendLogs();
-
 		logSession("Draft", this);
-		this.disconnectedUsers = {};
 
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
+		this.cleanDraftState();
+	}
+
+	stopDraft() {
+		switch (this.draftState.type) {
+			case "winston":
+				this.endWinstonDraft();
+				break;
+			case "grid":
+				this.endGridDraft();
+				break;
+			case "rochester":
+				this.endRochesterDraft();
+				break;
+			case "draft": {
+				this.endDraft();
+				break;
+			}
+		}
 	}
 
 	pauseDraft() {
@@ -1626,7 +1627,7 @@ export class Session {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				booster: this.draftState.boosters[Connections[userID].boosterIndex],
 				boosterNumber: this.draftState.boosterNumber,
-				pickNumber: this.draftState.round,
+				pickNumber: this.draftState.pickNumber,
 			});
 			delete this.disconnectedUsers[userID];
 		}
@@ -1650,7 +1651,7 @@ export class Session {
 			Connections[userID].socket.emit("startDraft");
 			Connections[userID].socket.emit("nextBooster", {
 				boosterNumber: this.draftState.boosterNumber,
-				pickNumber: this.draftState.round,
+				pickNumber: this.draftState.pickNumber,
 			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
@@ -1700,7 +1701,7 @@ export class Session {
 		if (this.useCustomCardList && this.customCardList.customSheets)
 			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce((acc, c) => acc + c);
 		let dec = Math.floor(this.maxTimer / cardsPerBooster);
-		this.countdown = this.maxTimer - this.draftState.round * dec;
+		this.countdown = this.maxTimer - this.draftState.pickNumber * dec;
 		this.resumeCountdown();
 	}
 	resumeCountdown() {

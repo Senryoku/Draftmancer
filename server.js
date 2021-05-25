@@ -325,7 +325,7 @@ const ownerSocketCallbacks = {
 		}
 	},
 	stopDraft(userID, sessionID) {
-		Sessions[sessionID].endDraft();
+		Sessions[sessionID].stopDraft();
 	},
 	pauseDraft(userID, sessionID) {
 		Sessions[sessionID].pauseDraft();

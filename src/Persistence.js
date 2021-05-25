@@ -23,10 +23,8 @@ const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 
-const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL
-	? process.env.PERSISTENCE_STORE_URL
-	: "http://localhost:3008";
-const PersistenceKey = process.env.PERSISTENCE_KEY ? process.env.PERSISTENCE_KEY : "1234";
+const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
+const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 async function requestSavedConnections() {
 	let InactiveConnections = {};
