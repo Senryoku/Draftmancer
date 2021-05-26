@@ -6,7 +6,7 @@
 				<h1>
 					Bracket for Session '{{ sessionID }}'
 					<span v-if="bracket" style="font-size: 0.8em; font-weight: 1">
-						(<template v-if="teamDraft">Team Draft</template>
+						(<template v-if="bracket.teamDraft">Team Draft</template>
 						<template v-else-if="bracket.double">Double Elimination</template>
 						<template v-else-if="bracket.swiss">3-Round Swiss</template>
 						<template v-else>Single Elimination</template>)

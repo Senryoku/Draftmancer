@@ -12,7 +12,7 @@
 				</span>
 				<span>
 					Type:
-					<template v-if="teamDraft"> Team Draft </template>
+					<template v-if="teamDraft"> Team Draft</template>
 					<template v-else>
 						<select v-model="typeToGenerate">
 							<option value="single">Single Elimination</option>
@@ -25,7 +25,7 @@
 			</template>
 			<template v-else>
 				<span style="font-size: 1.5em">
-					<template v-if="teamDraft">Team Draft</template>
+					<template v-if="bracket.teamDraft">Team Draft</template>
 					<template v-else-if="bracket.double">Double Elimination</template>
 					<template v-else-if="bracket.swiss">3-Round Swiss</template>
 					<template v-else>Single Elimination</template>
@@ -134,11 +134,11 @@ export default {
 	},
 	props: {
 		bracket: { type: Object, required: true },
-		teamDraft: { type: Boolean, required: true },
 		displayControls: { type: Boolean, default: true },
 		editable: { type: Boolean, default: false },
 		locked: { type: Boolean, default: false },
 		fullcontrol: { type: Boolean, default: false },
+		teamDraft: { type: Boolean, default: false }, // Used when fullcontrol is true
 		sessionID: { type: String },
 		draftlog: { type: Object, default: null },
 		language: { type: String, required: true },
