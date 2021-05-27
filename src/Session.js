@@ -245,7 +245,7 @@ export class Session {
 		for (let uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers(u =>
-			Connections[u].socket.emit("userDisconnected", {
+			Connections[u]?.socket.emit("userDisconnected", {
 				owner: this.owner,
 				disconnectedUsers: disconnectedUsersData,
 			})
@@ -277,7 +277,7 @@ export class Session {
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 
 			this.forUsers(u =>
-				Connections[u].socket.emit("sessionOptions", {
+				Connections[u]?.socket.emit("sessionOptions", {
 					boostersPerPlayer: this.boostersPerPlayer,
 					customBoosters: this.customBoosters,
 				})
@@ -289,7 +289,7 @@ export class Session {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
 		this.forUsers(u =>
-			Connections[u].socket.emit("sessionOptions", {
+			Connections[u]?.socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
 			})
@@ -307,7 +307,7 @@ export class Session {
 			}
 
 			this.forUsers(u =>
-				Connections[u].socket.emit("sessionOptions", {
+				Connections[u]?.socket.emit("sessionOptions", {
 					teamDraft: this.teamDraft,
 					maxPlayers: this.maxPlayers,
 					bots: this.bots,
@@ -342,7 +342,7 @@ export class Session {
 			bracket: this.bracket,
 		};
 		for (let p of optionProps) options[p] = this[p];
-		Connections[userID].socket.emit("sessionOptions", options);
+		Connections[userID]?.socket.emit("sessionOptions", options);
 	}
 
 	// Returns true if the card pool is not restricted by players collections (and ignoreCollections is true or no-one is using their collection)
@@ -1223,7 +1223,7 @@ export class Session {
 
 		// Signal users
 		this.forUsers(u => {
-			Connections[u].socket.emit("updateUser", {
+			Connections[u]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					pickedThisRound: true,
@@ -1354,7 +1354,7 @@ export class Session {
 		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
 
 		this.forUsers(user =>
-			Connections[user].socket.emit("sessionOptions", {
+			Connections[user]?.socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
@@ -1362,7 +1362,7 @@ export class Session {
 		if (!this.draftPaused && this.draftState instanceof DraftState) this.resumeCountdown();
 
 		this.forUsers(u =>
-			Connections[u].socket.emit("resumeOnReconnection", {
+			Connections[u]?.socket.emit("resumeOnReconnection", {
 				msg,
 			})
 		);
@@ -1417,14 +1417,14 @@ export class Session {
 		this.draftPaused = true;
 
 		this.stopCountdown();
-		this.forUsers(u => Connections[u].socket.emit("pauseDraft"));
+		this.forUsers(u => Connections[u]?.socket.emit("pauseDraft"));
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
 		if (this.draftState instanceof DraftState) this.resumeCountdown();
 		this.draftPaused = false;
-		this.forUsers(u => Connections[u].socket.emit("resumeDraft"));
+		this.forUsers(u => Connections[u]?.socket.emit("resumeDraft"));
 	}
 
 	///////////////////// Traditional Draft End  //////////////////////
@@ -1496,7 +1496,7 @@ export class Session {
 				break;
 			}
 			case "everyone":
-				this.forUsers(u => Connections[u].socket.emit("draftLog", this.draftLog));
+				this.forUsers(u => Connections[u]?.socket.emit("draftLog", this.draftLog));
 				break;
 		}
 	}
@@ -1679,7 +1679,7 @@ export class Session {
 		}
 
 		this.forUsers(u =>
-			Connections[u].socket.emit("sessionOptions", {
+			Connections[u]?.socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
 		);
@@ -1704,11 +1704,11 @@ export class Session {
 		this.stopCountdown(); // Cleanup if one is still running
 		if (this.maxTimer <= 0) {
 			// maxTimer <= 0 means no timer
-			this.forUsers(u => Connections[u].socket.emit("disableTimer"));
+			this.forUsers(u => Connections[u]?.socket.emit("disableTimer"));
 		} else {
 			// Immediately propagate current state
 			this.forUsers(u =>
-				Connections[u].socket.emit("timer", {
+				Connections[u]?.socket.emit("timer", {
 					countdown: this.countdown,
 				})
 			);
@@ -1718,7 +1718,7 @@ export class Session {
 					return () => {
 						sess.countdown--;
 						this.forUsers(u =>
-							Connections[u].socket.emit("timer", {
+							Connections[u]?.socket.emit("timer", {
 								countdown: sess.countdown,
 							})
 						);
@@ -1798,7 +1798,7 @@ export class Session {
 
 	emitMessage(title, text, showConfirmButton = true, timer = 1500) {
 		this.forUsers(u =>
-			Connections[u].socket.emit("message", {
+			Connections[u]?.socket.emit("message", {
 				title: title,
 				text: text,
 				showConfirmButton: showConfirmButton,
@@ -1808,7 +1808,7 @@ export class Session {
 	}
 
 	emitError(title, text, showConfirmButton = true, timer = 0) {
-		Connections[this.owner].socket.emit("message", {
+		Connections[this.owner]?.socket.emit("message", {
 			icon: "error",
 			title: title,
 			text: text,
@@ -1823,23 +1823,23 @@ export class Session {
 		} else {
 			this.bracket = new Bracket(players);
 		}
-		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	generateSwissBracket(players) {
 		this.bracket = new SwissBracket(players);
-		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	generateDoubleBracket(players) {
 		this.bracket = new DoubleBracket(players);
-		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	updateBracket(results) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
-		this.forUsers(u => Connections[u].socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	shareDecklist(userID, decklist) {
@@ -1850,7 +1850,7 @@ export class Session {
 		decklist = computeHashes(decklist);
 		this.draftLog.users[userID].decklist = decklist;
 		this.forUsers(uid => {
-			Connections[uid].socket.emit("shareDecklist", {
+			Connections[uid]?.socket.emit("shareDecklist", {
 				sessionID: this.id,
 				time: this.draftLog.time,
 				userID: userID,

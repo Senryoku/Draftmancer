@@ -137,7 +137,7 @@ const socketCallbacks = {
 	setUserName(userID, sessionID, userName) {
 		Connections[userID].userName = userName;
 		Sessions[sessionID].forUsers(user =>
-			Connections[user].socket.emit("updateUser", {
+			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					userName: userName,
@@ -162,7 +162,7 @@ const socketCallbacks = {
 
 		const hasCollection = !isEmpty(processedCollection);
 		Sessions[sessionID].forUsers(user =>
-			Connections[user].socket.emit("updateUser", {
+			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					collection: hasCollection,
@@ -175,7 +175,7 @@ const socketCallbacks = {
 
 		Connections[userID].useCollection = useCollection;
 		Sessions[sessionID].forUsers(user =>
-			Connections[user].socket.emit("updateUser", {
+			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
 					useCollection: useCollection,
@@ -185,10 +185,10 @@ const socketCallbacks = {
 	},
 	chatMessage(userID, sessionID, message) {
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
-		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("chatMessage", message));
+		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("chatMessage", message));
 	},
 	setReady(userID, sessionID, readyState) {
-		Sessions[sessionID].forUsers(user => Connections[user].socket.emit("setReady", userID, readyState));
+		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
 
 	pickCard(userID, sessionID, data, ack) {
@@ -265,7 +265,7 @@ const ownerSocketCallbacks = {
 			sess.notifyUserChange();
 		}
 		for (let user of sess.users)
-			if (user != userID) Connections[user].socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
+			if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	},
 	readyCheck(userID, sessionID, ack) {
 		const sess = Sessions[sessionID];
@@ -275,7 +275,7 @@ const ownerSocketCallbacks = {
 		}
 
 		ack?.({ code: 0 });
-		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("readyCheck");
+		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
 	},
 	startDraft(userID, sessionID) {
 		const sess = Sessions[sessionID];
@@ -363,7 +363,7 @@ const ownerSocketCallbacks = {
 			sess.owner = newOwnerID;
 		}
 		sess.forUsers(user =>
-			Connections[user].socket.emit(
+			Connections[user]?.socket.emit(
 				"sessionOwner",
 				sess.owner,
 				sess.owner in Connections ? Connections[sess.owner].userName : null
@@ -662,7 +662,7 @@ const ownerSocketCallbacks = {
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;
 			Sessions[sessionID].forUsers(uid =>
-				Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: true })
+				Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
 			);
 			ack?.({ code: 0 });
 		} catch (e) {
