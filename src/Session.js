@@ -273,7 +273,11 @@ export class Session {
 	}
 
 	setBoostersPerPlayer(boostersPerPlayer) {
-		if (this.boostersPerPlayer != boostersPerPlayer && boostersPerPlayer > 0) {
+		if (
+			this.boostersPerPlayer !== boostersPerPlayer &&
+			Number.isInteger(boostersPerPlayer) &&
+			boostersPerPlayer > 0
+		) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
@@ -288,18 +292,17 @@ export class Session {
 	}
 
 	setCardsPerBooster(cardsPerBooster) {
-		if (this.cardsPerBooster != cardsPerBooster && cardsPerBooster > 0) {
+		if (this.cardsPerBooster !== cardsPerBooster && Number.isInteger(cardsPerBooster) && cardsPerBooster > 0) {
 			this.cardsPerBooster = cardsPerBooster;
 
-
 			this.forUsers(u =>
-				Connections[u].socket.emit("sessionOptions", {
+				Connections[u]?.socket.emit("sessionOptions", {
 					cardsPerBooster: this.cardsPerBooster,
 				})
 			);
 		}
 	}
-	
+
 	setCustomCardList(cardList) {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
@@ -1136,7 +1139,9 @@ export class Session {
 		this.botsInstances = [];
 		for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i + 1}`, uuidv1()));
 
-		if (!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })) {
+		if (
+			!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })
+		) {
 			this.drafting = false;
 			return;
 		}
@@ -1708,7 +1713,7 @@ export class Session {
 
 	// Countdown Methods
 	startCountdown() {
-		let cardsPerBooster = 15;
+		let cardsPerBooster = this.cardsPerBooster ?? 15;
 		if (this.useCustomCardList && this.customCardList.customSheets)
 			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce((acc, c) => acc + c);
 		let dec = Math.floor(this.maxTimer / cardsPerBooster);

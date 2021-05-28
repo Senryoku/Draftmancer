@@ -1287,13 +1287,6 @@
 						Yes! You can import custom list of cards in text format in the settings.
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 					</p>
-					<strong>How can we adjust the packs content for cubes?</strong>
-					<p>
-						The <a href="cubeformat.html" target="_blank" rel="noopener nofollow">Cube Format</a> allows to fine tune the packs content (see the "Custom Card Slots" section).
-						<br />
-						To change the overall number of cards in a pack without going into more details, you can add the following line on top of your cube file and replace <tt>CardPerBooster</tt> by the desired value:
-						<pre>[SlotName(CardPerBooster)]</pre>
-					</p>
 					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
 				</div>
 				<br />
@@ -1785,28 +1778,6 @@
 							/>
 						</div>
 					</div>
-                                        <div
-                                                class="line"
-                                                v-tooltip.right="{
-                                                        classes: 'option-tooltip',
-                                                        content: '<p>Draft: Cards per Booster; default is 15.</p>',
-                                                }"
-                                        >
-                                                <label for="cards-per-booster">Cards per Booster</label>
-                                                <div class="right">
-                                                        <delayed-input
-                                                                type="number"
-                                                                id="cards-per-booster"
-                                                                class="small-number-input"
-                                                                min="1"
-                                                                max="100"
-                                                                step="1"
-                                                                :delay="0.1"
-                                                                v-model.number="cardsPerBooster"
-                                                                :validate="(v) => Math.max(1, Math.min(v, 100))"
-                                                        />
-                                                </div>
-                                        </div>
 					<div class="option-section" v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }">
 						<div class="option-column-title">Individual Booster Set</div>
 						<div
@@ -1913,12 +1884,6 @@
 							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
 							<label for="use-custom-card-list">Use a Custom Card List</label>
 						</div>
-						<div>
-							<button @click="importCubeCobra">
-								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
-								Import From Cube Cobra
-							</button>
-						</div>
 						<div v-if="customCardList.length > 0">
 							<i
 								class="fas fa-check green"
@@ -1937,6 +1902,33 @@
 							<button @click="displayedModal = 'cardList'">
 								<i class="fas fa-file-alt"></i>
 								Review.
+							</button>
+						</div>
+						<div v-else>(No Custom Card List loaded)</div>
+					</div>
+					<div style="display: flex; justify-content: space-around; align-items: center">
+						<div
+							v-tooltip.left="{
+								classes: 'option-tooltip',
+								content: '<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
+							}"
+							:class="{'disabled-simple': !useCustomCardList || (customCardList && customCardList.customSheets)}"
+						>
+							<label for="cards-per-booster">Cards per Booster</label>
+							<input
+								type="number"
+								id="cards-per-booster"
+								class="small-number-input"
+								min="1"
+								max="100"
+								step="1"
+								v-model.number="cardsPerBooster"
+							/>
+						</div>
+						<div>
+							<button @click="importCubeCobra">
+								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
+								Import From Cube Cobra
 							</button>
 						</div>
 					</div>

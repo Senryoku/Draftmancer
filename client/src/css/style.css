@@ -113,6 +113,11 @@ label {
 	background: repeating-linear-gradient(45deg, #282828, #282828 10px, #383838 10px, #383838 20px);
 }
 
+.disabled-simple {
+	pointer-events: none;
+	opacity: 0.3;
+}
+
 .opaque-disabled {
 	pointer-events: none;
 	filter: brightness(0.4);

@@ -395,7 +395,7 @@ const ownerSocketCallbacks = {
 		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
 		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
 
-		if (boostersPerPlayer == Sessions[sessionID].boostersPerPlayer) return;
+		if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
 
 		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
 	},
@@ -403,7 +403,7 @@ const ownerSocketCallbacks = {
 		if (!Number.isInteger(cardsPerBooster)) cardsPerBooster = parseInt(cardsPerBooster);
 		if (!Number.isInteger(cardsPerBooster) || cardsPerBooster <= 0) return;
 
-		if (cardsPerBooster == Sessions[sessionID].cardsPerBooster) return;
+		if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
 
 		Sessions[sessionID].setCardsPerBooster(cardsPerBooster);
 	},
