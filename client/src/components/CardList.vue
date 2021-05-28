@@ -49,49 +49,50 @@ export default {
 		language: { type: String, required: true },
 		collection: { type: Object },
 	},
-	data: function () {
+	data() {
 		return { cards: null };
 	},
-	mounted: function () {
+	mounted() {
 		// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
 		this.getCards();
 	},
 	computed: {
-		isValid: function () {
+		isValid() {
 			return this.cardlist && this.cardlist.length;
 		},
-		rows: function () {
-			if (this.cardlist.customSheets) return [];
+		rows() {
+			if (this.cardlist.customSheets || !this.cards) return [];
 			return this.rowsByColor(this.cards);
 		},
-		rowsBySlot: function () {
-			if (!this.cardlist.customSheets) return [];
+		rowsBySlot() {
+			if (!this.cardlist.customSheets || !this.cards) return [];
 			let rowsBySlot = {};
-			for (let slot in this.cardlist.cards) {
-				rowsBySlot[slot] = this.rowsByColor(this.cards); // FIXME
-			}
+			for (let slot in this.cardlist.cards) rowsBySlot[slot] = this.rowsByColor(this.cards[slot]);
 			return rowsBySlot;
 		},
-		checkCollection: function () {
+		checkCollection() {
 			return !isEmpty(this.collection);
 		},
-		missing: function () {
+		missing() {
 			if (!this.checkCollection || !this.cards) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			for (let c of this.cards) {
-				if (!(c.arena_id in this.collection)) {
-					missing.total += 1;
-					missing[c.rarity] += 1;
-				}
-			}
+			const count = (arr) => {
+				for (let c of arr)
+					if (!(c.arena_id in this.collection)) {
+						missing.total += 1;
+						missing[c.rarity] += 1;
+					}
+			};
+			if (this.cardlist.customSheets) for (let slot in this.cards) count(this.cards[slot]);
+			else count(this.cards);
 			return missing;
 		},
-		missingText: function () {
+		missingText() {
 			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
 		},
 	},
 	methods: {
-		download: function () {
+		download() {
 			let str = "";
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
@@ -107,7 +108,7 @@ export default {
 			}
 			download("Cube.txt", str);
 		},
-		rowsByColor: function (cards) {
+		rowsByColor(cards) {
 			if (!cards) return [];
 			let a = cards.reduce(
 				(acc, item) => {
@@ -125,7 +126,7 @@ export default {
 			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
 		},
-		getCards: async function () {
+		async getCards() {
 			if (!this.cardlist || !this.cardlist.cards) return;
 			const response = await fetch("/getCards", {
 				method: "POST",

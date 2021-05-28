@@ -1153,8 +1153,17 @@ app.post("/getCards", (req, res) => {
 	} else {
 		try {
 			res.setHeader("Content-Type", "application/json");
-			res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
+			if (Array.isArray(req.body)) {
+				res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
+			} else if (typeof req.body === "object") {
+				const r = {};
+				for (let slot in req.body) r[slot] = req.body[slot].map(cid => Cards[cid]);
+				res.send(JSON.stringify(r));
+			} else {
+				res.sendStatus(400);
+			}
 		} catch (e) {
+			console.error(e);
 			res.sendStatus(500);
 		}
 	}
