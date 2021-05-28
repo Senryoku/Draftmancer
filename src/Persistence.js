@@ -281,6 +281,7 @@ export function logSession(type, session) {
 	for (let prop of [
 		"boostersPerPlayer",
 		"teamDraft",
+		"cardsPerBooster",
 		"ignoreCollections",
 		"mythicPromotion",
 		"maxDuplicates",
