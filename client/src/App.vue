@@ -1785,6 +1785,28 @@
 							/>
 						</div>
 					</div>
+                                        <div
+                                                class="line"
+                                                v-tooltip.right="{
+                                                        classes: 'option-tooltip',
+                                                        content: '<p>Draft: Cards per Booster; default is 15.</p>',
+                                                }"
+                                        >
+                                                <label for="cards-per-booster">Cards per Booster</label>
+                                                <div class="right">
+                                                        <delayed-input
+                                                                type="number"
+                                                                id="cards-per-booster"
+                                                                class="small-number-input"
+                                                                min="1"
+                                                                max="100"
+                                                                step="1"
+                                                                :delay="0.1"
+                                                                v-model.number="cardsPerBooster"
+                                                                :validate="(v) => Math.max(1, Math.min(v, 100))"
+                                                        />
+                                                </div>
+                                        </div>
 					<div class="option-section" v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }">
 						<div class="option-column-title">Individual Booster Set</div>
 						<div
