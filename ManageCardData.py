@@ -334,7 +334,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
-            if c['set'] in ['sta', 'rmh1']:  # Force STA, RMH1 in booster
+            if c['set'] in ['sta']:  # Force STA in booster
                 selection['in_booster'] = not selection['collector_number'].endswith("e")
 
             if c['layout'] == "split":
