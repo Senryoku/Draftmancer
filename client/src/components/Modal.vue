@@ -92,6 +92,7 @@ export default {
 .modal-body {
 	max-height: 85vh;
 	overflow-y: scroll;
+	will-change: transform;
 	background-color: rgba(255, 255, 255, 0.1);
 	padding: 0.5em;
 	border-radius: 0.5em;

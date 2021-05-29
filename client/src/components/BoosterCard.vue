@@ -56,6 +56,7 @@ export default {
 .card {
 	margin: 0.75em;
 	transition: transform 0.08s ease-out;
+	will-change: transform;
 }
 
 .missing-warning {

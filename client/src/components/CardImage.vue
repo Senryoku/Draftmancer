@@ -12,14 +12,14 @@
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
 			<i class="fas fa-sync split-left-icon"> </i>
 		</div>
-		<div class="flip-container">
+		<div :class="{ 'flip-container': hasBack }">
 			<clazy-load
 				:ratio="0"
 				margin="200px"
 				:src="imageURI"
 				loadingClass="card-loading"
 				:forceLoad="!lazyLoad"
-				class="flip-front"
+				:class="{ 'flip-front': hasBack }"
 			>
 				<img :src="imageURI" />
 				<card-placeholder slot="placeholder" :card="card"></card-placeholder>
