@@ -173,6 +173,7 @@ describe("Sets content", function() {
 		khm: { common: 111, uncommon: 80, rare: 64, mythic: 20 },
 		tsr: { common: 121, uncommon: 100, rare: 53, mythic: 15 },
 		stx: { common: 105, uncommon: 80, rare: 69, mythic: 21 },
+		mh2: { common: 101, uncommon: 100, rare: 78, mythic: 24 },
 	};
 
 	beforeEach(function(done) {
