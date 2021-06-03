@@ -999,6 +999,7 @@ ul.player-list {
 	height: 0;
 	padding-bottom: 13.5%; /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
 	margin: 0;
+	z-index: 0;
 }
 
 /* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
