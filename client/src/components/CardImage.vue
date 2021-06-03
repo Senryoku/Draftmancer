@@ -21,7 +21,7 @@
 				:forceLoad="!lazyLoad"
 				:class="{ 'flip-front': hasBack }"
 			>
-				<img :src="imageURI" />
+				<img class="front-image" :src="imageURI" />
 				<card-placeholder slot="placeholder" :card="card"></card-placeholder>
 			</clazy-load>
 			<clazy-load
@@ -33,7 +33,7 @@
 				:forceLoad="!lazyLoad"
 				v-if="hasBack"
 			>
-				<img :src="backImageURI" />
+				<img class="back-image" :src="backImageURI" />
 				<card-placeholder slot="placeholder" :card="card.back"></card-placeholder>
 			</clazy-load>
 		</div>
@@ -179,12 +179,12 @@ img {
 	text-shadow: 0 0 4px black, 0 -4px 0 black;
 }
 
-.vertical-flip-button ~ .flip-container div img {
+.vertical-flip-button ~ div .front-image {
 	transform-origin: center;
 	transition: transform 0.2s;
 }
 
-.vertical-flip-button:hover ~ .flip-container div img {
+.vertical-flip-button:hover ~ div .front-image {
 	transform: rotateZ(180deg);
 }
 
@@ -209,18 +209,18 @@ img {
 	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
-.split-button ~ .flip-container div img,
-.split-left-button ~ .flip-container div img {
+.split-button ~ div .front-image,
+.split-left-button ~ div .front-image {
 	transform-origin: center;
 	transition: transform 0.2s;
 }
 
-.split-button:hover ~ .flip-container div img {
+.split-button:hover ~ div .front-image {
 	transform: scale(1.41) rotateZ(90deg);
 	z-index: 100;
 }
 
-.split-left-button:hover ~ .flip-container div img {
+.split-left-button:hover ~ div .front-image {
 	transform: scale(1.41) rotateZ(-90deg);
 	z-index: 100;
 }
