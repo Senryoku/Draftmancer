@@ -153,6 +153,11 @@
         }
     },
     "CubeLists": [
+		{
+			"name": "Arena Historic Cube #3 - June 2021 (STX)",
+			"filename": "MTGArenaCubeJune2021.txt",
+			"description": "MTGA Official Historic Cube from June 2021 (Strixhaven version)."
+		},
         {
             "name": "Arena Tinkerer's Cube #2",
             "filename": "TinkerersCubeJanuary2021.txt",
