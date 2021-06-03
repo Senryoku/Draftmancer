@@ -519,7 +519,7 @@ export const SetSpecificFactories = {
 		// Not using the suplied cardpool here
 		factory.generateBooster = function(targets) {
 			const newToModernCounts = countBySlot(this.newToModern);
-			// Ignore the rule if there's no legendary creatures left
+			// Ignore the rule if there's no New-to-Modern reprint left
 			if (Object.values(newToModernCounts).every(c => c === 0)) {
 				return this.originalGenBooster(targets);
 			} else {
