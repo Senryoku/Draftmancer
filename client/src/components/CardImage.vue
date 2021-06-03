@@ -205,7 +205,7 @@ img {
 }
 
 .split-left-button:hover .split-left-icon {
-	transform: rotateZ(-90deg) scaleX(-1);
+	transform: rotateZ(-89.999deg) scaleX(-1);
 	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
