@@ -201,7 +201,7 @@ const socketCallbacks = {
 			ack?.({ code: 500, error: "Internal server error." });
 			console.error("Error in pickCard:", err);
 			const data = {
-				boosters: Sessions[sessionID].boosters,
+				draftState: Sessions[sessionID].draftState,
 				sessionProps: {},
 			};
 			for (let p of optionProps) data.sessionProps[p] = Sessions[sessionID][p];
