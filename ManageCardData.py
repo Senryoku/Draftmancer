@@ -334,7 +334,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             elif not c['booster'] or c['type_line'].startswith("Basic"):
                 selection['in_booster'] = False
                 selection['rating'] = 0
-            if c['set'] == 'sta':  # Force STA in booster
+            if c['set'] in ['sta']:  # Force STA in booster
                 selection['in_booster'] = not selection['collector_number'].endswith("e")
 
             if c['layout'] == "split":
@@ -532,6 +532,6 @@ constants = {}
 with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'mh2', 'afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1), or aren't out yet (mh2, afr)
+    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'rmh1', 'afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, rmh1), or aren't out yet (afr)
 with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

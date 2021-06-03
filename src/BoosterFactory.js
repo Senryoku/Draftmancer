@@ -507,6 +507,35 @@ export const SetSpecificFactories = {
 		};
 		return factory;
 	},
+	// 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
+	mh2: (cardPool, landSlot, options) => {
+		const [newToModern, filteredCardPool] = filterCardPool(
+			cardPool,
+			cid => Cards[cid].collector_number >= 261 && Cards[cid].collector_number <= 303
+		);
+		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
+		factory.originalGenBooster = factory.generateBooster;
+		factory.newToModern = newToModern;
+		// Not using the suplied cardpool here
+		factory.generateBooster = function(targets) {
+			const newToModernCounts = countBySlot(this.newToModern);
+			// Ignore the rule if there's no New-to-Modern reprint left
+			if (Object.values(newToModernCounts).every(c => c === 0)) {
+				return this.originalGenBooster(targets);
+			} else {
+				// Roll for New-to-Modern rarity
+				const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, options);
+				const pickedCard = pickCard(this.newToModern[pickedRarity], []);
+				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
+
+				const booster = this.originalGenBooster(targets);
+				// Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown
+				booster.unshift(pickedCard);
+				return booster;
+			}
+		};
+		return factory;
+	},
 };
 
 /*

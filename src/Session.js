@@ -696,8 +696,8 @@ export class Session {
 				const usedSets = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
-				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX that already have 15 cards.
-				const irregularSets = ["cmr", "tsr", "stx"];
+				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2 that already have 15 cards.
+				const irregularSets = ["cmr", "tsr", "stx", "mh2"];
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot = this.distributionMode !== "regular" || customBoosters.some(v => v === "random");
 				if (
