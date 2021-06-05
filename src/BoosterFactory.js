@@ -121,11 +121,13 @@ export function BoosterFactory(cardPool, landSlot, options) {
 		let booster = [];
 
 		let addedFoils = 0;
-		if (this.options.foil && Math.random() <= foilRate) {
+		const localFoilRate = this.options.foilRate ?? foilRate;
+		if (this.options.foil && Math.random() <= localFoilRate) {
 			const rarityCheck = Math.random();
+			const foilCardPool = this.options.foilCardPool ?? this.cardPool;
 			for (let r in foilRarityRates)
-				if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.cardPool[r])) {
-					let pickedCard = pickCard(this.cardPool[r]);
+				if (rarityCheck <= foilRarityRates[r] && !isEmpty(foilCardPool[r])) {
+					let pickedCard = pickCard(foilCardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && pickedCard.rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
@@ -513,6 +515,10 @@ export const SetSpecificFactories = {
 			cardPool,
 			cid => parseInt(Cards[cid].collector_number) >= 261 && parseInt(Cards[cid].collector_number) <= 303
 		);
+		if (options.foil) {
+			options.foilRate = 1.0 / 3.0;
+			options.foilCardPool = cardPool; // New-to-Modern can also appear in as foil
+		}
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.newToModern = newToModern;
