@@ -511,7 +511,7 @@ export const SetSpecificFactories = {
 	mh2: (cardPool, landSlot, options) => {
 		const [newToModern, filteredCardPool] = filterCardPool(
 			cardPool,
-			cid => Cards[cid].collector_number >= 261 && Cards[cid].collector_number <= 303
+			cid => parseInt(Cards[cid].collector_number) >= 261 && parseInt(Cards[cid].collector_number) <= 303
 		);
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
@@ -526,7 +526,6 @@ export const SetSpecificFactories = {
 				// Roll for New-to-Modern rarity
 				const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, options);
 				const pickedCard = pickCard(this.newToModern[pickedRarity], []);
-				removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
 
 				const booster = this.originalGenBooster(targets);
 				// Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown

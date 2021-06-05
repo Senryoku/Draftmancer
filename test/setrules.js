@@ -44,6 +44,14 @@ describe("Set Specific Booster Rules", function() {
 		expect(LessonCount).to.be.within(1, 2);
 	};
 
+	const validateMH2Booster = function(booster) {
+		expect(booster.map(c => c.set).every(s => s === "mh2")).to.be.true;
+		let newToModernCount = booster.reduce((acc, val) => {
+			return acc + (val.collector_number >= 261 && val.collector_number <= 303 ? 1 : 0);
+		}, 0);
+		expect(newToModernCount).to.equal(1);
+	};
+
 	beforeEach(function(done) {
 		disableLogs();
 		done();
@@ -80,7 +88,7 @@ describe("Set Specific Booster Rules", function() {
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
 			clients[ownerIdx].once("startDraft", function() {
-				for (let b of Sessions[sessionID].boosters) validationFunc(b);
+				for (let b of Sessions[sessionID].draftState.boosters) validationFunc(b);
 				clients[ownerIdx].once("endDraft", function() {
 					done();
 				});
@@ -95,7 +103,7 @@ describe("Set Specific Booster Rules", function() {
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
 			clients[ownerIdx].once("startDraft", function() {
-				for (let b of Sessions[sessionID].boosters) validationFunc(b);
+				for (let b of Sessions[sessionID].draftState.boosters) validationFunc(b);
 				clients[ownerIdx].once("endDraft", function() {
 					done();
 				});
@@ -109,6 +117,7 @@ describe("Set Specific Booster Rules", function() {
 	testSet("war", validateWARBooster, "exactly one planeswalker per pack");
 	testSet("znr", validateZNRBooster, "exactly one MDFC per pack");
 	testSet("stx", validateSTXBooster, "exactly one STA and 1 or 2 lesson(s) per pack");
+	testSet("mh2", validateMH2Booster, "exactly one New-to-Modern card per pack");
 
 	it(`Validate mixed Custom boosters.`, function(done) {
 		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
