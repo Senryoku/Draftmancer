@@ -4,6 +4,11 @@ import { getUnique } from "./Cards.js";
 import { getRandomKey } from "./utils.js";
 
 export function removeCardFromDict(cid, dict) {
+	if (!dict[cid]) {
+		console.error("Called removeCardFromDict on a non-existing card.");
+		console.trace();
+		return;
+	}
 	dict[cid] -= 1;
 	if (dict[cid] == 0) delete dict[cid];
 }
