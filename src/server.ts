@@ -1115,7 +1115,7 @@ app.use(express.static("./client/public/"));
 app.get("/getCollection", (req, res) => {
 	if (!req.cookies.sessionID) {
 		res.sendStatus(400);
-	} else if (req.params.sessionID in Sessions) {
+	} else if (req.cookies.sessionID in Sessions) {
 		res.send(Sessions[req.cookies.sessionID].collection(false));
 	} else {
 		res.sendStatus(404);
