@@ -6,7 +6,15 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, DraftState, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
+import {
+	Session,
+	Sessions,
+	DraftState,
+	WinstonDraftState,
+	GridDraftState,
+	RochesterDraftState,
+	IIndexable,
+} from "./Session.js";
 import Bot from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -27,7 +35,7 @@ const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localho
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 async function requestSavedConnections() {
-	let InactiveConnections = {};
+	let InactiveConnections: { [uid: string]: any } = {};
 
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
@@ -43,10 +51,7 @@ async function requestSavedConnections() {
 			const connections = response.data;
 			if (connections && connections.length > 0) {
 				for (let c of connections) {
-					InactiveConnections[c.userID] = new Connection(null, c.userID, c.userName);
-					for (let prop of Object.getOwnPropertyNames(c)) {
-						InactiveConnections[c.userID][prop] = c[prop];
-					}
+					InactiveConnections[c.userID] = c;
 				}
 				console.log(`Restored ${connections.length} saved connections.`);
 			}
@@ -59,7 +64,7 @@ async function requestSavedConnections() {
 }
 
 async function requestSavedSessions() {
-	let InactiveSessions = {};
+	let InactiveSessions: { [sid: string]: Session } = {};
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
 			headers: {
@@ -77,10 +82,10 @@ async function requestSavedSessions() {
 					for (let prop of Object.getOwnPropertyNames(s).filter(
 						p => !["botsInstances", "draftState"].includes(p)
 					)) {
-						InactiveSessions[s.id][prop] = s[prop];
+						(InactiveSessions[s.id] as IIndexable)[prop] = s[prop];
 					}
 
-					const copyProps = (obj, target) => {
+					const copyProps = (obj: any, target: any) => {
 						for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
 					};
 
@@ -96,19 +101,21 @@ async function requestSavedSessions() {
 					if (s.draftState) {
 						switch (s.draftState.type) {
 							case "draft": {
-								InactiveSessions[s.id].draftState = new DraftState();
+								InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState as DraftState;
 								break;
 							}
 							case "winston": {
-								InactiveSessions[s.id].draftState = new WinstonDraftState();
+								InactiveSessions[s.id].draftState = InactiveSessions[s.id]
+									.draftState as WinstonDraftState;
 								break;
 							}
 							case "grid": {
-								InactiveSessions[s.id].draftState = new GridDraftState();
+								InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState as GridDraftState;
 								break;
 							}
 							case "rochester": {
-								InactiveSessions[s.id].draftState = new RochesterDraftState();
+								InactiveSessions[s.id].draftState = InactiveSessions[s.id]
+									.draftState as RochesterDraftState;
 								break;
 							}
 						}
@@ -146,10 +153,10 @@ async function tempDump(exitOnCompletion = false) {
 	let PoDConnections = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
-		const PoDConnection = {};
+		const PoDConnection: any = {};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) PoDConnection[prop] = c[prop];
+			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
 		}
 
 		PoDConnections.push(PoDConnection);
@@ -174,12 +181,12 @@ async function tempDump(exitOnCompletion = false) {
 	let PoDSessions = [];
 	for (const sessionID in Sessions) {
 		const s = Sessions[sessionID];
-		const PoDSession = {};
+		const PoDSession: any = {};
 
 		for (let prop of Object.getOwnPropertyNames(s).filter(
 			p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
 		)) {
-			if (!(s[prop] instanceof Function)) PoDSession[prop] = s[prop];
+			if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 		}
 
 		if (s.drafting) {
@@ -188,7 +195,7 @@ async function tempDump(exitOnCompletion = false) {
 				PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 			}
 
-			const copyProps = (obj, target) => {
+			const copyProps = (obj: any, target: any) => {
 				for (let prop of Object.getOwnPropertyNames(obj))
 					if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
 			};
@@ -235,7 +242,7 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-function saveLog(type, session) {
+function saveLog(type: string, session: Session) {
 	let localSess = JSON.parse(JSON.stringify(session));
 	localSess.users = [...session.users]; // Stringifying doesn't support Sets
 	// Anonymize Draft Log
@@ -260,7 +267,7 @@ function saveLog(type, session) {
 	}
 }
 
-export function dumpError(name, data) {
+export function dumpError(name: string, data: any) {
 	axios
 		.post(`${PersistenceStoreURL}/store/${name}`, data, {
 			headers: {
@@ -270,11 +277,11 @@ export function dumpError(name, data) {
 		.catch(err => console.error("Error dumping error(wup): ", err.message));
 }
 
-export function logSession(type, session) {
+export function logSession(type: string, session: Session) {
 	if (SaveLogs) saveLog(type, session);
 
 	if (!MixInstance) return;
-	let mixdata = {
+	let mixdata: any = {
 		distinct_id: process.env.NODE_ENV || "development",
 		playerCount: session.users.size,
 	};
@@ -301,13 +308,13 @@ export function logSession(type, session) {
 		"burnedCardsPerRound",
 		"bracketLocked",
 	])
-		mixdata[prop] = session[prop];
+		mixdata[prop] = (session as IIndexable)[prop];
 	if (session.customCardList && session.customCardList.name) mixdata.customCardListName = session.customCardList.name;
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
-export let InactiveSessions = {};
-export let InactiveConnections = {};
+export let InactiveSessions: { [sid: string]: any } = {};
+export let InactiveConnections: { [sid: string]: any } = {};
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.

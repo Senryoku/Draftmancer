@@ -2,7 +2,7 @@
 
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
-import { CardPool } from "./Cards";
+import { Card, CardPool } from "./Cards";
 
 export let Connections: { [uid: string]: Connection } = {};
 export class Connection {
@@ -15,7 +15,7 @@ export class Connection {
 	useCollection = true;
 
 	pickedThisRound = false;
-	pickedCards = [];
+	pickedCards: Array<Card> = [];
 	boosterIndex = -1;
 
 	constructor(socket: Socket, userID: UserID, userName: string) {

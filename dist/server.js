@@ -19,7 +19,7 @@ import { isEmpty, shuffleArray } from "./utils.js";
 import constants from "../client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, optionProps, instanceOfTurnBased } from "./Session.js";
+import { Session, Sessions, optionProps, instanceOfTurnBased, } from "./Session.js";
 import { Cards, MTGACards, getUnique } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 app.use(compression());
@@ -226,7 +226,7 @@ const socketCallbacks = {
         Sessions[sessionID].shareDecklist(userID, decklist);
     },
     updateBracket(userID, sessionID, results) {
-        if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock)
+        if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked)
             return;
         Sessions[sessionID].updateBracket(results);
     },
@@ -297,8 +297,6 @@ const ownerSocketCallbacks = {
         if (sess.drafting)
             return;
         if (sess.users.size == 2) {
-            if (typeof boosterCount === "string")
-                boosterCount = parseInt(boosterCount);
             sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
             startPublicSession(sess);
         }
@@ -380,8 +378,6 @@ const ownerSocketCallbacks = {
             Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
     },
     boostersPerPlayer(userID, sessionID, boostersPerPlayer) {
-        if (!Number.isInteger(boostersPerPlayer))
-            boostersPerPlayer = parseInt(boostersPerPlayer);
         if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0)
             return;
         if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer)
@@ -389,8 +385,6 @@ const ownerSocketCallbacks = {
         Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
     },
     cardsPerBooster(userID, sessionID, cardsPerBooster) {
-        if (!Number.isInteger(cardsPerBooster))
-            cardsPerBooster = parseInt(cardsPerBooster);
         if (!Number.isInteger(cardsPerBooster) || cardsPerBooster <= 0)
             return;
         if (cardsPerBooster === Sessions[sessionID].cardsPerBooster)
@@ -425,8 +419,6 @@ const ownerSocketCallbacks = {
         }
     },
     bots(userID, sessionID, bots) {
-        if (!Number.isInteger(bots))
-            bots = parseInt(bots);
         if (!Number.isInteger(bots))
             return;
         if (bots == Sessions[sessionID].bots)
@@ -571,8 +563,6 @@ const ownerSocketCallbacks = {
         }
     },
     setPickTimer(userID, sessionID, timerValue) {
-        if (!Number.isInteger(timerValue))
-            timerValue = parseInt(timerValue);
         if (!Number.isInteger(timerValue) || timerValue < 0)
             return;
         Sessions[sessionID].maxTimer = timerValue;
@@ -582,8 +572,6 @@ const ownerSocketCallbacks = {
         }
     },
     setMaxPlayers(userID, sessionID, maxPlayers) {
-        if (!Number.isInteger(maxPlayers))
-            maxPlayers = parseInt(maxPlayers);
         if (!Number.isInteger(maxPlayers) || maxPlayers < 0)
             return;
         Sessions[sessionID].maxPlayers = maxPlayers;
@@ -593,8 +581,6 @@ const ownerSocketCallbacks = {
         }
     },
     setMythicPromotion(userID, sessionID, mythicPromotion) {
-        if (typeof mythicPromotion !== "boolean")
-            return;
         Sessions[sessionID].mythicPromotion = mythicPromotion;
         for (let user of Sessions[sessionID].users) {
             if (user !== userID)
@@ -687,11 +673,6 @@ const ownerSocketCallbacks = {
         }
     },
     setDraftLogRecipients(userID, sessionID, draftLogRecipients) {
-        if (typeof draftLogRecipients !== "string")
-            return;
-        draftLogRecipients = draftLogRecipients.toLowerCase();
-        if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients))
-            return;
         Sessions[sessionID].draftLogRecipients = draftLogRecipients;
         for (let user of Sessions[sessionID].users) {
             if (user !== userID)
@@ -763,8 +744,6 @@ const ownerSocketCallbacks = {
             updatePublicSession(sessionID);
     },
     setPickedCardsPerRound(userID, sessionID, pickedCardsPerRound) {
-        if (!Number.isInteger(pickedCardsPerRound))
-            pickedCardsPerRound = parseInt(pickedCardsPerRound);
         if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1)
             return;
         Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
@@ -774,8 +753,6 @@ const ownerSocketCallbacks = {
         }
     },
     setBurnedCardsPerRound(userID, sessionID, burnedCardsPerRound) {
-        if (!Number.isInteger(burnedCardsPerRound))
-            burnedCardsPerRound = parseInt(burnedCardsPerRound);
         if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0)
             return;
         Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
@@ -921,7 +898,11 @@ io.on("connection", async function (socket) {
         // Restore previously saved connection
         // TODO: Front and Back end may be out of sync after this!
         InactiveConnections[query.userID].socket = socket;
-        Connections[query.userID] = InactiveConnections[query.userID];
+        let connection = new Connection(socket, query.userID, query.userName);
+        for (let prop of Object.getOwnPropertyNames(InactiveConnections[query.userID])) {
+            connection[prop] = InactiveConnections[query.userID][prop];
+        }
+        Connections[query.userID] = connection;
         delete InactiveConnections[query.userID];
     }
     else {
@@ -960,7 +941,7 @@ io.on("connection", async function (socket) {
 ///////////////////////////////////////////////////////////////////////////////
 function joinSession(sessionID, userID) {
     // Fallback to previous session if possible, or generate a new one
-    const refuse = msg => {
+    const refuse = (msg) => {
         Connections[userID].socket.emit("message", {
             title: "Cannot join session",
             html: msg,
@@ -1021,15 +1002,17 @@ function joinSession(sessionID, userID) {
 }
 function addUserToSession(userID, sessionID) {
     const options = {};
-    if (Connections[userID].sessionID !== null && Connections[userID].sessionID in Sessions) {
-        // Transfer session options to the new one if applicable
-        if (userID === Sessions[Connections[userID].sessionID].owner) {
-            for (let p of optionProps) {
-                options[p] = Sessions[Connections[userID].sessionID][p];
+    const currentSession = Connections[userID].sessionID;
+    if (currentSession !== undefined)
+        if (currentSession in Sessions) {
+            // Transfer session options to the new one if applicable
+            if (userID === Sessions[currentSession].owner) {
+                for (let p of optionProps) {
+                    options[p] = Sessions[currentSession][p];
+                }
             }
+            removeUserFromSession(userID);
         }
-        removeUserFromSession(userID);
-    }
     if (!(sessionID in Sessions))
         Sessions[sessionID] = new Session(sessionID, userID, options);
     Sessions[sessionID].addUser(userID);
@@ -1047,13 +1030,13 @@ function deleteSession(sessionID) {
 // Remove user from previous session and cleanup if empty
 function removeUserFromSession(userID) {
     const sessionID = Connections[userID].sessionID;
-    if (sessionID in Sessions) {
+    if (sessionID && sessionID in Sessions) {
         let sess = Sessions[sessionID];
         if (sess.users.has(userID)) {
             sess.remUser(userID);
             if (sess.isPublic)
                 updatePublicSession(sessionID);
-            Connections[userID].sessionID = null;
+            // Connections[userID].sessionID = null; // FIXME?
             // Keep session alive if the owner wasn't a player and is still connected.
             if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
                 deleteSession(sessionID);
@@ -1144,7 +1127,7 @@ app.post("/getCards", (req, res) => {
             else if (typeof req.body === "object") {
                 const r = {};
                 for (let slot in req.body)
-                    r[slot] = req.body[slot].map(cid => Cards[cid]);
+                    r[slot] = req.body[slot].map((cid) => Cards[cid]);
                 res.send(JSON.stringify(r));
             }
             else {
@@ -1226,7 +1209,7 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 });
 // Debug endpoints
 const secretKey = process.env.SECRET_KEY || "1234";
-var express_json_cache = []; // Clear this before calling
+let express_json_cache = []; // Clear this before calling
 app.set("json replacer", function (key, value) {
     if (!express_json_cache)
         express_json_cache = [];
@@ -1316,9 +1299,7 @@ app.get("/getSessions/:key", (req, res) => {
     }
 });
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
-    httpServer.listen(port, err => {
-        if (err)
-            throw err;
+    httpServer.listen(port, () => {
         console.log("listening on port " + port);
     });
 });

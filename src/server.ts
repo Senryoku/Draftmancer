@@ -22,8 +22,19 @@ import { isEmpty, shuffleArray } from "./utils.js";
 import constants from "../client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
-import { TurnBased, Session, Sessions, optionProps, instanceOfTurnBased } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool } from "./Cards.js";
+import {
+	TurnBased,
+	Session,
+	Sessions,
+	optionProps,
+	instanceOfTurnBased,
+	DistributionMode,
+	CustomCardList,
+	DraftLogRecipients,
+	IIndexable,
+	DraftLog,
+} from "./Session.js";
+import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import SocketIO from "socket.io";
@@ -42,7 +53,7 @@ function shortguid() {
 	return s4() + s4() + s4();
 }
 
-function getPublicSessionData(s) {
+function getPublicSessionData(s: Session) {
 	return {
 		id: s.id,
 		description: s.description,
@@ -185,15 +196,20 @@ const socketCallbacks: { [name: string]: Function } = {
 			})
 		);
 	},
-	chatMessage(userID: UserID, sessionID: SessionID, message) {
+	chatMessage(userID: UserID, sessionID: SessionID, message: { text: string }) {
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("chatMessage", message));
 	},
-	setReady(userID: UserID, sessionID: SessionID, readyState) {
+	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
 
-	pickCard(userID: UserID, sessionID: SessionID, data, ack: Function) {
+	pickCard(
+		userID: UserID,
+		sessionID: SessionID,
+		data: { pickedCards: Array<number>; burnedCards: Array<number> },
+		ack: Function
+	) {
 		// Removes picked card from corresponding booster and notify other players.
 		// Moves to next round when each player have picked a card.
 		try {
@@ -202,15 +218,15 @@ const socketCallbacks: { [name: string]: Function } = {
 		} catch (err) {
 			ack?.({ code: 500, error: "Internal server error." });
 			console.error("Error in pickCard:", err);
-			const data = {
+			const data: any = {
 				draftState: Sessions[sessionID].draftState,
 				sessionProps: {},
 			};
-			for (let p of optionProps) data.sessionProps[p] = Sessions[sessionID][p];
+			for (let p of optionProps) data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
 			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
 		}
 	},
-	gridDraftPick(userID: UserID, sessionID: SessionID, choice, ack: Function) {
+	gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: Function) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
 		const r = Sessions[sessionID].gridDraftPick(choice);
@@ -218,7 +234,7 @@ const socketCallbacks: { [name: string]: Function } = {
 		if (!r) ack?.({ code: 1, error: "Internal error." });
 		else ack?.({ code: 0 });
 	},
-	rochesterDraftPick(userID: UserID, sessionID: SessionID, choices, ack: Function) {
+	rochesterDraftPick(userID: UserID, sessionID: SessionID, choices: Array<number>, ack: Function) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "rochester", ack)) return;
 
 		const r = Sessions[sessionID].rochesterDraftPick(choices[0]);
@@ -243,18 +259,18 @@ const socketCallbacks: { [name: string]: Function } = {
 		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
 		else ack?.({ code: 0 });
 	},
-	shareDecklist(userID: UserID, sessionID: SessionID, decklist) {
+	shareDecklist(userID: UserID, sessionID: SessionID, decklist: DeckList) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
 	},
-	updateBracket(userID: UserID, sessionID: SessionID, results) {
-		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLock) return;
+	updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
+		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
 		Sessions[sessionID].updateBracket(results);
 	},
 };
 
 // Socket callback available only to session owners
-const ownerSocketCallbacks = {
-	setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val) {
+const ownerSocketCallbacks: { [key: string]: Function } = {
+	setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 
@@ -308,11 +324,10 @@ const ownerSocketCallbacks = {
 	resumeDraft(userID: UserID, sessionID: SessionID) {
 		Sessions[sessionID].resumeDraft();
 	},
-	startGridDraft(userID: UserID, sessionID: SessionID, boosterCount) {
+	startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
-			if (typeof boosterCount === "string") boosterCount = parseInt(boosterCount);
 			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
 			startPublicSession(sess);
 		} else {
@@ -336,7 +351,7 @@ const ownerSocketCallbacks = {
 			startPublicSession(sess);
 		}
 	},
-	startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount) {
+	startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
 		const sess = Sessions[sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
@@ -350,7 +365,7 @@ const ownerSocketCallbacks = {
 		}
 	},
 	// Session Settings
-	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID) {
+	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
 		const sess = Sessions[sessionID];
 		if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
 
@@ -372,7 +387,7 @@ const ownerSocketCallbacks = {
 			)
 		);
 	},
-	removePlayer(userID: UserID, sessionID: SessionID, userToRemove) {
+	removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID) {
 		if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
 
 		removeUserFromSession(userToRemove);
@@ -387,29 +402,27 @@ const ownerSocketCallbacks = {
 			text: `You've been removed from session '${sessionID}' by its owner.`,
 		});
 	},
-	setSeating(userID: UserID, sessionID: SessionID, seating) {
+	setSeating(userID: UserID, sessionID: SessionID, seating: Array<UserID>) {
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
 	randomizeSeating(userID: UserID, sessionID: SessionID) {
 		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
-	boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer) {
-		if (!Number.isInteger(boostersPerPlayer)) boostersPerPlayer = parseInt(boostersPerPlayer);
+	boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer: number) {
 		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
 
 		if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
 
 		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
 	},
-	cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster) {
-		if (!Number.isInteger(cardsPerBooster)) cardsPerBooster = parseInt(cardsPerBooster);
+	cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: number) {
 		if (!Number.isInteger(cardsPerBooster) || cardsPerBooster <= 0) return;
 
 		if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
 
 		Sessions[sessionID].setCardsPerBooster(cardsPerBooster);
 	},
-	teamDraft(userID: UserID, sessionID: SessionID, teamDraft) {
+	teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
 		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
 		if (!(typeof teamDraft === "boolean")) return;
 
@@ -417,7 +430,7 @@ const ownerSocketCallbacks = {
 
 		Sessions[sessionID].setTeamDraft(teamDraft);
 	},
-	setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode) {
+	setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode: DistributionMode) {
 		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
 
 		Sessions[sessionID].distributionMode = distributionMode;
@@ -426,7 +439,7 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
 		}
 	},
-	setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters) {
+	setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters: Array<string>) {
 		if (!Array.isArray(customBoosters)) return;
 
 		Sessions[sessionID].customBoosters = customBoosters;
@@ -434,8 +447,7 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
 		}
 	},
-	bots(userID: UserID, sessionID: SessionID, bots) {
-		if (!Number.isInteger(bots)) bots = parseInt(bots);
+	bots(userID: UserID, sessionID: SessionID, bots: number) {
 		if (!Number.isInteger(bots)) return;
 
 		if (bots == Sessions[sessionID].bots) return;
@@ -445,7 +457,7 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("bots", bots);
 		}
 	},
-	setRestriction(userID: UserID, sessionID: SessionID, setRestriction) {
+	setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<string>) {
 		if (!Array.isArray(setRestriction)) return;
 
 		if (setRestriction.length > 0) {
@@ -462,7 +474,7 @@ const ownerSocketCallbacks = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	parseCustomCardList(userID: UserID, sessionID: SessionID, customCardList, ack: Function) {
+	parseCustomCardList(userID: UserID, sessionID: SessionID, customCardList: CustomCardList, ack: Function) {
 		if (!customCardList) {
 			ack?.({ code: 1, type: "error", title: "No list supplied." });
 			return;
@@ -472,7 +484,7 @@ const ownerSocketCallbacks = {
 	loadFromCubeCobra(userID: UserID, sessionID: SessionID, data, ack: Function) {
 		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
 		// Plain text card list
-		const fromTextList = (userID: UserID, sessionID: SessionID, data, ack) => {
+		const fromTextList = (userID: UserID, sessionID: SessionID, data, ack: Function) => {
 			request(
 				{ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 },
 				(err, res, body) => {
@@ -572,15 +584,14 @@ const ownerSocketCallbacks = {
 
 		ack?.({ code: 0 });
 	},
-	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections) {
+	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
 		for (let user of Sessions[sessionID].users) {
 			if (user != userID)
 				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
 		}
 	},
-	setPickTimer(userID: UserID, sessionID: SessionID, timerValue) {
-		if (!Number.isInteger(timerValue)) timerValue = parseInt(timerValue);
+	setPickTimer(userID: UserID, sessionID: SessionID, timerValue: number) {
 		if (!Number.isInteger(timerValue) || timerValue < 0) return;
 
 		Sessions[sessionID].maxTimer = timerValue;
@@ -588,8 +599,7 @@ const ownerSocketCallbacks = {
 			if (user != userID) Connections[user].socket.emit("setPickTimer", timerValue);
 		}
 	},
-	setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers) {
-		if (!Number.isInteger(maxPlayers)) maxPlayers = parseInt(maxPlayers);
+	setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
 		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
 
 		Sessions[sessionID].maxPlayers = maxPlayers;
@@ -597,15 +607,17 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
 		}
 	},
-	setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion) {
-		if (typeof mythicPromotion !== "boolean") return;
-
+	setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion: boolean) {
 		Sessions[sessionID].mythicPromotion = mythicPromotion;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
 		}
 	},
-	setBoosterContent(userID: UserID, sessionID: SessionID, boosterContent) {
+	setBoosterContent(
+		userID: UserID,
+		sessionID: SessionID,
+		boosterContent: { common: number; uncommon: number; rare: number }
+	) {
 		// Validate input (a value for each rarity and at least one card)
 		if (boosterContent === null || !(typeof boosterContent === "object")) return;
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
@@ -619,14 +631,14 @@ const ownerSocketCallbacks = {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
-	setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value, ack: Function) {
+	setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value: boolean, ack: Function) {
 		Sessions[sessionID].usePredeterminedBoosters = value;
 		Sessions[sessionID].forNonOwners(uid =>
 			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
 		);
 		ack?.({ code: 0 });
 	},
-	setBoosters(userID: UserID, sessionID: SessionID, text, ack: Function) {
+	setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: Function) {
 		try {
 			let boosters = [];
 			let booster = [];
@@ -687,10 +699,7 @@ const ownerSocketCallbacks = {
 			ack?.({ code: 0 });
 		}
 	},
-	setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients) {
-		if (typeof draftLogRecipients !== "string") return;
-		draftLogRecipients = draftLogRecipients.toLowerCase();
-		if (!["everyone", "owner", "delayed", "none"].includes(draftLogRecipients)) return;
+	setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
 		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID)
@@ -699,7 +708,11 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	setMaxDuplicates(userID: UserID, sessionID: SessionID, maxDuplicates) {
+	setMaxDuplicates(
+		userID: UserID,
+		sessionID: SessionID,
+		maxDuplicates: { common: number; uncommon: number; rare: number }
+	) {
 		if (maxDuplicates !== null && !(typeof maxDuplicates === "object")) return;
 		if (
 			maxDuplicates !== null &&
@@ -716,7 +729,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	setColorBalance(userID: UserID, sessionID: SessionID, colorBalance) {
+	setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boolean) {
 		if (colorBalance === Sessions[sessionID].colorBalance) return;
 
 		Sessions[sessionID].colorBalance = colorBalance;
@@ -727,7 +740,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	setFoil(userID: UserID, sessionID: SessionID, foil) {
+	setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
 		if (foil === Sessions[sessionID].foil) return;
 
 		Sessions[sessionID].foil = foil;
@@ -738,7 +751,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	setCollationType(userID: UserID, sessionID: SessionID, preferedCollation) {
+	setCollationType(userID: UserID, sessionID: SessionID, preferedCollation: string) {
 		if (
 			preferedCollation === Sessions[sessionID].preferedCollation ||
 			!["Paper", "MTGA"].includes(preferedCollation)
@@ -753,7 +766,7 @@ const ownerSocketCallbacks = {
 				});
 		}
 	},
-	setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList) {
+	setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
 		Sessions[sessionID].useCustomCardList = useCustomCardList;
@@ -765,8 +778,7 @@ const ownerSocketCallbacks = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound) {
-		if (!Number.isInteger(pickedCardsPerRound)) pickedCardsPerRound = parseInt(pickedCardsPerRound);
+	setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound: number) {
 		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
 
 		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
@@ -775,8 +787,7 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
 		}
 	},
-	setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound) {
-		if (!Number.isInteger(burnedCardsPerRound)) burnedCardsPerRound = parseInt(burnedCardsPerRound);
+	setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound: number) {
 		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
 
 		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
@@ -785,7 +796,7 @@ const ownerSocketCallbacks = {
 				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
 		}
 	},
-	setPublic(userID: UserID, sessionID: SessionID, isPublic) {
+	setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
 		if (isPublic == Sessions[sessionID].isPublic) return;
 
 		Sessions[sessionID].isPublic = isPublic;
@@ -794,7 +805,7 @@ const ownerSocketCallbacks = {
 		}
 		updatePublicSession(sessionID);
 	},
-	setDescription(userID: UserID, sessionID: SessionID, description) {
+	setDescription(userID: UserID, sessionID: SessionID, description: string) {
 		if (description === null || description === undefined || description === Sessions[sessionID].description)
 			return;
 
@@ -807,14 +818,14 @@ const ownerSocketCallbacks = {
 	replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
 		Sessions[sessionID].replaceDisconnectedPlayers();
 	},
-	distributeSealed(userID: UserID, sessionID: SessionID, boostersPerPlayer, customBoosters) {
+	distributeSealed(userID: UserID, sessionID: SessionID, boostersPerPlayer: number, customBoosters: Array<string>) {
 		if (isNaN(boostersPerPlayer)) return;
 		Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
 	},
 	distributeJumpstart(userID: UserID, sessionID: SessionID) {
 		Sessions[sessionID].distributeJumpstart();
 	},
-	generateBracket(userID: UserID, sessionID: SessionID, players, ack: Function) {
+	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
 		if (
 			!(
 				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
@@ -825,24 +836,24 @@ const ownerSocketCallbacks = {
 		Sessions[sessionID].generateBracket(players);
 		ack?.({ code: 0 });
 	},
-	generateSwissBracket(userID: UserID, sessionID: SessionID, players, ack: Function) {
+	generateSwissBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateSwissBracket(players);
 		ack?.({ code: 0 });
 	},
-	generateDoubleBracket(userID: UserID, sessionID: SessionID, players, ack: Function) {
+	generateDoubleBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateDoubleBracket(players);
 		ack?.({ code: 0 });
 	},
-	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked) {
+	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
 		}
 	},
-	shareDraftLog(userID: UserID, sessionID: SessionID, draftLog) {
+	shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
 		const sess = Sessions[sessionID];
 		if (!draftLog) return;
 
@@ -901,7 +912,7 @@ io.on("connection", async function(socket) {
 			title: "Connecting...",
 			allowOutsideClick: false,
 		});
-		await new Promise(resolve => {
+		await new Promise<void>(resolve => {
 			(targetSocket => {
 				const timeout = setTimeout(() => {
 					// Previous connection did not respond in time, close it and continue as normal.
@@ -926,7 +937,11 @@ io.on("connection", async function(socket) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
 		InactiveConnections[query.userID].socket = socket;
-		Connections[query.userID] = InactiveConnections[query.userID];
+		let connection = new Connection(socket, query.userID, query.userName);
+		for (let prop of Object.getOwnPropertyNames(InactiveConnections[query.userID])) {
+			(connection as IIndexable)[prop] = InactiveConnections[query.userID][prop];
+		}
+		Connections[query.userID] = connection;
 		delete InactiveConnections[query.userID];
 	} else {
 		Connections[query.userID] = new Connection(socket, query.userID, query.userName);
@@ -969,15 +984,15 @@ io.on("connection", async function(socket) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-function joinSession(sessionID, userID) {
+function joinSession(sessionID: SessionID, userID: UserID) {
 	// Fallback to previous session if possible, or generate a new one
-	const refuse = msg => {
+	const refuse = (msg: string) => {
 		Connections[userID].socket.emit("message", {
 			title: "Cannot join session",
 			html: msg,
 		});
 		if (Connections[userID].sessionID === null) sessionID = shortguid();
-		else sessionID = Connections[userID].sessionID;
+		else sessionID = Connections[userID].sessionID as SessionID;
 		Connections[userID].socket.emit("setSession", sessionID);
 	};
 
@@ -1038,16 +1053,18 @@ function joinSession(sessionID, userID) {
 }
 
 function addUserToSession(userID: UserID, sessionID: SessionID) {
-	const options = {};
-	if (Connections[userID].sessionID !== null && Connections[userID].sessionID in Sessions) {
-		// Transfer session options to the new one if applicable
-		if (userID === Sessions[Connections[userID].sessionID].owner) {
-			for (let p of optionProps) {
-				options[p] = Sessions[Connections[userID].sessionID][p];
+	const options: any = {};
+	const currentSession = Connections[userID].sessionID;
+	if (currentSession !== undefined)
+		if (currentSession in Sessions) {
+			// Transfer session options to the new one if applicable
+			if (userID === Sessions[currentSession].owner) {
+				for (let p of optionProps) {
+					options[p] = (Sessions[currentSession] as IIndexable)[p];
+				}
 			}
+			removeUserFromSession(userID);
 		}
-		removeUserFromSession(userID);
-	}
 
 	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, options);
 
@@ -1055,7 +1072,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID) {
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
-function deleteSession(sessionID) {
+function deleteSession(sessionID: SessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
 	process.nextTick(() => {
 		delete Sessions[sessionID];
@@ -1064,15 +1081,16 @@ function deleteSession(sessionID) {
 }
 
 // Remove user from previous session and cleanup if empty
-function removeUserFromSession(userID) {
+function removeUserFromSession(userID: UserID) {
 	const sessionID = Connections[userID].sessionID;
-	if (sessionID in Sessions) {
+	if (sessionID && sessionID in Sessions) {
 		let sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
 
-			Connections[userID].sessionID = null;
+			// Connections[userID].sessionID = null; // FIXME?
+
 			// Keep session alive if the owner wasn't a player and is still connected.
 			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
 				deleteSession(sessionID);
@@ -1114,7 +1132,7 @@ app.get("/getCollection/:sessionID", (req, res) => {
 	}
 });
 
-function returnCollectionPlainText(res, sid) {
+function returnCollectionPlainText(res: any, sid: SessionID) {
 	if (!sid) {
 		res.sendStatus(400);
 	} else if (sid in Sessions) {
@@ -1157,8 +1175,8 @@ app.post("/getCards", (req, res) => {
 			if (Array.isArray(req.body)) {
 				res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
 			} else if (typeof req.body === "object") {
-				const r = {};
-				for (let slot in req.body) r[slot] = req.body[slot].map(cid => Cards[cid]);
+				const r: any = {};
+				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
 				res.send(JSON.stringify(r));
 			} else {
 				res.sendStatus(400);
@@ -1177,7 +1195,7 @@ app.post("/getDeck", (req, res) => {
 		try {
 			let r = { deck: [], sideboard: [] };
 			const lines = req.body.split(/\r\n|\n/);
-			let target = r.deck;
+			let target: any = r.deck;
 			for (let line of lines) {
 				line = line.trim();
 				if (line === "Deck") target = r.deck;
@@ -1233,8 +1251,8 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 
 const secretKey = process.env.SECRET_KEY || "1234";
 
-var express_json_cache = []; // Clear this before calling
-app.set("json replacer", function(key, value) {
+let express_json_cache: any = []; // Clear this before calling
+app.set("json replacer", function(key: string, value: any) {
 	if (!express_json_cache) express_json_cache = [];
 	// Deal with sets
 	if (typeof value === "object" && value instanceof Set) {
@@ -1252,7 +1270,7 @@ app.set("json replacer", function(key, value) {
 	return value;
 });
 
-function returnJSON(res, data) {
+function returnJSON(res: any, data: any) {
 	express_json_cache = [];
 	res.json(data);
 	express_json_cache = null; // Enable garbage collection
@@ -1301,7 +1319,7 @@ app.get("/getStatus/:key", (req, res) => {
 // Used by Discord Bot
 app.get("/getSessions/:key", (req, res) => {
 	if (req.params.key === secretKey) {
-		let localSess = {};
+		let localSess: { [sid: string]: any } = {};
 		for (let sid in Sessions)
 			localSess[sid] = {
 				id: sid,
@@ -1324,8 +1342,7 @@ app.get("/getSessions/:key", (req, res) => {
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
-	httpServer.listen(port, err => {
-		if (err) throw err;
+	httpServer.listen(port, () => {
 		console.log("listening on port " + port);
 	});
 });

@@ -103,7 +103,7 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 			shuffleArray(this.cardPool);
 		}
 		if (this.cardPool.length >= 3)
-			this.piles = [[this.cardPool.pop()], [this.cardPool.pop()], [this.cardPool.pop()]];
+			this.piles = [[this.cardPool.pop() as Card], [this.cardPool.pop() as Card], [this.cardPool.pop() as Card]];
 	}
 
 	currentPlayer() {
@@ -123,11 +123,11 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 
 export class GridDraftState extends IDraftState implements TurnBased {
 	round = 0;
-	boosters: Array<Array<Card>> = []; // Array of Boosters [3x3 Grid, Row-Major order]
+	boosters: Array<Array<Card | null>> = []; // Array of [3x3 Grid, Row-Major order]
 	players: Array<UserID>;
 	error: any;
 	boosterCount: number;
-	lastPicks: Array<Array<Card>> = [];
+	lastPicks: any = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("grid");
 		this.players = players;
@@ -167,7 +167,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	boosterNumber = 0;
 	boosters: Array<Array<Card>> = [];
 	boosterCount: number;
-	lastPicks: Array<Card> = [];
+	lastPicks: any = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("rochester");
 		this.players = players;
@@ -196,8 +196,19 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-type CustomCardList = any; // FIXME
-type DraftLog = any; // FIXME
+export type CustomCardList = {
+	name?: string;
+	cards: Array<CardID> | { [slot: string]: Array<CardID> } | null;
+	length: number | null;
+	cardsPerBooster: { [slot: string]: number };
+	customSheets: boolean | null;
+}; // FIXME
+export type DraftLog = any; // FIXME
+
+export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
+export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
+
+type userInfo = { [uid: string]: { isBot: boolean; disconnected?: boolean; instance?: Bot } };
 
 export interface IIndexable {
 	[key: string]: any;
@@ -229,12 +240,12 @@ export class Session implements IIndexable {
 	foil: boolean = false;
 	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
-	customCardList: CustomCardList = {};
-	distributionMode: string = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
+	customCardList: CustomCardList = { cards: null, cardsPerBooster: {}, customSheets: null, length: 0 };
+	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	pickedCardsPerRound: number = 1;
 	burnedCardsPerRound: number = 0;
-	draftLogRecipients: string = "everyone";
+	draftLogRecipients: DraftLogRecipients = "everyone";
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
 
@@ -245,12 +256,13 @@ export class Session implements IIndexable {
 	draftState?: IDraftState = undefined;
 	draftLog?: DraftLog;
 	// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
+	botsInstances: Array<Bot> = [];
 	disconnectedUsers: { [uid: string]: any } = {};
 	draftPaused: boolean = false;
 	countdown: number = 75;
 	countdownInterval: any = null;
 
-	constructor(id: SessionID, owner: UserID, options: any) {
+	constructor(id: SessionID, owner: UserID, options: any = null) {
 		this.id = id;
 		this.owner = owner;
 
@@ -545,7 +557,7 @@ export class Session implements IIndexable {
 				let cardsByRarity: SlotedCardPool = {};
 				for (let r in this.customCardList.cardsPerBooster) {
 					cardsByRarity[r] = {};
-					for (let cardId of this.customCardList.cards[r])
+					for (let cardId of (this.customCardList.cards as { [slot: string]: Array<CardID> })[r])
 						if (cardId in cardsByRarity[r])
 							// Duplicates adds one copy of the card
 							cardsByRarity[r][cardId] += 1;
@@ -597,7 +609,7 @@ export class Session implements IIndexable {
 				// Getting custom card list
 				let localCollection: CardPool = {};
 
-				for (let cardId of this.customCardList.cards) {
+				for (let cardId of this.customCardList.cards as Array<CardID>) {
 					// Duplicates adds one copy of the card
 					if (cardId in localCollection) localCollection[cardId] += 1;
 					else localCollection[cardId] = 1;
@@ -685,7 +697,7 @@ export class Session implements IIndexable {
 			};
 
 			// If the default rule will be used, initialize it
-			if (!options?.useCustomBoosters || customBoosters.some(v => v === "")) {
+			if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
 				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
 				if (
 					acceptPaperBoosterFactories &&
@@ -737,7 +749,8 @@ export class Session implements IIndexable {
 				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2 that already have 15 cards.
 				const irregularSets = ["cmr", "tsr", "stx", "mh2"];
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
-				const addLandSlot = this.distributionMode !== "regular" || customBoosters.some(v => v === "random");
+				const addLandSlot =
+					this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random");
 				if (
 					addLandSlot &&
 					defaultFactory &&
@@ -786,7 +799,7 @@ export class Session implements IIndexable {
 									);
 									// Check if we have enough card, considering maxDuplicate is a limiting factor
 									const multiplier = customBoosters.reduce(
-										(a, v) => (v == boosterSet ? a + 1 : a),
+										(a: number, v: string) => (v == boosterSet ? a + 1 : a),
 										0
 									);
 									for (let slot of ["common", "uncommon", "rare"]) {
@@ -827,7 +840,7 @@ export class Session implements IIndexable {
 
 				// Boosters within a round much be of the same length.
 				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
-				if (this.distributionMode !== "regular" || customBoosters.some(v => v === "random")) {
+				if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
 					if (this.boosters.some(b => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
 						this.emitError("Error generating boosters", msg);
@@ -843,7 +856,7 @@ export class Session implements IIndexable {
 
 	notifyUserChange() {
 		// Send only necessary data
-		let user_info = [];
+		let user_info: Array<any> = [];
 		for (let userID of this.getSortedHumanPlayersIDs()) {
 			let u = Connections[userID];
 			if (u) {
@@ -871,13 +884,13 @@ export class Session implements IIndexable {
 	}
 
 	cleanDraftState() {
-		this.draftState = null;
+		this.draftState = undefined;
 		this.drafting = false;
 		this.disconnectedUsers = {};
 	}
 
 	///////////////////// Winston Draft //////////////////////
-	startWinstonDraft(boosterCount) {
+	startWinstonDraft(boosterCount: number) {
 		if (this.users.size !== 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
@@ -912,7 +925,7 @@ export class Session implements IIndexable {
 	}
 
 	winstonNextRound() {
-		const s = this.draftState;
+		const s = this.draftState as WinstonDraftState;
 		++s.round;
 		s.currentPile = 0;
 		while (s.currentPile < 3 && !s.piles[s.currentPile].length) ++s.currentPile;
@@ -942,10 +955,10 @@ export class Session implements IIndexable {
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
 		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
-			s.piles[s.currentPile].push(s.cardPool.pop());
+			s.piles[s.currentPile].push(s.cardPool.pop() as Card);
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
-			const card = s.cardPool.pop();
+			const card = s.cardPool.pop() as Card;
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog.users[s.currentPlayer()].picks.push({
 				randomCard: card.id,
@@ -962,7 +975,7 @@ export class Session implements IIndexable {
 	}
 
 	winstonTakePile() {
-		const s = this.draftState;
+		const s = this.draftState as WinstonDraftState;
 		if (!this.drafting || !s || !(s instanceof WinstonDraftState)) return false;
 		this.draftLog.users[s.currentPlayer()].picks.push({
 			pickedPile: s.currentPile,
@@ -971,7 +984,7 @@ export class Session implements IIndexable {
 		Connections[s.currentPlayer()].pickedCards = Connections[s.currentPlayer()].pickedCards.concat(
 			s.piles[s.currentPile]
 		);
-		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop()];
+		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as Card];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
 		return true;
@@ -979,7 +992,7 @@ export class Session implements IIndexable {
 	///////////////////// Winston Draft End //////////////////////
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount) {
+	startGridDraft(boosterCount: number) {
 		if (this.users.size != 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
@@ -999,9 +1012,10 @@ export class Session implements IIndexable {
 
 		this.disconnectedUsers = {};
 		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		const s = this.draftState as GridDraftState;
 		this.boosters = [];
-		if (this.draftState.error) {
-			this.emitError(this.draftState.error.title, this.draftState.error.text);
+		if (s.error) {
+			this.emitError(s.error.title, s.error.text);
 			this.cleanDraftState();
 			return false;
 		}
@@ -1011,7 +1025,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedHumanPlayers(),
 			});
-			Connections[user].socket.emit("startGridDraft", this.draftState.syncData());
+			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
 
 		this.initLogs("Grid Draft");
@@ -1029,13 +1043,13 @@ export class Session implements IIndexable {
 	}
 
 	gridDraftNextRound() {
-		const s = this.draftState;
+		const s = this.draftState as GridDraftState;
 		if (!this.drafting || !s || !(s instanceof GridDraftState)) return;
 
 		++s.round;
 		if (s.round % 2 === 0) {
 			// Share the last pick before advancing to the next booster.
-			const syncData = s.syncData();
+			const syncData: any = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
 			for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
 			s.boosters.shift();
@@ -1047,18 +1061,18 @@ export class Session implements IIndexable {
 		for (let user of this.users) Connections[user].socket.emit("gridDraftNextRound", s.syncData());
 	}
 
-	gridDraftPick(choice) {
-		const s = this.draftState;
+	gridDraftPick(choice: number) {
+		const s = this.draftState as GridDraftState;
 		if (!this.drafting || !s || !(s instanceof GridDraftState)) return false;
 
-		const log = { pick: [], booster: s.boosters[0].map(c => (c ? c.id : null)) };
+		const log: any = { pick: [], booster: s.boosters[0].map(c => (c ? c.id : null)) };
 
 		let pickedCards = [];
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
-				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
+				Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx] as Card);
 				pickedCards.push(s.boosters[0][idx]);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
@@ -1098,7 +1112,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedHumanPlayers(),
 			});
-			Connections[user].socket.emit("startRochesterDraft", this.draftState.syncData());
+			Connections[user].socket.emit("startRochesterDraft", (this.draftState as RochesterDraftState).syncData());
 		}
 
 		this.initLogs("Rochester Draft");
@@ -1139,8 +1153,8 @@ export class Session implements IIndexable {
 		for (let user of this.users) Connections[user].socket.emit("rochesterDraftNextRound", syncData);
 	}
 
-	rochesterDraftPick(idx) {
-		const s = this.draftState;
+	rochesterDraftPick(idx: number) {
+		const s = this.draftState as RochesterDraftState;
 		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return false;
 
 		Connections[s.currentPlayer()].pickedCards.push(s.boosters[0][idx]);
@@ -1214,30 +1228,28 @@ export class Session implements IIndexable {
 		this.nextBooster();
 	}
 
-	pickCard(userID, pickedCards, burnedCards) {
+	pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
 		if (!this.drafting || this.draftState?.type !== "draft" || !this.users.has(userID)) return;
+		const s = this.draftState as DraftState;
 
-		const reportError = (code, err) => {
+		const reportError = (code: number, err: string) => {
 			console.error(err);
 			return { code: code, error: err };
 		};
 
 		const boosterIndex = Connections[userID].boosterIndex;
-		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= this.draftState.boosters.length)
+		if (typeof boosterIndex === "undefined" || boosterIndex < 0 || boosterIndex >= s.boosters.length)
 			return reportError(2, `Session.pickCard: boosterIndex ('${boosterIndex}') out of bounds.`);
-		if (
-			!pickedCards ||
-			pickedCards.length !== Math.min(this.pickedCardsPerRound, this.draftState.boosters[boosterIndex].length)
-		)
+		if (!pickedCards || pickedCards.length !== Math.min(this.pickedCardsPerRound, s.boosters[boosterIndex].length))
 			return reportError(
 				1,
-				`Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${this.draftState.boosters[boosterIndex].length}).`
+				`Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${s.boosters[boosterIndex].length}).`
 			);
-		if (pickedCards.some(idx => idx >= this.draftState.boosters[boosterIndex].length))
+		if (pickedCards.some(idx => idx >= s.boosters[boosterIndex].length))
 			return reportError(
 				3,
 				`Session.pickCard: Invalid card index [${pickedCards.join(", ")}] for booster #${boosterIndex} (${
-					this.draftState.boosters[boosterIndex].length
+					s.boosters[boosterIndex].length
 				}).`
 			);
 		if (Connections[userID].pickedThisRound)
@@ -1246,32 +1258,29 @@ export class Session implements IIndexable {
 			burnedCards &&
 			(burnedCards.length > this.burnedCardsPerRound ||
 				burnedCards.length !==
-					Math.min(
-						this.burnedCardsPerRound,
-						this.draftState.boosters[boosterIndex].length - pickedCards.length
-					) ||
-				burnedCards.some(idx => idx >= this.draftState.boosters[boosterIndex].length))
+					Math.min(this.burnedCardsPerRound, s.boosters[boosterIndex].length - pickedCards.length) ||
+				burnedCards.some(idx => idx >= s.boosters[boosterIndex].length))
 		)
 			return reportError(
 				5,
-				`Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${this.draftState.boosters[boosterIndex].length}).`
+				`Session.pickCard: Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${s.boosters[boosterIndex].length}).`
 			);
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
-				idx => this.draftState.boosters[boosterIndex][idx].name
+				idx => s.boosters[boosterIndex][idx].name
 			)}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
 		);
 
-		for (let idx of pickedCards) Connections[userID].pickedCards.push(this.draftState.boosters[boosterIndex][idx]);
+		for (let idx of pickedCards) Connections[userID].pickedCards.push(s.boosters[boosterIndex][idx]);
 		Connections[userID].pickedThisRound = true;
 
 		const pickData = {
 			pick: pickedCards,
 			burn: burnedCards,
-			booster: this.draftState.boosters[boosterIndex].map(c => c.id),
+			booster: s.boosters[boosterIndex].map(c => c.id),
 		};
 		this.draftLog.users[userID].picks.push(pickData);
 
@@ -1298,34 +1307,35 @@ export class Session implements IIndexable {
 			Connections[this.owner].socket.emit("draftLogLive", { userID: userID, pick: pickData });
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cards: pickedCards.map(idx => this.draftState.boosters[boosterIndex][idx]),
+				cards: pickedCards.map(idx => s.boosters[boosterIndex][idx]),
 			});
 		}
 
-		for (let idx of cardsToRemove) this.draftState.boosters[boosterIndex].splice(idx, 1);
+		for (let idx of cardsToRemove) s.boosters[boosterIndex].splice(idx, 1);
 
-		++this.draftState.pickedCardsThisRound;
-		if (this.draftState.pickedCardsThisRound === this.getHumanPlayerCount()) {
+		++s.pickedCardsThisRound;
+		if (s.pickedCardsThisRound === this.getHumanPlayerCount()) {
 			this.nextBooster();
 		}
 		return { code: 0 };
 	}
 
-	doBotPick(instance, boosterIndex) {
-		const startingBooster = this.draftState.boosters[boosterIndex].map(c => c.id);
+	doBotPick(instance: Bot, boosterIndex: number) {
+		const s = this.draftState as DraftState;
+		const startingBooster = s.boosters[boosterIndex].map(c => c.id);
 		const pickedIndices = [];
 		const pickedCards = [];
-		for (let i = 0; i < this.pickedCardsPerRound && this.draftState.boosters[boosterIndex].length > 0; ++i) {
-			const pickedIdx = instance.pick(this.draftState.boosters[boosterIndex]);
+		for (let i = 0; i < this.pickedCardsPerRound && s.boosters[boosterIndex].length > 0; ++i) {
+			const pickedIdx = instance.pick(s.boosters[boosterIndex]);
 			pickedIndices.push(pickedIdx);
-			pickedCards.push(this.draftState.boosters[boosterIndex][pickedIdx]);
-			this.draftState.boosters[boosterIndex].splice(pickedIdx, 1);
+			pickedCards.push(s.boosters[boosterIndex][pickedIdx]);
+			s.boosters[boosterIndex].splice(pickedIdx, 1);
 		}
 		const burned = [];
-		for (let i = 0; i < this.burnedCardsPerRound && this.draftState.boosters[boosterIndex].length > 0; ++i) {
-			const burnedIdx = instance.burn(this.draftState.boosters[boosterIndex]);
+		for (let i = 0; i < this.burnedCardsPerRound && s.boosters[boosterIndex].length > 0; ++i) {
+			const burnedIdx = instance.burn(s.boosters[boosterIndex]);
 			burned.push(burnedIdx);
-			this.draftState.boosters[boosterIndex].splice(burnedIdx, 1);
+			s.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
 		this.draftLog.users[instance.id].picks.push({
 			pick: pickedIndices,
@@ -1337,35 +1347,35 @@ export class Session implements IIndexable {
 
 	nextBooster() {
 		if (this.draftState?.type !== "draft") return;
+		const s = this.draftState as DraftState;
 
 		this.stopCountdown();
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
 		// Boosters are empty
-		if (this.draftState.boosters[0].length === 0) {
-			this.draftState.pickNumber = 0;
+		if (s.boosters[0].length === 0) {
+			s.pickNumber = 0;
 			// Remove empty boosters
-			this.draftState.boosters.splice(0, totalVirtualPlayers);
-			++this.draftState.boosterNumber;
+			s.boosters.splice(0, totalVirtualPlayers);
+			++s.boosterNumber;
 		}
 
 		// End draft if there is no more booster to distribute
-		if (this.draftState.boosters.length == 0) {
+		if (s.boosters.length == 0) {
 			this.endDraft();
 			return;
 		}
 
-		this.draftState.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
+		s.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
 
 		let index = 0;
-		const boosterOffset =
-			this.draftState.boosterNumber % 2 == 0 ? -this.draftState.pickNumber : this.draftState.pickNumber;
+		const boosterOffset = s.boosterNumber % 2 == 0 ? -s.pickNumber : s.pickNumber;
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				this.doBotPick(virtualPlayers[userID].instance, boosterIndex);
+				this.doBotPick(virtualPlayers[userID].instance as Bot, boosterIndex);
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					// This user has been replaced by a bot, pick immediately
@@ -1378,14 +1388,14 @@ export class Session implements IIndexable {
 					this.disconnectedUsers[userID].pickedThisRound = true;
 					this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
-					++this.draftState.pickedCardsThisRound;
+					++s.pickedCardsThisRound;
 				} else {
 					Connections[userID].pickedThisRound = false;
 					Connections[userID].boosterIndex = boosterIndex;
 					Connections[userID].socket.emit("nextBooster", {
-						booster: this.draftState.boosters[boosterIndex],
-						boosterNumber: this.draftState.boosterNumber,
-						pickNumber: this.draftState.pickNumber + 1,
+						booster: s.boosters[boosterIndex],
+						boosterNumber: s.boosterNumber,
+						pickNumber: s.pickNumber + 1,
 					});
 				}
 			}
@@ -1394,19 +1404,19 @@ export class Session implements IIndexable {
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("nextBooster", {
-				boosterNumber: this.draftState.boosterNumber,
-				pickNumber: this.draftState.pickNumber + 1,
+				boosterNumber: s.boosterNumber,
+				pickNumber: s.pickNumber + 1,
 			});
 		}
 
 		this.startCountdown(); // Starts countdown now that everyone has their booster
-		++this.draftState.pickNumber;
+		++s.pickNumber;
 
 		// Everyone is disconnected...
-		if (this.draftState.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
+		if (s.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
 	}
 
-	resumeOnReconnection(msg) {
+	resumeOnReconnection(msg: { title: string; text: string }) {
 		if (!this.drafting) return;
 
 		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
@@ -1431,13 +1441,13 @@ export class Session implements IIndexable {
 		const virtualPlayers = this.getSortedVirtualPlayers();
 		for (let userID in virtualPlayers) {
 			if (virtualPlayers[userID].isBot) {
-				this.draftLog.users[userID].cards = virtualPlayers[userID].instance.cards.map(c => c.id);
+				this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map(c => c.id);
 			} else {
 				// Has this user been replaced by a bot?
 				this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
 					? this.disconnectedUsers[userID]
 					: Connections[userID]
-				).pickedCards.map(c => c.id);
+				).pickedCards.map((c: Card) => c.id);
 			}
 		}
 
@@ -1488,7 +1498,7 @@ export class Session implements IIndexable {
 	///////////////////// Traditional Draft End  //////////////////////
 
 	initLogs(type = "Draft") {
-		const carddata = {};
+		const carddata: { [cid: string]: Card } = {};
 		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
 		this.draftLog = {
 			version: "2.0",
@@ -1496,7 +1506,7 @@ export class Session implements IIndexable {
 			sessionID: this.id,
 			time: Date.now(),
 			setRestriction: this.setRestriction,
-			useCustomBoosters: this.useCustomBoosters,
+			useCustomBoosters: this.customBoosters.some((v: string) => v !== ""),
 			boosters: this.boosters.map(b => b.map(c => c.id)),
 			carddata: carddata,
 			users: {},
@@ -1506,8 +1516,8 @@ export class Session implements IIndexable {
 			if (virtualPlayers[userID].isBot) {
 				this.draftLog.users[userID] = {
 					isBot: true,
-					userName: virtualPlayers[userID].instance.name,
-					userID: virtualPlayers[userID].instance.id,
+					userName: virtualPlayers[userID].instance?.name,
+					userID: virtualPlayers[userID].instance?.id,
 				};
 			} else {
 				this.draftLog.users[userID] = {
@@ -1519,7 +1529,7 @@ export class Session implements IIndexable {
 	}
 
 	getStrippedLog() {
-		const strippedLog = {
+		const strippedLog: any = {
 			version: this.draftLog.version,
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
@@ -1559,7 +1569,7 @@ export class Session implements IIndexable {
 		}
 	}
 
-	distributeSealed(boostersPerPlayer, customBoosters) {
+	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>) {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
@@ -1612,13 +1622,13 @@ export class Session implements IIndexable {
 		for (let user of this.users) {
 			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
 			const cards = boosters
-				.map(b => b.cards.map(cid => getUnique(cid)))
+				.map(b => b.cards.map((cid: CardID) => getUnique(cid)))
 				.reduce((arr, val) => {
 					arr.push(val);
 					return arr;
 				}, []);
 
-			this.draftLog.users[user].cards = cards.flat().map(c => c.id);
+			this.draftLog.users[user].cards = cards.flat().map((c: Card) => c.id);
 			for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = Cards[cid];
 
 			Connections[user].socket.emit("setCardSelection", cards);
@@ -1647,12 +1657,14 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	reconnectUser(userID) {
+	reconnectUser(userID: UserID) {
+		if (!this.draftState) return;
+
 		if (!(this.draftState instanceof DraftState)) {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
-			let msgData = {};
+			let msgData: any = {};
 			switch (this.draftState.type) {
 				case "winston":
 					msgData = { name: "rejoinWinstonDraft", state: this.draftState };
@@ -1693,7 +1705,7 @@ export class Session implements IIndexable {
 	}
 
 	// Non-playing owner (organizer) is trying to reconnect, we just need to send them the current state
-	reconnectOwner(userID) {
+	reconnectOwner(userID: UserID) {
 		if (userID !== this.owner || this.ownerIsPlayer) return;
 		Connections[userID].sessionID = this.id;
 		this.syncSessionOptions(userID);
@@ -1701,7 +1713,7 @@ export class Session implements IIndexable {
 		Connections[userID].socket.emit("sessionOptions", {
 			virtualPlayersData: this.getSortedVirtualPlayers(),
 		});
-		if (this.drafting) {
+		if (this.drafting && this.draftState && this.draftState instanceof DraftState) {
 			Connections[userID].socket.emit("startDraft");
 			Connections[userID].socket.emit("nextBooster", {
 				boosterNumber: this.draftState.boosterNumber,
@@ -1751,11 +1763,14 @@ export class Session implements IIndexable {
 
 	// Countdown Methods
 	startCountdown() {
-		let cardsPerBooster = this.cardsPerBooster ?? 15;
+		if (!this.draftState) return;
+		let cardsPerBooster: number = this.cardsPerBooster ?? 15;
 		if (this.useCustomCardList && this.customCardList.customSheets)
-			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce((acc, c) => acc + c);
+			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce(
+				(acc: number, c: number) => acc + c
+			);
 		let dec = Math.floor(this.maxTimer / cardsPerBooster);
-		this.countdown = this.maxTimer - this.draftState.pickNumber * dec;
+		this.countdown = this.maxTimer - (this.draftState as DraftState).pickNumber * dec;
 		this.resumeCountdown();
 	}
 	resumeCountdown() {
@@ -1810,7 +1825,7 @@ export class Session implements IIndexable {
 	}
 
 	getSortedHumanPlayers() {
-		let tmp = {};
+		let tmp: userInfo = {};
 		for (let userID of this.getSortedHumanPlayersIDs()) {
 			tmp[userID] = {
 				isBot: false,
@@ -1835,7 +1850,7 @@ export class Session implements IIndexable {
 			}
 			let humanIdx = 0;
 			let botIdx = 0;
-			let tmp = {}; // We rely on the order of addition to this object. I know.
+			let tmp: userInfo = {}; // We rely on the order of addition to this object. I know.
 			for (let human of order) {
 				if (human) {
 					let userID = humanPlayers[humanIdx];
@@ -1854,7 +1869,7 @@ export class Session implements IIndexable {
 		} else return this.getSortedHumanPlayers();
 	}
 
-	emitMessage(title, text, showConfirmButton = true, timer = 1500) {
+	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
 		this.forUsers(u =>
 			Connections[u]?.socket.emit("message", {
 				title: title,

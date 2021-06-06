@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
     dotenv.config();
 }
-import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, DraftState, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
+import { Connections } from "./Connection.js";
+import { Session, Sessions, } from "./Session.js";
 import Bot from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -37,10 +37,7 @@ async function requestSavedConnections() {
             const connections = response.data;
             if (connections && connections.length > 0) {
                 for (let c of connections) {
-                    InactiveConnections[c.userID] = new Connection(null, c.userID, c.userName);
-                    for (let prop of Object.getOwnPropertyNames(c)) {
-                        InactiveConnections[c.userID][prop] = c[prop];
-                    }
+                    InactiveConnections[c.userID] = c;
                 }
                 console.log(`Restored ${connections.length} saved connections.`);
             }
@@ -86,19 +83,21 @@ async function requestSavedSessions() {
                     if (s.draftState) {
                         switch (s.draftState.type) {
                             case "draft": {
-                                InactiveSessions[s.id].draftState = new DraftState();
+                                InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState;
                                 break;
                             }
                             case "winston": {
-                                InactiveSessions[s.id].draftState = new WinstonDraftState();
+                                InactiveSessions[s.id].draftState = InactiveSessions[s.id]
+                                    .draftState;
                                 break;
                             }
                             case "grid": {
-                                InactiveSessions[s.id].draftState = new GridDraftState();
+                                InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState;
                                 break;
                             }
                             case "rochester": {
-                                InactiveSessions[s.id].draftState = new RochesterDraftState();
+                                InactiveSessions[s.id].draftState = InactiveSessions[s.id]
+                                    .draftState;
                                 break;
                             }
                         }

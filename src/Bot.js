@@ -29,7 +29,7 @@ export default function Bot(name, id) {
 		return bestPick;
 	};
 	// TODO: Chooses which card to burn.
-	this.burn = function() {
+	this.burn = function(booster) {
 		return 0;
 	};
 }
