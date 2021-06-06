@@ -13,8 +13,8 @@ import express from "express";
 const app = express();
 import http from "http";
 const httpServer = new http.Server(app);
-import socketIO from "socket.io";
-const io = socketIO(httpServer);
+import SocketIO from "socket.io";
+const io = SocketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
@@ -30,7 +30,6 @@ import {
 	optionProps,
 	instanceOfTurnBased,
 	DistributionMode,
-	CustomCardList,
 	DraftLogRecipients,
 	IIndexable,
 	DraftLog,
@@ -38,7 +37,7 @@ import {
 import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
-import SocketIO from "socket.io";
+import { CustomCardList } from "./CustomCardList.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -872,7 +871,7 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 };
 
 function prepareSocketCallback(callback: Function, ownerOnly = false) {
-	return function(this: socketIO.Socket) {
+	return function(this: SocketIO.Socket) {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
 		const ack =
 			arguments.length > 0 && arguments[arguments.length - 1] instanceof Function

@@ -19,8 +19,8 @@ export function parseLine(line, options = { fallbackToCardName: false }) {
             undefined,
         ];
     }
-    let [, count, name, set, number, foil] = match;
-    count = parseInt(count);
+    let [, countStr, name, set, number, foil] = match;
+    let count = parseInt(countStr);
     if (!Number.isInteger(count))
         count = 1;
     if (set) {
@@ -43,23 +43,28 @@ export function parseLine(line, options = { fallbackToCardName: false }) {
     if (name in CardVersionsByName) {
         candidates = CardVersionsByName[name];
     }
-    else if (name.split(" //")[0] in CardVersionsByName) { // If not found, try doubled faced cards before giving up!
+    else if (name.split(" //")[0] in CardVersionsByName) {
+        // If not found, try doubled faced cards before giving up!
         candidates = CardVersionsByName[name.split(" //")[0]];
     }
-    let cardIDs = candidates.filter(id => (!set || Cards[id].set === set) &&
-        (!number || Cards[id].collector_number === number));
+    let cardIDs = candidates.filter(id => (!set || Cards[id].set === set) && (!number || Cards[id].collector_number === number));
     if (cardIDs.length > 0) {
-        return [count, cardIDs.reduce((best, cid) => {
+        return [
+            count,
+            cardIDs.reduce((best, cid) => {
                 if (parseInt(Cards[cid].collector_number) < parseInt(Cards[best].collector_number))
                     return cid;
                 return best;
-            }, cardIDs[0]), !!foil];
+            }, cardIDs[0]),
+            !!foil,
+        ];
     }
     else if (options && options.fallbackToCardName && name in CardsByName)
         return [count, CardsByName[name], !!foil];
-    const message = (name in CardsByName ?
-        `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.` :
-        `Could not find '${name}' in our database.`) + ` If you think it should be there, please contact us via email or our Discord server.`;
+    const message = (name in CardsByName
+        ? `Could not find this exact version of '${name}' (${set}) in our database, but other printings are available.`
+        : `Could not find '${name}' in our database.`) +
+        ` If you think it should be there, please contact us via email or our Discord server.`;
     return [
         {
             error: {
@@ -70,23 +75,24 @@ export function parseLine(line, options = { fallbackToCardName: false }) {
             },
         },
         undefined,
-        undefined
+        undefined,
     ];
 }
-;
-export function parseCardList(cardlist, options) {
+export function parseCardList(txtcardlist, options) {
     try {
-        const lines = cardlist.split(/\r\n|\n/);
-        let cardList = {};
+        const lines = txtcardlist.split(/\r\n|\n/);
+        let cardList = {
+            customSheets: false,
+            cardsPerBooster: {},
+            cards: [],
+            length: 0,
+        };
         // Custom rarity sheets
         if (lines[0].trim()[0] === "[") {
             let line = 0;
             let cardCount = 0;
-            cardList = {
-                customSheets: true,
-                cardsPerBooster: {},
-                cards: {},
-            };
+            cardList.customSheets = true;
+            cardList.cards = {};
             // Groups: SlotName, '(Count)', Count
             let headerRegex = new RegExp(String.raw `\[([^\(\]]+)(\((\d+)\))?\]`);
             while (line < lines.length) {
@@ -120,26 +126,24 @@ export function parseCardList(cardlist, options) {
             cardList.length = cardCount;
         }
         else {
-            cardList = {
-                customSheets: false,
-                cards: [],
-            };
+            const cards = [];
             for (let line of lines) {
                 if (line) {
                     let [count, cardID] = parseLine(line, options);
                     if (typeof cardID !== "undefined") {
                         for (let i = 0; i < count; ++i)
-                            cardList.cards.push(cardID);
+                            cards.push(cardID);
                     }
                     else
                         return count; // Return error from parseLine
                 }
             }
-            cardList.length = cardList.cards.length;
+            cardList.cards = cards;
+            cardList.length = cards.length;
         }
         if (options && options.name)
             cardList.name = options.name;
-        if (cardList.cards.length === 0)
+        if (cardList.cards?.length === 0)
             return {
                 error: {
                     type: "error",

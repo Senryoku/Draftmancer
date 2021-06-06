@@ -33,6 +33,7 @@ import JumpstartBoosters from "./data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
+import { CustomCardList } from "./CustomCardList";
 
 export const optionProps = [
 	"ownerIsPlayer",
@@ -197,13 +198,6 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-export type CustomCardList = {
-	name?: string;
-	cards: Array<CardID> | { [slot: string]: Array<CardID> } | null;
-	length: number | null;
-	cardsPerBooster: { [slot: string]: number };
-	customSheets: boolean | null;
-}; // FIXME
 export type DraftLog = any; // FIXME
 
 export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
