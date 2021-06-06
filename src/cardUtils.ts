@@ -1,9 +1,9 @@
 "use strict";
 
-import { getUnique } from "./Cards.js";
+import { CardID, Card, CardPool, getUnique } from "./Cards.js";
 import { getRandomKey } from "./utils.js";
 
-export function removeCardFromDict(cid, dict) {
+export function removeCardFromDict(cid: CardID, dict: CardPool) {
 	if (!dict[cid]) {
 		console.error("Called removeCardFromDict on a non-existing card.");
 		console.trace();
@@ -14,7 +14,7 @@ export function removeCardFromDict(cid, dict) {
 }
 
 // TODO: Prevent multiples by name?
-export function pickCard(dict, booster) {
+export function pickCard(dict: CardPool, booster: Array<Card> = []) {
 	let c = getRandomKey(dict);
 	if (booster != undefined) {
 		let prevention_attempts = 0; // Fail safe-ish
@@ -27,6 +27,6 @@ export function pickCard(dict, booster) {
 	return getUnique(c);
 }
 
-export function countCards(dict) {
+export function countCards(dict: CardPool): number {
 	return Object.values(dict).reduce((acc, val) => (acc += val), 0);
 }

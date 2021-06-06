@@ -1,6 +1,6 @@
 "use strict";
 
-import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
+import { CardID, Card, CardPool, Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 import constants from "../client/src/data/constants.json";
@@ -10,7 +10,7 @@ import constants from "../client/src/data/constants.json";
 const mythicRate = 1.0 / 8.0;
 const foilRate = 15.0 / 63.0;
 // 1/16 chances of a foil basic land added to the common slot. Mythic to common
-const foilRarityRates = {
+const foilRarityRates: { [slot: string]: number } = {
 	mythic: 1.0 / 128,
 	rare: 1.0 / 128 + 7.0 / 128,
 	uncommon: 1.0 / 16 + 3.0 / 16,
@@ -23,29 +23,45 @@ export const DefaultBoosterTargets = {
 	rare: 1,
 };
 
+class ColorBalancedSlotCache {
+	byColor: { [color: string]: CardPool } = {};
+	monocolored: CardPool;
+	monocoloredCount: number;
+	others: CardPool;
+	othersCount: number;
+
+	constructor(cardPool: CardPool) {
+		for (let cid in cardPool) {
+			if (!(Cards[cid].colors.join() in this.byColor)) this.byColor[Cards[cid].colors.join()] = {};
+			this.byColor[Cards[cid].colors.join()][cid] = cardPool[cid];
+		}
+		this.monocolored = Object.keys(this.byColor)
+			.filter(k => k.length === 1)
+			.map(k => this.byColor[k])
+			.reduce((acc, val) => Object.assign(acc, val), {});
+		this.monocoloredCount = countCards(this.monocolored);
+		this.others = Object.keys(this.byColor)
+			.filter(k => k.length !== 1)
+			.map(k => this.byColor[k])
+			.reduce((acc, val) => Object.assign(acc, val), {});
+		this.othersCount = countCards(this.others);
+	}
+}
+
 /*
  Provides color balancing for the supplied cardPool
 */
-export function ColorBalancedSlot(_cardPool) {
-	this.cardPool = _cardPool;
-	this.cache = { byColor: {} };
-	for (let cid in this.cardPool) {
-		if (!(Cards[cid].colors in this.cache.byColor)) this.cache.byColor[Cards[cid].colors] = {};
-		this.cache.byColor[Cards[cid].colors][cid] = this.cardPool[cid];
-	}
-	this.cache.monocolored = Object.keys(this.cache.byColor)
-		.filter(k => k.length === 1)
-		.map(k => this.cache.byColor[k])
-		.reduce((acc, val) => Object.assign(acc, val), {});
-	this.cache.monocoloredCount = countCards(this.cache.monocolored);
-	this.cache.others = Object.keys(this.cache.byColor)
-		.filter(k => k.length !== 1)
-		.map(k => this.cache.byColor[k])
-		.reduce((acc, val) => Object.assign(acc, val), {});
-	this.cache.othersCount = countCards(this.cache.others);
+export class ColorBalancedSlot {
+	cardPool: CardPool;
+	cache: ColorBalancedSlotCache;
 
-	this.syncCache = function(pickedCard) {
-		removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
+	constructor(_cardPool: CardPool) {
+		this.cardPool = _cardPool;
+		this.cache = new ColorBalancedSlotCache(_cardPool);
+	}
+
+	syncCache(pickedCard: Card) {
+		removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
 		if (pickedCard.colors.length === 1) {
 			removeCardFromDict(pickedCard.id, this.cache.monocolored);
 			--this.cache.monocoloredCount;
@@ -53,11 +69,11 @@ export function ColorBalancedSlot(_cardPool) {
 			removeCardFromDict(pickedCard.id, this.cache.others);
 			--this.cache.othersCount;
 		}
-	};
+	}
 
 	// Returns cardCount color balanced cards picked from cardPool.
 	// pickedCards can contain pre-selected cards for this slot.
-	this.generate = function(cardCount, pickedCards = []) {
+	generate(cardCount: number, pickedCards: Array<Card> = []) {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && !isEmpty(this.cache.byColor[c])) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards);
@@ -95,30 +111,40 @@ export function ColorBalancedSlot(_cardPool) {
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
 			removeCardFromDict(pickedCard.id, this.cardPool);
-			removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors]);
+			removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
 		}
 		// Shuffle to avoid obvious signals to other players
 		shuffleArray(pickedCards);
 		return pickedCards;
-	};
+	}
 }
 
-export function BoosterFactory(cardPool, landSlot, options) {
-	this.cardPool = cardPool;
-	this.landSlot = landSlot;
-	if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
-	this.options = options;
-	if (this.options.colorBalance) this.colorBalancedSlot = new ColorBalancedSlot(this.cardPool["common"]);
+type SlotedCardPool = { [slot: string]: CardPool };
 
-	this.onError = function(...args) {
-		if (this.options.onError) this.options.onError(...args);
-	};
+export class BoosterFactory {
+	cardPool: SlotedCardPool;
+	landSlot: any;
+	options: any;
+	onError: Function;
+	colorBalancedSlot?: ColorBalancedSlot;
+
+	constructor(cardPool: SlotedCardPool, landSlot: any, options: any) {
+		this.cardPool = cardPool;
+		this.landSlot = landSlot;
+		if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
+		this.options = options;
+		if (this.options.colorBalance) this.colorBalancedSlot = new ColorBalancedSlot(this.cardPool["common"]);
+
+		this.onError = function(...args: any[]) {
+			if (this.options.onError) this.options.onError(...args);
+		};
+	}
 
 	/* Returns a standard draft booster
 	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
 	 */
-	this.generateBooster = function(targets) {
-		let booster = [];
+	generateBooster(targets: { [slot: string]: number }) {
+		let booster: Array<Card> = [];
 
 		let addedFoils = 0;
 		const localFoilRate = this.options.foilRate ?? foilRate;
@@ -129,7 +155,7 @@ export function BoosterFactory(cardPool, landSlot, options) {
 				if (rarityCheck <= foilRarityRates[r] && !isEmpty(foilCardPool[r])) {
 					let pickedCard = pickCard(foilCardPool[r]);
 					// Synchronize color balancing dictionary
-					if (this.options.colorBalance && pickedCard.rarity == "common")
+					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
 					pickedCard.foil = true;
 					booster.push(pickedCard);
@@ -160,7 +186,7 @@ export function BoosterFactory(cardPool, landSlot, options) {
 
 		// Color balance the booster by adding one common of each color if possible
 		let pickedCommons = [];
-		if (this.options.colorBalance && targets["common"] - addedFoils >= 5) {
+		if (this.options.colorBalance && this.colorBalancedSlot && targets["common"] - addedFoils >= 5) {
 			pickedCommons = this.colorBalancedSlot.generate(targets["common"] - addedFoils);
 		} else {
 			for (let i = pickedCommons.length; i < targets["common"] - addedFoils; ++i) {
@@ -181,12 +207,12 @@ export function BoosterFactory(cardPool, landSlot, options) {
 		}
 
 		return booster;
-	};
+	}
 }
 
-function filterCardPool(cardPool, predicate) {
-	const specialCards = {};
-	const filteredCardPool = {};
+function filterCardPool(cardPool: SlotedCardPool, predicate: Function) {
+	const specialCards: SlotedCardPool = {};
+	const filteredCardPool: SlotedCardPool = {};
 	for (let slot in cardPool) {
 		specialCards[slot] = {};
 		filteredCardPool[slot] = {};
@@ -198,7 +224,11 @@ function filterCardPool(cardPool, predicate) {
 	return [specialCards, filteredCardPool];
 }
 
-function rollSpecialCardRarity(cardCounts, targets, options) {
+function rollSpecialCardRarity(
+	cardCounts: { [slot: string]: number },
+	targets: { [slot: string]: number },
+	options: any
+) {
 	let pickedRarity = options.minRarity ?? "uncommon";
 
 	let total = targets.rare;
@@ -222,59 +252,66 @@ function rollSpecialCardRarity(cardCounts, targets, options) {
 	return pickedRarity;
 }
 
-function countBySlot(cardPool) {
-	const counts = {};
-	for (let slot in cardPool) counts[slot] = Object.values(cardPool[slot]).reduce((acc, c) => acc + c, 0);
+function countBySlot(cardPool: SlotedCardPool) {
+	const counts: { [slot: string]: number } = {};
+	for (let slot in cardPool)
+		counts[slot] = Object.values(cardPool[slot]).reduce((acc: number, c: number): number => acc + c, 0);
 	return counts;
 }
 
-function insertInBooster(card, booster) {
-	let boosterByRarity = { mythic: [], rare: [], uncommon: [], common: [] };
+function insertInBooster(card: Card, booster: Array<Card>) {
+	let boosterByRarity: { [slot: string]: Array<Card> } = { mythic: [], rare: [], uncommon: [], common: [] };
 	for (let c of booster) boosterByRarity[c.rarity].push(c);
 	boosterByRarity[card.rarity].push(card);
 	shuffleArray(boosterByRarity[card.rarity]);
 	return Object.values(boosterByRarity).flat();
 }
 
+class WARBoosterFactory extends BoosterFactory {
+	planeswalkers: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot, options: any) {
+		const [planeswalkers, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].type.includes("Planeswalker")
+		);
+		super(filteredCardPool, landSlot, options);
+		this.planeswalkers = planeswalkers;
+	}
+	// Not using the suplied cardpool here
+	generateBooster(targets: { [slot: string]: number }) {
+		const plwCounts = countBySlot(this.planeswalkers);
+		// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
+		if (
+			((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
+				(!("rare" in targets) || targets["rare"] <= 0)) ||
+			Object.values(plwCounts).every(c => c === 0)
+		) {
+			return super.generateBooster(targets);
+		} else {
+			const pickedRarity = rollSpecialCardRarity(plwCounts, targets, this.options);
+			const pickedPL = pickCard(this.planeswalkers[pickedRarity], []);
+
+			const updatedTargets = Object.assign({}, targets);
+			if (pickedRarity === "mythic") --updatedTargets["rare"];
+			else --updatedTargets[pickedRarity];
+
+			let booster = super.generateBooster(updatedTargets);
+			booster = insertInBooster(pickedPL, booster);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories = {
 	// Exactly one Planeswalker per booster
-	war: (cardPool, landSlot, options) => {
-		const [planeswalkers, filteredCardPool] = filterCardPool(cardPool, cid =>
-			Cards[cid].type.includes("Planeswalker")
-		);
-		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-		factory.planeswalkers = planeswalkers;
-		factory.originalGenBooster = factory.generateBooster;
-		// Not using the suplied cardpool here
-		factory.generateBooster = function(targets) {
-			const plwCounts = countBySlot(this.planeswalkers);
-			// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
-			if (
-				((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
-					(!("rare" in targets) || targets["rare"] <= 0)) ||
-				Object.values(plwCounts).every(c => c === 0)
-			) {
-				return this.originalGenBooster(targets);
-			} else {
-				const pickedRarity = rollSpecialCardRarity(plwCounts, targets, options);
-				const pickedPL = pickCard(this.planeswalkers[pickedRarity], []);
-
-				const updatedTargets = Object.assign({}, targets);
-				if (pickedRarity === "mythic") --updatedTargets["rare"];
-				else --updatedTargets[pickedRarity];
-
-				let booster = this.originalGenBooster(updatedTargets);
-				booster = insertInBooster(pickedPL, booster);
-				return booster;
-			}
-		};
-		return factory;
+	war: (cardPool: SlotedCardPool, landSlot, options: any) => {
+		new WARBoosterFactory(cardPool, landSlot, options);
 	},
 	// At least one Legendary Creature per booster
 	// https://www.lethe.xyz/mtg/collation/dom.html
-	dom: (cardPool, landSlot, options) => {
+	dom: (cardPool: SlotedCardPool, landSlot, options) => {
 		const regex = /Legendary.*Creature/;
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
@@ -305,7 +342,7 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	// Exactly one MDFC per booster
-	znr: (cardPool, landSlot, options) => {
+	znr: (cardPool: SlotedCardPool, landSlot, options: any) => {
 		const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].name.includes("//"));
 		const factory = new BoosterFactory(filteredCardPool, landSlot, options);
 		factory.mdfcByRarity = mdfcByRarity;
@@ -336,7 +373,7 @@ export const SetSpecificFactories = {
 		};
 		return factory;
 	},
-	cmr: (cardPool, landSlot, options) => {
+	cmr: (cardPool: SlotedCardPool, landSlot, options) => {
 		// TODO Add the "Foil Etched" commanders to the foil slot.
 		// They shouldn't be in the card pool at all for now, Probable algorithm:
 		// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic'])
@@ -420,7 +457,7 @@ export const SetSpecificFactories = {
 	},
 	// One Timeshifted Card ("special" rarity) per booster.
 	// Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
-	tsr: (cardPool, landSlot, options) => {
+	tsr: (cardPool: SlotedCardPool, landSlot, options) => {
 		const factory = new BoosterFactory(cardPool, landSlot, options);
 		factory.originalGenBooster = factory.generateBooster;
 		factory.generateBooster = function(targets) {
@@ -432,7 +469,7 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	// Strixhaven: One card from the Mystical Archive (sta)
-	stx: (cardPool, landSlot, options) => {
+	stx: (cardPool: SlotedCardPool, landSlot, options) => {
 		const mythicPromotion = options?.mythicPromotion ?? true;
 		const [lessons, filteredCardPool] = filterCardPool(
 			cardPool,
@@ -510,7 +547,7 @@ export const SetSpecificFactories = {
 		return factory;
 	},
 	// 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
-	mh2: (cardPool, landSlot, options) => {
+	mh2: (cardPool: SlotedCardPool, landSlot, options) => {
 		const [newToModern, filteredCardPool] = filterCardPool(
 			cardPool,
 			cid => parseInt(Cards[cid].collector_number) >= 261 && parseInt(Cards[cid].collector_number) <= 303
@@ -549,7 +586,7 @@ export const SetSpecificFactories = {
 
 import PaperBoosterData from "../data/sealed_extended_data.json";
 
-function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
+function weightedRandomPick(arr: Array<any>, totalWeight: number, picked = [], attempt = 0) {
 	let pick = randomInt(1, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
@@ -564,7 +601,7 @@ function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
 	return arr[idx];
 }
 
-const CardsBySetAndCollectorNumber = {};
+const CardsBySetAndCollectorNumber: { [id: string]: CardID } = {};
 for (let cid in Cards) {
 	CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
 }

@@ -1,6 +1,6 @@
 import chai from "chai";
 const expect = chai.expect;
-import { Sessions } from "../src/Session.js";
+import { Sessions } from "../dist/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs } from "./src/common.js";
 
 describe("Set Specific Booster Rules", function() {

@@ -9,14 +9,41 @@ console.log("Loading Cards...");
 memoryReport();
 console.time("Parsing Cards");
 
-export let Cards = {};
+export type CardID = string;
+export type ArenaID = string;
+
+export class Card {
+	id: CardID = "";
+	arena_id?: ArenaID;
+	name: string = "";
+	mana_cost: string = "";
+	colors: Array<string> = [];
+	set: string = "";
+	collector_number: string = "";
+	rarity: string = "";
+	type: string = "";
+	subtypes: Array<string> = [];
+	rating: number = 0;
+	in_booster: boolean = true;
+	printed_names: { [lang: string]: string } = {};
+	image_uris: { [lang: string]: string } = {};
+
+	constructor() {}
+}
+
+export type CardPool = { [cid: string]: number };
+
+export let Cards: { [cid: string]: Card } = {};
 if (process.env.NODE_ENV !== "production") {
-	Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json"));
+	let tmp = JSON.parse(fs.readFileSync("./data/MTGCards.json").toString());
+	for (let cid in tmp) {
+		Cards[cid] = tmp[cid] as Card; //new Card(entry.value);
+	}
 } else {
 	const cardsPromise = new Promise((resolve, reject) => {
 		const stream = JSONStream.parse("$*");
-		stream.on("data", function(entry) {
-			Cards[entry.key] = entry.value;
+		stream.on("data", function(entry: any) {
+			Cards[entry.key] = entry.value as Card; //new Card(entry.value);
 		});
 		stream.on("end", resolve);
 		fs.createReadStream("./data/MTGCards.json").pipe(stream);
@@ -29,14 +56,14 @@ memoryReport();
 
 console.log("Preparing Cards and caches...");
 
-export const MTGACards = {}; // Cards sorted by their arena id
-export const CardVersionsByName = {}; // Every card version sorted by their name (first face)
+export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by their arena id
+export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
 for (let cid in Cards) {
 	if (!("in_booster" in Cards[cid])) Cards[cid].in_booster = true;
 	Object.assign(Cards[cid], parseCost(Cards[cid].mana_cost));
 
-	if ("arena_id" in Cards[cid]) MTGACards[Cards[cid].arena_id] = Cards[cid];
+	if (Cards[cid].arena_id !== undefined) MTGACards[Cards[cid].arena_id] = Cards[cid];
 
 	const firstFaceName = Cards[cid].name.split(" //")[0];
 	if (!CardVersionsByName[firstFaceName]) CardVersionsByName[firstFaceName] = [];
@@ -44,11 +71,11 @@ for (let cid in Cards) {
 }
 
 // Prefered version of each card
-export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json"));
+export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json").toString());
 
 // Cache for cards organized by set.
-export const CardsBySet = {};
-export const BoosterCardsBySet = {};
+export const CardsBySet: { [set: string]: Array<CardID> } = {};
+export const BoosterCardsBySet: { [set: string]: Array<CardID> } = {};
 for (let cid in Cards) {
 	if (Cards[cid].in_booster || Cards[cid].set === "und") {
 		// Force cache for Unsanctioned (UND) as it's not a draft product originally
@@ -72,7 +99,7 @@ Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 
 let UniqueID = 0;
-export function getUnique(cid) {
+export function getUnique(cid: CardID) {
 	return Object.assign({ uniqueID: ++UniqueID }, Cards[cid]);
 }
 

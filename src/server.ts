@@ -12,19 +12,19 @@ import compression from "compression";
 import express from "express";
 const app = express();
 import http from "http";
-const httpServer = http.Server(app);
+const httpServer = new http.Server(app);
 import socketIO from "socket.io";
 const io = socketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuidv1 from "uuid/v1.js";
 
-import { isEmpty, shuffleArray } from "./src/utils.js";
-import constants from "./client/src/data/constants.json";
-import { InactiveConnections, InactiveSessions, dumpError } from "./src/Persistence.js";
-import { Connection, Connections } from "./src/Connection.js";
-import { Session, Sessions, optionProps } from "./src/Session.js";
-import { Cards, MTGACards, getUnique } from "./src/Cards.js";
-import { parseLine, parseCardList, XMageToArena } from "./src/parseCardList.js";
+import { isEmpty, shuffleArray } from "./utils.js";
+import constants from "../client/src/data/constants.json";
+import { InactiveConnections, InactiveSessions, dumpError } from "./Persistence.js";
+import { Connection, Connections } from "./Connection.js";
+import { Session, Sessions, optionProps } from "./Session.js";
+import { Cards, MTGACards, getUnique } from "./Cards.js";
+import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 
 app.use(compression());
 app.use(cookieParser());

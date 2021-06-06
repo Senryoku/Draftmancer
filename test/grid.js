@@ -2,8 +2,8 @@
 
 import chai from "chai";
 const expect = chai.expect;
-import { Sessions } from "../src/Session.js";
-import { Connections } from "../src/Connection.js";
+import { Sessions } from "../dist/Session.js";
+import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
 describe("Grid Draft", function() {

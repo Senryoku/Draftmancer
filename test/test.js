@@ -3,9 +3,9 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards } from "./../src/Cards.js";
-import { Connections } from "../src/Connection.js";
-import { Sessions } from "../src/Session.js";
+import { Cards } from "./../dist/Cards.js";
+import { Connections } from "../dist/Connection.js";
+import { Sessions } from "../dist/Session.js";
 import randomjs from "random-js";
 import {
 	connectClient,
