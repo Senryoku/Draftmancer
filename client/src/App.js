@@ -8,7 +8,7 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
-import Constant from "./data/constants.json";
+import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
@@ -2301,7 +2301,7 @@ export default {
 		},
 		cardsPerBooster: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("cardsPerBooster",this.cardsPerBooster);
+			this.socket.emit("cardsPerBooster", this.cardsPerBooster);
 		},
 		teamDraft: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
