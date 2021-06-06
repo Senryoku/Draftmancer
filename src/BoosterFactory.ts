@@ -122,14 +122,18 @@ export class ColorBalancedSlot {
 	}
 }
 
-export class BoosterFactory {
+export interface IBoosterFactory {
+	generateBooster(targets: Targets): Card[] | false;
+}
+
+export class BoosterFactory implements IBoosterFactory {
 	cardPool: SlotedCardPool;
 	landSlot: BasicLandSlot | null;
-	options: any;
+	options: { [key: string]: any };
 	onError: Function;
 	colorBalancedSlot?: ColorBalancedSlot;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		this.cardPool = cardPool;
 		this.landSlot = landSlot;
 		if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
@@ -228,7 +232,7 @@ function filterCardPool(cardPool: SlotedCardPool, predicate: Function) {
 function rollSpecialCardRarity(
 	cardCounts: { [slot: string]: number },
 	targets: { [slot: string]: number },
-	options: any
+	options: { [key: string]: any }
 ) {
 	let pickedRarity = options.minRarity ?? "uncommon";
 
@@ -272,7 +276,7 @@ function insertInBooster(card: Card, booster: Array<Card>) {
 class WARBoosterFactory extends BoosterFactory {
 	planeswalkers: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [planeswalkers, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].type.includes("Planeswalker")
 		);
@@ -312,7 +316,7 @@ class DOMBoosterFactory extends BoosterFactory {
 	static regex = /Legendary.*Creature/;
 	legendaryCreatures: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].type.match(DOMBoosterFactory.regex)
 		);
@@ -348,7 +352,7 @@ class DOMBoosterFactory extends BoosterFactory {
 class ZNRBoosterFactory extends BoosterFactory {
 	mdfcByRarity: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].name.includes("//")
 		);
@@ -396,7 +400,7 @@ class CMRBoosterFactory extends BoosterFactory {
 	completeCardPool: SlotedCardPool;
 	legendaryCreatures: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].type.match(CMRBoosterFactory.regex)
 		);
@@ -475,7 +479,7 @@ class CMRBoosterFactory extends BoosterFactory {
 // One Timeshifted Card ("special" rarity) per booster.
 // Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
 class TSRBoosterFactory extends BoosterFactory {
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		super(cardPool, landSlot, options);
 	}
 	generateBooster(targets: Targets) {
@@ -492,7 +496,7 @@ class STXBoosterFactory extends BoosterFactory {
 	lessonsByRarity: SlotedCardPool;
 	mysticalArchiveByRarity: SlotedCardPool;
 
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [lessons, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon"
@@ -572,7 +576,7 @@ class STXBoosterFactory extends BoosterFactory {
 // 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
 class MH2BoosterFactory extends BoosterFactory {
 	newToModern: SlotedCardPool;
-	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) {
 		const [newToModern, filteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
@@ -607,27 +611,31 @@ class MH2BoosterFactory extends BoosterFactory {
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
-	[set: string]: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => BoosterFactory;
+	[set: string]: (
+		cardPool: SlotedCardPool,
+		landSlot: BasicLandSlot | null,
+		options: { [key: string]: any }
+	) => BoosterFactory;
 } = {
-	war: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	war: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new WARBoosterFactory(cardPool, landSlot, options);
 	},
-	dom: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	dom: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new DOMBoosterFactory(cardPool, landSlot, options);
 	},
-	znr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	znr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new ZNRBoosterFactory(cardPool, landSlot, options);
 	},
-	cmr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	cmr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new CMRBoosterFactory(cardPool, landSlot, options);
 	},
-	tsr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	tsr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new TSRBoosterFactory(cardPool, landSlot, options);
 	},
-	stx: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	stx: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new STXBoosterFactory(cardPool, landSlot, options);
 	},
-	mh2: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: any) => {
+	mh2: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: { [key: string]: any }) => {
 		return new MH2BoosterFactory(cardPool, landSlot, options);
 	},
 };
@@ -638,7 +646,34 @@ export const SetSpecificFactories: {
 
 import PaperBoosterData from "./data/sealed_extended_data.json";
 
-type CardInfo = { id: string; weight: number; foil: boolean }; // FIXME
+class CardInfo {
+	set: string = "";
+	number: string = "";
+	weight: number = 0;
+	foil: boolean = false;
+	uuid: string = "";
+	// computed
+	id: string = "";
+} // FIXME
+interface BoosterInfo {
+	sheets: { [slot: string]: number };
+	weight: number;
+}
+interface SheetInfo {
+	balance_colors?: boolean;
+	total_weight: number;
+	cards: CardInfo[];
+}
+interface SetInfo {
+	name: string;
+	code: string;
+	set_code: string;
+	set_name: string;
+	boosters: BoosterInfo[];
+	sheets: { [slot: string]: SheetInfo };
+	// computed
+	colorBalancedSheets?: any;
+}
 
 function weightedRandomPick(arr: Array<CardInfo>, totalWeight: number, picked: Array<CardInfo> = [], attempt = 0): any {
 	let pick = randomInt(1, totalWeight);
@@ -660,8 +695,75 @@ for (let cid in Cards) {
 	CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
 }
 
-export const PaperBoosterFactories: { [set: string]: any } = {};
-for (let set of PaperBoosterData as any) {
+export class PaperBoosterFactory implements IBoosterFactory {
+	set: any;
+	options: { [key: string]: any };
+	possibleContent: any;
+	landSlot: null;
+
+	constructor(set: any, options: { [key: string]: any }, possibleContent: any) {
+		this.set = set;
+		this.options = options;
+		this.possibleContent = possibleContent;
+	}
+
+	generateBooster() {
+		const booster: Array<CardInfo> = [];
+		const boosterContent = weightedRandomPick(
+			this.possibleContent,
+			this.possibleContent.reduce((acc: number, val: CardInfo) => (acc += val.weight), 0)
+		);
+		for (let sheetName in boosterContent.sheets) {
+			if (this.set.sheets[sheetName].balance_colors) {
+				const sheet = this.set.colorBalancedSheets[sheetName];
+				const pickedCards: Array<CardInfo> = [];
+				for (let color of "WUBRG") {
+					pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
+				}
+				const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
+				// Compensate the color balancing to keep a uniform distribution of cards within the sheet.
+				const x =
+					(sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * pickedCards.length) /
+					(cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
+				for (let i = 0; i < cardsToPick; ++i) {
+					//                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
+					//                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
+					if (
+						Math.random() < x ||
+						(sheet["Others"].cards.length === 1 &&
+							pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
+					)
+						pickedCards.push(
+							weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards)
+						);
+					else
+						pickedCards.push(
+							weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards)
+						);
+				}
+				shuffleArray(pickedCards);
+				booster.push(...pickedCards);
+			} else {
+				for (let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
+					booster.push(
+						weightedRandomPick(
+							this.set.sheets[sheetName].cards,
+							this.set.sheets[sheetName].total_weight,
+							booster
+						)
+					);
+				}
+			}
+		}
+		return booster.map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id))).reverse();
+	}
+}
+
+export const PaperBoosterFactories: {
+	[set: string]: (options?: { [key: string]: any }) => PaperBoosterFactory;
+} = {};
+for (let s of PaperBoosterData as any[]) {
+	let set: SetInfo = s as SetInfo;
 	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
 		console.log(
 			`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`
@@ -704,72 +806,13 @@ for (let set of PaperBoosterData as any) {
 			}
 		}
 	}
-	PaperBoosterFactories[set.code] = function(options: any = {}) {
+	PaperBoosterFactories[set.code] = function(options: { [key: string]: any } = {}) {
 		let possibleContent = set.boosters;
 		if (!options.foil) {
 			// (Attempt to) Filter out sheets with foils if option is disabled.
 			let nonFoil = set.boosters.filter((e: any) => !Object.keys(e.sheets).some(s => s.includes("foil")));
 			if (nonFoil.length > 0) possibleContent = nonFoil;
 		}
-		return {
-			set: set,
-			options: options,
-			possibleContent: possibleContent,
-			generateBooster: function() {
-				const booster: Array<CardInfo> = [];
-				const boosterContent = weightedRandomPick(
-					this.possibleContent,
-					this.possibleContent.reduce((acc: number, val: CardInfo) => (acc += val.weight), 0)
-				);
-				for (let sheetName in boosterContent.sheets) {
-					if (this.set.sheets[sheetName].balance_colors) {
-						const sheet = this.set.colorBalancedSheets[sheetName];
-						const pickedCards: Array<CardInfo> = [];
-						for (let color of "WUBRG") {
-							pickedCards.push(
-								weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards)
-							);
-						}
-						const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
-						// Compensate the color balancing to keep a uniform distribution of cards within the sheet.
-						const x =
-							(sheet["Mono"].total_weight * cardsToPick -
-								sheet["Others"].total_weight * pickedCards.length) /
-							(cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
-						for (let i = 0; i < cardsToPick; ++i) {
-							//                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
-							//                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
-							if (
-								Math.random() < x ||
-								(sheet["Others"].cards.length === 1 &&
-									pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
-							)
-								pickedCards.push(
-									weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards)
-								);
-							else
-								pickedCards.push(
-									weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards)
-								);
-						}
-						shuffleArray(pickedCards);
-						booster.push(...pickedCards);
-					} else {
-						for (let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
-							booster.push(
-								weightedRandomPick(
-									this.set.sheets[sheetName].cards,
-									this.set.sheets[sheetName].total_weight,
-									booster
-								)
-							);
-						}
-					}
-				}
-				return booster
-					.map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id)))
-					.reverse();
-			},
-		};
+		return new PaperBoosterFactory(set, options, possibleContent);
 	};
 }

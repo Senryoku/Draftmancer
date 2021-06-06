@@ -87,15 +87,10 @@ let UniqueID = 0;
 class UniqueCard extends Card {
     uniqueID;
     foil = false;
-    constructor(card, uniqueID, foil = false) {
-        super();
-        for (let prop of Object.getOwnPropertyNames(card))
-            this[prop] = card[prop];
-        this.uniqueID = uniqueID;
-        this.foil = foil;
-    }
 }
 export function getUnique(cid) {
-    return new UniqueCard(Cards[cid], ++UniqueID);
+    let uc = Cards[cid];
+    uc.uniqueID = ++UniqueID;
+    return uc;
 }
 console.log("Done.");

@@ -107,19 +107,14 @@ Object.freeze(MTGACardIDs);
 let UniqueID = 0;
 
 class UniqueCard extends Card {
-	uniqueID: number;
-	foil: boolean = false;
-
-	constructor(card: Card, uniqueID: number, foil: boolean = false) {
-		super();
-		for (let prop of Object.getOwnPropertyNames(card)) (this as IIndexable)[prop] = (card as IIndexable)[prop];
-		this.uniqueID = uniqueID;
-		this.foil = foil;
-	}
+	uniqueID?: number;
+	foil?: boolean = false;
 }
 
 export function getUnique(cid: CardID) {
-	return new UniqueCard(Cards[cid], ++UniqueID);
+	let uc: UniqueCard = Cards[cid];
+	uc.uniqueID = ++UniqueID;
+	return uc;
 }
 
 console.log("Done.");

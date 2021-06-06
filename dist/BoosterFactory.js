@@ -577,6 +577,15 @@ export const SetSpecificFactories = {
  * Another collation method using data from https://github.com/taw/magic-sealed-data
  */
 import PaperBoosterData from "./data/sealed_extended_data.json";
+class CardInfo {
+    set = "";
+    number = "";
+    weight = 0;
+    foil = false;
+    uuid = "";
+    // computed
+    id = "";
+} // FIXME
 function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
     let pick = randomInt(1, totalWeight);
     let idx = 0;
@@ -595,8 +604,55 @@ const CardsBySetAndCollectorNumber = {};
 for (let cid in Cards) {
     CardsBySetAndCollectorNumber[`${Cards[cid].set}:${Cards[cid].collector_number}`] = cid;
 }
+export class PaperBoosterFactory {
+    set;
+    options;
+    possibleContent;
+    landSlot;
+    constructor(set, options, possibleContent) {
+        this.set = set;
+        this.options = options;
+        this.possibleContent = possibleContent;
+    }
+    generateBooster() {
+        const booster = [];
+        const boosterContent = weightedRandomPick(this.possibleContent, this.possibleContent.reduce((acc, val) => (acc += val.weight), 0));
+        for (let sheetName in boosterContent.sheets) {
+            if (this.set.sheets[sheetName].balance_colors) {
+                const sheet = this.set.colorBalancedSheets[sheetName];
+                const pickedCards = [];
+                for (let color of "WUBRG") {
+                    pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
+                }
+                const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
+                // Compensate the color balancing to keep a uniform distribution of cards within the sheet.
+                const x = (sheet["Mono"].total_weight * cardsToPick - sheet["Others"].total_weight * pickedCards.length) /
+                    (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
+                for (let i = 0; i < cardsToPick; ++i) {
+                    //                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
+                    //                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
+                    if (Math.random() < x ||
+                        (sheet["Others"].cards.length === 1 &&
+                            pickedCards.some(c => c.id === sheet["Others"].cards[0].id)))
+                        pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
+                    else
+                        pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards));
+                }
+                shuffleArray(pickedCards);
+                booster.push(...pickedCards);
+            }
+            else {
+                for (let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
+                    booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
+                }
+            }
+        }
+        return booster.map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id))).reverse();
+    }
+}
 export const PaperBoosterFactories = {};
-for (let set of PaperBoosterData) {
+for (let s of PaperBoosterData) {
+    let set = s;
     if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
         console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
         continue;
@@ -647,48 +703,6 @@ for (let set of PaperBoosterData) {
             if (nonFoil.length > 0)
                 possibleContent = nonFoil;
         }
-        return {
-            set: set,
-            options: options,
-            possibleContent: possibleContent,
-            generateBooster: function () {
-                const booster = [];
-                const boosterContent = weightedRandomPick(this.possibleContent, this.possibleContent.reduce((acc, val) => (acc += val.weight), 0));
-                for (let sheetName in boosterContent.sheets) {
-                    if (this.set.sheets[sheetName].balance_colors) {
-                        const sheet = this.set.colorBalancedSheets[sheetName];
-                        const pickedCards = [];
-                        for (let color of "WUBRG") {
-                            pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
-                        }
-                        const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
-                        // Compensate the color balancing to keep a uniform distribution of cards within the sheet.
-                        const x = (sheet["Mono"].total_weight * cardsToPick -
-                            sheet["Others"].total_weight * pickedCards.length) /
-                            (cardsToPick * (sheet["Mono"].total_weight + sheet["Others"].total_weight));
-                        for (let i = 0; i < cardsToPick; ++i) {
-                            //                      For sets with only one non-mono colored card (like M14 and its unique common artifact)
-                            //                      compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
-                            if (Math.random() < x ||
-                                (sheet["Others"].cards.length === 1 &&
-                                    pickedCards.some(c => c.id === sheet["Others"].cards[0].id)))
-                                pickedCards.push(weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards));
-                            else
-                                pickedCards.push(weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards));
-                        }
-                        shuffleArray(pickedCards);
-                        booster.push(...pickedCards);
-                    }
-                    else {
-                        for (let i = 0; i < boosterContent.sheets[sheetName]; ++i) {
-                            booster.push(weightedRandomPick(this.set.sheets[sheetName].cards, this.set.sheets[sheetName].total_weight, booster));
-                        }
-                    }
-                }
-                return booster
-                    .map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id)))
-                    .reverse();
-            },
-        };
+        return new PaperBoosterFactory(set, options, possibleContent);
     };
 }

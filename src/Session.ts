@@ -28,6 +28,8 @@ import {
 	SetSpecificFactories,
 	PaperBoosterFactories,
 	DefaultBoosterTargets,
+	IBoosterFactory,
+	PaperBoosterFactory,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
@@ -729,7 +731,7 @@ export class Session implements IIndexable {
 			if (!boosterSpecificRules) {
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = defaultFactory.generateBooster(targets);
+					let booster = defaultFactory?.generateBooster(targets);
 					if (booster) this.boosters.push(booster);
 					else return false;
 				}
@@ -738,7 +740,7 @@ export class Session implements IIndexable {
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
 				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
 				const boosterFactories = [];
-				const usedSets: { [set: string]: BoosterFactory } = {};
+				const usedSets: { [set: string]: IBoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
 				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2 that already have 15 cards.
@@ -799,7 +801,7 @@ export class Session implements IIndexable {
 									);
 									for (let slot of ["common", "uncommon", "rare"]) {
 										if (
-											countCards(usedSets[boosterSet].cardPool[slot]) <
+											countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
 											multiplier * this.getVirtualPlayersCount() * targets[slot]
 										) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
@@ -825,7 +827,7 @@ export class Session implements IIndexable {
 				for (let b = 0; b < boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterFactories[p][b];
-						const booster = rule.generateBooster(targets);
+						const booster = rule?.generateBooster(targets);
 						if (booster) this.boosters.push(booster);
 						else return false;
 					}

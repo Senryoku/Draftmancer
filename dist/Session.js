@@ -627,7 +627,7 @@ export class Session {
             if (!boosterSpecificRules) {
                 this.boosters = [];
                 for (let i = 0; i < boosterQuantity; ++i) {
-                    let booster = defaultFactory.generateBooster(targets);
+                    let booster = defaultFactory?.generateBooster(targets);
                     if (booster)
                         this.boosters.push(booster);
                     else
@@ -711,7 +711,7 @@ export class Session {
                 for (let b = 0; b < boostersPerPlayer; ++b) {
                     for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
                         const rule = boosterFactories[p][b];
-                        const booster = rule.generateBooster(targets);
+                        const booster = rule?.generateBooster(targets);
                         if (booster)
                             this.boosters.push(booster);
                         else
