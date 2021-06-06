@@ -519,7 +519,7 @@ const ownerSocketCallbacks = {
                         });
                         return;
                     }
-                    else if (res.req.path.includes("404")) {
+                    else if (res.request.path.includes("404")) {
                         // Missing cube redirects to /404
                         ack?.({
                             type: "error",
@@ -589,11 +589,9 @@ const ownerSocketCallbacks = {
     },
     setBoosterContent(userID, sessionID, boosterContent) {
         // Validate input (a value for each rarity and at least one card)
-        if (boosterContent === null || !(typeof boosterContent === "object"))
-            return;
         if (!["common", "uncommon", "rare"].every(r => r in boosterContent))
             return;
-        if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r]))
+        if (Object.values(boosterContent).every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r]))
             return;
         if (Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0))
             return;

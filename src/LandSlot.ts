@@ -9,7 +9,7 @@ export class BasicLandSlot {
 	basicLandsIds: Array<CardID>;
 
 	constructor(set: string) {
-		this.basicLandsIds = BasicLandIDs[set];
+		this.basicLandsIds = (BasicLandIDs as { [set: string]: CardID[] })[set];
 	}
 
 	setup(commons: CardPool) {}

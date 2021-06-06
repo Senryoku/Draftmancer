@@ -10,8 +10,8 @@ export default function parseCost(cost: string) {
 	if (cost.includes("//")) cost = cost.split("//")[0].trim();
 	let symbols = cost.match(/({[^}]+})/g) ?? [];
 	for (let s of symbols) {
-		r.cmc += ManaSymbols[s].cmc;
-		r.colors = r.colors.concat(ManaSymbols[s].colors);
+		r.cmc += (ManaSymbols as any)[s].cmc;
+		r.colors = r.colors.concat((ManaSymbols as any)[s].colors);
 	}
 	r.colors = [...new Set(r.colors)]; // Remove duplicates
 	return r;

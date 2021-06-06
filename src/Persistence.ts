@@ -25,8 +25,8 @@ const MixInstance = MixPanelToken
 	  })
 	: null;
 
-//                         Testing in mocha                   Explicitly disabled
-const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
+//                         Testing in mocha                            Explicitly disabled
+const DisablePersistence = typeof (global as any).it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
 const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";

@@ -4,6 +4,7 @@ import fs from "fs";
 import parseCost from "./parseCost.js";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
+import { IIndexable } from "./Session.js";
 
 console.log("Loading Cards...");
 memoryReport();
@@ -109,7 +110,7 @@ class UniqueCard extends Card {
 
 	constructor(card: Card, uniqueID: number, foil: boolean = false) {
 		super();
-		for (let prop of Object.getOwnPropertyNames(card)) this[prop] = card[prop];
+		for (let prop of Object.getOwnPropertyNames(card)) (this as IIndexable)[prop] = (card as IIndexable)[prop];
 		this.uniqueID = uniqueID;
 		this.foil = foil;
 	}

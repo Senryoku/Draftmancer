@@ -14,7 +14,7 @@ const MixInstance = MixPanelToken
         protocol: "https",
     })
     : null;
-//                         Testing in mocha                   Explicitly disabled
+//                         Testing in mocha                            Explicitly disabled
 const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
 const SaveLogs = false; // Disabled for now.
 import axios from "axios";

@@ -80,7 +80,7 @@ function updatePublicSession(sid: SessionID) {
 }
 
 // Set session to private once a draft is started and broadcast the new status.
-function startPublicSession(s) {
+function startPublicSession(s: Session) {
 	if (s.isPublic) {
 		s.isPublic = false;
 		updatePublicSession(s.id);
@@ -474,17 +474,17 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	parseCustomCardList(userID: UserID, sessionID: SessionID, customCardList: CustomCardList, ack: Function) {
+	parseCustomCardList(userID: UserID, sessionID: SessionID, customCardList: string, ack: Function) {
 		if (!customCardList) {
 			ack?.({ code: 1, type: "error", title: "No list supplied." });
 			return;
 		}
 		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	},
-	loadFromCubeCobra(userID: UserID, sessionID: SessionID, data, ack: Function) {
+	loadFromCubeCobra(userID: UserID, sessionID: SessionID, data: any, ack: Function) {
 		// Cube Infos: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
 		// Plain text card list
-		const fromTextList = (userID: UserID, sessionID: SessionID, data, ack: Function) => {
+		const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: Function) => {
 			request(
 				{ url: `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`, timeout: 3000 },
 				(err, res, body) => {
@@ -544,7 +544,7 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 								text: `Cube Cobra responded '${res.statusCode}: ${body}'`,
 							});
 							return;
-						} else if (res.req.path.includes("404")) {
+						} else if (res.request.path.includes("404")) {
 							// Missing cube redirects to /404
 							ack?.({
 								type: "error",
@@ -619,9 +619,12 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 		boosterContent: { common: number; uncommon: number; rare: number }
 	) {
 		// Validate input (a value for each rarity and at least one card)
-		if (boosterContent === null || !(typeof boosterContent === "object")) return;
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
-		if (["common", "uncommon", "rare"].every(r => boosterContent[r] === Sessions[sessionID].boosterContent[r]))
+		if (
+			Object.values(boosterContent).every(
+				r => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]
+			)
+		)
 			return;
 		if (Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
 		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
