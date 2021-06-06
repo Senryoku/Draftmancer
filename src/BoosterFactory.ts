@@ -661,7 +661,7 @@ for (let cid in Cards) {
 }
 
 export const PaperBoosterFactories: { [set: string]: any } = {};
-for (let set of PaperBoosterData) {
+for (let set of PaperBoosterData as any) {
 	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
 		console.log(
 			`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`

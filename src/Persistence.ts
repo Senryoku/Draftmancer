@@ -30,6 +30,7 @@ const DisablePersistence = typeof (global as any).it === "function" || process.e
 const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
+import { UserID } from "./IDTypes.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -63,6 +64,50 @@ async function requestSavedConnections() {
 	return InactiveConnections;
 }
 
+export function restoreSession(s: any, owner: UserID) {
+	const r = new Session(s.id, owner);
+	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState"].includes(p))) {
+		(r as IIndexable)[prop] = s[prop];
+	}
+
+	const copyProps = (obj: any, target: any) => {
+		for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
+	};
+
+	if (s.botsInstances) {
+		r.botsInstances = [];
+		for (let bot of s.botsInstances) {
+			const newBot = new Bot(bot.name, bot.id);
+			copyProps(bot, newBot);
+			r.botsInstances.push(newBot);
+		}
+	}
+
+	if (s.draftState) {
+		switch (s.draftState.type) {
+			case "draft": {
+				r.draftState = s.draftState as DraftState;
+				break;
+			}
+			case "winston": {
+				r.draftState = s.draftState as WinstonDraftState;
+				break;
+			}
+			case "grid": {
+				r.draftState = s.draftState as GridDraftState;
+				break;
+			}
+			case "rochester": {
+				r.draftState = s.draftState as RochesterDraftState;
+				break;
+			}
+		}
+		//copyProps(s.draftState, InactiveSessions[s.id].draftState);
+	}
+
+	return r;
+}
+
 async function requestSavedSessions() {
 	let InactiveSessions: { [sid: string]: Session } = {};
 	try {
@@ -78,49 +123,7 @@ async function requestSavedSessions() {
 		} else {
 			if (response.data && response.data.length > 0) {
 				for (let s of response.data) {
-					InactiveSessions[s.id] = new Session(s.id, null);
-					for (let prop of Object.getOwnPropertyNames(s).filter(
-						p => !["botsInstances", "draftState"].includes(p)
-					)) {
-						(InactiveSessions[s.id] as IIndexable)[prop] = s[prop];
-					}
-
-					const copyProps = (obj: any, target: any) => {
-						for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
-					};
-
-					if (s.botsInstances) {
-						InactiveSessions[s.id].botsInstances = [];
-						for (let bot of s.botsInstances) {
-							const newBot = new Bot(bot.name, bot.id);
-							copyProps(bot, newBot);
-							InactiveSessions[s.id].botsInstances.push(newBot);
-						}
-					}
-
-					if (s.draftState) {
-						switch (s.draftState.type) {
-							case "draft": {
-								InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState as DraftState;
-								break;
-							}
-							case "winston": {
-								InactiveSessions[s.id].draftState = InactiveSessions[s.id]
-									.draftState as WinstonDraftState;
-								break;
-							}
-							case "grid": {
-								InactiveSessions[s.id].draftState = InactiveSessions[s.id].draftState as GridDraftState;
-								break;
-							}
-							case "rochester": {
-								InactiveSessions[s.id].draftState = InactiveSessions[s.id]
-									.draftState as RochesterDraftState;
-								break;
-							}
-						}
-						copyProps(s.draftState, InactiveSessions[s.id].draftState);
-					}
+					InactiveSessions[s.id] = s;
 				}
 				console.log(`Restored ${response.data.length} saved sessions.`);
 			}

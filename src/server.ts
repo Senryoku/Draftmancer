@@ -16,11 +16,12 @@ const httpServer = new http.Server(app);
 import socketIO from "socket.io";
 const io = socketIO(httpServer);
 import cookieParser from "cookie-parser";
-import uuidv1 from "uuid/v1.js";
+import uuid from "uuid";
+const uuidv1 = uuid.v1;
 
 import { isEmpty, shuffleArray } from "./utils.js";
 import constants from "../client/src/data/constants.json";
-import { InactiveConnections, InactiveSessions, dumpError } from "./Persistence.js";
+import { InactiveConnections, InactiveSessions, dumpError, restoreSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import {
 	TurnBased,
@@ -1007,8 +1008,8 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 
 		console.log(`Restoring inactive session '${sessionID}'...`);
 		// Always having a valid owner is more important than preserving the old one - probably.
-		if (InactiveSessions[sessionID].ownerIsPlayer) InactiveSessions[sessionID].owner = userID;
-		Sessions[sessionID] = InactiveSessions[sessionID];
+		if (InactiveSessions[sessionID].ownerIsPlayer) restoreSession(InactiveSessions[sessionID], userID);
+		else Sessions[sessionID] = restoreSession(InactiveSessions[sessionID], InactiveSessions[sessionID].owner);
 		delete InactiveSessions[sessionID];
 	}
 

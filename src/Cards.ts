@@ -2,6 +2,7 @@
 
 import fs from "fs";
 import parseCost from "./parseCost.js";
+
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 import { IIndexable } from "./Session.js";

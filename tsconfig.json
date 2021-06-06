@@ -5,6 +5,10 @@
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     "resolveJsonModule": true,
+    "typeRoots": [
+      "src/types",
+      "node_modules/@types"
+    ],
 
     /* Basic Options */
     // "incremental": true,                         /* Enable incremental compilation */
