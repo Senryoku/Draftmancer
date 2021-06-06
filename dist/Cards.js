@@ -49,8 +49,9 @@ for (let cid in Cards) {
     if (!("in_booster" in Cards[cid]))
         Cards[cid].in_booster = true;
     Object.assign(Cards[cid], parseCost(Cards[cid].mana_cost));
-    if (Cards[cid].arena_id !== undefined)
-        MTGACards[Cards[cid].arena_id] = Cards[cid];
+    const aid = Cards[cid].arena_id;
+    if (aid !== undefined)
+        MTGACards[aid] = Cards[cid];
     const firstFaceName = Cards[cid].name.split(" //")[0];
     if (!CardVersionsByName[firstFaceName])
         CardVersionsByName[firstFaceName] = [];

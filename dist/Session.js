@@ -1,5 +1,6 @@
 "use strict";
-import uuidv1 from "uuid/v1.js";
+import uuid from "uuid";
+const uuidv1 = uuid.genV1;
 import constants from "../client/src/data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
