@@ -1,13 +1,18 @@
 "use strict";
 export let Connections = {};
-export function Connection(socket, userID, userName) {
-    this.socket = socket;
-    this.userID = userID;
-    this.userName = userName;
-    this.sessionID = null;
-    this.collection = {};
-    this.useCollection = true;
-    this.pickedThisRound = false;
-    this.pickedCards = [];
-    this.boosterIndex = -1;
+export class Connection {
+    socket;
+    userID;
+    userName;
+    sessionID = undefined;
+    collection = {};
+    useCollection = true;
+    pickedThisRound = false;
+    pickedCards = [];
+    boosterIndex = -1;
+    constructor(socket, userID, userName) {
+        this.socket = socket;
+        this.userID = userID;
+        this.userName = userName;
+    }
 }

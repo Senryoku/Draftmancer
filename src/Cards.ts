@@ -27,11 +27,14 @@ export class Card {
 	in_booster: boolean = true;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
-
-	constructor() {}
 }
 
 export type CardPool = { [cid: string]: number };
+export type SlotedCardPool = { [slot: string]: CardPool };
+export type DeckList = {
+	main: Array<CardID>;
+	side: Array<CardID>;
+};
 
 export let Cards: { [cid: string]: Card } = {};
 if (process.env.NODE_ENV !== "production") {
@@ -99,8 +102,21 @@ Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 
 let UniqueID = 0;
+
+class UniqueCard extends Card {
+	uniqueID: number;
+	foil: boolean = false;
+
+	constructor(card: Card, uniqueID: number, foil: boolean = false) {
+		super();
+		for (let prop of Object.getOwnPropertyNames(card)) this[prop] = card[prop];
+		this.uniqueID = uniqueID;
+		this.foil = foil;
+	}
+}
+
 export function getUnique(cid: CardID) {
-	return Object.assign({ uniqueID: ++UniqueID }, Cards[cid]);
+	return new UniqueCard(Cards[cid], ++UniqueID);
 }
 
 console.log("Done.");

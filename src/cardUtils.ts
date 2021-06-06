@@ -5,7 +5,7 @@ import { getRandomKey } from "./utils.js";
 
 export function removeCardFromDict(cid: CardID, dict: CardPool) {
 	if (!dict[cid]) {
-		console.error("Called removeCardFromDict on a non-existing card.");
+		console.error(`Called removeCardFromDict on a non-existing card (${cid}).`);
 		console.trace();
 		return;
 	}

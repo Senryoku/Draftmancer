@@ -2,13 +2,25 @@
 
 import uuidv1 from "uuid/v1.js";
 import constants from "../client/src/data/constants.json";
+import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
 import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
-import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs } from "./Cards.js";
+import {
+	CardID,
+	Card,
+	Cards,
+	DeckList,
+	getUnique,
+	BoosterCardsBySet,
+	CardsBySet,
+	MTGACardIDs,
+	CardPool,
+	SlotedCardPool,
+} from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
-import { BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
+import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
 	BoosterFactory,
 	ColorBalancedSlot,
@@ -52,34 +64,46 @@ export const optionProps = [
 ];
 
 export class IDraftState {
-	constructor(type) {
+	type: string;
+	constructor(type: string) {
 		this.type = type;
 	}
 }
 
 export class DraftState extends IDraftState {
-	constructor(boosters) {
+	boosters: Array<Array<Card>>;
+	pickNumber = 0;
+	boosterNumber = 1;
+	pickedCardsThisRound = 0;
+	constructor(boosters: Array<Array<Card>>) {
 		super("draft");
 		this.boosters = boosters;
-		this.pickNumber = 0;
-		this.boosterNumber = 1;
-		this.pickedCardsThisRound = 0;
 	}
 }
 
-export class WinstonDraftState extends IDraftState {
-	constructor(players, boosters) {
+export interface TurnBased extends IDraftState {
+	currentPlayer(): UserID;
+}
+
+export function instanceOfTurnBased(object: any): object is TurnBased {
+	return "currentPlayer" in object;
+}
+
+export class WinstonDraftState extends IDraftState implements TurnBased {
+	players: Array<UserID>;
+	round = -1; // Will be immedialty incremented
+	cardPool: Array<Card> = [];
+	piles: [Array<Card>, Array<Card>, Array<Card>] = [[], [], []];
+	currentPile: number = 0;
+	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("winston");
 		this.players = players;
-		this.round = -1; // Will be immedialty incremented
-		this.cardPool = [];
 		if (boosters) {
 			for (let booster of boosters) this.cardPool.push(...booster);
 			shuffleArray(this.cardPool);
 		}
 		if (this.cardPool.length >= 3)
 			this.piles = [[this.cardPool.pop()], [this.cardPool.pop()], [this.cardPool.pop()]];
-		this.currentPile = 0;
 	}
 
 	currentPlayer() {
@@ -97,12 +121,16 @@ export class WinstonDraftState extends IDraftState {
 	}
 }
 
-export class GridDraftState extends IDraftState {
-	constructor(players, boosters) {
+export class GridDraftState extends IDraftState implements TurnBased {
+	round = 0;
+	boosters: Array<Array<Card>> = []; // Array of Boosters [3x3 Grid, Row-Major order]
+	players: Array<UserID>;
+	error: any;
+	boosterCount: number;
+	lastPicks: Array<Array<Card>> = [];
+	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("grid");
 		this.players = players;
-		this.round = 0;
-		this.boosters = []; // 3x3 Grid, Row-Major order
 		if (boosters) {
 			for (let booster of boosters) {
 				if (booster.length > 9) booster.length = 9;
@@ -116,7 +144,6 @@ export class GridDraftState extends IDraftState {
 			}
 		}
 		this.boosterCount = this.boosters.length;
-		this.lastPicks = [];
 	}
 
 	currentPlayer() {
@@ -134,20 +161,18 @@ export class GridDraftState extends IDraftState {
 	}
 }
 
-export class RochesterDraftState extends IDraftState {
-	constructor(players, boosters) {
+export class RochesterDraftState extends IDraftState implements TurnBased {
+	players: Array<UserID>;
+	pickNumber = 0;
+	boosterNumber = 0;
+	boosters: Array<Array<Card>> = [];
+	boosterCount: number;
+	lastPicks: Array<Card> = [];
+	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("rochester");
 		this.players = players;
-		this.pickNumber = 0;
-		this.boosterNumber = 0;
-		this.boosters = [];
-		if (boosters) {
-			for (let booster of boosters) {
-				this.boosters.push(booster);
-			}
-		}
+		this.boosters = boosters;
 		this.boosterCount = this.boosters.length;
-		this.lastPicks = [];
 	}
 
 	currentPlayer() {
@@ -171,56 +196,68 @@ export class RochesterDraftState extends IDraftState {
 	}
 }
 
-export class Session {
-	constructor(id, owner, options) {
+type CustomCardList = any; // FIXME
+type DraftLog = any; // FIXME
+
+export interface IIndexable {
+	[key: string]: any;
+}
+
+export class Session implements IIndexable {
+	id: SessionID;
+	owner: UserID;
+	userOrder: Array<string> = [];
+	users: Set<UserID> = new Set();
+
+	// Options
+	ownerIsPlayer: boolean = true;
+	setRestriction: Array<string> = [constants.MTGASets[constants.MTGASets.length - 1]];
+	isPublic: boolean = false;
+	description: string = "";
+	ignoreCollections: boolean = false;
+	boostersPerPlayer: number = 3;
+	cardsPerBooster: number = 15;
+	teamDraft: boolean = false;
+	bots: number = 0;
+	maxTimer: number = 75;
+	maxPlayers: number = 8;
+	mythicPromotion: boolean = true;
+	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
+	usePredeterminedBoosters: boolean = false;
+	colorBalance: boolean = true;
+	maxDuplicates?: { [slot: string]: number } = undefined;
+	foil: boolean = false;
+	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
+	useCustomCardList: boolean = false;
+	customCardList: CustomCardList = {};
+	distributionMode: string = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
+	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
+	pickedCardsPerRound: number = 1;
+	burnedCardsPerRound: number = 0;
+	draftLogRecipients: string = "everyone";
+	bracketLocked: boolean = false; // If set, only the owner can edit the results.
+	bracket?: Bracket = undefined;
+
+	boosters: Array<Array<Card>> = [];
+
+	// Draft state
+	drafting: boolean = false;
+	draftState?: IDraftState = undefined;
+	draftLog?: DraftLog;
+	// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
+	disconnectedUsers: { [uid: string]: any } = {};
+	draftPaused: boolean = false;
+	countdown: number = 75;
+	countdownInterval: any = null;
+
+	constructor(id: SessionID, owner: UserID, options: any) {
 		this.id = id;
 		this.owner = owner;
-		this.users = new Set();
-		this.userOrder = [];
 
-		// Options
-		this.ownerIsPlayer = true;
-		this.setRestriction = [constants.MTGASets[constants.MTGASets.length - 1]];
-		this.isPublic = false;
-		this.description = "";
-		this.ignoreCollections = false;
-		this.boostersPerPlayer = 3;
-		this.cardsPerBooster = 15;
-		this.teamDraft = false;
-		this.bots = 0;
-		this.maxTimer = 75;
-		this.maxPlayers = 8;
-		this.mythicPromotion = true;
-		this.boosterContent = DefaultBoosterTargets;
-		this.usePredeterminedBoosters = false;
-		this.colorBalance = true;
-		this.maxDuplicates = null;
-		this.foil = false;
-		this.preferedCollation = "MTGA"; // Unused! (And thus not exposed client-side)
-		this.useCustomCardList = false;
-		this.customCardList = {};
-		this.distributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
-		this.customBoosters = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
-		this.pickedCardsPerRound = 1;
-		this.burnedCardsPerRound = 0;
-		this.draftLogRecipients = "everyone";
-		this.bracketLocked = false; // If set, only the owner can edit the results.
-		this.bracket = undefined;
-
-		if (options) for (let p in options) this[p] = options[p];
-
-		this.boosters = [];
-		// Draft state
-		this.drafting = false;
-		this.draftState = null;
-		// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
-		this.disconnectedUsers = {};
-		this.draftPaused = false;
-		this.countdown = 75;
-		this.countdownInterval = null;
+		if (options) for (let p in options) (this as IIndexable)[p] = options[p];
 	}
 
-	addUser(userID) {
+	addUser(userID: UserID) {
 		if (this.users.has(userID)) {
 			console.error(`Session::addUser: this.users.has(${userID})`);
 		}
@@ -233,7 +270,7 @@ export class Session {
 		this.syncSessionOptions(userID);
 	}
 
-	getDisconnectedUserData(userID) {
+	getDisconnectedUserData(userID: UserID) {
 		return {
 			userName: Connections[userID].userName,
 			pickedThisRound: Connections[userID].pickedThisRound,
@@ -243,7 +280,7 @@ export class Session {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUsersData = {};
+		const disconnectedUsersData: { [uid: string]: any } = {};
 		for (let uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers(u =>
@@ -254,7 +291,7 @@ export class Session {
 		);
 	}
 
-	remUser(userID) {
+	remUser(userID: UserID) {
 		// Nothing to do if the user wasn't playing
 		if (userID === this.owner && !this.ownerIsPlayer) return;
 
@@ -272,18 +309,14 @@ export class Session {
 		}
 	}
 
-	setBoostersPerPlayer(boostersPerPlayer) {
-		if (
-			this.boostersPerPlayer !== boostersPerPlayer &&
-			Number.isInteger(boostersPerPlayer) &&
-			boostersPerPlayer > 0
-		) {
+	setBoostersPerPlayer(boostersPerPlayer: number) {
+		if (this.boostersPerPlayer !== boostersPerPlayer && boostersPerPlayer > 0) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 
-			this.forUsers(u =>
-				Connections[u]?.socket.emit("sessionOptions", {
+			this.forUsers((uid: UserID) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
 					boostersPerPlayer: this.boostersPerPlayer,
 					customBoosters: this.customBoosters,
 				})
@@ -291,30 +324,30 @@ export class Session {
 		}
 	}
 
-	setCardsPerBooster(cardsPerBooster) {
-		if (this.cardsPerBooster !== cardsPerBooster && Number.isInteger(cardsPerBooster) && cardsPerBooster > 0) {
+	setCardsPerBooster(cardsPerBooster: number) {
+		if (this.cardsPerBooster !== cardsPerBooster && cardsPerBooster > 0) {
 			this.cardsPerBooster = cardsPerBooster;
 
-			this.forUsers(u =>
-				Connections[u]?.socket.emit("sessionOptions", {
+			this.forUsers((uid: UserID) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
 					cardsPerBooster: this.cardsPerBooster,
 				})
 			);
 		}
 	}
 
-	setCustomCardList(cardList) {
+	setCustomCardList(cardList: CustomCardList) {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
-		this.forUsers(u =>
-			Connections[u]?.socket.emit("sessionOptions", {
+		this.forUsers((uid: UserID) =>
+			Connections[uid]?.socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
 			})
 		);
 	}
 
-	setTeamDraft(teamDraft) {
+	setTeamDraft(teamDraft: boolean) {
 		if (this.teamDraft != teamDraft) {
 			this.teamDraft = teamDraft;
 			if (teamDraft) {
@@ -334,7 +367,7 @@ export class Session {
 		}
 	}
 
-	setSeating(seating) {
+	setSeating(seating: Array<UserID>) {
 		if (this.drafting) return false;
 		if (!Array.isArray(seating) || [...this.users].some(u => !seating.includes(u))) {
 			console.error(`Session.setSeating: invalid seating.`);
@@ -354,12 +387,12 @@ export class Session {
 		return true;
 	}
 
-	syncSessionOptions(userID) {
-		const options = {
+	syncSessionOptions(userID: UserID) {
+		const options: any = {
 			sessionOwner: this.owner,
 			bracket: this.bracket,
 		};
-		for (let p of optionProps) options[p] = this[p];
+		for (let p of optionProps) options[p] = (this as IIndexable)[p];
 		Connections[userID]?.socket.emit("sessionOptions", options);
 	}
 
@@ -376,7 +409,7 @@ export class Session {
 
 	// Returns current card pool according to all session options (Collections, setRestrictions...)
 	cardPool() {
-		let cardPool = {};
+		let cardPool: CardPool = {};
 
 		if (this.unrestrictedCardPool()) {
 			// Returns all cards if there's no set restriction
@@ -397,10 +430,10 @@ export class Session {
 		return this.restrictedCollection(this.setRestriction);
 	}
 
-	restrictedCollection(sets) {
+	restrictedCollection(sets: Array<string>) {
 		const cardPool = this.collection();
 
-		const restricted = {};
+		const restricted: CardPool = {};
 		if (sets && sets.length > 0) {
 			for (let s of sets)
 				for (let cid of CardsBySet[s].filter(cid => cid in cardPool)) restricted[cid] = cardPool[cid];
@@ -409,10 +442,10 @@ export class Session {
 	}
 
 	// Compute user collections intersection (taking into account each user preferences)
-	collection(inBoosterOnly = true) {
+	collection(inBoosterOnly = true): CardPool {
 		const user_list = [...this.users];
 		let intersection = [];
-		let collection = {};
+		let collection: CardPool = {};
 
 		let useCollection = [];
 		for (let i = 0; i < user_list.length; ++i)
@@ -441,8 +474,8 @@ export class Session {
 	}
 
 	// Categorize card pool by rarity
-	cardPoolByRarity() {
-		const cardPoolByRarity = {
+	cardPoolByRarity(): SlotedCardPool {
+		const cardPoolByRarity: SlotedCardPool = {
 			common: {},
 			uncommon: {},
 			rare: {},
@@ -457,8 +490,8 @@ export class Session {
 	}
 
 	// Returns all cards from specified set categorized by rarity and set to maxDuplicates
-	setByRarity(set) {
-		let local = {
+	setByRarity(set: string) {
+		let local: SlotedCardPool = {
 			common: {},
 			uncommon: {},
 			rare: {},
@@ -478,7 +511,7 @@ export class Session {
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
-	generateBoosters(boosterQuantity, options = {}) {
+	generateBoosters(boosterQuantity: number, options: any = {}) {
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
 			if (!this.boosters) {
@@ -509,7 +542,7 @@ export class Session {
 			}
 			// List is using custom booster slots
 			if (this.customCardList.customSheets) {
-				let cardsByRarity = {};
+				let cardsByRarity: SlotedCardPool = {};
 				for (let r in this.customCardList.cardsPerBooster) {
 					cardsByRarity[r] = {};
 					for (let cardId of this.customCardList.cards[r])
@@ -542,10 +575,10 @@ export class Session {
 					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot])
 					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = [];
+					let booster: Array<Card> = [];
 
 					for (let r in this.customCardList.cardsPerBooster) {
-						if (useColorBalance && r === colorBalancedSlot) {
+						if (useColorBalance && colorBalancedSlotGenerator && r === colorBalancedSlot) {
 							booster = booster.concat(
 								colorBalancedSlotGenerator.generate(this.customCardList.cardsPerBooster[r])
 							);
@@ -562,7 +595,7 @@ export class Session {
 			} else {
 				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
-				let localCollection = {};
+				let localCollection: CardPool = {};
 
 				for (let cardId of this.customCardList.cards) {
 					// Duplicates adds one copy of the card
@@ -589,7 +622,7 @@ export class Session {
 						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster));
 				} else {
 					for (let i = 0; i < boosterQuantity; ++i) {
-						let booster = [];
+						let booster: Array<Card> = [];
 						for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster));
 						this.boosters.push(booster);
 					}
@@ -604,7 +637,7 @@ export class Session {
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
 				maxDuplicates: this.maxDuplicates,
-				onError: (...args) => {
+				onError: (...args: any[]) => {
 					this.emitError(...args);
 				},
 				session: this,
@@ -612,23 +645,28 @@ export class Session {
 
 			let defaultFactory = null;
 
-			const getBoosterFactory = function(set, cardPool, landSlot, options) {
+			const getBoosterFactory = function(
+				set: string | null,
+				cardPool: SlotedCardPool,
+				landSlot: BasicLandSlot | null,
+				options: any
+			) {
 				// Check for a special booster factory
 				if (set && set in SetSpecificFactories) return SetSpecificFactories[set](cardPool, landSlot, options);
 				return new BoosterFactory(cardPool, landSlot, options);
 			};
 
 			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
-			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some(v => v !== "");
+			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 			const acceptPaperBoosterFactories =
 				targets === DefaultBoosterTargets &&
 				BoosterFactoryOptions.mythicPromotion &&
 				this.maxDuplicates === null &&
 				this.unrestrictedCardPool();
-			const isPaperBoosterFactoryAvailable = set => {
+			const isPaperBoosterFactoryAvailable = (set: string) => {
 				return set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories;
 			};
-			const getPaperBoosterFactory = set => {
+			const getPaperBoosterFactory = (set: string) => {
 				// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
 				//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
 				//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.
@@ -693,7 +731,7 @@ export class Session {
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
 				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
 				const boosterFactories = [];
-				const usedSets = {};
+				const usedSets: { [set: string]: BoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
 				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2 that already have 15 cards.
@@ -1827,7 +1865,7 @@ export class Session {
 		);
 	}
 
-	emitError(title, text, showConfirmButton = true, timer = 0) {
+	emitError(title = "Error", text = "Unspecified Error", showConfirmButton = true, timer = 0) {
 		Connections[this.owner]?.socket.emit("message", {
 			icon: "error",
 			title: title,
@@ -1837,7 +1875,7 @@ export class Session {
 		});
 	}
 
-	generateBracket(players) {
+	generateBracket(players: Array<UserID>) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
 		} else {
@@ -1846,23 +1884,23 @@ export class Session {
 		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateSwissBracket(players) {
+	generateSwissBracket(players: Array<UserID>) {
 		this.bracket = new SwissBracket(players);
 		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateDoubleBracket(players) {
+	generateDoubleBracket(players: Array<UserID>) {
 		this.bracket = new DoubleBracket(players);
 		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	updateBracket(results) {
+	updateBracket(results: Array<[number, number]>) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
 		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	shareDecklist(userID, decklist) {
+	shareDecklist(userID: UserID, decklist: DeckList) {
 		if (this.draftLog === undefined || this.draftLog.users[userID] === undefined) {
 			console.log("Cannot find log for shared decklist.");
 			return;
@@ -1880,13 +1918,13 @@ export class Session {
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
-	forUsers(fn) {
+	forUsers(fn: (uid: UserID) => void) {
 		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);
 		for (let user of this.users) fn(user);
 	}
-	forNonOwners(fn) {
+	forNonOwners(fn: (uid: UserID) => void) {
 		for (let uid of this.users) if (uid !== this.owner) fn(uid);
 	}
 }
 
-export let Sessions = {};
+export let Sessions: { [sid: string]: Session } = {};

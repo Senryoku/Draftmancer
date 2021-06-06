@@ -19,7 +19,7 @@ import { isEmpty, shuffleArray } from "./utils.js";
 import constants from "../client/src/data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, optionProps } from "./Session.js";
+import { Session, Sessions, optionProps, instanceOfTurnBased } from "./Session.js";
 import { Cards, MTGACards, getUnique } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 app.use(compression());
@@ -111,7 +111,7 @@ const checkDraftAction = function (userID, sess, type, ack) {
         ack?.({ code: 2, error: "Not drafting." });
         return false;
     }
-    if (sess.draftState.currentPlayer && userID !== sess.draftState.currentPlayer()) {
+    if (instanceOfTurnBased(sess.draftState) && userID !== sess.draftState.currentPlayer()) {
         ack?.({ code: 3, error: "Not your turn." });
         return false;
     }
@@ -121,7 +121,7 @@ const socketCallbacks = {
     // Personnal options
     setUserName(userID, sessionID, userName) {
         Connections[userID].userName = userName;
-        Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("updateUser", {
+        Sessions[sessionID].forUsers((uid) => Connections[uid]?.socket.emit("updateUser", {
             userID: userID,
             updatedProperties: {
                 userName: userName,
@@ -862,13 +862,13 @@ function prepareSocketCallback(callback, ownerOnly = false) {
         const ack = arguments.length > 0 && arguments[arguments.length - 1] instanceof Function
             ? arguments[arguments.length - 1]
             : null;
-        const userID = this.userID;
+        const userID = this.handshake.query.userID;
         if (!(userID in Connections)) {
             ack?.({ code: 1, error: "Internal error. User does not exist." });
             return;
         }
         const sessionID = Connections[userID].sessionID;
-        if (!(sessionID in Sessions)) {
+        if (!sessionID || !(sessionID in Sessions)) {
             ack?.({ code: 1, error: "Internal error. Session does not exist." });
             return;
         }
@@ -917,7 +917,6 @@ io.on("connection", async function (socket) {
             })(Connections[query.userID].socket);
         });
     }
-    socket.userID = query.userID;
     if (query.userID in InactiveConnections) {
         // Restore previously saved connection
         // TODO: Front and Back end may be out of sync after this!
@@ -930,7 +929,7 @@ io.on("connection", async function (socket) {
     }
     // Messages
     socket.on("disconnect", function () {
-        const userID = this.userID;
+        const userID = this.handshake.query.userID;
         if (userID in Connections && Connections[userID].socket === this) {
             console.log(`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length -
                 1} players online)`);
@@ -946,7 +945,7 @@ io.on("connection", async function (socket) {
         console.error(err);
     });
     socket.on("setSession", function (sessionID) {
-        const userID = this.userID;
+        const userID = this.handshake.query.userID;
         if (sessionID === Connections[userID].sessionID)
             return;
         joinSession(sessionID, userID);

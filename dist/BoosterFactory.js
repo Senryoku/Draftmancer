@@ -251,6 +251,7 @@ function insertInBooster(card, booster) {
     shuffleArray(boosterByRarity[card.rarity]);
     return Object.values(boosterByRarity).flat();
 }
+// Exactly one Planeswalker per booster
 class WARBoosterFactory extends BoosterFactory {
     planeswalkers;
     constructor(cardPool, landSlot, options) {
@@ -276,7 +277,273 @@ class WARBoosterFactory extends BoosterFactory {
             else
                 --updatedTargets[pickedRarity];
             let booster = super.generateBooster(updatedTargets);
+            if (!booster)
+                return false;
             booster = insertInBooster(pickedPL, booster);
+            return booster;
+        }
+    }
+}
+// At least one Legendary Creature per booster
+// https://www.lethe.xyz/mtg/collation/dom.html
+class DOMBoosterFactory extends BoosterFactory {
+    static regex = /Legendary.*Creature/;
+    legendaryCreatures;
+    constructor(cardPool, landSlot, options) {
+        const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid) => Cards[cid].type.match(DOMBoosterFactory.regex));
+        super(filteredCardPool, landSlot, options);
+        this.legendaryCreatures = legendaryCreatures;
+    }
+    // Not using the suplied cardpool here
+    generateBooster(targets) {
+        const legendaryCounts = countBySlot(this.legendaryCreatures);
+        // Ignore the rule if there's no legendary creatures left
+        if (Object.values(legendaryCounts).every(c => c === 0)) {
+            return super.generateBooster(targets);
+        }
+        else {
+            // Roll for legendary rarity
+            const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, this.options);
+            const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
+            const updatedTargets = Object.assign({}, targets);
+            if (pickedRarity === "mythic")
+                --updatedTargets["rare"];
+            else
+                --updatedTargets[pickedRarity];
+            const booster = super.generateBooster(updatedTargets);
+            if (!booster)
+                return false;
+            // Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
+            booster.unshift(pickedCard);
+            return booster;
+        }
+    }
+}
+// Exactly one MDFC per booster
+class ZNRBoosterFactory extends BoosterFactory {
+    mdfcByRarity;
+    constructor(cardPool, landSlot, options) {
+        const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, (cid) => Cards[cid].name.includes("//"));
+        super(filteredCardPool, landSlot, options);
+        this.mdfcByRarity = mdfcByRarity;
+    }
+    generateBooster(targets) {
+        const mdfcCounts = countBySlot(this.mdfcByRarity);
+        // Ignore the rule if suitable rarities are ignored, or there's no mdfc left
+        if (((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
+            (!("rare" in targets) || targets["rare"] <= 0)) ||
+            Object.values(mdfcCounts).every(c => c === 0)) {
+            return super.generateBooster(targets);
+        }
+        else {
+            // Roll for MDFC rarity
+            const pickedRarity = rollSpecialCardRarity(mdfcCounts, targets, this.options);
+            const pickedMDFC = pickCard(this.mdfcByRarity[pickedRarity], []);
+            let updatedTargets = Object.assign({}, targets);
+            if (pickedRarity === "mythic")
+                --updatedTargets["rare"];
+            else
+                --updatedTargets[pickedRarity];
+            let booster = super.generateBooster(updatedTargets);
+            if (!booster)
+                return false;
+            booster = insertInBooster(pickedMDFC, booster);
+            return booster;
+        }
+    }
+}
+// TODO Add the "Foil Etched" commanders to the foil slot.
+// They shouldn't be in the card pool at all for now, Probable algorithm:
+// If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic'])
+// (rate unknown atm; probably the ratio between the size of both pools) then pick a card normaly in the selected pool.
+// List here: https://mtg.gamepedia.com/Commander_Legends#Notable_cards
+/*
+    Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
+    Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
+    Each Commander Legends Draft Booster contains 20 Magic cards + one ad/token, with two legends, at least one rare, and one foil.
+*/
+class CMRBoosterFactory extends BoosterFactory {
+    static regex = /Legendary.*Creature/;
+    completeCardPool;
+    legendaryCreatures;
+    constructor(cardPool, landSlot, options) {
+        const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid) => Cards[cid].type.match(CMRBoosterFactory.regex));
+        delete filteredCardPool["common"]["a69e6d8f-f742-4508-a83a-38ae84be228c"]; // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+        super(filteredCardPool, landSlot, options);
+        this.completeCardPool = cardPool;
+        this.legendaryCreatures = legendaryCreatures;
+    }
+    // Not using the suplied cardpool here
+    generateBooster(targets) {
+        // 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
+        // * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
+        if (targets === DefaultBoosterTargets)
+            targets = {
+                common: 13,
+                uncommon: 3,
+                rare: 1,
+            };
+        const legendaryCounts = countBySlot(this.legendaryCreatures);
+        // Ignore the rule if there's no legendary creatures left
+        if (Object.values(legendaryCounts).every(c => c === 0)) {
+            return super.generateBooster(targets);
+        }
+        else {
+            let updatedTargets = Object.assign({}, targets);
+            let booster = [];
+            // Prismatic Piper instead of a common in about 1 of every 6 packs
+            if (Math.random() < 1 / 6) {
+                --updatedTargets.common;
+                booster = super.generateBooster(updatedTargets);
+                if (!booster)
+                    return false;
+                booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
+            }
+            else {
+                booster = super.generateBooster(updatedTargets);
+                if (!booster)
+                    return false;
+            }
+            // 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
+            const pickedRarities = [
+                rollSpecialCardRarity(legendaryCounts, targets, this.options),
+                rollSpecialCardRarity(legendaryCounts, targets, this.options),
+            ];
+            while (pickedRarities[0] === "mythic" &&
+                pickedRarities[1] === "mythic" &&
+                (legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0))
+                pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, this.options);
+            for (let pickedRarity of pickedRarities) {
+                const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
+                removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+                booster.unshift(pickedCard);
+            }
+            // One random foil
+            let foilRarity = "common";
+            const rarityCheck = Math.random();
+            for (let r in foilRarityRates)
+                if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.completeCardPool[r])) {
+                    foilRarity = r;
+                    break;
+                }
+            const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
+            if (pickedFoil.id in this.cardPool[pickedFoil.rarity])
+                removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+            if (pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity])
+                removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+            booster.unshift(Object.assign({ foil: true }, pickedFoil));
+            return booster;
+        }
+    }
+}
+// One Timeshifted Card ("special" rarity) per booster.
+// Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
+class TSRBoosterFactory extends BoosterFactory {
+    constructor(cardPool, landSlot, options) {
+        super(cardPool, landSlot, options);
+    }
+    generateBooster(targets) {
+        let booster = super.generateBooster(targets);
+        const timeshifted = pickCard(this.cardPool["special"], []);
+        if (!booster)
+            return false;
+        booster.push(timeshifted);
+        return booster;
+    }
+}
+// Strixhaven: One card from the Mystical Archive (sta)
+class STXBoosterFactory extends BoosterFactory {
+    lessonsByRarity;
+    mysticalArchiveByRarity;
+    constructor(cardPool, landSlot, options) {
+        const [lessons, filteredCardPool] = filterCardPool(cardPool, (cid) => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon");
+        super(filteredCardPool, landSlot, options);
+        this.lessonsByRarity = lessons;
+        // Filter STA cards according to session collections
+        if (options.session && !options.session.unrestrictedCardPool()) {
+            const STACards = options.session.restrictedCollection(["sta"]);
+            this.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+            for (let cid in STACards)
+                this.mysticalArchiveByRarity[Cards[cid].rarity][cid] = Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, STACards[cid]);
+        }
+        else {
+            this.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+            for (let cid of BoosterCardsBySet["sta"])
+                this.mysticalArchiveByRarity[Cards[cid].rarity][cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+        }
+    }
+    generateBooster(targets) {
+        let booster = [];
+        const mythicPromotion = this.options?.mythicPromotion ?? true;
+        const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
+        // Lesson
+        const lessonsCounts = countBySlot(this.lessonsByRarity);
+        const rarityRoll = Math.random();
+        const pickedRarity = allowRares
+            ? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
+                ? "mythic"
+                : rarityRoll < 0.08 && lessonsCounts["rare"] > 0
+                    ? "rare"
+                    : "common"
+            : "common";
+        if (lessonsCounts[pickedRarity] <= 0) {
+            this.onError("Error generating boosters", "Not enough Lessons available.");
+            return false;
+        }
+        const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
+        let updatedTargets = Object.assign({}, targets);
+        if (updatedTargets["common"] > 0)
+            --updatedTargets["common"];
+        booster = super.generateBooster(updatedTargets);
+        if (!booster)
+            return false;
+        booster.push(pickedLesson);
+        // Mystical Archive
+        const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
+        const archiveRarityRoll = Math.random();
+        const archiveRarity = allowRares
+            ? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
+                ? "mythic"
+                : archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
+                    ? "rare"
+                    : "uncommon"
+            : "uncommon";
+        if (archiveCounts[archiveRarity] <= 0) {
+            this.onError("Error generating boosters", "Not enough Mystical Archive cards.");
+            return false;
+        }
+        const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
+        booster.push(archive);
+        return booster;
+    }
+}
+// 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
+class MH2BoosterFactory extends BoosterFactory {
+    newToModern;
+    constructor(cardPool, landSlot, options) {
+        const [newToModern, filteredCardPool] = filterCardPool(cardPool, (cid) => parseInt(Cards[cid].collector_number) >= 261 && parseInt(Cards[cid].collector_number) <= 303);
+        if (options.foil) {
+            options.foilRate = 1.0 / 3.0;
+            options.foilCardPool = cardPool; // New-to-Modern can also appear in as foil
+        }
+        super(filteredCardPool, landSlot, options);
+        this.newToModern = newToModern;
+    }
+    generateBooster(targets) {
+        const newToModernCounts = countBySlot(this.newToModern);
+        // Ignore the rule if there's no New-to-Modern reprint left
+        if (Object.values(newToModernCounts).every(c => c === 0)) {
+            return super.generateBooster(targets);
+        }
+        else {
+            // Roll for New-to-Modern rarity
+            const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, this.options);
+            const pickedCard = pickCard(this.newToModern[pickedRarity], []);
+            const booster = super.generateBooster(targets);
+            if (!booster)
+                return false;
+            // Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown
+            booster.unshift(pickedCard);
             return booster;
         }
     }
@@ -284,256 +551,26 @@ class WARBoosterFactory extends BoosterFactory {
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories = {
-    // Exactly one Planeswalker per booster
     war: (cardPool, landSlot, options) => {
-        new WARBoosterFactory(cardPool, landSlot, options);
+        return new WARBoosterFactory(cardPool, landSlot, options);
     },
-    // At least one Legendary Creature per booster
-    // https://www.lethe.xyz/mtg/collation/dom.html
     dom: (cardPool, landSlot, options) => {
-        const regex = /Legendary.*Creature/;
-        const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
-        const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-        factory.originalGenBooster = factory.generateBooster;
-        factory.legendaryCreatures = legendaryCreatures;
-        // Not using the suplied cardpool here
-        factory.generateBooster = function (targets) {
-            const legendaryCounts = countBySlot(this.legendaryCreatures);
-            // Ignore the rule if there's no legendary creatures left
-            if (Object.values(legendaryCounts).every(c => c === 0)) {
-                return this.originalGenBooster(targets);
-            }
-            else {
-                // Roll for legendary rarity
-                const pickedRarity = rollSpecialCardRarity(legendaryCounts, targets, options);
-                const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], []);
-                removeCardFromDict(pickedCard.id, this.cardPool[pickedCard.rarity]);
-                const updatedTargets = Object.assign({}, targets);
-                if (pickedRarity === "mythic")
-                    --updatedTargets["rare"];
-                else
-                    --updatedTargets[pickedRarity];
-                const booster = this.originalGenBooster(updatedTargets);
-                // Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
-                booster.unshift(pickedCard);
-                return booster;
-            }
-        };
-        return factory;
+        return new DOMBoosterFactory(cardPool, landSlot, options);
     },
-    // Exactly one MDFC per booster
     znr: (cardPool, landSlot, options) => {
-        const [mdfcByRarity, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].name.includes("//"));
-        const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-        factory.mdfcByRarity = mdfcByRarity;
-        factory.originalGenBooster = factory.generateBooster;
-        // Not using the suplied cardpool here
-        factory.generateBooster = function (targets) {
-            const mdfcCounts = countBySlot(this.mdfcByRarity);
-            // Ignore the rule if suitable rarities are ignored, or there's no mdfc left
-            if (((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
-                (!("rare" in targets) || targets["rare"] <= 0)) ||
-                Object.values(mdfcCounts).every(c => c === 0)) {
-                return this.originalGenBooster(targets);
-            }
-            else {
-                // Roll for MDFC rarity
-                const pickedRarity = rollSpecialCardRarity(mdfcCounts, targets, options);
-                const pickedMDFC = pickCard(this.mdfcByRarity[pickedRarity], []);
-                let updatedTargets = Object.assign({}, targets);
-                if (pickedRarity === "mythic")
-                    --updatedTargets["rare"];
-                else
-                    --updatedTargets[pickedRarity];
-                let booster = this.originalGenBooster(updatedTargets);
-                booster = insertInBooster(pickedMDFC, booster);
-                return booster;
-            }
-        };
-        return factory;
+        return new ZNRBoosterFactory(cardPool, landSlot, options);
     },
     cmr: (cardPool, landSlot, options) => {
-        // TODO Add the "Foil Etched" commanders to the foil slot.
-        // They shouldn't be in the card pool at all for now, Probable algorithm:
-        // If foilRarity === 'mythic', roll to select the card pool between "Foil Etched" (32 cards) or Regular Mythic (completeCardPool['mythic'])
-        // (rate unknown atm; probably the ratio between the size of both pools) then pick a card normaly in the selected pool.
-        // List here: https://mtg.gamepedia.com/Commander_Legends#Notable_cards
-        /*
-        Every Commander Legends Draft Booster Pack contains two legendary cards. [...]
-        Commander Legends also debuts a special kind of foil—foil-etched cards with beautiful metallic frames. In some Commander Legends Draft Boosters, you can find a foil-etched showcase legend or regular foil borderless planeswalker.
-        Each Commander Legends Draft Booster contains 20 Magic cards + one ad/token, with two legends, at least one rare, and one foil.
-        */
-        const regex = /Legendary.*Creature/;
-        const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].type.match(regex));
-        delete filteredCardPool["common"]["a69e6d8f-f742-4508-a83a-38ae84be228c"]; // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
-        const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-        factory.completeCardPool = cardPool;
-        factory.originalGenBooster = factory.generateBooster;
-        factory.legendaryCreatures = legendaryCreatures;
-        // Not using the suplied cardpool here
-        factory.generateBooster = function (targets) {
-            // 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
-            // * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
-            if (targets === DefaultBoosterTargets)
-                targets = {
-                    common: 13,
-                    uncommon: 3,
-                    rare: 1,
-                };
-            const legendaryCounts = countBySlot(this.legendaryCreatures);
-            // Ignore the rule if there's no legendary creatures left
-            if (Object.values(legendaryCounts).every(c => c === 0)) {
-                return this.originalGenBooster(targets);
-            }
-            else {
-                let updatedTargets = Object.assign({}, targets);
-                let booster = [];
-                // Prismatic Piper instead of a common in about 1 of every 6 packs
-                if (Math.random() < 1 / 6) {
-                    --updatedTargets.common;
-                    booster = this.originalGenBooster(updatedTargets);
-                    booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
-                }
-                else {
-                    booster = this.originalGenBooster(updatedTargets);
-                }
-                // 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
-                const pickedRarities = [
-                    rollSpecialCardRarity(legendaryCounts, targets, options),
-                    rollSpecialCardRarity(legendaryCounts, targets, options),
-                ];
-                while (pickedRarities[0] === "mythic" &&
-                    pickedRarities[1] === "mythic" &&
-                    (legendaryCounts["uncommon"] > 0 || legendaryCounts["rare"] > 0))
-                    pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, options);
-                for (let pickedRarity of pickedRarities) {
-                    const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
-                    removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
-                    booster.unshift(pickedCard);
-                }
-                // One random foil
-                let foilRarity = "common";
-                const rarityCheck = Math.random();
-                for (let r in foilRarityRates)
-                    if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.completeCardPool[r])) {
-                        foilRarity = r;
-                        break;
-                    }
-                const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
-                if (pickedFoil.id in this.cardPool[pickedFoil.rarity])
-                    removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
-                if (pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity])
-                    removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
-                booster.unshift(Object.assign({ foil: true }, pickedFoil));
-                return booster;
-            }
-        };
-        return factory;
+        return new CMRBoosterFactory(cardPool, landSlot, options);
     },
-    // One Timeshifted Card ("special" rarity) per booster.
-    // Foil rarity should be higher for this set, but we'll probably just rely on the other collation method.
     tsr: (cardPool, landSlot, options) => {
-        const factory = new BoosterFactory(cardPool, landSlot, options);
-        factory.originalGenBooster = factory.generateBooster;
-        factory.generateBooster = function (targets) {
-            let booster = this.originalGenBooster(targets);
-            const timeshifted = pickCard(this.cardPool["special"], []);
-            booster.push(timeshifted);
-            return booster;
-        };
-        return factory;
+        return new TSRBoosterFactory(cardPool, landSlot, options);
     },
-    // Strixhaven: One card from the Mystical Archive (sta)
     stx: (cardPool, landSlot, options) => {
-        const mythicPromotion = options?.mythicPromotion ?? true;
-        const [lessons, filteredCardPool] = filterCardPool(cardPool, cid => Cards[cid].subtypes.includes("Lesson") && Cards[cid].rarity !== "uncommon");
-        const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-        factory.originalGenBooster = factory.generateBooster;
-        factory.lessonsByRarity = lessons;
-        // Filter STA cards according to session collections
-        if (options.session && !options.session.unrestrictedCardPool()) {
-            const STACards = options.session.restrictedCollection(["sta"]);
-            factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
-            for (let cid in STACards)
-                factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] = Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, STACards[cid]);
-        }
-        else {
-            factory.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
-            for (let cid of BoosterCardsBySet["sta"])
-                factory.mysticalArchiveByRarity[Cards[cid].rarity][cid] =
-                    options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
-        }
-        factory.generateBooster = function (targets) {
-            let booster = [];
-            const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
-            // Lesson
-            const lessonsCounts = countBySlot(this.lessonsByRarity);
-            const rarityRoll = Math.random();
-            const pickedRarity = allowRares
-                ? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
-                    ? "mythic"
-                    : rarityRoll < 0.08 && lessonsCounts["rare"] > 0
-                        ? "rare"
-                        : "common"
-                : "common";
-            if (lessonsCounts[pickedRarity] <= 0) {
-                this.onError("Error generating boosters", "Not enough Lessons available.");
-                return false;
-            }
-            const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
-            let updatedTargets = Object.assign({}, targets);
-            if (updatedTargets["common"] > 0)
-                --updatedTargets["common"];
-            booster = this.originalGenBooster(updatedTargets);
-            booster.push(pickedLesson);
-            // Mystical Archive
-            const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
-            const archiveRarityRoll = Math.random();
-            const archiveRarity = allowRares
-                ? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
-                    ? "mythic"
-                    : archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
-                        ? "rare"
-                        : "uncommon"
-                : "uncommon";
-            if (archiveCounts[archiveRarity] <= 0) {
-                this.onError("Error generating boosters", "Not enough Mystical Archive cards.");
-                return false;
-            }
-            const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
-            booster.push(archive);
-            return booster;
-        };
-        return factory;
+        return new STXBoosterFactory(cardPool, landSlot, options);
     },
-    // 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
     mh2: (cardPool, landSlot, options) => {
-        const [newToModern, filteredCardPool] = filterCardPool(cardPool, cid => parseInt(Cards[cid].collector_number) >= 261 && parseInt(Cards[cid].collector_number) <= 303);
-        if (options.foil) {
-            options.foilRate = 1.0 / 3.0;
-            options.foilCardPool = cardPool; // New-to-Modern can also appear in as foil
-        }
-        const factory = new BoosterFactory(filteredCardPool, landSlot, options);
-        factory.originalGenBooster = factory.generateBooster;
-        factory.newToModern = newToModern;
-        // Not using the suplied cardpool here
-        factory.generateBooster = function (targets) {
-            const newToModernCounts = countBySlot(this.newToModern);
-            // Ignore the rule if there's no New-to-Modern reprint left
-            if (Object.values(newToModernCounts).every(c => c === 0)) {
-                return this.originalGenBooster(targets);
-            }
-            else {
-                // Roll for New-to-Modern rarity
-                const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, options);
-                const pickedCard = pickCard(this.newToModern[pickedRarity], []);
-                const booster = this.originalGenBooster(targets);
-                // Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown
-                booster.unshift(pickedCard);
-                return booster;
-            }
-        };
-        return factory;
+        return new MH2BoosterFactory(cardPool, landSlot, options);
     },
 };
 /*
@@ -550,7 +587,7 @@ function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
     }
     // Duplicate protection (allows duplicates between foil and non-foil)
     // Not sure if we should checks ids or (set, number) here.
-    if (attempt < 10 && picked.some(c => c.id === arr[idx].id && c.foil === arr[idx].foil))
+    if (attempt < 10 && picked.some((c) => c.id === arr[idx].id && c.foil === arr[idx].foil))
         return weightedRandomPick(arr, totalWeight, picked, attempt + 1);
     return arr[idx];
 }
@@ -606,7 +643,7 @@ for (let set of PaperBoosterData) {
         let possibleContent = set.boosters;
         if (!options.foil) {
             // (Attempt to) Filter out sheets with foils if option is disabled.
-            let nonFoil = set.boosters.filter(e => !Object.keys(e.sheets).some(s => s.includes("foil")));
+            let nonFoil = set.boosters.filter((e) => !Object.keys(e.sheets).some(s => s.includes("foil")));
             if (nonFoil.length > 0)
                 possibleContent = nonFoil;
         }

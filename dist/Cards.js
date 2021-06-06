@@ -21,7 +21,6 @@ export class Card {
     in_booster = true;
     printed_names = {};
     image_uris = {};
-    constructor() { }
 }
 export let Cards = {};
 if (process.env.NODE_ENV !== "production") {
@@ -84,7 +83,18 @@ Object.freeze(CardsBySet);
 Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 let UniqueID = 0;
+class UniqueCard extends Card {
+    uniqueID;
+    foil = false;
+    constructor(card, uniqueID, foil = false) {
+        super();
+        for (let prop of Object.getOwnPropertyNames(card))
+            this[prop] = card[prop];
+        this.uniqueID = uniqueID;
+        this.foil = foil;
+    }
+}
 export function getUnique(cid) {
-    return Object.assign({ uniqueID: ++UniqueID }, Cards[cid]);
+    return new UniqueCard(Cards[cid], ++UniqueID);
 }
 console.log("Done.");
