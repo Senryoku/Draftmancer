@@ -2,7 +2,7 @@
 import { Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
 import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
-import constants from "../client/src/data/constants.json";
+import constants from "./data/constants.json";
 // Generates booster for regular MtG Sets
 const mythicRate = 1.0 / 8.0;
 const foilRate = 15.0 / 63.0;
@@ -576,7 +576,7 @@ export const SetSpecificFactories = {
 /*
  * Another collation method using data from https://github.com/taw/magic-sealed-data
  */
-import PaperBoosterData from "../data/sealed_extended_data.json";
+import PaperBoosterData from "./data/sealed_extended_data.json";
 function weightedRandomPick(arr, totalWeight, picked = [], attempt = 0) {
     let pick = randomInt(1, totalWeight);
     let idx = 0;

@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import constants from "../data/constants.json";
+import constants from "../../../src/data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 
 export default {

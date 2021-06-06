@@ -4,7 +4,7 @@ import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsB
 import { isEmpty, shuffleArray, randomInt } from "./utils.js";
 import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
-import constants from "../client/src/data/constants.json";
+import constants from "./data/constants.json";
 
 // Generates booster for regular MtG Sets
 
@@ -636,7 +636,7 @@ export const SetSpecificFactories: {
  * Another collation method using data from https://github.com/taw/magic-sealed-data
  */
 
-import PaperBoosterData from "../data/sealed_extended_data.json";
+import PaperBoosterData from "./data/sealed_extended_data.json";
 
 type CardInfo = { id: string; weight: number; foil: boolean }; // FIXME
 

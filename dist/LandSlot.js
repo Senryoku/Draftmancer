@@ -2,7 +2,7 @@
 import { getUnique, Cards } from "./Cards.js";
 import { getRandomKey, getRandom } from "./utils.js";
 import { removeCardFromDict } from "./cardUtils.js";
-import BasicLandIDs from "../client/public/data/BasicLandIDs.json";
+import BasicLandIDs from "./data/BasicLandIDs.json";
 export class BasicLandSlot {
     basicLandsIds;
     constructor(set) {

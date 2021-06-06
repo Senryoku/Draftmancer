@@ -17,7 +17,7 @@ import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
 import { isEmpty, shuffleArray } from "./utils.js";
-import constants from "../client/src/data/constants.json";
+import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { Session, Sessions, optionProps, instanceOfTurnBased, } from "./Session.js";

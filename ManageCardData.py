@@ -17,12 +17,13 @@ BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'data/MTGCards.json'
 SetsInfosPath = 'client/public/data/SetsInfos.json'
-BasicLandIDsPath = 'client/public/data/BasicLandIDs.json'
+BasicLandIDsPath = 'src/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
 JumpstartBoostersFolder = 'data/JumpstartBoosters'
 JumpstartSwaps = "data/JumpstartSwaps.json"
-JumpstartBoostersDist = 'data/JumpstartBoosters.json'
+JumpstartBoostersDist = 'src/data/JumpstartBoosters.json'
 RatingsDest = 'data/ratings.json'
+ManaSymbolsFile = "src/data/mana_symbols.json"
 
 ArenaRarity = {
     1: "basic",  # I guess?
@@ -57,7 +58,6 @@ for path in MTGALocFiles:
 
 # Get mana symbols info from Scryfall
 SymbologyFile = "./data/symbology.json"
-ManaSymbolsFile = "./client/src/data/mana_symbols.json"
 if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
     if not os.path.isfile(SymbologyFile):
         urllib.request.urlretrieve(
@@ -529,9 +529,9 @@ with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
 constants = {}
-with open("client/src/data/constants.json", 'r', encoding="utf8") as constantsFile:
+with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
     s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'rmh1', 'afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, rmh1), or aren't out yet (afr)
-with open("client/src/data/constants.json", 'w', encoding="utf8") as constantsFile:
+with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

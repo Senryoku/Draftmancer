@@ -13,7 +13,7 @@ import { SpecialLandSlots } from "../../dist/LandSlot.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
-import constants from "../../client/src/data/constants.json";
+import constants from "../../src/data/constants.json";
 
 describe("Statistical color balancing tests", function() {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function(done) {

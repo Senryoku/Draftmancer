@@ -1,4 +1,4 @@
-import ManaSymbols from "../client/src/data/mana_symbols.json";
+import ManaSymbols from "./data/mana_symbols.json";
 export default function parseCost(cost) {
     let r = {
         cmc: 0,

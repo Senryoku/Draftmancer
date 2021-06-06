@@ -107,7 +107,7 @@
 
 <script>
 import MTGACards from "../../public/data/MTGACards.json";
-import Constant from "../data/constants.json";
+import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 import MissingCard from "./MissingCard.vue";
 
