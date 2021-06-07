@@ -221,15 +221,11 @@ describe("Sets content", function() {
 		it(`Checking ${set}`, function(done) {
 			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("setRestriction", function(sR) {
+			clients[nonOwnerIdx].once("setRestriction", function() {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				for (let r in sets[set]) {
-					expect(
-						Object.keys(localCollection[r])
-							.map(cid => Cards[cid].set)
-							.every(s => s === set)
-					).to.be.true;
-					expect(Object.keys(localCollection[r])).to.have.lengthOf(sets[set][r]);
+					expect([...localCollection[r].keys()].map(cid => Cards[cid].set).every(s => s === set)).to.be.true;
+					expect([...localCollection[r].keys()]).to.have.lengthOf(sets[set][r]);
 				}
 				done();
 			});
@@ -391,10 +387,10 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				expect(Object.keys(localCollection["common"])).to.have.lengthOf(101);
-				expect(Object.keys(localCollection["uncommon"])).to.have.lengthOf(80);
-				expect(Object.keys(localCollection["rare"])).to.have.lengthOf(53);
-				expect(Object.keys(localCollection["mythic"])).to.have.lengthOf(15);
+				expect([...localCollection["common"]]).to.have.lengthOf(101);
+				expect([...localCollection["uncommon"]]).to.have.lengthOf(80);
+				expect([...localCollection["rare"]]).to.have.lengthOf(53);
+				expect([...localCollection["mythic"]]).to.have.lengthOf(15);
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
