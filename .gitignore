@@ -60,6 +60,7 @@ typings/
 # next.js build output
 .next
 
+data/LimitedRatings/*
 data/scryfall-all-cards.json
 data/BulkArena.json
 Makefile
