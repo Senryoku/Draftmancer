@@ -1,23 +1,24 @@
 import crypto from "crypto";
 import { Cards } from "./Cards.js";
 import constants from "./data/constants.json";
+const basicNames = constants.BasicLandNames["en"];
 function decklistToArray(decklist, sidePrefix, nameFilter) {
     // Keep only the first face for two sided cards
-    const filter = name => {
+    const filter = (name) => {
         const idx = name.indexOf(" //");
         if (idx !== -1)
             name = name.substring(0, idx);
         return nameFilter(name);
     };
-    const main = [...decklist.main.map(cid => filter(Cards[cid].name))];
+    const main = [...decklist.main.map((cid) => filter(Cards[cid].name))];
     for (let c in decklist.lands)
         for (let i = 0; i < decklist.lands[c]; ++i)
-            main.push(filter(constants.BasicLandNames["en"][c]));
-    const side = [...decklist.side.map(cid => sidePrefix + filter(Cards[cid].name))];
+            main.push(filter(basicNames[c]));
+    const side = [...decklist.side.map((cid) => sidePrefix + filter(Cards[cid].name))];
     if (side.length > 0)
         for (let c of ["W", "U", "B", "R", "G"])
             for (let i = 0; i < 10; ++i)
-                side.push(sidePrefix + filter(constants.BasicLandNames["en"][c]));
+                side.push(sidePrefix + filter(basicNames[c]));
     return main.concat(side).sort();
 }
 export function hashCockatrice(decklist) {

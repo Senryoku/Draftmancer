@@ -1,4 +1,6 @@
 export class Bracket {
+    players;
+    results;
     constructor(players, matchCount = 7) {
         this.players = players;
         this.results = [];
@@ -7,20 +9,20 @@ export class Bracket {
     }
 }
 export class TeamBracket extends Bracket {
+    teamDraft = true;
     constructor(players) {
         super(players, 9);
-        this.teamDraft = true;
     }
 }
 export class SwissBracket extends Bracket {
+    swiss = true;
     constructor(players) {
         super(players, 12);
-        this.swiss = true;
     }
 }
 export class DoubleBracket extends Bracket {
+    double = true;
     constructor(players) {
         super(players, 14);
-        this.double = true;
     }
 }

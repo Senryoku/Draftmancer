@@ -36,6 +36,8 @@ export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;
 	side: Array<CardID>;
+	hashes?: { [key: string]: string };
+	lands?: { [key: string]: number };
 };
 
 export let Cards: { [cid: string]: Card } = {};
