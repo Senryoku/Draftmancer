@@ -58,7 +58,12 @@ async function requestSavedConnections() {
 			}
 		}
 	} catch (err) {
-		console.log("requestSavedConnections::", err);
+		console.error(
+			"requestSavedConnections::",
+			err.message,
+			err.response?.statusText ?? "",
+			err.response?.data ?? ""
+		);
 	}
 
 	return InactiveConnections;
@@ -129,7 +134,7 @@ async function requestSavedSessions() {
 			}
 		}
 	} catch (err) {
-		console.log("requestSavedSessions:: ", err);
+		console.error("requestSavedSessions::", err.message, err.response?.statusText ?? "", err.response?.data ?? "");
 	}
 
 	return InactiveSessions;
