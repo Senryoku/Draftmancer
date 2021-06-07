@@ -1007,8 +1007,10 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 
 		console.log(`Restoring inactive session '${sessionID}'...`);
 		// Always having a valid owner is more important than preserving the old one - probably.
-		if (InactiveSessions[sessionID].ownerIsPlayer) restoreSession(InactiveSessions[sessionID], userID);
-		else Sessions[sessionID] = restoreSession(InactiveSessions[sessionID], InactiveSessions[sessionID].owner);
+		Sessions[sessionID] = restoreSession(
+			InactiveSessions[sessionID],
+			InactiveSessions[sessionID].ownerIsPlayer ? userID : InactiveSessions[sessionID].owner
+		);
 		delete InactiveSessions[sessionID];
 	}
 
@@ -1092,7 +1094,7 @@ function removeUserFromSession(userID: UserID) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
 
-			// Connections[userID].sessionID = null; // FIXME?
+			Connections[userID].sessionID = undefined;
 
 			// Keep session alive if the owner wasn't a player and is still connected.
 			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {

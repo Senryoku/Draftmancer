@@ -86,23 +86,23 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				r.draftState = s.draftState as DraftState;
+				r.draftState = new DraftState([]);
 				break;
 			}
 			case "winston": {
-				r.draftState = s.draftState as WinstonDraftState;
+				r.draftState = new WinstonDraftState([], []);
 				break;
 			}
 			case "grid": {
-				r.draftState = s.draftState as GridDraftState;
+				r.draftState = new GridDraftState([], []);
 				break;
 			}
 			case "rochester": {
-				r.draftState = s.draftState as RochesterDraftState;
+				r.draftState = new RochesterDraftState([], []);
 				break;
 			}
 		}
-		//copyProps(s.draftState, InactiveSessions[s.id].draftState);
+		copyProps(s.draftState, r.draftState);
 	}
 
 	return r;

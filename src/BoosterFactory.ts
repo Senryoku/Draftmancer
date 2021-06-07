@@ -681,7 +681,7 @@ interface SetInfo {
 	boosters: BoosterInfo[];
 	sheets: { [slot: string]: SheetInfo };
 	// computed
-	colorBalancedSheets?: any;
+	colorBalancedSheets?: { [sheet: string]: { [subsheet: string]: { cards: CardInfo[]; total_weight: number } } };
 }
 
 function weightedRandomPick(arr: Array<CardInfo>, totalWeight: number, picked: Array<CardInfo> = [], attempt = 0): any {

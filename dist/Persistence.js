@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== "production") {
     dotenv.config();
 }
 import { Connections } from "./Connection.js";
-import { Session, Sessions, } from "./Session.js";
+import { Session, Sessions, DraftState, WinstonDraftState, GridDraftState, RochesterDraftState, } from "./Session.js";
 import Bot from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -68,23 +68,23 @@ export function restoreSession(s, owner) {
     if (s.draftState) {
         switch (s.draftState.type) {
             case "draft": {
-                r.draftState = s.draftState;
+                r.draftState = new DraftState([]);
                 break;
             }
             case "winston": {
-                r.draftState = s.draftState;
+                r.draftState = new WinstonDraftState([], []);
                 break;
             }
             case "grid": {
-                r.draftState = s.draftState;
+                r.draftState = new GridDraftState([], []);
                 break;
             }
             case "rochester": {
-                r.draftState = s.draftState;
+                r.draftState = new RochesterDraftState([], []);
                 break;
             }
         }
-        //copyProps(s.draftState, InactiveSessions[s.id].draftState);
+        copyProps(s.draftState, r.draftState);
     }
     return r;
 }
