@@ -824,7 +824,7 @@ const ownerSocketCallbacks = {
         // Update local copy to be public
         if (!sess.draftLog && sess.id === draftLog.sessionID)
             sess.draftLog = draftLog;
-        else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+        else if (sess.draftLog?.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
             sess.draftLog.delayed = false;
         // Send the full copy to everyone
         for (let user of sess.users)
@@ -1195,7 +1195,7 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
     }
     else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
         res.setHeader("Content-Type", "application/json");
-        if (Sessions[req.params.sessionID].draftLog.delayed)
+        if (Sessions[req.params.sessionID].draftLog?.delayed)
             res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
         else
             res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));

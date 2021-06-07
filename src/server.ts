@@ -32,12 +32,12 @@ import {
 	DistributionMode,
 	DraftLogRecipients,
 	IIndexable,
-	DraftLog,
 } from "./Session.js";
 import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
+import { DraftLog } from "./DraftLog";
 
 app.use(compression());
 app.use(cookieParser());
@@ -862,7 +862,7 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 
 		// Update local copy to be public
 		if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
-		else if (sess.draftLog.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+		else if (sess.draftLog?.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
@@ -1244,7 +1244,7 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
 		res.setHeader("Content-Type", "application/json");
-		if (Sessions[req.params.sessionID].draftLog.delayed)
+		if (Sessions[req.params.sessionID].draftLog?.delayed)
 			res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
 		else res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
 	} else {
