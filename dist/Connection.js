@@ -5,7 +5,7 @@ export class Connection {
     userID;
     userName;
     sessionID = undefined;
-    collection = {};
+    collection = new Map();
     useCollection = true;
     pickedThisRound = false;
     pickedCards = [];

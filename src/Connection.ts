@@ -11,7 +11,7 @@ export class Connection {
 	userName: string;
 
 	sessionID?: SessionID = undefined;
-	collection: CardPool = {};
+	collection: CardPool = new Map();
 	useCollection = true;
 
 	pickedThisRound = false;

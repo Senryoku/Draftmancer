@@ -1,7 +1,7 @@
 "use strict";
 import { getUnique, Cards } from "./Cards.js";
-import { getRandomKey, getRandom } from "./utils.js";
-import { removeCardFromDict } from "./cardUtils.js";
+import { getRandomMapKey, getRandom } from "./utils.js";
+import { removeCardFromCardPool } from "./cardUtils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json";
 export class BasicLandSlot {
     basicLandsIds;
@@ -16,7 +16,7 @@ export class BasicLandSlot {
 export class SpecialLandSlot extends BasicLandSlot {
     commonLandsIds;
     rate;
-    landsToDistribute = {};
+    landsToDistribute = new Map();
     constructor(set, commonLandsIds, rate, basicLandsIds) {
         super(set);
         this.commonLandsIds = commonLandsIds;
@@ -27,15 +27,15 @@ export class SpecialLandSlot extends BasicLandSlot {
     setup(commons) {
         for (let c of this.commonLandsIds) {
             if (c in commons) {
-                this.landsToDistribute[c] = commons[c];
-                delete commons[c];
+                this.landsToDistribute.set(c, commons.get(c));
+                commons.delete(c);
             }
         }
     }
     pick() {
-        if (Math.random() <= this.rate && Object.keys(this.landsToDistribute).length > 0) {
-            let c = getRandomKey(this.landsToDistribute);
-            removeCardFromDict(c, this.landsToDistribute);
+        if (Math.random() <= this.rate && this.landsToDistribute.size > 0) {
+            let c = getRandomMapKey(this.landsToDistribute);
+            removeCardFromCardPool(c, this.landsToDistribute);
             return getUnique(c);
         }
         else {

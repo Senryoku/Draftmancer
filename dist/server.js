@@ -16,7 +16,7 @@ const io = SocketIO(httpServer);
 import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
-import { isEmpty, shuffleArray } from "./utils.js";
+import { shuffleArray } from "./utils.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -132,16 +132,16 @@ const socketCallbacks = {
     setCollection(userID, sessionID, collection, ack) {
         if (typeof collection !== "object" || collection === null)
             return;
-        let processedCollection = {};
+        let processedCollection = new Map();
         // Remove unknown cards immediatly.
         for (let aid in collection) {
             if (aid in MTGACards) {
-                processedCollection[MTGACards[aid].id] = collection[aid];
+                processedCollection.set(MTGACards[aid].id, collection[aid]);
             }
         }
         Connections[userID].collection = processedCollection;
         ack?.({ collection: processedCollection });
-        const hasCollection = !isEmpty(processedCollection);
+        const hasCollection = processedCollection.size > 0;
         Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("updateUser", {
             userID: userID,
             updatedProperties: {
@@ -945,7 +945,7 @@ function joinSession(sessionID, userID) {
             title: "Cannot join session",
             html: msg,
         });
-        if (Connections[userID].sessionID === null)
+        if (!Connections[userID].sessionID)
             sessionID = shortguid();
         else
             sessionID = Connections[userID].sessionID;
@@ -1087,7 +1087,7 @@ function returnCollectionPlainText(res, sid) {
         const coll = Sessions[sid].collection(false);
         let r = "";
         for (let cid in coll)
-            r += `${coll[cid]} ${Cards[cid].name}\n`;
+            r += `${coll.get(cid)} ${Cards[cid].name}\n`;
         res.set("Content-disposition", `attachment; filename=collection_${sid}`);
         res.set("Content-Type", "text/plain");
         res.send(r);

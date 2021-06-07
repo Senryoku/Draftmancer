@@ -1,8 +1,8 @@
 "use strict";
 
 import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
-import { isEmpty, shuffleArray, randomInt } from "./utils.js";
-import { removeCardFromDict, pickCard, countCards } from "./cardUtils.js";
+import { shuffleArray, randomInt } from "./utils.js";
+import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import constants from "./data/constants.json";
 
@@ -34,19 +34,24 @@ class ColorBalancedSlotCache {
 	othersCount: number;
 
 	constructor(cardPool: CardPool) {
-		for (let cid in cardPool) {
-			if (!(Cards[cid].colors.join() in this.byColor)) this.byColor[Cards[cid].colors.join()] = {};
-			this.byColor[Cards[cid].colors.join()][cid] = cardPool[cid];
+		for (let cid of cardPool.keys()) {
+			if (!(Cards[cid].colors.join() in this.byColor)) this.byColor[Cards[cid].colors.join()] = new Map();
+			this.byColor[Cards[cid].colors.join()].set(cid, cardPool.get(cid) as number);
 		}
-		this.monocolored = Object.keys(this.byColor)
+
+		this.monocolored = new Map();
+		for (let cardPool of Object.keys(this.byColor)
 			.filter(k => k.length === 1)
-			.map(k => this.byColor[k])
-			.reduce((acc, val) => Object.assign(acc, val), {});
+			.map(k => this.byColor[k]))
+			for (let [cid, val] of cardPool.entries()) this.monocolored.set(cid, val);
+
 		this.monocoloredCount = countCards(this.monocolored);
-		this.others = Object.keys(this.byColor)
+		this.others = new Map();
+		for (let cardPool of Object.keys(this.byColor)
 			.filter(k => k.length !== 1)
-			.map(k => this.byColor[k])
-			.reduce((acc, val) => Object.assign(acc, val), {});
+			.map(k => this.byColor[k]))
+			for (let [cid, val] of cardPool.entries()) this.others.set(cid, val);
+
 		this.othersCount = countCards(this.others);
 	}
 }
@@ -64,12 +69,12 @@ export class ColorBalancedSlot {
 	}
 
 	syncCache(pickedCard: Card) {
-		removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
+		removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
 		if (pickedCard.colors.length === 1) {
-			removeCardFromDict(pickedCard.id, this.cache.monocolored);
+			removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
 			--this.cache.monocoloredCount;
 		} else {
-			removeCardFromDict(pickedCard.id, this.cache.others);
+			removeCardFromCardPool(pickedCard.id, this.cache.others);
 			--this.cache.othersCount;
 		}
 	}
@@ -78,14 +83,14 @@ export class ColorBalancedSlot {
 	// pickedCards can contain pre-selected cards for this slot.
 	generate(cardCount: number, pickedCards: Array<Card> = []) {
 		for (let c of "WUBRG") {
-			if (this.cache.byColor[c] && !isEmpty(this.cache.byColor[c])) {
+			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards);
-				removeCardFromDict(pickedCard.id, this.cardPool);
+				removeCardFromCardPool(pickedCard.id, this.cardPool);
 				if (pickedCard.colors.length === 1) {
-					removeCardFromDict(pickedCard.id, this.cache.monocolored);
+					removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
 					--this.cache.monocoloredCount;
 				} else {
-					removeCardFromDict(pickedCard.id, this.cache.others);
+					removeCardFromCardPool(pickedCard.id, this.cache.others);
 					--this.cache.othersCount;
 				}
 				pickedCards.push(pickedCard);
@@ -113,8 +118,8 @@ export class ColorBalancedSlot {
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
-			removeCardFromDict(pickedCard.id, this.cardPool);
-			removeCardFromDict(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
+			removeCardFromCardPool(pickedCard.id, this.cardPool);
+			removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
 		}
 		// Shuffle to avoid obvious signals to other players
 		shuffleArray(pickedCards);
@@ -155,9 +160,9 @@ export class BoosterFactory implements IBoosterFactory {
 		const localFoilRate = this.options.foilRate ?? foilRate;
 		if (this.options.foil && Math.random() <= localFoilRate) {
 			const rarityCheck = Math.random();
-			const foilCardPool = this.options.foilCardPool ?? this.cardPool;
+			const foilCardPool: SlotedCardPool = this.options.foilCardPool ?? this.cardPool;
 			for (let r in foilRarityRates)
-				if (rarityCheck <= foilRarityRates[r] && !isEmpty(foilCardPool[r])) {
+				if (rarityCheck <= foilRarityRates[r] && foilCardPool[r].size > 0) {
 					let pickedCard = pickCard(foilCardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity == "common")
@@ -171,14 +176,14 @@ export class BoosterFactory implements IBoosterFactory {
 
 		for (let i = 0; i < targets["rare"]; ++i) {
 			// 1 Rare/Mythic
-			if (isEmpty(this.cardPool["mythic"]) && isEmpty(this.cardPool["rare"])) {
+			if (this.cardPool["mythic"].size === 0 && this.cardPool["rare"].size === 0) {
 				const msg = `Not enough rare or mythic cards in collection.`;
 				this.onError("Error generating boosters", msg);
 				console.error(msg);
 				return false;
-			} else if (isEmpty(this.cardPool["mythic"])) {
+			} else if (this.cardPool["mythic"].size === 0) {
 				booster.push(pickCard(this.cardPool["rare"]));
-			} else if (this.options.mythicPromotion && isEmpty(this.cardPool["rare"])) {
+			} else if (this.options.mythicPromotion && this.cardPool["rare"].size === 0) {
 				booster.push(pickCard(this.cardPool["mythic"]));
 			} else {
 				if (this.options.mythicPromotion && Math.random() <= mythicRate)
@@ -215,15 +220,15 @@ export class BoosterFactory implements IBoosterFactory {
 	}
 }
 
-function filterCardPool(cardPool: SlotedCardPool, predicate: Function) {
+function filterCardPool(slotedCardPool: SlotedCardPool, predicate: Function) {
 	const specialCards: SlotedCardPool = {};
 	const filteredCardPool: SlotedCardPool = {};
-	for (let slot in cardPool) {
-		specialCards[slot] = {};
-		filteredCardPool[slot] = {};
-		for (let cid in cardPool[slot]) {
-			if (predicate(cid)) specialCards[slot][cid] = cardPool[slot][cid];
-			else filteredCardPool[slot][cid] = cardPool[slot][cid];
+	for (let slot in slotedCardPool) {
+		specialCards[slot] = new Map();
+		filteredCardPool[slot] = new Map();
+		for (let cid of slotedCardPool[slot].keys()) {
+			if (predicate(cid)) specialCards[slot].set(cid, slotedCardPool[slot].get(cid) as number);
+			else filteredCardPool[slot].set(cid, slotedCardPool[slot].get(cid) as number);
 		}
 	}
 	return [specialCards, filteredCardPool];
@@ -260,7 +265,7 @@ function rollSpecialCardRarity(
 function countBySlot(cardPool: SlotedCardPool) {
 	const counts: { [slot: string]: number } = {};
 	for (let slot in cardPool)
-		counts[slot] = Object.values(cardPool[slot]).reduce((acc: number, c: number): number => acc + c, 0);
+		counts[slot] = [...cardPool[slot].values()].reduce((acc: number, c: number): number => acc + c, 0);
 	return counts;
 }
 
@@ -349,6 +354,7 @@ class DOMBoosterFactory extends BoosterFactory {
 }
 
 // Exactly one MDFC per booster
+// FIXME: Modal Double Faced rares appear 50% more often than Single Faced rares
 class ZNRBoosterFactory extends BoosterFactory {
 	mdfcByRarity: SlotedCardPool;
 
@@ -404,7 +410,7 @@ class CMRBoosterFactory extends BoosterFactory {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].type.match(CMRBoosterFactory.regex)
 		);
-		delete filteredCardPool["common"]["a69e6d8f-f742-4508-a83a-38ae84be228c"]; // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
+		filteredCardPool["common"].delete("a69e6d8f-f742-4508-a83a-38ae84be228c"); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
 		super(filteredCardPool, landSlot, options);
 		this.completeCardPool = cardPool;
 		this.legendaryCreatures = legendaryCreatures;
@@ -452,7 +458,7 @@ class CMRBoosterFactory extends BoosterFactory {
 				pickedRarities[1] = rollSpecialCardRarity(legendaryCounts, targets, this.options);
 			for (let pickedRarity of pickedRarities) {
 				const pickedCard = pickCard(this.legendaryCreatures[pickedRarity], booster);
-				removeCardFromDict(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
+				removeCardFromCardPool(pickedCard.id, this.completeCardPool[pickedCard.rarity]);
 				booster.unshift(pickedCard);
 			}
 
@@ -460,15 +466,15 @@ class CMRBoosterFactory extends BoosterFactory {
 			let foilRarity = "common";
 			const rarityCheck = Math.random();
 			for (let r in foilRarityRates)
-				if (rarityCheck <= foilRarityRates[r] && !isEmpty(this.completeCardPool[r])) {
+				if (rarityCheck <= foilRarityRates[r] && this.completeCardPool[r].size > 0) {
 					foilRarity = r;
 					break;
 				}
 			const pickedFoil = pickCard(this.completeCardPool[foilRarity], []);
-			if (pickedFoil.id in this.cardPool[pickedFoil.rarity])
-				removeCardFromDict(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
-			if (pickedFoil.id in this.legendaryCreatures[pickedFoil.rarity])
-				removeCardFromDict(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
+			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+			if (this.legendaryCreatures[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.legendaryCreatures[pickedFoil.rarity]);
 			booster.unshift(Object.assign({ foil: true }, pickedFoil));
 
 			return booster;
@@ -506,17 +512,20 @@ class STXBoosterFactory extends BoosterFactory {
 
 		// Filter STA cards according to session collections
 		if (options.session && !options.session.unrestrictedCardPool()) {
-			const STACards = options.session.restrictedCollection(["sta"]);
-			this.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
-			for (let cid in STACards)
-				this.mysticalArchiveByRarity[Cards[cid].rarity][cid] = Math.min(
-					options.maxDuplicates?.[Cards[cid].rarity] ?? 99,
-					STACards[cid]
+			const STACards: CardPool = options.session.restrictedCollection(["sta"]);
+			this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+			for (let cid of STACards.keys())
+				this.mysticalArchiveByRarity[Cards[cid].rarity].set(
+					cid,
+					Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, STACards.get(cid) as number)
 				);
 		} else {
-			this.mysticalArchiveByRarity = { uncommon: {}, rare: {}, mythic: {} };
+			this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
 			for (let cid of BoosterCardsBySet["sta"])
-				this.mysticalArchiveByRarity[Cards[cid].rarity][cid] = options.maxDuplicates?.[Cards[cid].rarity] ?? 99;
+				this.mysticalArchiveByRarity[Cards[cid].rarity].set(
+					cid,
+					options.maxDuplicates?.[Cards[cid].rarity] ?? 99
+				);
 		}
 	}
 

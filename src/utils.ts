@@ -1,6 +1,7 @@
 "use strict";
 
 import randomjs from "random-js";
+import { CardID, CardPool } from "./Cards";
 const random = new randomjs.Random(randomjs.nodeCrypto);
 
 export function isEmpty(obj: Object) {
@@ -19,8 +20,16 @@ export function getRandom(arr: Array<any>) {
 	return arr[random.integer(0, arr.length - 1)];
 }
 
-export function getRandomKey(dict: {}) {
-	const keys = Object.keys(dict);
+export function getRandomMapKey(map: CardPool) {
+	let idx = random.integer(0, map.size - 1);
+	for (let k of map.keys()) {
+		if (idx-- === 0) return k;
+	}
+	return map.keys().next().value;
+}
+
+export function getRandomKey(obj: Object) {
+	const keys = Object.keys(obj);
 	return keys[random.integer(0, keys.length - 1)];
 }
 

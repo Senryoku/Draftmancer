@@ -31,7 +31,7 @@ export class Card {
 	image_uris: { [lang: string]: string } = {};
 }
 
-export type CardPool = { [cid: string]: number };
+export type CardPool = Map<string, number>; //{ [cid: string]: number };
 export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;

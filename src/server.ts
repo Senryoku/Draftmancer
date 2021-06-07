@@ -158,14 +158,14 @@ const socketCallbacks: { [name: string]: Function } = {
 			})
 		);
 	},
-	setCollection(userID: UserID, sessionID: SessionID, collection: CardPool, ack: Function) {
+	setCollection(userID: UserID, sessionID: SessionID, collection: { [aid: string]: number }, ack: Function) {
 		if (typeof collection !== "object" || collection === null) return;
 
-		let processedCollection: { [aid: string]: number } = {};
+		let processedCollection: CardPool = new Map();
 		// Remove unknown cards immediatly.
 		for (let aid in collection) {
 			if (aid in MTGACards) {
-				processedCollection[MTGACards[aid].id] = collection[aid];
+				processedCollection.set(MTGACards[aid].id, collection[aid]);
 			}
 		}
 
@@ -173,7 +173,7 @@ const socketCallbacks: { [name: string]: Function } = {
 
 		ack?.({ collection: processedCollection });
 
-		const hasCollection = !isEmpty(processedCollection);
+		const hasCollection = processedCollection.size > 0;
 		Sessions[sessionID].forUsers(user =>
 			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
@@ -994,7 +994,7 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 			title: "Cannot join session",
 			html: msg,
 		});
-		if (Connections[userID].sessionID === null) sessionID = shortguid();
+		if (!Connections[userID].sessionID) sessionID = shortguid();
 		else sessionID = Connections[userID].sessionID as SessionID;
 		Connections[userID].socket.emit("setSession", sessionID);
 	};
@@ -1141,7 +1141,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 	} else if (sid in Sessions) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
-		for (let cid in coll) r += `${coll[cid]} ${Cards[cid].name}\n`;
+		for (let cid in coll) r += `${coll.get(cid)} ${Cards[cid].name}\n`;
 		res.set("Content-disposition", `attachment; filename=collection_${sid}`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);

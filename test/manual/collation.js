@@ -17,7 +17,7 @@ import constants from "../../src/data/constants.json";
 
 describe("Statistical color balancing tests", function() {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function(done) {
-		this.timeout(4000);
+		this.timeout(1000);
 		const trials = 10000;
 		const landSlot = null;
 		const BoosterFactoryOptions = {
@@ -25,14 +25,14 @@ describe("Statistical color balancing tests", function() {
 			colorBalance: true,
 		};
 		const cardPoolByRarity = {
-			common: {},
-			uncommon: {},
-			rare: {},
-			mythic: {},
+			common: new Map(),
+			uncommon: new Map(),
+			rare: new Map(),
+			mythic: new Map(),
 		};
 		for (let cid in Cards) {
 			if (Cards[cid].in_booster && Cards[cid].set === "znr") {
-				cardPoolByRarity[Cards[cid].rarity][cid] = trials;
+				cardPoolByRarity[Cards[cid].rarity].set(cid, trials);
 			}
 		}
 		const factory = SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
@@ -98,13 +98,13 @@ describe("Statistical color balancing tests", function() {
 		//let s = getRandom(constants.MTGASets);
 		for (let s of constants.MTGASets) {
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
-				this.timeout(8000);
+				this.timeout(500);
 				const trials = 500;
 				const SessionInst = new Session("UniqueID");
 				SessionInst.colorBalance = true;
 				SessionInst.useCustomCardList = false;
 				SessionInst.setRestriction = [s];
-				const trackedCards = Object.keys(SessionInst.cardPoolByRarity().common)
+				const trackedCards = [...SessionInst.cardPoolByRarity().common.keys()]
 					.filter(cid => !(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid)))
 					.reduce((o, key) => ({ ...o, [key]: 0 }), {});
 				runTrials(SessionInst, trials, trackedCards);
@@ -115,7 +115,7 @@ describe("Statistical color balancing tests", function() {
 	}
 
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate WITHOUT color balancing`, function(done) {
-		this.timeout(80000);
+		this.timeout(500);
 		const trials = 500;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.useCustomCardList = true;
@@ -158,7 +158,7 @@ describe("Statistical color balancing tests", function() {
 			const SessionInst = new Session("UniqueID");
 			SessionInst.colorBalance = true;
 			SessionInst.setRestriction = ["znr"];
-			const trackedCards = Object.keys(SessionInst.cardPoolByRarity()[rarity]).reduce(
+			const trackedCards = [...SessionInst.cardPoolByRarity()[rarity].keys()].reduce(
 				(o, key) => ({ ...o, [key]: 0 }),
 				{}
 			);
@@ -193,7 +193,7 @@ describe("Statistical color balancing tests", function() {
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["stx"];
-		const trackedCards = SessionInst.cardPool();
+		const trackedCards = Object.fromEntries(SessionInst.cardPool());
 		runTrials(SessionInst, trials, trackedCards);
 
 		for (let rarity of ["common", "uncommon", "rare", "mythic"]) {
@@ -252,9 +252,10 @@ describe("Statistical color balancing tests", function() {
 		const trials = 10000;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.colorBalance = true;
-		SessionInst.setRestriction = ["znr"];
-		const rares = Object.keys(SessionInst.cardPoolByRarity().rare); // 64
-		const chiSquareCriticalValue63 = 82.529; // For 63 Degrees of Freedom and Significance Level 0.05
+		SessionInst.setRestriction = ["m21"];
+		const rares = [...SessionInst.cardPoolByRarity().rare.keys()]; // 53
+		expect(rares.length).equal(53);
+		const chiSquareCriticalValue52 = 69.832; // For 52 Degrees of Freedom and Significance Level 0.05
 
 		function checkUniformity(done, func) {
 			const results = rares.reduce((o, key) => ({ ...o, [key]: 0 }), {});
@@ -272,7 +273,7 @@ describe("Statistical color balancing tests", function() {
 				["Mean Deviation:", meanDeviation],
 				["Chi Squared Uniformity Test: ", chiSquareResult],
 			]);
-			expect(chiSquareResult).lte(chiSquareCriticalValue63);
+			expect(chiSquareResult).lte(chiSquareCriticalValue52);
 			done();
 		}
 
@@ -336,7 +337,7 @@ describe("Statistical color balancing tests", function() {
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
 				SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
-				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				const rares = [...SessionInst.cardPoolByRarity().rare.values()];
 				describe(`Using ${set} (${rares.length} rares)`, function() {
 					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
 						const engine = randomjs.nodeCrypto;
@@ -350,7 +351,7 @@ describe("Statistical color balancing tests", function() {
 						done();
 					});
 					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
-						this.timeout(80000);
+						this.timeout(8000);
 						Observed = countDuplicates(() => {
 							SessionInst.generateBoosters(3 * 8);
 							const cards = SessionInst.boosters
@@ -378,7 +379,7 @@ describe("Statistical color balancing tests", function() {
 				const SessionInst = new Session("UniqueID");
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
-				const rares = Object.values(SessionInst.cardPoolByRarity().rare);
+				const rares = [...SessionInst.cardPoolByRarity().rare.keys()];
 				describe(`Using ${set} (${rares.length} rares)`, function() {
 					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
 						const engine = randomjs.nodeCrypto;
@@ -393,7 +394,7 @@ describe("Statistical color balancing tests", function() {
 						done();
 					});
 					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
-						this.timeout(80000);
+						this.timeout(8000);
 						Observed = countDuplicates(() => {
 							SessionInst.generateBoosters(3 * 8);
 							return SessionInst.boosters

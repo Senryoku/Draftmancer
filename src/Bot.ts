@@ -1,11 +1,19 @@
 "use strict";
 
-export default function Bot(name, id) {
-	this.name = name;
-	this.id = id; // Used for sorting
-	this.cards = []; // For debugging mostly.
-	this.pickedColors = { W: 0, U: 0, R: 0, B: 0, G: 0 };
-	this.pick = function(booster) {
+import { Card } from "./Cards";
+
+export default class Bot {
+	name: string;
+	id: string;
+	cards: Card[] = []; // For debugging mostly.
+	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
+
+	constructor(name: string, id: string) {
+		this.name = name;
+		this.id = id; // Used for sorting
+	}
+
+	pick(booster: Card[]) {
 		let maxScore = 0;
 		let bestPick = 0;
 		for (let idx = 0; idx < booster.length; ++idx) {
@@ -27,9 +35,10 @@ export default function Bot(name, id) {
 		//console.log(`Bot pick: ${Cards[booster[bestPick]].name}`);
 		//console.log(this);
 		return bestPick;
-	};
+	}
+
 	// TODO: Chooses which card to burn.
-	this.burn = function(booster) {
+	burn = function(booster: Card[]) {
 		return 0;
 	};
 }

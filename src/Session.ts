@@ -410,7 +410,7 @@ export class Session implements IIndexable {
 		if (this.ignoreCollections) return true;
 
 		for (let userID of this.users) {
-			if (Connections[userID].useCollection && !isEmpty(Connections[userID].collection)) return false;
+			if (Connections[userID].useCollection && Connections[userID].collection.size > 0) return false;
 		}
 
 		return true;
@@ -418,19 +418,17 @@ export class Session implements IIndexable {
 
 	// Returns current card pool according to all session options (Collections, setRestrictions...)
 	cardPool() {
-		let cardPool: CardPool = {};
-
 		if (this.unrestrictedCardPool()) {
+			let cardPool: CardPool = new Map();
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
-				for (let c in Cards)
-					if (Cards[c].in_booster)
-						cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
+				for (let cid in Cards)
+					if (Cards[cid].in_booster) cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
 			} else {
 				// Use cache otherwise
 				for (let set of this.setRestriction)
-					for (let c of BoosterCardsBySet[set])
-						cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
+					for (let cid of BoosterCardsBySet[set])
+						cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
 			}
 			return cardPool;
 		}
@@ -442,10 +440,11 @@ export class Session implements IIndexable {
 	restrictedCollection(sets: Array<string>) {
 		const cardPool = this.collection();
 
-		const restricted: CardPool = {};
+		const restricted: CardPool = new Map();
 		if (sets && sets.length > 0) {
 			for (let s of sets)
-				for (let cid of CardsBySet[s].filter(cid => cid in cardPool)) restricted[cid] = cardPool[cid];
+				for (let cid of CardsBySet[s].filter(cid => cardPool.has(cid)))
+					restricted.set(cid, cardPool.get(cid) as number);
 			return restricted;
 		} else return cardPool;
 	}
@@ -454,12 +453,11 @@ export class Session implements IIndexable {
 	collection(inBoosterOnly = true): CardPool {
 		const user_list = [...this.users];
 		let intersection = [];
-		let collection: CardPool = {};
+		let collection: CardPool = new Map();
 
 		let useCollection = [];
 		for (let i = 0; i < user_list.length; ++i)
-			useCollection[i] =
-				Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection);
+			useCollection[i] = Connections[user_list[i]].useCollection && Connections[user_list[i]].collection.size > 0;
 
 		let arrays = [];
 		// Start from the first user's collection, or the list of all cards if not available/used
@@ -467,17 +465,21 @@ export class Session implements IIndexable {
 			if (inBoosterOnly) arrays.push(MTGACardIDs.filter(c => Cards[c].in_booster));
 			else arrays.push(MTGACardIDs);
 		else if (inBoosterOnly)
-			arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
-		else arrays.push(Object.keys(Connections[user_list[0]].collection));
+			arrays.push([...Connections[user_list[0]].collection.keys()].filter(c => Cards[c].in_booster));
+		else arrays.push([...Connections[user_list[0]].collection.keys()]);
 		for (let i = 1; i < user_list.length; ++i)
-			if (useCollection[i]) arrays.push(Object.keys(Connections[user_list[i]].collection));
+			if (useCollection[i]) arrays.push([...Connections[user_list[i]].collection.keys()]);
 		intersection = arrayIntersect(arrays);
 
 		// Compute the minimum count of each remaining card
 		for (let c of intersection) {
-			collection[c] = useCollection[0] ? Connections[user_list[0]].collection[c] : 4;
+			collection.set(c, useCollection[0] ? (Connections[user_list[0]].collection.get(c) as number) : 4);
 			for (let i = 1; i < user_list.length; ++i)
-				if (useCollection[i]) collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
+				if (useCollection[i])
+					collection.set(
+						c,
+						Math.min(collection.get(c) as number, Connections[user_list[i]].collection.get(c) as number)
+					);
 		}
 		return collection;
 	}
@@ -485,15 +487,15 @@ export class Session implements IIndexable {
 	// Categorize card pool by rarity
 	cardPoolByRarity(): SlotedCardPool {
 		const cardPoolByRarity: SlotedCardPool = {
-			common: {},
-			uncommon: {},
-			rare: {},
-			mythic: {},
+			common: new Map(),
+			uncommon: new Map(),
+			rare: new Map(),
+			mythic: new Map(),
 		};
 		const cardPool = this.cardPool();
-		for (let cid in cardPool) {
-			if (!(Cards[cid].rarity in cardPoolByRarity)) cardPoolByRarity[Cards[cid].rarity] = {};
-			cardPoolByRarity[Cards[cid].rarity][cid] = cardPool[cid];
+		for (let cid of cardPool.keys()) {
+			if (!(Cards[cid].rarity in cardPoolByRarity)) cardPoolByRarity[Cards[cid].rarity] = new Map();
+			cardPoolByRarity[Cards[cid].rarity].set(cid, cardPool.get(cid) as number);
 		}
 		return cardPoolByRarity;
 	}
@@ -501,14 +503,14 @@ export class Session implements IIndexable {
 	// Returns all cards from specified set categorized by rarity and set to maxDuplicates
 	setByRarity(set: string) {
 		let local: SlotedCardPool = {
-			common: {},
-			uncommon: {},
-			rare: {},
-			mythic: {},
+			common: new Map(),
+			uncommon: new Map(),
+			rare: new Map(),
+			mythic: new Map(),
 		};
 		for (let cid of BoosterCardsBySet[set]) {
-			if (!(Cards[cid].rarity in local)) local[Cards[cid].rarity] = {};
-			local[Cards[cid].rarity][cid] = this.maxDuplicates ? this.maxDuplicates[Cards[cid].rarity] : 99;
+			if (!(Cards[cid].rarity in local)) local[Cards[cid].rarity] = new Map();
+			local[Cards[cid].rarity].set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
 		}
 		return local;
 	}
@@ -553,12 +555,12 @@ export class Session implements IIndexable {
 			if (this.customCardList.customSheets) {
 				let cardsByRarity: SlotedCardPool = {};
 				for (let r in this.customCardList.cardsPerBooster) {
-					cardsByRarity[r] = {};
+					cardsByRarity[r] = new Map();
 					for (let cardId of (this.customCardList.cards as { [slot: string]: Array<CardID> })[r])
-						if (cardId in cardsByRarity[r])
+						if (cardsByRarity[r].has(cardId))
 							// Duplicates adds one copy of the card
-							cardsByRarity[r][cardId] += 1;
-						else cardsByRarity[r][cardId] = 1;
+							cardsByRarity[r].set(cardId, (cardsByRarity[r].get(cardId) as number) + 1);
+						else cardsByRarity[r].set(cardId, 1);
 
 					const card_count = countCards(cardsByRarity[r]);
 					const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
@@ -604,12 +606,13 @@ export class Session implements IIndexable {
 			} else {
 				// Generate fully random 15-cards booster for cube (not considering rarity)
 				// Getting custom card list
-				let localCollection: CardPool = {};
+				let localCollection: CardPool = new Map();
 
 				for (let cardId of this.customCardList.cards as Array<CardID>) {
 					// Duplicates adds one copy of the card
-					if (cardId in localCollection) localCollection[cardId] += 1;
-					else localCollection[cardId] = 1;
+					if (localCollection.has(cardId))
+						localCollection.set(cardId, (localCollection.get(cardId) as number) + 1);
+					else localCollection.set(cardId, 1);
 				}
 
 				const cardsPerBooster = options.cardsPerBooster ?? 15;
@@ -670,7 +673,7 @@ export class Session implements IIndexable {
 			const acceptPaperBoosterFactories =
 				targets === DefaultBoosterTargets &&
 				BoosterFactoryOptions.mythicPromotion &&
-				this.maxDuplicates === null &&
+				!this.maxDuplicates &&
 				this.unrestrictedCardPool();
 			const isPaperBoosterFactoryAvailable = (set: string) => {
 				return set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories;
@@ -860,7 +863,7 @@ export class Session implements IIndexable {
 				user_info.push({
 					userID: u.userID,
 					userName: u.userName,
-					collection: !isEmpty(u.collection),
+					collection: u.collection.size > 0,
 					useCollection: u.useCollection,
 					pickedThisRound: u.pickedThisRound,
 				});

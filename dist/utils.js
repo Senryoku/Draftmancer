@@ -13,8 +13,16 @@ export function negMod(m, n) {
 export function getRandom(arr) {
     return arr[random.integer(0, arr.length - 1)];
 }
-export function getRandomKey(dict) {
-    const keys = Object.keys(dict);
+export function getRandomMapKey(map) {
+    let idx = random.integer(0, map.size - 1);
+    for (let k of map.keys()) {
+        if (idx-- === 0)
+            return k;
+    }
+    return map.keys().next().value;
+}
+export function getRandomKey(obj) {
+    const keys = Object.keys(obj);
     return keys[random.integer(0, keys.length - 1)];
 }
 // Returns [start, start + step, ..., end]

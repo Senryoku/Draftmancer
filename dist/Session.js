@@ -3,7 +3,7 @@ import uuid from "uuid";
 const uuidv1 = uuid.v1;
 import constants from "./data/constants.json";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
+import { negMod, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
 import { Connections } from "./Connection.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, } from "./Cards.js";
 import Bot from "./Bot.js";
@@ -338,26 +338,26 @@ export class Session {
         if (this.ignoreCollections)
             return true;
         for (let userID of this.users) {
-            if (Connections[userID].useCollection && !isEmpty(Connections[userID].collection))
+            if (Connections[userID].useCollection && Connections[userID].collection.size > 0)
                 return false;
         }
         return true;
     }
     // Returns current card pool according to all session options (Collections, setRestrictions...)
     cardPool() {
-        let cardPool = {};
         if (this.unrestrictedCardPool()) {
+            let cardPool = new Map();
             // Returns all cards if there's no set restriction
             if (this.setRestriction.length === 0) {
-                for (let c in Cards)
-                    if (Cards[c].in_booster)
-                        cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
+                for (let cid in Cards)
+                    if (Cards[cid].in_booster)
+                        cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
             }
             else {
                 // Use cache otherwise
                 for (let set of this.setRestriction)
-                    for (let c of BoosterCardsBySet[set])
-                        cardPool[c] = this.maxDuplicates ? this.maxDuplicates[Cards[c].rarity] : 99;
+                    for (let cid of BoosterCardsBySet[set])
+                        cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
             }
             return cardPool;
         }
@@ -366,11 +366,11 @@ export class Session {
     }
     restrictedCollection(sets) {
         const cardPool = this.collection();
-        const restricted = {};
+        const restricted = new Map();
         if (sets && sets.length > 0) {
             for (let s of sets)
-                for (let cid of CardsBySet[s].filter(cid => cid in cardPool))
-                    restricted[cid] = cardPool[cid];
+                for (let cid of CardsBySet[s].filter(cid => cardPool.has(cid)))
+                    restricted.set(cid, cardPool.get(cid));
             return restricted;
         }
         else
@@ -380,11 +380,10 @@ export class Session {
     collection(inBoosterOnly = true) {
         const user_list = [...this.users];
         let intersection = [];
-        let collection = {};
+        let collection = new Map();
         let useCollection = [];
         for (let i = 0; i < user_list.length; ++i)
-            useCollection[i] =
-                Connections[user_list[i]].useCollection && !isEmpty(Connections[user_list[i]].collection);
+            useCollection[i] = Connections[user_list[i]].useCollection && Connections[user_list[i]].collection.size > 0;
         let arrays = [];
         // Start from the first user's collection, or the list of all cards if not available/used
         if (!useCollection[0])
@@ -393,50 +392,50 @@ export class Session {
             else
                 arrays.push(MTGACardIDs);
         else if (inBoosterOnly)
-            arrays.push(Object.keys(Connections[user_list[0]].collection).filter(c => Cards[c].in_booster));
+            arrays.push([...Connections[user_list[0]].collection.keys()].filter(c => Cards[c].in_booster));
         else
-            arrays.push(Object.keys(Connections[user_list[0]].collection));
+            arrays.push([...Connections[user_list[0]].collection.keys()]);
         for (let i = 1; i < user_list.length; ++i)
             if (useCollection[i])
-                arrays.push(Object.keys(Connections[user_list[i]].collection));
+                arrays.push([...Connections[user_list[i]].collection.keys()]);
         intersection = arrayIntersect(arrays);
         // Compute the minimum count of each remaining card
         for (let c of intersection) {
-            collection[c] = useCollection[0] ? Connections[user_list[0]].collection[c] : 4;
+            collection.set(c, useCollection[0] ? Connections[user_list[0]].collection.get(c) : 4);
             for (let i = 1; i < user_list.length; ++i)
                 if (useCollection[i])
-                    collection[c] = Math.min(collection[c], Connections[user_list[i]].collection[c]);
+                    collection.set(c, Math.min(collection.get(c), Connections[user_list[i]].collection.get(c)));
         }
         return collection;
     }
     // Categorize card pool by rarity
     cardPoolByRarity() {
         const cardPoolByRarity = {
-            common: {},
-            uncommon: {},
-            rare: {},
-            mythic: {},
+            common: new Map(),
+            uncommon: new Map(),
+            rare: new Map(),
+            mythic: new Map(),
         };
         const cardPool = this.cardPool();
-        for (let cid in cardPool) {
+        for (let cid of cardPool.keys()) {
             if (!(Cards[cid].rarity in cardPoolByRarity))
-                cardPoolByRarity[Cards[cid].rarity] = {};
-            cardPoolByRarity[Cards[cid].rarity][cid] = cardPool[cid];
+                cardPoolByRarity[Cards[cid].rarity] = new Map();
+            cardPoolByRarity[Cards[cid].rarity].set(cid, cardPool.get(cid));
         }
         return cardPoolByRarity;
     }
     // Returns all cards from specified set categorized by rarity and set to maxDuplicates
     setByRarity(set) {
         let local = {
-            common: {},
-            uncommon: {},
-            rare: {},
-            mythic: {},
+            common: new Map(),
+            uncommon: new Map(),
+            rare: new Map(),
+            mythic: new Map(),
         };
         for (let cid of BoosterCardsBySet[set]) {
             if (!(Cards[cid].rarity in local))
-                local[Cards[cid].rarity] = {};
-            local[Cards[cid].rarity][cid] = this.maxDuplicates ? this.maxDuplicates[Cards[cid].rarity] : 99;
+                local[Cards[cid].rarity] = new Map();
+            local[Cards[cid].rarity].set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
         }
         return local;
     }
@@ -473,13 +472,13 @@ export class Session {
             if (this.customCardList.customSheets) {
                 let cardsByRarity = {};
                 for (let r in this.customCardList.cardsPerBooster) {
-                    cardsByRarity[r] = {};
+                    cardsByRarity[r] = new Map();
                     for (let cardId of this.customCardList.cards[r])
-                        if (cardId in cardsByRarity[r])
+                        if (cardsByRarity[r].has(cardId))
                             // Duplicates adds one copy of the card
-                            cardsByRarity[r][cardId] += 1;
+                            cardsByRarity[r].set(cardId, cardsByRarity[r].get(cardId) + 1);
                         else
-                            cardsByRarity[r][cardId] = 1;
+                            cardsByRarity[r].set(cardId, 1);
                     const card_count = countCards(cardsByRarity[r]);
                     const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
                     if (card_count < card_target) {
@@ -517,13 +516,13 @@ export class Session {
             else {
                 // Generate fully random 15-cards booster for cube (not considering rarity)
                 // Getting custom card list
-                let localCollection = {};
+                let localCollection = new Map();
                 for (let cardId of this.customCardList.cards) {
                     // Duplicates adds one copy of the card
-                    if (cardId in localCollection)
-                        localCollection[cardId] += 1;
+                    if (localCollection.has(cardId))
+                        localCollection.set(cardId, localCollection.get(cardId) + 1);
                     else
-                        localCollection[cardId] = 1;
+                        localCollection.set(cardId, 1);
                 }
                 const cardsPerBooster = options.cardsPerBooster ?? 15;
                 let card_count = this.customCardList.cards.length;
@@ -574,7 +573,7 @@ export class Session {
             const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v) => v !== "");
             const acceptPaperBoosterFactories = targets === DefaultBoosterTargets &&
                 BoosterFactoryOptions.mythicPromotion &&
-                this.maxDuplicates === null &&
+                !this.maxDuplicates &&
                 this.unrestrictedCardPool();
             const isPaperBoosterFactoryAvailable = (set) => {
                 return set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories;
@@ -744,7 +743,7 @@ export class Session {
                 user_info.push({
                     userID: u.userID,
                     userName: u.userName,
-                    collection: !isEmpty(u.collection),
+                    collection: u.collection.size > 0,
                     useCollection: u.useCollection,
                     pickedThisRound: u.pickedThisRound,
                 });

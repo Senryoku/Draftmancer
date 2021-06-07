@@ -1,8 +1,8 @@
 "use strict";
 
 import { CardID, CardPool, getUnique, Cards } from "./Cards.js";
-import { getRandomKey, getRandom } from "./utils.js";
-import { removeCardFromDict } from "./cardUtils.js";
+import { getRandomMapKey, getRandom } from "./utils.js";
+import { removeCardFromCardPool } from "./cardUtils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json";
 
 export class BasicLandSlot {
@@ -21,7 +21,7 @@ export class BasicLandSlot {
 export class SpecialLandSlot extends BasicLandSlot {
 	commonLandsIds: Array<CardID>;
 	rate: number;
-	landsToDistribute: CardPool = {};
+	landsToDistribute: CardPool = new Map();
 
 	constructor(set: string, commonLandsIds: Array<CardID>, rate: number, basicLandsIds?: Array<CardID>) {
 		super(set);
@@ -33,16 +33,16 @@ export class SpecialLandSlot extends BasicLandSlot {
 	setup(commons: CardPool) {
 		for (let c of this.commonLandsIds) {
 			if (c in commons) {
-				this.landsToDistribute[c] = commons[c];
-				delete commons[c];
+				this.landsToDistribute.set(c, commons.get(c) as number);
+				commons.delete(c);
 			}
 		}
 	}
 
 	pick() {
-		if (Math.random() <= this.rate && Object.keys(this.landsToDistribute).length > 0) {
-			let c = getRandomKey(this.landsToDistribute);
-			removeCardFromDict(c, this.landsToDistribute);
+		if (Math.random() <= this.rate && this.landsToDistribute.size > 0) {
+			let c = getRandomMapKey(this.landsToDistribute);
+			removeCardFromCardPool(c, this.landsToDistribute);
 			return getUnique(c);
 		} else {
 			return getUnique(getRandom(this.basicLandsIds));
