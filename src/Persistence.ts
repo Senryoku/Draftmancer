@@ -46,8 +46,8 @@ async function requestSavedConnections() {
 			},
 		});
 		if (response.status !== 200) {
-			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data);
+			console.error(`requestSavedConnections::Error ${response.status}: ${response.statusText}`);
+			console.error(`	Data: `, response.data);
 		} else {
 			const connections = response.data;
 			if (connections && connections.length > 0) {
@@ -58,7 +58,7 @@ async function requestSavedConnections() {
 			}
 		}
 	} catch (err) {
-		console.log("Error (requestSavedConnections): ", err);
+		console.log("requestSavedConnections::", err);
 	}
 
 	return InactiveConnections;
@@ -118,8 +118,8 @@ async function requestSavedSessions() {
 			},
 		});
 		if (response.status !== 200) {
-			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data);
+			console.error(`requestSavedSessions::Error ${response.status}: ${response.statusText}`);
+			console.error(`	Data: `, response.data);
 		} else {
 			if (response.data && response.data.length > 0) {
 				for (let s of response.data) {
@@ -129,7 +129,7 @@ async function requestSavedSessions() {
 			}
 		}
 	} catch (err) {
-		console.log("error: ", err);
+		console.log("requestSavedSessions:: ", err);
 	}
 
 	return InactiveSessions;

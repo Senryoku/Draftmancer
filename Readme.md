@@ -19,6 +19,8 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 -   Use `npm run build-dev` to watch for changes in the client js code and automatically re-build it.
 -   Use `npm run build-dev-ts` to watch for changes in the server typescript code and automatically re-build it.
 
+-   Setting the environment variable `DISABLE_PERSISTENCE` to `TRUE` (one can use a `.env` file for development) will disable retrieving/saving the states of Connections/Sessions between server execution from an external store (see `src/Persistence.ts`).
+
 ### Tests
 
 -   `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
