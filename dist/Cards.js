@@ -89,7 +89,7 @@ class UniqueCard extends Card {
     foil = false;
 }
 export function getUnique(cid) {
-    let uc = Cards[cid];
+    let uc = Object.assign({}, Cards[cid]);
     uc.uniqueID = ++UniqueID;
     return uc;
 }
