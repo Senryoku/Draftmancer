@@ -21,7 +21,7 @@ const uuidv1 = uuid.v1;
 
 import { isEmpty, shuffleArray } from "./utils.js";
 import constants from "./data/constants.json";
-import { InactiveConnections, InactiveSessions, dumpError, restoreSession } from "./Persistence.js";
+import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import {
 	TurnBased,
@@ -960,8 +960,8 @@ io.on("connection", async function(socket) {
 					1} players online)`
 			);
 			removeUserFromSession(userID);
-			process.nextTick(() => {
-				if (Connections[userID].socket === this) delete Connections[userID];
+			setImmediate(() => {
+				if (Connections[userID]?.socket === this) delete Connections[userID];
 			});
 		}
 	});
@@ -1011,6 +1011,7 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 			InactiveSessions[sessionID],
 			InactiveSessions[sessionID].ownerIsPlayer ? userID : InactiveSessions[sessionID].owner
 		);
+		if (InactiveSessions[sessionID].deleteTimeout) clearTimeout(InactiveSessions[sessionID].deleteTimeout);
 		delete InactiveSessions[sessionID];
 	}
 
@@ -1060,16 +1061,15 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 function addUserToSession(userID: UserID, sessionID: SessionID) {
 	const options: any = {};
 	const currentSession = Connections[userID].sessionID;
-	if (currentSession !== undefined)
-		if (currentSession in Sessions) {
-			// Transfer session options to the new one if applicable
-			if (userID === Sessions[currentSession].owner) {
-				for (let p of optionProps) {
-					options[p] = (Sessions[currentSession] as IIndexable)[p];
-				}
+	if (currentSession && currentSession in Sessions) {
+		// Transfer session options to the new one if applicable
+		if (userID === Sessions[currentSession].owner) {
+			for (let p of optionProps) {
+				options[p] = (Sessions[currentSession] as IIndexable)[p];
 			}
-			removeUserFromSession(userID);
 		}
+		removeUserFromSession(userID);
+	}
 
 	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, options);
 
@@ -1079,7 +1079,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID) {
 
 function deleteSession(sessionID: SessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
-	process.nextTick(() => {
+	setImmediate(() => {
 		delete Sessions[sessionID];
 		if (wasPublic) updatePublicSession(sessionID);
 	});
@@ -1096,8 +1096,18 @@ function removeUserFromSession(userID: UserID) {
 
 			Connections[userID].sessionID = undefined;
 
-			// Keep session alive if the owner wasn't a player and is still connected.
-			if ((sess.ownerIsPlayer || !(sess.owner in Connections)) && sess.users.size === 0) {
+			//                           Keep session alive if the owner wasn't a player and is still connected.
+			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner in Connections))) {
+				// If a game was going, we'll keep the session around for a while in case a player reconnects
+				// (mostly useful in case of disconnection during a single player game)
+				if (sess.drafting) {
+					InactiveSessions[sessionID] = getPoDSession(sess);
+					InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
+						setImmediate(() => {
+							if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
+						});
+					}, 10 * 60 * 1000); // 10min should be plenty enough.
+				}
 				deleteSession(sessionID);
 			} else sess.notifyUserChange();
 		} else if (userID === sess.owner && !sess.ownerIsPlayer && sess.users.size === 0) {

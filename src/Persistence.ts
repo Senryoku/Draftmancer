@@ -69,15 +69,15 @@ async function requestSavedConnections() {
 	return InactiveConnections;
 }
 
+function copyProps(obj: any, target: any) {
+	for (let prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+}
+
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState"].includes(p))) {
+	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState", "owner"].includes(p))) {
 		(r as IIndexable)[prop] = s[prop];
 	}
-
-	const copyProps = (obj: any, target: any) => {
-		for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
-	};
 
 	if (s.botsInstances) {
 		r.botsInstances = [];
@@ -111,6 +111,38 @@ export function restoreSession(s: any, owner: UserID) {
 	}
 
 	return r;
+}
+
+export function getPoDSession(s: Session) {
+	const PoDSession: any = {};
+
+	for (let prop of Object.getOwnPropertyNames(s).filter(
+		p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
+	)) {
+		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
+	}
+
+	if (s.drafting) {
+		// Flag every user as disconnected so they can reconnect later
+		for (let userID of s.users) {
+			PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+		}
+
+		if (s.botsInstances) {
+			PoDSession.botsInstances = [];
+			for (let bot of s.botsInstances) {
+				let podbot = {};
+				copyProps(bot, podbot);
+				PoDSession.botsInstances.push(podbot);
+			}
+		}
+
+		if (s.draftState) {
+			PoDSession.draftState = {};
+			copyProps(s.draftState, PoDSession.draftState);
+		}
+	}
+	return PoDSession;
 }
 
 async function requestSavedSessions() {
@@ -186,45 +218,8 @@ async function tempDump(exitOnCompletion = false) {
 		console.log("Error: ", err);
 	}
 
-	let PoDSessions = [];
-	for (const sessionID in Sessions) {
-		const s = Sessions[sessionID];
-		const PoDSession: any = {};
-
-		for (let prop of Object.getOwnPropertyNames(s).filter(
-			p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
-		)) {
-			if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
-		}
-
-		if (s.drafting) {
-			// Flag every user as disconnected so they can reconnect later
-			for (let userID of s.users) {
-				PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
-			}
-
-			const copyProps = (obj: any, target: any) => {
-				for (let prop of Object.getOwnPropertyNames(obj))
-					if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
-			};
-
-			if (s.botsInstances) {
-				PoDSession.botsInstances = [];
-				for (let bot of s.botsInstances) {
-					let podbot = {};
-					copyProps(bot, podbot);
-					PoDSession.botsInstances.push(podbot);
-				}
-			}
-
-			if (s.draftState) {
-				PoDSession.draftState = {};
-				copyProps(s.draftState, PoDSession.draftState);
-			}
-		}
-
-		PoDSessions.push(PoDSession);
-	}
+	const PoDSessions = [];
+	for (const sessionID in Sessions) PoDSessions.push(getPoDSession(Sessions[sessionID]));
 
 	try {
 		Promises.push(
