@@ -960,7 +960,7 @@ io.on("connection", async function(socket) {
 					1} players online)`
 			);
 			removeUserFromSession(userID);
-			setImmediate(() => {
+			process.nextTick(() => {
 				if (Connections[userID]?.socket === this) delete Connections[userID];
 			});
 		}
@@ -1079,7 +1079,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID) {
 
 function deleteSession(sessionID: SessionID) {
 	const wasPublic = Sessions[sessionID].isPublic;
-	setImmediate(() => {
+	process.nextTick(() => {
 		delete Sessions[sessionID];
 		if (wasPublic) updatePublicSession(sessionID);
 	});
@@ -1103,7 +1103,7 @@ function removeUserFromSession(userID: UserID) {
 				if (sess.drafting) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
 					InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
-						setImmediate(() => {
+						process.nextTick(() => {
 							if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
 						});
 					}, 10 * 60 * 1000); // 10min should be plenty enough.
