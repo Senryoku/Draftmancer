@@ -3,9 +3,9 @@
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards } from "./../src/Cards.js";
-import { Connections } from "../src/Connection.js";
-import { Sessions } from "../src/Session.js";
+import { Cards } from "./../dist/Cards.js";
+import { Connections } from "../dist/Connection.js";
+import { Sessions } from "../dist/Session.js";
 import randomjs from "random-js";
 import {
 	connectClient,
@@ -15,7 +15,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 } from "./src/common.js";
-import Constants from "../client/src/data/constants.json";
+import Constants from "../src/data/constants.json";
 
 const checkColorBalance = function(booster) {
 	for (let color of "WUBRG")
@@ -221,15 +221,11 @@ describe("Sets content", function() {
 		it(`Checking ${set}`, function(done) {
 			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("setRestriction", function(sR) {
+			clients[nonOwnerIdx].once("setRestriction", function() {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
 				for (let r in sets[set]) {
-					expect(
-						Object.keys(localCollection[r])
-							.map(cid => Cards[cid].set)
-							.every(s => s === set)
-					).to.be.true;
-					expect(Object.keys(localCollection[r])).to.have.lengthOf(sets[set][r]);
+					expect([...localCollection[r].keys()].map(cid => Cards[cid].set).every(s => s === set)).to.be.true;
+					expect([...localCollection[r].keys()]).to.have.lengthOf(sets[set][r]);
 				}
 				done();
 			});
@@ -391,10 +387,10 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				expect(Object.keys(localCollection["common"])).to.have.lengthOf(101);
-				expect(Object.keys(localCollection["uncommon"])).to.have.lengthOf(80);
-				expect(Object.keys(localCollection["rare"])).to.have.lengthOf(53);
-				expect(Object.keys(localCollection["mythic"])).to.have.lengthOf(15);
+				expect([...localCollection["common"]]).to.have.lengthOf(101);
+				expect([...localCollection["uncommon"]]).to.have.lengthOf(80);
+				expect([...localCollection["rare"]]).to.have.lengthOf(53);
+				expect([...localCollection["mythic"]]).to.have.lengthOf(15);
 				done();
 			});
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
@@ -570,6 +566,46 @@ describe("Single Draft (Two Players)", function() {
 				done();
 			});
 			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+		});
+
+		endDraft();
+		disconnect();
+	});
+
+	describe("With Bots and all players disconnecting", function() {
+		connect();
+		it("Clients should receive the updated bot count.", function(done) {
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+
+		startDraft();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function(done) {
+			clients[ownerIdx].once("userDisconnected", function() {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Owner disconnects.", function(done) {
+			clients[ownerIdx].disconnect();
+			waitForSocket(clients[ownerIdx], done);
+		});
+
+		it("Owner reconnects.", function(done) {
+			clients[ownerIdx].on("connect", done);
+			clients[ownerIdx].connect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function(done) {
+			clients[ownerIdx].on("resumeOnReconnection", function() {
+				done();
+			});
+			clients[nonOwnerIdx].connect();
 		});
 
 		endDraft();
@@ -1217,7 +1253,7 @@ describe("Sealed", function() {
 	});
 });
 
-import JumpstartBoosters from "../data/JumpstartBoosters.json";
+import JumpstartBoosters from "../src/data/JumpstartBoosters.json";
 
 describe("Jumpstart", function() {
 	let clients = [];

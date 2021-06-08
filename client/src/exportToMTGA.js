@@ -1,4 +1,4 @@
-import Constant from "./data/constants.json";
+import Constant from "../../src/data/constants.json";
 
 function exportCardToMTGA(c, language, full) {
 	let set = c.set.toUpperCase();

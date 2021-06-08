@@ -10,6 +10,9 @@ module.exports = {
 		path: path.resolve(__dirname, "public/dist/"),
 		publicPath: "/dist/",
 	},
+	resolve: {
+		extensions: [".ts", ".tsx", ".js"],
+	},
 	module: {
 		rules: [
 			// Handles .vue files and <script> and <style> blocks within
@@ -39,9 +42,11 @@ module.exports = {
 				],
 			},
 			{
-			  test: /\.worker\.js$/,
-			  use: { loader: "worker-loader" },
+				test: /\.worker\.js$/,
+				use: { loader: "worker-loader" },
 			},
+			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+			{ test: /\.tsx?$/, loader: "ts-loader" },
 		],
 	},
 	plugins: [

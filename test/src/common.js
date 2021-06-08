@@ -1,8 +1,8 @@
 import chai from "chai";
 import io from "socket.io-client";
 const expect = chai.expect;
-import server from "../../server.js"; // Launch Server
-import { Connections } from "../../src/Connection.js";
+import server from "../../dist/server.js"; // Launch Server
+import { Connections } from "../../dist/Connection.js";
 
 const NODE_PORT = process.env.PORT | 3000;
 

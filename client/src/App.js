@@ -8,7 +8,7 @@ import Multiselect from "vue-multiselect";
 import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
-import Constant from "./data/constants.json";
+import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
@@ -242,6 +242,7 @@ export default {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
+				setCookie("useCollection", this.useCollection.toString());
 
 				Alert.fire({
 					icon: "warning",
@@ -479,22 +480,21 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(c);
-				// Fixme: I don't understand why this is necessary...
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
-				});
+					for (let c of data.pickedCards) this.addToDeck(c);
 
-				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
-				else this.draftingState = DraftState.WinstonWaiting;
+					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
+					else this.draftingState = DraftState.WinstonWaiting;
 
-				Alert.fire({
-					position: "center",
-					icon: "success",
-					title: "Reconnected to the Winston draft!",
-					showConfirmButton: false,
-					timer: 1500,
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Winston draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
 				});
 			});
 
@@ -546,22 +546,21 @@ export default {
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(c);
-				// Fixme: I don't understand why this is necessary...
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
-				});
+					for (let c of data.pickedCards) this.addToDeck(c);
 
-				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
-				else this.draftingState = DraftState.GridWaiting;
+					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
+					else this.draftingState = DraftState.GridWaiting;
 
-				Alert.fire({
-					position: "center",
-					icon: "success",
-					title: "Reconnected to the Grid draft!",
-					showConfirmButton: false,
-					timer: 1500,
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Grid draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
 				});
 			});
 
@@ -601,22 +600,21 @@ export default {
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(c);
-				// Fixme: I don't understand why this is necessary...
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
-				});
+					for (let c of data.pickedCards) this.addToDeck(c);
 
-				if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
-				else this.draftingState = DraftState.RochesterWaiting;
+					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
+					else this.draftingState = DraftState.RochesterWaiting;
 
-				Alert.fire({
-					position: "center",
-					icon: "success",
-					title: "Reconnected to the Rochester draft!",
-					showConfirmButton: false,
-					timer: 1500,
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Rochester draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
 				});
 			});
 
@@ -657,30 +655,31 @@ export default {
 				this.drafting = true;
 
 				this.clearState();
-				for (let c of data.pickedCards) this.addToDeck(c);
-				// Fixme: I don't understand why this in necessary... (Maybe it's not.)
+				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
+				if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
+				if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
+				// Let vue react to changes to card pools
 				this.$nextTick(() => {
-					if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
-					if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
-				});
+					for (let c of data.pickedCards) this.addToDeck(c);
 
-				this.booster = [];
-				for (let c of data.booster) this.booster.push(c);
-				this.boosterNumber = data.boosterNumber;
-				this.pickNumber = data.pickNumber;
+					this.booster = [];
+					for (let c of data.booster) this.booster.push(c);
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
 
-				this.pickedThisRound = data.pickedThisRound;
-				if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
-				else this.draftingState = DraftState.Picking;
-				this.selectedCards = [];
-				this.burningCards = [];
+					this.pickedThisRound = data.pickedThisRound;
+					if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
+					else this.draftingState = DraftState.Picking;
+					this.selectedCards = [];
+					this.burningCards = [];
 
-				Alert.fire({
-					position: "center",
-					icon: "success",
-					title: "Reconnected to the draft!",
-					showConfirmButton: false,
-					timer: 1500,
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
 				});
 			});
 
@@ -2301,7 +2300,7 @@ export default {
 		},
 		cardsPerBooster: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("cardsPerBooster",this.cardsPerBooster);
+			this.socket.emit("cardsPerBooster", this.cardsPerBooster);
 		},
 		teamDraft: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

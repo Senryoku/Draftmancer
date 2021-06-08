@@ -1,5 +1,10 @@
+import { UserID } from "./IDTypes";
+
 export class Bracket {
-	constructor(players, matchCount = 7) {
+	players: UserID[];
+	results: [number, number][];
+
+	constructor(players: UserID[], matchCount = 7) {
 		this.players = players;
 		this.results = [];
 		for (let i = 0; i < matchCount; ++i) this.results.push([0, 0]);
@@ -7,22 +12,22 @@ export class Bracket {
 }
 
 export class TeamBracket extends Bracket {
-	constructor(players) {
+	teamDraft: boolean = true;
+	constructor(players: UserID[]) {
 		super(players, 9);
-		this.teamDraft = true;
 	}
 }
 
 export class SwissBracket extends Bracket {
-	constructor(players) {
+	swiss: boolean = true;
+	constructor(players: UserID[]) {
 		super(players, 12);
-		this.swiss = true;
 	}
 }
 
 export class DoubleBracket extends Bracket {
-	constructor(players) {
+	double: boolean = true;
+	constructor(players: UserID[]) {
 		super(players, 14);
-		this.double = true;
 	}
 }

@@ -6,7 +6,15 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { Connection, Connections } from "./Connection.js";
-import { Session, Sessions, DraftState, WinstonDraftState, GridDraftState, RochesterDraftState } from "./Session.js";
+import {
+	Session,
+	Sessions,
+	DraftState,
+	WinstonDraftState,
+	GridDraftState,
+	RochesterDraftState,
+	IIndexable,
+} from "./Session.js";
 import Bot from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -17,17 +25,18 @@ const MixInstance = MixPanelToken
 	  })
 	: null;
 
-//                         Testing in mocha                   Explicitly disabled
-const DisablePersistence = typeof global.it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
+//                         Testing in mocha                            Explicitly disabled
+const DisablePersistence = typeof (global as any).it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
 const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
+import { UserID } from "./IDTypes.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
 async function requestSavedConnections() {
-	let InactiveConnections = {};
+	let InactiveConnections: { [uid: string]: any } = {};
 
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
@@ -37,29 +46,107 @@ async function requestSavedConnections() {
 			},
 		});
 		if (response.status !== 200) {
-			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data);
+			console.error(`requestSavedConnections::Error ${response.status}: ${response.statusText}`);
+			console.error(`	Data: `, response.data);
 		} else {
 			const connections = response.data;
 			if (connections && connections.length > 0) {
 				for (let c of connections) {
-					InactiveConnections[c.userID] = new Connection(null, c.userID, c.userName);
-					for (let prop of Object.getOwnPropertyNames(c)) {
-						InactiveConnections[c.userID][prop] = c[prop];
-					}
+					InactiveConnections[c.userID] = c;
 				}
 				console.log(`Restored ${connections.length} saved connections.`);
 			}
 		}
 	} catch (err) {
-		console.log("Error (requestSavedConnections): ", err);
+		console.error(
+			"requestSavedConnections::",
+			err.message,
+			err.response?.statusText ?? "",
+			err.response?.data ?? ""
+		);
 	}
 
 	return InactiveConnections;
 }
 
+function copyProps(obj: any, target: any) {
+	for (let prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+}
+
+export function restoreSession(s: any, owner: UserID) {
+	const r = new Session(s.id, owner);
+	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState", "owner"].includes(p))) {
+		(r as IIndexable)[prop] = s[prop];
+	}
+
+	if (s.botsInstances) {
+		r.botsInstances = [];
+		for (let bot of s.botsInstances) {
+			const newBot = new Bot(bot.name, bot.id);
+			copyProps(bot, newBot);
+			r.botsInstances.push(newBot);
+		}
+	}
+
+	if (s.draftState) {
+		switch (s.draftState.type) {
+			case "draft": {
+				r.draftState = new DraftState([]);
+				break;
+			}
+			case "winston": {
+				r.draftState = new WinstonDraftState([], []);
+				break;
+			}
+			case "grid": {
+				r.draftState = new GridDraftState([], []);
+				break;
+			}
+			case "rochester": {
+				r.draftState = new RochesterDraftState([], []);
+				break;
+			}
+		}
+		copyProps(s.draftState, r.draftState);
+	}
+
+	return r;
+}
+
+export function getPoDSession(s: Session) {
+	const PoDSession: any = {};
+
+	for (let prop of Object.getOwnPropertyNames(s).filter(
+		p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
+	)) {
+		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
+	}
+
+	if (s.drafting) {
+		// Flag every user as disconnected so they can reconnect later
+		for (let userID of s.users) {
+			PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+		}
+
+		if (s.botsInstances) {
+			PoDSession.botsInstances = [];
+			for (let bot of s.botsInstances) {
+				let podbot = {};
+				copyProps(bot, podbot);
+				PoDSession.botsInstances.push(podbot);
+			}
+		}
+
+		if (s.draftState) {
+			PoDSession.draftState = {};
+			copyProps(s.draftState, PoDSession.draftState);
+		}
+	}
+	return PoDSession;
+}
+
 async function requestSavedSessions() {
-	let InactiveSessions = {};
+	let InactiveSessions: { [sid: string]: Session } = {};
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
 			headers: {
@@ -68,58 +155,18 @@ async function requestSavedSessions() {
 			},
 		});
 		if (response.status !== 200) {
-			console.error(`Error ${response.status}: ${response.statusText}`);
-			console.error(`Data: `, response.data);
+			console.error(`requestSavedSessions::Error ${response.status}: ${response.statusText}`);
+			console.error(`	Data: `, response.data);
 		} else {
 			if (response.data && response.data.length > 0) {
 				for (let s of response.data) {
-					InactiveSessions[s.id] = new Session(s.id, null);
-					for (let prop of Object.getOwnPropertyNames(s).filter(
-						p => !["botsInstances", "draftState"].includes(p)
-					)) {
-						InactiveSessions[s.id][prop] = s[prop];
-					}
-
-					const copyProps = (obj, target) => {
-						for (let prop of Object.getOwnPropertyNames(obj)) target[prop] = obj[prop];
-					};
-
-					if (s.botsInstances) {
-						InactiveSessions[s.id].botsInstances = [];
-						for (let bot of s.botsInstances) {
-							const newBot = new Bot(bot.name, bot.id);
-							copyProps(bot, newBot);
-							InactiveSessions[s.id].botsInstances.push(newBot);
-						}
-					}
-
-					if (s.draftState) {
-						switch (s.draftState.type) {
-							case "draft": {
-								InactiveSessions[s.id].draftState = new DraftState();
-								break;
-							}
-							case "winston": {
-								InactiveSessions[s.id].draftState = new WinstonDraftState();
-								break;
-							}
-							case "grid": {
-								InactiveSessions[s.id].draftState = new GridDraftState();
-								break;
-							}
-							case "rochester": {
-								InactiveSessions[s.id].draftState = new RochesterDraftState();
-								break;
-							}
-						}
-						copyProps(s.draftState, InactiveSessions[s.id].draftState);
-					}
+					InactiveSessions[s.id] = s;
 				}
 				console.log(`Restored ${response.data.length} saved sessions.`);
 			}
 		}
 	} catch (err) {
-		console.log("error: ", err);
+		console.error("requestSavedSessions::", err.message, err.response?.statusText ?? "", err.response?.data ?? "");
 	}
 
 	return InactiveSessions;
@@ -146,10 +193,10 @@ async function tempDump(exitOnCompletion = false) {
 	let PoDConnections = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
-		const PoDConnection = {};
+		const PoDConnection: any = {};
 
 		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
-			if (!(c[prop] instanceof Function)) PoDConnection[prop] = c[prop];
+			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
 		}
 
 		PoDConnections.push(PoDConnection);
@@ -171,45 +218,8 @@ async function tempDump(exitOnCompletion = false) {
 		console.log("Error: ", err);
 	}
 
-	let PoDSessions = [];
-	for (const sessionID in Sessions) {
-		const s = Sessions[sessionID];
-		const PoDSession = {};
-
-		for (let prop of Object.getOwnPropertyNames(s).filter(
-			p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
-		)) {
-			if (!(s[prop] instanceof Function)) PoDSession[prop] = s[prop];
-		}
-
-		if (s.drafting) {
-			// Flag every user as disconnected so they can reconnect later
-			for (let userID of s.users) {
-				PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
-			}
-
-			const copyProps = (obj, target) => {
-				for (let prop of Object.getOwnPropertyNames(obj))
-					if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
-			};
-
-			if (s.botsInstances) {
-				PoDSession.botsInstances = [];
-				for (let bot of s.botsInstances) {
-					let podbot = {};
-					copyProps(bot, podbot);
-					PoDSession.botsInstances.push(podbot);
-				}
-			}
-
-			if (s.draftState) {
-				PoDSession.draftState = {};
-				copyProps(s.draftState, PoDSession.draftState);
-			}
-		}
-
-		PoDSessions.push(PoDSession);
-	}
+	const PoDSessions = [];
+	for (const sessionID in Sessions) PoDSessions.push(getPoDSession(Sessions[sessionID]));
 
 	try {
 		Promises.push(
@@ -235,7 +245,7 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-function saveLog(type, session) {
+function saveLog(type: string, session: Session) {
 	let localSess = JSON.parse(JSON.stringify(session));
 	localSess.users = [...session.users]; // Stringifying doesn't support Sets
 	// Anonymize Draft Log
@@ -260,7 +270,7 @@ function saveLog(type, session) {
 	}
 }
 
-export function dumpError(name, data) {
+export function dumpError(name: string, data: any) {
 	axios
 		.post(`${PersistenceStoreURL}/store/${name}`, data, {
 			headers: {
@@ -270,11 +280,11 @@ export function dumpError(name, data) {
 		.catch(err => console.error("Error dumping error(wup): ", err.message));
 }
 
-export function logSession(type, session) {
+export function logSession(type: string, session: Session) {
 	if (SaveLogs) saveLog(type, session);
 
 	if (!MixInstance) return;
-	let mixdata = {
+	let mixdata: any = {
 		distinct_id: process.env.NODE_ENV || "development",
 		playerCount: session.users.size,
 	};
@@ -301,13 +311,13 @@ export function logSession(type, session) {
 		"burnedCardsPerRound",
 		"bracketLocked",
 	])
-		mixdata[prop] = session[prop];
+		mixdata[prop] = (session as IIndexable)[prop];
 	if (session.customCardList && session.customCardList.name) mixdata.customCardListName = session.customCardList.name;
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
-export let InactiveSessions = {};
-export let InactiveConnections = {};
+export let InactiveSessions: { [sid: string]: any } = {};
+export let InactiveConnections: { [sid: string]: any } = {};
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
