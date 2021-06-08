@@ -572,6 +572,46 @@ describe("Single Draft (Two Players)", function() {
 		disconnect();
 	});
 
+	describe("With Bots and all players disconnecting", function() {
+		connect();
+		it("Clients should receive the updated bot count.", function(done) {
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(6);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 6);
+		});
+
+		startDraft();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function(done) {
+			clients[ownerIdx].once("userDisconnected", function() {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Owner disconnects.", function(done) {
+			clients[ownerIdx].disconnect();
+			waitForSocket(clients[ownerIdx], done);
+		});
+
+		it("Owner reconnects.", function(done) {
+			clients[ownerIdx].on("connect", done);
+			clients[ownerIdx].connect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function(done) {
+			clients[ownerIdx].on("resumeOnReconnection", function() {
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		endDraft();
+		disconnect();
+	});
+
 	describe("With custom boosters and bots", function() {
 		const CustomBoosters = ["xln", "rix", ""];
 		connect();
