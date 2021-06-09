@@ -621,9 +621,7 @@ const ownerSocketCallbacks: { [key: string]: Function } = {
 		// Validate input (a value for each rarity and at least one card)
 		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
 		if (
-			Object.values(boosterContent).every(
-				r => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]
-			)
+			Object.keys(boosterContent).every(r => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r])
 		)
 			return;
 		if (Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
