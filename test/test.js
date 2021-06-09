@@ -134,6 +134,25 @@ describe("Inter client communication", function() {
 			});
 			sender.emit("setUserName", "Sender New UserName");
 		});
+
+		it("Clearing sessionOptions events (We fire at least one on connection and don't want it to linger).", function(done) {
+			receiver.on("sessionOptions", () => {});
+			receiver.removeListener("sessionOptions");
+			done();
+		});
+
+		// Session settings
+		it("Clients should receive the updated boosterContent.", function(done) {
+			const newBoosterContent = { common: 2, uncommon: 58, rare: 36 };
+			receiver.once("sessionOptions", data => {
+				console.error(data);
+				console.error(newBoosterContent);
+				expect(data.boosterContent).to.eql(newBoosterContent);
+				done();
+			});
+
+			sender.emit("setBoosterContent", newBoosterContent);
+		});
 		it("Clients should receive the updated maxDuplicates.", function(done) {
 			const newMaxDuplicates = { common: 5, uncommon: 4, rare: 1, mythic: 1 };
 			receiver.once("sessionOptions", function(options) {
@@ -142,6 +161,7 @@ describe("Inter client communication", function() {
 			});
 			sender.emit("setMaxDuplicates", newMaxDuplicates);
 		});
+
 		it("Removing non-owner.", function(done) {
 			receiver.once("setSession", function(newID) {
 				expect(Sessions[sessionID].users.size).to.equal(1);

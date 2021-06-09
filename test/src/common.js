@@ -3,6 +3,7 @@ import io from "socket.io-client";
 const expect = chai.expect;
 import server from "../../dist/server.js"; // Launch Server
 import { Connections } from "../../dist/Connection.js";
+import { resolve } from "node:path";
 
 const NODE_PORT = process.env.PORT | 3000;
 
