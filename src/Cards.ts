@@ -6,10 +6,6 @@ import parseCost from "./parseCost.js";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 
-console.log("Loading Cards...");
-memoryReport();
-console.time("Parsing Cards");
-
 export type CardID = string;
 export type ArenaID = string;
 
@@ -30,7 +26,7 @@ export class Card {
 	image_uris: { [lang: string]: string } = {};
 }
 
-export type CardPool = Map<string, number>; //{ [cid: string]: number };
+export type CardPool = Map<string, number>;
 export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;
@@ -40,27 +36,46 @@ export type DeckList = {
 };
 
 export let Cards: { [cid: string]: Card } = {};
+
+let UniqueID = 0;
+
+export class UniqueCard extends Card {
+	uniqueID?: number;
+	foil?: boolean = false;
+}
+
+export function getUnique(cid: CardID, foil?: boolean) {
+	let uc: UniqueCard = Object.assign({}, Cards[cid]);
+	uc.uniqueID = ++UniqueID;
+	if (foil) uc.foil = foil;
+	return uc;
+}
+
+console.group("Cards.ts::Loading Cards...");
+console.time("Total");
+
+//memoryReport();
+
+console.time("Parsing Cards");
 if (process.env.NODE_ENV !== "production") {
-	let tmp = JSON.parse(fs.readFileSync("./data/MTGCards.json").toString());
-	for (let cid in tmp) {
-		Cards[cid] = tmp[cid] as Card; //new Card(entry.value);
-	}
+	Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"));
 } else {
+	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
 	const cardsPromise = new Promise((resolve, reject) => {
 		const stream = JSONStream.parse("$*");
 		stream.on("data", function(entry: any) {
-			Cards[entry.key] = entry.value as Card; //new Card(entry.value);
+			Cards[entry.key] = entry.value as Card;
 		});
 		stream.on("end", resolve);
 		fs.createReadStream("./data/MTGCards.json").pipe(stream);
 	});
 	await cardsPromise;
 }
-
 console.timeEnd("Parsing Cards");
-memoryReport();
 
-console.log("Preparing Cards and caches...");
+//memoryReport();
+
+console.time("Preparing Cards and caches");
 
 export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by their arena id
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
@@ -105,18 +120,7 @@ Object.freeze(CardsBySet);
 Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 
-let UniqueID = 0;
+console.timeEnd("Preparing Cards and caches");
 
-export class UniqueCard extends Card {
-	uniqueID?: number;
-	foil?: boolean = false;
-}
-
-export function getUnique(cid: CardID, foil?: boolean) {
-	let uc: UniqueCard = Object.assign({}, Cards[cid]);
-	uc.uniqueID = ++UniqueID;
-	if (foil) uc.foil = foil;
-	return uc;
-}
-
-console.log("Done.");
+console.timeEnd("Total");
+console.groupEnd();

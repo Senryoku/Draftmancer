@@ -782,9 +782,7 @@ export const PaperBoosterFactories: {
 for (let s of PaperBoosterData as any[]) {
 	let set: SetInfo = s as SetInfo;
 	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
-		console.log(
-			`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`
-		);
+		//console.log( `PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.` );
 		continue;
 	}
 

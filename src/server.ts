@@ -88,8 +88,6 @@ function startPublicSession(s: Session) {
 }
 
 // Prepare local custom card lists
-console.log("Preparing local custom card lists...");
-console.time("PrepareCustomCardLists");
 const ParsedCubeLists: { [name: string]: any } = {};
 for (let cube of constants.CubeLists) {
 	if (cube.filename) {
@@ -102,8 +100,6 @@ for (let cube of constants.CubeLists) {
 		}
 	}
 }
-console.timeEnd("PrepareCustomCardLists");
-console.log("Done.");
 
 /////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
@@ -1358,7 +1354,7 @@ app.get("/getSessions/:key", (req, res) => {
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
 	httpServer.listen(port, () => {
-		console.log("listening on port " + port);
+		console.log(`Listening on port ${port} (ready in ${process.uptime().toFixed(2)}s)`);
 	});
 });
 
