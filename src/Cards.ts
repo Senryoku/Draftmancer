@@ -108,7 +108,7 @@ Object.freeze(MTGACardIDs);
 
 let UniqueID = 0;
 
-class UniqueCard extends Card {
+export class UniqueCard extends Card {
 	uniqueID?: number;
 	foil?: boolean = false;
 }

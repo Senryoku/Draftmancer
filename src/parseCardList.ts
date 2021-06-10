@@ -1,12 +1,13 @@
 import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
+import { Options } from "./utils.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(+\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?\s*$/;
 
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
-export function parseLine(line: string, options: { [key: string]: any } = { fallbackToCardName: false }) {
+export function parseLine(line: string, options: Options = { fallbackToCardName: false }) {
 	line = line.trim();
 	const match = line.match(lineRegex);
 	if (!match) {

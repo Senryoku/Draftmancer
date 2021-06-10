@@ -16,11 +16,11 @@ export function negMod(m: number, n: number) {
 	return ((m % n) + n) % n;
 }
 
-export function getRandom(arr: Array<any>) {
+export function getRandom<Type>(arr: Array<Type>): Type {
 	return arr[random.integer(0, arr.length - 1)];
 }
 
-export function getRandomMapKey(map: CardPool) {
+export function getRandomMapKey<K, V>(map: Map<K, V>): K {
 	let idx = random.integer(0, map.size - 1);
 	for (let k of map.keys()) {
 		if (idx-- === 0) return k;
@@ -42,7 +42,7 @@ export function range(start: number, end: number, step: number = 1) {
 }
 
 // https://bl.ocks.org/lovasoa/3361645; modified to take an array of arrays as argument
-export function arrayIntersect(args: Array<Array<any>>) {
+export function arrayIntersect<T>(args: Array<Array<T>>) {
 	if (!args.length) return [];
 	if (args.length === 1) return args[0];
 	let a,
@@ -85,7 +85,7 @@ export function arrayIntersect(args: Array<Array<any>>) {
 
 // From https://stackoverflow.com/a/12646864
 // Modified to optionaly work only on the [start, end[ slice of array.
-export function shuffleArray(array: Array<any>, start = 0, end = array.length) {
+export function shuffleArray<T>(array: Array<T>, start = 0, end = array.length) {
 	for (let i = end - 1; i > start; i--) {
 		const j = start + Math.floor(Math.random() * (i - start + 1));
 		[array[i], array[j]] = [array[j], array[i]];
@@ -103,3 +103,5 @@ export function memoryReport() {
 	console.log(`	Heap used   ${bytesToMB(mem.heapUsed)} MB`);
 	console.log(`	Heap total  ${bytesToMB(mem.heapTotal)} MB`);
 }
+
+export type Options = { [key: string]: any };

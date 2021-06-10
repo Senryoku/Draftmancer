@@ -771,14 +771,21 @@ export default {
 			});
 
 			this.socket.on("setCardSelection", data => {
+				if (!data) return;
+				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
+				if (cards.length === 0) return;
 				this.clearState();
-				for (let c of data.reduce((acc, val) => acc.concat(val), [])) {
-					this.addToDeck(c);
-				}
-				this.draftingState = DraftState.Brewing;
-				// Hide waiting popup for sealed
-				if (Swal.isVisible()) Swal.close();
-				this.pushNotification("Cards received!");
+				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
+				if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
+				if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
+				// Let vue react to changes to card pools
+				this.$nextTick(() => {
+					for (let c of cards) this.addToDeck(c);
+					this.draftingState = DraftState.Brewing;
+					// Hide waiting popup for sealed
+					if (Swal.isVisible()) Swal.close();
+					this.pushNotification("Cards received!");
+				});
 			});
 
 			this.socket.on("timer", data => {

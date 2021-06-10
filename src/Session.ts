@@ -5,7 +5,7 @@ const uuidv1 = uuid.v1;
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect } from "./utils.js";
+import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options } from "./utils.js";
 import { Connections } from "./Connection.js";
 import {
 	CardID,
@@ -132,7 +132,7 @@ export class GridDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	error: any;
 	boosterCount: number;
-	lastPicks: any = [];
+	lastPicks: { userName: string; round: number; cards: (Card | null)[] }[] = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("grid");
 		this.players = players;
@@ -172,7 +172,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	boosterNumber = 0;
 	boosters: Array<Array<Card>> = [];
 	boosterCount: number;
-	lastPicks: any = [];
+	lastPicks: { userName: string; round: number; cards: Card[] }[] = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
 		super("rochester");
 		this.players = players;
@@ -256,13 +256,13 @@ export class Session implements IIndexable {
 	disconnectedUsers: { [uid: string]: any } = {};
 	draftPaused: boolean = false;
 	countdown: number = 75;
-	countdownInterval: any = null;
+	countdownInterval: NodeJS.Timeout | null = null;
 
-	constructor(id: SessionID, owner: UserID, options: any = null) {
+	constructor(id: SessionID, owner: UserID, options: Options = {}) {
 		this.id = id;
 		this.owner = owner;
 
-		if (options) for (let p in options) (this as IIndexable)[p] = options[p];
+		for (let p in options) (this as IIndexable)[p] = options[p];
 	}
 
 	addUser(userID: UserID) {
@@ -396,7 +396,7 @@ export class Session implements IIndexable {
 	}
 
 	syncSessionOptions(userID: UserID) {
-		const options: any = {
+		const options: Options = {
 			sessionOwner: this.owner,
 			bracket: this.bracket,
 		};
@@ -521,7 +521,7 @@ export class Session implements IIndexable {
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
-	generateBoosters(boosterQuantity: number, options: any = {}) {
+	generateBoosters(boosterQuantity: number, options: Options = {}) {
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
 			if (!this.boosters) {
@@ -660,7 +660,7 @@ export class Session implements IIndexable {
 				set: string | null,
 				cardPool: SlotedCardPool,
 				landSlot: BasicLandSlot | null,
-				options: any
+				options: Options
 			) {
 				// Check for a special booster factory
 				if (set && set in SetSpecificFactories) return SetSpecificFactories[set](cardPool, landSlot, options);
@@ -1609,12 +1609,7 @@ export class Session implements IIndexable {
 
 		for (let user of this.users) {
 			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-			const cards = boosters
-				.map(b => b.cards.map((cid: CardID) => getUnique(cid)))
-				.reduce((arr, val) => {
-					arr.push(val);
-					return arr;
-				}, []);
+			const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
 
 			log.users[user].cards = cards.flat().map((c: Card) => c.id);
 			for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];

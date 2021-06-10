@@ -19,7 +19,7 @@ import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
 
-import { isEmpty, shuffleArray } from "./utils.js";
+import { isEmpty, Options, shuffleArray } from "./utils.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -33,7 +33,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID } from "./Cards.js";
+import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -113,7 +113,7 @@ const useCustomCardList = function(session: Session, list: CustomCardList) {
 	if (session.isPublic) updatePublicSession(session.id);
 };
 
-const parseCustomCardList = function(session: Session, txtlist: string, options: any, ack: Function) {
+const parseCustomCardList = function(session: Session, txtlist: string, options: Options, ack: Function) {
 	let parsedList = null;
 	try {
 		parsedList = parseCardList(txtlist, options);
@@ -145,7 +145,9 @@ const checkDraftAction = function(userID: UserID, sess: Session, type: string, a
 	return true;
 };
 
-const socketCallbacks: { [name: string]: Function } = {
+type SocketSessionCallback = (userID: UserID, sessionID: SessionID, ...args: any) => void;
+
+const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	// Personnal options
 	setUserName(userID: UserID, sessionID: SessionID, userName: string) {
 		Connections[userID].userName = userName;
@@ -269,7 +271,7 @@ const socketCallbacks: { [name: string]: Function } = {
 };
 
 // Socket callback available only to session owners
-const ownerSocketCallbacks: { [key: string]: Function } = {
+const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
@@ -1057,7 +1059,7 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 }
 
 function addUserToSession(userID: UserID, sessionID: SessionID) {
-	const options: any = {};
+	const options: Options = {};
 	const currentSession = Connections[userID].sessionID;
 	if (currentSession && currentSession in Sessions) {
 		// Transfer session options to the new one if applicable
@@ -1188,7 +1190,7 @@ app.post("/getCards", (req, res) => {
 			if (Array.isArray(req.body)) {
 				res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
 			} else if (typeof req.body === "object") {
-				const r: any = {};
+				const r: { [key: string]: Card[] } = {};
 				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
 				res.send(JSON.stringify(r));
 			} else {
@@ -1206,9 +1208,9 @@ app.post("/getDeck", (req, res) => {
 		res.status(400).send({ error: { message: `Bad request.` } });
 	} else {
 		try {
-			let r = { deck: [], sideboard: [] };
+			let r = { deck: [] as Card[], sideboard: [] as Card[] };
 			const lines = req.body.split(/\r\n|\n/);
-			let target: any = r.deck;
+			let target: Card[] = r.deck;
 			for (let line of lines) {
 				line = line.trim();
 				if (line === "Deck") target = r.deck;
