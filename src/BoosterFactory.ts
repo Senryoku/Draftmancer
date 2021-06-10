@@ -724,12 +724,14 @@ export class PaperBoosterFactory implements IBoosterFactory {
 
 	generateBooster() {
 		const booster: Array<CardInfo> = [];
+		// Select one of the possible sheet arrangement
 		const boosterContent = this.possibleContent[
 			weightedRandomIdx(
 				this.possibleContent,
 				this.possibleContent.reduce((acc: number, val: BoosterInfo) => (acc += val.weight), 0)
 			)
 		];
+		// Pick cards from each sheet, color balancing if necessary
 		for (let sheetName in boosterContent.sheets) {
 			if (this.set.sheets[sheetName].balance_colors) {
 				const sheet = this.set.colorBalancedSheets?.[sheetName];
@@ -740,9 +742,8 @@ export class PaperBoosterFactory implements IBoosterFactory {
 					continue;
 				}
 				const pickedCards: Array<CardInfo> = [];
-				for (let color of "WUBRG") {
+				for (let color of "WUBRG")
 					pickedCards.push(weightedRandomPick(sheet[color].cards, sheet[color].total_weight, pickedCards));
-				}
 				const cardsToPick = boosterContent.sheets[sheetName] - pickedCards.length;
 				// Compensate the color balancing to keep a uniform distribution of cards within the sheet.
 				const x =
@@ -751,18 +752,11 @@ export class PaperBoosterFactory implements IBoosterFactory {
 				for (let i = 0; i < cardsToPick; ++i) {
 					// For sets with only one non-mono colored card (like M14 and its unique common artifact)
 					// compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
-					if (
-						Math.random() < x ||
-						(sheet["Others"].cards.length === 1 &&
-							pickedCards.some(c => c.id === sheet["Others"].cards[0].id))
-					)
-						pickedCards.push(
-							weightedRandomPick(sheet["Mono"].cards, sheet["Mono"].total_weight, pickedCards)
-						);
-					else
-						pickedCards.push(
-							weightedRandomPick(sheet["Others"].cards, sheet["Others"].total_weight, pickedCards)
-						);
+					const noOther =
+						sheet["Others"].cards.length === 1 &&
+						pickedCards.some(c => c.id === sheet["Others"].cards[0].id);
+					const selectedSheet = Math.random() < x || noOther ? sheet["Mono"] : sheet["Others"];
+					pickedCards.push(weightedRandomPick(selectedSheet.cards, selectedSheet.total_weight, pickedCards));
 				}
 				shuffleArray(pickedCards);
 				booster.push(...pickedCards);
@@ -778,7 +772,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 				}
 			}
 		}
-		return booster.map(c => (c.foil ? Object.assign({ foil: true }, getUnique(c.id)) : getUnique(c.id))).reverse();
+		return booster.map(c => getUnique(c.id, c.foil)).reverse();
 	}
 }
 

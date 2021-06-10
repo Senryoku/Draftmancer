@@ -1,7 +1,7 @@
 import ManaSymbolsJSON from "./data/mana_symbols.json";
 
 type parseCostReturnType = { cmc: number; colors: string[] };
-const ManaSymbols: { [key: string]: parseCostReturnType } = ManaSymbolsJSON;
+const ManaSymbols: { [key: string]: { cmc: number | null; colors: string[] } } = ManaSymbolsJSON;
 
 export default function parseCost(cost: string) {
 	let r: parseCostReturnType = {
@@ -13,7 +13,7 @@ export default function parseCost(cost: string) {
 	if (cost.includes("//")) cost = cost.split("//")[0].trim();
 	let symbols = cost.match(/({[^}]+})/g) || [];
 	for (let s of symbols) {
-		r.cmc += ManaSymbols[s].cmc;
+		r.cmc += ManaSymbols[s].cmc || 0;
 		r.colors = r.colors.concat(ManaSymbols[s].colors);
 	}
 	r.colors = [...new Set(r.colors)]; // Remove duplicates

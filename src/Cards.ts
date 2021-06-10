@@ -5,7 +5,6 @@ import parseCost from "./parseCost.js";
 
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
-import { IIndexable } from "./Session.js";
 
 console.log("Loading Cards...");
 memoryReport();
@@ -113,9 +112,10 @@ export class UniqueCard extends Card {
 	foil?: boolean = false;
 }
 
-export function getUnique(cid: CardID) {
+export function getUnique(cid: CardID, foil?: boolean) {
 	let uc: UniqueCard = Object.assign({}, Cards[cid]);
 	uc.uniqueID = ++UniqueID;
+	if (foil) uc.foil = foil;
 	return uc;
 }
 
