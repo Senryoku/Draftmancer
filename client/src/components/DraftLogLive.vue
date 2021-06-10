@@ -126,13 +126,13 @@ export default {
 		pickNames() {
 			const pick = this.draftlog.users[this.player].picks[this.pick];
 			return pick.pick
-				.map((idx) => pick.booster[idx])
+				.map(idx => pick.booster[idx])
 				.map(this.getCardName)
 				.join(", ");
 		},
 		selectedPlayerCards() {
 			return this.draftlog.users[this.player].picks
-				.map((p) => p.pick.map((idx) => p.booster[idx]))
+				.map(p => p.pick.map(idx => p.booster[idx]))
 				.flat()
 				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
 		},

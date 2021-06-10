@@ -1,7 +1,7 @@
 <template>
 	<ol class="patch-notes">
 		<li v-for="(pn, pnIndex) in notes" :key="pnIndex">
-			{{pn.date}}
+			{{ pn.date }}
 			<ul>
 				<li v-for="(n, index) in pn.notes" :key="index" v-html="n"></li>
 			</ul>

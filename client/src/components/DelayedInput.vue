@@ -23,24 +23,24 @@ export default {
 		validate: { type: Function },
 		waitOnEmpty: { type: Boolean, default: true },
 	},
-	data: function () {
+	data: function() {
 		return {
 			timeout: null,
 			inputEl: null,
 		};
 	},
-	mounted: function () {
+	mounted: function() {
 		this.inputEl = this.$el.querySelector("input");
 	},
 	methods: {
-		update: function (e) {
+		update: function(e) {
 			if (this.validate) this.inputEl.value = this.validate(this.inputEl.value);
 			this.$emit("input", this.inputEl.value);
 			this.inputEl.classList.remove("dirty");
 			this.inputEl.classList.add("updated");
 			clearTimeout(this.timeout);
 		},
-		modified: function (e) {
+		modified: function(e) {
 			this.inputEl.classList.add("dirty");
 			this.inputEl.classList.remove("updated");
 			//                    Avoid automatically validating & propagating changes when the input is empty

@@ -6,9 +6,9 @@
 		class="land-control"
 	>
 		<template v-slot:handle>
-			<span v-if="Object.values(lands).every((n) => n === 0)"> No basic land added. </span>
+			<span v-if="Object.values(lands).every(n => n === 0)"> No basic land added. </span>
 			<span
-				v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => lands[c] > 0)"
+				v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => lands[c] > 0)"
 				:key="c"
 				@click="add(c)"
 				@contextmenu.prevent="rem(c)"
@@ -66,10 +66,10 @@ export default {
 		otherbasics: { type: Boolean },
 	},
 	methods: {
-		add: function (c) {
+		add: function(c) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] + 1));
 		},
-		rem: function (c) {
+		rem: function(c) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] - 1));
 		},
 	},

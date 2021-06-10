@@ -107,7 +107,7 @@ export default {
 		return { loaded: false, img: new Image(), observer: null, errored: false };
 	},
 	methods: {
-		isVisible: function () {
+		isVisible: function() {
 			const rect = this.$el.getBoundingClientRect();
 
 			return (
@@ -139,7 +139,7 @@ export default {
 					this.$emit("load"); // emits 'load' event upwards
 					clear();
 				});
-				this.img.addEventListener("error", (event) => {
+				this.img.addEventListener("error", event => {
 					this.errored = true;
 					// emits 'error' event upwards adds the original event as argument
 					this.$emit("error", event);
@@ -162,7 +162,7 @@ export default {
 				root: this.element ? document.querySelector(this.element) : null,
 				rootMargin: this.margin, // creates IO instance
 			};
-			this.observer = new IntersectionObserver((entries) => {
+			this.observer = new IntersectionObserver(entries => {
 				// as we instantiated one for each component we can directly access the first index
 				if (
 					(this.ratio === 0 && entries[0].isIntersecting) ||

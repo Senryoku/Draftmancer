@@ -92,23 +92,23 @@ export default {
 		};
 	},
 	computed: {
-		orderedLogs: function () {
+		orderedLogs: function() {
 			return [...this.draftLogs].sort((lhs, rhs) => rhs.time - lhs.time);
 		},
 	},
 	methods: {
-		downloadLog: function (draftLog) {
+		downloadLog: function(draftLog) {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
 			for (let uid in draftLog.users) {
 				draftLogFull.users[uid].exportString = exportToMTGA(
-					draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
+					draftLogFull.users[uid].cards.map(cid => draftLogFull.carddata[cid]),
 					null,
 					this.language
 				);
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
-		deleteLog: function (draftLog) {
+		deleteLog: function(draftLog) {
 			Alert.fire({
 				position: "center",
 				icon: "question",
@@ -120,10 +120,10 @@ export default {
 				confirmButtonText: "Delete",
 				cancelButtonText: "Cancel",
 				allowOutsideClick: false,
-			}).then((result) => {
+			}).then(result => {
 				if (result.isConfirmed) {
 					this.draftLogs.splice(
-						this.draftLogs.findIndex((e) => e === draftLog),
+						this.draftLogs.findIndex(e => e === draftLog),
 						1
 					);
 					this.expandedLogs = {};
@@ -131,11 +131,11 @@ export default {
 				}
 			});
 		},
-		importLog: function (e) {
+		importLog: function(e) {
 			let file = e.target.files[0];
 			if (!file) return;
 			const reader = new FileReader();
-			const displayError = (e) => {
+			const displayError = e => {
 				Alert.fire({
 					icon: "error",
 					title: "Parsing Error",
@@ -143,7 +143,7 @@ export default {
 					footer: `Full error: ${e}`,
 				});
 			};
-			reader.onload = (e) => {
+			reader.onload = e => {
 				try {
 					let contents = e.target.result;
 					let json = JSON.parse(contents);
@@ -152,7 +152,7 @@ export default {
 						this.expandedLogs = {};
 						Vue.set(
 							this.expandedLogs,
-							this.orderedLogs.findIndex((e) => e === json),
+							this.orderedLogs.findIndex(e => e === json),
 							!this.expandedLogs[json]
 						);
 						this.$emit("storelogs");
@@ -163,10 +163,10 @@ export default {
 			};
 			reader.readAsText(file);
 		},
-		toggle: function (idx) {
+		toggle: function(idx) {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
-		printableType: function (draftLog) {
+		printableType: function(draftLog) {
 			let r = draftLog.type ? draftLog.type : "Draft";
 			if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
 			return r;

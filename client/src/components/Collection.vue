@@ -92,7 +92,7 @@
 				<div class="card-container">
 					<missing-card
 						v-for="card in selectedSet[missingCardsRarity].filter(
-							(c) => (showNonBooster || c.in_booster) && c.count < 4
+							c => (showNonBooster || c.in_booster) && c.count < 4
 						)"
 						:key="card.arena_id"
 						:card="card"
@@ -128,7 +128,7 @@ export default {
 		};
 	},
 	computed: {
-		collectionStats: function () {
+		collectionStats: function() {
 			if (!this.collection || !SetsInfos) return null;
 			const baseSet = (setCode, fullName) => {
 				return {
@@ -183,7 +183,7 @@ export default {
 						}
 						stats[s][card.rarity].push(card);
 
-						const count = (target) => {
+						const count = target => {
 							target.total.all += 1;
 							if (!(card.rarity in target.total)) target.total[card.rarity] = 0;
 							target.total[card.rarity] += 1;
@@ -202,10 +202,10 @@ export default {
 			}
 			return stats;
 		},
-		selectedSet: function () {
+		selectedSet: function() {
 			return this.collectionStats[this.selectedSetCode];
 		},
-		sets: function () {
+		sets: function() {
 			return Constant.MTGASets.slice().reverse();
 		},
 	},

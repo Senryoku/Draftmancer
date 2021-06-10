@@ -35,13 +35,13 @@
 					<h2>{{ block.name }}</h2>
 					<div class="controls">
 						<span
-							@click="add(block.sets.map((s) => s.code))"
+							@click="add(block.sets.map(s => s.code))"
 							class="clickable"
 							v-tooltip="'Add all sets from this block'"
 							><i class="fas fa-plus-square"></i
 						></span>
 						<span
-							@click="remove(block.sets.map((s) => s.code))"
+							@click="remove(block.sets.map(s => s.code))"
 							class="clickable"
 							v-tooltip="'Remove all sets from this block'"
 							><i class="fas fa-minus-square"></i
@@ -76,12 +76,12 @@ import constants from "../../../src/data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 
 export default {
-	data: function () {
+	data: function() {
 		return {
 			SetsInfos: SetsInfos,
 			blocks: [
-				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
-				{ name: "Un-sets", sets: ["und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
+				{ name: "MtG: Arena", sets: constants.MTGASets.map(s => SetsInfos[s]).reverse() },
+				{ name: "Un-sets", sets: ["und", "ust", "unh", "ugl"].map(s => SetsInfos[s]) },
 				{
 					name: "Masters",
 					sets: [
@@ -100,7 +100,7 @@ export default {
 						"me3",
 						"me2",
 						"me1", // Is 'med' in MTGA and MTGO
-					].map((s) => SetsInfos[s]),
+					].map(s => SetsInfos[s]),
 				},
 			],
 			irregularSets: ["cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn", "all"],
@@ -109,10 +109,10 @@ export default {
 	props: {
 		value: { type: Array, required: true },
 	},
-	mounted: function () {
-		const assigned = this.blocks.map((b) => b.sets).flat();
+	mounted: function() {
+		const assigned = this.blocks.map(b => b.sets).flat();
 		let blocks = {};
-		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
+		for (let s of constants.PrimarySets.map(s => SetsInfos[s])) {
 			let b = s.block;
 			if (!b && assigned.includes(s)) continue;
 			if (!b) b = "Others";
@@ -125,13 +125,13 @@ export default {
 		update(newVal) {
 			this.$emit("input", newVal);
 		},
-		addAll: function () {
+		addAll: function() {
 			this.update([...constants.PrimarySets]);
 		},
-		clear: function () {
+		clear: function() {
 			this.update([]);
 		},
-		remove: function (arr) {
+		remove: function(arr) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -139,7 +139,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		add: function (arr) {
+		add: function(arr) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -147,7 +147,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		toggle: function (s) {
+		toggle: function(s) {
 			const newVal = [...this.value];
 			const index = newVal.indexOf(s);
 			if (index !== -1) {
@@ -157,7 +157,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		selected: function (s) {
+		selected: function(s) {
 			return this.value.includes(s);
 		},
 	},

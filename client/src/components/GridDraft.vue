@@ -58,7 +58,7 @@ export default {
 	components: { Card, PickSummary },
 	props: { state: { type: Object, required: true }, picking: { type: Boolean, required: true } },
 	methods: {
-		isValidChoice: function (choice) {
+		isValidChoice: function(choice) {
 			let validCards = 0;
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
@@ -67,20 +67,20 @@ export default {
 			}
 			return validCards > 0;
 		},
-		highlight: function (event, type, index) {
-			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el) => {
+		highlight: function(event, type, index) {
+			this.$el.querySelectorAll(`.${type}-${index}`).forEach(el => {
 				if (event.type === "mouseenter") el.classList.add("highlight");
 				else if (event.type === "mouseleave") el.classList.remove("highlight");
 			});
 		},
 	},
 	computed: {
-		cardTransition: function () {
+		cardTransition: function() {
 			// Use special card transition on pick and a simple fading between boosters.
-			return this.state.booster.some((c) => c === null) ? "card-select" : "fade";
+			return this.state.booster.some(c => c === null) ? "card-select" : "fade";
 		},
-		arrowTransition: function () {
-			return this.state.booster.some((c) => c === null) ? "fade-delayed" : "fade";
+		arrowTransition: function() {
+			return this.state.booster.some(c => c === null) ? "fade-delayed" : "fade";
 		},
 	},
 };

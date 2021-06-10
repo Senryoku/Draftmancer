@@ -14,11 +14,11 @@ export default {
 	props: {
 		minwidth: { type: String, default: "12em" },
 	},
-	mounted: function () {
+	mounted: function() {
 		this.updateHeight();
 	},
 	methods: {
-		updateHeight: function () {
+		updateHeight: function() {
 			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px); --min-width: ${this.minwidth}`;
 		},
 	},

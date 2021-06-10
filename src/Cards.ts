@@ -93,7 +93,7 @@ for (let cid in Cards) {
 }
 
 // Prefered version of each card
-export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json").toString());
+export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
 
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = {};

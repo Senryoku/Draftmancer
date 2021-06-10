@@ -27,24 +27,24 @@ export default {
 		lazyLoad: { type: Boolean, default: false },
 		filter: { type: String },
 	},
-	data: function () {
+	data: function() {
 		return {
 			foilInterval: null,
 		};
 	},
 	computed: {
-		isFiltered: function () {
+		isFiltered: function() {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
 			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
 		},
 	},
 	methods: {
-		toggleZoom: function (e) {
+		toggleZoom: function(e) {
 			e.preventDefault();
 			this.$root.$emit("togglecardpopup", e, this.card);
 		},
-		mouseLeave: function (e) {
+		mouseLeave: function(e) {
 			e.preventDefault();
 			this.$root.$emit("closecardpopup");
 
@@ -57,12 +57,12 @@ export default {
 				this.$el.style.setProperty("--transform-rotation-y", `0`);
 			}
 		},
-		activateFoilEffect: function () {
+		activateFoilEffect: function() {
 			if (!this.card.foil) return;
 
 			document.addEventListener("mousemove", this.foilEffect);
 		},
-		foilEffect: function (e) {
+		foilEffect: function(e) {
 			const bounds = this.$el.getBoundingClientRect();
 			const style = this.$el.currentStyle || window.getComputedStyle(this.$el);
 			bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
@@ -75,18 +75,21 @@ export default {
 			}
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
-			const rotScale = (v) => -20 + 40 * v;
+			const rotScale = v => -20 + 40 * v;
 			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
 			this.$el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
 			this.$el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
 			this.$el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
 			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
-		passFilter: function (card, filter) {
+		passFilter: function(card, filter) {
 			return (
 				card.name.toLowerCase().includes(filter) ||
 				card.type.toLowerCase().includes(filter) ||
-				card.subtypes.join(" ").toLowerCase().includes(filter)
+				card.subtypes
+					.join(" ")
+					.toLowerCase()
+					.includes(filter)
 			);
 		},
 	},

@@ -76,7 +76,7 @@ export default {
 		missing() {
 			if (!this.checkCollection || !this.cards) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			const count = (arr) => {
+			const count = arr => {
 				for (let c of arr)
 					if (!(c.arena_id in this.collection)) {
 						missing.total += 1;
@@ -88,7 +88,7 @@ export default {
 			return missing;
 		},
 		missingText() {
-			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
+			return ["common", "uncommon", "rare", "mythic"].map(r => `${this.missing[r]} ${r}s`).join(", ");
 		},
 	},
 	methods: {

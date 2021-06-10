@@ -1,4 +1,3 @@
-
 <template>
 	<div v-if="bracket">
 		<div v-if="displayControls" class="controls">
@@ -50,7 +49,7 @@
 					:final="!bracket.double && colIndex === 2"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', m.index, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
+					@selectuser="user => (selectedUser = user)"
 				/>
 			</div>
 			<div class="bracket-column" v-if="bracket.double">
@@ -65,7 +64,7 @@
 					:final="true"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', final.index, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
+					@selectuser="user => (selectedUser = user)"
 				/>
 			</div>
 		</div>
@@ -83,7 +82,7 @@
 					:draftlog="draftlog"
 					:editable="editable"
 					@updated="(index, value) => $emit('updated', m.index, index, value)"
-					@selectuser="(user) => (selectedUser = user)"
+					@selectuser="user => (selectedUser = user)"
 				/>
 			</div>
 		</div>
@@ -155,7 +154,7 @@ export default {
 			);
 			fireToast("success", "Bracket Link copied to clipboard!");
 		},
-		hasDeckList: function (userID) {
+		hasDeckList: function(userID) {
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
 
@@ -245,7 +244,7 @@ export default {
 			let r = {};
 			for (let p of this.bracket.players) if (p) r[p.userID] = { wins: 0, losses: 0 };
 
-			const countMatch = (m) => {
+			const countMatch = m => {
 				if (m.isValid() && this.bracket.results[m.index][0] !== this.bracket.results[m.index][1]) {
 					let winIdx = this.bracket.results[m.index][0] > this.bracket.results[m.index][1] ? 0 : 1;
 					r[m.players[winIdx].userID].wins += 1;
@@ -277,7 +276,7 @@ export default {
 			}
 			return r;
 		},
-		selectedDeckList: function () {
+		selectedDeckList: function() {
 			if (this.draftlog && this.selectedUser && this.draftlog.users[this.selectedUser.userID])
 				return this.draftlog.users[this.selectedUser.userID].decklist;
 			return null;

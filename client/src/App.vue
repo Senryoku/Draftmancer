@@ -25,7 +25,11 @@
 			</span>
 			<span>
 				<label :for="hasCollection ? 'collection-stats' : 'file-input'">MTGA Collection</label>
-				<i class="fas fa-question-circle clickable" @click="displayedModal = 'collectionHelp'" v-tooltip="'Collection Import Help'"></i>
+				<i
+					class="fas fa-question-circle clickable"
+					@click="displayedModal = 'collectionHelp'"
+					v-tooltip="'Collection Import Help'"
+				></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<button
 					onclick="document.querySelector('#file-input').click()"
@@ -63,23 +67,35 @@
 					<i class="fas fa-list"></i> Game Logs
 				</button>
 			</div>
-			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em;">
+			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
 				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
 					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
 					<label for="pickOnDblclick">Pick on Double Click</label>
 				</div>
-				<div style="min-width: 20px;">
-				<i
-					class="fas clickable"
-					:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
-					@click="enableSound = !enableSound"
-					v-tooltip="'Toggle sound.'"
-				/></div>
-				<div style="min-width: 20px; text-align:center;">
-				<i v-tooltip="notificationPermission === 'denied' ? 'Notifications for this domain are blocked in your browser' : 'Toggle desktop notifications'"
-					class="fas clickable"
-					:class="{ 'greyed-out': notificationPermission === 'denied', 'fa-bell': enableNotifications, 'fa-bell-slash': !enableNotifications }"
-					@click="toggleNotifications" /></div>
+				<div style="min-width: 20px">
+					<i
+						class="fas clickable"
+						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
+						@click="enableSound = !enableSound"
+						v-tooltip="'Toggle sound.'"
+					/>
+				</div>
+				<div style="min-width: 20px; text-align: center">
+					<i
+						v-tooltip="
+							notificationPermission === 'denied'
+								? 'Notifications for this domain are blocked in your browser'
+								: 'Toggle desktop notifications'
+						"
+						class="fas clickable"
+						:class="{
+							'greyed-out': notificationPermission === 'denied',
+							'fa-bell': enableNotifications,
+							'fa-bell-slash': !enableNotifications,
+						}"
+						@click="toggleNotifications"
+					/>
+				</div>
 			</span>
 		</div>
 
@@ -269,7 +285,9 @@
 							v-model.number="maxTimer"
 						/>
 					</div>
-					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">Draft</button>
+					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">
+						Draft
+					</button>
 				</span>
 				<span v-show="userID === sessionOwner">
 					<dropdown :class="{ disabled: sessionOwner != userID }">
@@ -341,17 +359,21 @@
 				</button>
 			</div>
 			<template v-if="drafting">
-				<div id="url-remainder">
-					MTGADraft.tk
-				</div>
+				<div id="url-remainder">MTGADraft.tk</div>
 				<div id="draft-in-progress">
 					{{ gameModeName }}
 				</div>
-				<div v-if="sessionOwner === userID" style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%);">
-					<button class="stop" @click="stopDraft">
-						<i class="fas fa-stop"></i> Stop Draft
-					</button>
-					<button v-if="maxTimer > 0" class="stop" :class="{'opaque-disabled': waitingForDisconnectedUsers}" @click="pauseDraft">
+				<div
+					v-if="sessionOwner === userID"
+					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%)"
+				>
+					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
+					<button
+						v-if="maxTimer > 0"
+						class="stop"
+						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
+						@click="pauseDraft"
+					>
 						<i class="fas fa-pause"></i> Pause Draft
 					</button>
 				</div>
@@ -436,7 +458,7 @@
 									<img
 										src="./assets/img/pass_ownership.svg"
 										class="clickable"
-										style="height: 18px; margin-top: -4px;"
+										style="height: 18px; margin-top: -4px"
 										v-tooltip="`Give session ownership to ${userByID[id].userName}`"
 										@click="setSessionOwner(id)"
 									/>
@@ -450,7 +472,9 @@
 									<template v-if="!userByID[id].collection">
 										<i
 											class="fas fa-book red"
-											v-tooltip="userByID[id].userName + ' has not uploaded their collection yet.'"
+											v-tooltip="
+												userByID[id].userName + ' has not uploaded their collection yet.'
+											"
 										></i>
 									</template>
 									<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
@@ -458,7 +482,7 @@
 											class="fas fa-book yellow"
 											v-tooltip="
 												userByID[id].userName +
-												' has uploaded their collection, but is not using it.'
+													' has uploaded their collection, but is not using it.'
 											"
 										></i>
 									</template>
@@ -471,7 +495,10 @@
 								</template>
 								<template v-if="pendingReadyCheck">
 									<template v-if="userByID[id].readyState == ReadyState.Ready">
-										<i class="fas fa-check green" v-tooltip="`${userByID[id].userName} is ready!`"></i>
+										<i
+											class="fas fa-check green"
+											v-tooltip="`${userByID[id].userName} is ready!`"
+										></i>
 									</template>
 									<template v-else-if="userByID[id].readyState == ReadyState.NotReady">
 										<i
@@ -533,28 +560,31 @@
 									<img
 										src="./assets/img/pass_ownership.svg"
 										class="clickable"
-										:class="{'opaque-disabled': user.userID in disconnectedUsers }"
-										style="height: 18px; margin-top: -4px;"
+										:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
+										style="height: 18px; margin-top: -4px"
 										v-tooltip="`Give session ownership to ${user.userName}`"
 										@click="setSessionOwner(user.userID)"
 									/>
 									<i
 										class="fas fa-user-slash clickable red"
-										:class="{'opaque-disabled': user.userID in disconnectedUsers }"
+										:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
 										v-tooltip="`Remove ${user.userName} from the session`"
 										@click="removePlayer(user.userID)"
 									></i>
 								</template>
 								<template v-if="winstonDraftState || gridDraftState || rochesterDraftState">
-									<i v-if="user.userID in disconnectedUsers"
+									<i
+										v-if="user.userID in disconnectedUsers"
 										class="fas fa-times red"
 										v-tooltip="user.userName + ' is disconnected.'"
 									></i>
-									<i v-else
+									<i
+										v-else
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
+												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+												(rochesterDraftState &&
+													user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -562,10 +592,7 @@
 								</template>
 								<template v-else>
 									<template v-if="user.userID in disconnectedUsers">
-										<i
-											class="fas fa-times red"
-											v-tooltip="user.userName + ' is disconnected.'"
-										></i>
+										<i class="fas fa-times red" v-tooltip="user.userName + ' is disconnected.'"></i>
 									</template>
 									<template v-else-if="user.pickedThisRound">
 										<i
@@ -656,7 +683,7 @@
 					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
 					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 					class="container"
-					:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 				>
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
@@ -666,26 +693,27 @@
 								<i class="fas fa-clock"></i> {{ pickTimer }}
 							</span>
 							<template v-if="draftingState == DraftState.Picking">
-							<input
-								type="button"
-								@click="pickCard"
-								value="Confirm Pick"
-								v-if="
-									selectedCards.length === cardsToPick && burningCards.length === cardsToBurnThisRound
-								"
-							/>
-							<span v-else>
-								<span v-if="cardsToPick === 1">Pick a card</span>
+								<input
+									type="button"
+									@click="pickCard"
+									value="Confirm Pick"
+									v-if="
+										selectedCards.length === cardsToPick &&
+											burningCards.length === cardsToBurnThisRound
+									"
+								/>
 								<span v-else>
-									Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
+									<span v-if="cardsToPick === 1">Pick a card</span>
+									<span v-else>
+										Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
+									</span>
+									<span v-if="cardsToBurnThisRound === 1"> and remove a card from the pool.</span>
+									<span v-else-if="cardsToBurnThisRound > 1">
+										and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+											burningCards.length
+										}}/{{ cardsToBurnThisRound }}).
+									</span>
 								</span>
-								<span v-if="cardsToBurnThisRound === 1"> and remove a card from the pool.</span>
-								<span v-else-if="cardsToBurnThisRound > 1">
-									and remove {{ cardsToBurnThisRound }} cards from the pool ({{
-										burningCards.length
-									}}/{{ cardsToBurnThisRound }}).
-								</span>
-							</span>
 							</template>
 							<template v-else>
 								<i class="fas fa-spinner fa-spin"></i>
@@ -693,11 +721,34 @@
 							</template>
 						</div>
 					</div>
-					<transition-group tag="div" name="booster-cards" class="booster card-container" :class="{'booster-waiting': draftingState === DraftState.Waiting}">
+					<transition-group
+						tag="div"
+						name="booster-cards"
+						class="booster card-container"
+						:class="{ 'booster-waiting': draftingState === DraftState.Waiting }"
+					>
 						<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
-							<i class="fas passing-order" :class="{'fa-angle-double-left': boosterNumber % 2 == 1, 'fa-angle-double-right': boosterNumber % 2 == 0}" v-show="booster.length > 0"></i>
-							<span><div><div class="spinner"></div></div>{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} / {{virtualPlayers.length}}</span>
-							<i class="fas passing-order" :class="{'fa-angle-double-left': boosterNumber % 2 == 1, 'fa-angle-double-right': boosterNumber % 2 == 0}" v-show="booster.length > 0"></i>
+							<i
+								class="fas passing-order"
+								:class="{
+									'fa-angle-double-left': boosterNumber % 2 == 1,
+									'fa-angle-double-right': boosterNumber % 2 == 0,
+								}"
+								v-show="booster.length > 0"
+							></i>
+							<span
+								><div><div class="spinner"></div></div>
+								{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} /
+								{{ virtualPlayers.length }}</span
+							>
+							<i
+								class="fas passing-order"
+								:class="{
+									'fa-angle-double-left': boosterNumber % 2 == 1,
+									'fa-angle-double-right': boosterNumber % 2 == 0,
+								}"
+								v-show="booster.length > 0"
+							></i>
 						</div>
 						<booster-card
 							v-for="card in booster"
@@ -722,7 +773,7 @@
 			<!-- Winston Draft -->
 			<div
 				class="container"
-				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
 			>
 				<div class="section-title">
@@ -784,8 +835,8 @@
 				</div>
 			</div>
 			<!-- Grid Draft -->
-			<div 
-				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+			<div
+				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 				v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
 			>
 				<div class="section-title">
@@ -827,7 +878,7 @@
 			<!-- Rochester Draft -->
 			<div
 				class="rochester-container"
-				:class="{'disabled': waitingForDisconnectedUsers || draftPaused}"
+				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
 			>
 				<div style="flex-grow: 1">
@@ -835,8 +886,9 @@
 						<h2>Rochester Draft</h2>
 						<div class="controls">
 							<span>
-								Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{ rochesterDraftState.boosterCount }},
-								Pick #{{ rochesterDraftState.pickNumber + 1 }}
+								Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
+									rochesterDraftState.boosterCount
+								}}, Pick #{{ rochesterDraftState.pickNumber + 1 }}
 							</span>
 							<template v-if="userID === rochesterDraftState.currentPlayer">
 								<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
@@ -896,18 +948,18 @@
 			<transition name="fade">
 				<div v-if="draftPaused && !waitingForDisconnectedUsers" class="disconnected-user-popup-container">
 					<div class="disconnected-user-popup">
-						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>
+						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
+							<div class="swal2-icon-content">!</div>
+						</div>
 						<h1>Draft Paused</h1>
 						<template v-if="userID === sessionOwner">
 							Resume when you're ready.
-							
-							<div style="margin-top: 1em;">
+
+							<div style="margin-top: 1em">
 								<button @click="socket.emit('resumeDraft')">Resume</button>
 							</div>
 						</template>
-						<template v-else>
-							Wait for the session owner to resume.
-						</template>
+						<template v-else> Wait for the session owner to resume. </template>
 					</div>
 				</div>
 			</transition>
@@ -915,21 +967,27 @@
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
 					<div class="disconnected-user-popup">
-						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex;"><div class="swal2-icon-content">!</div></div>
+						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
+							<div class="swal2-icon-content">!</div>
+						</div>
 						<h1>Player(s) disconnected</h1>
-						
+
 						<div v-if="this.winstonDraftState || this.gridDraftState || this.rochesterDraftState">
-							{{`Wait for ${disconnectedUserNames} to come back...`}}
+							{{ `Wait for ${disconnectedUserNames} to come back...` }}
 						</div>
 						<div v-else>
 							<template v-if="userID === sessionOwner">
-								{{`Wait for ${disconnectedUserNames} to come back, or...`}}
-								<div style="margin-top: 1em;">
-									<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">Replace them by bot(s)</button>
+								{{ `Wait for ${disconnectedUserNames} to come back, or...` }}
+								<div style="margin-top: 1em">
+									<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">
+										Replace them by bot(s)
+									</button>
 								</div>
 							</template>
 							<template v-else>
-								{{`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`}}
+								{{
+									`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`
+								}}
 							</template>
 						</div>
 					</div>
@@ -942,8 +1000,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-				(drafting && draftingState !== DraftState.Watching) ||
-				draftingState == DraftState.Brewing
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -967,13 +1025,9 @@
 						>)
 					</template>
 					<template v-slot:controls>
-						<div style="font-variant: small-caps;" v-if="deck.length > 0">
+						<div style="font-variant: small-caps" v-if="deck.length > 0">
 							Export
-							<button
-								type="button"
-								@click="exportDeck"
-								v-tooltip.top="'Export deck and sideboard'"
-							>
+							<button type="button" @click="exportDeck" v-tooltip.top="'Export deck and sideboard'">
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
@@ -1056,11 +1110,34 @@
 										</template>
 									</tr>
 								</table>
-								<div v-if="collectionInfos.vaultProgress" v-tooltip.right="'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'" style="display:flex; align-items: center; justify-content: space-evenly; margin: 0.25em 0 0 0"><img src="./assets/img/vault.png" style="height: 1.5rem;"><span style="font-size:0.8em">{{collectionInfos.vaultProgress}}%</span></div>
+
+								<div
+									v-if="collectionInfos.vaultProgress"
+									v-tooltip.right="
+										'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
+									"
+									style="
+										display: flex;
+										align-items: center;
+										justify-content: space-evenly;
+										margin: 0.25em 0 0 0;
+									"
+								>
+									<img src="./assets/img/vault.png" style="height: 1.5rem" /><span
+										style="font-size: 0.8em"
+										>{{ collectionInfos.vaultProgress }}%</span
+									>
+								</div>
 							</template>
 						</dropdown>
-						<div class="input-delete-icon" v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'">
-							<input type="text" placeholder="Search..." v-model="deckFilter" /><span @click="deckFilter = ''"><i class="fas fa-times-circle"></i></span>
+						<div
+							class="input-delete-icon"
+							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
+						>
+							<input type="text" placeholder="Search..." v-model="deckFilter" /><span
+								@click="deckFilter = ''"
+								><i class="fas fa-times-circle"></i
+							></span>
 						</div>
 					</template>
 					<template v-slot:empty>
@@ -1073,9 +1150,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+						((sideboard != undefined && sideboard.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -1118,9 +1195,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-				((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1156,7 +1233,7 @@
 				in pod!
 			</p>
 			<div class="welcome-sections">
-				<div class="container" style="grid-area: News;">
+				<div class="container" style="grid-area: News">
 					<div class="section-title">
 						<h2>News</h2>
 					</div>
@@ -1165,30 +1242,39 @@
 							<em>June 3, 2021</em>
 							<p>
 								<img src="img/sets/mh2.svg" class="set-icon" style="--invertedness: 100%" />
-								Modern Horizons 2 (MH2) is now available! (see the "<i class="fas fa-ellipsis-h"></i> More sets..." option)<br />
+								Modern Horizons 2 (MH2) is now available! (see the "<i class="fas fa-ellipsis-h"></i>
+								More sets..." option)<br />
 							</p>
 						</div>
 						<div class="news">
 							<em>April 4, 2021</em>
-							<p><img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven: School of Mages (STX) support!</p>
+							<p>
+								<img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven:
+								School of Mages (STX) support!
+							</p>
 						</div>
 						<div class="news">
 							<em>March 28, 2021</em>
 							<p>
 								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but logs and preferences do not transfer over domains, you can still retrieve your game logs by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.  
+								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but
+								logs and preferences do not transfer over domains, you can still retrieve your game logs
+								by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.
 							</p>
 						</div>
 					</div>
 				</div>
-				<div class="container" style="grid-area: Help;">
+				<div class="container" style="grid-area: Help">
 					<div class="section-title">
 						<h2>Help</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a> guide<br />
+						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a>
+						guide<br />
 						<br />
-						<a @click="displayedModal = 'help'"><i class="fas fa-info-circle"></i> FAQ / Settings Description</a><br />
+						<a @click="displayedModal = 'help'"
+							><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
+						><br />
 						<br />
 						For any question/bug report/feature request you can email to
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
@@ -1196,7 +1282,7 @@
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 					</div>
 				</div>
-				<div class="container" style="grid-area: PublicSessions;">
+				<div class="container" style="grid-area: PublicSessions">
 					<div class="section-title">
 						<h2>Public Sessions</h2>
 					</div>
@@ -1230,9 +1316,7 @@
 									<td :title="s.id" class="id">{{ s.id }}</td>
 									<td
 										v-tooltip="
-											s.cube
-												? 'Cube'
-												: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+											s.cube ? 'Cube' : s.sets.map(code => setsInfos[code].fullName).join(', ')
 										"
 									>
 										<template v-if="s.cube">
@@ -1248,28 +1332,32 @@
 									<td class="desc">{{ s.description }}</td>
 									<td>
 										<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
-										<i
-											class="fas fa-check green"
-											v-tooltip="`You are in this session!`"
-											v-else
-										></i>
+										<i class="fas fa-check green" v-tooltip="`You are in this session!`" v-else></i>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
-				<div class="container" style="grid-area: Tools;">
+				<div class="container" style="grid-area: Tools">
 					<div class="section-title">
 						<h2>Tools</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
 						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
 							<li>
-								<a @click="displayedModal = 'importdeck'"><i class="fas fa-file-export"></i> Card List Importer</a>
+								<a @click="displayedModal = 'importdeck'"
+									><i class="fas fa-file-export"></i> Card List Importer</a
+								>
 							</li>
-							<li v-tooltip="'Download the intersection of the collections of players in the session in text format.'">
-								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"><i class="fas fa-file-download"></i> Download Session Collection</a>
+							<li
+								v-tooltip="
+									'Download the intersection of the collections of players in the session in text format.'
+								"
+							>
+								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
+									><i class="fas fa-file-download"></i> Download Session Collection</a
+								>
 							</li>
 						</ul>
 					</div>
@@ -1287,7 +1375,10 @@
 						Yes! You can import custom list of cards in text format in the settings.
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
 					</p>
-					Your question isn't awnsered here? Head to the <a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow">Help section of the MTGADraft Discord</a>!
+					Your question isn't awnsered here? Head to the
+					<a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow"
+						>Help section of the MTGADraft Discord</a
+					>!
 				</div>
 				<br />
 				<h2>Settings Description</h2>
@@ -1303,13 +1394,15 @@
 							</li>
 							<li>
 								<span class="option-name">Set(s)</span>
-								: Select one or multiple sets to draft with. All chosen sets will form the card pool out of which mixed boosters will be generated for all players. If you want every player to receive certain pure set boosters in a particular order (e.g. for original block drafts) you have to use the "Individual Booster Set" option in settings instead!
+								: Select one or multiple sets to draft with. All chosen sets will form the card pool out
+								of which mixed boosters will be generated for all players. If you want every player to
+								receive certain pure set boosters in a particular order (e.g. for original block drafts)
+								you have to use the "Individual Booster Set" option in settings instead!
 							</li>
 							<li>
 								<span class="option-name">Bots</span>
 								: Adds virtual players to your draft. They are
-								<strong>pretty dumb</strong>,
-								but they are doing their best. :(
+								<strong>pretty dumb</strong>, but they are doing their best. :(
 							</li>
 							<li>
 								<span class="option-name">Pick Timer</span>
@@ -1342,8 +1435,8 @@
 							</li>
 							<li>
 								<span class="option-name">Foil</span>
-								: If enabled, each pack will have a chance to contain a shiny foil card of any rarity and
-								replaces a common - like in paper.
+								: If enabled, each pack will have a chance to contain a shiny foil card of any rarity
+								and replaces a common - like in paper.
 							</li>
 						</ul>
 					</div>
@@ -1352,22 +1445,24 @@
 						<ul>
 							<li>
 								<span class="option-name">Language</span>
-								: Adjusts the display language of cards (not the page UI!). Some cards are not available in all languages.
+								: Adjusts the display language of cards (not the page UI!). Some cards are not available
+								in all languages.
 							</li>
 							<li>
 								<span class="option-name">Restrict to Collection</span>
 								: If unchecked, your collection will not limit the cards available in the selected sets.
-								If every players unchecks this, you will draft using all cards. This setting is ignored if "Ignore
-								Collections" is enabled by the session owner, when using a Custom Card List or Pre-Determined Boosters.
+								If every players unchecks this, you will draft using all cards. This setting is ignored
+								if "Ignore Collections" is enabled by the session owner, when using a Custom Card List
+								or Pre-Determined Boosters.
 							</li>
 							<li>
 								<span class="option-name">Pick on Double Click</span>
-								: Allows you to double click on cards during draft to pick without having to
-								confirm.
+								: Allows you to double click on cards during draft to pick without having to confirm.
 							</li>
 							<li>
 								<span class="option-name">Notifications</span>
-								: Enable this to receive desktop notifications when a draft is starting or you receive a new pack to make a pick.
+								: Enable this to receive desktop notifications when a draft is starting or you receive a
+								new pack to make a pick.
 							</li>
 							<li>
 								<span class="option-name">Session ID</span>
@@ -1384,26 +1479,42 @@
 			<div slot="body">
 				<div>
 					<div class="section-title">
-						<h2>As Player <i class="fas fa-user"></i> <span v-if="userID != sessionOwner">(That's you!)</span></h2>
+						<h2>
+							As Player <i class="fas fa-user"></i>
+							<span v-if="userID != sessionOwner">(That's you!)</span>
+						</h2>
 					</div>
-					<p>
+					<div style="margin-top: 0.5em; margin-bottom: 1em">
 						Customize your personal settings, like your User Name or Card Language on top of the page.<br />
 						There are also toggles to enable e.g. sound alerts and notifications in the upper right.
 						<br />
 						<span v-if="userID !== sessionOwner">
 							<ul>
-								<li>Wait for the session owner (<em>{{ userByID[sessionOwner].userName }} <i class="fas fa-crown subtle-gold"></i></em>) to select the settings and launch the game!</li>
+								<li>
+									Wait for the session owner (<em
+										>{{ userByID[sessionOwner].userName }}
+										<i class="fas fa-crown subtle-gold"></i></em
+									>) to select the settings and launch the game!
+								</li>
 								<li>Or, to create a new session that you own, change "Session ID" in the top left.</li>
 							</ul>
 						</span>
-					</p>
+					</div>
 				</div>
 				<div>
 					<div class="section-title">
-						<h2>As Session owner <i class="fas fa-crown subtle-gold"></i> <span v-if="userID === sessionOwner">(That's you!)</span><span v-else>(currently <em>{{ userByID[sessionOwner].userName }}</em>)</span></h2>
+						<h2>
+							As Session owner <i class="fas fa-crown subtle-gold"></i>
+							<span v-if="userID === sessionOwner">(That's you!)</span
+							><span v-else
+								>(currently <em>{{ userByID[sessionOwner].userName }}</em
+								>)</span
+							>
+						</h2>
 					</div>
-					<p>
-						One player takes the role of owner of the session (designated with <i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
+					<div style="margin-top: 0.5em; margin-bottom: 1em">
+						One player takes the role of owner of the session (designated with
+						<i class="fas fa-crown subtle-gold"></i>), by default the first connected player.
 						<ol>
 							<li>Session owner chooses an arbitrary Session ID.</li>
 							<li>
@@ -1419,64 +1530,79 @@
 								<a @click="displayedModal = 'sessionOptions'"><i class="fas fa-cog"></i> Settings</a>)
 							</li>
 							<li>
-								Ready check is performed to make sure everybody is set (<i class="fas fa-user-check"></i>).
+								Ready check is performed to make sure everybody is set (<i class="fas fa-user-check"></i
+								>).
 							</li>
-							<li>
-								Once all confirmed, the session owner launches the desired game mode.
-							</li>
+							<li>Once all confirmed, the session owner launches the desired game mode.</li>
 						</ol>
-					</p>
+					</div>
 				</div>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'collectionHelp'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Import Help</h2>
 			<div slot="body" style="font-size: 1.1em">
-				Each player can import their MTGA collection to restrict the card pool to cards they own.
-				(Session owners can bypass this feature by enabling "Ignore Collections"):
+				Each player can import their MTGA collection to restrict the card pool to cards they own. (Session
+				owners can bypass this feature by enabling "Ignore Collections"):
 				<ol>
 					<li>
-						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to
-						work. The toggle can be found in <em>Options > Account > Detailed Logs (Plugin
-						Support)</em>.
+						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work. The
+						toggle can be found in <em>Options > Account > Detailed Logs (Plugin Support)</em>.
 					</li>
 					<li>
 						<a onclick="document.querySelector('#file-input').click()">Upload</a>
-						your MTGA log file "Player.log". Its location is OS-specific:
-						(Note on hidden system folders in
+						your MTGA log file "Player.log". Its location is OS-specific: (Note on hidden system folders in
 						<a
 							href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
-							target="_blank" rel="noopener nofollow"
-							>
-							Windows	<i class="fas fa-external-link-alt"></i>
-							</a>
-						and <a
+							target="_blank"
+							rel="noopener nofollow"
+						>
+							Windows <i class="fas fa-external-link-alt"></i>
+						</a>
+						and
+						<a
 							href="https://appletoolbox.com/how-to-show-your-user-library-in-macos-high-sierra-and-sierra/"
-							target="_blank" rel="noopener nofollow"
-							>
+							target="_blank"
+							rel="noopener nofollow"
+						>
 							macOS <i class="fas fa-external-link-alt"></i>
-							</a>
+						</a>
 						)
 						<ul>
 							<li>
 								<i class="fab fa-windows"></i>
 								<tt
 									class="clickable"
-									@click="toClipboard('%userprofile%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\', 'Default log path copied to clipboard! (Windows)')" 
+									@click="
+										toClipboard(
+											'%userprofile%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\',
+											'Default log path copied to clipboard! (Windows)'
+										)
+									"
 									v-tooltip="'Copy Windows path to clipboard'"
 									>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 								>
 							</li>
 							<li>
 								<i class="fab fa-apple"></i>
-								<tt class="clickable" 
-									@click="toClipboard('~/Library/Logs/Wizards Of The Coast/MTGA/', 'Default log path copied to clipboard! (macOS)')" 
-									v-tooltip="'Copy macOS path to clipboard'" >
+								<tt
+									class="clickable"
+									@click="
+										toClipboard(
+											'~/Library/Logs/Wizards Of The Coast/MTGA/',
+											'Default log path copied to clipboard! (macOS)'
+										)
+									"
+									v-tooltip="'Copy macOS path to clipboard'"
+								>
 									Home/Library/Logs/Wizards Of The Coast/MTGA/
 								</tt>
 							</li>
 						</ul>
-						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i class="fab fa-windows"></i> <kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
+						Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i
+							class="fab fa-windows"
+						></i>
+						<kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
 					</li>
 				</ol>
 			</div>
@@ -1503,8 +1629,10 @@
 				<form @submit.prevent="uploadBoosters">
 					<div>
 						<div>
-							Paste your boosters card list here. One card per line, each booster separated by a blank line.<br>
-							Make sure each booster has the same number of cards and the total booster count is suitable for your settings.
+							Paste your boosters card list here. One card per line, each booster separated by a blank
+							line.<br />
+							Make sure each booster has the same number of cards and the total booster count is suitable
+							for your settings.
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
@@ -1636,15 +1764,21 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content:
-								'<p>Upload your own boosters.</p>',
+							content: '<p>Upload your own boosters.</p>',
 						}"
 					>
 						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
 						<div class="right">
 							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
-							<button @click="displayedModal = 'uploadBoosters'"><i class="fas fa-upload"></i> Upload</button>
-							<button @click="shuffleUploadedBoosters" v-tooltip="'Shuffle the boosters before distributing them.'">Shuffle</button>
+							<button @click="displayedModal = 'uploadBoosters'">
+								<i class="fas fa-upload"></i> Upload
+							</button>
+							<button
+								@click="shuffleUploadedBoosters"
+								v-tooltip="'Shuffle the boosters before distributing them.'"
+							>
+								Shuffle
+							</button>
 						</div>
 					</div>
 					<div
@@ -1774,11 +1908,14 @@
 								step="1"
 								:delay="0.1"
 								v-model.number="boostersPerPlayer"
-								:validate="(v) => Math.max(1, Math.min(v, 25))"
+								:validate="v => Math.max(1, Math.min(v, 25))"
 							/>
 						</div>
 					</div>
-					<div class="option-section" v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }">
+					<div
+						class="option-section"
+						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
+					>
 						<div class="option-column-title">Individual Booster Set</div>
 						<div
 							class="line"
@@ -1818,7 +1955,7 @@
 									</option>
 									<option style="color: #888" disabled>————————————————</option>
 									<option
-										v-for="code in primarySets.filter((s) => !sets.includes(s))"
+										v-for="code in primarySets.filter(s => !sets.includes(s))"
 										:value="code"
 										:key="code"
 									>
@@ -1910,9 +2047,13 @@
 						<div
 							v-tooltip.left="{
 								classes: 'option-tooltip',
-								content: '<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
+								content:
+									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
 							}"
-							:class="{'disabled-simple': !useCustomCardList || (customCardList && customCardList.customSheets)}"
+							:class="{
+								'disabled-simple':
+									!useCustomCardList || (customCardList && customCardList.customSheets),
+							}"
 						>
 							<label for="cards-per-booster">Cards per Booster</label>
 							<input
@@ -1983,7 +2124,8 @@
 						<div v-if="selectedCube.cubeCobraID">
 							<a
 								:href="`https://cubecobra.com/cube/overview/${selectedCube.cubeCobraID}`"
-								target="_blank" rel="noopener nofollow"
+								target="_blank"
+								rel="noopener nofollow"
 							>
 								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
 								Cube Cobra page
@@ -2050,9 +2192,22 @@
 				</p>
 				<h3>Patch Notes</h3>
 				<patch-notes></patch-notes>
-				<span style="font-size: 0.8em">(detailed changes can be found on <a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"><i class="fab fa-github" style="vertical-align: baseline; padding: 0px 0.25em;"></i>GitHub</a>)</span>
+				<span style="font-size: 0.8em"
+					>(detailed changes can be found on
+					<a
+						href="https://github.com/Senryoku/MTGADraft"
+						title="GitHub"
+						target="_blank"
+						rel="noopener nofollow"
+						><i class="fab fa-github" style="vertical-align: baseline; padding: 0px 0.25em"></i>GitHub</a
+					>)</span
+				>
 				<h3>Notice</h3>
-				<p>MTGADraft is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
+				<p>
+					MTGADraft is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by
+					Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast
+					LLC.
+				</p>
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
@@ -2068,7 +2223,12 @@
 						<em>PayPal</em>
 						:
 					</p>
-					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" rel="noopener nofollow">
+					<form
+						action="https://www.paypal.com/cgi-bin/webscr"
+						method="post"
+						target="_blank"
+						rel="noopener nofollow"
+					>
 						<input type="hidden" name="cmd" value="_s-xclick" />
 						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
 						<input type="hidden" name="lc" value="en_US" />
@@ -2101,9 +2261,15 @@
 				</a>
 			</span>
 			<span>
-				<a href="mailto:mtgadraft@gmail.com" title="Email"><i class="fas fa-envelope fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
-				<a href="https://discord.gg/XscXXNw" title="Discord" target="_blank" rel="noopener nofollow"><i class="fab fa-discord fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
-				<a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"><i class="fab fa-github fa-lg" style="vertical-align: baseline; padding: 0 0.25em;"></i></a>
+				<a href="mailto:mtgadraft@gmail.com" title="Email"
+					><i class="fas fa-envelope fa-lg" style="vertical-align: baseline; padding: 0 0.25em"></i
+				></a>
+				<a href="https://discord.gg/XscXXNw" title="Discord" target="_blank" rel="noopener nofollow"
+					><i class="fab fa-discord fa-lg" style="vertical-align: baseline; padding: 0 0.25em"></i
+				></a>
+				<a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow"
+					><i class="fab fa-github fa-lg" style="vertical-align: baseline; padding: 0 0.25em"></i
+				></a>
 			</span>
 		</footer>
 		<div

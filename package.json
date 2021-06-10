@@ -20,11 +20,16 @@
 		"test": "cross-env PORT=3001 mocha test --exit --experimental-json-modules",
 		"test-bail": "cross-env PORT=3001 mocha test --exit --experimental-json-modules -bail",
 		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules",
-		"manualtest-bail": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules -bail"
+		"manualtest-bail": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules -bail",
+		"prettier-format": "prettier --config .prettierrc --write src/**/*.ts client/src/**/*[!min].js client/src/**/*.vue",
+		"prepare": "husky install"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Senryoku/MTGADraft.git"
+	},
+	"lint-staged": {
+		"*.{ts,js,vue}": "prettier --config .prettierrc --write"
 	},
 	"author": "Senryoku",
 	"license": "MIT",
@@ -67,6 +72,8 @@
 		"eslint": "^7.12.1",
 		"eslint-plugin-vue": "^7.1.0",
 		"file-loader": "^6.0.0",
+		"husky": "^6.0.0",
+		"lint-staged": "^11.0.0",
 		"mocha": "^7.1.1",
 		"ts-loader": "^8.2.0",
 		"typescript": "^4.3.2",

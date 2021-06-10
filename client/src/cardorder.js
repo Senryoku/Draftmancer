@@ -11,7 +11,7 @@ const RarityOrder = {
 	rare: 1,
 	uncommon: 2,
 	common: 3,
-	other: 4
+	other: 4,
 };
 
 const TypeOrder = {
@@ -32,13 +32,13 @@ const TypeOrder = {
 };
 
 function colorOrder(colors) {
-	if(colors.length === 1) return ColorOrder[colors[0]];
-	else if(colors.length === 0) return 5;
+	if (colors.length === 1) return ColorOrder[colors[0]];
+	else if (colors.length === 0) return 5;
 	else return 6;
 }
 
 function rarityOrder(rarity) {
-	if(!(rarity in RarityOrder)) return RarityOrder["other"];
+	if (!(rarity in RarityOrder)) return RarityOrder["other"];
 	return RarityOrder[rarity];
 }
 
@@ -46,15 +46,13 @@ function getFirstType(type) {
 	const idx = type.indexOf(" //");
 	if (idx >= 0) return type.substr(0, idx);
 	else return type;
-};
+}
 
 function typeOrder(type) {
 	const fullType = getFirstType(type);
 	const simpleType = fullType.split(" ").pop();
-	if(fullType in TypeOrder)
-		return TypeOrder[getFirstType(type)];
-	else if(simpleType in TypeOrder)
-		return TypeOrder[simpleType];
+	if (fullType in TypeOrder) return TypeOrder[getFirstType(type)];
+	else if (simpleType in TypeOrder) return TypeOrder[simpleType];
 	else return 1;
 }
 
@@ -218,5 +216,5 @@ export default {
 	isOrdered,
 	colorOrder,
 	rarityOrder,
-	typeOrder
+	typeOrder,
 };

@@ -44,7 +44,7 @@ export default {
 			draftlog: null,
 		};
 	},
-	mounted: async function () {
+	mounted: async function() {
 		let urlParamSession = getUrlVars()["session"];
 		if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 

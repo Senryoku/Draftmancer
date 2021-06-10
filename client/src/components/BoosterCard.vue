@@ -38,12 +38,12 @@ export default {
 		hasenoughwildcards: { type: Boolean, default: true },
 	},
 	methods: {
-		burnCard: function (e) {
+		burnCard: function(e) {
 			this.$emit("burn");
 			e.stopPropagation();
 			e.preventDefault();
 		},
-		restoreCard: function (e) {
+		restoreCard: function(e) {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();

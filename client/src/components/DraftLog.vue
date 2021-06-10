@@ -37,7 +37,7 @@
 					</div>
 					<span class="color-list" v-if="log.colors">
 						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
+							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 							:key="c"
 							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
@@ -93,7 +93,7 @@
 					<div v-for="p in picks" :key="p.key">
 						<h3>
 							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
-							{{ p.data.pick.map((idx) => draftlog.carddata[p.data.booster[idx]].name).join(", ") }}
+							{{ p.data.pick.map(idx => draftlog.carddata[p.data.booster[idx]].name).join(", ") }}
 						</h3>
 						<draft-log-pick
 							:pick="p.data"
@@ -176,10 +176,10 @@ export default {
 			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
 				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
 		},
-		downloadMPT: function (id) {
+		downloadMPT: function(id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
-		submitToMPT: function (id) {
+		submitToMPT: function(id) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
 				headers: {
@@ -192,11 +192,11 @@ export default {
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
-			}).then((response) => {
+			}).then(response => {
 				if (response.status !== 200) {
 					fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
-					response.json().then((json) => {
+					response.json().then(json => {
 						if (json.error) {
 							fireToast("error", `Error: ${json.error}.`);
 						} else {
@@ -212,10 +212,10 @@ export default {
 				}
 			});
 		},
-		exportSingleLog: function (id) {
+		exportSingleLog: function(id) {
 			helper.copyToClipboard(
 				exportToMTGA(
-					this.draftlog.users[id].cards.map((cid) => this.draftlog.carddata[cid]),
+					this.draftlog.users[id].cards.map(cid => this.draftlog.carddata[cid]),
 					null,
 					this.language
 				),
@@ -224,7 +224,7 @@ export default {
 			);
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		colorsInCardList: function (cards) {
+		colorsInCardList: function(cards) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cards) return r;
 			for (let cid of cards) {
@@ -234,19 +234,19 @@ export default {
 			}
 			return r;
 		},
-		updateToV2: async function () {
+		updateToV2: async function() {
 			if (!this.draftlog.version || this.draftlog.version === "1.0") {
 				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
 				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
-				const updateCIDs = (arr) => arr.map((cid) => MTGACards[cid].id);
+				const updateCIDs = arr => arr.map(cid => MTGACards[cid].id);
 				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
 				for (let u in this.draftlog.users) {
 					for (let p of this.draftlog.users[u].picks) {
-						p.pick = [p.booster.findIndex((cid) => cid === p.pick)];
+						p.pick = [p.booster.findIndex(cid => cid === p.pick)];
 						for (let i = 0; i < p.burn.length; ++i)
-							p.burn[i] = p.booster.findIndex((cid) => cid === p.burn[i]);
+							p.burn[i] = p.booster.findIndex(cid => cid === p.burn[i]);
 						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...
-						p.booster = p.booster.map((cid) => MTGACards[cid].id);
+						p.booster = p.booster.map(cid => MTGACards[cid].id);
 					}
 					this.draftlog.users[u].cards = updateCIDs(this.draftlog.users[u].cards);
 					if (this.draftlog.users[u].decklist) {
@@ -265,22 +265,22 @@ export default {
 		},
 	},
 	computed: {
-		type: function () {
+		type: function() {
 			return this.draftlog.type ? this.draftlog.type : "Draft";
 		},
-		selectedLog: function () {
+		selectedLog: function() {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
-		selectedLogCards: function () {
+		selectedLogCards: function() {
 			let uniqueID = 0;
-			return this.selectedLog.cards.map((cid) =>
+			return this.selectedLog.cards.map(cid =>
 				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
 			);
 		},
-		selectedLogDecklist: function () {
+		selectedLogDecklist: function() {
 			return this.selectedLog.decklist;
 		},
-		tableSummary: function () {
+		tableSummary: function() {
 			// Aggregate information about each player
 			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
@@ -304,10 +304,10 @@ export default {
 				});
 			return tableSummary;
 		},
-		teamDraft: function () {
+		teamDraft: function() {
 			return this.draftlog.teamDraft;
 		},
-		picks: function () {
+		picks: function() {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -340,7 +340,7 @@ export default {
 					return [];
 				case "Grid Draft": {
 					let key = 0;
-					return this.selectedLog.picks.map((p) => {
+					return this.selectedLog.picks.map(p => {
 						return {
 							key: key,
 							data: p,

@@ -10,7 +10,7 @@
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">Added basics:</span>
-				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands[c] > 0)" :key="c">
+				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ list.lands[c] }}
 				</span>
@@ -106,34 +106,34 @@ export default {
 		language: { type: String, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
-	data: function () {
+	data: function() {
 		return { displayStats: false };
 	},
 	computed: {
-		mainboard: function () {
+		mainboard: function() {
 			let uniqueID = 0;
-			return this.list.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list.main.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
-		sideboard: function () {
+		sideboard: function() {
 			let uniqueID = 0;
-			return this.list.side.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list.side.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
-		landcount: function () {
+		landcount: function() {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 	},
 	methods: {
-		exportDeck: function (full = true) {
+		exportDeck: function(full = true) {
 			copyToClipboard(exportToMTGA(this.mainboard, this.sideboard, this.language, this.list.lands, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		copyHash: function (hash) {
+		copyHash: function(hash) {
 			copyToClipboard(hash);
 			fireToast("success", "Hash copied to clipboard!");
 		},
 	},
 	watch: {
-		list: function () {
+		list: function() {
 			this.$nextTick(() => {
 				this.$refs.mainboardComponent.sync();
 				this.$refs.sideboardComponent.sync();
