@@ -59,6 +59,10 @@ export default {
 	will-change: transform;
 }
 
+.card:hover {
+	z-index: 10;
+}
+
 .missing-warning {
 	position: absolute;
 	left: -0.5em;

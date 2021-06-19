@@ -217,12 +217,10 @@ img {
 
 .split-button:hover ~ div .front-image {
 	transform: scale(1.41) rotateZ(90deg);
-	z-index: 100;
 }
 
 .split-left-button:hover ~ div .front-image {
 	transform: scale(1.41) rotateZ(-90deg);
-	z-index: 100;
 }
 
 /* Fixed Layouts (Used by CardPopup) */
