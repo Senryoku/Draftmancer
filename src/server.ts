@@ -1118,6 +1118,7 @@ function removeUserFromSession(userID: UserID) {
 
 // Serve files in the public directory
 app.use(express.static("./client/public/"));
+app.use("/bracket", express.static("client/public/bracket.html"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints
@@ -1227,10 +1228,6 @@ app.post("/getDeck", (req, res) => {
 			res.sendStatus(500);
 		}
 	}
-});
-
-app.get("/bracket", (req, res) => {
-	res.sendFile("client/public/bracket.html", { root: "." });
 });
 
 app.get("/getBracket/:sessionID", (req, res) => {
