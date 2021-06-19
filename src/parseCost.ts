@@ -11,9 +11,9 @@ export default function parseCost(cost: string) {
 	if (!cost || cost === "") return r;
 	// Use only the first part of split cards
 	if (cost.includes("//")) cost = cost.split("//")[0].trim();
-	let symbols = cost.match(/({[^}]+})/g) || [];
+	let symbols = cost.match(/({[^}]+})/g) ?? [];
 	for (let s of symbols) {
-		r.cmc += ManaSymbols[s].cmc || 0;
+		r.cmc += ManaSymbols[s].cmc ?? 0;
 		r.colors = r.colors.concat(ManaSymbols[s].colors);
 	}
 	r.colors = [...new Set(r.colors)]; // Remove duplicates
