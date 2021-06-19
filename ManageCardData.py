@@ -11,6 +11,8 @@ import glob
 import decimal
 from itertools import groupby
 import functools
+from pprint import pprint
+import math as m1
 
 ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
@@ -363,10 +365,14 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 
     # Set result of melding cards as their back
     for c in meldCards:
-        if [a for a in c['all_parts'] if a['id'] == c['id']][0]['component'] == 'meld_part':
-            meldResult = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
-            cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
-                                      'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
+        part_info = [a for a in c['all_parts'] if a['name'] == c['name']]
+        if len(part_info) > 0:
+            if part_info[0]['component'] == 'meld_part':
+                meldResult = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
+                cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
+                                          'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
+        else:
+            print("Warning: Could not find part info for meld card ", c.name)
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
@@ -505,9 +511,14 @@ def getIcon(set, icon_path):
     return None
 
 
+nth = 1
+set_per_line = m1.floor(os.get_terminal_size().columns / 14)
+subsets = []  # List of sub-sets associated to a larger, standard set.
 for set, group in groups:
     cardList = list(group)
     setdata = next(x for x in SetsInfos if x['code'] == set)
+    if("parent_set_code" in setdata):
+        subsets.append(set)
     setinfos[set] = {"code": set,
                      "fullName": setdata['name'],
                      "cardCount": len(cardList),
@@ -520,7 +531,8 @@ for set, group in groups:
     icon_path = "img/sets/{}.svg".format(set if set != 'con' else 'conf')
     if getIcon(set, icon_path) != None:
         setinfos[set]['icon'] = icon_path
-    print('\t', set, ": ", len(cardList))
+    print(' | {:6s} {:4d}'.format(set, len(cardList)), end=(' |\n' if nth % set_per_line == 0 else ''))
+    nth += 1
     cardList.sort(key=lambda c: c['rarity'])
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
@@ -532,6 +544,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in ['tsb', 'fmb1', 'rmh1', 'afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, rmh1), or aren't out yet (afr)
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ['afr']]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, 'h1r'... see subsets), or aren't out yet (afr)
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
