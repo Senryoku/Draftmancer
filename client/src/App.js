@@ -1,5 +1,5 @@
 "use strict";
-import "core-js/features/string/match-all";
+import "core-js/features/string/match-all.js";
 import io from "../../node_modules/socket.io-client/dist/socket.io.js";
 import Vue from "vue";
 import draggable from "vuedraggable";
