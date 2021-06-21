@@ -2,7 +2,7 @@ import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { Options } from "./utils.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(+\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?\s*$/;
+const lineRegex = /^(?:(\d+)\s+)?([^(+\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
 
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
