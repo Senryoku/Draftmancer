@@ -154,6 +154,11 @@
     },
     "CubeLists": [
         {
+            "name": "Arena Chromatic Cube June 2021",
+            "filename": "ArenaChromaticCubeJune2021.txt",
+            "description": "MTGA Official Chromatic Cube June 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/chromatic-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
             "name": "Arena Historic Cube #3 - June 2021 (STX)",
             "filename": "MTGArenaCubeJune2021.txt",
             "description": "MTGA Official Historic Cube from June 2021 (Strixhaven version)."
