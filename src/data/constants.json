@@ -215,6 +215,7 @@
         }
     ],
     "PrimarySets": [
+        "afr",
         "mh2",
         "stx",
         "tsr",

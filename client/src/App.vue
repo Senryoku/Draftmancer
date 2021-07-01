@@ -1239,6 +1239,23 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>July XX, 2021</em>
+							<p>
+								<img src="img/sets/afr.svg" class="set-icon" style="--invertedness: 100%" />
+								Adventures in the Forgotten Realms (AFR) is now available!
+							</p>
+							<p>
+								If you get regular use out of MTGADraft, please consider
+								<a
+									href="https://www.paypal.com/donate?hosted_button_id=6L2CUS6DH82DL"
+									target="_blank"
+									rel="noopener nofollow"
+									>donating <i class="fas fa-external-link-alt"></i
+								></a>
+								a few bucks for the hours spent developing and maintaining it. Thank you! :) - Sen
+							</p>
+						</div>
+						<div class="news">
 							<em>June 3, 2021</em>
 							<p>
 								<img src="img/sets/mh2.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1251,15 +1268,6 @@
 							<p>
 								<img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven:
 								School of Mages (STX) support!
-							</p>
-						</div>
-						<div class="news">
-							<em>March 28, 2021</em>
-							<p>
-								Introducing the <a href="https://www.mtgadraft.tk">MTGADraft.tk</a> domain.<br />
-								<i class="fas fa-exclamation-triangle yellow"></i> This is the exact same website but
-								logs and preferences do not transfer over domains, you can still retrieve your game logs
-								by accessing the <a href="https://mtgadraft.herokuapp.com">old URL</a>.
 							</p>
 						</div>
 					</div>
