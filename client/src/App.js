@@ -1666,7 +1666,7 @@ export default {
 						});
 					});
 				},
-				onOpen: el => {
+				didOpen: el => {
 					let customBoostersEl = el.querySelector("#input-customBoosters");
 					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
 					// Create the set selects according to the number of booster per player
