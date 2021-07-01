@@ -133,7 +133,8 @@ select.swal2-input option {
 	box-sizing: border-box;
 }
 
-#main-container .controls button {
+#main-container .controls button,
+#main-container .controls input[type="button"] {
 	background-color: #333;
 }
 
