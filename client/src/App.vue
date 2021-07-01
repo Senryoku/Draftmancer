@@ -205,10 +205,7 @@
 										<img class="set-icon" :src="setsInfos[values[0]].icon" />
 										{{ setsInfos[values[0]].fullName }}
 									</span>
-									<span
-										class="multiselect__single multiselect__single_nooverflow"
-										v-if="values.length > 1"
-									>
+									<span class="multiselect__single" v-if="values.length > 1">
 										({{ values.length }})
 										<img v-for="v in values" class="set-icon" :src="setsInfos[v].icon" :key="v" />
 									</span>
@@ -216,7 +213,15 @@
 								<template slot="option" slot-scope="{ option }">
 									<span class="multiselect__option set-option">
 										<img class="set-icon padded-icon" :src="setsInfos[option].icon" />
-										{{ setsInfos[option].fullName }}
+										<span
+											style="
+												display: inline-block;
+												max-width: 13.5em;
+												overflow: hidden;
+												text-overflow: ellipsis;
+											"
+											>{{ setsInfos[option].fullName }}</span
+										>
 									</span>
 								</template>
 								<div
@@ -1252,7 +1257,7 @@
 									rel="noopener nofollow"
 									>donating <i class="fas fa-external-link-alt"></i
 								></a>
-								a few bucks for the hours spent developing and maintaining it. Thank you! :) - Sen
+								a few bucks for the time spent developing and maintaining it. Thank you! :) - Sen
 							</p>
 						</div>
 						<div class="news">
