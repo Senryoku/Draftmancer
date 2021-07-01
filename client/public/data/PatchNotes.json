@@ -1,5 +1,9 @@
 [
 	{
+		"date": "XX/07/2021",
+		"notes": ["Adventures in the Forgotten Realms (AFR) support."]
+	},
+	{
 		"date": "03/06/2021",
 		"notes": ["Modern Horizons 2 (MH2) support."]
 	},
