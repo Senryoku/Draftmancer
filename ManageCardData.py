@@ -35,7 +35,8 @@ ArenaRarity = {
     5: "mythic"
 }
 
-ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceSymbology = False
+ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceSymbology = FetchSet = False
+SetToFetch = ""
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
     ForceDownload = Arg == "dl"
@@ -43,6 +44,9 @@ if len(sys.argv) > 1:
     ForceRatings = Arg == "ratings"
     ForceJumpstart = Arg == "jmp"
     ForceSymbology = Arg == "symb"
+    FetchSet = Arg == "set" and len(sys.argv) > 2
+    if(FetchSet):
+        SetToFetch = sys.argv[2].lower()
 
 MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
@@ -156,6 +160,21 @@ SetsInfos = json.load(open(ScryfallSets, 'r', encoding="utf8"))['data']
 PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
 PrimarySets.extend(['ugl', 'unh', 'ust', 'und'])
+
+# Manually fetch up-to-date data for a specific set (really unoptimized)
+if FetchSet:
+    setcards = requests.get(json.loads(requests.get("https://api.scryfall.com/sets/{}".format(SetToFetch)).content)["search_uri"]).json()
+    allcards = []
+    with open(BulkDataPath, 'r', encoding="utf8") as file:
+        allcards = json.load(file)
+    allcards.append(setcards["data"])
+    while setcards["has_more"]:
+        setcards = requests.get(setcards["next_page"]).json()
+        for c in setcards["data"]:
+            if c not in allcards:
+                allcards.append(c)
+    with open(BulkDataPath, 'w', encoding="utf8") as file:
+        json.dump(allcards, file)
 
 
 def handleTypeLine(typeLine):
@@ -365,14 +384,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
 
     # Set result of melding cards as their back
     for c in meldCards:
-        part_info = [a for a in c['all_parts'] if a['name'] == c['name']]
-        if len(part_info) > 0:
-            if part_info[0]['component'] == 'meld_part':
-                meldResult = cards[[a for a in c['all_parts'] if a['component'] == 'meld_result'][0]['id']]
-                cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
-                                          'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
+        meldResult = [a for a in c['all_parts'] if a['component'] == 'meld_result']
+        if len(meldResult) > 0:
+            meldResult = cards[meldResult[0]['id']]
+            cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
+                                      'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
         else:
-            print("Warning: Could not find part info for meld card ", c.name)
+            print("Warning: Could not find part info for meld card (ignore if this is a result card) ", c["name"])
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
