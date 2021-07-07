@@ -133,7 +133,8 @@ select.swal2-input option {
 	box-sizing: border-box;
 }
 
-#main-container .controls button {
+#main-container .controls button,
+#main-container .controls input[type="button"] {
 	background-color: #333;
 }
 
@@ -459,7 +460,7 @@ select.swal2-input option {
 }
 
 .welcome-section .news p {
-	margin: 0 0 0 1em;
+	margin: 0.25em 0 0 1em;
 }
 
 .welcome-alt {
@@ -1417,15 +1418,15 @@ ul.player-list {
 	min-height: auto;
 	width: auto;
 	font-size: inherit;
-}
-
-.multiselect__single_nooverflow {
+	max-width: 17.5em;
+	text-overflow: ellipsis;
+	display: inline-block;
 	overflow: hidden;
-	max-height: 1em;
-	max-width: 12em;
+	white-space: nowrap;
 }
 
-.multiselect__single_nooverflow .set-icon {
+.multiselect__single .set-icon {
+	vertical-align: middle;
 	margin-right: 0.2em;
 }
 

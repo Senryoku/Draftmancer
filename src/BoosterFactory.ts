@@ -9,7 +9,7 @@ import constants from "./data/constants.json";
 // Generates booster for regular MtG Sets
 
 const mythicRate = 1.0 / 8.0;
-const foilRate = 15.0 / 63.0;
+const foilRate = 15.0 / 67.0;
 // 1/16 chances of a foil basic land added to the common slot. Mythic to common
 const foilRarityRates: { [slot: string]: number } = {
 	mythic: 1.0 / 128,
@@ -17,6 +17,12 @@ const foilRarityRates: { [slot: string]: number } = {
 	uncommon: 1.0 / 16 + 3.0 / 16,
 	common: 1.0,
 };
+
+export function getSetFoilRate(set: string | null) {
+	if (set === null) return foilRate;
+	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr"].includes(set)) return 1.0 / 3.0;
+	return foilRate;
+}
 
 type Targets = { [slot: string]: number };
 

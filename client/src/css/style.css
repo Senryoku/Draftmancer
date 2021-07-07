@@ -12,9 +12,9 @@ body {
 .backgound-image {
 	position: absolute;
 	right: 5em;
-	top: 0;
+	top: 7em;
 	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
-		url("../assets/img/stx-bg-cropped-min.png");
+		url("../assets/img/afr_1080p.png");
 	background-position: center;
 	background-size: 100%;
 	background-repeat: no-repeat;

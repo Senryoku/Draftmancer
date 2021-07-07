@@ -194,6 +194,7 @@ describe("Sets content", function() {
 		tsr: { common: 121, uncommon: 100, rare: 53, mythic: 15 },
 		stx: { common: 105, uncommon: 80, rare: 69, mythic: 21 },
 		mh2: { common: 101, uncommon: 100, rare: 78, mythic: 24 },
+		afr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function(done) {

@@ -30,6 +30,7 @@ import {
 	DefaultBoosterTargets,
 	IBoosterFactory,
 	PaperBoosterFactory,
+	getSetFoilRate,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
 Object.freeze(JumpstartBoosters);
@@ -662,6 +663,7 @@ export class Session implements IIndexable {
 				landSlot: BasicLandSlot | null,
 				options: Options
 			) {
+				options = Object.assign({ foilRate: getSetFoilRate(set) }, options);
 				// Check for a special booster factory
 				if (set && set in SetSpecificFactories) return SetSpecificFactories[set](cardPool, landSlot, options);
 				return new BoosterFactory(cardPool, landSlot, options);
