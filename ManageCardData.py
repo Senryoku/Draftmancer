@@ -47,6 +47,7 @@ if len(sys.argv) > 1:
     FetchSet = Arg == "set" and len(sys.argv) > 2
     if(FetchSet):
         SetToFetch = sys.argv[2].lower()
+        ForceCache = True
 
 MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
@@ -164,7 +165,7 @@ PrimarySets.extend(['ugl', 'unh', 'ust', 'und'])
 
 def append_set_cards(allcards, results):
     for c in results["data"]:
-        if c not in allcards:
+        if not any(c["id"] == card["id"] for card in allcards):
             print("Added: {}".format(c["name"]))
             allcards.append(c)
 
