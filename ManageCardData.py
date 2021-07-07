@@ -161,18 +161,25 @@ PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
 PrimarySets.extend(['ugl', 'unh', 'ust', 'und'])
 
+
+def append_set_cards(allcards, results):
+    for c in results["data"]:
+        if c not in allcards:
+            print("Added: {}".format(c["name"]))
+            allcards.append(c)
+
+
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
+    print("Fetching cards from {}...".format(SetToFetch))
     setcards = requests.get(json.loads(requests.get("https://api.scryfall.com/sets/{}".format(SetToFetch)).content)["search_uri"]).json()
     allcards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         allcards = json.load(file)
-    allcards.append(setcards["data"])
+    append_set_cards(allcards, setcards)
     while setcards["has_more"]:
         setcards = requests.get(setcards["next_page"]).json()
-        for c in setcards["data"]:
-            if c not in allcards:
-                allcards.append(c)
+        append_set_cards(allcards, setcards)
     with open(BulkDataPath, 'w', encoding="utf8") as file:
         json.dump(allcards, file)
 
