@@ -265,6 +265,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             # Workaround for Teferi, Master of Time (M21) variations (exclude all except the first one from boosters)
             if(c['set'] == 'm21' and c['collector_number'] in ['275', '276', '277']):
                 c['booster'] = False
+            # Workaround for premium version of some afr cards
+            if(c['set'] == 'afr' and ('★' in c['collector_number'] or int(c['collector_number']) > 281)):
+                c['booster'] = False
 
             all_cards.append(c)
             copied += 1
