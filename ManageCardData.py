@@ -198,11 +198,11 @@ CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
     CardRatings = dict(CardRatings, **json.loads(file.read()))
 if not os.path.isfile(RatingsDest) or ForceRatings:
-    for path in glob.glob('{}/*.html'.format(RatingSourceFolder)):
+    for path in glob.glob('{}/*.htm*'.format(RatingSourceFolder)):
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r"(?ms)data-name=\"([^\"]+)\".*?<td>[^<]+<\/td>.*?<td>([\d.]+)<\/td>", text)
+                r"<h3>([^<]+)<\/h3>\s*<b>Pro Rating: ([0-9]*\.?[0-9]*)<\/b>", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
