@@ -219,7 +219,13 @@ async function tempDump(exitOnCompletion = false) {
 	}
 
 	const PoDSessions = [];
-	for (const sessionID in Sessions) PoDSessions.push(getPoDSession(Sessions[sessionID]));
+	for (const sessionID in Sessions) {
+		try {
+			PoDSessions.push(getPoDSession(Sessions[sessionID]));
+		} catch (e) {
+			console.error(`Error while saving session '${sessionID}'.`);
+		}
+	}
 
 	try {
 		Promises.push(
