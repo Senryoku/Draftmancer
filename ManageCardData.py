@@ -307,7 +307,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     meldCards = []
     for c in all_cards:
         if c['id'] not in cards:
-            cards[c['id']] = {'id': c['id']}
+            cards[c['id']] = {'id': c['id'], 'oracle_id': c['oracle_id']}
 
         key = (c['name'], c['set'], c['collector_number'])
         if key not in Translations:
