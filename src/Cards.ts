@@ -8,10 +8,12 @@ import { memoryReport } from "./utils.js";
 
 export type CardID = string;
 export type ArenaID = string;
+export type OracleID = string;
 
 export class Card {
 	id: CardID = "";
 	arena_id?: ArenaID;
+	oracle_id: OracleID = "";
 	name: string = "";
 	mana_cost: string = "";
 	colors: Array<string> = [];
