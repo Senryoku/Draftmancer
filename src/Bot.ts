@@ -24,6 +24,7 @@ export default class Bot {
 	constructor(name: string, id: string) {
 		this.name = name;
 		this.id = id; // Used for sorting
+		this.oracleIds = [...basicOracleIds];
 	}
 
 	getBotResult(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
@@ -32,9 +33,9 @@ export default class Bot {
 		this.oracleIds.push(...booster.map(({ oracle_id }) => oracle_id));
 		const drafterState = {
 			basics: [0, 1, 2, 3, 4],
-			cardsInPack: booster.map((_, idx) => idx + 5),
-			picked: this.cards.map((_, idx) => idx + 5 + booster.length),
-			seen: this.seen.map((_, idx) => idx + 5 + booster.length + this.cards.length),
+			cardsInPack: boosterIdxs,
+			picked: this.picked,
+			seen: this.seen,
 			cardOracleIds: this.oracleIds,
 			packNum: boosterNum,
 			numPacks: numBoosters,
