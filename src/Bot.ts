@@ -1,6 +1,6 @@
 "use strict";
 
-import { calculateBotPick } from "mtgdraftbots";
+import { calculateBotPick, initializeDraftbots, testRecognized } from "mtgdraftbots";
 
 import { Card } from "./Cards";
 
@@ -11,6 +11,8 @@ const basicOracleIds = [
 	"b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
 	"a3fb7228-e76b-4e96-a40e-20b5fed75685",
 ];
+
+const draftbotInitialization = initializeDraftbots();
 
 export default class Bot {
 	name: string;
@@ -27,7 +29,7 @@ export default class Bot {
 		this.oracleIds = [...basicOracleIds];
 	}
 
-	getBotResult(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+	async getBotResult(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const boosterIdxs = booster.map((_, idx) => idx + this.oracleIds.length);
 		this.seen.push(...boosterIdxs);
 		this.oracleIds.push(...booster.map(({ oracle_id }) => oracle_id));
@@ -43,6 +45,11 @@ export default class Bot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
+		// Make sure the bots are initialized before we call them.
+		await draftbotInitialization;
+		// TODO: Use this to determine if we should use the new draftbots
+		const recognized = await testRecognized(this.oracleIds);
+		// We could also retrieve recognized from the result of calculateBotPicks.
 		return calculateBotPick(drafterState);
 	}
 
@@ -50,7 +57,7 @@ export default class Bot {
 		const result = await this.getBotResult(booster, boosterNum, numBoosters, pickNum, numPicks);
 		const bestPick = result.chosenOption;
 		// This dedupes the card since we know it is already in the oracleIds array.
-		this.picked.push(result.cardsInPack[result.chosenOption]);
+		this.picked.push(result.cardsInPack[bestPick]);
 		this.cards.push(booster[bestPick]);
 		return bestPick;
 	}
