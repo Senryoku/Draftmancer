@@ -2,9 +2,81 @@
 
 import { calculateBotPick, initializeDraftbots, testRecognized } from "mtgdraftbots";
 
-import { Card } from "./Cards";
+import { Card, OracleID } from "./Cards";
 
-const basicOracleIds = [
+const DraftbotInitialized = await initializeDraftbots("../data/draftbotparameters.bin");
+if (!DraftbotInitialized) console.error("Bot.ts: Error initializing draft bot parameters.");
+
+export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
+	if (!DraftbotInitialized) return true; // Immediatly returns true if mtgdraftbots hasn't been properly initialized.
+	// Counts the number of cards recognized by the mtgdraftbots library amoung the supplied array.
+	let recognized = (await testRecognized(oracleIds)).filter((x: number) => x > 0).length;
+	return recognized / oracleIds.length < 0.8; // Returns true if less than 80% of cards have associated data.
+}
+
+export interface IBot {
+	name: string;
+	id: string;
+	cards: Card[];
+
+	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
+	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
+}
+
+// Straightforward implementation of basic bots used as a fallback
+export class SimpleBot implements IBot {
+	name: string;
+	id: string;
+	type: string = "SimpleBot";
+	cards: Card[] = [];
+	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
+
+	constructor(name: string, id: string) {
+		this.name = name;
+		this.id = id;
+	}
+
+	async pick(
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	): Promise<number> {
+		let maxScore = 0;
+		let bestPick = 0;
+		for (let idx = 0; idx < booster.length; ++idx) {
+			let c = booster[idx];
+			// TODO: Rate cards
+			let score = c.rating;
+			for (let color of c.colors) {
+				score += 0.35 * this.pickedColors[color];
+			}
+			if (score > maxScore) {
+				maxScore = score;
+				bestPick = idx;
+			}
+		}
+		for (let color of booster[bestPick].colors) {
+			this.pickedColors[color] += 1;
+		}
+		this.cards.push(booster[bestPick]);
+		return bestPick;
+	}
+
+	// TODO: Chooses which card to burn.
+	async burn(
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	): Promise<number> {
+		return 0;
+	}
+}
+
+const BasicsOracleIds = [
 	"56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
 	"b2c6aa39-2d2a-459c-a555-fb48ba993373",
 	"bc71ebf6-2056-41f7-be35-b2e5c34afa99",
@@ -12,11 +84,11 @@ const basicOracleIds = [
 	"a3fb7228-e76b-4e96-a40e-20b5fed75685",
 ];
 
-const draftbotInitialization = initializeDraftbots();
-
-export default class Bot {
+// Uses the mtgdraftbots library
+export class Bot implements IBot {
 	name: string;
 	id: string;
+	type: string = "mtgdraftbots";
 	oracleIds: string[] = [];
 	seen: number[] = [];
 	picked: number[] = [];
@@ -26,7 +98,7 @@ export default class Bot {
 	constructor(name: string, id: string) {
 		this.name = name;
 		this.id = id; // Used for sorting
-		this.oracleIds = [...basicOracleIds];
+		this.oracleIds = [...BasicsOracleIds];
 	}
 
 	async getBotResult(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
@@ -45,11 +117,6 @@ export default class Bot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
-		// Make sure the bots are initialized before we call them.
-		await draftbotInitialization;
-		// TODO: Use this to determine if we should use the new draftbots
-		const recognized = await testRecognized(this.oracleIds);
-		// We could also retrieve recognized from the result of calculateBotPicks.
 		return calculateBotPick(drafterState);
 	}
 

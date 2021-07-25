@@ -15,7 +15,7 @@ import {
 	RochesterDraftState,
 	IIndexable,
 } from "./Session.js";
-import Bot from "./Bot.js";
+import { Bot, SimpleBot } from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
@@ -82,9 +82,15 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.botsInstances) {
 		r.botsInstances = [];
 		for (let bot of s.botsInstances) {
-			const newBot = new Bot(bot.name, bot.id);
-			copyProps(bot, newBot);
-			r.botsInstances.push(newBot);
+			if (bot.type == "SimpleBot") {
+				const newBot = new SimpleBot(bot.name, bot.id);
+				copyProps(bot, newBot);
+				r.botsInstances.push(newBot);
+			} else if (bot.type == "mtgdraftbots") {
+				const newBot = new Bot(bot.name, bot.id);
+				copyProps(bot, newBot);
+				r.botsInstances.push(newBot);
+			} else console.error(`Error: Invalid bot type '${bot.type}'.`);
 		}
 	}
 

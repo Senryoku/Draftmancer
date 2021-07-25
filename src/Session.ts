@@ -20,7 +20,7 @@ import {
 	SlotedCardPool,
 	UniqueCard,
 } from "./Cards.js";
-import Bot from "./Bot.js";
+import { IBot, Bot, SimpleBot, fallbackToSimpleBots } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -209,7 +209,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
 export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
 
-export type UserInfo = { [uid: string]: { isBot: boolean; disconnected?: boolean; instance?: Bot } };
+export type UserInfo = { [uid: string]: { isBot: boolean; disconnected?: boolean; instance?: IBot } };
 
 export interface IIndexable {
 	[key: string]: any;
@@ -257,7 +257,7 @@ export class Session implements IIndexable {
 	draftState?: IDraftState = undefined;
 	draftLog?: DraftLog;
 	// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
-	botsInstances: Array<Bot> = [];
+	botsInstances: Array<IBot> = [];
 	disconnectedUsers: { [uid: string]: any } = {};
 	draftPaused: boolean = false;
 	countdown: number = 75;
@@ -1187,7 +1187,7 @@ export class Session implements IIndexable {
 	///////////////////// Rochester Draft End //////////////////////
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	startDraft() {
+	async startDraft() {
 		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
 
@@ -1195,15 +1195,22 @@ export class Session implements IIndexable {
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
 		this.disconnectedUsers = {};
-		// Generate bots
-		this.botsInstances = [];
-		for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i + 1}`, uuidv1()));
 
 		if (
 			!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })
 		) {
 			this.drafting = false;
 			return;
+		}
+
+		// Generate bots
+		this.botsInstances = [];
+		const oracleIds = this.boosters.flat().map(card => card.oracle_id);
+		const fallback = await fallbackToSimpleBots(oracleIds);
+		if (fallback) {
+			for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new SimpleBot(`Bot #${i + 1}`, uuidv1()));
+		} else {
+			for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new Bot(`Bot #${i + 1}`, uuidv1()));
 		}
 
 		// Draft Log initialization
@@ -1328,7 +1335,7 @@ export class Session implements IIndexable {
 		return { code: 0 };
 	}
 
-	async doBotPick(instance: Bot, boosterIndex: number) {
+	async doBotPick(instance: IBot, boosterIndex: number) {
 		const s = this.draftState as DraftState;
 		const startingBooster = s.boosters[boosterIndex].map(c => c.id);
 		const pickedIndices = [];
@@ -1395,14 +1402,14 @@ export class Session implements IIndexable {
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				this.doBotPick(virtualPlayers[userID].instance as Bot, boosterIndex);
+				this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex);
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					// This user has been replaced by a bot, pick immediately
 					if (!this.disconnectedUsers[userID].bot) {
 						console.error("Trying to use bot that doesn't exist... That should not be possible!");
 						console.error(this.disconnectedUsers[userID]);
-						this.disconnectedUsers[userID].bot = new Bot("Bot", userID);
+						this.disconnectedUsers[userID].bot = new SimpleBot("Bot", userID);
 					}
 					const pickedCards = await this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
 					this.disconnectedUsers[userID].pickedThisRound = true;
@@ -1770,7 +1777,8 @@ export class Session implements IIndexable {
 		console.warn("Replacing disconnected players with bots!");
 
 		for (let uid in this.disconnectedUsers) {
-			this.disconnectedUsers[uid].bot = new Bot(`${this.disconnectedUsers[uid].userName} (Bot)`, uid);
+			// TODO: Allow the use of Bot when possible.
+			this.disconnectedUsers[uid].bot = new SimpleBot(`${this.disconnectedUsers[uid].userName} (Bot)`, uid);
 			for (let c of this.disconnectedUsers[uid].pickedCards) {
 				this.disconnectedUsers[uid].bot.pick([c]);
 			}
