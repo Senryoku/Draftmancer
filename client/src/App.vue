@@ -1250,10 +1250,6 @@
 								Adventures in the Forgotten Realms (AFR) is now available!
 							</p>
 							<p>
-								<i class="fa fa-exclamation-triangle yellow"></i> Some cards may still be low
-								resolution/not available in english, this will be fixed in the upcoming days.
-							</p>
-							<p>
 								If you get regular use out of MTGADraft, please consider
 								<a
 									href="https://www.paypal.com/donate?hosted_button_id=6L2CUS6DH82DL"
