@@ -350,6 +350,15 @@
 								>
 									Jumpstart
 								</button>
+								<button
+									@click="deckWarning(distributeJumpstartHH)"
+									v-tooltip.left="
+										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
+									"
+									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
+								>
+									Jumpstart: Historic Horizons
+								</button>
 							</div>
 						</template>
 					</dropdown>

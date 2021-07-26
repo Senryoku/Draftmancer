@@ -33,6 +33,7 @@ import {
 	getSetFoilRate,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
+import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
@@ -1603,14 +1604,16 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	distributeJumpstart() {
+	distributeJumpstart(set: string | null) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
 		const log = this.initLogs("Jumpstart");
 		log.carddata = {};
 
+		const BoostersPool = set == "jhh" ? JumpstartHHBoosters : JumpstartBoosters;
+
 		for (let user of this.users) {
-			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
+			let boosters = [getRandom(BoostersPool), getRandom(BoostersPool)];
 			const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
 
 			log.users[user].cards = cards.flat().map((c: Card) => c.id);

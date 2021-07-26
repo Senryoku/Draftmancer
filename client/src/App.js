@@ -1738,6 +1738,10 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart");
 		},
+		distributeJumpstartHH: function() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("distributeJumpstart", "jhh");
+		},
 		readyCheck: function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
