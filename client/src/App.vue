@@ -1244,7 +1244,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>July XX, 2021</em>
+							<em>July 07, 2021</em>
 							<p>
 								<img src="img/sets/afr.svg" class="set-icon" style="--invertedness: 100%" />
 								Adventures in the Forgotten Realms (AFR) is now available!
