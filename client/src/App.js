@@ -770,6 +770,8 @@ export default {
 				);
 			});
 
+			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
+
 			this.socket.on("setCardSelection", data => {
 				if (!data) return;
 				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
@@ -1740,7 +1742,41 @@ export default {
 		},
 		distributeJumpstartHH: function() {
 			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("distributeJumpstart", "jhh");
+			this.socket.emit("distributeJumpstart", "j21");
+		},
+		packChoice: function(choice) {
+			console.log(choice);
+		},
+		displayPackChoice: function(boosters, currentPack, packCount) {
+			let boostersDisplay = "";
+			for (let b of boosters) boostersDisplay += `<h2 class="pack-button clickable">${b.name}</h2>`;
+			return Alert.fire({
+				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
+				html: `<div style="display:flex; justify-content: space-around;">${boostersDisplay}</div>`,
+				showCancelButton: false,
+				showConfirmButton: false,
+				allowEscapeKey: false,
+				allowOutsideClick: false,
+				width: "900px",
+				didOpen: el => {
+					let packButtons = el.querySelectorAll(".pack-button");
+					for (let i = 0; i < packButtons.length; ++i) {
+						packButtons[i].addEventListener("click", () => {
+							for (let c of boosters[i].cards) this.addToDeck(c);
+							Alert.clickConfirm();
+						});
+					}
+				},
+			});
+		},
+		selectJumpstartPacks: async function(boosters, ack) {
+			this.clearState();
+			this.draftingState = DraftState.Brewing;
+			for (let i = 0; i < boosters.length; ++i) await this.displayPackChoice(boosters[i], i, boosters.length);
+			ack?.(
+				this.userID,
+				this.deck.map(card => card.id)
+			);
 		},
 		readyCheck: function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;

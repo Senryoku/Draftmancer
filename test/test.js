@@ -195,7 +195,7 @@ describe("Sets content", function() {
 		stx: { common: 105, uncommon: 80, rare: 69, mythic: 21 },
 		mh2: { common: 101, uncommon: 100, rare: 78, mythic: 24 },
 		afr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
-		jhh: { common: 383, uncommon: 286, rare: 85, mythic: 13 }, // TODO: Replace by the actual Jumpstart: Historic Horizon set code
+		j21: { common: 383, uncommon: 286, rare: 85, mythic: 13 }, // TODO: Replace by the actual Jumpstart: Historic Horizon set code. Some cards may have their original set.
 	};
 
 	beforeEach(function(done) {

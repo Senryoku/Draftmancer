@@ -18,6 +18,7 @@ import {
 	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
+	UniqueCard,
 } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -1610,39 +1611,68 @@ export class Session implements IIndexable {
 		const log = this.initLogs("Jumpstart");
 		log.carddata = {};
 
-		const BoostersPool = set == "jhh" ? JumpstartHHBoosters : JumpstartBoosters;
+		// Jumpstart: Historic Horizons
+		if (set == "j21") {
+			for (let user of this.users) {
+				// Randomly get 2*3 packs and let the user choose among them.
+				let boosters = [];
+				for (let i = 0; i < 2; ++i) {
+					let ithchoice = [];
+					for (let j = 0; j < 3; ++j) {
+						const boosterPattern = getRandom(JumpstartHHBoosters);
+						let booster: { name: string; cards: UniqueCard[] } = { name: boosterPattern.name, cards: [] };
+						// TODO: Handle variations of packs in Jumpstart: Historic Horizons
+						booster.cards = boosterPattern.cards.map((cid: CardID) => getUnique(cid));
+						ithchoice.push(booster);
+					}
+					boosters.push(ithchoice);
+				}
 
-		for (let user of this.users) {
-			let boosters = [getRandom(BoostersPool), getRandom(BoostersPool)];
-			const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
+				Connections[user].socket.emit("selectJumpstartPacks", boosters, (user: UserID, cards: CardID[]) => {
+					if (!this.draftLog) return;
+					this.draftLog.users[user].cards = cards;
+					for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = Cards[cid];
+					if (
+						Object.keys(this.draftLog.users).every(
+							(uid: UserID) => this.draftLog?.users[uid].cards !== null
+						)
+					) {
+						this.sendLogs();
+						logSession("Jumpstart", this);
+					}
+				});
+			}
+		} else {
+			// Original Jumpstart
+			for (let user of this.users) {
+				let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
+				// TODO: Handle variations of packs in Jumpstart: Historic Horizons
+				const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
 
-			log.users[user].cards = cards.flat().map((c: Card) => c.id);
-			for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
+				log.users[user].cards = cards.flat().map((c: Card) => c.id);
+				for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
 
-			Connections[user].socket.emit("setCardSelection", cards);
-			Connections[user].socket.emit("message", {
-				icon: "success",
-				imageUrl: "/img/2JumpstartBoosters-min.png",
-				title: "Here are your Jumpstart boosters!",
-				text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
-				showConfirmButton: false,
-				timer: 2000,
-			});
+				Connections[user].socket.emit("setCardSelection", cards);
+				Connections[user].socket.emit("message", {
+					icon: "success",
+					imageUrl: "/img/2JumpstartBoosters-min.png",
+					title: "Here are your Jumpstart boosters!",
+					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
+					showConfirmButton: false,
+					timer: 2000,
+				});
+			}
+			this.sendLogs();
+			logSession("Jumpstart", this);
 		}
-
-		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("message", {
-				title: "Jumpstart boosters successfly distributed!",
+				title: "Jumpstart boosters successfully distributed!",
 				showConfirmButton: false,
 			});
 		}
-
-		logSession("Jumpstart", this);
-
-		this.boosters = [];
 	}
 
 	reconnectUser(userID: UserID) {
