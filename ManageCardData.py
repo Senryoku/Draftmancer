@@ -24,6 +24,7 @@ RatingSourceFolder = 'data/LimitedRatings/'
 JumpstartBoostersFolder = 'data/JumpstartBoosters'
 JumpstartSwaps = "data/JumpstartSwaps.json"
 JumpstartBoostersDist = 'src/data/JumpstartBoosters.json'
+JumpstartHHBoostersDist = 'src/data/JumpstartHHBoosters.json'
 RatingsDest = 'data/ratings.json'
 ManaSymbolsFile = "src/data/mana_symbols.json"
 
@@ -35,7 +36,7 @@ ArenaRarity = {
     5: "mythic"
 }
 
-ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceSymbology = FetchSet = False
+ForceDownload = ForceExtract = ForceCache = ForceRatings = ForceJumpstart = ForceJumpstartHH = ForceSymbology = FetchSet = False
 SetToFetch = ""
 if len(sys.argv) > 1:
     Arg = sys.argv[1].lower()
@@ -43,6 +44,7 @@ if len(sys.argv) > 1:
     ForceCache = ForceDownload or Arg == "cache"
     ForceRatings = Arg == "ratings"
     ForceJumpstart = Arg == "jmp"
+    ForceJumpstartHH = Arg == "jhh"
     ForceSymbology = Arg == "symb"
     FetchSet = Arg == "set" and len(sys.argv) > 2
     if(FetchSet):
@@ -495,7 +497,48 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
     print("Jumpstart Boosters: ", len(jumpstartBoosters))
     with open(JumpstartBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartBoosters, outfile, ensure_ascii=False)
-    print("Jumpstart booster dumped to disk.")
+    print("Jumpstart boosters dumped to disk.")
+
+
+PacketListURL = "https://magic.wizards.com/en/articles/archive/magic-digital/jumpstart-historic-horizons-packet-lists-2021-07-26"
+TitleRegex = r"<span class=\"deck-meta\">\s*<h4>(\w+)</h4>"
+CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a href=\"https://gatherer\.wizards\.com/Pages/Search/Default\.aspx\?name=.*\" data-src=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\" data-mp4=\"https://magic\.wizards\.com/\" data-webm=\"https://magic\.wizards\.com/\" data-gif=\"https://magic\.wizards\.com/\" class=\"deck-list-link\" data-cardexpansion=\".*\" data-cardnumber=\"\d+\">(.+)</a></span>"
+AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
+AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
+if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
+    print("Extracting Jumpstart: Historic Horizons Boosters...")
+    jumpstartHHBoosters = []
+    page = requests.get(PacketListURL).text
+    matches = re.finditer(TitleRegex, page)
+    matches_arr = []
+    for m in matches:
+        matches_arr.append(m)
+    for idx in range(len(matches_arr)):
+        print("Found Pack: ", matches_arr[idx].group(1))
+        start = page.find("<div class=\"sorted-by-rarity-container sortedContainer\" style=\"display:none;\">", matches_arr[idx].span()[1])
+        end = matches_arr[idx + 1].span()[0] if idx < len(matches_arr) - 1 else len(page)
+        cards_matches = re.findall(CardsRegex, page[start:end])
+        jhh_cards = []
+        for c in cards_matches:
+            for i in c[0]:
+                jhh_cards.append(c[1])  # TODO: Find ID?
+        altcards = []
+        altline_matches = re.findall(AlternateLinesRegex, page[start:end])
+        for l in altline_matches:
+            alt_matches = re.findall(AlternateCardsRegex, l)
+            if len(alt_matches) > 0:
+                altslot = []
+                for alt in alt_matches:
+                    altslot.append({"name": alt[1], "weight": int(alt[0])})
+                    if alt[1] in jhh_cards:
+                        jhh_cards.remove(alt[1])
+                altcards.append(altslot)
+
+        jumpstartHHBoosters.append({"name": m.group(1), "cards": jhh_cards, "alts": altcards})
+    print("Jumpstart Boosters: ", len(jumpstartHHBoosters))
+    with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
+        json.dump(jumpstartHHBoosters, outfile, ensure_ascii=False)
+    print("Jumpstart: Historic Horizons boosters dumped to disk.")
 
 
 def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):
