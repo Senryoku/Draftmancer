@@ -95,7 +95,7 @@ MTGATranslations = {"en": {},
                     "zht": {},
                     "ph": {}}
 CardsCollectorNumberAndSet = {}
-CardNameToID = {}
+CardNameToArenaID = {}
 AKRCards = {}
 KLRCards = {}
 for path in MTGACardsFiles:
@@ -134,9 +134,9 @@ for path in MTGACardsFiles:
                         'printed_name': MTGALocalization[lang][o['titleId']]}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
-                if MTGALocalization['en'][o['titleId']] not in CardNameToID or o['set'] in ['jmp', 'm21']:
-                    CardNameToID[MTGALocalization['en']
-                                 [o['titleId']]] = o['grpid']
+                if MTGALocalization['en'][o['titleId']] not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
+                    CardNameToArenaID[MTGALocalization['en']
+                                      [o['titleId']]] = o['grpid']
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
@@ -454,6 +454,9 @@ for cid in cards:
 with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
     json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
 
+###############################################################################
+# Generate Jumpstart pack data
+
 if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
     print("Extracting Jumpstart Boosters...")
     jumpstartBoosters = []
@@ -473,10 +476,10 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                     name = m.group(2)
                     if name in swaps:
                         name = swaps[name]
-                    if name in CardNameToID:
+                    if name in CardNameToArenaID:
                         cid = None
                         for c in cards:
-                            if 'arena_id' in cards[c] and cards[c]['arena_id'] == CardNameToID[name]:
+                            if 'arena_id' in cards[c] and cards[c]['arena_id'] == CardNameToArenaID[name]:
                                 cid = cards[c]['id']
                                 break
                         # Some cards are labeled as JMP in Arena but not on Scryfall (Swaped cards). We can search for an alternative version.
@@ -500,11 +503,29 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
     print("Jumpstart boosters dumped to disk.")
 
 
+###############################################################################
+# Retreive Jumpstart: Historic Horizons pack information directly from Wizards' site
+
 PacketListURL = "https://magic.wizards.com/en/articles/archive/magic-digital/jumpstart-historic-horizons-packet-lists-2021-07-26"
 TitleRegex = r"<span class=\"deck-meta\">\s*<h4>(\w+)</h4>"
 CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a href=\"https://gatherer\.wizards\.com/Pages/Search/Default\.aspx\?name=.*\" data-src=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\" data-mp4=\"https://magic\.wizards\.com/\" data-webm=\"https://magic\.wizards\.com/\" data-gif=\"https://magic\.wizards\.com/\" class=\"deck-list-link\" data-cardexpansion=\".*\" data-cardnumber=\"\d+\">(.+)</a></span>"
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
 AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
+
+
+def getIDFromName(name):
+    candidates = []
+    for c in cards:
+        if 'name' in cards[c] and cards[c]['name'] == name:
+            candidates.append(cards[c])
+            break
+    if len(candidates) == 0:
+        print("Could not find a suitable CardID for {}".format(name))
+        return None
+    # TODO: Select the card version more carefully
+    return candidates[0]["id"]
+
+
 if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
     print("Extracting Jumpstart: Historic Horizons Boosters...")
     jumpstartHHBoosters = []
@@ -520,8 +541,10 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         cards_matches = re.findall(CardsRegex, page[start:end])
         jhh_cards = []
         for c in cards_matches:
-            for i in c[0]:
-                jhh_cards.append(c[1])  # TODO: Find ID?
+            cid = getIDFromName(c[1])
+            if cid != None:
+                for i in c[0]:  # Add the card c[0] times
+                    jhh_cards.append(cid)
         altcards = []
         altline_matches = re.findall(AlternateLinesRegex, page[start:end])
         for l in altline_matches:
@@ -529,16 +552,26 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             if len(alt_matches) > 0:
                 altslot = []
                 for alt in alt_matches:
-                    altslot.append({"name": alt[1], "weight": int(alt[0])})
-                    if alt[1] in jhh_cards:
-                        jhh_cards.remove(alt[1])
-                altcards.append(altslot)
+                    if alt[1] in CardNameToArenaID:
+                        cid = getIDFromName(alt[1])
+                        if cid != None:
+                            altslot.append({"name": alt[1], "id": cid, "weight": int(alt[0])})
+                            if alt[1] in jhh_cards:
+                                jhh_cards.remove(alt[1])
+                    else:
+                        print("Jumpstart: Historic Horizons Boosters: Card '{}' not found.".format(alt[1]))
+                if len(altslot) > 0:
+                    altcards.append(altslot)
+                else:
+                    print("Jumpstart: Historic Horizons Boosters: Empty Alt Slot.")
 
-        jumpstartHHBoosters.append({"name": m.group(1), "cards": jhh_cards, "alts": altcards})
+        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "cards": jhh_cards, "alts": altcards})
     print("Jumpstart Boosters: ", len(jumpstartHHBoosters))
     with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartHHBoosters, outfile, ensure_ascii=False)
     print("Jumpstart: Historic Horizons boosters dumped to disk.")
+
+###############################################################################
 
 
 def overrideViewbox(svgPath, expectedViewbox, correctedViewbox):

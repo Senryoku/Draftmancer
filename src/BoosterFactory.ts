@@ -686,7 +686,7 @@ interface SetInfo {
 	colorBalancedSheets?: { [sheet: string]: { [subsheet: string]: { cards: CardInfo[]; total_weight: number } } };
 }
 
-function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
+export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
 	let pick = randomInt(1, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;

@@ -32,6 +32,7 @@ import {
 	IBoosterFactory,
 	PaperBoosterFactory,
 	getSetFoilRate,
+	weightedRandomIdx,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
@@ -1623,6 +1624,13 @@ export class Session implements IIndexable {
 						let booster: { name: string; cards: UniqueCard[] } = { name: boosterPattern.name, cards: [] };
 						// TODO: Handle variations of packs in Jumpstart: Historic Horizons
 						booster.cards = boosterPattern.cards.map((cid: CardID) => getUnique(cid));
+						if (boosterPattern.alts) {
+							for (let slot of boosterPattern.alts) {
+								const totalWeight = slot.map(o => o.weight).reduce((p, c) => p + c, 0); // FIXME: Should always be 100, but since cards are still missing from the database, we'll compute it correctly.
+								const pickIdx = weightedRandomIdx(slot, totalWeight);
+								booster.cards.push(getUnique(slot[pickIdx].id));
+							}
+						}
 						ithchoice.push(booster);
 					}
 					boosters.push(ithchoice);
