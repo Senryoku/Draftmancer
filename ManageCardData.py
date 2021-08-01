@@ -512,21 +512,30 @@ CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
 AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
 
-
-def getIDFromName(name):
-    candidates = []
-    for c in cards:
-        if 'name' in cards[c] and cards[c]['name'] == name:
-            candidates.append(cards[c])
-            break
-    if len(candidates) == 0:
-        print("Could not find a suitable CardID for {}".format(name))
-        return None
-    # TODO: Select the card version more carefully
-    return candidates[0]["id"]
-
-
 if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
+    CardIDsByName = {}
+    for cid in cards:
+        if cards[cid]["name"] not in CardIDsByName:
+            CardIDsByName[cards[cid]["name"]] = []
+        CardIDsByName[cards[cid]["name"]].append(cid)
+
+    def getIDFromNameForJHH(name):
+        if name not in CardIDsByName:
+            print("Could not find a suitable CardID for {}".format(name))
+            return None
+        candidates = CardIDsByName[name]
+        best = cards[candidates[0]]
+        for cid in candidates:
+            if cards[cid]["set"] == "j21":
+                return cid
+            elif cards[cid]["set"] == "mh2":
+                best = cards[cid]
+            elif cards[cid]["set"] == "m20" and best["set"] != "mh2":
+                best = cards[cid]
+            elif best["set"] == cards[cid]["set"] and cards[cid]["collector_number"].isdigit() and (not best["collector_number"].isdigit() or int(cards[cid]["collector_number"]) < int(best["collector_number"])):
+                best = cards[cid]
+        return best["id"]
+
     print("Extracting Jumpstart: Historic Horizons Boosters...")
     jumpstartHHBoosters = []
     page = requests.get(PacketListURL).text
@@ -546,7 +555,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             if(c == "Cycling Land"):
                 cycling_land = True
                 continue
-            cid = getIDFromName(c[1])
+            cid = getIDFromNameForJHH(c[1])
             if cid != None:
                 for i in range(int(c[0])):  # Add the card c[0] times
                     for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
@@ -560,7 +569,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 altslot = []
                 for alt in alt_matches:
                     if alt[1] in CardNameToArenaID:
-                        cid = getIDFromName(alt[1])
+                        cid = getIDFromNameForJHH(alt[1])
                         if cid != None:
                             altslot.append({"name": alt[1], "id": cid, "weight": int(alt[0])})
                             if alt[1] in jhh_cards:
