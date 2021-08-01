@@ -6,6 +6,7 @@ export type JHHBoosterPattern = {
 	colors: string[];
 	cycling_land: boolean;
 	cards: string[];
+	image?: string | null;
 	alts: {
 		name: string;
 		id: string;
@@ -13,12 +14,13 @@ export type JHHBoosterPattern = {
 	}[][];
 };
 
-export function generateJHHBooster(
-	boosterPattern: JHHBoosterPattern
-): { name: string; cards: UniqueCard[]; colors: Array<string> } {
-	let booster: { name: string; cards: UniqueCard[]; colors: Array<string> } = {
+export type JHHBooster = { name: string; colors: Array<string>; image?: string | null; cards: UniqueCard[] };
+
+export function generateJHHBooster(boosterPattern: JHHBoosterPattern): JHHBooster {
+	let booster: JHHBooster = {
 		name: boosterPattern.name,
 		colors: boosterPattern.colors,
+		image: boosterPattern.image,
 		cards: [],
 	};
 	// Immutable part of the pack

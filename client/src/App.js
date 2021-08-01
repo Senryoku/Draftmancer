@@ -1753,17 +1753,17 @@ export default {
 				let colors = b.colors
 					.map(c => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`)
 					.join(" ");
-				boostersDisplay += `<h2 class="pack-button clickable">${colors} ${b.name}</h2>`;
+				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
 			}
 			let choice = -1;
 			await Alert.fire({
 				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
-				html: `<div style="display:flex; justify-content: space-around;">${boostersDisplay}</div>`,
+				html: `<div style="display:flex; justify-content: space-around; width: 100%">${boostersDisplay}</div>`,
 				showCancelButton: false,
 				showConfirmButton: false,
 				allowEscapeKey: false,
 				allowOutsideClick: false,
-				width: "900px",
+				width: "50vw",
 				didOpen: el => {
 					let packButtons = el.querySelectorAll(".pack-button");
 					for (let i = 0; i < packButtons.length; ++i) {

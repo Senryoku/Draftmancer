@@ -13,6 +13,15 @@ from itertools import groupby
 import functools
 from pprint import pprint
 import math as m1
+from ordered_enum import OrderedEnum
+
+
+class Rarity(OrderedEnum):
+    mythic: int = 4
+    rare: int = 3
+    uncommon: int = 2
+    common: int = 1
+
 
 ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
@@ -551,6 +560,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         jhh_cards = []
         colors = set()
         cycling_land = False
+        rarest_card = None
         for c in cards_matches:
             if(c == "Cycling Land"):
                 cycling_land = True
@@ -560,6 +570,8 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 for i in range(int(c[0])):  # Add the card c[0] times
                     for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
                         colors.add(color)
+                    if(rarest_card == None or Rarity[cards[cid]["rarity"]] < Rarity[cards[rarest_card]["rarity"]]):
+                        rarest_card = cid
                     jhh_cards.append(cid)
         altcards = []
         altline_matches = re.findall(AlternateLinesRegex, page[start:end])
@@ -581,7 +593,8 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 else:
                     print("Jumpstart: Historic Horizons Boosters: Empty Alt Slot.")
 
-        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land, "cards": jhh_cards, "alts": altcards})
+        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land,
+                                    "image": cards[rarest_card]["image_uris"]["en"] if rarest_card != None else None, "cards": jhh_cards, "alts": altcards})
     print("Jumpstart Boosters: ", len(jumpstartHHBoosters))
     with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartHHBoosters, outfile, ensure_ascii=False)
