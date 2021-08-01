@@ -449,8 +449,8 @@ for cid in cards:
         if(cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []
         BasicLandIDs[cards[cid]["set"]].append(cid)
-    for set in BasicLandIDs:
-        BasicLandIDs[set].sort()
+    for mtgset in BasicLandIDs:
+        BasicLandIDs[mtgset].sort()
 with open(BasicLandIDsPath, 'w+', encoding="utf8") as basiclandidsfile:
     json.dump(BasicLandIDs, basiclandidsfile, ensure_ascii=False)
 
@@ -508,7 +508,7 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
 
 PacketListURL = "https://magic.wizards.com/en/articles/archive/magic-digital/jumpstart-historic-horizons-packet-lists-2021-07-26"
 TitleRegex = r"<span class=\"deck-meta\">\s*<h4>(\w+)</h4>"
-CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a href=\"https://gatherer\.wizards\.com/Pages/Search/Default\.aspx\?name=.*\" data-src=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\" data-mp4=\"https://magic\.wizards\.com/\" data-webm=\"https://magic\.wizards\.com/\" data-gif=\"https://magic\.wizards\.com/\" class=\"deck-list-link\" data-cardexpansion=\".*\" data-cardnumber=\"\d+\">(.+)</a></span>"
+CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a[^>]*>(.+)</a></span>"
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
 AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
 
@@ -540,10 +540,17 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         end = matches_arr[idx + 1].span()[0] if idx < len(matches_arr) - 1 else len(page)
         cards_matches = re.findall(CardsRegex, page[start:end])
         jhh_cards = []
+        colors = set()
+        cycling_land = False
         for c in cards_matches:
+            if(c == "Cycling Land"):
+                cycling_land = True
+                continue
             cid = getIDFromName(c[1])
             if cid != None:
-                for i in c[0]:  # Add the card c[0] times
+                for i in range(int(c[0])):  # Add the card c[0] times
+                    for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
+                        colors.add(color)
                     jhh_cards.append(cid)
         altcards = []
         altline_matches = re.findall(AlternateLinesRegex, page[start:end])
@@ -565,7 +572,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 else:
                     print("Jumpstart: Historic Horizons Boosters: Empty Alt Slot.")
 
-        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "cards": jhh_cards, "alts": altcards})
+        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land, "cards": jhh_cards, "alts": altcards})
     print("Jumpstart Boosters: ", len(jumpstartHHBoosters))
     with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartHHBoosters, outfile, ensure_ascii=False)
@@ -597,11 +604,11 @@ groups = groupby(array, lambda c: c['set'])
 setinfos = {}
 
 
-def getIcon(set, icon_path):
+def getIcon(mtgset, icon_path):
     if not os.path.isfile("client/public/" + icon_path):
         try:
             response = requests.get(
-                "https://api.scryfall.com/sets/{}".format(set))
+                "https://api.scryfall.com/sets/{}".format(mtgset))
             scryfall_set_data = json.loads(response.content)
             if scryfall_set_data and 'icon_svg_uri' in scryfall_set_data:
                 urllib.request.urlretrieve(
@@ -610,7 +617,7 @@ def getIcon(set, icon_path):
                     overrideViewbox(icon_path, "0 0 32 32", "0 6 32 20")
                 return icon_path
         except:
-            print("Error getting set '{}' icon:".format(set), sys.exc_info()[0])
+            print("Error getting set '{}' icon:".format(mtgset), sys.exc_info()[0])
     else:
         return icon_path
     return None
@@ -619,29 +626,29 @@ def getIcon(set, icon_path):
 nth = 1
 set_per_line = m1.floor(os.get_terminal_size().columns / 14)
 subsets = []  # List of sub-sets associated to a larger, standard set.
-for set, group in groups:
+for mtgset, group in groups:
     cardList = list(group)
-    setdata = next(x for x in SetsInfos if x['code'] == set)
+    setdata = next(x for x in SetsInfos if x['code'] == mtgset)
     if("parent_set_code" in setdata):
-        subsets.append(set)
-    setinfos[set] = {"code": set,
-                     "fullName": setdata['name'],
-                     "cardCount": len(cardList),
+        subsets.append(mtgset)
+    setinfos[mtgset] = {"code": mtgset,
+                        "fullName": setdata['name'],
+                        "cardCount": len(cardList),
 
-                     "isPrimary": set in PrimarySets
-                     }
+                        "isPrimary": mtgset in PrimarySets
+                        }
     if 'block' in setdata:
-        setinfos[set]["block"] = setdata['block']
+        setinfos[mtgset]["block"] = setdata['block']
     # con is a reserved keyword on windows
-    icon_path = "img/sets/{}.svg".format(set if set != 'con' else 'conf')
-    if getIcon(set, icon_path) != None:
-        setinfos[set]['icon'] = icon_path
-    print(' | {:6s} {:4d}'.format(set, len(cardList)), end=(' |\n' if nth % set_per_line == 0 else ''))
+    icon_path = "img/sets/{}.svg".format(mtgset if mtgset != 'con' else 'conf')
+    if getIcon(mtgset, icon_path) != None:
+        setinfos[mtgset]['icon'] = icon_path
+    print(' | {:6s} {:4d}'.format(mtgset, len(cardList)), end=(' |\n' if nth % set_per_line == 0 else ''))
     nth += 1
     cardList.sort(key=lambda c: c['rarity'])
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
-        setinfos[set][rarity + "Count"] = len(rarityGroupList)
+        setinfos[mtgset][rarity + "Count"] = len(rarityGroupList)
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False)
 
