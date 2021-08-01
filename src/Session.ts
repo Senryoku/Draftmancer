@@ -5,7 +5,7 @@ const uuidv1 = uuid.v1;
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options } from "./utils.js";
+import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom } from "./utils.js";
 import { Connections } from "./Connection.js";
 import {
 	CardID,
@@ -41,6 +41,7 @@ import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList } from "./CustomCardList";
 import { DraftLog } from "./DraftLog.js";
+import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 
 export const optionProps = [
 	"ownerIsPlayer",
@@ -1616,27 +1617,27 @@ export class Session implements IIndexable {
 		if (set == "j21") {
 			for (let user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
-				let boosters = [];
-				for (let i = 0; i < 2; ++i) {
-					let ithchoice = [];
-					for (let j = 0; j < 3; ++j) {
-						const boosterPattern = getRandom(JumpstartHHBoosters);
-						let booster: { name: string; cards: UniqueCard[] } = { name: boosterPattern.name, cards: [] };
-						// TODO: Handle variations of packs in Jumpstart: Historic Horizons
-						booster.cards = boosterPattern.cards.map((cid: CardID) => getUnique(cid));
-						if (boosterPattern.alts) {
-							for (let slot of boosterPattern.alts) {
-								const totalWeight = slot.map(o => o.weight).reduce((p, c) => p + c, 0); // FIXME: Should always be 100, but since cards are still missing from the database, we'll compute it correctly.
-								const pickIdx = weightedRandomIdx(slot, totalWeight);
-								booster.cards.push(getUnique(slot[pickIdx].id));
-							}
-						}
-						ithchoice.push(booster);
-					}
-					boosters.push(ithchoice);
+				let choices: any = [];
+				choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
+				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
+				let secondchoice = [];
+				for (let i = 0; i < 3; ++i) {
+					const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
+						if (p === choices[0][i]) return false; // Prevent duplicates
+						if (p.colors.length === 5) return true; // WUBRG can always be picked
+						// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
+						if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
+						// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
+						return (
+							p.colors === choices[0][i].colors ||
+							(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
+						);
+					});
+					secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
 				}
+				choices.push(secondchoice);
 
-				Connections[user].socket.emit("selectJumpstartPacks", boosters, (user: UserID, cards: CardID[]) => {
+				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cards: CardID[]) => {
 					if (!this.draftLog) return;
 					this.draftLog.users[user].cards = cards;
 					for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = Cards[cid];

@@ -1747,10 +1747,11 @@ export default {
 		packChoice: function(choice) {
 			console.log(choice);
 		},
-		displayPackChoice: function(boosters, currentPack, packCount) {
+		displayPackChoice: async function(boosters, currentPack, packCount) {
 			let boostersDisplay = "";
 			for (let b of boosters) boostersDisplay += `<h2 class="pack-button clickable">${b.name}</h2>`;
-			return Alert.fire({
+			let choice = -1;
+			await Alert.fire({
 				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
 				html: `<div style="display:flex; justify-content: space-around;">${boostersDisplay}</div>`,
 				showCancelButton: false,
@@ -1762,17 +1763,20 @@ export default {
 					let packButtons = el.querySelectorAll(".pack-button");
 					for (let i = 0; i < packButtons.length; ++i) {
 						packButtons[i].addEventListener("click", () => {
+							choice = i;
 							for (let c of boosters[i].cards) this.addToDeck(c);
 							Alert.clickConfirm();
 						});
 					}
 				},
 			});
+			return choice;
 		},
-		selectJumpstartPacks: async function(boosters, ack) {
+		selectJumpstartPacks: async function(choices, ack) {
 			this.clearState();
 			this.draftingState = DraftState.Brewing;
-			for (let i = 0; i < boosters.length; ++i) await this.displayPackChoice(boosters[i], i, boosters.length);
+			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
+			await this.displayPackChoice(choices[1][choice], 1, choices.length);
 			ack?.(
 				this.userID,
 				this.deck.map(card => card.id)
