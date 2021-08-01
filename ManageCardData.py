@@ -507,8 +507,8 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
 # Retreive Jumpstart: Historic Horizons pack information directly from Wizards' site
 
 PacketListURL = "https://magic.wizards.com/en/articles/archive/magic-digital/jumpstart-historic-horizons-packet-lists-2021-07-26"
-TitleRegex = r"<span class=\"deck-meta\">\s*<h4>(\w+)</h4>"
-CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a[^>]*>(.+)</a></span>"
+TitleRegex = r"<span class=\"deck-meta\">\s*<h4>([^<]+)</h4>"
+CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a[^>]*>([^<]+)</a></span>"
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
 AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
 
