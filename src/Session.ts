@@ -1623,7 +1623,7 @@ export class Session implements IIndexable {
 				let secondchoice = [];
 				for (let i = 0; i < 3; ++i) {
 					const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
-						if (p === choices[0][i]) return false; // Prevent duplicates
+						if (p.name === choices[0][i].name) return false; // Prevent duplicates
 						if (p.colors.length === 5) return true; // WUBRG can always be picked
 						// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
 						if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
