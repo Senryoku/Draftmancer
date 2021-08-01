@@ -1749,7 +1749,12 @@ export default {
 		},
 		displayPackChoice: async function(boosters, currentPack, packCount) {
 			let boostersDisplay = "";
-			for (let b of boosters) boostersDisplay += `<h2 class="pack-button clickable">${b.name}</h2>`;
+			for (let b of boosters) {
+				let colors = b.colors
+					.map(c => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`)
+					.join(" ");
+				boostersDisplay += `<h2 class="pack-button clickable">${colors} ${b.name}</h2>`;
+			}
 			let choice = -1;
 			await Alert.fire({
 				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
