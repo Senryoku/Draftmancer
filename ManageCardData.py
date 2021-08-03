@@ -519,14 +519,15 @@ PacketListURL = "https://magic.wizards.com/en/articles/archive/magic-digital/jum
 TitleRegex = r"<span class=\"deck-meta\">\s*<h4>([^<]+)</h4>"
 CardsRegex = r"<span class=\"card-count\">(\d+)</span>\s*<span class=\"card-name\"><a[^>]*>([^<]+)</a></span>"
 AlternateLinesRegex = r"<tr[\s\S]*?<\/tr>"
-AlternateCardsRegex = r"<td>(\d+)%</td>\s*<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>"
+AlternateCardsRegex = r"<td><a href=\"https://gatherer\.wizards\.com/Pages/Card/Details\.aspx\?name=.*\" class=\"autocard-link\" data-image-url=\"https://gatherer\.wizards\.com/Handlers/Image\.ashx\?type=card&amp;name=.*\">(.+)</a></td>\s*<td>(\d+)%</td>"
 
 if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
     CardIDsByName = {}
     for cid in cards:
-        if cards[cid]["name"] not in CardIDsByName:
-            CardIDsByName[cards[cid]["name"]] = []
-        CardIDsByName[cards[cid]["name"]].append(cid)
+        cardname = cards[cid]["name"].split(" //")[0]
+        if cardname not in CardIDsByName:
+            CardIDsByName[cardname] = []
+        CardIDsByName[cardname].append(cid)
 
     def getIDFromNameForJHH(name):
         if name not in CardIDsByName:
@@ -580,22 +581,24 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             if len(alt_matches) > 0:
                 altslot = []
                 for alt in alt_matches:
-                    if alt[1] in CardNameToArenaID:
-                        cid = getIDFromNameForJHH(alt[1])
+                    cardname = alt[0].split(" //")[0].strip()
+                    if cardname in CardIDsByName:
+                        cid = getIDFromNameForJHH(cardname)
                         if cid != None:
-                            altslot.append({"name": alt[1], "id": cid, "weight": int(alt[0])})
-                            if alt[1] in jhh_cards:
-                                jhh_cards.remove(alt[1])
+                            altslot.append({"name": cardname, "id": cid, "weight": int(alt[1])})
+                            if cid in jhh_cards:
+                                jhh_cards.remove(cid)
                     else:
-                        print("Jumpstart: Historic Horizons Boosters: Card '{}' not found.".format(alt[1]))
+                        print("Jumpstart: Historic Horizons Boosters: Card '{}' ({}) not found.".format(cardname, alt[0]))
                 if len(altslot) > 0:
                     altcards.append(altslot)
                 else:
                     print("Jumpstart: Historic Horizons Boosters: Empty Alt Slot.")
+                    print(alt_matches)
 
         jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land,
                                     "image": cards[rarest_card]["image_uris"]["en"] if rarest_card != None else None, "cards": jhh_cards, "alts": altcards})
-    print("Jumpstart Boosters: ", len(jumpstartHHBoosters))
+    print("Jumpstart Boosters: {}/46".format(len(jumpstartHHBoosters)))
     with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartHHBoosters, outfile, ensure_ascii=False)
     print("Jumpstart: Historic Horizons boosters dumped to disk.")
