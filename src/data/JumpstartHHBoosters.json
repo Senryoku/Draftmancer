@@ -418,8 +418,8 @@
     {
         "name": "Delirium",
         "colors": [
-            "R",
-            "U"
+            "U",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/e/7e3af226-9f55-481a-87ec-da2861ac60e0.jpg?1622484720",
@@ -464,6 +464,11 @@
                 {
                     "name": "Gouged Zealot",
                     "id": "5c0595a6-a9e5-4ea8-b733-382e6c365759",
+                    "weight": 50
+                },
+                {
+                    "name": "Storm God's Oracle",
+                    "id": "a6d22f24-f752-4bc8-ba97-061b2c060ec8",
                     "weight": 50
                 }
             ],
@@ -525,8 +530,8 @@
     {
         "name": "Enchanted",
         "colors": [
-            "G",
-            "W"
+            "W",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/6/76ebe313-3452-415c-a93f-52c7467531a3.jpg?1626102345",
@@ -586,6 +591,11 @@
                 }
             ],
             [
+                {
+                    "name": "Fall of the Impostor",
+                    "id": "d7de696a-49c2-421d-a86c-bcffd68870c6",
+                    "weight": 50
+                },
                 {
                     "name": "Baffling End",
                     "id": "208c6f51-3c00-4fc6-8579-8f57444d0e97",
@@ -745,8 +755,8 @@
     {
         "name": "Evolving",
         "colors": [
-            "G",
-            "U"
+            "U",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/9/e90192b4-696c-4d63-b752-0c891f50a810.jpg?1553217295",
@@ -893,6 +903,11 @@
                     "name": "Specimen Collector",
                     "id": "bdfaed69-bc4c-4c73-abc3-00dce5e0177e",
                     "weight": 34
+                },
+                {
+                    "name": "Alirios, Enraptured",
+                    "id": "26f9ebbe-3791-4d19-88d2-d5de95faff48",
+                    "weight": 33
                 },
                 {
                     "name": "Spire Patrol",
@@ -1333,7 +1348,8 @@
         "cards": [
             "a11d8da1-a183-470a-b4ed-2e35ac5ab9a9",
             "c4df2846-67ba-4228-9e32-fec788f1eab3",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "e0cb828c-a19b-4e6d-853f-85e5ea7cadf8",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "562f1c51-d245-4771-bf61-415297e4f9d5",
             "01e70418-53a6-431c-a539-75c76567a5d2"
         ],
@@ -1799,8 +1815,8 @@
     {
         "name": "Lost and Found",
         "colors": [
-            "B",
-            "U"
+            "U",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/2/f200ea9a-198b-4ba2-ad2b-ea4a133b7f40.jpg?1626095733",
@@ -1989,8 +2005,8 @@
     {
         "name": "Many Faced",
         "colors": [
-            "B",
-            "W"
+            "W",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/2/7/277bc4e5-f43a-4f1e-a7e9-11796e78fcdf.jpg?1599254148",
@@ -2003,6 +2019,11 @@
         ],
         "alts": [
             [
+                {
+                    "name": "Impostor of the Sixth Pride",
+                    "id": "83298c8a-02c4-4ada-9a41-4b973bb58ac6",
+                    "weight": 50
+                },
                 {
                     "name": "Enduring Sliver",
                     "id": "6ed0f6a5-ed40-44fc-a5e1-3f8bb968d1d9",
@@ -2205,6 +2226,11 @@
                     "name": "Destructive Digger",
                     "id": "d981b310-5e75-4f30-baf6-37f069f00aa3",
                     "weight": 66
+                },
+                {
+                    "name": "Gadrak, the Crown-Scourge",
+                    "id": "44b83bb7-00c8-4078-b27f-42a830a544b5",
+                    "weight": 34
                 }
             ]
         ]
@@ -2212,8 +2238,8 @@
     {
         "name": "Ninjas",
         "colors": [
-            "B",
-            "U"
+            "U",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/5/65c8f074-e260-4f8e-85d1-1904ca928b51.jpg?1562201419",
@@ -2314,13 +2340,12 @@
     {
         "name": "On the Draw",
         "colors": [
-            "R",
-            "U"
+            "U",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/1/11754da2-dc6a-47f7-9744-4db71ea9d336.jpg?1627587066",
         "cards": [
-            "7c6466cb-d1d0-4461-b48d-7497bdc9c474",
             "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "04692219-8850-4b05-aa60-64f32b0daade",
             "0461867b-ec35-4d37-a398-5247e06c4afe",
@@ -2362,6 +2387,11 @@
                 }
             ],
             [
+                {
+                    "name": "Scour All Possibilities",
+                    "id": "7c6466cb-d1d0-4461-b48d-7497bdc9c474",
+                    "weight": 34
+                },
                 {
                     "name": "Faithless Salvaging",
                     "id": "c6ed4077-4ed5-48fb-91c9-a9195d652978",
@@ -2559,8 +2589,8 @@
     {
         "name": "Pumped Up",
         "colors": [
-            "G",
-            "W"
+            "W",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/7/172684cc-beed-4f99-99e0-9383ba13f1d5.jpg?1562270940",
@@ -2691,8 +2721,8 @@
     {
         "name": "Reanimated",
         "colors": [
-            "B",
-            "W"
+            "W",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/1/d116329d-6de7-402c-821d-e9aeba9ad2b1.jpg?1626098629",
@@ -3302,7 +3332,8 @@
         "cards": [
             "974bf524-5322-4287-ac49-face12655874",
             "480ddde1-81d3-4939-b232-cb1ced6cfc4d",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "5b209759-6215-49e8-a6a0-a6c94040adb2",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "6c02cc57-f589-4c5d-b306-cceb0ab3ce8b"
         ],
         "alts": [
@@ -3408,7 +3439,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/f/ffe93b27-f8ae-4abf-8ade-90f503f132c2.jpg?1615606609",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/8/88bf4af9-4b14-43e7-9d50-0e6a895cece1.jpg?1591605156",
         "cards": [
             "b5dbaec5-502d-48c2-9e71-c12cd0bccc6a",
             "028cf0b8-96b5-4af0-81ba-ada8e9ea785f",
@@ -3529,6 +3560,11 @@
                 }
             ],
             [
+                {
+                    "name": "Serra the Benevolent",
+                    "id": "88bf4af9-4b14-43e7-9d50-0e6a895cece1",
+                    "weight": 70
+                },
                 {
                     "name": "Serra's Emissary",
                     "id": "b6534049-3045-4546-b1e8-e5b1b0df5f56",
@@ -3667,11 +3703,11 @@
     {
         "name": "Sliver Hive",
         "colors": [
-            "W",
-            "R",
-            "G",
             "B",
-            "U"
+            "R",
+            "U",
+            "G",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/6/06d4fbe1-8a2f-4958-bb85-1a1e5f1e8d87.jpg?1562202321",
@@ -3942,6 +3978,11 @@
                     "name": "Grinning Ignus",
                     "id": "31716a43-2522-46ff-a9a4-b6952cd41f11",
                     "weight": 20
+                },
+                {
+                    "name": "Storm-Kiln Artist",
+                    "id": "fa96b8dc-233a-4884-ab84-235cbc7df0b6",
+                    "weight": 20
                 }
             ],
             [
@@ -4039,8 +4080,8 @@
     {
         "name": "Tinkerer",
         "colors": [
-            "G",
-            "U"
+            "U",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/a/6/a6baff7b-bdfe-4b64-802d-f73c455dac35.jpg?1626102167",
@@ -4222,6 +4263,11 @@
                     "weight": 50
                 },
                 {
+                    "name": "Marauding Boneslasher",
+                    "id": "1e1a8c05-d56c-44ee-a203-613a3987ab4e",
+                    "weight": 25
+                },
+                {
                     "name": "Plague Wight",
                     "id": "962d354f-f2ad-4b47-8666-0ed64543b676",
                     "weight": 25
@@ -4328,6 +4374,11 @@
                 {
                     "name": "Raise the Draugr",
                     "id": "1a67c196-632c-4c7b-a132-de07d894e634",
+                    "weight": 50
+                },
+                {
+                    "name": "Cemetery Recruitment",
+                    "id": "3a23adea-9f4a-409c-a37d-323eee781273",
                     "weight": 50
                 }
             ]

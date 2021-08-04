@@ -551,6 +551,26 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 best = cards[cid]
         return best["id"]
 
+    NameFixes = {
+        "Serra, the Benevolent": "Serra the Benevolent",
+        "Storm-God's Oracle": "Storm God's Oracle",
+        "Fall of the Imposter": "Fall of the Impostor",
+        "Aliros, Enraptured": "Alirios, Enraptured",
+        "Filligree Attendent": "Filigree Attendant",
+        "Imposter of the Sixth Pride": "Impostor of the Sixth Pride",
+        "Gadrak, the Crown Scourge": "Gadrak, the Crown-Scourge",
+        "Scour all Possibilities": "Scour All Possibilities",
+        "Storm-Kin Artist": "Storm-Kiln Artist",
+        "Maurading Boneslasher": "Marauding Boneslasher",
+        "Cemetary Recruitment": "Cemetery Recruitment"
+    }
+
+    def fix_cardname(n):
+        r = n.split(" //")[0].strip()
+        if(r in NameFixes):
+            return NameFixes[r]
+        return r
+
     print("Extracting Jumpstart: Historic Horizons Boosters...")
     jumpstartHHBoosters = []
     page = requests.get(PacketListURL).text
@@ -568,10 +588,11 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         cycling_land = False
         rarest_card = None
         for c in cards_matches:
-            if(c[1] == "Cycling Land"):
+            cardname = fix_cardname(c[1])
+            if(cardname == "Cycling Land"):
                 jhh_cards.append(CyclingLands[color[0]])
                 continue
-            cid = getIDFromNameForJHH(c[1])
+            cid = getIDFromNameForJHH(cardname)
             if cid != None:
                 for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
                     colors.add(color)
@@ -588,7 +609,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             if len(alt_matches) > 0:
                 altslot = []
                 for alt in alt_matches:
-                    cardname = alt[0].split(" //")[0].strip()
+                    cardname = fix_cardname(alt[0])
                     if(cardname == "Cycling Land"):
                         altslot.append({"name": cards[CyclingLands[color[0]]]["name"], "id": CyclingLands[color[0]], "weight": int(alt[1])})
                         continue
