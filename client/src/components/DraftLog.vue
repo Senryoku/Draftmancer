@@ -187,10 +187,10 @@ export default {
 		}
 	},
 	methods: {
-		downloadMPT: function(id) {
+		downloadMPT(id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
-		submitToMPT: function(id) {
+		submitToMPT(id) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
 				headers: {
@@ -223,7 +223,7 @@ export default {
 				}
 			});
 		},
-		exportSingleLog: function(id) {
+		exportSingleLog(id) {
 			helper.copyToClipboard(
 				exportToMTGA(
 					this.draftlog.users[id].cards.map(cid => this.draftlog.carddata[cid]),
@@ -235,7 +235,7 @@ export default {
 			);
 			fireToast("success", "Card list exported to clipboard!");
 		},
-		colorsInCardList: function(cards) {
+		colorsInCardList(cards) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			if (!cards) return r;
 			for (let cid of cards) {
@@ -245,7 +245,7 @@ export default {
 			}
 			return r;
 		},
-		updateToV2: async function() {
+		async updateToV2() {
 			if (!this.draftlog.version || this.draftlog.version === "1.0") {
 				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
 				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
@@ -276,22 +276,22 @@ export default {
 		},
 	},
 	computed: {
-		type: function() {
+		type() {
 			return this.draftlog.type ? this.draftlog.type : "Draft";
 		},
-		selectedLog: function() {
+		selectedLog() {
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
-		selectedLogCards: function() {
+		selectedLogCards() {
 			let uniqueID = 0;
 			return this.selectedLog.cards.map(cid =>
 				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
 			);
 		},
-		selectedLogDecklist: function() {
+		selectedLogDecklist() {
 			return this.selectedLog.decklist;
 		},
-		tableSummary: function() {
+		tableSummary() {
 			// Aggregate information about each player
 			let tableSummary = [];
 			for (let userID in this.draftlog.users) {
@@ -315,10 +315,10 @@ export default {
 				});
 			return tableSummary;
 		},
-		teamDraft: function() {
+		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picks: function() {
+		picks() {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
