@@ -1668,6 +1668,8 @@
 				slot="body"
 				:draftLogs="draftLogs"
 				:language="language"
+				:userID="userID"
+				:userName="userName"
 				@sharelog="shareSavedDraftLog"
 				@storelogs="storeDraftLogs"
 			></draft-log-history>

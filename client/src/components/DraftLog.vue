@@ -18,6 +18,7 @@
 						'selected-player': log.userID == displayOptions.detailsUserID,
 						teama: type === 'Draft' && teamDraft && index % 2 === 0,
 						teamb: type === 'Draft' && teamDraft && index % 2 === 1,
+						self: userID === log.userID || userName === log.userName,
 					}"
 					@click="
 						() => {
@@ -160,8 +161,10 @@ export default {
 	props: {
 		draftlog: { type: Object, required: true },
 		language: { type: String, required: true },
+		userID: { type: String },
+		userName: { type: String },
 	},
-	data: () => {
+	data() {
 		return {
 			displayOptions: {
 				detailsUserID: undefined,
@@ -170,12 +173,20 @@ export default {
 			},
 		};
 	},
+	mounted() {
+		if (this.draftlog && this.draftlog.users) {
+			const userIDs = Object.keys(this.draftlog.users);
+			if (userIDs.length > 0) {
+				this.displayOptions.detailsUserID = userIDs[0]; // Default to first player
+				if (userIDs.includes(this.userID)) this.displayOptions.detailsUserID = this.userID;
+				else
+					for (let uid of userIDs)
+						if (this.draftlog.users[uid].userName === this.userName)
+							this.displayOptions.detailsUserID = uid;
+			}
+		}
+	},
 	methods: {
-		mounted: () => {
-			// Displayed log defaults to first player
-			if (this.draftLog && this.draftLog.users && Object.keys(this.draftLog.users)[0])
-				this.displayOptions.detailsUserID = Object.keys(this.draftLog.users)[0];
-		},
 		downloadMPT: function(id) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
@@ -422,6 +433,14 @@ ul.player-table li.selected-player {
 	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
 	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
+	font-weight: bold;
+}
+
+ul.player-list-log li.selected-player.self,
+ul.player-table li.selected-player.self {
+	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1), inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
+	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1) inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
+	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1), inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
 	font-weight: bold;
 }
 

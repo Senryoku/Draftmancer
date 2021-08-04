@@ -64,6 +64,8 @@
 					v-if="expandedLogs[idx]"
 					:draftlog="draftLog"
 					:language="language"
+					:userID="userID"
+					:userName="userName"
 					@storelogs="$emit('storelogs')"
 				></draft-log>
 			</transition>
@@ -85,6 +87,8 @@ export default {
 	props: {
 		draftLogs: { type: Array, required: true },
 		language: { type: String, required: true },
+		userID: { type: String },
+		userName: { type: String },
 	},
 	data: () => {
 		return {
