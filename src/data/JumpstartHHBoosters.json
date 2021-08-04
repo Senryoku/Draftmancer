@@ -393,7 +393,7 @@
             ],
             [
                 {
-                    "name": "Reaper of Night",
+                    "name": "Reaper of Night // Harvest Fear",
                     "id": "4dc774b4-3f70-4351-b1b8-8a0193cb3a50",
                     "weight": 40
                 },
@@ -755,8 +755,8 @@
     {
         "name": "Evolving",
         "colors": [
-            "U",
-            "G"
+            "G",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/9/e90192b4-696c-4d63-b752-0c891f50a810.jpg?1553217295",
@@ -1218,7 +1218,7 @@
                     "weight": 33
                 },
                 {
-                    "name": "Shepherd of the Flock",
+                    "name": "Shepherd of the Flock // Usher to Safety",
                     "id": "36dd3490-1f18-4698-95f5-4abbf257ca0d",
                     "weight": 33
                 }
@@ -1252,7 +1252,7 @@
                     "weight": 60
                 },
                 {
-                    "name": "Hanweir Militia Captain",
+                    "name": "Hanweir Militia Captain // Westvale Cult Leader",
                     "id": "7e137566-5033-48e8-88ba-65e3821b3cec",
                     "weight": 20
                 },
@@ -1349,7 +1349,7 @@
             "a11d8da1-a183-470a-b4ed-2e35ac5ab9a9",
             "c4df2846-67ba-4228-9e32-fec788f1eab3",
             "e0cb828c-a19b-4e6d-853f-85e5ea7cadf8",
-            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "562f1c51-d245-4771-bf61-415297e4f9d5",
             "01e70418-53a6-431c-a539-75c76567a5d2"
         ],
@@ -1759,7 +1759,7 @@
                     "weight": 25
                 },
                 {
-                    "name": "Faerie Guidemother",
+                    "name": "Faerie Guidemother // Gift of the Fae",
                     "id": "b2e1130d-c692-4e29-bb50-559327921ad5",
                     "weight": 25
                 }
@@ -1815,8 +1815,8 @@
     {
         "name": "Lost and Found",
         "colors": [
-            "B",
-            "U"
+            "U",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/2/f200ea9a-198b-4ba2-ad2b-ea4a133b7f40.jpg?1626095733",
@@ -1990,7 +1990,7 @@
                     "weight": 25
                 },
                 {
-                    "name": "Heir of Falkenrath",
+                    "name": "Heir of Falkenrath // Heir to the Night",
                     "id": "cf2ad186-4d85-4628-ae84-3c58c88d34cb",
                     "weight": 25
                 },
@@ -2012,7 +2012,7 @@
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/4/34c0e3a0-672f-40c9-be66-8b916a4588f2.jpg?1627936187",
         "cards": [
             "92c46961-cf1a-4f20-83aa-3d256db2388f",
-            "bbf00df0-3857-4bd7-8993-656eb3426511",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "128c516b-7eb1-4f81-8b54-428bd0649d92",
             "2e1da79b-4392-47cc-ade9-776827695276",
             "34c0e3a0-672f-40c9-be66-8b916a4588f2"
@@ -2122,8 +2122,8 @@
     {
         "name": "Modular",
         "colors": [
-            "R",
-            "W"
+            "W",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/c/8c1cce91-7c81-45d9-bbec-b085e794791d.jpg?1626099476",
@@ -2131,7 +2131,7 @@
             "dcafff1a-e220-40ff-8c00-de6037219bc6",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "8d54c510-19bf-4da4-a51b-1caadf960654",
             "8c1cce91-7c81-45d9-bbec-b085e794791d"
         ],
@@ -2238,8 +2238,8 @@
     {
         "name": "Ninjas",
         "colors": [
-            "U",
-            "B"
+            "B",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/5/65c8f074-e260-4f8e-85d1-1904ca928b51.jpg?1562201419",
@@ -2434,7 +2434,7 @@
                     "weight": 50
                 },
                 {
-                    "name": "Merchant of the Vale",
+                    "name": "Merchant of the Vale // Haggle",
                     "id": "0b4399b6-e67f-40d8-8676-f5db7e04a6c9",
                     "weight": 50
                 }
@@ -2816,8 +2816,8 @@
     {
         "name": "Relentless",
         "colors": [
-            "B",
-            "G"
+            "G",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/7/871567c6-c910-4550-9b61-cfc7d745edde.jpg?1627497083",
@@ -3244,14 +3244,14 @@
                     "weight": 20
                 },
                 {
-                    "name": "Fast",
+                    "name": "Fast // Furious",
                     "id": "5b209759-6215-49e8-a6a0-a6c94040adb2",
                     "weight": 20
                 }
             ],
             [
                 {
-                    "name": "Merchant of the Vale",
+                    "name": "Merchant of the Vale // Haggle",
                     "id": "0b4399b6-e67f-40d8-8676-f5db7e04a6c9",
                     "weight": 75
                 },
@@ -3576,8 +3576,8 @@
     {
         "name": "Sliver Assault",
         "colors": [
-            "R",
-            "W"
+            "W",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/2/7/27933191-dad6-43d5-b02e-a94ad8033f2f.jpg?1562202289",
@@ -3681,7 +3681,7 @@
                     "weight": 33
                 },
                 {
-                    "name": "Integrity",
+                    "name": "Integrity // Intervention",
                     "id": "4a82084e-b178-442b-8007-7b2a70f3fbba",
                     "weight": 33
                 }
@@ -3704,10 +3704,10 @@
         "name": "Sliver Hive",
         "colors": [
             "R",
-            "W",
-            "U",
             "B",
-            "G"
+            "W",
+            "G",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/6/06d4fbe1-8a2f-4958-bb85-1a1e5f1e8d87.jpg?1562202321",
@@ -3809,8 +3809,8 @@
     {
         "name": "Squirrels",
         "colors": [
-            "B",
-            "G"
+            "G",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/5/7/57b819b7-c193-446d-b7cf-75a09e1d58a4.jpg?1627262556",
@@ -3818,7 +3818,7 @@
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "995529d1-e2b0-4cce-bd40-56c7ef3c33da",
             "3c216e13-3779-4734-b481-9aad7aba9925",
-            "bbf00df0-3857-4bd7-8993-656eb3426511",
+            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
             "d512e5b8-2394-42d9-9dbf-345137710cde",
             "0fb48c2e-ee0f-4fae-9c22-247870c10d5b",
             "91571765-8da8-49f9-a776-7778d86cfb99"
@@ -3921,7 +3921,7 @@
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/5/8/58dd8787-7cf8-49d5-80f1-bffcb6957b4b.jpg?1620580778",
         "cards": [
             "b0f3b68e-f616-4687-bc2d-075165162cd1",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "8c9eb595-e8fa-4a5e-abca-d30613c0e28f",
             "1c7c2814-a617-4123-acdf-1b01b2768210",
             "f1c1918b-2f7a-4cab-9547-029ebc589000"
@@ -3934,7 +3934,7 @@
                     "weight": 67
                 },
                 {
-                    "name": "Birgi, God of Storytelling",
+                    "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
                     "id": "252c0f8a-54d5-461d-84f7-496c42703ff0",
                     "weight": 33
                 }
@@ -4081,8 +4081,8 @@
     {
         "name": "Tinkerer",
         "colors": [
-            "U",
-            "G"
+            "G",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/a/6/a6baff7b-bdfe-4b64-802d-f73c455dac35.jpg?1626102167",
@@ -4090,7 +4090,6 @@
             "501599d6-1072-4124-b05d-01f96de153f3",
             "135db79f-6f07-486c-ae3a-d4244aaf6dc8",
             "0a269277-7f4e-40de-a2b4-53aa50cfd665",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
             "bdfaed69-bc4c-4c73-abc3-00dce5e0177e",
             "5c5be54d-660e-42ab-b5ea-5e1cf3bad0bc"
         ],
@@ -4199,8 +4198,8 @@
             ],
             [
                 {
-                    "name": "Lonely Sandbar",
-                    "id": "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+                    "name": "Tranquil Thicket",
+                    "id": "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
                     "weight": 80
                 },
                 {
@@ -4349,7 +4348,7 @@
                     "weight": 33
                 },
                 {
-                    "name": "Murderous Rider",
+                    "name": "Murderous Rider // Swift End",
                     "id": "e73d8a84-2c0d-423c-89c7-71de0af9e1ac",
                     "weight": 33
                 }
@@ -4412,7 +4411,7 @@
                     "weight": 33
                 },
                 {
-                    "name": "Flaxen Intruder",
+                    "name": "Flaxen Intruder // Welcome Home",
                     "id": "06bd1ad2-fb5d-4aef-87d1-13a341c686fa",
                     "weight": 33
                 }

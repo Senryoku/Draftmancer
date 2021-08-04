@@ -590,7 +590,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         for c in cards_matches:
             cardname = fix_cardname(c[1])
             if(cardname == "Cycling Land"):
-                jhh_cards.append(CyclingLands[color[0]])
+                jhh_cards.append(CyclingLands[next(iter(colors))])
                 continue
             cid = getIDFromNameForJHH(cardname)
             if cid != None:
@@ -610,16 +610,17 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 altslot = []
                 for alt in alt_matches:
                     cardname = fix_cardname(alt[0])
-                    if(cardname == "Cycling Land"):
-                        altslot.append({"name": cards[CyclingLands[color[0]]]["name"], "id": CyclingLands[color[0]], "weight": int(alt[1])})
-                        continue
-                    cid = getIDFromNameForJHH(cardname)
-                    if cid != None:
-                        altslot.append({"name": cardname, "id": cid, "weight": int(alt[1])})
+                    cid = None
+                    if cardname == "Cycling Land":
+                        cid = CyclingLands[next(iter(colors))]
+                    else:
+                        cid = getIDFromNameForJHH(cardname)
+                    if cid == None:
+                        print("Jumpstart: Historic Horizons Boosters: Card '{}' ('{}') not found.".format(cardname, alt[0]))
+                    else:
+                        altslot.append({"name": cards[cid]["name"], "id": cid, "weight": int(alt[1])})
                         if cid in jhh_cards:
                             jhh_cards.remove(cid)
-                    else:
-                        print("Jumpstart: Historic Horizons Boosters: Card '{}' ('{}') not found.".format(cardname, alt[0]))
                 if len(altslot) > 0:
                     altcards.append(altslot)
                 else:
