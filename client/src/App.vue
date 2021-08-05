@@ -1049,7 +1049,7 @@
 								@click="exportDeck(false)"
 								v-tooltip.top="'Export without set information'"
 							>
-								<i class="fas fa-clipboard"></i> Simple
+								<i class="fas fa-list"></i> Simple
 							</button>
 						</div>
 						<button
@@ -1058,7 +1058,7 @@
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
 						>
-							<i class="fas fa-share-square"></i> Share
+							<i class="fas fa-clipboard-check"></i> Share
 						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
