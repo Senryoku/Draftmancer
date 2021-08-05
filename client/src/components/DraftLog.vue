@@ -69,7 +69,7 @@
 								`Copy ${selectedLog.userName}'s cards to your clipboard in MTGA format.`
 							"
 						>
-							<img class="set-icon" src="./assets/img/mtga-icon.png" /> Export Card List
+							<img class="set-icon" src="../assets/img/mtga-icon.png" /> Export Card List
 						</button>
 						<button
 							@click="downloadMPT(selectedLog.userID)"
