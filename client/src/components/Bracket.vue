@@ -2,7 +2,7 @@
 	<div v-if="bracket">
 		<div v-if="displayControls" class="controls">
 			<button @click="copyLink" v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'">
-				<i class="fas fa-clipboard"></i> Copy Link to Clipboard
+				<i class="fas fa-share-square"></i> Share
 			</button>
 			<template v-if="fullcontrol">
 				<span v-tooltip="'If set, only the owner will be able to enter results.'">
