@@ -1058,7 +1058,7 @@
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
 						>
-							<i class="fas fa-clipboard-check"></i> Share
+							<i class="fas fa-clipboard-check"></i> Submit
 						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
