@@ -124,7 +124,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/1/01e70418-53a6-431c-a539-75c76567a5d2.jpg?1562639649",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/9/f9011c3a-c9db-4e92-89d5-29f139017573.jpg?1626101403",
         "cards": [
             "b56d6402-a941-46cc-b1d6-352d5aa5cc3f",
             "501599d6-1072-4124-b05d-01f96de153f3",
@@ -167,7 +167,7 @@
             [
                 {
                     "name": "Icy Manipulator",
-                    "id": "01e70418-53a6-431c-a539-75c76567a5d2",
+                    "id": "9fd9b205-817e-4ca4-8a29-3c2b6cbf7207",
                     "weight": 50
                 },
                 {
@@ -251,7 +251,7 @@
                 },
                 {
                     "name": "Goreclaw, Terror of Qal Sisma",
-                    "id": "2cfd2051-9362-4016-9c2b-57c83c9ad53b",
+                    "id": "36d4574a-3266-4497-b145-fb25820d8a7f",
                     "weight": 33
                 }
             ],
@@ -292,7 +292,7 @@
                 },
                 {
                     "name": "Enlarge",
-                    "id": "0f4e699f-5f2c-4487-8a40-42be6f561631",
+                    "id": "8b9f4647-4214-4f11-8995-72e149592e2f",
                     "weight": 25
                 }
             ],
@@ -306,6 +306,93 @@
                     "name": "Savage Swipe",
                     "id": "eea7e77c-ede5-41bd-b766-9a76ce691607",
                     "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Cycling",
+        "colors": [
+            "W"
+        ],
+        "cycling_land": false,
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/f/6f58c2dc-7cf1-4a0b-8722-a26cc1ced8db.jpg?1628032114",
+        "cards": [
+            "ff5a821c-eaec-4f69-97c7-8299cdebc2f4",
+            "5f640e0c-298d-4a5f-94d0-d839cf06ca86",
+            "028cf0b8-96b5-4af0-81ba-ada8e9ea785f",
+            "6f58c2dc-7cf1-4a0b-8722-a26cc1ced8db",
+            "78b81339-746d-4f71-9943-01c0f6a5683a",
+            "28ee2a16-58d3-4548-85ee-c7b3a7e57d0a",
+            "a2b13ff6-67e9-4760-aef4-a8548ea44344"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Imposing Vantasaur",
+                    "id": "b6fa5feb-f5e9-4079-acc9-84e458044769",
+                    "weight": 34
+                },
+                {
+                    "name": "Winged Shepherd",
+                    "id": "04301470-82d9-43c7-aaf1-a41e185cb109",
+                    "weight": 33
+                },
+                {
+                    "name": "Yoked Plowbeast",
+                    "id": "ddbbc7dc-efdf-46e8-bf19-0daa4034f6ec",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Wingsteed Trainer",
+                    "id": "d480fb3e-956f-4ba6-b527-8642db632597",
+                    "weight": 50
+                },
+                {
+                    "name": "Splendor Mare",
+                    "id": "535ccc75-b24e-4071-b6a0-fc5267a454e3",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Pacifism",
+                    "id": "31279d7c-5246-40b2-a8c7-0be4a5f24a29",
+                    "weight": 60
+                },
+                {
+                    "name": "Cast Out",
+                    "id": "ec265d99-808f-4024-91b2-6575b46fd6f8",
+                    "weight": 30
+                },
+                {
+                    "name": "Radiant's Judgment",
+                    "id": "28d2718e-c6fc-4961-b094-11f25f1177ff",
+                    "weight": 10
+                }
+            ],
+            [
+                {
+                    "name": "Forsake the Worldly",
+                    "id": "11b8403f-5f2d-4b4f-b032-13be64553213",
+                    "weight": 20
+                },
+                {
+                    "name": "Gilded Light",
+                    "id": "01b92597-cb1e-4b8f-9ee9-07b48cf1a5c6",
+                    "weight": 20
+                },
+                {
+                    "name": "Coordinated Charge",
+                    "id": "129c404b-2c1e-4f0b-bb4e-7e8e627a69a8",
+                    "weight": 20
+                },
+                {
+                    "name": "Djeru's Renunciation",
+                    "id": "03f005de-7971-4f22-ad1f-5d0667f68113",
+                    "weight": 20
                 }
             ]
         ]
@@ -329,7 +416,7 @@
             [
                 {
                     "name": "Drainpipe Vermin",
-                    "id": "4d7251f3-df66-4611-a84c-1897f74431f7",
+                    "id": "761f2f66-a43b-422e-94b7-3c068314b7ec",
                     "weight": 50
                 },
                 {
@@ -353,7 +440,7 @@
             [
                 {
                     "name": "Black Cat",
-                    "id": "32efcfad-818c-4485-9022-cf94403f370b",
+                    "id": "c90a12af-b453-4d83-9a14-5411b562d480",
                     "weight": 34
                 },
                 {
@@ -375,7 +462,7 @@
                 },
                 {
                     "name": "Plaguecrafter",
-                    "id": "0972aad9-c7a1-42e2-8d2f-aecbb5fd33b5",
+                    "id": "8682fb87-df14-4277-aaa0-0d53d766c406",
                     "weight": 0
                 }
             ],
@@ -387,7 +474,7 @@
                 },
                 {
                     "name": "Urgoros, the Empty One",
-                    "id": "85e248df-b431-4738-a692-0b5704fc75b4",
+                    "id": "e8652fb7-1bce-44ee-b75e-4c773ff8fdb3",
                     "weight": 25
                 }
             ],
@@ -516,7 +603,7 @@
             [
                 {
                     "name": "Chromatic Sphere",
-                    "id": "920cd17f-9274-443e-906f-c9904f0658d5",
+                    "id": "edabc8b2-4413-48e4-8d6f-521b19d839a6",
                     "weight": 50
                 },
                 {
@@ -639,133 +726,19 @@
         ]
     },
     {
-        "name": "Energy",
+        "name": "Evolving",
         "colors": [
+            "U",
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/7/871567c6-c910-4550-9b61-cfc7d745edde.jpg?1627497083",
-        "cards": [
-            "0987d29a-2043-4341-89d5-5e34bb6507e2",
-            "4f274e39-6b15-4afd-a1e2-29209fdb858f",
-            "5198ac65-118c-4616-8315-d71d41b883ad"
-        ],
-        "alts": [
-            [
-                {
-                    "name": "Servant of the Conduit",
-                    "id": "94d33649-9532-4820-b057-c7c5fec832dc",
-                    "weight": 60
-                },
-                {
-                    "name": "Longtusk Cub",
-                    "id": "9b23c10f-0a01-4c2c-a5fd-f3d69bf54601",
-                    "weight": 40
-                }
-            ],
-            [
-                {
-                    "name": "Thriving Rhino",
-                    "id": "5acf10ec-f2dd-4569-909b-ac52a9ed6adf",
-                    "weight": 50
-                },
-                {
-                    "name": "Aetherstream Leopard",
-                    "id": "6f3a727a-5eca-44de-aa8f-0d2573db83eb",
-                    "weight": 50
-                }
-            ],
-            [
-                {
-                    "name": "Peema Aether-Seer",
-                    "id": "8b0e54a3-cd9b-47bc-957c-3611993d2d05",
-                    "weight": 50
-                },
-                {
-                    "name": "Evolution Sage",
-                    "id": "969bf351-c7df-4eb0-8065-9b8d5233f8f3",
-                    "weight": 50
-                }
-            ],
-            [
-                {
-                    "name": "Urban Daggertooth",
-                    "id": "4ab83a39-d90d-403e-b74d-fe99c8b2aacd",
-                    "weight": 25
-                },
-                {
-                    "name": "Riparian Tiger",
-                    "id": "7599508f-1a61-430b-819e-681040c81f79",
-                    "weight": 25
-                },
-                {
-                    "name": "Bloom Hulk",
-                    "id": "fd1c9129-254d-4d1d-9d95-112292bd6bcc",
-                    "weight": 25
-                },
-                {
-                    "name": "Bristling Hydra",
-                    "id": "095ac316-dd28-4e2d-83f9-6e2d05a499a6",
-                    "weight": 25
-                }
-            ],
-            [
-                {
-                    "name": "Courage in Crisis",
-                    "id": "67a22083-9ef9-4ff7-8502-3a77e69299df",
-                    "weight": 34
-                },
-                {
-                    "name": "Highspire Infusion",
-                    "id": "08325c39-0eeb-4bd0-9adc-2892c1c6637e",
-                    "weight": 33
-                },
-                {
-                    "name": "Snakeskin Veil",
-                    "id": "d9849b22-1fba-4f6a-bd94-df1bc1764e6b",
-                    "weight": 33
-                }
-            ],
-            [
-                {
-                    "name": "Pool of Vigorous Growth",
-                    "id": "871567c6-c910-4550-9b61-cfc7d745edde",
-                    "weight": 80
-                },
-                {
-                    "name": "Sylvan Anthem",
-                    "id": "a119edc2-9e0f-43d1-a13d-25827f86e3e3",
-                    "weight": 20
-                }
-            ],
-            [
-                {
-                    "name": "Smell Fear",
-                    "id": "956a2a42-6a91-45b5-99f1-87c2cf1dd608",
-                    "weight": 60
-                },
-                {
-                    "name": "Skyshroud Ambush",
-                    "id": "9ea0f387-210f-466c-a5da-9b3aea7d360b",
-                    "weight": 40
-                }
-            ]
-        ]
-    },
-    {
-        "name": "Evolving",
-        "colors": [
-            "G",
-            "U"
-        ],
-        "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/9/e90192b4-696c-4d63-b752-0c891f50a810.jpg?1553217295",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/f/ff824392-fb5c-496c-be2f-6dfa6e04e3a2.jpg?1584831850",
         "cards": [
             "4ab83a39-d90d-403e-b74d-fe99c8b2aacd",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
-            "db490f74-977f-476d-b8ee-da7b0a98b4c4",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+            "e0f31228-0c47-4c51-932d-50fdec965f15",
             "4258a536-2275-45e8-8833-e921ca15c5a7",
-            "e90192b4-696c-4d63-b752-0c891f50a810"
+            "ff824392-fb5c-496c-be2f-6dfa6e04e3a2"
         ],
         "alts": [
             [
@@ -872,16 +845,16 @@
     {
         "name": "Flickering",
         "colors": [
-            "W",
-            "U"
+            "U",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/b/3b5233ff-03bc-4053-9b49-c4185c2de38d.jpg?1562847919",
         "cards": [
             "3b5233ff-03bc-4053-9b49-c4185c2de38d",
             "c4df2846-67ba-4228-9e32-fec788f1eab3",
-            "12b1e18f-f781-498c-ba84-cdee49c24230",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "8bc7fdf0-3e1e-487c-833d-7c74aa02c0c1",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "50bc0f5b-7421-45b9-af85-86dd9821b7d8",
             "ff376d1a-85b4-4d8d-8862-5de0aae6fa4e"
         ],
@@ -894,7 +867,7 @@
                 },
                 {
                     "name": "Wispweaver Angel",
-                    "id": "57300d02-faad-43b2-afa9-023d1c3a0901",
+                    "id": "8c0698ea-996c-4961-b16c-fcbfed0dd277",
                     "weight": 50
                 }
             ],
@@ -911,7 +884,7 @@
                 },
                 {
                     "name": "Spire Patrol",
-                    "id": "1daaf494-70af-4a8d-836f-f6a9d6c1f080",
+                    "id": "979f2726-3a01-4043-b1af-9190154db385",
                     "weight": 33
                 }
             ],
@@ -923,7 +896,7 @@
                 },
                 {
                     "name": "Charming Prince",
-                    "id": "67ca015a-849f-4c9c-9e12-c049cfe16aeb",
+                    "id": "dcb94950-3f3e-4876-84f8-d5e4d9cfecee",
                     "weight": 34
                 }
             ],
@@ -957,7 +930,7 @@
                 },
                 {
                     "name": "Thraben Inspector",
-                    "id": "09110c28-299e-4f97-81f5-af3d51f0aef9",
+                    "id": "c9dca1ec-c5cb-4ddf-893c-e95249a288f1",
                     "weight": 50
                 }
             ],
@@ -981,24 +954,26 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/8/187d5819-6a63-4e4f-98c4-18191c03f164.jpg?1626124265",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/4/e4148be2-ce02-40a0-aca5-8c646f45ad71.jpg?1627939286",
         "cards": [
-            "01c6f877-6b00-4d57-8a88-36cd3b16edbc",
-            "143231b3-23c4-4c6d-8b58-e401e1ac6e29",
+            "0dbcb19a-1f38-4900-a019-2696a694ebd5",
+            "16a6c0f4-54c4-4717-af98-920a1113b081",
+            "6b146ba7-591c-4553-b250-0a6eed24f0b5",
             "5e8bded3-46c3-474f-9d09-978df8705ad1",
             "9ea0f387-210f-466c-a5da-9b3aea7d360b",
+            "e4148be2-ce02-40a0-aca5-8c646f45ad71",
             "a45b534b-8442-4074-a8d2-f38e83f24868"
         ],
         "alts": [
             [
                 {
                     "name": "Paradise Druid",
-                    "id": "187d5819-6a63-4e4f-98c4-18191c03f164",
+                    "id": "6ed8d9e7-cdad-450d-8329-fa653d387a63",
                     "weight": 75
                 },
                 {
                     "name": "Dwynen's Elite",
-                    "id": "8abb79f6-e54c-4c37-8cc5-115a737898a0",
+                    "id": "d95d4f15-613c-42f1-a49b-f4f604e69feb",
                     "weight": 25
                 }
             ],
@@ -1066,12 +1041,12 @@
             [
                 {
                     "name": "Arbor Armament",
-                    "id": "1bd2e870-e829-4529-9e2e-1217fbda99d4",
+                    "id": "71c10923-a5b3-4b50-ae51-59982e05963a",
                     "weight": 25
                 },
                 {
                     "name": "Gift of Growth",
-                    "id": "3f1f81db-30e7-4be1-a3b7-68c072d42ed2",
+                    "id": "7a3f8878-5928-47ec-bb31-f4ee24ad982b",
                     "weight": 25
                 },
                 {
@@ -1096,6 +1071,7 @@
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/1/11616853-34b1-4bb1-9590-461e12970ec3.jpg?1562201917",
         "cards": [
+            "dd2202a0-9c79-4ddb-b33e-a4aa01ab022b",
             "1a67c196-632c-4c7b-a132-de07d894e634",
             "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "34d6a2d0-d855-4b87-9f4c-58dda0b81c82",
@@ -1111,7 +1087,7 @@
                 },
                 {
                     "name": "Beetleback Chief",
-                    "id": "16b8a76e-5ad9-42b6-ba03-819b2491c0c2",
+                    "id": "a4a514b9-8a67-47aa-8218-8d6fe8040128",
                     "weight": 50
                 }
             ],
@@ -1123,12 +1099,12 @@
                 },
                 {
                     "name": "Goblin Arsonist",
-                    "id": "4d131369-db00-4a11-bd47-4401188b0f35",
+                    "id": "fa4bf664-3b92-4598-b905-2bc090958c8b",
                     "weight": 25
                 },
                 {
                     "name": "Shambling Goblin",
-                    "id": "3c0d2e09-e369-4454-914f-ca23da3d0933",
+                    "id": "d3ab1d6c-09a6-4f6a-9549-94b439a46680",
                     "weight": 25
                 }
             ],
@@ -1145,7 +1121,7 @@
                 },
                 {
                     "name": "Dark-Dweller Oracle",
-                    "id": "29c7df4b-fc79-4a6f-8f85-677331470e23",
+                    "id": "69a57bfc-1de2-4b3a-84bc-19ec41087f0d",
                     "weight": 25
                 }
             ],
@@ -1219,7 +1195,7 @@
                 },
                 {
                     "name": "Shepherd of the Flock // Usher to Safety",
-                    "id": "36dd3490-1f18-4698-95f5-4abbf257ca0d",
+                    "id": "c0b4f0ce-0d18-4546-803d-94a2f4f30951",
                     "weight": 33
                 }
             ],
@@ -1231,7 +1207,7 @@
                 },
                 {
                     "name": "Thraben Inspector",
-                    "id": "09110c28-299e-4f97-81f5-af3d51f0aef9",
+                    "id": "c9dca1ec-c5cb-4ddf-893c-e95249a288f1",
                     "weight": 25
                 },
                 {
@@ -1258,7 +1234,7 @@
                 },
                 {
                     "name": "Elite Spellbinder",
-                    "id": "250b3ddb-bfd1-4a3c-bafb-4ef79a3edf08",
+                    "id": "9d3a7998-ccac-45ad-a4e9-3a2cb057f63b",
                     "weight": 20
                 }
             ],
@@ -1340,18 +1316,18 @@
     {
         "name": "In the Machine",
         "colors": [
-            "W",
-            "U"
+            "U",
+            "W"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/1/01e70418-53a6-431c-a539-75c76567a5d2.jpg?1562639649",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/c/3/c3f3852d-e99a-418e-a235-da47ed38aabe.jpg?1622576530",
         "cards": [
             "a11d8da1-a183-470a-b4ed-2e35ac5ab9a9",
             "c4df2846-67ba-4228-9e32-fec788f1eab3",
             "e0cb828c-a19b-4e6d-853f-85e5ea7cadf8",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "562f1c51-d245-4771-bf61-415297e4f9d5",
-            "01e70418-53a6-431c-a539-75c76567a5d2"
+            "9fd9b205-817e-4ca4-8a29-3c2b6cbf7207"
         ],
         "alts": [
             [
@@ -1379,7 +1355,7 @@
                 },
                 {
                     "name": "Cogworker's Puzzleknot",
-                    "id": "00d594df-c51b-4936-9af1-536dab1792ae",
+                    "id": "4c0401df-6eb4-4eeb-b666-4384b5b739f4",
                     "weight": 25
                 }
             ],
@@ -1477,7 +1453,7 @@
             [
                 {
                     "name": "Ravenous Intruder",
-                    "id": "289d6da8-9cfe-4c1b-90c9-477a743f6d62",
+                    "id": "7702231d-5ddc-4057-84c2-e99feed32e49",
                     "weight": 34
                 },
                 {
@@ -1494,7 +1470,7 @@
             [
                 {
                     "name": "Myr Sire",
-                    "id": "36a5a985-d3b4-4199-bac2-b83862f0439f",
+                    "id": "a3f2e2e5-5ed2-4040-92ba-ad1ac13f03f6",
                     "weight": 75
                 },
                 {
@@ -1547,127 +1523,13 @@
                 },
                 {
                     "name": "Chromatic Sphere",
-                    "id": "920cd17f-9274-443e-906f-c9904f0658d5",
+                    "id": "edabc8b2-4413-48e4-8d6f-521b19d839a6",
                     "weight": 25
                 },
                 {
                     "name": "Implement of Combustion",
                     "id": "15b1c8da-604a-42f0-8658-82580700dd31",
                     "weight": 25
-                }
-            ]
-        ]
-    },
-    {
-        "name": "Kiora",
-        "colors": [
-            "U"
-        ],
-        "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/4/0/40cc6b1c-8f3d-4128-97ac-33381868ddd2.jpg?1627496735",
-        "cards": [
-            "0a767474-ba5a-4141-a926-a384bb1d3626",
-            "36ad7c4d-fa1a-4440-b9a7-f722b07df870",
-            "61921b05-ee83-4768-a405-4d3355c0ad6e"
-        ],
-        "alts": [
-            [
-                {
-                    "name": "Shoreline Scout",
-                    "id": "40cc6b1c-8f3d-4128-97ac-33381868ddd2",
-                    "weight": 34
-                },
-                {
-                    "name": "Floodhound",
-                    "id": "b56d6402-a941-46cc-b1d6-352d5aa5cc3f",
-                    "weight": 33
-                },
-                {
-                    "name": "Hard Evidence",
-                    "id": "501599d6-1072-4124-b05d-01f96de153f3",
-                    "weight": 33
-                }
-            ],
-            [
-                {
-                    "name": "Coralhelm Guide",
-                    "id": "0389a652-4ca8-45ab-ab3f-624c8f2626f7",
-                    "weight": 34
-                },
-                {
-                    "name": "Skyclave Squid",
-                    "id": "581ed049-7b5b-47d9-96af-f737631a221f",
-                    "weight": 33
-                },
-                {
-                    "name": "Glimmerbell",
-                    "id": "54f71f8a-546a-465e-a254-09a3ae873ef4",
-                    "weight": 33
-                }
-            ],
-            [
-                {
-                    "name": "Mentor of Evos Isle",
-                    "id": "b50905d7-fc61-45f4-a5e1-ad42ff03dd05",
-                    "weight": 50
-                },
-                {
-                    "name": "Mistwalker",
-                    "id": "92f64b49-327c-473b-a492-f020a322aed7",
-                    "weight": 50
-                }
-            ],
-            [
-                {
-                    "name": "Waterknot",
-                    "id": "4d53c5ec-eb0b-48cc-b244-99cb42d61b4a",
-                    "weight": 50
-                },
-                {
-                    "name": "Bubble Snare",
-                    "id": "1bfba7a0-d5ca-4197-9e58-21f28345f1a6",
-                    "weight": 50
-                }
-            ],
-            [
-                {
-                    "name": "Tolarian Kraken",
-                    "id": "c2776694-6183-498d-9a38-e4c5c9e78179",
-                    "weight": 40
-                },
-                {
-                    "name": "Waker of Waves",
-                    "id": "abb47990-a5a9-4a22-a8bb-d229b17132c6",
-                    "weight": 30
-                },
-                {
-                    "name": "Wormhole Serpent",
-                    "id": "2d0fd73f-e161-4e42-b4f9-9246a9dba785",
-                    "weight": 30
-                }
-            ],
-            [
-                {
-                    "name": "Tightening Coils",
-                    "id": "a014dd06-626d-4917-8981-e0064718b571",
-                    "weight": 50
-                },
-                {
-                    "name": "Into the Roil",
-                    "id": "17b14898-2862-407b-a581-a027e571007a",
-                    "weight": 50
-                }
-            ],
-            [
-                {
-                    "name": "Bounty of the Deep",
-                    "id": "936df148-e8c8-4359-8861-2b8a4abeadc4",
-                    "weight": 67
-                },
-                {
-                    "name": "Tome of the Infinite",
-                    "id": "ac8cd054-99aa-4d6b-aa01-bfd9d25495c2",
-                    "weight": 33
                 }
             ]
         ]
@@ -1689,7 +1551,7 @@
             [
                 {
                     "name": "Thraben Inspector",
-                    "id": "09110c28-299e-4f97-81f5-af3d51f0aef9",
+                    "id": "c9dca1ec-c5cb-4ddf-893c-e95249a288f1",
                     "weight": 40
                 },
                 {
@@ -1760,7 +1622,7 @@
                 },
                 {
                     "name": "Faerie Guidemother // Gift of the Fae",
-                    "id": "b2e1130d-c692-4e29-bb50-559327921ad5",
+                    "id": "e8bbece8-9620-44d9-b991-350fe952538a",
                     "weight": 25
                 }
             ],
@@ -1806,7 +1668,7 @@
                 },
                 {
                     "name": "Fortify",
-                    "id": "1eff4028-d4f9-4822-81d6-9f5e5e6f3011",
+                    "id": "b9d4b138-5edc-4c12-b526-5c258bc1555c",
                     "weight": 33
                 }
             ]
@@ -1826,7 +1688,7 @@
             "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "8b3e2d11-0f87-43f2-a961-99a47486f8fa",
             "347cee3a-6e0e-43c2-85e5-531b19297c3d",
-            "42230b38-c81a-4d76-ad17-1166f5f62312"
+            "da367981-9d6f-419f-9f58-f969b6183336"
         ],
         "alts": [
             [
@@ -1890,7 +1752,7 @@
                 },
                 {
                     "name": "Champion of Wits",
-                    "id": "0e41318b-7939-4c2c-a5f1-9eb44a374d90",
+                    "id": "b685b930-3201-4eb1-ac29-9c926651d118",
                     "weight": 34
                 }
             ],
@@ -1964,7 +1826,7 @@
             [
                 {
                     "name": "Macabre Waltz",
-                    "id": "8023e97a-cbfa-448d-ab4d-c8efe9481834",
+                    "id": "c5776bc9-7295-4143-a453-64e3c681f8e7",
                     "weight": 34
                 },
                 {
@@ -2120,10 +1982,119 @@
         ]
     },
     {
+        "name": "Merfolk",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/c/6/c6f9ece1-669a-47c9-96c3-1e1dbf87421c.jpg?1626095109",
+        "cards": [
+            "40cc6b1c-8f3d-4128-97ac-33381868ddd2",
+            "899540b0-c17a-4a73-912c-9b8925203de1",
+            "b57434d9-6fa5-43a6-98b9-044d2259d699",
+            "acb0d55a-9d6a-443d-aa82-5cea93188fd2",
+            "c6f9ece1-669a-47c9-96c3-1e1dbf87421c"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Raving Visionary",
+                    "id": "347cee3a-6e0e-43c2-85e5-531b19297c3d",
+                    "weight": 40
+                },
+                {
+                    "name": "Merfolk Trickster",
+                    "id": "359b2f2b-7b58-47b6-b00c-8616f981e3a3",
+                    "weight": 30
+                },
+                {
+                    "name": "Silvergill Adept",
+                    "id": "45ea8ca1-612d-4984-8572-06710d38bfa6",
+                    "weight": 30
+                }
+            ],
+            [
+                {
+                    "name": "Shaper Apprentice",
+                    "id": "02955471-5ffc-4c7b-83fe-a69816415ca1",
+                    "weight": 25
+                },
+                {
+                    "name": "Tazeem Roilmage",
+                    "id": "6f222fb7-375d-4ee2-9ff6-bd71f63ab31a",
+                    "weight": 25
+                },
+                {
+                    "name": "Master of the Pearl Trident",
+                    "id": "3367f862-cd88-4e6d-8e87-693080e5c431",
+                    "weight": 25
+                },
+                {
+                    "name": "Coralhelm Guide",
+                    "id": "0389a652-4ca8-45ab-ab3f-624c8f2626f7",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Faceless Agent",
+                    "id": "99ce3a33-c7a1-411c-a320-575eacf5a682",
+                    "weight": 60
+                },
+                {
+                    "name": "Watertrap Weaver",
+                    "id": "0d973568-d7b0-443f-a09d-44f6b02da5d4",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Expedition Diviner",
+                    "id": "090f6e94-fb5f-4861-a465-f11766303676",
+                    "weight": 50
+                },
+                {
+                    "name": "Storm Sculptor",
+                    "id": "4bb9ac55-4bb4-4447-b214-6a108ddb3f07",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Phantasmal Form",
+                    "id": "f106e515-511a-48c7-b7a7-3ca820950122",
+                    "weight": 50
+                },
+                {
+                    "name": "Choking Tethers",
+                    "id": "066c8e2f-9ab7-4988-ae90-ad24d8c2b469",
+                    "weight": 25
+                },
+                {
+                    "name": "Unsummon",
+                    "id": "7a960516-3864-4a7a-8117-d25dec0dd665",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Ethereal Grasp",
+                    "id": "00972d59-1d92-4db2-8d05-2d1dbde46ab0",
+                    "weight": 60
+                },
+                {
+                    "name": "Bubble Snare",
+                    "id": "1bfba7a0-d5ca-4197-9e58-21f28345f1a6",
+                    "weight": 40
+                }
+            ]
+        ]
+    },
+    {
         "name": "Modular",
         "colors": [
-            "W",
-            "R"
+            "R",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/c/8c1cce91-7c81-45d9-bbec-b085e794791d.jpg?1626099476",
@@ -2131,7 +2102,7 @@
             "dcafff1a-e220-40ff-8c00-de6037219bc6",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "8d54c510-19bf-4da4-a51b-1caadf960654",
             "8c1cce91-7c81-45d9-bbec-b085e794791d"
         ],
@@ -2200,7 +2171,7 @@
                 },
                 {
                     "name": "Iron Bully",
-                    "id": "545521f8-ab61-4f18-b290-16cd2c2d505e",
+                    "id": "ded2c66e-402c-4d5c-b987-402679aa914b",
                     "weight": 33
                 }
             ],
@@ -2238,14 +2209,14 @@
     {
         "name": "Ninjas",
         "colors": [
-            "B",
-            "U"
+            "U",
+            "B"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/5/65c8f074-e260-4f8e-85d1-1904ca928b51.jpg?1562201419",
         "cards": [
             "ad3eddfe-bbed-41ef-b14f-25aa528fc100",
-            "bbf00df0-3857-4bd7-8993-656eb3426511",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "b07b3736-25e7-46f2-bea5-543ec13995b1",
             "919cd266-b796-4a1c-937f-76b565c82495",
             "65c8f074-e260-4f8e-85d1-1904ca928b51"
@@ -2307,7 +2278,7 @@
                 },
                 {
                     "name": "Ghostform",
-                    "id": "1f6a20ba-6691-4844-9685-dfcd4184224e",
+                    "id": "347760a1-03f5-4cc9-87ad-e08986b1ea21",
                     "weight": 25
                 }
             ],
@@ -2347,7 +2318,7 @@
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/1/11754da2-dc6a-47f7-9744-4db71ea9d336.jpg?1627587066",
         "cards": [
             "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
-            "04692219-8850-4b05-aa60-64f32b0daade",
+            "789c5c2b-3e51-4f6c-ac76-d276facf716f",
             "0461867b-ec35-4d37-a398-5247e06c4afe",
             "11754da2-dc6a-47f7-9744-4db71ea9d336"
         ],
@@ -2471,7 +2442,7 @@
                 },
                 {
                     "name": "Irencrag Pyromancer",
-                    "id": "15eb0922-345e-43e0-bf29-bd7497fa0058",
+                    "id": "9a7b0ead-5629-429d-bede-8154f3fae96d",
                     "weight": 30
                 }
             ]
@@ -2489,18 +2460,18 @@
             "5f52e2aa-59c2-4df2-92ec-15926d61b40f",
             "94db72a8-57f7-4f17-9f09-cae90ef50304",
             "f902a1cd-d04f-4a8c-9aed-a618d0a2e2fa",
-            "0972aad9-c7a1-42e2-8d2f-aecbb5fd33b5"
+            "8682fb87-df14-4277-aaa0-0d53d766c406"
         ],
         "alts": [
             [
                 {
                     "name": "Shambling Goblin",
-                    "id": "3c0d2e09-e369-4454-914f-ca23da3d0933",
+                    "id": "d3ab1d6c-09a6-4f6a-9549-94b439a46680",
                     "weight": 34
                 },
                 {
                     "name": "Typhoid Rats",
-                    "id": "035533c6-ed13-488c-a9bc-5c7087472e84",
+                    "id": "ce4985d1-f311-4132-8d32-0a76ee53392e",
                     "weight": 33
                 },
                 {
@@ -2593,12 +2564,12 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/7/172684cc-beed-4f99-99e0-9383ba13f1d5.jpg?1562270940",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/c/7cff0dc6-5455-4dea-940b-dff7fe88dc5d.jpg?1576382069",
         "cards": [
             "7ce1c2a8-688b-4f63-8d58-e325efc6052a",
             "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "49d68905-e13e-4751-b028-90c795c11cd5",
-            "172684cc-beed-4f99-99e0-9383ba13f1d5",
+            "60c5f5d3-fc82-444e-80c3-dd8ab8bdece4",
             "3028075c-5fc5-4942-a984-1ffcf7a8933d"
         ],
         "alts": [
@@ -2610,7 +2581,7 @@
                 },
                 {
                     "name": "Armorcraft Judge",
-                    "id": "0893ada6-d7dd-4913-8c94-a780fc559859",
+                    "id": "a3e5d12d-d3b1-4626-88b7-c96094209ef2",
                     "weight": 25
                 },
                 {
@@ -2661,7 +2632,7 @@
                 },
                 {
                     "name": "Kujar Seedsculptor",
-                    "id": "7a8a8d63-e64b-4a7a-ba95-1a68f75977d4",
+                    "id": "add73341-09e1-4fe1-9e4a-7c3b879f5754",
                     "weight": 33
                 },
                 {
@@ -2756,7 +2727,7 @@
                 },
                 {
                     "name": "Nullpriest of Oblivion",
-                    "id": "0195245a-a48f-4972-a7ce-1e7eb82d4d77",
+                    "id": "086fc7fb-efcf-4676-8455-39b63edaec6a",
                     "weight": 34
                 }
             ],
@@ -2842,7 +2813,7 @@
                 },
                 {
                     "name": "Lord of Extinction",
-                    "id": "8862c680-01ed-4794-bc75-47dd840778a6",
+                    "id": "ee0ba712-c302-4fa1-8335-36f2dbac6402",
                     "weight": 33
                 }
             ],
@@ -2859,7 +2830,7 @@
                 },
                 {
                     "name": "Corpse Churn",
-                    "id": "6b7e6054-c6b8-4b29-83c5-a2e4e295bdf3",
+                    "id": "a1c0c764-791d-4181-8f7a-147554d97d97",
                     "weight": 33
                 }
             ],
@@ -2952,12 +2923,12 @@
             [
                 {
                     "name": "Dragon Fodder",
-                    "id": "037158e7-a3a4-4da5-967a-5096ae287061",
+                    "id": "cdb5eab0-5397-4c00-8cef-7d3baf38a171",
                     "weight": 50
                 },
                 {
                     "name": "Tormenting Voice",
-                    "id": "25af9ac1-a03b-4be7-b726-fb66427b1caa",
+                    "id": "48dbbc83-5549-480f-bf98-da90495d2a29",
                     "weight": 25
                 },
                 {
@@ -2974,7 +2945,7 @@
                 },
                 {
                     "name": "Dragon Hatchling",
-                    "id": "83cb9ea2-ce64-437e-afac-5029a34bf10f",
+                    "id": "c5d3a18c-d030-494d-b7b1-4d1d1e27fbbf",
                     "weight": 50
                 }
             ],
@@ -2991,14 +2962,14 @@
                 },
                 {
                     "name": "Sparktongue Dragon",
-                    "id": "289a3c60-c740-4e2e-a622-a749ed230c5b",
+                    "id": "bc0dbc86-cc12-49e7-9721-dd52b35efcbe",
                     "weight": 33
                 }
             ],
             [
                 {
                     "name": "Dragon Egg",
-                    "id": "166e3f73-07f0-4c59-a48f-01b830fb9898",
+                    "id": "d330ce5b-de86-42ad-ac00-3ae1d3252956",
                     "weight": 75
                 },
                 {
@@ -3015,7 +2986,7 @@
                 },
                 {
                     "name": "Furnace Whelp",
-                    "id": "1267597a-bbfe-4fb7-91b7-7fee371f0dfd",
+                    "id": "2ce76e86-39f3-4ebf-b550-88ea7f23a91f",
                     "weight": 25
                 }
             ],
@@ -3049,7 +3020,7 @@
                 },
                 {
                     "name": "Sarkhan's Rage",
-                    "id": "4787924f-3186-4e18-b53c-dd67c5f42220",
+                    "id": "47daba07-1f1e-48e1-a500-ef94d0a3b327",
                     "weight": 25
                 }
             ]
@@ -3169,7 +3140,7 @@
                 },
                 {
                     "name": "Inspiring Call",
-                    "id": "07ed4a28-50b6-4349-82d2-165e6f08956e",
+                    "id": "eb7a443d-ab85-4c3e-9fd4-f84afcea2665",
                     "weight": 25
                 },
                 {
@@ -3190,7 +3161,7 @@
         "cards": [
             "bb8f3008-a3ba-4f73-afa6-ad81074b3196",
             "fa9f01d2-ab13-432a-965d-c892bf419b69",
-            "1b748290-04b0-48a9-81aa-ab43182cf339"
+            "f65ea432-9ece-40bf-9cdc-95e01a85b78f"
         ],
         "alts": [
             [
@@ -3228,7 +3199,7 @@
                 },
                 {
                     "name": "Conspiracy Theorist",
-                    "id": "2523aaa1-7b10-4b36-a8f8-fe3e1060c7b4",
+                    "id": "742a7487-70a2-448b-8e66-c33cba798a32",
                     "weight": 25
                 }
             ],
@@ -3444,7 +3415,7 @@
             "b5dbaec5-502d-48c2-9e71-c12cd0bccc6a",
             "028cf0b8-96b5-4af0-81ba-ada8e9ea785f",
             "ffe93b27-f8ae-4abf-8ade-90f503f132c2",
-            "1941cf19-b1f6-4148-a1de-6d03531f2f1c"
+            "9067f035-3437-4c5c-bae9-d3c9001a3411"
         ],
         "alts": [
             [
@@ -3499,7 +3470,7 @@
                 },
                 {
                     "name": "Angel of the Dawn",
-                    "id": "5ccfe469-3fa7-4672-ae15-8f25971e7c56",
+                    "id": "f4bae0e4-1143-4dc4-afb1-e6b4201ff101",
                     "weight": 25
                 },
                 {
@@ -3521,7 +3492,7 @@
                 },
                 {
                     "name": "Angelic Edict",
-                    "id": "e24b62d3-c200-4330-a255-92d77f01ba44",
+                    "id": "f14ed7f7-83c4-425b-a2b7-5bd76558ce76",
                     "weight": 25
                 }
             ],
@@ -3576,15 +3547,15 @@
     {
         "name": "Sliver Assault",
         "colors": [
-            "W",
-            "R"
+            "R",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/2/7/27933191-dad6-43d5-b02e-a94ad8033f2f.jpg?1562202289",
         "cards": [
             "27933191-dad6-43d5-b02e-a94ad8033f2f",
             "6ed0f6a5-ed40-44fc-a5e1-3f8bb968d1d9",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "7f5c4368-4f2e-4f5f-8944-8b0d49ab3e38",
             "87731608-7038-453f-97dc-12cfa5b9211d"
         ],
@@ -3704,25 +3675,25 @@
         "name": "Sliver Hive",
         "colors": [
             "R",
-            "B",
-            "W",
             "G",
-            "U"
+            "B",
+            "U",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/6/06d4fbe1-8a2f-4958-bb85-1a1e5f1e8d87.jpg?1562202321",
         "cards": [
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "1a67c196-632c-4c7b-a132-de07d894e634",
-            "06450be5-0634-4aef-bda7-4d4fbb9ec00a",
+            "7ca0387e-8de3-489f-b5f4-39aed387bfb7",
             "ad0fa2fb-6770-4a81-b830-4acfa957655a",
             "492181e4-5825-45d4-b8a1-37f29c32a845",
-            "168bfec4-ef2a-48b5-b78a-487703cbdae5",
-            "e14e6193-f60b-46c8-a7eb-02a437138568",
-            "95d781a5-2f5e-499f-b210-c4a5c50a180c",
-            "ac8546d1-bfea-4cf7-bfa1-48555ea81bd4",
-            "a4be3032-c55b-43b5-9ae0-f4e7470f4f83",
-            "46e93212-da68-48f8-9aeb-ee5eb92e9a54",
+            "8a2c2fea-d657-49f1-af03-d5d3fef3ead0",
+            "e9495172-6fde-4aae-b47e-fc887440120e",
+            "fe7f4393-38f9-43b5-873b-58246183b874",
+            "d4b7c6cf-ba1e-4b9e-bbb9-15588b84ae32",
+            "cbe67eb3-f10d-4f34-b4b0-fd00ee8cc325",
+            "56caba21-b773-4245-b3f8-3ae62725c14f",
             "1216b0b3-4f59-4e81-aaea-1b272e2b7c4e",
             "7f5c4368-4f2e-4f5f-8944-8b0d49ab3e38",
             "91cef7ce-aa9f-4659-ac24-394c5ab9f77c",
@@ -3802,6 +3773,119 @@
                     "name": "Lava Coil",
                     "id": "f6135cf4-50c2-4e44-b9b0-96e1187a2200",
                     "weight": 50
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Spellcasting",
+        "colors": [
+            "R"
+        ],
+        "cycling_land": false,
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/4/2/4290d31a-ce74-4a22-8266-9e44d23d506f.jpg?1626101705",
+        "cards": [
+            "c6ed4077-4ed5-48fb-91c9-a9195d652978",
+            "352aa417-412d-4344-aaa4-e2fae627fbbd",
+            "fe140361-93b2-4382-b85e-8c263d2f446e",
+            "4290d31a-ce74-4a22-8266-9e44d23d506f"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Lightning Visionary",
+                    "id": "af648aaf-a8e0-4291-acf9-5f8533728f92",
+                    "weight": 60
+                },
+                {
+                    "name": "Goblin Arsonist",
+                    "id": "fa4bf664-3b92-4598-b905-2bc090958c8b",
+                    "weight": 40
+                }
+            ],
+            [
+                {
+                    "name": "Thermo-Alchemist",
+                    "id": "b37c1b56-621a-4908-89b2-21622d195223",
+                    "weight": 50
+                },
+                {
+                    "name": "Young Pyromancer",
+                    "id": "218af707-cc60-407e-af20-e21879a0e902",
+                    "weight": 25
+                },
+                {
+                    "name": "Incendiary Oracle",
+                    "id": "eb6b9b5c-35ff-47ac-9b04-71257314b686",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Storm Caller",
+                    "id": "1b6d123c-c16d-43fa-b183-8a59c7e1a11e",
+                    "weight": 60
+                },
+                {
+                    "name": "Seasoned Pyromancer",
+                    "id": "11754da2-dc6a-47f7-9744-4db71ea9d336",
+                    "weight": 20
+                },
+                {
+                    "name": "Blisterstick Shaman",
+                    "id": "f8187e90-6a60-4ed0-9b3a-3a679743b7d0",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Living Lightning",
+                    "id": "7e84379a-369e-4a9f-8c8b-bf47ab524c4e",
+                    "weight": 34
+                },
+                {
+                    "name": "Guttersnipe",
+                    "id": "bbc0f3e7-a287-4624-8266-ca617448fcaa",
+                    "weight": 33
+                },
+                {
+                    "name": "Kinetic Augur",
+                    "id": "dc5e8221-fc2d-4d90-80f3-729606648c54",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Battle-Rattle Shaman",
+                    "id": "faca827d-0b35-48d7-acd6-13ecacc32b82",
+                    "weight": 75
+                },
+                {
+                    "name": "Clamor Shaman",
+                    "id": "b3f073d7-f60a-44c1-aec9-cf42bbdb3153",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Reckless Charge",
+                    "id": "0938e686-345e-4411-b564-cf9324ec6b9d",
+                    "weight": 25
+                },
+                {
+                    "name": "Sure Strike",
+                    "id": "064a6f1c-a058-4cc8-b467-5dbecb5eeb99",
+                    "weight": 25
+                },
+                {
+                    "name": "Fists of Flame",
+                    "id": "1897b60d-7e15-488c-84d5-505187739b00",
+                    "weight": 25
+                },
+                {
+                    "name": "Renegade Tactics",
+                    "id": "6c06a39c-68bb-4e65-9a6d-9d9bc745201f",
+                    "weight": 25
                 }
             ]
         ]
@@ -3888,7 +3972,7 @@
                 },
                 {
                     "name": "Gift of Growth",
-                    "id": "3f1f81db-30e7-4be1-a3b7-68c072d42ed2",
+                    "id": "7a3f8878-5928-47ec-bb31-f4ee24ad982b",
                     "weight": 25
                 }
             ],
@@ -3918,7 +4002,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/5/8/58dd8787-7cf8-49d5-80f1-bffcb6957b4b.jpg?1620580778",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/5/658ec634-3eb2-4967-b938-d20d31ab77e3.jpg?1624592623",
         "cards": [
             "b0f3b68e-f616-4687-bc2d-075165162cd1",
             "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
@@ -3935,7 +4019,7 @@
                 },
                 {
                     "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
-                    "id": "252c0f8a-54d5-461d-84f7-496c42703ff0",
+                    "id": "44657ab1-0a6a-4a5f-9688-86f239083821",
                     "weight": 33
                 }
             ],
@@ -3976,7 +4060,7 @@
                 },
                 {
                     "name": "Grinning Ignus",
-                    "id": "31716a43-2522-46ff-a9a4-b6952cd41f11",
+                    "id": "cfa04897-6438-45e5-a10b-2e8afaf2b9eb",
                     "weight": 20
                 },
                 {
@@ -3988,7 +4072,7 @@
             [
                 {
                     "name": "Dragonsguard Elite",
-                    "id": "58dd8787-7cf8-49d5-80f1-bffcb6957b4b",
+                    "id": "658ec634-3eb2-4967-b938-d20d31ab77e3",
                     "weight": 50
                 },
                 {
@@ -4031,7 +4115,7 @@
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/f/8f4c701d-8a2c-44bf-9e36-f37936179244.jpg?1627935823",
         "cards": [
-            "09110c28-299e-4f97-81f5-af3d51f0aef9",
+            "c9dca1ec-c5cb-4ddf-893c-e95249a288f1",
             "8cd64ea6-ac09-4b38-bebf-f67fb16b817d",
             "85e9e58a-0ac1-405c-906e-16e981763b3a",
             "d480fb3e-956f-4ba6-b527-8642db632597",
@@ -4039,7 +4123,7 @@
             "8f4c701d-8a2c-44bf-9e36-f37936179244",
             "31279d7c-5246-40b2-a8c7-0be4a5f24a29",
             "1dca2c1f-3835-478b-860c-51b2036221b2",
-            "9b49245c-b978-4f33-9d24-9ad854e9af2d"
+            "a974571c-d8d5-4860-9077-2023e5f32a24"
         ],
         "alts": [
             [
@@ -4072,7 +4156,7 @@
                 },
                 {
                     "name": "Shelter",
-                    "id": "1a50984b-5bf5-4432-a149-96492d1683de",
+                    "id": "9c726ab3-1692-4e14-ab21-664a1679bc53",
                     "weight": 20
                 }
             ]
@@ -4081,8 +4165,8 @@
     {
         "name": "Tinkerer",
         "colors": [
-            "G",
-            "U"
+            "U",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/a/6/a6baff7b-bdfe-4b64-802d-f73c455dac35.jpg?1626102167",
@@ -4165,7 +4249,7 @@
                 },
                 {
                     "name": "Prosperous Pirates",
-                    "id": "24d3dde3-e5f8-4ab7-bd2b-6f45988099ad",
+                    "id": "4fed2d67-fc51-45e8-825b-fe7565e8a65d",
                     "weight": 25
                 },
                 {
@@ -4198,8 +4282,8 @@
             ],
             [
                 {
-                    "name": "Tranquil Thicket",
-                    "id": "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+                    "name": "Lonely Sandbar",
+                    "id": "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
                     "weight": 80
                 },
                 {
@@ -4218,6 +4302,265 @@
                     "name": "Pool of Vigorous Growth",
                     "id": "871567c6-c910-4550-9b61-cfc7d745edde",
                     "weight": 20
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Undone",
+        "colors": [
+            "U"
+        ],
+        "cycling_land": false,
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/5/7/57b852b6-4388-4a41-a5c0-bba37a5c1451.jpg?1562201300",
+        "cards": [
+            "b56d6402-a941-46cc-b1d6-352d5aa5cc3f",
+            "2a304f7e-0b9e-4ef6-9ad8-34350839f7d9",
+            "00972d59-1d92-4db2-8d05-2d1dbde46ab0",
+            "0857765f-afd7-418a-a93b-c0bd1b1f037e",
+            "c6344ecd-ca57-4104-a77a-d7d14264776d",
+            "301750a7-d1fd-435e-bfa8-9d2fb22ad627",
+            "57b852b6-4388-4a41-a5c0-bba37a5c1451"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Burrog Befuddler",
+                    "id": "6040c573-cd8c-4593-8ade-d9922482035c",
+                    "weight": 50
+                },
+                {
+                    "name": "Faerie Duelist",
+                    "id": "a7da9c9b-aeef-4f48-bc8f-39425841cc8c",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Vexing Gull",
+                    "id": "869fee23-df75-448d-9fca-6ba6713d459f",
+                    "weight": 40
+                },
+                {
+                    "name": "Breaching Hippocamp",
+                    "id": "8841c01e-015e-4541-942a-f8859dd03fea",
+                    "weight": 20
+                },
+                {
+                    "name": "Mentor of Evos Isle",
+                    "id": "b50905d7-fc61-45f4-a5e1-ad42ff03dd05",
+                    "weight": 20
+                },
+                {
+                    "name": "Crookclaw Transmuter",
+                    "id": "ac4e2977-b518-4fa3-83e4-5af326ded290",
+                    "weight": 20
+                }
+            ],
+            [
+                {
+                    "name": "Pondering Mage",
+                    "id": "c08c5ac8-5c0b-4c89-8f06-e5aadfccee01",
+                    "weight": 25
+                },
+                {
+                    "name": "Living Tempest",
+                    "id": "a05ed233-9b53-4c67-ab1c-0217386c9fe4",
+                    "weight": 25
+                },
+                {
+                    "name": "Windcaller Aven",
+                    "id": "2ef5d303-e91b-4522-a3e0-0b94dc872018",
+                    "weight": 25
+                },
+                {
+                    "name": "Voracious Greatshark",
+                    "id": "1400155f-8911-45fd-aab2-998c8a28292c",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Supreme Will",
+                    "id": "9859e709-2f70-4aec-9909-a073c93062a2",
+                    "weight": 25
+                },
+                {
+                    "name": "Hypnotic Sprite // Mesmeric Glare",
+                    "id": "7acbd812-b994-4e68-8f95-04222796e994",
+                    "weight": 25
+                },
+                {
+                    "name": "Censor",
+                    "id": "f3ecc497-80c5-4916-96a5-16e51c8d255e",
+                    "weight": 25
+                },
+                {
+                    "name": "Neutralize",
+                    "id": "0430da3c-9460-4b62-ae28-2e7e6f4d06a4",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Exclude",
+                    "id": "1455f59e-f487-4195-ab25-8fc7695903e4",
+                    "weight": 25
+                },
+                {
+                    "name": "Essence Capture",
+                    "id": "ce137910-0f0e-4f94-9b95-6e0eeeba164e",
+                    "weight": 25
+                },
+                {
+                    "name": "Dismiss",
+                    "id": "1e55d6be-7682-4786-9872-e847afd710b0",
+                    "weight": 25
+                },
+                {
+                    "name": "Rewind",
+                    "id": "b832abcc-9ffd-47bf-827a-01b303c610ee",
+                    "weight": 25
+                }
+            ]
+        ]
+    },
+    {
+        "name": "Vampire",
+        "colors": [
+            "B"
+        ],
+        "cycling_land": false,
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/a/9/a90a1c44-ee0f-4c12-bfaf-6f371bcce167.jpg?1562201588",
+        "cards": [
+            "99ce3a33-c7a1-411c-a320-575eacf5a682",
+            "b3c185b9-5d97-4a5a-af0b-8b9c44dcd235",
+            "059e8447-6b1c-4651-a734-a8fea2cbf7b2",
+            "a90a1c44-ee0f-4c12-bfaf-6f371bcce167"
+        ],
+        "alts": [
+            [
+                {
+                    "name": "Blood Artist",
+                    "id": "465d8c18-c76b-488a-a4ec-ec0d2267a307",
+                    "weight": 25
+                },
+                {
+                    "name": "Carrier Thrall",
+                    "id": "bd2ab895-9225-4eba-90c3-4023db4f8b70",
+                    "weight": 25
+                },
+                {
+                    "name": "Legion Vanguard",
+                    "id": "d0ac1b48-dcfd-48a1-b999-ccc642596d28",
+                    "weight": 25
+                },
+                {
+                    "name": "Indulgent Aristocrat",
+                    "id": "f24200d4-cd98-424c-bc2f-69f8b361d8fc",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Vermin Gorger",
+                    "id": "d3166b10-5bc3-4db6-bb5b-81045d98e446",
+                    "weight": 50
+                },
+                {
+                    "name": "Blood Burglar",
+                    "id": "01efd5af-ed6d-4132-8f33-37f6a9fa55d0",
+                    "weight": 50
+                }
+            ],
+            [
+                {
+                    "name": "Skymarch Bloodletter",
+                    "id": "1f4b41d7-30fa-43ab-8f8d-c1de68a19add",
+                    "weight": 34
+                },
+                {
+                    "name": "Marauding Blight-Priest",
+                    "id": "730ddbcd-0814-4e22-85e9-78b0878324b6",
+                    "weight": 33
+                },
+                {
+                    "name": "Callous Bloodmage",
+                    "id": "81358736-65cf-44d8-819e-d0268d14cc76",
+                    "weight": 33
+                }
+            ],
+            [
+                {
+                    "name": "Graveshifter",
+                    "id": "128c516b-7eb1-4f81-8b54-428bd0649d92",
+                    "weight": 50
+                },
+                {
+                    "name": "Deathless Ancient",
+                    "id": "8adc1cd9-22ff-4263-856b-0aaa990a3893",
+                    "weight": 25
+                },
+                {
+                    "name": "Markov Crusader",
+                    "id": "87d8354b-df56-4294-9f8a-b7c92e31b88e",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Blood Glutton",
+                    "id": "28ff52a2-4223-4551-b388-b4dd21cc1437",
+                    "weight": 25
+                },
+                {
+                    "name": "Epicure of Blood",
+                    "id": "4b060bc4-2d0c-46f4-b2b4-21583c2428f2",
+                    "weight": 25
+                },
+                {
+                    "name": "Anointed Deacon",
+                    "id": "9bae5e75-0048-41fd-8bbb-89607ab96d6e",
+                    "weight": 25
+                },
+                {
+                    "name": "Queen's Agent",
+                    "id": "3562f65a-bd69-47e4-9d9d-ab5c2c6ceb35",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Davriel's Withering",
+                    "id": "49d1fae1-06da-40eb-adea-84babbfd94e4",
+                    "weight": 75
+                },
+                {
+                    "name": "Moment of Craving",
+                    "id": "c0e3ea55-162d-4466-ba4e-b938a0845fb5",
+                    "weight": 25
+                }
+            ],
+            [
+                {
+                    "name": "Mark of the Vampire",
+                    "id": "55fec80c-81d5-4d3b-bc07-6fc6c2513ef8",
+                    "weight": 25
+                },
+                {
+                    "name": "Abnormal Endurance",
+                    "id": "de2de2bd-9ba7-4b6f-94c2-dafb2011a48e",
+                    "weight": 25
+                },
+                {
+                    "name": "Subtle Strike",
+                    "id": "0d3f531a-ce45-4cba-be24-6db749e38abd",
+                    "weight": 25
+                },
+                {
+                    "name": "Unexpected Fangs",
+                    "id": "aa6494ad-a35e-4b09-8623-7740f3c20b0b",
+                    "weight": 25
                 }
             ]
         ]
@@ -4247,7 +4590,7 @@
                 },
                 {
                     "name": "Shambling Goblin",
-                    "id": "3c0d2e09-e369-4454-914f-ca23da3d0933",
+                    "id": "d3ab1d6c-09a6-4f6a-9549-94b439a46680",
                     "weight": 20
                 },
                 {
@@ -4264,7 +4607,7 @@
                 },
                 {
                     "name": "Marauding Boneslasher",
-                    "id": "1e1a8c05-d56c-44ee-a203-613a3987ab4e",
+                    "id": "8eb8922f-84b4-4973-9d5c-7fd1e65fd0c4",
                     "weight": 25
                 },
                 {
@@ -4286,14 +4629,14 @@
                 },
                 {
                     "name": "Liliana's Devotee",
-                    "id": "3613e3d6-e23f-4745-bad0-25245bc9c9d8",
+                    "id": "ae5d7f15-a86f-4eaa-8280-2e7f73c8ce3a",
                     "weight": 25
                 }
             ],
             [
                 {
                     "name": "Lord of the Accursed",
-                    "id": "0bf248d8-80ff-4d5b-a616-0b0bc42c7f7a",
+                    "id": "94fba85b-0147-4693-aa07-3a3310465ac4",
                     "weight": 34
                 },
                 {
@@ -4378,7 +4721,7 @@
                 },
                 {
                     "name": "Cemetery Recruitment",
-                    "id": "3a23adea-9f4a-409c-a37d-323eee781273",
+                    "id": "88531c36-2330-474b-9426-1e4dd0fe4e3e",
                     "weight": 50
                 }
             ]
@@ -4446,7 +4789,7 @@
                 },
                 {
                     "name": "Penumbra Bobcat",
-                    "id": "21049fee-a748-4856-99ae-3a225a168532",
+                    "id": "496cce86-ff61-4d24-8d37-8c27acaff21c",
                     "weight": 25
                 }
             ],
@@ -4475,7 +4818,7 @@
                 },
                 {
                     "name": "Esika's Chariot",
-                    "id": "0f6c1b83-ac63-4666-b853-66a8bf14ad14",
+                    "id": "a87606cc-fbf0-4e2c-9798-f1c935d0573d",
                     "weight": 30
                 }
             ],

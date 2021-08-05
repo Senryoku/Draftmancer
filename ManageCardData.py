@@ -549,6 +549,8 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 best = cards[cid]
             elif best["set"] == cards[cid]["set"] and cards[cid]["collector_number"].isdigit() and (not best["collector_number"].isdigit() or int(cards[cid]["collector_number"]) < int(best["collector_number"])):
                 best = cards[cid]
+            if "arena_id" in cards[cid] and "arena_id" not in best:
+                best = cards[cid]
         return best["id"]
 
     NameFixes = {
@@ -562,7 +564,10 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         "Scour all Possibilities": "Scour All Possibilities",
         "Storm-Kin Artist": "Storm-Kiln Artist",
         "Maurading Boneslasher": "Marauding Boneslasher",
-        "Cemetary Recruitment": "Cemetery Recruitment"
+        "Cemetary Recruitment": "Cemetery Recruitment",
+        "Radiant&rsquo;s Judgment": "Radiant's Judgment",
+        "Djeru&rsquo;s Renunciation": "Djeru's Renunciation",
+        "Imposing Vantasau": "Imposing Vantasaur"
     }
 
     def fix_cardname(n):
@@ -593,6 +598,8 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 jhh_cards.append(CyclingLands[next(iter(colors))])
                 continue
             cid = getIDFromNameForJHH(cardname)
+            if cid == None:  # FIXME: Temp workaround, remove it when all cards are here.
+                cid = getIDFromNameForJHH("\"{}\"".format(cardname))
             if cid != None:
                 for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
                     colors.add(color)
@@ -626,12 +633,13 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                 else:
                     print("Jumpstart: Historic Horizons Boosters: Empty Alt Slot.")
                     print(alt_matches)
-        jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land,
-                                    "image": cards[rarest_card]["image_uris"]["en"] if rarest_card != None else None, "cards": jhh_cards, "alts": altcards})
         found_cards = len(jhh_cards) + len(altcards)
-        print("Added Pack '{}', {} + {} = {}/{} cards.".format(matches_arr[idx].group(1), len(jhh_cards), len(altcards), found_cards, total_expected_cards))
         if found_cards != total_expected_cards:
             print("\tUnexpected number of cards for {} ({}/{})!".format(matches_arr[idx].group(1), found_cards, total_expected_cards))
+        else:
+            print("Added Pack '{}', {} + {} = {}/{} cards.".format(matches_arr[idx].group(1), len(jhh_cards), len(altcards), found_cards, total_expected_cards))
+            jumpstartHHBoosters.append({"name": matches_arr[idx].group(1), "colors": list(colors), "cycling_land": cycling_land,
+                                        "image": cards[rarest_card]["image_uris"]["en"] if rarest_card != None else None, "cards": jhh_cards, "alts": altcards})
     print("Jumpstart Boosters: {}/46".format(len(jumpstartHHBoosters)))
     with open(JumpstartHHBoostersDist, 'w', encoding="utf8") as outfile:
         json.dump(jumpstartHHBoosters, outfile, indent=4, ensure_ascii=False,)
