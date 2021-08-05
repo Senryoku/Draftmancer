@@ -66,26 +66,26 @@
 						<button
 							@click="exportSingleLog(selectedLog.userID)"
 							v-tooltip="
-								`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`
+								`Copy ${selectedLog.userName}'s cards to your clipboard in MTGA format.`
 							"
 						>
-							<i class="set-icon" src="./assets/img/mtga-icon.png"></i> Export Card List in MTGA format
+							<i class="set-icon" src="./assets/img/mtga-icon.png"></i> Export Card List
 						</button>
 						<button
 							@click="downloadMPT(selectedLog.userID)"
 							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
 							v-if="type === 'Draft'"
 						>
-							<i class="fas fa-file-download"></i> Download log in MTGO format
+							<i class="fas fa-file-download"></i> Download Log
 						</button>
 						<button
 							@click="submitToMPT(selectedLog.userID)"
 							v-tooltip="
-								`Submit ${selectedLog.userName}'s picks to MagicProTools and open it in a new tab.`
+								`Generate a link to review ${selectedLog.userName}'s picks at MagicProTools.`
 							"
 							v-if="type === 'Draft'"
 						>
-							<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
+							<i class="fas fa-share-square"></i> Export Log to MagicProTools
 						</button>
 					</div>
 				</div>
