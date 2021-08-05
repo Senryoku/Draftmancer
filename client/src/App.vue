@@ -1041,13 +1041,17 @@
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
 							Export
-							<button type="button" @click="exportDeck" v-tooltip.top="'Export deck and sideboard'">
+							<button
+								type="button"
+								@click="exportDeck"
+								v-tooltip.top="'Export deck and sideboard'"
+							>
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
 								type="button"
 								@click="exportDeck(false)"
-								v-tooltip.top="'Export without set information'"
+								v-tooltip.top="'Export deck and sideboard without set information'"
 							>
 								<i class="fas fa-list"></i> Simple
 							</button>
