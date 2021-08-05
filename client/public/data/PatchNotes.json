@@ -1,5 +1,9 @@
 [
 	{
+		"date": "05/08/2021",
+		"notes": ["Preliminary Jumpstart: Historic Horizons support."]
+	},
+	{
 		"date": "07/07/2021",
 		"notes": ["Adventures in the Forgotten Realms (AFR) support."]
 	},

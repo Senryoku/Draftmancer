@@ -20,6 +20,10 @@ export function getRandom<Type>(arr: Array<Type>): Type {
 	return arr[random.integer(0, arr.length - 1)];
 }
 
+export function getNDisctinctRandom<Type>(arr: Type[], n: number): Type[] {
+	return random.sample(arr, n);
+}
+
 export function getRandomMapKey<K, V>(map: Map<K, V>): K {
 	let idx = random.integer(0, map.size - 1);
 	for (let k of map.keys()) {

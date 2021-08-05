@@ -5,7 +5,7 @@ const uuidv1 = uuid.v1;
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options } from "./utils.js";
+import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom } from "./utils.js";
 import { Connections } from "./Connection.js";
 import {
 	CardID,
@@ -18,6 +18,7 @@ import {
 	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
+	UniqueCard,
 } from "./Cards.js";
 import Bot from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -31,13 +32,16 @@ import {
 	IBoosterFactory,
 	PaperBoosterFactory,
 	getSetFoilRate,
+	weightedRandomIdx,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
+import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 Object.freeze(JumpstartBoosters);
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList } from "./CustomCardList";
 import { DraftLog } from "./DraftLog.js";
+import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 
 export const optionProps = [
 	"ownerIsPlayer",
@@ -1603,43 +1607,81 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	distributeJumpstart() {
+	distributeJumpstart(set: string | null) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
 		const log = this.initLogs("Jumpstart");
 		log.carddata = {};
 
-		for (let user of this.users) {
-			let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-			const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
+		// Jumpstart: Historic Horizons
+		if (set == "j21") {
+			for (let user of this.users) {
+				// Randomly get 2*3 packs and let the user choose among them.
+				let choices: any = [];
+				choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
+				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
+				let secondchoice = [];
+				for (let i = 0; i < 3; ++i) {
+					const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
+						if (p.name === choices[0][i].name) return false; // Prevent duplicates
+						if (p.colors.length === 5) return true; // WUBRG can always be picked
+						// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
+						if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
+						// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
+						return (
+							p.colors === choices[0][i].colors ||
+							(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
+						);
+					});
+					secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
+				}
+				choices.push(secondchoice);
 
-			log.users[user].cards = cards.flat().map((c: Card) => c.id);
-			for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
+				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cards: CardID[]) => {
+					if (!this.draftLog) return;
+					this.draftLog.users[user].cards = cards;
+					for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = Cards[cid];
+					if (
+						Object.keys(this.draftLog.users).every(
+							(uid: UserID) => this.draftLog?.users[uid].cards !== null
+						)
+					) {
+						this.sendLogs();
+						logSession("Jumpstart", this);
+					}
+				});
+			}
+		} else {
+			// Original Jumpstart
+			for (let user of this.users) {
+				let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
+				// TODO: Handle variations of packs in Jumpstart: Historic Horizons
+				const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
 
-			Connections[user].socket.emit("setCardSelection", cards);
-			Connections[user].socket.emit("message", {
-				icon: "success",
-				imageUrl: "/img/2JumpstartBoosters-min.png",
-				title: "Here are your Jumpstart boosters!",
-				text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
-				showConfirmButton: false,
-				timer: 2000,
-			});
+				log.users[user].cards = cards.flat().map((c: Card) => c.id);
+				for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
+
+				Connections[user].socket.emit("setCardSelection", cards);
+				Connections[user].socket.emit("message", {
+					icon: "success",
+					imageUrl: "/img/2JumpstartBoosters-min.png",
+					title: "Here are your Jumpstart boosters!",
+					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
+					showConfirmButton: false,
+					timer: 2000,
+				});
+			}
+			this.sendLogs();
+			logSession("Jumpstart", this);
 		}
-
-		this.sendLogs();
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("message", {
-				title: "Jumpstart boosters successfly distributed!",
+				title: "Jumpstart boosters successfully distributed!",
 				showConfirmButton: false,
 			});
 		}
-
-		logSession("Jumpstart", this);
-
-		this.boosters = [];
 	}
 
 	reconnectUser(userID: UserID) {

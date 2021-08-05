@@ -350,6 +350,15 @@
 								>
 									Jumpstart
 								</button>
+								<button
+									@click="deckWarning(distributeJumpstartHH)"
+									v-tooltip.left="
+										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
+									"
+									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
+								>
+									Jumpstart: Historic Horizons
+								</button>
 							</div>
 						</template>
 					</dropdown>
@@ -1244,6 +1253,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>August 05, 2021</em>
+							<p>
+								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
+								Added Jumpstart: Historic Horizons Gamemode.
+							</p>
+							<p>
+								<i class="fa fa-exclamation-triangle yellow"></i> A few cards are still missing and
+								their corresponding packs are disabled for now. This should be fixed in the upcoming
+								days.
+							</p>
+						</div>
+						<div class="news">
 							<em>July 07, 2021</em>
 							<p>
 								<img src="img/sets/afr.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1266,13 +1287,6 @@
 								<img src="img/sets/mh2.svg" class="set-icon" style="--invertedness: 100%" />
 								Modern Horizons 2 (MH2) is now available! (see the "<i class="fas fa-ellipsis-h"></i>
 								More sets..." option)<br />
-							</p>
-						</div>
-						<div class="news">
-							<em>April 4, 2021</em>
-							<p>
-								<img src="img/sets/stx.svg" class="set-icon" style="--invertedness: 100%" /> Strixhaven:
-								School of Mages (STX) support!
 							</p>
 						</div>
 					</div>

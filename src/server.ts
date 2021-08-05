@@ -821,8 +821,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (isNaN(boostersPerPlayer)) return;
 		Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
 	},
-	distributeJumpstart(userID: UserID, sessionID: SessionID) {
-		Sessions[sessionID].distributeJumpstart();
+	distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
+		Sessions[sessionID].distributeJumpstart(set);
 	},
 	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
 		if (
