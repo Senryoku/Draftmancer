@@ -69,7 +69,7 @@
 								`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`
 							"
 						>
-							<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
+							<i class="set-icon" src="./assets/img/mtga-icon.png"></i> Export Card List in MTGA format
 						</button>
 						<button
 							@click="downloadMPT(selectedLog.userID)"
