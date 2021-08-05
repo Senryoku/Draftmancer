@@ -81,7 +81,7 @@
 						<button
 							@click="submitToMPT(selectedLog.userID)"
 							v-tooltip="
-								`Generate a link to review ${selectedLog.userName}'s picks at MagicProTools.`
+								`Submit ${selectedLog.userName}'s picks to MagicProTools and copy link.`
 							"
 							v-if="type === 'Draft'"
 						>
