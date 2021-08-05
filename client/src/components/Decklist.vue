@@ -24,7 +24,7 @@
 					@click="exportDeck"
 					v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
 				>
-					<img class="set-icon" src="./assets/img/mtga-icon.png" /> Export Deck
+					<img class="set-icon" src="../assets/img/mtga-icon.png" /> Export Deck
 				</button>
 				<button
 					type="button"
