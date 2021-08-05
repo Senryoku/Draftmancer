@@ -24,16 +24,14 @@
 					@click="exportDeck"
 					v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
 				>
-					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
+					<i class="set-icon" src="./assets/img/mtga-icon.png"></i> Export Deck
 				</button>
 				<button
 					type="button"
 					@click="exportDeck(false)"
-					v-tooltip="
-						`Export ${username}'s deck and sideboard without set information, ready to be imported in MTGA or another program.`
-					"
+					v-tooltip="`Copy ${username}'s deck and sideboard without set information.`"
 				>
-					<i class="fas fa-clipboard"></i> Export Deck (Simple)
+					<i class="fas fa-list"></i> Export Deck (Simple)
 				</button>
 				<template v-if="list.hashes">
 					<span
