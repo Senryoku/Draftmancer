@@ -24,7 +24,7 @@
 					@click="exportDeck"
 					v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
 				>
-					<i class="set-icon" src="./assets/img/mtga-icon.png"></i> Export Deck
+					<img class="set-icon" src="./assets/img/mtga-icon.png" /> Export Deck
 				</button>
 				<button
 					type="button"
@@ -41,7 +41,7 @@
 						>Cockatrice: {{ list.hashes.cockatrice }}</span
 					>
 					<span 
-					        @click="copyHash(list.hashes.mws)"
+						@click="copyHash(list.hashes.mws)"
 						class="clickable"
 						v-tooltip.top="'Copy MWS hash to clipboard.'"
 						>MWS: {{ list.hashes.mws }}</span
