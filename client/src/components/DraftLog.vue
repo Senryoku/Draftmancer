@@ -22,7 +22,14 @@
 					}"
 					@click="
 						() => {
-							if (log.userName !== '(empty)') displayOptions.detailsUserID = log.userID;
+							if (log.userName !== '(empty)') {
+								displayOptions.detailsUserID = log.userID;
+								if (log.hasDeck) {
+									if (displayOptions.category === 'Cards') displayOptions.category = 'Deck';
+								} else {
+									if (displayOptions.category === 'Deck') displayOptions.category = 'Cards';
+								}
+							}
 						}
 					"
 				>
@@ -183,6 +190,11 @@ export default {
 					for (let uid of userIDs)
 						if (this.draftlog.users[uid].userName === this.userName)
 							this.displayOptions.detailsUserID = uid;
+				if (
+					this.displayOptions.detailsUserID &&
+					this.draftlog.users[this.displayOptions.detailsUserID].decklist
+				)
+					this.displayOptions.category = "Deck";
 			}
 		}
 	},
