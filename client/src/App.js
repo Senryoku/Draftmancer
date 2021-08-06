@@ -770,6 +770,8 @@ export default {
 				);
 			});
 
+			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
+
 			this.socket.on("setCardSelection", data => {
 				if (!data) return;
 				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
@@ -1737,6 +1739,53 @@ export default {
 		distributeJumpstart: function() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart");
+		},
+		distributeJumpstartHH: function() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("distributeJumpstart", "j21");
+		},
+		packChoice: function(choice) {
+			console.log(choice);
+		},
+		displayPackChoice: async function(boosters, currentPack, packCount) {
+			let boostersDisplay = "";
+			for (let b of boosters) {
+				let colors = b.colors
+					.map(c => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`)
+					.join(" ");
+				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
+			}
+			let choice = -1;
+			await Alert.fire({
+				title: `Select your Jumpstart Packs (${currentPack + 1}/${packCount})`,
+				html: `<div style="display:flex; justify-content: space-around; width: 100%">${boostersDisplay}</div>`,
+				showCancelButton: false,
+				showConfirmButton: false,
+				allowEscapeKey: false,
+				allowOutsideClick: false,
+				width: "50vw",
+				didOpen: el => {
+					let packButtons = el.querySelectorAll(".pack-button");
+					for (let i = 0; i < packButtons.length; ++i) {
+						packButtons[i].addEventListener("click", () => {
+							choice = i;
+							for (let c of boosters[i].cards) this.addToDeck(c);
+							Alert.clickConfirm();
+						});
+					}
+				},
+			});
+			return choice;
+		},
+		selectJumpstartPacks: async function(choices, ack) {
+			this.clearState();
+			this.draftingState = DraftState.Brewing;
+			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
+			await this.displayPackChoice(choices[1][choice], 1, choices.length);
+			ack?.(
+				this.userID,
+				this.deck.map(card => card.id)
+			);
 		},
 		readyCheck: function() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
