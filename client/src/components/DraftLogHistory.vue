@@ -26,7 +26,7 @@
 						class="fa"
 						:class="{
 							'fa-chevron-down': expandedLogs[idx],
-							'fa-chevron-up': !expandedLogs[idx],
+							'fa-chevron-right': !expandedLogs[idx],
 						}"
 					></i>
 					<i class="fas fa-lock" v-else></i>
@@ -55,7 +55,7 @@
 						</template>
 						<template v-else-if="draftLog.boosters">
 							<!-- User has the full logs ready to be shared -->
-							Delayed Game Log: No one can view information until unlocked!
+							Delayed Game Log: No one can view details until released!
 							<button
 								@click="$emit('sharelog', draftLog)"
 								v-tooltip="'Make game log available for all participants'"
