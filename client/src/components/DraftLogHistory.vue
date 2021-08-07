@@ -37,7 +37,11 @@
 					</span>
 				</span>
 				<span>
-					<button class="flat" @click="toggle(idx)">
+					<button
+						class="flat"
+						@click="toggle(idx)"
+						v-show="!draftLog.delayed"
+						>
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Hide</template>
 						<template v-else> <i class="far fa-eye"></i> Show</template>
 					</button>
@@ -46,7 +50,7 @@
 							<i
 								class="fas fa-file-download"
 								@click="downloadLog(draftLog)"
-								v-tooltip="'Download game log of Session {{ draftLog.sessionID }}.'"
+								v-tooltip="'Download game log of Session ${draftLog.sessionID}'"
 							></i>
 						</template>
 						<template v-else-if="draftLog.boosters">
@@ -62,7 +66,7 @@
 					<i
 						class="fas fa-trash"
 						@click="deleteLog(draftLog)"
-						v-tooltip="'Delete selected game log'"
+						v-tooltip="'Delete game log'"
 					></i>
 				</span>
 			</div>
