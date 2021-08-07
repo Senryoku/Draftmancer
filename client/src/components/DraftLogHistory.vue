@@ -20,7 +20,7 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span @click="toggle(idx)" class="clickable" v-bind:class="{ disabled: draftLog.delayed }">
+				<span @click="toggle(idx)" class="clickable" v-bind:class="{ greyed-out: draftLog.delayed }" style="min-width: 20px">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
