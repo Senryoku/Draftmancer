@@ -35,18 +35,16 @@
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
 				>
-					Upload
+					<i class="fas fa-file-upload"></i> Upload
 					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
 				</button>
-				<button
+				<i
+					class="fas fa-th"
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
-					class="flat"
 					id="collection-stats"
-				>
-					<i class="fas fa-chart-bar"></i> Stats
-				</button>
+				></i>
 				<div
 					v-show="hasCollection"
 					class="inline"
