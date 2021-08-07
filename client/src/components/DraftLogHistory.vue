@@ -30,7 +30,7 @@
 						}"
 					></i>
 					<i class="fas fa-lock" v-else></i>
-					<span>
+					<span :class="{ disabled: draftLog.delayed }">
 						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
@@ -53,19 +53,21 @@
 								v-tooltip="'Download Game Log'"
 							></i>
 						</template>
-						<template v-else-if="draftLog.boosters" class="font-italic">
+						<template v-else-if="draftLog.boosters">
 							<!-- User has the full logs ready to be shared -->
 							Delayed Game Log: No one can view it until you unlock it!
 							<button
 								@click="$emit('sharelog', draftLog)"
 								v-tooltip="'Make game log available for all participants'"
 							>
-								<i class="fas fa-key"></i> Unlock Game Log 
+								<i class="fas fa-key"></i> Unlock
 							</button>
 						</template>
-						<template v-else class="font-italic">Delayed Game Log: Locked until the session owner makes it available!</template>
+						<template v-else>
+							Delayed Game Log: Locked until the session owner makes it available!
+						</template>
 					</template>
-					<template v-else class="font-italic">Incompatible game log version</template>
+					<template v-else>Incompatible game log version</template>
 					<i
 						class="fas fa-trash"
 						@click="deleteLog(draftLog)"
