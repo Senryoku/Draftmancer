@@ -32,7 +32,7 @@
 				</div>
 			</span>
 			<span>
-				MTGA Collection
+				<div>MTGA Collection</div>
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
@@ -186,12 +186,15 @@
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
-							<div v-tooltip="'Restrict cards to the selected sets. No selection defaults to all cards in Arena.'">
+							<div
+								class="inline"
+								v-tooltip="'Restrict cards to the selected sets. No selection defaults to all cards in Arena.'"
+							>
 							<label for="set-restriction">Set(s)</label>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
-								placeholder="All sets in MTGA"
+								placeholder="All sets from MTGA"
 								:options="sets.slice().reverse()"
 								:searchable="false"
 								:allow-empty="true"
