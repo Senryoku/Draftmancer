@@ -7,8 +7,16 @@
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
-				<label for="user-name">User Name</label>
-				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" :delay="2" />
+				<div class="inline" v-tooltip="'Your player name.'">
+					<label for="user-name">User Name</label>
+					<delayed-input
+						id="user-name"
+						v-model="userName"
+						type="text"
+						maxlength="50"
+						:delay="2"
+					/>
+				</div>
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
 					<select v-model="language" name="language" id="select-language">
@@ -36,14 +44,14 @@
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
 				>
 					<i class="fas fa-file-upload"></i> Upload
-					<i v-if="hasCollection" class="fas fa-check green" v-tooltip.top="'Collection uploaded.'"></i>
+					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
 				</button>
 				<i
 					class="fas fa-th"
 					v-if="hasCollection"
 					@click="displayedModal = 'collection'"
 					id="collection-stats"
-					v-tooltip="'Display collection data'"
+					v-tooltip="'Display your collection'"
 				></i>
 				<div
 					v-show="hasCollection"
@@ -630,8 +638,9 @@
 					<input
 						type="text"
 						v-model="currentChatMessage"
-						placeholder="Chat with players in your session."
+						placeholder="Type a message..."
 						maxlength="255"
+						v-tooltip="'Chat with players in your session.'"
 					/>
 				</form>
 				<i
@@ -1305,8 +1314,8 @@
 							><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
 						><br />
 						<br />
-						For any question/bug report/feature request you can email to
-						<a href="mailto:mtgadraft@gmail.com"><i class="fas fa-envelope"></i>mtgadraft@gmail.com</a>
+						For any question/bug report/feature request you can mail to
+						<a href="mailto:mtgadraft@gmail.com"><i class="fas fa-envelope"></i> mtgadraft@gmail.com</a>
 						or join the
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 					</div>
@@ -1376,7 +1385,7 @@
 						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
 							<li
 								v-tooltip="
-									'Import a custom list of cards or deck to tinker around with.'
+									'Import a card list to tinker around with.'
 								"
 							>
 								<a @click="displayedModal = 'importdeck'"
