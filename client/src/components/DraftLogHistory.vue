@@ -4,9 +4,9 @@
 		<div class="controls">
 			<button
 				onclick="document.querySelector('#log-input').click()"
-				v-tooltip="'Import a saved game log.'"
+				v-tooltip="'Upload a saved game log file.'"
 				>
-				<i class="fas fa-file-export"></i> Import Game Log
+				<i class="fas fa-file-upload"></i> Upload Game Log
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 			<span v-if="draftLogs.length >= 25"
@@ -38,8 +38,8 @@
 				</span>
 				<span>
 					<button class="flat" @click="toggle(idx)">
-						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
-						<template v-else> <i class="far fa-eye"></i> Review</template>
+						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Hide</template>
+						<template v-else> <i class="far fa-eye"></i> Show</template>
 					</button>
 					<template v-if="draftLog.version === '2.0'">
 						<template v-if="!draftLog.delayed">
