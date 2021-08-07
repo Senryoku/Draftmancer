@@ -36,14 +36,14 @@
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
 				>
 					<i class="fas fa-file-upload"></i> Upload
-					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
+					<i v-if="hasCollection" class="fas fa-check green" v-tooltip.top="'Collection uploaded.'"></i>
 				</button>
 				<i
 					class="fas fa-th"
 					v-if="hasCollection"
-					v-tooltip="'Display some statistics about your collection.'"
 					@click="displayedModal = 'collection'"
 					id="collection-stats"
+					v-tooltip="'Display collection data'"
 				></i>
 				<div
 					v-show="hasCollection"
@@ -1306,7 +1306,7 @@
 						><br />
 						<br />
 						For any question/bug report/feature request you can email to
-						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+						<a href="mailto:mtgadraft@gmail.com"><i class="fas fa-envelope"></i>mtgadraft@gmail.com</a>
 						or join the
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 					</div>
@@ -1374,7 +1374,11 @@
 					</div>
 					<div class="welcome-section welcome-alt">
 						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-							<li>
+							<li
+								v-tooltip="
+									'Import a custom list of cards or deck to tinker around with.'
+								"
+							>
 								<a @click="displayedModal = 'importdeck'"
 									><i class="fas fa-file-export"></i> Card List Importer</a
 								>
