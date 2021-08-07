@@ -21,7 +21,7 @@
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
 				<span @click="toggle(idx)" class="clickable" v-bind:class="{ disabled: draftLog.delayed }">
-					<div class="inline" style="min-width: 20px">
+					<div class="inline" style="min-width: 20px; text-align: center">
 						<i
 							v-if="!draftLog.delayed"
 							class="fa"
