@@ -7,7 +7,7 @@
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
-				<div class="inline" v-tooltip="'Your player name.'">
+				<div class="inline" v-tooltip="'Change your player name.'">
 					<label for="user-name">User Name</label>
 					<delayed-input
 						id="user-name"
@@ -32,7 +32,7 @@
 				</div>
 			</span>
 			<span>
-				<label :for="hasCollection ? 'collection-stats' : 'file-input'">MTGA Collection</label>
+				MTGA Collection
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
@@ -185,14 +185,12 @@
 						)
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
+						<div
+							class="inline"
+							v-tooltip="'Restricts to the selected sets. No selection means all cards present in Arena.'"
+						>
 						<div class="inline">
-							<label
-								for="set-restriction"
-								v-tooltip="
-									'Restricts to the selected sets. No selection means all cards present in Arena.'
-								"
-								>Set(s)</label
-							>
+							<label for="set-restriction">Set(s)</label>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
@@ -261,6 +259,7 @@
 								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
 								<label for="ignore-collections">Ignore Collections</label>
 							</div>
+						</div>
 						</div>
 					</span>
 				</span>
