@@ -185,16 +185,13 @@
 						)
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
-						<div
-							class="inline"
-							v-tooltip="'Restricts to the selected sets. No selection means all cards present in Arena.'"
-						>
 						<div class="inline">
+							<div v-tooltip="'Restrict cards to the selected sets. No selection defaults to all cards in Arena.'">
 							<label for="set-restriction">Set(s)</label>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
-								placeholder="All"
+								placeholder="All sets in MTGA"
 								:options="sets.slice().reverse()"
 								:searchable="false"
 								:allow-empty="true"
@@ -245,6 +242,7 @@
 									More sets...
 								</div>
 							</multiselect>
+							</div>
 							<i
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
@@ -259,7 +257,6 @@
 								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
 								<label for="ignore-collections">Ignore Collections</label>
 							</div>
-						</div>
 						</div>
 					</span>
 				</span>
