@@ -46,7 +46,7 @@
 							<i
 								class="fas fa-file-download"
 								@click="downloadLog(draftLog)"
-								v-tooltip="'Download game log of Session '{{ draftLog.sessionID }}.'"
+								v-tooltip="'Download game log of Session {{ draftLog.sessionID }}.'"
 							></i>
 						</template>
 						<template v-else-if="draftLog.boosters">
@@ -59,10 +59,6 @@
 						<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
 					</template>
 					<template v-else>(Incompatible draft log version)</template>
-					
-					<button type="button" class="stop" @click="deleteLog(draftLog)">
-						<i class="fas fa-trash"></i> Delete
-					</button>
 					<i
 						class="fas fa-trash"
 						@click="deleteLog(draftLog)"
