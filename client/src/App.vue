@@ -32,7 +32,7 @@
 				</div>
 			</span>
 			<span>
-				<div>MTGA Collection</div>
+				<label>MTGA Collection</label>
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
@@ -159,7 +159,9 @@
 						accept=".txt"
 					/>
 
-					<strong>Card Pool:</strong>
+					<label>
+						<strong>Card Pool:</strong>
+					</label>
 					<span v-if="useCustomCardList">
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
 						(
@@ -194,7 +196,7 @@
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
-								placeholder="All sets from MTGA"
+								placeholder="All sets in MTGA"
 								:options="sets.slice().reverse()"
 								:searchable="false"
 								:allow-empty="true"
@@ -264,7 +266,9 @@
 					</span>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<strong>Draft:</strong>
+					<label>
+						<strong>Draft:</strong>
+					</label>
 					<div
 						class="inline"
 						:class="{ disabled: teamDraft }"
