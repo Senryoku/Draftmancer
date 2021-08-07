@@ -64,7 +64,7 @@
 					class="flat"
 					v-tooltip="'Displays logs of your previous drafts and sealed'"
 				>
-					<i class="fas fa-th-list"></i> Game Logs
+					<i class="far fa-list-alt"></i> Game Logs
 				</button>
 			</div>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
@@ -404,7 +404,7 @@
 			>
 				<i
 					class="fas fa-crown subtle-gold"
-					v-tooltip="
+					v-tooltip.top="
 						sessionOwnerUsername
 							? `${sessionOwnerUsername} is the session owner.`
 							: 'Session owner is disconnected.'
