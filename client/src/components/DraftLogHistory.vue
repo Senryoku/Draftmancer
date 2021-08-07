@@ -20,7 +20,7 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span @click="toggle(idx)" class="clickable">
+				<span @click="toggle(idx)" class="clickable" :class="{ disabled: draftLog.delayed }">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
@@ -30,7 +30,7 @@
 						}"
 					></i>
 					<i class="fas fa-lock" v-else></i>
-					<span :class="{ disabled: draftLog.delayed }">
+					<span>
 						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
@@ -55,7 +55,7 @@
 						</template>
 						<template v-else-if="draftLog.boosters">
 							<!-- User has the full logs ready to be shared -->
-							Delayed Game Log: No one can view it until you unlock it!
+							Delayed Game Log: No one can view information until unlocked!
 							<button
 								@click="$emit('sharelog', draftLog)"
 								v-tooltip="'Make game log available for all participants'"
