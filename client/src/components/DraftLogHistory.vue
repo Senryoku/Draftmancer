@@ -20,16 +20,18 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
-				<span @click="toggle(idx)" class="clickable" v-bind:class="{ greyed-out: draftLog.delayed }" style="min-width: 20px">
-					<i
-						v-if="!draftLog.delayed"
-						class="fa"
-						:class="{
-							'fa-chevron-down': expandedLogs[idx],
-							'fa-chevron-right': !expandedLogs[idx],
-						}"
-					></i>
-					<i class="fas fa-lock" v-else></i>
+				<span @click="toggle(idx)" class="clickable" v-bind:class="{ greyed-out: draftLog.delayed }">
+					<div class="inline" style="min-width: 20px">
+						<i
+							v-if="!draftLog.delayed"
+							class="fa"
+							:class="{
+								'fa-chevron-down': expandedLogs[idx],
+								'fa-chevron-right': !expandedLogs[idx],
+							}"
+						></i>
+						<i class="fas fa-lock" v-else></i>
+					</div>
 					<span>
 						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
