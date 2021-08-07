@@ -41,7 +41,7 @@
 						class="flat"
 						@click="toggle(idx)"
 						v-show="!draftLog.delayed"
-						>
+					>
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Hide</template>
 						<template v-else> <i class="far fa-eye"></i> Show</template>
 					</button>
@@ -50,23 +50,26 @@
 							<i
 								class="fas fa-file-download"
 								@click="downloadLog(draftLog)"
-								v-tooltip="'Download game log of Session ${draftLog.sessionID}'"
+								v-tooltip="'Download Game Log'"
 							></i>
 						</template>
-						<template v-else-if="draftLog.boosters">
+						<template v-else-if="draftLog.boosters" class="font-italic">
 							<!-- User has the full logs ready to be shared -->
-							(Delayed: No one can review this log until you share it)
-							<button @click="$emit('sharelog', draftLog)">
-								<i class="fas fa-share-square"></i> Share with session and unlock
+							Delayed Game Log: No one can view it until you unlock it!
+							<button
+								@click="$emit('sharelog', draftLog)"
+								v-tooltip="'Make game log available for all participants'"
+							>
+								<i class="fas fa-key"></i> Unlock Game Log 
 							</button>
 						</template>
-						<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
+						<template v-else class="font-italic">Delayed Game Log: Locked until the session owner makes it available!</template>
 					</template>
-					<template v-else>(Incompatible draft log version)</template>
+					<template v-else class="font-italic">Incompatible game log version</template>
 					<i
 						class="fas fa-trash"
 						@click="deleteLog(draftLog)"
-						v-tooltip="'Delete game log'"
+						v-tooltip="'Delete Game Log'"
 					></i>
 				</span>
 			</div>
