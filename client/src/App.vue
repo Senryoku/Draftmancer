@@ -39,18 +39,22 @@
 					v-tooltip="'Collection Import Help'"
 				></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
-				<button
+				<i
+					class="fas fa-file-upload green"
+					v-if="hasCollection"
+					onclick="document.querySelector('#file-input').click()"
+					v-tooltip="'Collection uploaded. Update your collection by re-uploading your Player.log file.'"
+				></i>
+				<i
+					class="fas fa-file-upload red"
+					v-else
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
-				>
-					<i class="fas fa-file-upload"></i> Upload
-					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
-				</button>
+				></i>
 				<i
-					class="fas fa-th"
+					class="fas fa-book"
 					v-if="hasCollection"
 					@click="displayedModal = 'collection'"
-					id="collection-stats"
 					v-tooltip="'Display your collection'"
 				></i>
 				<div
@@ -190,7 +194,7 @@
 						<div class="inline">
 							<div
 								class="inline"
-								v-tooltip="'Restrict cards to the selected sets. No selection defaults to all cards in Arena.'"
+								v-tooltip="'Restrict cards to the selected sets. An empty selection defaults to all cards in Arena.'"
 							>
 							<label for="set-restriction">Set(s)</label>
 							<multiselect
@@ -1366,7 +1370,7 @@
 										<template v-else-if="s.sets.length === 1">
 											<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
 										</template>
-										<template v-else-if="s.sets.length === 0">All</template>
+										<template v-else-if="s.sets.length === 0">All MTGA</template>
 										<template v-else>[{{ s.sets.length }}]</template>
 									</td>
 									<td>{{ s.players }} / {{ s.maxPlayers }}</td>
