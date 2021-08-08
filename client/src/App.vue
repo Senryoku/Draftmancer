@@ -607,27 +607,27 @@
 					</li>
 				</ul>
 			</template>
+			<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+				<div
+					class="inline"
+					:class="{ disabled: teamDraft }"
+					v-tooltip="'Add some dumb bots to your draft.'"
+				>
+					<label for="bots">
+						<i class="fas fa-robot"></i>
+					</label>
+					<input
+						type="number"
+						id="bots"
+						class="small-number-input"
+						min="0"
+						:max="Math.max(7, maxPlayers - 1)"
+						step="1"
+						v-model.number="bots"
+					/>
+				</div>
+			</span>
 			<div class="chat">
-				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<div
-						class="inline"
-						:class="{ disabled: teamDraft }"
-						v-tooltip="'Add some dumb bots to your draft.'"
-					>
-						<label for="bots">
-							<i class="fas fa-robot"></i>
-						</label>
-						<input
-							type="number"
-							id="bots"
-							class="small-number-input"
-							min="0"
-							:max="Math.max(7, maxPlayers - 1)"
-							step="1"
-							v-model.number="bots"
-						/>
-					</div>
-				</span>
 				<form @submit.prevent="sendChatMessage">
 					<input
 						type="text"
