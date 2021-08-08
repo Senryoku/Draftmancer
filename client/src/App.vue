@@ -1826,7 +1826,7 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Import your own booster.</p>',
+							content: '<p>Import custom booster.</p>',
 						}"
 					>
 						<label for="use-predetermined-boosters">Use Pre-Determined Booster</label>
@@ -1838,13 +1838,12 @@
 							>
 								<i class="fas fa-file-export"></i> Import
 							</button>
-							<button
+							<i
+								class="fas fa-random"></i>
 								@click="shuffleUploadedBoosters"
 								v-tooltip="'Shuffle all booster before distribution. Their content is not mixed!'"
 								v-show="usePredeterminedBoosters"
-							>
-								<i class="fas fa-random"></i>
-							</button>
+							/>
 						</div>
 					</div>
 					<div
