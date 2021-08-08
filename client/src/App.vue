@@ -2128,7 +2128,7 @@
 								content:
 									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets.</p><p>Default is 15.</p>',
 							}"
-							v-if: "!useCustomCardList || (customCardList && customCardList.customSheets)"
+							v-if: "useCustomCardList"
 						>
 							<label for="cards-per-booster">Cards per Booster</label>
 							<input
