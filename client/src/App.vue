@@ -607,9 +607,9 @@
 					</li>
 				</ul>
 			</template>
-			<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+			<span :class="{ disabled: sessionOwner != userID }">
 				<div
-					class="inline-block"
+					class="inline"
 					:class="{ disabled: teamDraft }"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
