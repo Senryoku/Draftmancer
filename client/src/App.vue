@@ -276,7 +276,7 @@
 						Draft
 					</button>
 					<dropdown
-						v-show:"userID === sessionOwner">
+						v-show:"userID === sessionOwner"
 						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
@@ -609,10 +609,10 @@
 				</ul>
 			</template>
 			<!-- TODO bot icon and input would not show in line next to each other (but on top) once draft starts when not hidden-->
-			<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
+			<span class="generic-container" :class="{ 'disabled-simple': sessionOwner != userID }">
 				<div
 					class="inline"
-					:class="{ 'disabled-simple': teamDraft }"
+					:class="{ disabled: teamDraft }"
 					v-if="!drafting"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
