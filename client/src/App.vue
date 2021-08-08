@@ -612,6 +612,7 @@
 				<div
 					class="inline"
 					:class="{ disabled: teamDraft }"
+					v-if="!drafting"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
 					<label for="bots">
