@@ -256,6 +256,7 @@
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
+								v-show:"userID === sessionOwner"
 							></i>
 							<div
 								class="inline"
@@ -276,7 +277,7 @@
 						Draft
 					</button>
 					<dropdown
-						v-show:"userID === sessionOwner"
+						v-if:"userID === sessionOwner"
 						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
@@ -612,8 +613,7 @@
 			<span class="generic-container" :class="{ 'disabled-simple': sessionOwner != userID }">
 				<div
 					class="inline"
-					:class="{ disabled: teamDraft }"
-					v-if="!drafting"
+					v-if="!drafting || !teamDraft"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
 					<label for="bots">
