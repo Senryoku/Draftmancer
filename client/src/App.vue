@@ -273,7 +273,9 @@
 						:class="{ disabled: teamDraft }"
 						v-tooltip="'Add some dumb bots to your draft.'"
 					>
-						<label for="bots">Bots</label>
+						<label for="bots">
+							<i class="fas fa-robot"></i> Bots
+						</label>
 						<input
 							type="number"
 							id="bots"
@@ -2044,7 +2046,9 @@
 								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of booster per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 booster per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
 						}"
 					>
-						<label for="burned-cards-per-round">Burned cards per booster</label>
+						<label for="burned-cards-per-round">
+							<i class="fas fa-fire-alt"></i> Burned cards per booster
+						</label>
 						<div class="right">
 							<input
 								type="number"
