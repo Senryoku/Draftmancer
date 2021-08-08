@@ -1839,7 +1839,7 @@
 								<i class="fas fa-file-export"></i> Import
 							</button>
 							<i
-								class="fas fa-random"></i>
+								class="fas fa-random"
 								@click="shuffleUploadedBoosters"
 								v-tooltip="'Shuffle all booster before distribution. Their content is not mixed!'"
 								v-show="usePredeterminedBoosters"
