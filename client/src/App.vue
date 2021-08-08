@@ -1840,10 +1840,10 @@
 							</button>
 							<button
 								@click="shuffleUploadedBoosters"
-								v-tooltip="'Shuffle all booster before distribution.'"
+								v-tooltip="'Shuffle all booster before distribution. Their content is not mixed!'"
 								v-show="usePredeterminedBoosters"
 							>
-								<i class="fas fa-random"></i> Shuffle
+								<i class="fas fa-random"></i>
 							</button>
 						</div>
 					</div>
