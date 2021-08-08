@@ -607,7 +607,7 @@
 					</li>
 				</ul>
 			</template>
-			<-- TODO bot icon and input are not shown in line when draft starts -->
+			<!-- TODO bot icon and input are not shown in line when draft starts -->
 			<span :class="{ disabled: sessionOwner != userID }">
 				<div
 					class="inline"
@@ -625,6 +625,7 @@
 						:max="Math.max(7, maxPlayers - 1)"
 						step="1"
 						v-model.number="bots"
+						prepend-inner-icon="fas fa-robot"
 					/>
 				</div>
 			</span>
