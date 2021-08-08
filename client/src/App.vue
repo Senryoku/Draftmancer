@@ -353,20 +353,20 @@
 								<span class="game-modes-cat-title">Sealed</span>
 								<button
 									@click="sealedDialog"
-									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+									v-tooltip.left="'Distributes booster to everyone for a sealed session.'"
 								>
 									Sealed
 								</button>
 								<button
 									@click="deckWarning(distributeJumpstart)"
-									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+									v-tooltip.left="'Distributes two Jumpstart booster to everyone.'"
 								>
 									Jumpstart
 								</button>
 								<button
 									@click="deckWarning(distributeJumpstartHH)"
 									v-tooltip.left="
-										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
+										'Distributes two Jumpstart: Historic Horizons booster to everyone.'
 									"
 									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
 								>
@@ -1444,8 +1444,8 @@
 							<li>
 								<span class="option-name">Set(s)</span>
 								: Select one or multiple sets to draft with. All chosen sets will form the card pool out
-								of which mixed boosters will be generated for all players. If you want every player to
-								receive certain pure set boosters in a particular order (e.g. for original block drafts)
+								of which mixed booster will be generated for all players. If you want every player to
+								receive certain pure set booster in a particular order (e.g. for original block drafts)
 								you have to use the "Individual Booster Set" option in settings instead!
 							</li>
 							<li>
@@ -1502,7 +1502,7 @@
 								: If unchecked, your collection will not limit the cards available in the selected sets.
 								If every players unchecks this, you will draft using all cards. This setting is ignored
 								if "Ignore Collections" is enabled by the session owner, when using a Custom Card List
-								or Pre-Determined Boosters.
+								or Pre-Determined Booster.
 							</li>
 							<li>
 								<span class="option-name">Pick on Double Click</span>
@@ -1663,16 +1663,19 @@
 					<div>
 						<div>
 							Paste your card list or deck here. One card per line.<br />
-							If want to seperate your sideboard from the other cards, use a blank line.
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
 							rows="15"
-							cols="40"
+							cols="50"
 							id="decklist-text"
 						></textarea>
 					</div>
-					<div><button type="submit">Import</button></div>
+					<div>
+						<button type="submit">
+							<i class="fas fa-file-export"></i> Import
+						</button>
+					</div>
 				</form>
 			</div>
 		</modal>
@@ -1685,16 +1688,20 @@
 							Paste your booster card list here. One card per line,<br />
 							each booster separated by a blank line.<br />
 							Make sure each booster has the same number of cards<br />
-							and the total booster count is suitable	for your settings.
+							and the total booster count is suitable	for your settings.<br />
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
 							rows="15"
-							cols="40"
+							cols="50"
 							id="upload-booster-text"
 						></textarea>
 					</div>
-					<div><button type="submit">Import</button></div>
+					<div>
+						<button type="submit">
+							<i class="fas fa-file-export"></i> Import
+						</button>
+					</div>
 				</form>
 			</div>
 		</modal>
@@ -1825,14 +1832,18 @@
 						<label for="use-predetermined-boosters">Use Pre-Determined Booster</label>
 						<div class="right">
 							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
-							<button @click="displayedModal = 'uploadBoosters'">
+							<button
+								@click="displayedModal = 'uploadBoosters'">
+								v-show="usePredeterminedBoosters"
+							>
 								<i class="fas fa-file-export"></i> Import
 							</button>
 							<button
 								@click="shuffleUploadedBoosters"
-								v-tooltip="'Shuffle the booster before distributing them.'"
+								v-tooltip="'Shuffle all booster before distribution.'"
+								v-show="usePredeterminedBoosters"
 							>
-								Shuffle
+								<i class="fas fa-random"></i> Shuffle
 							</button>
 						</div>
 					</div>
@@ -1949,7 +1960,7 @@
 						class="line"
 						v-tooltip.right="{
 							classes: 'option-tooltip',
-							content: '<p>Draft: Boosters per Player; default is 3.</p>',
+							content: '<p>Draft: Booster per Player</p><p>Default is 3.</p>',
 						}"
 					>
 						<label for="boosters-per-player">Booster per Player</label>
@@ -1977,7 +1988,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the booster will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
+									'<p>Controls how the booster will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive booster from the same sets and will open them in the specified order.</li><li>Shuffle Player Booster: Each player will receive booster from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Booster will be shuffled all together and randomly handed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -2046,7 +2057,7 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
+								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of booster per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 booster per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
 						}"
 					>
 						<label for="burned-cards-per-round">Burned cards per booster</label>
@@ -2103,7 +2114,7 @@
 							v-tooltip.left="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
+									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets.</p><p>Default is 15.</p>',
 							}"
 							:class="{
 								'disabled-simple':
