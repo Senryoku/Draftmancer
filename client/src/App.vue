@@ -607,7 +607,7 @@
 					</li>
 				</ul>
 			</template>
-			<!-- TODO bot icon and input are not shown in line when draft starts -->
+			<!-- TODO bot icon and input are not shown in line once draft starts -->
 			<span :class="{ disabled: sessionOwner != userID }">
 				<div
 					class="inline"
@@ -1977,10 +1977,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p>
-									<ul><li>Regular: Every player will receive the same defined boosters and will open them in the specified order.</li>
-									<li>Shuffle Player Boosters: Each player will receive the same defined boosters, but will open them in a random order.</li>
-									<li>Shuffle Booster Pool: All boosters from every player will be mixed up together and randomly distributed to each player.</li></ul>',
+									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive the same defined boosters and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive the same defined boosters but will open them in a random order.</li><li>Shuffle Booster Pool: All boosters from every player will be mixed together and randomly distributed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -1999,8 +1996,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Specify the set for each indiviual booster handed to players. Useful for normal Chaos Drafts or former XLN/RIX Block Drafts for example.</p>
-									<p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+									'<p>Specify the set for each indiviual booster handed to players. Useful for normal Chaos Drafts or former XLN/RIX Block Drafts for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
 							}"
 						>
 							<div v-for="(value, index) in customBoosters" class="line" :key="index">
@@ -2050,10 +2046,7 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p>
-								<p>This is typically used in conjunction with a higher count of boosters per player when drafting with 2 to 4 players.
-								Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p>
-								<p>Default is 0.</p>',
+								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player when drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
 						}"
 					>
 						<label for="burned-cards-per-round">
