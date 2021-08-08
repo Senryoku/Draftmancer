@@ -252,13 +252,11 @@
 								</div>
 							</multiselect>
 							</div>
-							<div v-show:"userID === sessionOwner">
-								<i
-									class="fas fa-ellipsis-h clickable"
-									@click="displayedModal = 'setRestriction'"
-									v-tooltip="'More sets'"
-								></i>
-							</div>
+							<i
+								class="fas fa-ellipsis-h clickable"
+								@click="displayedModal = 'setRestriction'"
+								v-tooltip="'More sets'"
+							></i>
 							<div
 								class="inline"
 								v-tooltip="'Draft with all cards within set restriction disregarding players collections.'"
