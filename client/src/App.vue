@@ -1661,8 +1661,12 @@
 			<div slot="body">
 				<form @submit.prevent="importDeck">
 					<div>
+						<div>
+							Paste your card list or deck here. One card per line.<br />
+							If want to seperate your sideboard from the other cards, use a blank line.
+						</div>
 						<textarea
-							placeholder="Paste cards here... any list MTGA accepts should work"
+							placeholder="Paste cards here..."
 							rows="15"
 							cols="40"
 							id="decklist-text"
@@ -1673,15 +1677,15 @@
 			</div>
 		</modal>
 		<modal v-show="displayedModal === 'uploadBoosters'" @close="displayedModal = 'sessionOptions'">
-			<h2 slot="header">Upload Boosters</h2>
+			<h2 slot="header">Booster Importer</h2>
 			<div slot="body">
 				<form @submit.prevent="uploadBoosters">
 					<div>
 						<div>
-							Paste your boosters card list here. One card per line, each booster separated by a blank
-							line.<br />
-							Make sure each booster has the same number of cards and the total booster count is suitable
-							for your settings.
+							Paste your booster card list here. One card per line,<br />
+							each booster separated by a blank line.<br />
+							Make sure each booster has the same number of cards<br />
+							and the total booster count is suitable	for your settings.
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
@@ -1690,7 +1694,7 @@
 							id="upload-booster-text"
 						></textarea>
 					</div>
-					<div><button type="submit">Upload</button></div>
+					<div><button type="submit">Import</button></div>
 				</form>
 			</div>
 		</modal>
@@ -1815,18 +1819,18 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Upload your own boosters.</p>',
+							content: '<p>Import your own booster.</p>',
 						}"
 					>
-						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
+						<label for="use-predetermined-boosters">Use Pre-Determined Booster</label>
 						<div class="right">
 							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
 							<button @click="displayedModal = 'uploadBoosters'">
-								<i class="fas fa-upload"></i> Upload
+								<i class="fas fa-file-export"></i> Import
 							</button>
 							<button
 								@click="shuffleUploadedBoosters"
-								v-tooltip="'Shuffle the boosters before distributing them.'"
+								v-tooltip="'Shuffle the booster before distributing them.'"
 							>
 								Shuffle
 							</button>
@@ -1838,7 +1842,7 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
+								'<p>Lets you customize the exact content of your booster.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
 						}"
 					>
 						<div class="option-column-title">Booster Content</div>
@@ -1864,7 +1868,7 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default: Off.</p>',
+								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool.</p><p>Default: Off.</p>',
 						}"
 					>
 						<div class="option-column-title">
@@ -1948,7 +1952,7 @@
 							content: '<p>Draft: Boosters per Player; default is 3.</p>',
 						}"
 					>
-						<label for="boosters-per-player">Boosters per Player</label>
+						<label for="boosters-per-player">Booster per Player</label>
 						<div class="right">
 							<delayed-input
 								type="number"
@@ -1973,7 +1977,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
+									'<p>Controls how the booster will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -1984,7 +1988,7 @@
 								id="distribution-mode"
 							>
 								<option value="regular">Regular</option>
-								<option value="shufflePlayerBoosters">Shuffle Player Boosters</option>
+								<option value="shufflePlayerBoosters">Shuffle Player Booster</option>
 								<option value="shuffleBoosterPool">Shuffle Booster Pool</option>
 							</select>
 						</div>
@@ -1992,7 +1996,7 @@
 							v-tooltip.right="{
 								classes: 'option-tooltip',
 								content:
-									'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+									'<p>Specify the set of indiviual booster handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
 							}"
 						>
 							<div v-for="(value, index) in customBoosters" class="line" :key="index">
@@ -2167,7 +2171,7 @@
 								class="set-icon"
 								src="./assets/img/cubecobra-small-logo.png"
 							/>
-							Load Cube
+							<i class="fas fa-cloud-download-alt"></i> Load Cube
 						</button>
 					</div>
 					<div class="option-cube-infos" v-if="selectedCube">
