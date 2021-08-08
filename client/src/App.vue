@@ -1662,7 +1662,7 @@
 				<form @submit.prevent="importDeck">
 					<div>
 						<div>
-							Paste your card list or deck here. One card per line.<br />
+							Paste your card list or deck here. One card per line.
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
@@ -1688,7 +1688,7 @@
 							Paste your booster card list here. One card per line,<br />
 							each booster separated by a blank line.<br />
 							Make sure each booster has the same number of cards<br />
-							and the total booster count is suitable	for your settings.<br />
+							and the total booster count is suitable	for your settings.
 						</div>
 						<textarea
 							placeholder="Paste cards here..."
@@ -1833,7 +1833,7 @@
 						<div class="right">
 							<input type="checkbox" v-model="usePredeterminedBoosters" id="use-predetermined-boosters" />
 							<button
-								@click="displayedModal = 'uploadBoosters'">
+								@click="displayedModal = 'uploadBoosters'"
 								v-show="usePredeterminedBoosters"
 							>
 								<i class="fas fa-file-export"></i> Import
