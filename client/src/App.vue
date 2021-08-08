@@ -625,7 +625,7 @@
 						:max="Math.max(7, maxPlayers - 1)"
 						step="1"
 						v-model.number="bots"
-						prepend-inner-icon="fas fa-robot"
+						icon="fas fa-robot"
 					/>
 				</div>
 			</span>
