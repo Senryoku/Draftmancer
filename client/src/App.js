@@ -1753,7 +1753,7 @@ export default {
 				let colors = b.colors
 					.map(c => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`)
 					.join(" ");
-				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
+				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; min-width: 250px; min-height: 354px; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
 			}
 			let choice = -1;
 			await Alert.fire({
