@@ -1065,7 +1065,9 @@ export default {
 
 			const { value: boosterCount } = await Alert.fire({
 				title: "Winston Draft",
-				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
+				html: `
+					<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.
+					</p>How many booster for the main stack (default is 6)?`,
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
@@ -1127,7 +1129,11 @@ export default {
 
 			const { value: boosterCount } = await Alert.fire({
 				title: "Grid Draft",
-				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
+				html: `
+					<p>Grid Draft is a draft variant for two players mostly used for drafting cubes.
+					9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster.
+					The remaining cards are discarded.</p>
+					How many booster (default is 18)?`,
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
@@ -1198,8 +1204,8 @@ export default {
 				title: "Glimpse Draft",
 				html: `
 					<p>Glimpse Draft (or Burn Draft) is a draft variant where players remove cards from the draft (typically 2) alongside each pick. It's mostly used for small and medium sized groups where a regular draft makes not much sense.</p>
-					<p>How many boosters per player (default is 9)?
-					<input type="number" value="${boostersPerPlayer}" min="3" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Boosters per Player"></p>
+					<p>How many booster per player (default is 9)?
+					<input type="number" value="${boostersPerPlayer}" min="3" step="1" id="input-boostersPerPlayer" class="swal2-input" placeholder="Booster per Player"></p>
 					<p>How many burned cards per pick (default is 2)?
 					<input type="number" value="${burnedCardsPerRound}" min="1" max="13" step="1" id="input-burnedCardsPerRound" class="swal2-input" placeholder="Burned Cards"></p>`,
 				inputValue: 6,
@@ -1562,7 +1568,7 @@ export default {
 						footer: response.error.footer,
 					});
 				} else {
-					fireToast("success", "Boosters successfuly uploaded!");
+					fireToast("success", "Booster successfully uploaded!");
 					this.displayedModal = "sessionOptions";
 				}
 			});
@@ -1573,7 +1579,7 @@ export default {
 				if (response.error) {
 					fireToast(response.error.type, response.error.title);
 				} else {
-					fireToast("success", "Boosters successfuly shuffled!");
+					fireToast("success", "Booster successfully shuffled!");
 				}
 			});
 		},
@@ -1644,8 +1650,8 @@ export default {
 			Alert.fire({
 				title: "Start Sealed",
 				html: `
-					<p>How many boosters for each player (default is 6)?
-					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block" placeholder="Boosters per Player"></p>
+					<p>How many booster for each player (default is 6)?
+					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block" placeholder="Booster per Player"></p>
 					<p>(Optional) Customize the set of each booster:
 					<div id="input-customBoosters" style="
 						display: grid;
@@ -1656,7 +1662,7 @@ export default {
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Distribute boosters",
+				confirmButtonText: "Distribute booster",
 				width: "900px",
 				preConfirm: function() {
 					return new Promise(function(resolve) {
@@ -2387,7 +2393,7 @@ export default {
 			handler(val) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
-					fireToast("warning", "Your boosters should contain at least one card :)");
+					fireToast("warning", "Your booster should contain at least one card :)");
 					this.boosterContent["common"] = 1;
 				} else {
 					if (this.socket) this.socket.emit("setBoosterContent", this.boosterContent);
