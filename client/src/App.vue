@@ -1258,11 +1258,6 @@
 								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
 								Added Jumpstart: Historic Horizons Gamemode.
 							</p>
-							<p>
-								<i class="fa fa-exclamation-triangle yellow"></i> A few cards are still missing and
-								their corresponding packs are disabled for now. This should be fixed in the upcoming
-								days.
-							</p>
 						</div>
 						<div class="news">
 							<em>July 07, 2021</em>
