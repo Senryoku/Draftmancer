@@ -5,7 +5,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/2/f/2fb64a1b-5fc7-47be-a6f5-857e68b635ee.jpg?1628314647",
         "cards": [
             "bf72f87a-d471-40ec-b42f-f2c3633b59f0",
             "8ba894a7-42b4-46b9-9fcc-706e6930f638",
@@ -124,7 +124,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/4/c/4c016fba-312d-43fc-92b6-212147b2f578.jpg?1628313912",
         "cards": [
             "50b2a8a0-93a3-4e83-8f14-efbce07d2d3a",
             "204114ed-0d8e-460f-b7ce-9266536d4399",
@@ -196,7 +196,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/9/39f73116-3dd2-4c87-be0f-8ad5e3b59e4a.jpg?1628319144",
         "cards": [
             "ce2c30dd-f28a-4400-b6ea-f26462e45afc",
             "268434a4-8bab-410c-96b3-83dfdd91a655",
@@ -509,7 +509,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/2/e22f973e-bbff-4f9e-a598-95d21d8ce721.jpg?1628317042",
         "cards": [
             "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "63f00a6e-9716-4928-967c-00682b97ba9a",
@@ -617,16 +617,16 @@
     {
         "name": "Enchanted",
         "colors": [
-            "G",
-            "W"
+            "W",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/d/7ddd45f0-b22e-48be-8142-512be7fb3d16.jpg?1628322223",
         "cards": [
             "ead78df0-2ea5-47fc-82b3-b61047bb9fdb",
             "4f274e39-6b15-4afd-a1e2-29209fdb858f",
             "71b1dac5-6ed3-4ffc-b37b-da5bb8f58d29",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "fbc6fc57-209f-4d34-9433-06f0bb25543f",
             "88f82b43-ff4c-4056-a939-b9dfe1c2f221"
         ],
@@ -843,14 +843,14 @@
     {
         "name": "Evolving",
         "colors": [
-            "G",
-            "U"
+            "U",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/2/e/2ef2300a-98eb-452f-be6a-83b18e08bedc.jpg?1628322114",
         "cards": [
             "213d950a-a6b8-4088-a96e-ac9c94b4f267",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "2ce8abb5-8e9c-4a4b-b99e-6f4603a3c04f",
             "98971851-e17e-4c09-bbe3-f550a52ecc5a",
             "2ef2300a-98eb-452f-be6a-83b18e08bedc"
@@ -1295,15 +1295,15 @@
     {
         "name": "Goblin Fodder",
         "colors": [
-            "R",
-            "B"
+            "B",
+            "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/5/7515e5b3-5240-480d-8a0e-5a989c1a906d.jpg?1628318335",
         "cards": [
             "dd2202a0-9c79-4ddb-b33e-a4aa01ab022b",
             "55432915-6f11-45ed-b4dd-1883a1c2615c",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "9f0a0ad2-b050-4f03-87d1-aaca7d7fa3dd",
             "a897f6a7-e892-45d0-a43b-a823fc0884ff",
             "7515e5b3-5240-480d-8a0e-5a989c1a906d"
@@ -1550,7 +1550,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/4/6/466df5af-f5ec-45ec-bba0-838cc3f387dd.jpg?1628322715",
         "cards": [
             "6430fd7e-3147-4cb7-becc-72a4d969f0e6",
             "c4df2846-67ba-4228-9e32-fec788f1eab3",
@@ -1655,7 +1655,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/d/7d4cc438-d93d-4fe9-8162-c7271c9d15b3.jpg?1628317117",
         "cards": [
             "d7abbaa1-bc2e-499e-b809-88eec72d26e7",
             "82f1d347-4384-46e9-bacf-67af510a76d3",
@@ -2026,7 +2026,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/3/8348225c-dc67-4500-9f74-6c2e7dfcaaea.jpg?1628316064",
         "cards": [
             "32d3fa1b-79b5-40b0-99ea-0249aa8959a4",
             "84aa7067-1422-461b-893d-4d537e9384d1",
@@ -2118,18 +2118,18 @@
     {
         "name": "Madness",
         "colors": [
-            "B",
-            "R"
+            "R",
+            "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/1/61093e82-401a-4c56-a627-1455a9a337b8.jpg?1628321556",
         "cards": [
             "f6154597-1231-461f-91ee-40f0c6c063b8",
             "76f7fe19-cec7-459e-b2d2-42a3e2765b30",
             "1db3f83b-2b2c-4f63-84a4-8f7194c98201",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
-            "bbf00df0-3857-4bd7-8993-656eb3426511",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "36bf0a33-a2da-438a-85df-0e3c2b842a74",
             "61093e82-401a-4c56-a627-1455a9a337b8"
         ],
@@ -2332,7 +2332,7 @@
             "U"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/1/d1d38c8b-d3d0-4250-a89a-e6b67a93d5f7.jpg?1628314270",
         "cards": [
             "40cc6b1c-8f3d-4128-97ac-33381868ddd2",
             "c873f421-c22a-4ee3-befb-c1ca8d1bb2a6",
@@ -2442,7 +2442,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/6/066f28c3-aedb-488b-bedf-531814c02250.jpg?1628322873",
         "cards": [
             "1f35714c-9aa4-4642-a6c9-e901e7580221",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
@@ -2558,7 +2558,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/4/34935bfc-1f9c-4c03-8ead-a62730d99591.jpg?1628313552",
         "cards": [
             "ad3eddfe-bbed-41ef-b14f-25aa528fc100",
             "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
@@ -2905,14 +2905,14 @@
     {
         "name": "Pumped Up",
         "colors": [
-            "G",
-            "W"
+            "W",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/c/dcb8ca44-5d9a-470a-8043-d3f848f7fd4a.jpg?1628320550",
         "cards": [
             "71b1dac5-6ed3-4ffc-b37b-da5bb8f58d29",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "dfe53841-6431-4b70-8c31-7d94e152c66f",
             "dcb8ca44-5d9a-470a-8043-d3f848f7fd4a",
             "893bb9b6-8fe8-48cd-88ff-eb99edeab3ca"
@@ -3040,7 +3040,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/0/3/03648d6b-01a2-4de0-8d2a-c49f45d3d803.jpg?1628315935",
         "cards": [
             "5f52e2aa-59c2-4df2-92ec-15926d61b40f",
             "8ef8d801-7d7c-4aab-9429-00c9fa76f743",
@@ -3144,7 +3144,7 @@
             "W"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/8/88c9aa12-7e26-4beb-a36c-1aa35bc77096.jpg?1628321958",
         "cards": [
             "9b296004-1cdb-4cd7-a9bf-2063151e8e2e",
             "84aa7067-1422-461b-893d-4d537e9384d1",
@@ -3235,15 +3235,15 @@
     {
         "name": "Relentless",
         "colors": [
-            "G",
-            "B"
+            "B",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/7/871567c6-c910-4550-9b61-cfc7d745edde.jpg?1627497083",
         "cards": [
             "ce2c30dd-f28a-4400-b6ea-f26462e45afc",
             "ab89539d-91fc-46eb-b5f4-1489abe73a23",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "ce62fa4e-f76d-4ff2-aa6d-bcae4f725696",
             "77cdc051-f191-4b04-939c-d9ad5a60ed4b"
         ],
@@ -3743,16 +3743,16 @@
     {
         "name": "Scorched Earth",
         "colors": [
-            "G",
-            "R"
+            "R",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/c/dc124a43-e4f5-488f-8747-92736fab8e09.jpg?1628322257",
         "cards": [
             "3f25391c-bd12-436b-a68a-52b133c4a0ed",
             "8b62a6a7-f94e-42d9-8d9f-8fc2b5dd302c",
             "b601374d-c295-494c-881f-5c8ab7005ac2",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
             "a3d69f24-b257-4e24-924b-5a572692e893"
         ],
         "alts": [
@@ -3995,15 +3995,15 @@
     {
         "name": "Sliver Assault",
         "colors": [
-            "R",
-            "W"
+            "W",
+            "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/1/e11b0c43-2b36-419d-a567-23f1ebcdd340.jpg?1628321591",
         "cards": [
             "e11b0c43-2b36-419d-a567-23f1ebcdd340",
             "5b2c564f-2dfd-49f4-8169-021c348c9578",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "5a05798c-9bc3-45ec-85d4-1c9769929bc9",
             "0d495127-497e-47f1-bdb5-e2e5e98756f0"
         ],
@@ -4122,14 +4122,14 @@
     {
         "name": "Sliver Hive",
         "colors": [
-            "R",
-            "G",
-            "W",
             "B",
-            "U"
+            "W",
+            "R",
+            "U",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/6/f64d033b-8a30-4ba7-b3ae-b67997a396f2.jpg?1628321692",
         "cards": [
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "55432915-6f11-45ed-b4dd-1883a1c2615c",
@@ -4231,7 +4231,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/9/192a3ba4-6240-48db-ab4d-8ca41ceed807.jpg?1628317833",
         "cards": [
             "5ec81a7c-0b2a-4f57-849e-4dfc534473a7",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
@@ -4345,7 +4345,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/0/30310d1c-27b5-4d49-95ea-aad530190974.jpg?1628319306",
         "cards": [
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "5c2d77ee-73d5-4eba-b188-4a0f298c1642",
@@ -4450,7 +4450,7 @@
             "R"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/7/d72dc589-cdfc-40b9-a7ee-fde5359fae6b.jpg?1628319489",
         "cards": [
             "8f439a94-c3fa-4813-abbb-a39200a88bc7",
             "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
@@ -4613,11 +4613,11 @@
     {
         "name": "Tinkerer",
         "colors": [
-            "G",
-            "U"
+            "U",
+            "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/4/e4b2e6f3-bba8-4ee5-b100-a5d89bd76253.jpg?1628321891",
         "cards": [
             "204114ed-0d8e-460f-b7ce-9266536d4399",
             "ae9a7ded-eab4-4213-94c2-017494272e78",
@@ -4730,8 +4730,8 @@
             ],
             [
                 {
-                    "name": "Tranquil Thicket",
-                    "id": "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+                    "name": "Lonely Sandbar",
+                    "id": "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
                     "weight": 80
                 },
                 {
@@ -4879,7 +4879,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/2/62a3e06b-4b65-4edc-9013-00eff01d9aff.jpg?1628315124",
         "cards": [
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "c59f11a3-1fa0-4e1d-88a4-bd4c6a3198a6",
@@ -5019,7 +5019,7 @@
             "B"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/2/724cecae-1b1c-47e3-b995-9180da461636.jpg?1628315403",
         "cards": [
             "6290a3ca-3978-4686-a526-260acc224f82",
             "d40c5f14-2dfe-4abe-bc2f-c5b61b5ba9b9"
@@ -5181,7 +5181,7 @@
             "G"
         ],
         "cycling_land": false,
-        "image": "https://c2.scryfall.com/file/scryfall-errors/soon.jpg",
+        "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/c/8/c85d9cd2-8de4-47b1-81e8-8f0301c83bfc.jpg?1628319396",
         "cards": [
             "ce2c30dd-f28a-4400-b6ea-f26462e45afc",
             "9ea0f387-210f-466c-a5da-9b3aea7d360b",
