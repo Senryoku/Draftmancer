@@ -154,7 +154,7 @@
 						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 					></i>
 				</span>
-				<span class="generic-container card-pool-controls">
+				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID }">
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -190,7 +190,7 @@
 						></i>
 						)
 					</span>
-					<span v-else :class="{ disabled: sessionOwner != userID }">
+					<span v-else :class="{ 'disabled-simple': sessionOwner != userID }">
 						<div class="inline">
 							<div
 								class="inline"
@@ -275,7 +275,8 @@
 					>
 						Draft
 					</button>
-					<dropdown :class="{ disabled: sessionOwner != userID }">
+					<dropdown
+						v-show:"userID === sessionOwner">
 						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
@@ -607,11 +608,11 @@
 					</li>
 				</ul>
 			</template>
-			<!-- TODO bot icon and input are not shown in line once draft starts -->
+			<!-- TODO bot icon and input would not show in line next to each other (but on top) once draft starts when not hidden-->
 			<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 				<div
 					class="inline"
-					:class="{ disabled: teamDraft }"
+					:class="{ 'disabled-simple': teamDraft }"
 					v-if="!drafting"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
