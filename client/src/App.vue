@@ -252,12 +252,13 @@
 								</div>
 							</multiselect>
 							</div>
+							<div v-show:"userID === sessionOwner">
 							<i
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
-								v-show:"userID === sessionOwner"
 							></i>
+							</div>
 							<div
 								class="inline"
 								v-tooltip="'Draft with all cards within set restriction disregarding players collections.'"
@@ -277,7 +278,6 @@
 						Draft
 					</button>
 					<dropdown
-						v-if:"userID === sessionOwner"
 						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
