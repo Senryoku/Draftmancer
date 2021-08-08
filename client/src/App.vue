@@ -608,7 +608,7 @@
 				</ul>
 			</template>
 			<!-- TODO bot icon and input are not shown in line once draft starts -->
-			<span :class="{ disabled: sessionOwner != userID }">
+			<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
 				<div
 					class="inline"
 					:class="{ disabled: teamDraft }"
@@ -625,7 +625,6 @@
 						:max="Math.max(7, maxPlayers - 1)"
 						step="1"
 						v-model.number="bots"
-						icon="fas fa-robot"
 					/>
 				</div>
 			</span>
@@ -1435,7 +1434,7 @@
 								: Select one or multiple sets to draft with. All chosen sets will form the card pool out
 								of which mixed boosters will be generated for all players. If you want every player to
 								receive certain pure set boosters in a particular order (e.g. for original block drafts)
-								you have to use the "Individual Boosters Set" option in settings instead!
+								you have to use the "Booster Sets" customization options in settings instead!
 							</li>
 							<li>
 								<span class="option-name">Bots</span>
@@ -1669,12 +1668,12 @@
 			</div>
 		</modal>
 		<modal v-show="displayedModal === 'uploadBoosters'" @close="displayedModal = 'sessionOptions'">
-			<h2 slot="header">Boosters Importer</h2>
+			<h2 slot="header">Booster Importer</h2>
 			<div slot="body">
 				<form @submit.prevent="uploadBoosters">
 					<div>
 						<div>
-							Paste the list of card for your boosters here.<br />
+							Paste all list of cards for the boosters here.<br />
 							One card per line, each booster separated by a blank line.<br />
 							Make sure each booster has the same number of cards<br />
 							and the total booster count is suitable	for your settings.
@@ -1815,7 +1814,7 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Import custom boosters.</p>',
+							content: '<p>Import custom booster packs.</p>',
 						}"
 					>
 						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
