@@ -253,11 +253,11 @@
 							</multiselect>
 							</div>
 							<div v-show:"userID === sessionOwner">
-							<i
-								class="fas fa-ellipsis-h clickable"
-								@click="displayedModal = 'setRestriction'"
-								v-tooltip="'More sets'"
-							></i>
+								<i
+									class="fas fa-ellipsis-h clickable"
+									@click="displayedModal = 'setRestriction'"
+									v-tooltip="'More sets'"
+								></i>
 							</div>
 							<div
 								class="inline"
@@ -613,7 +613,8 @@
 			<span class="generic-container" :class="{ 'disabled-simple': sessionOwner != userID }">
 				<div
 					class="inline"
-					v-if="!drafting || !teamDraft"
+					:class="{ disabled: teamDraft }"
+					v-show="!drafting"
 					v-tooltip="'Add some dumb bots to your draft.'"
 				>
 					<label for="bots">
