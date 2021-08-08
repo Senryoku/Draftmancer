@@ -289,20 +289,6 @@
 							v-model.number="bots"
 						/>
 					</div>
-					<div class="inline" v-tooltip="'Pick Timer (sec.). Zero means no timer.'">
-						<label for="timer">
-							<i class="fas fa-clock"></i>
-						</label>
-						<input
-							type="number"
-							id="timer"
-							class="small-number-input"
-							min="0"
-							max="180"
-							step="15"
-							v-model.number="maxTimer"
-						/>
-					</div>
 					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">
 						Draft
 					</button>
@@ -2072,6 +2058,23 @@
 								@change="if (burnedCardsPerRound < 0) burnedCardsPerRound = 0;"
 							/>
 						</div>
+					</div>
+					<div
+						class="inline"
+						v-tooltip="'Pick Timer (sec.). Zero means no timer.'"
+					>
+						<label for="timer">
+							<i class="fas fa-clock"></i>
+						</label>
+						<input
+							type="number"
+							id="timer"
+							class="small-number-input"
+							min="0"
+							max="180"
+							step="15"
+							v-model.number="maxTimer"
+						/>
 					</div>
 				</div>
 				<div class="option-section option-custom-card-list" :class="{ disabled: usePredeterminedBoosters }">
