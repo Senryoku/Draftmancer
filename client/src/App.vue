@@ -259,9 +259,7 @@
 							></i>
 							<div
 								class="inline"
-								v-tooltip="
-									'Draft with all cards within set restriction disregarding players collections.'
-								"
+								v-tooltip="'Draft with all cards within set restriction disregarding players collections.'"
 							>
 								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
 								<label for="ignore-collections">Ignore Collections</label>
@@ -270,9 +268,6 @@
 					</span>
 				</span>
 				<span class="generic-container" :class="{ disabled: sessionOwner != userID }">
-					<label>
-						<strong>Draft:</strong>
-					</label>
 					<div
 						class="inline"
 						:class="{ disabled: teamDraft }"
@@ -289,11 +284,15 @@
 							v-model.number="bots"
 						/>
 					</div>
-					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">
-						Draft
-					</button>
 				</span>
 				<span v-show="userID === sessionOwner">
+					<button
+						@click="startDraft"
+						v-show="userID === sessionOwner"
+						v-tooltip="'Starts a Draft Session.'"
+					>
+						Draft
+					</button>
 					<dropdown :class="{ disabled: sessionOwner != userID }">
 						<template v-slot:handle>
 							Other Game Modes
@@ -2060,21 +2059,26 @@
 						</div>
 					</div>
 					<div
-						class="inline"
-						v-tooltip="'Pick Timer (sec.). Zero means no timer.'"
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content: 'Pick Timer in seconds. Zero means no timer.'
+						}"
 					>
 						<label for="timer">
-							<i class="fas fa-clock"></i>
+							<i class="fas fa-clock"></i> Pick timer
 						</label>
-						<input
-							type="number"
-							id="timer"
-							class="small-number-input"
-							min="0"
-							max="180"
-							step="15"
-							v-model.number="maxTimer"
-						/>
+						<div class="right">
+							<input
+								type="number"
+								id="timer"
+								class="small-number-input"
+								min="0"
+								max="180"
+								step="15"
+								v-model.number="maxTimer"
+							/>
+						</div>
 					</div>
 				</div>
 				<div class="option-section option-custom-card-list" :class="{ disabled: usePredeterminedBoosters }">
