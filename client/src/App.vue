@@ -431,21 +431,21 @@
 							:data-userid="id"
 						>
 							<div class="status-icons">
-							<i
-								v-if="id === sessionOwner"
-								class="fas fa-crown subtle-gold"
-								v-tooltip="`${userByID[id].userName} is the session owner.`"
-							></i>
-							<i
-								v-if="user.isBot"
-								class="fas fa-robot"
-								v-tooltip="`${userByID[id].userName} is a bot.`"
-							></i>
-							<i
-								v-if="!user.isBot"
-								class="fas fa-user"
-								v-tooltip="`${userByID[id].userName} is a human player.`"
-							></i>
+								<i
+									v-if="id === sessionOwner"
+									class="fas fa-crown subtle-gold"
+									v-tooltip="`${userByID[id].userName} is the session owner.`"
+								></i>
+								<i
+									v-if="user === isBot"
+									class="fas fa-robot"
+									v-tooltip="`${userByID[id].userName} is a bot.`"
+								></i>
+								<i
+									v-if="user != isBot"
+									class="fas fa-user"
+									v-tooltip="`${userByID[id].userName} is a human player.`"
+								></i>
 							</div>
 							<div class="player-name"> {{ userByID[id].userName }}</div>
 							<template v-if="userID == sessionOwner">
