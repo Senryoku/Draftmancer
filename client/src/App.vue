@@ -112,7 +112,7 @@
 		<!-- Session Options -->
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
-				<span id="session-controls">
+				<span v-show="!drafting" id="session-controls">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
 						<delayed-input
@@ -271,7 +271,7 @@
 					<button
 						@click="startDraft"
 						v-show="userID === sessionOwner"
-						v-tooltip="'Start a Draft Session.'"
+						v-tooltip="'Players pick cards from circling packs.'"
 					>
 						Draft
 					</button>
@@ -353,9 +353,8 @@
 				</button>
 			</div>
 			<template v-if="drafting">
-				<div id="url-remainder">MTGADraft.tk</div>
 				<div id="draft-in-progress">
-					{{ gameModeName }}
+					{{ gameModeName }} in progress
 				</div>
 				<div
 					v-if="sessionOwner === userID"
