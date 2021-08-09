@@ -256,6 +256,7 @@
 								class="fas fa-ellipsis-h clickable"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
+								v-show="userID === sessionOwner && !drafting"
 							></i>
 							<div
 								class="inline"
