@@ -111,8 +111,8 @@
 
 		<!-- Session Options -->
 		<div class="generic-container">
-			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
-				<span v-show="!drafting" id="session-controls">
+			<div id="limited-controls" class="main-controls">
+				<span id="session-controls" v-show="!drafting">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
 						<label for="session-id">Session ID</label>
 						<delayed-input
@@ -149,7 +149,7 @@
 					></i>
 					<i
 						class="fas fa-user-check clickable"
-						v-if="sessionOwner === userID"
+						v-show="sessionOwner === userID"
 						@click="readyCheck"
 						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 					></i>
@@ -271,7 +271,6 @@
 				<span v-show="userID === sessionOwner && !drafting">
 					<button
 						@click="startDraft"
-						v-show="userID === sessionOwner"
 						v-tooltip="'Players pick cards from circling packs.'"
 					>
 						Draft
@@ -348,6 +347,7 @@
 					v-tooltip="'More session settings'"
 					@click="displayedModal = 'sessionOptions'"
 					class="setting-button flat"
+					v-show="!drafting"
 				>
 					<i class="fas fa-cog"></i>
 					Settings
@@ -1729,7 +1729,8 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content: '<p>Share this session ID with everyone.</p>',
+							content:
+								'<p>Public sessions show up for everybody to join.</p><p>Private sessions can only be joined via their specific ID</p>',
 						}"
 					>
 						<label for="is-public">Public</label>
