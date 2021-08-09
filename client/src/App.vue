@@ -190,7 +190,7 @@
 						></i>
 						)
 					</span>
-					<span v-else :class="{ 'disabled-simple': sessionOwner != userID }">
+					<span>
 						<div class="inline">
 							<div
 								class="inline"
@@ -267,7 +267,7 @@
 						</div>
 					</span>
 				</span>
-				<span v-show="userID === sessionOwner">
+				<span v-show="userID === sessionOwner && !drafting">
 					<button
 						@click="startDraft"
 						v-show="userID === sessionOwner"
