@@ -437,12 +437,7 @@
 									v-tooltip="`${userByID[id].userName} is the session owner.`"
 								></i>
 								<i
-									v-show="user.isBot"
-									class="fas fa-robot"
-									v-tooltip="`${userByID[id].userName} is a bot.`"
-								></i>
-								<i
-									v-show="id != sessionOwner && !user.isBot"
+									v-show="id != sessionOwner"
 									class="fas fa-user"
 									v-tooltip="`${userByID[id].userName} is a human player.`"
 								></i>
