@@ -155,6 +155,7 @@
 					></i>
 				</span>
 				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+				<!-- TODO instead disabling maybe also ok to not show parent span completely during draft as card pool info is currently not useful when customizing booster in settings -->
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -607,27 +608,6 @@
 					</li>
 				</ul>
 			</template>
-			<!-- TODO bot icon and input would not show in line next to each other (but on top) once draft starts when not hidden-->
-			<span class="generic-container" :class="{ 'disabled-simple': sessionOwner != userID }">
-				<div
-					class="inline"
-					:class="{ disabled: teamDraft }"
-					v-if="!drafting"
-					v-tooltip="'Add some dumb bots to your draft.'"
-				>
-					<label for="bots">
-						<i class="fas fa-robot"></i>
-					</label>
-					<input
-						type="number"
-						id="bots"
-						class="small-number-input"
-						min="0"
-						:max="Math.max(7, maxPlayers - 1)"
-						step="1"
-						v-model.number="bots"
-					/>
-				</div>
 			</span>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">
@@ -2085,6 +2065,29 @@
 								max="180"
 								step="15"
 								v-model.number="maxTimer"
+							/>
+						</div>
+					</div>
+					<div
+						class="line"
+						:class="{ disabled: teamDraft }"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content: 'Add some dumb bots to your draft.'
+						}"
+					>
+						<label for="bots">
+							<i class="fas fa-robot"></i> Bots
+						</label>
+						<div class="right">
+							<input
+								type="number"
+								id="bots"
+								class="small-number-input"
+								min="0"
+								:max="Math.max(7, maxPlayers - 1)"
+								step="1"
+								v-model.number="bots"
 							/>
 						</div>
 					</div>
