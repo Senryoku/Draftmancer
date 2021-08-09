@@ -154,7 +154,7 @@
 						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 					></i>
 				</span>
-				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID }">
+				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 					<input
 						type="file"
 						id="card-list-input-main"
