@@ -553,21 +553,6 @@ select.swal2-input option {
 	text-shadow: 0px 0px 10px black;
 }
 
-#url-remainder {
-	position: absolute;
-	left: 0em;
-	top: 50%;
-	transform: translateY(-50%);
-	font-variant: small-caps;
-	font-weight: bold;
-	font-size: 1.5em;
-	color: #888;
-	background-color: #222;
-	mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
-	-webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 5em);
-	padding: 0.35em 6em 0.35em 0.5em;
-}
-
 #draft-in-progress {
 	position: absolute;
 	top: 50%;
