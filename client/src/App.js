@@ -1131,7 +1131,7 @@ export default {
 				title: "Grid Draft",
 				html: `
 					<p>Grid Draft is a draft variant for two players mostly used for drafting cubes.
-					9-card boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster.
+					9-card boosters are presented one by one in a 3x3 grid and players alternately choose a row or a column from each, resulting in 2 or 3 cards being picked from every booster.
 					The remaining cards are discarded.</p>
 					How many booster packs (default is 18)?`,
 				inputPlaceholder: "Booster count",
