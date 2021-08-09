@@ -271,11 +271,11 @@
 					<button
 						@click="startDraft"
 						v-show="userID === sessionOwner"
-						v-tooltip="'Starts a Draft Session.'"
+						v-tooltip="'Start a Draft Session.'"
 					>
 						Draft
 					</button>
-					<dropdown
+					<dropdown>
 						<template v-slot:handle>
 							Other Game Modes
 							<i class="fas fa-caret-down"></i>
@@ -286,23 +286,23 @@
 								<button
 									@click="startWinstonDraft()"
 									v-tooltip.left="
-										'Starts a Winston Draft. This is a draft variant for only two players.'
+										'Players pick piles of cards. This is a two player format.'
 									"
 								>
-									Winston (2p.)
+									Winston (1v1)
 								</button>
 								<button
 									@click="startGridDraft()"
 									v-tooltip.left="
-										'Starts a Grid Draft. This is a draft variant for only two players.'
+										'Players pick rows/columns of cards. This is a two player format.'
 									"
 								>
-									Grid (2p.)
+									Grid (1v1)
 								</button>
 								<button
 									@click="startGlimpseDraft()"
 									v-tooltip.left="
-										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
+										'Players remove cards from the pack with each pick.'
 									"
 								>
 									Glimpse/Burn
@@ -310,7 +310,7 @@
 								<button
 									@click="startRochesterDraft()"
 									v-tooltip.left="
-										'Starts a Rochester Draft. Every players picks from a single booster.'
+										'Players pick from the same shared booster.'
 									"
 								>
 									Rochester
@@ -320,20 +320,20 @@
 								<span class="game-modes-cat-title">Sealed</span>
 								<button
 									@click="sealedDialog"
-									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
+									v-tooltip.left="'Players receive a private card pool.'"
 								>
 									Sealed
 								</button>
 								<button
 									@click="deckWarning(distributeJumpstart)"
-									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
+									v-tooltip.left="'Players receive two random Jumpstart boosters randomly.'"
 								>
 									Jumpstart
 								</button>
 								<button
 									@click="deckWarning(distributeJumpstartHH)"
 									v-tooltip.left="
-										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
+										'Players choose two Jumpstart: Historic Horizons boosters from a random pool.'
 									"
 									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
 								>
