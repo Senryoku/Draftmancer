@@ -432,17 +432,17 @@
 						>
 							<div class="status-icons">
 								<i
-									v-if="id === sessionOwner"
+									v-show="id === sessionOwner"
 									class="fas fa-crown subtle-gold"
 									v-tooltip="`${userByID[id].userName} is the session owner.`"
 								></i>
 								<i
-									v-if="user === isBot"
+									v-show="user.isBot"
 									class="fas fa-robot"
 									v-tooltip="`${userByID[id].userName} is a bot.`"
 								></i>
 								<i
-									v-if="user != isBot"
+									v-show="id != sessionOwner && !user.isBot"
 									class="fas fa-user"
 									v-tooltip="`${userByID[id].userName} is a human player.`"
 								></i>
