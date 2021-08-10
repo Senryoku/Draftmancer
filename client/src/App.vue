@@ -786,7 +786,14 @@
 							@dragstart.native="dragBoosterCard($event, card)"
 							:hasenoughwildcards="hasEnoughWildcards(card)"
 							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-							:botscore="botScores && botScores.scores && displayBotScores ? botScores.scores[idx] : null"
+							:botscore="
+								draftingState !== DraftState.Waiting &&
+								botScores &&
+								botScores.scores &&
+								displayBotScores
+									? botScores.scores[idx]
+									: null
+							"
 							:botpicked="
 								draftingState !== DraftState.Waiting &&
 									botScores &&
