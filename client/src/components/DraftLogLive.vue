@@ -5,19 +5,28 @@
 				<div class="draft-log-live-title">
 					<h2>Live Review: {{ draftlog.users[player].userName }}</h2>
 					<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
+						<i
+							:class="{ disabled: pack <= 0 && pick <= 0 }"
+							class="fas fa-chevron-left clickable"
+							@click="prevPick"
+						></i>
+						<label>Pack #</label>
+						<select v-model="pack">
+							<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
+								{{ index }}
+							</option>
+						</select>
+						,
 						<label>Pick #</label>
-						<i :class="{ disabled: pick <= 0 }" class="fas fa-chevron-left clickable" @click="prevPick"></i>
 						<select v-model="pick">
-							<option
-								v-for="index in draftlog.users[player].picks.length"
-								:key="index"
-								:value="index - 1"
-							>
+							<option v-for="index in picksPerPack[pack].length" :key="index" :value="index - 1">
 								{{ index }}
 							</option>
 						</select>
 						<i
-							:class="{ disabled: pick >= draftlog.users[player].picks.length - 1 }"
+							:class="{
+								disabled: pack >= picksPerPack.length - 1 && pick >= picksPerPack[pack].length - 1,
+							}"
 							class="fas fa-chevron-right clickable"
 							@click="nextPick"
 						></i>
@@ -28,11 +37,11 @@
 					<p>Waiting for {{ draftlog.users[player].userName }} to make their first pick...</p>
 				</template>
 				<template v-else>
-					<div v-if="pick < draftlog.users[player].picks.length">
+					<div v-if="validPick">
 						<transition :name="'slide-fade-' + pickTransition" mode="out-in">
 							<draft-log-pick
 								:key="`${player}-${pick}`"
-								:pick="draftlog.users[player].picks[pick]"
+								:pick="picksPerPack[pack][pick].data"
 								:carddata="draftlog.carddata"
 								:language="language"
 							></draft-log-pick>
@@ -76,6 +85,7 @@ export default {
 	data() {
 		return {
 			player: undefined,
+			pack: 0,
 			pick: 0,
 			eventListeners: [],
 			pickTransition: "right",
@@ -109,17 +119,40 @@ export default {
 		setPlayer(userID) {
 			if (!(userID in this.draftlog.users)) return;
 			this.player = userID;
-			this.pick = Math.max(0, Math.min(this.pick, this.draftlog.users[userID].picks.length - 1));
+
+			this.pack = 0;
+			this.pick = 0;
+			// Get to the last pick once computed values are updated.
+			if (this.picksPerPack.length > 0)
+				this.$nextTick(() => {
+					this.pack = this.picksPerPack.length - 1;
+					this.pick = this.picksPerPack[this.pack].length - 1;
+				});
 		},
 		prevPick() {
-			this.pick = Math.max(0, this.pick - 1);
+			if (this.pick === 0) {
+				if (this.pack === 0) return;
+				--this.pack;
+				this.pick = this.picksPerPack[this.pack].length - 1;
+			} else {
+				--this.pick;
+			}
 		},
 		nextPick() {
-			this.pick = Math.min(this.pick + 1, this.draftlog.users[this.player].picks.length - 1);
+			if (this.pick === this.picksPerPack[this.pack].length - 1) {
+				if (this.pack === this.picksPerPack.length - 1) return;
+				++this.pack;
+				this.pick = 0;
+			} else {
+				++this.pick;
+			}
 		},
 		newPick(data) {
 			// Skip to last pick if we're spectating this player
-			if (data.userID === this.player) this.pick = this.draftlog.users[this.player].picks.length - 1;
+			if (data.userID === this.player) {
+				this.pack = this.picksPerPack.length - 1;
+				this.pick = this.picksPerPack[this.pack].length - 1;
+			}
 		},
 	},
 	computed: {
@@ -136,11 +169,62 @@ export default {
 				.flat()
 				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
 		},
+		selectedLog() {
+			return this.draftlog.users[this.player];
+		},
+		picks() {
+			if (
+				!this.selectedLog ||
+				!this.selectedLog.picks ||
+				this.selectedLog.picks.length === 0 ||
+				this.draftlog.type !== "Draft"
+			)
+				return [];
+			// Infer PackNumber & PickNumber
+			let r = [];
+			let currPick = 0;
+			let currBooster = -1;
+			let lastSize = 0;
+			let currPickNumber = 0;
+			while (currPick < this.selectedLog.picks.length) {
+				if (this.selectedLog.picks[currPick].booster.length > lastSize) {
+					++currBooster;
+					currPickNumber = 0;
+				} else ++currPickNumber;
+				r.push({
+					key: currPick,
+					data: this.selectedLog.picks[currPick],
+					packNumber: currBooster,
+					pickNumber: currPickNumber,
+				});
+				lastSize = this.selectedLog.picks[currPick].booster.length;
+				++currPick;
+			}
+			return r;
+		},
+		picksPerPack() {
+			let r = [];
+			let currentPack = -1;
+			for (let p of this.picks) {
+				if (currentPack !== p.packNumber) {
+					r.push([]);
+					currentPack = p.packNumber;
+				}
+				r[r.length - 1].push(p);
+			}
+			return r;
+		},
+		validPick() {
+			return this.pack < this.picksPerPack.length && this.pick < this.picksPerPack[this.pack].length;
+		},
 	},
 	watch: {
 		pick(n, o) {
 			if (n < o) this.pickTransition = "right";
 			else this.pickTransition = "left";
+		},
+		pack(newVal) {
+			this.pick = Math.min(this.pick, this.picksPerPack[newVal].length - 1); // Make sure pick is still valid.
 		},
 	},
 };
