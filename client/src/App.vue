@@ -17,8 +17,8 @@
 						:delay="2"
 					/>
 				</div>
-				<div class="inline" v-tooltip="'Controls the display language of cards.'">
-					<label for="language">Card Language</label>
+				<div class="inline" v-tooltip="'Change the display language of cards.'">
+					<label for="language">Card Art</label>
 					<select v-model="language" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
