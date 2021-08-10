@@ -13,7 +13,6 @@
 						id="user-name"
 						v-model="userName"
 						type="text"
-						minlength="2"
 						maxlength="30"
 						:delay="2"
 					/>
@@ -121,7 +120,6 @@
 							autocomplete="off"
 							id="session-id"
 							:type="hideSessionID ? 'password' : 'text'"
-							minlength="4"
 							maxlength="30"
 							:delay="2"
 						/>
