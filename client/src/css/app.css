@@ -610,6 +610,10 @@ select.swal2-input option {
 	width: 10em;
 }
 
+#user-name {
+	width: 8em;
+}
+
 .game-modes-cat {
 	margin-bottom: 0.5em;
 	display: flex;
