@@ -1253,6 +1253,20 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>August 10, 2021</em>
+							<p>
+								New experimental bots, courtesy of
+								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
+									>ruler501</a
+								>!
+							</p>
+							<p>
+								These should make more informed decisions than our previous really simple bots, but may
+								not be available depending on the card pool used for the draft as they require set
+								specific training (typically, we'll fallback to the generic bots for the latest sets).
+							</p>
+						</div>
+						<div class="news">
 							<em>August 05, 2021</em>
 							<p>
 								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />

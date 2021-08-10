@@ -1,5 +1,9 @@
 [
 	{
+		"date": "10/08/2021",
+		"notes": ["Added new experimental bots from ruler501 (https://github.com/ruler501)."]
+	},
+	{
 		"date": "05/08/2021",
 		"notes": ["Preliminary Jumpstart: Historic Horizons support."]
 	},
