@@ -19,13 +19,11 @@
 			Your logs will be visible here after you've completed a game.
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
-			<div class="log-controls">
-				<span
-					@click="toggle(idx)"
-					class="clickable"
-					v-bind:class="{ 'disabled-simple': draftLog.delayed }"
-					v-tooltip="draftLog.delayed && 'Delayed Game Log. No one can view details until released by the session owner!'"
-				>
+			<div
+				class="log-controls"
+				v-tooltip="draftLog.delayed && 'Delayed Game Log. No one can view details until released by the session owner!'"
+			>
+				<span @click="toggle(idx)" class="clickable" v-bind:class="{ 'disabled-simple': draftLog.delayed }">
 					<div class="inline" style="min-width: 20px; text-align: center">
 						<i
 							v-if="!draftLog.delayed"
