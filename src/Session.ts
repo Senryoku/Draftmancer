@@ -1300,7 +1300,10 @@ export class Session implements IIndexable {
 			}.`
 		);
 
-		for (let idx of pickedCards) Connections[userID].pickedCards.push(s.boosters[boosterIndex][idx]);
+		for (let idx of pickedCards) {
+			Connections[userID].pickedCards.push(s.boosters[boosterIndex][idx]);
+			Connections[userID].bot?.addCard(s.boosters[boosterIndex][idx]);
+		}
 		Connections[userID].pickedThisRound = true;
 
 		const pickData = {
