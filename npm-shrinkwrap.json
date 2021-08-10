@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+		"mtgdraftbots": {
+		"version": "1.3.3",
+		"dependencies": {
+			"threads": "^1.6.5"
+		}
+	},
+  }
+}
