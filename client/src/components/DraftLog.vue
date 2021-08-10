@@ -29,6 +29,7 @@
 								} else {
 									if (displayOptions.category === 'Deck') displayOptions.category = 'Cards';
 								}
+								displayOptions.pack = displayOptions.pick = 0;
 							}
 						}
 					"
@@ -62,7 +63,10 @@
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
-						<select v-model="displayOptions.category">
+						<select
+							v-model="displayOptions.category"
+							@change="displayOptions.pack = displayOptions.pick = 0"
+						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
 							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
@@ -98,18 +102,69 @@
 				</div>
 
 				<template v-if="displayOptions.category === 'Picks'">
-					<div v-for="p in picks" :key="p.key">
-						<h3>
-							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
-							{{ p.data.pick.map(idx => draftlog.carddata[p.data.booster[idx]].name).join(", ") }}
-						</h3>
+					<template
+						v-if="
+							displayOptions.pack < picksPerPack.length &&
+								displayOptions.pick < picksPerPack[displayOptions.pack].length
+						"
+					>
+						<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
+							<div>
+								<i
+									:class="{ disabled: displayOptions.pack <= 0 && displayOptions.pick <= 0 }"
+									class="fas fa-chevron-left clickable"
+									@click="prevPick"
+								></i>
+								<label>Pack #</label>
+								<select v-model="displayOptions.pack" style="width: 4em">
+									<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
+										{{ index }}
+									</option>
+								</select>
+								,
+								<label>Pick #</label>
+								<select v-model="displayOptions.pick" style="width: 4em">
+									<option
+										v-for="index in picksPerPack[displayOptions.pack].length"
+										:key="index"
+										:value="index - 1"
+									>
+										{{ index }}
+									</option>
+								</select>
+								<i
+									:class="{
+										disabled:
+											displayOptions.pack >= picksPerPack.length - 1 &&
+											displayOptions.pick >= picksPerPack[displayOptions.pack].length - 1,
+									}"
+									class="fas fa-chevron-right clickable"
+									@click="nextPick"
+								></i>
+							</div>
+							<h2>
+								{{
+									picksPerPack[displayOptions.pack][displayOptions.pick].data.pick
+										.map(
+											idx =>
+												draftlog.carddata[
+													picksPerPack[displayOptions.pack][displayOptions.pick].data.booster[
+														idx
+													]
+												].name
+										)
+										.join(", ")
+								}}
+							</h2>
+						</div>
 						<draft-log-pick
-							:pick="p.data"
+							:pick="picksPerPack[displayOptions.pack][displayOptions.pick].data"
 							:carddata="draftlog.carddata"
 							:language="language"
 							:type="draftlog.type"
 						></draft-log-pick>
-					</div>
+					</template>
+					<template v-else>No picks.</template>
 				</template>
 				<template v-else-if="displayOptions.category === 'Cards'">
 					<div class="log-container">
@@ -175,6 +230,8 @@ export default {
 				detailsUserID: undefined,
 				category: "Cards",
 				textList: false,
+				pack: 0,
+				pick: 0,
 			},
 		};
 	},
@@ -255,6 +312,24 @@ export default {
 			}
 			return r;
 		},
+		prevPick() {
+			if (this.displayOptions.pick === 0) {
+				if (this.displayOptions.pack === 0) return;
+				--this.displayOptions.pack;
+				this.displayOptions.pick = this.picksPerPack[this.displayOptions.pack].length - 1;
+			} else {
+				--this.displayOptions.pick;
+			}
+		},
+		nextPick() {
+			if (this.displayOptions.pick === this.picksPerPack[this.displayOptions.pack].length - 1) {
+				if (this.displayOptions.pack === this.picksPerPack.length - 1) return;
+				++this.displayOptions.pack;
+				this.displayOptions.pick = 0;
+			} else {
+				++this.displayOptions.pick;
+			}
+		},
 	},
 	computed: {
 		type() {
@@ -299,7 +374,7 @@ export default {
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picks() {
+		picksPerPack() {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -316,8 +391,9 @@ export default {
 						if (this.selectedLog.picks[currPick].booster.length > lastSize) {
 							++currBooster;
 							currPickNumber = 0;
+							r.push([]);
 						} else ++currPickNumber;
-						r.push({
+						r[currBooster].push({
 							key: currPick,
 							data: this.selectedLog.picks[currPick],
 							packNumber: currBooster,
@@ -352,6 +428,16 @@ export default {
 				// Displayed log defaults to first player
 				if (this.draftlog && this.draftlog.users && Object.keys(this.draftlog.users)[0])
 					this.displayOptions.detailsUserID = Object.keys(this.draftlog.users)[0];
+			},
+		},
+		displayOptions: {
+			deep: true,
+			immediate: true,
+			handler() {
+				this.displayOptions.pick = Math.min(
+					this.displayOptions.pick,
+					this.picksPerPack[this.displayOptions.pack].length - 1
+				); // Make sure pick is still valid.
 			},
 		},
 	},

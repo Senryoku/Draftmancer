@@ -11,14 +11,14 @@
 							@click="prevPick"
 						></i>
 						<label>Pack #</label>
-						<select v-model="pack">
+						<select v-model="pack" style="width: 4em">
 							<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
 								{{ index }}
 							</option>
 						</select>
 						,
 						<label>Pick #</label>
-						<select v-model="pick">
+						<select v-model="pick" style="width: 4em">
 							<option v-for="index in picksPerPack[pack].length" :key="index" :value="index - 1">
 								{{ index }}
 							</option>
@@ -218,3 +218,16 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+.draft-log-live-title h2 {
+	display: inline-block;
+	margin: 0;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.draft-log-live-instructions {
+	text-align: center;
+}
+</style>
