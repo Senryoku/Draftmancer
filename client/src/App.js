@@ -1025,7 +1025,40 @@ export default {
 		},
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
-			// Forces a random card if none is selected
+
+			// Uses botScores to automatically select picks if available
+			if (this.botScores) {
+				let orderedPicks = [];
+				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
+				orderedPicks.sort((lhs, rhs) => {
+					return this.botScores.scores[lhs].score < this.botScores.scores[rhs].score;
+				});
+				let currIdx = 0;
+				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
+					while (
+						currIdx < orderedPicks.length &&
+						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+					)
+						++currIdx;
+					if (currIdx < orderedPicks.length) this.selectedCards.push(this.booster[orderedPicks[currIdx]]);
+					++currIdx;
+				}
+				currIdx = 0;
+				orderedPicks.reverse();
+				while (currIdx < orderedPicks.length && this.burningCards.length < this.cardsToBurnThisRound) {
+					while (
+						currIdx < orderedPicks.length &&
+						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+					)
+						++currIdx;
+					if (currIdx < orderedPicks.length) this.burningCards.push(this.booster[orderedPicks[currIdx]]);
+					++currIdx;
+				}
+			}
+
+			// Forces a random card if there isn't enough selected already
 			while (this.selectedCards.length < this.cardsToPick) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * this.booster.length);
