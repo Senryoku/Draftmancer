@@ -21,10 +21,7 @@
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div
 				class="log-controls"
-				v-tooltip="{
-					title: 'Delayed Game Log: No one can view details until released!',
-					disabled: '!draftLog.delayed'
-					}"
+				v-tooltip="draftLog.delayed && 'Delayed Game Log: No one can view details until released!'"
 			>
 				<span @click="toggle(idx)" class="clickable" v-bind:class="{ 'disabled-simple': draftLog.delayed }">
 					<div class="inline" style="min-width: 20px; text-align: center">
