@@ -172,7 +172,7 @@ export default {
 		selectedLog() {
 			return this.draftlog.users[this.player];
 		},
-		picks() {
+		picksPerPack() {
 			if (
 				!this.selectedLog ||
 				!this.selectedLog.picks ||
@@ -190,8 +190,9 @@ export default {
 				if (this.selectedLog.picks[currPick].booster.length > lastSize) {
 					++currBooster;
 					currPickNumber = 0;
+					r.push([]);
 				} else ++currPickNumber;
-				r.push({
+				r[currBooster].push({
 					key: currPick,
 					data: this.selectedLog.picks[currPick],
 					packNumber: currBooster,
@@ -199,18 +200,6 @@ export default {
 				});
 				lastSize = this.selectedLog.picks[currPick].booster.length;
 				++currPick;
-			}
-			return r;
-		},
-		picksPerPack() {
-			let r = [];
-			let currentPack = -1;
-			for (let p of this.picks) {
-				if (currentPack !== p.packNumber) {
-					r.push([]);
-					currentPack = p.packNumber;
-				}
-				r[r.length - 1].push(p);
 			}
 			return r;
 		},
