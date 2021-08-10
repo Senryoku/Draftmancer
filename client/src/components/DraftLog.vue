@@ -148,7 +148,6 @@
 	</div>
 	<div v-else>
 		<h2>Incompatible draft log version</h2>
-		<button @click="updateToV2">Convert Draft Log to latest version</button>
 	</div>
 </template>
 
@@ -156,7 +155,6 @@
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
 import exportToMTGA from "../exportToMTGA.js";
-import parseCost from "../../../src/parseCost.ts";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
@@ -256,35 +254,6 @@ export default {
 				}
 			}
 			return r;
-		},
-		async updateToV2() {
-			if (!this.draftlog.version || this.draftlog.version === "1.0") {
-				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
-				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
-				const updateCIDs = arr => arr.map(cid => MTGACards[cid].id);
-				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
-				for (let u in this.draftlog.users) {
-					for (let p of this.draftlog.users[u].picks) {
-						p.pick = [p.booster.findIndex(cid => cid === p.pick)];
-						for (let i = 0; i < p.burn.length; ++i)
-							p.burn[i] = p.booster.findIndex(cid => cid === p.burn[i]);
-						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...
-						p.booster = p.booster.map(cid => MTGACards[cid].id);
-					}
-					this.draftlog.users[u].cards = updateCIDs(this.draftlog.users[u].cards);
-					if (this.draftlog.users[u].decklist) {
-						this.draftlog.users[u].decklist.main = updateCIDs(this.draftlog.users[u].decklist.main);
-						this.draftlog.users[u].decklist.side = updateCIDs(this.draftlog.users[u].decklist.side);
-					}
-				}
-				this.draftlog.carddata = {};
-				for (let cid of this.draftlog.boosters.flat())
-					this.draftlog.carddata[MTGACards[cid].id] = MTGACards[cid];
-				for (let i = 0; i < this.draftlog.boosters.length; ++i)
-					this.draftlog.boosters[i] = updateCIDs(this.draftlog.boosters[i]);
-				this.$set(this.draftlog, "version", "2.0");
-				this.$emit("storelogs");
-			}
 		},
 	},
 	computed: {
