@@ -1478,7 +1478,7 @@ export class Session implements IIndexable {
 			const virtualPlayers = this.getSortedVirtualPlayers();
 			for (let userID in virtualPlayers) {
 				if (virtualPlayers[userID].isBot) {
-					this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map(c => c.id);
+					this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map((c: Card) => c.id);
 				} else {
 					// Has this user been replaced by a bot?
 					this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
