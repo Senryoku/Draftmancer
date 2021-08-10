@@ -493,7 +493,7 @@
 											class="fas fa-book yellow"
 											v-tooltip="
 												userByID[id].userName +
-													' has uploaded their collection, but is not using it.'
+												' has uploaded their collection, but is not using it.'
 											"
 										></i>
 									</template>
@@ -593,9 +593,8 @@
 										v-else
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer)
+											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -710,7 +709,7 @@
 									value="Confirm Pick"
 									v-if="
 										selectedCards.length === cardsToPick &&
-											burningCards.length === cardsToBurnThisRound
+										burningCards.length === cardsToBurnThisRound
 									"
 								/>
 								<span v-else>
@@ -749,7 +748,7 @@
 							></i>
 							<span
 								><div><div class="spinner"></div></div>
-								{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} /
+								{{ virtualPlayers.filter((p) => p.isBot || p.pickedThisRound).length }} /
 								{{ virtualPlayers.length }}</span
 							>
 							<i
@@ -1011,8 +1010,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing
+				(drafting && draftingState !== DraftState.Watching) ||
+				draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -1161,9 +1160,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-						((sideboard != undefined && sideboard.length > 0) ||
-							(drafting && draftingState !== DraftState.Watching) ||
-							draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -1206,9 +1205,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+				((sideboard != undefined && sideboard.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1249,6 +1248,20 @@
 						<h2>News</h2>
 					</div>
 					<div class="welcome-section">
+						<div class="news">
+							<em>September 27, 2021</em>
+							<p>
+								New experimental bots, courtesy of
+								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
+									>ruler501</a
+								>!
+							</p>
+							<p>
+								These should make more informed decisions than our previous really simple bots, but may
+								not be available depending on the card pool used for the draft as they require set
+								specific training (typically, we'll fallback to the generic bots for the latest sets).
+							</p>
+						</div>
 						<div class="news">
 							<em>September 11, 2021</em>
 							<p>
@@ -1339,7 +1352,7 @@
 									<td :title="s.id" class="id">{{ s.id }}</td>
 									<td
 										v-tooltip="
-											s.cube ? 'Cube' : s.sets.map(code => setsInfos[code].fullName).join(', ')
+											s.cube ? 'Cube' : s.sets.map((code) => setsInfos[code].fullName).join(', ')
 										"
 									>
 										<template v-if="s.cube">
@@ -1933,7 +1946,7 @@
 								step="1"
 								:delay="0.1"
 								v-model.number="boostersPerPlayer"
-								:validate="v => Math.max(1, Math.min(v, 25))"
+								:validate="(v) => Math.max(1, Math.min(v, 25))"
 							/>
 						</div>
 					</div>
@@ -1980,7 +1993,7 @@
 									</option>
 									<option style="color: #888" disabled>————————————————</option>
 									<option
-										v-for="code in primarySets.filter(s => !sets.includes(s))"
+										v-for="code in primarySets.filter((s) => !sets.includes(s))"
 										:value="code"
 										:key="code"
 									>

@@ -1,5 +1,9 @@
 [
 	{
+		"date": "27/09/2021",
+		"notes": ["Added new experimental bots from ruler501 (https://github.com/ruler501)."]
+	},
+	{
 		"date": "11/09/2021",
 		"notes": ["Innistrad: Midnight Hunt (MID) support."]
 	},
