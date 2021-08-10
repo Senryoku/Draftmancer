@@ -290,6 +290,7 @@ export class Session implements IIndexable {
 			pickedThisRound: Connections[userID].pickedThisRound,
 			pickedCards: Connections[userID].pickedCards,
 			boosterIndex: Connections[userID].boosterIndex,
+			bot: Connections[userID].bot,
 		};
 	}
 
@@ -1226,12 +1227,15 @@ export class Session implements IIndexable {
 		for (let userID in log.users) log.users[userID].picks = [];
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
-		for (let user of this.users) {
-			Connections[user].pickedCards = [];
-			Connections[user].socket.emit("sessionOptions", {
+		for (let uid of this.users) {
+			Connections[uid].pickedCards = [];
+			Connections[uid].bot = fallback
+				? new SimpleBot(Connections[uid].userName, uid)
+				: new Bot(Connections[uid].userName, uid);
+			Connections[uid].socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
 			});
-			Connections[user].socket.emit("startDraft");
+			Connections[uid].socket.emit("startDraft");
 		}
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
@@ -1431,6 +1435,13 @@ export class Session implements IIndexable {
 						booster: s.boosters[boosterIndex],
 						boosterNumber: s.boosterNumber,
 						pickNumber: s.pickNumber + 1,
+						botScores: await Connections[userID].bot?.getScores(
+							s.boosters[boosterIndex],
+							s.boosterNumber,
+							this.boostersPerPlayer,
+							s.pickNumber,
+							s.pickNumber + s.boosters[boosterIndex].length
+						),
 					});
 				}
 			}
@@ -1740,6 +1751,7 @@ export class Session implements IIndexable {
 			Connections[userID].pickedThisRound = this.disconnectedUsers[userID].pickedThisRound;
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			Connections[userID].boosterIndex = this.disconnectedUsers[userID].boosterIndex;
+			Connections[userID].bot = this.disconnectedUsers[userID].bot;
 
 			this.addUser(userID);
 			Connections[userID].socket.emit("rejoinDraft", {
@@ -1748,6 +1760,7 @@ export class Session implements IIndexable {
 				booster: this.draftState.boosters[Connections[userID].boosterIndex],
 				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.pickNumber,
+				botScores: this.disconnectedUsers[userID].bot?.lastScores,
 			});
 			delete this.disconnectedUsers[userID];
 		}
@@ -1785,12 +1798,6 @@ export class Session implements IIndexable {
 		console.warn("Replacing disconnected players with bots!");
 
 		for (let uid in this.disconnectedUsers) {
-			// TODO: Allow the use of Bot when possible.
-			this.disconnectedUsers[uid].bot = new SimpleBot(`${this.disconnectedUsers[uid].userName} (Bot)`, uid);
-			for (let c of this.disconnectedUsers[uid].pickedCards) {
-				this.disconnectedUsers[uid].bot.pick([c]);
-			}
-
 			// Immediately pick cards
 			if (!this.disconnectedUsers[uid].pickedThisRound) {
 				const pickedCards = await this.doBotPick(

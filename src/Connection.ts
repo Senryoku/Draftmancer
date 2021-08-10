@@ -3,6 +3,7 @@
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { Card, CardPool } from "./Cards";
+import { IBot } from "./Bot.js";
 
 export let Connections: { [uid: string]: Connection } = {};
 export class Connection {
@@ -17,6 +18,7 @@ export class Connection {
 	pickedThisRound = false;
 	pickedCards: Array<Card> = [];
 	boosterIndex = -1;
+	bot?: IBot;
 
 	constructor(socket: Socket, userID: UserID, userName: string) {
 		this.socket = socket;

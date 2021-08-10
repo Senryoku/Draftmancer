@@ -60,10 +60,15 @@ label {
 
 .clickable {
 	cursor: pointer;
+	transition: opacity 0.25s, color 0.25s;
 }
 
 .clickable:hover {
 	color: #fff;
+}
+
+.faded {
+	opacity: 0.5;
 }
 
 .draggable {

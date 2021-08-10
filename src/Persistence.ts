@@ -35,6 +35,20 @@ import { UserID } from "./IDTypes.js";
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
+function restoreBot(bot: any) {
+	if (bot.type == "SimpleBot") {
+		const newBot = new SimpleBot(bot.name, bot.id);
+		copyProps(bot, newBot);
+		return newBot;
+	} else if (bot.type == "mtgdraftbots") {
+		const newBot = new Bot(bot.name, bot.id);
+		copyProps(bot, newBot);
+		return newBot;
+	}
+	console.error(`Error: Invalid bot type '${bot.type}'.`);
+	return null;
+}
+
 async function requestSavedConnections() {
 	let InactiveConnections: { [uid: string]: any } = {};
 
@@ -53,6 +67,8 @@ async function requestSavedConnections() {
 			if (connections && connections.length > 0) {
 				for (let c of connections) {
 					InactiveConnections[c.userID] = c;
+					if (InactiveConnections[c.userID].bot)
+						InactiveConnections[c.userID].bot = restoreBot(InactiveConnections[c.userID].bot);
 				}
 				console.log(`Restored ${connections.length} saved connections.`);
 			}
@@ -82,15 +98,8 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.botsInstances) {
 		r.botsInstances = [];
 		for (let bot of s.botsInstances) {
-			if (bot.type == "SimpleBot") {
-				const newBot = new SimpleBot(bot.name, bot.id);
-				copyProps(bot, newBot);
-				r.botsInstances.push(newBot);
-			} else if (bot.type == "mtgdraftbots") {
-				const newBot = new Bot(bot.name, bot.id);
-				copyProps(bot, newBot);
-				r.botsInstances.push(newBot);
-			} else console.error(`Error: Invalid bot type '${bot.type}'.`);
+			let b = restoreBot(bot);
+			if (b) r.botsInstances.push(b);
 		}
 	}
 
