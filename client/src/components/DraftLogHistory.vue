@@ -61,6 +61,7 @@
 							</div>
 						</template>
 						<template v-else-if="draftLog.boosters">
+						<!-- User has the full logs ready to be shared -->
 							<button
 								@click="$emit('sharelog', draftLog)"
 								v-tooltip="'Make game log available for all participants'"
