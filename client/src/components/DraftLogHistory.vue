@@ -20,6 +20,8 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls">
+			<div v-if="draftLog.boosters" class="inline" v-tooltip="'Delayed Game Log: No one can view details until released!'"></div>
+			<div v-else class="inline" v-tooltip="'Delayed Game Log: Locked until the session owner makes it available!'"></div>
 				<span @click="toggle(idx)" class="clickable" v-bind:class="{ 'disabled-simple': draftLog.delayed }">
 					<div class="inline" style="min-width: 20px; text-align: center">
 						<i
@@ -30,7 +32,7 @@
 								'fa-chevron-right': !expandedLogs[idx],
 							}"
 						></i>
-						<i class="fas fa-lock" v-else></i>
+						<i v-else class="fas fa-lock"></i>
 					</div>
 					<span>
 						<strong>{{ printableType(draftLog) }}</strong>
@@ -55,23 +57,6 @@
 									@click="downloadLog(draftLog)"
 									v-tooltip="'Download Game Log'"
 								></i>
-							</div>
-						</template>
-						<template v-else-if="draftLog.boosters">
-							<!-- User has the full logs ready to be shared -->
-							<div class="inline" v-tooltip="'No one can view details until released!'">
-								<label><strong>Delayed Game Log</strong></label>
-							</div>
-							<button
-								@click="$emit('sharelog', draftLog)"
-								v-tooltip="'Make game log available for all participants'"
-							>
-								<i class="fas fa-key"></i> Unlock
-							</button>
-						</template>
-						<template v-else>
-							<div class="inline" v-tooltip="'Locked until the session owner makes it available!'">
-								<label><strong>Delayed Game Log</strong></label>
 							</div>
 						</template>
 					</template>
