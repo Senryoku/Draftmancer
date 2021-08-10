@@ -21,7 +21,7 @@
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div
 				class="log-controls"
-				v-tooltip="draftLog.delayed && 'Delayed Game Log: No one can view details until released!'"
+				v-tooltip="draftLog.delayed && 'Delayed Game Log. No one can view details until released by the session owner!'"
 			>
 				<span @click="toggle(idx)" class="clickable" v-bind:class="{ 'disabled-simple': draftLog.delayed }">
 					<div class="inline" style="min-width: 20px; text-align: center">
@@ -59,6 +59,14 @@
 									v-tooltip="'Download Game Log'"
 								></i>
 							</div>
+						</template>
+						<template v-if="draftLog.boosters">
+							<button
+								@click="$emit('sharelog', draftLog)"
+								v-tooltip="'Make game log available for all participants'"
+							>
+								<i class="fas fa-key"></i> Unlock
+							</button>
 						</template>
 					</template>
 					<template v-else>Incompatible game log version</template>
