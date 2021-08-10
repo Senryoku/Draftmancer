@@ -15,15 +15,15 @@
 			>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
-			No saved game logs.
-			<br />Your logs will be visible here after you've completed a game.
+			No saved game logs.<br /><br />
+			Your logs will be visible here after you've completed a game.
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div
 				class="log-controls"
 				v-tooltip="{
 					title: 'Delayed Game Log: No one can view details until released!',
-					disabled: '!draftLog.boosters'
+					disabled: '!draftLog.delayed'
 					}"
 			>
 				<span @click="toggle(idx)" class="clickable" v-bind:class="{ 'disabled-simple': draftLog.delayed }">
