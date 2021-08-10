@@ -49,11 +49,13 @@
 					</button>
 					<template v-if="draftLog.version === '2.0'">
 						<template v-if="!draftLog.delayed">
-							<i
-								class="fas fa-file-download"
-								@click="downloadLog(draftLog)"
-								v-tooltip="'Download Game Log'"
-							></i>
+							<div style="min-width: 20px; text-align: center">
+								<i
+									class="fas fa-file-download"
+									@click="downloadLog(draftLog)"
+									v-tooltip="'Download Game Log'"
+								></i>
+							</div>
 						</template>
 						<template v-else-if="draftLog.boosters">
 							<!-- User has the full logs ready to be shared -->
@@ -74,11 +76,13 @@
 						</template>
 					</template>
 					<template v-else>Incompatible game log version</template>
-					<i
-						class="fas fa-trash"
-						@click="deleteLog(draftLog)"
-						v-tooltip="'Delete Game Log'"
-					></i>
+					<div style="min-width: 20px; text-align: center">
+						<i
+							class="fas fa-trash"
+							@click="deleteLog(draftLog)"
+							v-tooltip="'Delete Game Log'"
+						></i>
+					</div>
 				</span>
 			</div>
 			<transition name="scale">
