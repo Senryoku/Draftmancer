@@ -60,7 +60,7 @@
 								></i>
 							</div>
 						</template>
-						<template v-if="draftLog.boosters">
+						<template v-else-if="draftLog.boosters">
 							<button
 								@click="$emit('sharelog', draftLog)"
 								v-tooltip="'Make game log available for all participants'"
