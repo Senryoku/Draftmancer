@@ -1597,7 +1597,7 @@ export default {
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
-				text: `Do you want to surrender session ownership to ${user.userName}?`,
+				text: `Do you want to transfer session ownership to ${user.userName}?`,
 				icon: "warning",
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
