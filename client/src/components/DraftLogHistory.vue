@@ -49,7 +49,7 @@
 					</button>
 					<template v-if="draftLog.version === '2.0'">
 						<template v-if="!draftLog.delayed">
-							<div style="min-width: 20px; text-align: center">
+							<div class="inline" style="min-width: 20px; text-align: center">
 								<i
 									class="fas fa-file-download"
 									@click="downloadLog(draftLog)"
@@ -76,7 +76,7 @@
 						</template>
 					</template>
 					<template v-else>Incompatible game log version</template>
-					<div style="min-width: 20px; text-align: center">
+					<div class="inline" style="min-width: 20px; text-align: center">
 						<i
 							class="fas fa-trash"
 							@click="deleteLog(draftLog)"
