@@ -18,9 +18,20 @@ export interface IBot {
 	name: string;
 	id: string;
 	cards: Card[];
+	lastScores: any; // Keep track of the result of the last call to getScores
 
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
+
+	getScores(
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	): Promise<any>;
+
+	addCard(card: Card): void;
 }
 
 // Straightforward implementation of basic bots used as a fallback
@@ -29,6 +40,7 @@ export class SimpleBot implements IBot {
 	id: string;
 	type: string = "SimpleBot";
 	cards: Card[] = [];
+	lastScores: any;
 	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
 
 	constructor(name: string, id: string) {
@@ -43,25 +55,9 @@ export class SimpleBot implements IBot {
 		pickNum: number,
 		numPicks: number
 	): Promise<number> {
-		let maxScore = 0;
-		let bestPick = 0;
-		for (let idx = 0; idx < booster.length; ++idx) {
-			let c = booster[idx];
-			// TODO: Rate cards
-			let score = c.rating;
-			for (let color of c.colors) {
-				score += 0.35 * this.pickedColors[color];
-			}
-			if (score > maxScore) {
-				maxScore = score;
-				bestPick = idx;
-			}
-		}
-		for (let color of booster[bestPick].colors) {
-			this.pickedColors[color] += 1;
-		}
-		this.cards.push(booster[bestPick]);
-		return bestPick;
+		let scores = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
+		this.addCard(booster[scores.chosenOption]);
+		return scores.chosenOption;
 	}
 
 	// TODO: Chooses which card to burn.
@@ -73,6 +69,32 @@ export class SimpleBot implements IBot {
 		numPicks: number
 	): Promise<number> {
 		return 0;
+	}
+
+	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+		let maxScore = 0;
+		let bestPick = 0;
+		let scores: { score: number }[] = [];
+		for (let idx = 0; idx < booster.length; ++idx) {
+			let c = booster[idx];
+			let score = c.rating;
+			for (let color of c.colors) score += 0.35 * this.pickedColors[color];
+			scores.push({ score: score / 10 });
+			if (score > maxScore) {
+				maxScore = score;
+				bestPick = idx;
+			}
+		}
+		this.lastScores = {
+			chosenOption: bestPick,
+			scores,
+		};
+		return this.lastScores;
+	}
+
+	addCard(card: Card) {
+		for (let color of card.colors) ++this.pickedColors[color];
+		this.cards.push(card);
 	}
 }
 
@@ -89,11 +111,12 @@ export class Bot implements IBot {
 	name: string;
 	id: string;
 	type: string = "mtgdraftbots";
-	oracleIds: string[] = [];
-	seen: number[] = [];
-	picked: number[] = [];
-	// This has to be tracked separately since it is used otuside the class.
 	cards: Card[] = [];
+	lastScores: any;
+
+	oracleIds: string[] = []; // Tracks seen oracle_ids, necessary for mtgdraftbots lib
+	seen: number[] = []; // Indices of oracleIds
+	picked: number[] = []; // Indices of oracleIds
 
 	constructor(name: string, id: string) {
 		this.name = name;
@@ -101,7 +124,7 @@ export class Bot implements IBot {
 		this.oracleIds = [...BasicsOracleIds];
 	}
 
-	async getBotResult(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
+	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const boosterIdxs = booster.map((_, idx) => idx + this.oracleIds.length);
 		this.seen.push(...boosterIdxs);
 		this.oracleIds.push(...booster.map(({ oracle_id }) => oracle_id));
@@ -117,11 +140,12 @@ export class Bot implements IBot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
-		return calculateBotPick(drafterState);
+		this.lastScores = await calculateBotPick(drafterState);
+		return this.lastScores;
 	}
 
 	async pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		const result = await this.getBotResult(booster, boosterNum, numBoosters, pickNum, numPicks);
+		const result = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		const bestPick = result.chosenOption;
 		// This dedupes the card since we know it is already in the oracleIds array.
 		this.picked.push(result.cardsInPack[bestPick]);
@@ -132,7 +156,7 @@ export class Bot implements IBot {
 	async burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		let worstPick = 0;
 		let worstScore = 2;
-		const result = await this.getBotResult(booster, boosterNum, numBoosters, pickNum, numPicks);
+		const result = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		for (let i = 0; i < result.scores.length; i++) {
 			if (result.scores[i].score < worstScore) {
 				worstPick = i;
@@ -140,5 +164,10 @@ export class Bot implements IBot {
 			}
 		}
 		return worstPick;
+	}
+
+	addCard(card: Card) {
+		this.picked.push(this.oracleIds.findIndex(cid => cid == card.oracle_id));
+		this.cards.push(card);
 	}
 }

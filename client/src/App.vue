@@ -74,6 +74,16 @@
 				</div>
 				<div style="min-width: 20px">
 					<i
+						class="fas clickable fa-robot"
+						:class="{ faded: !displayBotScores }"
+						@click="displayBotScores = !displayBotScores"
+						v-tooltip="
+							`Toggle displaying bot recommendations. ${displayBotScores ? 'Enabled' : 'Disabled'}`
+						"
+					/>
+				</div>
+				<div style="min-width: 20px">
+					<i
 						class="fas clickable"
 						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
 						@click="enableSound = !enableSound"
@@ -765,7 +775,7 @@
 							></i>
 						</div>
 						<booster-card
-							v-for="card in booster"
+							v-for="(card, idx) in booster"
 							:key="`card-booster-${card.uniqueID}`"
 							:card="card"
 							:language="language"
@@ -780,6 +790,13 @@
 							@dragstart.native="dragBoosterCard($event, card)"
 							:hasenoughwildcards="hasEnoughWildcards(card)"
 							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+							:botscore="botScores && botScores.scores && displayBotScores ? botScores.scores[idx] : null"
+							:botpicked="
+								draftingState !== DraftState.Waiting &&
+									botScores &&
+									displayBotScores &&
+									idx === botScores.chosenOption
+							"
 						></booster-card>
 					</transition-group>
 				</div>
