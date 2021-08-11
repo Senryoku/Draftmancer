@@ -2281,7 +2281,7 @@
 			<card-stats slot="body" :cards="deck" :addedbasics="totalLands"></card-stats>
 		</modal>
 		<modal v-if="displayedModal === 'cardList'" @close="displayedModal = ''">
-			<h2 slot="header">Custom Card List Review</h2>
+			<h2 slot="header">Custom Card List</h2>
 			<card-list slot="body" :cardlist="customCardList" :language="language" :collection="collection"></card-list>
 		</modal>
 		<modal v-if="displayedModal === 'About'" @close="displayedModal = ''">
