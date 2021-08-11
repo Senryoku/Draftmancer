@@ -1247,7 +1247,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome ${user.userName}!</h1>
+			<h1>Welcome {{ userName }}!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
