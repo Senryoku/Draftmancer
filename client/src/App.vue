@@ -168,7 +168,7 @@
 				</span>
 				<span class="generic-container card-pool-controls">
 				<!-- TODO instead disabling maybe also ok to not show parent span completely during draft as card pool info is currently not useful when customizing booster in settings -->
-				<!-- The custom card list span is now also disabled because it's uniformely disabled in the span above to prevent stacked disabling, cube list can not be reviewed by players before game starts -->
+				<!-- A lot of disabling going on here to get the custom card list right, easy solution is to disable the parent span but then the card list can not be reviewed because the icon is disabled -->
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -178,9 +178,8 @@
 					/>
 					<label>Card Pool:</label>
 					<span v-if="useCustomCardList">
-						<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+						<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 							{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						>
 							(
 						</div>
 						<template v-if="customCardList.length > 0">
@@ -206,7 +205,7 @@
 							v-tooltip="'Return to official sets.'"
 							v-if="sessionOwner === userID && !drafting"
 						></i>
-						<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">)</div>
+						<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">)</div>
 					</span>
 					<span v-else :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 						<div class="inline">
