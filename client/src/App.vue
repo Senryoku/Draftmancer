@@ -166,7 +166,7 @@
 						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
 					></i>
 				</span>
-				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+				<span class="generic-container card-pool-controls">
 				<!-- TODO instead disabling maybe also ok to not show parent span completely during draft as card pool info is currently not useful when customizing booster in settings -->
 				<!-- The custom card list span is now also disabled because it's uniformely disabled in the span above to prevent stacked disabling, cube list can not be reviewed by players before game starts -->
 					<input
@@ -201,7 +201,7 @@
 						></i>
 						)
 					</span>
-					<span v-else>
+					<span v-else :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 						<div class="inline">
 							<div
 								class="inline"
