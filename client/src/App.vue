@@ -178,15 +178,22 @@
 					/>
 					<label>Card Pool:</label>
 					<span v-if="useCustomCardList">
-						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						(
+						<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+							{{ customCardList.name ? customCardList.name : "Custom Card List" }}
+						>
+							(
+						</div>
 						<template v-if="customCardList.length > 0">
-							{{ customCardList.length }} cards
-							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
-								<i class="fas fa-file-alt"></i>
-							</a>
+							<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+								{{ customCardList.length }} cards
+							</div>
+							<i
+								class="fas fa-file-alt clickable"
+								@click="displayedModal = 'cardList'"
+								v-tooltip="'Display Card List'">
+							</i>
 						</template>
-						<template v-else>No list loaded</template>
+						<template v-else :class="{ 'disabled-simple': sessionOwner != userID || drafting}">No list loaded</template>
 						<i
 							class="fas fa-file-upload clickable"
 							onclick="document.querySelector('#card-list-input-main').click()"
@@ -199,7 +206,7 @@
 							v-tooltip="'Return to official sets.'"
 							v-if="sessionOwner === userID && !drafting"
 						></i>
-						)
+						<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">)</div>
 					</span>
 					<span v-else :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 						<div class="inline">
@@ -2134,11 +2141,12 @@
 							<span v-if="customCardList.name"
 								>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span
 							>
-							<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
-							<button @click="displayedModal = 'cardList'">
-								<i class="fas fa-file-alt"></i>
-								Review.
-							</button>
+							<span v-else>Loaded list with {{ customCardList.length }} cards</span>
+							<i
+								class="fas fa-file-alt clickable"
+								@click="displayedModal = 'cardList'"
+								v-tooltip="'Display Card List'">
+							</i>
 						</div>
 						<div v-else>(No Custom Card List loaded)</div>
 					</div>
