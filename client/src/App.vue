@@ -8,7 +8,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<div class="inline" v-tooltip="'Change your player name.'">
-					<label for="user-name">User Name</label>
+					<label for="user-name"><strong>User Name</strong></label>
 					<delayed-input
 						id="user-name"
 						v-model="userName"
@@ -18,7 +18,7 @@
 					/>
 				</div>
 				<div class="inline" v-tooltip="'Change the display language of cards.'">
-					<label for="language">Card Art</label>
+					<label for="language"><strong>Card Art</strong></label>
 					<select v-model="language" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
@@ -126,7 +126,7 @@
 			<div id="limited-controls" class="main-controls">
 				<span id="session-controls" v-show="!drafting">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
-						<label for="session-id">Session ID</label>
+						<label for="session-id"><strong>Session ID</strong></label>
 						<delayed-input
 							v-model="sessionID"
 							autocomplete="off"
@@ -203,7 +203,7 @@
 						></i>
 						)
 					</span>
-					<span>
+					<span v-else>
 						<div class="inline">
 							<div
 								class="inline"
