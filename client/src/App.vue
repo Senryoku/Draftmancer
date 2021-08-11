@@ -1077,12 +1077,13 @@
 							<i class="fas fa-clipboard-check"></i> Submit
 						</button>
 						<i
+							v-if="deck.length > 0"
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
 							v-tooltip.top="'Deck Statistics'"
 						></i>
 						<land-control
-							v-if="draftingState === DraftState.Brewing"
+							v-if="draftingState === DraftState.Brewing || deck.length > 0"
 							:lands="lands"
 							:autoland.sync="autoLand"
 							:otherbasics="basicsInDeck"
@@ -1161,6 +1162,7 @@
 							</template>
 						</dropdown>
 						<div
+							v-if="deck.length > 0"
 							class="input-delete-icon"
 							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
 						>
