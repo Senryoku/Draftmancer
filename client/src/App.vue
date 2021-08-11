@@ -33,16 +33,32 @@
 			</span>
 			<span>
 				<div style="font-variant: small-caps">
-					<label><strong>MTGADraft</strong></label>
+					<label>
+						<i class="fas fa-spinner"></i>
+						<strong> MTGADraft</strong>
+					</label>
 				</div>
 			</span>
 			<span>
-				<label>MTGA Collection</label>
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
 					v-tooltip="'Collection Import Help'"
 				></i>
+				<div>
+					<button
+						@click="displayedModal = 'collection'"
+						class="flat"
+						v-tooltip="'Manage your MTGA card collection'"
+					>
+						<i
+							class="fas fa-book green"
+							v-if="hasCollection"
+						></i>
+						<i v-else class="fas fa-book red"							
+						></i> Collection
+					</button>
+				</div>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<i
 					class="fas fa-file-upload green"
@@ -56,12 +72,6 @@
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
 				></i>
-				<i
-					class="fas fa-book"
-					v-if="hasCollection"
-					@click="displayedModal = 'collection'"
-					v-tooltip="'Display your collection'"
-				></i>
 				<div
 					v-show="hasCollection"
 					class="inline"
@@ -72,16 +82,16 @@
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
 				</div>
+				<div>
+					<button
+						@click="displayedModal = 'draftLogs'"
+						class="flat"
+						v-tooltip="'Displays logs of your previous drafts and sealed'"
+					>
+						<i class="fas fa-list-alt"></i> Game Logs
+					</button>
+				</div>
 			</span>
-			<div>
-				<button
-					@click="displayedModal = 'draftLogs'"
-					class="flat"
-					v-tooltip="'Displays logs of your previous drafts and sealed'"
-				>
-					<i class="fas fa-list-alt"></i> Game Logs
-				</button>
-			</div>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
 				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
 					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
