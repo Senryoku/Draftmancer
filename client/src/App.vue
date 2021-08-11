@@ -41,7 +41,7 @@
 					</label>
 				</div>
 			</span>
-			<span class="inline">
+			<span>
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
@@ -79,7 +79,7 @@
 					<input type="checkbox" v-model="useCollection" id="useCollection" />
 					<label for="useCollection">Restrict to Collection</label>
 				</div>
-				<div>
+				<div class="inline">
 					<button
 						@click="displayedModal = 'draftLogs'"
 						class="flat"
