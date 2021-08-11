@@ -34,7 +34,7 @@
 			<span>
 				<div style="font-variant: small-caps">
 					<label><strong>MTGADraft</strong></label>
-				</div
+				</div>
 			</span>
 			<span>
 				<label>MTGA Collection</label>
