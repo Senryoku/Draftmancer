@@ -193,13 +193,13 @@
 							class="fas fa-file-upload clickable"
 							onclick="document.querySelector('#card-list-input-main').click()"
 							v-tooltip="'Upload a Custom Card List'"
-							v-if="sessionOwner === userID"
+							v-if="sessionOwner === userID && !drafting"
 						></i>
 						<i
 							class="fas fa-times clickable brightred"
 							@click="useCustomCardList = false"
 							v-tooltip="'Return to official sets.'"
-							v-if="sessionOwner === userID"
+							v-if="sessionOwner === userID && !drafting"
 						></i>
 						)
 					</span>
