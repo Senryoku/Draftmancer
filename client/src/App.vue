@@ -416,11 +416,11 @@
 				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
-			<i class="fas fa-chair"></i>
 			<div
 				style="flex: 0 3 auto; text-align: center; font-size: 0.9em; margin-right: 0.3em; margin-left: 0.5em"
 				v-tooltip="'Current player count. Maximum players can be adjusted in session settings.'"
 			>
+				<i class="fas fa-chair"></i>
 				<label>{{ sessionUsers.length }}/{{ maxPlayers }}</label>
 			</div>
 			<i
