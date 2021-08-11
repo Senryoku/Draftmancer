@@ -5,7 +5,9 @@
 			<i class="fas fa-exclamation-triangle yellow"></i>
 			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
-		<button @click="download">Download List</button>
+		<button @click="download">
+			<i class="fas fa-file-download"></i> Download List
+		</button>
 		<template v-if="cardlist.customSheets">
 			<div v-for="(slot, key) in cardlist.cards" :key="key">
 				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
