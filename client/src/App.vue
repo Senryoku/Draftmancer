@@ -32,6 +32,11 @@
 				</div>
 			</span>
 			<span>
+				<div style="font-variant: small-caps">
+					<label><strong>MTGADraft</strong></label>
+				</div
+			</span>
+			<span>
 				<label>MTGA Collection</label>
 				<i
 					class="fas fa-question-circle clickable"
