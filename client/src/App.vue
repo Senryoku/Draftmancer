@@ -39,35 +39,30 @@
 					</label>
 				</div>
 			</span>
-			<span>
+			<span class="inline">
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
-					v-tooltip="'Collection Import Help'"
+					v-tooltip="'MTGA Collection Import Help'"
 				></i>
 				<div class="inline">
 					<button
 						@click="displayedModal = 'collection'"
 						class="flat"
-						v-tooltip="'Manage your MTGA card collection'"
+						v-tooltip="'Manage your MTG Arena card collection'"
 					>
-						<i
-							class="fas fa-book green"
-							v-if="hasCollection"
-						></i>
-						<i v-else class="fas fa-book red"							
-						></i> Collection
+						<iclass="fas fa-book"></i> Collection
 					</button>
 				</div>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 				<i
-					class="fas fa-file-upload green"
+					class="fas fa-file-upload green clickable"
 					v-if="hasCollection"
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Collection uploaded. Update your collection by re-uploading your Player.log file.'"
 				></i>
 				<i
-					class="fas fa-file-upload red"
+					class="fas fa-file-upload red clickable"
 					v-else
 					onclick="document.querySelector('#file-input').click()"
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
