@@ -51,7 +51,7 @@
 						class="flat"
 						v-tooltip="'Manage your MTG Arena card collection'"
 					>
-						<iclass="fas fa-book"></i> Collection
+						<i class="fas fa-book"></i> Collection
 					</button>
 				</div>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
@@ -1245,7 +1245,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome ${userName}!</h1>
+			<h1>Welcome {{ user.userName }}!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
