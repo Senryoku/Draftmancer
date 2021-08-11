@@ -8,7 +8,7 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<div class="inline" v-tooltip="'Change your player name.'">
-					<label for="user-name"><strong>User Name</strong></label>
+					<label for="user-name">User Name</label>
 					<delayed-input
 						id="user-name"
 						v-model="userName"
@@ -18,7 +18,7 @@
 					/>
 				</div>
 				<div class="inline" v-tooltip="'Change the display language of cards.'">
-					<label for="language"><strong>Card Art</strong></label>
+					<label for="language">Card Art</label>
 					<select v-model="language" name="language" id="select-language">
 						<option
 							v-for="lang in languages"
@@ -126,7 +126,7 @@
 			<div id="limited-controls" class="main-controls">
 				<span id="session-controls" v-show="!drafting">
 					<div class="inline" v-tooltip="'Unique ID of your game session.'">
-						<label for="session-id"><strong>Session ID</strong></label>
+						<label for="session-id">Session ID</label>
 						<delayed-input
 							v-model="sessionID"
 							autocomplete="off"
@@ -168,6 +168,7 @@
 				</span>
 				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 				<!-- TODO instead disabling maybe also ok to not show parent span completely during draft as card pool info is currently not useful when customizing booster in settings -->
+				<!-- The custom card list span is now also disabled because it's uniformely disabled in the span above, cube list can not be reviewed by players before game starts -->
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -175,11 +176,8 @@
 						style="display: none"
 						accept=".txt"
 					/>
-
-					<label>
-						<strong>Card Pool:</strong>
-					</label>
 					<span v-if="useCustomCardList">
+						<label>Card Pool:</label>
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
 						(
 						<template v-if="customCardList.length > 0">
