@@ -176,7 +176,9 @@
 						style="display: none"
 						accept=".txt"
 					/>
-					<label>Card Pool:</label>
+					<label>
+						Card Pool<span v-show="useCustomCardList">:</span>
+					</label>
 					<span v-if="useCustomCardList">
 						<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 							{{ customCardList.name ? customCardList.name : "Custom Card List" }}
@@ -415,18 +417,21 @@
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
 			<div
+				v-if="!drafting"
 				style="flex: 0 3 auto; text-align: center; font-size: 0.9em; margin-right: 0.5em; margin-left: 0.5em"
 				v-tooltip="'Current player count. Maximum players can be adjusted in session settings.'"
 			>
 				<i class="fas fa-chair"></i>
 				<label>{{ sessionUsers.length }}/{{ maxPlayers }}</label>
 			</div>
-			<i
-				v-if="userID == sessionOwner && !drafting"
-				class="fas fa-random clickable"
-				@click="randomizeSeating"
-				v-tooltip="'Randomize Seating Order.'"
-			></i>
+			<div>
+				<i
+					v-if="userID == sessionOwner && !drafting"
+					class="fas fa-random clickable"
+					@click="randomizeSeating"
+					v-tooltip="'Randomize Seating Order.'"
+				></i>
+			</div>
 			<template v-if="!drafting">
 				<draggable
 					v-model="userOrder"
