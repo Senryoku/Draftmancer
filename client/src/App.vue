@@ -183,7 +183,7 @@
 							(
 						</div>
 						<template v-if="customCardList.length > 0">
-							<div :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+							<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 								{{ customCardList.length }} cards
 							</div>
 							<i
@@ -192,7 +192,11 @@
 								v-tooltip="'Display Card List'">
 							</i>
 						</template>
-						<template v-else :class="{ 'disabled-simple': sessionOwner != userID || drafting}">No list loaded</template>
+						<template v-else
+							<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
+								No list loaded
+							</div>
+						</template>
 						<i
 							class="fas fa-file-upload clickable"
 							onclick="document.querySelector('#card-list-input-main').click()"
