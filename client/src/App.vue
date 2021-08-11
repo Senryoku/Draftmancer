@@ -418,9 +418,7 @@
 				v-tooltip="'Maximum players can be adjusted in session settings.'"
 				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
 			>
-				Players
-				<br />
-				({{ sessionUsers.length }}/{{ maxPlayers }})
+				{{ sessionUsers.length }}/{{ maxPlayers }}
 			</div>
 			<i
 				v-if="userID == sessionOwner && !drafting"
