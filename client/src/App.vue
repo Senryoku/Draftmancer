@@ -168,7 +168,7 @@
 				</span>
 				<span class="generic-container card-pool-controls" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 				<!-- TODO instead disabling maybe also ok to not show parent span completely during draft as card pool info is currently not useful when customizing booster in settings -->
-				<!-- The custom card list span is now also disabled because it's uniformely disabled in the span above, cube list can not be reviewed by players before game starts -->
+				<!-- The custom card list span is now also disabled because it's uniformely disabled in the span above to prevent stacked disabling, cube list can not be reviewed by players before game starts -->
 					<input
 						type="file"
 						id="card-list-input-main"
@@ -176,8 +176,8 @@
 						style="display: none"
 						accept=".txt"
 					/>
+					<label>Card Pool:</label>
 					<span v-if="useCustomCardList">
-						<label>Card Pool:</label>
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
 						(
 						<template v-if="customCardList.length > 0">
@@ -205,9 +205,8 @@
 						<div class="inline">
 							<div
 								class="inline"
-								v-tooltip="'Restrict cards to the selected sets. An empty selection defaults to all cards in Arena.'"
+								v-tooltip="'Restrict cards to the selected sets when creating booster packs. An empty selection defaults to all cards in Arena.'"
 							>
-							<label for="set-restriction">Set(s)</label>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
