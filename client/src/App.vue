@@ -423,12 +423,14 @@
 				<i class="fas fa-chair"></i>
 				<label>{{ sessionUsers.length }}/{{ maxPlayers }}</label>
 			</div>
-			<i
-				v-if="userID == sessionOwner && !drafting"
-				class="fas fa-random clickable"
-				@click="randomizeSeating"
-				v-tooltip="'Randomize Seating Order'"
-			></i>
+			<div style="margin-right: 0.2em">
+				<i
+					v-if="userID == sessionOwner && !drafting"
+					class="fas fa-random clickable"
+					@click="randomizeSeating"
+					v-tooltip="'Randomize Seating Order'"
+				></i>
+			</div>
 			<template v-if="!drafting">
 				<draggable
 					v-model="userOrder"
