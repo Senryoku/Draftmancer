@@ -34,8 +34,10 @@
 			<span>
 				<div style="font-variant: small-caps">
 					<label>
-						<i class="fas fa-spinner"></i>
-						<strong> MTGADraft</strong>
+						<a href="https://mtgadraft.tk">
+							<i class="fas fa-spinner"></i>
+							<strong> MTGADraft</strong>
+						</a>
 					</label>
 				</div>
 			</span>
@@ -1245,7 +1247,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome {{ user.userName }}!</h1>
+			<h1>Welcome ${user.userName}!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
