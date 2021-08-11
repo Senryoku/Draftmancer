@@ -192,7 +192,7 @@
 								v-tooltip="'Display Card List'">
 							</i>
 						</template>
-						<template v-else
+						<template v-else>
 							<div class="inline" :class="{ 'disabled-simple': sessionOwner != userID || drafting}">
 								No list loaded
 							</div>
