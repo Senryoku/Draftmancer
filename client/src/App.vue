@@ -45,7 +45,7 @@
 					@click="displayedModal = 'collectionHelp'"
 					v-tooltip="'Collection Import Help'"
 				></i>
-				<div>
+				<div class="inline">
 					<button
 						@click="displayedModal = 'collection'"
 						class="flat"
@@ -73,8 +73,8 @@
 					v-tooltip="'Import your collection by uploading your Player.log file.'"
 				></i>
 				<div
-					v-show="hasCollection"
 					class="inline"
+					v-show="hasCollection"
 					v-tooltip="
 						'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'
 					"
@@ -1250,7 +1250,7 @@
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome to MTGADraft.tk!</h1>
+			<h1>Welcome ${userName}!</h1>
 			<p class="important">
 				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
 				in pod!
