@@ -415,8 +415,8 @@
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
 			<div
-				v-tooltip="'Maximum players can be adjusted in session settings.'"
-				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
+				v-tooltip="'Current player count. Maximum players can be adjusted in session settings.'"
+				style="flex: 0 3 auto; text-align: center; font-size: 0.9em; margin-right: 0.5em; margin-left: 0.2em"
 			>
 				{{ sessionUsers.length }}/{{ maxPlayers }}
 			</div>
