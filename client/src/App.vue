@@ -418,16 +418,15 @@
 			</div>
 			<div
 				v-if="!drafting"
-				style="flex: 0 3 auto; text-align: center; font-size: 0.9em; margin-right: 0.4em; margin-left: 0.5em"
+				style="flex: 0 3 auto; text-align: center; font-size: 0.9em; margin-right: 0.3em; margin-left: 0.5em"
 				v-tooltip="'Current player count. Maximum players can be adjusted in session settings.'"
 			>
 				<i class="fas fa-chair"></i>
 				<label>{{ sessionUsers.length }}/{{ maxPlayers }}</label>
 			</div>
-			<div>
-				<br />
+			<div class="inline-block">
 				<i
-					v-if="userID == sessionOwner && !drafting"
+					v-if="userID == sessionOwner"
 					class="fas fa-random clickable"
 					@click="randomizeSeating"
 					v-tooltip="'Randomize Seating Order.'"
