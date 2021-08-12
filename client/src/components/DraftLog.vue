@@ -87,7 +87,7 @@
 							style="font-variant: small-caps"
 							v-if="type === 'Draft'"
 							>
-							<label>Draft Log</label></span>
+							<label>Draft Log</label>
 							<button
 								@click="downloadMPT(selectedLog.userID)"
 								v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
