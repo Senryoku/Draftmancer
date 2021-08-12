@@ -4,7 +4,7 @@
 			<h2 style="min-width: 7em">
 				<slot name="title">Card Pool ({{ cards.length }})</slot>
 			</h2>
-			<div class="controls">
+			<div class="controls" style="float:right">
 				<slot name="controls"></slot>
 				<dropdown>
 					<template v-slot:handle>
