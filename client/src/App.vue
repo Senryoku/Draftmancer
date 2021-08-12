@@ -34,7 +34,7 @@
 			<span>
 				<div style="font-variant: small-caps">
 					<label>
-						<a href="https://mtgadraft.tk">
+						<a href="/">
 							<i class="fas fa-spinner"></i>
 							<strong> MTGADraft</strong>
 						</a>
