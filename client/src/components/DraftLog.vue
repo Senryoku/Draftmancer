@@ -62,7 +62,10 @@
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
-						<select v-model="displayOptions.category">
+						<select
+							v-model="displayOptions.category"
+							:class="{ 'disabled-simple': displayOptions.category.length === 1 }"
+						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
 							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
@@ -128,7 +131,7 @@
 							:group="`cardPool-${selectedLog.userID}`"
 							:key="`cardPool-${selectedLog.userID}`"
 						>
-							<template v-slot:title>Cards ({{ selectedLogCards.length }})</template>
+							<template v-slot:title><label>Cards ({{ selectedLogCards.length }})</label></template>
 						</card-pool>
 					</div>
 				</template>
