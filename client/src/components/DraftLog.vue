@@ -47,7 +47,7 @@
 					<span
 						class="color-list"
 						v-if="log.colors"
-						v-tooltip="Deck Colours"
+						v-tooltip="`${log.userName}'s Deck Colours`"
 					>
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
