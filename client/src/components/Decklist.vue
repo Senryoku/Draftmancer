@@ -31,7 +31,7 @@
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
 					@click="displayStats = true"
-					v-tooltip="`${username}'s Deck Statistic`"
+					v-tooltip="`${username}'s Deck Statistics`"
 				></i>
 				<span v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
 					<span v-if="landcount > 0">
@@ -75,7 +75,7 @@
 			<template v-slot:title><label>Sideboard ({{ list.side.length }})</label></template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
-			<h2 slot="header">{{ username }}'s Deck Statistic</h2>
+			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
 			<card-stats slot="body" :cards="mainboard" :addedbasics="landcount"></card-stats>
 		</modal>
 	</div>
