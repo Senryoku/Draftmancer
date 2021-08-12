@@ -72,12 +72,13 @@
 						</select>
 						<span
 							style="font-variant: small-caps"
+							v-if="displayOptions.category === 'Cards'"
 							>
 							<label>Export</label>
 							<button
 								@click="exportSingleLog(selectedLog.userID)"
 								v-tooltip="
-									`Copy ${selectedLog.userName}'s cards in MTGA format.`
+									`Copy ${selectedLog.userName}'s card pool in MTGA format.`
 								"
 							>
 								<img class="set-icon" src="../assets/img/mtga-icon.png" /> Card List
