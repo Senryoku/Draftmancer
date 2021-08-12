@@ -86,7 +86,7 @@
 						</span>
 						<span
 							style="font-variant: small-caps"
-							v-if="type === 'Draft' || v-if="displayOptions.category === 'Picks'""
+							v-if="type === 'Draft' && displayOptions.category === 'Picks'"
 							>
 							<label>Draft Log</label>
 							<button
