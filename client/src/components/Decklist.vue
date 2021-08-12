@@ -9,7 +9,7 @@
 		>
 			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
-				<span v-tooltip="Amount of basic lands included and their distribution (Not shown in decklist below).">
+				<span v-tooltip="'Amount of basic lands included and their distribution (Not shown in decklist below).'">
 					<span v-if="landcount > 0">
 						<label>
 							<img
