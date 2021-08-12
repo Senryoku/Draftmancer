@@ -7,10 +7,13 @@
 			:key="`deck-${_uid}`"
 			ref="mainboardComponent"
 		>
-			<template v-slot:title>Deck ({{ list.main.length }})</template>
+			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">
-					<img src="../assets/img/Land_symbol.svg" /> Basics:
+					<img
+						src="../assets/img/Land_symbol.svg"
+						style="height: 1em" />
+					<label> Basics:</label>
 				</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
@@ -19,7 +22,7 @@
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
 					@click="displayStats = true"
-					v-tooltip="`${username}'s Deck Statistics`"
+					v-tooltip="`${username}'s Deck Statistic`"
 				></i>
 				<button
 					type="button"
@@ -58,15 +61,15 @@
 			:key="`side-${_uid}`"
 			ref="sideboardComponent"
 		>
-			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
+			<template v-slot:title><label>Sideboard ({{ list.side.length }})</label></template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
-			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
+			<h2 slot="header">{{ username }}'s Deck Statistic</h2>
 			<card-stats slot="body" :cards="mainboard" :addedbasics="landcount"></card-stats>
 		</modal>
 	</div>
 	<div class="message" v-else-if="list && list.hashes">
-		<h2>{{ username }}'s Deck hashes</h2>
+		<h2>{{ username }}'s Deck Hashes</h2>
 		<!-- TODO when is this displayed? When viewing player deck stats it's not shown. Why hash tooltips to the right here? -->
 		<table class="hashes">
 			<tr>
