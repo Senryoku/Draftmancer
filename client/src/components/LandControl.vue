@@ -56,10 +56,10 @@
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
-				style="margin: 0.5em"
+				style="margin: 1em"
 				v-tooltip.left="'Remove all basic lands from your card pool.'"
 			>
-				Remove Basics
+				<i class="fas fa-minus-circle"></i> Remove Basics
 			</button>
 		</template>
 	</dropdown>
