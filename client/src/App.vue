@@ -1044,11 +1044,10 @@
 					<template v-slot:title>
 						<label>Deck ({{ deck.length }}
 						<span
-							style="font-size: 0.7em"
+							style="font-size: 0.75em"
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Amount of basic lands added on export (Not shown in decklist below).'"
-						> +{{ totalLands }}</span>
-						)</label>
+						> +{{ totalLands }}</span>)</label>
 					</template>
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
