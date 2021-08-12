@@ -342,7 +342,7 @@
 								<span class="game-modes-cat-title">Sealed</span>
 								<button
 									@click="sealedDialog"
-									v-tooltip.left="'Players receive a private card pool.'"
+									v-tooltip.left="'Players receive several boosters.'"
 								>
 									Sealed
 								</button>
@@ -1042,14 +1042,13 @@
 					:filter="deckFilter"
 				>
 					<template v-slot:title>
-						<label>Deck ({{ deck.length}}
+						<label>Deck ({{ deck.length }}
 						<span
-							style="font-size: 0.8em"
+							style="font-size: 0.7em"
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Amount of basic lands added on export (Not shown in decklist below).'"
-						>
-							+ {{ totalLands }}</span
-						>)</label>
+						> +{{ totalLands }}</span>
+						)</label>
 					</template>
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
