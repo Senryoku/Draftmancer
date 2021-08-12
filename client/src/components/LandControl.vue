@@ -56,7 +56,7 @@
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
-				style="white-space: normal; height: auto; line-height: 1em"
+				style="margin: 0.5em"
 				v-tooltip.left="'Remove all basic lands from your card pool.'"
 			>
 				Remove Basics
