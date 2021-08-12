@@ -14,13 +14,13 @@
 						<label>
 							<img
 								src="../assets/img/Land_symbol.svg"
-								style="height: 1em; vertical-align: bottom"
-							/> Lands ({{ landcount }})
+								style="height: 1em; vertical-align: text-bottom"
+							/> Lands ({{ landcount }}):
 						</label>
 					</span>
 					<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 						<label>
-							<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: bottom"/>
+							<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom"/>
 							{{ list.lands[c] }}
 						</label>
 					</span>
