@@ -1,7 +1,7 @@
 <template>
 	<dropdown
 		v-tooltip.top="
-			'Control basic lands added on export. \'Autocompletion\' will complete your deck to 40 cards.'
+			'Control basic lands added on export.'
 		"
 		class="land-control"
 	>
@@ -41,14 +41,20 @@
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
 			<span class="header" style="margin: 0.5em">
-				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Autocompletion" />
+				<checkbox
+					:value="autoland"
+					@toggle="$emit('update:autoland', !autoland)"
+					label="Autocompletion"
+					v-tooltip.left="Complete your deck with basic lands to 40 cards."
+				/>
 			</span>
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
 				style="white-space: normal; height: auto; line-height: 1em; padding: 0.5em"
+				v-tooltip.left="Remove all basic lands from your card pool."
 			>
-				Remove other basics from deck
+				Remove Basics
 			</button>
 		</template>
 	</dropdown>
