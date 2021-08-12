@@ -38,7 +38,6 @@
 					min="0"
 					max="999"
 					step="1"
-					v-validate="'length:4'"
 					onclick="this.select();"
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
