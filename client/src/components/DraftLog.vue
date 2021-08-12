@@ -86,13 +86,13 @@
 							<i class="fas fa-file-download"></i> Download Log
 						</button>
 						<button
+							v-if="type === 'Draft'"
 							@click="submitToMPT(selectedLog.userID)"
 							v-tooltip="
-								`Submit ${selectedLog.userName}'s picks to MagicProTools and copy link.`
+								`Submit ${selectedLog.userName}'s picks to MagicProTools and open in new tab.`
 							"
-							v-if="type === 'Draft'"
 						>
-							<i class="fas fa-share-square"></i> Export Log to MagicProTools
+							<i class="fas fa-external-link-alt"></i> Export Log to MagicProTools
 						</button>
 					</div>
 				</div>
