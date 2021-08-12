@@ -90,13 +90,9 @@
 				</div>
 			</span>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
-				<div style="min-width: 20px">
-					<i
-						class="fas clickable"
-						:class="{ 'greyed-out': !pickOnDblclick, 'fa-hand-pointer': pickOnDblclick }"
-						@click="pickOnDblclick = !pickOnDblclick"
-						v-tooltip="'Toggle picking cards with double click.'"
-					/>
+				<div class="inline" v-tooltip="'Toggle picking cards with double click.'">
+					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
+					<label for="pickOnDblclick">Pick on Double Click</label>
 				</div>
 				<div style="min-width: 20px">
 					<i
