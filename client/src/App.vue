@@ -93,10 +93,7 @@
 				<div style="min-width: 20px">
 					<i
 						class="fas clickable"
-						:class="{
-							'greyed-out': !enableSound,
-							'fa-hand-pointer': pickOnDblclick,
-						}"
+						:class="{ 'greyed-out': !pickOnDblclick, 'fa-hand-pointer': pickOnDblclick }"
 						@click="pickOnDblclick = !pickOnDblclick"
 						v-tooltip="'Toggle picking cards with double click.'"
 					/>
@@ -111,18 +108,18 @@
 				</div>
 				<div style="min-width: 20px; text-align: center">
 					<i
+						class="fas clickable"
+						:class="{
+							'greyed-out': notificationPermission === 'denied',
+							'fa-bell': enableNotifications,
+							'fa-bell-slash': !enableNotifications
+						}"
+						@click="toggleNotifications"
 						v-tooltip="
 							notificationPermission === 'denied'
 								? 'Notifications for this domain are blocked in your browser'
 								: 'Toggle Desktop Notifications'
 						"
-						class="fas clickable"
-						:class="{
-							'greyed-out': notificationPermission === 'denied',
-							'fa-bell': enableNotifications,
-							'fa-bell-slash': !enableNotifications,
-						}"
-						@click="toggleNotifications"
 					/>
 				</div>
 			</span>
