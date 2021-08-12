@@ -77,7 +77,7 @@
 							<button
 								@click="exportSingleLog(selectedLog.userID)"
 								v-tooltip="
-									`Copy ${selectedLog.userName}'s cards to your clipboard in MTGA format.`
+									`Copy ${selectedLog.userName}'s cards in MTGA format.`
 								"
 							>
 								<img class="set-icon" src="../assets/img/mtga-icon.png" /> Card List
