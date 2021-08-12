@@ -13,7 +13,7 @@
 				<span v-if="landcount > 0"><label>Basics:</label></span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: sub" />
-					<label>{{ list.lands[c] }}</label>
+					{{ list.lands[c] }}
 				</span>
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
