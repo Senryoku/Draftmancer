@@ -7,17 +7,18 @@
 			:key="`deck-${_uid}`"
 			ref="mainboardComponent"
 		>
-			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
+			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
-				<span v-if="landcount > 0">Added basics:</span>
+				<!-- TODO should not have that much spacing between icons -->
+				<span v-if="landcount > 0"><label>Basics:</label></span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
-					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
-					{{ list.lands[c] }}
+					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: sub" />
+					<label>{{ list.lands[c] }}</label>
 				</span>
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
 					@click="displayStats = true"
-					v-tooltip="'Deck Statistics'"
+					v-tooltip="'${username}'s Deck Statistics'"
 				></i>
 				<button
 					type="button"
@@ -56,7 +57,7 @@
 			:key="`side-${_uid}`"
 			ref="sideboardComponent"
 		>
-			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
+			<template v-slot:title><label>Sideboard ({{ list.side.length }})</label></template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
 			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
@@ -64,8 +65,8 @@
 		</modal>
 	</div>
 	<div class="message" v-else-if="list && list.hashes">
-	<!-- TODO when is this displayed? Why hash tooltips to the right here? -->
 		<h2>{{ username }}'s Deck hashes</h2>
+		<!-- TODO when is this displayed? When viewing player deck stats it's not shown. Why hash tooltips to the right here? -->
 		<table class="hashes">
 			<tr>
 				<td>Cockatrice</td>
@@ -89,6 +90,7 @@
 			</tr>
 		</table>
 	</div>
+	<!-- TODO when is this displayed? -->
 	<div class="message" v-else>{{ username }} did not submit their decklist.</div>
 </template>
 
