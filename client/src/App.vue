@@ -1057,14 +1057,14 @@
 							<button
 								type="button"
 								@click="exportDeck"
-								v-tooltip.top="'Export deck, lands and sideboard'"
+								v-tooltip.top="'Export deck, lands and sideboard in MTGA format.'"
 							>
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
 								type="button"
 								@click="exportDeck(false)"
-								v-tooltip.top="'Export deck, lands and sideboard without set information'"
+								v-tooltip.top="'Export deck, lands and sideboard without set information.'"
 							>
 								<i class="fas fa-list"></i> Simple
 							</button>
