@@ -9,19 +9,21 @@
 		>
 			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
-				<span v-if="landcount > 0">
-					<label>
-						<img
-							src="../assets/img/Land_symbol.svg"
-							style="height: 1em; vertical-align: sub"
-						/> Basics ({{ landcount }}):
-					</label>
-				</span>
-				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
-					<label>
-						<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: sub"/>
-						{{ list.lands[c] }}
-					</label>
+				<span v-tooltip="Amount of basic lands included and their distribution (Not shown in decklist below).">
+					<span v-if="landcount > 0">
+						<label>
+							<img
+								src="../assets/img/Land_symbol.svg"
+								style="height: 1em; vertical-align: bottom"
+							/> Lands ({{ landcount }})
+						</label>
+					</span>
+					<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
+						<label>
+							<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: bottom"/>
+							{{ list.lands[c] }}
+						</label>
+					</span>
 				</span>
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
