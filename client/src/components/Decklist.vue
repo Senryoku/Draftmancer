@@ -19,7 +19,7 @@
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
 					@click="displayStats = true"
-					v-tooltip="'${username}'s Deck Statistics'"
+					v-tooltip="`${username}'s Deck Statistics`"
 				></i>
 				<button
 					type="button"
