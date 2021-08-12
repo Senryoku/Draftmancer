@@ -10,14 +10,15 @@
 			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">
-					<img
-						src="../assets/img/Land_symbol.svg"
-						style="height: 1em" />
-					<label> Basics:</label>
+					<label>
+						<img
+							src="../assets/img/Land_symbol.svg"
+							style="height: 1em" /> Basics (${landcount}):
+					</label>
 				</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
-					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
-					{{ list.lands[c] }}
+					<img :src="`img/mana/${c}.svg`" class="mana-icon" />
+					<label>{{ list.lands[c] }}</label>
 				</span>
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
