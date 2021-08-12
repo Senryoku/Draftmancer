@@ -37,13 +37,13 @@
 					<span
 						@click="copyHash(list.hashes.cockatrice)"
 						class="clickable"
-						v-tooltip.top="'Copy Cockatrice hash to clipboard.'"
+						v-tooltip="'Copy Cockatrice hash to clipboard.'"
 						>Cockatrice: {{ list.hashes.cockatrice }}</span
 					>
 					<span 
 						@click="copyHash(list.hashes.mws)"
 						class="clickable"
-						v-tooltip.top="'Copy MWS hash to clipboard.'"
+						v-tooltip="'Copy MWS hash to clipboard.'"
 						>MWS: {{ list.hashes.mws }}</span
 					>
 				</template>
@@ -64,6 +64,7 @@
 		</modal>
 	</div>
 	<div class="message" v-else-if="list && list.hashes">
+	<!-- TODO when is this displayed? Why hash tooltips to the right here? -->
 		<h2>{{ username }}'s Deck hashes</h2>
 		<table class="hashes">
 			<tr>
