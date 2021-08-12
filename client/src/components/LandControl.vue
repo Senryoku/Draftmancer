@@ -28,9 +28,11 @@
 					@contextmenu.prevent="rem(c)"
 					:class="{ 'fade-out': lands[c] <= 0 }"
 				/>
-				<input
 				<!-- TODO input limitation to 999 not working, should probably better be 99 anyway -->
+				<!-- works for booster per player in settings -->
+				<input
 					class="small-number-input"
+					:class="{ 'fade-out': lands[c] <= 0 }"
 					type="number"
 					:id="`${c}-mana`"
 					:value="lands[c]"
