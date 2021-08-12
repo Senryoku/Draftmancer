@@ -64,7 +64,7 @@
 					<div class="controls">
 						<select
 							v-model="displayOptions.category"
-							:class="{ 'disabled-simple': displayOptions.category.length === 1 }"
+							:class="{ 'disabled-simple': displayOptions.category.length = 1 }"
 						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
