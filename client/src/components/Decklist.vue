@@ -7,7 +7,7 @@
 			:key="`deck-${_uid}`"
 			ref="mainboardComponent"
 		>
-			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
+			<template v-slot:title>Deck ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<!-- TODO should not have that much spacing between icons -->
 				<span v-if="landcount > 0"><label>Basics:</label></span>
@@ -57,7 +57,7 @@
 			:key="`side-${_uid}`"
 			ref="sideboardComponent"
 		>
-			<template v-slot:title><label>Sideboard ({{ list.side.length }})</label></template>
+			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
 			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
