@@ -43,13 +43,16 @@
 							style="margin: 0 0.5em"
 						></i>
 					</div>
-					<span class="color-list" v-if="log.colors">
+					<span
+						class="color-list"
+						v-if="log.colors"
+						v-tooltip="Deck Colours"
+					>
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 							:key="c"
 							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
-							v-tooltip="log.colors[c]"
 						/>
 					</span>
 				</li>
