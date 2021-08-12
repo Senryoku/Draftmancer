@@ -1,12 +1,12 @@
 <template>
 	<dropdown
 		v-tooltip.top="
-			'Controls basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards with basic lands.'
+			'Control basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards.'
 		"
 		class="land-control"
 	>
 		<template v-slot:handle>
-			<span v-if="Object.values(lands).every(n => n === 0)"> No basic land added. </span>
+			<span v-if="Object.values(lands).every(n => n === 0)"> No lands added </span>
 			<span
 				v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => lands[c] > 0)"
 				:key="c"
@@ -19,9 +19,6 @@
 			</span>
 		</template>
 		<template v-slot:dropdown>
-			<span class="header">
-				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Auto. Land" />
-			</span>
 			<div class="land-input" v-for="c in ['W', 'U', 'B', 'R', 'G']" :key="c">
 				<i class="fas fa-minus fa-lg clickable" @click="rem(c)" :class="{ disabled: lands[c] <= 0 }"></i>
 				<img
@@ -43,6 +40,9 @@
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
+			<span class="header">
+				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Autocompletion" />
+			</span>
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
