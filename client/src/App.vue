@@ -90,7 +90,7 @@
 				</div>
 			</span>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
-				<div class="inline" v-tooltip="'Toggle picking cards with double click.'">
+				<div class="inline" v-tooltip="'Double click confirms your pick.'">
 					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
 					<label for="pickOnDblclick">Pick on Double Click</label>
 				</div>
@@ -1042,17 +1042,18 @@
 					:filter="deckFilter"
 				>
 					<template v-slot:title>
-						Deck ({{ deck.length
+						<label>Deck ({{ deck.length
 						}}<span
+							style="font-size: 2em"
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Added basics on export (Not shown in decklist below).'"
 						>
-							+ {{ totalLands }}</span
-						>)
+							+{{ totalLands }}</span>
+						)</label>
 					</template>
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
-							Export
+							<label>Export</label>
 							<button
 								type="button"
 								@click="exportDeck"
