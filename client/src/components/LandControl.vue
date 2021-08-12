@@ -45,14 +45,14 @@
 					:value="autoland"
 					@toggle="$emit('update:autoland', !autoland)"
 					label="Autocompletion"
-					v-tooltip.left="Complete your deck with basic lands to 40 cards."
+					v-tooltip.left="'Complete your deck with basic lands to 40 cards.'"
 				/>
 			</span>
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
 				style="white-space: normal; height: auto; line-height: 1em; padding: 0.5em"
-				v-tooltip.left="Remove all basic lands from your card pool."
+				v-tooltip.left="'Remove all basic lands from your card pool.'"
 			>
 				Remove Basics
 			</button>
