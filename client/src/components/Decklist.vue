@@ -9,6 +9,30 @@
 		>
 			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
 			<template v-slot:controls>
+				<span
+					style="font-variant: small-caps"
+					>
+					<label>Export</label>
+					<button
+						type="button"
+						@click="exportDeck"
+						v-tooltip="`Copy ${username}'s deck and sideboard in MTGA format.`"
+					>
+						<img class="set-icon" src="../assets/img/mtga-icon.png" /> Deck
+					</button>
+					<button
+						type="button"
+						@click="exportDeck(false)"
+						v-tooltip="`Copy ${username}'s deck and sideboard without set information.`"
+					>
+						<i class="fas fa-list"></i> Deck (Simple)
+					</button>
+				</span>
+				<i
+					class="fas fa-chart-pie fa-lg clickable"
+					@click="displayStats = true"
+					v-tooltip="`${username}'s Deck Statistic`"
+				></i>
 				<span v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
 					<span v-if="landcount > 0">
 						<label>
@@ -25,25 +49,6 @@
 						</label>
 					</span>
 				</span>
-				<i
-					class="fas fa-chart-pie fa-lg clickable"
-					@click="displayStats = true"
-					v-tooltip="`${username}'s Deck Statistic`"
-				></i>
-				<button
-					type="button"
-					@click="exportDeck"
-					v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
-				>
-					<img class="set-icon" src="../assets/img/mtga-icon.png" /> Export Deck
-				</button>
-				<button
-					type="button"
-					@click="exportDeck(false)"
-					v-tooltip="`Copy ${username}'s deck and sideboard without set information.`"
-				>
-					<i class="fas fa-list"></i> Export Deck (Simple)
-				</button>
 				<template v-if="list.hashes">
 					<span
 						@click="copyHash(list.hashes.cockatrice)"
