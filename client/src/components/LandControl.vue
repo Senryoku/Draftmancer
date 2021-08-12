@@ -1,7 +1,7 @@
 <template>
 	<dropdown
 		v-tooltip.top="
-			'Control basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards.'
+			'Control basic lands added on export. \'Autocompletion\' will complete your deck to 40 cards.'
 		"
 		class="land-control"
 	>
@@ -35,12 +35,12 @@
 					:value="lands[c]"
 					@input="$emit('update:lands', c, $event.target.value === '' ? 0 : parseInt($event.target.value))"
 					min="0"
-					max="999"
+					max="99"
 					onclick="this.select();"
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
-			<span class="header">
+			<span class="header" style="margin: 0.5em">
 				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Autocompletion" />
 			</span>
 			<button
