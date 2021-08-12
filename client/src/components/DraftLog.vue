@@ -70,18 +70,22 @@
 								Deck
 							</option>
 						</select>
-						<button
-							@click="exportSingleLog(selectedLog.userID)"
-							v-tooltip="
-								`Copy ${selectedLog.userName}'s cards to your clipboard in MTGA format.`
-							"
-						>
-							<img class="set-icon" src="../assets/img/mtga-icon.png" /> Export Card List
-						</button>
-						<span>
-							<span
-								style="font-variant: small-caps"
-								v-if="type === 'Draft'"
+						<span
+							style="font-variant: small-caps"
+							>
+							<label>Export</label>
+							<button
+								@click="exportSingleLog(selectedLog.userID)"
+								v-tooltip="
+									`Copy ${selectedLog.userName}'s cards to your clipboard in MTGA format.`
+								"
+							>
+								<img class="set-icon" src="../assets/img/mtga-icon.png" /> Card List
+							</button>
+						</span>
+						<span
+							style="font-variant: small-caps"
+							v-if="type === 'Draft'"
 							>
 							<label>Draft Log</label></span>
 							<button
@@ -95,15 +99,14 @@
 								v-if="type === 'Draft'"
 								@click="submitToMPT(selectedLog.userID)"
 								v-tooltip="
-									`Submit ${selectedLog.userName}'s picks to MagicProTools.`
+									`Submit ${selectedLog.userName}'s picks to MagicProTools and review them in a new tab.`
 								"
 							>
-								<i class="fas fa-external-link-alt"></i> Export to MagicProTools
+								<i class="fas fa-external-link-alt"></i> Submit to MagicProTools
 							</button>
 						</span>
 					</div>
 				</div>
-
 				<template v-if="displayOptions.category === 'Picks'">
 					<div v-for="p in picks" :key="p.key">
 						<h3>
