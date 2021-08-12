@@ -78,22 +78,29 @@
 						>
 							<img class="set-icon" src="../assets/img/mtga-icon.png" /> Export Card List
 						</button>
-						<button
-							@click="downloadMPT(selectedLog.userID)"
-							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
-							v-if="type === 'Draft'"
-						>
-							<i class="fas fa-file-download"></i> Download Log
-						</button>
-						<button
-							v-if="type === 'Draft'"
-							@click="submitToMPT(selectedLog.userID)"
-							v-tooltip="
-								`Submit ${selectedLog.userName}'s picks to MagicProTools and open in new tab.`
-							"
-						>
-							<i class="fas fa-external-link-alt"></i> Export Log to MagicProTools
-						</button>
+						<span>
+							<span
+								style="font-variant: small-caps"
+								v-if="type === 'Draft'"
+							>
+							<label>Draft Log</label></span>
+							<button
+								@click="downloadMPT(selectedLog.userID)"
+								v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
+								v-if="type === 'Draft'"
+							>
+								<i class="fas fa-file-download"></i> Download
+							</button>
+							<button
+								v-if="type === 'Draft'"
+								@click="submitToMPT(selectedLog.userID)"
+								v-tooltip="
+									`Submit ${selectedLog.userName}'s picks to MagicProTools.`
+								"
+							>
+								<i class="fas fa-external-link-alt"></i> Export to MagicProTools
+							</button>
+						</span>
 					</div>
 				</div>
 
