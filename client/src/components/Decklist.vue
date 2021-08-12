@@ -16,14 +16,14 @@
 					<button
 						type="button"
 						@click="exportDeck"
-						v-tooltip="`Copy ${username}'s deck and sideboard in MTGA format.`"
+						v-tooltip="`Copy ${username}'s deck, lands and sideboard in MTGA format.`"
 					>
 						<img class="set-icon" src="../assets/img/mtga-icon.png" /> Deck
 					</button>
 					<button
 						type="button"
 						@click="exportDeck(false)"
-						v-tooltip="`Copy ${username}'s deck and sideboard without set information.`"
+						v-tooltip="`Copy ${username}'s deck, lands and sideboard without set information.`"
 					>
 						<i class="fas fa-list"></i> Deck (Simple)
 					</button>
