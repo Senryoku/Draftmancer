@@ -109,7 +109,7 @@ export default {
 
 .land-input {
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
 	align-items: center;
 }
 
