@@ -31,7 +31,7 @@
 							@click="sortByType"
 							v-else-if="options.sort === 'type'"
 						/>
-						Layout
+						<label>Layout</label>
 					</template>
 					<template v-slot:dropdown>
 						<div class="section">
