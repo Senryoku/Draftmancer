@@ -1042,14 +1042,14 @@
 					:filter="deckFilter"
 				>
 					<template v-slot:title>
-						<label>Deck ({{ deck.length
+						Deck ({{ deck.length
 						}}<span
 							style="font-size: 2em"
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Added basics on export (Not shown in decklist below).'"
 						>
 							+{{ totalLands }}</span>
-						)</label>
+						)
 					</template>
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
