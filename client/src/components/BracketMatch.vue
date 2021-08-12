@@ -29,7 +29,7 @@
 						<i
 							class="fas fa-clipboard-check green"
 							v-if="hasDeckList(p.userID)"
-							v-tooltip.top="`${p.userName} submited their deck. Click to review it.`"
+							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
 						></i>
 					</div>
 					<template v-if="match.isValid()">
