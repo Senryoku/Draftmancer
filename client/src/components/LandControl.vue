@@ -30,6 +30,7 @@
 				/>
 				<!-- TODO input limitation to 999 not working, should probably better be 99 anyway -->
 				<!-- works for booster per player in settings -->
+				<!-- values like 3.7 can be entered -->
 				<input
 					class="small-number-input"
 					:class="{ 'fade-out': lands[c] <= 0 }"
@@ -40,7 +41,6 @@
 					min="0"
 					max="999"
 					step="1"
-					v-validate="'length:4'"
 					onclick="this.select();"
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
@@ -56,7 +56,7 @@
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
-				style="white-space: normal; height: auto; line-height: 1em; padding: 0.5em"
+				style="white-space: normal; height: auto; line-height: 1em"
 				v-tooltip.left="'Remove all basic lands from your card pool.'"
 			>
 				Remove Basics
