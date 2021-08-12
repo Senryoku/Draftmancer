@@ -69,7 +69,6 @@
 						<select
 							v-model="displayOptions.category"
 							:class="{ 'disabled-simple': displayOptions.category.length = 1 }"
-							@change="displayOptions.pack = displayOptions.pick = 0"
 						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
