@@ -1042,14 +1042,14 @@
 					:filter="deckFilter"
 				>
 					<template v-slot:title>
-						Deck ({{ deck.length
-						}}<span
+						<label>Deck ({{ deck.length}}
+						<span
 							style="font-size: 0.8em"
 							v-show="draftingState == DraftState.Brewing && totalLands > 0"
 							v-tooltip="'Amount of basic lands added on export (Not shown in decklist below).'"
 						>
 							+ {{ totalLands }}</span
-						>)
+						>)</label>
 					</template>
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
@@ -1057,14 +1057,14 @@
 							<button
 								type="button"
 								@click="exportDeck"
-								v-tooltip.top="'Export deck and sideboard'"
+								v-tooltip.top="'Export deck, lands and sideboard'"
 							>
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
 								type="button"
 								@click="exportDeck(false)"
-								v-tooltip.top="'Export deck and sideboard without set information'"
+								v-tooltip.top="'Export deck, lands and sideboard without set information'"
 							>
 								<i class="fas fa-list"></i> Simple
 							</button>
@@ -1190,12 +1190,12 @@
 				class="collapsed-sideboard"
 			>
 				<div class="section-title">
-					<h2>Sideboard ({{ sideboard.length }})</h2>
+					<h2><label>Sideboard ({{ sideboard.length }})</label></h2>
 					<div class="controls">
 						<i
 							class="far fa-window-maximize clickable"
 							@click="collapseSideboard = false"
-							v-tooltip="'Maximize sideboard'"
+							v-tooltip="'Maximize Sideboard'"
 						></i>
 					</div>
 				</div>
@@ -1244,12 +1244,12 @@
 				@drop.native="dropBoosterCard($event, { toSideboard: true })"
 				:filter="deckFilter"
 			>
-				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
+				<template v-slot:title><label>Sideboard ({{ sideboard.length }})</label></template>
 				<template v-slot:controls>
 					<i
 						class="fas fa-columns clickable"
 						@click="collapseSideboard = true"
-						v-tooltip="'Minimize sideboard'"
+						v-tooltip="'Minimize Sideboard'"
 					></i>
 				</template>
 				<template v-slot:empty>
