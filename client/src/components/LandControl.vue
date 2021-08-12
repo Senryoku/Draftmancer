@@ -29,15 +29,16 @@
 					:class="{ 'fade-out': lands[c] <= 0 }"
 				/>
 				<input
-				<!-- TODO input is not limited to 999 at all, should probably better be 99 anyway -->
+				<!-- TODO input limitation to 999 not working, should probably better be 99 anyway -->
 					class="small-number-input"
-					:class="{ 'fade-out': lands[c] <= 0 }"
 					type="number"
 					:id="`${c}-mana`"
 					:value="lands[c]"
 					@input="$emit('update:lands', c, $event.target.value === '' ? 0 : parseInt($event.target.value))"
 					min="0"
 					max="999"
+					step="1"
+					v-validate="'length:4'"
 					onclick="this.select();"
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
