@@ -10,7 +10,7 @@
 			<template v-slot:title>Deck ({{ list.main.length }})</template>
 			<!-- TODO should not have that much spacing between icons -->
 			<template v-slot:controls>
-				<span v-if="landcount > 0"><label>Basics:</label></span>
+				<span v-if="landcount > 0">Basics:</span>
 				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: sub" />
 					{{ list.lands[c] }}
