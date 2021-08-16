@@ -43,7 +43,7 @@
 					v-tooltip="`${username}'s Deck Statistics`"
 				></i>
 				<span
-					v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
+					v-tooltip="'Basic land count and distribution (Not shown in decklist below).'"
 					v-if="landcount > 0"
 					style="font-variant: small-caps"
 				>
