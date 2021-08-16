@@ -615,7 +615,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             alt_matches = re.findall(AlternateCardsRegex, l)
             if len(alt_matches) > 0:
                 altslot = []
-                for altidx, alt in enumerate(alt_matches):
+                for alt in alt_matches:
                     cardname = fix_cardname(alt[0])
                     cid = None
                     if cardname == "Cycling Land":
@@ -626,7 +626,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
                         print("Jumpstart: Historic Horizons Boosters: Card '{}' ('{}') not found.".format(cardname, alt[0]))
                     else:
                         altslot.append({"name": cards[cid]["name"], "id": cid, "weight": int(alt[1])})
-                        if altidx == 0 and cid in jhh_cards:
+                        if cid in jhh_cards:
                             jhh_cards.remove(cid)
                 if len(altslot) > 0:
                     altcards.append(altslot)
@@ -723,6 +723,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["mid"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in []]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

@@ -195,7 +195,7 @@ describe("Sets content", function() {
 		stx: { common: 105, uncommon: 80, rare: 69, mythic: 21 },
 		mh2: { common: 101, uncommon: 100, rare: 78, mythic: 24 },
 		afr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
-		j21: { common: 383 + 20, uncommon: 286, rare: 85, mythic: 13 }, // The 20 added common are additional lands
+		j21: { common: 383, uncommon: 286, rare: 85, mythic: 13 }, // TODO: Replace by the actual Jumpstart: Historic Horizon set code. Some cards may have their original set.
 	};
 
 	beforeEach(function(done) {
@@ -1332,72 +1332,5 @@ describe("Jumpstart", function() {
 			});
 		}
 		clients[ownerIdx].emit("distributeJumpstart");
-	});
-});
-
-describe("Jumpstart: Historic Horizons", function() {
-	let clients = [];
-	let sessionID = "JumpStartSession";
-
-	beforeEach(function(done) {
-		disableLogs();
-		done();
-	});
-
-	afterEach(function(done) {
-		enableLogs(this.currentTest.state == "failed");
-		done();
-	});
-
-	before(function(done) {
-		let queries = [];
-		for (let i = 0; i < 8; ++i)
-			queries.push({
-				sessionID: sessionID,
-				userName: "DontCare",
-			});
-		clients = makeClients(queries, done);
-	});
-
-	after(function(done) {
-		disableLogs();
-		for (let c of clients) {
-			c.disconnect();
-		}
-
-		waitForClientDisconnects(done);
-	});
-
-	it(`Owner launches a Jumpstart game, clients should receive their pack selection.`, function(done) {
-		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
-		let receivedPools = 0;
-		for (let client of clients) {
-			client.once("selectJumpstartPacks", function(choices, ack) {
-				expect(choices.length).to.equal(2);
-				expect(choices[0].length).to.equal(3);
-				expect(choices[1].length).to.equal(3);
-				for (let i = 0; i < 3; ++i) expect(choices[1][i].length).to.equal(3);
-				client.packChoices = choices;
-				client.ack = ack;
-				++receivedPools;
-				if (receivedPools === clients.length) done();
-			});
-		}
-		clients[ownerIdx].emit("distributeJumpstart", "j21");
-	});
-
-	it(`Clients make their choice and draft log updates accordingly.`, function(done) {
-		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
-		clients[ownerIdx].on("draftLog", log => {
-			if (Object.keys(log.users).filter(uid => !!log.users[uid].cards).length === clients.length) {
-				clients[ownerIdx].removeListener("draftLog");
-				done();
-			}
-		});
-		for (let client of clients) {
-			let cards = [...client.packChoices[0][0].cards];
-			cards.push(...client.packChoices[1][0][1].cards);
-			client.ack(client.query.userID, cards);
-		}
 	});
 });

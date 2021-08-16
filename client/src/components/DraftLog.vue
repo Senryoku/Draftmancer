@@ -29,7 +29,6 @@
 								} else {
 									if (displayOptions.category === 'Deck') displayOptions.category = 'Cards';
 								}
-								displayOptions.pack = displayOptions.pick = 0;
 							}
 						}
 					"
@@ -112,69 +111,18 @@
 					</div>
 				</div>
 				<template v-if="displayOptions.category === 'Picks'">
-					<template
-						v-if="
-							displayOptions.pack < picksPerPack.length &&
-								displayOptions.pick < picksPerPack[displayOptions.pack].length
-						"
-					>
-						<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
-							<div>
-								<i
-									:class="{ disabled: displayOptions.pack <= 0 && displayOptions.pick <= 0 }"
-									class="fas fa-chevron-left clickable"
-									@click="prevPick"
-								></i>
-								<label>Pack #</label>
-								<select v-model="displayOptions.pack" style="width: 4em">
-									<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
-										{{ index }}
-									</option>
-								</select>
-								,
-								<label>Pick #</label>
-								<select v-model="displayOptions.pick" style="width: 4em">
-									<option
-										v-for="index in picksPerPack[displayOptions.pack].length"
-										:key="index"
-										:value="index - 1"
-									>
-										{{ index }}
-									</option>
-								</select>
-								<i
-									:class="{
-										disabled:
-											displayOptions.pack >= picksPerPack.length - 1 &&
-											displayOptions.pick >= picksPerPack[displayOptions.pack].length - 1,
-									}"
-									class="fas fa-chevron-right clickable"
-									@click="nextPick"
-								></i>
-							</div>
-							<h2>
-								{{
-									picksPerPack[displayOptions.pack][displayOptions.pick].data.pick
-										.map(
-											idx =>
-												draftlog.carddata[
-													picksPerPack[displayOptions.pack][displayOptions.pick].data.booster[
-														idx
-													]
-												].name
-										)
-										.join(", ")
-								}}
-							</h2>
-						</div>
+					<div v-for="p in picks" :key="p.key">
+						<h3>
+							Pack {{ p.packNumber + 1 }}, Pick {{ p.pickNumber + 1 }}:
+							{{ p.data.pick.map(idx => draftlog.carddata[p.data.booster[idx]].name).join(", ") }}
+						</h3>
 						<draft-log-pick
-							:pick="picksPerPack[displayOptions.pack][displayOptions.pick].data"
+							:pick="p.data"
 							:carddata="draftlog.carddata"
 							:language="language"
 							:type="draftlog.type"
 						></draft-log-pick>
-					</template>
-					<template v-else>No picks.</template>
+					</div>
 				</template>
 				<template v-else-if="displayOptions.category === 'Cards'">
 					<div class="log-container">
@@ -213,6 +161,7 @@
 	</div>
 	<div v-else>
 		<h2>Incompatible draft log version</h2>
+		<button @click="updateToV2">Convert Draft Log to latest version</button>
 	</div>
 </template>
 
@@ -220,6 +169,7 @@
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
 import exportToMTGA from "../exportToMTGA.js";
+import parseCost from "../../../src/parseCost.ts";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
@@ -240,8 +190,6 @@ export default {
 				detailsUserID: undefined,
 				category: "Cards",
 				textList: false,
-				pack: 0,
-				pick: 0,
 			},
 		};
 	},
@@ -322,22 +270,33 @@ export default {
 			}
 			return r;
 		},
-		prevPick() {
-			if (this.displayOptions.pick === 0) {
-				if (this.displayOptions.pack === 0) return;
-				--this.displayOptions.pack;
-				this.displayOptions.pick = this.picksPerPack[this.displayOptions.pack].length - 1;
-			} else {
-				--this.displayOptions.pick;
-			}
-		},
-		nextPick() {
-			if (this.displayOptions.pick === this.picksPerPack[this.displayOptions.pack].length - 1) {
-				if (this.displayOptions.pack === this.picksPerPack.length - 1) return;
-				++this.displayOptions.pack;
-				this.displayOptions.pick = 0;
-			} else {
-				++this.displayOptions.pick;
+		async updateToV2() {
+			if (!this.draftlog.version || this.draftlog.version === "1.0") {
+				const MTGACards = await (() => import("../../public/data/MTGACards.json"))();
+				for (let c in MTGACards) Object.assign(MTGACards[c], parseCost(MTGACards[c].mana_cost));
+				const updateCIDs = arr => arr.map(cid => MTGACards[cid].id);
+				// Replaces ArenaIDs by entire card objects for boosters and indices of the booster for picks
+				for (let u in this.draftlog.users) {
+					for (let p of this.draftlog.users[u].picks) {
+						p.pick = [p.booster.findIndex(cid => cid === p.pick)];
+						for (let i = 0; i < p.burn.length; ++i)
+							p.burn[i] = p.booster.findIndex(cid => cid === p.burn[i]);
+						// UniqueID should be consistent across pick and with the boosters array, but it's not used right now...
+						p.booster = p.booster.map(cid => MTGACards[cid].id);
+					}
+					this.draftlog.users[u].cards = updateCIDs(this.draftlog.users[u].cards);
+					if (this.draftlog.users[u].decklist) {
+						this.draftlog.users[u].decklist.main = updateCIDs(this.draftlog.users[u].decklist.main);
+						this.draftlog.users[u].decklist.side = updateCIDs(this.draftlog.users[u].decklist.side);
+					}
+				}
+				this.draftlog.carddata = {};
+				for (let cid of this.draftlog.boosters.flat())
+					this.draftlog.carddata[MTGACards[cid].id] = MTGACards[cid];
+				for (let i = 0; i < this.draftlog.boosters.length; ++i)
+					this.draftlog.boosters[i] = updateCIDs(this.draftlog.boosters[i]);
+				this.$set(this.draftlog, "version", "2.0");
+				this.$emit("storelogs");
 			}
 		},
 	},
@@ -384,7 +343,7 @@ export default {
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack() {
+		picks() {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -401,9 +360,8 @@ export default {
 						if (this.selectedLog.picks[currPick].booster.length > lastSize) {
 							++currBooster;
 							currPickNumber = 0;
-							r.push([]);
 						} else ++currPickNumber;
-						r[currBooster].push({
+						r.push({
 							key: currPick,
 							data: this.selectedLog.picks[currPick],
 							packNumber: currBooster,
@@ -438,16 +396,6 @@ export default {
 				// Displayed log defaults to first player
 				if (this.draftlog && this.draftlog.users && Object.keys(this.draftlog.users)[0])
 					this.displayOptions.detailsUserID = Object.keys(this.draftlog.users)[0];
-			},
-		},
-		displayOptions: {
-			deep: true,
-			immediate: true,
-			handler() {
-				this.displayOptions.pick = Math.min(
-					this.displayOptions.pick,
-					this.picksPerPack[this.displayOptions.pack].length - 1
-				); // Make sure pick is still valid.
 			},
 		},
 	},

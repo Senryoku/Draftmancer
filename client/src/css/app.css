@@ -1027,6 +1027,17 @@ ul.player-list {
 	text-align: center;
 }
 
+.draft-log-live-title h2 {
+	display: inline-block;
+	margin: 0;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.draft-log-live-instructions {
+	text-align: center;
+}
+
 /* ------------------------------------------------ */
 /*             Absolute Center Spinner              */
 
