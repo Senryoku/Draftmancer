@@ -1,13 +1,17 @@
 <template>
 	<div v-if="collectionStats" style="position: relative">
-		
+		<i
+			class="fas fa-question-circle clickable"
+			@click="displayedModal = 'collectionHelp'"
+			v-tooltip="'MTGA Collection Import Help'"
+		></i>
 		<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
 		<button
 			@click="displayedModal = 'collection'"
 			class="flat"
-			v-tooltip="'Manage your MTG Arena card collection'"
+			v-tooltip="'Upload your MTG Arena card collection'"
 		>
-			<i class="fas fa-book"></i> Collection
+			<i class="fas fa-file-upload"></i> Upload MTGA collection
 		</button>
 		<i
 			class="fas fa-file-upload green clickable"
