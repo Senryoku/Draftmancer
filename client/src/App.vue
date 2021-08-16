@@ -1328,7 +1328,11 @@
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 					</div>
 				</div>
-				<div class="container" style="grid-area: PublicSessions">
+				<div
+					class="container"
+					:class="{ 'disabled-simple': userID != sessionOwner && publicSessions.length === 0}"
+					style="grid-area: PublicSessions"
+				>
 					<div class="section-title">
 						<h2>Public Sessions</h2>
 					</div>
