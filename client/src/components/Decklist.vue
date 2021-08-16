@@ -7,7 +7,16 @@
 			:key="`deck-${_uid}`"
 			ref="mainboardComponent"
 		>
-			<template v-slot:title><label>Deck ({{ list.main.length }})</label></template>
+			<template v-slot:title>
+				<label>Deck ({{ list.main.length }}			
+				}}<span
+					style="font-size: 0.8em"
+					v-show="totalLands > 0"
+					v-tooltip="'Amount of basic lands included in deck (Not shown in decklist below).'"
+				>
+					+{{ totalLands }}</span
+				>)</label>
+			</template>
 			<template v-slot:controls>
 				<span
 					style="font-variant: small-caps"
