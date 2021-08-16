@@ -8,7 +8,7 @@
 			ref="mainboardComponent"
 		>
 			<template v-slot:title>
-				<label>Deck ({{ list.main.length }}			
+				<label>Deck ({{ list.main.length			
 				}}<span
 					style="font-size: 0.8em"
 					v-show="totalLands > 0"
