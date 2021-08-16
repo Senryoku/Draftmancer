@@ -1070,7 +1070,7 @@
 							</button>
 						</div>
 						<button
-							:class="{ 'disabled-simple': deck.length === 0 && !currentDraftLog }"
+							:class="{ 'disabled-simple': deck.length === 0 || !currentDraftLog }"
 							type="button"
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
