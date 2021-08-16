@@ -6,7 +6,10 @@
 			</h2>
 			<div class="controls">
 				<slot name="controls"></slot>
-				<dropdown>
+				<dropdown
+					v-tooltip.top="
+						'Adjust the way cards are displayed.'"
+				>
 					<template v-slot:handle>
 						<i
 							class="fas fa-sort-amount-up handle-icon clickable"
