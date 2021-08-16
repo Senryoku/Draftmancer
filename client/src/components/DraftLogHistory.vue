@@ -58,7 +58,7 @@
 								<i
 									class="fas fa-file-download clickable"
 									@click="downloadLog(draftLog)"
-									v-tooltip="`Download log for session '${draftLog.sessionID'`"
+									v-tooltip="`Download log for session '${draftLog.sessionID}'`"
 								></i>
 							</div>
 						</template>
