@@ -55,7 +55,7 @@
 						<template v-if="!draftLog.delayed">
 							<div class="inline" style="min-width: 20px; text-align: center">
 								<i
-									class="fas fa-file-download"
+									class="fas fa-file-download clickable"
 									@click="downloadLog(draftLog)"
 									v-tooltip="'Download Game Log'"
 								></i>
@@ -74,7 +74,7 @@
 					<template v-else>Incompatible game log version</template>
 					<div class="inline" style="min-width: 20px; text-align: center">
 						<i
-							class="fas fa-trash"
+							class="fas fa-trash clickable"
 							@click="deleteLog(draftLog)"
 							v-tooltip="'Delete Game Log'"
 						></i>
