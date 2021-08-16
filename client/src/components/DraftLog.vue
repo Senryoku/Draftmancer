@@ -44,7 +44,7 @@
 						></i>
 					</div>
 					<span class="color-list" v-if="log.colors">
-						<div v-tooltip="`${log.userName}'s Deck Colors`">
+						<div v-tooltip="`${log.userName}'s main deck colors`">
 							<img
 								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 								:key="c"
@@ -65,7 +65,7 @@
 					<div class="controls">
 						<select
 							v-model="displayOptions.category"
-							:class="{ 'disabled-simple': displayOptions.category.length === '1' }"
+							:class="{ 'disabled-simple': displayOptions.length = 1 }"
 						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
