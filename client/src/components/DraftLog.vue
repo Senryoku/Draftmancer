@@ -44,17 +44,15 @@
 							style="margin: 0 0.5em"
 						></i>
 					</div>
-					<span
-						class="color-list"
-						v-if="log.colors"
-						v-tooltip="`Deck Colours`"
-					>
-						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
-							:key="c"
-							:src="'img/mana/' + c + '.svg'"
-							class="mana-icon"
-						/>
+					<span class="color-list" v-if="log.colors">
+						<div v-tooltip="`${log.userName}'s Deck Colours`">
+							<img
+								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+								:key="c"
+								:src="'img/mana/' + c + '.svg'"
+								class="mana-icon"
+							/>
+						</div>
 					</span>
 				</li>
 			</ul>
