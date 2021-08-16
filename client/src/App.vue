@@ -1164,7 +1164,7 @@
 						</dropdown>
 						<div
 							class="input-delete-icon"
-							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
+							v-tooltip.top="'Quick search for English card names and types in your deck and sideboard.'"
 						>
 							<input type="text" placeholder="Search..." v-model="deckFilter" /><span
 								@click="deckFilter = ''"
