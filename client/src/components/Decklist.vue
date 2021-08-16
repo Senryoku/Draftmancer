@@ -42,15 +42,17 @@
 					@click="displayStats = true"
 					v-tooltip="`${username}'s Deck Statistics`"
 				></i>
-				<span v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
-					<span v-if="landcount > 0" style="font-variant: small-caps">
-						<label>
-							<img
-								src="../assets/img/Land_symbol.svg"
-								style="height: 1em; vertical-align: text-bottom"
-							/> Lands
-						</label>
-					</span>
+				<span
+					v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
+					v-if="landcount > 0"
+					style="font-variant: small-caps"
+				>
+					<label>
+						<img
+							src="../assets/img/Land_symbol.svg"
+							style="height: 1em; vertical-align: text-bottom"
+						/> Lands
+					</label>
 					<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
 						<label>
 							<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom"/>
