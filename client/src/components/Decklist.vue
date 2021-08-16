@@ -11,10 +11,10 @@
 				<label>Deck ({{ list.main.length			
 				}}<span
 					style="font-size: 0.8em"
-					v-show="totalLands > 0"
+					v-show="landcount > 0"
 					v-tooltip="'Amount of basic lands included in deck (Not shown in decklist below).'"
 				>
-					+{{ totalLands }}</span
+					+{{ landcount }}</span
 				>)</label>
 			</template>
 			<template v-slot:controls>
