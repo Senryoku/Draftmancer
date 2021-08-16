@@ -83,7 +83,7 @@
 					<button
 						@click="displayedModal = 'draftLogs'"
 						class="flat"
-						v-tooltip="'Displays logs of your previous drafts and sealed'"
+						v-tooltip="'Display details of your previous games'"
 					>
 						<i class="fas fa-list-alt"></i> Game Logs
 					</button>
