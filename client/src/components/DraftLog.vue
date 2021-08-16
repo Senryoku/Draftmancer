@@ -63,9 +63,9 @@
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
+						<!-- disable select when there is only one option available in dropdown -->
 						<select
 							v-model="displayOptions.category"
-							:class="{ 'disabled-simple': displayOptions.length = 1 }"
 						>
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
