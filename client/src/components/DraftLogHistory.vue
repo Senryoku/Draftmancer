@@ -66,7 +66,7 @@
 						<!-- User has the full logs ready to be shared -->
 							<button
 								@click="$emit('sharelog', draftLog)"
-								v-tooltip="'Make game log available for all participants'"
+								v-tooltip="`Make log for session '${draftLog.sessionID}' available for all participants`"
 							>
 								<i class="fas fa-key"></i> Unlock
 							</button>
