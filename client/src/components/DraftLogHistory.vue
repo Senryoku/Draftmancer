@@ -46,7 +46,7 @@
 						class="flat"
 						@click="toggle(idx)"
 						v-show="!draftLog.delayed"
-						style="width: 6em"
+						style="width: 7em"
 					>
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Hide</template>
 						<template v-else> <i class="far fa-eye"></i> Show</template>
