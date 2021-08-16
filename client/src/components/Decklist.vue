@@ -12,7 +12,7 @@
 				}}<span
 					style="font-size: 0.8em"
 					v-show="landcount > 0"
-					v-tooltip="'Amount of basic lands included in deck (Not shown in decklist below).'"
+					v-tooltip="'Amount of basic lands in deck (Not shown in decklist below).'"
 				>
 					+{{ landcount }}</span
 				>)</label>
@@ -43,12 +43,12 @@
 					v-tooltip="`${username}'s Deck Statistics`"
 				></i>
 				<span v-tooltip="'Basic land count and distribution (Not shown in decklist below).'">
-					<span v-if="landcount > 0">
+					<span v-if="landcount > 0" style="font-variant: small-caps">
 						<label>
 							<img
 								src="../assets/img/Land_symbol.svg"
 								style="height: 1em; vertical-align: text-bottom"
-							/> Lands ({{ landcount }}):
+							/> Lands
 						</label>
 					</span>
 					<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
