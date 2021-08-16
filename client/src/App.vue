@@ -1052,7 +1052,7 @@
 						>)</label>
 					</template>
 					<template v-slot:controls>
-						<div style="font-variant: small-caps" v-if="deck.length > 0">
+						<div style="font-variant: small-caps" :class="{ 'disabled-simple': deck.length > 0}">
 							<label>Export</label>
 							<button
 								type="button"
@@ -1070,7 +1070,7 @@
 							</button>
 						</div>
 						<button
-							v-if="deck.length > 0 && currentDraftLog"
+							:class="{ 'disabled-simple': deck.length > 0 && currentDraftLog}"
 							type="button"
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
@@ -1078,7 +1078,7 @@
 							<i class="fas fa-clipboard-check"></i> Submit
 						</button>
 						<i
-							v-if="deck.length > 0"
+							:class="{ 'disabled-simple': deck.length > 0}"
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
 							v-tooltip.top="'Deck Statistics'"
@@ -1163,7 +1163,6 @@
 							</template>
 						</dropdown>
 						<div
-							v-if="deck.length > 0"
 							class="input-delete-icon"
 							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
 						>
