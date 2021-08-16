@@ -1350,7 +1350,7 @@
 							/>
 						</div>
 
-						<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+						<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions available</p>
 						<table v-else class="public-sessions">
 							<thead>
 								<tr>
@@ -1404,9 +1404,10 @@
 									><i class="fas fa-file-export"></i> Card List Importer</a
 								>
 							</li>
+							<!-- does the downlaod of this list with card overlap work at all? -->
 							<li
 								v-tooltip="
-									'Download the intersection of the collections of players in the session in text format.'
+									'Download a list of cards all players in this session have in their collection in common.'
 								"
 							>
 								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
