@@ -47,8 +47,8 @@
 						@click="toggle(idx)"
 						v-show="!draftLog.delayed"
 					>
-						<template v-if="expandedLogs[idx]" style="width: 5em"> <i class="far fa-eye-slash"></i> Hide</template>
-						<template v-else style="width: 5em"> <i class="far fa-eye"></i> Show</template>
+						<template v-if="expandedLogs[idx]" style="width: 6em"> <i class="far fa-eye-slash"></i> Hide</template>
+						<template v-else style="width: 6em"> <i class="far fa-eye"></i> Show</template>
 					</button>
 					<template v-if="draftLog.version === '2.0'">
 						<template v-if="!draftLog.delayed">
