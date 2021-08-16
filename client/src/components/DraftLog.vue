@@ -46,7 +46,7 @@
 					<span class="color-list" v-if="log.colors">
 						<div v-tooltip="`${log.userName}'s main deck colors`">
 							<img
-								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+								v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 8)"
 								:key="c"
 								:src="'img/mana/' + c + '.svg'"
 								class="mana-icon"
