@@ -1,5 +1,37 @@
 <template>
 	<div v-if="collectionStats" style="position: relative">
+		
+		<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
+		<button
+			@click="displayedModal = 'collection'"
+			class="flat"
+			v-tooltip="'Manage your MTG Arena card collection'"
+		>
+			<i class="fas fa-book"></i> Collection
+		</button>
+		<i
+			class="fas fa-file-upload green clickable"
+			v-if="hasCollection"
+			onclick="document.querySelector('#file-input').click()"
+			v-tooltip="'Collection uploaded. Update your collection by re-uploading your Player.log file.'"
+		></i>
+		<i
+			class="fas fa-file-upload red clickable"
+			v-else
+			onclick="document.querySelector('#file-input').click()"
+			v-tooltip="'Import your collection by uploading your Player.log file.'"
+		></i>
+		<div
+			class="inline"
+			v-show="hasCollection"
+			v-tooltip="
+				'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'
+			"
+		>
+			<input type="checkbox" v-model="useCollection" id="useCollection" />
+			<label for="useCollection">Restrict to Collection</label>
+		</div>
+		
 		<div style="display: flex; justify-content: space-between">
 			<div>
 				Select set:
