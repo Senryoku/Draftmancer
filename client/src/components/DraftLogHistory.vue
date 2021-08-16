@@ -57,7 +57,7 @@
 								<i
 									class="fas fa-file-download clickable"
 									@click="downloadLog(draftLog)"
-									v-tooltip="'Download Game Log'"
+									v-tooltip="'Download ${draftLog.sessionID} Log'"
 								></i>
 							</div>
 						</template>
@@ -76,7 +76,7 @@
 						<i
 							class="fas fa-trash clickable"
 							@click="deleteLog(draftLog)"
-							v-tooltip="'Delete Game Log'"
+							v-tooltip="`Delete game log for session '${draftLog.sessionID}'`"
 						></i>
 					</div>
 				</span>
