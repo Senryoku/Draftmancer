@@ -54,7 +54,7 @@
 							class="set-icon"
 							style="--invertedness: 100%"
 						/>
-						{{ selectedSet.fullName }}<br /><br />
+						<p>{{ selectedSet.fullName }}</p>
 					</caption>
 					<tr>
 						<th>Rarity</th>
