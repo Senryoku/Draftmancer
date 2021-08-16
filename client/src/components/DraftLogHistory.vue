@@ -15,8 +15,8 @@
 			>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
-			No saved game logs.<br /><br />
-			Your logs will be visible here after you've completed a game.
+			<p>No saved game logs.</p>
+			<p>Your logs will be visible here after you've completed a game.</p>
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div
