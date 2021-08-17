@@ -22,16 +22,16 @@
 					<div
 						class="bracket-player-name"
 						v-tooltip="`Current record: ${recordString(p)}`"
-						:class="{ clickable: draftlog }"
-						@click="if (draftlog) $emit('selectuser', p);"
+						:class="{ clickable: hasDeckList(p.userID) }"
+						@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
 					>
 						{{ p.userName }}
-						<i
-							class="fas fa-clipboard-check green"
-							v-if="hasDeckList(p.userID)"
-							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
-						></i>
 					</div>
+					<i
+						class="fas fa-clipboard-check green"
+						v-if="hasDeckList(p.userID)"
+						v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
+					></i>
 					<template v-if="match.isValid()">
 						<input
 							v-if="editable"
