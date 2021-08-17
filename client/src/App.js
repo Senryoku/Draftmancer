@@ -1651,7 +1651,7 @@ export default {
 				title: "Start Sealed",
 				html: `
 					<p>How many booster packs for each player (default is 6)?
-					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block"</p>
+					<input type="number" value="6" min="1" max="36" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block"</p>
 					<p>(Optional) Customize the set of each booster:
 					<div id="input-customBoosters" style="
 						display: grid;
