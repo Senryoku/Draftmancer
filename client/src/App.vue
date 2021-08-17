@@ -1072,8 +1072,7 @@
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
 						>
-							<i v-if="hasDeckList" class="fas fa-clipboard-check green"></i>
-							<i v-else class="fas fa-clipboard-check"></i> Submit
+							<i class="fas fa-clipboard-check"></i> Submit
 						</button>
 						<i
 							:class="{ 'disabled-simple': deck.length === 0 }"
