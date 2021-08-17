@@ -401,17 +401,14 @@
 			<div
 				v-if="!ownerIsPlayer"
 				class="generic-container"
-				v-tooltip="'Non-playing session owner.'"
+				v-tooltip="
+					sessionOwnerUsername
+						? `${sessionOwnerUsername} is the non-playing session owner. (Organizer)`
+						: 'Session owner is disconnected.'
+					"
 				style="flex: 0 3 auto; text-align: center"
 			>
-				<i
-					class="fas fa-crown subtle-gold"
-					v-tooltip.top="
-						sessionOwnerUsername
-							? `${sessionOwnerUsername} is the session owner.`
-							: 'Session owner is disconnected.'
-					"
-				></i>
+				<i class="fas fa-crown subtle-gold"></i>
 				<br />
 				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
