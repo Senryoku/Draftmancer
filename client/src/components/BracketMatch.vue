@@ -19,19 +19,22 @@
 						<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
 						<div v-else class="trophy"></div>
 					</template>
-					<div
+					<span
 						class="bracket-player-name"
-						v-tooltip="`Current record: ${recordString(p)}`"
-						:class="{ clickable: hasDeckList(p.userID) }"
-						@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
 					>
-						{{ p.userName }}
-					</div>
-					<i
-						class="fas fa-clipboard-check green"
-						v-if="hasDeckList(p.userID)"
-						v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
-					></i>
+						<div
+							:class="{ clickable: hasDeckList(p.userID) }"
+							@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
+							v-tooltip="`Current record: ${recordString(p)}`"
+						>
+							{{ p.userName }}
+						</div>
+						<i
+							class="fas fa-clipboard-check green"
+							v-if="hasDeckList(p.userID)"
+							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
+						></i>
+					</span>
 					<template v-if="match.isValid()">
 						<input
 							v-if="editable"
