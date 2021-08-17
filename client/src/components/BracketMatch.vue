@@ -21,12 +21,10 @@
 					</template>
 					<span
 						class="bracket-player-name"
+						:class="{ clickable: hasDeckList(p.userID) }"
+						@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
 					>
-						<div
-							:class="{ clickable: hasDeckList(p.userID) }"
-							@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
-							v-tooltip="`Current record: ${recordString(p)}`"
-						>
+						<div v-tooltip="`Current record: ${recordString(p)}`">
 							{{ p.userName }}
 						</div>
 						<i
