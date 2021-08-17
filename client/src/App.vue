@@ -403,7 +403,7 @@
 				class="generic-container"
 				v-tooltip="
 					sessionOwnerUsername
-						? `${sessionOwnerUsername} is the non-playing session owner. (Organizer)`
+						? `Non-playing session owner (Organizer)`
 						: 'Session owner is disconnected.'
 					"
 				style="flex: 0 3 auto; text-align: center"
