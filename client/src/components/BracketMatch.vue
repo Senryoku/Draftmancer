@@ -24,10 +24,10 @@
 						:class="{ clickable: hasDeckList(p.userID) }"
 						@click="if (hasDeckList(p.userID)) $emit('selectuser', p);"
 					>
-						<div v-tooltip="`Current record: ${recordString(p)}`">{{ p.userName }}</div>
+						<div class="inline" v-tooltip="`Current record: ${recordString(p)}`">{{ p.userName }}</div>
 						<i
 							class="fas fa-clipboard-check green"
-							v-if="hasDeckList(p.userID)"
+							v-show="hasDeckList(p.userID)"
 							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
 						></i>
 					</div>
