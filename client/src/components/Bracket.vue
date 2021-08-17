@@ -152,7 +152,7 @@ export default {
 					window.location.port ? ":" + window.location.port : ""
 				}/bracket?session=${encodeURI(this.sessionID)}`
 			);
-			fireToast("success", "Bracket Link copied to clipboard!");
+			fireToast("success", "Bracket link copied to clipboard!");
 		},
 		hasDeckList: function(userID) {
 			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
