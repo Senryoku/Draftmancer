@@ -1520,7 +1520,7 @@ export default {
 				lands: this.lands,
 				timestamp: Date.now(),
 			});
-			fireToast("success", "Deck now visible in logs and bracket!");
+			fireToast("success", "Deck is now visible in bracket and logs!");
 		},
 		importDeck: async function() {
 			const response = await fetch("/getDeck", {
