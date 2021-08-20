@@ -796,9 +796,9 @@
 							"
 							:botpicked="
 								draftingState !== DraftState.Waiting &&
-									botScores &&
-									displayBotScores &&
-									idx === botScores.chosenOption
+								botScores &&
+								displayBotScores &&
+								idx === botScores.chosenOption
 							"
 						></booster-card>
 					</transition-group>
@@ -1285,6 +1285,13 @@
 								not be available depending on the card pool used for the draft as they require set
 								specific training (typically, we'll fallback to the generic bots for the latest sets).
 							</p>
+							<p>
+								You can help re-training the bots simply by drafting right here and by participating in
+								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+									>ruler101's Patreon <i class="fab fa-patreon"></i
+								></a>
+								to cover the training cost.
+							</p>
 						</div>
 						<div class="news">
 							<em>September 11, 2021</em>
@@ -1313,13 +1320,6 @@
 									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
 								></a>
 								to draw to their attention to the problem.
-							</p>
-						</div>
-						<div class="news">
-							<em>August 05, 2021</em>
-							<p>
-								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
-								Added Jumpstart: Historic Horizons Gamemode.
 							</p>
 						</div>
 					</div>
