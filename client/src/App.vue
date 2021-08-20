@@ -2272,7 +2272,7 @@
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
-			<h2 slot="header">Support me</h2>
+			<h2 slot="header">Support MTGADraft</h2>
 			<div slot="body">
 				<div style="max-width: 50vw">
 					<p>Hello there!</p>
@@ -2281,7 +2281,7 @@
 						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
 						that sounds like a good use of my time and you want to help me stay motivated and high on
 						cafeine, you can donate here via
-						<em>PayPal</em>
+						<em><i class="fab fa-paypal"></i> PayPal</em>
 						:
 					</p>
 					<form
@@ -2289,6 +2289,7 @@
 						method="post"
 						target="_blank"
 						rel="noopener nofollow"
+						style="margin-left: 1em"
 					>
 						<input type="hidden" name="cmd" value="_s-xclick" />
 						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
@@ -2301,6 +2302,20 @@
 							alt="Donate with PayPal button"
 						/>
 					</form>
+					<p>
+						ruler101, developper of mtgdraftbots (which MTGADraft uses when possible) and
+						<a href="https://cubeartisan.net" target="_blank" rel="noopener nofollow">cubeartisan</a>, also
+						has a
+						<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+							>Patreon</a
+						>
+						were you can support her and help cover the cost of bot training:
+					</p>
+					<p style="margin-left: 1em">
+						<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+							><i class="fab fa-patreon"></i> ruler101's Patreon</a
+						>
+					</p>
 					<p>Thank you very much!</p>
 					<p>Sen</p>
 				</div>
