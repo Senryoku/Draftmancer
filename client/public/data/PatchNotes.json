@@ -1,5 +1,9 @@
 [
 	{
+		"date": "20/08/2021",
+		"notes": ["Fixed a bug preventing Kaladesh Remaster to be used in Chaos Draft."]
+	},
+	{
 		"date": "05/08/2021",
 		"notes": ["Preliminary Jumpstart: Historic Horizons support."]
 	},

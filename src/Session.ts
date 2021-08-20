@@ -33,6 +33,7 @@ import {
 	PaperBoosterFactory,
 	getSetFoilRate,
 	weightedRandomIdx,
+	PaperBoosterSizes,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
@@ -783,8 +784,12 @@ export class Session implements IIndexable {
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterSet]) {
-								// Use the corresponding PaperBoosterFactories if possible
-								if (acceptPaperBoosterFactories && isPaperBoosterFactoryAvailable(boosterSet)) {
+								// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
+								if (
+									acceptPaperBoosterFactories &&
+									isPaperBoosterFactoryAvailable(boosterSet) &&
+									(!addLandSlot || PaperBoosterSizes[boosterSet] === 15)
+								) {
 									usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
 								} else {
 									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.

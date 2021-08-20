@@ -785,6 +785,9 @@ export class PaperBoosterFactory implements IBoosterFactory {
 export const PaperBoosterFactories: {
 	[set: string]: (options?: Options) => PaperBoosterFactory;
 } = {};
+export const PaperBoosterSizes: {
+	[set: string]: number;
+} = {};
 for (let s of PaperBoosterData as any[]) {
 	let set: SetInfo = s as SetInfo;
 	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
@@ -836,4 +839,8 @@ for (let s of PaperBoosterData as any[]) {
 		}
 		return new PaperBoosterFactory(set, options, possibleContent);
 	};
+	PaperBoosterSizes[set.code] = Object.keys(set.boosters[0].sheets).reduce(
+		(acc: number, curr: string): number => (acc += set.boosters[0].sheets[curr]),
+		0
+	);
 }
