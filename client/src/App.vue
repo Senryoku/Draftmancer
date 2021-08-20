@@ -1277,7 +1277,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>August 10, 2021</em>
+							<em>August 20, 2021</em>
 							<p>
 								New experimental bots, courtesy of
 								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
@@ -1288,6 +1288,13 @@
 								These should make more informed decisions than our previous really simple bots, but may
 								not be available depending on the card pool used for the draft as they require set
 								specific training (typically, we'll fallback to the generic bots for the latest sets).
+							</p>
+							<p>
+								You can help re-training the bots simply by drafting right here and by participating in
+								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+									>ruler101's Patreon <i class="fab fa-patreon"></i
+								></a>
+								to cover the training cost.
 							</p>
 						</div>
 						<div class="news">
@@ -1312,14 +1319,6 @@
 									>donating <i class="fas fa-external-link-alt"></i
 								></a>
 								a few bucks for the time spent developing and maintaining it. Thank you! :) - Sen
-							</p>
-						</div>
-						<div class="news">
-							<em>June 3, 2021</em>
-							<p>
-								<img src="img/sets/mh2.svg" class="set-icon" style="--invertedness: 100%" />
-								Modern Horizons 2 (MH2) is now available! (see the "<i class="fas fa-ellipsis-h"></i>
-								More sets..." option)<br />
 							</p>
 						</div>
 					</div>
