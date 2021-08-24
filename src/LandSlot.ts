@@ -32,7 +32,7 @@ export class SpecialLandSlot extends BasicLandSlot {
 
 	setup(commons: CardPool) {
 		for (let c of this.commonLandsIds) {
-			if (c in commons) {
+			if (commons.has(c)) {
 				this.landsToDistribute.set(c, commons.get(c) as number);
 				commons.delete(c);
 			}
