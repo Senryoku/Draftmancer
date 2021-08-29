@@ -111,7 +111,7 @@ for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
         for o in carddata:
-            if o['isPrimaryCard']:
+            if not ('isSecondaryCard' in o and o['isSecondaryCard']):
                 o['set'] = o['set'].lower()
                 if o['set'] == 'conf':
                     o['set'] = 'con'
