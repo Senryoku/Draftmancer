@@ -1236,6 +1236,17 @@ export default {
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
+		uploadMTGALogs() {
+			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
+			//document.querySelector("#file-input").click();
+			Alert.fire({
+				icon: "error",
+				title: "Collection import is disabled",
+				html: `With the Jumpstart: Historic Horizons update, Wizards removed player collection from MTGA player logs which was our only non-intrusive way to get them. Collection import is thus disabled until the situation is resolved.
+				<br/>
+				You can vote for <a href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855" target="_blank" rel="noopener nofollow"> this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i></a> to draw to their attention to the problem.`,
+			});
+		},
 		parseMTGALog: function(e) {
 			let file = e.target.files[0];
 			if (!file) {
@@ -1246,6 +1257,7 @@ export default {
 				let contents = e.target.result;
 
 				// Propose to use MTGA user name
+				// FIXME: The username doesn't seem to appear in the log anymore as of 29/08/2021
 				let nameFromLogs = getCookie("nameFromLogs", "");
 				if (nameFromLogs === "") {
 					let m = contents.match(/DisplayName:(.+)#(\d+)/);
@@ -1273,7 +1285,7 @@ export default {
 					}
 				}
 
-				// Specific error message when detailed logs are disabled in MTGA
+				// Specific error message when detailed logs are disabled in MTGA (could also use /"DetailedLogs\\\\\\":(true|false)/ regex);
 				if (
 					contents.indexOf("DETAILED LOGS: DISABLED") !== -1 &&
 					contents.indexOf("DETAILED LOGS: ENABLED") === -1
@@ -1300,22 +1312,20 @@ export default {
 						const collectionStr = contents.slice(collectionStart, collectionEnd);
 						const collection = JSON.parse(collectionStr)["payload"];
 
-						const inventoryStart = contents.indexOf(
-							"{",
-							contents.indexOf("PlayerInventory.GetPlayerInventory", collectionEnd)
-						);
+						const inventoryStart = contents.indexOf('{"InventoryInfo', collectionEnd);
 						const inventoryEnd = contents.indexOf("\n", inventoryStart);
 						const inventoryStr = contents.slice(inventoryStart, inventoryEnd);
-						const rawInventory = JSON.parse(inventoryStr)["payload"];
+						const rawInventory = JSON.parse(inventoryStr)["InventoryInfo"];
 						const inventory = {
 							wildcards: {
-								common: Math.max(0, rawInventory.wcCommon),
-								uncommon: Math.max(0, rawInventory.wcUncommon),
-								rare: Math.max(0, rawInventory.wcRare),
-								mythic: Math.max(0, rawInventory.wcMythic),
+								common: Math.max(0, rawInventory.WildCardCommons),
+								uncommon: Math.max(0, rawInventory.WildCardUnCommons),
+								rare: Math.max(0, rawInventory.WildCardRares),
+								mythic: Math.max(0, rawInventory.WildCardMythics),
 							},
-							vaultProgress: Math.max(0, rawInventory.vaultProgress),
+							vaultProgress: Math.max(0, rawInventory.TotalVaultProgress) / 10,
 						};
+						console.log(inventory);
 
 						return { collection, inventory };
 					} catch (e) {

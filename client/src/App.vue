@@ -31,10 +31,7 @@
 					v-tooltip="'Collection Import Help'"
 				></i>
 				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
-				<button
-					onclick="document.querySelector('#file-input').click()"
-					v-tooltip="'Import your collection by uploading your Player.log file.'"
-				>
+				<button @click="uploadMTGALogs" v-tooltip="'Import your collection by uploading your Player.log file.'">
 					Upload
 					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
 				</button>
@@ -1253,6 +1250,28 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>August 29, 2021</em>
+							<p>
+								<i class="fas fa-exclamation-triangle red"></i>
+								<strong>MTGA Collection import disabled!</strong>
+							</p>
+							<p>
+								With the Jumpstart: Historic Horizons update, Wizards removed player collection from
+								MTGA player logs. It was our only non-intrusive way to get them. Collection import is
+								thus disabled until the situation is resolved.
+								<br />
+								You can vote for
+								<a
+									href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855"
+									target="_blank"
+									rel="noopener nofollow"
+								>
+									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
+								></a>
+								to draw to their attention to the problem.
+							</p>
+						</div>
+						<div class="news">
 							<em>August 05, 2021</em>
 							<p>
 								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1274,14 +1293,6 @@
 									>donating <i class="fas fa-external-link-alt"></i
 								></a>
 								a few bucks for the time spent developing and maintaining it. Thank you! :) - Sen
-							</p>
-						</div>
-						<div class="news">
-							<em>June 3, 2021</em>
-							<p>
-								<img src="img/sets/mh2.svg" class="set-icon" style="--invertedness: 100%" />
-								Modern Horizons 2 (MH2) is now available! (see the "<i class="fas fa-ellipsis-h"></i>
-								More sets..." option)<br />
 							</p>
 						</div>
 					</div>
