@@ -1231,7 +1231,7 @@ export class Session implements IIndexable {
 			});
 			Connections[this.owner].socket.emit("startDraft");
 			// Update draft log for live display if owner in not playing
-			if (["owner", "everyone"].includes(this.draftLogRecipients)) {
+			if (this.shouldSendLiveUpdates()) {
 				Connections[this.owner].socket.emit("draftLogLive", { log: this.draftLog });
 			}
 		}
@@ -1312,11 +1312,7 @@ export class Session implements IIndexable {
 		});
 
 		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
-		if (
-			!this.ownerIsPlayer &&
-			["owner", "everyone"].includes(this.draftLogRecipients) &&
-			this.owner in Connections
-		) {
+		if (this.shouldSendLiveUpdates()) {
 			Connections[this.owner].socket.emit("draftLogLive", { userID: userID, pick: pickData });
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
@@ -1350,11 +1346,16 @@ export class Session implements IIndexable {
 			burned.push(burnedIdx);
 			s.boosters[boosterIndex].splice(burnedIdx, 1);
 		}
-		this.draftLog?.users[instance.id].picks.push({
+
+		const pickData = {
 			pick: pickedIndices,
 			burn: burned,
 			booster: startingBooster,
-		});
+		};
+		this.draftLog?.users[instance.id].picks.push(pickData);
+		if (this.shouldSendLiveUpdates())
+			Connections[this.owner].socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
+
 		return pickedCards;
 	}
 
@@ -1962,6 +1963,13 @@ export class Session implements IIndexable {
 				decklist: decklist,
 			});
 		});
+	}
+
+	// Indicates if the DraftLogLive feature is in use
+	shouldSendLiveUpdates() {
+		return (
+			!this.ownerIsPlayer && ["owner", "everyone"].includes(this.draftLogRecipients) && this.owner in Connections
+		);
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
