@@ -1474,6 +1474,7 @@ export class Session implements IIndexable {
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
+		this.stopCountdown();
 		this.cleanDraftState();
 	}
 
