@@ -896,6 +896,8 @@ export class Session implements IIndexable {
 	cleanDraftState() {
 		this.draftState = undefined;
 		this.drafting = false;
+		this.draftPaused = false;
+		this.stopCountdown();
 		this.disconnectedUsers = {};
 	}
 
@@ -1474,7 +1476,6 @@ export class Session implements IIndexable {
 		this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
 		console.log(`Session ${this.id} draft ended.`);
-		this.stopCountdown();
 		this.cleanDraftState();
 	}
 

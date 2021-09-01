@@ -712,6 +712,7 @@ export default {
 					timer: 1500,
 				});
 				this.drafting = false;
+				this.draftPaused = false;
 				if (this.draftingState === DraftState.Watching) {
 					this.draftingState = undefined;
 				} else {
