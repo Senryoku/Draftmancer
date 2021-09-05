@@ -52,6 +52,18 @@ describe("Set Specific Booster Rules", function() {
 		expect(newToModernCount).to.equal(1);
 	};
 
+	const validateMIDBooster = function(booster) {
+		expect(booster.map(c => c.set).every(s => s === "mid")).to.be.true;
+		let CommonDFC = booster.reduce((acc, val) => {
+			return acc + (val.rarity === "common" && val.name.includes("//")) ? 1 : 0;
+		}, 0);
+		expect(CommonDFC).to.equal(1);
+		let UncommonDFC = booster.reduce((acc, val) => {
+			return acc + (val.rarity === "uncommon" && val.name.includes("//")) ? 1 : 0;
+		}, 0);
+		expect(UncommonDFC).to.be.at.most(1);
+	};
+
 	beforeEach(function(done) {
 		disableLogs();
 		done();
@@ -118,6 +130,7 @@ describe("Set Specific Booster Rules", function() {
 	testSet("znr", validateZNRBooster, "exactly one MDFC per pack");
 	testSet("stx", validateSTXBooster, "exactly one STA and 1 or 2 lesson(s) per pack");
 	testSet("mh2", validateMH2Booster, "exactly one New-to-Modern card per pack");
+	testSet("mid", validateMIDBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 
 	it(`Validate mixed Custom boosters.`, function(done) {
 		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
