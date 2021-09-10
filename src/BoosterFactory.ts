@@ -625,43 +625,50 @@ class MH2BoosterFactory extends BoosterFactory {
 
 // Innistrad: Midnight Hunt
 //  - Exactly one common double-faced card
-//  - At most one uncommon DFC
+//  - Exactly one uncommon or rare/mythic DFC
 class MIDBoosterFactory extends BoosterFactory {
-	doubleFacedCommons: CardPool;
-	doubleFacedUncommons: CardPool;
+	doubleFacedCards: SlotedCardPool;
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [doubleFacedCommons, filteredCardPool] = filterCardPool(
-			cardPool,
-			(cid: CardID) => Cards[cid].rarity === "common" && Cards[cid].name.includes("//")
+		const [doubleFacedCards, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].name.includes("//")
 		);
 		const [doubleFacedUncommons, refilteredCardPool] = filterCardPool(
 			filteredCardPool,
 			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
 		);
+		const [doubleFacedRares, rerefilteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
+		);
 		super(refilteredCardPool, landSlot, options);
-		this.doubleFacedCommons = doubleFacedCommons["common"];
-		this.doubleFacedUncommons = doubleFacedUncommons["uncommon"];
+		this.doubleFacedCards = doubleFacedCards;
 	}
 	generateBooster(targets: Targets) {
-		const doubleFacedCommonsCounts = this.doubleFacedCommons.size;
+		const doubleFacedCommonsCounts = this.doubleFacedCards["common"].size;
 		// Ignore the rule if there's no common double-faced card left
 		if (doubleFacedCommonsCounts <= 0) {
 			return super.generateBooster(targets);
 		} else {
 			let pickedDoubleFacedCommon: UniqueCard | null = null;
-			let pickedDoubleFacedUncommon: UniqueCard | null = null;
+			let pickedDoubleFacedRareOrUncommon: UniqueCard | null = null;
 			let updatedTargets = Object.assign({}, targets);
 			if (targets["common"] > 0) {
-				pickedDoubleFacedCommon = pickCard(this.doubleFacedCommons, []);
+				pickedDoubleFacedCommon = pickCard(this.doubleFacedCards["common"], []);
 				--updatedTargets["common"];
 			}
-			// TODO: Actual rate of uncommon dfc is unknown
-			if (
-				targets["uncommon"] > 0 &&
-				this.doubleFacedUncommons.size > 0 &&
-				Math.random() < this.doubleFacedUncommons.size / this.cardPool["uncommon"].size
-			) {
-				pickedDoubleFacedUncommon = pickCard(this.doubleFacedUncommons, []);
+			// TODO: Actual rate of rare/uncommon dfc is unknown
+			const rareMCount =
+				this.doubleFacedCards["rare"].size +
+				(this.options.mythicPromotion ? this.doubleFacedCards["mythic"].size : 0);
+			if (targets["rare"] > 0 && rareMCount / this.doubleFacedCards["uncommon"].size < Math.random()) {
+				if (this.options.mythicPromotion && Math.random() <= mythicRate) {
+					pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["mythic"], []);
+				} else {
+					pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["rare"], []);
+				}
+				--updatedTargets["rare"];
+			} else if (targets["uncommon"] > 0 && this.doubleFacedCards["uncommon"].size > 0) {
+				pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["uncommon"], []);
 				--updatedTargets["uncommon"];
 			}
 			const booster = super.generateBooster(updatedTargets);
@@ -669,13 +676,16 @@ class MIDBoosterFactory extends BoosterFactory {
 			// Insert the Double-Faced common as the first common in the pack
 			if (pickedDoubleFacedCommon)
 				booster.splice(updatedTargets["rare"] + updatedTargets["uncommon"], 0, pickedDoubleFacedCommon);
-			// Insert the Double-Faced uncommon randomly among the other uncommons in the pack
-			if (pickedDoubleFacedUncommon)
+			// Insert the Double-Faced uncommon randomly among the other uncommons in the pack, or the rare/mythic on top
+			if (pickedDoubleFacedRareOrUncommon) {
 				booster.splice(
-					updatedTargets["rare"] + Math.random() * updatedTargets["uncommon"],
+					pickedDoubleFacedRareOrUncommon.rarity === "uncommon"
+						? updatedTargets["rare"] + Math.random() * updatedTargets["uncommon"]
+						: 0,
 					0,
-					pickedDoubleFacedUncommon
+					pickedDoubleFacedRareOrUncommon
 				);
+			}
 			return booster;
 		}
 	}
@@ -782,7 +792,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 	set: SetInfo;
 	options: Options;
 	possibleContent: BoosterInfo[];
-	landSlot: null;
+	landSlot: null = null;
 
 	constructor(set: SetInfo, options: Options, possibleContent: BoosterInfo[]) {
 		this.set = set;

@@ -59,9 +59,13 @@ describe("Set Specific Booster Rules", function() {
 		}, 0);
 		expect(CommonDFC).to.equal(1);
 		let UncommonDFC = booster.reduce((acc, val) => {
-			return acc + (val.rarity === "uncommon" && val.name.includes("//")) ? 1 : 0;
+			return acc +
+				((val.rarity === "uncommon" || val.rarity === "rare" || val.rarity === "mythic") &&
+					val.name.includes("//"))
+				? 1
+				: 0;
 		}, 0);
-		expect(UncommonDFC).to.be.at.most(1);
+		expect(UncommonDFC).to.equal(1);
 	};
 
 	beforeEach(function(done) {
