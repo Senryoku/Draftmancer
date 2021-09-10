@@ -196,6 +196,7 @@ describe("Sets content", function() {
 		mh2: { common: 101, uncommon: 100, rare: 78, mythic: 24 },
 		afr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		//j21: { common: 383 + 20, uncommon: 286, rare: 85, mythic: 13 }, // The 20 added common are additional lands
+		mid: { common: 101, uncommon: 80, rare: 66, mythic: 20 },
 	};
 
 	beforeEach(function(done) {
