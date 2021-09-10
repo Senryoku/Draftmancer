@@ -1250,6 +1250,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>September 2021</em>
+							<p>
+								<img src="img/sets/mid.svg" class="set-icon" style="--invertedness: 100%" />
+								Innistrad: Midnight Hunt (MID) is now available!
+							</p>
+						</div>
+						<div class="news">
 							<em>August 29, 2021</em>
 							<p>
 								<i class="fas fa-exclamation-triangle red"></i>
@@ -1276,23 +1283,6 @@
 							<p>
 								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
 								Added Jumpstart: Historic Horizons Gamemode.
-							</p>
-						</div>
-						<div class="news">
-							<em>July 07, 2021</em>
-							<p>
-								<img src="img/sets/afr.svg" class="set-icon" style="--invertedness: 100%" />
-								Adventures in the Forgotten Realms (AFR) is now available!
-							</p>
-							<p>
-								If you get regular use out of MTGADraft, please consider
-								<a
-									href="https://www.paypal.com/donate?hosted_button_id=6L2CUS6DH82DL"
-									target="_blank"
-									rel="noopener nofollow"
-									>donating <i class="fas fa-external-link-alt"></i
-								></a>
-								a few bucks for the time spent developing and maintaining it. Thank you! :) - Sen
 							</p>
 						</div>
 					</div>
