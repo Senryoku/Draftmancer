@@ -657,19 +657,17 @@ class MIDBoosterFactory extends BoosterFactory {
 				--updatedTargets["common"];
 			}
 			// TODO: Actual rate of rare/uncommon dfc is unknown
-			const rareMCount =
-				this.doubleFacedCards["rare"].size +
-				(this.options.mythicPromotion ? this.doubleFacedCards["mythic"].size : 0);
-			if (targets["rare"] > 0 && rareMCount / this.doubleFacedCards["uncommon"].size < Math.random()) {
-				if (this.options.mythicPromotion && Math.random() <= mythicRate) {
-					pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["mythic"], []);
-				} else {
-					pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["rare"], []);
-				}
-				--updatedTargets["rare"];
-			} else if (targets["uncommon"] > 0 && this.doubleFacedCards["uncommon"].size > 0) {
+			const pickedRarity = rollSpecialCardRarity(
+				countBySlot(this.doubleFacedCards),
+				updatedTargets,
+				this.options
+			);
+			if (pickedRarity === "uncommon") {
 				pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["uncommon"], []);
 				--updatedTargets["uncommon"];
+			} else if (pickedRarity === "rare" || pickedRarity === "mythic") {
+				pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards[pickedRarity], []);
+				--updatedTargets["rare"];
 			}
 			const booster = super.generateBooster(updatedTargets);
 			if (!booster) return false;
