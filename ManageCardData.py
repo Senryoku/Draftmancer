@@ -176,9 +176,13 @@ PrimarySets.extend(['ugl', 'unh', 'ust', 'und'])
 
 def append_set_cards(allcards, results):
     for c in results["data"]:
-        if not any(c["id"] == card["id"] for card in allcards):
-            print("Added: {}".format(c["name"]))
+        try:
+            idx = next(i for i, card in enumerate(allcards) if c["id"] == card["id"])
+            allcards[idx] = c
+            print("Updated: {}".format(c["name"]))
+        except StopIteration:
             allcards.append(c)
+            print("Added: {}".format(c["name"]))
 
 
 # Manually fetch up-to-date data for a specific set (really unoptimized)
