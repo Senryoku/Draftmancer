@@ -505,13 +505,13 @@
     {
         "name": "Delirium",
         "colors": [
-            "R",
-            "U"
+            "U",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/2/e22f973e-bbff-4f9e-a598-95d21d8ce721.jpg?1630248698",
         "cards": [
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "63f00a6e-9716-4928-967c-00682b97ba9a",
             "308e9006-d072-46f4-befd-6a8d37f48582",
             "19ce1d89-23af-4a17-962d-9b42bd0c61b6",
@@ -843,14 +843,14 @@
     {
         "name": "Evolving",
         "colors": [
-            "U",
-            "G"
+            "G",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/f/ff824392-fb5c-496c-be2f-6dfa6e04e3a2.jpg?1584831850",
         "cards": [
             "213d950a-a6b8-4088-a96e-ac9c94b4f267",
-            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
             "e0f31228-0c47-4c51-932d-50fdec965f15",
             "98971851-e17e-4c09-bbe3-f550a52ecc5a",
             "ff824392-fb5c-496c-be2f-6dfa6e04e3a2"
@@ -1295,15 +1295,15 @@
     {
         "name": "Goblin Fodder",
         "colors": [
-            "R",
-            "B"
+            "B",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/7/5/7515e5b3-5240-480d-8a0e-5a989c1a906d.jpg?1630249421",
         "cards": [
             "dd2202a0-9c79-4ddb-b33e-a4aa01ab022b",
             "1a67c196-632c-4c7b-a132-de07d894e634",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "34d6a2d0-d855-4b87-9f4c-58dda0b81c82",
             "a897f6a7-e892-45d0-a43b-a823fc0884ff",
             "7515e5b3-5240-480d-8a0e-5a989c1a906d"
@@ -2022,15 +2022,15 @@
     {
         "name": "Lost and Found",
         "colors": [
-            "U",
-            "B"
+            "B",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/3/8348225c-dc67-4500-9f74-6c2e7dfcaaea.jpg?1630247979",
         "cards": [
             "32d3fa1b-79b5-40b0-99ea-0249aa8959a4",
             "84aa7067-1422-461b-893d-4d537e9384d1",
-            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "2583c3c4-4238-4136-9020-37d46bff73d0",
             "63f00a6e-9716-4928-967c-00682b97ba9a",
             "da367981-9d6f-419f-9f58-f969b6183336"
@@ -2118,8 +2118,8 @@
     {
         "name": "Madness",
         "colors": [
-            "R",
-            "B"
+            "B",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/1/61093e82-401a-4c56-a627-1455a9a337b8.jpg?1630251498",
@@ -2129,7 +2129,7 @@
             "1db3f83b-2b2c-4f63-84a4-8f7194c98201",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
             "352aa417-412d-4344-aaa4-e2fae627fbbd",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "36bf0a33-a2da-438a-85df-0e3c2b842a74",
             "61093e82-401a-4c56-a627-1455a9a337b8"
         ],
@@ -2212,14 +2212,14 @@
     {
         "name": "Many Faced",
         "colors": [
-            "W",
-            "B"
+            "B",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/4/34c0e3a0-672f-40c9-be66-8b916a4588f2.jpg?1630244913",
         "cards": [
             "1a578419-020e-4b54-be89-62eb186bfce4",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "ac62b522-b858-4d2f-9079-bb90502e4c37",
             "4a55bb40-02f1-4dca-8ea8-cb62fc8335ba",
             "34c0e3a0-672f-40c9-be66-8b916a4588f2"
@@ -2656,13 +2656,13 @@
     {
         "name": "On the Draw",
         "colors": [
-            "R",
-            "U"
+            "U",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/1/1/11754da2-dc6a-47f7-9744-4db71ea9d336.jpg?1630249605",
         "cards": [
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
             "789c5c2b-3e51-4f6c-ac76-d276facf716f",
             "0461867b-ec35-4d37-a398-5247e06c4afe",
             "11754da2-dc6a-47f7-9744-4db71ea9d336"
@@ -3140,15 +3140,15 @@
     {
         "name": "Reanimated",
         "colors": [
-            "W",
-            "B"
+            "B",
+            "W"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/8/8/88c9aa12-7e26-4beb-a36c-1aa35bc77096.jpg?1630251875",
         "cards": [
             "9b296004-1cdb-4cd7-a9bf-2063151e8e2e",
             "84aa7067-1422-461b-893d-4d537e9384d1",
-            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "63d2259f-0cc3-439d-a08f-d66aaf145f25",
             "5ad416dc-4ab6-45b5-9d54-080f5becde60",
             "a1523cda-c47d-4419-a5d3-fd6ed9867c56",
@@ -3743,8 +3743,8 @@
     {
         "name": "Scorched Earth",
         "colors": [
-            "R",
-            "G"
+            "G",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/d/c/dc124a43-e4f5-488f-8747-92736fab8e09.jpg?1630252156",
@@ -3752,7 +3752,7 @@
             "3f25391c-bd12-436b-a68a-52b133c4a0ed",
             "8b62a6a7-f94e-42d9-8d9f-8fc2b5dd302c",
             "b601374d-c295-494c-881f-5c8ab7005ac2",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
             "a3d69f24-b257-4e24-924b-5a572692e893"
         ],
         "alts": [
@@ -3995,15 +3995,15 @@
     {
         "name": "Sliver Assault",
         "colors": [
-            "R",
-            "W"
+            "W",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/1/e11b0c43-2b36-419d-a567-23f1ebcdd340.jpg?1630251544",
         "cards": [
             "e11b0c43-2b36-419d-a567-23f1ebcdd340",
             "5b2c564f-2dfd-49f4-8169-021c348c9578",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "f27cfdab-7a27-4cd9-9f0d-c6fe8294e6c7",
             "5a05798c-9bc3-45ec-85d4-1c9769929bc9",
             "0d495127-497e-47f1-bdb5-e2e5e98756f0"
         ],
@@ -4122,11 +4122,11 @@
     {
         "name": "Sliver Hive",
         "colors": [
-            "W",
-            "G",
-            "U",
             "B",
-            "R"
+            "R",
+            "W",
+            "U",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/f/6/f64d033b-8a30-4ba7-b3ae-b67997a396f2.jpg?1630251636",
@@ -4341,8 +4341,8 @@
     {
         "name": "Squirrels",
         "colors": [
-            "G",
-            "B"
+            "B",
+            "G"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/3/0/30310d1c-27b5-4d49-95ea-aad530190974.jpg?1630250174",
@@ -4350,7 +4350,7 @@
             "99ce3a33-c7a1-411c-a320-575eacf5a682",
             "5c2d77ee-73d5-4eba-b188-4a0f298c1642",
             "8ef8d801-7d7c-4aab-9429-00c9fa76f743",
-            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
+            "bbf00df0-3857-4bd7-8993-656eb3426511",
             "5db1fca1-58bf-4860-9c5e-ae43f0122620",
             "c98a3c11-9761-4037-a6bf-f5d41108b738",
             "39614e65-47a1-4d6e-aa9c-7c2ae32dd2ae"
@@ -4446,14 +4446,14 @@
     {
         "name": "Storm",
         "colors": [
-            "R",
-            "G"
+            "G",
+            "R"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/6/5/658ec634-3eb2-4967-b938-d20d31ab77e3.jpg?1624592623",
         "cards": [
             "8f439a94-c3fa-4813-abbb-a39200a88bc7",
-            "5e82b3fa-a7b8-4ca2-9ce3-054475b407cf",
+            "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
             "d5bd5788-1201-497b-93cf-d638b9cf5e7b",
             "d2e5d72a-5ef4-4578-8595-66eeef762c21",
             "f2d99189-ed73-4fe8-ae99-6c7e2921189e"
@@ -4613,8 +4613,8 @@
     {
         "name": "Tinkerer",
         "colors": [
-            "U",
-            "G"
+            "G",
+            "U"
         ],
         "cycling_land": false,
         "image": "https://c1.scryfall.com/file/scryfall-cards/border_crop/front/e/4/e4b2e6f3-bba8-4ee5-b100-a5d89bd76253.jpg?1630251808",
@@ -4730,8 +4730,8 @@
             ],
             [
                 {
-                    "name": "Lonely Sandbar",
-                    "id": "9db4c029-3f8d-4fd7-bb40-0414ca6fd4a0",
+                    "name": "Tranquil Thicket",
+                    "id": "9ffbc971-f61c-4e04-bc52-4f9b5c31ef37",
                     "weight": 80
                 },
                 {
