@@ -1250,7 +1250,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>September 2021</em>
+							<em>September 11, 2021</em>
 							<p>
 								<img src="img/sets/mid.svg" class="set-icon" style="--invertedness: 100%" />
 								Innistrad: Midnight Hunt (MID) is now available!
