@@ -63,17 +63,15 @@
         "klr",
         "khm",
         "stx",
-        "afr"
+        "afr",
+        "mid"
     ],
     "StandardSets": [
-        "eld",
-        "thb",
-        "iko",
-        "m21",
         "znr",
         "khm",
         "stx",
-        "afr"
+        "afr",
+        "mid"
     ],
     "BasicLandNames": {
         "en": {
@@ -222,6 +220,7 @@
         }
     ],
     "PrimarySets": [
+        "mid",
         "j21",
         "afr",
         "mh2",

@@ -1,6 +1,6 @@
 "use strict";
 
-import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsBySet } from "./Cards.js";
+import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsBySet, UniqueCard } from "./Cards.js";
 import { shuffleArray, randomInt, Options } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
@@ -20,7 +20,7 @@ const foilRarityRates: { [slot: string]: number } = {
 
 export function getSetFoilRate(set: string | null) {
 	if (set === null) return foilRate;
-	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr"].includes(set)) return 1.0 / 3.0;
+	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid"].includes(set)) return 1.0 / 3.0;
 	return foilRate;
 }
 
@@ -623,6 +623,72 @@ class MH2BoosterFactory extends BoosterFactory {
 	}
 }
 
+// Innistrad: Midnight Hunt
+//  - Exactly one common double-faced card
+//  - Exactly one uncommon or rare/mythic DFC
+class MIDBoosterFactory extends BoosterFactory {
+	doubleFacedCards: SlotedCardPool;
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [doubleFacedCards, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].name.includes("//")
+		);
+		const [doubleFacedUncommons, refilteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
+		);
+		const [doubleFacedRares, rerefilteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
+		);
+		super(refilteredCardPool, landSlot, options);
+		this.doubleFacedCards = doubleFacedCards;
+	}
+	generateBooster(targets: Targets) {
+		const doubleFacedCommonsCounts = this.doubleFacedCards["common"].size;
+		// Ignore the rule if there's no common double-faced card left
+		if (doubleFacedCommonsCounts <= 0) {
+			return super.generateBooster(targets);
+		} else {
+			let pickedDoubleFacedCommon: UniqueCard | null = null;
+			let pickedDoubleFacedRareOrUncommon: UniqueCard | null = null;
+			let updatedTargets = Object.assign({}, targets);
+			if (targets["common"] > 0) {
+				pickedDoubleFacedCommon = pickCard(this.doubleFacedCards["common"], []);
+				--updatedTargets["common"];
+			}
+			// TODO: Actual rate of rare/uncommon dfc is unknown
+			const pickedRarity = rollSpecialCardRarity(
+				countBySlot(this.doubleFacedCards),
+				updatedTargets,
+				this.options
+			);
+			if (pickedRarity === "uncommon") {
+				pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards["uncommon"], []);
+				--updatedTargets["uncommon"];
+			} else if (pickedRarity === "rare" || pickedRarity === "mythic") {
+				pickedDoubleFacedRareOrUncommon = pickCard(this.doubleFacedCards[pickedRarity], []);
+				--updatedTargets["rare"];
+			}
+			const booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+			// Insert the Double-Faced common as the first common in the pack
+			if (pickedDoubleFacedCommon)
+				booster.splice(updatedTargets["rare"] + updatedTargets["uncommon"], 0, pickedDoubleFacedCommon);
+			// Insert the Double-Faced uncommon randomly among the other uncommons in the pack, or the rare/mythic on top
+			if (pickedDoubleFacedRareOrUncommon) {
+				booster.splice(
+					pickedDoubleFacedRareOrUncommon.rarity === "uncommon"
+						? updatedTargets["rare"] + Math.random() * updatedTargets["uncommon"]
+						: 0,
+					0,
+					pickedDoubleFacedRareOrUncommon
+				);
+			}
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -649,6 +715,9 @@ export const SetSpecificFactories: {
 	mh2: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
 		return new MH2BoosterFactory(cardPool, landSlot, options);
 	},
+	mid: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
+		return new MIDBoosterFactory(cardPool, landSlot, options);
+	},
 };
 
 /*
@@ -656,6 +725,7 @@ export const SetSpecificFactories: {
  */
 
 import PaperBoosterData from "./data/sealed_extended_data.json";
+import { off } from "process";
 
 class CardInfo {
 	set: string = "";
@@ -720,7 +790,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 	set: SetInfo;
 	options: Options;
 	possibleContent: BoosterInfo[];
-	landSlot: null;
+	landSlot: null = null;
 
 	constructor(set: SetInfo, options: Options, possibleContent: BoosterInfo[]) {
 		this.set = set;
