@@ -503,7 +503,7 @@
 											class="fas fa-book yellow"
 											v-tooltip="
 												userByID[id].userName +
-												' has uploaded their collection, but is not using it.'
+													' has uploaded their collection, but is not using it.'
 											"
 										></i>
 									</template>
@@ -603,8 +603,9 @@
 										v-else
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-											(rochesterDraftState && user.userID === rochesterDraftState.currentPlayer)
+												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+												(rochesterDraftState &&
+													user.userID === rochesterDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -719,7 +720,7 @@
 									value="Confirm Pick"
 									v-if="
 										selectedCards.length === cardsToPick &&
-										burningCards.length === cardsToBurnThisRound
+											burningCards.length === cardsToBurnThisRound
 									"
 								/>
 								<span v-else>
@@ -758,7 +759,7 @@
 							></i>
 							<span
 								><div><div class="spinner"></div></div>
-								{{ virtualPlayers.filter((p) => p.isBot || p.pickedThisRound).length }} /
+								{{ virtualPlayers.filter(p => p.isBot || p.pickedThisRound).length }} /
 								{{ virtualPlayers.length }}</span
 							>
 							<i
@@ -796,9 +797,9 @@
 							"
 							:botpicked="
 								draftingState !== DraftState.Waiting &&
-								botScores &&
-								displayBotScores &&
-								idx === botScores.chosenOption
+									botScores &&
+									displayBotScores &&
+									idx === botScores.chosenOption
 							"
 						></booster-card>
 					</transition-group>
@@ -1034,8 +1035,8 @@
 			class="container deck-container"
 			v-show="
 				(deck !== undefined && deck.length > 0) ||
-				(drafting && draftingState !== DraftState.Watching) ||
-				draftingState == DraftState.Brewing
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState == DraftState.Brewing
 			"
 		>
 			<div class="deck">
@@ -1184,9 +1185,9 @@
 			<div
 				v-if="
 					collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
+						((sideboard != undefined && sideboard.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState == DraftState.Brewing)
 				"
 				class="collapsed-sideboard"
 			>
@@ -1229,9 +1230,9 @@
 		<div
 			v-show="
 				!collapseSideboard &&
-				((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
+					((sideboard != undefined && sideboard.length > 0) ||
+						(drafting && draftingState !== DraftState.Watching) ||
+						draftingState == DraftState.Brewing)
 			"
 			class="container"
 		>
@@ -1273,13 +1274,34 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<<<<<<< HEAD
 							<em>September 27, 2021</em>
+							=======
+							<em>August 20, 2021</em>
+							>>>>>>> 57d111edd906737712e7894891b8e74423958e06
 							<p>
 								New experimental bots, courtesy of
 								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
 									>ruler501</a
 								>!
 							</p>
+							<<<<<<< HEAD =======
+							<p>
+								These should make more informed decisions than our previous really simple bots, but may
+								not be available depending on the card pool used for the draft as they require set
+								specific training (typically, we'll fallback to the generic bots for the latest sets).
+							</p>
+							<p>
+								You can help re-training the bots simply by drafting right here and by participating in
+								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+									>ruler101's Patreon <i class="fab fa-patreon"></i
+								></a>
+								to cover the training cost.
+							</p>
+						</div>
+						<div class="news">
+							<em>August 05, 2021</em>
+							>>>>>>> 57d111edd906737712e7894891b8e74423958e06
 							<p>
 								These should make more informed decisions than our previous really simple bots, but may
 								not be available depending on the card pool used for the draft as they require set
@@ -1319,7 +1341,9 @@
 								>
 									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
 								></a>
-								to draw to their attention to the problem.
+								<<<<<<< HEAD to draw to their attention to the problem. ======= a few bucks for the time
+								spent developing and maintaining it. Thank you! :) - Sen >>>>>>>
+								57d111edd906737712e7894891b8e74423958e06
 							</p>
 						</div>
 					</div>
@@ -1376,7 +1400,7 @@
 									<td :title="s.id" class="id">{{ s.id }}</td>
 									<td
 										v-tooltip="
-											s.cube ? 'Cube' : s.sets.map((code) => setsInfos[code].fullName).join(', ')
+											s.cube ? 'Cube' : s.sets.map(code => setsInfos[code].fullName).join(', ')
 										"
 									>
 										<template v-if="s.cube">
@@ -1970,7 +1994,7 @@
 								step="1"
 								:delay="0.1"
 								v-model.number="boostersPerPlayer"
-								:validate="(v) => Math.max(1, Math.min(v, 25))"
+								:validate="v => Math.max(1, Math.min(v, 25))"
 							/>
 						</div>
 					</div>
@@ -2017,7 +2041,7 @@
 									</option>
 									<option style="color: #888" disabled>————————————————</option>
 									<option
-										v-for="code in primarySets.filter((s) => !sets.includes(s))"
+										v-for="code in primarySets.filter(s => !sets.includes(s))"
 										:value="code"
 										:key="code"
 									>
