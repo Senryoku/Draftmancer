@@ -31,9 +31,12 @@ const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 import { UserID } from "./IDTypes.js";
+import { Cards } from "./Cards.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
+
+const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 function restoreBot(bot: any) {
 	if (bot.type == "SimpleBot") {
@@ -266,28 +269,85 @@ async function tempDump(exitOnCompletion = false) {
 	if (exitOnCompletion) process.exit(0);
 }
 
-function saveLog(type: string, session: Session) {
-	let localSess = JSON.parse(JSON.stringify(session));
-	localSess.users = [...session.users]; // Stringifying doesn't support Sets
-	// Anonymize Draft Log
-	localSess.id = new Date().toISOString();
-	if (localSess.draftLog) {
-		localSess.draftLog.sessionID = localSess.id;
-		let idx = 0;
-		if (localSess.draftLog.users)
-			for (let uid in localSess.draftLog.users)
-				if (!localSess.draftLog.users[uid].userName.startsWith("Bot #"))
-					localSess.draftLog.users[uid].userName = `Anonymous Player #${++idx}`;
-	}
+type MTGDraftbotsLogEntry = {
+	pack: String[];
+	picks: Number[];
+	trash: Number[];
+	packNum: Number;
+	numPacks: Number;
+	pickNum: Number;
+	numPicks: Number;
+};
 
-	if (type === "Draft" && !DisablePersistence) {
-		axios
-			.post(`${PersistenceStoreURL}/store/${localSess.draftLog.sessionID}`, localSess.draftLog, {
-				headers: {
-					"access-key": PersistenceKey,
-				},
-			})
-			.catch(err => console.error("Error storing logs: ", err.message));
+type MTGDraftbotsLog = {
+	players: MTGDraftbotsLogEntry[][];
+	apiKey: String;
+};
+
+function saveLog(type: string, session: Session) {
+	if (session.draftLog) {
+		let localLog = JSON.parse(JSON.stringify(session.draftLog));
+		// Anonymize Draft Log
+		localLog.sessionID = new Date().toISOString();
+		let idx = 0;
+		if (localLog.users)
+			for (let uid in localLog.users)
+				if (!localLog.users[uid].userName.startsWith("Bot #"))
+					localLog.users[uid].userName = `Anonymous Player #${++idx}`;
+
+		if (type === "Draft" && !DisablePersistence && SaveLogs) {
+			axios
+				.post(`${PersistenceStoreURL}/store/${localLog.sessionID}`, localLog, {
+					headers: {
+						"access-key": PersistenceKey,
+					},
+				})
+				.catch(err => console.error("Error storing logs: ", err.message));
+		}
+
+		// Send log to MTGDraftbots endpoint
+		if (MTGDraftbotsAPIKey) {
+			const data: MTGDraftbotsLog = {
+				players: [],
+				apiKey: MTGDraftbotsAPIKey,
+			};
+			for (let uid in localLog.users) {
+				const u = localLog.users[uid];
+				if (!u.isBot && u.picks.length > 0) {
+					const player: MTGDraftbotsLogEntry[] = [];
+					let packNum = 0;
+					let pickNum = 0;
+					let lastPackSize = u.picks[0].booster.length + 1;
+					for (let p of u.picks) {
+						if (p.booster.length >= lastPackSize) {
+							for (let i = player.length - pickNum; i < player.length; ++i) player[i].numPicks = pickNum;
+							packNum += 1;
+							pickNum = 0;
+						}
+						lastPackSize = p.booster.length;
+						player.push({
+							pack: p.booster.map((cid: string) => Cards[cid].name),
+							picks: p.pick,
+							trash: p.burn,
+							packNum: packNum,
+							numPacks: -1,
+							pickNum: pickNum,
+							numPicks: -1,
+						});
+						pickNum += p.pick.length;
+					}
+					for (let p of player) {
+						p.numPacks = packNum + 1;
+						if (p.numPicks === -1) p.numPicks = pickNum;
+					}
+					data.players.push(player);
+				}
+			}
+			axios
+				.post("https://staging.cubeartisan.net/integrations/draftlog", data)
+				.then(response => console.log(response))
+				.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
+		}
 	}
 }
 
@@ -302,7 +362,7 @@ export function dumpError(name: string, data: any) {
 }
 
 export function logSession(type: string, session: Session) {
-	if (SaveLogs) saveLog(type, session);
+	saveLog(type, session);
 
 	if (!MixInstance) return;
 	let mixdata: any = {
