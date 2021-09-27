@@ -1274,34 +1274,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<<<<<<< HEAD
 							<em>September 27, 2021</em>
-							=======
-							<em>August 20, 2021</em>
-							>>>>>>> 57d111edd906737712e7894891b8e74423958e06
 							<p>
 								New experimental bots, courtesy of
 								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
 									>ruler501</a
 								>!
 							</p>
-							<<<<<<< HEAD =======
-							<p>
-								These should make more informed decisions than our previous really simple bots, but may
-								not be available depending on the card pool used for the draft as they require set
-								specific training (typically, we'll fallback to the generic bots for the latest sets).
-							</p>
-							<p>
-								You can help re-training the bots simply by drafting right here and by participating in
-								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
-									>ruler101's Patreon <i class="fab fa-patreon"></i
-								></a>
-								to cover the training cost.
-							</p>
-						</div>
-						<div class="news">
-							<em>August 05, 2021</em>
-							>>>>>>> 57d111edd906737712e7894891b8e74423958e06
 							<p>
 								These should make more informed decisions than our previous really simple bots, but may
 								not be available depending on the card pool used for the draft as they require set
@@ -1341,9 +1320,7 @@
 								>
 									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
 								></a>
-								<<<<<<< HEAD to draw to their attention to the problem. ======= a few bucks for the time
-								spent developing and maintaining it. Thank you! :) - Sen >>>>>>>
-								57d111edd906737712e7894891b8e74423958e06
+								to draw to their attention to the problem.
 							</p>
 						</div>
 					</div>
