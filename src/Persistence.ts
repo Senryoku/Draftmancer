@@ -25,8 +25,9 @@ const MixInstance = MixPanelToken
 	  })
 	: null;
 
-//                         Testing in mocha                            Explicitly disabled
-const DisablePersistence = typeof (global as any).it === "function" || process.env.DISABLE_PERSISTENCE === "TRUE";
+const InTesting = typeof (global as any).it === "function"; // Testing in mocha
+//                                      Explicitly disabled
+const DisablePersistence = InTesting || process.env.DISABLE_PERSISTENCE === "TRUE";
 const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
@@ -308,7 +309,7 @@ function saveLog(type: string, session: Session) {
 		}
 
 		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey) {
+		if (MTGDraftbotsAPIKey && type === "Draft") {
 			const data: MTGDraftbotsLog = {
 				players: [],
 				apiKey: MTGDraftbotsAPIKey,
@@ -345,16 +346,17 @@ function saveLog(type: string, session: Session) {
 					data.players.push(player);
 				}
 			}
-			axios
-				.post(MTGDraftbotsLogEndpoint, data)
-				.then(response => {
-					// We expect a 201 (Created) response
-					if (response.status !== 201) {
-						console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
-						console.warn(response);
-					}
-				})
-				.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
+			if (!InTesting)
+				axios
+					.post(MTGDraftbotsLogEndpoint, data)
+					.then(response => {
+						// We expect a 201 (Created) response
+						if (response.status !== 201) {
+							console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
+							console.warn(response);
+						}
+					})
+					.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
 		}
 	}
 }
