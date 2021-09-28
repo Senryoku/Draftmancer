@@ -149,7 +149,8 @@ export default {
 	transform: scale(1.08);
 }
 
-.bot-picked .card-image,
+.bot-picked .card-image .front-image,
+.bot-picked .card-image .back-image,
 .bot-picked .card-placeholder {
 	-webkit-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
 	-moz-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
