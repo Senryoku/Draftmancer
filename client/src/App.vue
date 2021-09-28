@@ -1280,7 +1280,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>September 27, 2021</em>
+							<em>September 28, 2021</em>
 							<p>
 								New experimental bots, courtesy of
 								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
