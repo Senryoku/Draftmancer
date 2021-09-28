@@ -36,6 +36,8 @@ import { Cards } from "./Cards.js";
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
 
+const MTGDraftbotsLogEndpoint =
+	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 function restoreBot(bot: any) {
@@ -344,7 +346,7 @@ function saveLog(type: string, session: Session) {
 				}
 			}
 			axios
-				.post("https://staging.cubeartisan.net/integrations/draftlog", data)
+				.post(MTGDraftbotsLogEndpoint, data)
 				.then(response => console.log(response))
 				.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
 		}
