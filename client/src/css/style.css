@@ -71,6 +71,23 @@ label {
 	opacity: 0.5;
 }
 
+.crossed {
+	position: relative;
+}
+
+.crossed:after {
+	position: absolute;
+	content: "";
+	background-color: white;
+	top: 50%;
+	left: calc(-14px + 50%);
+	height: 3px;
+	width: 28px;
+	transform: rotate(42deg);
+	box-shadow: 2px 2px #00000060;
+	border-radius: 1.5px;
+}
+
 .draggable {
 	cursor: grab;
 }

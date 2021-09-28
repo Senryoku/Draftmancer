@@ -65,14 +65,19 @@
 				</button>
 			</div>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
-				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
-					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
-					<label for="pickOnDblclick">Pick on Double Click</label>
+				<div style="min-width: 20px; text-align: center">
+					<i
+						class="fas clickable fa-mouse-pointer"
+						style="font-size: 1.2em; vertical-align: -20%"
+						:class="{ faded: !pickOnDblclick, crossed: !pickOnDblclick }"
+						@click="pickOnDblclick = !pickOnDblclick"
+						v-tooltip="`Toggle picking cards by double click. ${pickOnDblclick ? 'Enabled' : 'Disabled'}`"
+					/>
 				</div>
 				<div style="min-width: 20px">
 					<i
 						class="fas clickable fa-robot"
-						:class="{ faded: !displayBotScores }"
+						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
 						@click="displayBotScores = !displayBotScores"
 						v-tooltip="
 							`Toggle displaying bot recommendations. ${displayBotScores ? 'Enabled' : 'Disabled'}`
@@ -82,7 +87,7 @@
 				<div style="min-width: 20px">
 					<i
 						class="fas clickable"
-						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
+						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound, faded: !enableSound }"
 						@click="enableSound = !enableSound"
 						v-tooltip="'Toggle sound.'"
 					/>
@@ -98,6 +103,7 @@
 						:class="{
 							'greyed-out': notificationPermission === 'denied',
 							'fa-bell': enableNotifications,
+							faded: !enableNotifications,
 							'fa-bell-slash': !enableNotifications,
 						}"
 						@click="toggleNotifications"
