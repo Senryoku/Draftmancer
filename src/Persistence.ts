@@ -328,7 +328,7 @@ function saveLog(type: string, session: Session) {
 						}
 						lastPackSize = p.booster.length;
 						player.push({
-							pack: p.booster.map((cid: string) => Cards[cid].name),
+							pack: p.booster.map((cid: string) => Cards[cid].oracle_id),
 							picks: p.pick,
 							trash: p.burn,
 							packNum: packNum,
@@ -347,7 +347,13 @@ function saveLog(type: string, session: Session) {
 			}
 			axios
 				.post(MTGDraftbotsLogEndpoint, data)
-				.then(response => console.log(response))
+				.then(response => {
+					// We expect a 201 (Created) response
+					if (response.status !== 201) {
+						console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
+						console.warn(response);
+					}
+				})
 				.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
 		}
 	}
