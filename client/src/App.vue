@@ -65,14 +65,29 @@
 				</button>
 			</div>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
-				<div class="inline" v-tooltip="'Allows you to pick cards by double clicking.'">
-					<input type="checkbox" v-model="pickOnDblclick" id="pickOnDblclick" />
-					<label for="pickOnDblclick">Pick on Double Click</label>
+				<div style="min-width: 20px; text-align: center">
+					<i
+						class="fas clickable fa-mouse-pointer"
+						style="font-size: 1.2em; vertical-align: -20%"
+						:class="{ faded: !pickOnDblclick, crossed: !pickOnDblclick }"
+						@click="pickOnDblclick = !pickOnDblclick"
+						v-tooltip="`Toggle picking cards by double click. ${pickOnDblclick ? 'Enabled' : 'Disabled'}`"
+					/>
+				</div>
+				<div style="min-width: 20px">
+					<i
+						class="fas clickable fa-robot"
+						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
+						@click="displayBotScores = !displayBotScores"
+						v-tooltip="
+							`Toggle displaying bot recommendations. ${displayBotScores ? 'Enabled' : 'Disabled'}`
+						"
+					/>
 				</div>
 				<div style="min-width: 20px">
 					<i
 						class="fas clickable"
-						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound }"
+						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound, faded: !enableSound }"
 						@click="enableSound = !enableSound"
 						v-tooltip="'Toggle sound.'"
 					/>
@@ -88,6 +103,7 @@
 						:class="{
 							'greyed-out': notificationPermission === 'denied',
 							'fa-bell': enableNotifications,
+							faded: !enableNotifications,
 							'fa-bell-slash': !enableNotifications,
 						}"
 						@click="toggleNotifications"
@@ -762,7 +778,7 @@
 							></i>
 						</div>
 						<booster-card
-							v-for="card in booster"
+							v-for="(card, idx) in booster"
 							:key="`card-booster-${card.uniqueID}`"
 							:card="card"
 							:language="language"
@@ -777,6 +793,20 @@
 							@dragstart.native="dragBoosterCard($event, card)"
 							:hasenoughwildcards="hasEnoughWildcards(card)"
 							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+							:botscore="
+								draftingState !== DraftState.Waiting &&
+								botScores &&
+								botScores.scores &&
+								displayBotScores
+									? botScores.scores[idx]
+									: null
+							"
+							:botpicked="
+								draftingState !== DraftState.Waiting &&
+									botScores &&
+									displayBotScores &&
+									idx === botScores.chosenOption
+							"
 						></booster-card>
 					</transition-group>
 				</div>
@@ -1250,6 +1280,27 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>September 28, 2021</em>
+							<p>
+								New experimental bots, courtesy of
+								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
+									>ruler501</a
+								>!
+							</p>
+							<p>
+								These should make more informed decisions than our previous really simple bots, but may
+								not be available depending on the card pool used for the draft as they require set
+								specific training (typically, we'll fallback to the generic bots for the latest sets).
+							</p>
+							<p>
+								You can help re-training the bots simply by drafting right here and by participating in
+								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+									>ruler101's Patreon <i class="fab fa-patreon"></i
+								></a>
+								to cover the training cost.
+							</p>
+						</div>
+						<div class="news">
 							<em>September 11, 2021</em>
 							<p>
 								<img src="img/sets/mid.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1276,13 +1327,6 @@
 									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
 								></a>
 								to draw to their attention to the problem.
-							</p>
-						</div>
-						<div class="news">
-							<em>August 05, 2021</em>
-							<p>
-								<img src="img/sets/j21.svg" class="set-icon" style="--invertedness: 100%" />
-								Added Jumpstart: Historic Horizons Gamemode.
 							</p>
 						</div>
 					</div>
@@ -2236,7 +2280,7 @@
 			</div>
 		</modal>
 		<modal v-if="displayedModal === 'donation'" @close="displayedModal = ''">
-			<h2 slot="header">Support me</h2>
+			<h2 slot="header">Support MTGADraft</h2>
 			<div slot="body">
 				<div style="max-width: 50vw">
 					<p>Hello there!</p>
@@ -2245,7 +2289,7 @@
 						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
 						that sounds like a good use of my time and you want to help me stay motivated and high on
 						cafeine, you can donate here via
-						<em>PayPal</em>
+						<em><i class="fab fa-paypal"></i> PayPal</em>
 						:
 					</p>
 					<form
@@ -2253,6 +2297,7 @@
 						method="post"
 						target="_blank"
 						rel="noopener nofollow"
+						style="margin-left: 1em"
 					>
 						<input type="hidden" name="cmd" value="_s-xclick" />
 						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
@@ -2265,6 +2310,20 @@
 							alt="Donate with PayPal button"
 						/>
 					</form>
+					<p>
+						ruler101, developper of mtgdraftbots (which MTGADraft uses when possible) and
+						<a href="https://cubeartisan.net" target="_blank" rel="noopener nofollow">cubeartisan</a>, also
+						has a
+						<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+							>Patreon</a
+						>
+						were you can support her and help cover the cost of bot training:
+					</p>
+					<p style="margin-left: 1em">
+						<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
+							><i class="fab fa-patreon"></i> ruler101's Patreon</a
+						>
+					</p>
 					<p>Thank you very much!</p>
 					<p>Sen</p>
 				</div>

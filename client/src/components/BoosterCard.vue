@@ -1,5 +1,11 @@
 <template>
-	<card :card="card" :language="language" :class="{ selected: selected, burned: burned }" class="booster-card">
+	<card
+		:card="card"
+		:language="language"
+		:class="{ selected: selected, burned: burned, 'bot-picked': botpicked }"
+		class="booster-card"
+		v-tooltip.right="botTooltip"
+	>
 		<div
 			v-if="wildcardneeded"
 			class="collection-status"
@@ -12,6 +18,7 @@
 			<i class="fas fa-exclamation-triangle yellow missing-warning" v-if="!hasenoughwildcards"></i>
 			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.png`" />
 		</div>
+		<div class="bot-score" v-if="botscore">{{ (10 * botscore.score).toFixed(1) }}</div>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>
@@ -36,6 +43,8 @@ export default {
 		burned: { type: Boolean, default: false },
 		wildcardneeded: { type: Boolean, default: false },
 		hasenoughwildcards: { type: Boolean, default: true },
+		botscore: { type: Object, default: null },
+		botpicked: { type: Boolean, default: false },
 	},
 	methods: {
 		burnCard: function(e) {
@@ -47,6 +56,19 @@ export default {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();
+		},
+	},
+	computed: {
+		botTooltip() {
+			if (!this.botscore?.oracleResults) return "";
+			let r = `Bot score: ${(10 * this.botscore.score).toFixed(1)} `;
+			if (this.botpicked) r += "★";
+			r += '<br /><div style="font-size:small">';
+			for (let o of this.botscore.oracleResults) {
+				r += `&nbsp;&nbsp;${o.title}: ${(10 * o.value).toFixed(1)}<br />`;
+			}
+			r += "</div>";
+			return r;
 		},
 	},
 };
@@ -105,6 +127,17 @@ export default {
 .collection-status.warn {
 	color: #ffffb3;
 }
+
+.bot-score {
+	position: absolute;
+	right: -0.75em;
+	top: 12.5%;
+	border-radius: 50%;
+	background-color: rgba(0, 0, 0, 0.75);
+	width: 2em;
+	height: 2em;
+	line-height: 2em;
+}
 </style>
 
 <style>
@@ -114,5 +147,13 @@ export default {
 
 .booster-card:hover:not(.zoomedin) {
 	transform: scale(1.08);
+}
+
+.bot-picked .card-image .front-image,
+.bot-picked .card-image .back-image,
+.bot-picked .card-placeholder {
+	-webkit-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
+	-moz-box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
+	box-shadow: 0px 0px 20px 1px rgb(0, 111, 175);
 }
 </style>

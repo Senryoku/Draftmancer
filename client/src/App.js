@@ -159,6 +159,7 @@ export default {
 			booster: [],
 			boosterNumber: 0,
 			pickNumber: 0,
+			botScores: null,
 			winstonDraftState: null,
 			gridDraftState: null,
 			rochesterDraftState: null,
@@ -179,6 +180,7 @@ export default {
 			pendingReadyCheck: false,
 			setsInfos: undefined,
 			draftingState: undefined,
+			displayBotScores: getCookie("displayBotScores", "false") === "true",
 			pickOnDblclick: getCookie("pickOnDblclick", "false") === "true",
 			enableSound: getCookie("enableSound", "true") === "true",
 			enableNotifications:
@@ -666,6 +668,7 @@ export default {
 					for (let c of data.booster) this.booster.push(c);
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
+					this.botScores = data.botScores;
 
 					this.pickedThisRound = data.pickedThisRound;
 					if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
@@ -690,6 +693,7 @@ export default {
 				}
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
+				this.botScores = data.botScores;
 
 				// Only watching, not playing/receiving a boost ourself.
 				if (this.draftingState == DraftState.Watching) return;
@@ -818,6 +822,9 @@ export default {
 			this.deckFilter = "";
 			this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			this.currentDraftLog = null;
+			this.boosterNumber = 0;
+			this.pickNumber = 0;
+			this.botScores = null;
 		},
 		playSound: function(key) {
 			if (this.enableSound) Sounds[key].play();
@@ -1019,7 +1026,40 @@ export default {
 		},
 		forcePick: function() {
 			if (this.draftingState != DraftState.Picking) return;
-			// Forces a random card if none is selected
+
+			// Uses botScores to automatically select picks if available
+			if (this.botScores) {
+				let orderedPicks = [];
+				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
+				orderedPicks.sort((lhs, rhs) => {
+					return this.botScores.scores[lhs].score < this.botScores.scores[rhs].score;
+				});
+				let currIdx = 0;
+				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
+					while (
+						currIdx < orderedPicks.length &&
+						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+					)
+						++currIdx;
+					if (currIdx < orderedPicks.length) this.selectedCards.push(this.booster[orderedPicks[currIdx]]);
+					++currIdx;
+				}
+				currIdx = 0;
+				orderedPicks.reverse();
+				while (currIdx < orderedPicks.length && this.burningCards.length < this.cardsToBurnThisRound) {
+					while (
+						currIdx < orderedPicks.length &&
+						(this.selectedCards.includes(this.booster[orderedPicks[currIdx]]) ||
+							this.burningCards.includes(this.booster[orderedPicks[currIdx]]))
+					)
+						++currIdx;
+					if (currIdx < orderedPicks.length) this.burningCards.push(this.booster[orderedPicks[currIdx]]);
+					++currIdx;
+				}
+			}
+
+			// Forces a random card if there isn't enough selected already
 			while (this.selectedCards.length < this.cardsToPick) {
 				let randomIdx;
 				do randomIdx = Math.floor(Math.random() * this.booster.length);
@@ -2313,6 +2353,9 @@ export default {
 		// Front-end options
 		language: function() {
 			setCookie("language", this.language);
+		},
+		displayBotScores: function() {
+			setCookie("displayBotScores", this.displayBotScores.toString());
 		},
 		pickOnDblclick: function() {
 			setCookie("pickOnDblclick", this.pickOnDblclick.toString());
