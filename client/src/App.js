@@ -180,7 +180,7 @@ export default {
 			pendingReadyCheck: false,
 			setsInfos: undefined,
 			draftingState: undefined,
-			displayBotScores: true,
+			displayBotScores: getCookie("displayBotScores", "false") === "true",
 			pickOnDblclick: getCookie("pickOnDblclick", "false") === "true",
 			enableSound: getCookie("enableSound", "true") === "true",
 			enableNotifications:
@@ -2353,6 +2353,9 @@ export default {
 		// Front-end options
 		language: function() {
 			setCookie("language", this.language);
+		},
+		displayBotScores: function() {
+			setCookie("displayBotScores", this.displayBotScores.toString());
 		},
 		pickOnDblclick: function() {
 			setCookie("pickOnDblclick", this.pickOnDblclick.toString());
