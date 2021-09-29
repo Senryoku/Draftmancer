@@ -1295,7 +1295,7 @@
 							<p>
 								You can help re-training the bots simply by drafting right here and by participating in
 								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
-									>ruler101's Patreon <i class="fab fa-patreon"></i
+									>ruler501's Patreon <i class="fab fa-patreon"></i
 								></a>
 								to cover the training cost.
 							</p>
