@@ -321,11 +321,15 @@ function saveLog(type: string, session: Session) {
 					let packNum = 0;
 					let pickNum = 0;
 					let lastPackSize = u.picks[0].booster.length + 1;
+					let lastPackPicks = 0;
 					for (let p of u.picks) {
 						if (p.booster.length >= lastPackSize) {
-							for (let i = player.length - pickNum; i < player.length; ++i) player[i].numPicks = pickNum;
+							// Patch last pack picks with the correct numPicks
+							for (let i = player.length - lastPackPicks; i < player.length; ++i)
+								player[i].numPicks = pickNum;
 							packNum += 1;
 							pickNum = 0;
+							lastPackPicks = 0;
 						}
 						lastPackSize = p.booster.length;
 						player.push({
@@ -338,15 +342,17 @@ function saveLog(type: string, session: Session) {
 							numPicks: -1,
 						});
 						pickNum += p.pick.length;
+						++lastPackPicks;
 					}
+					// Patch each pick with the correct numPacks and the last pack with the correct numPicks
 					for (let p of player) {
 						p.numPacks = packNum + 1;
 						if (p.numPicks === -1) p.numPicks = pickNum;
 					}
-					data.players.push(player);
+					if (player.length > 0) data.players.push(player);
 				}
 			}
-			if (!InTesting)
+			if (!InTesting && process.env.NODE_ENV === "production" && data.players.length > 0)
 				axios
 					.post(MTGDraftbotsLogEndpoint, data)
 					.then(response => {
@@ -372,7 +378,11 @@ export function dumpError(name: string, data: any) {
 }
 
 export function logSession(type: string, session: Session) {
-	saveLog(type, session);
+	try {
+		saveLog(type, session);
+	} catch (err) {
+		console.error("Error saving logs: ", err);
+	}
 
 	if (!MixInstance) return;
 	let mixdata: any = {
