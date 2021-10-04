@@ -8,7 +8,14 @@
 		<div id="view-controls" class="main-controls">
 			<span>
 				<label for="user-name">User Name</label>
-				<delayed-input id="user-name" v-model="userName" type="text" maxlength="50" :delay="2" />
+				<delayed-input
+					id="user-name"
+					v-model="userName"
+					type="text"
+					maxlength="50"
+					:delay="2"
+					style="margin-right: 0.25em"
+				/>
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
 					<label for="language">Card Language</label>
 					<select v-model="language" name="language" id="select-language">
@@ -116,7 +123,7 @@
 		<div class="generic-container">
 			<div id="limited-controls" class="main-controls" v-bind:class="{ disabled: drafting }">
 				<span id="session-controls">
-					<div class="inline" v-tooltip="'Unique ID of your game session.'">
+					<div class="inline" v-tooltip="'Unique ID of your game session.'" style="margin-right: 0.25em">
 						<label for="session-id">Session ID</label>
 						<delayed-input
 							v-model="sessionID"

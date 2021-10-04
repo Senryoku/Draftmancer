@@ -62,7 +62,7 @@ form {
 }
 
 input {
-	width: calc(100% - 0.25em);
+	width: 100%;
 	box-sizing: border-box;
 	--shadow-blur: 3px;
 	--shadow-width: 1px;
