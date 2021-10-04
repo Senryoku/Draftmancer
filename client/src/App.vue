@@ -2211,8 +2211,6 @@
 					</div>
 					<div class="option-info">
 						You can find more cubes or craft your own on
-						<a href="https://www.cubetutor.com/" target="_blank" rel="noopener nofollow">Cube Tutor</a>
-						or
 						<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow">Cube Cobra</a>
 						<br />Customize your list even further by using all features of the
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">
