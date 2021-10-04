@@ -82,14 +82,17 @@
 					/>
 				</div>
 				<div style="min-width: 20px">
-					<i
-						class="fas clickable fa-robot"
+					<div
+						class="fas clickable"
+						style="width: 20px; margin-top: 5px"
 						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
 						@click="displayBotScores = !displayBotScores"
 						v-tooltip="
 							`Toggle displaying bot recommendations. ${displayBotScores ? 'Enabled' : 'Disabled'}`
 						"
-					/>
+					>
+						<img src="./assets/img/bot-score.svg" />
+					</div>
 				</div>
 				<div style="min-width: 20px">
 					<i
@@ -283,9 +286,9 @@
 					<div
 						class="inline"
 						:class="{ disabled: teamDraft }"
-						v-tooltip="'Add some dumb bots to your draft.'"
+						v-tooltip="'Bots. Use them to draft alone or fill your pod.'"
 					>
-						<label for="bots">Bots</label>
+						<label for="bots"><i class="fas fa-robot"></i></label>
 						<input
 							type="number"
 							id="bots"

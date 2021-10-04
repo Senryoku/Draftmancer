@@ -1,0 +1,16 @@
+<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="robot" class="svg-inline--fa fa-robot fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+
+ <g>
+  <defs>
+   <mask id="m">
+    <rect width="640" height="640" fill="white"  />
+	<rect stroke="#000000" stroke-width="24" rx="10" transform="rotate(7.49782, 437.619, 496.143)" id="svg_6" height="268" width="384" y="348" x="215" fill="#000"/>
+   </mask>
+  </defs>
+  <path id="svg_1" d="m32,224l32,0l0,192l-32,0a31.96166,31.96166 0 0 1 -32,-32l0,-128a31.96166,31.96166 0 0 1 32,-32zm512,-48l0,272a64.06328,64.06328 0 0 1 -64,64l-320,0a64.06328,64.06328 0 0 1 -64,-64l0,-272a79.974,79.974 0 0 1 80,-80l112,0l0,-64a32,32 0 0 1 64,0l0,64l112,0a79.974,79.974 0 0 1 80,80zm-280,80a40,40 0 1 0 -40,40a39.997,39.997 0 0 0 40,-40zm-8,128l-64,0l0,32l64,0l0,-32zm96,0l-64,0l0,32l64,0l0,-32zm104,-128a40,40 0 1 0 -40,40a39.997,39.997 0 0 0 40,-40zm-8,128l-64,0l0,32l64,0l0,-32zm192,-128l0,128a31.96166,31.96166 0 0 1 -32,32l-32,0l0,-192l32,0a31.96166,31.96166 0 0 1 32,32z" fill="#DDD" style="mask: url(#m)" />
+  <text font-style="normal" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="sans-serif" font-size="260" id="svg_2" y="198" x="560" stroke-width="0" stroke="#000" fill="#DDD">!</text>
+  <rect id="svg_5" height="2.85714" width="0" y="583.14288" x="297.14278" fill="#ffffff"/>
+  <rect rx="10" transform="rotate(7.49782, 437.619, 496.143)" id="svg_6" height="268" width="384" y="348" x="215" fill="#FFF"/>
+  <text transform="rotate(8, 435.524, 503.095)" font-style="normal" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="sans-serif" font-size="280" id="svg_8" y="585" x="309" stroke-width="0" stroke="#000000" fill="#000000">✓</text>
+ </g>
+</svg>
