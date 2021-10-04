@@ -149,13 +149,13 @@
 						@click="sessionURLToClipboard"
 					></i>
 					<i
-						class="fas fa-project-diagram clickable"
+						class="fas fa-sitemap clickable"
 						v-if="sessionOwner === userID && !bracket"
 						@click="generateBracket"
 						v-tooltip="'Generate Bracket.'"
 					></i>
 					<i
-						class="fas fa-project-diagram clickable"
+						class="fas fa-sitemap clickable"
 						v-if="bracket"
 						@click="displayedModal = 'bracket'"
 						v-tooltip="'Display Bracket.'"
