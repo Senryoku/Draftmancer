@@ -448,13 +448,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             cardsByName[name.split(" //")[0]] = cardsByName[name]
 
     with open(FinalDataPath, 'w', encoding="utf8") as outfile:
-        json.dump(cards, outfile, ensure_ascii=False)
+        json.dump(cards, outfile, ensure_ascii=False, indent=4)
 
     with open("data/CardsByName.json", 'w', encoding="utf8") as outfile:
-        json.dump(cardsByName, outfile, ensure_ascii=False)
+        json.dump(cardsByName, outfile, ensure_ascii=False, indent=4)
 
     with open("client/public/data/MTGACards.json", 'w', encoding="utf8") as outfile:
-        json.dump(MTGACards, outfile, ensure_ascii=False)
+        json.dump(MTGACards, outfile, ensure_ascii=False, indent=4)
 
 cards = {}
 with open(FinalDataPath, 'r', encoding="utf8") as file:
@@ -726,7 +726,7 @@ for mtgset, group in groups:
         rarityGroupList = list(rarityGroup)
         setinfos[mtgset][rarity + "Count"] = len(rarityGroupList)
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
-    json.dump(setinfos, setinfosfile, ensure_ascii=False)
+    json.dump(setinfos, setinfosfile, ensure_ascii=False, indent=4)
 
 constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
