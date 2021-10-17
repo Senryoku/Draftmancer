@@ -1762,10 +1762,11 @@
     "htr20": {
         "code": "htr20",
         "fullName": "2020 Heroes of the Realm",
-        "cardCount": 2,
+        "cardCount": 3,
         "isPrimary": false,
+        "block": "Heroes of the Realm",
         "icon": "img/sets/htr20.svg",
-        "mythicCount": 2
+        "mythicCount": 3
     },
     "ice": {
         "code": "ice",
@@ -3789,10 +3790,10 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 26,
+        "cardCount": 30,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 26
+        "rareCount": 30
     },
     "prix": {
         "code": "prix",
@@ -4325,6 +4326,17 @@
         "mythicCount": 35,
         "rareCount": 117
     },
+    "q06": {
+        "code": "q06",
+        "fullName": "Pioneer Challenge Decks 2021",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/q06.svg",
+        "commonCount": 2,
+        "mythicCount": 1,
+        "rareCount": 4,
+        "uncommonCount": 3
+    },
     "rav": {
         "code": "rav",
         "fullName": "Ravnica: City of Guilds",
@@ -4439,12 +4451,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 309,
+        "cardCount": 349,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 12,
-        "mythicCount": 61,
-        "rareCount": 216,
+        "commonCount": 13,
+        "mythicCount": 69,
+        "rareCount": 247,
         "uncommonCount": 20
     },
     "slu": {

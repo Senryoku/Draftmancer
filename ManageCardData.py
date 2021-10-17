@@ -121,13 +121,14 @@ for path in MTGACardsFiles:
                     o['set'] = 'dom'
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Process AKR cards separately (except basics)
+                fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ").replace("<nobr>", "").replace("</nobr>", "")
                 if o["set"] == "akr":
                     if o['rarity'] != 1:
-                        AKRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
+                        AKRCards[fixed_name] = (
                             o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
                 if o["set"] == "klr":
                     if o['rarity'] != 1:
-                        KLRCards[MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")] = (
+                        KLRCards[fixed_name] = (
                             o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
                 else:
                     # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
@@ -243,8 +244,9 @@ else:
 if not os.path.isfile(FinalDataPath) or ForceCache:
     all_cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
-        objects = ijson.items(file, 'item')
-        ScryfallCards = (o for o in objects)
+        # objects = ijson.items(file, 'item')
+        # ScryfallCards = (o for o in objects if not(o['oversized'] or o['layout'] in ["token", "double_faced_token", "emblem", "art_series"]))
+        ScryfallCards = json.load(file)
 
         akr_candidates = {}
         klr_candidates = {}
@@ -309,7 +311,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         for name in klr_candidates:
             del MissingKLRCards[name]
         if len(MissingKLRCards) > 0:
-            print("MissingAKRCards: ", MissingKLRCards)
+            print("MissingKLRCards: ", MissingKLRCards)
 
         for c in all_cards:
             if c['set'] == 'akr' and c['name'] in akr_candidates and c['lang'] in akr_candidates[c['name']]:
