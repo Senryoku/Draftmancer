@@ -1417,7 +1417,7 @@ export class Session implements IIndexable {
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex);
+				await this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex);
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					// This user has been replaced by a bot, pick immediately
