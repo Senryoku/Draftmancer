@@ -3568,10 +3568,10 @@
     "pm21": {
         "code": "pm21",
         "fullName": "Core Set 2021 Promos",
-        "cardCount": 142,
+        "cardCount": 136,
         "isPrimary": false,
         "icon": "img/sets/pm21.svg",
-        "mythicCount": 36,
+        "mythicCount": 30,
         "rareCount": 106
     },
     "pmbs": {
@@ -4451,12 +4451,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 349,
+        "cardCount": 356,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 13,
-        "mythicCount": 69,
-        "rareCount": 247,
+        "commonCount": 12,
+        "mythicCount": 71,
+        "rareCount": 253,
         "uncommonCount": 20
     },
     "slu": {
