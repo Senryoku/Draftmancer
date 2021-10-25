@@ -157,7 +157,8 @@ export default {
 	},
 	computed: {
 		pickNames() {
-			const pick = this.draftlog.users[this.player].picks[this.pick];
+			if (this.picksPerPack.length === 0 || !this.validPick) return "";
+			const pick = this.picksPerPack[this.pack][this.pick].data;
 			return pick.pick
 				.map(idx => pick.booster[idx])
 				.map(this.getCardName)
