@@ -704,6 +704,14 @@
         "commonCount": 42,
         "uncommonCount": 20
     },
+    "dbl": {
+        "code": "dbl",
+        "fullName": "Innistrad: Double Feature",
+        "cardCount": 1,
+        "isPrimary": true,
+        "icon": "img/sets/dbl.svg",
+        "rareCount": 1
+    },
     "dd1": {
         "code": "dd1",
         "fullName": "Duel Decks: Elves vs. Goblins",
@@ -5030,6 +5038,25 @@
         "mythicCount": 30,
         "rareCount": 105,
         "uncommonCount": 80
+    },
+    "voc": {
+        "code": "voc",
+        "fullName": "Crimson Vow Commander",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/voc.svg",
+        "mythicCount": 6
+    },
+    "vow": {
+        "code": "vow",
+        "fullName": "Innistrad: Crimson Vow",
+        "cardCount": 117,
+        "isPrimary": true,
+        "icon": "img/sets/vow.svg",
+        "commonCount": 26,
+        "mythicCount": 16,
+        "rareCount": 58,
+        "uncommonCount": 17
     },
     "w16": {
         "code": "w16",
