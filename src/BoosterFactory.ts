@@ -689,6 +689,10 @@ class MIDBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Innistrad: Crimson Vow
+// Looks identical to MID
+const VOWBoosterFactory = MIDBoosterFactory;
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -717,6 +721,9 @@ export const SetSpecificFactories: {
 	},
 	mid: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
 		return new MIDBoosterFactory(cardPool, landSlot, options);
+	},
+	vow: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
+		return new VOWBoosterFactory(cardPool, landSlot, options);
 	},
 };
 
