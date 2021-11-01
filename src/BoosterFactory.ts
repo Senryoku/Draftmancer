@@ -20,7 +20,7 @@ const foilRarityRates: { [slot: string]: number } = {
 
 export function getSetFoilRate(set: string | null) {
 	if (set === null) return foilRate;
-	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid"].includes(set)) return 1.0 / 3.0;
+	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid", "vow"].includes(set)) return 1.0 / 3.0;
 	return foilRate;
 }
 
