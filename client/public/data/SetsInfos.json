@@ -707,10 +707,12 @@
     "dbl": {
         "code": "dbl",
         "fullName": "Innistrad: Double Feature",
-        "cardCount": 1,
+        "cardCount": 4,
         "isPrimary": true,
         "icon": "img/sets/dbl.svg",
-        "rareCount": 1
+        "commonCount": 1,
+        "mythicCount": 1,
+        "rareCount": 2
     },
     "dd1": {
         "code": "dd1",
@@ -3348,6 +3350,7 @@
         "fullName": "Judge Gift Cards 2021",
         "cardCount": 10,
         "isPrimary": false,
+        "block": "Judge Gift Cards",
         "icon": "img/sets/pj21.svg",
         "mythicCount": 8,
         "rareCount": 2
@@ -5050,13 +5053,13 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 117,
+        "cardCount": 230,
         "isPrimary": true,
         "icon": "img/sets/vow.svg",
-        "commonCount": 26,
-        "mythicCount": 16,
-        "rareCount": 58,
-        "uncommonCount": 17
+        "commonCount": 39,
+        "mythicCount": 31,
+        "rareCount": 97,
+        "uncommonCount": 63
     },
     "w16": {
         "code": "w16",
