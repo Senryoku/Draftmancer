@@ -1290,6 +1290,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>November 05, 2021</em>
+							<p>
+								<img src="img/sets/vow.svg" class="set-icon" style="--invertedness: 100%" />
+								Innistrad: Crimson Vow (VOW) is now available!
+							</p>
+						</div>
+						<div class="news">
 							<em>September 28, 2021</em>
 							<p>
 								New experimental bots, courtesy of
@@ -1308,13 +1315,6 @@
 									>ruler501's Patreon <i class="fab fa-patreon"></i
 								></a>
 								to cover the training cost.
-							</p>
-						</div>
-						<div class="news">
-							<em>September 11, 2021</em>
-							<p>
-								<img src="img/sets/mid.svg" class="set-icon" style="--invertedness: 100%" />
-								Innistrad: Midnight Hunt (MID) is now available!
 							</p>
 						</div>
 						<div class="news">

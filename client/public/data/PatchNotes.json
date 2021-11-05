@@ -1,5 +1,9 @@
 [
 	{
+		"date": "05/11/2021",
+		"notes": ["Innistrad: Crimson Vow (Vow) support."]
+	},
+	{
 		"date": "28/09/2021",
 		"notes": ["Added new experimental bots from ruler501 (https://github.com/ruler501)."]
 	},
