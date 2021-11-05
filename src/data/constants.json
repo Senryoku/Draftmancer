@@ -64,14 +64,16 @@
         "khm",
         "stx",
         "afr",
-        "mid"
+        "mid",
+        "vow"
     ],
     "StandardSets": [
         "znr",
         "khm",
         "stx",
         "afr",
-        "mid"
+        "mid",
+        "vow"
     ],
     "BasicLandNames": {
         "en": {
@@ -220,6 +222,7 @@
         }
     ],
     "PrimarySets": [
+        "vow",
         "mid",
         "j21",
         "afr",
