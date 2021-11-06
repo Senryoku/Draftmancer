@@ -5054,13 +5054,13 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 393,
+        "cardCount": 407,
         "isPrimary": true,
         "icon": "img/sets/vow.svg",
-        "commonCount": 118,
-        "mythicCount": 45,
-        "rareCount": 133,
-        "uncommonCount": 97
+        "commonCount": 122,
+        "mythicCount": 46,
+        "rareCount": 139,
+        "uncommonCount": 100
     },
     "w16": {
         "code": "w16",
