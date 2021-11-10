@@ -236,7 +236,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
                 CardRatings[m[0]] = rating
 
     with open(RatingsDest, 'w') as outfile:
-        json.dump(CardRatings, outfile)
+        json.dump(CardRatings, outfile, indent=2)
 else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
