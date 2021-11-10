@@ -2330,6 +2330,7 @@
         "fullName": "Midnight Hunt Commander",
         "cardCount": 187,
         "isPrimary": false,
+        "block": "Commander",
         "icon": "img/sets/mic.svg",
         "commonCount": 15,
         "mythicCount": 21,
@@ -2341,6 +2342,7 @@
         "fullName": "Innistrad: Midnight Hunt",
         "cardCount": 392,
         "isPrimary": true,
+        "block": "Innistrad: Double Feature",
         "icon": "img/sets/mid.svg",
         "commonCount": 123,
         "mythicCount": 41,
@@ -3415,11 +3417,11 @@
     "pl21": {
         "code": "pl21",
         "fullName": "Year of the Ox 2021",
-        "cardCount": 3,
+        "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/pl21.svg",
-        "mythicCount": 2,
-        "rareCount": 1
+        "mythicCount": 3,
+        "rareCount": 2
     },
     "plc": {
         "code": "plc",
@@ -3628,6 +3630,7 @@
         "fullName": "Innistrad: Midnight Hunt Promos",
         "cardCount": 152,
         "isPrimary": false,
+        "block": "Innistrad: Double Feature",
         "icon": "img/sets/pmid.svg",
         "mythicCount": 35,
         "rareCount": 117
@@ -4483,6 +4486,7 @@
         "fullName": "Innistrad: Midnight Hunt Substitute Cards",
         "cardCount": 1,
         "isPrimary": false,
+        "block": "Innistrad: Double Feature",
         "icon": "img/sets/smid.svg",
         "commonCount": 1
     },
@@ -5045,19 +5049,23 @@
     "voc": {
         "code": "voc",
         "fullName": "Crimson Vow Commander",
-        "cardCount": 20,
+        "cardCount": 188,
         "isPrimary": false,
+        "block": "Commander",
         "icon": "img/sets/voc.svg",
-        "mythicCount": 8,
-        "rareCount": 12
+        "commonCount": 15,
+        "mythicCount": 17,
+        "rareCount": 123,
+        "uncommonCount": 33
     },
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 407,
+        "cardCount": 412,
         "isPrimary": true,
+        "block": "Innistrad: Double Feature",
         "icon": "img/sets/vow.svg",
-        "commonCount": 122,
+        "commonCount": 127,
         "mythicCount": 46,
         "rareCount": 139,
         "uncommonCount": 100
