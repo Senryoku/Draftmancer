@@ -668,7 +668,8 @@ export class Session implements IIndexable {
 			) {
 				options = Object.assign({ foilRate: getSetFoilRate(set) }, options);
 				// Check for a special booster factory
-				if (set && set in SetSpecificFactories) return SetSpecificFactories[set](cardPool, landSlot, options);
+				if (set && set in SetSpecificFactories)
+					return new SetSpecificFactories[set](cardPool, landSlot, options);
 				return new BoosterFactory(cardPool, landSlot, options);
 			};
 

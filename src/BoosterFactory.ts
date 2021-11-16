@@ -689,10 +689,6 @@ class MIDBoosterFactory extends BoosterFactory {
 	}
 }
 
-// Innistrad: Crimson Vow
-// Looks identical to MID
-const VOWBoosterFactory = MIDBoosterFactory;
-
 // Innistrad: Double Feature (DBL) - Uses cards from MID and VOW
 // Note: Since we're completely skipping super.generateBooster(), there's no color balancing going on here.
 //       It is pretty tricky to implement with the added constraint of having to pick exactly 4 commons from each set.
@@ -749,38 +745,18 @@ class DBLBoosterFactory extends BoosterFactory {
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
-	[set: string]: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => BoosterFactory;
+	[set: string]: new (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => BoosterFactory;
 } = {
-	war: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new WARBoosterFactory(cardPool, landSlot, options);
-	},
-	dom: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new DOMBoosterFactory(cardPool, landSlot, options);
-	},
-	znr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new ZNRBoosterFactory(cardPool, landSlot, options);
-	},
-	cmr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new CMRBoosterFactory(cardPool, landSlot, options);
-	},
-	tsr: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new TSRBoosterFactory(cardPool, landSlot, options);
-	},
-	stx: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new STXBoosterFactory(cardPool, landSlot, options);
-	},
-	mh2: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new MH2BoosterFactory(cardPool, landSlot, options);
-	},
-	mid: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new MIDBoosterFactory(cardPool, landSlot, options);
-	},
-	vow: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new VOWBoosterFactory(cardPool, landSlot, options);
-	},
-	dbl: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
-		return new DBLBoosterFactory(cardPool, landSlot, options);
-	},
+	war: WARBoosterFactory,
+	dom: DOMBoosterFactory,
+	znr: ZNRBoosterFactory,
+	cmr: CMRBoosterFactory,
+	tsr: TSRBoosterFactory,
+	stx: STXBoosterFactory,
+	mh2: MH2BoosterFactory,
+	mid: MIDBoosterFactory,
+	vow: MIDBoosterFactory, // Innistrad: Crimson Vow - Identical to MID
+	dbl: DBLBoosterFactory,
 };
 
 /*
@@ -788,7 +764,6 @@ export const SetSpecificFactories: {
  */
 
 import PaperBoosterData from "./data/sealed_extended_data.json";
-import { off } from "process";
 
 class CardInfo {
 	set: string = "";
