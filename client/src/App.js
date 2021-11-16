@@ -120,7 +120,7 @@ export default {
 			ownerIsPlayer: true,
 			isPublic: false,
 			description: "",
-			ignoreCollections: false,
+			ignoreCollections: true,
 			sessionUsers: [],
 			disconnectedUsers: {},
 			boostersPerPlayer: 3,

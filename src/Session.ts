@@ -224,7 +224,7 @@ export class Session implements IIndexable {
 	setRestriction: Array<string> = [constants.MTGASets[constants.MTGASets.length - 1]];
 	isPublic: boolean = false;
 	description: string = "";
-	ignoreCollections: boolean = false;
+	ignoreCollections: boolean = true;
 	boostersPerPlayer: number = 3;
 	cardsPerBooster: number = 15;
 	teamDraft: boolean = false;
