@@ -56,7 +56,9 @@
 						:class="{ 'selected-set': selected(s.code) }"
 						@click="toggle(s.code)"
 					>
-						<span><img :src="s.icon" class="set-icon" /> {{ s.fullName }}</span>
+						<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
+							><img :src="s.icon" class="set-icon" /> {{ s.fullName }}</span
+						>
 						<div
 							v-if="irregularSets.includes(s.code)"
 							class="irregular yellow"
@@ -214,6 +216,7 @@ export default {
 	border-radius: 0.3em;
 	background-color: #282828;
 	user-select: none;
+	overflow: hidden;
 }
 
 .selected-set {
