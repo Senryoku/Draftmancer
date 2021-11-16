@@ -1,7 +1,11 @@
 [
 	{
+		"date": "16/11/2021",
+		"notes": ["Innistrad: Double Feature (DBL) support."]
+	},
+	{
 		"date": "05/11/2021",
-		"notes": ["Innistrad: Crimson Vow (Vow) support."]
+		"notes": ["Innistrad: Crimson Vow (VOW) support."]
 	},
 	{
 		"date": "28/09/2021",
