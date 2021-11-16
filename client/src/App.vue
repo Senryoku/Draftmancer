@@ -1290,6 +1290,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>November 16, 2021</em>
+							<p>
+								<img src="img/sets/dbl.svg" class="set-icon" style="--invertedness: 100%" />
+								Innistrad: Double Feature (DBL) support.
+							</p>
+							<p>
+								This is a special draft product composed of the cards from Innistrad: Midnight Hunt and
+								Crimson Vow. Note: Due to the unusual content of the packs, Color Balancing is not
+								implemented for this set.
+							</p>
+						</div>
+						<div class="news">
 							<em>November 05, 2021</em>
 							<p>
 								<img src="img/sets/vow.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1315,28 +1327,6 @@
 									>ruler501's Patreon <i class="fab fa-patreon"></i
 								></a>
 								to cover the training cost.
-							</p>
-						</div>
-						<div class="news">
-							<em>August 29, 2021</em>
-							<p>
-								<i class="fas fa-exclamation-triangle red"></i>
-								<strong>MTGA Collection import disabled!</strong>
-							</p>
-							<p>
-								With the Jumpstart: Historic Horizons update, Wizards removed player collection from
-								MTGA player logs. It was our only non-intrusive way to get them. Collection import is
-								thus disabled until the situation is resolved.
-								<br />
-								You can vote for
-								<a
-									href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855"
-									target="_blank"
-									rel="noopener nofollow"
-								>
-									this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
-								></a>
-								to draw to their attention to the problem.
 							</p>
 						</div>
 					</div>

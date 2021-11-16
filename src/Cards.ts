@@ -109,6 +109,7 @@ for (let cid in Cards) {
 	if (!(Cards[cid].set in CardsBySet)) CardsBySet[Cards[cid].set] = [];
 	CardsBySet[Cards[cid].set].push(cid);
 }
+BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 
 export const CardIDs = Object.keys(Cards);
 export const MTGACardIDs = CardIDs.filter(cid => !!Cards[cid].arena_id);

@@ -1,7 +1,7 @@
 "use strict";
 
 import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsBySet, UniqueCard } from "./Cards.js";
-import { shuffleArray, randomInt, Options } from "./utils.js";
+import { shuffleArray, randomInt, Options, random } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import constants from "./data/constants.json";
@@ -119,7 +119,7 @@ export class ColorBalancedSlot {
 		let remainingCards = cardCount - seededMonocolors; // r
 		const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
 		for (let i = pickedCards.length; i < cardCount; ++i) {
-			const type = (Math.random() < x && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
+			const type = (random.bool(x) && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
 			let pickedCard = pickCard(type ? this.cache.monocolored : this.cache.others, pickedCards);
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
@@ -164,8 +164,8 @@ export class BoosterFactory implements IBoosterFactory {
 
 		let addedFoils = 0;
 		const localFoilRate = this.options.foilRate ?? foilRate;
-		if (this.options.foil && Math.random() <= localFoilRate) {
-			const rarityCheck = Math.random();
+		if (this.options.foil && random.bool(localFoilRate)) {
+			const rarityCheck = random.real(0, 1);
 			const foilCardPool: SlotedCardPool = this.options.foilCardPool ?? this.cardPool;
 			for (let r in foilRarityRates)
 				if (rarityCheck <= foilRarityRates[r] && foilCardPool[r].size > 0) {
@@ -192,7 +192,7 @@ export class BoosterFactory implements IBoosterFactory {
 			} else if (this.options.mythicPromotion && this.cardPool["rare"].size === 0) {
 				booster.push(pickCard(this.cardPool["mythic"]));
 			} else {
-				if (this.options.mythicPromotion && Math.random() <= mythicRate)
+				if (this.options.mythicPromotion && random.bool(mythicRate))
 					booster.push(pickCard(this.cardPool["mythic"]));
 				else booster.push(pickCard(this.cardPool["rare"]));
 			}
@@ -251,14 +251,14 @@ function rollSpecialCardRarity(
 	if (pickedRarity === "common") total += targets.common;
 	if (pickedRarity === "common" || pickedRarity === "uncommon") total += targets.uncommon;
 
-	const rand = Math.random() * total;
+	const rand = random.real(0, total);
 	if (rand < targets.rare) pickedRarity = "rare";
 	else if (rand < targets.rare + targets.uncommon) pickedRarity = "uncommon";
 
 	if (pickedRarity === "rare") {
 		if (
 			cardCounts["rare"] === 0 ||
-			(cardCounts["mythic"] > 0 && options.mythicPromotion && Math.random() <= mythicRate)
+			(cardCounts["mythic"] > 0 && options.mythicPromotion && random.bool(mythicRate))
 		)
 			pickedRarity = "mythic";
 	}
@@ -441,7 +441,7 @@ class CMRBoosterFactory extends BoosterFactory {
 
 			let booster: Array<Card> | false = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
-			if (Math.random() < 1 / 6) {
+			if (random.bool(1 / 6)) {
 				--updatedTargets.common;
 				booster = super.generateBooster(updatedTargets);
 				if (!booster) return false;
@@ -470,7 +470,7 @@ class CMRBoosterFactory extends BoosterFactory {
 
 			// One random foil
 			let foilRarity = "common";
-			const rarityCheck = Math.random();
+			const rarityCheck = random.real(0, 1);
 			for (let r in foilRarityRates)
 				if (rarityCheck <= foilRarityRates[r] && this.completeCardPool[r].size > 0) {
 					foilRarity = r;
@@ -542,7 +542,7 @@ class STXBoosterFactory extends BoosterFactory {
 
 		// Lesson
 		const lessonsCounts = countBySlot(this.lessonsByRarity);
-		const rarityRoll = Math.random();
+		const rarityRoll = random.real(0, 1);
 		const pickedRarity = allowRares
 			? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
 				? "mythic"
@@ -567,7 +567,7 @@ class STXBoosterFactory extends BoosterFactory {
 
 		// Mystical Archive
 		const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
-		const archiveRarityRoll = Math.random();
+		const archiveRarityRoll = random.real(0, 1);
 		const archiveRarity = allowRares
 			? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
 				? "mythic"
@@ -678,7 +678,7 @@ class MIDBoosterFactory extends BoosterFactory {
 			if (pickedDoubleFacedRareOrUncommon) {
 				booster.splice(
 					pickedDoubleFacedRareOrUncommon.rarity === "uncommon"
-						? updatedTargets["rare"] + Math.random() * updatedTargets["uncommon"]
+						? randomInt(updatedTargets["rare"], updatedTargets["rare"] + updatedTargets["uncommon"])
 						: 0,
 					0,
 					pickedDoubleFacedRareOrUncommon
@@ -692,6 +692,59 @@ class MIDBoosterFactory extends BoosterFactory {
 // Innistrad: Crimson Vow
 // Looks identical to MID
 const VOWBoosterFactory = MIDBoosterFactory;
+
+// Innistrad: Double Feature (DBL) - Uses cards from MID and VOW
+// Note: Since we're completely skipping super.generateBooster(), there's no color balancing going on here.
+//       It is pretty tricky to implement with the added constraint of having to pick exactly 4 commons from each set.
+class DBLBoosterFactory extends BoosterFactory {
+	midCardPool: SlotedCardPool;
+	vowCardPool: SlotedCardPool;
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		// We won't use the default booster generator, or the land slot
+		super(cardPool, landSlot, options);
+		[this.midCardPool, this.vowCardPool] = filterCardPool(cardPool, (cid: CardID) => Cards[cid].set === "mid");
+	}
+
+	generateBooster(targets: Targets) {
+		if (targets !== DefaultBoosterTargets) {
+			targets = {
+				rare: Math.ceil(targets["rare"] / 2),
+				uncommon: Math.ceil(targets["uncommon"] / 2),
+				common: Math.ceil(targets["common"] / 2),
+			};
+		} else {
+			targets = {
+				rare: 1,
+				uncommon: 2,
+				common: 4,
+			};
+		}
+
+		let booster: Array<Card> | false = [];
+		const mythicPromotion = this.options?.mythicPromotion ?? true;
+
+		// Silver screen foil card (Note: We could eventually use actual DBL cards for this, to get the proper image)
+		const pickedPool = random.pick([this.midCardPool, this.vowCardPool]);
+		const pickedRarity = rollSpecialCardRarity(countBySlot(pickedPool), targets, {
+			minRarity: "common",
+			mythicPromotion,
+		});
+		booster.push(pickCard(pickedPool[pickedRarity], [])); // Allow duplicates here
+
+		for (let rarity in targets) {
+			let pickedCards: Array<UniqueCard> = [];
+			for (let pool of [this.midCardPool, this.vowCardPool])
+				for (let i = 0; i < targets[rarity]; i++) {
+					const promotion =
+						rarity === "rare" && mythicPromotion && pool["mythic"].size > 0 && random.bool(mythicRate);
+					pickedCards.push(pickCard(pool[promotion ? "mythic" : rarity], pickedCards));
+				}
+			booster.push(...pickedCards);
+		}
+
+		return booster;
+	}
+}
 
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
@@ -724,6 +777,9 @@ export const SetSpecificFactories: {
 	},
 	vow: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
 		return new VOWBoosterFactory(cardPool, landSlot, options);
+	},
+	dbl: (cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) => {
+		return new DBLBoosterFactory(cardPool, landSlot, options);
 	},
 };
 
@@ -838,7 +894,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 					const noOther =
 						sheet["Others"].cards.length === 1 &&
 						pickedCards.some(c => c.id === sheet["Others"].cards[0].id);
-					const selectedSheet = Math.random() < x || noOther ? sheet["Mono"] : sheet["Others"];
+					const selectedSheet = random.bool(x) || noOther ? sheet["Mono"] : sheet["Others"];
 					pickedCards.push(weightedRandomPick(selectedSheet.cards, selectedSheet.total_weight, pickedCards));
 				}
 				shuffleArray(pickedCards);

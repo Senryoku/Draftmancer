@@ -18,7 +18,6 @@ import {
 	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
-	UniqueCard,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -30,9 +29,7 @@ import {
 	PaperBoosterFactories,
 	DefaultBoosterTargets,
 	IBoosterFactory,
-	PaperBoosterFactory,
 	getSetFoilRate,
-	weightedRandomIdx,
 	PaperBoosterSizes,
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
@@ -753,8 +750,8 @@ export class Session implements IIndexable {
 				const usedSets: { [set: string]: IBoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
 
-				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2 that already have 15 cards.
-				const irregularSets = ["cmr", "tsr", "stx", "mh2"];
+				// Exceptions for inclusion of basic land slot: Commander Legends as the booster size will be wrong anyway, and TSR/STX/MH2/DBL that already have 15 cards.
+				const irregularSets = ["cmr", "tsr", "stx", "mh2", "dbl"];
 				// If randomized, we'll have to make sure all boosters are of the same size: Adding a land slot to the default rule.
 				const addLandSlot =
 					this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random");

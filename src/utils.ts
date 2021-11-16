@@ -1,8 +1,7 @@
 "use strict";
 
 import randomjs from "random-js";
-import { CardID, CardPool } from "./Cards";
-const random = new randomjs.Random(randomjs.nodeCrypto);
+export const random = new randomjs.Random(randomjs.nodeCrypto);
 
 export function isEmpty(obj: Object) {
 	return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
