@@ -3184,6 +3184,14 @@
         "icon": "img/sets/pf20.svg",
         "rareCount": 6
     },
+    "pf21": {
+        "code": "pf21",
+        "fullName": "MagicFest 2021",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/pf21.svg",
+        "rareCount": 1
+    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
@@ -4465,10 +4473,10 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 356,
+        "cardCount": 359,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 12,
+        "commonCount": 15,
         "mythicCount": 71,
         "rareCount": 253,
         "uncommonCount": 20
@@ -5247,10 +5255,10 @@
         "isPrimary": false,
         "block": "Commander",
         "icon": "img/sets/znc.svg",
-        "commonCount": 34,
+        "commonCount": 32,
         "mythicCount": 9,
         "rareCount": 41,
-        "uncommonCount": 58
+        "uncommonCount": 60
     },
     "zne": {
         "code": "zne",
