@@ -120,6 +120,17 @@
         "rareCount": 111,
         "uncommonCount": 112
     },
+    "a22": {
+        "code": "a22",
+        "fullName": "Alchemy: Innistrad",
+        "cardCount": 30,
+        "isPrimary": true,
+        "icon": "img/sets/a22.svg",
+        "commonCount": 1,
+        "mythicCount": 5,
+        "rareCount": 20,
+        "uncommonCount": 4
+    },
     "a25": {
         "code": "a25",
         "fullName": "Masters 25",
@@ -627,6 +638,7 @@
         "fullName": "Conspiracy: Take the Crown",
         "cardCount": 222,
         "isPrimary": true,
+        "block": "Conspiracy",
         "icon": "img/sets/cn2.svg",
         "commonCount": 90,
         "mythicCount": 15,
@@ -638,6 +650,7 @@
         "fullName": "Conspiracy",
         "cardCount": 210,
         "isPrimary": true,
+        "block": "Conspiracy",
         "icon": "img/sets/cns.svg",
         "commonCount": 89,
         "mythicCount": 10,
@@ -707,12 +720,13 @@
     "dbl": {
         "code": "dbl",
         "fullName": "Innistrad: Double Feature",
-        "cardCount": 4,
+        "cardCount": 535,
         "isPrimary": true,
         "icon": "img/sets/dbl.svg",
-        "commonCount": 1,
-        "mythicCount": 1,
-        "rareCount": 2
+        "commonCount": 200,
+        "mythicCount": 40,
+        "rareCount": 129,
+        "uncommonCount": 166
     },
     "dd1": {
         "code": "dd1",
@@ -1695,10 +1709,10 @@
     "hho": {
         "code": "hho",
         "fullName": "Happy Holidays",
-        "cardCount": 17,
+        "cardCount": 18,
         "isPrimary": false,
         "icon": "img/sets/hho.svg",
-        "mythicCount": 7,
+        "mythicCount": 8,
         "rareCount": 10
     },
     "hml": {
@@ -2517,6 +2531,15 @@
         "rareCount": 43,
         "uncommonCount": 60
     },
+    "omic": {
+        "code": "omic",
+        "fullName": "Midnight Hunt Commander Display Commanders",
+        "cardCount": 2,
+        "isPrimary": false,
+        "block": "Commander",
+        "icon": "img/sets/omic.svg",
+        "mythicCount": 2
+    },
     "ons": {
         "code": "ons",
         "fullName": "Onslaught",
@@ -2539,6 +2562,15 @@
         "mythicCount": 16,
         "rareCount": 60,
         "uncommonCount": 84
+    },
+    "ovoc": {
+        "code": "ovoc",
+        "fullName": "Crimson Vow Commander Display Commanders",
+        "cardCount": 2,
+        "isPrimary": false,
+        "block": "Innistrad: Double Feature",
+        "icon": "img/sets/ovoc.svg",
+        "mythicCount": 2
     },
     "p02": {
         "code": "p02",
@@ -2951,6 +2983,7 @@
         "fullName": "Conspiracy Promos",
         "cardCount": 1,
         "isPrimary": false,
+        "block": "Conspiracy",
         "icon": "img/sets/pcns.svg",
         "rareCount": 1
     },
@@ -3478,14 +3511,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 577,
+        "cardCount": 652,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 75,
-        "mythicCount": 80,
-        "rareCount": 260,
+        "commonCount": 85,
+        "mythicCount": 89,
+        "rareCount": 291,
         "specialCount": 2,
-        "uncommonCount": 160
+        "uncommonCount": 185
     },
     "plrw": {
         "code": "plrw",
@@ -3627,11 +3660,11 @@
     "pmh2": {
         "code": "pmh2",
         "fullName": "Modern Horizons 2 Promos",
-        "cardCount": 102,
+        "cardCount": 80,
         "isPrimary": false,
         "icon": "img/sets/pmh2.svg",
-        "mythicCount": 24,
-        "rareCount": 78
+        "mythicCount": 20,
+        "rareCount": 60
     },
     "pmid": {
         "code": "pmid",
@@ -4193,6 +4226,15 @@
         "icon": "img/sets/pust.svg",
         "rareCount": 1
     },
+    "pvow": {
+        "code": "pvow",
+        "fullName": "Innistrad: Crimson Vow Promos",
+        "cardCount": 152,
+        "isPrimary": false,
+        "icon": "img/sets/pvow.svg",
+        "mythicCount": 35,
+        "rareCount": 117
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -4473,12 +4515,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 359,
+        "cardCount": 409,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 15,
         "mythicCount": 71,
-        "rareCount": 253,
+        "rareCount": 303,
         "uncommonCount": 20
     },
     "slu": {
@@ -4926,6 +4968,17 @@
         "mythicCount": 4,
         "rareCount": 30,
         "uncommonCount": 22
+    },
+    "unf": {
+        "code": "unf",
+        "fullName": "Unfinity",
+        "cardCount": 26,
+        "isPrimary": false,
+        "icon": "img/sets/unf.svg",
+        "commonCount": 11,
+        "mythicCount": 1,
+        "rareCount": 11,
+        "uncommonCount": 3
     },
     "unh": {
         "code": "unh",

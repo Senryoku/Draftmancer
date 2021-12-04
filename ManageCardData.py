@@ -328,7 +328,22 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
     print("Generating card data cache...")
     meldCards = []
     for c in all_cards:
+        # Some dual faced Secret Lair cards have some key information hidden in the card_faces array. Extract it.
+        def copyFromFaces(prop):
+            if prop not in c:
+                if 'card_faces' in c and len(c['card_faces']) > 1 and prop in c['card_faces'][0] and prop in c['card_faces'][1] and c['card_faces'][0][prop] == c['card_faces'][1][prop]:
+                    c['type_line'] = c['card_faces'][0][prop]
+                else:
+                    print("Warning: Missing '{}' for card '{}'.".format(prop, c['name']))
+                    return False
+            return True
+        
+        if copyFromFaces("type_line") == False:
+            continue
+
         if c['id'] not in cards:
+            if copyFromFaces("oracle_id") == False:
+                continue
             cards[c['id']] = {'id': c['id'], 'oracle_id': c['oracle_id']}
 
         key = (c['name'], c['set'], c['collector_number'])
@@ -734,6 +749,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in []]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
