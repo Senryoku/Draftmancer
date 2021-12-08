@@ -160,7 +160,7 @@ export class BoosterFactory implements IBoosterFactory {
 	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
 	 */
 	generateBooster(targets: Targets) {
-		let booster: Array<Card> = [];
+		let booster: Array<UniqueCard> = [];
 
 		let addedFoils = 0;
 		const localFoilRate = this.options.foilRate ?? foilRate;
