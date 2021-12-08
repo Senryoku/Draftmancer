@@ -123,13 +123,12 @@
     "a22": {
         "code": "a22",
         "fullName": "Alchemy: Innistrad",
-        "cardCount": 30,
+        "cardCount": 48,
         "isPrimary": true,
         "icon": "img/sets/a22.svg",
-        "commonCount": 1,
-        "mythicCount": 5,
-        "rareCount": 20,
-        "uncommonCount": 4
+        "mythicCount": 8,
+        "rareCount": 32,
+        "uncommonCount": 8
     },
     "a25": {
         "code": "a25",
@@ -3865,13 +3864,13 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 2267,
+        "cardCount": 2268,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 388,
         "mythicCount": 270,
-        "rareCount": 1140,
+        "rareCount": 1141,
         "uncommonCount": 468
     },
     "prna": {
@@ -4515,12 +4514,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 409,
+        "cardCount": 414,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 15,
-        "mythicCount": 71,
-        "rareCount": 303,
+        "mythicCount": 74,
+        "rareCount": 305,
         "uncommonCount": 20
     },
     "slu": {
