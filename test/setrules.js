@@ -7,6 +7,15 @@ describe("Set Specific Booster Rules", function() {
 	let clients = [];
 	let sessionID = "SessionID";
 
+	const validateColorBalance = booster => {
+		const colors = "WUBRG";
+		const commons = booster.filter(card => card.rarity == "common");
+		for (let color of colors) {
+			let count = commons.filter(card => card.colors.includes(color)).length;
+			expect(count).to.be.at.least(1);
+		}
+	};
+
 	const validateDOMBooster = function(booster) {
 		const regex = /Legendary.*Creature/;
 		expect(booster.map(c => c.set).every(s => s === "dom")).to.be.true;
@@ -152,6 +161,8 @@ describe("Set Specific Booster Rules", function() {
 	testSet("mh2", validateMH2Booster, "exactly one New-to-Modern card per pack");
 	testSet("mid", validateMIDBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 	testSet("vow", validateVOWBooster, "exactly one common DFC and at most one uncommon DFC per pack");
+
+	testSet("vow", validateColorBalance, "at least one common of each color.");
 
 	it(`Validate mixed Custom boosters.`, function(done) {
 		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
