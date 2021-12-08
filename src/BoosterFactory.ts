@@ -671,14 +671,22 @@ class MIDBoosterFactory extends BoosterFactory {
 			}
 			const booster = super.generateBooster(updatedTargets);
 			if (!booster) return false;
+			const hasFoil = booster[0].foil ? 1 : 0;
 			// Insert the Double-Faced common as the first common in the pack
 			if (pickedDoubleFacedCommon)
-				booster.splice(updatedTargets["rare"] + updatedTargets["uncommon"], 0, pickedDoubleFacedCommon);
+				booster.splice(
+					updatedTargets["rare"] + updatedTargets["uncommon"] + hasFoil,
+					0,
+					pickedDoubleFacedCommon
+				);
 			// Insert the Double-Faced uncommon randomly among the other uncommons in the pack, or the rare/mythic on top
 			if (pickedDoubleFacedRareOrUncommon) {
 				booster.splice(
 					pickedDoubleFacedRareOrUncommon.rarity === "uncommon"
-						? randomInt(updatedTargets["rare"], updatedTargets["rare"] + updatedTargets["uncommon"])
+						? randomInt(
+								updatedTargets["rare"] + hasFoil,
+								updatedTargets["rare"] + updatedTargets["uncommon"] + hasFoil
+						  )
 						: 0,
 					0,
 					pickedDoubleFacedRareOrUncommon
