@@ -332,7 +332,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
         def copyFromFaces(prop):
             if prop not in c:
                 if 'card_faces' in c and len(c['card_faces']) > 1 and prop in c['card_faces'][0] and prop in c['card_faces'][1] and c['card_faces'][0][prop] == c['card_faces'][1][prop]:
-                    c['type_line'] = c['card_faces'][0][prop]
+                    c[prop] = c['card_faces'][0][prop]
                 else:
                     print("Warning: Missing '{}' for card '{}'.".format(prop, c['name']))
                     return False
