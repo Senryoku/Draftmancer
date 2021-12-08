@@ -163,6 +163,21 @@ describe("Set Specific Booster Rules", function() {
 	testSet("vow", validateVOWBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 
 	testSet("vow", validateColorBalance, "at least one common of each color.");
+	it(`$VOW boosters should have at least one common of each color, even with foil on.`, function(done) {
+		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setRestriction", ["vow"]);
+		clients[ownerIdx].emit("setFoil", true);
+		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
+		clients[ownerIdx].once("startDraft", function() {
+			for (let b of Sessions[sessionID].draftState.boosters) validateColorBalance(b);
+			clients[ownerIdx].once("endDraft", function() {
+				done();
+			});
+			clients[ownerIdx].emit("stopDraft");
+		});
+		clients[ownerIdx].emit("startDraft");
+	});
 
 	it(`Validate mixed Custom boosters.`, function(done) {
 		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
