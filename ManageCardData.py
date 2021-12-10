@@ -1,7 +1,6 @@
 import mmap
 import json
 import requests
-import ijson
 import os
 import gzip
 import urllib
@@ -288,8 +287,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache:
             if(c['set'] == 'm21' and c['collector_number'] in ['275', '276', '277']):
                 c['booster'] = False
             # Workaround for premium version of some afr cards
-            if(c['set'] == 'afr' and ('★' in c['collector_number'] or int(c['collector_number']) > 281)):
-                c['booster'] = False
+            cnAsInt = 0
+            try:
+                cnAsInt = int(c['collector_number'])
+                if(c['set'] == 'afr' and ('★' in c['collector_number'] or cnAsInt > 281)):
+                    c['booster'] = False
+            except ValueError:
+                pass
 
             all_cards.append(c)
             copied += 1
@@ -721,7 +725,11 @@ set_per_line = m1.floor(os.get_terminal_size().columns / 14)
 subsets = []  # List of sub-sets associated to a larger, standard set.
 for mtgset, group in groups:
     cardList = list(group)
-    setdata = next(x for x in SetsInfos if x['code'] == mtgset)
+    candidates = [x for x in SetsInfos if x['code'] == mtgset]
+    if len(candidates) == 0:
+        print("\nWarning: Set '{}' not found in SetsInfos.\n".format(mtgset))
+        continue
+    setdata = candidates[0]
     if("parent_set_code" in setdata):
         subsets.append(mtgset)
     setinfos[mtgset] = {"code": mtgset,

@@ -120,16 +120,6 @@
         "rareCount": 111,
         "uncommonCount": 112
     },
-    "a22": {
-        "code": "a22",
-        "fullName": "Alchemy: Innistrad",
-        "cardCount": 48,
-        "isPrimary": true,
-        "icon": "img/sets/a22.svg",
-        "mythicCount": 8,
-        "rareCount": 32,
-        "uncommonCount": 8
-    },
     "a25": {
         "code": "a25",
         "fullName": "Masters 25",
