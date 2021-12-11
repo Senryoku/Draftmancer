@@ -157,13 +157,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 402,
+        "cardCount": 405,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
         "commonCount": 139,
-        "mythicCount": 40,
+        "mythicCount": 41,
         "rareCount": 115,
-        "uncommonCount": 108
+        "uncommonCount": 110
     },
     "ajmp": {
         "code": "ajmp",
@@ -2011,12 +2011,12 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 404,
+        "cardCount": 409,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 129,
-        "mythicCount": 41,
-        "rareCount": 125,
+        "mythicCount": 43,
+        "rareCount": 128,
         "uncommonCount": 109
     },
     "kld": {
@@ -3834,10 +3834,10 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 30,
+        "cardCount": 31,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 30
+        "rareCount": 31
     },
     "prix": {
         "code": "prix",
@@ -4218,11 +4218,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 152,
+        "cardCount": 84,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
-        "mythicCount": 35,
-        "rareCount": 117
+        "mythicCount": 20,
+        "rareCount": 64
     },
     "pwar": {
         "code": "pwar",
@@ -4504,10 +4504,10 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 414,
+        "cardCount": 416,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 15,
+        "commonCount": 17,
         "mythicCount": 74,
         "rareCount": 305,
         "uncommonCount": 20
@@ -5278,6 +5278,16 @@
         "rareCount": 65,
         "uncommonCount": 82
     },
+    "y22": {
+        "code": "y22",
+        "fullName": "Alchemy: Innistrad",
+        "cardCount": 63,
+        "isPrimary": true,
+        "icon": "img/sets/y22.svg",
+        "mythicCount": 10,
+        "rareCount": 42,
+        "uncommonCount": 11
+    },
     "zen": {
         "code": "zen",
         "fullName": "Zendikar",
@@ -5313,12 +5323,12 @@
     "znr": {
         "code": "znr",
         "fullName": "Zendikar Rising",
-        "cardCount": 392,
+        "cardCount": 395,
         "isPrimary": true,
         "icon": "img/sets/znr.svg",
         "commonCount": 132,
-        "mythicCount": 40,
-        "rareCount": 131,
+        "mythicCount": 41,
+        "rareCount": 133,
         "uncommonCount": 89
     }
 }
