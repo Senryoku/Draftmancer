@@ -326,6 +326,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
+			if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
 			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
 			startPublicSession(sess);
 		} else {
@@ -353,6 +354,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		const sess = Sessions[sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
+			if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
 			sess.startWinstonDraft(boosterCount ? boosterCount : 6);
 			startPublicSession(sess);
 		} else {

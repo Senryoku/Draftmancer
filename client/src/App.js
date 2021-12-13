@@ -1104,7 +1104,7 @@ export default {
 				return;
 			}
 
-			const { value: boosterCount } = await Alert.fire({
+			let { value: boosterCount } = await Alert.fire({
 				title: "Winston Draft",
 				html: `<p>Winston Draft is a draft variant for two players. <a href="https://mtg.gamepedia.com/Winston_Draft" target="_blank" rel="noopener nofollow">More information here</a>.</p>How many boosters for the main stack (default is 6)?`,
 				inputPlaceholder: "Booster count",
@@ -1122,6 +1122,7 @@ export default {
 			});
 
 			if (boosterCount) {
+				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
 				this.socket.emit("startWinstonDraft", boosterCount);
 			}
 		},
@@ -1166,7 +1167,7 @@ export default {
 				return;
 			}
 
-			const { value: boosterCount } = await Alert.fire({
+			let { value: boosterCount } = await Alert.fire({
 				title: "Grid Draft",
 				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
 				inputPlaceholder: "Booster count",
@@ -1184,6 +1185,7 @@ export default {
 			});
 
 			if (boosterCount) {
+				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
 				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
