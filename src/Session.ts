@@ -54,6 +54,7 @@ export const optionProps = [
 	"maxTimer",
 	"maxPlayers",
 	"mythicPromotion",
+	"useBoosterContent",
 	"boosterContent",
 	"usePredeterminedBoosters",
 	"colorBalance",
@@ -232,6 +233,7 @@ export class Session implements IIndexable {
 	maxTimer: number = 75;
 	maxPlayers: number = 8;
 	mythicPromotion: boolean = true;
+	useBoosterContent: boolean = false; // Use the specified booster content if true, DefaultBoosterTargets otherwise
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
 	usePredeterminedBoosters: boolean = false;
 	colorBalance: boolean = true;
@@ -390,6 +392,11 @@ export class Session implements IIndexable {
 		this.userOrder = seating;
 		this.notifyUserChange();
 		return true;
+	}
+
+	getBoosterContent() {
+		if (this.useBoosterContent) return this.boosterContent;
+		return DefaultBoosterTargets;
 	}
 
 	randomizeSeating() {
@@ -645,7 +652,7 @@ export class Session implements IIndexable {
 			}
 		} else {
 			// Standard draft boosters
-			const targets = options?.targets ?? this.boosterContent;
+			const targets = options?.targets ?? this.getBoosterContent();
 
 			const BoosterFactoryOptions = {
 				foil: this.foil,
@@ -676,7 +683,7 @@ export class Session implements IIndexable {
 			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
 			const boosterSpecificRules = options.useCustomBoosters && customBoosters.some((v: string) => v !== "");
 			const acceptPaperBoosterFactories =
-				targets === DefaultBoosterTargets &&
+				!this.useBoosterContent &&
 				BoosterFactoryOptions.mythicPromotion &&
 				!this.maxDuplicates &&
 				this.unrestrictedCardPool();
@@ -1010,11 +1017,11 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
 		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
 		// Use boosterContent setting only if it is valid (adds up to 9 cards)
-		const cardsPerBooster = Object.values(this.boosterContent).reduce((val, acc) => val + acc, 0);
+		const cardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
 
 		if (
 			!this.generateBoosters(boosterCount, {
-				targets: cardsPerBooster === 9 ? this.boosterContent : { rare: 1, uncommon: 3, common: 5 },
+				targets: cardsPerBooster === 9 ? this.getBoosterContent() : { rare: 1, uncommon: 3, common: 5 },
 				cardsPerBooster: 9,
 			})
 		) {

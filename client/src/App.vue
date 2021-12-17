@@ -1859,22 +1859,27 @@
 								'<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
 						}"
 					>
-						<div class="option-column-title">Booster Content</div>
-						<div class="line" v-for="r in ['common', 'uncommon', 'rare']" :key="r">
-							<label :for="'booster-content-' + r" class="capitalized">{{ r }}s</label>
-							<div class="right">
-								<input
-									class="small-number-input"
-									type="number"
-									:id="'booster-content-' + r"
-									min="0"
-									max="16"
-									step="1"
-									v-model.number="boosterContent[r]"
-									@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
-								/>
-							</div>
+						<div class="option-column-title">
+							<input type="checkbox" v-model="useBoosterContent" id="edit-booster-content" />
+							<label for="edit-booster-content">Edit Booster Content</label>
 						</div>
+						<template v-if="useBoosterContent">
+							<div class="line" v-for="r in ['common', 'uncommon', 'rare']" :key="r">
+								<label :for="'booster-content-' + r" class="capitalized">{{ r }}s</label>
+								<div class="right">
+									<input
+										class="small-number-input"
+										type="number"
+										:id="'booster-content-' + r"
+										min="0"
+										max="16"
+										step="1"
+										v-model.number="boosterContent[r]"
+										@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
+									/>
+								</div>
+							</div>
+						</template>
 					</div>
 					<div
 						class="option-section"

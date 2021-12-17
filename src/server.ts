@@ -613,6 +613,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
 		}
 	},
+	setUseBoosterContent(userID: UserID, sessionID: SessionID, useBoosterContent: boolean) {
+		Sessions[sessionID].useBoosterContent = useBoosterContent;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID)
+				Connections[user].socket.emit("sessionOptions", { useBoosterContent: useBoosterContent });
+		}
+	},
 	setBoosterContent(
 		userID: UserID,
 		sessionID: SessionID,

@@ -130,6 +130,7 @@ export default {
 			customBoosters: ["", "", ""],
 			maxPlayers: 8,
 			mythicPromotion: true,
+			useBoosterContent: false,
 			boosterContent: {
 				common: 10,
 				uncommon: 3,
@@ -2437,6 +2438,10 @@ export default {
 		mythicPromotion: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMythicPromotion", this.mythicPromotion);
+		},
+		useBoosterContent() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setUseBoosterContent", this.useBoosterContent);
 		},
 		boosterContent: {
 			deep: true,
