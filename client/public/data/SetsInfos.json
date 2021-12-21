@@ -2467,6 +2467,15 @@
         "rareCount": 44,
         "uncommonCount": 44
     },
+    "neo": {
+        "code": "neo",
+        "fullName": "Kamigawa: Neon Dynasty",
+        "cardCount": 13,
+        "isPrimary": true,
+        "icon": "img/sets/neo.svg",
+        "mythicCount": 6,
+        "rareCount": 7
+    },
     "nph": {
         "code": "nph",
         "fullName": "New Phyrexia",
@@ -4224,6 +4233,56 @@
         "mythicCount": 20,
         "rareCount": 64
     },
+    "pw09": {
+        "code": "pw09",
+        "fullName": "Wizards Play Network 2009",
+        "cardCount": 8,
+        "isPrimary": false,
+        "icon": "img/sets/pw09.svg",
+        "rareCount": 8
+    },
+    "pw10": {
+        "code": "pw10",
+        "fullName": "Wizards Play Network 2010",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/pw10.svg",
+        "rareCount": 10
+    },
+    "pw11": {
+        "code": "pw11",
+        "fullName": "Wizards Play Network 2011",
+        "cardCount": 14,
+        "isPrimary": false,
+        "icon": "img/sets/pw11.svg",
+        "rareCount": 14
+    },
+    "pw12": {
+        "code": "pw12",
+        "fullName": "Wizards Play Network 2012",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/pw12.svg",
+        "rareCount": 3
+    },
+    "pw21": {
+        "code": "pw21",
+        "fullName": "Wizards Play Network 2021",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/pw21.svg",
+        "mythicCount": 1,
+        "rareCount": 5
+    },
+    "pw22": {
+        "code": "pw22",
+        "fullName": "Wizards Play Network 2022",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/pw22.svg",
+        "mythicCount": 1,
+        "rareCount": 2
+    },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
@@ -4259,47 +4318,6 @@
         "isPrimary": false,
         "icon": "img/sets/pwos.svg",
         "rareCount": 1
-    },
-    "pwp09": {
-        "code": "pwp09",
-        "fullName": "Wizards Play Network 2009",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/pwp09.svg",
-        "rareCount": 8
-    },
-    "pwp10": {
-        "code": "pwp10",
-        "fullName": "Wizards Play Network 2010",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/pwp10.svg",
-        "rareCount": 10
-    },
-    "pwp11": {
-        "code": "pwp11",
-        "fullName": "Wizards Play Network 2011",
-        "cardCount": 14,
-        "isPrimary": false,
-        "icon": "img/sets/pwp11.svg",
-        "rareCount": 14
-    },
-    "pwp12": {
-        "code": "pwp12",
-        "fullName": "Wizards Play Network 2012",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pwp12.svg",
-        "rareCount": 3
-    },
-    "pwp21": {
-        "code": "pwp21",
-        "fullName": "Wizards Play Network 2021",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/pwp21.svg",
-        "mythicCount": 1,
-        "rareCount": 5
     },
     "pwpn": {
         "code": "pwpn",
