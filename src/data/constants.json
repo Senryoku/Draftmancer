@@ -150,9 +150,14 @@
 	},
 	"CubeLists": [
 		{
+			"name": "Arena Cube - January 2022 - No Alchemy",
+			"filename": "MTGArenaCubeJanuary2022NoAlchemy.txt",
+			"description": "MTGA Official Cube from January 2022, excluding Alchemy re-balanced cards. Use this version if you intend to play 40-cards decks in Arena Direct Challenge as Alchemy cards aren't allowed there."
+		},
+		{
 			"name": "Arena Cube - January 2022",
 			"filename": "MTGArenaCubeJanuary2022.txt",
-			"description": "MTGA Official Cube from January 2022. First version with Alchemy rebalanced cards."
+			"description": "MTGA Official Cube from January 2022. First version with Alchemy rebalanced cards. NOTE: Alchemy cards cannot be played in 40-cards deck using Arena Direct Challenge."
 		},
 		{
 			"name": "Arena Tinkerer's Cube #3",
