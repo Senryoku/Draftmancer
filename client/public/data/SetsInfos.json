@@ -2470,11 +2470,11 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 13,
+        "cardCount": 16,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "mythicCount": 6,
-        "rareCount": 7
+        "rareCount": 10
     },
     "nph": {
         "code": "nph",
@@ -3640,10 +3640,11 @@
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 8,
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/pmei.svg",
         "commonCount": 7,
+        "rareCount": 1,
         "uncommonCount": 1
     },
     "pmh1": {
@@ -4522,12 +4523,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 416,
+        "cardCount": 423,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 17,
-        "mythicCount": 76,
-        "rareCount": 303,
+        "mythicCount": 77,
+        "rareCount": 309,
         "uncommonCount": 20
     },
     "slu": {
