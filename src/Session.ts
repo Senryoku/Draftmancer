@@ -323,17 +323,22 @@ export class Session implements IIndexable {
 		}
 	}
 
-	setBoostersPerPlayer(boostersPerPlayer: number) {
+	setBoostersPerPlayer(boostersPerPlayer: number, userID: UserID | null = null) {
 		if (this.boostersPerPlayer !== boostersPerPlayer && boostersPerPlayer > 0) {
 			this.boostersPerPlayer = boostersPerPlayer;
 			while (this.customBoosters.length < boostersPerPlayer) this.customBoosters.push("");
 			while (this.customBoosters.length > boostersPerPlayer) this.customBoosters.pop();
 
 			this.forUsers((uid: UserID) =>
-				Connections[uid]?.socket.emit("sessionOptions", {
-					boostersPerPlayer: this.boostersPerPlayer,
-					customBoosters: this.customBoosters,
-				})
+				Connections[uid]?.socket.emit(
+					"sessionOptions",
+					userID === uid // Don't send boostersPerPlayer back to the user who changed the setting, avoiding possible loops
+						? { customBoosters: this.customBoosters }
+						: {
+								boostersPerPlayer: this.boostersPerPlayer,
+								customBoosters: this.customBoosters,
+						  }
+				)
 			);
 		}
 	}

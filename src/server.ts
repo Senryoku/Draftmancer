@@ -413,7 +413,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 		if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
 
-		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer);
+		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer, userID);
 	},
 	cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: number) {
 		if (!Number.isInteger(cardsPerBooster) || cardsPerBooster <= 0) return;
