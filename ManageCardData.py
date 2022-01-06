@@ -108,6 +108,7 @@ CardsCollectorNumberAndSet = {}
 CardNameToArenaID = {}
 AKRCards = {}
 KLRCards = {}
+J21MTGACollectorNumbers = {}
 for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
@@ -139,6 +140,9 @@ for path in MTGACardsFiles:
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
                         MTGALocalization['en'][o['titleId']], collectorNumber, 'ajmp')] = o['grpid']
+                # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
+                if o['set'] == 'j21':
+                    J21MTGACollectorNumbers[fixed_name] = collectorNumber
 
                 for lang in MTGALocalization:
                     MTGATranslations[lang][o['grpid']] = {
@@ -158,6 +162,8 @@ with open('data/MTGADataDebug.json', 'w') as outfile:
     for key in CardsCollectorNumberAndSet.keys():
         MTGADataDebugToJSON[str(key)] = CardsCollectorNumberAndSet[key]
     json.dump(MTGADataDebugToJSON, outfile, sort_keys=True, indent=4)
+with open('data/J21MTGACollectorNumbers.json', 'w') as outfile:
+    json.dump(J21MTGACollectorNumbers, outfile, sort_keys=True, indent=4)
 
 if not os.path.isfile(BulkDataPath) or ForceDownload:
     # Get Bulk Data URL

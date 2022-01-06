@@ -1,5 +1,7 @@
 import Constant from "../../src/data/constants.json";
 
+import J21MTGACollectorNumber from "../../data/J21MTGACollectorNumbers.json";
+
 function exportCardToMTGA(c, language, full) {
 	let set = c.set.toUpperCase();
 	if (set == "DOM") set = "DAR"; // DOM is called DAR in MTGA
@@ -14,7 +16,10 @@ function exportCardToMTGA(c, language, full) {
 		else if (c.set != "grn" && c.set != "rna") name = name.substr(0, idx - 1);
 	}
 
-	if (full) return `1 ${name} (${set}) ${c.collector_number}\n`;
+	// FIXME: Translate J21 Collector Numbers to MTGA, this should be avoidable
+	const collector_number = c.set == "j21" ? J21MTGACollectorNumber[c.name] : c.collector_number;
+
+	if (full) return `1 ${name} (${set}) ${collector_number}\n`;
 	else return `1 ${name}\n`;
 }
 
