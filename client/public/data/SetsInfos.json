@@ -4400,7 +4400,7 @@
     },
     "q06": {
         "code": "q06",
-        "fullName": "Pioneer Challenge Decks 2021",
+        "fullName": "Pioneer Challenger Decks 2021",
         "cardCount": 10,
         "isPrimary": false,
         "icon": "img/sets/q06.svg",
@@ -4523,12 +4523,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 423,
+        "cardCount": 424,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 17,
         "mythicCount": 77,
-        "rareCount": 309,
+        "rareCount": 310,
         "uncommonCount": 20
     },
     "slu": {
