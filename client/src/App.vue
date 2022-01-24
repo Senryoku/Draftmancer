@@ -1107,6 +1107,7 @@
 							:lands="lands"
 							:autoland.sync="autoLand"
 							:targetDeckSize.sync="targetDeckSize"
+							:sideboardBasics.sync="sideboardBasics"
 							:otherbasics="basicsInDeck"
 							@removebasics="removeBasicsFromDeck"
 							@update:lands="(c, n) => (lands[c] = n)"

@@ -82,6 +82,7 @@ const defaultSettings = {
 	enableSound: true,
 	enableNotifications: false,
 	collapseSideboard: false,
+	sideboardBasics: 5,
 };
 const storedSettings = JSON.parse(localStorage.getItem("mtgadraft-settings") ?? "{}");
 
@@ -233,6 +234,7 @@ export default {
 			autoLand: true,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 			targetDeckSize: initialSettings.targetDeckSize,
+			sideboardBasics: initialSettings.sideboardBasics,
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -1588,7 +1590,9 @@ export default {
 			}
 		},
 		exportDeck: function(full = true) {
-			copyToClipboard(exportToMTGA(this.deck, this.sideboard, this.language, this.lands, full));
+			copyToClipboard(
+				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, this.sideboardBasics, full)
+			);
 			fireToast("success", "Deck exported to clipboard!");
 		},
 		shareDecklist: function() {
@@ -2423,6 +2427,9 @@ export default {
 		},
 		targetDeckSize() {
 			this.updateAutoLands();
+			this.storeSettings();
+		},
+		sideboardBasics() {
 			this.storeSettings();
 		},
 		// Session options

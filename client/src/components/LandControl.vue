@@ -1,7 +1,7 @@
 <template>
 	<dropdown
 		v-tooltip.top="
-			'Controls basic lands added on export. \'Auto. Land\' will complete your deck to 40 cards with basic lands.'
+			`Controls basic lands added on export. \'Auto. Land\' will complete your deck to ${targetDeckSize} cards with basic lands.`
 		"
 		class="land-control"
 	>
@@ -58,6 +58,20 @@
 					max="999"
 				/>
 			</div>
+			<div>
+				<label for="sideboard-basics">Side. Basics</label
+				><input
+					class="small-number-input"
+					type="number"
+					id="sideboard-basics"
+					:value="sideboardBasics"
+					@input="
+						$emit('update:sideboardBasics', $event.target.value === '' ? 0 : parseInt($event.target.value))
+					"
+					min="0"
+					max="99"
+				/>
+			</div>
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
@@ -78,7 +92,8 @@ export default {
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
-		targetDeckSize: { type: Number },
+		targetDeckSize: { type: Number, required: true },
+		sideboardBasics: { type: Number, required: true },
 		otherbasics: { type: Boolean },
 	},
 	methods: {

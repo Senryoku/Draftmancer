@@ -124,7 +124,7 @@ export default {
 	},
 	methods: {
 		exportDeck: function(full = true) {
-			copyToClipboard(exportToMTGA(this.mainboard, this.sideboard, this.language, this.list.lands, full));
+			copyToClipboard(exportToMTGA(this.mainboard, this.sideboard, this.language, this.list.lands, 0, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
 		copyHash: function(hash) {

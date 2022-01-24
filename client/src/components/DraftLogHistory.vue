@@ -107,7 +107,8 @@ export default {
 				draftLogFull.users[uid].exportString = exportToMTGA(
 					draftLogFull.users[uid].cards.map(cid => draftLogFull.carddata[cid]),
 					null,
-					this.language
+					this.language,
+					0
 				);
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));

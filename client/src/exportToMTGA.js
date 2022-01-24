@@ -23,7 +23,7 @@ function exportCardToMTGA(c, language, full) {
 	else return `1 ${name}\n`;
 }
 
-export default function exportToMTGA(deck, sideboard, language, lands, full = true) {
+export default function exportToMTGA(deck, sideboard, language, lands, sideboardBasics = 0, full = true) {
 	let str = full ? "Deck\n" : "";
 	for (let c of deck) str += exportCardToMTGA(c, language, full);
 	if (lands) {
@@ -42,7 +42,9 @@ export default function exportToMTGA(deck, sideboard, language, lands, full = tr
 		);
 		for (let c of sideboard) str += exportCardToMTGA(c, language, full);
 		// Add some basic lands to the sideboard
-		for (let c of ["W", "U", "B", "R", "G"]) str += `10 ${Constant.BasicLandNames[language][c]}\n`;
+		if (sideboardBasics && sideboardBasics > 0)
+			for (let c of ["W", "U", "B", "R", "G"])
+				str += `${sideboardBasics} ${Constant.BasicLandNames[language][c]}\n`;
 	}
 	return str;
 }
