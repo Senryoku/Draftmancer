@@ -435,10 +435,11 @@ export default {
 			deep: true,
 			immediate: true,
 			handler() {
-				this.displayOptions.pick = Math.min(
-					this.displayOptions.pick,
-					this.picksPerPack[this.displayOptions.pack].length - 1
-				); // Make sure pick is still valid.
+				if (this.picksPerPack.length > this.displayOptions.pack)
+					this.displayOptions.pick = Math.min(
+						this.displayOptions.pick,
+						this.picksPerPack[this.displayOptions.pack].length - 1
+					); // Make sure pick is still valid.
 			},
 		},
 	},
