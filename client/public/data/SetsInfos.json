@@ -4523,12 +4523,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 424,
+        "cardCount": 428,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 17,
         "mythicCount": 77,
-        "rareCount": 310,
+        "rareCount": 314,
         "uncommonCount": 20
     },
     "slu": {
