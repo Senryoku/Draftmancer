@@ -72,10 +72,33 @@ Vue.use(VTooltip, {
 	defaultDelay: 250,
 });
 
+// Personal front-end settings
 const defaultSettings = {
 	targetDeckSize: 40,
+	hideSessionID: false,
+	displayCollectionStatus: true,
+	displayBotScores: false,
+	pickOnDblclick: true,
+	enableSound: true,
+	enableNotifications: false,
+	collapseSideboard: false,
 };
 const storedSettings = JSON.parse(localStorage.getItem("mtgadraft-settings") ?? "{}");
+
+// Also get the settings from the cookies for backwards compatibility.
+// FIXME: Should be removed after a while.
+function getSettingFromCookie(name) {
+	if (name in storedSettings) return; // Prioritize the localStore settings.
+	const cookieValue = getCookie(name, null);
+	if (cookieValue) {
+		storedSettings[name] = cookieValue;
+		// 'Cast' strings from cookies into booleans
+		if (typeof defaultSettings[name] === "boolean" && typeof storedSettings[name] === "string")
+			storedSettings[name] = storedSettings[name] === "true";
+	}
+}
+for (const name in defaultSettings) getSettingFromCookie(name);
+
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
 export default {
@@ -177,24 +200,24 @@ export default {
 			// Front-end options & data
 			displayedModal: "",
 			userOrder: [],
-			hideSessionID: getCookie("hideSessionID", "false") === "true",
+			hideSessionID: initialSettings.hideSessionID,
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
-			displayCollectionStatus: getCookie("displayCollectionStatus", "true") === "true",
+			displayCollectionStatus: defaultSettings.displayCollectionStatus,
 			sets: Constant.MTGASets,
 			primarySets: Constant.PrimarySets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
 			draftingState: undefined,
-			displayBotScores: getCookie("displayBotScores", "false") === "true",
-			pickOnDblclick: getCookie("pickOnDblclick", "false") === "true",
-			enableSound: getCookie("enableSound", "true") === "true",
+			displayBotScores: defaultSettings.displayBotScores,
+			pickOnDblclick: defaultSettings.pickOnDblclick,
+			enableSound: defaultSettings.enableSound,
 			enableNotifications:
 				typeof Notification !== "undefined" &&
 				Notification &&
 				Notification.permission == "granted" &&
-				getCookie("enableNotifications", "false") === "true",
+				defaultSettings.enableNotifications,
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 			titleNotification: null,
 			// Draft Booster
@@ -206,7 +229,7 @@ export default {
 			deck: [],
 			sideboard: [],
 			deckFilter: "",
-			collapseSideboard: getCookie("collapseSideboard", "false") === "true",
+			collapseSideboard: defaultSettings.collapseSideboard,
 			autoLand: true,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 			targetDeckSize: initialSettings.targetDeckSize,
@@ -2157,7 +2180,11 @@ export default {
 			return needed < this.collectionInfos.wildcards[card.rarity];
 		},
 		storeSettings() {
-			localStorage.setItem("mtgadraft-settings", JSON.stringify({ targetDeckSize: this.targetDeckSize }));
+			let settings = {};
+			for (let key in defaultSettings) {
+				settings[key] = this[key];
+			}
+			localStorage.setItem("mtgadraft-settings", JSON.stringify(settings));
 		},
 	},
 	computed: {
@@ -2368,30 +2395,30 @@ export default {
 			setCookie("language", this.language);
 		},
 		displayBotScores: function() {
-			setCookie("displayBotScores", this.displayBotScores.toString());
+			this.storeSettings();
 		},
-		pickOnDblclick: function() {
-			setCookie("pickOnDblclick", this.pickOnDblclick.toString());
+		pickOnDblclick() {
+			this.storeSettings();
 		},
-		enableNotifications: function() {
-			setCookie("enableNotifications", this.enableNotifications.toString());
+		enableNotifications() {
+			this.storeSettings();
 		},
-		enableSound: function() {
-			setCookie("enableSound", this.enableSound.toString());
+		enableSound() {
+			this.storeSettings();
 		},
-		hideSessionID: function() {
-			setCookie("hideSessionID", this.hideSessionID.toString());
+		hideSessionID() {
+			this.storeSettings();
 		},
-		displayCollectionStatus: function() {
-			setCookie("displayCollectionStatus", this.displayCollectionStatus.toString());
+		displayCollectionStatus() {
+			this.storeSettings();
 		},
-		collapseSideboard: function() {
-			setCookie("collapseSideboard", this.collapseSideboard.toString());
+		collapseSideboard() {
+			this.storeSettings();
 		},
-		deck: function() {
+		deck() {
 			this.updateAutoLands();
 		},
-		autoLand: function() {
+		autoLand() {
 			this.updateAutoLands();
 		},
 		targetDeckSize() {
