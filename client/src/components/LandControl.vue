@@ -43,6 +43,21 @@
 				/>
 				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
 			</div>
+			<div class="v-separator" style="height: 0.5em"></div>
+			<div>
+				<label for="deck-size">Deck Size</label
+				><input
+					class="small-number-input"
+					type="number"
+					id="deck-size"
+					:value="targetDeckSize"
+					@input="
+						$emit('update:targetDeckSize', $event.target.value === '' ? 0 : parseInt($event.target.value))
+					"
+					min="1"
+					max="999"
+				/>
+			</div>
 			<button
 				v-if="otherbasics"
 				@click="$emit('removebasics')"
@@ -63,6 +78,7 @@ export default {
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
+		targetDeckSize: { type: Number },
 		otherbasics: { type: Boolean },
 	},
 	methods: {

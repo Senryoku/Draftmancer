@@ -72,6 +72,12 @@ Vue.use(VTooltip, {
 	defaultDelay: 250,
 });
 
+const defaultSettings = {
+	targetDeckSize: 40,
+};
+const storedSettings = JSON.parse(localStorage.getItem("mtgadraft-settings") ?? "{}");
+const initialSettings = Object.assign(defaultSettings, storedSettings);
+
 export default {
 	components: {
 		Modal,
@@ -203,6 +209,7 @@ export default {
 			collapseSideboard: getCookie("collapseSideboard", "false") === "true",
 			autoLand: true,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
+			targetDeckSize: initialSettings.targetDeckSize,
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -1989,7 +1996,7 @@ export default {
 			if (this.autoLand) {
 				if (!this.deck || this.deck.length === 0) return;
 
-				const targetDeckSize = 40;
+				const targetDeckSize = this.targetDeckSize ?? 40;
 				const landToAdd = targetDeckSize - this.deck.length;
 				if (landToAdd < 0) return;
 				if (landToAdd === 0) {
@@ -2148,6 +2155,9 @@ export default {
 				return true;
 			const needed = this.neededWildcards.main[card.rarity] || 0;
 			return needed < this.collectionInfos.wildcards[card.rarity];
+		},
+		storeSettings() {
+			localStorage.setItem("mtgadraft-settings", JSON.stringify({ targetDeckSize: this.targetDeckSize }));
 		},
 	},
 	computed: {
@@ -2383,6 +2393,10 @@ export default {
 		},
 		autoLand: function() {
 			this.updateAutoLands();
+		},
+		targetDeckSize() {
+			this.updateAutoLands();
+			this.storeSettings();
 		},
 		// Session options
 		ownerIsPlayer: function() {

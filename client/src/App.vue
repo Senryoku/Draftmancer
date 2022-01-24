@@ -1106,6 +1106,7 @@
 							v-if="draftingState === DraftState.Brewing"
 							:lands="lands"
 							:autoland.sync="autoLand"
+							:targetDeckSize.sync="targetDeckSize"
 							:otherbasics="basicsInDeck"
 							@removebasics="removeBasicsFromDeck"
 							@update:lands="(c, n) => (lands[c] = n)"
