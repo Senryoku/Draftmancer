@@ -1,5 +1,9 @@
 [
 	{
+		"date": "XX/02/2022",
+		"notes": ["Kamigawa: Neon Dysnaty (NEO) support."]
+	},
+	{
 		"date": "16/11/2021",
 		"notes": ["Innistrad: Double Feature (DBL) support."]
 	},
