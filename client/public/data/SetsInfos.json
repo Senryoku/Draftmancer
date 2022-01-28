@@ -157,13 +157,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 405,
+        "cardCount": 413,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
-        "commonCount": 139,
-        "mythicCount": 41,
-        "rareCount": 115,
-        "uncommonCount": 110
+        "commonCount": 142,
+        "mythicCount": 43,
+        "rareCount": 117,
+        "uncommonCount": 111
     },
     "ajmp": {
         "code": "ajmp",
@@ -2343,12 +2343,12 @@
     "mid": {
         "code": "mid",
         "fullName": "Innistrad: Midnight Hunt",
-        "cardCount": 392,
+        "cardCount": 393,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/mid.svg",
         "commonCount": 123,
-        "mythicCount": 41,
+        "mythicCount": 42,
         "rareCount": 131,
         "uncommonCount": 97
     },
@@ -2456,6 +2456,15 @@
         "rareCount": 88,
         "uncommonCount": 88
     },
+    "nec": {
+        "code": "nec",
+        "fullName": "Neon Dynasty Commander",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/nec.svg",
+        "mythicCount": 4,
+        "rareCount": 2
+    },
     "nem": {
         "code": "nem",
         "fullName": "Nemesis",
@@ -2470,11 +2479,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 16,
+        "cardCount": 98,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "mythicCount": 6,
-        "rareCount": 10
+        "commonCount": 17,
+        "mythicCount": 29,
+        "rareCount": 35,
+        "uncommonCount": 17
     },
     "nph": {
         "code": "nph",
@@ -3640,11 +3651,10 @@
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 9,
+        "cardCount": 8,
         "isPrimary": false,
         "icon": "img/sets/pmei.svg",
         "commonCount": 7,
-        "rareCount": 1,
         "uncommonCount": 1
     },
     "pmh1": {
@@ -4634,13 +4644,13 @@
     "stx": {
         "code": "stx",
         "fullName": "Strixhaven: School of Mages",
-        "cardCount": 382,
+        "cardCount": 383,
         "isPrimary": true,
         "icon": "img/sets/stx.svg",
         "commonCount": 115,
         "mythicCount": 42,
         "rareCount": 140,
-        "uncommonCount": 85
+        "uncommonCount": 86
     },
     "sum": {
         "code": "sum",
@@ -5130,13 +5140,13 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 412,
+        "cardCount": 413,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/vow.svg",
         "commonCount": 127,
         "mythicCount": 46,
-        "rareCount": 139,
+        "rareCount": 140,
         "uncommonCount": 100
     },
     "w16": {
@@ -5162,13 +5172,13 @@
     "war": {
         "code": "war",
         "fullName": "War of the Spark",
-        "cardCount": 275,
+        "cardCount": 276,
         "isPrimary": true,
         "block": "Guilds of Ravnica",
         "icon": "img/sets/war.svg",
         "commonCount": 120,
         "mythicCount": 18,
-        "rareCount": 55,
+        "rareCount": 56,
         "uncommonCount": 82
     },
     "wc00": {
@@ -5301,7 +5311,7 @@
         "code": "y22",
         "fullName": "Alchemy: Innistrad",
         "cardCount": 63,
-        "isPrimary": true,
+        "isPrimary": false,
         "icon": "img/sets/y22.svg",
         "mythicCount": 10,
         "rareCount": 42,

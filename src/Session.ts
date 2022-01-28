@@ -222,7 +222,7 @@ export class Session implements IIndexable {
 
 	// Options
 	ownerIsPlayer: boolean = true;
-	setRestriction: Array<string> = ["vow"]; // [constants.MTGASets[constants.MTGASets.length - 1]]; // Temporary fixed to VOW until DBL is not the lastest set anymore
+	setRestriction: Array<string> = [constants.MTGASets[constants.MTGASets.length - 1]];
 	isPublic: boolean = false;
 	description: string = "";
 	ignoreCollections: boolean = true;

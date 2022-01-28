@@ -20,7 +20,7 @@ const foilRarityRates: { [slot: string]: number } = {
 
 export function getSetFoilRate(set: string | null) {
 	if (set === null) return foilRate;
-	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid", "vow"].includes(set)) return 1.0 / 3.0;
+	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid", "vow", "neo"].includes(set)) return 1.0 / 3.0;
 	return foilRate;
 }
 
@@ -742,6 +742,54 @@ class DBLBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Kamigawa: Neon Dynasty
+// https://media.wizards.com/2022/images/daily/en_uV6TSNyNy6.jpg
+//   1 Rare or mythic rare card
+//   1 Double-faced common or uncommon card
+//   3 Uncommon cards
+//   9 Common cards (in 33% of Kamigawa: Neon Dynasty packs, a traditional foil of any rarity replaces a common.)
+//   1 Land card, featuring an ukiyo-e land in 33% of Draft Boosters
+class NEOBoosterFactory extends BoosterFactory {
+	doubleFacedUCs: SlotedCardPool;
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [doubleFacedUCs, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) =>
+				Cards[cid].name.includes("//") && (Cards[cid].rarity === "uncommon" || Cards[cid].rarity === "common")
+		);
+		super(filteredCardPool, landSlot, options);
+		this.doubleFacedUCs = doubleFacedUCs;
+	}
+	generateBooster(targets: Targets) {
+		const doubleFacedUCsCount = this.doubleFacedUCs["common"].size + this.doubleFacedUCs["uncommon"].size;
+		// Ignore the rule if there's no UCs double-faced card left
+		if (doubleFacedUCsCount <= 0) {
+			return super.generateBooster(targets);
+		} else {
+			let pickedDoubleFacedUC: UniqueCard | null = null;
+			let updatedTargets = Object.assign({}, targets);
+			if (targets["common"] > 0) {
+				// The Double-Faced Uncommon/Common takes a common slot
+				--updatedTargets["common"];
+			}
+			const booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+			const hasFoil = booster[0].foil ? 1 : 0;
+			const pickedRarity = rollSpecialCardRarity(
+				countBySlot(this.doubleFacedUCs),
+				{ rare: 0, uncommon: updatedTargets.uncommon, common: updatedTargets.common },
+				{
+					minRarity: "common",
+				}
+			);
+			pickedDoubleFacedUC = pickCard(this.doubleFacedUCs[pickedRarity], []);
+			// Insert the Double-Faced common or uncommon as the first uncommon in the pack
+			if (pickedDoubleFacedUC) booster.splice(updatedTargets["rare"] + hasFoil, 0, pickedDoubleFacedUC);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -757,6 +805,7 @@ export const SetSpecificFactories: {
 	mid: MIDBoosterFactory,
 	vow: MIDBoosterFactory, // Innistrad: Crimson Vow - Identical to MID
 	dbl: DBLBoosterFactory,
+	neo: NEOBoosterFactory,
 };
 
 /*
