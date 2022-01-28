@@ -632,15 +632,7 @@ class MIDBoosterFactory extends BoosterFactory {
 		const [doubleFacedCards, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].name.includes("//")
 		);
-		const [doubleFacedUncommons, refilteredCardPool] = filterCardPool(
-			filteredCardPool,
-			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
-		);
-		const [doubleFacedRares, rerefilteredCardPool] = filterCardPool(
-			filteredCardPool,
-			(cid: CardID) => Cards[cid].rarity === "uncommon" && Cards[cid].name.includes("//")
-		);
-		super(refilteredCardPool, landSlot, options);
+		super(filteredCardPool, landSlot, options);
 		this.doubleFacedCards = doubleFacedCards;
 	}
 	generateBooster(targets: Targets) {
