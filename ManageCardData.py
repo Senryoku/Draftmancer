@@ -61,6 +61,7 @@ if len(sys.argv) > 1:
         SetToFetch = sys.argv[2].lower()
         ForceCache = True
 
+print("Don'f forget to update Arena itself!")
 MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
 MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
