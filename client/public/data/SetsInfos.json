@@ -2459,11 +2459,10 @@
     "nec": {
         "code": "nec",
         "fullName": "Neon Dynasty Commander",
-        "cardCount": 6,
+        "cardCount": 4,
         "isPrimary": false,
         "icon": "img/sets/nec.svg",
-        "mythicCount": 4,
-        "rareCount": 2
+        "mythicCount": 4
     },
     "nem": {
         "code": "nem",
@@ -2479,13 +2478,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 98,
+        "cardCount": 162,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 17,
-        "mythicCount": 29,
-        "rareCount": 35,
-        "uncommonCount": 17
+        "commonCount": 22,
+        "mythicCount": 35,
+        "rareCount": 65,
+        "uncommonCount": 40
     },
     "nph": {
         "code": "nph",
