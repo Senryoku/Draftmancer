@@ -78,9 +78,7 @@ for path in MTGALocFiles:
 # Get mana symbols info from Scryfall
 SymbologyFile = "./data/symbology.json"
 if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
-    if not os.path.isfile(SymbologyFile):
-        urllib.request.urlretrieve(
-            "https://api.scryfall.com/symbology", SymbologyFile)
+    urllib.request.urlretrieve("https://api.scryfall.com/symbology", SymbologyFile)
     mana_symbols = {}
     with open(SymbologyFile, 'r', encoding="utf8") as file:
         symbols = json.load(file)
