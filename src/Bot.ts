@@ -99,14 +99,6 @@ export class SimpleBot implements IBot {
 	}
 }
 
-const BasicsOracleIds = [
-	"56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
-	"b2c6aa39-2d2a-459c-a555-fb48ba993373",
-	"bc71ebf6-2056-41f7-be35-b2e5c34afa99",
-	"b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
-	"a3fb7228-e76b-4e96-a40e-20b5fed75685",
-];
-
 // Uses the mtgdraftbots library
 export class Bot implements IBot {
 	name: string;
@@ -127,7 +119,6 @@ export class Bot implements IBot {
 		const packOracleIds = booster.map((c: Card) => c.oracle_id);
 		this.seen.push({ packNum: boosterNum - 1, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
-			basics: [0, 1, 2, 3, 4],
 			cardsInPack: packOracleIds,
 			picked: this.picked,
 			seen: this.seen,
@@ -137,8 +128,6 @@ export class Bot implements IBot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
-		console.log("drafterState: ");
-		console.log(JSON.stringify(drafterState, null, 2));
 		let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
 		if (response.status == 200 && response.data.success) {
 			console.log("MTGDraftBots response: ", response.data);
@@ -154,6 +143,7 @@ export class Bot implements IBot {
 		} else {
 			console.error("Error requesting mtgdraftbots scores, full response:");
 			console.error(response);
+			// TODO: Fallback to simple bot?
 			return null;
 		}
 	}
