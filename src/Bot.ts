@@ -102,8 +102,8 @@ export class Bot implements IBot {
 	cards: Card[] = [];
 	lastScores: { chosenOption: number; scores: number[] } = { chosenOption: 0, scores: [] };
 
-	seen: any[] = [];
-	picked: string[] = []; // Array of oracleIds
+	seen: { packNum: number; pickNum: number; numPicks: number; pack: OracleID[] }[] = [];
+	picked: OracleID[] = []; // Array of oracleIds
 
 	fallbackBot: SimpleBot | null = null;
 
@@ -113,7 +113,7 @@ export class Bot implements IBot {
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		const packOracleIds = booster.map((c: Card) => c.oracle_id);
+		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 		this.seen.push({ packNum: boosterNum - 1, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
 			basics: [], // FIXME: Should not be necessary anymore.
@@ -190,7 +190,7 @@ export class Bot implements IBot {
 	}
 
 	addCard(card: Card) {
-		this.picked.push(card.id);
+		this.picked.push(card.oracle_id);
 		this.cards.push(card);
 	}
 }
