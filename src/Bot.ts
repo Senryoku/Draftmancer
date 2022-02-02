@@ -13,7 +13,7 @@ export interface IBot {
 	name: string;
 	id: string;
 	cards: Card[];
-	lastScores: any; // Keep track of the result of the last call to getScores
+	lastScores: { chosenOption: number; scores: number[] }; // Keep track of the result of the last call to getScores
 
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
@@ -35,7 +35,7 @@ export class SimpleBot implements IBot {
 	id: string;
 	type: string = "SimpleBot";
 	cards: Card[] = [];
-	lastScores: any;
+	lastScores: { chosenOption: number; scores: number[] } = { chosenOption: 0, scores: [] };
 
 	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
 
@@ -70,12 +70,12 @@ export class SimpleBot implements IBot {
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		let maxScore = 0;
 		let bestPick = 0;
-		let scores: { score: number }[] = [];
+		let scores: number[] = [];
 		for (let idx = 0; idx < booster.length; ++idx) {
 			let c = booster[idx];
 			let score = c.rating;
 			for (let color of c.colors) score += 0.35 * this.pickedColors[color];
-			scores.push({ score: score / 10 });
+			scores.push(score / 10);
 			if (score > maxScore) {
 				maxScore = score;
 				bestPick = idx;
@@ -100,7 +100,7 @@ export class Bot implements IBot {
 	id: string;
 	type: string = "mtgdraftbots";
 	cards: Card[] = [];
-	lastScores: any;
+	lastScores: { chosenOption: number; scores: number[] } = { chosenOption: 0, scores: [] };
 
 	seen: any[] = [];
 	picked: string[] = []; // Array of oracleIds
@@ -181,9 +181,9 @@ export class Bot implements IBot {
 		let worstScore = 2;
 		const result = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		for (let i = 0; i < result.scores.length; i++) {
-			if (result.scores[i].score < worstScore) {
+			if (result.scores[i] < worstScore) {
 				worstPick = i;
-				worstScore = result.scores[i].score;
+				worstScore = result.scores[i];
 			}
 		}
 		return worstPick;
