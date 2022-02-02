@@ -1,18 +1,12 @@
 "use strict";
 
-import { calculateBotPick, initializeDraftbots, testRecognized } from "mtgdraftbots";
 import axios from "axios";
 
 import { Card, OracleID } from "./Cards";
 
-const DraftbotInitialized = await initializeDraftbots("../data/draftbotparameters.bin");
-if (!DraftbotInitialized) console.error("Bot.ts: Error initializing draft bot parameters.");
-
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
-	if (!DraftbotInitialized) return true; // Immediatly returns true if mtgdraftbots hasn't been properly initialized.
-	// Counts the number of cards recognized by the mtgdraftbots library amoung the supplied array.
-	let recognized = (await testRecognized(oracleIds)).filter((x: number) => x > 0).length;
-	return recognized / oracleIds.length < 0.8; // Returns true if less than 80% of cards have associated data.
+	// TODO: Make sure mtgdraftbots API can be reached? And the card pool is recognized?
+	return false;
 }
 
 export interface IBot {
@@ -99,7 +93,7 @@ export class SimpleBot implements IBot {
 	}
 }
 
-// Uses the mtgdraftbots library
+// Uses the mtgdraftbots API
 export class Bot implements IBot {
 	name: string;
 	id: string;
@@ -108,7 +102,7 @@ export class Bot implements IBot {
 	lastScores: any;
 
 	seen: any[] = [];
-	picked: number[] = []; // Indices of oracleIds
+	picked: string[] = []; // Array of oracleIds
 
 	constructor(name: string, id: string) {
 		this.name = name;
