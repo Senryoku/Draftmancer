@@ -36,6 +36,7 @@ export class SimpleBot implements IBot {
 	type: string = "SimpleBot";
 	cards: Card[] = [];
 	lastScores: any;
+
 	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
 
 	constructor(name: string, id: string) {
@@ -104,6 +105,8 @@ export class Bot implements IBot {
 	seen: any[] = [];
 	picked: string[] = []; // Array of oracleIds
 
+	fallbackBot: SimpleBot | null = null;
+
 	constructor(name: string, id: string) {
 		this.name = name;
 		this.id = id; // Used for sorting
@@ -113,6 +116,7 @@ export class Bot implements IBot {
 		const packOracleIds = booster.map((c: Card) => c.oracle_id);
 		this.seen.push({ packNum: boosterNum - 1, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
+			basics: [], // FIXME: Should not be necessary anymore.
 			cardsInPack: packOracleIds,
 			picked: this.picked,
 			seen: this.seen,
@@ -122,24 +126,45 @@ export class Bot implements IBot {
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
-		let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
-		if (response.status == 200 && response.data.success) {
-			console.log("MTGDraftBots response: ", response.data);
-			let chosenOption = 0;
-			for (let i = 1; i < response.data.scores.length; ++i) {
-				if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
+		try {
+			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
+			if (response.status == 200 && response.data.success) {
+				console.log("MTGDraftBots response: ", response.data);
+				let chosenOption = 0;
+				for (let i = 1; i < response.data.scores.length; ++i) {
+					if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
+				}
+				this.lastScores = {
+					chosenOption: chosenOption,
+					scores: response.data.scores,
+				};
+				return this.lastScores;
+			} else {
+				console.error("Error requesting mtgdraftbots scores, full response:");
+				console.error(response);
+				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
-			this.lastScores = {
-				chosenOption: chosenOption,
-				scores: response.data.scores,
-			};
-			return this.lastScores;
-		} else {
-			console.error("Error requesting mtgdraftbots scores, full response:");
-			console.error(response);
-			// TODO: Fallback to simple bot?
-			return null;
+		} catch (e) {
+			console.error("Error requesting mtgdraftbots scores: ", e);
+			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
+	}
+
+	async getScoresFallback(
+		booster: Card[],
+		boosterNum: number,
+		numBoosters: number,
+		pickNum: number,
+		numPicks: number
+	) {
+		if (!this.fallbackBot) {
+			this.fallbackBot = new SimpleBot(this.name, this.id);
+			for (let card of this.cards) {
+				this.fallbackBot.addCard(card);
+			}
+		}
+		this.lastScores = await this.fallbackBot.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
+		return this.lastScores;
 	}
 
 	async pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
@@ -147,6 +172,7 @@ export class Bot implements IBot {
 		const bestPick = result.chosenOption;
 		this.picked.push(booster[bestPick].oracle_id);
 		this.cards.push(booster[bestPick]);
+		if (this.fallbackBot) this.fallbackBot.addCard(booster[bestPick]);
 		return bestPick;
 	}
 
