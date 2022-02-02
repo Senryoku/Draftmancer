@@ -1,6 +1,7 @@
 "use strict";
 
 import { calculateBotPick, initializeDraftbots, testRecognized } from "mtgdraftbots";
+import axios from "axios";
 
 import { Card, OracleID } from "./Cards";
 
@@ -114,41 +115,53 @@ export class Bot implements IBot {
 	cards: Card[] = [];
 	lastScores: any;
 
-	oracleIds: string[] = []; // Tracks seen oracle_ids, necessary for mtgdraftbots lib
-	seen: number[] = []; // Indices of oracleIds
+	seen: any[] = [];
 	picked: number[] = []; // Indices of oracleIds
 
 	constructor(name: string, id: string) {
 		this.name = name;
 		this.id = id; // Used for sorting
-		this.oracleIds = [...BasicsOracleIds];
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		const boosterIdxs = booster.map((_, idx) => idx + this.oracleIds.length);
-		this.seen.push(...boosterIdxs);
-		this.oracleIds.push(...booster.map(({ oracle_id }) => oracle_id));
+		const packOracleIds = booster.map((c: Card) => c.oracle_id);
+		this.seen.push({ packNum: boosterNum - 1, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {
 			basics: [0, 1, 2, 3, 4],
-			cardsInPack: boosterIdxs,
+			cardsInPack: packOracleIds,
 			picked: this.picked,
 			seen: this.seen,
-			cardOracleIds: this.oracleIds,
-			packNum: boosterNum,
+			packNum: boosterNum - 1,
 			numPacks: numBoosters,
 			pickNum,
 			numPicks,
 			seed: Math.floor(Math.random() * 65536),
 		};
-		this.lastScores = await calculateBotPick(drafterState);
-		return this.lastScores;
+		console.log("drafterState: ");
+		console.log(JSON.stringify(drafterState, null, 2));
+		let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
+		if (response.status == 200 && response.data.success) {
+			console.log("MTGDraftBots response: ", response.data);
+			let chosenOption = 0;
+			for (let i = 1; i < response.data.scores.length; ++i) {
+				if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
+			}
+			this.lastScores = {
+				chosenOption: chosenOption,
+				scores: response.data.scores,
+			};
+			return this.lastScores;
+		} else {
+			console.error("Error requesting mtgdraftbots scores, full response:");
+			console.error(response);
+			return null;
+		}
 	}
 
 	async pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		const result = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		const bestPick = result.chosenOption;
-		// This dedupes the card since we know it is already in the oracleIds array.
-		this.picked.push(result.cardsInPack[bestPick]);
+		this.picked.push(booster[bestPick].oracle_id);
 		this.cards.push(booster[bestPick]);
 		return bestPick;
 	}
@@ -167,7 +180,7 @@ export class Bot implements IBot {
 	}
 
 	addCard(card: Card) {
-		this.picked.push(this.oracleIds.findIndex(cid => cid == card.oracle_id));
+		this.picked.push(card.id);
 		this.cards.push(card);
 	}
 }
