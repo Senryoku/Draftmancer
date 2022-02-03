@@ -9,11 +9,13 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 	return false;
 }
 
+export type BotScores = { chosenOption: number; scores: number[] };
+
 export interface IBot {
 	name: string;
 	id: string;
 	cards: Card[];
-	lastScores: { chosenOption: number; scores: number[] }; // Keep track of the result of the last call to getScores
+	lastScores: BotScores; // Keep track of the result of the last call to getScores
 
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
 	burn(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
@@ -24,7 +26,7 @@ export interface IBot {
 		numBoosters: number,
 		pickNum: number,
 		numPicks: number
-	): Promise<any>;
+	): Promise<BotScores>;
 
 	addCard(card: Card): void;
 }
@@ -35,7 +37,7 @@ export class SimpleBot implements IBot {
 	id: string;
 	type: string = "SimpleBot";
 	cards: Card[] = [];
-	lastScores: { chosenOption: number; scores: number[] } = { chosenOption: 0, scores: [] };
+	lastScores: BotScores = { chosenOption: 0, scores: [] };
 
 	pickedColors: { [color: string]: number } = { W: 0, U: 0, R: 0, B: 0, G: 0 };
 
@@ -100,7 +102,7 @@ export class Bot implements IBot {
 	id: string;
 	type: string = "mtgdraftbots";
 	cards: Card[] = [];
-	lastScores: { chosenOption: number; scores: number[] } = { chosenOption: 0, scores: [] };
+	lastScores: BotScores = { chosenOption: 0, scores: [] };
 
 	seen: { packNum: number; pickNum: number; numPicks: number; pack: OracleID[] }[] = [];
 	picked: OracleID[] = []; // Array of oracleIds
