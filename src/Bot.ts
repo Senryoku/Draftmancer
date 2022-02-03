@@ -131,7 +131,6 @@ export class Bot implements IBot {
 		try {
 			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
 			if (response.status == 200 && response.data.success) {
-				console.log("MTGDraftBots response: ", response.data);
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
 					if (response.data.scores[i] > response.data.scores[chosenOption]) chosenOption = i;
