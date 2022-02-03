@@ -304,14 +304,17 @@ describe("Single Draft (Two Players)", function() {
 		});
 	}
 
-	function disconnect() {
+	function disconnect(callback = () => {}) {
 		it("Clients should disconnect.", function(done) {
 			disableLogs();
 			for (let c of clients) {
 				c.disconnect();
 			}
 
-			waitForClientDisconnects(done);
+			waitForClientDisconnects(() => {
+				callback();
+				done();
+			});
 		});
 	}
 
@@ -516,6 +519,27 @@ describe("Single Draft (Two Players)", function() {
 		startDraft();
 		endDraft();
 		disconnect();
+	});
+
+	// Explicitly tests mtgdraftbots since the external API calls are too slow for standard tests
+	describe("With mtgdraftbots external API", function() {
+		this.timeout(50000);
+		connect();
+		it("Clients should receive the updated bot count.", function(done) {
+			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("bots", function(bots) {
+				expect(bots).to.equal(2);
+				global.FORCE_MTGDRAFTBOTS = true;
+				done();
+			});
+			clients[ownerIdx].emit("bots", 2);
+		});
+		startDraft();
+		endDraft();
+		disconnect(() => {
+			global.FORCE_MTGDRAFTBOTS = false;
+		});
 	});
 
 	describe("With Bots and foils", function() {
