@@ -1502,28 +1502,33 @@ export class Session implements IIndexable {
 	endDraft() {
 		if (!this.drafting || this.draftState?.type !== "draft") return;
 
-		if (this.draftLog) {
-			const virtualPlayers = this.getSortedVirtualPlayers();
-			for (let userID in virtualPlayers) {
-				if (virtualPlayers[userID].isBot) {
-					this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map((c: Card) => c.id);
-				} else {
-					// Has this user been replaced by a bot?
-					this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
-						? this.disconnectedUsers[userID]
-						: Connections[userID]
-					).pickedCards.map((c: Card) => c.id);
+		// Allow other callbacks (like nextBooster) to finish before proceeding (actually an issue in tests).
+		process.nextTick(() => {
+			if (this.draftLog) {
+				const virtualPlayers = this.getSortedVirtualPlayers();
+				for (let userID in virtualPlayers) {
+					if (virtualPlayers[userID].isBot) {
+						this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map(
+							(c: Card) => c.id
+						);
+					} else {
+						// Has this user been replaced by a bot?
+						this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
+							? this.disconnectedUsers[userID]
+							: Connections[userID]
+						).pickedCards.map((c: Card) => c.id);
+					}
 				}
+
+				this.sendLogs();
 			}
+			logSession("Draft", this);
 
-			this.sendLogs();
-		}
-		logSession("Draft", this);
+			this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
-		this.forUsers(u => Connections[u].socket.emit("endDraft"));
-
-		console.log(`Session ${this.id} draft ended.`);
-		this.cleanDraftState();
+			console.log(`Session ${this.id} draft ended.`);
+			this.cleanDraftState();
+		});
 	}
 
 	stopDraft() {
