@@ -128,7 +128,7 @@ describe("Set Specific Booster Rules", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-			clients[ownerIdx].once("startDraft", function() {
+			clients[ownerIdx].once("nextBooster", function() {
 				for (let b of Sessions[sessionID].draftState.boosters) validationFunc(b);
 				clients[ownerIdx].once("endDraft", function() {
 					done();
@@ -143,7 +143,7 @@ describe("Set Specific Booster Rules", function() {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
-			clients[ownerIdx].once("startDraft", function() {
+			clients[ownerIdx].once("nextBooster", function() {
 				for (let b of Sessions[sessionID].draftState.boosters) validationFunc(b);
 				clients[ownerIdx].once("endDraft", function() {
 					done();
@@ -163,13 +163,13 @@ describe("Set Specific Booster Rules", function() {
 	testSet("vow", validateVOWBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 
 	testSet("vow", validateColorBalance, "at least one common of each color.");
-	it(`$VOW boosters should have at least one common of each color, even with foil on.`, function(done) {
+	it(`VOW boosters should have at least one common of each color, even with foil on.`, function(done) {
 		let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["vow"]);
 		clients[ownerIdx].emit("setFoil", true);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-		clients[ownerIdx].once("startDraft", function() {
+		clients[ownerIdx].once("nextBooster", function() {
 			for (let b of Sessions[sessionID].draftState.boosters) validateColorBalance(b);
 			clients[ownerIdx].once("endDraft", function() {
 				done();
@@ -184,7 +184,7 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", []);
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
-		clients[ownerIdx].once("startDraft", function() {
+		clients[ownerIdx].once("nextBooster", function() {
 			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
 				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
 				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
@@ -201,7 +201,7 @@ describe("Set Specific Booster Rules", function() {
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["dom"]);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
-		clients[ownerIdx].once("startDraft", function() {
+		clients[ownerIdx].once("nextBooster", function() {
 			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
 				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
 				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
