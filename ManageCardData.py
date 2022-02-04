@@ -35,8 +35,6 @@ JumpstartBoostersDist = 'src/data/JumpstartBoosters.json'
 JumpstartHHBoostersDist = 'src/data/JumpstartHHBoosters.json'
 RatingsDest = 'data/ratings.json'
 ManaSymbolsFile = "src/data/mana_symbols.json"
-BotParametersURL = "https://storage.googleapis.com/storage/v1/b/cubeartisan/o/draftbotparams.bin?alt=media"
-BotParametersPath = "data/draftbotparams.bin"
 
 ArenaRarity = {
     1: "basic",  # I guess?
@@ -174,8 +172,6 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
         'download_uri']
     print("Downloading {}...".format(allcardURL))
     urllib.request.urlretrieve(allcardURL, BulkDataPath)
-    print("Downloading bot parameters...")
-    urllib.request.urlretrieve(BotParametersURL, BotParametersPath)
 
 
 if not os.path.isfile(ScryfallSets) or ForceDownload:
