@@ -17,7 +17,7 @@
 			<i class="fas fa-exclamation-triangle yellow missing-warning" v-if="!hasenoughwildcards"></i>
 			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.png`" />
 		</div>
-		<div class="bot-score" v-if="botscore">{{ displayBotScore }}</div>
+		<div class="bot-score" v-if="botscore && displayBotScore">{{ displayBotScore }}</div>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
 				<i class="fas fa-undo-alt fa-2x"></i>
@@ -60,7 +60,7 @@ export default {
 	computed: {
 		displayBotScore() {
 			if (!this.botscore) return null;
-			if (this.botscore < 0) return (5 + this.botscore / 5).toFixed(1); // FIXME: Working with the negative weights returned by the mtgdraftbot API, this is completly arbitrary.
+			if (this.botscore < 0) return null; // FIXME: The negative weights returned by the mtgdraftbot API won't make much sense to the user, hidding them for now.
 			return (10 * this.botscore).toFixed(1);
 		},
 	},
