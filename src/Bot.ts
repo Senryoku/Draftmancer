@@ -115,7 +115,7 @@ export class Bot implements IBot {
 
 	constructor(name: string, id: string) {
 		this.name = name;
-		this.id = id; // Used for sorting
+		this.id = id;
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
@@ -133,7 +133,7 @@ export class Bot implements IBot {
 			seed: Math.floor(Math.random() * 65536),
 		};
 		try {
-			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState });
+			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
@@ -164,9 +164,7 @@ export class Bot implements IBot {
 	) {
 		if (!this.fallbackBot) {
 			this.fallbackBot = new SimpleBot(this.name, this.id);
-			for (let card of this.cards) {
-				this.fallbackBot.addCard(card);
-			}
+			for (let card of this.cards) this.fallbackBot.addCard(card);
 		}
 		this.lastScores = await this.fallbackBot.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		return this.lastScores;
