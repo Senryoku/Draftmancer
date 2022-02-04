@@ -5,9 +5,34 @@ import axios from "axios";
 import { Card, OracleID } from "./Cards";
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
-	// TODO: Make sure mtgdraftbots API can be reached? And the card pool is recognized?
+	// Send a dummy request to make sure the API is up and running and at least 50% of the cards are recognized.
+	const drafterState = {
+		basics: [], // FIXME: Should not be necessary anymore.
+		cardsInPack: oracleIds,
+		picked: [],
+		seen: [],
+		packNum: 0,
+		numPacks: 1,
+		pickNum: 0,
+		numPicks: 1,
+		seed: Math.floor(Math.random() * 65536),
+	};
+	try {
+		let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
+		if (
+			response.status !== 200 ||
+			!response.data.success ||
+			response.data.scores.filter((s: number) => s === 0).length > response.data.scores.length / 2 // A score of 0 means the card was not recognized.
+		) {
+			return true;
+		}
+	} catch (e) {
+		console.error("Error requesting testing the mtgdraftbots API: ", e);
+		return true;
+	}
 
-	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests. FIXME: This feels hackish.
+	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
+	// FIXME: This feels hackish.
 	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
 
 	return false;
