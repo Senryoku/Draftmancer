@@ -2459,10 +2459,11 @@
     "nec": {
         "code": "nec",
         "fullName": "Neon Dynasty Commander",
-        "cardCount": 4,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/nec.svg",
-        "mythicCount": 4
+        "mythicCount": 8,
+        "rareCount": 12
     },
     "nem": {
         "code": "nem",
@@ -2478,13 +2479,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 162,
+        "cardCount": 393,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 22,
-        "mythicCount": 35,
-        "rareCount": 65,
-        "uncommonCount": 40
+        "commonCount": 69,
+        "mythicCount": 54,
+        "rareCount": 162,
+        "uncommonCount": 108
     },
     "nph": {
         "code": "nph",
@@ -2551,13 +2552,13 @@
     "ons": {
         "code": "ons",
         "fullName": "Onslaught",
-        "cardCount": 350,
+        "cardCount": 351,
         "isPrimary": true,
         "block": "Onslaught",
         "icon": "img/sets/ons.svg",
         "commonCount": 130,
         "rareCount": 110,
-        "uncommonCount": 110
+        "uncommonCount": 111
     },
     "ori": {
         "code": "ori",
@@ -2686,6 +2687,15 @@
         "isPrimary": false,
         "icon": "img/sets/p15a.svg",
         "rareCount": 2
+    },
+    "p22": {
+        "code": "p22",
+        "fullName": "Judge Gift Cards 2022",
+        "cardCount": 3,
+        "isPrimary": false,
+        "block": "Judge Gift Cards",
+        "icon": "img/sets/p22.svg",
+        "rareCount": 3
     },
     "p2hg": {
         "code": "p2hg",
@@ -3519,14 +3529,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 652,
+        "cardCount": 727,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 85,
-        "mythicCount": 89,
-        "rareCount": 291,
-        "specialCount": 2,
-        "uncommonCount": 185
+        "commonCount": 94,
+        "mythicCount": 94,
+        "rareCount": 331,
+        "specialCount": 3,
+        "uncommonCount": 205
     },
     "plrw": {
         "code": "plrw",
