@@ -1228,7 +1228,7 @@ export class Session implements IIndexable {
 		// Generate bots
 		this.botsInstances = [];
 		const oracleIds = this.boosters.flat().map(card => card.oracle_id);
-		const fallback = await fallbackToSimpleBots(oracleIds);
+		const fallback = await fallbackToSimpleBots([...new Set(oracleIds)]);
 		if (fallback) {
 			for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new SimpleBot(`Bot #${i + 1}`, uuidv1()));
 		} else {
