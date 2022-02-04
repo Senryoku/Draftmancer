@@ -1353,7 +1353,7 @@ export class Session implements IIndexable {
 		for (let idx of cardsToRemove) s.boosters[boosterIndex].splice(idx, 1);
 
 		++s.pickedCardsThisRound;
-		if (s.pickedCardsThisRound === this.getHumanPlayerCount()) {
+		if (s.pickedCardsThisRound === this.getVirtualPlayersCount()) {
 			this.nextBooster();
 		}
 		return { code: 0 };
@@ -1398,6 +1398,7 @@ export class Session implements IIndexable {
 		if (this.shouldSendLiveUpdates())
 			Connections[this.owner].socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
 
+		++s.pickedCardsThisRound;
 		return pickedCards;
 	}
 
@@ -1422,29 +1423,26 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		s.pickedCardsThisRound = 0; // Only counting cards picked by human players (including disconnected ones)
+		s.pickedCardsThisRound = 0; // Tracks how many cards have been picked this round to determine when to start the next booster
 
 		let index = 0;
 		const boosterOffset = s.boosterNumber % 2 == 0 ? -s.pickNumber : s.pickNumber;
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
+		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				await this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex);
+				botPromises.push(this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex));
 			} else {
 				if (virtualPlayers[userID].disconnected) {
-					// This user has been replaced by a bot, pick immediately
-					if (!this.disconnectedUsers[userID].bot) {
-						console.error("Trying to use bot that doesn't exist... That should not be possible!");
-						console.error(this.disconnectedUsers[userID]);
-						this.disconnectedUsers[userID].bot = new SimpleBot("Bot", userID);
-					}
-					const pickedCards = await this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex);
 					this.disconnectedUsers[userID].pickedThisRound = true;
-					this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
-					++s.pickedCardsThisRound;
+					botPromises.push(
+						this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex).then(pickedCards => {
+							this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
+						})
+					);
 				} else {
 					Connections[userID].pickedThisRound = false;
 					Connections[userID].boosterIndex = boosterIndex;
@@ -1475,8 +1473,10 @@ export class Session implements IIndexable {
 		this.startCountdown(); // Starts countdown now that everyone has their booster
 		++s.pickNumber;
 
-		// Everyone is disconnected...
-		if (s.pickedCardsThisRound === this.getHumanPlayerCount()) this.nextBooster();
+		Promise.all(botPromises).then(() => {
+			// Everyone is disconnected... Or human players picked before the bots :)
+			if (s.pickedCardsThisRound === totalVirtualPlayers) this.nextBooster();
+		});
 	}
 
 	resumeOnReconnection(msg: { title: string; text: string }) {
@@ -1502,28 +1502,33 @@ export class Session implements IIndexable {
 	endDraft() {
 		if (!this.drafting || this.draftState?.type !== "draft") return;
 
-		if (this.draftLog) {
-			const virtualPlayers = this.getSortedVirtualPlayers();
-			for (let userID in virtualPlayers) {
-				if (virtualPlayers[userID].isBot) {
-					this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map((c: Card) => c.id);
-				} else {
-					// Has this user been replaced by a bot?
-					this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
-						? this.disconnectedUsers[userID]
-						: Connections[userID]
-					).pickedCards.map((c: Card) => c.id);
+		// Allow other callbacks (like nextBooster) to finish before proceeding (actually an issue in tests).
+		process.nextTick(() => {
+			if (this.draftLog) {
+				const virtualPlayers = this.getSortedVirtualPlayers();
+				for (let userID in virtualPlayers) {
+					if (virtualPlayers[userID].isBot) {
+						this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map(
+							(c: Card) => c.id
+						);
+					} else {
+						// Has this user been replaced by a bot?
+						this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
+							? this.disconnectedUsers[userID]
+							: Connections[userID]
+						).pickedCards.map((c: Card) => c.id);
+					}
 				}
+
+				this.sendLogs();
 			}
+			logSession("Draft", this);
 
-			this.sendLogs();
-		}
-		logSession("Draft", this);
+			this.forUsers(u => Connections[u].socket.emit("endDraft"));
 
-		this.forUsers(u => Connections[u].socket.emit("endDraft"));
-
-		console.log(`Session ${this.id} draft ended.`);
-		this.cleanDraftState();
+			console.log(`Session ${this.id} draft ended.`);
+			this.cleanDraftState();
+		});
 	}
 
 	stopDraft() {
@@ -1823,13 +1828,13 @@ export class Session implements IIndexable {
 				);
 				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
 				this.disconnectedUsers[uid].pickedThisRound = true;
-				++this.draftState.pickedCardsThisRound;
 			}
 		}
 
+		const virtualPlayers = this.getSortedVirtualPlayers();
 		this.forUsers(u =>
 			Connections[u]?.socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
+				virtualPlayersData: virtualPlayers,
 			})
 		);
 		this.resumeOnReconnection({
@@ -1837,7 +1842,7 @@ export class Session implements IIndexable {
 			text: `Disconnected player(s) has been replaced by bot(s).`,
 		});
 
-		if (this.draftState.pickedCardsThisRound == this.getHumanPlayerCount()) this.nextBooster();
+		if (this.draftState.pickedCardsThisRound === this.getVirtualPlayersCount()) this.nextBooster();
 	}
 
 	// Countdown Methods

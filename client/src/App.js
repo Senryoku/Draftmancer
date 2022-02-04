@@ -1065,7 +1065,7 @@ export default {
 				let orderedPicks = [];
 				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
 				orderedPicks.sort((lhs, rhs) => {
-					return this.botScores.scores[lhs].score < this.botScores.scores[rhs].score;
+					return this.botScores.scores[lhs] < this.botScores.scores[rhs];
 				});
 				let currIdx = 0;
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
