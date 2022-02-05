@@ -1292,6 +1292,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>February, 2022</em>
+							<p>
+								<img src="img/sets/neo.svg" class="set-icon" style="--invertedness: 100%" />
+								Kamigawa: Neon Dynasty (NEO) support.
+							</p>
+						</div>
+						<div class="news">
 							<em>November 16, 2021</em>
 							<p>
 								<img src="img/sets/dbl.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1308,27 +1315,6 @@
 							<p>
 								<img src="img/sets/vow.svg" class="set-icon" style="--invertedness: 100%" />
 								Innistrad: Crimson Vow (VOW) is now available!
-							</p>
-						</div>
-						<div class="news">
-							<em>September 28, 2021</em>
-							<p>
-								New experimental bots, courtesy of
-								<a href="https://github.com/ruler501" target="_blank" rel="noopener nofollow"
-									>ruler501</a
-								>!
-							</p>
-							<p>
-								These should make more informed decisions than our previous really simple bots, but may
-								not be available depending on the card pool used for the draft as they require set
-								specific training (typically, we'll fallback to the generic bots for the latest sets).
-							</p>
-							<p>
-								You can help re-training the bots simply by drafting right here and by participating in
-								<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow"
-									>ruler501's Patreon <i class="fab fa-patreon"></i
-								></a>
-								to cover the training cost.
 							</p>
 						</div>
 					</div>

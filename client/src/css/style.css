@@ -14,8 +14,8 @@ body {
 	right: 5em;
 	top: 7em;
 	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
-		url("../assets/img/vow_sma_v2_fb_1000x1000_en-min.jpg");
-	background-position: center, center 20%;
+		url("../assets/img/neo_sma_v2_fb_1000x1000_en-min.jpg");
+	background-position: center, center 40%;
 	background-size: 100%;
 	background-repeat: no-repeat;
 	z-index: -1;

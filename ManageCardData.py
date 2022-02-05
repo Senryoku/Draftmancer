@@ -77,9 +77,7 @@ for path in MTGALocFiles:
 # Get mana symbols info from Scryfall
 SymbologyFile = "./data/symbology.json"
 if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
-    if not os.path.isfile(SymbologyFile):
-        urllib.request.urlretrieve(
-            "https://api.scryfall.com/symbology", SymbologyFile)
+    urllib.request.urlretrieve("https://api.scryfall.com/symbology", SymbologyFile)
     mana_symbols = {}
     with open(SymbologyFile, 'r', encoding="utf8") as file:
         symbols = json.load(file)
@@ -243,7 +241,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-if not os.path.isfile(FinalDataPath) or ForceCache:
+if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         # objects = ijson.items(file, 'item')
@@ -760,6 +758,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "neo"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet ()
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
