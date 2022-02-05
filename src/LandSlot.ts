@@ -177,6 +177,23 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		5 / 12,
 		BasicLandIDs["khm"].filter((cid: CardID) => Cards[cid]["type"].startsWith("Basic Snow"))
 	), // Always one snow-covered land, either basic or tapped. Shimmerdrift Vale (f09d98db-0176-41a7-b99b-ead29876cdab) appears in the common slot
+	neo: new SpecialLandSlot(
+		"neo",
+		[
+			// Dual Taplands
+			"ba06fcda-7ab8-48d4-8656-2a911e73dc44", // Bloodfell Caves
+			"d290ec6b-15a6-49e8-abd2-b8c4d0f556eb", // Blossoming Sands
+			"fab0660b-81f8-40ca-8098-5f8d51219a40", // Dismal Backwater
+			"deadca61-0be9-4eeb-ba12-bc73a49bae74", // Jungle Hollow
+			"58d511be-60e0-4755-abec-18eebb530605", // Rugged Highlands
+			"00538414-90f3-41da-b67e-d81cfa643de3", // Scoured Barrens
+			"ea6c2670-e6fd-40d6-afe0-7d3c4db96a4d", // Swiftwater Cliffs
+			"68f822b7-efc5-42c8-93ea-7dd17b4c3e7a", // Tranquil Cove
+			"cf9b1d47-11ef-4f06-94b2-94b6727de3bd", // Wind-Scarred Crag
+			"d5af3569-3e66-4a50-aca0-c17c799dca28", // Thornwood Falls
+		],
+		5 / 12 // FIXME: This is arbitrary, we don't know the actual rate for now.
+	),
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};

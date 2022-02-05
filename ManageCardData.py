@@ -241,7 +241,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-if not os.path.isfile(FinalDataPath) or ForceCache:
+if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         # objects = ijson.items(file, 'item')
