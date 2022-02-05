@@ -2,15 +2,22 @@
 
 import axios from "axios";
 
+import { shuffleArray } from "./utils.js";
 import { Card, OracleID } from "./Cards";
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
-	// Send a dummy request to make sure the API is up and running and at least 50% of the cards are recognized.
+	// Send a dummy request to make sure the API is up and running that most of the cards are recognized.
+
+	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
+	// we'll just take a random sample (of 15 cards, just because) and test these.
+	shuffleArray(oracleIds);
+	oracleIds = oracleIds.slice(0, 15);
+
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
 		cardsInPack: oracleIds,
 		picked: [],
-		seen: [],
+		seen: [], //[{ packNum: 0, pickNum: 0, numPicks: 1, pack: oracleIds }],
 		packNum: 0,
 		numPacks: 1,
 		pickNum: 0,
@@ -22,7 +29,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		if (
 			response.status !== 200 ||
 			!response.data.success ||
-			response.data.scores.filter((s: number) => s === 0).length > response.data.scores.length / 2 // A score of 0 means the card was not recognized.
+			response.data.scores.filter((s: number) => s === 0).length > 0.8 * response.data.scores.length // A score of 0 means the card was not recognized (probably :)).
 		) {
 			return true;
 		}
