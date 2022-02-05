@@ -2479,12 +2479,12 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 393,
+        "cardCount": 418,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 69,
+        "commonCount": 87,
         "mythicCount": 54,
-        "rareCount": 162,
+        "rareCount": 169,
         "uncommonCount": 108
     },
     "nph": {
