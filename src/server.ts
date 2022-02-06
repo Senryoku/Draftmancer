@@ -804,6 +804,15 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
 		}
 	},
+	setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discardRemainingCardsAt: number) {
+		if (!Number.isInteger(discardRemainingCardsAt) || discardRemainingCardsAt < 0) return;
+
+		Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", { discardRemainingCardsAt: discardRemainingCardsAt });
+		}
+	},
 	setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
 		if (isPublic == Sessions[sessionID].isPublic) return;
 

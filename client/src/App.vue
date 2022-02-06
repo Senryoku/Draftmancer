@@ -2070,6 +2070,33 @@
 							/>
 						</div>
 					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content: '<p>Discard (burn) the remaining N cards of each packs automatically.</p>',
+						}"
+					>
+						<label for="discard-remaining-cards">Discard the remaining</label>
+						<div class="right">
+							<input
+								type="number"
+								id="discard-remaining-cards"
+								class="small-number-input"
+								min="0"
+								:max="
+									Math.max(
+										Object.values(this.boosterContent).reduce((v, a) => (a += v)),
+										this.cardsPerBooster
+									) - this.pickedCardsPerRound
+								"
+								step="1"
+								v-model.number="discardRemainingCardsAt"
+								@change="if (discardRemainingCardsAt < 0) discardRemainingCardsAt = 0;"
+							/>
+							cards of each pack
+						</div>
+					</div>
 				</div>
 				<div class="option-section option-custom-card-list" :class="{ disabled: usePredeterminedBoosters }">
 					<div class="option-column-title">Custom Card List</div>

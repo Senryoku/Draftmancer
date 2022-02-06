@@ -177,6 +177,7 @@ export default {
 			customCardList: {},
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
+			discardRemainingCardsAt: 0,
 			maxTimer: 75,
 			pickTimer: 75,
 			draftLogRecipients: "everyone",
@@ -2537,6 +2538,10 @@ export default {
 		burnedCardsPerRound: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
+		},
+		discardRemainingCardsAt() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDiscardRemainingCardsAt", this.discardRemainingCardsAt);
 		},
 		draftLogRecipients: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

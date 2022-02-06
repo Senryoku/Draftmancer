@@ -67,6 +67,7 @@ export const optionProps = [
 	"customBoosters",
 	"pickedCardsPerRound",
 	"burnedCardsPerRound",
+	"discardRemainingCardsAt",
 	"draftLogRecipients",
 	"bracketLocked",
 	"draftPaused",
@@ -82,7 +83,7 @@ export class IDraftState {
 export class DraftState extends IDraftState {
 	boosters: Array<Array<Card>>;
 	pickNumber = 0;
-	boosterNumber = 1;
+	boosterNumber = 1; // Warning: This starts at 1! (Mostly used for display purposes)
 	pickedCardsThisRound = 0;
 	constructor(boosters: Array<Array<Card>>) {
 		super("draft");
@@ -246,6 +247,7 @@ export class Session implements IIndexable {
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	pickedCardsPerRound: number = 1;
 	burnedCardsPerRound: number = 0;
+	discardRemainingCardsAt: number = 0;
 	draftLogRecipients: DraftLogRecipients = "everyone";
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
@@ -1409,10 +1411,10 @@ export class Session implements IIndexable {
 		this.stopCountdown();
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
-		// Boosters are empty
-		if (s.boosters[0].length === 0) {
+		// Boosters are empty, or we're discarding the remainding cards
+		if (s.boosters[0].length <= Math.max(0, this.discardRemainingCardsAt)) {
 			s.pickNumber = 0;
-			// Remove empty boosters
+			// Remove this round's boosters
 			s.boosters.splice(0, totalVirtualPlayers);
 			++s.boosterNumber;
 		}

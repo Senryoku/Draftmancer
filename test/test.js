@@ -505,6 +505,56 @@ describe("Single Draft (Two Players)", function() {
 		disconnect();
 	});
 
+	describe("Discarding the 8 remaining cards of each pack", function() {
+		connect();
+		const discardRemainingCardsAt = 8;
+		const cardsPerPack = 15; // Drafting VOW to make sure we have 15 cards per pack
+		it("Clients should receive the updated setRestriction status.", function(done) {
+			let ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			let nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("setRestriction", function(setRestriction) {
+				expect(setRestriction).to.have.lengthOf(1);
+				expect(setRestriction[0]).to.be.equal("vow");
+				done();
+			});
+			clients[ownerIdx].emit("ignoreCollections", true);
+			clients[ownerIdx].emit("setRestriction", ["vow"]);
+		});
+		it("Clients should receive the updated discardRemainingCardsAt status.", function(done) {
+			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+			nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("sessionOptions", function(options) {
+				expect(options.discardRemainingCardsAt).to.equal(discardRemainingCardsAt);
+				done();
+			});
+			clients[ownerIdx].emit("setDiscardRemainingCardsAt", discardRemainingCardsAt);
+		});
+		startDraft();
+		it(`Packs should be 15 cards.`, function(done) {
+			expect(Sessions[sessionID].draftState.boosters[0].length).to.equal(15);
+			done();
+		});
+		for (let i = 0; i < cardsPerPack - discardRemainingCardsAt - 1; i++) {
+			singlePick();
+		}
+		it(`Draft should advance to the next pack after cardPerBooster - ${discardRemainingCardsAt} picks.`, function(done) {
+			let receivedBoosters = 0;
+			for (let c = 0; c < clients.length; ++c) {
+				clients[c].once("nextBooster", function(data) {
+					const idx = c;
+					receivedBoosters += 1;
+					expect(data.booster.length).to.equal(cardsPerPack);
+					expect(data.boosterNumber).to.equal(2);
+					boosters[idx] = data.booster;
+					if (receivedBoosters == clients.length) done();
+				});
+				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
+			}
+		});
+		endDraft();
+		disconnect();
+	});
+
 	describe("With Bots", function() {
 		connect();
 		it("Clients should receive the updated bot count.", function(done) {
