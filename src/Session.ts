@@ -227,7 +227,7 @@ export class Session implements IIndexable {
 	description: string = "";
 	ignoreCollections: boolean = true;
 	boostersPerPlayer: number = 3;
-	cardsPerBooster: number = 15;
+	cardsPerBooster: number = 15; // Used for cubes (instead of boosterContent)
 	teamDraft: boolean = false;
 	bots: number = 0;
 	maxTimer: number = 75;
