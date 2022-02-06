@@ -2479,13 +2479,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 492,
+        "cardCount": 500,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 145,
-        "mythicCount": 56,
-        "rareCount": 183,
-        "uncommonCount": 108
+        "mythicCount": 62,
+        "rareCount": 186,
+        "uncommonCount": 107
     },
     "nph": {
         "code": "nph",
@@ -4542,12 +4542,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 428,
+        "cardCount": 431,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 17,
+        "commonCount": 18,
         "mythicCount": 77,
-        "rareCount": 314,
+        "rareCount": 316,
         "uncommonCount": 20
     },
     "slu": {
