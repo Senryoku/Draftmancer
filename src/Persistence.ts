@@ -41,6 +41,11 @@ const MTGDraftbotsLogEndpoint =
 	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
+function copyProps(obj: any, target: any) {
+	for (let prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+	return target;
+}
+
 function restoreBot(bot: any) {
 	if (bot.type == "SimpleBot") {
 		const newBot = new SimpleBot(bot.name, bot.id);
@@ -52,7 +57,7 @@ function restoreBot(bot: any) {
 		return newBot;
 	}
 	console.error(`Error: Invalid bot type '${bot.type}'.`);
-	return null;
+	return undefined;
 }
 
 async function requestSavedConnections() {
@@ -91,14 +96,14 @@ async function requestSavedConnections() {
 	return InactiveConnections;
 }
 
-function copyProps(obj: any, target: any) {
-	for (let prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
-}
-
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
 	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState", "owner"].includes(p))) {
 		(r as IIndexable)[prop] = s[prop];
+	}
+
+	for (let userID in r.disconnectedUsers) {
+		r.disconnectedUsers[userID].bot = restoreBot(r.disconnectedUsers[userID].bot);
 	}
 
 	if (s.botsInstances) {
@@ -216,10 +221,13 @@ async function tempDump(exitOnCompletion = false) {
 		const c = Connections[userID];
 		const PoDConnection: any = {};
 
-		for (let prop of Object.getOwnPropertyNames(c).filter(p => p !== "socket")) {
+		for (let prop of Object.getOwnPropertyNames(c).filter(p => !["socket", "bot"].includes(p))) {
 			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
 		}
-
+		if (c.bot) {
+			PoDConnection.bot = copyProps(c.bot, {});
+			if (c.bot instanceof Bot) PoDConnection.bot.fallbackBot = undefined;
+		}
 		PoDConnections.push(PoDConnection);
 	}
 

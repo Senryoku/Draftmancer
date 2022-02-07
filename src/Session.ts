@@ -215,6 +215,14 @@ export interface IIndexable {
 	[key: string]: any;
 }
 
+type DisconnectedUser = {
+	userName: string;
+	pickedThisRound: boolean;
+	pickedCards: Card[];
+	boosterIndex: number;
+	bot: IBot | undefined;
+};
+
 export class Session implements IIndexable {
 	id: SessionID;
 	owner: UserID;
@@ -260,7 +268,7 @@ export class Session implements IIndexable {
 	draftLog?: DraftLog;
 	// Additional state properties (Only used by DraftState rn, but could be extented to other gamemodes)
 	botsInstances: Array<IBot> = [];
-	disconnectedUsers: { [uid: string]: any } = {};
+	disconnectedUsers: { [uid: string]: DisconnectedUser } = {};
 	draftPaused: boolean = false;
 	countdown: number = 75;
 	countdownInterval: NodeJS.Timeout | null = null;
@@ -1440,11 +1448,15 @@ export class Session implements IIndexable {
 				if (virtualPlayers[userID].disconnected) {
 					this.disconnectedUsers[userID].pickedThisRound = true;
 					this.disconnectedUsers[userID].boosterIndex = boosterIndex;
-					botPromises.push(
-						this.doBotPick(this.disconnectedUsers[userID].bot, boosterIndex).then(pickedCards => {
-							this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
-						})
-					);
+					if (this.disconnectedUsers[userID].bot)
+						botPromises.push(
+							this.doBotPick(this.disconnectedUsers[userID].bot as IBot, boosterIndex).then(
+								pickedCards => {
+									this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
+								}
+							)
+						);
+					else console.error("Session::nextBooster(): this.disconnectedUsers[userID].bot is undefined");
 				} else {
 					Connections[userID].pickedThisRound = false;
 					Connections[userID].boosterIndex = boosterIndex;
@@ -1824,11 +1836,16 @@ export class Session implements IIndexable {
 		for (let uid in this.disconnectedUsers) {
 			// Immediately pick cards
 			if (!this.disconnectedUsers[uid].pickedThisRound) {
-				const pickedCards = await this.doBotPick(
-					this.disconnectedUsers[uid].bot,
-					this.disconnectedUsers[uid].boosterIndex
-				);
-				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
+				if (this.disconnectedUsers[uid].bot) {
+					const pickedCards = await this.doBotPick(
+						this.disconnectedUsers[uid].bot as IBot,
+						this.disconnectedUsers[uid].boosterIndex
+					);
+					this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
+				} else
+					console.error(
+						"Session::replaceDisconnectedPlayers(): this.disconnectedUsers[uid].bot is undefined!"
+					);
 				this.disconnectedUsers[uid].pickedThisRound = true;
 			}
 		}

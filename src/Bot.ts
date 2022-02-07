@@ -227,5 +227,6 @@ export class Bot implements IBot {
 	addCard(card: Card) {
 		this.picked.push(card.oracle_id);
 		this.cards.push(card);
+		if (this.fallbackBot) this.fallbackBot.addCard(card);
 	}
 }
