@@ -1276,10 +1276,10 @@ export class Session implements IIndexable {
 
 		this.draftState = new DraftState(this.boosters);
 		this.boosters = [];
-		this.nextBooster();
+		await this.nextBooster();
 	}
 
-	pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
+	async pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
 		if (!this.drafting || this.draftState?.type !== "draft" || !this.users.has(userID)) return;
 		const s = this.draftState as DraftState;
 
@@ -1365,7 +1365,7 @@ export class Session implements IIndexable {
 
 		++s.pickedCardsThisRound;
 		if (s.pickedCardsThisRound === this.getVirtualPlayersCount()) {
-			this.nextBooster();
+			await this.nextBooster();
 		}
 		return { code: 0 };
 	}
@@ -1862,7 +1862,7 @@ export class Session implements IIndexable {
 			text: `Disconnected player(s) has been replaced by bot(s).`,
 		});
 
-		if (this.draftState.pickedCardsThisRound === this.getVirtualPlayersCount()) this.nextBooster();
+		if (this.draftState.pickedCardsThisRound === this.getVirtualPlayersCount()) await this.nextBooster();
 	}
 
 	// Countdown Methods

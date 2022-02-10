@@ -201,8 +201,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
-
-	pickCard(
+	async pickCard(
 		userID: UserID,
 		sessionID: SessionID,
 		data: { pickedCards: Array<number>; burnedCards: Array<number> },
@@ -211,7 +210,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		// Removes picked card from corresponding booster and notify other players.
 		// Moves to next round when each player have picked a card.
 		try {
-			const r = Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
+			const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
 		} catch (err) {
 			ack?.({ code: 500, error: "Internal server error." });
@@ -885,7 +884,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 };
 
 function prepareSocketCallback(callback: Function, ownerOnly = false) {
-	return function(this: SocketIO.Socket) {
+	return async function(this: SocketIO.Socket) {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
 		const ack =
 			arguments.length > 0 && arguments[arguments.length - 1] instanceof Function
@@ -906,7 +905,7 @@ function prepareSocketCallback(callback: Function, ownerOnly = false) {
 			return;
 		}
 		try {
-			callback(userID, sessionID, ...arguments);
+			await callback(userID, sessionID, ...arguments);
 		} catch (e) {
 			ack?.({ code: 500, error: "Internal server error." });
 			console.error(e);
