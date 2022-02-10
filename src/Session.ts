@@ -353,15 +353,16 @@ export class Session implements IIndexable {
 		}
 	}
 
-	setCardsPerBooster(cardsPerBooster: number) {
+	setCardsPerBooster(cardsPerBooster: number, userID: UserID | null = null) {
 		if (this.cardsPerBooster !== cardsPerBooster && cardsPerBooster > 0) {
 			this.cardsPerBooster = cardsPerBooster;
 
-			this.forUsers((uid: UserID) =>
-				Connections[uid]?.socket.emit("sessionOptions", {
-					cardsPerBooster: this.cardsPerBooster,
-				})
-			);
+			this.forUsers((uid: UserID) => {
+				if (userID !== uid)
+					Connections[uid]?.socket.emit("sessionOptions", {
+						cardsPerBooster: this.cardsPerBooster,
+					});
+			});
 		}
 	}
 

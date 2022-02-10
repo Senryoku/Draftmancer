@@ -420,7 +420,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 		if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
 
-		Sessions[sessionID].setCardsPerBooster(cardsPerBooster);
+		Sessions[sessionID].setCardsPerBooster(cardsPerBooster, userID);
 	},
 	teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
 		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
