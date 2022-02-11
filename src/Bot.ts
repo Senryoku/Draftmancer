@@ -165,7 +165,7 @@ export class Bot implements IBot {
 			seed: Math.floor(Math.random() * 65536),
 		};
 		try {
-			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
+			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1500 });
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
