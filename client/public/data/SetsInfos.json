@@ -2459,11 +2459,13 @@
     "nec": {
         "code": "nec",
         "fullName": "Neon Dynasty Commander",
-        "cardCount": 20,
+        "cardCount": 180,
         "isPrimary": false,
         "icon": "img/sets/nec.svg",
-        "mythicCount": 8,
-        "rareCount": 12
+        "commonCount": 14,
+        "mythicCount": 21,
+        "rareCount": 115,
+        "uncommonCount": 30
     },
     "nem": {
         "code": "nem",
@@ -4542,12 +4544,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 431,
+        "cardCount": 434,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 18,
+        "commonCount": 20,
         "mythicCount": 77,
-        "rareCount": 316,
+        "rareCount": 317,
         "uncommonCount": 20
     },
     "slu": {
