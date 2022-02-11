@@ -874,15 +874,22 @@ export default {
 			this.currentChatMessage = "";
 		},
 		// Draft Methods
-		startDraft: function() {
+		async startDraft() {
 			if (this.userID != this.sessionOwner) return false;
 			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
-				Alert.fire({
+				let ret = await Alert.fire({
 					icon: "info",
 					title: "Not enough players",
-					text: `Can't start draft: Not enough players (min. 2 including bots).`,
+					text: `At least 2 players (including bots) are needed to start a draft.`,
+					showDenyButton: true,
+					denyButtonColor: "darkgreen",
+					denyButtonText: "Draft alone with bots",
+					confirmButtonText: "Dismiss",
 				});
-				return false;
+				if (ret.isDenied) {
+					this.bots = 7;
+					await this.$nextTick();
+				} else return false;
 			}
 
 			if (this.deck.length > 0) {
