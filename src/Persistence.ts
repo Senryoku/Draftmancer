@@ -47,6 +47,7 @@ function copyProps(obj: any, target: any) {
 }
 
 function restoreBot(bot: any) {
+	if (!bot) return null;
 	if (bot.type == "SimpleBot") {
 		const newBot = new SimpleBot(bot.name, bot.id);
 		copyProps(bot, newBot);
@@ -102,9 +103,9 @@ export function restoreSession(s: any, owner: UserID) {
 		(r as IIndexable)[prop] = s[prop];
 	}
 
-	for (let userID in r.disconnectedUsers) {
-		r.disconnectedUsers[userID].bot = restoreBot(r.disconnectedUsers[userID].bot);
-	}
+	for (let userID in r.disconnectedUsers)
+		if (r.disconnectedUsers[userID].bot)
+			r.disconnectedUsers[userID].bot = restoreBot(r.disconnectedUsers[userID].bot);
 
 	if (s.botsInstances) {
 		r.botsInstances = [];
