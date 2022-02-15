@@ -2481,11 +2481,11 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 500,
+        "cardCount": 498,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 145,
-        "mythicCount": 62,
+        "mythicCount": 60,
         "rareCount": 186,
         "uncommonCount": 107
     },
@@ -3748,6 +3748,15 @@
         "icon": "img/sets/pnem.svg",
         "rareCount": 1
     },
+    "pneo": {
+        "code": "pneo",
+        "fullName": "Kamigawa: Neon Dynasty Promos",
+        "cardCount": 77,
+        "isPrimary": false,
+        "icon": "img/sets/pneo.svg",
+        "mythicCount": 18,
+        "rareCount": 59
+    },
     "pnph": {
         "code": "pnph",
         "fullName": "New Phyrexia Promos",
@@ -4544,12 +4553,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 434,
+        "cardCount": 438,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 20,
+        "commonCount": 22,
         "mythicCount": 77,
-        "rareCount": 317,
+        "rareCount": 319,
         "uncommonCount": 20
     },
     "slu": {
