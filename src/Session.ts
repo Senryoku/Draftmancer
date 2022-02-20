@@ -2026,14 +2026,23 @@ export class Session implements IIndexable {
 		}
 		decklist = computeHashes(decklist);
 		this.draftLog.users[userID].decklist = decklist;
-		this.forUsers(uid => {
-			Connections[uid]?.socket.emit("shareDecklist", {
+		if (this.draftLogRecipients === "everyone") {
+			this.forUsers(uid => {
+				Connections[uid]?.socket.emit("shareDecklist", {
+					sessionID: this.id,
+					time: this.draftLog?.time,
+					userID: userID,
+					decklist: decklist,
+				});
+			});
+		} else if (this.draftLogRecipients === "owner" || this.draftLogRecipients === "delayed") {
+			Connections[this.owner]?.socket.emit("shareDecklist", {
 				sessionID: this.id,
 				time: this.draftLog?.time,
 				userID: userID,
 				decklist: decklist,
 			});
-		});
+		}
 	}
 
 	// Indicates if the DraftLogLive feature is in use

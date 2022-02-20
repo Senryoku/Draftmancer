@@ -1090,7 +1090,7 @@
 							</button>
 						</div>
 						<button
-							v-if="deck.length > 0 && currentDraftLog"
+							v-if="deck.length > 0 && (currentDraftLog || draftLogRecipients === 'owner')"
 							type="button"
 							@click="shareDecklist()"
 							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
