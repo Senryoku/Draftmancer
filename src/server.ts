@@ -865,8 +865,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
 		Sessions[sessionID].bracketLocked = bracketLocked;
 		for (let user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { bracketLocked: bracketLocked });
+			if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
 		}
 	},
 	shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
@@ -879,7 +878,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
-		for (let user of sess.users) if (user !== userID) Connections[user].socket.emit("draftLog", draftLog);
+		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
 	},
 };
 
