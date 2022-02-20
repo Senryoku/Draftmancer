@@ -3336,6 +3336,17 @@
         "icon": "img/sets/pgtw.svg",
         "rareCount": 3
     },
+    "phed": {
+        "code": "phed",
+        "fullName": "Heads I Win, Tails You Lose",
+        "cardCount": 82,
+        "isPrimary": false,
+        "icon": "img/sets/phed.svg",
+        "commonCount": 15,
+        "mythicCount": 5,
+        "rareCount": 38,
+        "uncommonCount": 24
+    },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
@@ -3751,11 +3762,11 @@
     "pneo": {
         "code": "pneo",
         "fullName": "Kamigawa: Neon Dynasty Promos",
-        "cardCount": 77,
+        "cardCount": 145,
         "isPrimary": false,
         "icon": "img/sets/pneo.svg",
-        "mythicCount": 18,
-        "rareCount": 59
+        "mythicCount": 33,
+        "rareCount": 112
     },
     "pnph": {
         "code": "pnph",
@@ -4524,8 +4535,8 @@
         "cardCount": 173,
         "isPrimary": false,
         "icon": "img/sets/s99.svg",
-        "commonCount": 82,
-        "rareCount": 36,
+        "commonCount": 83,
+        "rareCount": 35,
         "uncommonCount": 55
     },
     "scg": {
@@ -4550,15 +4561,23 @@
         "rareCount": 81,
         "uncommonCount": 80
     },
+    "skhm": {
+        "code": "skhm",
+        "fullName": "Kaldheim Substitute Cards",
+        "cardCount": 9,
+        "isPrimary": false,
+        "icon": "img/sets/skhm.svg",
+        "commonCount": 9
+    },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 438,
+        "cardCount": 475,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 22,
-        "mythicCount": 77,
-        "rareCount": 319,
+        "mythicCount": 81,
+        "rareCount": 352,
         "uncommonCount": 20
     },
     "slu": {
@@ -4572,11 +4591,11 @@
     "smid": {
         "code": "smid",
         "fullName": "Innistrad: Midnight Hunt Substitute Cards",
-        "cardCount": 1,
+        "cardCount": 9,
         "isPrimary": false,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/smid.svg",
-        "commonCount": 1
+        "commonCount": 9
     },
     "soi": {
         "code": "soi",
@@ -4640,6 +4659,14 @@
         "mythicCount": 2,
         "rareCount": 6
     },
+    "sstx": {
+        "code": "sstx",
+        "fullName": "Strixhaven: School of Mages Substitute Cards",
+        "cardCount": 9,
+        "isPrimary": false,
+        "icon": "img/sets/sstx.svg",
+        "commonCount": 9
+    },
     "sta": {
         "code": "sta",
         "fullName": "Strixhaven Mystical Archive",
@@ -4682,6 +4709,14 @@
         "commonCount": 90,
         "rareCount": 121,
         "uncommonCount": 95
+    },
+    "svow": {
+        "code": "svow",
+        "fullName": "Innistrad: Crimson Vow Substitute Cards",
+        "cardCount": 9,
+        "isPrimary": false,
+        "icon": "img/sets/svow.svg",
+        "commonCount": 9
     },
     "sznr": {
         "code": "sznr",
