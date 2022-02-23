@@ -2119,7 +2119,7 @@ export default {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
-				}/?session=${encodeURI(this.sessionID)}`
+				}/?session=${encodeURIComponent(this.sessionID)}`
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
@@ -2330,7 +2330,7 @@ export default {
 		// Load all card informations
 		try {
 			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
+			if (urlParamSession) this.sessionID = decodeURIComponent(urlParamSession);
 
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);
@@ -2387,7 +2387,7 @@ export default {
 			history.replaceState(
 				{ sessionID: this.sessionID },
 				`MTGADraft Session ${this.sessionID}`,
-				`?session=${encodeURI(this.sessionID)}`
+				`?session=${encodeURIComponent(this.sessionID)}`
 			);
 			setCookie("sessionID", this.sessionID);
 		},
