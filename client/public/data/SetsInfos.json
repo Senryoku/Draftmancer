@@ -157,13 +157,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 413,
+        "cardCount": 415,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
-        "commonCount": 142,
+        "commonCount": 143,
         "mythicCount": 43,
         "rareCount": 117,
-        "uncommonCount": 111
+        "uncommonCount": 112
     },
     "ajmp": {
         "code": "ajmp",
@@ -279,8 +279,8 @@
         "isPrimary": true,
         "icon": "img/sets/arn.svg",
         "commonCount": 41,
-        "rareCount": 32,
-        "uncommonCount": 19
+        "rareCount": 33,
+        "uncommonCount": 18
     },
     "ath": {
         "code": "ath",
@@ -1090,12 +1090,12 @@
     "eld": {
         "code": "eld",
         "fullName": "Throne of Eldraine",
-        "cardCount": 397,
+        "cardCount": 398,
         "isPrimary": true,
         "icon": "img/sets/eld.svg",
         "commonCount": 141,
         "mythicCount": 37,
-        "rareCount": 123,
+        "rareCount": 124,
         "uncommonCount": 96
     },
     "ema": {
@@ -1795,11 +1795,11 @@
     "iko": {
         "code": "iko",
         "fullName": "Ikoria: Lair of Behemoths",
-        "cardCount": 385,
+        "cardCount": 386,
         "isPrimary": true,
         "icon": "img/sets/iko.svg",
         "commonCount": 132,
-        "mythicCount": 37,
+        "mythicCount": 38,
         "rareCount": 111,
         "uncommonCount": 105
     },
@@ -2011,13 +2011,13 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 409,
+        "cardCount": 413,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 129,
-        "mythicCount": 43,
-        "rareCount": 128,
-        "uncommonCount": 109
+        "mythicCount": 44,
+        "rareCount": 129,
+        "uncommonCount": 111
     },
     "kld": {
         "code": "kld",
@@ -2343,11 +2343,11 @@
     "mid": {
         "code": "mid",
         "fullName": "Innistrad: Midnight Hunt",
-        "cardCount": 393,
+        "cardCount": 395,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/mid.svg",
-        "commonCount": 123,
+        "commonCount": 125,
         "mythicCount": 42,
         "rareCount": 131,
         "uncommonCount": 97
@@ -2857,12 +2857,12 @@
     "pana": {
         "code": "pana",
         "fullName": "MTG Arena Promos",
-        "cardCount": 73,
+        "cardCount": 78,
         "isPrimary": false,
         "icon": "img/sets/pana.svg",
         "commonCount": 58,
         "mythicCount": 4,
-        "rareCount": 11
+        "rareCount": 16
     },
     "parb": {
         "code": "parb",
@@ -4572,12 +4572,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 475,
+        "cardCount": 493,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 22,
+        "commonCount": 39,
         "mythicCount": 81,
-        "rareCount": 352,
+        "rareCount": 353,
         "uncommonCount": 20
     },
     "slu": {
@@ -5195,14 +5195,14 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 413,
+        "cardCount": 416,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/vow.svg",
-        "commonCount": 127,
+        "commonCount": 128,
         "mythicCount": 46,
         "rareCount": 140,
-        "uncommonCount": 100
+        "uncommonCount": 102
     },
     "w16": {
         "code": "w16",
