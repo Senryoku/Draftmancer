@@ -1342,8 +1342,8 @@ export default {
 
 				// Propose to use MTGA user name
 				// FIXME: The username doesn't seem to appear in the log anymore as of 29/08/2021
-				let nameFromLogs = getCookie("nameFromLogs", "");
-				if (nameFromLogs === "") {
+				let nameFromLogs = localStorage.getItem("nameFromLogs");
+				if (!nameFromLogs) {
 					let m = contents.match(/DisplayName:(.+)#(\d+)/);
 					if (m) {
 						let name = `${m[1]}#${m[2]}`;
@@ -1361,9 +1361,9 @@ export default {
 							});
 							if (swalResult.value) {
 								this.userName = name;
-								setCookie("nameFromLogs", "done");
+								localStorage.setItem("nameFromLogs", "done");
 							} else {
-								setCookie("nameFromLogs", "refused");
+								localStorage.setItem("nameFromLogs", "refused");
 							}
 						}
 					}
