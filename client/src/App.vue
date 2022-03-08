@@ -1605,7 +1605,7 @@
 						toggle can be found in <em>Options > Account > Detailed Logs (Plugin Support)</em>.
 					</li>
 					<li>
-						<a onclick="document.querySelector('#file-input').click()">Upload</a>
+						<a @click="uploadMTGALogs">Upload</a>
 						your MTGA log file "Player.log". Its location is OS-specific: (Note on hidden system folders in
 						<a
 							href="https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files"
