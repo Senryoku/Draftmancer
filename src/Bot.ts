@@ -165,7 +165,7 @@ export class Bot implements IBot {
 			seed: Math.floor(Math.random() * 65536),
 		};
 		try {
-			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1500 });
+			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
@@ -182,7 +182,11 @@ export class Bot implements IBot {
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
 		} catch (e) {
-			console.error("Error requesting mtgdraftbots scores: ", e);
+			if (e.code == "ECONNABORTED") {
+				console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
+			} else {
+				console.error("Error requesting mtgdraftbots scores: ", e);
+			}
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
