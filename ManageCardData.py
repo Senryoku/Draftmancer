@@ -223,15 +223,18 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r"<h3>([^<]+)<\/h3>\s*<b>[^<]*</b><br />\s*<b>Pro Rating: ([0-9]*\.?[0-9]*( \/\/ )?[0-9]*\.?[0-9]*)<\/b>", text)
+                r"<h3>([^<]+)<\/h3>\s*<b>[^<]*</b><br>\s*<b>Pro Rating: ([0-9]*\.?[0-9]*( \/\/ )?[0-9]*\.?[0-9]*)<\/b>", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
-                try:
-                    rating = float(m[1])
-                except ValueError:
-                    vals = m[1].split("//")
-                    rating = (float(vals[0]) + float(vals[1]))/2
+                if(m[1] == ''):
+                    continue
+                else:
+                    try:
+                        rating = float(m[1])
+                    except ValueError:
+                        vals = m[1].split("//")
+                        rating = (float(vals[0]) + float(vals[1]))/2
                 # print(m[0], " ", rating)
                 CardRatings[m[0]] = rating
 
