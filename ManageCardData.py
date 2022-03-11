@@ -118,7 +118,8 @@ for path in MTGACardsFiles:
                     o['set'] = 'dom'
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Process AKR cards separately (except basics)
-                fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ").replace("<nobr>", "").replace("</nobr>", "")
+                fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")
+                fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
                 if o["set"] == "akr":
                     if o['rarity'] != 1:
                         AKRCards[fixed_name] = (
@@ -131,24 +132,23 @@ for path in MTGACardsFiles:
                     # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                     # Adding name to disambiguate.
                     CardsCollectorNumberAndSet[(
-                        MTGALocalization['en'][o['titleId']], collectorNumber, o['set'])] = o['grpid']
+                        fixed_name, collectorNumber, o['set'])] = o['grpid']
 
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
-                        MTGALocalization['en'][o['titleId']], collectorNumber, 'ajmp')] = o['grpid']
+                        fixed_name, collectorNumber, 'ajmp')] = o['grpid']
                 # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
                 if o['set'] == 'j21':
                     J21MTGACollectorNumbers[fixed_name] = collectorNumber
 
                 for lang in MTGALocalization:
                     MTGATranslations[lang][o['grpid']] = {
-                        'printed_name': MTGALocalization[lang][o['titleId']]}
+                        'printed_name': fixed_name}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
-                if MTGALocalization['en'][o['titleId']] not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
-                    CardNameToArenaID[MTGALocalization['en']
-                                      [o['titleId']]] = o['grpid']
+                if fixed_name not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
+                    CardNameToArenaID[fixed_name] = o['grpid']
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
@@ -223,7 +223,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r"<h3>([^<]+)<\/h3>\s*<b>Pro Rating: ([0-9]*\.?[0-9]*( \/\/ )?[0-9]*\.?[0-9]*)<\/b>", text)
+                r"<h3>([^<]+)<\/h3>\s*<b>[^<]*</b><br />\s*<b>Pro Rating: ([0-9]*\.?[0-9]*( \/\/ )?[0-9]*\.?[0-9]*)<\/b>", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
