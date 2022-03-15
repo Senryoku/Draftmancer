@@ -92,44 +92,46 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 
 export function parseCardList(txtcardlist: string, options: { [key: string]: any }) {
 	try {
-		const lines = txtcardlist.split(/\r\n|\n/);
+		const lines = txtcardlist.split(/\r\n|\n/).map(s => s.trim());
 		let cardList: CustomCardList = {
 			customSheets: false,
 			cardsPerBooster: {},
 			cards: [],
 			length: 0,
 		};
-		// Custom rarity sheets
-		if (lines[0].trim()[0] === "[") {
-			let line = 0;
+		// Custom slots
+		let lineIdx = 0;
+		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
+		if (lines[lineIdx][0] === "[") {
+			// List has to start with a header if it has custom slots
 			let cardCount = 0;
 			cardList.customSheets = true;
 			cardList.cards = {};
 			// Groups: SlotName, '(Count)', Count
 			let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`);
-			while (line < lines.length) {
-				let header = lines[line].match(headerRegex);
+			while (lineIdx < lines.length) {
+				let header = lines[lineIdx].match(headerRegex);
 				if (!header) {
 					return {
 						error: {
 							type: "error",
 							title: `Slot`,
-							text: `Error parsing slot '${lines[line]}'.`,
+							text: `Error parsing slot '${lines[lineIdx]}'.`,
 						},
 					};
 				}
 				cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
 				cardList.cards[header[1]] = [];
-				line += 1;
-				while (line < lines.length && lines[line].trim()[0] !== "[") {
-					if (lines[line]) {
-						let [count, cardID] = parseLine(lines[line].trim(), options);
+				++lineIdx;
+				while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
+					if (lines[lineIdx]) {
+						let [count, cardID] = parseLine(lines[lineIdx], options);
 						if (typeof cardID !== "undefined") {
 							for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
 							cardCount += count;
 						} else return count; // Return error from parseLine
 					}
-					line += 1;
+					++lineIdx;
 				}
 			}
 			cardList.length = cardCount;
