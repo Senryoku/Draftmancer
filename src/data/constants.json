@@ -234,6 +234,7 @@
         }
     ],
     "PrimarySets": [
+        "snc",
         "neo",
         "dbl",
         "vow",

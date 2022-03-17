@@ -4269,11 +4269,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 84,
+        "cardCount": 93,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
-        "mythicCount": 20,
-        "rareCount": 64
+        "mythicCount": 22,
+        "rareCount": 71
     },
     "pw09": {
         "code": "pw09",
@@ -4319,11 +4319,12 @@
     "pw22": {
         "code": "pw22",
         "fullName": "Wizards Play Network 2022",
-        "cardCount": 3,
+        "cardCount": 4,
         "isPrimary": false,
         "icon": "img/sets/pw22.svg",
         "mythicCount": 1,
-        "rareCount": 2
+        "rareCount": 2,
+        "uncommonCount": 1
     },
     "pwar": {
         "code": "pwar",
@@ -4588,6 +4589,15 @@
         "icon": "img/sets/slu.svg",
         "rareCount": 16
     },
+    "slx": {
+        "code": "slx",
+        "fullName": "Universes Within",
+        "cardCount": 9,
+        "isPrimary": true,
+        "icon": "img/sets/slx.svg",
+        "mythicCount": 1,
+        "rareCount": 8
+    },
     "smid": {
         "code": "smid",
         "fullName": "Innistrad: Midnight Hunt Substitute Cards",
@@ -4596,6 +4606,14 @@
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/smid.svg",
         "commonCount": 9
+    },
+    "snc": {
+        "code": "snc",
+        "fullName": "Streets of New Capenna",
+        "cardCount": 27,
+        "isPrimary": true,
+        "commonCount": 10,
+        "rareCount": 17
     },
     "soi": {
         "code": "soi",
@@ -5371,6 +5389,16 @@
         "mythicCount": 10,
         "rareCount": 42,
         "uncommonCount": 11
+    },
+    "yneo": {
+        "code": "yneo",
+        "fullName": "Alchemy: Kamigawa",
+        "cardCount": 30,
+        "isPrimary": false,
+        "icon": "img/sets/yneo.svg",
+        "mythicCount": 5,
+        "rareCount": 20,
+        "uncommonCount": 5
     },
     "zen": {
         "code": "zen",
