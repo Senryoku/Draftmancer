@@ -2156,9 +2156,13 @@
 							/>
 						</div>
 						<div>
-							<button @click="importCubeCobra">
+							<button @click="importCube('Cube Cobra')">
 								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
 								Import From Cube Cobra
+							</button>
+							<button @click="importCube('CubeArtisan')">
+								<img class="set-icon" src="./assets/img/cubeartisan-logo.png" />
+								Import From CubeArtisan
 							</button>
 						</div>
 					</div>

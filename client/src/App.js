@@ -1528,12 +1528,12 @@ export default {
 				}
 			});
 		},
-		importCubeCobra: function() {
-			const defaultMatchCardVersions = localStorage.getItem("cubecobra-match-versions", "false") === "true";
-			const defaultCubeID = localStorage.getItem("cubecobra-cubeID", "");
+		importCube(service) {
+			const defaultMatchCardVersions = localStorage.getItem("import-match-versions", "false") === "true";
+			const defaultCubeID = localStorage.getItem("import-cubeID", "");
 			Alert.fire({
-				title: "Import from Cube Cobra",
-				html: `<p>Enter a Cube ID or an URL to import a cube directly from Cube Cobra</p>
+				title: `Import from ${service}`,
+				html: `<p>Enter a Cube ID or an URL to import a cube directly from ${service}</p>
 				<input type="checkbox" id="input-match-card-versions" ${
 					defaultMatchCardVersions ? "checked" : ""
 				}><label for="input-match-card-versions">Match exact card versions</label>`,
@@ -1544,24 +1544,27 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
-				preConfirm: function(cubeCobraID) {
+				preConfirm(cubeID) {
 					const matchVersions = document.getElementById("input-match-card-versions").checked;
-					localStorage.setItem("cubecobra-match-versions", matchVersions.toString());
-					if (cubeCobraID) {
+					localStorage.setItem("import-match-versions", matchVersions.toString());
+					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
-						const urlTest = cubeCobraID.match(/https?:\/\/cubecobra.com\/[^/]*\/.*\/([^/]*)/);
-						if (urlTest) cubeCobraID = urlTest[1];
+						const urlTest = cubeID.match(
+							/https?:\/\/(?:cubecobra\.com|cubeartisan\.net)\/cube\/(?:overview\/)?([^/\n]*)/
+						);
+						if (urlTest) cubeID = urlTest[1];
 					}
-					localStorage.setItem("cubecobra-cubeID", cubeCobraID);
+					localStorage.setItem("import-cubeID", cubeID);
 					return new Promise(function(resolve) {
 						resolve({
-							cubeCobraID: cubeCobraID,
+							cubeID: cubeID,
 							matchVersions: matchVersions,
+							service: service,
 						});
 					});
 				},
 			}).then(result => {
-				if (result.value && result.value.cubeCobraID) this.selectCube(result.value);
+				if (result.value && result.value.cubeID) this.selectCube(result.value);
 			});
 		},
 		selectCube: function(cube) {
@@ -1579,18 +1582,26 @@ export default {
 			};
 
 			if (cube.cubeCobraID) {
+				cube.cubeID = cube.cubeCobraID;
+				cube.service = "Cube Cobra";
+			} else if (cube.cubeArtisanID) {
+				cube.cubeID = cube.cubeArtisanID;
+				cube.service = "CubeArtisan";
+			}
+
+			if (cube.cubeID) {
 				Alert.fire({
 					position: "center",
 					icon: "info",
 					title: `Loading Cube...`,
-					text: `Please wait as we retrieve the latest version from Cube Cobra...`,
-					footer: `CubeID: ${cube.cubeCobraID}`,
+					text: `Please wait as we retrieve the latest version from ${cube.service}...`,
+					footer: `CubeID: ${cube.cubeID}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
 				this.socket.emit(
-					"loadFromCubeCobra",
-					{ cubeID: cube.cubeCobraID, name: cube.name, matchVersions: cube.matchVersions },
+					"importCube",
+					{ cubeID: cube.cubeID, service: cube.service, matchVersions: cube.matchVersions },
 					ack
 				);
 			} else if (cube.name) {
