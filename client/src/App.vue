@@ -88,7 +88,9 @@
 						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
 						@click="displayBotScores = !displayBotScores"
 						v-tooltip="
-							`Toggle displaying bot recommendations. ${displayBotScores ? 'Enabled' : 'Disabled'}`
+							`Display Bot Recommendations: <b>${
+								displayBotScores ? 'Enabled' : 'Disabled'
+							}</b><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`
 						"
 					>
 						<img src="./assets/img/bot-score.svg" />
@@ -2095,6 +2097,19 @@
 								@change="if (discardRemainingCardsAt < 0) discardRemainingCardsAt = 0;"
 							/>
 							cards of each pack
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.right="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Disable the bot suggestions mechanism for every player in the session. Useful for tournaments for example.</p>',
+						}"
+					>
+						<label for="disable-bot-suggestions">Disable Bot Suggestions</label>
+						<div class="right">
+							<input type="checkbox" id="disable-bot-suggestions" v-model="disableBotSuggestions" />
 						</div>
 					</div>
 				</div>

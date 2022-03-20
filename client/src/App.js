@@ -156,6 +156,7 @@ export default {
 			boostersPerPlayer: 3,
 			cardsPerBooster: 15,
 			teamDraft: false,
+			disableBotSuggestions: false,
 			distributionMode: "regular",
 			customBoosters: ["", "", ""],
 			maxPlayers: 8,
@@ -2485,6 +2486,10 @@ export default {
 		teamDraft: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("teamDraft", this.teamDraft);
+		},
+		disableBotSuggestions(oldValue, newValue) {
+			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
+			this.socket.emit("setDisableBotSuggestions", this.disableBotSuggestions);
 		},
 		distributionMode: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

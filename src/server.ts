@@ -429,6 +429,15 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 		Sessions[sessionID].setTeamDraft(teamDraft);
 	},
+	setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
+		if (!(typeof disableBotSuggestions === "boolean"))
+			disableBotSuggestions = disableBotSuggestions === "true" || !!disableBotSuggestions;
+		if (!(typeof disableBotSuggestions === "boolean")) return;
+
+		if (disableBotSuggestions === Sessions[sessionID].disableBotSuggestions) return;
+
+		Sessions[sessionID].setDisableBotSuggestions(disableBotSuggestions);
+	},
 	setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode: DistributionMode) {
 		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
 

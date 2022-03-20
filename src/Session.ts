@@ -50,6 +50,7 @@ export const optionProps = [
 	"boostersPerPlayer",
 	"cardsPerBooster",
 	"teamDraft",
+	"disableBotSuggestions",
 	"bots",
 	"maxTimer",
 	"maxPlayers",
@@ -238,6 +239,7 @@ export class Session implements IIndexable {
 	boostersPerPlayer: number = 3;
 	cardsPerBooster: number = 15; // Used for cubes (instead of boosterContent)
 	teamDraft: boolean = false;
+	disableBotSuggestions: boolean = false;
 	bots: number = 0;
 	maxTimer: number = 75;
 	maxPlayers: number = 8;
@@ -392,6 +394,17 @@ export class Session implements IIndexable {
 					teamDraft: this.teamDraft,
 					maxPlayers: this.maxPlayers,
 					bots: this.bots,
+				})
+			);
+		}
+	}
+
+	setDisableBotSuggestions(disableBotSuggestions: boolean) {
+		if (this.disableBotSuggestions != disableBotSuggestions) {
+			this.disableBotSuggestions = disableBotSuggestions;
+			this.forUsers(u =>
+				Connections[u]?.socket.emit("sessionOptions", {
+					disableBotSuggestions: this.disableBotSuggestions,
 				})
 			);
 		}
@@ -1465,13 +1478,15 @@ export class Session implements IIndexable {
 						booster: s.boosters[boosterIndex],
 						boosterNumber: s.boosterNumber,
 						pickNumber: s.pickNumber + 1,
-						botScores: await Connections[userID].bot?.getScores(
-							s.boosters[boosterIndex],
-							s.boosterNumber,
-							this.boostersPerPlayer,
-							s.pickNumber,
-							s.pickNumber + s.boosters[boosterIndex].length
-						),
+						botScores: this.disableBotSuggestions
+							? undefined
+							: await Connections[userID].bot?.getScores(
+									s.boosters[boosterIndex],
+									s.boosterNumber,
+									this.boostersPerPlayer,
+									s.pickNumber,
+									s.pickNumber + s.boosters[boosterIndex].length
+							  ),
 					});
 				}
 			}
