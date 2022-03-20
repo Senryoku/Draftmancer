@@ -50,6 +50,7 @@ export const optionProps = [
 	"boostersPerPlayer",
 	"cardsPerBooster",
 	"teamDraft",
+	"randomizeSeatingOrder",
 	"disableBotSuggestions",
 	"bots",
 	"maxTimer",
@@ -240,6 +241,7 @@ export class Session implements IIndexable {
 	cardsPerBooster: number = 15; // Used for cubes (instead of boosterContent)
 	teamDraft: boolean = false;
 	disableBotSuggestions: boolean = false;
+	randomizeSeatingOrder: boolean = false;
 	bots: number = 0;
 	maxTimer: number = 75;
 	maxPlayers: number = 8;
@@ -405,6 +407,17 @@ export class Session implements IIndexable {
 			this.forUsers(u =>
 				Connections[u]?.socket.emit("sessionOptions", {
 					disableBotSuggestions: this.disableBotSuggestions,
+				})
+			);
+		}
+	}
+
+	setRandomizeSeatingOrder(randomizeSeatingOrder: boolean) {
+		if (this.randomizeSeatingOrder != randomizeSeatingOrder) {
+			this.randomizeSeatingOrder = randomizeSeatingOrder;
+			this.forUsers(u =>
+				Connections[u]?.socket.emit("sessionOptions", {
+					randomizeSeatingOrder: this.randomizeSeatingOrder,
 				})
 			);
 		}
@@ -1151,6 +1164,7 @@ export class Session implements IIndexable {
 	///////////////////// Rochester Draft //////////////////////
 	startRochesterDraft() {
 		if (this.users.size <= 1) return false;
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true })) {
@@ -1234,6 +1248,9 @@ export class Session implements IIndexable {
 
 	///////////////////// Traditional Draft Methods //////////////////////
 	async startDraft() {
+		if (this.drafting) return;
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
+
 		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
 

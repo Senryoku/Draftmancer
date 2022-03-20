@@ -452,10 +452,19 @@
 				({{ sessionUsers.length }}/{{ maxPlayers }})
 			</div>
 			<i
-				v-if="userID == sessionOwner && !drafting"
-				class="fas fa-random clickable"
-				@click="randomizeSeating"
-				v-tooltip="'Randomize Seating Order.'"
+				v-if="!drafting"
+				class="fas fa-random"
+				:class="{
+					crossed: !randomizeSeatingOrder,
+					faded: !randomizeSeatingOrder,
+					clickable: userID === sessionOwner,
+				}"
+				@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
+				v-tooltip="
+					`Randomize Seating Order on draft start: <strong>${
+						randomizeSeatingOrder ? 'Enabled' : 'Disabled'
+					}</strong>`
+				"
 			></i>
 			<template v-if="!drafting">
 				<draggable

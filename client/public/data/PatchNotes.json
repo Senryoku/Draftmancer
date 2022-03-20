@@ -3,7 +3,8 @@
 		"date": "20/03/2022",
 		"notes": [
 			"Allow importing cubes from CubeArtisan.",
-			"Add a setting to disable Bot Recommendations for the entire session."
+			"Add a setting to disable Bot Recommendations for the entire session.",
+			"Turn the 'Randomize Seating Order' feature into a togglable setting, if enabled the seating order will be randomized once when a draft is started."
 		]
 	},
 	{

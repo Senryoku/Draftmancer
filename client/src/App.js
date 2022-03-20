@@ -156,6 +156,7 @@ export default {
 			boostersPerPlayer: 3,
 			cardsPerBooster: 15,
 			teamDraft: false,
+			randomizeSeatingOrder: false,
 			disableBotSuggestions: false,
 			distributionMode: "regular",
 			customBoosters: ["", "", ""],
@@ -1742,10 +1743,6 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		randomizeSeating: function() {
-			if (this.userID != this.sessionOwner) return;
-			this.socket.emit("randomizeSeating");
-		},
 		sealedDialog: async function() {
 			if (this.userID != this.sessionOwner) return;
 
@@ -2486,6 +2483,10 @@ export default {
 		teamDraft: function() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("teamDraft", this.teamDraft);
+		},
+		randomizeSeatingOrder(oldValue, newValue) {
+			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
+			this.socket.emit("setRandomizeSeatingOrder", this.randomizeSeatingOrder);
 		},
 		disableBotSuggestions(oldValue, newValue) {
 			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;

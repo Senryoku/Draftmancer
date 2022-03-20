@@ -404,9 +404,6 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	setSeating(userID: UserID, sessionID: SessionID, seating: Array<UserID>) {
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
-	randomizeSeating(userID: UserID, sessionID: SessionID) {
-		if (!Sessions[sessionID].randomizeSeating()) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
-	},
 	boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer: number) {
 		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
 
@@ -428,6 +425,15 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (teamDraft === Sessions[sessionID].teamDraft) return;
 
 		Sessions[sessionID].setTeamDraft(teamDraft);
+	},
+	setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, randomizeSeatingOrder: boolean) {
+		if (!(typeof randomizeSeatingOrder === "boolean"))
+			randomizeSeatingOrder = randomizeSeatingOrder === "true" || !!randomizeSeatingOrder;
+		if (!(typeof randomizeSeatingOrder === "boolean")) return;
+
+		if (randomizeSeatingOrder === Sessions[sessionID].randomizeSeatingOrder) return;
+
+		Sessions[sessionID].setRandomizeSeatingOrder(randomizeSeatingOrder);
 	},
 	setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
 		if (!(typeof disableBotSuggestions === "boolean"))
