@@ -1483,7 +1483,10 @@ export class Session implements IIndexable {
 						botPromises.push(
 							this.doBotPick(this.disconnectedUsers[userID].bot as IBot, boosterIndex).then(
 								pickedCards => {
-									this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
+									if (this.disconnectedUsers[userID]) {
+										this.disconnectedUsers[userID].pickedThisRound = true;
+										this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
+									}
 								}
 							)
 						);
