@@ -78,7 +78,9 @@
 						style="font-size: 1.2em; vertical-align: -20%"
 						:class="{ faded: !pickOnDblclick, crossed: !pickOnDblclick }"
 						@click="pickOnDblclick = !pickOnDblclick"
-						v-tooltip="`Toggle picking cards by double click. ${pickOnDblclick ? 'Enabled' : 'Disabled'}`"
+						v-tooltip="
+							`Pick cards by double clicking: <strong>${pickOnDblclick ? 'Enabled' : 'Disabled'}</strong>`
+						"
 					/>
 				</div>
 				<div style="min-width: 20px">
@@ -88,9 +90,9 @@
 						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
 						@click="displayBotScores = !displayBotScores"
 						v-tooltip="
-							`Display Bot Recommendations: <b>${
+							`Display Bot Recommendations: <strong>${
 								displayBotScores ? 'Enabled' : 'Disabled'
-							}</b><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`
+							}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`
 						"
 					>
 						<img src="./assets/img/bot-score.svg" />
@@ -101,7 +103,7 @@
 						class="fas clickable"
 						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound, faded: !enableSound }"
 						@click="enableSound = !enableSound"
-						v-tooltip="'Toggle sound.'"
+						v-tooltip="`Sound: <strong>${enableSound ? 'Enabled' : 'Disabled'}</strong>`"
 					/>
 				</div>
 				<div style="min-width: 20px; text-align: center">
@@ -109,7 +111,9 @@
 						v-tooltip="
 							notificationPermission === 'denied'
 								? 'Notifications for this domain are blocked in your browser'
-								: 'Toggle desktop notifications'
+								: `Desktop Notifications: <strong>${
+										enableNotifications ? 'Enabled' : 'Disabled'
+								  }</strong>`
 						"
 						class="fas clickable"
 						:class="{
