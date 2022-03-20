@@ -1523,6 +1523,10 @@ export class Session implements IIndexable {
 		this.startCountdown(); // Starts countdown now that everyone has their booster
 		++s.pickNumber;
 
+		// FIXME: If a player disconnects before bots are done picking, it's possible for nextBooster to be called while there's a disconnected player because of the following statement,
+		//        meaning the countdown will run while players are stuck with a "Player Disconnected" message.
+		//        This is extremly unlikely in normal conditions, and not straightforward to fix without introducting an additional 'Paused because of disconnection' session state, so I'm won't bother with fixing it for now.
+		//        Also, it would probably be healthier to completetly rethink the countdown mechanism anyway, to avoid relying on client responding and make the picks on the server side.
 		Promise.all(botPromises).then(() => {
 			// Everyone is disconnected... Or human players picked before the bots :)
 			if (s.pickedCardsThisRound === totalVirtualPlayers) this.nextBooster();
