@@ -5380,12 +5380,13 @@
         "rareCount": 65,
         "uncommonCount": 82
     },
-    "y22": {
-        "code": "y22",
+    "ymid": {
+        "code": "ymid",
         "fullName": "Alchemy: Innistrad",
         "cardCount": 63,
         "isPrimary": false,
-        "icon": "img/sets/y22.svg",
+        "block": "Alchemy 2022",
+        "icon": "img/sets/ymid.svg",
         "mythicCount": 10,
         "rareCount": 42,
         "uncommonCount": 11
@@ -5395,6 +5396,7 @@
         "fullName": "Alchemy: Kamigawa",
         "cardCount": 30,
         "isPrimary": false,
+        "block": "Alchemy 2022",
         "icon": "img/sets/yneo.svg",
         "mythicCount": 5,
         "rareCount": 20,
