@@ -1,7 +1,14 @@
 [
 	{
+		"date": "20/03/2022",
+		"notes": [
+			"Allow importing cubes from CubeArtisan.",
+			"Add a setting to disable Bot Recommendations for the entire session."
+		]
+	},
+	{
 		"date": "05/02/2022",
-		"notes": ["Use updated ruler501's draft bots.", "Kamigawa: Neon Dysnaty (NEO) support."]
+		"notes": ["Use updated ruler501's draft bots.", "Kamigawa: Neon Dynasty (NEO) support."]
 	},
 	{
 		"date": "16/11/2021",
