@@ -2065,23 +2065,19 @@ export class Session implements IIndexable {
 		}
 		decklist = computeHashes(decklist);
 		this.draftLog.users[userID].decklist = decklist;
+		// Update clients
+		const shareData = {
+			sessionID: this.id,
+			time: this.draftLog?.time,
+			userID: userID,
+			decklist: decklist,
+		};
 		if (this.draftLogRecipients === "everyone") {
-			this.forUsers(uid => {
-				Connections[uid]?.socket.emit("shareDecklist", {
-					sessionID: this.id,
-					time: this.draftLog?.time,
-					userID: userID,
-					decklist: decklist,
-				});
-			});
-		} else if (this.draftLogRecipients === "owner" || this.draftLogRecipients === "delayed") {
-			Connections[this.owner]?.socket.emit("shareDecklist", {
-				sessionID: this.id,
-				time: this.draftLog?.time,
-				userID: userID,
-				decklist: decklist,
-			});
-		}
+			this.forUsers(uid => Connections[uid]?.socket.emit("shareDecklist", shareData));
+			// Also send the update to the organiser separately if they're not playing
+			if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+		} else if (this.draftLogRecipients === "owner" || this.draftLogRecipients === "delayed")
+			Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 	}
 
 	// Indicates if the DraftLogLive feature is in use
