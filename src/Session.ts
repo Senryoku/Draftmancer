@@ -34,7 +34,9 @@ import {
 } from "./BoosterFactory.js";
 import JumpstartBoosters from "./data/JumpstartBoosters.json";
 import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
+import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
+Object.freeze(SuperJumpBoosters);
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList } from "./CustomCardList";
@@ -1728,29 +1730,36 @@ export class Session implements IIndexable {
 		log.carddata = {};
 
 		// Jumpstart: Historic Horizons
-		if (set == "j21") {
+		if (set === "j21" || set === "super") {
 			for (let user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
 				let choices: any = [];
-				choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
-				// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-				let secondchoice = [];
-				for (let i = 0; i < 3; ++i) {
-					const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
-						if (p.name === choices[0][i].name) return false; // Prevent duplicates
-						if (p.colors.length === 5) return true; // WUBRG can always be picked
-						// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
-						if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
-						// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
-						return (
-							p.colors === choices[0][i].colors ||
-							(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
-						);
-					});
-					secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
+				if (set === "j21") {
+					choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
+					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
+					let secondchoice = [];
+					for (let i = 0; i < 3; ++i) {
+						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
+							if (p.name === choices[0][i].name) return false; // Prevent duplicates
+							if (p.colors.length === 5) return true; // WUBRG can always be picked
+							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
+							if (choices[0][i].colors.length === 1) return p.colors.includes(choices[0][i].colors[0]);
+							// If first pack is dual-colored: Mono colored of one of these colors, Dual colored of the same colors, or WUBRG
+							return (
+								p.colors === choices[0][i].colors ||
+								(p.colors.length === 1 && choices[0][i].colors.includes(p.colors[0]))
+							);
+						});
+						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
+					}
+					choices.push(secondchoice);
+				} else {
+					choices.push(getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster));
+					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
+					choices.push([]);
+					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
+					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
 				}
-				choices.push(secondchoice);
-
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cards: CardID[]) => {
 					if (!this.draftLog) return;
 					this.draftLog.users[user].cards = cards;
@@ -1769,7 +1778,6 @@ export class Session implements IIndexable {
 			// Original Jumpstart
 			for (let user of this.users) {
 				let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-				// TODO: Handle variations of packs in Jumpstart: Historic Horizons
 				const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
 
 				log.users[user].cards = cards.flat().map((c: Card) => c.id);

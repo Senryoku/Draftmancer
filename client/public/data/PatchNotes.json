@@ -1,5 +1,11 @@
 [
 	{
+		"date": "01/04/2022",
+		"notes": [
+			"Super Jump! support (https://magic.wizards.com/en/articles/archive/magic-online/super-jump-magic-online-2022-03-22)."
+		]
+	},
+	{
 		"date": "20/03/2022",
 		"notes": [
 			"Allow importing cubes from CubeArtisan.",

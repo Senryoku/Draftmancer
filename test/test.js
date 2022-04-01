@@ -1477,3 +1477,70 @@ describe("Jumpstart: Historic Horizons", function() {
 		}
 	});
 });
+
+describe("Jumpstart: Super Jump!", function() {
+	let clients = [];
+	let sessionID = "JumpStartSession";
+
+	beforeEach(function(done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function(done) {
+		enableLogs(this.currentTest.state == "failed");
+		done();
+	});
+
+	before(function(done) {
+		let queries = [];
+		for (let i = 0; i < 8; ++i)
+			queries.push({
+				sessionID: sessionID,
+				userName: "DontCare",
+			});
+		clients = makeClients(queries, done);
+	});
+
+	after(function(done) {
+		disableLogs();
+		for (let c of clients) {
+			c.disconnect();
+		}
+
+		waitForClientDisconnects(done);
+	});
+
+	it(`Owner launches a Jumpstart game, clients should receive their pack selection.`, function(done) {
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		let receivedPools = 0;
+		for (let client of clients) {
+			client.once("selectJumpstartPacks", (choices, ack) => {
+				expect(choices.length).to.equal(2);
+				expect(choices[0].length).to.equal(3);
+				expect(choices[1].length).to.equal(3);
+				for (let i = 0; i < 3; ++i) expect(choices[1][i].length).to.equal(3);
+				client.packChoices = choices;
+				client.ack = ack;
+				++receivedPools;
+				if (receivedPools === clients.length) done();
+			});
+		}
+		clients[ownerIdx].emit("distributeJumpstart", "super");
+	});
+
+	it(`Clients make their choice and draft log updates accordingly.`, function(done) {
+		const ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].on("draftLog", log => {
+			if (Object.keys(log.users).filter(uid => !!log.users[uid].cards).length === clients.length) {
+				clients[ownerIdx].removeListener("draftLog");
+				done();
+			}
+		});
+		for (let client of clients) {
+			let cards = [...client.packChoices[0][0].cards];
+			cards.push(...client.packChoices[1][0][1].cards);
+			client.ack(client.query.userID, cards);
+		}
+	});
+});

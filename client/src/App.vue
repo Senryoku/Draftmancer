@@ -388,6 +388,13 @@
 								>
 									Jumpstart: Historic Horizons
 								</button>
+								<button
+									@click="deckWarning(distributeSuperJump)"
+									v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'"
+									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
+								>
+									Super Jump!
+								</button>
 							</div>
 						</template>
 					</dropdown>
@@ -1307,6 +1314,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>April 01, 2022</em>
+							<p>Jumpstart: Super Jump! support.</p>
+							<p>
+								You can find it in the "Other Game Modes" dropdown. See the announcement
+								<a
+									target="_blank"
+									href="https://magic.wizards.com/en/articles/archive/magic-online/super-jump-magic-online-2022-03-22"
+									>on Wizards website</a
+								>.
+							</p>
+						</div>
+						<div class="news">
 							<em>February, 2022</em>
 							<p>
 								<img src="img/sets/neo.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1323,13 +1342,6 @@
 								This is a special draft product composed of the cards from Innistrad: Midnight Hunt and
 								Crimson Vow. Note: Due to the unusual content of the packs, Color Balancing is not
 								implemented for this set.
-							</p>
-						</div>
-						<div class="news">
-							<em>November 05, 2021</em>
-							<p>
-								<img src="img/sets/vow.svg" class="set-icon" style="--invertedness: 100%" />
-								Innistrad: Crimson Vow (VOW) is now available!
 							</p>
 						</div>
 					</div>

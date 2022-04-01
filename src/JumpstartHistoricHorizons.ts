@@ -4,10 +4,10 @@ import { CardID, getUnique, UniqueCard } from "./Cards.js";
 export type JHHBoosterPattern = {
 	name: string;
 	colors: string[];
-	cycling_land: boolean;
+	cycling_land?: boolean;
 	cards: string[];
 	image?: string | null;
-	alts: {
+	alts?: {
 		name: string;
 		id: string;
 		weight: number;

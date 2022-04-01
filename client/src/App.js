@@ -1841,18 +1841,19 @@ export default {
 			const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
 		},
-		distributeJumpstart: function() {
+		distributeJumpstart() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart");
 		},
-		distributeJumpstartHH: function() {
+		distributeJumpstartHH() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart", "j21");
 		},
-		packChoice: function(choice) {
-			console.log(choice);
+		distributeSuperJump() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("distributeJumpstart", "super");
 		},
-		displayPackChoice: async function(boosters, currentPack, packCount) {
+		async displayPackChoice(boosters, currentPack, packCount) {
 			let boostersDisplay = "";
 			for (let b of boosters) {
 				let colors = b.colors
