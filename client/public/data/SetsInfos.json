@@ -546,6 +546,17 @@
         "rareCount": 45,
         "uncommonCount": 43
     },
+    "clb": {
+        "code": "clb",
+        "fullName": "Commander Legends: Battle for Baldur's Gate",
+        "cardCount": 27,
+        "isPrimary": false,
+        "icon": "img/sets/clb.svg",
+        "commonCount": 2,
+        "mythicCount": 5,
+        "rareCount": 18,
+        "uncommonCount": 2
+    },
     "cm1": {
         "code": "cm1",
         "fullName": "Commander's Arsenal",
@@ -1358,13 +1369,13 @@
     "frf": {
         "code": "frf",
         "fullName": "Fate Reforged",
-        "cardCount": 185,
+        "cardCount": 191,
         "isPrimary": true,
         "block": "Khans of Tarkir",
         "icon": "img/sets/frf.svg",
         "commonCount": 80,
         "mythicCount": 10,
-        "rareCount": 35,
+        "rareCount": 41,
         "uncommonCount": 60
     },
     "fut": {
@@ -2459,11 +2470,11 @@
     "nec": {
         "code": "nec",
         "fullName": "Neon Dynasty Commander",
-        "cardCount": 180,
+        "cardCount": 179,
         "isPrimary": false,
         "icon": "img/sets/nec.svg",
         "commonCount": 14,
-        "mythicCount": 21,
+        "mythicCount": 20,
         "rareCount": 115,
         "uncommonCount": 30
     },
@@ -2693,11 +2704,11 @@
     "p22": {
         "code": "p22",
         "fullName": "Judge Gift Cards 2022",
-        "cardCount": 3,
+        "cardCount": 5,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p22.svg",
-        "rareCount": 3
+        "rareCount": 5
     },
     "p2hg": {
         "code": "p2hg",
@@ -4610,10 +4621,12 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 27,
+        "cardCount": 36,
         "isPrimary": true,
         "commonCount": 10,
-        "rareCount": 17
+        "mythicCount": 3,
+        "rareCount": 17,
+        "uncommonCount": 6
     },
     "soi": {
         "code": "soi",
