@@ -1794,13 +1794,20 @@
 						class="line"
 						v-tooltip.left="{
 							classes: 'option-tooltip',
-							content:
-								'<p>Is the session owner participating?<br>If not, the owner will still be able to observe the picks of each player (as long as the logs are available). Mostly useful to tournament organizers.</p>',
+							content: `<p>Spectate the game as the Session Owner, without participating.<br>
+								If checked, the owner will still be able to observe the picks of each player (as long as the logs are available).<br>
+								Mostly useful to tournament organizers.</p>`,
 						}"
 					>
-						<label for="is-owner-player">Session owner is playing</label>
+						<label for="is-owner-player">Spectate as Session Owner</label>
 						<div class="right">
-							<input type="checkbox" v-model="ownerIsPlayer" id="is-owner-player" />
+							<input
+								type="checkbox"
+								v-model="ownerIsPlayer"
+								:true-value="false"
+								:false-value="true"
+								id="is-owner-player"
+							/>
 						</div>
 					</div>
 					<div class="line" v-bind:class="{ disabled: teamDraft }">
