@@ -3870,11 +3870,12 @@
     "ppro": {
         "code": "ppro",
         "fullName": "Pro Tour Promos",
-        "cardCount": 13,
+        "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/ppro.svg",
-        "mythicCount": 4,
-        "rareCount": 9
+        "mythicCount": 5,
+        "rareCount": 8,
+        "uncommonCount": 1
     },
     "pptk": {
         "code": "pptk",
@@ -4584,12 +4585,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 493,
+        "cardCount": 498,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 81,
-        "rareCount": 353,
+        "mythicCount": 82,
+        "rareCount": 357,
         "uncommonCount": 20
     },
     "slu": {
@@ -4623,6 +4624,7 @@
         "fullName": "Streets of New Capenna",
         "cardCount": 36,
         "isPrimary": true,
+        "icon": "img/sets/snc.svg",
         "commonCount": 10,
         "mythicCount": 3,
         "rareCount": 17,
