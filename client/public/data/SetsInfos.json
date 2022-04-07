@@ -157,13 +157,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 415,
+        "cardCount": 419,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
-        "commonCount": 143,
+        "commonCount": 145,
         "mythicCount": 43,
         "rareCount": 117,
-        "uncommonCount": 112
+        "uncommonCount": 114
     },
     "ajmp": {
         "code": "ajmp",
@@ -1966,13 +1966,13 @@
     "jmp": {
         "code": "jmp",
         "fullName": "Jumpstart",
-        "cardCount": 495,
+        "cardCount": 496,
         "isPrimary": true,
         "icon": "img/sets/jmp.svg",
         "commonCount": 235,
         "mythicCount": 17,
         "rareCount": 88,
-        "uncommonCount": 155
+        "uncommonCount": 156
     },
     "jou": {
         "code": "jou",
@@ -2022,13 +2022,13 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 413,
+        "cardCount": 425,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
-        "commonCount": 129,
-        "mythicCount": 44,
-        "rareCount": 129,
-        "uncommonCount": 111
+        "commonCount": 130,
+        "mythicCount": 45,
+        "rareCount": 132,
+        "uncommonCount": 118
     },
     "kld": {
         "code": "kld",
@@ -4585,12 +4585,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 498,
+        "cardCount": 523,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 82,
-        "rareCount": 357,
+        "mythicCount": 87,
+        "rareCount": 377,
         "uncommonCount": 20
     },
     "slu": {
@@ -4622,13 +4622,13 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 36,
+        "cardCount": 40,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 10,
         "mythicCount": 3,
         "rareCount": 17,
-        "uncommonCount": 6
+        "uncommonCount": 10
     },
     "soi": {
         "code": "soi",
@@ -4724,13 +4724,13 @@
     "stx": {
         "code": "stx",
         "fullName": "Strixhaven: School of Mages",
-        "cardCount": 383,
+        "cardCount": 385,
         "isPrimary": true,
         "icon": "img/sets/stx.svg",
         "commonCount": 115,
         "mythicCount": 42,
         "rareCount": 140,
-        "uncommonCount": 86
+        "uncommonCount": 88
     },
     "sum": {
         "code": "sum",
@@ -5452,12 +5452,12 @@
     "znr": {
         "code": "znr",
         "fullName": "Zendikar Rising",
-        "cardCount": 395,
+        "cardCount": 400,
         "isPrimary": true,
         "icon": "img/sets/znr.svg",
         "commonCount": 132,
-        "mythicCount": 41,
-        "rareCount": 133,
-        "uncommonCount": 89
+        "mythicCount": 42,
+        "rareCount": 134,
+        "uncommonCount": 92
     }
 }
