@@ -211,7 +211,7 @@ export class Bot implements IBot {
 		const bestPick = result.chosenOption;
 		this.picked.push(booster[bestPick].oracle_id);
 		this.cards.push(booster[bestPick]);
-		if (this.fallbackBot) this.fallbackBot.addCard(booster[bestPick]);
+		this.fallbackBot?.addCard(booster[bestPick]);
 		return bestPick;
 	}
 
@@ -231,6 +231,6 @@ export class Bot implements IBot {
 	addCard(card: Card) {
 		this.picked.push(card.oracle_id);
 		this.cards.push(card);
-		if (this.fallbackBot) this.fallbackBot.addCard(card);
+		this.fallbackBot?.addCard(card);
 	}
 }

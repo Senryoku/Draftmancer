@@ -159,8 +159,9 @@ export function getPoDSession(s: Session) {
 		if (s.botsInstances) {
 			PoDSession.botsInstances = [];
 			for (let bot of s.botsInstances) {
-				let podbot = {};
+				let podbot: any = {};
 				copyProps(bot, podbot);
+				if (podbot.fallbackBot) podbot.fallbackBot = undefined;
 				PoDSession.botsInstances.push(podbot);
 			}
 		}
