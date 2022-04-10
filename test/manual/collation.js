@@ -35,7 +35,7 @@ describe("Statistical color balancing tests", function() {
 				cardPoolByRarity[Cards[cid].rarity].set(cid, trials);
 			}
 		}
-		const factory = SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
+		const factory = new SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
 		let kitesails = 0;
 		let brutes = 0;
 		for (let i = 0; i < trials; i++) {
@@ -96,7 +96,7 @@ describe("Statistical color balancing tests", function() {
 	{
 		// Random set, or all of them
 		//let s = getRandom(constants.MTGASets);
-		for (let s of constants.MTGASets) {
+		for (let s of constants.MTGASets.filter(set => set !== "dbl")) {
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function(done) {
 				this.timeout(500);
 				const trials = 500;
@@ -232,7 +232,7 @@ describe("Statistical color balancing tests", function() {
 		let x2 = 0;
 		for (let i = 0; i < observed.length; ++i) {
 			const n = observed[i] - expected[i];
-			x2 += (n * n) / expected[i];
+			x2 += (n * n) / (expected[i] > 0 ? expected[i] : 1);
 		}
 		return x2;
 	}
@@ -310,49 +310,99 @@ describe("Statistical color balancing tests", function() {
 	});
 
 	describe("Duplicate tests.", function() {
-		const trials = 2000;
-		function countDuplicates(populate) {
+		const trials = 4000;
+		const random = new randomjs.Random(randomjs.nodeCrypto);
+
+		function countTotalDupes(data, res) {
+			let duplicates = 0;
+			for (let i = 0; i < data.length - 1; ++i) if (data[i] === data[i + 1]) ++duplicates;
+			while (res.length <= duplicates) res.push(0);
+			++res[duplicates];
+			return duplicates;
+		}
+
+		function countMaxDupes(data, res) {
+			let maxDuplicates = 0;
+			let maxDuplicatesValues = [];
+			for (let i = 0; i < data.length - 1; ++i)
+				if (data[i] === data[i + 1]) ++maxDuplicates;
+				else {
+					maxDuplicatesValues.push(maxDuplicates);
+					maxDuplicates = 0;
+				}
+			maxDuplicates = maxDuplicatesValues.reduce((a, b) => Math.max(a, b), 0);
+			while (res.length <= maxDuplicates) res.push(0);
+			++res[maxDuplicates];
+			return maxDuplicates;
+		}
+
+		function countDuplicates(populate, distinctResults) {
 			const results = [0];
+			const controlResults = [0];
+			const maxResults = [0];
+			const controlMaxResults = [0];
 			let totalDupes = 0;
+			let controlTotalDupes = 0;
+			let totalMaxDupes = 0;
+			let controlTotalMaxDupes = 0;
 			for (let i = 0; i < trials; i++) {
 				let cards = populate();
 				if (typeof cards[0] === "number") cards = cards.sort((a, b) => a - b);
 				else cards = cards.sort();
-				let duplicates = 0;
-				for (let i = 0; i < cards.length - 1; ++i) if (cards[i] === cards[i + 1]) ++duplicates;
-				while (results.length <= duplicates) results.push(0);
-				++results[duplicates];
-				totalDupes += duplicates;
+				totalDupes += countTotalDupes(cards, results);
+				totalMaxDupes += countMaxDupes(cards, maxResults);
+
+				if (distinctResults) {
+					let control = [];
+					for (let i = 0; i < cards.length; i++) control.push(random.integer(0, distinctResults - 1));
+					control.sort((a, b) => a - b);
+					controlTotalDupes += countTotalDupes(control, controlResults);
+					controlTotalMaxDupes += countMaxDupes(control, controlMaxResults);
+				}
 			}
-			console.table(results);
-			console.error("Mean: ", totalDupes / trials);
+			if (distinctResults) {
+				console.table({
+					Duplicates: results,
+					"Control Duplicates": controlResults,
+					"Max Duplicates": maxResults,
+					"Control Max Duplicates": controlMaxResults,
+				});
+				console.error(
+					"Mean: ",
+					totalDupes / trials,
+					"(Expected:",
+					controlTotalDupes / trials,
+					"Chi Squared:",
+					chiSquare(results, controlResults),
+					"); Max Mean: ",
+					totalMaxDupes / trials,
+					"(Expected:",
+					controlTotalMaxDupes / trials,
+					"Chi Squared:",
+					chiSquare(maxResults, controlMaxResults),
+					")"
+				);
+			} else {
+				console.table({
+					Duplicates: results,
+					"Max Duplicates": maxResults,
+				});
+				console.error("Mean: ", totalDupes / trials, "; Max Mean: ", totalMaxDupes / trials);
+			}
 			return results;
 		}
 
 		describe("Without mythic.", function() {
-			for (let set of ["znr", "eld", "thb", "iko", "m21"]) {
-				let Expected;
-				let Observed;
+			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
 				const SessionInst = new Session("UniqueID");
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
 				SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
 				const rares = [...SessionInst.cardPoolByRarity().rare.values()];
 				describe(`Using ${set} (${rares.length} rares)`, function() {
-					it(`Count duplicate rares in uniform distribution (${set}, ${rares.length} rares).`, function(done) {
-						const engine = randomjs.nodeCrypto;
-						const distribution = randomjs.integer(0, rares.length - 1);
-						Expected = countDuplicates(() => {
-							let cards = [];
-							for (let j = 0; j < 3 * 8; ++j) cards.push(distribution(engine));
-							expect(cards.length).equal(3 * 8);
-							return cards;
-						});
-						done();
-					});
 					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function(done) {
 						this.timeout(8000);
-						Observed = countDuplicates(() => {
+						countDuplicates(() => {
 							SessionInst.generateBoosters(3 * 8);
 							const cards = SessionInst.boosters
 								.flat()
@@ -360,12 +410,7 @@ describe("Statistical color balancing tests", function() {
 								.map(c => c.name);
 							expect(cards.length).equal(3 * 8);
 							return cards;
-						});
-						done();
-					});
-					it(`Check distribution fitness (${set}, ${rares.length} rares).`, function(done) {
-						const cs = chiSquare(Observed, Expected);
-						console.error("Chi-Square: ", cs);
+						}, rares.length);
 						done();
 					});
 				});
@@ -373,7 +418,7 @@ describe("Statistical color balancing tests", function() {
 		});
 
 		describe("Accounting for mythics.", function() {
-			for (let set of ["znr", "eld", "thb", "iko", "m21"]) {
+			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
 				let Expected;
 				let Observed;
 				const SessionInst = new Session("UniqueID");
