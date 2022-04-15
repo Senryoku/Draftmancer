@@ -4642,10 +4642,10 @@
         "cardCount": 456,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
-        "commonCount": 139,
+        "commonCount": 138,
         "mythicCount": 53,
         "rareCount": 152,
-        "uncommonCount": 112
+        "uncommonCount": 113
     },
     "soi": {
         "code": "soi",
