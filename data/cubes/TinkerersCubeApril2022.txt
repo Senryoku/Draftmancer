@@ -1,540 +1,540 @@
-Doomed Traveler
-Isamaru, Hound of Konda
-Lunarch Veteran
-Novice Knight
-Stonebinder's Familiar
-Thraben Inspector
-Usher of the Fallen
-Benalish Honor Guard
-Charming Prince
-Daxos, Blessed by the Sun
-Drogskol Infantry
-Intrepid Adversary
-Professor of Symbology
-Sram, Senior Edificer
-Stone Haven Pilgrim
-Twinblade Geist
 Adeline, Resplendent Cathar
-Blade Splicer
-Danitha Capashen, Paragon
-Heliod, Sun-Crowned
-Kindly Ancestor
-Nadaar, Selfless Paladin
-Norika Yamazaki, the Poet
-Priest of Ancient Lore
-Archon of Sun's Grace
-Go-Shintai of Shared Purpose
-Halvar, God of Battle
-Master Splicer
-Restoration Angel
+Ajani, Strength of the Pride
+Ancestral Blade
 Angel of Invention
+Anointed Procession
+A-Plate Armor
+Archon of Sun's Grace
+Banishing Slash
+Benalish Honor Guard
+Blade Splicer
 Cataclysmic Gearhulk
 Cavalier of Dawn
-Rambunctious Mutt
-Sunblade Samurai
-Syr Alin, the Lion's Claw
+Charming Prince
+Cleric Class
+Dancing Sword
+Danitha Capashen, Paragon
+Daxos, Blessed by the Sun
+Divine Visitation
+Doomed Traveler
+Drogskol Infantry
+Elspeth, Sun's Nemesis
+Ephemerate
+Faith's Fetters
+Farm // Market
+Gideon Blackblade
+Glass Casket
+Glorious Enforcer
+Go-Shintai of Shared Purpose
+Halvar, God of Battle
+Heliod, Sun-Crowned
+Honden of Cleansing Fire
+Intrepid Adversary
+Isamaru, Hound of Konda
+Kindly Ancestor
+Lantern Flare
+Legion's Landing
 Lena, Selfless Champion
 Loxodon Lifechanter
-Glorious Enforcer
-Gideon Blackblade
-Ajani, Strength of the Pride
-Elspeth, Sun's Nemesis
-The Wandering Emperor
-Ephemerate
-You Hear Something on Watch
-Banishing Slash
-Wanderer's Strike
+Lunarch Veteran
+Master Splicer
+Maul of the Skyclaves
+Michiko's Reign of Truth
+Minimus Containment
+Momentary Blink
+Nadaar, Selfless Paladin
+Norika Yamazaki, the Poet
+Novice Knight
+Omen of the Sun
+On Serra's Wings
 Ondu Inversion
 Portable Hole
-Ancestral Blade
-Dancing Sword
-Glass Casket
-Maul of the Skyclaves
-Plate Armor
-The Circle of Loyalty
-Cleric Class
-Legion's Landing
+Priest of Ancient Lore
+Professor of Symbology
+Rambunctious Mutt
+Restoration Angel
 Sanctum of Tranquil Light
 Sentinel's Eyes
-Michiko's Reign of Truth
-Skyblade's Boon
-Minimus Containment
-Omen of the Sun
 Sigarda's Imprisonment
+Skyblade's Boon
 Sparring Regimen
-The Restoration of Eiganjo
-Touch the Spirit Realm
-Anointed Procession
-Faith's Fetters
-Honden of Cleansing Fire
-On Serra's Wings
+Sram, Senior Edificer
+Stone Haven Pilgrim
+Stonebinder's Familiar
+Sunblade Samurai
+Syr Alin, the Lion's Claw
 Teleportation Circle
-Divine Visitation
-Eiganjo, Seat of the Empire
-Secluded Steppe
-Lantern Bearer
-Network Disruptor
-Pteramander
-Slither Blade
-Jeskai Elder
-Merfolk Looter
-Merfolk Trickster
-Mischievous Catgeist
-Raving Visionary
-Spectral Adversary
-Timestream Navigator
-Yuan-Ti Malison
+The Circle of Loyalty
+The Restoration of Eiganjo
+The Wandering Emperor
+Thraben Inspector
+Touch the Spirit Realm
+Twinblade Geist
+Usher of the Fallen
+Wanderer's Strike
+You Hear Something on Watch
 Acquisition Octopus
-Aven Eternal
-Barrin, Tolarian Archmage
-Dream Strix
-Flux Channeler
-Grazilaxx, Illithid Scholar
-Overwhelmed Archivist
-Poppet Stitcher
-Prosperous Thief
-Gutter Skulker
-Mirrorhall Mimic
-Ninja of the Deep Hours
-Oneirophage
-Skatewing Spy
-Skyswimmer Koi
-Whirler Rogue
-Ominous Sphinx
-Shipwreck Dowser
-Specimen Collector
-Shimmer Dragon
-Tolarian Kraken
-Windcaller Aven
-Junk Winder
-Mirrorshell Crab
-Scholar of the Lost Trove
-Thought Monitor
-Jace, Mirror Mage
-Mordenkainen
-Consider
-Secrets of the Key
-Arcane Subtraction
-Blink of an Eye
-Essence Capture
-Just the Wind
 A-Divide by Zero
-Neutralize
-Pop Quiz
-Syphon Essence
-Chemister's Insight
-Illusionist's Stratagem
-Spell Swindle
-Snow Day
-Hard Evidence
-Silent Departure
-Contentious Plan
-Scour All Possibilities
-Teachings of the Archaics
-Pirate's Prize
-Tezzeret's Gambit
-Moonsnare Prototype
-Portal of Sanctuary
-Wizard's Spellbook
+Arcane Subtraction
+Aven Eternal
 A-Wizard Class
+Barrin, Tolarian Archmage
+Behold the Unspeakable
+Blink of an Eye
+Chemister's Insight
+Consider
+Contentious Plan
 Curiosity
 Curious Obsession
-Ominous Seas
 Drake Haven
+Dream Strix
+Essence Capture
+Flux Channeler
+Grazilaxx, Illithid Scholar
+Gutter Skulker
+Hard Evidence
+Honden of Seeing Winds
+Illusionist's Stratagem
+Inexorable Tide
+Jace, Mirror Mage
+Jeskai Elder
+Junk Winder
+Just the Wind
+Lantern Bearer
+Merfolk Looter
+Merfolk Trickster
+Mirrorhall Mimic
+Mirrorshell Crab
+Mischievous Catgeist
+Moonsnare Prototype
+Mordenkainen
+Network Disruptor
+Neutralize
+Ninja of the Deep Hours
 Ominous Roost
+Ominous Seas
+Ominous Sphinx
+Oneirophage
+Overwhelmed Archivist
+Pirate's Prize
+Pop Quiz
+Poppet Stitcher
+Portal of Sanctuary
+Prosperous Thief
+Pteramander
+Raving Visionary
 Rousing Read
 Sanctum of Calm Waters
+Scholar of the Lost Trove
+Scour All Possibilities
+Secrets of the Key
+Shimmer Dragon
+Shipwreck Dowser
+Silent Departure
+Skatewing Spy
+Skyswimmer Koi
+Slither Blade
+Snow Day
+Specimen Collector
+Spectral Adversary
+Spell Swindle
+Syphon Essence
 Tamiyo's Compleation
-Behold the Unspeakable
-Honden of Seeing Winds
-Inexorable Tide
-Lonely Sandbar
-Otawara, Soaring City
-Changeling Outcast
-Dockside Chef
-Eyetwitch
-Forsworn Paladin
-Foulmire Knight
-Gutterbones
-Ruthless Sniper
-Sanitarium Skeleton
-Hoard Robber
-Lampad of Death's Vigil
-Mire Triton
-Restless Bloodseeker
-Undead Butler
-Callous Bloodmage
-Covert Cutpurse
-Egon, God of Death
-Falkenrath Forebear
-Fell Stinger
-Grimdancer
-Hooded Blightfang
-Nashi, Moon Sage's Scion
-Rotting Regisaur
-Silversmote Ghoul
-Skullport Merchant
-Yuan-Ti Fang-Blade
-Falkenrath Noble
-Go-Shintai of Hidden Cruelty
-Henrika Domnathi
-Kami of Terrible Secrets
-Liliana's Reaver
-Pharika's Spawn
-Pitiless Plunderer
+Teachings of the Archaics
+Tezzeret's Gambit
+Thought Monitor
+Timestream Navigator
+Tolarian Kraken
+Whirler Rogue
+Windcaller Aven
+Wizard's Spellbook
+Yuan-Ti Malison
+A-Precipitous Drop
 Archfiend of Ifnir
-Gravebreaker Lamia
-Syr Konrad, the Grim
-Witch of the Moors
-Dreadhound
-First-Sphere Gargantua
-Harvester of Souls
-Marionette Master
 Archfiend of Sorrows
-Herald of Anguish
-Void Beckoner
-Liliana, Waker of the Dead
-Rotten Reunion
-Deadly Dispute
+Arguel's Blood Fast
 Bake into a Pie
 Blood Curdle
-Bone Shards
-Feed the Swarm
-Foul Play
-Hunt for Specimens
-Discerning Taste
-Necrotic Fumes
-Pointed Discussion
-Soul Transfer
-Contract Killing
-Edgar's Awakening
-Grisly Ritual
 Blood Fountain
-Reaper's Talisman
-Sphere of Annihilation
-Vorpal Sword
-Poet's Quill
-Thieves' Tools
-Mask of Griselbrand
-Warlock Class
-Arguel's Blood Fast
-Life of Toshiro Umezawa
-Sanctum of Stone Fangs
-A-Precipitous Drop
+Bone Shards
+Callous Bloodmage
+Changeling Outcast
+Contract Killing
+Covert Cutpurse
+Deadly Dispute
+Discerning Taste
+Dockside Chef
+Dreadhound
 Dying to Serve
-Sanguine Brushstroke
+Edgar's Awakening
+Egon, God of Death
+Eyetwitch
+Falkenrath Forebear
+Falkenrath Noble
+Feed the Swarm
+Fell Stinger
+First-Sphere Gargantua
+Forsworn Paladin
+Foul Play
+Foulmire Knight
+Go-Shintai of Hidden Cruelty
+Gravebreaker Lamia
+Grimdancer
+Grisly Ritual
+Gutterbones
+Harvester of Souls
+Henrika Domnathi
+Herald of Anguish
+Hoard Robber
 Honden of Night's Reach
-Twisted Embrace
+Hooded Blightfang
+Hunt for Specimens
+Kami of Terrible Secrets
+Lampad of Death's Vigil
+Life of Toshiro Umezawa
+Liliana, Waker of the Dead
+Liliana's Reaver
+Marionette Master
+Mask of Griselbrand
+Mire Triton
+Nashi, Moon Sage's Scion
+Necrotic Fumes
+Pharika's Spawn
+Pitiless Plunderer
+Poet's Quill
+Pointed Discussion
+Reaper's Talisman
+Restless Bloodseeker
 Revel in Riches
-Barren Moor
-Takenuma, Abandoned Mire
-Dragon's Rage Channeler
-Fireblade Charger
-Goblin Banneret
-Grim Initiate
-Rabbit Battery
+Rotten Reunion
+Rotting Regisaur
+Ruthless Sniper
+Sanctum of Stone Fangs
+Sanguine Brushstroke
+Sanitarium Skeleton
+Silversmote Ghoul
+Skullport Merchant
+Soul Transfer
+Sphere of Annihilation
+Syr Konrad, the Grim
+Thieves' Tools
+Twisted Embrace
+Undead Butler
+Void Beckoner
+Vorpal Sword
+Warlock Class
+Witch of the Moors
+Yuan-Ti Fang-Blade
+Abrade
+Academic Dispute
 Akki Ember-Keeper
 Battle Cry Goblin
+Battle-Rattle Shaman
+Beetleback Chief
 Blood Aspirant
 Blood Petal Celebrant
 Bloodthirsty Adversary
-Goro-Goro, Disciple of Ryusei
-Lizard Blades
-Magda, Brazen Outlaw
-Ogre-Head Helm
-Young Pyromancer
 Breya's Apprentice
-Gadrak, the Crown-Scourge
-Go-Shintai of Ancient Wars
-Irencrag Pyromancer
-Krenko, Tin Street Kingpin
-Seasoned Pyromancer
-Squee, the Immortal
-Subira, Tulzidi Caravanner
-Battle-Rattle Shaman
-Beetleback Chief
-Kinetic Augur
-Mad Ratter
-Retriever Phoenix
-Storm-Kiln Artist
-Toralf, God of Fury
-Falkenrath Celebrants
-Havoc Jester
-Siege-Gang Commander
-Tiger-Tribe Hunter
 Combustible Gearhulk
-Kuldotha Flamefiend
-Sanctuary Smasher
-Terror of Mount Velus
-Academic Dispute
-Flame Discharge
-Lunar Frenzy
-Outnumber
-Spikefield Hazard
-Unholy Heat
-Abrade
-Fire Prophecy
-First Day of Class
-Shredded Sails
+Crash Through
+Double Vision
+Dragon Fodder
+Dragon's Rage Channeler
+Dragonspark Reactor
+Dwarven Hammer
 Enthusiastic Study
+Explosive Singularity
+Fable of the Mirror-Breaker
+Falkenrath Celebrants
+Fast // Furious
+Fire Prophecy
+Fireblade Charger
+First Day of Class
+Flame Discharge
+Furious Rise
+Gadrak, the Crown-Scourge
+Goblin Banneret
+Goblin Wizardry
+Goro-Goro, Disciple of Ryusei
+Go-Shintai of Ancient Wars
+Grim Initiate
+Havoc Jester
+Honden of Infinite Rage
+Igneous Inspiration
+Illuminate History
+Improvised Weaponry
+Irencrag Pyromancer
+Iroas's Blessing
+Kinetic Augur
+Krenko, Tin Street Kingpin
+Kuldotha Flamefiend
+Lacerate Flesh
+Lightning Spear
+Lizard Blades
+Lunar Frenzy
+Mad Ratter
+Magda, Brazen Outlaw
+Makeshift Munitions
+Mask of Immolation
+Ogre-Head Helm
+Outnumber
+Rabbit Battery
+Retriever Phoenix
+Sanctuary Smasher
+Sarkhan's Unsealing
+Seasoned Pyromancer
+Seize the Spoils
+Seize the Storm
+Shredded Sails
+Siege-Gang Commander
+Spikefield Hazard
+Squee, the Immortal
+Start from Scratch
+Stensia Uprising
+Storm-Kiln Artist
+Strike It Rich
+Subira, Tulzidi Caravanner
+Terror of Mount Velus
+Tiger-Tribe Hunter
+Toralf, God of Fury
+Unholy Heat
+Volcanic Salvo
 Welding Sparks
 You See a Pair of Goblins
-Goblin Wizardry
-Fast // Furious
-Crash Through
-Strike It Rich
-Dragon Fodder
-Igneous Inspiration
-Improvised Weaponry
-Seize the Spoils
-Start from Scratch
-Illuminate History
-Lacerate Flesh
-Seize the Storm
-Explosive Singularity
-Volcanic Salvo
-Dragonspark Reactor
-Lightning Spear
-Mask of Immolation
-Dwarven Hammer
-Makeshift Munitions
-Fable of the Mirror-Breaker
-Furious Rise
-Honden of Infinite Rage
-Iroas's Blessing
-Sarkhan's Unsealing
-Stensia Uprising
-Double Vision
-Forgotten Cave
-Sokenzan, Crucible of Defiance
+Young Pyromancer
+A-Ellywick Tumblestrum
+Ancient Animus
+Ashaya, Soul of the Wild
+Basic Conjuration
+Beanstalk Giant
+Bloom Hulk
+Blossom Prancer
+Bramble Wurm
+Briarbridge Tracker
 Chainweb Aracnir
+Clear Shot
+Containment Breach
 Contortionist Troupe
+Crawling Infestation
 Deathbonnet Sprout
-Fang of Shigeki
-Gilded Goose
-Pelt Collector
-Servant of the Scale
-Tenacious Pup
 Destiny Spinner
+Epic Proportions
+Evolution Sage
+Fang of Shigeki
+Field Trip
 Fynn, the Fangbearer
+Garruk's Uprising
+Gilded Goose
+Gnarled Professor
 Go-Shintai of Boundless Vigor
+Hardened Scales
+Honden of Life's Web
+Hydra's Growth
 Ilysian Caryatid
 Incubation Druid
+Irresistible Prey
+Jewel-Eyed Cobra
+Jiang Yanggu, Wildcrafter
+Jugan Defends the Temple
+Jukai Preserver
+Kamahl's Druidic Vow
 Kappa Tech-Wrecker
+Kodama of the West Tree
+Kolvori, God of Kinship
+Majestic Myriarch
 Masked Vandal
 Nessian Wanderer
+Old Gnawbone
+Parallel Lives
+Pelt Collector
 Pollenbright Druid
 Prosperous Innkeeper
+Ramunap Excavator
 Reclusive Taxidermist
+Renata, Called to the Hunt
+Roaring Earth
+Sanctum of Fruitful Harvest
+Saryth, the Viper's Fang
+Servant of the Scale
+Setessan Champion
+Smell Fear
+Snakeskin Veil
+Spider Spawning
+Spinning Wheel Kick
 Steelbane Hydra
 Syr Faren, the Hengehammer
-Weaver of Harmony
-Woodland Champion
-Briarbridge Tracker
-Evolution Sage
-Jewel-Eyed Cobra
-Kodama of the West Tree
-Ramunap Excavator
-Setessan Champion
-Tireless Provisioner
-Varis, Silverymoon Ranger
-Bloom Hulk
-Gnarled Professor
-Jukai Preserver
-Kolvori, God of Kinship
-Renata, Called to the Hunt
-Saryth, the Viper's Fang
-Timeless Witness
-Voracious Typhon
-Ashaya, Soul of the Wild
-Blossom Prancer
-Majestic Myriarch
-Beanstalk Giant
-Bramble Wurm
-Old Gnawbone
-Jiang Yanggu, Wildcrafter
-A-Ellywick Tumblestrum
-Vivien of the Arkbow
-Snakeskin Veil
-Ancient Animus
-Wilt
-Clear Shot
-Irresistible Prey
-Kamahl's Druidic Vow
-Smell Fear
-Spinning Wheel Kick
-You Find a Cursed Idol
-Basic Conjuration
-Containment Breach
-Field Trip
-Hardened Scales
-Roaring Earth
-The Binding of the Titans
-Warbriar Blessing
-Wolfwillow Haven
-Crawling Infestation
-Garruk's Uprising
-Hydra's Growth
-Jugan Defends the Temple
-Sanctum of Fruitful Harvest
-Ulvenwald Mysteries
-Parallel Lives
-Honden of Life's Web
 Tales of Master Seshiro
+Tenacious Pup
+The Binding of the Titans
 The Mending of Dominaria
-Epic Proportions
-Boseiju, Who Endures
-Tranquil Thicket
-Devoted Grafkeeper
-Faithful Mending
-Momentary Blink
-A-Vega, the Watcher
-Niko Aris
-Soulherder
-Farm // Market
-Krydle of Baldur's Gate
-Lazotep Chancellor
-Kaito Shizuki
-Obsessive Stitcher
-Tomebound Lich
-Kalain, Reclusive Painter
-Oni-Cult Anvil
-Slaughter-Priest of Mogis
-Unlicensed Disintegration
+Timeless Witness
+Tireless Provisioner
+Ulvenwald Mysteries
+Varis, Silverymoon Ranger
+Vivien of the Arkbow
+Voracious Typhon
+Warbriar Blessing
+Weaver of Harmony
+Wilt
+Wolfwillow Haven
+Woodland Champion
+You Find a Cursed Idol
+A-Bruenor Battlehammer
+A-Nahiri, Heir of the Ancients
 Angrath, Captain of Chaos
-Domri's Ambush
-Targ Nar, Demon-Fang Gnoll
-Invigorating Hot Spring
-Leafkin Avenger
-Samut, the Tested
-Sythis, Harvest's Hand
-Knight of Autumn
+A-Vega, the Watcher
+Binding the Old Gods
+Blade Historian
 Calix, Destiny's Hand
 Captain Sisay
+Colossal Skyturtle
+Combine Chrysalis
+Devoted Grafkeeper
+Domri's Ambush
 Drizzt Do'Urden
+Elemental Summoning
+Experimental Overload
+Faithful Mending
+Fractal Summoning
+Heroic Reinforcements
 Hidden Stockpile
+Improbable Alliance
 Indulging Patrician
 Inkling Summoning
-Naomi, Pillar of Order
-Vona, Butcher of Magan
-Rise of Extus
-Improbable Alliance
-The Royal Scions
-Experimental Overload
-Elemental Summoning
-Thundering Djinn
-Thousand-Year Storm
-Skull Prophet
-Old Rutstein
-Pest Summoning
-Binding the Old Gods
-Vraska, Swarm's Eminence
-Lord of Extinction
-Spider Spawning
-Lantern Flare
-Rip Apart
-Spirit Summoning
-Blade Historian
-Bruenor Battlehammer
-Heroic Reinforcements
-Nahiri, Heir of the Ancients
-Combine Chrysalis
-Fractal Summoning
+Invigorating Hot Spring
+Kaito Shizuki
+Kalain, Reclusive Painter
 Kasmina, Enigma Sage
+Knight of Autumn
+Krydle of Baldur's Gate
+Lazotep Chancellor
+Leafkin Avenger
+Lord of Extinction
+Naomi, Pillar of Order
+Niko Aris
+Obsessive Stitcher
+Old Rutstein
+Oni-Cult Anvil
+Pest Summoning
+Rip Apart
+Rise of Extus
+Samut, the Tested
 Sharktocrab
+Skull Prophet
+Slaughter-Priest of Mogis
+Soulherder
+Spirit Summoning
+Sythis, Harvest's Hand
+Targ Nar, Demon-Fang Gnoll
+The Royal Scions
+Thousand-Year Storm
+Thundering Djinn
+Tomebound Lich
+Unlicensed Disintegration
+Vona, Butcher of Magan
+Vraska, Swarm's Eminence
 Wavesifter
-Colossal Skyturtle
-Containment Construct
-Monoskelion
-Perilous Myr
+A-Cosmos Elixir
+Animation Module
+Bag of Holding
+Blackblade Reforged
+Ceremonial Knife
 Circuit Mender
-Solemn Simulacrum
-Towashi Guide-Bot
-Traxos, Scourge of Kroog
-Shrine Steward
-Meteor Golem
-Walking Skyscraper
+Containment Construct
+Desecrated Tomb
+Dungeon Map
+Eater of Virtue
 Environmental Sciences
 Environmental Sciences
 Environmental Sciences
 Environmental Sciences
 Expanded Anatomy
-Introduction to Prophecy
-Introduction to Annihilation
-Mascot Exhibition
-Animation Module
-Bag of Holding
-Ceremonial Knife
-Eater of Virtue
-Soul-Guide Lantern
-The Ozolith
-Blackblade Reforged
 Eye of Vecna
 Golden Egg
 Goldvein Pick
+Introduction to Annihilation
+Introduction to Prophecy
 Key to the City
+Mascot Exhibition
+Maskwood Nexus
 Mazemind Tome
+Meteor Golem
+Monoskelion
+Nettlecyst
+Perilous Myr
 Reckoner Bankbuster
 Relic Amulet
-Treasure Map
-Desecrated Tomb
-Dungeon Map
-Nettlecyst
+Shrine Steward
 Skyclave Relic
-A-Cosmos Elixir
-Maskwood Nexus
-Weatherlight
+Solemn Simulacrum
+Soul-Guide Lantern
 The Deck of Many Things
-Glacial Fortress
-Hallowed Fountain
-Hengegate Pathway
-Temple of Enlightenment
-Clearwater Pathway
-Drowned Catacomb
-Temple of Deceit
-Watery Grave
+The Ozolith
+Towashi Guide-Bot
+Traxos, Scourge of Kroog
+Treasure Map
+Walking Skyscraper
+Weatherlight
+Barkchannel Pathway
+Barren Moor
 Blightstep Pathway
 Blood Crypt
-Dragonskull Summit
-Temple of Malice
-Cragcrown Pathway
-Rootbound Crag
-Stomping Ground
-Temple of Abandon
-Branchloft Pathway
-Sunpetal Grove
-Temple Garden
-Temple of Plenty
-Brightclimb Pathway
-Godless Shrine
-Isolated Chapel
-Temple of Silence
-Riverglide Pathway
-Steam Vents
-Sulfur Falls
-Temple of Epiphany
-Darkbore Pathway
-Overgrown Tomb
-Temple of Malady
-Woodland Cemetery
-Clifftop Retreat
-Needleverge Pathway
-Sacred Foundry
-Temple of Triumph
-Barkchannel Pathway
-Breeding Pool
-Hinterland Harbor
-Temple of Mystery
 Bonders' Enclave
+Boseiju, Who Endures
+Branchloft Pathway
+Breeding Pool
+Brightclimb Pathway
+Clearwater Pathway
+Clifftop Retreat
+Cragcrown Pathway
+Darkbore Pathway
+Dragonskull Summit
+Drowned Catacomb
+Eiganjo, Seat of the Empire
 Evolving Wilds
 Fabled Passage
+Forgotten Cave
 Forsaken Crossroads
+Glacial Fortress
+Godless Shrine
 Hall of Oracles
+Hallowed Fountain
+Hengegate Pathway
+Hinterland Harbor
+Isolated Chapel
 Karn's Bastion
+Lonely Sandbar
+Needleverge Pathway
+Otawara, Soaring City
+Overgrown Tomb
+Riverglide Pathway
 Roadside Reliquary
+Rootbound Crag
+Sacred Foundry
+Secluded Steppe
+Sokenzan, Crucible of Defiance
+Steam Vents
+Stomping Ground
+Sulfur Falls
+Sunpetal Grove
+Takenuma, Abandoned Mire
+Temple Garden
+Temple of Abandon
+Temple of Deceit
+Temple of Enlightenment
+Temple of Epiphany
+Temple of Malady
+Temple of Malice
+Temple of Mystery
+Temple of Plenty
+Temple of Silence
+Temple of Triumph
 Thriving Bluff
 Thriving Grove
 Thriving Heath
 Thriving Isle
 Thriving Moor
+Tranquil Thicket
 Voldaren Estate
+Watery Grave
+Woodland Cemetery
