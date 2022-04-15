@@ -1314,6 +1314,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>April 15, 2022</em>
+							<p>
+								<img src="img/sets/snc.svg" class="set-icon" style="--invertedness: 100%" />
+								Streets of New Capenna (SNC) support.
+							</p>
+						</div>
+						<div class="news">
 							<em>April 01, 2022</em>
 							<p>Jumpstart: Super Jump! support.</p>
 							<p>
@@ -1330,18 +1337,6 @@
 							<p>
 								<img src="img/sets/neo.svg" class="set-icon" style="--invertedness: 100%" />
 								Kamigawa: Neon Dynasty (NEO) support.
-							</p>
-						</div>
-						<div class="news">
-							<em>November 16, 2021</em>
-							<p>
-								<img src="img/sets/dbl.svg" class="set-icon" style="--invertedness: 100%" />
-								Innistrad: Double Feature (DBL) support.
-							</p>
-							<p>
-								This is a special draft product composed of the cards from Innistrad: Midnight Hunt and
-								Crimson Vow. Note: Due to the unusual content of the packs, Color Balancing is not
-								implemented for this set.
 							</p>
 						</div>
 					</div>

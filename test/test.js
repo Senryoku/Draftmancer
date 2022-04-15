@@ -197,7 +197,8 @@ describe("Sets content", function() {
 		afr: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		//j21: { common: 383 + 20, uncommon: 286, rare: 85, mythic: 13 }, // The 20 added common are additional lands
 		mid: { common: 100, uncommon: 83, rare: 64, mythic: 20 },
-		vow: { common: 100, uncommon: 83, rare: 64, mythic: 20 }, // TODO: Check actual numbers
+		vow: { common: 100, uncommon: 83, rare: 64, mythic: 20 },
+		snc: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function(done) {

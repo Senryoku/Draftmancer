@@ -157,13 +157,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 419,
+        "cardCount": 420,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
         "commonCount": 145,
         "mythicCount": 43,
         "rareCount": 117,
-        "uncommonCount": 114
+        "uncommonCount": 115
     },
     "ajmp": {
         "code": "ajmp",
@@ -1522,6 +1522,15 @@
         "icon": "img/sets/g99.svg",
         "rareCount": 1
     },
+    "gdy": {
+        "code": "gdy",
+        "fullName": "Game Day Promos",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/gdy.svg",
+        "mythicCount": 1,
+        "rareCount": 2
+    },
     "gk1": {
         "code": "gk1",
         "fullName": "GRN Guild Kit",
@@ -2022,13 +2031,13 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 425,
+        "cardCount": 424,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 130,
         "mythicCount": 45,
         "rareCount": 132,
-        "uncommonCount": 118
+        "uncommonCount": 117
     },
     "kld": {
         "code": "kld",
@@ -2466,6 +2475,14 @@
         "commonCount": 130,
         "rareCount": 88,
         "uncommonCount": 88
+    },
+    "ncc": {
+        "code": "ncc",
+        "fullName": "New Capenna Commander",
+        "cardCount": 22,
+        "isPrimary": false,
+        "mythicCount": 16,
+        "rareCount": 6
     },
     "nec": {
         "code": "nec",
@@ -4622,13 +4639,13 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 40,
+        "cardCount": 456,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
-        "commonCount": 10,
-        "mythicCount": 3,
-        "rareCount": 17,
-        "uncommonCount": 10
+        "commonCount": 139,
+        "mythicCount": 53,
+        "rareCount": 152,
+        "uncommonCount": 112
     },
     "soi": {
         "code": "soi",

@@ -67,7 +67,8 @@
 		"mid",
 		"vow",
 		"dbl",
-		"neo"
+		"neo",
+		"snc"
 	],
 	"StandardSets": ["znr", "khm", "stx", "afr", "mid", "vow"],
 	"BasicLandNames": {
@@ -237,6 +238,7 @@
 		}
 	],
 	"PrimarySets": [
+		"snc",
 		"neo",
 		"dbl",
 		"vow",
