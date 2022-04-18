@@ -899,7 +899,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		ack?.({ code: 0 });
 	},
 	generateSwissBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
-		if (players.length !== 8) return;
+		if (players.length !== 8 && players.length !== 6) return;
 		Sessions[sessionID].generateSwissBracket(players);
 		ack?.({ code: 0 });
 	},

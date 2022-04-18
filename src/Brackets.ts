@@ -21,7 +21,7 @@ export class TeamBracket extends Bracket {
 export class SwissBracket extends Bracket {
 	swiss: boolean = true;
 	constructor(players: UserID[]) {
-		super(players, 12);
+		super(players, players.length === 6 ? 9 : 12);
 	}
 }
 
