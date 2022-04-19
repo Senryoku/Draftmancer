@@ -1968,7 +1968,10 @@ export default {
 		},
 		generateSwissBracket: function() {
 			if (this.userID != this.sessionOwner) return;
-			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
+			let players =
+				this.sessionUsers.length == 6
+					? this.prepareBracketPlayers([0, 3, 1, 4, 2, 5])
+					: this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateSwissBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});

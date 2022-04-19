@@ -194,6 +194,17 @@ export default {
 			const winner = this.winner;
 			const loser = this.loser;
 
+			if (this.bracket.swiss && this.bracket.players.length === 6) {
+				for (let i = 0; i < 3; ++i) m[0].push(new Match(i, [getPlayer(2 * i), getPlayer(2 * i + 1)]));
+				m[1].push(new Match(3, [winner(m[0][0]), winner(m[0][1])]));
+				m[1].push(new Match(4, [winner(m[0][2]), loser(m[0][0])]));
+				m[1].push(new Match(5, [loser(m[0][1]), loser(m[0][2])]));
+				m[2].push(new Match(6, [winner(m[0][1]), winner(m[0][2])]));
+				m[2].push(new Match(7, [winner(m[0][0]), loser(m[0][1])]));
+				m[2].push(new Match(8, [loser(m[0][0]), loser(m[0][2])]));
+				return m;
+			}
+
 			if (this.bracket.teamDraft) {
 				m[0].push(new Match(0, [getPlayer(0), getPlayer(3)]));
 				m[0].push(new Match(1, [getPlayer(2), getPlayer(5)]));
