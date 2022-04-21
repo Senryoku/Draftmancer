@@ -201,12 +201,12 @@
     "ala": {
         "code": "ala",
         "fullName": "Shards of Alara",
-        "cardCount": 249,
+        "cardCount": 250,
         "isPrimary": true,
         "block": "Alara",
         "icon": "img/sets/ala.svg",
         "commonCount": 121,
-        "mythicCount": 15,
+        "mythicCount": 16,
         "rareCount": 53,
         "uncommonCount": 60
     },
@@ -550,7 +550,7 @@
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
         "cardCount": 27,
-        "isPrimary": false,
+        "isPrimary": true,
         "icon": "img/sets/clb.svg",
         "commonCount": 2,
         "mythicCount": 5,
@@ -2479,10 +2479,13 @@
     "ncc": {
         "code": "ncc",
         "fullName": "New Capenna Commander",
-        "cardCount": 22,
+        "cardCount": 447,
         "isPrimary": false,
-        "mythicCount": 16,
-        "rareCount": 6
+        "icon": "img/sets/ncc.svg",
+        "commonCount": 34,
+        "mythicCount": 50,
+        "rareCount": 303,
+        "uncommonCount": 60
     },
     "nec": {
         "code": "nec",
@@ -3522,6 +3525,14 @@
         "icon": "img/sets/pl21.svg",
         "mythicCount": 3,
         "rareCount": 2
+    },
+    "pl22": {
+        "code": "pl22",
+        "fullName": "Year of the Tiger 2022",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pl22.svg",
+        "rareCount": 5
     },
     "plc": {
         "code": "plc",
