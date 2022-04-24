@@ -1336,7 +1336,7 @@
 								>
 								(.csv). As
 								<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a>
-								happens to export MTGGoldFish .csv files, this is probably the most convinient way to
+								happens to export MTGGoldFish .csv files, this is probably the most convenient way to
 								import your collection.
 							</p>
 						</div>
