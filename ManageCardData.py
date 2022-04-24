@@ -59,7 +59,7 @@ if len(sys.argv) > 1:
         SetToFetch = sys.argv[2].lower()
         ForceCache = True
 
-print("Don'f forget to update Arena itself!")
+print("Don't forget to update Arena itself!")
 MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
 MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
 MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
@@ -149,6 +149,11 @@ for path in MTGACardsFiles:
                 # From Jumpstart: Prioritizing cards from JMP and M21
                 if fixed_name not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
                     CardNameToArenaID[fixed_name] = o['grpid']
+
+                if "IsRebalanced" in o and o["IsRebalanced"]:
+                    CardsCollectorNumberAndSet[(
+                        "A-"+fixed_name, "A-"+collectorNumber, o['set'])] = o['grpid']
+                    CardNameToArenaID["A-"+fixed_name] = o['grpid']
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
