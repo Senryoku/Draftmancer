@@ -183,7 +183,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	},
 	// Parse a card list and uses it as collection
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
-		let cardList = parseCardList(txtcollection, {});
+		let cardList = parseCardList(txtcollection, { fallbackToCardName: true });
 		if (cardList.error) {
 			ack?.(cardList.error);
 			return;

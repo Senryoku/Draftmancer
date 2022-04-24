@@ -14,6 +14,7 @@ import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } fro
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
+import parseCSV from "./parseCSV.js";
 
 import Modal from "./components/Modal.vue";
 import DelayedInput from "./components/DelayedInput.vue";
@@ -1326,24 +1327,72 @@ export default {
 			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
 			//document.querySelector("#mtga-logs-file-input").click();
 			Alert.fire({
-				icon: "error",
-				title: "Collection import is disabled",
+				icon: "warning",
+				title: "Logs import is disabled",
 				html: `With the Jumpstart: Historic Horizons update, Wizards removed player collection from MTGA player logs which was our only non-intrusive way to get them. Collection import is thus disabled until the situation is resolved.
 				<br />
 				You can vote for <a href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855" target="_blank" rel="noopener nofollow"> this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i></a> to draw to their attention to the problem.
 				<hr />
-				As a workaround, you can use a card list following the custom card list format as a collection:
-				<br />
-				<button class="swal2-confirm swal2-styled" onclick="document.querySelector('#collection-file-input').click()">Upload a list</button>`,
+				<h2 class="swal2-title custom-swal-title">Other Imports</h2>
+				As a workaround, you can use a 
+				<ul style="text-align: left">
+				<li>.txt card list in the MTGA format</li>
+				<li>.csv file following the <a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank">MTGGoldFish CSV format</a> (<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a> exports to it)</li>
+				</ul>`,
+				showCancelButton: true,
+				confirmButtonText: "Upload a .txt or .csv list",
+			}).then(r => {
+				if (r.value) {
+					document.querySelector("#collection-file-input").click();
+				}
 			});
 		},
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
 		uploadCardListAsCollection(e) {
-			let file = e.target.files[0];
+			const file = e.target.files[0];
 			if (!file) return;
-			let reader = new FileReader();
+			const reader = new FileReader();
 			reader.onload = async e => {
 				let contents = e.target.result;
+
+				// Convert MTGGoldFish CSV format (https://www.mtggoldfish.com/help/import_formats#mtggoldfish) to our format
+				if (file.name.endsWith(".csv")) {
+					const lines = parseCSV(contents);
+					const cardIndex = lines[0].indexOf("Card");
+					const setIDIndex = lines[0].indexOf("Set ID");
+					const quantityIndex = lines[0].indexOf("Quantity");
+					// Check header
+					if (cardIndex < 0 || setIDIndex < 0 || quantityIndex < 0) {
+						Alert.fire({
+							icon: "error",
+							title: "Invalid file",
+							text: `The uploaded file is not a valid MTGGoldFish CSV file (Invalid header).`,
+							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${lines[0]}'.`,
+							showCancelButton: false,
+						});
+						return;
+					}
+					contents = "";
+					for (let i = 1; i < lines.length; i++) {
+						const line = lines[i];
+						if (line.length === 0) continue;
+						if (line.length < Math.max(quantityIndex, cardIndex, setIDIndex)) {
+							Alert.fire({
+								icon: "error",
+								title: "Invalid file",
+								text: `Error on line ${i} ('${line}'): missing field(s).`,
+								showCancelButton: false,
+							});
+							return;
+						}
+						if (["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(line[cardIndex])) continue;
+						if (line[setIDIndex] === "ANA") line[setIDIndex] = "OANA"; // Workaround, not sure why scryfall tags some cards as "OANA" instead of "ANA"
+						contents += `${line[quantityIndex].trim()} ${line[cardIndex].trim()} (${line[
+							setIDIndex
+						].trim()})\n`;
+					}
+				}
+
 				this.socket.emit("parseCollection", contents, ret => {
 					if (ret.type === "error") {
 						Alert.fire({ icon: "error", title: ret.title, text: ret.text });
@@ -1359,6 +1408,9 @@ export default {
 						},
 						vaultProgress: 0,
 					};
+					localStorage.setItem("Collection", JSON.stringify(this.collection));
+					localStorage.setItem("CollectionInfos", JSON.stringify(this.collectionInfos));
+					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
 					if (ret.type === "warning") Alert.fire({ icon: "warning", title: ret.title, text: ret.text });
 					else
 						fireToast(
@@ -1373,9 +1425,9 @@ export default {
 			reader.readAsText(file);
 		},
 		parseMTGALog(e) {
-			let file = e.target.files[0];
+			const file = e.target.files[0];
 			if (!file) return;
-			let reader = new FileReader();
+			const reader = new FileReader();
 			reader.onload = async e => {
 				let contents = e.target.result;
 

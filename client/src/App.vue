@@ -49,7 +49,7 @@
 					id="collection-file-input"
 					@change="uploadCardListAsCollection"
 					style="display: none"
-					accept=".txt"
+					accept=".txt,.csv"
 				/>
 				<button @click="uploadMTGALogs" v-tooltip="'Import your collection by uploading your Player.log file.'">
 					Upload
@@ -1326,6 +1326,20 @@
 						<h2>News</h2>
 					</div>
 					<div class="welcome-section">
+						<div class="news">
+							<em>April 24, 2022</em>
+							<p>
+								Since collections are still absent from MTGA logs 9 months later, I've added a way to
+								import them manually, either using the MTGA card list format (.txt) or the
+								<a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank"
+									>MTGGoldFish format</a
+								>
+								(.csv). As
+								<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a>
+								happens to export MTGGoldFish .csv files, this is probably the most convinient way to
+								import your collection.
+							</p>
+						</div>
 						<div class="news">
 							<em>April 15, 2022</em>
 							<p>

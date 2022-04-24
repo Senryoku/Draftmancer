@@ -1,7 +1,10 @@
 [
 	{
 		"date": "24/04/2022",
-		"notes": ["Added a workaround for collection import using the standard card list format."]
+		"notes": [
+			"Added a workaround for collection import using the standard card list format.",
+			"Added support for MTGGoldfish .csv collection files."
+		]
 	},
 	{
 		"date": "01/04/2022",
