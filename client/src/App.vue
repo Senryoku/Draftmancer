@@ -31,13 +31,26 @@
 				</div>
 			</span>
 			<span>
-				<label :for="hasCollection ? 'collection-stats' : 'file-input'">MTGA Collection</label>
+				<label :for="hasCollection ? 'collection-stats' : 'mtga-logs-file-input'">MTGA Collection</label>
 				<i
 					class="fas fa-question-circle clickable"
 					@click="displayedModal = 'collectionHelp'"
 					v-tooltip="'Collection Import Help'"
 				></i>
-				<input type="file" id="file-input" @change="parseMTGALog" style="display: none" accept=".log" />
+				<input
+					type="file"
+					id="mtga-logs-file-input"
+					@change="parseMTGALog"
+					style="display: none"
+					accept=".log"
+				/>
+				<input
+					type="file"
+					id="collection-file-input"
+					@change="uploadCardListAsCollection"
+					style="display: none"
+					accept=".txt"
+				/>
 				<button @click="uploadMTGALogs" v-tooltip="'Import your collection by uploading your Player.log file.'">
 					Upload
 					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>

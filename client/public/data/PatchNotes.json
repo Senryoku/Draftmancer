@@ -1,5 +1,9 @@
 [
 	{
+		"date": "24/04/2022",
+		"notes": ["Added a workaround for collection import using the standard card list format."]
+	},
+	{
 		"date": "01/04/2022",
 		"notes": [
 			"Super Jump! support (https://magic.wizards.com/en/articles/archive/magic-online/super-jump-magic-online-2022-03-22)."

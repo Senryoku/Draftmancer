@@ -181,6 +181,41 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			})
 		);
 	},
+	// Parse a card list and uses it as collection
+	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
+		let cardList = parseCardList(txtcollection, {});
+		if (cardList.error) {
+			ack?.(cardList.error);
+			return;
+		}
+
+		let collection: CardPool = new Map();
+		let ret: any = { code: 0 };
+		for (let cardID of cardList.cards as Array<CardID>) {
+			let aid = Cards[cardID].arena_id;
+			if (!aid) {
+				if (ret.ignoredCards > 0) {
+					++ret.ignoredCards;
+				} else
+					ret = {
+						code: 1,
+						type: "warning",
+						title: "Non-MTGA card(s) ignored.",
+						text: `${Cards[cardID].name} (${Cards[cardID].set}) is not a valid MTGA card and has been ignored.`,
+						ignoredCards: 1,
+					};
+				continue;
+			}
+			if (collection.has(aid)) collection.set(aid, (collection.get(aid) as number) + 1);
+			else collection.set(aid, 1);
+		}
+		if (ret.ignoredCards > 1) {
+			ret.text += ` (${ret.ignoredCards} cards ignored in total.)`;
+		}
+
+		ret.collection = Object.fromEntries(collection);
+		ack?.(ret);
+	},
 	useCollection(userID: UserID, sessionID: SessionID, useCollection: boolean) {
 		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
 

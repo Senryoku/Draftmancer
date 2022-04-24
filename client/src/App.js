@@ -1324,21 +1324,58 @@ export default {
 		},
 		uploadMTGALogs() {
 			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
-			//document.querySelector("#file-input").click();
+			//document.querySelector("#mtga-logs-file-input").click();
 			Alert.fire({
 				icon: "error",
 				title: "Collection import is disabled",
 				html: `With the Jumpstart: Historic Horizons update, Wizards removed player collection from MTGA player logs which was our only non-intrusive way to get them. Collection import is thus disabled until the situation is resolved.
-				<br/>
-				You can vote for <a href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855" target="_blank" rel="noopener nofollow"> this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i></a> to draw to their attention to the problem.`,
+				<br />
+				You can vote for <a href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855" target="_blank" rel="noopener nofollow"> this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i></a> to draw to their attention to the problem.
+				<hr />
+				As a workaround, you can use a card list following the custom card list format as a collection:
+				<br />
+				<button class="swal2-confirm swal2-styled" onclick="document.querySelector('#collection-file-input').click()">Upload a list</button>`,
 			});
 		},
-		parseMTGALog: function(e) {
+		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
+		uploadCardListAsCollection(e) {
 			let file = e.target.files[0];
-			if (!file) {
-				return;
-			}
-			var reader = new FileReader();
+			if (!file) return;
+			let reader = new FileReader();
+			reader.onload = async e => {
+				let contents = e.target.result;
+				this.socket.emit("parseCollection", contents, ret => {
+					if (ret.type === "error") {
+						Alert.fire({ icon: "error", title: ret.title, text: ret.text });
+						return;
+					}
+					this.setCollection(ret.collection); // Unnecessary round trip, consider removing if this ends up being the only way to update the collection
+					this.collectionInfos = {
+						wildcards: {
+							common: 0,
+							uncommon: 0,
+							rare: 0,
+							mythic: 0,
+						},
+						vaultProgress: 0,
+					};
+					if (ret.type === "warning") Alert.fire({ icon: "warning", title: ret.title, text: ret.text });
+					else
+						fireToast(
+							"success",
+							`Collection successfully imported (${Object.values(ret.collection).reduce(
+								(a, b) => a + b,
+								0
+							)} cards).`
+						);
+				});
+			};
+			reader.readAsText(file);
+		},
+		parseMTGALog(e) {
+			let file = e.target.files[0];
+			if (!file) return;
+			let reader = new FileReader();
 			reader.onload = async e => {
 				let contents = e.target.result;
 
