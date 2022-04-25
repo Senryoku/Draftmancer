@@ -93,6 +93,7 @@ export default {
 	},
 	methods: {
 		download() {
+			// FIXME: Handle Custom Cards
 			let str = "";
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
@@ -128,6 +129,31 @@ export default {
 		},
 		async getCards() {
 			if (!this.cardlist || !this.cardlist.cards) return;
+			let cards = [];
+			let tofetch = [];
+			if (this.cardlist.customCards) {
+				if (this.cardlist.customSheets) {
+					cards = {};
+					tofetch = {};
+					for (let slot in this.cardlist.cards) {
+						cards[slot] = [];
+						tofetch[slot] = [];
+						for (let cid of this.cardlist.cards[slot]) {
+							if (this.cardlist.customCards && cid in this.cardlist.customCards)
+								cards[slot].push(this.cardlist.customCards[cid]);
+							else tofetch[slot].push(cid);
+						}
+					}
+				} else {
+					for (let cid of this.cardlist.cards) {
+						if (this.cardlist.customCards && cid in this.cardlist.customCards)
+							cards.push(this.cardlist.customCards[cid]);
+						else tofetch.push(cid);
+					}
+				}
+			} else {
+				tofetch = this.cardlist.cards;
+			}
 			const response = await fetch("/getCards", {
 				method: "POST",
 				mode: "cors",
@@ -138,9 +164,15 @@ export default {
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
-				body: JSON.stringify(this.cardlist.cards),
+				body: JSON.stringify(tofetch),
 			});
-			this.cards = await response.json();
+			const fetchedCards = await response.json();
+			if (this.cardlist.customSheets) {
+				for (let slot in this.cardlist.cards) if (fetchedCards[slot]) cards[slot].push(...fetchedCards[slot]);
+			} else {
+				cards.push(...fetchedCards);
+			}
+			this.cards = cards;
 		},
 	},
 };

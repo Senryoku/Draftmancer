@@ -28,6 +28,11 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	let count = parseInt(countStr);
 	if (!Number.isInteger(count)) count = 1;
 
+	// Override with custom cards if available
+	if (options.customCards && name in options.customCards) {
+		return [count, name, !!foil];
+	}
+
 	if (set) {
 		set = set.toLowerCase();
 		if (set === "dar") set = "dom";
@@ -103,6 +108,117 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 		let lineIdx = 0;
 		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
 		if (lines[lineIdx][0] === "[") {
+			// Detect Custom Card section (must be the first section of the file.)
+			if (lines[lineIdx] === "[CustomCards]") {
+				if (lines.length - lineIdx < 2)
+					return {
+						error: {
+							type: "error",
+							title: `[CustomCards]`,
+							text: `Expected a list of custom cards, got end-of-file.`,
+						},
+					};
+				// Custom cards must be a JSON array
+				if (lines[lineIdx + 1][0] !== "[") {
+					return {
+						error: {
+							type: "error",
+							title: `[CustomCards]`,
+							text: `Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
+						},
+					};
+				}
+				// Search for the section (matching closing bracket)
+				let opened = 1;
+				let index = "[CustomCards]".length + 1;
+				while (txtcardlist[index] !== "[") ++index;
+				const start = index;
+				++index;
+				while (index < txtcardlist.length && opened > 0) {
+					if (txtcardlist[index] === "[") ++opened;
+					else if (txtcardlist[index] === "]") --opened;
+					++index;
+				}
+				if (opened !== 0) {
+					return {
+						error: {
+							type: "error",
+							title: `[CustomCards]`,
+							text: `Line ${lineIdx}: Expected ']', got end-of-file.`,
+						},
+					};
+				}
+				let customCards = {};
+				const customCardsStr = txtcardlist.substring(start, index);
+				try {
+					customCards = JSON.parse(customCardsStr);
+				} catch (e) {
+					console.error("Error parsing custom cards", typeof e);
+					console.error(customCardsStr);
+					let msg = `Error parsing custom cards: ${e.message}.`;
+					let position = e.message.match(/at position (\d+)/);
+					console.log(position);
+					if (position) {
+						position = parseInt(position[1]);
+						msg += `<pre>${customCardsStr.substr(
+							Math.max(0, position - 30),
+							Math.max(0, position - 1)
+						)}<span style="color: red;">${customCardsStr[position]}</span>${customCardsStr.substr(
+							Math.min(position + 1, index - start),
+							Math.min(position + 30, index - start)
+						)}</pre>`;
+					}
+					return {
+						error: {
+							type: "error",
+							title: `[CustomCards]`,
+							html: msg,
+						},
+					};
+				}
+				cardList.customCards = {};
+				for (let c of customCards) {
+					// TODO: Validate each card.
+					if (!("name" in c))
+						return {
+							error: {
+								type: "error",
+								title: `Missing Card Property`,
+								html: `Missing mandatory property 'name' in custom card: <pre>${JSON.stringify(
+									c,
+									null,
+									2
+								)}</pre>`,
+							},
+						};
+					if (
+						!("image_uris" in c) ||
+						typeof c["image_uris"] !== "object" ||
+						Object.keys(c["image_uris"]).length === 0
+					)
+						return {
+							error: {
+								type: "error",
+								title: `Missing Card Property`,
+								html: `Missing mandatory property 'image_uris' in custom card: <pre>${JSON.stringify(
+									c,
+									null,
+									2
+								)}</pre>`,
+							},
+						};
+					if (c.name in cardList.customCards)
+						return {
+							error: {
+								type: "error",
+								title: `[CustomCards]`,
+								text: `Duplicate card '${c.name}'.`,
+							},
+						};
+					cardList.customCards[c.name] = c;
+				}
+				lineIdx += customCardsStr.match(/\r\n|\n/g).length + 2; // Skip this section's lines
+			}
 			// List has to start with a header if it has custom slots
 			let cardCount = 0;
 			cardList.customSheets = true;
@@ -123,9 +239,10 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
 				cardList.cards[header[1]] = [];
 				++lineIdx;
+				const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 				while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 					if (lines[lineIdx]) {
-						let [count, cardID] = parseLine(lines[lineIdx], options);
+						let [count, cardID] = parseLine(lines[lineIdx], parseLineOptions);
 						if (typeof cardID !== "undefined") {
 							for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
 							cardCount += count;
