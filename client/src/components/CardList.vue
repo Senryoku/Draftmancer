@@ -93,18 +93,23 @@ export default {
 	},
 	methods: {
 		download() {
-			// FIXME: Handle Custom Cards
+			if (!this.cards) return;
 			let str = "";
+			if (this.cardlist.customCards) {
+				str += "[CustomCards]\n";
+				str += JSON.stringify(this.cardlist.customCards, null, 2);
+				str += "\n";
+			}
 			if (this.cardlist.customSheets) {
 				for (let slot in this.cardlist.cards) {
 					str += `[${slot}(${this.cardlist.cardsPerBooster[slot]})]\n`;
-					for (let c of this.cardlist.cards[slot]) {
-						str += c.name + "\n";
+					for (let card of this.cards[slot]) {
+						str += card.name + "\n";
 					}
 				}
 			} else {
-				for (let c of this.cardlist.cards) {
-					str += c.name + "\n";
+				for (let card of this.cards) {
+					str += card.name + "\n";
 				}
 			}
 			download("Cube.txt", str);
