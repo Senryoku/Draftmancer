@@ -6,4 +6,5 @@ export type CustomCardList = {
 	length: number | null;
 	cardsPerBooster: { [slot: string]: number };
 	customSheets: boolean | null;
+	customCards: { [cardID: string]: string } | null;
 };

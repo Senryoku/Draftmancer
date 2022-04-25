@@ -100,6 +100,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 		const lines = txtcardlist.split(/\r\n|\n/).map(s => s.trim());
 		let cardList: CustomCardList = {
 			customSheets: false,
+			customCards: null,
 			cardsPerBooster: {},
 			cards: [],
 			length: 0,
@@ -148,7 +149,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 						},
 					};
 				}
-				let customCards = {};
+				let customCards = [];
 				const customCardsStr = txtcardlist.substring(start, index);
 				try {
 					customCards = JSON.parse(customCardsStr);
@@ -217,7 +218,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 						};
 					cardList.customCards[c.name] = c;
 				}
-				lineIdx += customCardsStr.match(/\r\n|\n/g).length + 2; // Skip this section's lines
+				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
 			}
 			// List has to start with a header if it has custom slots
 			let cardCount = 0;

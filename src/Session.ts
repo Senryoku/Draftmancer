@@ -256,7 +256,13 @@ export class Session implements IIndexable {
 	foil: boolean = false;
 	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
-	customCardList: CustomCardList = { cards: null, cardsPerBooster: {}, customSheets: null, length: 0 };
+	customCardList: CustomCardList = {
+		cards: null,
+		cardsPerBooster: {},
+		customSheets: null,
+		customCards: null,
+		length: 0,
+	};
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	pickedCardsPerRound: number = 1;
