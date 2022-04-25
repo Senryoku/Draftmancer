@@ -1,4 +1,4 @@
-import parseCost from "./parseCost.js";
+import { validateCustomCard } from "./CustomCards.js";
 import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { Options } from "./utils.js";
@@ -180,36 +180,8 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				}
 				cardList.customCards = {};
 				for (let c of customCards) {
-					// TODO: Validate each card.
-					if (!("name" in c))
-						return {
-							error: {
-								type: "error",
-								title: `Missing Card Property`,
-								html: `Missing mandatory property 'name' in custom card: <pre>${JSON.stringify(
-									c,
-									null,
-									2
-								)}</pre>`,
-							},
-						};
-					if (
-						!("image_uris" in c) ||
-						typeof c["image_uris"] !== "object" ||
-						Object.keys(c["image_uris"]).length === 0
-					)
-						return {
-							error: {
-								type: "error",
-								title: `Missing Card Property`,
-								html: `Missing mandatory property 'image_uris' in custom card: <pre>${JSON.stringify(
-									c,
-									null,
-									2
-								)}</pre>`,
-							},
-						};
-					if (!("colors" in c)) Object.assign(c, parseCost(c.mana_cost));
+					let error = validateCustomCard(c);
+					if (error) return error;
 					if (c.name in cardList.customCards)
 						return {
 							error: {

@@ -1,4 +1,4 @@
-import { CardID } from "./Cards";
+import { CardID, Card } from "./Cards";
 
 export type CustomCardList = {
 	name?: string;
@@ -6,5 +6,5 @@ export type CustomCardList = {
 	length: number | null;
 	cardsPerBooster: { [slot: string]: number };
 	customSheets: boolean | null;
-	customCards: { [cardID: string]: string } | null;
+	customCards: { [cardID: string]: Card } | null;
 };

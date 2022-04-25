@@ -660,7 +660,7 @@ export class Session implements IIndexable {
 				this.boosters = [];
 				const colorBalancedSlotGenerator = useColorBalance
 					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], {
-							getCard: cid => {
+							getCard: (cid: CardID) => {
 								return this.customCardList.customCards && cid in this.customCardList.customCards
 									? this.customCardList.customCards[cid]
 									: Cards[cid];
