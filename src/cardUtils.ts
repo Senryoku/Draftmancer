@@ -1,7 +1,7 @@
 "use strict";
 
 import { CardID, Card, CardPool, getUnique } from "./Cards.js";
-import { getRandomMapKey } from "./utils.js";
+import { getRandomMapKey, Options } from "./utils.js";
 
 export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 	if (!dict.has(cid)) {
@@ -14,7 +14,7 @@ export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 }
 
 // TODO: Prevent multiples by name?
-export function pickCard(dict: CardPool, booster: Array<Card> = []) {
+export function pickCard(dict: CardPool, booster: Array<Card> = [], options: Options = {}) {
 	let c = getRandomMapKey(dict);
 	if (booster != undefined) {
 		let prevention_attempts = 0; // Fail safe-ish
@@ -24,7 +24,7 @@ export function pickCard(dict: CardPool, booster: Array<Card> = []) {
 		}
 	}
 	removeCardFromCardPool(c, dict);
-	return getUnique(c);
+	return options?.getUnique ? options.getUnique(c) : getUnique(c);
 }
 
 export function countCards(dict: CardPool): number {

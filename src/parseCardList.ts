@@ -1,3 +1,4 @@
+import parseCost from "./parseCost.js";
 import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { Options } from "./utils.js";
@@ -208,6 +209,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 								)}</pre>`,
 							},
 						};
+					if (!("colors" in c)) Object.assign(c, parseCost(c.mana_cost));
 					if (c.name in cardList.customCards)
 						return {
 							error: {

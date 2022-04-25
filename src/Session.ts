@@ -12,6 +12,8 @@ import {
 	Card,
 	Cards,
 	DeckList,
+	UniqueCard,
+	getNextCardID,
 	getUnique,
 	BoosterCardsBySet,
 	CardsBySet,
@@ -640,10 +642,30 @@ export class Session implements IIndexable {
 				const useColorBalance =
 					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
 
+				let pickOptions: Options = this.customCardList.customCards
+					? {
+							getUnique: (cid: CardID, foil?: boolean) => {
+								if (this.customCardList.customCards && cid in this.customCardList.customCards) {
+									let uc: UniqueCard = Object.assign({}, this.customCardList.customCards[cid]);
+									uc.uniqueID = getNextCardID();
+									if (foil) uc.foil = foil;
+									return uc;
+								}
+								return getUnique(cid);
+							},
+					  }
+					: {};
+
 				// Generate Boosters
 				this.boosters = [];
 				const colorBalancedSlotGenerator = useColorBalance
-					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot])
+					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], {
+							getCard: cid => {
+								return this.customCardList.customCards && cid in this.customCardList.customCards
+									? this.customCardList.customCards[cid]
+									: Cards[cid];
+							},
+					  })
 					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster: Array<Card> = [];
@@ -651,11 +673,15 @@ export class Session implements IIndexable {
 					for (let r in this.customCardList.cardsPerBooster) {
 						if (useColorBalance && colorBalancedSlotGenerator && r === colorBalancedSlot) {
 							booster = booster.concat(
-								colorBalancedSlotGenerator.generate(this.customCardList.cardsPerBooster[r])
+								colorBalancedSlotGenerator.generate(
+									this.customCardList.cardsPerBooster[r],
+									[],
+									pickOptions
+								)
 							);
 						} else {
 							for (let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i) {
-								const pickedCard = pickCard(cardsByRarity[r], booster);
+								const pickedCard = pickCard(cardsByRarity[r], booster, pickOptions);
 								booster.push(pickedCard);
 							}
 						}

@@ -41,6 +41,10 @@ export let Cards: { [cid: string]: Card } = {};
 
 let UniqueID = 0;
 
+export function getNextCardID() {
+	return ++UniqueID;
+}
+
 export class UniqueCard extends Card {
 	uniqueID?: number;
 	foil?: boolean = false;
@@ -48,7 +52,7 @@ export class UniqueCard extends Card {
 
 export function getUnique(cid: CardID, foil?: boolean) {
 	let uc: UniqueCard = Object.assign({}, Cards[cid]);
-	uc.uniqueID = ++UniqueID;
+	uc.uniqueID = getNextCardID();
 	if (foil) uc.foil = foil;
 	return uc;
 }

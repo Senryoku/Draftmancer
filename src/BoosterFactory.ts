@@ -39,10 +39,11 @@ class ColorBalancedSlotCache {
 	others: CardPool;
 	othersCount: number;
 
-	constructor(cardPool: CardPool) {
+	constructor(cardPool: CardPool, options: Options = {}) {
+		const getCard = options.getCard ?? ((cid: CardID) => Cards[cid]);
 		for (let cid of cardPool.keys()) {
-			if (!(Cards[cid].colors.join() in this.byColor)) this.byColor[Cards[cid].colors.join()] = new Map();
-			this.byColor[Cards[cid].colors.join()].set(cid, cardPool.get(cid) as number);
+			if (!(getCard(cid).colors.join() in this.byColor)) this.byColor[getCard(cid).colors.join()] = new Map();
+			this.byColor[getCard(cid).colors.join()].set(cid, cardPool.get(cid) as number);
 		}
 
 		this.monocolored = new Map();
@@ -69,9 +70,9 @@ export class ColorBalancedSlot {
 	cardPool: CardPool;
 	cache: ColorBalancedSlotCache;
 
-	constructor(_cardPool: CardPool) {
+	constructor(_cardPool: CardPool, options: Options = {}) {
 		this.cardPool = _cardPool;
-		this.cache = new ColorBalancedSlotCache(_cardPool);
+		this.cache = new ColorBalancedSlotCache(_cardPool, options);
 	}
 
 	syncCache(pickedCard: Card) {
@@ -87,10 +88,10 @@ export class ColorBalancedSlot {
 
 	// Returns cardCount color balanced cards picked from cardPool.
 	// pickedCards can contain pre-selected cards for this slot.
-	generate(cardCount: number, pickedCards: Array<Card> = []) {
+	generate(cardCount: number, pickedCards: Array<Card> = [], options: Options = {}) {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
-				let pickedCard = pickCard(this.cache.byColor[c], pickedCards);
+				let pickedCard = pickCard(this.cache.byColor[c], pickedCards, options);
 				removeCardFromCardPool(pickedCard.id, this.cardPool);
 				if (pickedCard.colors.length === 1) {
 					removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
@@ -120,7 +121,7 @@ export class ColorBalancedSlot {
 		const x = (c * remainingCards - a * seededMonocolors) / (remainingCards * (c + a));
 		for (let i = pickedCards.length; i < cardCount; ++i) {
 			const type = (random.bool(x) && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
-			let pickedCard = pickCard(type ? this.cache.monocolored : this.cache.others, pickedCards);
+			let pickedCard = pickCard(type ? this.cache.monocolored : this.cache.others, pickedCards, options);
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
