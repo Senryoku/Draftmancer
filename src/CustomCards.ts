@@ -1,5 +1,5 @@
 import parseCost from "./parseCost.js";
-import { ackError } from "./utils.js";
+import { APIResponse, ackError } from "./utils.js";
 
 function checkProperty(card: any, prop: string) {
 	if (!(prop in card))
@@ -12,7 +12,7 @@ function checkProperty(card: any, prop: string) {
 
 let CustomCardAutoCollectorNumber = 0;
 
-export function validateCustomCard(card: any) {
+export function validateCustomCard(card: any): APIResponse | null {
 	// Check mandatory fields
 	let missing =
 		checkProperty(card, "name") ??
