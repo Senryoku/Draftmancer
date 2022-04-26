@@ -457,6 +457,9 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
+        # Special case for conjure-only cards from J21 that should be avoided.
+        if a['set'] == 'j21' and int(a['collector_number']) >= 777: return b
+        if b['set'] == 'j21' and int(b['collector_number']) >= 777: return a
         if 'arena_id' in a and 'arena_id' not in b:
             return a
         if 'arena_id' not in a and 'arena_id' in b:
