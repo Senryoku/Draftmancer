@@ -147,12 +147,14 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 					console.log(position);
 					if (position) {
 						position = parseInt(position[1]);
-						msg += `<pre>${customCardsStr.substr(
-							Math.max(0, position - 30),
+						msg += `<pre>${customCardsStr.slice(
+							Math.max(0, position - 50),
 							Math.max(0, position - 1)
-						)}<span style="color: red;">${customCardsStr[position]}</span>${customCardsStr.substr(
-							Math.min(position + 1, index - start),
-							Math.min(position + 30, index - start)
+						)}<span style="color: red; text-decoration: underline red;">${
+							customCardsStr[position]
+						}</span>${customCardsStr.slice(
+							Math.min(position + 1, customCardsStr.length),
+							Math.min(position + 50, customCardsStr.length)
 						)}</pre>`;
 					}
 					return ackError({

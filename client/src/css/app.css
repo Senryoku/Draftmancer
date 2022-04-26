@@ -1450,4 +1450,5 @@ ul.player-list {
 .swal2-content pre {
 	text-align: left;
 	font-size: 0.8em;
+    white-space: pre-wrap;
 }
