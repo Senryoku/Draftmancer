@@ -1,7 +1,7 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
-import { Options } from "./utils.js";
+import { Options, ackError } from "./utils.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -13,14 +13,11 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	const match = line.match(lineRegex);
 	if (!match) {
 		return [
-			{
-				error: {
-					type: "error",
-					title: `Syntax Error`,
-					text: `The line '${line}' doesn't match the card syntax.`,
-					footer: `Full line: '${line}'`,
-				},
-			},
+			ackError({
+				title: `Syntax Error`,
+				text: `The line '${line}' doesn't match the card syntax.`,
+				footer: `Full line: '${line}'`,
+			}),
 			undefined,
 		];
 	}
@@ -83,14 +80,11 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 		` If you think it should be there, please contact us via email or our Discord server.`;
 
 	return [
-		{
-			error: {
-				type: "error",
-				title: `Card not found`,
-				text: message,
-				footer: `Full line: '${line}'`,
-			},
-		},
+		ackError({
+			title: `Card not found`,
+			text: message,
+			footer: `Full line: '${line}'`,
+		}),
 		undefined,
 		undefined,
 	];
@@ -113,22 +107,16 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 			// Detect Custom Card section (must be the first section of the file.)
 			if (lines[lineIdx] === "[CustomCards]") {
 				if (lines.length - lineIdx < 2)
-					return {
-						error: {
-							type: "error",
-							title: `[CustomCards]`,
-							text: `Expected a list of custom cards, got end-of-file.`,
-						},
-					};
+					return ackError({
+						title: `[CustomCards]`,
+						text: `Expected a list of custom cards, got end-of-file.`,
+					});
 				// Custom cards must be a JSON array
 				if (lines[lineIdx + 1][0] !== "[") {
-					return {
-						error: {
-							type: "error",
-							title: `[CustomCards]`,
-							text: `Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
-						},
-					};
+					return ackError({
+						title: `[CustomCards]`,
+						text: `Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
+					});
 				}
 				// Search for the section (matching closing bracket)
 				let opened = 1;
@@ -142,13 +130,10 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 					++index;
 				}
 				if (opened !== 0) {
-					return {
-						error: {
-							type: "error",
-							title: `[CustomCards]`,
-							text: `Line ${lineIdx}: Expected ']', got end-of-file.`,
-						},
-					};
+					return ackError({
+						title: `[CustomCards]`,
+						text: `Line ${lineIdx}: Expected ']', got end-of-file.`,
+					});
 				}
 				let customCards = [];
 				const customCardsStr = txtcardlist.substring(start, index);
@@ -170,26 +155,20 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 							Math.min(position + 30, index - start)
 						)}</pre>`;
 					}
-					return {
-						error: {
-							type: "error",
-							title: `[CustomCards]`,
-							html: msg,
-						},
-					};
+					return ackError({
+						title: `[CustomCards]`,
+						html: msg,
+					});
 				}
 				cardList.customCards = {};
 				for (let c of customCards) {
 					let error = validateCustomCard(c);
 					if (error) return error;
 					if (c.name in cardList.customCards)
-						return {
-							error: {
-								type: "error",
-								title: `[CustomCards]`,
-								text: `Duplicate card '${c.name}'.`,
-							},
-						};
+						return ackError({
+							title: `[CustomCards]`,
+							text: `Duplicate card '${c.name}'.`,
+						});
 					cardList.customCards[c.name] = c;
 				}
 				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
@@ -203,13 +182,10 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 			while (lineIdx < lines.length) {
 				let header = lines[lineIdx].match(headerRegex);
 				if (!header) {
-					return {
-						error: {
-							type: "error",
-							title: `Slot`,
-							text: `Error parsing slot '${lines[lineIdx]}'.`,
-						},
-					};
+					return ackError({
+						title: `Slot`,
+						text: `Error parsing slot '${lines[lineIdx]}'.`,
+					});
 				}
 				cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
 				cardList.cards[header[1]] = [];
@@ -242,23 +218,17 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 		}
 		if (options && options.name) cardList.name = options.name;
 		if (cardList.cards?.length === 0)
-			return {
-				error: {
-					type: "error",
-					title: "Empty List",
-					text: `Supplied card list is empty.`,
-				},
-			};
+			return ackError({
+				title: "Empty List",
+				text: `Supplied card list is empty.`,
+			});
 		return cardList;
 	} catch (e) {
-		return {
-			error: {
-				type: "error",
-				title: "Parsing Error",
-				text: "An error occurred during parsing, please check you input file.",
-				footer: "Full error: " + e,
-			},
-		};
+		return ackError({
+			title: "Parsing Error",
+			text: "An error occurred during parsing, please check you input file.",
+			footer: "Full error: " + e,
+		});
 	}
 }
 
