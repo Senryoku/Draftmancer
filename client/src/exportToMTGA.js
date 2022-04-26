@@ -17,8 +17,9 @@ function exportCardToMTGA(c, language, full) {
 	}
 
 	// FIXME: Translate J21 Collector Numbers to MTGA, this should be avoidable
-	let collector_number = c.set == "j21" ? J21MTGACollectorNumber[c.name] : c.collector_number;
-	if (collector_number.startsWith("A-")) collector_number = collector_number.substr(2);
+	let collector_number =
+		c.set === "j21" && c.name in J21MTGACollectorNumber ? J21MTGACollectorNumber[c.name] : c.collector_number;
+	if (collector_number?.startsWith("A-")) collector_number = collector_number.substr(2);
 
 	if (full) return `1 ${name} (${set}) ${collector_number}\n`;
 	else return `1 ${name}\n`;

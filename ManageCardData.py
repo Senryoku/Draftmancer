@@ -110,16 +110,16 @@ for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
         for o in carddata:
+            fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")
+            fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
+            o['set'] = o['set'].lower()
             if not ('isSecondaryCard' in o and o['isSecondaryCard']):
-                o['set'] = o['set'].lower()
                 if o['set'] == 'conf':
                     o['set'] = 'con'
                 if o['set'] == 'dar':
                     o['set'] = 'dom'
                 collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
                 # Process AKR cards separately (except basics)
-                fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")
-                fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
                 if o["set"] == "akr":
                     if o['rarity'] != 1:
                         AKRCards[fixed_name] = (
@@ -138,9 +138,6 @@ for path in MTGACardsFiles:
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
                         fixed_name, collectorNumber, 'ajmp')] = o['grpid']
-                # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
-                if o['set'] == 'j21':
-                    J21MTGACollectorNumbers[fixed_name] = collectorNumber
 
                 for lang in MTGALocalization:
                     MTGATranslations[lang][o['grpid']] = {
@@ -154,6 +151,10 @@ for path in MTGACardsFiles:
                     CardsCollectorNumberAndSet[(
                         "A-"+fixed_name, "A-"+collectorNumber, o['set'])] = o['grpid']
                     CardNameToArenaID["A-"+fixed_name] = o['grpid']
+            # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
+            #        (Also for secondary cards as there's some created cards in this set.)
+            if o['set'] == 'j21':
+                J21MTGACollectorNumbers[fixed_name] = collectorNumber
 
 
 print("AKRCards length: {}".format(len(AKRCards.keys())))
