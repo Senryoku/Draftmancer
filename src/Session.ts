@@ -13,7 +13,6 @@ import {
 	Cards,
 	DeckList,
 	UniqueCard,
-	getNextCardID,
 	getUnique,
 	BoosterCardsBySet,
 	CardsBySet,
@@ -644,14 +643,10 @@ export class Session implements IIndexable {
 
 				let pickOptions: Options = this.customCardList.customCards
 					? {
-							getUnique: (cid: CardID, foil?: boolean) => {
-								if (this.customCardList.customCards && cid in this.customCardList.customCards) {
-									let uc: UniqueCard = Object.assign({}, this.customCardList.customCards[cid]);
-									uc.uniqueID = getNextCardID();
-									if (foil) uc.foil = foil;
-									return uc;
-								}
-								return getUnique(cid);
+							getCard: (cid: CardID) => {
+								return this.customCardList.customCards && cid in this.customCardList.customCards
+									? this.customCardList.customCards[cid]
+									: Cards[cid];
 							},
 					  }
 					: {};
@@ -659,13 +654,7 @@ export class Session implements IIndexable {
 				// Generate Boosters
 				this.boosters = [];
 				const colorBalancedSlotGenerator = useColorBalance
-					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], {
-							getCard: (cid: CardID) => {
-								return this.customCardList.customCards && cid in this.customCardList.customCards
-									? this.customCardList.customCards[cid]
-									: Cards[cid];
-							},
-					  })
+					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], pickOptions)
 					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster: Array<Card> = [];

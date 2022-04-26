@@ -739,8 +739,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 					let [count, cardID, foil] = parseLine(line);
 					if (typeof cardID !== "undefined") {
 						for (let i = 0; i < count; ++i) {
-							let card = getUnique(cardID);
-							if (foil) card.foil = true;
+							let card = getUnique(cardID, { foil });
 							booster.push(card);
 						}
 					} else {

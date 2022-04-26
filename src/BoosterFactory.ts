@@ -936,7 +936,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 				}
 			}
 		}
-		return booster.map(c => getUnique(c.id, c.foil)).reverse();
+		return booster.map(c => getUnique(c.id, { foil: c.foil })).reverse();
 	}
 }
 

@@ -4,7 +4,7 @@ import fs from "fs";
 import parseCost from "./parseCost.js";
 
 import JSONStream from "JSONStream";
-import { memoryReport } from "./utils.js";
+import { memoryReport, Options } from "./utils.js";
 
 export type CardID = string;
 export type ArenaID = string;
@@ -50,10 +50,10 @@ export class UniqueCard extends Card {
 	foil?: boolean = false;
 }
 
-export function getUnique(cid: CardID, foil?: boolean) {
-	let uc: UniqueCard = Object.assign({}, Cards[cid]);
+export function getUnique(cid: CardID, options: Options = {}) {
+	let uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : Cards[cid]);
 	uc.uniqueID = getNextCardID();
-	if (foil) uc.foil = foil;
+	if (options.foil) uc.foil = options.foil;
 	return uc;
 }
 

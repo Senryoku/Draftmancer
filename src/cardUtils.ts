@@ -24,7 +24,7 @@ export function pickCard(dict: CardPool, booster: Array<Card> = [], options: Opt
 		}
 	}
 	removeCardFromCardPool(c, dict);
-	return options?.getUnique ? options.getUnique(c) : getUnique(c);
+	return getUnique(c, options);
 }
 
 export function countCards(dict: CardPool): number {
