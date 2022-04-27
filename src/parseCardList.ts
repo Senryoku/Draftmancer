@@ -184,7 +184,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				if (!header) {
 					return ackError({
 						title: `Slot`,
-						text: `Error parsing slot '${lines[lineIdx]}'.`,
+						text: `Error parsing slot '${lines[lineIdx]}' (line ${lineIdx + 1}).`,
 					});
 				}
 				cardList.cardsPerBooster[header[1]] = parseInt(header[3]);

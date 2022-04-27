@@ -101,6 +101,85 @@ Card Name 6
 ...</code></pre>
 			Color balancing (if enabled) will be used only on the largest slot (in terms of cards per booster) and if it consist of at least 5 cards per booster. In both previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
 		</p>
-	</div>
+	<h2>Custom Cards</h2>
+	<p>A cube can also be composed of user-defined cards specified as JSON data. The CustomCards section must be the first one in the file.</p>
+	<pre>
+[CustomCards]
+[
+	{	
+		"name": "My 1st Custom Card",
+		"rarity": "mythic",
+		"mana_cost": "{2}{W}{W}",
+		"type": "Legendary Creature",
+		"subtypes": [
+			"God"
+		],
+		"image_uris": {
+			"en": "https://domain.com/URL/to/image.png"
+		},
+	},	
+	{	
+		"name": "My 2nd Custom Card",
+		"mana_cost": "{W/B}{G}",
+		"type": "Instant",
+		"image_uris": {
+			"en": "https://domain.com/URL/to/image2.png",
+			"fr": "https://domain.com/URL/to/image2_fr.png"
+		},
+		"printed_names": {
+			"en": "My 2nd Custom Card",
+			"fr": "Ma deuxième carte personnalisée"
+		},
+		"back": {
+			"name": "Back of my 2nd Custom Card",
+			"printed_names": {
+				"en": "Back of my 2nd Custom Card",
+				"fr": "Dos de ma deuxième carte personnalisée"
+			},
+			"image_uris": {
+				"en": "https://domain.com/URL/to/image2_back.png"
+				"fr": "https://domain.com/URL/to/image2_back_fr.png"
+			},
+			"type": "Land",
+			"subtypes": [
+				"Forest"
+			]
+		}
+	}
+]
+[MainSlot(15)]
+4 My 1st Custom Card
+4 My 2nd Custom Card
+... Standard Card List ...
+	</pre>
+	<p>Full Card specification ('?' denotes an optional field):</p>
+	<pre>
+{
+	name: string,
+	mana_cost: string,
+	type: string,
+	image_uris: { [lang: string]: URL },
+	printed_names?: { [lang: string]: string };
+	colors?: Array&lt;"W" | "U" | "B" | "R" | "G"&gt;;
+	set?: string,	
+	collector_number?: string;
+	rarity?: string;
+	subtypes?: Array<string> = [];
+	rating?: number = 0;
+	layout?: string;
+	back?: {
+		name: string;
+		image_uris: { [lang: string]: URL };
+		type: string;
+		printed_names?: { [lang: string]: string };
+		subtypes?: Array&lt;string&gl;;
+	};
+}
+	</pre>
+	<p>
+		The mana cost field follows <a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a> (e.g. "{5}{G}{G}"").
+		The image_uris and printed_names fields are objects with the language as key and the localized image URL or name as value (see previous example).
+	</p>
+</div>
 </body>
 </html>
