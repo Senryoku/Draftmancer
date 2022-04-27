@@ -1,7 +1,7 @@
 import { validateCustomCard } from "./CustomCards.js";
-import { CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
+import { Card, CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
-import { Options, ackError } from "./utils.js";
+import { Options, APIResponse, ackError } from "./utils.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -115,7 +115,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				if (lines[lineIdx + 1][0] !== "[") {
 					return ackError({
 						title: `[CustomCards]`,
-						text: `Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
+						text: `Custom cards section must be a JSON Array. Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
 					});
 				}
 				// Search for the section (matching closing bracket)
@@ -140,11 +140,8 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				try {
 					customCards = JSON.parse(customCardsStr);
 				} catch (e) {
-					console.error("Error parsing custom cards", typeof e);
-					console.error(customCardsStr);
 					let msg = `Error parsing custom cards: ${e.message}.`;
 					let position = e.message.match(/at position (\d+)/);
-					console.log(position);
 					if (position) {
 						position = parseInt(position[1]);
 						msg += `<pre>${customCardsStr.slice(
@@ -164,14 +161,15 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				}
 				cardList.customCards = {};
 				for (let c of customCards) {
-					let error = validateCustomCard(c);
-					if (error) return error;
-					if (c.name in cardList.customCards)
+					const cardOrError = validateCustomCard(c);
+					if ((cardOrError as APIResponse).error) return cardOrError as APIResponse;
+					const customCard = cardOrError as Card;
+					if (customCard.name in cardList.customCards)
 						return ackError({
 							title: `[CustomCards]`,
-							text: `Duplicate card '${c.name}'.`,
+							text: `Duplicate card '${customCard.name}'.`,
 						});
-					cardList.customCards[c.name] = c;
+					cardList.customCards[customCard.name] = customCard;
 				}
 				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
 			}

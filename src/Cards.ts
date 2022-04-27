@@ -10,13 +10,16 @@ export type CardID = string;
 export type ArenaID = string;
 export type OracleID = string;
 
+export type CardColor = "W" | "U" | "B" | "R" | "G";
+
 export class Card {
 	id: CardID = "";
 	arena_id?: ArenaID;
 	oracle_id: OracleID = "";
 	name: string = "";
 	mana_cost: string = "";
-	colors: Array<string> = [];
+	cmc: number = 0;
+	colors: Array<CardColor> = [];
 	set: string = "";
 	collector_number: string = "";
 	rarity: string = "";
@@ -24,6 +27,7 @@ export class Card {
 	subtypes: Array<string> = [];
 	rating: number = 0;
 	in_booster: boolean = true;
+	layout?: string;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
 	back?: {

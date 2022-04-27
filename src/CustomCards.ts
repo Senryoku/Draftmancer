@@ -1,5 +1,6 @@
 import parseCost from "./parseCost.js";
 import { APIResponse, ackError } from "./utils.js";
+import { Card, CardColor } from "./Cards.js";
 
 function checkProperty(card: any, prop: string) {
 	if (!(prop in card))
@@ -10,40 +11,125 @@ function checkProperty(card: any, prop: string) {
 	return null;
 }
 
-let CustomCardAutoCollectorNumber = 0;
+function checkPropertyType(card: any, prop: string, type: string) {
+	if (typeof card[prop] !== type)
+		return ackError({
+			title: `Invalid Card Property`,
+			html: `Property '${prop}' should be of type '${type}': <pre>${JSON.stringify(card, null, 2)}</pre>`,
+		});
+	return null;
+}
 
-export function validateCustomCard(card: any): APIResponse | null {
-	// Check mandatory fields
-	let missing =
-		checkProperty(card, "name") ??
-		checkProperty(card, "mana_cost") ??
-		checkProperty(card, "type") ??
-		checkProperty(card, "image_uris");
-	if (missing) return missing;
-	if (typeof card["image_uris"] !== "object" || Object.keys(card["image_uris"]).length === 0)
+function checkPropertyTypeOrUndefined(card: any, prop: string, type: string) {
+	if (!("prop" in card)) return null;
+	return checkPropertyType(card, prop, type);
+}
+
+function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
+	if (prop in card && !Array.isArray(card.subtypes)) {
 		return ackError({
 			title: `Invalid Property`,
-			html: `Invalid mandatory property 'image_uris' in custom card: <pre>${JSON.stringify(card, null, 2)}</pre>`,
+			html: `Invalid property 'subtypes' in custom card, must be an Array. <pre>${JSON.stringify(
+				card,
+				null,
+				2
+			)}</pre>`,
 		});
-	// Assign default value to optional fields if missing
-	if (!("id" in card)) card["id"] = card.name;
-	if (!("oracle_id" in card)) card["oracle_id"] = card.name;
-	if (!("colors" in card)) Object.assign(card, parseCost(card.mana_cost));
-	if (!("set" in card)) card["set"] = "custom";
-	if (!("collector_number" in card)) card["collector_number"] = (++CustomCardAutoCollectorNumber).toString();
-	if (!("rarity" in card)) card["rarity"] = "rare";
-	if (!("subtypes" in card)) card["subtypes"] = [];
-	if (!("rating" in card)) card["rating"] = 1;
-	if (!("in_booster" in card)) card["in_booster"] = true;
-	if (!("printed_names" in card)) card["printed_names"] = { en: card.name };
+	}
+	return null;
+}
 
-	if ("back" in card) {
-		let missing =
-			checkProperty(card, "name") ?? checkProperty(card.back, "type") ?? checkProperty(card.back, "image_uris");
-		if (missing) return missing;
-		if (!("printed_names" in card.back)) card.back["printed_names"] = { en: card.back.name };
-		if (!("subtypes" in card.back)) card.back["subtypes"] = [];
+let CustomCardAutoCollectorNumber = 0;
+
+export function validateCustomCard(inputCard: any): APIResponse | Card {
+	let card = new Card();
+	// Check mandatory fields
+	let missing =
+		checkProperty(inputCard, "name") ??
+		checkProperty(inputCard, "mana_cost") ??
+		checkProperty(inputCard, "type") ??
+		checkProperty(inputCard, "image_uris");
+	if (missing) return missing;
+	let typeError =
+		checkPropertyType(inputCard, "name", "string") ??
+		checkPropertyType(inputCard, "mana_cost", "string") ??
+		checkPropertyType(inputCard, "type", "string") ??
+		checkPropertyType(inputCard, "image_uris", "object") ??
+		checkPropertyTypeOrUndefined(inputCard, "set", "string") ??
+		checkPropertyTypeOrUndefined(inputCard, "rarity", "string") ??
+		checkPropertyTypeOrUndefined(inputCard, "rating", "number") ??
+		checkPropertyTypeOrUndefined(inputCard, "in_booster", "boolean") ??
+		checkPropertyTypeOrUndefined(inputCard, "layout", "string") ??
+		checkPropertyTypeOrUndefined(inputCard, "printed_names", "object");
+	if (typeError) return typeError;
+	if (Object.keys(inputCard["image_uris"]).length === 0)
+		return ackError({
+			title: `Invalid Property`,
+			html: `Invalid mandatory property 'image_uris' in custom card: Should have at least one entry. <pre>${JSON.stringify(
+				inputCard,
+				null,
+				2
+			)}</pre>`,
+		});
+	if ("colors" in inputCard) {
+		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
+			return ackError({
+				title: `Invalid Property`,
+				html: `Invalid mandatory property 'colors' in custom card, 'colors' should be an Array of inputCard colors (W, U, B, R or G). Leave blank to let it be automatically infered from the mana cost. <pre>${JSON.stringify(
+					inputCard,
+					null,
+					2
+				)}</pre>`,
+			});
+		}
+	}
+	if ("rarity" in inputCard) {
+		const acceptedValues = ["common", "uncommon", "rare", "mythic", "special"];
+		if (!acceptedValues.includes(inputCard.rarity))
+			return ackError({
+				title: `Invalid Property`,
+				html: `Invalid mandatory property 'rarity' in custom card, must be one of [${acceptedValues.join(
+					", "
+				)}]. <pre>${JSON.stringify(inputCard, null, 2)}</pre>`,
+			});
 	}
 
-	return null;
+	let arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "subtypes");
+	if (arrayCheck) return arrayCheck;
+
+	// Create the final Card object,
+	// Assign default value to missing optional fields
+	card.name = card.id = card.oracle_id = inputCard.name;
+	let { cmc, colors } = parseCost(inputCard.mana_cost);
+	card.cmc = cmc;
+	card.colors = inputCard.colors ?? colors;
+	card.set = inputCard.set ?? "custom";
+	card.collector_number = inputCard.collector_number ?? `${++CustomCardAutoCollectorNumber}`;
+	card.rarity = inputCard.rarity ?? "rare";
+	card.type = inputCard.type;
+	card.subtypes = inputCard.subtypes ?? [];
+	card.rating = inputCard.rating ?? 0;
+	card.in_booster = inputCard.in_booster ?? true;
+	card.layout = inputCard.layout;
+	card.printed_names = inputCard.printed_names ?? { en: inputCard.name };
+	card.image_uris = inputCard.image_uris;
+
+	if ("back" in inputCard) {
+		let missing =
+			checkProperty(inputCard.back, "name") ??
+			checkProperty(inputCard.back, "type") ??
+			checkProperty(inputCard.back, "image_uris");
+		if (missing) return missing;
+		let arrayCheck = checkPropertyIsArrayOrUndefined(inputCard.back, "subtypes");
+		if (arrayCheck) return arrayCheck;
+		card.back = {
+			name: inputCard.back.name,
+			type: inputCard.back.type,
+			image_uris: inputCard.back.image_uris,
+			printed_names: inputCard.back.printed_names ?? { en: inputCard.back.name },
+			subtypes: inputCard.back.subtypes ?? [],
+		};
+	}
+
+	return card;
 }
