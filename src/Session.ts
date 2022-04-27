@@ -1647,7 +1647,14 @@ export class Session implements IIndexable {
 
 	initLogs(type = "Draft"): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
-		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		const getCard = this.customCardList?.customCards
+			? (cid: CardID) => {
+					return this.customCardList.customCards && cid in this.customCardList.customCards
+						? this.customCardList.customCards[cid]
+						: Cards[cid];
+			  }
+			: (cid: CardID) => Cards[cid];
+		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = getCard(c.id);
 		this.draftLog = new DraftLog(
 			type,
 			this,
