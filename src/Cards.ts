@@ -26,6 +26,13 @@ export class Card {
 	in_booster: boolean = true;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
+	back?: {
+		name: string;
+		printed_names: { [lang: string]: string };
+		image_uris: { [lang: string]: string };
+		type: string;
+		subtypes: Array<string>;
+	};
 }
 
 export type CardPool = Map<string, number>;
