@@ -92,7 +92,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 
 export function parseCardList(txtcardlist: string, options: { [key: string]: any }) {
 	try {
-		const lines = txtcardlist.split(/\r\n|\n/).map(s => s.trim());
+		const lines = txtcardlist.split(/\r?\n/).map(s => s.trim());
 		let cardList: CustomCardList = {
 			customSheets: false,
 			customCards: null,
