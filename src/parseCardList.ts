@@ -132,7 +132,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				if (opened !== 0) {
 					return ackError({
 						title: `[CustomCards]`,
-						text: `Line ${lineIdx}: Expected ']', got end-of-file.`,
+						text: `Line ${index}: Expected ']', got end-of-file.`,
 					});
 				}
 				let customCards = [];
