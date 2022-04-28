@@ -108,3 +108,33 @@ export function memoryReport() {
 }
 
 export type Options = { [key: string]: any };
+
+export class APIMessage {
+	title: string = "Title";
+	type: string = "info";
+	text?: string;
+	html?: string;
+	footer?: string;
+
+	constructor(props: { title: string; text?: string; html?: string; footer?: string }) {
+		Object.assign(this, props);
+	}
+}
+
+export class APIError extends APIMessage {
+	type: string = "error";
+
+	constructor(props: { title: string; text?: string; html?: string; footer?: string }) {
+		super(props);
+	}
+}
+
+export class APIResponse {
+	error?: APIError;
+}
+
+export function ackError(props: { title: string; text?: string; html?: string; footer?: string }): APIResponse {
+	return {
+		error: new APIError(props),
+	};
+}

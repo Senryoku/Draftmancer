@@ -4,11 +4,13 @@ import fs from "fs";
 import parseCost from "./parseCost.js";
 
 import JSONStream from "JSONStream";
-import { memoryReport } from "./utils.js";
+import { memoryReport, Options } from "./utils.js";
 
 export type CardID = string;
 export type ArenaID = string;
 export type OracleID = string;
+
+export type CardColor = "W" | "U" | "B" | "R" | "G";
 
 export class Card {
 	id: CardID = "";
@@ -16,7 +18,8 @@ export class Card {
 	oracle_id: OracleID = "";
 	name: string = "";
 	mana_cost: string = "";
-	colors: Array<string> = [];
+	cmc: number = 0;
+	colors: Array<CardColor> = [];
 	set: string = "";
 	collector_number: string = "";
 	rarity: string = "";
@@ -24,8 +27,16 @@ export class Card {
 	subtypes: Array<string> = [];
 	rating: number = 0;
 	in_booster: boolean = true;
+	layout?: string;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
+	back?: {
+		name: string;
+		printed_names: { [lang: string]: string };
+		image_uris: { [lang: string]: string };
+		type: string;
+		subtypes: Array<string>;
+	};
 }
 
 export type CardPool = Map<string, number>;
@@ -41,15 +52,19 @@ export let Cards: { [cid: string]: Card } = {};
 
 let UniqueID = 0;
 
+export function getNextCardID() {
+	return ++UniqueID;
+}
+
 export class UniqueCard extends Card {
 	uniqueID?: number;
 	foil?: boolean = false;
 }
 
-export function getUnique(cid: CardID, foil?: boolean) {
-	let uc: UniqueCard = Object.assign({}, Cards[cid]);
-	uc.uniqueID = ++UniqueID;
-	if (foil) uc.foil = foil;
+export function getUnique(cid: CardID, options: Options = {}) {
+	let uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : Cards[cid]);
+	uc.uniqueID = getNextCardID();
+	if (options.foil) uc.foil = options.foil;
 	return uc;
 }
 

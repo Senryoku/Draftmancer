@@ -739,8 +739,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 					let [count, cardID, foil] = parseLine(line);
 					if (typeof cardID !== "undefined") {
 						for (let i = 0; i < count; ++i) {
-							let card = getUnique(cardID);
-							if (foil) card.foil = true;
+							let card = getUnique(cardID, { foil });
 							booster.push(card);
 						}
 					} else {
@@ -1303,7 +1302,7 @@ app.post("/getDeck", (req, res) => {
 	} else {
 		try {
 			let r = { deck: [] as Card[], sideboard: [] as Card[] };
-			const lines = req.body.split(/\r\n|\n/);
+			const lines = req.body.split(/\r?\n/);
 			let target: Card[] = r.deck;
 			for (let line of lines) {
 				line = line.trim();

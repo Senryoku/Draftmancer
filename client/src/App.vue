@@ -1327,6 +1327,14 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>April 28, 2022</em>
+							<p>
+								Experimental support for custom cards in cubes. Refer to the
+								<a href="cubeformat.html" target="_blank">Cube Format documentation</a> for more
+								information.
+							</p>
+						</div>
+						<div class="news">
 							<em>April 24, 2022</em>
 							<p>
 								Since collections are still absent from MTGA logs 9 months later, I've added a way to
@@ -1357,13 +1365,6 @@
 									href="https://magic.wizards.com/en/articles/archive/magic-online/super-jump-magic-online-2022-03-22"
 									>on Wizards website</a
 								>.
-							</p>
-						</div>
-						<div class="news">
-							<em>February, 2022</em>
-							<p>
-								<img src="img/sets/neo.svg" class="set-icon" style="--invertedness: 100%" />
-								Kamigawa: Neon Dynasty (NEO) support.
 							</p>
 						</div>
 					</div>
@@ -1477,9 +1478,15 @@
 					<strong>Can we play cube?</strong>
 					<p>
 						Yes! You can import custom list of cards in text format in the settings.
-						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>
+						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">More information</a>.
 					</p>
-					Your question isn't awnsered here? Head to the
+					<strong>Are custom cards supported?</strong>
+					<p>
+						There is an experimental support for custom cards in cube, see the
+						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">Cube Format</a> for more
+						information.
+					</p>
+					Your question isn't answered here? Head to the
 					<a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow"
 						>Help section of the MTGADraft Discord</a
 					>!
@@ -2297,7 +2304,13 @@
 					</div>
 					<div class="option-info">
 						You can find more cubes or craft your own on
-						<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow">Cube Cobra</a>
+						<a href="https://cubecobra.com/" target="_blank" rel="noopener nofollow"
+							><i class="fas fa-external-link-alt"></i> Cube Cobra</a
+						>
+						or
+						<a href="https://cubeartisan.net/" target="_blank" rel="noopener nofollow"
+							><i class="fas fa-external-link-alt"></i> Cube Artisan</a
+						>
 						<br />Customize your list even further by using all features of the
 						<a href="cubeformat.html" target="_blank" rel="noopener nofollow">
 							<i class="fas fa-external-link-alt"></i>

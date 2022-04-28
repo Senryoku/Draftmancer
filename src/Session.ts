@@ -12,6 +12,7 @@ import {
 	Card,
 	Cards,
 	DeckList,
+	UniqueCard,
 	getUnique,
 	BoosterCardsBySet,
 	CardsBySet,
@@ -256,7 +257,13 @@ export class Session implements IIndexable {
 	foil: boolean = false;
 	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
-	customCardList: CustomCardList = { cards: null, cardsPerBooster: {}, customSheets: null, length: 0 };
+	customCardList: CustomCardList = {
+		cards: null,
+		cardsPerBooster: {},
+		customSheets: null,
+		customCards: null,
+		length: 0,
+	};
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	pickedCardsPerRound: number = 1;
@@ -634,10 +641,20 @@ export class Session implements IIndexable {
 				const useColorBalance =
 					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
 
+				let pickOptions: Options = this.customCardList.customCards
+					? {
+							getCard: (cid: CardID) => {
+								return this.customCardList.customCards && cid in this.customCardList.customCards
+									? this.customCardList.customCards[cid]
+									: Cards[cid];
+							},
+					  }
+					: {};
+
 				// Generate Boosters
 				this.boosters = [];
 				const colorBalancedSlotGenerator = useColorBalance
-					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot])
+					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], pickOptions)
 					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
 					let booster: Array<Card> = [];
@@ -645,11 +662,15 @@ export class Session implements IIndexable {
 					for (let r in this.customCardList.cardsPerBooster) {
 						if (useColorBalance && colorBalancedSlotGenerator && r === colorBalancedSlot) {
 							booster = booster.concat(
-								colorBalancedSlotGenerator.generate(this.customCardList.cardsPerBooster[r])
+								colorBalancedSlotGenerator.generate(
+									this.customCardList.cardsPerBooster[r],
+									[],
+									pickOptions
+								)
 							);
 						} else {
 							for (let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i) {
-								const pickedCard = pickCard(cardsByRarity[r], booster);
+								const pickedCard = pickCard(cardsByRarity[r], booster, pickOptions);
 								booster.push(pickedCard);
 							}
 						}
@@ -1626,7 +1647,14 @@ export class Session implements IIndexable {
 
 	initLogs(type = "Draft"): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
-		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = Cards[c.id];
+		const getCard = this.customCardList?.customCards
+			? (cid: CardID) => {
+					return this.customCardList.customCards && cid in this.customCardList.customCards
+						? this.customCardList.customCards[cid]
+						: Cards[cid];
+			  }
+			: (cid: CardID) => Cards[cid];
+		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = getCard(c.id);
 		this.draftLog = new DraftLog(
 			type,
 			this,

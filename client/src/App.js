@@ -1614,6 +1614,7 @@ export default {
 						icon: "error",
 						title: answer.title,
 						text: answer.text,
+						html: answer.html,
 						footer: answer.footer,
 					});
 				}

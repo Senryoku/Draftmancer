@@ -1,73 +1,101 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en-US">
-<head>
-	<meta charset="UTF-8">
-	<title>MTGADraft Cube Format</title>
-	<style>
-	body {
-		margin: 0;
-		margin-left: 0;
-		background-color: rgb(32, 32, 32);
-		color: #ddd;
-		font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	<head>
+		<meta charset="UTF-8" />
+		<title>MTGADraft Cube Format</title>
+		<style>
+			body {
+				margin: 0;
+				margin-left: 0;
+				background-color: rgb(32, 32, 32);
+				color: #ddd;
+				font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-		position: relative;
-		min-height: calc(100vh - 2em);
-		padding-bottom: 2em;
-	}
+				position: relative;
+				min-height: calc(100vh - 2em);
+				padding-bottom: 2em;
+			}
 
-	pre {
-		background-color: #333;
-		padding: 0.5em;
-	}
-	</style>
-</head>
-<body>
-	<div class="welcome" style="margin-left:5em; margin-right: 5em;">
-		<h1>MTGADraft Cube Format</h1>
-		<p>
+			pre {
+				background-color: #333;
+				padding: 0.5em;
+			}
+
+			.content {
+				margin: 5em;
+				margin-top: 1em;
+			}
+
+			section {
+				margin-left: 1em;
+			}
+
+			h1 {
+				text-align: center;
+			}
+
+			section h2,
+			section h3 {
+				margin-left: -1em;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="content">
+			<h1>MTGADraft Cube Format</h1>
 			Basic cube list is one English card name per line, just like .txt export in either Cube Cobra.
-		</p>
-		<p>
-			Boosters will be 15 cards without regards for rarity distribution. Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity, Maximum duplicate copies and Foil.
-		</p>
-		<h2>Advanced Card Specification</h2>
-		<p>
-			Full syntax for a card line is inspired by the Arena Import/Export format and is defined as follows:
-			<pre><code>[Count] CardName [(Set) [CollectorNumber]]</code></pre>
-			All parameters between brackets ([]) are optional, only the card name is required.
-			<ul>
-				<li>Count (optional): How many times this card is present in the cube. Defaults to one.</li>
-				<li>CardName (required): The name of the card.</li>
-				<li>Set (optional): Lets you specify the edition of the card. This is the 3-letter code of the set (e.g. 'GRN' for Guilds of Ravnica).</li>
-				<li>CollectorNumber (optional): Lets you specify an exact collector number for cards with multiple printing within a set (like Guildgates). Specifying a collector number without a set is NOT valid.</li>
-			</ul>
-			<h3>Examples</h3>
-			The four following lines are equivalent and will add one copy of 'Incubation Druid' from Ravnica Allegiance. Here the set and collector number are both redundant as there's only one printing of the card (in Arena, and as of May 2020 :)):
-			<pre><code>1 Incubation Druid (RNA) 131
+			<br />
+			Boosters will be 15 cards without regards for rarity distribution. Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity,
+			Maximum duplicate copies and Foil.
+			<section>
+				<h2>Advanced Card Specification</h2>
+				Full syntax for a card line is inspired by the Arena Import/Export format and is defined as follows:
+				<pre>[Count] CardName [(Set) [CollectorNumber]]</pre>
+				All parameters between brackets ([]) are optional, only the card name is required.
+				<ul>
+					<li>Count (optional): How many times this card is present in the cube. Defaults to one.</li>
+					<li>CardName (required): The name of the card.</li>
+					<li>Set (optional): Lets you specify the edition of the card. This is the 3-letter code of the set (e.g. 'GRN' for Guilds of Ravnica).</li>
+					<li>
+						CollectorNumber (optional): Lets you specify an exact collector number for cards with multiple printing within a set (like Guildgates). Specifying a
+						collector number without a set is NOT valid.
+					</li>
+				</ul>
+				<section>
+					<h3>Examples</h3>
+					The four following lines are equivalent and will add one copy of 'Incubation Druid' from Ravnica Allegiance. Here the set and collector number are both
+					redundant as there's only one printing of the card (in Arena, and as of May 2020 :)):
+					<pre>
+1 Incubation Druid (RNA) 131
 1 Incubation Druid (RNA)
 1 Incubation Druid
-Incubation Druid</code></pre>
-			This will add 8 copies of the full art "Unset" Forest:
-			<pre><code>8 Forest (ANA) 60</code></pre>
-			This will add one copy of each of the two version (#243 & #244) of the Azorius Guildgate of RNA:
-			<pre><code>1 Azorius Guildgate (RNA) 243
-1 Azorius Guildgate (RNA) 244</code></pre>
-		</p>
-		<h2>Custom Card Slots</h2>
-		<p>
-			If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
-			<pre><code>[SlotName(CardPerBooster)]
+Incubation Druid</pre
+					>
+					This will add 8 copies of the full art "Unset" Forest:
+					<pre>8 Forest (ANA) 60</pre>
+					This will add one copy of each of the two version (#243 & #244) of the Azorius Guildgate of RNA:
+					<pre>
+1 Azorius Guildgate (RNA) 243
+1 Azorius Guildgate (RNA) 244</pre
+					>
+				</section>
+			</section>
+			<section>
+				<h2>Custom Card Slots</h2>
+				If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
+				<pre>
+[SlotName(CardPerBooster)]
 Card Name 1
 Card Name 2
 ...
 [Slot2Name(CardPerBooster)]
 Card Name 3
 Card Name 4
-...</code>
-			</pre>
-			Each slot will be present in each booster. For example:
-			<pre><code>[Common(10)]
+...</pre
+				>
+				Each slot will be present in each booster. For example:
+				<pre>
+[Common(10)]
 Card Name 1
 Card Name 2
 ...
@@ -78,12 +106,12 @@ Card Name 4
 [Rare(1)]
 Card Name 5
 Card Name 6
-...</code></pre>
-			Will mimic the distribution of a standard Magic booster, except for the 1/8 Mythic/Rare ratio. Cards in the 'Common' slot don't have to be 'real' commons!
-			</p>
-			<p>
-			Why not add a special planeswalker slot in each of your booster instead of one of the commons, everyone loved them in WAR right? :D
-			<pre><code>[Planewalker(1)]
+...</pre
+				>
+				Will mimic the distribution of a standard Magic booster, except for the 1/8 Mythic/Rare ratio. Cards in the 'Common' slot don't have to be 'real' commons! Why not
+				add a special planeswalker slot in each of your booster instead of one of the commons, everyone loved them in WAR right? :D
+				<pre>
+[Planewalker(1)]
 Planewalker Card Name 1
 Planewalker Card Name 2
 ...
@@ -98,9 +126,92 @@ Card Name 4
 [Rare(1)]
 Card Name 5
 Card Name 6
-...</code></pre>
-			Color balancing (if enabled) will be used only on the largest slot (in terms of cards per booster) and if it consist of at least 5 cards per booster. In both previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
-		</p>
-	</div>
-</body>
+...</pre
+				>
+				Color balancing (if enabled) will be used only on the largest slot (in terms of cards per booster) and if it consist of at least 5 cards per booster. In both
+				previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
+			</section>
+			<section>
+				<h2>Custom Cards</h2>
+				A cube can also be composed of user-defined cards specified as JSON data. The CustomCards section must be the first one in the file.
+				<pre>
+[CustomCards]
+[
+	{	
+		"name": "My 1st Custom Card",
+		"rarity": "mythic",
+		"mana_cost": "{2}{W}{W}",
+		"type": "Legendary Creature",
+		"subtypes": [
+			"God"
+		],
+		"image_uris": {
+			"en": "https://domain.com/URL/to/image.png"
+		},
+	},	
+	{	
+		"name": "My 2nd Custom Card",
+		"mana_cost": "{W/B}{G}",
+		"type": "Instant",
+		"image_uris": {
+			"en": "https://domain.com/URL/to/image2.png",
+			"fr": "https://domain.com/URL/to/image2_fr.png"
+		},
+		"printed_names": {
+			"en": "My 2nd Custom Card",
+			"fr": "Ma deuxième carte personnalisée"
+		},
+		"back": {
+			"name": "Back of my 2nd Custom Card",
+			"printed_names": {
+				"en": "Back of my 2nd Custom Card",
+				"fr": "Dos de ma deuxième carte personnalisée"
+			},
+			"image_uris": {
+				"en": "https://domain.com/URL/to/image2_back.png"
+				"fr": "https://domain.com/URL/to/image2_back_fr.png"
+			},
+			"type": "Land",
+			"subtypes": [
+				"Forest"
+			]
+		}
+	}
+]
+[MainSlot(15)]
+4 My 1st Custom Card
+4 My 2nd Custom Card
+... Standard Card List ...</pre
+				>
+				Full Card specification ('?' denotes an optional field):
+				<pre>
+{
+	name: string,
+	mana_cost: string,
+	type: string,
+	image_uris: { [lang: string]: URL },
+	printed_names?: { [lang: string]: string };
+	colors?: Array&lt;"W" | "U" | "B" | "R" | "G"&gt;;
+	set?: string,	
+	collector_number?: string;
+	rarity?: string;
+	subtypes?: Array&lt;string&gt; = [];
+	rating?: number = 0;
+	layout?: string;
+	back?: {
+		name: string;
+		image_uris: { [lang: string]: URL };
+		type: string;
+		printed_names?: { [lang: string]: string };
+		subtypes?: Array&lt;string&gl;;
+	};
+}</pre
+				>
+				The mana cost field follows
+				<a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a>
+				(e.g. "{5}{G}{G}""). The image_uris and printed_names fields are objects with the language as key and the localized image URL or name as value (see previous
+				example).
+			</section>
+		</div>
+	</body>
 </html>
