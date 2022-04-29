@@ -16,7 +16,7 @@
 			<br />Your logs will be visible here after you've completed a game.
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
-			<div class="log-controls">
+			<div class="log-controls" @click.self="toggle(idx)">
 				<span @click="toggle(idx)" class="clickable">
 					<i
 						v-if="!draftLog.delayed"
@@ -191,6 +191,11 @@ export default {
 	border-radius: 0.5em;
 	padding: 0.5em;
 	background-color: rgba(255, 255, 255, 0.05);
+	transition: 0.1s;
+}
+
+.log:hover {
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 .log-controls {

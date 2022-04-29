@@ -1374,17 +1374,53 @@
 						<h2>Help</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a>
-						guide<br />
-						<br />
-						<a @click="displayedModal = 'help'"
-							><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
-						><br />
+						<div style="display: flex; justify-content: space-between">
+							<div>
+								<a @click="displayedModal = 'gettingStarted'"
+									><i class="fas fa-rocket"></i> Get Started</a
+								>
+								guide
+							</div>
+							<div>
+								<a @click="displayedModal = 'help'"
+									><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
+								>
+							</div>
+						</div>
 						<br />
 						For any question/bug report/feature request you can email to
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 						or join the
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+					</div>
+				</div>
+				<div class="container" style="grid-area: Coaching">
+					<div class="section-title">
+						<h2>Coaching</h2>
+					</div>
+					<div class="welcome-section welcome-alt">Esporter</div>
+				</div>
+				<div class="container" style="grid-area: Tools">
+					<div class="section-title">
+						<h2>Tools</h2>
+					</div>
+					<div class="welcome-section welcome-alt">
+						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
+							<li>
+								<a @click="displayedModal = 'importdeck'"
+									><i class="fas fa-file-export"></i> Card List Importer</a
+								>
+							</li>
+							<li
+								v-tooltip="
+									'Download the intersection of the collections of players in the session in text format.'
+								"
+							>
+								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
+									><i class="fas fa-file-download"></i> Download Session Collection</a
+								>
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div class="container" style="grid-area: PublicSessions">
@@ -1442,29 +1478,6 @@
 								</tr>
 							</tbody>
 						</table>
-					</div>
-				</div>
-				<div class="container" style="grid-area: Tools">
-					<div class="section-title">
-						<h2>Tools</h2>
-					</div>
-					<div class="welcome-section welcome-alt">
-						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-							<li>
-								<a @click="displayedModal = 'importdeck'"
-									><i class="fas fa-file-export"></i> Card List Importer</a
-								>
-							</li>
-							<li
-								v-tooltip="
-									'Download the intersection of the collections of players in the session in text format.'
-								"
-							>
-								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
-									><i class="fas fa-file-download"></i> Download Session Collection</a
-								>
-							</li>
-						</ul>
 					</div>
 				</div>
 			</div>

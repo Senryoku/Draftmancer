@@ -1852,7 +1852,7 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
-				width: "900px",
+				width: "auto",
 				preConfirm: function() {
 					return new Promise(function(resolve) {
 						resolve({
