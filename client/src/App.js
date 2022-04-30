@@ -2482,7 +2482,7 @@ export default {
 		}
 	},
 	watch: {
-		sessionID: function() {
+		sessionID() {
 			if (this.socket) {
 				this.socket.query.sessionID = this.sessionID;
 				this.socket.emit("setSession", this.sessionID);
@@ -2492,7 +2492,7 @@ export default {
 				`MTGADraft Session ${this.sessionID}`,
 				`?session=${encodeURIComponent(this.sessionID)}`
 			);
-			setCookie("sessionID", this.sessionID);
+			if (this.sessionID) setCookie("sessionID", this.sessionID);
 		},
 		userName: function() {
 			if (this.socket) {
