@@ -16,24 +16,25 @@ import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
 import parseCSV from "./parseCSV.js";
 
-import Modal from "./components/Modal.vue";
-import DelayedInput from "./components/DelayedInput.vue";
+import BoosterCard from "./components/BoosterCard.vue";
+import Bracket from "./components/Bracket.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
-import CardPopup from "./components/CardPopup.vue";
-import Dropdown from "./components/Dropdown.vue";
-import BoosterCard from "./components/BoosterCard.vue";
 import CardPool from "./components/CardPool.vue";
-import DraftLogPick from "./components/DraftLogPick.vue";
+import CardPopup from "./components/CardPopup.vue";
+import DelayedInput from "./components/DelayedInput.vue";
 import DraftLog from "./components/DraftLog.vue";
 import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
-import Bracket from "./components/Bracket.vue";
+import DraftLogPick from "./components/DraftLogPick.vue";
+import Dropdown from "./components/Dropdown.vue";
+import Esporter from "./components/Esporter.vue";
 import GridDraft from "./components/GridDraft.vue";
 import LandControl from "./components/LandControl.vue";
+import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
-import SetRestriction from "./components/SetRestriction.vue";
 import PickSummary from "./components/PickSummary.vue";
+import SetRestriction from "./components/SetRestriction.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
@@ -105,29 +106,30 @@ const initialSettings = Object.assign(defaultSettings, storedSettings);
 
 export default {
 	components: {
-		Modal,
-		DelayedInput,
-		Card,
-		CardPlaceholder,
-		CardPopup,
-		Dropdown,
 		BoosterCard,
+		Bracket,
+		Card,
+		CardList: () => import("./components/CardList.vue"),
+		CardPlaceholder,
 		CardPool,
-		DraftLogPick,
+		CardPopup,
+		CardStats: () => import("./components/CardStats.vue"),
+		Collection: () => import("./components/Collection.vue"),
+		DelayedInput,
 		DraftLog,
 		DraftLogHistory,
 		DraftLogLive,
-		Collection: () => import("./components/Collection.vue"),
-		CardList: () => import("./components/CardList.vue"),
-		CardStats: () => import("./components/CardStats.vue"),
+		DraftLogPick,
+		Dropdown,
+		Esporter,
 		GridDraft,
 		LandControl,
-		Bracket,
-		PatchNotes,
-		SetRestriction,
-		PickSummary,
-		draggable,
+		Modal,
 		Multiselect,
+		PatchNotes,
+		PickSummary,
+		SetRestriction,
+		draggable,
 	},
 	data: () => {
 		return {

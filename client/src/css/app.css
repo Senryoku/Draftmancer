@@ -422,6 +422,10 @@ select.swal2-input option {
 	margin: auto;
 }
 
+.welcome-sections .container {
+	margin-top: 0.5em;
+}
+
 .welcome-sections .section-title {
 	--outline-size: 1px;
 	text-shadow:
