@@ -2494,22 +2494,22 @@ export default {
 			);
 			if (this.sessionID) setCookie("sessionID", this.sessionID);
 		},
-		userName: function() {
+		userName() {
 			if (this.socket) {
 				this.socket.query.userName = this.userName;
 				this.socket.emit("setUserName", this.userName);
 			}
 			setCookie("userName", this.userName);
 		},
-		useCollection: function() {
+		useCollection() {
 			if (this.socket) this.socket.emit("useCollection", this.useCollection);
 			setCookie("useCollection", this.useCollection.toString());
 		},
 		// Front-end options
-		language: function() {
+		language() {
 			setCookie("language", this.language);
 		},
-		displayBotScores: function() {
+		displayBotScores() {
 			this.storeSettings();
 		},
 		pickOnDblclick() {
@@ -2544,37 +2544,37 @@ export default {
 			this.storeSettings();
 		},
 		// Session options
-		ownerIsPlayer: function() {
+		ownerIsPlayer() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
-		setRestriction: function() {
+		setRestriction() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 
 			this.socket.emit("setRestriction", this.setRestriction);
 		},
-		isPublic: function() {
+		isPublic() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPublic", this.isPublic);
 		},
-		description: function() {
+		description() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDescription", this.description);
 		},
-		usePredeterminedBoosters: function() {
+		usePredeterminedBoosters() {
 			if (this.userID !== this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUsePredeterminedBoosters", this.usePredeterminedBoosters);
 		},
-		boostersPerPlayer: function() {
+		boostersPerPlayer() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("boostersPerPlayer", this.boostersPerPlayer);
 		},
-		cardsPerBooster: function() {
+		cardsPerBooster() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("cardsPerBooster", this.cardsPerBooster);
 		},
-		teamDraft: function() {
+		teamDraft() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("teamDraft", this.teamDraft);
 		},
@@ -2586,23 +2586,23 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
 			this.socket.emit("setDisableBotSuggestions", this.disableBotSuggestions);
 		},
-		distributionMode: function() {
+		distributionMode() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
-		customBoosters: function() {
+		customBoosters() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setCustomBoosters", this.customBoosters);
 		},
-		bots: function() {
+		bots() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("bots", this.bots);
 		},
-		maxPlayers: function() {
+		maxPlayers() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
-		mythicPromotion: function() {
+		mythicPromotion() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setMythicPromotion", this.mythicPromotion);
 		},
@@ -2622,7 +2622,7 @@ export default {
 				}
 			},
 		},
-		maxTimer: function() {
+		maxTimer() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
 		},
@@ -2637,23 +2637,23 @@ export default {
 				this.socket.emit("setMaxDuplicates", this.maxDuplicates);
 			},
 		},
-		colorBalance: function() {
+		colorBalance() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setColorBalance", this.colorBalance);
 		},
-		foil: function() {
+		foil() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setFoil", this.foil);
 		},
-		useCustomCardList: function() {
+		useCustomCardList() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
 		},
-		pickedCardsPerRound: function() {
+		pickedCardsPerRound() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickedCardsPerRound", this.pickedCardsPerRound);
 		},
-		burnedCardsPerRound: function() {
+		burnedCardsPerRound() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setBurnedCardsPerRound", this.burnedCardsPerRound);
 		},
@@ -2661,11 +2661,11 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDiscardRemainingCardsAt", this.discardRemainingCardsAt);
 		},
-		draftLogRecipients: function() {
+		draftLogRecipients() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 		},
-		sessionUsers: function(newV, oldV) {
+		sessionUsers(newV, oldV) {
 			document.title = this.pageTitle;
 			if (oldV.length > 0) {
 				if (oldV.length < newV.length) {
