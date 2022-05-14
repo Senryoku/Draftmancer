@@ -5,6 +5,9 @@ import axios from "axios";
 import { shuffleArray } from "./utils.js";
 import { Card, OracleID } from "./Cards";
 
+const mtgdraftbotsAPITimeout = 3500;
+const mtgdraftbotsAPIURL = "https://mtgml.cubeartisan.net/draft";
+
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
 	// Send a dummy request to make sure the API is up and running that most of the cards are recognized.
 
@@ -29,7 +32,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
-		let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
+		let response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
 		if (
 			response.status !== 200 ||
 			!response.data.success ||
@@ -38,7 +41,8 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 			return true;
 		}
 	} catch (e) {
-		console.error("Error requesting testing the mtgdraftbots API: ", e);
+		if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
+		else console.error("Error requesting testing the mtgdraftbots API: ", e);
 		return true;
 	}
 
@@ -165,7 +169,7 @@ export class Bot implements IBot {
 			seed: Math.floor(Math.random() * 65536),
 		};
 		try {
-			let response = await axios.post("https://mtgml.cubeartisan.net/draft", { drafterState }, { timeout: 1000 });
+			let response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
@@ -182,11 +186,8 @@ export class Bot implements IBot {
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
 		} catch (e) {
-			if (e.code == "ECONNABORTED") {
-				console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
-			} else {
-				console.error("Error requesting mtgdraftbots scores: ", e);
-			}
+			if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
+			else console.error("Error requesting mtgdraftbots scores: ", e);
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
