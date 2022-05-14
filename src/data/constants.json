@@ -246,6 +246,7 @@
         }
     ],
     "PrimarySets": [
+        "2x2",
         "clb",
         "snc",
         "neo",

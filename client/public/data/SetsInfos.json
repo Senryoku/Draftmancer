@@ -21,6 +21,15 @@
         "rareCount": 117,
         "uncommonCount": 95
     },
+    "2x2": {
+        "code": "2x2",
+        "fullName": "Double Masters 2022",
+        "cardCount": 15,
+        "isPrimary": true,
+        "icon": "img/sets/2x2.svg",
+        "mythicCount": 9,
+        "rareCount": 6
+    },
     "2xm": {
         "code": "2xm",
         "fullName": "Double Masters",
@@ -42,6 +51,16 @@
         "commonCount": 90,
         "rareCount": 121,
         "uncommonCount": 95
+    },
+    "40k": {
+        "code": "40k",
+        "fullName": "Warhammer 40,000",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/40k.svg",
+        "commonCount": 1,
+        "mythicCount": 2,
+        "rareCount": 2
     },
     "4ed": {
         "code": "4ed",
@@ -549,12 +568,12 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 27,
+        "cardCount": 28,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
         "commonCount": 2,
         "mythicCount": 5,
-        "rareCount": 18,
+        "rareCount": 19,
         "uncommonCount": 2
     },
     "cm1": {
@@ -3561,6 +3580,14 @@
         "icon": "img/sets/plg21.svg",
         "rareCount": 5
     },
+    "plg22": {
+        "code": "plg22",
+        "fullName": "Love Your LGS 2022",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/plg22.svg",
+        "rareCount": 1
+    },
     "plgm": {
         "code": "plgm",
         "fullName": "DCI Legend Membership",
@@ -3581,12 +3608,12 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 727,
+        "cardCount": 741,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
         "commonCount": 94,
-        "mythicCount": 94,
-        "rareCount": 331,
+        "mythicCount": 101,
+        "rareCount": 338,
         "specialCount": 3,
         "uncommonCount": 205
     },
@@ -3788,6 +3815,15 @@
         "isPrimary": false,
         "icon": "img/sets/pnat.svg",
         "rareCount": 1
+    },
+    "pncc": {
+        "code": "pncc",
+        "fullName": "New Capenna Commander Promos",
+        "cardCount": 73,
+        "isPrimary": false,
+        "icon": "img/sets/pncc.svg",
+        "mythicCount": 2,
+        "rareCount": 71
     },
     "pnem": {
         "code": "pnem",
@@ -4077,6 +4113,15 @@
         "block": "Shadowmoor",
         "icon": "img/sets/pshm.svg",
         "rareCount": 2
+    },
+    "psnc": {
+        "code": "psnc",
+        "fullName": "Streets of New Capenna Promos",
+        "cardCount": 160,
+        "isPrimary": false,
+        "icon": "img/sets/psnc.svg",
+        "mythicCount": 40,
+        "rareCount": 120
     },
     "psoi": {
         "code": "psoi",
@@ -4591,6 +4636,14 @@
         "rareCount": 44,
         "uncommonCount": 44
     },
+    "sch": {
+        "code": "sch",
+        "fullName": "Store Championships 2022",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/sch.svg",
+        "rareCount": 3
+    },
     "shm": {
         "code": "shm",
         "fullName": "Shadowmoor",
@@ -4613,12 +4666,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 523,
+        "cardCount": 536,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 87,
-        "rareCount": 377,
+        "mythicCount": 88,
+        "rareCount": 389,
         "uncommonCount": 20
     },
     "slu": {
