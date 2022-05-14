@@ -1327,6 +1327,28 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>May, 2022</em>
+							<div style="display: flex; align-items: center">
+								<img src="./assets/img/logo-nobackground-200.png" style="height: 5em" />
+								<div>
+									<p style="margin-left: 0.2em">
+										<a href="https://esporter.win/mtgadraft" target="_blank">Esporter</a> is a group
+										coaching service for MTG players, they use MTGADraft for their practice drafts!
+									</p>
+									<p style="margin-left: 0.2em">
+										Their next session will be led by
+										<a href="https://www.twitch.tv/justlolaman" target="_blank">Justlolaman</a>,
+										each week you will get one hour of small-group coaching with him and will
+										practice with other players in your Split.
+									</p>
+									<p style="margin-left: 0.2em">
+										<a href="https://esporter.win/mtgadraft" target="_blank">Signing up</a> for one
+										of their splits also supports MTGADraft :)
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="news">
 							<em>April 28, 2022</em>
 							<p>
 								Experimental support for custom cards in cubes. Refer to the
@@ -1348,25 +1370,6 @@
 								import your collection.
 							</p>
 						</div>
-						<div class="news">
-							<em>April 15, 2022</em>
-							<p>
-								<img src="img/sets/snc.svg" class="set-icon" style="--invertedness: 100%" />
-								Streets of New Capenna (SNC) support.
-							</p>
-						</div>
-						<div class="news">
-							<em>April 01, 2022</em>
-							<p>Jumpstart: Super Jump! support.</p>
-							<p>
-								You can find it in the "Other Game Modes" dropdown. See the announcement
-								<a
-									target="_blank"
-									href="https://magic.wizards.com/en/articles/archive/magic-online/super-jump-magic-online-2022-03-22"
-									>on Wizards website</a
-								>.
-							</p>
-						</div>
 					</div>
 				</div>
 				<div class="container" style="grid-area: Help">
@@ -1374,17 +1377,50 @@
 						<h2>Help</h2>
 					</div>
 					<div class="welcome-section welcome-alt">
-						<a @click="displayedModal = 'gettingStarted'"><i class="fas fa-rocket"></i> Get Started</a>
-						guide<br />
-						<br />
-						<a @click="displayedModal = 'help'"
-							><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
-						><br />
+						<div style="display: flex; justify-content: space-between">
+							<div>
+								<a @click="displayedModal = 'gettingStarted'"
+									><i class="fas fa-rocket"></i> Get Started</a
+								>
+								guide
+							</div>
+							<div>
+								<a @click="displayedModal = 'help'"
+									><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
+								>
+							</div>
+						</div>
 						<br />
 						For any question/bug report/feature request you can email to
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 						or join the
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+					</div>
+				</div>
+				<div class="container" style="grid-area: Coaching">
+					<Esporter />
+				</div>
+				<div class="container" style="grid-area: Tools">
+					<div class="section-title">
+						<h2>Tools</h2>
+					</div>
+					<div class="welcome-section welcome-alt">
+						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
+							<li>
+								<a @click="displayedModal = 'importdeck'"
+									><i class="fas fa-file-export"></i> Card List Importer</a
+								>
+							</li>
+							<li
+								v-tooltip="
+									'Download the intersection of the collections of players in the session in text format.'
+								"
+							>
+								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
+									><i class="fas fa-file-download"></i> Download Session Collection</a
+								>
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div class="container" style="grid-area: PublicSessions">
@@ -1442,29 +1478,6 @@
 								</tr>
 							</tbody>
 						</table>
-					</div>
-				</div>
-				<div class="container" style="grid-area: Tools">
-					<div class="section-title">
-						<h2>Tools</h2>
-					</div>
-					<div class="welcome-section welcome-alt">
-						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-							<li>
-								<a @click="displayedModal = 'importdeck'"
-									><i class="fas fa-file-export"></i> Card List Importer</a
-								>
-							</li>
-							<li
-								v-tooltip="
-									'Download the intersection of the collections of players in the session in text format.'
-								"
-							>
-								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
-									><i class="fas fa-file-download"></i> Download Session Collection</a
-								>
-							</li>
-						</ul>
 					</div>
 				</div>
 			</div>

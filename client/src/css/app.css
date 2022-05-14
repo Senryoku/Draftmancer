@@ -413,13 +413,31 @@ select.swal2-input option {
 	padding-top: 0;
 }
 
+.welcome h1 {
+	margin-bottom: 1rem;
+}
+
 .welcome .important {
 	font-size: 1.4rem;
+	margin: 1rem;
 }
 
 .welcome-sections {
 	width: 85%;
 	margin: auto;
+}
+
+.welcome-sections .container {
+	margin-top: 0.5em;
+}
+
+.welcome-sections .section-title {
+	--outline-size: 1px;
+	text-shadow:
+   calc(-1 * var(--outline-size)) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
+    var(--outline-size)           calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
+   calc(-1 * var(--outline-size))  var(--outline-size)           10px rgb(32, 32, 32),
+	var(--outline-size)            var(--outline-size)           10px rgb(32, 32, 32);
 }
 
 @media (orientation: portrait) {
@@ -437,6 +455,7 @@ select.swal2-input option {
 		gap: 0 1em;
 		grid-template-areas:
 			"News News Help"
+			"News News Coaching"
 			"News News Tools"
 			"PublicSessions PublicSessions PublicSessions";
 	}
@@ -919,7 +938,7 @@ ul.player-list {
 	align-items: center;
 	margin-left: 1em;
 	margin-right: 1em;
-	min-height: 35px;
+	min-height: 35px;  
 }
 
 .section-title h2 {
