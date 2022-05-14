@@ -13,6 +13,10 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 	shuffleArray(oracleIds);
 	oracleIds = oracleIds.slice(0, 15);
 
+	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
+	// FIXME: This feels hackish.
+	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
+
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
 		cardsInPack: oracleIds,
@@ -37,10 +41,6 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		console.error("Error requesting testing the mtgdraftbots API: ", e);
 		return true;
 	}
-
-	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
-	// FIXME: This feels hackish.
-	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
 
 	return false;
 }

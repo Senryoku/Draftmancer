@@ -574,7 +574,7 @@ describe("Single Draft (Two Players)", function() {
 
 	// Explicitly tests mtgdraftbots since the external API calls are too slow for standard tests
 	describe("With mtgdraftbots external API", function() {
-		this.timeout(50000);
+		this.timeout(500000);
 		connect();
 		it("Clients should receive the updated bot count.", function(done) {
 			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);

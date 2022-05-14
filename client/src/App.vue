@@ -1329,7 +1329,11 @@
 						<div class="news">
 							<em>May, 2022</em>
 							<div style="display: flex; align-items: center">
-								<img src="./assets/img/logo-nobackground-200.png" style="height: 5em" />
+								<img
+									src="./assets/img/logo-nobackground-200.png"
+									style="height: 5em"
+									alt="Esporter Logo"
+								/>
 								<div>
 									<p style="margin-left: 0.2em">
 										<a href="https://esporter.win/mtgadraft" target="_blank">Esporter</a> is a group
