@@ -2,25 +2,29 @@
 	<div>
 		<a href="https://esporter.win/mtgadraft" target="_blank">
 			<div class="welcome-section welcome-alt">
-				<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" />
+				<div style="display: flex; align-items: center">
+					<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" width="100%" />
+					<div v-if="remainingTime">
+						<div style="font-size: 0.8em; font-style: italic">Next Split</div>
+						<div style="text-align: right">
+							<div style="white-space: nowrap"><strong>JustLolaman</strong></div>
+							<div style="white-space: nowrap; font-family: 'Lucida Console'; font-size: 0.8em">
+								<span v-if="remainingTime.days > 0">{{ remainingTime.days }}d</span>
+								{{ remainingTime.hours.toString().padStart(2, "0") }}h
+								{{ remainingTime.minutes.toString().padStart(2, "0") }}m
+								{{ remainingTime.seconds.toString().padStart(2, "0") }}s
+							</div>
+						</div>
+					</div>
+					<div style="font-size: 0.8em; font-style: italic" v-else>New Splits start each week!</div>
+				</div>
 				<div>
 					Esporter's Splits are the best way to improve at Magic!
 					<ol>
-						<li><strong>Group Coaching</strong> sessions with a Pro</li>
-						<li><strong>Scrimmages</strong> with other players in your Split</li>
-						<li><strong>Gameplay reviews</strong> with our resident Esporter coaches</li>
-						<li>A <strong>Championship Tournament</strong> to conclude the Split</li>
+						<li><strong>Coaching </strong> from pros</li>
+						<li><strong>Play & Improve</strong> with people at your level</li>
+						<li><strong>Become a Champion</strong> in a final tournament for prizes</li>
 					</ol>
-				</div>
-				<div v-if="remainingTime" style="margin: 0.2em 0.2em 0 0.2em">
-					<div style="text-align: right">
-						<div style="float: left">Next Split:</div>
-						Led by <strong>JustLolaman</strong><br />
-						Starts in <span v-if="remainingTime.days > 0">{{ remainingTime.days }}d</span>
-						{{ remainingTime.hours.toString().padStart(2, "0") }}h
-						{{ remainingTime.minutes.toString().padStart(2, "0") }}m
-						{{ remainingTime.seconds.toString().padStart(2, "0") }}s
-					</div>
 				</div>
 			</div></a
 		>

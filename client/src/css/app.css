@@ -413,8 +413,13 @@ select.swal2-input option {
 	padding-top: 0;
 }
 
+.welcome h1 {
+	margin-bottom: 1rem;
+}
+
 .welcome .important {
 	font-size: 1.4rem;
+	margin: 1rem;
 }
 
 .welcome-sections {
