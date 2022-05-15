@@ -73,7 +73,8 @@ export default {
 
 <style scoped>
 a,
-a:visited {
+a:visited,
+a:hover {
 	color: #ddd;
 }
 
