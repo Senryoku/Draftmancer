@@ -6,7 +6,9 @@
 					<i class="fas fas fa-external-link-alt"></i>
 				</div>
 				<div style="display: flex; align-items: center">
-					<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" width="100%" />
+					<div>
+						<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" width="100%" />
+					</div>
 					<div v-if="remainingTime">
 						<div style="font-size: 0.8em; font-style: italic">Next Split</div>
 						<div style="text-align: right">
