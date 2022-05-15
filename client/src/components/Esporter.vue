@@ -1,7 +1,10 @@
 <template>
 	<div>
 		<a href="https://esporter.win/mtgadraft" target="_blank">
-			<div class="welcome-section welcome-alt">
+			<div class="welcome-section welcome-alt" style="position: relative">
+				<div style="position: absolute; bottom: 0.5em; right: 0.5em; opacity: 0.2">
+					<i class="fas fas fa-external-link-alt"></i>
+				</div>
 				<div style="display: flex; align-items: center">
 					<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" width="100%" />
 					<div v-if="remainingTime">
