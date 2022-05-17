@@ -1499,7 +1499,7 @@ export class Session implements IIndexable {
 		const staggerDelay = 200; // Wil delay successive calls to the mtgdraftbots API
 		let inFlightBots = 0;
 		const delayRequest = (botType: string) => {
-			if (botType != "mtgdraftbots") return Promise.resolve();
+			if (botType !== "mtgdraftbots") return Promise.resolve();
 			let r = new Promise(resolve => setTimeout(resolve, staggerDelay * inFlightBots));
 			inFlightBots++;
 			return r;
@@ -1544,23 +1544,21 @@ export class Session implements IIndexable {
 								pickNumber: s.pickNumber + 1,
 								numPicks: s.pickNumber + s.boosters[boosterIndex].length,
 							};
-							return new Promise(resolve => setTimeout(resolve, 0)).then(() =>
-								Connections[userID].bot
-									?.getScores(
-										localData.booster,
-										localData.boosterNumber,
-										localData.boostersPerPlayer,
-										localData.pickNumber,
-										localData.numPicks
-									)
-									.then(value => {
-										Connections[userID]?.socket.emit("botRecommandations", {
-											pickNumber: localData.pickNumber,
-											scores: value,
-										});
-										return;
-									})
-							);
+							return Connections[userID].bot
+								?.getScores(
+									localData.booster,
+									localData.boosterNumber,
+									localData.boostersPerPlayer,
+									localData.pickNumber,
+									localData.numPicks
+								)
+								.then(value => {
+									Connections[userID]?.socket.emit("botRecommandations", {
+										pickNumber: localData.pickNumber,
+										scores: value,
+									});
+									return;
+								});
 						})();
 					}
 				}
