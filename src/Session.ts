@@ -1495,10 +1495,21 @@ export class Session implements IIndexable {
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
+
+		const staggerDelay = 200; // Wil delay successive calls to the mtgdraftbots API
+		let inFlightBots = 0;
+		const delayRequest = (botType: string) => {
+			if (botType != "mtgdraftbots") return Promise.resolve();
+			let r = new Promise(resolve => setTimeout(resolve, staggerDelay * inFlightBots));
+			inFlightBots++;
+			return r;
+		};
+
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				botPromises.push(this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex));
+				const botInstance = virtualPlayers[userID].instance as IBot;
+				botPromises.push(delayRequest(botInstance.type).then(() => this.doBotPick(botInstance, boosterIndex)));
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					this.disconnectedUsers[userID].pickedThisRound = true;
