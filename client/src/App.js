@@ -732,7 +732,7 @@ export default {
 				}
 				this.boosterNumber = data.boosterNumber;
 				this.pickNumber = data.pickNumber;
-				this.botScores = data.botScores;
+				this.botScores = data.botScores; // Get or Clear bot scores
 
 				// Only watching, not playing/receiving a boost ourself.
 				if (this.draftingState == DraftState.Watching) return;
@@ -744,6 +744,10 @@ export default {
 				this.draftingState = DraftState.Picking;
 				this.selectedCards = [];
 				this.burningCards = [];
+			});
+
+			this.socket.on("botRecommandations", data => {
+				if (data.pickNumber === this.pickNumber) this.botScores = data.scores;
 			});
 
 			this.socket.on("endDraft", () => {

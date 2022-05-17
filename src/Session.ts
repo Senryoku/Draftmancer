@@ -1425,6 +1425,7 @@ export class Session implements IIndexable {
 
 	async doBotPick(instance: IBot, boosterIndex: number) {
 		const s = this.draftState as DraftState;
+		if (!s) return [];
 		const startingBooster = s.boosters[boosterIndex].map(c => c.id);
 		const pickedIndices = [];
 		const pickedCards = [];
@@ -1460,7 +1461,7 @@ export class Session implements IIndexable {
 		};
 		this.draftLog?.users[instance.id].picks.push(pickData);
 		if (this.shouldSendLiveUpdates())
-			Connections[this.owner].socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
+			Connections[this.owner]?.socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
 
 		++s.pickedCardsThisRound;
 		return pickedCards;
@@ -1494,10 +1495,21 @@ export class Session implements IIndexable {
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
+
+		const staggerDelay = 200; // Wil delay successive calls to the mtgdraftbots API
+		let inFlightBots = 0;
+		const delayRequest = (botType: string) => {
+			if (botType !== "mtgdraftbots") return Promise.resolve();
+			let r = new Promise(resolve => setTimeout(resolve, staggerDelay * inFlightBots));
+			inFlightBots++;
+			return r;
+		};
+
 		for (let userID in virtualPlayers) {
 			const boosterIndex = negMod(boosterOffset + index, totalVirtualPlayers);
 			if (virtualPlayers[userID].isBot) {
-				botPromises.push(this.doBotPick(virtualPlayers[userID].instance as IBot, boosterIndex));
+				const botInstance = virtualPlayers[userID].instance as IBot;
+				botPromises.push(delayRequest(botInstance.type).then(() => this.doBotPick(botInstance, boosterIndex)));
 			} else {
 				if (virtualPlayers[userID].disconnected) {
 					this.disconnectedUsers[userID].pickedThisRound = true;
@@ -1521,16 +1533,34 @@ export class Session implements IIndexable {
 						booster: s.boosters[boosterIndex],
 						boosterNumber: s.boosterNumber,
 						pickNumber: s.pickNumber + 1,
-						botScores: this.disableBotSuggestions
-							? undefined
-							: await Connections[userID].bot?.getScores(
-									s.boosters[boosterIndex],
-									s.boosterNumber,
-									this.boostersPerPlayer,
-									s.pickNumber,
-									s.pickNumber + s.boosters[boosterIndex].length
-							  ),
 					});
+					// Asyncronously ask for bot recommendations, and send then when available
+					if (!this.disableBotSuggestions && Connections[userID].bot) {
+						(() => {
+							const localData = {
+								booster: s.boosters[boosterIndex],
+								boosterNumber: s.boosterNumber,
+								boostersPerPlayer: this.boostersPerPlayer,
+								pickNumber: s.pickNumber + 1,
+								numPicks: s.pickNumber + s.boosters[boosterIndex].length,
+							};
+							return Connections[userID].bot
+								?.getScores(
+									localData.booster,
+									localData.boosterNumber,
+									localData.boostersPerPlayer,
+									localData.pickNumber,
+									localData.numPicks
+								)
+								.then(value => {
+									Connections[userID]?.socket.emit("botRecommandations", {
+										pickNumber: localData.pickNumber,
+										scores: value,
+									});
+									return;
+								});
+						})();
+					}
 				}
 			}
 			++index;

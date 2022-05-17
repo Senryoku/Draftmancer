@@ -55,6 +55,7 @@ export interface IBot {
 	name: string;
 	id: string;
 	cards: Card[];
+	type: string;
 	lastScores: BotScores; // Keep track of the result of the last call to getScores
 
 	pick(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number): Promise<number>;
