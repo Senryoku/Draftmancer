@@ -1425,6 +1425,7 @@ export class Session implements IIndexable {
 
 	async doBotPick(instance: IBot, boosterIndex: number) {
 		const s = this.draftState as DraftState;
+		if (!s) return [];
 		const startingBooster = s.boosters[boosterIndex].map(c => c.id);
 		const pickedIndices = [];
 		const pickedCards = [];
