@@ -1460,7 +1460,7 @@ export class Session implements IIndexable {
 		};
 		this.draftLog?.users[instance.id].picks.push(pickData);
 		if (this.shouldSendLiveUpdates())
-			Connections[this.owner].socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
+			Connections[this.owner]?.socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
 
 		++s.pickedCardsThisRound;
 		return pickedCards;
@@ -1521,16 +1521,36 @@ export class Session implements IIndexable {
 						booster: s.boosters[boosterIndex],
 						boosterNumber: s.boosterNumber,
 						pickNumber: s.pickNumber + 1,
-						botScores: this.disableBotSuggestions
-							? undefined
-							: await Connections[userID].bot?.getScores(
-									s.boosters[boosterIndex],
-									s.boosterNumber,
-									this.boostersPerPlayer,
-									s.pickNumber,
-									s.pickNumber + s.boosters[boosterIndex].length
-							  ),
 					});
+					// Asyncronously ask for bot recommendations, and send then when available
+					if (!this.disableBotSuggestions && Connections[userID].bot) {
+						(() => {
+							const localData = {
+								booster: s.boosters[boosterIndex],
+								boosterNumber: s.boosterNumber,
+								boostersPerPlayer: this.boostersPerPlayer,
+								pickNumber: s.pickNumber + 1,
+								numPicks: s.pickNumber + s.boosters[boosterIndex].length,
+							};
+							return new Promise(resolve => setTimeout(resolve, 0)).then(() =>
+								Connections[userID].bot
+									?.getScores(
+										localData.booster,
+										localData.boosterNumber,
+										localData.boostersPerPlayer,
+										localData.pickNumber,
+										localData.numPicks
+									)
+									.then(value => {
+										Connections[userID]?.socket.emit("botRecommandations", {
+											pickNumber: localData.pickNumber,
+											scores: value,
+										});
+										return;
+									})
+							);
+						})();
+					}
 				}
 			}
 			++index;
