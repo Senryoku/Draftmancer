@@ -60,7 +60,12 @@
 
 		<!-- Cards of selected player -->
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<template v-if="!draftlog.delayed || userID === selectedLog.userID">
+			<!-- Display the log if available (contains cards) and is not delayed or is personal, otherwise only display the deck hash -->
+			<template
+				v-if="
+					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) && selectedLog.cards
+				"
+			>
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
@@ -240,7 +245,8 @@ export default {
 		if (this.draftlog && this.draftlog.users) {
 			const userIDs = Object.keys(this.draftlog.users);
 			if (userIDs.length > 0) {
-				this.displayOptions.detailsUserID = userIDs[0]; // Default to first player
+				this.displayOptions.detailsUserID = userIDs[0]; // Fallback to the first player in the list
+				// Tries to display the user's picks by default, checking by ID then username
 				if (userIDs.includes(this.userID)) this.displayOptions.detailsUserID = this.userID;
 				else
 					for (let uid of userIDs)

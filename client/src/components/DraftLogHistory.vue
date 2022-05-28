@@ -33,27 +33,30 @@
 						<span v-if="draftLog.time">({{ new Date(draftLog.time).toLocaleString() }})</span>
 					</span>
 				</span>
+				<template v-if="draftLog.delayed">
+					<template v-if="draftLog.boosters">
+						<!-- User (the session owner of the draft) has the full logs ready to be shared -->
+						<span style="pointer-events: none"
+							>(Partial: The complete log is locked until you share it)</span
+						>
+						<button @click="$emit('sharelog', draftLog)">
+							<i class="fas fa-share-square"></i> Share with session and unlock
+						</button>
+					</template>
+					<template v-else
+						><span style="pointer-events: none"
+							>(Partial: Complete log is locked until the session owner shares it)</span
+						></template
+					>
+				</template>
 				<span>
 					<button class="flat" @click="toggle(idx)">
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
 						<template v-else> <i class="far fa-eye"></i> Review</template>
 					</button>
-					<template v-if="draftLog.version === '2.0'">
-						<template v-if="!draftLog.delayed">
-							<button type="button" @click="downloadLog(draftLog)">
-								<i class="fas fa-file-download"></i> Download
-							</button>
-						</template>
-						<template v-else-if="draftLog.boosters">
-							<!-- User has the full logs ready to be shared -->
-							(Delayed: No one can review this log until you share it)
-							<button @click="$emit('sharelog', draftLog)">
-								<i class="fas fa-share-square"></i> Share with session and unlock
-							</button>
-						</template>
-						<template v-else>(Delayed: Locked until the session owner shares the logs) </template>
-					</template>
-					<template v-else>(Incompatible draft log version)</template>
+					<button type="button" @click="downloadLog(draftLog)">
+						<i class="fas fa-file-download"></i> Download
+					</button>
 					<button type="button" class="stop" @click="deleteLog(draftLog)">
 						<i class="fas fa-trash"></i> Delete
 					</button>

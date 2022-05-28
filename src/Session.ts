@@ -72,6 +72,7 @@ export const optionProps = [
 	"pickedCardsPerRound",
 	"burnedCardsPerRound",
 	"discardRemainingCardsAt",
+	"personalLogs",
 	"draftLogRecipients",
 	"bracketLocked",
 	"draftPaused",
@@ -268,6 +269,7 @@ export class Session implements IIndexable {
 	pickedCardsPerRound: number = 1;
 	burnedCardsPerRound: number = 0;
 	discardRemainingCardsAt: number = 0;
+	personalLogs: boolean = true;
 	draftLogRecipients: DraftLogRecipients = "everyone";
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
@@ -1300,7 +1302,6 @@ export class Session implements IIndexable {
 
 		// Draft Log initialization
 		const log = this.initLogs("Draft");
-		log.teamDraft = this.teamDraft;
 		for (let userID in log.users) log.users[userID].picks = [];
 
 		let virtualPlayers = this.getSortedVirtualPlayers();
@@ -1674,7 +1675,7 @@ export class Session implements IIndexable {
 
 	///////////////////// Traditional Draft End  //////////////////////
 
-	initLogs(type = "Draft"): DraftLog {
+	initLogs(type: string = "Draft"): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
 		const getCard = this.customCardList?.customCards
 			? (cid: CardID) => {
@@ -1700,7 +1701,7 @@ export class Session implements IIndexable {
 			version: this.draftLog.version,
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
-			delayed: true,
+			delayed: this.draftLog.delayed,
 			teamDraft: this.draftLog.teamDraft,
 			users: {},
 			carddata: {} as { [cid: string]: Card },
@@ -1710,8 +1711,10 @@ export class Session implements IIndexable {
 			if (uid === recipientUID) {
 				strippedLog.users[uid] = this.draftLog.users[uid];
 				// We also have to supply card data for all cards seen by the player.
-				for (let pick of this.draftLog.users[uid].picks)
-					for (let cid of pick.booster) strippedLog.carddata[cid] = Cards[cid];
+				if (this.draftLog.users[uid].picks)
+					for (let pick of this.draftLog.users[uid].picks)
+						for (let cid of pick.booster) strippedLog.carddata[cid] = Cards[cid];
+				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = Cards[cid];
 			} else {
 				strippedLog.users[uid] = {
 					userID: this.draftLog.users[uid].userID,
@@ -1729,21 +1732,30 @@ export class Session implements IIndexable {
 		if (!this.draftLog) return;
 		switch (this.draftLogRecipients) {
 			case "none":
+				if (this.personalLogs)
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
 				break;
 			case "owner":
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
+				if (this.personalLogs)
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
 				break;
 			default:
 			case "delayed": {
 				this.draftLog.delayed = true;
 				// Send the full log to the owner.
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				// Send the stripped log, with only the details of their own picks, to all other players.
-				this.forNonOwners(uid => Connections[uid].socket.emit("draftLog", this.getStrippedLog(uid)));
+				// Send the stripped log, with the details of their own picks if personalLogs are enabled, to all other players.
+				if (this.personalLogs)
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+				else {
+					const strippedLog = this.getStrippedLog();
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
+				}
 				break;
 			}
 			case "everyone":
-				this.forUsers(u => Connections[u]?.socket.emit("draftLog", this.draftLog));
+				this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", this.draftLog));
 				break;
 		}
 	}
