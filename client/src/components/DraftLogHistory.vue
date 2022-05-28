@@ -181,6 +181,10 @@ export default {
 </script>
 
 <style scoped>
+.draft-log-history {
+	min-height: 85vh; /* Takes the whole modal height by default, avoiding some shifting */
+}
+
 .draft-log-history .controls {
 	margin-bottom: 0.5em;
 }

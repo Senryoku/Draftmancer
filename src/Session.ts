@@ -5,14 +5,13 @@ const uuidv1 = uuid.v1;
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, isEmpty, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom } from "./utils.js";
+import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom } from "./utils.js";
 import { Connections } from "./Connection.js";
 import {
 	CardID,
 	Card,
 	Cards,
 	DeckList,
-	UniqueCard,
 	getUnique,
 	BoosterCardsBySet,
 	CardsBySet,
@@ -1694,7 +1693,8 @@ export class Session implements IIndexable {
 		return this.draftLog;
 	}
 
-	getStrippedLog() {
+	// Returns a copy of the current draft log without the pick details, except for an optional recipient.
+	getStrippedLog(recipientUID: UserID | undefined = undefined) {
 		if (!this.draftLog) return;
 		const strippedLog: any = {
 			version: this.draftLog.version,
@@ -1703,18 +1703,28 @@ export class Session implements IIndexable {
 			delayed: true,
 			teamDraft: this.draftLog.teamDraft,
 			users: {},
+			carddata: {} as { [cid: string]: Card },
 		};
-		for (let u in this.draftLog.users) {
-			strippedLog.users[u] = {
-				userID: this.draftLog.users[u].userID,
-				userName: this.draftLog.users[u].userName,
-			};
-			if (this.draftLog.users[u].decklist)
-				strippedLog.users[u].decklist = { hashes: this.draftLog.users[u].decklist.hashes };
+
+		for (let uid in this.draftLog.users) {
+			if (uid === recipientUID) {
+				strippedLog.users[uid] = this.draftLog.users[uid];
+				// We also have to supply card data for all cards seen by the player.
+				for (let pick of this.draftLog.users[uid].picks)
+					for (let cid of pick.booster) strippedLog.carddata[cid] = Cards[cid];
+			} else {
+				strippedLog.users[uid] = {
+					userID: this.draftLog.users[uid].userID,
+					userName: this.draftLog.users[uid].userName,
+				};
+				if (this.draftLog.users[uid].decklist)
+					strippedLog.users[uid].decklist = { hashes: this.draftLog.users[uid].decklist.hashes };
+			}
 		}
 		return strippedLog;
 	}
 
+	// Sends the current draft log to all users according to the specified recipient(s).
 	sendLogs() {
 		if (!this.draftLog) return;
 		switch (this.draftLogRecipients) {
@@ -1726,9 +1736,10 @@ export class Session implements IIndexable {
 			default:
 			case "delayed": {
 				this.draftLog.delayed = true;
+				// Send the full log to the owner.
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				const strippedLog = this.getStrippedLog();
-				for (let u of this.users) if (u !== this.owner) Connections[u].socket.emit("draftLog", strippedLog);
+				// Send the stripped log, with only the details of their own picks, to all other players.
+				this.forNonOwners(uid => Connections[uid].socket.emit("draftLog", this.getStrippedLog(uid)));
 				break;
 			}
 			case "everyone":

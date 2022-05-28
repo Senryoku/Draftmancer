@@ -60,7 +60,7 @@
 
 		<!-- Cards of selected player -->
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<template v-if="!draftlog.delayed">
+			<template v-if="!draftlog.delayed || userID === selectedLog.userID">
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
