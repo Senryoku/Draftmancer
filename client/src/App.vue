@@ -2003,7 +2003,7 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Controls who is going to receive the game logs.</p><p>\'Owner only, delayed\': Owner will choose when to reveal the game log. Useful for tournaments.</p>',
+								'<p>Controls who is going to receive the game logs.</p><p>\'Delayed\': Owner will choose when to reveal the full game log. Useful for tournaments.</p>',
 						}"
 					>
 						<label for="draft-log-recipients">Send game logs to</label>
@@ -2011,7 +2011,7 @@
 							<select v-model="draftLogRecipients" id="draft-log-recipients">
 								<option value="everyone">Everyone</option>
 								<option value="owner">Owner only</option>
-								<option value="delayed">Owner only, delayed</option>
+								<option value="delayed">Delayed</option>
 								<option value="none">No-one</option>
 							</select>
 						</div>
