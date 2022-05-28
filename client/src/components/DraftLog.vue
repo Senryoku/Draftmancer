@@ -44,7 +44,8 @@
 							style="margin: 0 0.5em"
 						></i>
 					</div>
-					<span class="color-list" v-if="log.colors">
+					<!-- Color Summary of the picks, explicitly hidden for other players if the details are supposed to be delayed (Don't leak it to the owner) -->
+					<span class="color-list" v-if="(!draftlog.delayed || log.userID === userID) && log.colors">
 						<img
 							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
 							:key="c"
