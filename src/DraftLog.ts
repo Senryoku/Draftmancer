@@ -25,6 +25,7 @@ export class DraftLog {
 		this.time = Date.now();
 		this.setRestriction = session.setRestriction;
 		this.useCustomBoosters = session.customBoosters.some((v: string) => v !== "");
+		this.customBoosters = this.useCustomBoosters ? session.customBoosters : [];
 		this.boosters = session.boosters.map((b: Card[]) => b.map((c: Card) => c.id));
 		this.carddata = carddata;
 		this.personalLogs = session.personalLogs;

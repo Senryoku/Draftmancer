@@ -1697,22 +1697,28 @@ export class Session implements IIndexable {
 	// Returns a copy of the current draft log without the pick details, except for an optional recipient.
 	getStrippedLog(recipientUID: UserID | undefined = undefined) {
 		if (!this.draftLog) return;
-		const strippedLog: any = {
+		const strippedLog: DraftLog = {
 			version: this.draftLog.version,
+			type: this.draftLog.type,
+			users: {},
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
-			personalLogs: this.draftLog.personalLogs,
-			delayed: this.draftLog.delayed,
-			teamDraft: this.draftLog.teamDraft,
-			users: {},
+			setRestriction: this.draftLog.setRestriction,
+			useCustomBoosters: this.draftLog.useCustomBoosters,
+			customBoosters: this.draftLog.customBoosters,
+			boosters: [], // Omited
 			carddata: {} as { [cid: string]: Card },
+
+			delayed: this.draftLog.delayed,
+			personalLogs: this.draftLog.personalLogs,
+			teamDraft: this.draftLog.teamDraft,
 		};
 
 		for (let uid in this.draftLog.users) {
 			if (uid === recipientUID) {
 				strippedLog.users[uid] = this.draftLog.users[uid];
 				// We also have to supply card data for all cards seen by the player.
-				if (this.draftLog.users[uid].picks)
+				if (this.draftLog.type === "Draft" && this.draftLog.users[uid].picks)
 					for (let pick of this.draftLog.users[uid].picks)
 						for (let cid of pick.booster) strippedLog.carddata[cid] = Cards[cid];
 				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = Cards[cid];
@@ -1775,7 +1781,7 @@ export class Session implements IIndexable {
 			return;
 
 		const log = this.initLogs("Sealed");
-		log.customBoosters = customBoosters;
+		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
 		let idx = 0;
 		for (let userID of this.users) {
