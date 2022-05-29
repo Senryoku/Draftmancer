@@ -6,7 +6,7 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe("Rochester Draft", function() {
+describe.only("Rochester Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
@@ -155,4 +155,116 @@ describe("Rochester Draft", function() {
 		startDraft();
 		endDraft();
 	});
+
+	function checklogs(desc, setup, func) {
+		describe(desc, function() {
+			it("Emit Settings.", setup);
+			startDraft();
+			it("Every player randomly chooses a card and players should receive a valid draft log.", function(done) {
+				let draftEnded = 0;
+
+				for (let c = 0; c < clients.length; ++c) {
+					// Pick randomly and retry on error
+					const pick = state => {
+						const cl = clients[c];
+						cl.emit("rochesterDraftPick", [Math.floor(Math.random() * state.booster.length)], response => {
+							if (response.code !== 0) pick(state);
+						});
+					};
+					clients[c].on("rochesterDraftNextRound", function(state) {
+						if (state.currentPlayer === clients[c].query.userID) pick(state);
+					});
+					clients[c].once("draftLog", function(draftLog) {
+						draftEnded += 1;
+						func(c, draftLog);
+						this.removeListener("rochesterDraftNextRound");
+						if (draftEnded == clients.length) done();
+					});
+				}
+				// Pick the first card
+				let currPlayer = clients.findIndex(c => c.query.userID == rochesterDraftState.currentPlayer);
+				clients[currPlayer].emit("rochesterDraftPick", [0]);
+			});
+		});
+	}
+
+	function setSettings(draftLogRecipients, personalLogs) {
+		return done => {
+			const nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[nonOwnerIdx].on("sessionOptions", function() {
+				if (
+					Sessions[sessionID].personalLogs === personalLogs &&
+					Sessions[sessionID].draftLogRecipients === draftLogRecipients
+				) {
+					clients[nonOwnerIdx].removeListener("sessionOptions");
+					done();
+				}
+			});
+			clients[ownerIdx].emit("setDraftLogRecipients", draftLogRecipients);
+			clients[ownerIdx].emit("setPersonalLogs", personalLogs);
+		};
+	}
+
+	checklogs(
+		"Logs: Complete to Everyone; Personal logs enabled",
+		setSettings("everyone", true),
+		(clientIndex, draftLog) => {
+			expect(draftLog.personalLogs).to.be.true;
+			for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+		}
+	);
+
+	checklogs(
+		"Logs: Complete to Everyone; Personal logs disabled",
+		setSettings("everyone", false),
+		(clientIndex, draftLog) => {
+			expect(draftLog.personalLogs).to.be.false;
+			for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+		}
+	);
+
+	checklogs(
+		"Logs: Complete to Everyone (Delayed); Personal logs enabled",
+		setSettings("delayed", true),
+		(clientIndex, draftLog) => {
+			expect(draftLog.personalLogs).to.be.true;
+			if (clientIndex === ownerIdx) {
+				for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+			} else {
+				expect(draftLog.users[clients[clientIndex].query.userID].cards).to.exist;
+				for (let i = 0; i < clients.length; ++i)
+					if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+			}
+		}
+	);
+
+	checklogs(
+		"Logs: Complete to Everyone (Delayed); Personal logs disabled",
+		setSettings("delayed", false),
+		(clientIndex, draftLog) => {
+			expect(draftLog.personalLogs).to.be.false;
+			if (clientIndex === ownerIdx) {
+				for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+			} else {
+				for (let i = 0; i < clients.length; ++i)
+					expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+			}
+		}
+	);
+
+	checklogs("Logs: Complete to No-one; Personal logs enabled", setSettings("none", true), (clientIndex, draftLog) => {
+		expect(draftLog.personalLogs).to.be.true;
+		expect(draftLog.users[clients[clientIndex].query.userID].cards).to.exist;
+		for (let i = 0; i < clients.length; ++i)
+			if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+	});
+
+	checklogs(
+		"Logs: Complete to No-one; Personal logs disabled",
+		setSettings("none", false),
+		(clientIndex, draftLog) => {
+			expect(draftLog.personalLogs).to.be.false;
+			for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+		}
+	);
 });
