@@ -106,37 +106,37 @@ export default {
 		language: { type: String, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
-	data: function() {
+	data() {
 		return { displayStats: false };
 	},
 	computed: {
-		mainboard: function() {
+		mainboard() {
 			let uniqueID = 0;
 			return this.list.main.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
-		sideboard: function() {
+		sideboard() {
 			let uniqueID = 0;
 			return this.list.side.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
-		landcount: function() {
+		landcount() {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 	},
 	methods: {
-		exportDeck: function(full = true) {
+		exportDeck(full = true) {
 			copyToClipboard(exportToMTGA(this.mainboard, this.sideboard, this.language, this.list.lands, 0, full));
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		copyHash: function(hash) {
+		copyHash(hash) {
 			copyToClipboard(hash);
 			fireToast("success", "Hash copied to clipboard!");
 		},
 	},
 	watch: {
-		list: function() {
+		list() {
 			this.$nextTick(() => {
-				this.$refs.mainboardComponent.sync();
-				this.$refs.sideboardComponent.sync();
+				this.$refs.mainboardComponent?.sync();
+				this.$refs.sideboardComponent?.sync();
 			});
 		},
 	},
