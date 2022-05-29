@@ -1746,6 +1746,10 @@ export class Session implements IIndexable {
 					this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
 				}
 				break;
+			default:
+			case "delayed":
+				this.draftLog.delayed = true;
+			// Fallthrough
 			case "owner":
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
@@ -1755,20 +1759,6 @@ export class Session implements IIndexable {
 					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
 				}
 				break;
-			default:
-			case "delayed": {
-				this.draftLog.delayed = true;
-				// Send the full log to the owner.
-				Connections[this.owner].socket.emit("draftLog", this.draftLog);
-				// Send the stripped log, with the details of their own picks if personalLogs are enabled, to all other players.
-				if (this.personalLogs)
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
-				else {
-					const strippedLog = this.getStrippedLog();
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
-				}
-				break;
-			}
 			case "everyone":
 				this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", this.draftLog));
 				break;
