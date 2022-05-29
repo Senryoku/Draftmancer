@@ -2166,12 +2166,37 @@ export class Session implements IIndexable {
 			userID: userID,
 			decklist: decklist,
 		};
-		if (this.draftLogRecipients === "everyone") {
-			this.forUsers(uid => Connections[uid]?.socket.emit("shareDecklist", shareData));
-			// Also send the update to the organiser separately if they're not playing
-			if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-		} else if (this.draftLogRecipients === "owner" || this.draftLogRecipients === "delayed")
-			Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+		const hashesOnly = {
+			sessionID: this.id,
+			time: this.draftLog?.time,
+			userID: userID,
+			decklist: { hashes: decklist.hashes },
+		};
+		// Note: The session setting draftLogRecipients may have change since the game ended.
+		switch (this.draftLogRecipients) {
+			default:
+			case "delayed":
+				if (this.draftLog.delayed) {
+					// Complete log has not been shared yet, send only hashes to non-owners.
+					Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+					break;
+				}
+			// Else, fall through to "everyone"
+			case "everyone":
+				// Also send the update to the organiser separately if they're not playing
+				if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+				this.forUsers(uid => Connections[uid]?.socket.emit("shareDecklist", shareData));
+				break;
+			case "owner":
+				Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+				this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+				break;
+			case "none":
+				Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
+				this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+				break;
+		}
 	}
 
 	// Indicates if the DraftLogLive feature is in use

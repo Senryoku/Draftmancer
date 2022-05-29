@@ -964,6 +964,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
+		draftLog.delayed = false;
 		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
 	},
 };
