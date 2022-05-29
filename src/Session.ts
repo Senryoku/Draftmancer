@@ -1740,12 +1740,20 @@ export class Session implements IIndexable {
 		switch (this.draftLogRecipients) {
 			case "none":
 				if (this.personalLogs)
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+					this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+				else {
+					const strippedLog = this.getStrippedLog();
+					this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
+				}
 				break;
 			case "owner":
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
 					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+				else {
+					const strippedLog = this.getStrippedLog();
+					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
+				}
 				break;
 			default:
 			case "delayed": {
