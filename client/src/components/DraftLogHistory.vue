@@ -34,8 +34,8 @@
 					</span>
 				</span>
 				<template v-if="draftLog.delayed">
-					<template v-if="draftLog.boosters">
-						<!-- User (the session owner of the draft) has the full logs ready to be shared -->
+					<template v-if="shareable(draftLog)">
+						<!-- User (the session owner during the draft) has the full logs ready to be shared -->
 						<span style="pointer-events: none"
 							>(Partial: The complete log is locked until you share it)</span
 						>
@@ -104,6 +104,10 @@ export default {
 		},
 	},
 	methods: {
+		shareable(draftlog) {
+			// Returns true if the draftlog is shareable, i.e. the full log is locally available and is marked as delayed (other players in the session should only have a partial log)
+			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every(user => user.cards);
+		},
 		downloadLog: function(draftLog) {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
 			for (let uid in draftLog.users) {
