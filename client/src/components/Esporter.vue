@@ -9,10 +9,12 @@
 					<div>
 						<img src="../assets/img/logo-nobackground-500-cropped.png" alt="Esporter Logo" width="100%" />
 					</div>
-					<div v-if="remainingTime">
+					<div v-if="nextSplit && remainingTime">
 						<div style="font-size: 0.8em; font-style: italic">Next Split</div>
 						<div style="text-align: right">
-							<div style="white-space: nowrap"><strong>JustLolaman</strong></div>
+							<div style="white-space: nowrap">
+								<strong>{{ nextSplit.coach }}</strong>
+							</div>
 							<div style="white-space: nowrap; font-family: 'Lucida Console'; font-size: 0.8em">
 								<span v-if="remainingTime.days > 0">{{ remainingTime.days }}d</span>
 								{{ remainingTime.hours.toString().padStart(2, "0") }}h
@@ -50,22 +52,30 @@ function computeRemainingTime(targetDate) {
 }
 export default {
 	data: () => {
-		const nextSplitDate = new Date("May 30, 2022 4:00 pm PST");
-		let remainingTime = computeRemainingTime(nextSplitDate);
+		const splits = [
+			{ coach: "JustLolaman", date: new Date("May 30, 2022 4:00 pm PST") },
+			{ coach: "Chord_O_Calls", date: new Date("June 6, 2022 4:00 pm PST") },
+		];
+		const now = new Date(Date.now());
+		let nextSplit = null;
+		for (let s of splits) if (s.date > now && (!nextSplit || s.date < nextSplit.date)) nextSplit = s;
+
+		let remainingTime = nextSplit ? computeRemainingTime(nextSplit.date) : null;
 		return {
 			interval: null,
-			nextSplitDate: nextSplitDate,
+			nextSplit: nextSplit,
 			remainingTime: remainingTime,
 		};
 	},
 	mounted() {
-		this.interval = setInterval(() => {
-			this.remainingTime = computeRemainingTime(this.nextSplitDate);
-			if (!this.remainingTime) {
-				clearInterval(this.interval);
-				this.interval = null;
-			}
-		}, 1000);
+		if (this.nextSplit)
+			this.interval = setInterval(() => {
+				this.remainingTime = computeRemainingTime(this.nextSplit.date);
+				if (!this.remainingTime) {
+					clearInterval(this.interval);
+					this.interval = null;
+				}
+			}, 1000);
 	},
 	methods: {},
 };
