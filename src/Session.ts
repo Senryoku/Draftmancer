@@ -1701,6 +1701,7 @@ export class Session implements IIndexable {
 			version: this.draftLog.version,
 			sessionID: this.draftLog.sessionID,
 			time: this.draftLog.time,
+			personalLogs: this.draftLog.personalLogs,
 			delayed: this.draftLog.delayed,
 			teamDraft: this.draftLog.teamDraft,
 			users: {},
