@@ -58,9 +58,8 @@
         "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
-        "commonCount": 1,
         "mythicCount": 2,
-        "rareCount": 2
+        "rareCount": 3
     },
     "4ed": {
         "code": "4ed",
@@ -251,10 +250,10 @@
     "anb": {
         "code": "anb",
         "fullName": "Arena Beginner Set",
-        "cardCount": 116,
+        "cardCount": 118,
         "isPrimary": false,
         "icon": "img/sets/anb.svg",
-        "commonCount": 73,
+        "commonCount": 75,
         "rareCount": 20,
         "uncommonCount": 23
     },
@@ -568,13 +567,14 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 28,
+        "cardCount": 612,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
-        "commonCount": 2,
-        "mythicCount": 5,
-        "rareCount": 19,
-        "uncommonCount": 2
+        "commonCount": 176,
+        "mythicCount": 53,
+        "rareCount": 183,
+        "specialCount": 1,
+        "uncommonCount": 199
     },
     "cm1": {
         "code": "cm1",
@@ -1974,10 +1974,10 @@
     "j21": {
         "code": "j21",
         "fullName": "Jumpstart: Historic Horizons",
-        "cardCount": 388,
+        "cardCount": 389,
         "isPrimary": true,
         "icon": "img/sets/j21.svg",
-        "commonCount": 191,
+        "commonCount": 192,
         "mythicCount": 13,
         "rareCount": 59,
         "uncommonCount": 125
@@ -2501,10 +2501,10 @@
         "cardCount": 447,
         "isPrimary": false,
         "icon": "img/sets/ncc.svg",
-        "commonCount": 34,
+        "commonCount": 35,
         "mythicCount": 50,
         "rareCount": 304,
-        "uncommonCount": 59
+        "uncommonCount": 58
     },
     "nec": {
         "code": "nec",
@@ -4666,11 +4666,11 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 536,
+        "cardCount": 538,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 88,
+        "mythicCount": 90,
         "rareCount": 389,
         "uncommonCount": 20
     },
@@ -4864,6 +4864,14 @@
         "isPrimary": false,
         "block": "Commander",
         "icon": "img/sets/tc15.svg",
+        "commonCount": 1
+    },
+    "tclb": {
+        "code": "tclb",
+        "fullName": "Battle for Baldur's Gate Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/tclb.svg",
         "commonCount": 1
     },
     "tcm2": {
@@ -5497,6 +5505,17 @@
         "mythicCount": 5,
         "rareCount": 20,
         "uncommonCount": 5
+    },
+    "ysnc": {
+        "code": "ysnc",
+        "fullName": "Alchemy: New Capenna",
+        "cardCount": 6,
+        "isPrimary": false,
+        "block": "Alchemy 2022",
+        "icon": "img/sets/ysnc.svg",
+        "mythicCount": 1,
+        "rareCount": 3,
+        "uncommonCount": 2
     },
     "zen": {
         "code": "zen",
