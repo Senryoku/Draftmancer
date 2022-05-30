@@ -786,6 +786,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			ack?.({ code: 0 });
 		}
 	},
+	setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
+		Sessions[sessionID].personalLogs = value;
+		Sessions[sessionID].forNonOwners(uid =>
+			Connections[uid].socket.emit("sessionOptions", { personalLogs: value })
+		);
+	},
 	setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
 		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
 		for (let user of Sessions[sessionID].users) {
@@ -958,6 +964,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.draftLog.delayed = false;
 
 		// Send the full copy to everyone
+		draftLog.delayed = false;
 		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
 	},
 };

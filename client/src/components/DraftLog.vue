@@ -13,8 +13,10 @@
 				<li
 					v-for="(log, index) of tableSummary"
 					:key="index"
+					class="player-button"
 					:class="{
 						clickable: log.userName !== '(empty)',
+						disabled: log.userName === '(empty)',
 						'selected-player': log.userID == displayOptions.detailsUserID,
 						teama: type === 'Draft' && teamDraft && index % 2 === 0,
 						teamb: type === 'Draft' && teamDraft && index % 2 === 1,
@@ -60,7 +62,12 @@
 
 		<!-- Cards of selected player -->
 		<div v-if="Object.keys(draftlog.users).includes(displayOptions.detailsUserID)">
-			<template v-if="!draftlog.delayed || userID === selectedLog.userID">
+			<!-- Display the log if available (contains cards) and is not delayed or is personal, otherwise only display the deck hash -->
+			<template
+				v-if="
+					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) && selectedLog.cards
+				"
+			>
 				<div class="section-title">
 					<h2>{{ selectedLog.userName }}</h2>
 					<div class="controls">
@@ -240,7 +247,8 @@ export default {
 		if (this.draftlog && this.draftlog.users) {
 			const userIDs = Object.keys(this.draftlog.users);
 			if (userIDs.length > 0) {
-				this.displayOptions.detailsUserID = userIDs[0]; // Default to first player
+				this.displayOptions.detailsUserID = userIDs[0]; // Fallback to the first player in the list
+				// Tries to display the user's picks by default, checking by ID then username
 				if (userIDs.includes(this.userID)) this.displayOptions.detailsUserID = this.userID;
 				else
 					for (let uid of userIDs)
@@ -476,7 +484,7 @@ ul.player-table li {
 	display: inline-flex;
 	justify-content: space-between;
 
-	border: 1px solid black;
+	border: 1px solid #282828;
 	margin: var(--margin);
 	padding: 0.5em;
 	border-radius: 0.2em;
@@ -496,22 +504,6 @@ ul.player-list-log > li {
 .color-list > img {
 	margin-left: 0.25em;
 	margin-right: 0.25em;
-}
-
-ul.player-list-log li.selected-player,
-ul.player-table li.selected-player {
-	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1);
-	font-weight: bold;
-}
-
-ul.player-list-log li.selected-player.self,
-ul.player-table li.selected-player.self {
-	-webkit-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1), inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
-	-moz-box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1) inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
-	box-shadow: 0px 0px 20px 1px rgba(0, 115, 2, 1), inset 0 0 5px 0px rgba(255, 255, 255, 0.3);
-	font-weight: bold;
 }
 
 ul.player-table li:nth-child(1) {
@@ -603,5 +595,31 @@ ul.player-table.six li:nth-child(3):after,
 ul.player-table.six li:nth-child(6):after,
 ul.player-table.six li:nth-child(4):before {
 	content: "";
+}
+
+.player-button.selected-player {
+	box-shadow: inset 0px 0px 8px 2px rgb(99, 101, 149);
+	background-color: #666;
+}
+
+.player-button.self {
+	background-color: #505056;
+}
+
+.player-button.selected-player {
+	background-color: #606068;
+}
+
+.player-button.clickable:not(.selected-player) {
+	box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.2), inset -2px -2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.player-button.clickable:not(.selected-player):hover {
+	background-color: #585858;
+	color: white;
+}
+
+.player-button.clickable:not(.selected-player):active {
+	box-shadow: inset 2px 2px 2px 0px rgba(0, 0, 0, 0.2), inset -2px -2px 2px 0px rgba(255, 255, 255, 0.2);
 }
 </style>

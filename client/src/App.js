@@ -185,6 +185,7 @@ export default {
 			discardRemainingCardsAt: 0,
 			maxTimer: 75,
 			pickTimer: 75,
+			personalLogs: true,
 			draftLogRecipients: "everyone",
 			bracketLocked: false,
 			//
@@ -2666,6 +2667,10 @@ export default {
 		discardRemainingCardsAt() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDiscardRemainingCardsAt", this.discardRemainingCardsAt);
+		},
+		personalLogs() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setPersonalLogs", this.personalLogs);
 		},
 		draftLogRecipients() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

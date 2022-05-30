@@ -1,5 +1,11 @@
 [
 	{
+		"date": "29/05/2022",
+		"notes": [
+			"Slightly reworked draft logs and added a 'Personal Log' setting: By default players will always receive the details of their own picks and final card pool. This can be disabled in the settings menu."
+		]
+	},
+	{
 		"date": "28/04/2022",
 		"notes": ["Experimental support for custom cards in cubes. See the cube format documentation for details."]
 	},

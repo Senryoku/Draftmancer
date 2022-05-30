@@ -2003,15 +2003,28 @@
 						v-tooltip.left="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Controls who is going to receive the game logs.</p><p>\'Delayed\': Owner will choose when to reveal the full game log. Useful for tournaments.</p>',
+								'<p>If enabled, players will receive a log of their own draft, regardless of the full game log settings.</p>',
 						}"
 					>
-						<label for="draft-log-recipients">Send game logs to</label>
+						<label for="option-personal-logs">Personal Logs</label>
+						<div class="right">
+							<input type="checkbox" v-model="personalLogs" id="option-personal-logs" />
+						</div>
+					</div>
+					<div
+						class="line"
+						v-tooltip.left="{
+							classes: 'option-tooltip',
+							content:
+								'<p>Controls who is going to receive the full game logs. Note that this setting doesn\'t affect personal logs.</p><p>\'Everyone, on owner approval\': The session owner will choose when to reveal the full game logs. Useful for tournaments.</p>',
+						}"
+					>
+						<label for="draft-log-recipients">Send full game logs to</label>
 						<div class="right">
 							<select v-model="draftLogRecipients" id="draft-log-recipients">
 								<option value="everyone">Everyone</option>
+								<option value="delayed">Everyone, on owner approval</option>
 								<option value="owner">Owner only</option>
-								<option value="delayed">Delayed</option>
 								<option value="none">No-one</option>
 							</select>
 						</div>
