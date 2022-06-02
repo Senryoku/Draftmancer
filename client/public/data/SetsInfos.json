@@ -567,12 +567,12 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 612,
+        "cardCount": 651,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
         "commonCount": 176,
-        "mythicCount": 53,
-        "rareCount": 183,
+        "mythicCount": 63,
+        "rareCount": 212,
         "specialCount": 1,
         "uncommonCount": 199
     },
@@ -3819,10 +3819,10 @@
     "pncc": {
         "code": "pncc",
         "fullName": "New Capenna Commander Promos",
-        "cardCount": 73,
+        "cardCount": 72,
         "isPrimary": false,
         "icon": "img/sets/pncc.svg",
-        "mythicCount": 2,
+        "mythicCount": 1,
         "rareCount": 71
     },
     "pnem": {
@@ -5509,13 +5509,14 @@
     "ysnc": {
         "code": "ysnc",
         "fullName": "Alchemy: New Capenna",
-        "cardCount": 6,
+        "cardCount": 26,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/ysnc.svg",
-        "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 2
+        "commonCount": 1,
+        "mythicCount": 3,
+        "rareCount": 13,
+        "uncommonCount": 9
     },
     "zen": {
         "code": "zen",
