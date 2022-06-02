@@ -791,6 +791,101 @@ class NEOBoosterFactory extends BoosterFactory {
 	}
 }
 
+/* Commander Legends: Battle for Baldur's Gate
+ * 1 Legendary creature or planeswalker (rare or mythic rare in 31% of boosters)
+ * 1 Legendary Background (rare in 1 of 12 boosters)
+ * 1 Non-legendary rare or mythic rare card
+ * 3 Uncommons
+ * 13 Commons
+ * 1 Traditional foil card of any rarity
+ */
+class CLBBoosterFactory extends BoosterFactory {
+	static regex = /Legendary.*(Creature|Planeswalker).*/;
+	completeCardPool: SlotedCardPool; // Will be used for foils
+	legendaryCreaturesAndPlaneswalkers: SlotedCardPool;
+	legendaryBackgrounds: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		let [legendaryCreaturesAndPlaneswalkers, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) =>
+				Cards[cid].type.match(CMRBoosterFactory.regex) &&
+				!["Vivien, Champion of the Wilds", "Xenagos, the Reveler"].includes(Cards[cid].name) // These two cannot be your commander
+		);
+		let legendaryBackgrounds;
+		[legendaryBackgrounds, filteredCardPool] = filterCardPool(filteredCardPool, (cid: CardID) =>
+			Cards[cid].subtypes.includes("Background")
+		);
+		super(filteredCardPool, landSlot, options);
+		this.completeCardPool = cardPool;
+		this.legendaryCreaturesAndPlaneswalkers = legendaryCreaturesAndPlaneswalkers;
+		this.legendaryBackgrounds = legendaryBackgrounds;
+	}
+
+	// Not using the suplied cardpool here
+	generateBooster(targets: Targets) {
+		// These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
+		if (targets === DefaultBoosterTargets)
+			targets = {
+				common: 13,
+				uncommon: 3,
+				rare: 1,
+			};
+		const legendaryCounts = countBySlot(this.legendaryCreaturesAndPlaneswalkers);
+		// Ignore the rule if there's no legendary creatures or planeswalkers left
+		if (Object.values(legendaryCounts).every(c => c === 0)) {
+			return super.generateBooster(targets);
+		} else {
+			let booster: Array<Card> | false = [];
+
+			booster = super.generateBooster(targets);
+			if (!booster) return false;
+
+			// 1 Legendary creature or planeswalker (rare or mythic rare in 31% of boosters)
+			let legendaryRarity = "uncommon";
+			const legendaryRarityCheck = random.real(0, 1);
+			// Rare or mythic rare in 31% of boosters (Ratio of mythics is unknown)
+			if (legendaryRarityCheck < 0.31 / 8.0) legendaryRarity = "mythic";
+			else if (legendaryRarityCheck < 0.31) legendaryRarity = "rare";
+			const pickedLegend = pickCard(this.legendaryCreaturesAndPlaneswalkers[legendaryRarity], booster);
+			removeCardFromCardPool(pickedLegend.id, this.completeCardPool[pickedLegend.rarity]);
+
+			const backgroundCounts = countBySlot(this.legendaryBackgrounds);
+			let backgroundRarity = "common";
+			const backgroundRarityCheck = random.real(0, 1);
+			// Rare in 1 of 12 boosters, no idea about uncommon/common ratio
+			// There's 4 Mythics, 5 Rares, 15 Uncommons and 5 Commons
+			if (backgroundRarityCheck < 1.0 / 12.0 / 8.0 && backgroundCounts["mythic"] > 0) backgroundRarity = "mythic";
+			else if (backgroundRarityCheck < 1.0 / 12.0 && backgroundCounts["rare"] > 0) backgroundRarity = "rare";
+			else if (backgroundRarityCheck < 1.0 / 2.0 && backgroundCounts["uncommon"] > 0)
+				backgroundRarity = "uncommon"; // This ratio is completely arbitrary
+			if (backgroundCounts[backgroundRarity] <= 0) return false;
+			const pickedBackground = pickCard(this.legendaryBackgrounds[backgroundRarity], booster);
+			removeCardFromCardPool(pickedBackground.id, this.completeCardPool[pickedBackground.rarity]);
+
+			booster.unshift(pickedBackground);
+			booster.unshift(pickedLegend);
+
+			// One random foil
+			let foilRarity = "common";
+			const rarityCheck = random.real(0, 1);
+			for (let r in foilRarityRates)
+				if (rarityCheck <= foilRarityRates[r] && this.completeCardPool[r].size > 0) {
+					foilRarity = r;
+					break;
+				}
+			const pickedFoil = pickCard(this.completeCardPool[foilRarity], [], { foil: true });
+			if (this.cardPool[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.cardPool[pickedFoil.rarity]);
+			if (this.legendaryCreaturesAndPlaneswalkers[pickedFoil.rarity].has(pickedFoil.id))
+				removeCardFromCardPool(pickedFoil.id, this.legendaryCreaturesAndPlaneswalkers[pickedFoil.rarity]);
+			booster.push(pickedFoil);
+
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -807,6 +902,7 @@ export const SetSpecificFactories: {
 	vow: MIDBoosterFactory, // Innistrad: Crimson Vow - Identical to MID
 	dbl: DBLBoosterFactory,
 	neo: NEOBoosterFactory,
+	clb: CLBBoosterFactory,
 };
 
 /*

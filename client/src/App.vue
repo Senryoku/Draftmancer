@@ -1327,6 +1327,18 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>June 2, 2022</em>
+							<p>
+								<img src="img/sets/clb.svg" class="set-icon" style="--invertedness: 100%" />
+								Commander Legends: Battle for Baldur's Gate (CLB) initial support.
+							</p>
+							<p>
+								Exact collation (most notably uncommon/ratio for backgrounds) is still to be determined
+								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
+								when drafting this set!
+							</p>
+						</div>
+						<div class="news">
 							<em>May, 2022</em>
 							<div style="display: flex; align-items: center">
 								<img
@@ -1358,20 +1370,6 @@
 								Experimental support for custom cards in cubes. Refer to the
 								<a href="cubeformat.html" target="_blank">Cube Format documentation</a> for more
 								information.
-							</p>
-						</div>
-						<div class="news">
-							<em>April 24, 2022</em>
-							<p>
-								Since collections are still absent from MTGA logs 9 months later, I've added a way to
-								import them manually, either using the MTGA card list format (.txt) or the
-								<a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank"
-									>MTGGoldFish format</a
-								>
-								(.csv). As
-								<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a>
-								happens to export MTGGoldFish .csv files, this is probably the most convenient way to
-								import your collection.
 							</p>
 						</div>
 					</div>
