@@ -2211,40 +2211,10 @@
 					</div>
 				</div>
 				<div class="option-section option-custom-card-list" :class="{ disabled: usePredeterminedBoosters }">
-					<div class="option-column-title">Custom Card List</div>
-					<div style="display: flex; justify-content: space-between; align-items: center">
-						<div
-							v-tooltip.left="{
-								classes: 'option-tooltip',
-								content: '<p>Use a custom card list (aka Cube).</p>',
-							}"
-						>
-							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" />
-							<label for="use-custom-card-list">Use a Custom Card List</label>
-						</div>
-						<div v-if="customCardList.length > 0">
-							<i
-								class="fas fa-check green"
-								v-if="useCustomCardList"
-								v-tooltip="'Card list successfuly loaded!'"
-							></i>
-							<i
-								class="fas fa-check yellow"
-								v-else
-								v-tooltip="'Card list successfuly loaded, but not used.'"
-							></i>
-							<span v-if="customCardList.name"
-								>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span
-							>
-							<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
-							<button @click="displayedModal = 'cardList'">
-								<i class="fas fa-file-alt"></i>
-								Review.
-							</button>
-						</div>
-						<div v-else>(No Custom Card List loaded)</div>
+					<div class="option-column-title">
+						<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" /> Custom Card List
 					</div>
-					<div style="display: flex; justify-content: space-around; align-items: center">
+					<div style="display: flex; justify-content: space-between; align-items: center">
 						<div
 							v-tooltip.left="{
 								classes: 'option-tooltip',
@@ -2267,39 +2237,70 @@
 								v-model.number="cardsPerBooster"
 							/>
 						</div>
-						<div>
-							<button @click="importCube('Cube Cobra')">
+						<div v-if="customCardList.length > 0">
+							<i
+								class="fas fa-check green"
+								v-if="useCustomCardList"
+								v-tooltip="'Card list successfuly loaded!'"
+							></i>
+							<i
+								class="fas fa-exclamation-triangle yellow"
+								v-else
+								v-tooltip="'Card list successfuly loaded, but not used.'"
+							></i>
+							<span v-if="customCardList.name"
+								>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span
+							>
+							<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
+							<button @click="displayedModal = 'cardList'">
+								<i class="fas fa-file-alt"></i>
+								Review.
+							</button>
+						</div>
+						<div v-else>(No Custom Card List loaded)</div>
+					</div>
+					<div style="display: flex; gap: 0.5em">
+						<input
+							type="file"
+							id="card-list-input"
+							@change="uploadFile($event, parseCustomCardList)"
+							style="display: none"
+							accept=".txt"
+						/>
+						<div
+							class="file-drop clickable"
+							v-tooltip.left="{
+								classes: 'option-tooltip',
+								content:
+									'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
+							}"
+							@drop="dropCustomList"
+							onclick="document.querySelector('#card-list-input').click()"
+							@dragover="
+								$event.preventDefault();
+								$event.target.classList.add('dropzone-highlight');
+							"
+							style="flex-grow: 1; height: 100%"
+						>
+							Upload a Custom Card List file by dropping it here or by clicking to browse your computer.
+						</div>
+						<div
+							style="
+								display: flex;
+								align-items: center;
+								justify-content: space-around;
+								flex-direction: column;
+							"
+						>
+							<button @click="importCube('Cube Cobra')" style="width: 100%">
 								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
 								Import From Cube Cobra
 							</button>
-							<button @click="importCube('CubeArtisan')">
+							<button @click="importCube('CubeArtisan')" style="width: 100%">
 								<img class="set-icon" src="./assets/img/cubeartisan-logo.png" />
 								Import From CubeArtisan
 							</button>
 						</div>
-					</div>
-					<input
-						type="file"
-						id="card-list-input"
-						@change="uploadFile($event, parseCustomCardList)"
-						style="display: none"
-						accept=".txt"
-					/>
-					<div
-						class="file-drop clickable"
-						v-tooltip.left="{
-							classes: 'option-tooltip',
-							content:
-								'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
-						}"
-						@drop="dropCustomList"
-						onclick="document.querySelector('#card-list-input').click()"
-						@dragover="
-							$event.preventDefault();
-							$event.target.classList.add('dropzone-highlight');
-						"
-					>
-						Upload a Custom Card List file by dropping it here or by clicking to browse your computer.
 					</div>
 					<div
 						class="option-cube-select"
