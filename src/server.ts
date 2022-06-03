@@ -27,7 +27,7 @@ import {
 	TurnBased,
 	Session,
 	Sessions,
-	optionProps,
+	SessionsSettingsProps,
 	instanceOfTurnBased,
 	DistributionMode,
 	DraftLogRecipients,
@@ -38,6 +38,7 @@ import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog";
+import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -157,7 +158,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		);
 	},
 	setCollection(userID: UserID, sessionID: SessionID, collection: { [aid: string]: number }, ack: Function) {
-		if (typeof collection !== "object" || collection === null) return;
+		if (!isObject(collection) || collection === null) return;
 
 		let processedCollection: CardPool = new Map();
 		// Remove unknown cards immediatly.
@@ -217,7 +218,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		ack?.(ret);
 	},
 	useCollection(userID: UserID, sessionID: SessionID, useCollection: boolean) {
-		if (typeof useCollection !== "boolean" || useCollection === Connections[userID].useCollection) return;
+		if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
 
 		Connections[userID].useCollection = useCollection;
 		Sessions[sessionID].forUsers(user =>
@@ -229,11 +230,14 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			})
 		);
 	},
-	chatMessage(userID: UserID, sessionID: SessionID, message: { text: string }) {
+	chatMessage(userID: UserID, sessionID: SessionID, message: { author: string; text: string; timestamp: number }) {
+		if (!isObject(message) || !isString(message.author) || !isString(message.text) || !isNumber(message.timestamp))
+			return;
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("chatMessage", message));
 	},
 	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
+		if (!isBoolean(readyState)) return;
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
 	async pickCard(
@@ -254,7 +258,8 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 				draftState: Sessions[sessionID].draftState,
 				sessionProps: {},
 			};
-			for (let p of optionProps) data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
+			for (let p of Object.keys(SessionsSettingsProps))
+				data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
 			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
 		}
 	},
@@ -303,6 +308,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 // Socket callback available only to session owners
 const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
+		if (!SessionsSettingsProps.ownerIsPlayer(val)) return;
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 
@@ -440,14 +446,14 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
 	},
 	boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer: number) {
-		if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) return;
+		if (!SessionsSettingsProps.boostersPerPlayer(boostersPerPlayer)) return;
 
 		if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
 
 		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer, userID);
 	},
 	cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: number) {
-		if (!Number.isInteger(cardsPerBooster) || cardsPerBooster <= 0) return;
+		if (!SessionsSettingsProps.cardsPerBooster(cardsPerBooster)) return;
 
 		if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
 
@@ -455,7 +461,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	},
 	teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
 		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
-		if (!(typeof teamDraft === "boolean")) return;
+		if (!SessionsSettingsProps.teamDraft(teamDraft)) return;
 
 		if (teamDraft === Sessions[sessionID].teamDraft) return;
 
@@ -464,7 +470,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, randomizeSeatingOrder: boolean) {
 		if (!(typeof randomizeSeatingOrder === "boolean"))
 			randomizeSeatingOrder = randomizeSeatingOrder === "true" || !!randomizeSeatingOrder;
-		if (!(typeof randomizeSeatingOrder === "boolean")) return;
+		if (!SessionsSettingsProps.randomizeSeatingOrder(randomizeSeatingOrder)) return;
 
 		if (randomizeSeatingOrder === Sessions[sessionID].randomizeSeatingOrder) return;
 
@@ -473,14 +479,14 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
 		if (!(typeof disableBotSuggestions === "boolean"))
 			disableBotSuggestions = disableBotSuggestions === "true" || !!disableBotSuggestions;
-		if (!(typeof disableBotSuggestions === "boolean")) return;
+		if (!SessionsSettingsProps.disableBotSuggestions(disableBotSuggestions)) return;
 
 		if (disableBotSuggestions === Sessions[sessionID].disableBotSuggestions) return;
 
 		Sessions[sessionID].setDisableBotSuggestions(disableBotSuggestions);
 	},
 	setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode: DistributionMode) {
-		if (!["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(distributionMode)) return;
+		if (!SessionsSettingsProps.distributionMode(distributionMode)) return;
 
 		Sessions[sessionID].distributionMode = distributionMode;
 		for (let user of Sessions[sessionID].users) {
@@ -489,7 +495,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters: Array<string>) {
-		if (!Array.isArray(customBoosters)) return;
+		if (!SessionsSettingsProps.customBoosters(customBoosters)) return;
 
 		Sessions[sessionID].customBoosters = customBoosters;
 		for (let user of Sessions[sessionID].users) {
@@ -497,7 +503,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	bots(userID: UserID, sessionID: SessionID, bots: number) {
-		if (!Number.isInteger(bots)) return;
+		if (!SessionsSettingsProps.bots(bots)) return;
 
 		if (bots == Sessions[sessionID].bots) return;
 
@@ -507,15 +513,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<string>) {
-		if (!Array.isArray(setRestriction)) return;
-
-		if (setRestriction.length > 0) {
-			for (let s of setRestriction) {
-				if (constants.PrimarySets.indexOf(s) === -1) return;
-			}
-		}
-
-		if (setRestriction === Sessions[sessionID].setRestriction) return;
+		if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
 
 		Sessions[sessionID].setRestriction = setRestriction;
 		for (let user of Sessions[sessionID].users) {
@@ -665,22 +663,23 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		ack?.({ code: 0 });
 	},
 	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
+		if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
 		for (let user of Sessions[sessionID].users) {
 			if (user != userID)
 				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
 		}
 	},
-	setPickTimer(userID: UserID, sessionID: SessionID, timerValue: number) {
-		if (!Number.isInteger(timerValue) || timerValue < 0) return;
+	setPickTimer(userID: UserID, sessionID: SessionID, maxTimer: number) {
+		if (!SessionsSettingsProps.maxTimer(maxTimer)) return;
 
-		Sessions[sessionID].maxTimer = timerValue;
+		Sessions[sessionID].maxTimer = maxTimer;
 		for (let user of Sessions[sessionID].users) {
-			if (user != userID) Connections[user].socket.emit("setPickTimer", timerValue);
+			if (user != userID) Connections[user].socket.emit("setPickTimer", maxTimer);
 		}
 	},
 	setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
-		if (!Number.isInteger(maxPlayers) || maxPlayers < 0) return;
+		if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
 
 		Sessions[sessionID].maxPlayers = maxPlayers;
 		for (let user of Sessions[sessionID].users) {
@@ -688,12 +687,16 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion: boolean) {
+		if (!SessionsSettingsProps.mythicPromotion(mythicPromotion)) return;
+
 		Sessions[sessionID].mythicPromotion = mythicPromotion;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
 		}
 	},
 	setUseBoosterContent(userID: UserID, sessionID: SessionID, useBoosterContent: boolean) {
+		if (!SessionsSettingsProps.useBoosterContent(useBoosterContent)) return;
+
 		Sessions[sessionID].useBoosterContent = useBoosterContent;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID)
@@ -705,14 +708,11 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		sessionID: SessionID,
 		boosterContent: { common: number; uncommon: number; rare: number }
 	) {
-		// Validate input (a value for each rarity and at least one card)
-		if (!["common", "uncommon", "rare"].every(r => r in boosterContent)) return;
+		if (!SessionsSettingsProps.boosterContent(boosterContent)) return;
 		if (
 			Object.keys(boosterContent).every(r => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r])
 		)
 			return;
-		if (Object.values(boosterContent).some(i => !Number.isInteger(i) || i < 0)) return;
-		if (Object.values(boosterContent).reduce((acc, val) => acc + val) <= 0) return;
 
 		Sessions[sessionID].boosterContent = boosterContent;
 		for (let user of Sessions[sessionID].users) {
@@ -720,6 +720,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value: boolean, ack: Function) {
+		if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
+
 		Sessions[sessionID].usePredeterminedBoosters = value;
 		Sessions[sessionID].forNonOwners(uid =>
 			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
@@ -787,12 +789,16 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
+		if (!SessionsSettingsProps.personalLogs(value)) return;
+
 		Sessions[sessionID].personalLogs = value;
 		Sessions[sessionID].forNonOwners(uid =>
 			Connections[uid].socket.emit("sessionOptions", { personalLogs: value })
 		);
 	},
 	setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
+		if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
+
 		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID)
@@ -806,13 +812,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		sessionID: SessionID,
 		maxDuplicates: { common: number; uncommon: number; rare: number }
 	) {
-		if (maxDuplicates !== null && !(typeof maxDuplicates === "object")) return;
-		if (
-			maxDuplicates !== null &&
-			typeof maxDuplicates === "object" &&
-			Object.values(maxDuplicates).some(i => !Number.isInteger(i))
-		)
-			return;
+		if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
 
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
 		for (let user of Sessions[sessionID].users) {
@@ -823,6 +823,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boolean) {
+		if (!SessionsSettingsProps.colorBalance(colorBalance)) return;
 		if (colorBalance === Sessions[sessionID].colorBalance) return;
 
 		Sessions[sessionID].colorBalance = colorBalance;
@@ -834,6 +835,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
+		if (!SessionsSettingsProps.foil(foil)) return;
 		if (foil === Sessions[sessionID].foil) return;
 
 		Sessions[sessionID].foil = foil;
@@ -845,11 +847,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setCollationType(userID: UserID, sessionID: SessionID, preferedCollation: string) {
-		if (
-			preferedCollation === Sessions[sessionID].preferedCollation ||
-			!["Paper", "MTGA"].includes(preferedCollation)
-		)
-			return;
+		if (!SessionsSettingsProps.preferedCollation(preferedCollation)) return;
+		if (preferedCollation === Sessions[sessionID].preferedCollation) return;
 
 		Sessions[sessionID].preferedCollation = preferedCollation;
 		for (let user of Sessions[sessionID].users) {
@@ -860,6 +859,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
+		if (!SessionsSettingsProps.useCustomCardList(useCustomCardList)) return;
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
 		Sessions[sessionID].useCustomCardList = useCustomCardList;
@@ -872,7 +872,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
 	setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound: number) {
-		if (!Number.isInteger(pickedCardsPerRound) || pickedCardsPerRound < 1) return;
+		if (!SessionsSettingsProps.pickedCardsPerRound(pickedCardsPerRound)) return;
+		if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;
 
 		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
 		for (let user of Sessions[sessionID].users) {
@@ -881,7 +882,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound: number) {
-		if (!Number.isInteger(burnedCardsPerRound) || burnedCardsPerRound < 0) return;
+		if (!SessionsSettingsProps.burnedCardsPerRound(burnedCardsPerRound)) return;
+		if (burnedCardsPerRound === Sessions[sessionID].burnedCardsPerRound) return;
 
 		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
 		for (let user of Sessions[sessionID].users) {
@@ -890,7 +892,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discardRemainingCardsAt: number) {
-		if (!Number.isInteger(discardRemainingCardsAt) || discardRemainingCardsAt < 0) return;
+		if (!SessionsSettingsProps.discardRemainingCardsAt(discardRemainingCardsAt)) return;
+		if (discardRemainingCardsAt === Sessions[sessionID].discardRemainingCardsAt) return;
 
 		Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
 		for (let user of Sessions[sessionID].users) {
@@ -899,7 +902,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 	},
 	setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
-		if (isPublic == Sessions[sessionID].isPublic) return;
+		if (!SessionsSettingsProps.isPublic(isPublic)) return;
+		if (isPublic === Sessions[sessionID].isPublic) return;
 
 		Sessions[sessionID].isPublic = isPublic;
 		for (let user of Sessions[sessionID].users) {
@@ -908,8 +912,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		updatePublicSession(sessionID);
 	},
 	setDescription(userID: UserID, sessionID: SessionID, description: string) {
-		if (description === null || description === undefined || description === Sessions[sessionID].description)
-			return;
+		if (!SessionsSettingsProps.description(description)) return;
+		if (description === Sessions[sessionID].description) return;
 
 		Sessions[sessionID].description = description.substring(0, 70);
 		for (let user of Sessions[sessionID].users) {
@@ -949,6 +953,9 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		ack?.({ code: 0 });
 	},
 	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
+		if (!SessionsSettingsProps.bracketLocked(bracketLocked)) return;
+		if (bracketLocked === Sessions[sessionID].bracketLocked) return;
+
 		Sessions[sessionID].bracketLocked = bracketLocked;
 		for (let user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
@@ -1076,7 +1083,8 @@ io.on("connection", async function(socket) {
 
 		const filteredSettings: Options = {};
 		if (sessionSettings)
-			for (let prop of optionProps) if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+			for (let prop of Object.keys(SessionsSettingsProps))
+				if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
 		joinSession(sessionID, userID, filteredSettings);
 	});
 
@@ -1089,7 +1097,9 @@ io.on("connection", async function(socket) {
 	try {
 		if (query.sessionSettings) {
 			const sessionSettings: Options = JSON.parse(query.sessionSettings);
-			for (let prop of optionProps) if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+			for (let prop of Object.keys(SessionsSettingsProps))
+				if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
+					filteredSettings[prop] = sessionSettings[prop];
 		}
 	} catch (e) {
 		console.error("Error parsing default session setting on user connection: ", e);
@@ -1181,7 +1191,8 @@ function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSe
 		if (currentSession && currentSession in Sessions)
 			if (userID === Sessions[currentSession].owner)
 				// Transfer session settings to the new one if applicable
-				for (let p of optionProps) defaultSessionSettings[p] = (Sessions[currentSession] as IIndexable)[p];
+				for (let p of Object.keys(SessionsSettingsProps))
+					defaultSessionSettings[p] = (Sessions[currentSession] as IIndexable)[p];
 
 		Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
 	}

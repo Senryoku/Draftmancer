@@ -42,41 +42,88 @@ import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js
 import { CustomCardList } from "./CustomCardList";
 import { DraftLog } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
+import { isBoolean, isObject, isString } from "./TypeChecks.js";
 
-export const optionProps = [
-	"ownerIsPlayer",
-	"setRestriction",
-	"isPublic",
-	"description",
-	"ignoreCollections",
-	"boostersPerPlayer",
-	"cardsPerBooster",
-	"teamDraft",
-	"randomizeSeatingOrder",
-	"disableBotSuggestions",
-	"bots",
-	"maxTimer",
-	"maxPlayers",
-	"mythicPromotion",
-	"useBoosterContent",
-	"boosterContent",
-	"usePredeterminedBoosters",
-	"colorBalance",
-	"maxDuplicates",
-	"foil",
-	"preferedCollation",
-	"useCustomCardList",
-	"customCardList",
-	"distributionMode",
-	"customBoosters",
-	"pickedCardsPerRound",
-	"burnedCardsPerRound",
-	"discardRemainingCardsAt",
-	"personalLogs",
-	"draftLogRecipients",
-	"bracketLocked",
-	"draftPaused",
-];
+// Validate session settings types and values.
+export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
+	ownerIsPlayer: isBoolean,
+	setRestriction(val: any) {
+		if (!Array.isArray(val)) return false;
+		for (let s of val) if (constants.PrimarySets.indexOf(s) === -1) return false;
+		return true;
+	},
+	isPublic: isBoolean,
+	description: isString,
+	ignoreCollections: isBoolean,
+	boostersPerPlayer(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 1;
+	},
+	cardsPerBooster(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 1;
+	},
+	teamDraft: isBoolean,
+	randomizeSeatingOrder: isBoolean,
+	disableBotSuggestions: isBoolean,
+	bots(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 0;
+	},
+	maxTimer(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 0;
+	},
+	maxPlayers(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 1;
+	},
+	mythicPromotion: isBoolean,
+	useBoosterContent: isBoolean,
+	boosterContent(val: any) {
+		// Validate input (a value for each rarity and at least one card)
+		if (!isObject(val)) return false;
+		if (!["common", "uncommon", "rare"].every(r => r in val)) return false;
+		if (Object.values(val).some((i: any) => !Number.isInteger(i) || i < 0)) return false;
+		if (Object.values(val).reduce((acc, val) => acc + val) <= 0) return false;
+		return true;
+	},
+	usePredeterminedBoosters: isBoolean,
+	colorBalance: isBoolean,
+	maxDuplicates(val: any) {
+		if (!isObject(val)) return false;
+		if (Object.values(val).some(i => !Number.isInteger(i))) return false;
+		return true;
+	},
+	foil: isBoolean,
+	preferedCollation(val: any) {
+		return ["Paper", "MTGA"].includes(val);
+	},
+	useCustomCardList: isBoolean,
+	customCardList: isObject,
+	distributionMode(val: any) {
+		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
+	},
+	customBoosters: Array.isArray,
+	pickedCardsPerRound(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 1;
+	},
+	burnedCardsPerRound(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 0;
+	},
+	discardRemainingCardsAt(val: any) {
+		if (!Number.isInteger(val)) return false;
+		return val >= 0;
+	},
+	personalLogs: isBoolean,
+	draftLogRecipients(val: any) {
+		return ["everyone", "delayed", "owner", "none"].includes(val);
+	},
+	bracketLocked: isBoolean,
+	draftPaused: isBoolean,
+};
 
 export class IDraftState {
 	type: string;
@@ -291,8 +338,10 @@ export class Session implements IIndexable {
 		this.id = id;
 		this.owner = owner;
 
-		// FIXME: We should validate all the settings
-		for (let p in options) (this as IIndexable)[p] = options[p];
+		// Validate and set session settings
+		for (let p in options)
+			if (p in SessionsSettingsProps && SessionsSettingsProps[p](options[p]))
+				(this as IIndexable)[p] = options[p];
 	}
 
 	addUser(userID: UserID) {
@@ -464,7 +513,7 @@ export class Session implements IIndexable {
 			sessionOwner: this.owner,
 			bracket: this.bracket,
 		};
-		for (let p of optionProps) options[p] = (this as IIndexable)[p];
+		for (let p of Object.keys(SessionsSettingsProps)) options[p] = (this as IIndexable)[p];
 		Connections[userID]?.socket.emit("sessionOptions", options);
 	}
 

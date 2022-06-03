@@ -86,7 +86,7 @@ describe("Inter client communication", function() {
 				expect(msg.text).to.equal(text);
 				done();
 			});
-			sender.emit("chatMessage", { text: text });
+			sender.emit("chatMessage", { author: "sender", text: text, timestamp: Date.now() });
 		});
 	});
 
@@ -941,22 +941,31 @@ describe("Single Draft (Two Players)", function() {
 			clients[ownerIdx].emit("bots", 6);
 		});
 
+		// Settings are not propagated to other clients when the values do not change
+		let previousPickCount = 1;
+		let previousBurnedCount = 0;
 		for (let pickPerRound = 1; pickPerRound < 5; ++pickPerRound) {
 			for (let burnPerRound = 0; burnPerRound < 5; ++burnPerRound) {
 				it(`Clients should receive the updated pick count (${pickPerRound}).`, function(done) {
-					clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
-						expect(sessionOptions.pickedCardsPerRound).to.equal(pickPerRound);
-						done();
-					});
-					clients[ownerIdx].emit("setPickedCardsPerRound", pickPerRound);
+					if (previousPickCount !== pickPerRound) {
+						clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
+							expect(sessionOptions.pickedCardsPerRound).to.equal(pickPerRound);
+							done();
+						});
+						clients[ownerIdx].emit("setPickedCardsPerRound", pickPerRound);
+						previousPickCount = pickPerRound;
+					} else done();
 				});
 
 				it(`Clients should receive the updated burn count (${burnPerRound}).`, function(done) {
-					clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
-						expect(sessionOptions.burnedCardsPerRound).to.equal(burnPerRound);
-						done();
-					});
-					clients[ownerIdx].emit("setBurnedCardsPerRound", burnPerRound);
+					if (previousBurnedCount !== burnPerRound) {
+						clients[nonOwnerIdx].once("sessionOptions", function(sessionOptions) {
+							expect(sessionOptions.burnedCardsPerRound).to.equal(burnPerRound);
+							done();
+						});
+						clients[ownerIdx].emit("setBurnedCardsPerRound", burnPerRound);
+						previousBurnedCount = burnPerRound;
+					} else done();
 				});
 
 				it("When session owner launch draft, everyone should receive a startDraft event", function(done) {
