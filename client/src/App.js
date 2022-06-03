@@ -914,6 +914,8 @@ export default {
 			this.personalLogs = true;
 			this.draftLogRecipients = "everyone";
 			this.bracketLocked = false;
+
+			fireToast("success", "Session settings reset to default values.");
 		},
 		playSound(key) {
 			if (this.enableSound) Sounds[key].play();
