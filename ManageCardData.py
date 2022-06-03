@@ -1,3 +1,5 @@
+from html import unescape
+import sqlite3
 import mmap
 import json
 import requests
@@ -60,19 +62,19 @@ if len(sys.argv) > 1:
         ForceCache = True
 
 print("Don't forget to update Arena itself!")
-MTGADataFolder = "H:\MtGA\MTGA_Data\Downloads\Data"
-MTGALocFiles = glob.glob('{}\data_loc_*.mtga'.format(MTGADataFolder))
-MTGACardsFiles = glob.glob('{}\data_cards_*.mtga'.format(MTGADataFolder))
-MTGALocalization = {}
-for path in MTGALocFiles:
-    with open(path, 'r', encoding="utf8") as file:
-        locdata = json.load(file)
-        for lang in locdata:
-            langcode = lang['isoCode'][:2]
-            if langcode not in MTGALocalization:
-                MTGALocalization[langcode] = {}
-            for o in lang['keys']:
-                MTGALocalization[langcode][o['id']] = o['text']
+MTGAFolder = "H:\\MtGA\\"
+MTGADataFolder = f"{MTGAFolder}MTGA_Data\\Downloads\\Raw\\"
+MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
+MTGACardsFiles = glob.glob(f'{MTGADataFolder}Raw_cards_*.mtga')
+
+LangCodes = ["enUS", "frFR", "deDE", "itIT", "esES", "ptBR", "ruRU", "jaJP", "koKR", "zhCN", "zhTW"]
+MTGALocalization = {key: {} for key in LangCodes}
+for path in MTGACardDBFiles:
+    MTGACardDB = sqlite3.connect(path)
+    MTGACardDB.row_factory = sqlite3.Row
+    for row in MTGACardDB.execute(f'SELECT LocId, {", ".join(LangCodes)} FROM Localizations').fetchall():
+        for key in MTGALocalization:
+            MTGALocalization[key][row["LocId"]] = row[key]
 
 # Get mana symbols info from Scryfall
 SymbologyFile = "./data/symbology.json"
@@ -89,18 +91,6 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
     with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
         json.dump(mana_symbols, outfile)
 
-MTGATranslations = {"en": {},
-                    "es": {},
-                    "fr": {},
-                    "de": {},
-                    "it": {},
-                    "pt": {},
-                    "ja": {},
-                    "ko": {},
-                    "ru": {},
-                    "zhs": {},
-                    "zht": {},
-                    "ph": {}}
 CardsCollectorNumberAndSet = {}
 CardNameToArenaID = {}
 AKRCards = {}
@@ -110,7 +100,7 @@ for path in MTGACardsFiles:
     with open(path, 'r', encoding="utf8") as file:
         carddata = json.load(file)
         for o in carddata:
-            fixed_name = MTGALocalization['en'][o['titleId']].replace(" /// ", " // ")
+            fixed_name = MTGALocalization['enUS'][o['titleId']].replace(" /// ", " // ")
             fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
             o['set'] = o['set'].lower()
             if not ('isSecondaryCard' in o and o['isSecondaryCard']):
@@ -138,10 +128,6 @@ for path in MTGACardsFiles:
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
                         fixed_name, collectorNumber, 'ajmp')] = o['grpid']
-
-                for lang in MTGALocalization:
-                    MTGATranslations[lang][o['grpid']] = {
-                        'printed_name': fixed_name}
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
                 if fixed_name not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
@@ -220,7 +206,6 @@ def handleTypeLine(typeLine):
         subtypes = arr[1].split()
     return types, subtypes
 
-from html import unescape
 
 CardRatings = {}
 with open('data/ratings_base.json', 'r', encoding="utf8") as file:
@@ -352,7 +337,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
                     print("Warning: Missing '{}' for card '{}'.".format(prop, c['name']))
                     return False
             return True
-        
+
         if copyFromFaces("type_line") == False:
             continue
 
@@ -458,8 +443,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
         # Special case for conjure-only cards from J21 that should be avoided.
-        if a['set'] == 'j21' and int(a['collector_number']) >= 777: return b
-        if b['set'] == 'j21' and int(b['collector_number']) >= 777: return a
+        if a['set'] == 'j21' and int(a['collector_number']) >= 777:
+            return b
+        if b['set'] == 'j21' and int(b['collector_number']) >= 777:
+            return a
         if 'arena_id' in a and 'arena_id' not in b:
             return a
         if 'arena_id' not in a and 'arena_id' in b:
