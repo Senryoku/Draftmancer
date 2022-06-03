@@ -291,6 +291,7 @@ export class Session implements IIndexable {
 		this.id = id;
 		this.owner = owner;
 
+		// FIXME: We should validate all the settings
 		for (let p in options) (this as IIndexable)[p] = options[p];
 	}
 

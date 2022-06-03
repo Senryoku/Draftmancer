@@ -74,6 +74,9 @@ Vue.use(VTooltip, {
 	defaultDelay: 250,
 });
 
+const localStorageSettingsKey = "mtgadraft-settings";
+const localStorageSessionSettingsKey = "mtgadraft-session-settings";
+
 // Personal front-end settings
 const defaultSettings = {
 	targetDeckSize: 40,
@@ -86,7 +89,7 @@ const defaultSettings = {
 	collapseSideboard: false,
 	sideboardBasics: 5,
 };
-const storedSettings = JSON.parse(localStorage.getItem("mtgadraft-settings") ?? "{}");
+const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 
 // Also get the settings from the cookies for backwards compatibility.
 // FIXME: Should be removed after a while.
@@ -260,12 +263,15 @@ export default {
 				console.log("storedUserID: " + storedUserID);
 			}
 
+			const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+
 			// Socket Setup
 			this.socket = io({
 				query: {
 					userID: this.userID,
 					sessionID: this.sessionID,
 					userName: this.userName,
+					sessionSettings: storedSessionSettings,
 				},
 			});
 
@@ -372,10 +378,9 @@ export default {
 			});
 
 			this.socket.on("sessionOptions", sessionOptions => {
-				for (let prop in sessionOptions) {
-					this[prop] = sessionOptions[prop];
-				}
+				for (let prop in sessionOptions) this[prop] = sessionOptions[prop];
 			});
+
 			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {
 				this.sessionOwner = ownerID;
 				if (ownerUserName) this.sessionOwnerUsername = ownerUserName;
@@ -2278,6 +2283,12 @@ export default {
 			copyToClipboard(data);
 			fireToast("success", message);
 		},
+		updateStoredSessionSettings(data) {
+			let previous = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+			previous = JSON.parse(previous);
+			for (let key in data) previous[key] = data[key];
+			localStorage.setItem(localStorageSessionSettingsKey, JSON.stringify(previous));
+		},
 		storeDraftLogs() {
 			// Limits saved draft logs to 25
 			while (this.draftLogs.length > 25) {
@@ -2344,7 +2355,7 @@ export default {
 			for (let key in defaultSettings) {
 				settings[key] = this[key];
 			}
-			localStorage.setItem("mtgadraft-settings", JSON.stringify(settings));
+			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
 		},
 	},
 	computed: {
@@ -2529,8 +2540,17 @@ export default {
 	watch: {
 		sessionID() {
 			if (this.socket) {
+				let sessionSettings = {};
+				const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey);
+				if (storedSessionSettings) {
+					try {
+						sessionSettings = JSON.parse(storedSessionSettings);
+					} catch (e) {
+						console.error("Error parsing stored session settings: ", e);
+					}
+				}
 				this.socket.query.sessionID = this.sessionID;
-				this.socket.emit("setSession", this.sessionID);
+				this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			history.replaceState(
 				{ sessionID: this.sessionID },
@@ -2588,7 +2608,7 @@ export default {
 		sideboardBasics() {
 			this.storeSettings();
 		},
-		// Session options
+		// Session settings
 		ownerIsPlayer() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			setCookie("userID", this.userID); // Used for reconnection
@@ -2626,10 +2646,12 @@ export default {
 		randomizeSeatingOrder(oldValue, newValue) {
 			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
 			this.socket.emit("setRandomizeSeatingOrder", this.randomizeSeatingOrder);
+			this.updateStoredSessionSettings({ randomizeSeatingOrder: this.randomizeSeatingOrder });
 		},
 		disableBotSuggestions(oldValue, newValue) {
 			if (this.userID != this.sessionOwner || !this.socket || oldValue === newValue) return;
 			this.socket.emit("setDisableBotSuggestions", this.disableBotSuggestions);
+			this.updateStoredSessionSettings({ disableBotSuggestions: this.disableBotSuggestions });
 		},
 		distributionMode() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -2670,10 +2692,12 @@ export default {
 		maxTimer() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
+			this.updateStoredSessionSettings({ maxTimer: this.maxTimer });
 		},
 		ignoreCollections() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("ignoreCollections", this.ignoreCollections);
+			this.updateStoredSessionSettings({ ignoreCollections: this.ignoreCollections });
 		},
 		maxDuplicates: {
 			deep: true,
@@ -2685,10 +2709,12 @@ export default {
 		colorBalance() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setColorBalance", this.colorBalance);
+			this.updateStoredSessionSettings({ colorBalance: this.colorBalance });
 		},
 		foil() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setFoil", this.foil);
+			this.updateStoredSessionSettings({ foil: this.foil });
 		},
 		useCustomCardList() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -2709,10 +2735,12 @@ export default {
 		personalLogs() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPersonalLogs", this.personalLogs);
+			this.updateStoredSessionSettings({ personalLogs: this.personalLogs });
 		},
 		draftLogRecipients() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
+			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
 		},
 		sessionUsers(newV, oldV) {
 			document.title = this.pageTitle;

@@ -1070,23 +1070,39 @@ io.on("connection", async function(socket) {
 		console.error(err);
 	});
 
-	socket.on("setSession", function(this: SocketIO.Socket, sessionID) {
+	socket.on("setSession", function(this: SocketIO.Socket, sessionID, sessionSettings) {
 		const userID = this.handshake.query.userID;
 		if (sessionID === Connections[userID].sessionID) return;
-		joinSession(sessionID, userID);
+
+		const filteredSettings: Options = {};
+		if (sessionSettings)
+			for (let prop of optionProps) if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+		joinSession(sessionID, userID, filteredSettings);
 	});
 
 	for (let key in socketCallbacks) socket.on(key, prepareSocketCallback(socketCallbacks[key]));
 
 	for (let key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
-	joinSession(query.sessionID, query.userID);
+	// Apply prefered session settings in case we're creating a new one, filtering out invalid ones.
+	let filteredSettings: Options = {};
+	try {
+		if (query.sessionSettings) {
+			const sessionSettings: Options = JSON.parse(query.sessionSettings);
+			for (let prop of optionProps) if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+		}
+	} catch (e) {
+		console.error("Error parsing default session setting on user connection: ", e);
+		console.error("query.sessionSettings: ", query.sessionSettings);
+	}
+
+	joinSession(query.sessionID, query.userID, filteredSettings);
 	socket.emit("publicSessions", getPublicSessions());
 });
 
 ///////////////////////////////////////////////////////////////////////////////
 
-function joinSession(sessionID: SessionID, userID: UserID) {
+function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}) {
 	// Fallback to previous session if possible, or generate a new one
 	const refuse = (msg: string) => {
 		Connections[userID].socket.emit("message", {
@@ -1153,24 +1169,22 @@ function joinSession(sessionID: SessionID, userID: UserID) {
 			addUserToSession(userID, sessionID);
 		}
 	} else {
-		addUserToSession(userID, sessionID);
+		addUserToSession(userID, sessionID, defaultSessionSettings);
 	}
 }
 
-function addUserToSession(userID: UserID, sessionID: SessionID) {
-	const options: Options = {};
+function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSettings: Options = {}) {
 	const currentSession = Connections[userID].sessionID;
-	if (currentSession && currentSession in Sessions) {
-		// Transfer session options to the new one if applicable
-		if (userID === Sessions[currentSession].owner) {
-			for (let p of optionProps) {
-				options[p] = (Sessions[currentSession] as IIndexable)[p];
-			}
-		}
-		removeUserFromSession(userID);
-	}
+	if (currentSession && currentSession in Sessions) removeUserFromSession(userID);
 
-	if (!(sessionID in Sessions)) Sessions[sessionID] = new Session(sessionID, userID, options);
+	if (!(sessionID in Sessions)) {
+		if (currentSession && currentSession in Sessions)
+			if (userID === Sessions[currentSession].owner)
+				// Transfer session settings to the new one if applicable
+				for (let p of optionProps) defaultSessionSettings[p] = (Sessions[currentSession] as IIndexable)[p];
+
+		Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
+	}
 
 	Sessions[sessionID].addUser(userID);
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
