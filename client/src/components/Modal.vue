@@ -5,6 +5,9 @@
 				<div class="modal-container">
 					<div class="modal-header">
 						<slot name="header"></slot>
+						<div class="modal-controls">
+							<slot name="controls"></slot>
+						</div>
 						<i
 							@click="$emit('close')"
 							class="fa fa-times fa-lg modal-default-button clickable"
@@ -102,6 +105,12 @@ export default {
 	position: absolute;
 	top: 0.2em;
 	right: 0.2em;
+}
+
+.modal-controls {
+	position: absolute;
+	top: 0.2em;
+	right: 3em;
 }
 
 .modal-footer {
