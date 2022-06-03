@@ -1800,6 +1800,13 @@
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
 			<h2 slot="header">Additional Session Settings</h2>
+			<div slot="controls">
+				<i
+					class="fas fa-undo clickable"
+					@click="resetSessionSettings"
+					v-tooltip="'Reset all session settings to their default value'"
+				></i>
+			</div>
 			<div slot="body" class="session-options-container" :class="{ disabled: userID != sessionOwner }">
 				<div class="option-column option-column-left">
 					<div

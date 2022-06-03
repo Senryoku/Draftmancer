@@ -149,13 +149,13 @@ export default {
 			sessionID: getCookie("sessionID", shortguid()),
 			sessionOwner: null,
 			sessionOwnerUsername: null,
-			// Session options
+			sessionUsers: [],
+			disconnectedUsers: {},
+			// Session settings
 			ownerIsPlayer: true,
 			isPublic: false,
 			description: "",
 			ignoreCollections: true,
-			sessionUsers: [],
-			disconnectedUsers: {},
 			boostersPerPlayer: 3,
 			cardsPerBooster: 15,
 			teamDraft: false,
@@ -252,7 +252,7 @@ export default {
 		};
 	},
 	methods: {
-		initializeSocket: function() {
+		initializeSocket() {
 			let storedUserID = getCookie("userID", null);
 			if (storedUserID != null) {
 				this.userID = storedUserID;
@@ -859,7 +859,7 @@ export default {
 				this.pickTimer = -1;
 			});
 		},
-		clearState: function() {
+		clearState() {
 			this.disconnectedUsers = {};
 			this.clearSideboard();
 			this.clearDeck();
@@ -870,11 +870,49 @@ export default {
 			this.pickNumber = 0;
 			this.botScores = null;
 		},
-		playSound: function(key) {
+		resetSessionSettings() {
+			this.ownerIsPlayer = true;
+			this.isPublic = false;
+			this.description = "";
+			this.ignoreCollections = true;
+			this.boostersPerPlayer = 3;
+			this.cardsPerBooster = 15;
+			this.teamDraft = false;
+			this.randomizeSeatingOrder = false;
+			this.disableBotSuggestions = false;
+			this.distributionMode = "regular";
+			this.customBoosters = ["", "", ""];
+			this.maxPlayers = 8;
+			this.mythicPromotion = true;
+			this.useBoosterContent = false;
+			this.boosterContent = {
+				common: 10,
+				uncommon: 3,
+				rare: 1,
+			};
+			this.usePredeterminedBoosters = false;
+			this.colorBalance = true;
+			this.maxDuplicates = null;
+			this.foil = false;
+			this.bots = 0;
+			this.setRestriction = [];
+			this.drafting = false;
+			this.useCustomCardList = false;
+			this.customCardList = {};
+			this.pickedCardsPerRound = 1;
+			this.burnedCardsPerRound = 0;
+			this.discardRemainingCardsAt = 0;
+			this.maxTimer = 75;
+			this.pickTimer = 75;
+			this.personalLogs = true;
+			this.draftLogRecipients = "everyone";
+			this.bracketLocked = false;
+		},
+		playSound(key) {
 			if (this.enableSound) Sounds[key].play();
 		},
 		// Chat Methods
-		sendChatMessage: function() {
+		sendChatMessage() {
 			if (!this.currentChatMessage || this.currentChatMessage == "") return;
 			this.socket.emit("chatMessage", {
 				author: this.userID,
@@ -923,7 +961,7 @@ export default {
 			}
 			return false;
 		},
-		stopDraft: function() {
+		stopDraft() {
 			if (this.userID != this.sessionOwner) return;
 			const self = this;
 			Alert.fire({
@@ -940,25 +978,25 @@ export default {
 				}
 			});
 		},
-		pauseDraft: function() {
+		pauseDraft() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("pauseDraft");
 		},
-		selectCard: function(e, c) {
+		selectCard(e, c) {
 			if (!this.selectedCards.includes(c)) {
 				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
 				this.selectedCards.push(c);
 				this.restoreCard(null, c);
 			}
 		},
-		burnCard: function(e, c) {
+		burnCard(e, c) {
 			if (this.burningCards.includes(c)) return;
 			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
-		restoreCard: function(e, c) {
+		restoreCard(e, c) {
 			if (!this.burningCards.includes(c)) return;
 			this.burningCards.splice(
 				this.burningCards.findIndex(o => o === c),
@@ -966,11 +1004,11 @@ export default {
 			);
 			if (e) e.stopPropagation();
 		},
-		doubleClickCard: function(e, c) {
+		doubleClickCard(e, c) {
 			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
-		allowBoosterCardDrop: function(e) {
+		allowBoosterCardDrop(e) {
 			// Allow dropping only if the dragged object is the selected card
 
 			// A better (?) solution would be something like
@@ -986,13 +1024,13 @@ export default {
 				return false;
 			}
 		},
-		dragBoosterCard: function(e, card) {
+		dragBoosterCard(e, card) {
 			e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
 			e.dataTransfer.setData("text", card.id);
 			e.dataTransfer.effectAllowed = "move";
 			this.selectCard(null, card);
 		},
-		dropBoosterCard: function(e, options) {
+		dropBoosterCard(e, options) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
 				e.dataTransfer.getData("isboostercard") !== "true" ||
@@ -1016,7 +1054,7 @@ export default {
 				this.pickCard(options);
 			}
 		},
-		pickCard: function(options) {
+		pickCard(options) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
@@ -1075,7 +1113,7 @@ export default {
 			});
 			this.pickInFlight = true;
 		},
-		forcePick: function() {
+		forcePick() {
 			if (this.draftingState != DraftState.Picking) return;
 
 			// Uses botScores to automatically select picks if available
@@ -1132,7 +1170,7 @@ export default {
 			}
 			this.pickCard();
 		},
-		setWinstonDraftState: function(state) {
+		setWinstonDraftState(state) {
 			this.winstonDraftState = state;
 			const piles = [];
 			for (let p of state.piles) {
@@ -1177,7 +1215,7 @@ export default {
 				this.socket.emit("startWinstonDraft", boosterCount);
 			}
 		},
-		winstonDraftTakePile: function() {
+		winstonDraftTakePile() {
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
 			this.socket.emit("winstonDraftTakePile", answer => {
 				if (answer.code === 0) {
@@ -1185,12 +1223,12 @@ export default {
 				} else alert("Error: ", answer.error);
 			});
 		},
-		winstonDraftSkipPile: function() {
+		winstonDraftSkipPile() {
 			this.socket.emit("winstonDraftSkipPile", answer => {
 				if (answer.code !== 0) alert("Error: ", answer.error);
 			});
 		},
-		setGridDraftState: function(state) {
+		setGridDraftState(state) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
 			const booster = [];
@@ -1240,7 +1278,7 @@ export default {
 				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
-		gridDraftPick: function(choice) {
+		gridDraftPick(choice) {
 			const cards = [];
 			let pickedCards = 0;
 			for (let i = 0; i < 3; ++i) {
@@ -1262,7 +1300,7 @@ export default {
 				});
 			}
 		},
-		setRochesterDraftState: function(state) {
+		setRochesterDraftState(state) {
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function() {
@@ -1301,7 +1339,7 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Glimpse Draft",
-				preConfirm: function() {
+				preConfirm() {
 					return new Promise(function(resolve) {
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
@@ -1325,7 +1363,7 @@ export default {
 			});
 		},
 		// Collection management
-		setCollection: function(json) {
+		setCollection(json) {
 			if (this.collection == json) return;
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
@@ -1572,7 +1610,7 @@ export default {
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile: function(e, callback, options) {
+		uploadFile(e, callback, options) {
 			let file = e.target.files[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
@@ -1590,7 +1628,7 @@ export default {
 			const blob = await response.blob();
 			callback(blob, options);
 		},
-		dropCustomList: function(event) {
+		dropCustomList(event) {
 			event.preventDefault();
 			event.target.classList.remove("dropzone-highlight");
 
@@ -1666,7 +1704,7 @@ export default {
 				if (result.value && result.value.cubeID) this.selectCube(result.value);
 			});
 		},
-		selectCube: function(cube) {
+		selectCube(cube) {
 			const ack = r => {
 				if (r.type === "error") {
 					Alert.fire({
@@ -1707,13 +1745,13 @@ export default {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
 		},
-		exportDeck: function(full = true) {
+		exportDeck(full = true) {
 			copyToClipboard(
 				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, this.sideboardBasics, full)
 			);
 			fireToast("success", "Deck exported to clipboard!");
 		},
-		shareDecklist: function() {
+		shareDecklist() {
 			this.socket.emit("shareDecklist", {
 				main: this.deck.map(c => c.id),
 				side: this.sideboard.map(c => c.id),
@@ -1756,7 +1794,7 @@ export default {
 				fireToast("error", "Error importing deck.");
 			}
 		},
-		uploadBoosters: function() {
+		uploadBoosters() {
 			if (this.sessionOwner !== this.userID) return;
 			const text = document.querySelector("#upload-booster-text").value;
 			this.socket.emit("setBoosters", text, response => {
@@ -1773,7 +1811,7 @@ export default {
 				}
 			});
 		},
-		shuffleUploadedBoosters: function() {
+		shuffleUploadedBoosters() {
 			if (this.sessionOwner !== this.userID) return;
 			this.socket.emit("shuffleBoosters", response => {
 				if (response.error) {
@@ -1783,7 +1821,7 @@ export default {
 				}
 			});
 		},
-		toggleSetRestriction: function(code) {
+		toggleSetRestriction(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
 					this.setRestriction.findIndex(c => c === code),
@@ -1791,7 +1829,7 @@ export default {
 				);
 			else this.setRestriction.push(code);
 		},
-		setSessionOwner: function(newOwnerID) {
+		setSessionOwner(newOwnerID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find(u => u.userID === newOwnerID);
 			if (!user) return;
@@ -1809,7 +1847,7 @@ export default {
 				}
 			});
 		},
-		removePlayer: function(userID) {
+		removePlayer(userID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find(u => u.userID === userID);
 			if (!user) return;
@@ -1827,7 +1865,7 @@ export default {
 				}
 			});
 		},
-		movePlayer: function(idx, dir) {
+		movePlayer(idx, dir) {
 			if (this.userID != this.sessionOwner) return;
 
 			const negMod = (m, n) => ((m % n) + n) % n;
@@ -1836,7 +1874,7 @@ export default {
 
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		changePlayerOrder: function() {
+		changePlayerOrder() {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
@@ -1860,7 +1898,7 @@ export default {
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Distribute boosters",
 				width: "auto",
-				preConfirm: function() {
+				preConfirm() {
 					return new Promise(function(resolve) {
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
@@ -1914,7 +1952,7 @@ export default {
 				}
 			});
 		},
-		deckWarning: function(call, options = []) {
+		deckWarning(call, options = []) {
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -1933,7 +1971,7 @@ export default {
 				call(...options);
 			}
 		},
-		distributeSealed: function(boosterCount, customBoosters) {
+		distributeSealed(boosterCount, customBoosters) {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
@@ -1990,7 +2028,7 @@ export default {
 				this.deck.map(card => card.id)
 			);
 		},
-		readyCheck: function() {
+		readyCheck() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (this.socket.disconnected) {
@@ -2005,7 +2043,7 @@ export default {
 				}
 			});
 		},
-		initReadyCheck: function() {
+		initReadyCheck() {
 			this.pendingReadyCheck = true;
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.Unknown;
@@ -2013,12 +2051,12 @@ export default {
 			this.playSound("readyCheck");
 			this.pushTitleNotification("❔");
 		},
-		stopReadyCheck: function() {
+		stopReadyCheck() {
 			this.pendingReadyCheck = false;
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog: function(storedDraftLog) {
+		shareSavedDraftLog(storedDraftLog) {
 			if (this.userID != this.sessionOwner) {
 				Alert.fire({
 					title: "You need to be the session owner to share logs.",
@@ -2044,7 +2082,7 @@ export default {
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
-		prepareBracketPlayers: function(pairingOrder) {
+		prepareBracketPlayers(pairingOrder) {
 			const playerInfos = this.sessionUsers.map(u => {
 				return { userID: u.userID, userName: u.userName };
 			});
@@ -2056,14 +2094,14 @@ export default {
 			return players;
 		},
 		// Bracket (Server communication)
-		generateBracket: function() {
+		generateBracket() {
 			if (this.userID != this.sessionOwner) return;
 			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
-		generateSwissBracket: function() {
+		generateSwissBracket() {
 			if (this.userID != this.sessionOwner) return;
 			let players =
 				this.sessionUsers.length == 6
@@ -2073,25 +2111,25 @@ export default {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
-		generateDoubleBracket: function() {
+		generateDoubleBracket() {
 			if (this.userID != this.sessionOwner || this.teamDraft) return;
 			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateDoubleBracket", players, answer => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
-		updateBracket: function(matchIndex, index, value) {
+		updateBracket(matchIndex, index, value) {
 			if (this.userID != this.sessionOwner && this.bracketLocked) return;
 			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
-		lockBracket: function(val) {
+		lockBracket(val) {
 			if (this.userID != this.sessionOwner) return;
 			this.bracketLocked = val;
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck: function(card, options) {
+		addToDeck(card, options) {
 			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
@@ -2099,7 +2137,7 @@ export default {
 				this.$refs.deckDisplay.addCard(card, options ? options.event : null);
 			}
 		},
-		addToSideboard: function(card, options) {
+		addToSideboard(card, options) {
 			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
@@ -2107,7 +2145,7 @@ export default {
 				this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
 			}
 		},
-		deckToSideboard: function(e, c) {
+		deckToSideboard(e, c) {
 			// From deck to sideboard
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
@@ -2116,7 +2154,7 @@ export default {
 			} else return;
 			this.$refs.deckDisplay.remCard(c);
 		},
-		sideboardToDeck: function(e, c) {
+		sideboardToDeck(e, c) {
 			// From sideboard to deck
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
@@ -2137,7 +2175,7 @@ export default {
 				this.$refs.sideboardDisplay.sync();
 			});
 		},
-		updateAutoLands: function() {
+		updateAutoLands() {
 			if (this.autoLand) {
 				if (!this.deck || this.deck.length === 0) return;
 
@@ -2177,13 +2215,13 @@ export default {
 				}
 			}
 		},
-		removeBasicsFromDeck: function() {
+		removeBasicsFromDeck() {
 			this.deck = this.deck.filter(c => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter(c => c.type !== "Basic Land");
 			this.$refs.deckDisplay.filterBasics();
 			this.$refs.sideboardDisplay.filterBasics();
 		},
-		colorsInCardPool: function(pool) {
+		colorsInCardPool(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			for (let card of pool) {
 				for (let color of card.colors) {
@@ -2193,7 +2231,7 @@ export default {
 			return r;
 		},
 		// Misc.
-		toggleNotifications: function() {
+		toggleNotifications() {
 			this.enableNotifications = !this.enableNotifications;
 			if (typeof Notification === "undefined") {
 				this.notificationPermission = "unavailable";
@@ -2211,7 +2249,7 @@ export default {
 				new Notification(title, data);
 			}
 		},
-		pushTitleNotification: function(msg) {
+		pushTitleNotification(msg) {
 			if (this.titleNotification) {
 				clearTimeout(this.titleNotification.timeout);
 				this.titleNotification = null;
@@ -2225,7 +2263,7 @@ export default {
 			};
 			document.title = this.pageTitle;
 		},
-		sessionURLToClipboard: function() {
+		sessionURLToClipboard() {
 			copyToClipboard(
 				`${window.location.protocol}//${window.location.hostname}${
 					window.location.port ? ":" + window.location.port : ""
@@ -2233,14 +2271,14 @@ export default {
 			);
 			fireToast("success", "Session link copied to clipboard!");
 		},
-		disconnectedReminder: function() {
+		disconnectedReminder() {
 			fireToast("error", "Disconnected from server!");
 		},
 		toClipboard(data, message = "Copied to clipboard!") {
 			copyToClipboard(data);
 			fireToast("success", message);
 		},
-		storeDraftLogs: function() {
+		storeDraftLogs() {
 			// Limits saved draft logs to 25
 			while (this.draftLogs.length > 25) {
 				const idx = this.draftLogs.reduce((acc, cur, idx, src) => {
@@ -2256,7 +2294,7 @@ export default {
 			};
 			worker.postMessage(["compress", this.draftLogs]);
 		},
-		toggleLimitDuplicates: function() {
+		toggleLimitDuplicates() {
 			if (this.maxDuplicates !== null) this.maxDuplicates = null;
 			else
 				this.maxDuplicates = {
@@ -2266,7 +2304,7 @@ export default {
 					mythic: 1,
 				};
 		},
-		countMissing: function(cards) {
+		countMissing(cards) {
 			if (!this.hasCollection || !cards) return null;
 			const r = { common: 0, uncommon: 0, rare: 0, mythic: 0 };
 			const counts = {};
@@ -2283,14 +2321,14 @@ export default {
 				);
 			return r;
 		},
-		wildcardCost: function(card) {
+		wildcardCost(card) {
 			if (!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
 			if (!(card.arena_id in this.collection)) return true;
 			if (this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
 			return currentCount >= this.collection[card.arena_id];
 		},
-		hasEnoughWildcards: function(card) {
+		hasEnoughWildcards(card) {
 			if (
 				!this.neededWildcards ||
 				!this.neededWildcards.main ||
@@ -2633,7 +2671,7 @@ export default {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setPickTimer", this.maxTimer);
 		},
-		ignoreCollections: function() {
+		ignoreCollections() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("ignoreCollections", this.ignoreCollections);
 		},
