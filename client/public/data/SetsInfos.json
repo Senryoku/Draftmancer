@@ -567,14 +567,14 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 651,
+        "cardCount": 893,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
-        "commonCount": 176,
-        "mythicCount": 63,
-        "rareCount": 212,
+        "commonCount": 202,
+        "mythicCount": 75,
+        "rareCount": 359,
         "specialCount": 1,
-        "uncommonCount": 199
+        "uncommonCount": 256
     },
     "cm1": {
         "code": "cm1",
@@ -3819,11 +3819,11 @@
     "pncc": {
         "code": "pncc",
         "fullName": "New Capenna Commander Promos",
-        "cardCount": 72,
+        "cardCount": 75,
         "isPrimary": false,
         "icon": "img/sets/pncc.svg",
         "mythicCount": 1,
-        "rareCount": 71
+        "rareCount": 74
     },
     "pnem": {
         "code": "pnem",
@@ -4866,14 +4866,6 @@
         "icon": "img/sets/tc15.svg",
         "commonCount": 1
     },
-    "tclb": {
-        "code": "tclb",
-        "fullName": "Battle for Baldur's Gate Tokens",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/tclb.svg",
-        "commonCount": 1
-    },
     "tcm2": {
         "code": "tcm2",
         "fullName": "Commander Anthology Volume II Tokens",
@@ -5509,14 +5501,13 @@
     "ysnc": {
         "code": "ysnc",
         "fullName": "Alchemy: New Capenna",
-        "cardCount": 26,
+        "cardCount": 30,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/ysnc.svg",
-        "commonCount": 1,
-        "mythicCount": 3,
-        "rareCount": 13,
-        "uncommonCount": 9
+        "mythicCount": 5,
+        "rareCount": 15,
+        "uncommonCount": 10
     },
     "zen": {
         "code": "zen",
