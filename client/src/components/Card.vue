@@ -27,24 +27,24 @@ export default {
 		lazyLoad: { type: Boolean, default: false },
 		filter: { type: String },
 	},
-	data: function() {
+	data() {
 		return {
 			foilInterval: null,
 		};
 	},
 	computed: {
-		isFiltered: function() {
+		isFiltered() {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
 			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
 		},
 	},
 	methods: {
-		toggleZoom: function(e) {
+		toggleZoom(e) {
 			e.preventDefault();
 			this.$root.$emit("togglecardpopup", e, this.card);
 		},
-		mouseLeave: function(e) {
+		mouseLeave(e) {
 			e.preventDefault();
 			this.$root.$emit("closecardpopup");
 
@@ -57,12 +57,12 @@ export default {
 				this.$el.style.setProperty("--transform-rotation-y", `0`);
 			}
 		},
-		activateFoilEffect: function() {
+		activateFoilEffect() {
 			if (!this.card.foil) return;
 
 			document.addEventListener("mousemove", this.foilEffect);
 		},
-		foilEffect: function(e) {
+		foilEffect(e) {
 			const bounds = this.$el.getBoundingClientRect();
 			const style = this.$el.currentStyle || window.getComputedStyle(this.$el);
 			bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
@@ -82,9 +82,10 @@ export default {
 			this.$el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
 			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
-		passFilter: function(card, filter) {
+		passFilter(card, filter) {
 			return (
 				card.name.toLowerCase().includes(filter) ||
+				(this.language != "en" && card.printed_names[this.language]?.toLowerCase().includes(filter)) ||
 				card.type.toLowerCase().includes(filter) ||
 				card.subtypes
 					.join(" ")
