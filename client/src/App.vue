@@ -2290,14 +2290,21 @@
 								align-items: center;
 								justify-content: space-around;
 								flex-direction: column;
+								min-width: 17em;
 							"
 						>
-							<button @click="importCube('Cube Cobra')" style="width: 100%">
-								<img class="set-icon" src="./assets/img/cubecobra-small-logo.png" />
+							<button @click="importCube('Cube Cobra')" style="position: relative; width: 100%">
+								<img
+									style="position: absolute; left: 0.2em; top: 10%; height: 80%"
+									src="./assets/img/cubecobra-small-logo.png"
+								/>
 								Import From Cube Cobra
 							</button>
-							<button @click="importCube('CubeArtisan')" style="width: 100%">
-								<img class="set-icon" src="./assets/img/cubeartisan-logo.png" />
+							<button @click="importCube('CubeArtisan')" style="position: relative; width: 100%">
+								<img
+									style="position: absolute; left: 0.2em; top: 10%; height: 80%"
+									src="./assets/img/cubeartisan-logo.png"
+								/>
 								Import From CubeArtisan
 							</button>
 						</div>
