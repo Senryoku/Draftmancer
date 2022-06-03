@@ -876,6 +876,8 @@ export default {
 			this.botScores = null;
 		},
 		resetSessionSettings() {
+			if (this.userID !== this.sessionOwner) return;
+
 			this.ownerIsPlayer = true;
 			this.isPublic = false;
 			this.description = "";

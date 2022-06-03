@@ -1803,6 +1803,7 @@
 			<div slot="controls">
 				<i
 					class="fas fa-undo clickable"
+					:class="{ disabled: userID !== sessionOwner }"
 					@click="resetSessionSettings"
 					v-tooltip="'Reset all session settings to their default value'"
 				></i>
