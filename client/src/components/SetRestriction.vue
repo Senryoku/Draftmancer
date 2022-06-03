@@ -78,7 +78,7 @@ import constants from "../../../src/data/constants.json";
 import SetsInfos from "../../public/data/SetsInfos.json";
 
 export default {
-	data: function() {
+	data() {
 		return {
 			SetsInfos: SetsInfos,
 			blocks: [
@@ -111,7 +111,7 @@ export default {
 	props: {
 		value: { type: Array, required: true },
 	},
-	mounted: function() {
+	mounted() {
 		const assigned = this.blocks.map(b => b.sets).flat();
 		let blocks = {};
 		for (let s of constants.PrimarySets.map(s => SetsInfos[s])) {
@@ -127,13 +127,13 @@ export default {
 		update(newVal) {
 			this.$emit("input", newVal);
 		},
-		addAll: function() {
+		addAll() {
 			this.update([...constants.PrimarySets]);
 		},
-		clear: function() {
+		clear() {
 			this.update([]);
 		},
-		remove: function(arr) {
+		remove(arr) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -141,7 +141,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		add: function(arr) {
+		add(arr) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -149,7 +149,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		toggle: function(s) {
+		toggle(s) {
 			const newVal = [...this.value];
 			const index = newVal.indexOf(s);
 			if (index !== -1) {
@@ -159,7 +159,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		selected: function(s) {
+		selected(s) {
 			return this.value.includes(s);
 		},
 	},
