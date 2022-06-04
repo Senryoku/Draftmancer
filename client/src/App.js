@@ -1427,6 +1427,7 @@ export default {
 						return;
 					}
 					contents = "";
+					const setWorkaroundRegex = /^Y\d\d-/;
 					for (let i = 1; i < lines.length; i++) {
 						const line = lines[i];
 						if (line.length === 0) continue;
@@ -1440,7 +1441,17 @@ export default {
 							return;
 						}
 						if (["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(line[cardIndex])) continue;
-						if (line[setIDIndex] === "ANA") line[setIDIndex] = "OANA"; // Workaround, not sure why scryfall tags some cards as "OANA" instead of "ANA"
+
+						// Workaround for some divergent set codes.
+						const setCodeTranslation = {
+							ANA: "OANA",
+						};
+						if (line[setIDIndex] in setCodeTranslation)
+							line[setIDIndex] = setCodeTranslation[line[setIDIndex]];
+						// Generic solution for alchemy sets, hoping the trend will continue (Y-2X -> Y).
+						if (setWorkaroundRegex.test(line[setIDIndex]))
+							line[setIDIndex] = line[setIDIndex].replace(setWorkaroundRegex, "Y");
+
 						contents += `${line[quantityIndex].trim()} ${line[cardIndex].trim()} (${line[
 							setIDIndex
 						].trim()})\n`;
