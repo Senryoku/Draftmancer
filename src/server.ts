@@ -237,7 +237,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("chatMessage", message));
 	},
 	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
-		if (!isBoolean(readyState)) return;
+		if (!isString(readyState)) return;
 		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
 	async pickCard(
