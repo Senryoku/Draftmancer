@@ -90,6 +90,31 @@ describe("Inter client communication", function() {
 		});
 	});
 
+	describe("Ready Check", function() {
+		it("Clients should receive a readyCheck event when the owner send a readyCheck event to the server.", function(done) {
+			receiver.on("readyCheck", done);
+			sender.emit("readyCheck");
+		});
+
+		it("Sender status should be dispatched to other users.", function(done) {
+			receiver.once("setReady", (userID, status) => {
+				expect(userID).to.equal(sender.query.userID);
+				expect(status).to.equal("Ready");
+				done();
+			});
+			sender.emit("setReady", "Ready");
+		});
+
+		it("Receiver status should be dispatched to other users.", function(done) {
+			sender.once("setReady", (userID, status) => {
+				expect(userID).to.equal(receiver.query.userID);
+				expect(status).to.equal("Ready");
+				done();
+			});
+			receiver.emit("setReady", "Ready");
+		});
+	});
+
 	describe("Personal options updates", function() {
 		it("Clients should receive the updated userName when a user changes it.", function(done) {
 			receiver.once("updateUser", function(data) {
