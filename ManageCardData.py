@@ -406,6 +406,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if c['set'] in ['sta']:  # Force STA in booster
                 selection['in_booster'] = not selection['collector_number'].endswith("e")
 
+            # Commanders from CLB commanders deck are incorrectly marked as in_booster by scryfall
+            if c['set'] == "clb" and int(c['collector_number']) >= 646 and int(c["collector_number"]) <= 649:
+                selection['in_booster'] = False
+
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:
                     selection['layout'] = 'split-left'

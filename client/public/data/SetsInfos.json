@@ -4890,9 +4890,9 @@
         "cardCount": 197,
         "isPrimary": false,
         "icon": "img/sets/td0.svg",
-        "commonCount": 100,
+        "commonCount": 101,
         "rareCount": 26,
-        "uncommonCount": 71
+        "uncommonCount": 70
     },
     "td2": {
         "code": "td2",
