@@ -99,7 +99,7 @@ describe("Set Specific Booster Rules", function() {
 			return acc +
 				(val.type === "Legendary Creature" ||
 					(val.type === "Legendary Planeswalker" &&
-						!["Vivien, Champion of the Wilds", "Xenagos, the Reveler"].includes(val.name)))
+						!["Vivien, Champion of the Wilds", "Xenagos, the Reveler", "Faceless One"].includes(val.name)))
 				? 1
 				: 0;
 		}, 0);

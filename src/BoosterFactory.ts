@@ -810,11 +810,12 @@ class CLBBoosterFactory extends BoosterFactory {
 			cardPool,
 			(cid: CardID) =>
 				Cards[cid].type.match(CMRBoosterFactory.regex) &&
-				!["Vivien, Champion of the Wilds", "Xenagos, the Reveler"].includes(Cards[cid].name) // These two cannot be your commander
+				!["Vivien, Champion of the Wilds", "Xenagos, the Reveler", "Faceless One"].includes(Cards[cid].name) // These two cannot be your commander
 		);
 		let legendaryBackgrounds;
-		[legendaryBackgrounds, filteredCardPool] = filterCardPool(filteredCardPool, (cid: CardID) =>
-			Cards[cid].subtypes.includes("Background")
+		[legendaryBackgrounds, filteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => Cards[cid].name !== "Faceless One" && Cards[cid].subtypes.includes("Background")
 		);
 		super(filteredCardPool, landSlot, options);
 		this.completeCardPool = cardPool;
