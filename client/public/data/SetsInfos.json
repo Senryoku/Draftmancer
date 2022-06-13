@@ -567,14 +567,14 @@
     "clb": {
         "code": "clb",
         "fullName": "Commander Legends: Battle for Baldur's Gate",
-        "cardCount": 893,
+        "cardCount": 936,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
-        "commonCount": 202,
-        "mythicCount": 75,
-        "rareCount": 359,
+        "commonCount": 200,
+        "mythicCount": 91,
+        "rareCount": 386,
         "specialCount": 1,
-        "uncommonCount": 256
+        "uncommonCount": 258
     },
     "cm1": {
         "code": "cm1",
@@ -3040,6 +3040,15 @@
         "icon": "img/sets/pchk.svg",
         "rareCount": 1
     },
+    "pclb": {
+        "code": "pclb",
+        "fullName": "Battle for Baldur's Gate Promos",
+        "cardCount": 99,
+        "isPrimary": false,
+        "icon": "img/sets/pclb.svg",
+        "mythicCount": 22,
+        "rareCount": 77
+    },
     "pcmp": {
         "code": "pcmp",
         "fullName": "Champs and States",
@@ -3608,14 +3617,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 741,
+        "cardCount": 814,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 94,
-        "mythicCount": 101,
-        "rareCount": 338,
+        "commonCount": 101,
+        "mythicCount": 108,
+        "rareCount": 368,
         "specialCount": 3,
-        "uncommonCount": 205
+        "uncommonCount": 234
     },
     "plrw": {
         "code": "plrw",
@@ -4666,12 +4675,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 538,
+        "cardCount": 542,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 90,
-        "rareCount": 389,
+        "mythicCount": 93,
+        "rareCount": 390,
         "uncommonCount": 20
     },
     "slu": {
