@@ -188,7 +188,7 @@ export class Bot implements IBot {
 			}
 		} catch (e) {
 			if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
-			else console.error("Error requesting mtgdraftbots scores: ", e);
+			else console.error("Error requesting mtgdraftbots scores: ", e.message);
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
