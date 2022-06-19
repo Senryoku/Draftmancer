@@ -40,15 +40,17 @@ export class MinesweeperGrid {
 				this.state[i].push(new MinesweeperCell(cards.pop() as Card));
 			}
 		}
-		// Reveal borders and center
-		for (let j = 0; j < width; j++) {
-			this.state[0][j].reveal();
-			this.state[height - 1][j].reveal();
+		if (options.revealBorders) {
+			for (let j = 0; j < width; j++) {
+				this.state[0][j].reveal();
+				this.state[height - 1][j].reveal();
+			}
+			for (let i = 0; i < height; i++) {
+				this.state[i][0].reveal();
+				this.state[i][width - 1].reveal();
+			}
 		}
-		for (let i = 0; i < height; i++) {
-			this.state[i][0].reveal();
-			this.state[i][width - 1].reveal();
-		}
+		// TODO: Reveal the middle card(s)
 	}
 
 	pick(row: number, col: number) {
@@ -79,14 +81,15 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		packs: Array<Array<Card>>,
 		gridWidth: number,
 		gridHeight: number,
-		picksPerGrid: number
+		picksPerGrid: number,
+		options: Options = {}
 	) {
 		super("minesweeper");
 		this.players = players;
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
 		this.picksPerGrid = picksPerGrid;
-		for (let p of packs) this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight));
+		for (let p of packs) this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, options));
 	}
 
 	grid() {

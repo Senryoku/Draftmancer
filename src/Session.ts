@@ -37,6 +37,7 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
+import { SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -1307,29 +1308,41 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Rochester Draft End //////////////////////
 
-	startMinesweeperDraft(gridCount: number, gridWidth: number, gridHeight: number, picksPerGrid: number) {
-		if (this.users.size <= 1) return false;
+	startMinesweeperDraft(
+		gridCount: number,
+		gridWidth: number,
+		gridHeight: number,
+		picksPerGrid: number,
+		options: Options = {}
+	): SocketAck {
+		if (this.users.size <= 1)
+			return new SocketError(
+				"Unsufficient number of players",
+				"Minesweeper draft necessitates at least two players. Bots are not supported."
+			);
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		if (!this.useCustomCardList) {
-			this.emitError(
+			return new SocketError(
 				"Error",
 				"Minesweeper draft is only available for cube drafting. Please select a custom card list."
 			);
-			return true;
 		}
 		this.drafting = true;
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
 			this.drafting = false;
-			return true;
-		}
-
-		if (this.boosters.some(b => b.length !== gridWidth * gridHeight)) {
-			this.emitError(
+			return new SocketError(
 				"Erroneous Pack Size",
 				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
 			);
-			return true;
+		}
+
+		if (this.boosters.some(b => b.length !== gridWidth * gridHeight)) {
+			this.drafting = false;
+			return new SocketError(
+				"Erroneous Pack Size",
+				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
+			);
 		}
 
 		this.disconnectedUsers = {};
@@ -1338,7 +1351,8 @@ export class Session implements IIndexable {
 			this.boosters,
 			gridWidth,
 			gridHeight,
-			picksPerGrid
+			picksPerGrid,
+			options
 		);
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
@@ -1355,7 +1369,7 @@ export class Session implements IIndexable {
 		for (let userID in log.users) log.users[userID].picks = [];
 
 		this.boosters = [];
-		return true;
+		return {};
 	}
 
 	minesweeperDraftPick(row: number, col: number) {

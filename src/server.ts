@@ -20,6 +20,7 @@ import uuid from "uuid";
 const uuidv1 = uuid.v1;
 
 import { Options, shuffleArray } from "./utils.js";
+import { SocketAck, SocketError } from "./Message.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -421,39 +422,38 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		ack: Function
 	) {
 		const sess = Sessions[sessionID];
-		if (sess.users.size < 2) {
-			ack?.({
-				error: {
-					title: `Not enough players`,
-					text: `Minesweeper Draft can only be played with at least 2 players. Bots are not supported!`,
-				},
-			});
-		} else {
-			if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
-			if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
-			if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
-			if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
-			if (
-				typeof gridCount !== "number" ||
-				gridCount <= 0 ||
-				typeof gridWidth !== "number" ||
-				gridWidth <= 0 ||
-				typeof gridHeight !== "number" ||
-				gridHeight <= 0 ||
-				typeof gridHeight !== "number" ||
-				picksPerGrid <= 0 ||
-				picksPerGrid > gridWidth * gridHeight
-			)
-				ack?.({
-					error: {
-						title: `Invalid parameters`,
-						text: `Grid parameters are invalid. Please check your settings.`,
-						footer: `Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`,
-					},
-				});
-			sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
-			startPublicSession(sess);
+		if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
+		if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
+		if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
+		if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
+		if (
+			typeof gridCount !== "number" ||
+			gridCount <= 0 ||
+			typeof gridWidth !== "number" ||
+			gridWidth <= 0 ||
+			typeof gridHeight !== "number" ||
+			gridHeight <= 0 ||
+			typeof picksPerGrid !== "number" ||
+			picksPerGrid <= 0 ||
+			picksPerGrid > gridWidth * gridHeight
+		) {
+			ack?.(
+				new SocketError(
+					`Invalid parameters`,
+					`Grid parameters are invalid. Please check your settings.`,
+					`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`
+				)
+			);
+			return;
 		}
+		const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
+			revealBorders: true,
+		});
+		if (ret?.error) {
+			ack?.(ret);
+			return;
+		}
+		startPublicSession(sess);
 		ack?.();
 	},
 	// Session Settings

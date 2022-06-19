@@ -78,7 +78,7 @@ describe("Minesweeper Draft", function() {
 		});
 	};
 
-	const startDraft = () => {
+	const startDraft = (gridCount = 3, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
 		it("When session owner launch Minesweeper draft, everyone should receive a startMinesweeperDraft event", function(done) {
 			let connectedClients = 0;
 			for (let c of clients) {
@@ -90,10 +90,7 @@ describe("Minesweeper Draft", function() {
 					}
 				});
 			}
-			const gridCount = 3;
-			const gridWidth = 10;
-			const gridHeight = 9;
-			const picksPerGrid = clients.length * 3 + 1;
+			if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
 			clients[ownerIdx].emit(
 				"startMinesweeperDraft",
 				gridCount,
@@ -144,6 +141,37 @@ describe("Minesweeper Draft", function() {
 		});
 	};
 
+	const startDraftWithError = (done, gridCount = 3, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
+		if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
+		clients[ownerIdx].emit("startMinesweeperDraft", gridCount, gridWidth, gridHeight, picksPerGrid, r => {
+			//console.error("Response:", r);
+			expect(r?.error).to.exist;
+			done();
+		});
+	};
+
+	describe("Parameter validation", function() {
+		it("Error if not using a cube", function(done) {
+			startDraftWithError(done);
+		});
+		selectCube();
+		it("Error on invalid gridCount", function(done) {
+			startDraftWithError(done, 0);
+		});
+		it("Error on invalid gridWidth", function(done) {
+			startDraftWithError(done, 3, 0);
+		});
+		it("Error on invalid gridHeight", function(done) {
+			startDraftWithError(done, 3, 10, 0);
+		});
+		it("Error on invalid picksPerGrid", function(done) {
+			startDraftWithError(done, 3, 10, 9, 0);
+		});
+		it("Error on invalid picksPerGrid", function(done) {
+			startDraftWithError(done, 3, 10, 9, 10 * 9 + 1);
+		});
+	});
+
 	describe("Default settings with built-in cube", function() {
 		selectCube();
 		startDraft();
@@ -165,6 +193,7 @@ describe("Minesweeper Draft", function() {
 		it("Non-owner reconnects, draft restarts.", function(done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("rejoinMinesweeperDraft", function(state) {
+				expect(state).to.exist;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
