@@ -30,6 +30,7 @@ import DraftLogPick from "./components/DraftLogPick.vue";
 import Dropdown from "./components/Dropdown.vue";
 import Esporter from "./components/Esporter.vue";
 import GridDraft from "./components/GridDraft.vue";
+import MinesweeperDraft from "./components/MinesweeperDraft.vue";
 import LandControl from "./components/LandControl.vue";
 import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
@@ -52,6 +53,8 @@ const DraftState = {
 	GridWaiting: "GridWaiting",
 	RochesterPicking: "RochesterPicking",
 	RochesterWaiting: "RochesterWaiting",
+	MinesweeperPicking: "MinesweeperPicking",
+	MinesweeperWaiting: "MinesweeperWaiting",
 };
 
 const ReadyState = {
@@ -126,6 +129,7 @@ export default {
 		Dropdown,
 		Esporter,
 		GridDraft,
+		MinesweeperDraft,
 		LandControl,
 		Modal,
 		Multiselect,
@@ -204,6 +208,7 @@ export default {
 			winstonDraftState: null,
 			gridDraftState: null,
 			rochesterDraftState: null,
+			minesweeperDraftState: null,
 			draftPaused: false,
 
 			publicSessions: [],
@@ -659,6 +664,48 @@ export default {
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Rochester draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			// Minesweeper Draft
+			this.socket.on("startMinesweeperDraft", state => {
+				startDraftSetup("Minesweeper draft");
+				this.draftingState =
+					this.userID === state.currentPlayer ? DraftState.MinesweeperPicking : DraftState.MinesweeperWaiting;
+				this.setMinesweeperDraftState(state);
+			});
+			this.socket.on("minesweeperDraftState", state => {
+				this.setMinesweeperDraftState(state);
+			});
+			this.socket.on("minesweeperGridSync", grid => {
+				this.minesweeperDraftState.grid = grid;
+			});
+			this.socket.on("minesweeperDraftEnd", () => {
+				this.drafting = false;
+				this.minesweeperDraftState = null;
+				this.draftingState = DraftState.Brewing;
+				fireToast("success", "Done drafting!");
+			});
+			this.socket.on("rejoinMinesweeperDraft", data => {
+				this.drafting = true;
+
+				this.setMinesweeperDraftState(data.state);
+				this.clearState();
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards) this.addToDeck(c);
+
+					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.MinesweeperPicking;
+					else this.draftingState = DraftState.MinesweeperWaiting;
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Minesweeper draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1325,6 +1372,72 @@ export default {
 				return;
 			}
 			this.socket.emit("startRochesterDraft");
+		},
+		setMinesweeperDraftState(state) {
+			this.minesweeperDraftState = state;
+		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
+		startMinesweeperDraft: async function() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			let gridCount = 3;
+			let gridWidth = 9;
+			let gridHeight = 10;
+			let picksPerGrid = this.sessionUsers.length * 9;
+
+			Alert.fire({
+				title: "Minesweeper Draft",
+				html: `
+					<p>Minesweeper Draft is a draft variant ...</p>
+					<p>
+						Grid Count:
+						<input type="number" value="${gridCount}" min="3" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count">
+					<br />
+						Grid Size:
+						<input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em">
+					<br />
+						Picks per Grid (for all players):
+						<input type="number" value="${picksPerGrid}" min="1" max="40*40" step="1" id="input-picksPerGrid" class="swal2-input" placeholder="Picks per Grid">
+					</p>`,
+				showCancelButton: true,
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
+				confirmButtonText: "Start Minesweeper Draft",
+				preConfirm() {
+					return new Promise(function(resolve) {
+						resolve({
+							gridCount: document.getElementById("input-gridCount").valueAsNumber,
+							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
+							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
+							picksPerGrid: document.getElementById("input-picksPerGrid").valueAsNumber,
+						});
+					});
+				},
+			}).then(r => {
+				if (r.isConfirmed) {
+					this.socket.emit(
+						"startMinesweeperDraft",
+						r.value.gridCount,
+						r.value.gridWidth,
+						r.value.gridHeight,
+						r.value.picksPerGrid,
+						response => {
+							if (response?.error) {
+								Alert.fire(response.error);
+							}
+						}
+					);
+				}
+			});
+		},
+		minesweeperDraftPick(row, col) {
+			const card = this.minesweeperDraftState.grid[row][col].card;
+			this.socket.emit("minesweeperDraftPick", row, col, response => {
+				if (response?.error) {
+					Alert.fire(response.error);
+				} else {
+					this.addToDeck(card);
+				}
+			});
 		},
 		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
 		startGlimpseDraft: async function() {

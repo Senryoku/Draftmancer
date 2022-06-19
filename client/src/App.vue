@@ -377,6 +377,9 @@
 								>
 									Rochester
 								</button>
+								<button @click="startMinesweeperDraft()" v-tooltip.left="'Starts a Minesweeper Draft.'">
+									Minesweeper
+								</button>
 							</div>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
@@ -603,7 +606,8 @@
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
 								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
-								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID),
+								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
+								(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
 						}"
 						:data-userid="user.userID"
 						:key="user.userID"
@@ -644,7 +648,14 @@
 										@click="removePlayer(user.userID)"
 									></i>
 								</template>
-								<template v-if="winstonDraftState || gridDraftState || rochesterDraftState">
+								<template
+									v-if="
+										winstonDraftState ||
+											gridDraftState ||
+											rochesterDraftState ||
+											minesweeperDraftState
+									"
+								>
 									<i
 										v-if="user.userID in disconnectedUsers"
 										class="fas fa-times red"
@@ -656,7 +667,9 @@
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
 												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
 												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer)
+													user.userID === rochesterDraftState.currentPlayer) ||
+												(minesweeperDraftState &&
+													user.userID === minesweeperDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -1049,6 +1062,48 @@
 					</div>
 				</div>
 			</transition>
+			<!-- Minesweeper Draft -->
+			<div
+				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+				v-if="
+					draftingState === DraftState.MinesweeperPicking || draftingState === DraftState.MinesweeperWaiting
+				"
+			>
+				<div class="section-title">
+					<h2>Minesweeper Draft</h2>
+					<div class="controls">
+						<span>
+							Grid #{{ minesweeperDraftState.gridNumber + 1 }}/{{ minesweeperDraftState.gridCount }}, Pick
+							#{{ minesweeperDraftState.pickNumber + 1 }}/{{ minesweeperDraftState.picksPerGrid }}
+						</span>
+						<span>
+							<template v-if="userID === minesweeperDraftState.currentPlayer">
+								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
+							</template>
+							<template v-else-if="minesweeperDraftState.currentPlayer === null">
+								<template v-if="minesweeperDraftState.gridNumber >= minesweeperDraftState.gridCount">
+									This was the last grid! Let me cleanup this cards off the table...
+								</template>
+								<template v-else>Advancing to the next grid...</template>
+							</template>
+							<template v-else>
+								<i class="fas fa-spinner fa-spin"></i>
+								Waiting for
+								{{
+									minesweeperDraftState.currentPlayer in userByID
+										? userByID[minesweeperDraftState.currentPlayer].userName
+										: "(Disconnected)"
+								}}...
+							</template>
+						</span>
+					</div>
+				</div>
+				<minesweeper-draft
+					:state="minesweeperDraftState"
+					:picking="userID === minesweeperDraftState.currentPlayer"
+					@pick="minesweeperDraftPick"
+				></minesweeper-draft>
+			</div>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
@@ -1058,7 +1113,14 @@
 						</div>
 						<h1>Player(s) disconnected</h1>
 
-						<div v-if="this.winstonDraftState || this.gridDraftState || this.rochesterDraftState">
+						<div
+							v-if="
+								this.winstonDraftState ||
+									this.gridDraftState ||
+									this.rochesterDraftState ||
+									this.minesweeperDraftState
+							"
+						>
 							{{ `Wait for ${disconnectedUserNames} to come back...` }}
 						</div>
 						<div v-else>
