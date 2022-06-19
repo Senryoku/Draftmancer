@@ -8,13 +8,19 @@
 						v-for="(cell, colIdx) in row"
 						:key="rowIdx * state.grid[0].length + colIdx"
 					>
-						<CardPlaceholder v-if="cell.state === 0" />
-						<Card
-							v-else
-							:card="cell.card"
-							:class="{ clickable: picking && cell.state === 1, picked: cell.state === 2 }"
-							@click="pick(rowIdx, colIdx)"
-						/>
+						<transition name="turnover" mode="out-in">
+							<CardPlaceholder
+								v-if="cell.state === 0"
+								:key="rowIdx * state.grid[0].length + colIdx + '_placeholder'"
+							/>
+							<Card
+								v-else
+								:card="cell.card"
+								:class="{ clickable: picking && cell.state === 1, picked: cell.state === 2 }"
+								@click="pick(rowIdx, colIdx)"
+								:key="rowIdx * state.grid[0].length + colIdx + '_card'"
+							/>
+						</transition>
 					</div>
 				</div>
 			</div>
@@ -78,6 +84,31 @@ export default {
 .picked {
 	filter: brightness(0.4);
 	transform: scale(0.8);
+}
+
+.turnover-enter-active,
+.turnover-leave-active {
+	perspective-origin: center center;
+	backface-visibility: hidden;
+	z-index: 1;
+}
+
+/* The translateZ should be ease-in-out, but it's not possible to have independent transforms on a single element */
+
+.turnover-enter-active {
+	transition: transform 0.4s ease-out !important;
+}
+
+.turnover-leave-active {
+	transition: transform 0.4s ease-in !important;
+}
+
+.turnover-enter {
+	transform: perspective(1000px) translateZ(150px) rotateY(-90deg);
+}
+
+.turnover-leave-to {
+	transform: perspective(1000px) translateZ(150px) rotateY(90deg);
 }
 </style>
 
