@@ -55,10 +55,10 @@ export class MinesweeperGrid {
 
 	pick(row: number, col: number) {
 		this.get(row, col)?.pick();
-		this.get(row - 1, col - 1)?.reveal();
-		this.get(row - 1, col + 1)?.reveal();
-		this.get(row + 1, col - 1)?.reveal();
-		this.get(row + 1, col + 1)?.reveal();
+		this.get(row - 1, col)?.reveal();
+		this.get(row + 1, col)?.reveal();
+		this.get(row, col - 1)?.reveal();
+		this.get(row, col + 1)?.reveal();
 	}
 
 	get(row: number, col: number) {
@@ -129,17 +129,21 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 
 	// Remove unnecessary card information from the grid before sharing it with players
 	strippedGrid() {
-		const ret: any = { ...this.grid() }; // Clone
-		for (let row of ret.state) {
+		const ret: any = [];
+		let rowIdx = 0;
+		for (let row of this.grid().state) {
+			ret.push([]);
 			for (let cell of row) {
-				if (cell.state === MinesweeperCellState.Hidden) cell.card = undefined;
+				ret[rowIdx].push({ ...cell });
+				if (cell.state === MinesweeperCellState.Hidden) ret[rowIdx][ret[rowIdx].length - 1].card = undefined;
 			}
+			++rowIdx;
 		}
 		return ret;
 	}
 
 	syncData() {
-		const grid = this.strippedGrid().state;
+		const grid = this.strippedGrid();
 		return {
 			pickNumber: this.pickNumber,
 			gridNumber: this.gridNumber,
