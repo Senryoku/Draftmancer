@@ -1379,7 +1379,7 @@ export default {
 		startMinesweeperDraft: async function() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			let gridCount = 3;
+			let gridCount = 4;
 			let gridWidth = 9;
 			let gridHeight = 10;
 			let picksPerGrid = this.sessionUsers.length * 9;
