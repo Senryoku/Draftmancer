@@ -93,22 +93,25 @@ export default {
 	z-index: 1;
 }
 
-/* The translateZ should be ease-in-out, but it's not possible to have independent transforms on a single element */
-
 .turnover-enter-active {
-	transition: transform 0.4s ease-out !important;
+	transition: transform 0.3s ease-out, scale 0.3s ease-in-out !important;
 }
 
 .turnover-leave-active {
-	transition: transform 0.4s ease-in !important;
+	transition: transform 0.3s ease-in, scale 0.3s ease-in-out !important;
+}
+
+.turnover-enter,
+.turnover-leave-to {
+	scale: 1.15;
 }
 
 .turnover-enter {
-	transform: perspective(1000px) translateZ(150px) rotateY(-90deg);
+	transform: perspective(1000px) rotateY(-90deg);
 }
 
 .turnover-leave-to {
-	transform: perspective(1000px) translateZ(150px) rotateY(90deg);
+	transform: perspective(1000px) rotateY(90deg);
 }
 </style>
 
