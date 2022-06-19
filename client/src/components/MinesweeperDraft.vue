@@ -1,18 +1,24 @@
 <template>
 	<div class="minesweeper-draft">
-		<div class="minesweeper-grid" v-if="state.grid">
-			<template v-for="(row, rowIdx) in state.grid">
-				<div v-for="(cell, colIdx) in row" :key="rowIdx * state.grid[0].length + colIdx">
-					<CardPlaceholder v-if="cell.state === 0" />
-					<Card
-						v-else
-						:card="cell.card"
-						:class="{ clickable: picking && cell.state === 1, picked: cell.state === 2 }"
-						@click="pick(rowIdx, colIdx)"
-					/>
+		<transition-group name="slide-fade-left">
+			<div class="minesweeper-grid" v-if="state.grid" :key="state.gridNumber">
+				<div class="minesweeper-row" v-for="(row, rowIdx) in state.grid" :key="rowIdx">
+					<div
+						class="minesweeper-cell"
+						v-for="(cell, colIdx) in row"
+						:key="rowIdx * state.grid[0].length + colIdx"
+					>
+						<CardPlaceholder v-if="cell.state === 0" />
+						<Card
+							v-else
+							:card="cell.card"
+							:class="{ clickable: picking && cell.state === 1, picked: cell.state === 2 }"
+							@click="pick(rowIdx, colIdx)"
+						/>
+					</div>
 				</div>
-			</template>
-		</div>
+			</div>
+		</transition-group>
 	</div>
 </template>
 
@@ -35,41 +41,52 @@ export default {
 
 <style scoped>
 .minesweeper-draft {
-	width: 100%;
+	background-color: #282828;
+	border-radius: 10px;
+	box-shadow: inset 0 0 8px #383838;
+	padding: 0.5em;
+	overflow-y: hidden;
+	overflow-x: scroll;
 }
 
 .minesweeper-grid {
 	margin: auto;
 	align-items: center;
 
-	display: grid;
-	grid-auto-flow: row dense;
-	grid-template-columns: repeat(9, 1fr);
-
+	display: table;
+	table-layout: fixed;
 	--gap: 5px;
-	gap: var(--gap);
-
-	/*
-	overflow: scroll;
-	*/
-}
-
-.minesweeper-grid .card {
-	width: 100%;
-	height: auto;
-	transition: box-shadow 0.15s ease-in-out, transform 0.2s ease-in-out;
+	border-spacing: var(--gap);
 }
 
 .minesweeper-row {
-	display: flex;
+	display: table-row;
+}
+
+.minesweeper-cell {
+	display: table-cell;
+}
+
+.minesweeper-grid .card {
+	/*
+	width: auto;
+	height: auto;
+	*/
+	transition: transform 0.2s ease-in-out;
 }
 
 .picked {
 	filter: brightness(0.4);
 	transform: scale(0.8);
 }
+</style>
 
-.clickable:hover {
+<style>
+.clickable img {
+	transition: box-shadow 0.15s ease-in-out;
+}
+
+.clickable:hover img {
 	cursor: pointer;
 	box-shadow: deepskyblue 0 0 5px 1px;
 }
