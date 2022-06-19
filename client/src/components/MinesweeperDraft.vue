@@ -1,6 +1,6 @@
 <template>
 	<div class="minesweeper-draft">
-		<transition-group name="slide-fade-left">
+		<transition name="slide-fade-left" mode="out-in">
 			<div class="minesweeper-grid" v-if="state.grid" :key="state.gridNumber">
 				<div class="minesweeper-row" v-for="(row, rowIdx) in state.grid" :key="rowIdx">
 					<div
@@ -18,7 +18,7 @@
 					</div>
 				</div>
 			</div>
-		</transition-group>
+		</transition>
 	</div>
 </template>
 
