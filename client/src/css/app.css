@@ -955,7 +955,7 @@ ul.player-list {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 1.5em;
+	gap: 0 1.5em;
 	margin-left: 1.5em;
 }
 @supports not (gap: 1.5em) {
