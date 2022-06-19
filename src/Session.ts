@@ -1796,6 +1796,9 @@ export class Session implements IIndexable {
 			case "rochester":
 				this.endRochesterDraft();
 				break;
+			case "minesweeper":
+				this.endMinesweeperDraft();
+				break;
 			case "draft": {
 				this.endDraft();
 				break;
