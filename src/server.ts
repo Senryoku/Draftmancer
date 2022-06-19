@@ -19,16 +19,14 @@ import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
 
-import { isEmpty, Options, shuffleArray } from "./utils.js";
+import { Options, shuffleArray } from "./utils.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import {
-	TurnBased,
 	Session,
 	Sessions,
 	SessionsSettingsProps,
-	instanceOfTurnBased,
 	DistributionMode,
 	DraftLogRecipients,
 	IIndexable,
@@ -37,8 +35,9 @@ import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card } from ".
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
-import { DraftLog } from "./DraftLog";
+import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
+import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
 
 app.use(compression());
 app.use(cookieParser());
@@ -296,6 +295,14 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
 		else ack?.({ code: 0 });
 	},
+	minesweeperDraftPick(userID: UserID, sessionID: SessionID, row: number, col: number, ack: Function) {
+		if (!checkDraftAction(userID, Sessions[sessionID], "minesweeper", ack)) return;
+
+		const r = Sessions[sessionID].minesweeperDraftPick(row, col);
+
+		if (!r) ack?.({ code: 1, error: "Internal error." });
+		else ack?.({ code: 0 });
+	},
 	shareDecklist(userID: UserID, sessionID: SessionID, decklist: DeckList) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
 	},
@@ -403,6 +410,51 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 				text: `Winston Draft can only be played with exactly 2 players. Bots are not supported!`,
 			});
 		}
+	},
+	startMinesweeperDraft(
+		userID: UserID,
+		sessionID: SessionID,
+		gridCount: number,
+		gridWidth: number,
+		gridHeight: number,
+		picksPerGrid: number,
+		ack: Function
+	) {
+		const sess = Sessions[sessionID];
+		if (sess.users.size < 2) {
+			ack?.({
+				error: {
+					title: `Not enough players`,
+					text: `Minesweeper Draft can only be played with at least 2 players. Bots are not supported!`,
+				},
+			});
+		} else {
+			if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
+			if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
+			if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
+			if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
+			if (
+				typeof gridCount !== "number" ||
+				gridCount <= 0 ||
+				typeof gridWidth !== "number" ||
+				gridWidth <= 0 ||
+				typeof gridHeight !== "number" ||
+				gridHeight <= 0 ||
+				typeof gridHeight !== "number" ||
+				picksPerGrid <= 0 ||
+				picksPerGrid > gridWidth * gridHeight
+			)
+				ack?.({
+					error: {
+						title: `Invalid parameters`,
+						text: `Grid parameters are invalid. Please check your settings.`,
+						footer: `Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`,
+					},
+				});
+			sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
+			startPublicSession(sess);
+		}
+		ack?.();
 	},
 	// Session Settings
 	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
