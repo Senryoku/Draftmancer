@@ -24,11 +24,13 @@
     "2x2": {
         "code": "2x2",
         "fullName": "Double Masters 2022",
-        "cardCount": 15,
+        "cardCount": 223,
         "isPrimary": true,
         "icon": "img/sets/2x2.svg",
-        "mythicCount": 9,
-        "rareCount": 6
+        "commonCount": 41,
+        "mythicCount": 54,
+        "rareCount": 90,
+        "uncommonCount": 38
     },
     "2xm": {
         "code": "2xm",
@@ -570,11 +572,11 @@
         "cardCount": 936,
         "isPrimary": true,
         "icon": "img/sets/clb.svg",
-        "commonCount": 200,
-        "mythicCount": 91,
-        "rareCount": 386,
+        "commonCount": 201,
+        "mythicCount": 90,
+        "rareCount": 387,
         "specialCount": 1,
-        "uncommonCount": 258
+        "uncommonCount": 257
     },
     "cm1": {
         "code": "cm1",
@@ -2551,6 +2553,14 @@
         "rareCount": 35,
         "uncommonCount": 60
     },
+    "oafc": {
+        "code": "oafc",
+        "fullName": "Forgotten Realms Commander Display Commanders",
+        "cardCount": 4,
+        "isPrimary": false,
+        "icon": "img/sets/oafc.svg",
+        "mythicCount": 4
+    },
     "oana": {
         "code": "oana",
         "fullName": "Arena New Player Experience Cards",
@@ -3887,12 +3897,12 @@
     "por": {
         "code": "por",
         "fullName": "Portal",
-        "cardCount": 222,
+        "cardCount": 228,
         "isPrimary": false,
         "icon": "img/sets/por.svg",
-        "commonCount": 110,
+        "commonCount": 115,
         "rareCount": 55,
-        "uncommonCount": 57
+        "uncommonCount": 58
     },
     "pori": {
         "code": "pori",
@@ -3921,15 +3931,6 @@
         "block": "Time Spiral",
         "icon": "img/sets/pplc.svg",
         "rareCount": 2
-    },
-    "ppod": {
-        "code": "ppod",
-        "fullName": "Portal Demo Game",
-        "cardCount": 6,
-        "isPrimary": false,
-        "icon": "img/sets/ppod.svg",
-        "commonCount": 1,
-        "rareCount": 5
     },
     "ppp1": {
         "code": "ppp1",
@@ -4675,12 +4676,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 542,
+        "cardCount": 563,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 93,
-        "rareCount": 390,
+        "mythicCount": 104,
+        "rareCount": 400,
         "uncommonCount": 20
     },
     "slu": {
