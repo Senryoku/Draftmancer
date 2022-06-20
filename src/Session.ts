@@ -1377,8 +1377,19 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
 		if (s.grid().get(row, col)?.state !== MinesweeperCellState.Revealed) return false;
 
+		const userID = s.currentPlayer();
 		s.pick(row, col);
 		const currentGridState = s.syncData();
+
+		const pickedCard = s.grid().get(row, col)?.card as Card;
+		Connections[userID].pickedCards.push(pickedCard);
+
+		s.lastPicks.unshift({
+			userName: Connections[userID].userName,
+			round: s.lastPicks.length === 0 ? 0 : s.lastPicks[0].round + 1,
+			cards: [pickedCard],
+		});
+		if (s.lastPicks.length > 2) s.lastPicks.pop();
 
 		if (s.advance()) {
 			// Only send the pick data for animation purposes.
