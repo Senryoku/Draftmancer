@@ -62,7 +62,7 @@ export class MinesweeperGrid {
 	}
 
 	get(row: number, col: number) {
-		if (row < 0 || row > this.state.length || col < 0 || col > this.state[row].length) return null;
+		if (row < 0 || row >= this.state.length || col < 0 || col >= this.state[row].length) return null;
 		return this.state[row][col];
 	}
 }

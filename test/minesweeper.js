@@ -109,24 +109,18 @@ describe.only("Minesweeper Draft", function() {
 			let draftEnded = 0;
 
 			for (let c = 0; c < clients.length; ++c) {
-				const pick = state => {
+				const pick = (row, col) => {
 					const cl = clients[c];
-					let row,
-						col,
-						index = 0;
-					do {
-						row = Math.floor(index / state.grid[0].length);
-						col = Math.floor(index % state.grid[0].length);
-						++index;
-					} while (index < state.grid.length * state.grid[0].length && state.grid[row][col].state != 1);
 					cl.emit("minesweeperDraftPick", row, col, response => {
 						if (response?.error) console.error(response?.error);
 						expect(response?.error).to.be.undefined;
 					});
 				};
 				clients[c].on("minesweeperDraftState", function(state) {
+					let choices = [];
 					for (let i = 0; i < state.grid.length; ++i) {
 						for (let j = 0; j < state.grid[0].length; ++j) {
+							if (state.grid[i][j].state === 1) choices.push([i, j]);
 							if (state.grid[i][j].state === 2) {
 								// If Picked, neightbors should be revealed.
 								if (i > 0) expect(state.grid[i - 1][j].state).to.not.equal(0);
@@ -136,7 +130,9 @@ describe.only("Minesweeper Draft", function() {
 							}
 						}
 					}
-					if (state.currentPlayer === clients[c].query.userID) pick(state);
+					expect(choices.length).to.be.above(0);
+					const choice = choices[Math.floor(Math.random() * choices.length)];
+					if (state.currentPlayer === clients[c].query.userID) pick(choice[0], choice[1]);
 				});
 				clients[c].once("minesweeperDraftEnd", function() {
 					draftEnded += 1;
