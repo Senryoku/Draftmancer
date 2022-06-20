@@ -6,7 +6,7 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe.only("Minesweeper Draft", function() {
+describe("Minesweeper Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
