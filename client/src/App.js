@@ -680,14 +680,20 @@ export default {
 			this.socket.on("minesweeperDraftState", state => {
 				this.setMinesweeperDraftState(state);
 			});
-			this.socket.on("minesweeperGridSync", grid => {
+			this.socket.on("minesweeperGridState", grid => {
 				this.minesweeperDraftState.grid = grid;
 			});
-			this.socket.on("minesweeperDraftEnd", () => {
-				this.drafting = false;
-				this.minesweeperDraftState = null;
-				this.draftingState = DraftState.Brewing;
-				fireToast("success", "Done drafting!");
+			this.socket.on("minesweeperDraftEnd", options => {
+				// Delay to allow the last pick to be displayed.
+				setTimeout(
+					() => {
+						this.drafting = false;
+						this.minesweeperDraftState = null;
+						this.draftingState = DraftState.Brewing;
+						fireToast("success", "Done drafting!");
+					},
+					options?.immediate ? 0 : 1000
+				);
 			});
 			this.socket.on("rejoinMinesweeperDraft", data => {
 				this.drafting = true;
@@ -1374,7 +1380,11 @@ export default {
 			this.socket.emit("startRochesterDraft");
 		},
 		setMinesweeperDraftState(state) {
-			this.minesweeperDraftState = state;
+			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
+			if (currentGridNumber !== undefined && currentGridNumber !== state.gridNumber) {
+				// Delay the state update on grid change to allow the animation to finish
+				setTimeout(() => (this.minesweeperDraftState = state), 1000);
+			} else this.minesweeperDraftState = state;
 		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
 		startMinesweeperDraft: async function() {
 			if (this.userID !== this.sessionOwner || this.drafting) return;

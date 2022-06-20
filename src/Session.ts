@@ -1404,13 +1404,13 @@ export class Session implements IIndexable {
 		return true;
 	}
 
-	endMinesweeperDraft() {
+	endMinesweeperDraft(options: Options = {}) {
 		const s = this.draftState as MinesweeperDraftState;
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
 		logSession("MinesweeperDraft", this);
 		for (let uid of this.users) {
 			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
-			Connections[uid].socket.emit("minesweeperDraftEnd");
+			Connections[uid].socket.emit("minesweeperDraftEnd", options);
 		}
 		this.sendLogs();
 		this.cleanDraftState();
@@ -1797,7 +1797,7 @@ export class Session implements IIndexable {
 				this.endRochesterDraft();
 				break;
 			case "minesweeper":
-				this.endMinesweeperDraft();
+				this.endMinesweeperDraft({ immediate: true });
 				break;
 			case "draft": {
 				this.endDraft();
