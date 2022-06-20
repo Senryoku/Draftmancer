@@ -613,16 +613,41 @@
 						:key="user.userID"
 					>
 						<template v-if="!rochesterDraftState">
-							<i
-								class="fas fa-angle-double-left passing-order-left"
-								v-show="boosterNumber % 2 == 1"
-								v-tooltip="'Passing order'"
-							></i>
-							<i
-								class="fas fa-angle-double-right passing-order-right"
-								v-show="boosterNumber % 2 == 0"
-								v-tooltip="'Passing order'"
-							></i>
+							<template v-if="minesweeperDraftState">
+								<i
+									class="fas fa-circle fa-xs passing-order-repeat"
+									v-if="
+										minesweeperDraftState.pickNumber !== 0 &&
+											minesweeperDraftState.pickNumber % sessionUsers.length ==
+												sessionUsers.length - 1
+									"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-left passing-order-left"
+									v-else-if="
+										Math.floor(minesweeperDraftState.pickNumber / sessionUsers.length) % 2 == 1
+									"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-right passing-order-right"
+									v-else
+									v-tooltip="'Passing order'"
+								></i>
+							</template>
+							<template v-else>
+								<i
+									class="fas fa-angle-double-left passing-order-left"
+									v-show="boosterNumber % 2 == 1"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-right passing-order-right"
+									v-show="boosterNumber % 2 == 0"
+									v-tooltip="'Passing order'"
+								></i>
+							</template>
 						</template>
 						<div class="player-name">{{ user.userName }}</div>
 						<template v-if="!user.isBot && !user.disconnected">

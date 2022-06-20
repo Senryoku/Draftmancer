@@ -104,7 +104,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		const offset = direction
 			? this.players.length - 1 - (this.pickNumber % this.players.length)
 			: this.pickNumber % this.players.length;
-		return this.players[negMod(this.gridNumber + (startingDirection ? 1 : -1) * offset, this.players.length)];
+		return this.players[negMod(this.gridNumber + (startingDirection ? -1 : 1) * offset, this.players.length)];
 	}
 
 	pick(row: number, col: number) {
