@@ -1368,12 +1368,15 @@ export class Session implements IIndexable {
 		return {};
 	}
 
-	minesweeperDraftPick(row: number, col: number) {
+	minesweeperDraftPick(userID: UserID, row: number, col: number) {
 		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
-		if (s.grid().get(row, col)?.state !== MinesweeperCellState.Revealed) return false;
+		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState))
+			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
+		if (s.grid().get(row, col)?.state !== MinesweeperCellState.Revealed)
+			return new SocketError("Invalid Coordinates", "Cards can only be picked after being revealed.");
 
-		const userID = s.currentPlayer();
+		const currentUserID = s.currentPlayer();
+		if (currentUserID !== userID) return new SocketError("Not your turn", "It's not your turn to pick.");
 		s.pick(row, col);
 		const currentGridState = s.syncData();
 
@@ -1408,7 +1411,7 @@ export class Session implements IIndexable {
 			});
 		}
 
-		return true;
+		return {};
 	}
 
 	endMinesweeperDraft(options: Options = {}) {

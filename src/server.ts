@@ -299,10 +299,10 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	minesweeperDraftPick(userID: UserID, sessionID: SessionID, row: number, col: number, ack: Function) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "minesweeper", ack)) return;
 
-		const r = Sessions[sessionID].minesweeperDraftPick(row, col);
+		const r = Sessions[sessionID].minesweeperDraftPick(userID, row, col);
 
-		if (!r) ack?.({ code: 1, error: "Internal error." });
-		else ack?.({ code: 0 });
+		if (r?.error) ack?.(r);
+		else ack?.();
 	},
 	shareDecklist(userID: UserID, sessionID: SessionID, decklist: DeckList) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
