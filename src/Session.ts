@@ -1345,6 +1345,8 @@ export class Session implements IIndexable {
 			);
 		}
 
+		this.initLogs("Minesweeper Draft");
+
 		this.disconnectedUsers = {};
 		this.draftState = new MinesweeperDraftState(
 			this.getSortedHumanPlayersIDs(),
@@ -1364,9 +1366,6 @@ export class Session implements IIndexable {
 				(this.draftState as MinesweeperDraftState).syncData()
 			);
 		}
-
-		const log = this.initLogs("Minesweeper Draft");
-		for (let userID in log.users) log.users[userID].picks = [];
 
 		this.boosters = [];
 		return {};

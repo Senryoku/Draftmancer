@@ -76,6 +76,8 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	gridNumber = 0;
 	picksPerGrid = 2;
 	lastPicks: { userName: string; round: number; cards: Card[] }[] = [];
+
+	// Warning: this will empty the packs.
 	constructor(
 		players: Array<UserID>,
 		packs: Array<Array<Card>>,
