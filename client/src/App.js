@@ -1421,25 +1421,32 @@ export default {
 				title: "Minesweeper Draft",
 				html: `
 					<p>Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
-					<p>
-						Grid Count:
-						<input type="number" value="${gridCount}" min="3" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count">
-					<br />
-						Grid Size:
-						<input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em">
-					<br />
-						Picks per Player, per Grid:
-						<input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid">
-					<br />
-						<input type="checkbox" ${
-							revealBorders ? "checked" : ""
-						} id="input-revealBorders" placeholder="Reveal Borders"> Reveal borders:
-					</p>
+					<div style="display: table; border-spacing: 0.5em; margin: auto;">
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Grid Count:</div>
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridCount}" min="1" max="99" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count" style="max-width: 4em; margin: 0 auto;"></div>
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Grid Size:</div> 
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em; margin: 0 auto;"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em; margin: 0 auto;"></div> 
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Picks per Player, per Grid:</div> 
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid" style="max-width: 4em; margin: 0 auto;"></div> 
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Reveal borders:</div>
+							<div style="display: table-cell; text-align: left;"><input type="checkbox" ${
+								revealBorders ? "checked" : ""
+							} id="input-revealBorders" placeholder="Reveal Borders"></div>
+						</div>
+					</div>
 				`,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Minesweeper Draft",
+				width: "40vw",
 				preConfirm() {
 					return new Promise(function(resolve) {
 						resolve({
