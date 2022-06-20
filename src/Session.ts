@@ -1331,10 +1331,7 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
 			this.drafting = false;
-			return new SocketError(
-				"Erroneous Pack Size",
-				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
-			);
+			return {}; // generateBoosters already emits errors.
 		}
 
 		if (this.boosters.some(b => b.length !== gridWidth * gridHeight)) {
