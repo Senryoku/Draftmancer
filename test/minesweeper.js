@@ -6,7 +6,7 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe.only("Minesweeper Draft", function() {
+describe("Minesweeper Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
@@ -78,8 +78,8 @@ describe.only("Minesweeper Draft", function() {
 		});
 	};
 
-	const startDraft = (gridCount = 3, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
-		it("When session owner launch Minesweeper draft, everyone should receive a startMinesweeperDraft event", function(done) {
+	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
+		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid})`, function(done) {
 			let connectedClients = 0;
 			for (let c of clients) {
 				c.once("startMinesweeperDraft", function(state) {
@@ -90,7 +90,7 @@ describe.only("Minesweeper Draft", function() {
 					}
 				});
 			}
-			if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
+			if (picksPerGrid === -1) picksPerGrid = clients.length * 9;
 			clients[ownerIdx].emit(
 				"startMinesweeperDraft",
 				gridCount,
@@ -120,6 +120,7 @@ describe.only("Minesweeper Draft", function() {
 						++index;
 					} while (index < state.grid.length * state.grid[0].length && state.grid[row][col].state != 1);
 					cl.emit("minesweeperDraftPick", row, col, response => {
+						if (response?.error) console.error(response?.error);
 						expect(response?.error).to.be.undefined;
 					});
 				};
@@ -136,6 +137,7 @@ describe.only("Minesweeper Draft", function() {
 			let currPlayer = clients.findIndex(c => c.query.userID == minesweeper.currentPlayer);
 
 			clients[currPlayer].emit("minesweeperDraftPick", 0, 0, response => {
+				if (response?.error) console.error(response?.error);
 				expect(response?.error).to.be.undefined;
 			});
 		});
@@ -200,5 +202,24 @@ describe.only("Minesweeper Draft", function() {
 		});
 
 		endDraft();
+	});
+
+	describe("Parameters matrix", function() {
+		selectCube();
+
+		for (let [gridCount, gridWidth, gridHeight, picksPerGrid] of [
+			[2, 10, 9, -1],
+			[2, 10, 10, -1],
+			[2, 9, 9, -1],
+			[3, 12, 12, -1],
+			[3, 8, 8, -1],
+			[4, 10, 9, 4 * 8],
+			[2, 10, 9, 4 * 2],
+			[2, 10, 9, 4 * 12],
+			[1, 10, 9, -1],
+		]) {
+			startDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
+			endDraft();
+		}
 	});
 });
