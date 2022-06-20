@@ -37,12 +37,15 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
+import { SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
-import { CustomCardList } from "./CustomCardList";
+import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { isBoolean, isObject, isString } from "./TypeChecks.js";
+import { IDraftState, TurnBased } from "./IDraftState.js";
+import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -125,13 +128,6 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	draftPaused: isBoolean,
 };
 
-export class IDraftState {
-	type: string;
-	constructor(type: string) {
-		this.type = type;
-	}
-}
-
 export class DraftState extends IDraftState {
 	boosters: Array<Array<Card>>;
 	pickNumber = 0;
@@ -141,14 +137,6 @@ export class DraftState extends IDraftState {
 		super("draft");
 		this.boosters = boosters;
 	}
-}
-
-export interface TurnBased extends IDraftState {
-	currentPlayer(): UserID;
-}
-
-export function instanceOfTurnBased(object: any): object is TurnBased {
-	return "currentPlayer" in object;
 }
 
 export class WinstonDraftState extends IDraftState implements TurnBased {
@@ -1320,6 +1308,124 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Rochester Draft End //////////////////////
 
+	startMinesweeperDraft(
+		gridCount: number,
+		gridWidth: number,
+		gridHeight: number,
+		picksPerGrid: number,
+		options: Options = {}
+	): SocketAck {
+		if (this.users.size <= 1)
+			return new SocketError(
+				"Unsufficient number of players",
+				"Minesweeper draft necessitates at least two players. Bots are not supported."
+			);
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
+		if (!this.useCustomCardList) {
+			return new SocketError(
+				"Error",
+				"Minesweeper draft is only available for cube drafting. Please select a custom card list."
+			);
+		}
+		this.drafting = true;
+		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
+		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
+			this.drafting = false;
+			return {}; // generateBoosters already emits errors.
+		}
+
+		if (this.boosters.some(b => b.length !== gridWidth * gridHeight)) {
+			this.drafting = false;
+			return new SocketError(
+				"Erroneous Pack Size",
+				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
+			);
+		}
+
+		this.initLogs("Minesweeper Draft");
+
+		this.disconnectedUsers = {};
+		this.draftState = new MinesweeperDraftState(
+			this.getSortedHumanPlayersIDs(),
+			this.boosters,
+			gridWidth,
+			gridHeight,
+			picksPerGrid,
+			options
+		);
+		for (let user of this.users) {
+			Connections[user].pickedCards = [];
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedHumanPlayers(),
+			});
+			Connections[user].socket.emit(
+				"startMinesweeperDraft",
+				(this.draftState as MinesweeperDraftState).syncData()
+			);
+		}
+
+		this.boosters = [];
+		return {};
+	}
+
+	minesweeperDraftPick(userID: UserID, row: number, col: number) {
+		const s = this.draftState as MinesweeperDraftState;
+		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState))
+			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
+		if (s.grid().get(row, col)?.state !== MinesweeperCellState.Revealed)
+			return new SocketError("Invalid Coordinates", "Cards can only be picked after being revealed.");
+
+		const currentUserID = s.currentPlayer();
+		if (currentUserID !== userID) return new SocketError("Not your turn", "It's not your turn to pick.");
+		s.pick(row, col);
+		const currentGridState = s.syncData();
+
+		const pickedCard = s.grid().get(row, col)?.card as Card;
+		Connections[userID].pickedCards.push(pickedCard);
+
+		s.lastPicks.unshift({
+			userName: Connections[userID].userName,
+			round: s.lastPicks.length === 0 ? 0 : s.lastPicks[0].round + 1,
+			cards: [pickedCard],
+		});
+		if (s.lastPicks.length > 2) s.lastPicks.pop();
+
+		if (s.advance()) {
+			// Only send the pick data for animation purposes.
+			this.forUsers(userID => {
+				Connections[userID].socket.emit("minesweeperGridState", currentGridState.grid);
+			});
+
+			if (s.done()) {
+				this.endMinesweeperDraft();
+			} else {
+				// Send the next grid immediately, front-end will handle the animation
+				const nextGridState = s.syncData();
+				this.forUsers(userID => {
+					Connections[userID].socket.emit("minesweeperDraftState", nextGridState);
+				});
+			}
+		} else {
+			this.forUsers(userID => {
+				Connections[userID].socket.emit("minesweeperDraftState", currentGridState);
+			});
+		}
+
+		return {};
+	}
+
+	endMinesweeperDraft(options: Options = {}) {
+		const s = this.draftState as MinesweeperDraftState;
+		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
+		logSession("MinesweeperDraft", this);
+		for (let uid of this.users) {
+			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			Connections[uid].socket.emit("minesweeperDraftEnd", options);
+		}
+		this.sendLogs();
+		this.cleanDraftState();
+	}
+
 	///////////////////// Traditional Draft Methods //////////////////////
 	async startDraft() {
 		if (this.drafting) return;
@@ -1700,6 +1806,9 @@ export class Session implements IIndexable {
 			case "rochester":
 				this.endRochesterDraft();
 				break;
+			case "minesweeper":
+				this.endMinesweeperDraft({ immediate: true });
+				break;
 			case "draft": {
 				this.endDraft();
 				break;
@@ -1959,6 +2068,9 @@ export class Session implements IIndexable {
 					break;
 				case "rochester":
 					msgData = { name: "rejoinRochesterDraft", state: this.draftState };
+					break;
+				case "minesweeper":
+					msgData = { name: "rejoinMinesweeperDraft", state: this.draftState };
 					break;
 			}
 			Connections[userID].socket.emit(msgData.name, {

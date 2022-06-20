@@ -377,6 +377,9 @@
 								>
 									Rochester
 								</button>
+								<button @click="startMinesweeperDraft()" v-tooltip.left="'Starts a Minesweeper Draft.'">
+									Minesweeper
+								</button>
 							</div>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
@@ -603,22 +606,48 @@
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
 								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
-								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID),
+								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
+								(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
 						}"
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
 						<template v-if="!rochesterDraftState">
-							<i
-								class="fas fa-angle-double-left passing-order-left"
-								v-show="boosterNumber % 2 == 1"
-								v-tooltip="'Passing order'"
-							></i>
-							<i
-								class="fas fa-angle-double-right passing-order-right"
-								v-show="boosterNumber % 2 == 0"
-								v-tooltip="'Passing order'"
-							></i>
+							<template v-if="minesweeperDraftState">
+								<i
+									class="fas fa-circle fa-xs passing-order-repeat"
+									v-if="
+										minesweeperDraftState.pickNumber !== 0 &&
+											minesweeperDraftState.pickNumber % sessionUsers.length ==
+												sessionUsers.length - 1
+									"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-left passing-order-left"
+									v-else-if="
+										Math.floor(minesweeperDraftState.pickNumber / sessionUsers.length) % 2 == 1
+									"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-right passing-order-right"
+									v-else
+									v-tooltip="'Passing order'"
+								></i>
+							</template>
+							<template v-else>
+								<i
+									class="fas fa-angle-double-left passing-order-left"
+									v-show="boosterNumber % 2 == 1"
+									v-tooltip="'Passing order'"
+								></i>
+								<i
+									class="fas fa-angle-double-right passing-order-right"
+									v-show="boosterNumber % 2 == 0"
+									v-tooltip="'Passing order'"
+								></i>
+							</template>
 						</template>
 						<div class="player-name">{{ user.userName }}</div>
 						<template v-if="!user.isBot && !user.disconnected">
@@ -644,7 +673,14 @@
 										@click="removePlayer(user.userID)"
 									></i>
 								</template>
-								<template v-if="winstonDraftState || gridDraftState || rochesterDraftState">
+								<template
+									v-if="
+										winstonDraftState ||
+											gridDraftState ||
+											rochesterDraftState ||
+											minesweeperDraftState
+									"
+								>
 									<i
 										v-if="user.userID in disconnectedUsers"
 										class="fas fa-times red"
@@ -656,7 +692,9 @@
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
 												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
 												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer)
+													user.userID === rochesterDraftState.currentPlayer) ||
+												(minesweeperDraftState &&
+													user.userID === minesweeperDraftState.currentPlayer)
 										"
 										class="fas fa-spinner fa-spin"
 										v-tooltip="user.userName + ' is thinking...'"
@@ -1049,6 +1087,21 @@
 					</div>
 				</div>
 			</transition>
+			<!-- Minesweeper Draft -->
+			<minesweeper-draft
+				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+				v-if="
+					draftingState === DraftState.MinesweeperPicking || draftingState === DraftState.MinesweeperWaiting
+				"
+				:state="minesweeperDraftState"
+				:currentPlayerUsername="
+					minesweeperDraftState.currentPlayer in userByID
+						? userByID[minesweeperDraftState.currentPlayer].userName
+						: '(Disconnected)'
+				"
+				:picking="userID === minesweeperDraftState.currentPlayer"
+				@pick="minesweeperDraftPick"
+			></minesweeper-draft>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
@@ -1058,7 +1111,14 @@
 						</div>
 						<h1>Player(s) disconnected</h1>
 
-						<div v-if="this.winstonDraftState || this.gridDraftState || this.rochesterDraftState">
+						<div
+							v-if="
+								this.winstonDraftState ||
+									this.gridDraftState ||
+									this.rochesterDraftState ||
+									this.minesweeperDraftState
+							"
+						>
 							{{ `Wait for ${disconnectedUserNames} to come back...` }}
 						</div>
 						<div v-else>
@@ -1327,6 +1387,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>June 20, 2022</em>
+							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
+							<p>
+								Default values are tuned for 4 players. Check it out in the "Other Game Modes" dropdown.
+							</p>
+						</div>
+						<div class="news">
 							<em>June 2, 2022</em>
 							<p>
 								<img src="img/sets/clb.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1337,32 +1404,6 @@
 								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
 								when drafting this set!
 							</p>
-						</div>
-						<div class="news">
-							<em>May, 2022</em>
-							<div style="display: flex; align-items: center">
-								<img
-									src="./assets/img/logo-nobackground-200.png"
-									style="height: 5em"
-									alt="Esporter Logo"
-								/>
-								<div>
-									<p style="margin-left: 0.2em">
-										<a href="https://esporter.win/mtgadraft" target="_blank">Esporter</a> is a group
-										coaching service for MTG players, they use MTGADraft for their practice drafts!
-									</p>
-									<p style="margin-left: 0.2em">
-										Their next session will be led by
-										<a href="https://www.twitch.tv/justlolaman" target="_blank">Justlolaman</a>,
-										each week you will get one hour of small-group coaching with him and will
-										practice with other players in your Split.
-									</p>
-									<p style="margin-left: 0.2em">
-										<a href="https://esporter.win/mtgadraft" target="_blank">Signing up</a> for one
-										of their splits also supports MTGADraft :)
-									</p>
-								</div>
-							</div>
 						</div>
 						<div class="news">
 							<em>April 28, 2022</em>

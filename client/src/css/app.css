@@ -747,6 +747,13 @@ ul.player-list {
 	right: -0.3em;
 }
 
+.passing-order-repeat {
+	position: absolute;
+	right: -1.15em;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
 .passing-order-left {
 	position: absolute;
 	left: -0.9em;
@@ -955,7 +962,7 @@ ul.player-list {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 1.5em;
+	gap: 0 1.5em;
 	margin-left: 1.5em;
 }
 @supports not (gap: 1.5em) {
@@ -1458,15 +1465,6 @@ ul.player-list {
 
 .multiselect__tag-icon {
 	color: #bf5d5d;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-	opacity: 0;
 }
 
 .swal2-content pre {

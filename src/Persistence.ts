@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-import { Connection, Connections } from "./Connection.js";
+import { Connections } from "./Connection.js";
 import {
 	Session,
 	Sessions,
@@ -15,6 +15,7 @@ import {
 	RochesterDraftState,
 	IIndexable,
 } from "./Session.js";
+import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, SimpleBot } from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
@@ -132,6 +133,10 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 			case "rochester": {
 				r.draftState = new RochesterDraftState([], []);
+				break;
+			}
+			case "minesweeper": {
+				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
 				break;
 			}
 		}

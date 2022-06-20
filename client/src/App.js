@@ -30,6 +30,7 @@ import DraftLogPick from "./components/DraftLogPick.vue";
 import Dropdown from "./components/Dropdown.vue";
 import Esporter from "./components/Esporter.vue";
 import GridDraft from "./components/GridDraft.vue";
+import MinesweeperDraft from "./components/MinesweeperDraft.vue";
 import LandControl from "./components/LandControl.vue";
 import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
@@ -52,6 +53,8 @@ const DraftState = {
 	GridWaiting: "GridWaiting",
 	RochesterPicking: "RochesterPicking",
 	RochesterWaiting: "RochesterWaiting",
+	MinesweeperPicking: "MinesweeperPicking",
+	MinesweeperWaiting: "MinesweeperWaiting",
 };
 
 const ReadyState = {
@@ -126,6 +129,7 @@ export default {
 		Dropdown,
 		Esporter,
 		GridDraft,
+		MinesweeperDraft,
 		LandControl,
 		Modal,
 		Multiselect,
@@ -204,6 +208,7 @@ export default {
 			winstonDraftState: null,
 			gridDraftState: null,
 			rochesterDraftState: null,
+			minesweeperDraftState: null,
 			draftPaused: false,
 
 			publicSessions: [],
@@ -659,6 +664,54 @@ export default {
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Rochester draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			// Minesweeper Draft
+			this.socket.on("startMinesweeperDraft", state => {
+				startDraftSetup("Minesweeper draft");
+				this.draftingState =
+					this.userID === state.currentPlayer ? DraftState.MinesweeperPicking : DraftState.MinesweeperWaiting;
+				this.setMinesweeperDraftState(state);
+			});
+			this.socket.on("minesweeperDraftState", state => {
+				this.setMinesweeperDraftState(state);
+			});
+			this.socket.on("minesweeperGridState", grid => {
+				this.minesweeperDraftState.grid = grid;
+			});
+			this.socket.on("minesweeperDraftEnd", options => {
+				// Delay to allow the last pick to be displayed.
+				setTimeout(
+					() => {
+						this.drafting = false;
+						this.minesweeperDraftState = null;
+						this.draftingState = DraftState.Brewing;
+						fireToast("success", "Done drafting!");
+					},
+					options?.immediate ? 0 : 1000
+				);
+			});
+			this.socket.on("rejoinMinesweeperDraft", data => {
+				this.drafting = true;
+
+				this.setMinesweeperDraftState(data.state);
+				this.clearState();
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards) this.addToDeck(c);
+
+					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.MinesweeperPicking;
+					else this.draftingState = DraftState.MinesweeperWaiting;
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Minesweeper draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1325,6 +1378,114 @@ export default {
 				return;
 			}
 			this.socket.emit("startRochesterDraft");
+		},
+		setMinesweeperDraftState(state) {
+			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
+			if (currentGridNumber !== undefined && currentGridNumber !== state.gridNumber) {
+				// Delay the state update on grid change to allow the animation to finish
+				setTimeout(() => (this.minesweeperDraftState = state), 1000);
+			} else this.minesweeperDraftState = state;
+
+			if (this.userID === state.currentPlayer) {
+				this.playSound("next");
+				fireToast("info", "Your turn! Pick a card.");
+				this.pushNotification("Your turn!", {
+					body: `This is your turn to pick.`,
+				});
+			}
+		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
+		startMinesweeperDraft: async function() {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			let gridCount = 4;
+			let gridWidth = 9;
+			let gridHeight = 10;
+			let picksPerPlayerPerGrid = 9;
+			let revealBorders = true;
+
+			const savedValues = localStorage.getItem("mtgadraft-minesweeper");
+			if (savedValues) {
+				try {
+					const values = JSON.parse(savedValues);
+					gridCount = values.gridCount;
+					gridWidth = values.gridWidth;
+					gridHeight = values.gridHeight;
+					picksPerPlayerPerGrid = values.picksPerPlayerPerGrid;
+					revealBorders = values.revealBorders;
+				} catch (err) {
+					console.error("Error parsing saved values for Minesweeper Draft: ", err);
+				}
+			}
+
+			Alert.fire({
+				title: "Minesweeper Draft",
+				html: `
+					<p>Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
+					<div style="display: table; border-spacing: 0.5em; margin: auto;">
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Grid Count:</div>
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridCount}" min="1" max="99" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count" style="max-width: 4em; margin: 0 auto;"></div>
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Grid Size:</div> 
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em; margin: 0 auto;"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em; margin: 0 auto;"></div> 
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Picks per Player, per Grid:</div> 
+							<div style="display: table-cell; text-align: left;"><input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid" style="max-width: 4em; margin: 0 auto;"></div> 
+						</div> 
+						<div style="display: table-row">
+							<div style="display: table-cell; text-align: right;">Reveal borders:</div>
+							<div style="display: table-cell; text-align: left;"><input type="checkbox" ${
+								revealBorders ? "checked" : ""
+							} id="input-revealBorders" placeholder="Reveal Borders"></div>
+						</div>
+					</div>
+				`,
+				showCancelButton: true,
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
+				confirmButtonText: "Start Minesweeper Draft",
+				width: "40vw",
+				preConfirm() {
+					return new Promise(function(resolve) {
+						resolve({
+							gridCount: document.getElementById("input-gridCount").valueAsNumber,
+							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
+							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
+							picksPerPlayerPerGrid: document.getElementById("input-picksPerPlayerPerGrid").valueAsNumber,
+							revealBorders: document.getElementById("input-revealBorders").checked,
+						});
+					});
+				},
+			}).then(r => {
+				if (r.isConfirmed) {
+					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
+					this.socket.emit(
+						"startMinesweeperDraft",
+						r.value.gridCount,
+						r.value.gridWidth,
+						r.value.gridHeight,
+						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
+						r.value.revealBorders,
+						response => {
+							if (response?.error) {
+								Alert.fire(response.error);
+							}
+						}
+					);
+				}
+			});
+		},
+		minesweeperDraftPick(row, col) {
+			const card = this.minesweeperDraftState.grid[row][col].card;
+			this.socket.emit("minesweeperDraftPick", row, col, response => {
+				if (response?.error) {
+					Alert.fire(response.error);
+				} else {
+					this.addToDeck(card);
+				}
+			});
 		},
 		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
 		startGlimpseDraft: async function() {
