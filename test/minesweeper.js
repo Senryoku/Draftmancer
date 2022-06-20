@@ -78,8 +78,8 @@ describe("Minesweeper Draft", function() {
 		});
 	};
 
-	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
-		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid})`, function(done) {
+	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1, revealBorders = true) => {
+		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealBorders: ${revealBorders})`, function(done) {
 			let connectedClients = 0;
 			for (let c of clients) {
 				c.once("startMinesweeperDraft", function(state) {
@@ -97,6 +97,7 @@ describe("Minesweeper Draft", function() {
 				gridWidth,
 				gridHeight,
 				picksPerGrid,
+				revealBorders,
 				response => {
 					expect(response?.error).to.be.undefined;
 				}
@@ -143,20 +144,40 @@ describe("Minesweeper Draft", function() {
 			// Pick the first card
 			let currPlayer = clients.findIndex(c => c.query.userID == minesweeper.currentPlayer);
 
-			clients[currPlayer].emit("minesweeperDraftPick", 0, 0, response => {
-				if (response?.error) console.error(response?.error);
-				expect(response?.error).to.be.undefined;
-			});
+			for (let i = 0; i < minesweeper.grid.length; ++i)
+				for (let j = 0; j < minesweeper.grid[0].length; ++j)
+					if (minesweeper.grid[i][j].state === 1) {
+						clients[currPlayer].emit("minesweeperDraftPick", i, j, response => {
+							if (response?.error) console.error(response?.error);
+							expect(response?.error).to.be.undefined;
+						});
+						return;
+					}
 		});
 	};
 
-	const startDraftWithError = (done, gridCount = 3, gridWidth = 10, gridHeight = 9, picksPerGrid = -1) => {
+	const startDraftWithError = (
+		done,
+		gridCount = 3,
+		gridWidth = 10,
+		gridHeight = 9,
+		picksPerGrid = -1,
+		revealBorders = true
+	) => {
 		if (picksPerGrid === -1) picksPerGrid = clients.length * 3 + 1;
-		clients[ownerIdx].emit("startMinesweeperDraft", gridCount, gridWidth, gridHeight, picksPerGrid, r => {
-			//console.error("Response:", r);
-			expect(r?.error).to.exist;
-			done();
-		});
+		clients[ownerIdx].emit(
+			"startMinesweeperDraft",
+			gridCount,
+			gridWidth,
+			gridHeight,
+			picksPerGrid,
+			revealBorders,
+			r => {
+				//console.error("Response:", r);
+				expect(r?.error).to.exist;
+				done();
+			}
+		);
 	};
 
 	describe("Parameter validation", function() {
@@ -228,5 +249,14 @@ describe("Minesweeper Draft", function() {
 			startDraft(gridCount, gridWidth, gridHeight, picksPerGrid);
 			endDraft();
 		}
+
+		startDraft(3, 10, 9, -1, false);
+		endDraft();
+		startDraft(3, 9, 10, -1, false);
+		endDraft();
+		startDraft(3, 9, 9, -1, false);
+		endDraft();
+		startDraft(3, 10, 10, -1, false);
+		endDraft();
 	});
 });

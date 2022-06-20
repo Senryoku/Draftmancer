@@ -419,6 +419,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
+		revealBorders: boolean,
 		ack: Function
 	) {
 		const sess = Sessions[sessionID];
@@ -447,7 +448,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			return;
 		}
 		const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
-			revealBorders: true,
+			revealBorders: revealBorders,
 		});
 		if (ret?.error) {
 			ack?.(ret);

@@ -80,6 +80,12 @@ export default {
 	*/
 	transition: transform 0.2s ease-in-out;
 }
+.minesweeper-grid .card-placeholder {
+	width: 200px;
+	height: 286.833px;
+	padding-top: 0;
+	transition: transform 0.2s ease-in-out;
+}
 
 .picked {
 	filter: brightness(0.4);

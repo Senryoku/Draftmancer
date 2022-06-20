@@ -1393,6 +1393,7 @@ export default {
 			let gridWidth = 9;
 			let gridHeight = 10;
 			let picksPerPlayerPerGrid = 9;
+			let revealBorders = true;
 
 			const savedValues = localStorage.getItem("mtgadraft-minesweeper");
 			if (savedValues) {
@@ -1402,6 +1403,7 @@ export default {
 					gridWidth = values.gridWidth;
 					gridHeight = values.gridHeight;
 					picksPerPlayerPerGrid = values.picksPerPlayerPerGrid;
+					revealBorders = values.revealBorders;
 				} catch (err) {
 					console.error("Error parsing saved values for Minesweeper Draft: ", err);
 				}
@@ -1410,7 +1412,7 @@ export default {
 			Alert.fire({
 				title: "Minesweeper Draft",
 				html: `
-					<p>Minesweeper Draft is a draft variant ...</p>
+					<p>Minesweeper Draft is a draft variant where players alternatively pick cards from a partially revealed card grid, discovering neighboring cards after each pick.</p>
 					<p>
 						Grid Count:
 						<input type="number" value="${gridCount}" min="3" step="1" id="input-gridCount" class="swal2-input" placeholder="Grid Count">
@@ -1420,7 +1422,12 @@ export default {
 					<br />
 						Picks per Player, per Grid:
 						<input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid">
-					</p>`,
+					<br />
+						<input type="checkbox" ${
+							revealBorders ? "checked" : ""
+						} id="input-revealBorders" placeholder="Reveal Borders"> Reveal borders:
+					</p>
+				`,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
@@ -1432,6 +1439,7 @@ export default {
 							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
 							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
 							picksPerPlayerPerGrid: document.getElementById("input-picksPerPlayerPerGrid").valueAsNumber,
+							revealBorders: document.getElementById("input-revealBorders").checked,
 						});
 					});
 				},
@@ -1444,6 +1452,7 @@ export default {
 						r.value.gridWidth,
 						r.value.gridHeight,
 						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
+						r.value.revealBorders,
 						response => {
 							if (response?.error) {
 								Alert.fire(response.error);

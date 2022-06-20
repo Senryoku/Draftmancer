@@ -50,7 +50,27 @@ export class MinesweeperGrid {
 				this.state[i][width - 1].reveal();
 			}
 		}
-		// TODO: Reveal the middle card(s)
+		// Reveal the middle card(s)
+		let rowStart = Math.floor(height / 2);
+		let rowEnd = rowStart + 1;
+		if (height % 2 === 0) --rowStart;
+		let colStart = Math.floor(width / 2);
+		let colEnd = colStart + 1;
+		if (width % 2 === 0) --colStart;
+		if (height % 2 === 1 && width % 2 === 1) {
+		}
+
+		for (let i = rowStart; i < rowEnd; i++) {
+			for (let j = colStart; j < colEnd; j++) {
+				this.state[i][j].reveal();
+			}
+		}
+		if (height % 2 === 1 && width % 2 === 1) {
+			this.get(rowStart - 1, colStart)?.reveal();
+			this.get(rowStart + 1, colStart)?.reveal();
+			this.get(rowStart, colStart - 1)?.reveal();
+			this.get(rowStart, colStart + 1)?.reveal();
+		}
 	}
 
 	pick(row: number, col: number) {
