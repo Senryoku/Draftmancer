@@ -1387,6 +1387,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>June 20, 2022</em>
+							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
+							<p>
+								Default values are tuned for 4 players. Check it out in the "Other Game Modes" dropdown.
+							</p>
+						</div>
+						<div class="news">
 							<em>June 2, 2022</em>
 							<p>
 								<img src="img/sets/clb.svg" class="set-icon" style="--invertedness: 100%" />
@@ -1397,32 +1404,6 @@
 								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
 								when drafting this set!
 							</p>
-						</div>
-						<div class="news">
-							<em>May, 2022</em>
-							<div style="display: flex; align-items: center">
-								<img
-									src="./assets/img/logo-nobackground-200.png"
-									style="height: 5em"
-									alt="Esporter Logo"
-								/>
-								<div>
-									<p style="margin-left: 0.2em">
-										<a href="https://esporter.win/mtgadraft" target="_blank">Esporter</a> is a group
-										coaching service for MTG players, they use MTGADraft for their practice drafts!
-									</p>
-									<p style="margin-left: 0.2em">
-										Their next session will be led by
-										<a href="https://www.twitch.tv/justlolaman" target="_blank">Justlolaman</a>,
-										each week you will get one hour of small-group coaching with him and will
-										practice with other players in your Split.
-									</p>
-									<p style="margin-left: 0.2em">
-										<a href="https://esporter.win/mtgadraft" target="_blank">Signing up</a> for one
-										of their splits also supports MTGADraft :)
-									</p>
-								</div>
-							</div>
 						</div>
 						<div class="news">
 							<em>April 28, 2022</em>
