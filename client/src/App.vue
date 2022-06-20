@@ -1088,47 +1088,20 @@
 				</div>
 			</transition>
 			<!-- Minesweeper Draft -->
-			<div
+			<minesweeper-draft
 				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 				v-if="
 					draftingState === DraftState.MinesweeperPicking || draftingState === DraftState.MinesweeperWaiting
 				"
-			>
-				<div class="section-title">
-					<h2>Minesweeper Draft</h2>
-					<div class="controls">
-						<span>
-							Grid #{{ minesweeperDraftState.gridNumber + 1 }}/{{ minesweeperDraftState.gridCount }}, Pick
-							#{{ minesweeperDraftState.pickNumber + 1 }}/{{ minesweeperDraftState.picksPerGrid }}
-						</span>
-						<span>
-							<template v-if="userID === minesweeperDraftState.currentPlayer">
-								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card.
-							</template>
-							<template v-else-if="minesweeperDraftState.currentPlayer === null">
-								<template v-if="minesweeperDraftState.gridNumber >= minesweeperDraftState.gridCount">
-									This was the last grid! Let me cleanup this cards off the table...
-								</template>
-								<template v-else>Advancing to the next grid...</template>
-							</template>
-							<template v-else>
-								<i class="fas fa-spinner fa-spin"></i>
-								Waiting for
-								{{
-									minesweeperDraftState.currentPlayer in userByID
-										? userByID[minesweeperDraftState.currentPlayer].userName
-										: "(Disconnected)"
-								}}...
-							</template>
-						</span>
-					</div>
-				</div>
-				<minesweeper-draft
-					:state="minesweeperDraftState"
-					:picking="userID === minesweeperDraftState.currentPlayer"
-					@pick="minesweeperDraftPick"
-				></minesweeper-draft>
-			</div>
+				:state="minesweeperDraftState"
+				:currentPlayerUsername="
+					minesweeperDraftState.currentPlayer in userByID
+						? userByID[minesweeperDraftState.currentPlayer].userName
+						: '(Disconnected)'
+				"
+				:picking="userID === minesweeperDraftState.currentPlayer"
+				@pick="minesweeperDraftPick"
+			></minesweeper-draft>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
