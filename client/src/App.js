@@ -1392,7 +1392,7 @@ export default {
 			let gridCount = 4;
 			let gridWidth = 9;
 			let gridHeight = 10;
-			let picksPerGrid = this.sessionUsers.length * 9;
+			let picksPerPlayerPerGrid = 9;
 
 			Alert.fire({
 				title: "Minesweeper Draft",
@@ -1405,8 +1405,8 @@ export default {
 						Grid Size:
 						<input type="number" value="${gridWidth}" min="1" max="40" step="1" id="input-gridWidth" class="swal2-input" placeholder="Grid Width" style="max-width: 4em"> x <input type="number" value="${gridHeight}" min="1" max="40" step="1" id="input-gridHeight" class="swal2-input" placeholder="Grid Height" style="max-width: 4em">
 					<br />
-						Picks per Grid (for all players):
-						<input type="number" value="${picksPerGrid}" min="1" max="40*40" step="1" id="input-picksPerGrid" class="swal2-input" placeholder="Picks per Grid">
+						Picks per Player, per Grid:
+						<input type="number" value="${picksPerPlayerPerGrid}" min="1" max="40*40" step="1" id="input-picksPerPlayerPerGrid" class="swal2-input" placeholder="Picks per Player, per Grid">
 					</p>`,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
@@ -1418,7 +1418,7 @@ export default {
 							gridCount: document.getElementById("input-gridCount").valueAsNumber,
 							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
 							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
-							picksPerGrid: document.getElementById("input-picksPerGrid").valueAsNumber,
+							picksPerPlayerPerGrid: document.getElementById("input-picksPerPlayerPerGrid").valueAsNumber,
 						});
 					});
 				},
@@ -1429,7 +1429,7 @@ export default {
 						r.value.gridCount,
 						r.value.gridWidth,
 						r.value.gridHeight,
-						r.value.picksPerGrid,
+						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
 						response => {
 							if (response?.error) {
 								Alert.fire(response.error);
