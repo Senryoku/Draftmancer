@@ -167,11 +167,12 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	syncData() {
 		const grid = this.strippedGrid();
 		return {
-			pickNumber: this.pickNumber,
+			gridCount: this.grids.length,
 			gridNumber: this.gridNumber,
+			picksPerGrid: this.picksPerGrid,
+			pickNumber: this.pickNumber,
 			currentPlayer: this.currentPlayer(),
 			grid: grid,
-			gridCount: this.grids.length,
 			lastPicks: this.lastPicks,
 		};
 	}
