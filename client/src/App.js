@@ -1394,6 +1394,19 @@ export default {
 			let gridHeight = 10;
 			let picksPerPlayerPerGrid = 9;
 
+			const savedValues = localStorage.getItem("mtgadraft-minesweeper");
+			if (savedValues) {
+				try {
+					const values = JSON.parse(savedValues);
+					gridCount = values.gridCount;
+					gridWidth = values.gridWidth;
+					gridHeight = values.gridHeight;
+					picksPerPlayerPerGrid = values.picksPerPlayerPerGrid;
+				} catch (err) {
+					console.error("Error parsing saved values for Minesweeper Draft: ", err);
+				}
+			}
+
 			Alert.fire({
 				title: "Minesweeper Draft",
 				html: `
@@ -1424,6 +1437,7 @@ export default {
 				},
 			}).then(r => {
 				if (r.isConfirmed) {
+					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
 						"startMinesweeperDraft",
 						r.value.gridCount,
