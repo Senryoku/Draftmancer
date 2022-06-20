@@ -6,7 +6,7 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe("Minesweeper Draft", function() {
+describe.only("Minesweeper Draft", function() {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
@@ -125,6 +125,17 @@ describe("Minesweeper Draft", function() {
 					});
 				};
 				clients[c].on("minesweeperDraftState", function(state) {
+					for (let i = 0; i < state.grid.length; ++i) {
+						for (let j = 0; j < state.grid[0].length; ++j) {
+							if (state.grid[i][j].state === 2) {
+								// If Picked, neightbors should be revealed.
+								if (i > 0) expect(state.grid[i - 1][j].state).to.not.equal(0);
+								if (i < state.grid.length - 1) expect(state.grid[i + 1][j].state).to.not.equal(0);
+								if (j > 0) expect(state.grid[i][j - 1].state).to.not.equal(0);
+								if (j < state.grid[0].length - 1) expect(state.grid[i][j + 1].state).to.not.equal(0);
+							}
+						}
+					}
 					if (state.currentPlayer === clients[c].query.userID) pick(state);
 				});
 				clients[c].once("minesweeperDraftEnd", function() {
