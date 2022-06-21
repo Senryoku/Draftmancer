@@ -13,8 +13,8 @@ import express from "express";
 const app = express();
 import http from "http";
 const httpServer = new http.Server(app);
-import SocketIO from "socket.io";
-const io = SocketIO(httpServer);
+import { Server, Socket } from "socket.io";
+const io = new Server(httpServer);
 import cookieParser from "cookie-parser";
 import uuid from "uuid";
 const uuidv1 = uuid.v1;
@@ -67,8 +67,8 @@ function getPublicSessionData(s: Session) {
 
 function getPublicSessions() {
 	return Object.values(Sessions)
-		.filter(s => s.isPublic && !s.drafting)
-		.map(s => getPublicSessionData(s));
+		.filter((s) => s.isPublic && !s.drafting)
+		.map((s) => getPublicSessionData(s));
 }
 
 function updatePublicSession(sid: SessionID) {
@@ -105,12 +105,12 @@ for (let cube of constants.CubeLists) {
 /////////////////////////////////////////////////////////////////
 // Setup all websocket responses on client connection
 
-const useCustomCardList = function(session: Session, list: CustomCardList) {
+const useCustomCardList = function (session: Session, list: CustomCardList) {
 	session.setCustomCardList(list);
 	if (session.isPublic) updatePublicSession(session.id);
 };
 
-const parseCustomCardList = function(session: Session, txtlist: string, options: Options, ack: Function) {
+const parseCustomCardList = function (session: Session, txtlist: string, options: Options, ack: Function) {
 	let parsedList = null;
 	try {
 		parsedList = parseCardList(txtlist, options);
@@ -130,7 +130,7 @@ const parseCustomCardList = function(session: Session, txtlist: string, options:
 	ack?.({ code: 0 });
 };
 
-const checkDraftAction = function(userID: UserID, sess: Session, type: string, ack?: Function) {
+const checkDraftAction = function (userID: UserID, sess: Session, type: string, ack?: Function) {
 	if (!sess.drafting || sess.draftState?.type !== type) {
 		ack?.({ code: 2, error: "Not drafting." });
 		return false;
@@ -173,7 +173,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		ack?.({ collection: processedCollection });
 
 		const hasCollection = processedCollection.size > 0;
-		Sessions[sessionID].forUsers(user =>
+		Sessions[sessionID].forUsers((user) =>
 			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
@@ -221,7 +221,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
 
 		Connections[userID].useCollection = useCollection;
-		Sessions[sessionID].forUsers(user =>
+		Sessions[sessionID].forUsers((user) =>
 			Connections[user]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
@@ -234,11 +234,11 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		if (!isObject(message) || !isString(message.author) || !isString(message.text) || !isNumber(message.timestamp))
 			return;
 		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
-		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("chatMessage", message));
+		Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("chatMessage", message));
 	},
 	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
 		if (!isString(readyState)) return;
-		Sessions[sessionID].forUsers(user => Connections[user]?.socket.emit("setReady", userID, readyState));
+		Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
 	},
 	async pickCard(
 		userID: UserID,
@@ -472,7 +472,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		} else {
 			sess.owner = newOwnerID;
 		}
-		sess.forUsers(user =>
+		sess.forUsers((user) =>
 			Connections[user]?.socket.emit(
 				"sessionOwner",
 				sess.owner,
@@ -763,7 +763,9 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	) {
 		if (!SessionsSettingsProps.boosterContent(boosterContent)) return;
 		if (
-			Object.keys(boosterContent).every(r => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r])
+			Object.keys(boosterContent).every(
+				(r) => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]
+			)
 		)
 			return;
 
@@ -776,7 +778,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
 
 		Sessions[sessionID].usePredeterminedBoosters = value;
-		Sessions[sessionID].forNonOwners(uid =>
+		Sessions[sessionID].forNonOwners((uid) =>
 			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
 		);
 		ack?.({ code: 0 });
@@ -825,7 +827,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 			Sessions[sessionID].boosters = boosters;
 			Sessions[sessionID].usePredeterminedBoosters = true;
-			Sessions[sessionID].forUsers(uid =>
+			Sessions[sessionID].forUsers((uid) =>
 				Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
 			);
 			ack?.({ code: 0 });
@@ -845,7 +847,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.personalLogs(value)) return;
 
 		Sessions[sessionID].personalLogs = value;
-		Sessions[sessionID].forNonOwners(uid =>
+		Sessions[sessionID].forNonOwners((uid) =>
 			Connections[uid].socket.emit("sessionOptions", { personalLogs: value })
 		);
 	},
@@ -1030,13 +1032,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 };
 
 function prepareSocketCallback(callback: Function, ownerOnly = false) {
-	return async function(this: SocketIO.Socket) {
+	return async function (this: Socket) {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
 		const ack =
 			arguments.length > 0 && arguments[arguments.length - 1] instanceof Function
 				? arguments[arguments.length - 1]
 				: null;
-		const userID = this.handshake.query.userID;
+		const userID = (this.handshake.query as any).userID;
 		if (!(userID in Connections)) {
 			ack?.({ code: 1, error: "Internal error. User does not exist." });
 			return;
@@ -1059,7 +1061,7 @@ function prepareSocketCallback(callback: Function, ownerOnly = false) {
 	};
 }
 
-io.on("connection", async function(socket) {
+io.on("connection", async function (socket) {
 	const query = socket.handshake.query;
 	console.log(
 		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
@@ -1074,8 +1076,8 @@ io.on("connection", async function(socket) {
 			title: "Connecting...",
 			allowOutsideClick: false,
 		});
-		await new Promise<void>(resolve => {
-			(targetSocket => {
+		await new Promise<void>((resolve) => {
+			((targetSocket) => {
 				const timeout = setTimeout(() => {
 					// Previous connection did not respond in time, close it and continue as normal.
 					targetSocket.disconnect();
@@ -1111,12 +1113,13 @@ io.on("connection", async function(socket) {
 
 	// Messages
 
-	socket.on("disconnect", function(this: SocketIO.Socket) {
-		const userID = this.handshake.query.userID;
+	socket.on("disconnect", function (this: Socket) {
+		const userID = (this.handshake.query as any).userID;
 		if (userID in Connections && Connections[userID].socket === this) {
 			console.log(
-				`${Connections[userID].userName} [${userID}] disconnected. (${Object.keys(Connections).length -
-					1} players online)`
+				`${Connections[userID].userName} [${userID}] disconnected. (${
+					Object.keys(Connections).length - 1
+				} players online)`
 			);
 			removeUserFromSession(userID);
 			process.nextTick(() => {
@@ -1125,13 +1128,13 @@ io.on("connection", async function(socket) {
 		}
 	});
 
-	socket.on("error", function(err) {
+	socket.on("error", function (err: any) {
 		console.error("Socket.io error: ");
 		console.error(err);
 	});
 
-	socket.on("setSession", function(this: SocketIO.Socket, sessionID, sessionSettings) {
-		const userID = this.handshake.query.userID;
+	socket.on("setSession", function (this: Socket, sessionID: SessionID, sessionSettings: Options) {
+		const userID = (this.handshake.query as any).userID;
 		if (sessionID === Connections[userID].sessionID) return;
 
 		const filteredSettings: Options = {};
@@ -1212,8 +1215,9 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		// Session exists and is drafting
 		if (sess.drafting) {
 			console.log(
-				`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${userID in
-					sess.disconnectedUsers}`
+				`${userID} wants to join drafting session '${sessionID}'... userID in sess.disconnectedUsers: ${
+					userID in sess.disconnectedUsers
+				}`
 			);
 
 			if (userID in sess.disconnectedUsers) {
@@ -1366,7 +1370,7 @@ app.post("/getCards", (req, res) => {
 		try {
 			res.setHeader("Content-Type", "application/json");
 			if (Array.isArray(req.body)) {
-				res.send(JSON.stringify(req.body.map(cid => Cards[cid])));
+				res.send(JSON.stringify(req.body.map((cid) => Cards[cid])));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
 				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
@@ -1441,7 +1445,7 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 const secretKey = process.env.SECRET_KEY || "1234";
 
 let express_json_cache: any = []; // Clear this before calling
-app.set("json replacer", function(key: string, value: any) {
+app.set("json replacer", function (key: string, value: any) {
 	if (!express_json_cache) express_json_cache = [];
 	// Deal with sets
 	if (typeof value === "object" && value instanceof Set) {

@@ -1,6 +1,6 @@
 "use strict";
 import "core-js/features/string/match-all.js";
-import io from "../../node_modules/socket.io-client/dist/socket.io.js";
+import io from "socket.io-client";
 import Vue from "vue";
 import draggable from "vuedraggable";
 import VTooltip from "v-tooltip";
@@ -291,7 +291,7 @@ export default {
 					});
 			});
 
-			this.socket.on("reconnect", attemptNumber => {
+			this.socket.on("reconnect", (attemptNumber) => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
@@ -304,17 +304,17 @@ export default {
 				});
 			});
 
-			this.socket.on("alreadyConnected", newID => {
+			this.socket.on("alreadyConnected", (newID) => {
 				this.userID = newID;
 				this.socket.query.userID = newID;
 				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
-			this.socket.on("stillAlive", ack => {
+			this.socket.on("stillAlive", (ack) => {
 				if (ack) ack();
 			});
 
-			this.socket.on("chatMessage", message => {
+			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
 				// TODO: Cleanup this?
 				let bubble = document.querySelector("#chat-bubble-" + message.author);
@@ -324,12 +324,12 @@ export default {
 				bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = 0), 5000);
 			});
 
-			this.socket.on("publicSessions", sessions => {
+			this.socket.on("publicSessions", (sessions) => {
 				this.publicSessions = sessions;
 			});
 
-			this.socket.on("updatePublicSession", session => {
-				const idx = this.publicSessions.findIndex(s => s.id === session.id);
+			this.socket.on("updatePublicSession", (session) => {
+				const idx = this.publicSessions.findIndex((s) => s.id === session.id);
 				if (session.isPrivate) {
 					if (idx !== -1) this.publicSessions.splice(idx, 1);
 				} else {
@@ -338,7 +338,7 @@ export default {
 				}
 			});
 
-			this.socket.on("setSession", sessionID => {
+			this.socket.on("setSession", (sessionID) => {
 				this.sessionID = sessionID;
 				this.socket.query.sessionID = sessionID;
 				if (this.drafting) {
@@ -348,28 +348,28 @@ export default {
 				}
 			});
 
-			this.socket.on("sessionUsers", users => {
+			this.socket.on("sessionUsers", (users) => {
 				for (let u of users) {
 					if (!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
 				this.sessionUsers = users;
-				this.userOrder = users.map(u => u.userID);
+				this.userOrder = users.map((u) => u.userID);
 			});
 
-			this.socket.on("userDisconnected", data => {
+			this.socket.on("userDisconnected", (data) => {
 				if (!this.drafting) return;
 				this.sessionOwner = data.owner;
 				this.disconnectedUsers = data.disconnectedUsers;
 			});
 
-			this.socket.on("resumeOnReconnection", data => {
+			this.socket.on("resumeOnReconnection", (data) => {
 				this.disconnectedUsers = {};
 				fireToast("success", data.msg.title, data.msg.text);
 			});
 
-			this.socket.on("updateUser", data => {
+			this.socket.on("updateUser", (data) => {
 				let user = this.userByID[data.userID];
 				if (!user) {
 					if (data.userID === this.sessionOwner && data.updatedProperties.userName)
@@ -382,7 +382,7 @@ export default {
 				}
 			});
 
-			this.socket.on("sessionOptions", sessionOptions => {
+			this.socket.on("sessionOptions", (sessionOptions) => {
 				for (let prop in sessionOptions) this[prop] = sessionOptions[prop];
 			});
 
@@ -390,35 +390,35 @@ export default {
 				this.sessionOwner = ownerID;
 				if (ownerUserName) this.sessionOwnerUsername = ownerUserName;
 			});
-			this.socket.on("isPublic", data => {
+			this.socket.on("isPublic", (data) => {
 				this.isPublic = data;
 			});
-			this.socket.on("ignoreCollections", ignoreCollections => {
+			this.socket.on("ignoreCollections", (ignoreCollections) => {
 				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("boostersPerPlayer", data => {
+			this.socket.on("boostersPerPlayer", (data) => {
 				this.boostersPerPlayer = parseInt(data);
 			});
-			this.socket.on("cardsPerBooster", data => {
+			this.socket.on("cardsPerBooster", (data) => {
 				this.cardsPerBooster = parseInt(data);
 			});
-			this.socket.on("teamDraft", data => {
+			this.socket.on("teamDraft", (data) => {
 				this.teamDraft = data;
 			});
-			this.socket.on("bots", data => {
+			this.socket.on("bots", (data) => {
 				this.bots = parseInt(data);
 			});
-			this.socket.on("setMaxPlayers", maxPlayers => {
+			this.socket.on("setMaxPlayers", (maxPlayers) => {
 				this.maxPlayers = parseInt(maxPlayers);
 			});
-			this.socket.on("setRestriction", setRestriction => {
+			this.socket.on("setRestriction", (setRestriction) => {
 				this.setRestriction = setRestriction;
 			});
-			this.socket.on("setPickTimer", timer => {
+			this.socket.on("setPickTimer", (timer) => {
 				this.maxTimer = timer;
 			});
 
-			this.socket.on("message", data => {
+			this.socket.on("message", (data) => {
 				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
 				if (data.text === undefined) data.text = "";
@@ -471,7 +471,7 @@ export default {
 					confirmButtonText: "I'm ready!",
 					cancelButtonText: "Not Ready",
 					allowOutsideClick: false,
-				}).then(result => {
+				}).then((result) => {
 					this.socket.emit("setReady", result.value ? ReadyState.Ready : ReadyState.NotReady);
 				});
 			});
@@ -479,21 +479,21 @@ export default {
 			this.socket.on("setReady", (userID, readyState) => {
 				if (!this.pendingReadyCheck) return;
 				if (userID in this.userByID) this.userByID[userID].readyState = readyState;
-				if (this.sessionUsers.every(u => u.readyState === ReadyState.Ready)) {
+				if (this.sessionUsers.every((u) => u.readyState === ReadyState.Ready)) {
 					fireToast("success", "Everybody is ready!");
 					this.pushTitleNotification("✔️");
 				}
 			});
 
 			// Winston Draft
-			this.socket.on("startWinstonDraft", state => {
+			this.socket.on("startWinstonDraft", (state) => {
 				startDraftSetup("Winston draft");
 				this.setWinstonDraftState(state);
 			});
-			this.socket.on("winstonDraftSync", winstonDraftState => {
+			this.socket.on("winstonDraftSync", (winstonDraftState) => {
 				this.setWinstonDraftState(winstonDraftState);
 			});
-			this.socket.on("winstonDraftNextRound", currentPlayer => {
+			this.socket.on("winstonDraftNextRound", (currentPlayer) => {
 				if (this.userID === currentPlayer) {
 					this.playSound("next");
 					fireToast("success", "Your turn!");
@@ -511,7 +511,7 @@ export default {
 				this.draftingState = DraftState.Brewing;
 				fireToast("success", "Done drafting!");
 			});
-			this.socket.on("winstonDraftRandomCard", c => {
+			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const ComponentClass = Vue.extend(Card);
@@ -527,7 +527,7 @@ export default {
 				});
 			});
 
-			this.socket.on("rejoinWinstonDraft", data => {
+			this.socket.on("rejoinWinstonDraft", (data) => {
 				this.drafting = true;
 
 				this.setWinstonDraftState(data.state);
@@ -551,16 +551,16 @@ export default {
 			});
 
 			// Grid Draft
-			this.socket.on("startGridDraft", state => {
+			this.socket.on("startGridDraft", (state) => {
 				startDraftSetup("Grid draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 			});
-			this.socket.on("gridDraftSync", gridDraftState => {
+			this.socket.on("gridDraftSync", (gridDraftState) => {
 				this.setGridDraftState(gridDraftState);
 			});
-			this.socket.on("gridDraftNextRound", state => {
+			this.socket.on("gridDraftNextRound", (state) => {
 				const doNextRound = () => {
 					this.setGridDraftState(state);
 					if (this.userID === state.currentPlayer) {
@@ -593,7 +593,7 @@ export default {
 				);
 			});
 
-			this.socket.on("rejoinGridDraft", data => {
+			this.socket.on("rejoinGridDraft", (data) => {
 				this.drafting = true;
 
 				this.setGridDraftState(data.state);
@@ -617,16 +617,16 @@ export default {
 			});
 
 			// Rochester Draft
-			this.socket.on("startRochesterDraft", state => {
+			this.socket.on("startRochesterDraft", (state) => {
 				startDraftSetup("Rochester draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
 				this.setRochesterDraftState(state);
 			});
-			this.socket.on("rochesterDraftSync", state => {
+			this.socket.on("rochesterDraftSync", (state) => {
 				this.setRochesterDraftState(state);
 			});
-			this.socket.on("rochesterDraftNextRound", state => {
+			this.socket.on("rochesterDraftNextRound", (state) => {
 				this.setRochesterDraftState(state);
 				if (this.userID === state.currentPlayer) {
 					this.playSound("next");
@@ -647,7 +647,7 @@ export default {
 				fireToast("success", "Done drafting!");
 			});
 
-			this.socket.on("rejoinRochesterDraft", data => {
+			this.socket.on("rejoinRochesterDraft", (data) => {
 				this.drafting = true;
 
 				this.setRochesterDraftState(data.state);
@@ -671,19 +671,19 @@ export default {
 			});
 
 			// Minesweeper Draft
-			this.socket.on("startMinesweeperDraft", state => {
+			this.socket.on("startMinesweeperDraft", (state) => {
 				startDraftSetup("Minesweeper draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.MinesweeperPicking : DraftState.MinesweeperWaiting;
 				this.setMinesweeperDraftState(state);
 			});
-			this.socket.on("minesweeperDraftState", state => {
+			this.socket.on("minesweeperDraftState", (state) => {
 				this.setMinesweeperDraftState(state);
 			});
-			this.socket.on("minesweeperGridState", grid => {
+			this.socket.on("minesweeperGridState", (grid) => {
 				this.minesweeperDraftState.grid = grid;
 			});
-			this.socket.on("minesweeperDraftEnd", options => {
+			this.socket.on("minesweeperDraftEnd", (options) => {
 				// Delay to allow the last pick to be displayed.
 				setTimeout(
 					() => {
@@ -695,7 +695,7 @@ export default {
 					options?.immediate ? 0 : 1000
 				);
 			});
-			this.socket.on("rejoinMinesweeperDraft", data => {
+			this.socket.on("rejoinMinesweeperDraft", (data) => {
 				this.drafting = true;
 
 				this.setMinesweeperDraftState(data.state);
@@ -746,12 +746,12 @@ export default {
 				startDraftSetup();
 
 				// Are we just an Organizer, and not a player?
-				if (!this.virtualPlayers.map(u => u.userID).includes(this.userID)) {
+				if (!this.virtualPlayers.map((u) => u.userID).includes(this.userID)) {
 					this.draftingState = DraftState.Watching;
 				}
 			});
 
-			this.socket.on("rejoinDraft", data => {
+			this.socket.on("rejoinDraft", (data) => {
 				this.drafting = true;
 
 				this.clearState();
@@ -784,7 +784,7 @@ export default {
 				});
 			});
 
-			this.socket.on("nextBooster", data => {
+			this.socket.on("nextBooster", (data) => {
 				this.booster = [];
 				for (let u of this.sessionUsers) {
 					u.pickedThisRound = false;
@@ -805,7 +805,7 @@ export default {
 				this.burningCards = [];
 			});
 
-			this.socket.on("botRecommandations", data => {
+			this.socket.on("botRecommandations", (data) => {
 				if (data.pickNumber === this.pickNumber) this.botScores = data.scores;
 			});
 
@@ -836,10 +836,10 @@ export default {
 				fireToast("success", "Draft Resumed");
 			});
 
-			this.socket.on("draftLog", draftLog => {
+			this.socket.on("draftLog", (draftLog) => {
 				// Updates draft log if already present, or adds it to the list
 				const idx = this.draftLogs.findIndex(
-					l => l.sessionID === draftLog.sessionID && l.time === draftLog.time
+					(l) => l.sessionID === draftLog.sessionID && l.time === draftLog.time
 				);
 				if (idx >= 0) {
 					if (this.currentDraftLog === this.draftLogs[idx]) this.currentDraftLog = draftLog;
@@ -852,15 +852,15 @@ export default {
 				this.storeDraftLogs();
 			});
 
-			this.socket.on("shareDecklist", data => {
-				const idx = this.draftLogs.findIndex(l => l.sessionID === data.sessionID && l.time === data.time);
+			this.socket.on("shareDecklist", (data) => {
+				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
 				if (idx && data.userID in this.draftLogs[idx].users) {
 					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
 					this.storeDraftLogs();
 				}
 			});
 
-			this.socket.on("draftLogLive", data => {
+			this.socket.on("draftLogLive", (data) => {
 				if (data.log) this.draftLogLive = data.log;
 				if (data.pick) {
 					this.draftLogLive.users[data.userID].picks.push(data.pick);
@@ -868,18 +868,18 @@ export default {
 				}
 			});
 
-			this.socket.on("pickAlert", data => {
+			this.socket.on("pickAlert", (data) => {
 				fireToast(
 					"info",
 					`${data.userName} picked ${data.cards
-						.map(s => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
+						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
 
-			this.socket.on("setCardSelection", data => {
+			this.socket.on("setCardSelection", (data) => {
 				if (!data) return;
 				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
 				if (cards.length === 0) return;
@@ -897,7 +897,7 @@ export default {
 				});
 			});
 
-			this.socket.on("timer", data => {
+			this.socket.on("timer", (data) => {
 				if (data.countdown == 0) this.forcePick(this.booster);
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
@@ -1011,7 +1011,7 @@ export default {
 					confirmButtonColor: ButtonColor.Critical,
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
-				}).then(result => {
+				}).then((result) => {
 					if (result.value) {
 						this.socket.emit("startDraft");
 						return true;
@@ -1034,7 +1034,7 @@ export default {
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Stop the draft!",
-			}).then(result => {
+			}).then((result) => {
 				if (result.value) {
 					self.socket.emit("stopDraft");
 				}
@@ -1061,7 +1061,7 @@ export default {
 		restoreCard(e, c) {
 			if (!this.burningCards.includes(c)) return;
 			this.burningCards.splice(
-				this.burningCards.findIndex(o => o === c),
+				this.burningCards.findIndex((o) => o === c),
 				1
 			);
 			if (e) e.stopPropagation();
@@ -1105,7 +1105,7 @@ export default {
 				console.error(`dropBoosterCard error: this.selectedCards === ${this.selectedCards}`);
 				return;
 			}
-			if (!this.selectedCards.some(c => cardid === c.id)) {
+			if (!this.selectedCards.some((c) => cardid === c.id)) {
 				console.error(
 					`dropBoosterCard error: cardid (${cardid}) != this.selectedCards.id (${this.selectedCards.id})`
 				);
@@ -1145,8 +1145,8 @@ export default {
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.selectedCards.map(c => this.rochesterDraftState.booster.findIndex(c2 => c === c2)),
-						answer => {
+						this.selectedCards.map((c) => this.rochesterDraftState.booster.findIndex((c2) => c === c2)),
+						(answer) => {
 							this.pickInFlight = false;
 							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
 						}
@@ -1156,10 +1156,10 @@ export default {
 					this.socket.emit(
 						"pickCard",
 						{
-							pickedCards: this.selectedCards.map(c => this.booster.findIndex(c2 => c === c2)),
-							burnedCards: this.burningCards.map(c => this.booster.findIndex(c2 => c === c2)),
+							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
+							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 						},
-						answer => {
+						(answer) => {
 							this.pickInFlight = false;
 							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
 						}
@@ -1170,7 +1170,7 @@ export default {
 				else this.addToDeck(this.selectedCards, options);
 				// Removes picked & burned cards for animation
 				this.booster = this.booster.filter(
-					c => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
+					(c) => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
 				);
 			});
 			this.pickInFlight = true;
@@ -1242,15 +1242,14 @@ export default {
 			}
 			this.winstonDraftState.piles = piles;
 		},
-		startWinstonDraft: async function() {
+		startWinstonDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
-					text:
-						"Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
+					text: "Non-playing owner is not supported in Winston Draft for now. The 'Session owner is playing' option needs to be active.",
 				});
 				return;
 			}
@@ -1279,14 +1278,14 @@ export default {
 		},
 		winstonDraftTakePile() {
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
-			this.socket.emit("winstonDraftTakePile", answer => {
+			this.socket.emit("winstonDraftTakePile", (answer) => {
 				if (answer.code === 0) {
 					for (let c of cards) this.addToDeck(c);
 				} else alert("Error: ", answer.error);
 			});
 		},
 		winstonDraftSkipPile() {
-			this.socket.emit("winstonDraftSkipPile", answer => {
+			this.socket.emit("winstonDraftSkipPile", (answer) => {
 				if (answer.code !== 0) alert("Error: ", answer.error);
 			});
 		},
@@ -1305,15 +1304,14 @@ export default {
 			}
 			this.gridDraftState.booster = booster;
 		},
-		startGridDraft: async function() {
+		startGridDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
-					text:
-						"Non-playing owner is not supported in Grid Draft for now. The 'Session owner is playing' option needs to be active.",
+					text: "Non-playing owner is not supported in Grid Draft for now. The 'Session owner is playing' option needs to be active.",
 				});
 				return;
 			}
@@ -1355,7 +1353,7 @@ export default {
 				console.error("gridDraftPick: Should not reach that.");
 				return;
 			} else {
-				this.socket.emit("gridDraftPick", choice, answer => {
+				this.socket.emit("gridDraftPick", choice, (answer) => {
 					if (answer.code === 0) {
 						for (let c of cards) this.addToDeck(c);
 					} else alert("Error: ", answer.error);
@@ -1365,15 +1363,14 @@ export default {
 		setRochesterDraftState(state) {
 			this.rochesterDraftState = state;
 		},
-		startRochesterDraft: async function() {
+		startRochesterDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
 
 			if (!this.ownerIsPlayer) {
 				Alert.fire({
 					icon: "error",
 					title: "Owner has to play",
-					text:
-						"Non-playing owner is not supported in Rochester Draft for now. The 'Session owner is playing' option needs to be active.",
+					text: "Non-playing owner is not supported in Rochester Draft for now. The 'Session owner is playing' option needs to be active.",
 				});
 				return;
 			}
@@ -1394,7 +1391,7 @@ export default {
 				});
 			}
 		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
-		startMinesweeperDraft: async function() {
+		startMinesweeperDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			let gridCount = 4;
@@ -1448,7 +1445,7 @@ export default {
 				confirmButtonText: "Start Minesweeper Draft",
 				width: "40vw",
 				preConfirm() {
-					return new Promise(function(resolve) {
+					return new Promise(function (resolve) {
 						resolve({
 							gridCount: document.getElementById("input-gridCount").valueAsNumber,
 							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
@@ -1458,7 +1455,7 @@ export default {
 						});
 					});
 				},
-			}).then(r => {
+			}).then((r) => {
 				if (r.isConfirmed) {
 					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
@@ -1468,7 +1465,7 @@ export default {
 						r.value.gridHeight,
 						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
 						r.value.revealBorders,
-						response => {
+						(response) => {
 							if (response?.error) {
 								Alert.fire(response.error);
 							}
@@ -1479,7 +1476,7 @@ export default {
 		},
 		minesweeperDraftPick(row, col) {
 			const card = this.minesweeperDraftState.grid[row][col].card;
-			this.socket.emit("minesweeperDraftPick", row, col, response => {
+			this.socket.emit("minesweeperDraftPick", row, col, (response) => {
 				if (response?.error) {
 					Alert.fire(response.error);
 				} else {
@@ -1488,7 +1485,7 @@ export default {
 			});
 		},
 		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
-		startGlimpseDraft: async function() {
+		startGlimpseDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			let boostersPerPlayer = 9;
@@ -1510,14 +1507,14 @@ export default {
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Glimpse Draft",
 				preConfirm() {
-					return new Promise(function(resolve) {
+					return new Promise(function (resolve) {
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
 							burnedCardsPerRound: document.getElementById("input-burnedCardsPerRound").valueAsNumber,
 						});
 					});
 				},
-			}).then(r => {
+			}).then((r) => {
 				if (r.isConfirmed) {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
 					this.boostersPerPlayer = r.value.boostersPerPlayer;
@@ -1556,7 +1553,7 @@ export default {
 				</ul>`,
 				showCancelButton: true,
 				confirmButtonText: "Upload a .txt or .csv list",
-			}).then(r => {
+			}).then((r) => {
 				if (r.value) {
 					document.querySelector("#collection-file-input").click();
 				}
@@ -1567,7 +1564,7 @@ export default {
 			const file = e.target.files[0];
 			if (!file) return;
 			const reader = new FileReader();
-			reader.onload = async e => {
+			reader.onload = async (e) => {
 				let contents = e.target.result;
 
 				// Convert MTGGoldFish CSV format (https://www.mtggoldfish.com/help/import_formats#mtggoldfish) to our format
@@ -1619,7 +1616,7 @@ export default {
 					}
 				}
 
-				this.socket.emit("parseCollection", contents, ret => {
+				this.socket.emit("parseCollection", contents, (ret) => {
 					if (ret.type === "error") {
 						Alert.fire({ icon: "error", title: ret.title, text: ret.text });
 						return;
@@ -1654,7 +1651,7 @@ export default {
 			const file = e.target.files[0];
 			if (!file) return;
 			const reader = new FileReader();
-			reader.onload = async e => {
+			reader.onload = async (e) => {
 				let contents = e.target.result;
 
 				// Propose to use MTGA user name
@@ -1694,15 +1691,14 @@ export default {
 					Alert.fire({
 						icon: "error",
 						title: "Detailed logs disabled",
-						text:
-							"Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
+						text: "Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
 					});
 					return null;
 				}
 
-				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map(e => e[1]));
+				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
 
-				const parseCollection = function(contents, startIdx = null) {
+				const parseCollection = function (contents, startIdx = null) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
 					try {
 						const callIdx = startIdx
@@ -1733,8 +1729,7 @@ export default {
 						Alert.fire({
 							icon: "error",
 							title: "Parsing Error",
-							text:
-								"An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
+							text: "An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
 							footer: "Full error: " + e,
 						});
 						return null;
@@ -1764,7 +1759,7 @@ export default {
 						let cardids = Object.keys(collections[0]);
 						// Filter ids
 						for (let i = 1; i < collections.length; ++i)
-							cardids = Object.keys(collections[i]).filter(id => cardids.includes(id));
+							cardids = Object.keys(collections[i]).filter((id) => cardids.includes(id));
 						// Find min amount of each card
 						result = {};
 						for (let id of cardids) result[id] = collections[0][id];
@@ -1800,7 +1795,7 @@ export default {
 			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function(url, callback, options) {
+		fetchFile: async function (url, callback, options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				fireToast("error", `Could not fetch ${url}.`);
@@ -1823,7 +1818,7 @@ export default {
 				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
 			}
 		},
-		parseCustomCardList: async function(file) {
+		parseCustomCardList: async function (file) {
 			Alert.fire({
 				position: "center",
 				icon: "info",
@@ -1832,7 +1827,7 @@ export default {
 			});
 			let contents = await file.text();
 
-			this.socket.emit("parseCustomCardList", contents, answer => {
+			this.socket.emit("parseCustomCardList", contents, (answer) => {
 				if (answer.code === 0) {
 					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
 				} else {
@@ -1873,7 +1868,7 @@ export default {
 						if (urlTest) cubeID = urlTest[1];
 					}
 					localStorage.setItem("import-cubeID", cubeID);
-					return new Promise(function(resolve) {
+					return new Promise(function (resolve) {
 						resolve({
 							cubeID: cubeID,
 							matchVersions: matchVersions,
@@ -1881,12 +1876,12 @@ export default {
 						});
 					});
 				},
-			}).then(result => {
+			}).then((result) => {
 				if (result.value && result.value.cubeID) this.selectCube(result.value);
 			});
 		},
 		selectCube(cube) {
-			const ack = r => {
+			const ack = (r) => {
 				if (r.type === "error") {
 					Alert.fire({
 						icon: "error",
@@ -1934,14 +1929,14 @@ export default {
 		},
 		shareDecklist() {
 			this.socket.emit("shareDecklist", {
-				main: this.deck.map(c => c.id),
-				side: this.sideboard.map(c => c.id),
+				main: this.deck.map((c) => c.id),
+				side: this.sideboard.map((c) => c.id),
 				lands: this.lands,
 				timestamp: Date.now(),
 			});
 			fireToast("success", "Deck now visible in logs and bracket!");
 		},
-		importDeck: async function() {
+		importDeck: async function () {
 			const response = await fetch("/getDeck", {
 				method: "POST",
 				mode: "cors",
@@ -1978,7 +1973,7 @@ export default {
 		uploadBoosters() {
 			if (this.sessionOwner !== this.userID) return;
 			const text = document.querySelector("#upload-booster-text").value;
-			this.socket.emit("setBoosters", text, response => {
+			this.socket.emit("setBoosters", text, (response) => {
 				if (response.error) {
 					Alert.fire({
 						icon: "error",
@@ -1994,7 +1989,7 @@ export default {
 		},
 		shuffleUploadedBoosters() {
 			if (this.sessionOwner !== this.userID) return;
-			this.socket.emit("shuffleBoosters", response => {
+			this.socket.emit("shuffleBoosters", (response) => {
 				if (response.error) {
 					fireToast(response.error.type, response.error.title);
 				} else {
@@ -2005,14 +2000,14 @@ export default {
 		toggleSetRestriction(code) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
-					this.setRestriction.findIndex(c => c === code),
+					this.setRestriction.findIndex((c) => c === code),
 					1
 				);
 			else this.setRestriction.push(code);
 		},
 		setSessionOwner(newOwnerID) {
 			if (this.userID != this.sessionOwner) return;
-			let user = this.sessionUsers.find(u => u.userID === newOwnerID);
+			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
@@ -2022,7 +2017,7 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Yes",
-			}).then(result => {
+			}).then((result) => {
 				if (result.value) {
 					this.socket.emit("setSessionOwner", newOwnerID);
 				}
@@ -2030,7 +2025,7 @@ export default {
 		},
 		removePlayer(userID) {
 			if (this.userID != this.sessionOwner) return;
-			let user = this.sessionUsers.find(u => u.userID === userID);
+			let user = this.sessionUsers.find((u) => u.userID === userID);
 			if (!user) return;
 			Alert.fire({
 				title: "Are you sure?",
@@ -2040,7 +2035,7 @@ export default {
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
 				confirmButtonText: "Remove player",
-			}).then(result => {
+			}).then((result) => {
 				if (result.value) {
 					this.socket.emit("removePlayer", userID);
 				}
@@ -2059,7 +2054,7 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		sealedDialog: async function() {
+		sealedDialog: async function () {
 			if (this.userID != this.sessionOwner) return;
 
 			Alert.fire({
@@ -2080,16 +2075,16 @@ export default {
 				confirmButtonText: "Distribute boosters",
 				width: "auto",
 				preConfirm() {
-					return new Promise(function(resolve) {
+					return new Promise(function (resolve) {
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
 							customBoosters: [
 								...document.getElementById("input-customBoosters").querySelectorAll("select"),
-							].map(s => s.value),
+							].map((s) => s.value),
 						});
 					});
 				},
-				didOpen: el => {
+				didOpen: (el) => {
 					let customBoostersEl = el.querySelector("#input-customBoosters");
 					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
 					// Create the set selects according to the number of booster per player
@@ -2115,7 +2110,7 @@ export default {
 							addSeparator();
 							for (let s of Constant.MTGASets.slice().reverse()) addOption(s, SetsInfos[s].fullName);
 							addSeparator();
-							for (let s of Constant.PrimarySets.filter(s => !Constant.MTGASets.includes(s)))
+							for (let s of Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)))
 								addOption(s, SetsInfos[s].fullName);
 							customBoostersEl.appendChild(sel);
 						}
@@ -2123,11 +2118,11 @@ export default {
 							customBoostersEl.removeChild(customBoostersEl.lastChild);
 					}
 					updateCustomBoosterInput(boostersPerPlayerEl.value);
-					boostersPerPlayerEl.addEventListener("change", function(e) {
+					boostersPerPlayerEl.addEventListener("change", function (e) {
 						updateCustomBoosterInput(e.target.value);
 					});
 				},
-			}).then(r => {
+			}).then((r) => {
 				if (r.isConfirmed) {
 					this.deckWarning(this.distributeSealed, [r.value.boostersPerPlayer, r.value.customBoosters]);
 				}
@@ -2143,7 +2138,7 @@ export default {
 					confirmButtonColor: ButtonColor.Critical,
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Start new game!",
-				}).then(result => {
+				}).then((result) => {
 					if (result.value) {
 						call(...options);
 					}
@@ -2154,7 +2149,7 @@ export default {
 		},
 		distributeSealed(boosterCount, customBoosters) {
 			if (this.userID !== this.sessionOwner) return;
-			const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
+			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
 		},
 		distributeJumpstart() {
@@ -2173,7 +2168,9 @@ export default {
 			let boostersDisplay = "";
 			for (let b of boosters) {
 				let colors = b.colors
-					.map(c => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`)
+					.map(
+						(c) => `<img src="img/mana/${c}.svg" class="mana-icon" style="vertical-align: text-top;"></img>`
+					)
 					.join(" ");
 				boostersDisplay += `<div class="pack-button clickable" style="text-align: center"><img src="${b.image}" style="display:block; min-width: 250px; min-height: 354px; max-width: 250px; max-height: 60vh; border-radius: 3%; margin:auto;" /><h2>${colors}<br />${b.name}</h2></div>`;
 			}
@@ -2186,7 +2183,7 @@ export default {
 				allowEscapeKey: false,
 				allowOutsideClick: false,
 				width: "50vw",
-				didOpen: el => {
+				didOpen: (el) => {
 					let packButtons = el.querySelectorAll(".pack-button");
 					for (let i = 0; i < packButtons.length; ++i) {
 						packButtons[i].addEventListener("click", () => {
@@ -2199,14 +2196,14 @@ export default {
 			});
 			return choice;
 		},
-		selectJumpstartPacks: async function(choices, ack) {
+		selectJumpstartPacks: async function (choices, ack) {
 			this.clearState();
 			this.draftingState = DraftState.Brewing;
 			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
 			await this.displayPackChoice(choices[1][choice], 1, choices.length);
 			ack?.(
 				this.userID,
-				this.deck.map(card => card.id)
+				this.deck.map((card) => card.id)
 			);
 		},
 		readyCheck() {
@@ -2217,7 +2214,7 @@ export default {
 				return;
 			}
 
-			this.socket.emit("readyCheck", anwser => {
+			this.socket.emit("readyCheck", (anwser) => {
 				if (anwser.code === 0) {
 					this.initReadyCheck();
 					this.socket.emit("setReady", ReadyState.Ready);
@@ -2264,7 +2261,7 @@ export default {
 			}
 		},
 		prepareBracketPlayers(pairingOrder) {
-			const playerInfos = this.sessionUsers.map(u => {
+			const playerInfos = this.sessionUsers.map((u) => {
 				return { userID: u.userID, userName: u.userName };
 			});
 			let players = [];
@@ -2278,7 +2275,7 @@ export default {
 		generateBracket() {
 			if (this.userID != this.sessionOwner) return;
 			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
-			this.socket.emit("generateBracket", players, answer => {
+			this.socket.emit("generateBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
@@ -2288,14 +2285,14 @@ export default {
 				this.sessionUsers.length == 6
 					? this.prepareBracketPlayers([0, 3, 1, 4, 2, 5])
 					: this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
-			this.socket.emit("generateSwissBracket", players, answer => {
+			this.socket.emit("generateSwissBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
 		generateDoubleBracket() {
 			if (this.userID != this.sessionOwner || this.teamDraft) return;
 			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
-			this.socket.emit("generateDoubleBracket", players, answer => {
+			this.socket.emit("generateDoubleBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
 			});
 		},
@@ -2397,8 +2394,8 @@ export default {
 			}
 		},
 		removeBasicsFromDeck() {
-			this.deck = this.deck.filter(c => c.type !== "Basic Land");
-			this.sideboard = this.sideboard.filter(c => c.type !== "Basic Land");
+			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
+			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
 			this.$refs.deckDisplay.filterBasics();
 			this.$refs.sideboardDisplay.filterBasics();
 		},
@@ -2419,7 +2416,7 @@ export default {
 				return;
 			}
 			if (this.enableNotifications && Notification.permission !== "granted") {
-				Notification.requestPermission().then(permission => {
+				Notification.requestPermission().then((permission) => {
 					this.notificationPermission = permission;
 					if (permission !== "granted") this.enableNotifications = false;
 				});
@@ -2475,7 +2472,7 @@ export default {
 			}
 
 			let worker = new LogStoreWorker();
-			worker.onmessage = e => {
+			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
 				console.log("Stored Draft Logs.");
 			};
@@ -2571,7 +2568,7 @@ export default {
 		},
 		disconnectedUserNames() {
 			return Object.values(this.disconnectedUsers)
-				.map(u => u.userName)
+				.map((u) => u.userName)
 				.join(", ");
 		},
 		virtualPlayers() {
@@ -2591,7 +2588,7 @@ export default {
 						disconnected: true,
 					});
 				} else {
-					const p = this.sessionUsers.find(u => u.userID === id);
+					const p = this.sessionUsers.find((u) => u.userID === id);
 					if (p) r.push(p);
 				}
 			}
@@ -2623,7 +2620,9 @@ export default {
 			return addedLands;
 		},
 		basicsInDeck() {
-			return this.deck.some(c => c.type === "Basic Land") || this.sideboard.some(c => c.type === "Basic Land");
+			return (
+				this.deck.some((c) => c.type === "Basic Land") || this.sideboard.some((c) => c.type === "Basic Land")
+			);
 		},
 		neededWildcards() {
 			if (!this.hasCollection) return null;
@@ -2644,8 +2643,8 @@ export default {
 			return (
 				this.displayCollectionStatus &&
 				this.neededWildcards &&
-				((this.neededWildcards.main && Object.values(this.neededWildcards.main).some(v => v > 0)) ||
-					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some(v => v > 0)))
+				((this.neededWildcards.main && Object.values(this.neededWildcards.main).some((v) => v > 0)) ||
+					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
 
@@ -2661,7 +2660,7 @@ export default {
 			}`;
 		},
 	},
-	mounted: async function() {
+	mounted: async function () {
 		// Load all card informations
 		try {
 			let urlParamSession = getUrlVars()["session"];
@@ -2698,7 +2697,7 @@ export default {
 			const storedLogs = localStorage.getItem("draftLogs");
 			if (storedLogs) {
 				let worker = new LogStoreWorker();
-				worker.onmessage = e => {
+				worker.onmessage = (e) => {
 					this.draftLogs = e.data;
 					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
 				};
