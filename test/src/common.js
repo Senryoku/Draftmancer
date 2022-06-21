@@ -3,7 +3,6 @@ import io from "socket.io-client";
 const expect = chai.expect;
 import server from "../../dist/server.js"; // Launch Server
 import { Connections } from "../../dist/Connection.js";
-import { resolve } from "node:path";
 
 const NODE_PORT = process.env.PORT | 3000;
 
@@ -19,12 +18,13 @@ export function connectClient(query) {
 	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
 
 	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions));
-	r.on("alreadyConnected", function(newID) {
+	r.on("alreadyConnected", function (newID) {
 		this.query.userID = newID;
 	});
-	r.on("stillAlive", function(ack) {
+	r.on("stillAlive", function (ack) {
 		if (ack) ack();
 	});
+	r.query = query; // Hackish: This property disappeared between socket.io v2 and v3
 	return r;
 }
 
@@ -32,7 +32,7 @@ let outputbuffer;
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
-export const logReplacer = function() {
+export const logReplacer = function () {
 	for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
 	outputbuffer += "\n";
 };
@@ -62,7 +62,7 @@ export function makeClients(queries, done) {
 	// Wait for all clients to be connected
 	let connectedClientCount = 0;
 	for (let s of sockets) {
-		s.once("connect", function() {
+		s.once("connect", function () {
 			connectedClientCount += 1;
 			if (connectedClientCount == sockets.length) {
 				enableLogs(false);
@@ -83,7 +83,7 @@ export const waitForSocket = (socket, done) => {
 };
 
 // Wait for the sockets to be disconnected, I haven't found another way...
-export const waitForClientDisconnects = done => {
+export const waitForClientDisconnects = (done) => {
 	if (Object.keys(Connections).length === 0) {
 		enableLogs(false);
 		done();
