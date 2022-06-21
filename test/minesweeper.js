@@ -6,22 +6,22 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe("Minesweeper Draft", function() {
+describe("Minesweeper Draft", function () {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
 
-	beforeEach(function(done) {
+	beforeEach(function (done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function(done) {
+	afterEach(function (done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function(done) {
+	before(function (done) {
 		clients = makeClients(
 			[
 				{
@@ -49,7 +49,7 @@ describe("Minesweeper Draft", function() {
 		);
 	});
 
-	after(function(done) {
+	after(function (done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
@@ -57,9 +57,9 @@ describe("Minesweeper Draft", function() {
 		waitForClientDisconnects(done);
 	});
 
-	it(`4 clients with different userID should be connected.`, function(done) {
+	it(`4 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(4);
-		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -68,9 +68,9 @@ describe("Minesweeper Draft", function() {
 	let minesweeper = null;
 
 	const selectCube = () => {
-		it("Emit Settings.", function(done) {
+		it("Emit Settings.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("sessionOptions", function(options) {
+			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
@@ -79,10 +79,10 @@ describe("Minesweeper Draft", function() {
 	};
 
 	const startDraft = (gridCount = 4, gridWidth = 10, gridHeight = 9, picksPerGrid = -1, revealBorders = true) => {
-		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealBorders: ${revealBorders})`, function(done) {
+		it(`Start Minesweeper draft (Parameters: gridCount = ${gridCount}, gridWidth = ${gridWidth}, gridHeight = ${gridHeight}, picksPerGrid = ${picksPerGrid}, revealBorders: ${revealBorders})`, function (done) {
 			let connectedClients = 0;
 			for (let c of clients) {
-				c.once("startMinesweeperDraft", function(state) {
+				c.once("startMinesweeperDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
 						minesweeper = state;
@@ -98,7 +98,7 @@ describe("Minesweeper Draft", function() {
 				gridHeight,
 				picksPerGrid,
 				revealBorders,
-				response => {
+				(response) => {
 					expect(response?.error).to.be.undefined;
 				}
 			);
@@ -106,18 +106,20 @@ describe("Minesweeper Draft", function() {
 	};
 
 	const endDraft = () => {
-		it("Every player randomly chooses a card and the draft should end.", function(done) {
+		it("Every player randomly chooses a card and the draft should end.", function (done) {
+			this.timeout(4000);
+
 			let draftEnded = 0;
 
 			for (let c = 0; c < clients.length; ++c) {
 				const pick = (row, col) => {
 					const cl = clients[c];
-					cl.emit("minesweeperDraftPick", row, col, response => {
+					cl.emit("minesweeperDraftPick", row, col, (response) => {
 						if (response?.error) console.error(response?.error);
 						expect(response?.error).to.be.undefined;
 					});
 				};
-				clients[c].on("minesweeperDraftState", function(state) {
+				clients[c].on("minesweeperDraftState", function (state) {
 					let choices = [];
 					for (let i = 0; i < state.grid.length; ++i) {
 						for (let j = 0; j < state.grid[0].length; ++j) {
@@ -135,19 +137,19 @@ describe("Minesweeper Draft", function() {
 					const choice = choices[Math.floor(Math.random() * choices.length)];
 					if (state.currentPlayer === clients[c].query.userID) pick(choice[0], choice[1]);
 				});
-				clients[c].once("minesweeperDraftEnd", function() {
+				clients[c].once("minesweeperDraftEnd", function () {
 					draftEnded += 1;
 					this.removeListener("minesweeperDraftState");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			// Pick the first card
-			let currPlayer = clients.findIndex(c => c.query.userID == minesweeper.currentPlayer);
+			let currPlayer = clients.findIndex((c) => c.query.userID == minesweeper.currentPlayer);
 
 			for (let i = 0; i < minesweeper.grid.length; ++i)
 				for (let j = 0; j < minesweeper.grid[0].length; ++j)
 					if (minesweeper.grid[i][j].state === 1) {
-						clients[currPlayer].emit("minesweeperDraftPick", i, j, response => {
+						clients[currPlayer].emit("minesweeperDraftPick", i, j, (response) => {
 							if (response?.error) console.error(response?.error);
 							expect(response?.error).to.be.undefined;
 						});
@@ -172,7 +174,7 @@ describe("Minesweeper Draft", function() {
 			gridHeight,
 			picksPerGrid,
 			revealBorders,
-			r => {
+			(r) => {
 				//console.error("Response:", r);
 				expect(r?.error).to.exist;
 				done();
@@ -180,49 +182,49 @@ describe("Minesweeper Draft", function() {
 		);
 	};
 
-	describe("Parameter validation", function() {
-		it("Error if not using a cube", function(done) {
+	describe("Parameter validation", function () {
+		it("Error if not using a cube", function (done) {
 			startDraftWithError(done);
 		});
 		selectCube();
-		it("Error on invalid gridCount", function(done) {
+		it("Error on invalid gridCount", function (done) {
 			startDraftWithError(done, 0);
 		});
-		it("Error on invalid gridWidth", function(done) {
+		it("Error on invalid gridWidth", function (done) {
 			startDraftWithError(done, 3, 0);
 		});
-		it("Error on invalid gridHeight", function(done) {
+		it("Error on invalid gridHeight", function (done) {
 			startDraftWithError(done, 3, 10, 0);
 		});
-		it("Error on invalid picksPerGrid", function(done) {
+		it("Error on invalid picksPerGrid", function (done) {
 			startDraftWithError(done, 3, 10, 9, 0);
 		});
-		it("Error on invalid picksPerGrid", function(done) {
+		it("Error on invalid picksPerGrid", function (done) {
 			startDraftWithError(done, 3, 10, 9, 10 * 9 + 1);
 		});
 	});
 
-	describe("Default settings with built-in cube", function() {
+	describe("Default settings with built-in cube", function () {
 		selectCube();
 		startDraft();
 		endDraft();
 	});
 
-	describe("Default settings with a disconnect", function() {
+	describe("Default settings with a disconnect", function () {
 		selectCube();
 		startDraft();
 
-		it("Non-owner disconnects, owner receives updated user infos.", function(done) {
+		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[ownerIdx].once("userDisconnected", function() {
+			clients[ownerIdx].once("userDisconnected", function () {
 				waitForSocket(clients[nonOwnerIdx], done);
 			});
 			clients[nonOwnerIdx].disconnect();
 		});
 
-		it("Non-owner reconnects, draft restarts.", function(done) {
+		it("Non-owner reconnects, draft restarts.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("rejoinMinesweeperDraft", function(state) {
+			clients[nonOwnerIdx].once("rejoinMinesweeperDraft", function (state) {
 				expect(state).to.exist;
 				done();
 			});
@@ -232,7 +234,7 @@ describe("Minesweeper Draft", function() {
 		endDraft();
 	});
 
-	describe("Parameters matrix", function() {
+	describe("Parameters matrix", function () {
 		selectCube();
 
 		for (let [gridCount, gridWidth, gridHeight, picksPerGrid] of [
