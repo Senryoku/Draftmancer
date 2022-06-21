@@ -296,10 +296,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if handled % 1000 == 0:
                 sys.stdout.write("\b" * 100)  # return to start of line
                 sys.stdout.write(
-                    "PreProcessing...    {}/{} cards added...".format(copied, handled))
+                    f"PreProcessing...    {copied}/{handled} cards added...")
         sys.stdout.write("\b" * 100)
         sys.stdout.write(
-            "PreProcessing done! {}/{} cards added.\n".format(copied, handled))
+            f"PreProcessing done! {copied}/{handled} cards added.\n")
 
         sys.stdout.write("Fixing AKR images...")
         MissingAKRCards = AKRCards.copy()
@@ -334,7 +334,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
                 if 'card_faces' in c and len(c['card_faces']) > 1 and prop in c['card_faces'][0] and prop in c['card_faces'][1] and c['card_faces'][0][prop] == c['card_faces'][1][prop]:
                     c[prop] = c['card_faces'][0][prop]
                 else:
-                    print("Warning: Missing '{}' for card '{}'.".format(prop, c['name']))
+                    print(f"Warning: Missing '{prop}' for card '{c['name']}'.")
                     return False
             return True
 
@@ -373,7 +373,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             Translations[key]['back']['printed_names'][c['lang']
                                                        ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
             if 'image_uris' not in c['card_faces'][1]:  # Temp workaround while STX data is still incomplete
-                print("/!\ {}: Missing back side image.".format(c['name']))
+                print(f"/!\ {c['name']}: Missing back side image.")
             else:
                 Translations[key]['back']['image_uris'][c['lang']
                                                         ] = c['card_faces'][1]['image_uris']['border_crop']
@@ -533,10 +533,10 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                                 key for key, val in cards.items() if val['name'] == name and val['set'] != 'jmp']
                             if len(candidates) == 0:
                                 print(
-                                    " > Cannot find a good candidate ID for {} !!".format(name))
+                                    f" > Cannot find a good candidate ID for {name} !!")
                             else:
                                 cid = max(candidates)
-                                print("> Using {}".format(cid))
+                                print(f"> Using {cid}")
                         booster["cards"] += [cid] * count
                     else:
                         print("Jumpstart Boosters: Card '{}' not found.".format(name))
@@ -762,6 +762,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "2x2"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet (snc)
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "2x2"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet (2x2)
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
