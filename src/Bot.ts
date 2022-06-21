@@ -40,7 +40,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		) {
 			return true;
 		}
-	} catch (e) {
+	} catch (e: any) {
 		if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
 		else console.error("Error requesting testing the mtgdraftbots API: ", e);
 		return true;
@@ -186,7 +186,7 @@ export class Bot implements IBot {
 				console.error(response);
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
-		} catch (e) {
+		} catch (e: any) {
 			if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
 			else console.error("Error requesting mtgdraftbots scores: ", e.message);
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);

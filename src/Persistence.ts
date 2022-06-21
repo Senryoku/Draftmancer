@@ -87,7 +87,7 @@ async function requestSavedConnections() {
 				console.log(`Restored ${connections.length} saved connections.`);
 			}
 		}
-	} catch (err) {
+	} catch (err: any) {
 		console.error(
 			"requestSavedConnections::",
 			err.message,
@@ -101,7 +101,9 @@ async function requestSavedConnections() {
 
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (let prop of Object.getOwnPropertyNames(s).filter(p => !["botsInstances", "draftState", "owner"].includes(p))) {
+	for (let prop of Object.getOwnPropertyNames(s).filter(
+		(p) => !["botsInstances", "draftState", "owner"].includes(p)
+	)) {
 		(r as IIndexable)[prop] = s[prop];
 	}
 
@@ -150,7 +152,7 @@ export function getPoDSession(s: Session) {
 	const PoDSession: any = {};
 
 	for (let prop of Object.getOwnPropertyNames(s).filter(
-		p => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
+		(p) => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
@@ -199,7 +201,7 @@ async function requestSavedSessions() {
 				console.log(`Restored ${response.data.length} saved sessions.`);
 			}
 		}
-	} catch (err) {
+	} catch (err: any) {
 		console.error("requestSavedSessions::", err.message, err.response?.statusText ?? "", err.response?.data ?? "");
 	}
 
@@ -229,7 +231,7 @@ async function tempDump(exitOnCompletion = false) {
 		const c = Connections[userID];
 		const PoDConnection: any = {};
 
-		for (let prop of Object.getOwnPropertyNames(c).filter(p => !["socket", "bot"].includes(p))) {
+		for (let prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
 			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
 		}
 		if (c.bot) {
@@ -249,7 +251,7 @@ async function tempDump(exitOnCompletion = false) {
 						"access-key": PersistenceKey,
 					},
 				})
-				.catch(err => console.error("Error storing connections: ", err.message))
+				.catch((err) => console.error("Error storing connections: ", err.message))
 		);
 	} catch (err) {
 		console.log("Error: ", err);
@@ -274,7 +276,7 @@ async function tempDump(exitOnCompletion = false) {
 						"access-key": PersistenceKey,
 					},
 				})
-				.catch(err => console.error("Error storing sessions: ", err.message))
+				.catch((err) => console.error("Error storing sessions: ", err.message))
 		);
 	} catch (err) {
 		console.log("Error: ", err);
@@ -321,7 +323,7 @@ function saveLog(type: string, session: Session) {
 						"access-key": PersistenceKey,
 					},
 				})
-				.catch(err => console.error("Error storing logs: ", err.message));
+				.catch((err) => console.error("Error storing logs: ", err.message));
 		}
 
 		// Send log to MTGDraftbots endpoint
@@ -371,14 +373,14 @@ function saveLog(type: string, session: Session) {
 			if (!InTesting && process.env.NODE_ENV === "production" && data.players.length > 0)
 				axios
 					.post(MTGDraftbotsLogEndpoint, data)
-					.then(response => {
+					.then((response) => {
 						// We expect a 201 (Created) response
 						if (response.status !== 201) {
 							console.warn("Unexpected response after sending draft logs to MTGDraftbots: ");
 							console.warn(response);
 						}
 					})
-					.catch(err => console.error("Error sending logs to cubeartisan: ", err.message));
+					.catch((err) => console.error("Error sending logs to cubeartisan: ", err.message));
 		}
 	}
 }
@@ -390,7 +392,7 @@ export function dumpError(name: string, data: any) {
 				"access-key": PersistenceKey,
 			},
 		})
-		.catch(err => console.error("Error dumping error(wup): ", err.message));
+		.catch((err) => console.error("Error dumping error(wup): ", err.message));
 }
 
 export function logSession(type: string, session: Session) {
@@ -445,7 +447,7 @@ if (!DisablePersistence) {
 
 	// Only synchronous calls, called on process.exit()
 	// See https://nodejs.org/api/process.html#process_event_exit
-	process.on("exit", code => {
+	process.on("exit", (code) => {
 		console.log(`exit callback: Process exited with code: ${code}`);
 	});
 
@@ -472,7 +474,7 @@ if (!DisablePersistence) {
 		}, 20000);
 	});
 
-	process.on("uncaughtException", err => {
+	process.on("uncaughtException", (err) => {
 		console.error("Uncaught Exception thrown: ");
 		console.error(err);
 		tempDump(true);
@@ -484,7 +486,7 @@ if (!DisablePersistence) {
 
 	InactiveConnections = requestSavedConnections();
 	InactiveSessions = requestSavedSessions();
-	Promise.all([InactiveConnections, InactiveSessions]).then(values => {
+	Promise.all([InactiveConnections, InactiveSessions]).then((values) => {
 		InactiveConnections = values[0];
 		InactiveSessions = values[1];
 	});

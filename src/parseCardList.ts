@@ -59,7 +59,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	}
 
 	let cardIDs = candidates.filter(
-		id => (!set || Cards[id].set === set) && (!number || Cards[id].collector_number === number)
+		(id) => (!set || Cards[id].set === set) && (!number || Cards[id].collector_number === number)
 	);
 
 	if (cardIDs.length > 0) {
@@ -92,7 +92,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 
 export function parseCardList(txtcardlist: string, options: { [key: string]: any }) {
 	try {
-		const lines = txtcardlist.split(/\r?\n/).map(s => s.trim());
+		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		let cardList: CustomCardList = {
 			customSheets: false,
 			customCards: null,
@@ -139,7 +139,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				const customCardsStr = txtcardlist.substring(start, index);
 				try {
 					customCards = JSON.parse(customCardsStr);
-				} catch (e) {
+				} catch (e: any) {
 					let msg = `Error parsing custom cards: ${e.message}.`;
 					let position = e.message.match(/at position (\d+)/);
 					if (position) {
