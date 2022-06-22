@@ -160,7 +160,7 @@ export function getPoDSession(s: Session) {
 	if (s.drafting) {
 		// Flag every user as disconnected so they can reconnect later
 		for (let userID of s.users) {
-			PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
+			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 		}
 
 		if (s.botsInstances) {
