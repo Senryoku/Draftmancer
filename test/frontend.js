@@ -1,22 +1,19 @@
 import puppeteer from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import server from "../dist/server.js"; // Launch Server
+import { enableLogs, disableLogs } from "./src/common.js";
 
-let browser;
+let ownerBrowser;
 let sessionOwnerPage;
+let otherBrowser;
 let otherPlayerPage;
 
-before(async function () {
-	browser = await puppeteer.launch({
-		headless: false, // For testing only
-	});
-	const context = browser.defaultBrowserContext();
-	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
-	sessionOwnerPage = await browser.newPage();
+const testDebug = true; // Display tests for debugging
+const debugWindowWidth = 960;
+const debugWindowHeight = 1080;
 
-	// Disable animations
-	sessionOwnerPage.on("load", () => {
+function disableAnimations(page) {
+	page.on("load", () => {
 		const content = `
 		*,
 		*::after,
@@ -29,12 +26,45 @@ before(async function () {
 			caret-color: transparent !important;
 		}`;
 
-		sessionOwnerPage.addStyleTag({ content });
+		page.addStyleTag({ content });
 	});
+}
+
+before(async function () {
+	ownerBrowser = await puppeteer.launch({
+		headless: !testDebug,
+		args: testDebug ? [`--window-size=${debugWindowWidth},${debugWindowHeight}`, `--window-position=0,0`] : [],
+	});
+	otherBrowser = await puppeteer.launch({
+		headless: !testDebug,
+		args: testDebug
+			? [`--window-size=${debugWindowWidth},${debugWindowHeight}`, `--window-position=${debugWindowWidth},0`]
+			: [],
+	});
+	const context = ownerBrowser.defaultBrowserContext();
+	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
+	[sessionOwnerPage] = await ownerBrowser.pages();
+	[otherPlayerPage] = await otherBrowser.pages();
+	if (testDebug) {
+		sessionOwnerPage.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
+		otherPlayerPage.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
+	}
+	disableAnimations(sessionOwnerPage);
+	disableAnimations(otherPlayerPage);
 });
 
 after(function () {
-	browser.close();
+	ownerBrowser.close();
+});
+
+beforeEach(function (done) {
+	disableLogs();
+	done();
+});
+
+afterEach(function (done) {
+	enableLogs(this.currentTest.state == "failed");
+	done();
 });
 
 async function clickDraft() {
@@ -44,12 +74,14 @@ async function clickDraft() {
 	await button.click();
 }
 
+// Returns true if the draft ended
 async function pickCard(page) {
-	await page.waitForXPath("//span[contains(., 'Pick a card')]");
+	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')]");
+	let text = await page.evaluate((next) => next.innerText, next);
+	if (text === "Done drafting!") return true;
 
 	const [card] = await page.$$(".booster-card");
 	expect(card).to.exist;
-	//await sessionOwnerPage.waitForTimeout(200);
 	await card.click();
 	await page.waitForSelector('input[value="Confirm Pick"]', {
 		visible: true,
@@ -57,6 +89,7 @@ async function pickCard(page) {
 	const [button] = await page.$$('input[value="Confirm Pick"]');
 	expect(button).to.exist;
 	await button.click();
+	return false;
 }
 
 async function pickFirstCard(page) {
@@ -83,8 +116,9 @@ describe.only("Front End - Solo", function () {
 		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-
-		await sessionOwnerPage.waitForTimeout(1500); // Wait for the "Now drafting!" popup to go.
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
 	});
 
 	it(`Owner picks a card`, async function () {
@@ -92,19 +126,12 @@ describe.only("Front End - Solo", function () {
 	});
 
 	it(`...Until draft if done.`, async function () {
-		let draftDone = false;
-		//await sessionOwnerPage.waitForTimeout(250); // Animation
-		while (!draftDone) {
-			//await sessionOwnerPage.waitForTimeout(250); // Animation
-			await pickCard(sessionOwnerPage);
-			//await sessionOwnerPage.waitForTimeout(250); // Animation
-			let popup = await sessionOwnerPage.$x("//*[contains(., 'Done drafting!')]");
-			if (popup.length > 0) draftDone = true;
-		}
+		while (!(await pickCard(sessionOwnerPage)));
 	});
 });
 
-describe("Front End - Multi", function () {
+describe.only("Front End - Multi", function () {
+	this.timeout(100000);
 	it("Owner joins", async function () {
 		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
 	});
@@ -116,7 +143,6 @@ describe("Front End - Multi", function () {
 		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
 		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
 
-		otherPlayerPage = await browser.newPage();
 		await otherPlayerPage.goto(clipboard);
 	});
 
@@ -125,10 +151,23 @@ describe("Front End - Multi", function () {
 		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitFor(1500); // Wait for the "Now drafting!" popup to go.
+		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
 	});
 
-	it("Owner picks a card", async function () {
-		await pickFirstCard(sessionOwnerPage);
+	it("Each player picks a card", async function () {
+		let done = false;
+		while (!done) {
+			let ownerPromise = pickCard(sessionOwnerPage);
+			let otherPromise = pickCard(otherPlayerPage);
+			done = (await ownerPromise) && (await otherPromise);
+		}
 	});
 });
