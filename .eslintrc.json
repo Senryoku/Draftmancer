@@ -10,5 +10,5 @@
 		"sourceType": "module"
 	},
 	"plugins": ["vue"],
-	"rules": {}
+	"rules": {"vue/script-setup-uses-vars": "off"}
 }

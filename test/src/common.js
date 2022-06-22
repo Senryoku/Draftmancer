@@ -1,6 +1,7 @@
 import chai from "chai";
 import io from "socket.io-client";
 const expect = chai.expect;
+// eslint-disable-next-line no-unused-vars
 import server from "../../dist/server.js"; // Launch Server
 import { Connections } from "../../dist/Connection.js";
 

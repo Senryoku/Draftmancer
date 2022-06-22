@@ -1,7 +1,8 @@
+import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import puppeteer from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { enableLogs, disableLogs } from "./src/common.js";
+import { enableLogs, disableLogs } from "../src/common.js";
 
 let ownerBrowser;
 let sessionOwnerPage;
@@ -33,12 +34,18 @@ function disableAnimations(page) {
 before(async function () {
 	ownerBrowser = await puppeteer.launch({
 		headless: !testDebug,
-		args: testDebug ? [`--window-size=${debugWindowWidth},${debugWindowHeight}`, `--window-position=0,0`] : [],
+		args: testDebug
+			? [`--window-size=${debugWindowWidth},${debugWindowHeight}`, `--window-position=0,0`, "--mute-audio"]
+			: [],
 	});
 	otherBrowser = await puppeteer.launch({
 		headless: !testDebug,
 		args: testDebug
-			? [`--window-size=${debugWindowWidth},${debugWindowHeight}`, `--window-position=${debugWindowWidth},0`]
+			? [
+					`--window-size=${debugWindowWidth},${debugWindowHeight}`,
+					`--window-position=${debugWindowWidth},0`,
+					"--mute-audio",
+			  ]
 			: [],
 	});
 	const context = ownerBrowser.defaultBrowserContext();
@@ -53,8 +60,9 @@ before(async function () {
 	disableAnimations(otherPlayerPage);
 });
 
-after(function () {
-	ownerBrowser.close();
+after(async function () {
+	await ownerBrowser.close();
+	await otherBrowser.close();
 });
 
 beforeEach(function (done) {
@@ -99,7 +107,7 @@ async function pickFirstCard(page) {
 	await pickCard(page);
 }
 
-describe.only("Front End - Solo", function () {
+describe("Front End - Solo", function () {
 	this.timeout(100000);
 	it("Owner joins", async function () {
 		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
@@ -130,7 +138,7 @@ describe.only("Front End - Solo", function () {
 	});
 });
 
-describe.only("Front End - Multi", function () {
+describe("Front End - Multi", function () {
 	this.timeout(100000);
 	it("Owner joins", async function () {
 		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
@@ -167,6 +175,80 @@ describe.only("Front End - Multi", function () {
 		while (!done) {
 			let ownerPromise = pickCard(sessionOwnerPage);
 			let otherPromise = pickCard(otherPlayerPage);
+			done = (await ownerPromise) && (await otherPromise);
+		}
+	});
+});
+
+async function pickMinesweeper(page) {
+	let next = await page.waitForXPath(
+		"//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')] | //span[contains(., 'Waiting for')]"
+	);
+	let text = await page.evaluate((next) => next.innerText, next);
+	if (text === "Done drafting!") return true;
+	if (text.includes("Waiting for")) return false;
+
+	const [card] = await page.$$(".card:not(.picked)");
+	expect(card).to.exist;
+	await card.click();
+	return false;
+}
+
+async function waitAndClickXpath(page, xpath) {
+	await page.waitForXPath(xpath, {
+		visible: true,
+	});
+	const [element] = await page.$x(xpath);
+	expect(element).to.exist;
+	await element.click();
+}
+
+describe("Minesweeper Draft", function () {
+	this.timeout(100000);
+	it("Owner joins", async function () {
+		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+	});
+
+	it(`Another Player joins the session`, async function () {
+		// Get session link
+		await sessionOwnerPage.$$(".fa-share-square");
+		await sessionOwnerPage.click(".fa-share-square");
+		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
+		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
+
+		await otherPlayerPage.goto(clipboard);
+	});
+
+	it(`Select Cube`, async function () {
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Settings')]");
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Load Cube')]");
+		await sessionOwnerPage.keyboard.press("Escape");
+	});
+
+	it(`Launch Minesweeper Draft`, async function () {
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Minesweeper')]");
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Minesweeper')]");
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Start Minesweeper Draft')]");
+
+		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
+			visible: true,
+		});
+		await otherPlayerPage.waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
+			visible: true,
+		});
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+	});
+
+	it(`Pick until done.`, async function () {
+		let done = false;
+		while (!done) {
+			let ownerPromise = pickMinesweeper(sessionOwnerPage);
+			let otherPromise = pickMinesweeper(otherPlayerPage);
 			done = (await ownerPromise) && (await otherPromise);
 		}
 	});
