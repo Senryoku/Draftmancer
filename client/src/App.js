@@ -680,9 +680,6 @@ export default {
 			this.socket.on("minesweeperDraftState", (state) => {
 				this.setMinesweeperDraftState(state);
 			});
-			this.socket.on("minesweeperGridState", (grid) => {
-				this.minesweeperDraftState.grid = grid;
-			});
 			this.socket.on("minesweeperDraftEnd", (options) => {
 				// Delay to allow the last pick to be displayed.
 				setTimeout(
@@ -1382,18 +1379,22 @@ export default {
 		},
 		setMinesweeperDraftState(state) {
 			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
+
+			const execute = () => {
+				this.minesweeperDraftState = state;
+				if (this.userID === state.currentPlayer) {
+					this.playSound("next");
+					fireToast("info", "Your turn! Pick a card.");
+					this.pushNotification("Your turn!", {
+						body: `This is your turn to pick.`,
+					});
+				}
+			};
+
 			if (currentGridNumber !== undefined && currentGridNumber !== state.gridNumber) {
 				// Delay the state update on grid change to allow the animation to finish
-				setTimeout(() => (this.minesweeperDraftState = state), 1000);
-			} else this.minesweeperDraftState = state;
-
-			if (this.userID === state.currentPlayer) {
-				this.playSound("next");
-				fireToast("info", "Your turn! Pick a card.");
-				this.pushNotification("Your turn!", {
-					body: `This is your turn to pick.`,
-				});
-			}
+				setTimeout(execute, 1000);
+			} else execute();
 		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
 		startMinesweeperDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;

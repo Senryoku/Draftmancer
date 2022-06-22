@@ -21,7 +21,7 @@
 					<template v-else>
 						<i class="fas fa-spinner fa-spin"></i>
 						Waiting for
-						{{ currentPlayerUsername }}...
+						{{ currentPlayerUsername !== "" ? currentPlayerUsername : "the next grid" }}...
 					</template>
 				</span>
 				<span>

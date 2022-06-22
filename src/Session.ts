@@ -86,7 +86,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	boosterContent(val: any) {
 		// Validate input (a value for each rarity and at least one card)
 		if (!isObject(val)) return false;
-		if (!["common", "uncommon", "rare"].every(r => r in val)) return false;
+		if (!["common", "uncommon", "rare"].every((r) => r in val)) return false;
 		if (Object.values(val).some((i: any) => !Number.isInteger(i) || i < 0)) return false;
 		if (Object.values(val).reduce((acc, val) => acc + val) <= 0) return false;
 		return true;
@@ -95,7 +95,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	colorBalance: isBoolean,
 	maxDuplicates(val: any) {
 		if (!isObject(val)) return false;
-		if (Object.values(val).some(i => !Number.isInteger(i))) return false;
+		if (Object.values(val).some((i) => !Number.isInteger(i))) return false;
 		return true;
 	},
 	foil: isBoolean,
@@ -359,7 +359,7 @@ export class Session implements IIndexable {
 		const disconnectedUsersData: { [uid: string]: any } = {};
 		for (let uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
-		this.forUsers(u =>
+		this.forUsers((u) =>
 			Connections[u]?.socket.emit("userDisconnected", {
 				owner: this.owner,
 				disconnectedUsers: disconnectedUsersData,
@@ -439,7 +439,7 @@ export class Session implements IIndexable {
 				this.maxPlayers = 8;
 			}
 
-			this.forUsers(u =>
+			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {
 					teamDraft: this.teamDraft,
 					maxPlayers: this.maxPlayers,
@@ -452,7 +452,7 @@ export class Session implements IIndexable {
 	setDisableBotSuggestions(disableBotSuggestions: boolean) {
 		if (this.disableBotSuggestions != disableBotSuggestions) {
 			this.disableBotSuggestions = disableBotSuggestions;
-			this.forUsers(u =>
+			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {
 					disableBotSuggestions: this.disableBotSuggestions,
 				})
@@ -463,7 +463,7 @@ export class Session implements IIndexable {
 	setRandomizeSeatingOrder(randomizeSeatingOrder: boolean) {
 		if (this.randomizeSeatingOrder != randomizeSeatingOrder) {
 			this.randomizeSeatingOrder = randomizeSeatingOrder;
-			this.forUsers(u =>
+			this.forUsers((u) =>
 				Connections[u]?.socket.emit("sessionOptions", {
 					randomizeSeatingOrder: this.randomizeSeatingOrder,
 				})
@@ -473,7 +473,7 @@ export class Session implements IIndexable {
 
 	setSeating(seating: Array<UserID>) {
 		if (this.drafting) return false;
-		if (!Array.isArray(seating) || [...this.users].some(u => !seating.includes(u))) {
+		if (!Array.isArray(seating) || [...this.users].some((u) => !seating.includes(u))) {
 			console.error(`Session.setSeating: invalid seating.`);
 			console.error("Submitted seating:", seating);
 			console.error("Session.users:", this.users);
@@ -543,7 +543,7 @@ export class Session implements IIndexable {
 		const restricted: CardPool = new Map();
 		if (sets && sets.length > 0) {
 			for (let s of sets)
-				for (let cid of CardsBySet[s].filter(cid => cardPool.has(cid)))
+				for (let cid of CardsBySet[s].filter((cid) => cardPool.has(cid)))
 					restricted.set(cid, cardPool.get(cid) as number);
 			return restricted;
 		} else return cardPool;
@@ -562,10 +562,10 @@ export class Session implements IIndexable {
 		let arrays = [];
 		// Start from the first user's collection, or the list of all cards if not available/used
 		if (!useCollection[0])
-			if (inBoosterOnly) arrays.push(MTGACardIDs.filter(c => Cards[c].in_booster));
+			if (inBoosterOnly) arrays.push(MTGACardIDs.filter((c) => Cards[c].in_booster));
 			else arrays.push(MTGACardIDs);
 		else if (inBoosterOnly)
-			arrays.push([...Connections[user_list[0]].collection.keys()].filter(c => Cards[c].in_booster));
+			arrays.push([...Connections[user_list[0]].collection.keys()].filter((c) => Cards[c].in_booster));
 		else arrays.push([...Connections[user_list[0]].collection.keys()]);
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push([...Connections[user_list[i]].collection.keys()]);
@@ -639,7 +639,7 @@ export class Session implements IIndexable {
 				);
 				return false;
 			}
-			if (this.boosters.some(b => b.length !== this.boosters[0].length)) {
+			if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
 				this.emitError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
 				return false;
 			}
@@ -771,7 +771,7 @@ export class Session implements IIndexable {
 
 			let defaultFactory = null;
 
-			const getBoosterFactory = function(
+			const getBoosterFactory = function (
 				set: string | null,
 				cardPool: SlotedCardPool,
 				landSlot: BasicLandSlot | null,
@@ -965,7 +965,7 @@ export class Session implements IIndexable {
 				// Boosters within a round much be of the same length.
 				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
 				if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
-					if (this.boosters.some(b => b.length !== this.boosters[0].length)) {
+					if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
 						this.emitError("Error generating boosters", msg);
 						console.error(msg);
@@ -995,7 +995,7 @@ export class Session implements IIndexable {
 		}
 
 		// Send to all session users
-		this.forUsers(user => {
+		this.forUsers((user) => {
 			if (Connections[user]) {
 				Connections[user].socket.emit(
 					"sessionOwner",
@@ -1045,7 +1045,7 @@ export class Session implements IIndexable {
 	endWinstonDraft() {
 		logSession("WinstonDraft", this);
 		if (this.draftLog)
-			for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map((c) => c.id);
 		this.sendLogs();
 		for (let user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.cleanDraftState();
@@ -1164,7 +1164,7 @@ export class Session implements IIndexable {
 	endGridDraft() {
 		logSession("GridDraft", this);
 		if (this.draftLog) {
-			for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			for (let uid of this.users) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map((c) => c.id);
 			this.sendLogs();
 		}
 		for (let user of this.users) Connections[user].socket.emit("gridDraftEnd");
@@ -1194,7 +1194,7 @@ export class Session implements IIndexable {
 		const s = this.draftState as GridDraftState;
 		if (!this.drafting || !s || !(s instanceof GridDraftState)) return false;
 
-		const log: any = { pick: [], booster: s.boosters[0].map(c => (c ? c.id : null)) };
+		const log: any = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
 		let pickedCards = [];
 		for (let i = 0; i < 3; ++i) {
@@ -1256,7 +1256,7 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return false;
 		logSession("RochesterDraft", this);
 		for (let uid of this.users) {
-			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map((c) => c.id);
 			Connections[uid].socket.emit("rochesterDraftEnd");
 		}
 		this.sendLogs();
@@ -1291,7 +1291,7 @@ export class Session implements IIndexable {
 
 		this.draftLog?.users[s.currentPlayer()].picks.push({
 			pick: [idx],
-			booster: s.boosters[0].map(c => c.id),
+			booster: s.boosters[0].map((c) => c.id),
 		});
 
 		s.lastPicks.unshift({
@@ -1334,7 +1334,7 @@ export class Session implements IIndexable {
 			return {}; // generateBoosters already emits errors.
 		}
 
-		if (this.boosters.some(b => b.length !== gridWidth * gridHeight)) {
+		if (this.boosters.some((b) => b.length !== gridWidth * gridHeight)) {
 			this.drafting = false;
 			return new SocketError(
 				"Erroneous Pack Size",
@@ -1391,9 +1391,10 @@ export class Session implements IIndexable {
 		if (s.lastPicks.length > 2) s.lastPicks.pop();
 
 		if (s.advance()) {
-			// Only send the pick data for animation purposes.
-			this.forUsers(userID => {
-				Connections[userID].socket.emit("minesweeperGridState", currentGridState.grid);
+			// Send the state without current player for animation purposes.
+			this.forUsers((userID) => {
+				currentGridState.currentPlayer = "";
+				Connections[userID].socket.emit("minesweeperDraftState", currentGridState);
 			});
 
 			if (s.done()) {
@@ -1401,12 +1402,12 @@ export class Session implements IIndexable {
 			} else {
 				// Send the next grid immediately, front-end will handle the animation
 				const nextGridState = s.syncData();
-				this.forUsers(userID => {
+				this.forUsers((userID) => {
 					Connections[userID].socket.emit("minesweeperDraftState", nextGridState);
 				});
 			}
 		} else {
-			this.forUsers(userID => {
+			this.forUsers((userID) => {
 				Connections[userID].socket.emit("minesweeperDraftState", currentGridState);
 			});
 		}
@@ -1419,7 +1420,7 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
 		logSession("MinesweeperDraft", this);
 		for (let uid of this.users) {
-			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map(c => c.id);
+			if (this.draftLog) this.draftLog.users[uid].cards = Connections[uid].pickedCards.map((c) => c.id);
 			Connections[uid].socket.emit("minesweeperDraftEnd", options);
 		}
 		this.sendLogs();
@@ -1448,7 +1449,7 @@ export class Session implements IIndexable {
 
 		// Generate bots
 		this.botsInstances = [];
-		const oracleIds = this.boosters.flat().map(card => card.oracle_id);
+		const oracleIds = this.boosters.flat().map((card) => card.oracle_id);
 		const fallback = await fallbackToSimpleBots([...new Set(oracleIds)]);
 		if (fallback) {
 			for (let i = 0; i < this.bots; ++i) this.botsInstances.push(new SimpleBot(`Bot #${i + 1}`, uuidv1()));
@@ -1505,7 +1506,7 @@ export class Session implements IIndexable {
 				1,
 				`Session.pickCard: Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${s.boosters[boosterIndex].length}).`
 			);
-		if (pickedCards.some(idx => idx >= s.boosters[boosterIndex].length))
+		if (pickedCards.some((idx) => idx >= s.boosters[boosterIndex].length))
 			return reportError(
 				3,
 				`Session.pickCard: Invalid card index [${pickedCards.join(", ")}] for booster #${boosterIndex} (${
@@ -1519,7 +1520,7 @@ export class Session implements IIndexable {
 			(burnedCards.length > this.burnedCardsPerRound ||
 				burnedCards.length !==
 					Math.min(this.burnedCardsPerRound, s.boosters[boosterIndex].length - pickedCards.length) ||
-				burnedCards.some(idx => idx >= s.boosters[boosterIndex].length))
+				burnedCards.some((idx) => idx >= s.boosters[boosterIndex].length))
 		)
 			return reportError(
 				5,
@@ -1528,7 +1529,7 @@ export class Session implements IIndexable {
 
 		console.log(
 			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
-				idx => s.boosters[boosterIndex][idx].name
+				(idx) => s.boosters[boosterIndex][idx].name
 			)}' from booster #${boosterIndex}, burning ${
 				burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"
 			}.`
@@ -1543,7 +1544,7 @@ export class Session implements IIndexable {
 		const pickData = {
 			pick: pickedCards,
 			burn: burnedCards,
-			booster: s.boosters[boosterIndex].map(c => c.id),
+			booster: s.boosters[boosterIndex].map((c) => c.id),
 		};
 		this.draftLog?.users[userID].picks.push(pickData);
 
@@ -1552,7 +1553,7 @@ export class Session implements IIndexable {
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 
 		// Signal users
-		this.forUsers(u => {
+		this.forUsers((u) => {
 			Connections[u]?.socket.emit("updateUser", {
 				userID: userID,
 				updatedProperties: {
@@ -1566,7 +1567,7 @@ export class Session implements IIndexable {
 			Connections[this.owner].socket.emit("draftLogLive", { userID: userID, pick: pickData });
 			Connections[this.owner].socket.emit("pickAlert", {
 				userName: Connections[userID].userName,
-				cards: pickedCards.map(idx => s.boosters[boosterIndex][idx]),
+				cards: pickedCards.map((idx) => s.boosters[boosterIndex][idx]),
 			});
 		}
 
@@ -1582,7 +1583,7 @@ export class Session implements IIndexable {
 	async doBotPick(instance: IBot, boosterIndex: number) {
 		const s = this.draftState as DraftState;
 		if (!s) return [];
-		const startingBooster = s.boosters[boosterIndex].map(c => c.id);
+		const startingBooster = s.boosters[boosterIndex].map((c) => c.id);
 		const pickedIndices = [];
 		const pickedCards = [];
 		for (let i = 0; i < this.pickedCardsPerRound && s.boosters[boosterIndex].length > 0; ++i) {
@@ -1656,7 +1657,7 @@ export class Session implements IIndexable {
 		let inFlightBots = 0;
 		const delayRequest = (botType: string) => {
 			if (botType !== "mtgdraftbots") return Promise.resolve();
-			let r = new Promise(resolve => setTimeout(resolve, staggerDelay * inFlightBots));
+			let r = new Promise((resolve) => setTimeout(resolve, staggerDelay * inFlightBots));
 			inFlightBots++;
 			return r;
 		};
@@ -1673,7 +1674,7 @@ export class Session implements IIndexable {
 					if (this.disconnectedUsers[userID].bot)
 						botPromises.push(
 							this.doBotPick(this.disconnectedUsers[userID].bot as IBot, boosterIndex).then(
-								pickedCards => {
+								(pickedCards) => {
 									if (this.disconnectedUsers[userID]) {
 										this.disconnectedUsers[userID].pickedThisRound = true;
 										this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
@@ -1708,7 +1709,7 @@ export class Session implements IIndexable {
 									localData.pickNumber,
 									localData.numPicks
 								)
-								.then(value => {
+								.then((value) => {
 									Connections[userID]?.socket.emit("botRecommandations", {
 										pickNumber: localData.pickNumber,
 										scores: value,
@@ -1747,7 +1748,7 @@ export class Session implements IIndexable {
 
 		console.warn(`resumeOnReconnection(): Restarting draft for session ${this.id}.`);
 
-		this.forUsers(user =>
+		this.forUsers((user) =>
 			Connections[user]?.socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayers(),
 			})
@@ -1755,7 +1756,7 @@ export class Session implements IIndexable {
 
 		if (!this.draftPaused && this.draftState instanceof DraftState) this.resumeCountdown();
 
-		this.forUsers(u =>
+		this.forUsers((u) =>
 			Connections[u]?.socket.emit("resumeOnReconnection", {
 				msg,
 			})
@@ -1776,9 +1777,8 @@ export class Session implements IIndexable {
 						);
 					} else {
 						// Has this user been replaced by a bot?
-						this.draftLog.users[userID].cards = (virtualPlayers[userID].disconnected
-							? this.disconnectedUsers[userID]
-							: Connections[userID]
+						this.draftLog.users[userID].cards = (
+							virtualPlayers[userID].disconnected ? this.disconnectedUsers[userID] : Connections[userID]
 						).pickedCards.map((c: Card) => c.id);
 					}
 				}
@@ -1787,7 +1787,7 @@ export class Session implements IIndexable {
 			}
 			logSession("Draft", this);
 
-			this.forUsers(u => Connections[u].socket.emit("endDraft"));
+			this.forUsers((u) => Connections[u].socket.emit("endDraft"));
 
 			console.log(`Session ${this.id} draft ended.`);
 			this.cleanDraftState();
@@ -1822,14 +1822,14 @@ export class Session implements IIndexable {
 		this.draftPaused = true;
 
 		this.stopCountdown();
-		this.forUsers(u => Connections[u]?.socket.emit("pauseDraft"));
+		this.forUsers((u) => Connections[u]?.socket.emit("pauseDraft"));
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
 		if (this.draftState instanceof DraftState) this.resumeCountdown();
 		this.draftPaused = false;
-		this.forUsers(u => Connections[u]?.socket.emit("resumeDraft"));
+		this.forUsers((u) => Connections[u]?.socket.emit("resumeDraft"));
 	}
 
 	///////////////////// Traditional Draft End  //////////////////////
@@ -1899,10 +1899,10 @@ export class Session implements IIndexable {
 		switch (this.draftLogRecipients) {
 			case "none":
 				if (this.personalLogs)
-					this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
+					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog));
 				}
 				break;
 			default:
@@ -1912,14 +1912,14 @@ export class Session implements IIndexable {
 			case "owner":
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("draftLog", strippedLog));
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog));
 				}
 				break;
 			case "everyone":
-				this.forUsers(uid => Connections[uid]?.socket.emit("draftLog", this.draftLog));
+				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog));
 				break;
 		}
 	}
@@ -1927,7 +1927,7 @@ export class Session implements IIndexable {
 	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>) {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
-		const useCustomBoosters = customBoosters && customBoosters.some(s => s !== "");
+		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 		if (
 			!this.generateBoosters(this.users.size * boostersPerPlayer, {
 				boostersPerPlayer: boostersPerPlayer,
@@ -1949,7 +1949,7 @@ export class Session implements IIndexable {
 				currIdx += this.users.size;
 			}
 			Connections[userID].socket.emit("setCardSelection", playersBoosters);
-			log.users[userID].cards = playersBoosters.flat().map(c => c.id);
+			log.users[userID].cards = playersBoosters.flat().map((c) => c.id);
 			++idx;
 		}
 
@@ -1984,7 +1984,7 @@ export class Session implements IIndexable {
 					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
 					let secondchoice = [];
 					for (let i = 0; i < 3; ++i) {
-						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter(p => {
+						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
 							if (p.name === choices[0][i].name) return false; // Prevent duplicates
 							if (p.colors.length === 5) return true; // WUBRG can always be picked
 							// If first pack is mono-colored: Mono colored, Dual colored than contains the first pack's color, or WUBRG
@@ -2023,7 +2023,7 @@ export class Session implements IIndexable {
 			// Original Jumpstart
 			for (let user of this.users) {
 				let boosters = [getRandom(JumpstartBoosters), getRandom(JumpstartBoosters)];
-				const cards = boosters.map(b => b.cards.map((cid: CardID) => getUnique(cid)));
+				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid)));
 
 				log.users[user].cards = cards.flat().map((c: Card) => c.id);
 				for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
@@ -2147,7 +2147,7 @@ export class Session implements IIndexable {
 		}
 
 		const virtualPlayers = this.getSortedVirtualPlayers();
-		this.forUsers(u =>
+		this.forUsers((u) =>
 			Connections[u]?.socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
 			})
@@ -2176,20 +2176,20 @@ export class Session implements IIndexable {
 		this.stopCountdown(); // Cleanup if one is still running
 		if (this.maxTimer <= 0) {
 			// maxTimer <= 0 means no timer
-			this.forUsers(u => Connections[u]?.socket.emit("disableTimer"));
+			this.forUsers((u) => Connections[u]?.socket.emit("disableTimer"));
 		} else {
 			// Immediately propagate current state
-			this.forUsers(u =>
+			this.forUsers((u) =>
 				Connections[u]?.socket.emit("timer", {
 					countdown: this.countdown,
 				})
 			);
 			// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
 			this.countdownInterval = setInterval(
-				(sess => {
+				((sess) => {
 					return () => {
 						sess.countdown--;
-						this.forUsers(u =>
+						this.forUsers((u) =>
 							Connections[u]?.socket.emit("timer", {
 								countdown: sess.countdown,
 							})
@@ -2216,7 +2216,7 @@ export class Session implements IIndexable {
 	// Distribute order has to be deterministic (especially for the reconnect feature), uses this.userOrder
 	getSortedHumanPlayersIDs() {
 		let players = Array.from(this.users).concat(Object.keys(this.disconnectedUsers));
-		return this.userOrder.filter(e => players.includes(e));
+		return this.userOrder.filter((e) => players.includes(e));
 	}
 
 	getVirtualPlayersCount() {
@@ -2269,7 +2269,7 @@ export class Session implements IIndexable {
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
-		this.forUsers(u =>
+		this.forUsers((u) =>
 			Connections[u]?.socket.emit("message", {
 				title: title,
 				text: text,
@@ -2295,23 +2295,23 @@ export class Session implements IIndexable {
 		} else {
 			this.bracket = new Bracket(players);
 		}
-		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	generateSwissBracket(players: Array<UserID>) {
 		this.bracket = new SwissBracket(players);
-		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	generateDoubleBracket(players: Array<UserID>) {
 		this.bracket = new DoubleBracket(players);
-		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	updateBracket(results: Array<[number, number]>) {
 		if (!this.bracket) return false;
 		this.bracket.results = results;
-		this.forUsers(u => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
+		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
 	shareDecklist(userID: UserID, decklist: DeckList) {
@@ -2341,22 +2341,22 @@ export class Session implements IIndexable {
 				if (this.draftLog.delayed) {
 					// Complete log has not been shared yet, send only hashes to non-owners.
 					Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-					this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
 				}
 			// Else, fall through to "everyone"
 			case "everyone":
 				// Also send the update to the organiser separately if they're not playing
 				if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-				this.forUsers(uid => Connections[uid]?.socket.emit("shareDecklist", shareData));
+				this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
 				break;
 			case "owner":
 				Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-				this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+				this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 				break;
 			case "none":
 				Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
-				this.forNonOwners(uid => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+				this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 				break;
 		}
 	}
