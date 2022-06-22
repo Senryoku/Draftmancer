@@ -13,6 +13,24 @@ const testDebug = true; // Display tests for debugging
 const debugWindowWidth = 960;
 const debugWindowHeight = 1080;
 
+async function waitAndClickXpath(page, xpath) {
+	await page.waitForXPath(xpath, {
+		visible: true,
+	});
+	const [element] = await page.$x(xpath);
+	expect(element).to.exist;
+	await element.click();
+}
+
+async function waitAndClickSelector(page, selector) {
+	await page.waitForSelector(selector, {
+		visible: true,
+	});
+	const [element] = await page.$$(selector);
+	expect(element).to.exist;
+	await element.click();
+}
+
 function disableAnimations(page) {
 	page.on("load", () => {
 		const content = `
@@ -88,23 +106,12 @@ async function pickCard(page) {
 	let text = await page.evaluate((next) => next.innerText, next);
 	if (text === "Done drafting!") return true;
 
-	const [card] = await page.$$(".booster-card");
+	const cards = await page.$$(".booster-card");
+	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
 	await card.click();
-	await page.waitForSelector('input[value="Confirm Pick"]', {
-		visible: true,
-	});
-	const [button] = await page.$$('input[value="Confirm Pick"]');
-	expect(button).to.exist;
-	await button.click();
+	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
 	return false;
-}
-
-async function pickFirstCard(page) {
-	const [boosterH2] = await page.$x("//h2[contains(., 'Your Booster')]");
-	expect(boosterH2).to.exist;
-
-	await pickCard(page);
 }
 
 describe("Front End - Solo", function () {
@@ -130,7 +137,7 @@ describe("Front End - Solo", function () {
 	});
 
 	it(`Owner picks a card`, async function () {
-		await pickFirstCard(sessionOwnerPage);
+		await pickCard(sessionOwnerPage);
 	});
 
 	it(`...Until draft if done.`, async function () {
@@ -188,19 +195,12 @@ async function pickMinesweeper(page) {
 	if (text === "Done drafting!") return true;
 	if (text.includes("Waiting for")) return false;
 
-	const [card] = await page.$$(".card:not(.picked)");
+	const cards = await page.$$(".minesweeper-grid .card:not(.picked)");
+	if (cards.length === 0) return false;
+	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
 	await card.click();
 	return false;
-}
-
-async function waitAndClickXpath(page, xpath) {
-	await page.waitForXPath(xpath, {
-		visible: true,
-	});
-	const [element] = await page.$x(xpath);
-	expect(element).to.exist;
-	await element.click();
 }
 
 describe("Minesweeper Draft", function () {
