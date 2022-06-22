@@ -1281,12 +1281,16 @@ export default {
 			this.socket.emit("winstonDraftTakePile", (answer) => {
 				if (answer.code === 0) {
 					for (let c of cards) this.addToDeck(c);
-				} else alert("Error: ", answer.error);
+				} else {
+					console.error(answer);
+				}
 			});
 		},
 		winstonDraftSkipPile() {
 			this.socket.emit("winstonDraftSkipPile", (answer) => {
-				if (answer.code !== 0) alert("Error: ", answer.error);
+				if (answer.code !== 0) {
+					console.error(answer);
+				}
 			});
 		},
 		setGridDraftState(state) {

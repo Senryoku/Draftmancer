@@ -1,27 +1,27 @@
 "use strict";
-
+import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe("Rochester Draft", function() {
+describe("Rochester Draft", function () {
 	let clients = [];
 	let sessionID = "sessionID";
 	let ownerIdx;
 
-	beforeEach(function(done) {
+	beforeEach(function (done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function(done) {
+	afterEach(function (done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function(done) {
+	before(function (done) {
 		clients = makeClients(
 			[
 				{
@@ -59,7 +59,7 @@ describe("Rochester Draft", function() {
 		);
 	});
 
-	after(function(done) {
+	after(function (done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
@@ -67,9 +67,9 @@ describe("Rochester Draft", function() {
 		waitForClientDisconnects(done);
 	});
 
-	it(`6 clients with different userID should be connected.`, function(done) {
+	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
@@ -78,10 +78,10 @@ describe("Rochester Draft", function() {
 	let rochesterDraftState = null;
 
 	const startDraft = () => {
-		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function(done) {
+		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function (done) {
 			let connectedClients = 0;
 			for (let c of clients) {
-				c.once("startRochesterDraft", function(state) {
+				c.once("startRochesterDraft", function (state) {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
 						rochesterDraftState = state;
@@ -94,46 +94,46 @@ describe("Rochester Draft", function() {
 	};
 
 	const endDraft = () => {
-		it("Every player randomly chooses a card and the draft should end.", function(done) {
+		it("Every player randomly chooses a card and the draft should end.", function (done) {
 			let draftEnded = 0;
 
 			for (let c = 0; c < clients.length; ++c) {
 				// Pick randomly and retry on error
-				const pick = state => {
+				const pick = (state) => {
 					const cl = clients[c];
-					cl.emit("rochesterDraftPick", [Math.floor(Math.random() * state.booster.length)], response => {
+					cl.emit("rochesterDraftPick", [Math.floor(Math.random() * state.booster.length)], (response) => {
 						if (response.code !== 0) pick(state);
 					});
 				};
-				clients[c].on("rochesterDraftNextRound", function(state) {
+				clients[c].on("rochesterDraftNextRound", function (state) {
 					if (state.currentPlayer === clients[c].query.userID) pick(state);
 				});
-				clients[c].once("rochesterDraftEnd", function() {
+				clients[c].once("rochesterDraftEnd", function () {
 					draftEnded += 1;
 					this.removeListener("rochesterDraftNextRound");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			// Pick the first card
-			let currPlayer = clients.findIndex(c => c.query.userID == rochesterDraftState.currentPlayer);
+			let currPlayer = clients.findIndex((c) => c.query.userID == rochesterDraftState.currentPlayer);
 			clients[currPlayer].emit("rochesterDraftPick", [0]);
 		});
 	};
 
-	describe("Default settings with a disconnect", function() {
+	describe("Default settings with a disconnect", function () {
 		startDraft();
 
-		it("Non-owner disconnects, owner receives updated user infos.", function(done) {
+		it("Non-owner disconnects, owner receives updated user infos.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[ownerIdx].once("userDisconnected", function() {
+			clients[ownerIdx].once("userDisconnected", function () {
 				waitForSocket(clients[nonOwnerIdx], done);
 			});
 			clients[nonOwnerIdx].disconnect();
 		});
 
-		it("Non-owner reconnects, draft restarts.", function(done) {
+		it("Non-owner reconnects, draft restarts.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("rejoinRochesterDraft", function(state) {
+			clients[nonOwnerIdx].once("rejoinRochesterDraft", function () {
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -142,10 +142,10 @@ describe("Rochester Draft", function() {
 		endDraft();
 	});
 
-	describe("Using a Cube", function() {
-		it("Emit Settings.", function(done) {
+	describe("Using a Cube", function () {
+		it("Emit Settings.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("sessionOptions", function(options) {
+			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);

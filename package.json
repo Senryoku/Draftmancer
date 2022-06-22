@@ -21,6 +21,8 @@
 		"test-bail": "cross-env PORT=3001 mocha test --exit --experimental-json-modules -bail",
 		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules",
 		"manualtest-bail": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules -bail",
+		"fronttest": "cross-env PORT=3001 mocha test/frontend --exit --experimental-json-modules",
+		"fronttest-bail": "cross-env PORT=3001 mocha test/frontend --exit --experimental-json-modules -bail",
 		"prettier-format": "prettier --config .prettierrc --write src/**/*.ts client/src/**/*[!min].js client/src/**/*.vue",
 		"prepare": "husky install"
 	},
@@ -74,6 +76,7 @@
 		"husky": "^6.0.0",
 		"lint-staged": "^11.2.6",
 		"mocha": "^10.0.0",
+		"puppeteer": "^14.4.1",
 		"ts-loader": "^9.3.0",
 		"typescript": "^4.7.4",
 		"vue": "^2.6.14",

@@ -24,7 +24,8 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 ### Tests
 
 -   `npm test` runs all tests in the `test` folder (non recursive). This is the command run by GitHub actions on each commit.
--   `npm run manualtest` runs tests from the `test/manual` folder, it contains additional (and long) statistical tests.
+-   `npm run manualtest` runs tests from the `test/manual` folder, it contains additional (and long) statistical tests. These are not included in the automatic test suite.
+-   `npm run fronttest` runs tests from the `test/frontend` folder, it contains additional end-to-end tests, including the client. These are not included in the automatic test suite.
 
 Add `-bail` (e.g. `npm run test-bail`) to stop on the first error.
 
