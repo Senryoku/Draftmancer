@@ -24,13 +24,13 @@
     "2x2": {
         "code": "2x2",
         "fullName": "Double Masters 2022",
-        "cardCount": 223,
+        "cardCount": 497,
         "isPrimary": true,
         "icon": "img/sets/2x2.svg",
-        "commonCount": 41,
-        "mythicCount": 54,
-        "rareCount": 90,
-        "uncommonCount": 38
+        "commonCount": 54,
+        "mythicCount": 100,
+        "rareCount": 250,
+        "uncommonCount": 93
     },
     "2xm": {
         "code": "2xm",
@@ -3083,7 +3083,8 @@
         "isPrimary": false,
         "block": "Alara",
         "icon": "img/sets/pcon.svg",
-        "rareCount": 2
+        "mythicCount": 1,
+        "rareCount": 1
     },
     "pcsp": {
         "code": "pcsp",
@@ -4680,8 +4681,8 @@
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 104,
-        "rareCount": 400,
+        "mythicCount": 105,
+        "rareCount": 399,
         "uncommonCount": 20
     },
     "slu": {
@@ -4815,12 +4816,12 @@
     "stx": {
         "code": "stx",
         "fullName": "Strixhaven: School of Mages",
-        "cardCount": 385,
+        "cardCount": 386,
         "isPrimary": true,
         "icon": "img/sets/stx.svg",
         "commonCount": 115,
         "mythicCount": 42,
-        "rareCount": 140,
+        "rareCount": 141,
         "uncommonCount": 88
     },
     "sum": {
