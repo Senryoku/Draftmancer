@@ -243,6 +243,7 @@ export default {
 }
 
 .related-card {
+	width: 100%;
 	height: var(--image-height);
 	background: url("../assets/img/cardback.png");
 	background-size: 100%;
