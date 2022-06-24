@@ -73,14 +73,14 @@ export default {
 		fixedLayout: { type: Boolean, default: false },
 	},
 	computed: {
-		imageURI: function() {
+		imageURI: function () {
 			if (this.language in this.card.image_uris) return this.card.image_uris[this.language];
 			return this.card.image_uris["en"];
 		},
-		hasBack: function() {
+		hasBack: function () {
 			return this.card.back !== null && this.card.back !== undefined;
 		},
-		backImageURI: function() {
+		backImageURI: function () {
 			return this.language in this.card.back.image_uris
 				? this.card.back.image_uris[this.language]
 				: this.card.back.image_uris["en"];
@@ -226,6 +226,7 @@ img {
 /* Fixed Layouts (Used by CardPopup) */
 .fixed-layout {
 	width: 100%;
+	transform-origin: center;
 }
 
 .layout-flip,

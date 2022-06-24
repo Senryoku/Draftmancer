@@ -6,25 +6,39 @@
 			v-if="card"
 			v-show="display"
 		>
-			<CardImage
-				class="card-image"
-				:language="language"
-				:card="card"
-				:fixedLayout="true"
-				v-if="currentPart === 0"
-			/>
-			<div class="related-card" v-else>
-				<template v-if="relatedCards[currentPart - 1].status !== 'ready'">
-					<card-placeholder class="card-image"></card-placeholder>
-				</template>
-				<template v-else>
-					<img :src="relatedCards[currentPart - 1].image_uris.border_crop" class="card-image" />
-				</template>
-			</div>
-			<div v-if="hasAdditionalData(card.id)">
+			<div class="carousel">
+				<div
+					:class="{
+						selected: currentPart === 0,
+						before: currentPart === 1,
+						'before-hidden': currentPart > 1,
+					}"
+					:key="card.id"
+				>
+					<CardImage :language="language" :card="card" :fixedLayout="true" />
+				</div>
+				<div
+					class="related-card"
+					v-for="(relatedCard, idx) in relatedCards"
+					:key="relatedCard.id"
+					:class="{
+						selected: currentPart === idx + 1,
+						before: currentPart === idx + 2,
+						after: currentPart === idx,
+						'before-hidden': currentPart > idx + 2,
+						'after-hidden': currentPart < idx,
+					}"
+				>
+					<template v-if="relatedCard.status !== 'ready'">
+						<card-placeholder class="card-image"></card-placeholder>
+					</template>
+					<template v-else>
+						<img :src="relatedCard.image_uris.border_crop" class="card-image" />
+					</template>
+				</div>
 				<div v-if="relatedCards.length > 0" class="all-parts">
 					<div class="mouse-hint"><i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i></div>
-					<i class="fas fa-angle-left"></i>
+					<i class="fas fa-angle-up"></i>
 					<i class="fas fa-square fa-sm" :class="{ selected: currentPart === 0 }"></i>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
@@ -42,10 +56,10 @@
 							></i
 						></template>
 					</template>
-					<i class="fas fa-angle-right"></i>
+					<i class="fas fa-angle-down"></i>
 				</div>
+				<div v-if="hasPendingData(card.id)" class="all-parts"><i class="fas fa-spinner fa-spin" /></div>
 			</div>
-			<div v-else class="all-parts"><i class="fas fa-spinner fa-spin"></i></div>
 		</div>
 	</transition>
 </template>
@@ -92,8 +106,8 @@ export default {
 				});
 			}
 		},
-		hasAdditionalData(cardID) {
-			return cardID in this.cardCache && this.cardCache[cardID]?.status === "ready";
+		hasPendingData(cardID) {
+			return cardID in this.cardCache && this.cardCache[cardID]?.status === "pending";
 		},
 		additionalData(cardID) {
 			return this.cardCache[cardID];
@@ -114,6 +128,9 @@ export default {
 				event.stopPropagation();
 				event.preventDefault();
 			}
+		},
+		negMod(x, n) {
+			return ((x % n) + n) % n;
 		},
 	},
 	computed: {
@@ -147,19 +164,17 @@ export default {
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
 
-.card-popup .card-image {
-	width: 100%;
-}
-
 .card-popup.right {
-	right: 2.5vw;
+	right: 4vw;
+	direction: rtl;
 }
 
 .card-popup.left {
-	left: 2.5vw;
+	left: 4vw;
 }
 
 .card-popup >>> img {
+	width: auto;
 	max-height: var(--image-height);
 }
 
@@ -182,42 +197,49 @@ export default {
 	right: -5vw;
 }
 
-.all-parts {
+.carousel {
 	position: relative;
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	gap: 0.5vw;
-
-	width: 50%;
-	margin: 0 auto 0 auto;
-	padding: 1vh 0.5vw 1vh 0.5vw;
-	background: #222;
-	border: 2px solid #333;
-	border-top: 0;
-	border-radius: 0 0 1em 1em;
-
-	color: #aaa;
+	min-width: min(90vw, calc(0.71 * var(--image-height)));
+	max-width: min(90vw, calc(2 * 0.71 * var(--image-height)));
+	height: 100%;
 }
 
-.all-parts .selected {
-	text-shadow: 0 0 6px white;
-	color: white;
-}
-
-.all-parts .fa-angle-left,
-.all-parts .fa-angle-right {
-	color: #666;
-}
-
-.mouse-hint {
+.carousel > * {
 	position: absolute;
-	left: 1em;
-	color: #666;
-	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.7);
-	top: 50%;
-	transform: translateY(-50%);
+	transition: all 0.4s ease-out;
+	transform-origin: left center;
+}
+
+.right .carousel > * {
+	transform-origin: right center;
+}
+
+.carousel .selected {
+	z-index: 1;
+}
+
+.carousel .before:not(.selected) {
+	z-index: 0;
+	transform: translateY(-25%) scale(70%);
+	opacity: 0.8;
+}
+
+.carousel .after:not(.selected) {
+	z-index: 0;
+	transform: translateY(25%) scale(70%);
+	opacity: 0.8;
+}
+
+.carousel .before-hidden:not(.selected) {
+	z-index: -1;
+	transform: translateY(-50%) scale(0%);
+	opacity: 0;
+}
+
+.carousel .after-hidden:not(.selected) {
+	z-index: -1;
+	transform: translateY(50%) scale(0%);
+	opacity: 0;
 }
 
 .related-card {
@@ -230,5 +252,66 @@ export default {
 .related-card .card-image {
 	height: var(--image-height);
 	border-radius: 3%;
+}
+
+.all-parts {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5vh;
+
+	height: 50%;
+	width: 2em;
+	margin: 0 auto 0 auto;
+	padding: 1vh 0;
+	background: #222;
+	border: 2px solid #aaa;
+
+	color: #aaa;
+}
+
+.right .all-parts {
+	right: -2em;
+
+	border-left: 0;
+	border-radius: 0 1em 1em 0;
+}
+
+.left .all-parts {
+	left: -2em;
+	text-align: left;
+
+	border-right: 0;
+	border-radius: 1em 0 0 1em;
+}
+
+.all-parts > * {
+	transition: all 0.1s;
+}
+
+.all-parts .selected {
+	text-shadow: 0 0 6px white;
+	color: white;
+}
+
+.all-parts .fa-angle-up,
+.all-parts .fa-angle-down {
+	color: #666;
+}
+
+.mouse-hint {
+	position: absolute;
+	color: #666;
+	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.7);
+	top: 1em;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 0.25em;
 }
 </style>
