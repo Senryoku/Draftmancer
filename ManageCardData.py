@@ -326,7 +326,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
     cardsByName = {}
     Translations = {}
     print("Generating card data cache...")
-    meldCards = []
     for c in all_cards:
         # Some dual faced Secret Lair cards have some key information hidden in the card_faces array. Extract it.
         def copyFromFaces(prop):
@@ -417,8 +416,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
                     selection['layout'] = 'split'
             if c['layout'] == "flip":
                 selection['layout'] = 'flip'
-            if c['layout'] == 'meld':  # Defer dealing with meld cards until we have all the relevant information
-                meldCards.append(c)
 
             cards[c['id']].update(selection)
 
@@ -433,16 +430,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             del cards[cid]
         if 'arena_id' in c:
             MTGACards[c['arena_id']] = c
-
-    # Set result of melding cards as their back
-    for c in meldCards:
-        meldResult = [a for a in c['all_parts'] if a['component'] == 'meld_result']
-        if len(meldResult) > 0:
-            meldResult = cards[meldResult[0]['id']]
-            cards[c['id']]['back'] = {'name': meldResult['name'], 'type': meldResult['type'], 'subtypes': meldResult['subtypes'],
-                                      'printed_names': meldResult['printed_names'], 'image_uris': meldResult['image_uris']}
-        else:
-            print("Warning: Could not find part info for meld card (ignore if this is a result card) ", c["name"])
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
