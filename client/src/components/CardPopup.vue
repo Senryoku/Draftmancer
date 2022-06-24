@@ -96,6 +96,10 @@ export default {
 	},
 	methods: {
 		requestData(cardID) {
+			// Note: This will always request the english version of the card data, regardless of the language prop.,
+			//	   but the all_parts (related cards) property doesn't seem to exist on translated cards anyway.
+			//     We could search for the translated cards from their english ID, but I'm not sure if that's worth it,
+			//     especially since I strongly suspect most of them won't be in Scryfall DB at all.
 			if (!this.cardCache[cardID]) {
 				this.$set(this.cardCache, cardID, { id: cardID, status: "pending" });
 				axios.get(`https://api.scryfall.com/cards/${cardID}`).then((response) => {
