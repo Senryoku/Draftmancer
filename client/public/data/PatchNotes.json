@@ -1,5 +1,11 @@
 [
 	{
+		"date": "24/06/2022",
+		"notes": [
+			"In preparation for Baldur's Gate Alchemy specialization cards: Added a way to scroll through related cards when zooming in on a card by using the mouse wheel."
+		]
+	},
+	{
 		"date": "20/06/2022",
 		"notes": ["New game mode: Minesweeper Draft."]
 	},
