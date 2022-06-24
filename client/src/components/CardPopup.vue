@@ -143,7 +143,7 @@ export default {
 			if (!this.cardCache[this.card?.id]?.all_parts) return r;
 
 			for (let card of this.cardCache[this.card.id].all_parts) {
-				if (card.id !== this.card.id) {
+				if (card.id !== this.card.id && card.component !== "combo_piece") {
 					this.requestData(card.id);
 					r.push(this.additionalData(card.id));
 				}
@@ -156,30 +156,28 @@ export default {
 
 <style scoped>
 .card-popup {
-	--image-height: 70vh;
+	--image-height: calc(min(70vh, 90vw * 1.4 * 0.5));
 
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	min-width: min(90vw, calc(0.71 * var(--image-height)));
-	max-width: min(90vw, calc(2 * 0.71 * var(--image-height)));
 	z-index: 999;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
 
 .card-popup.right {
-	right: 4vw;
+	right: 3.5vw;
 	direction: rtl;
 }
 
 .card-popup.left {
-	left: 4vw;
+	left: 3.5vw;
 }
 
 .card-popup >>> img {
 	width: auto;
-	max-height: var(--image-height);
+	height: var(--image-height);
 }
 
 .zoom-enter-active,
@@ -203,9 +201,8 @@ export default {
 
 .carousel {
 	position: relative;
-	min-width: min(90vw, calc(0.71 * var(--image-height)));
-	max-width: min(90vw, calc(2 * 0.71 * var(--image-height)));
-	height: 100%;
+	width: 50vw;
+	height: var(--image-height);
 }
 
 .carousel > * {
@@ -247,7 +244,7 @@ export default {
 }
 
 .related-card {
-	width: 100%;
+	width: calc(0.71 * var(--image-height));
 	height: var(--image-height);
 	background: url("../assets/img/cardback.png");
 	background-size: 100%;
@@ -255,6 +252,7 @@ export default {
 }
 
 .related-card .card-image {
+	width: auto;
 	height: var(--image-height);
 	border-radius: 3%;
 }
