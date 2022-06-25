@@ -122,7 +122,7 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				r.draftState = new DraftState([]);
+				r.draftState = new DraftState();
 				break;
 			}
 			case "winston": {
@@ -143,6 +143,7 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 		}
 		copyProps(s.draftState, r.draftState);
+		// TODO: Deal with draft players object
 	}
 
 	return r;
@@ -233,10 +234,6 @@ async function tempDump(exitOnCompletion = false) {
 
 		for (let prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
 			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
-		}
-		if (c.bot) {
-			PoDConnection.bot = copyProps(c.bot, {});
-			if (c.bot instanceof Bot) PoDConnection.bot.fallbackBot = undefined;
 		}
 		PoDConnections.push(PoDConnection);
 	}
