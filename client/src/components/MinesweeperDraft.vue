@@ -215,11 +215,11 @@ export default {
 </style>
 
 <style>
-.clickable img {
+.minesweeper-cell .clickable img {
 	transition: box-shadow 0.15s ease-in-out;
 }
 
-.clickable:hover img {
+.minesweeper-cell .clickable:hover img {
 	cursor: pointer;
 	box-shadow: deepskyblue 0 0 5px 1px;
 }
