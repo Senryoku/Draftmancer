@@ -24,13 +24,13 @@
     "2x2": {
         "code": "2x2",
         "fullName": "Double Masters 2022",
-        "cardCount": 497,
+        "cardCount": 579,
         "isPrimary": true,
         "icon": "img/sets/2x2.svg",
-        "commonCount": 54,
-        "mythicCount": 100,
-        "rareCount": 250,
-        "uncommonCount": 93
+        "commonCount": 98,
+        "mythicCount": 105,
+        "rareCount": 272,
+        "uncommonCount": 104
     },
     "2xm": {
         "code": "2xm",
