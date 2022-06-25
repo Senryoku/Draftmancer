@@ -1389,6 +1389,47 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>June 25, 2022</em>
+							<ul>
+								<li>
+									<img src="img/sets/2x2.svg" class="set-icon" style="--invertedness: 100%" />
+									Double Masters 2022 (2X2) support: Check out the full set selection menu (<i
+										class="fas fa-ellipsis-h"
+									></i
+									>).
+								</li>
+								<li>
+									In preparation for Baldur's Gate Alchemy Horizons specialize mechanics, zooming in
+									on a card (right-click) will now also allow you to scroll through the related cards
+									with your mouse wheel.
+								</li>
+							</ul>
+							<p>
+								If you are using MTGADraft regularly and enjoying it, please consider supporting my work
+								by donating a small amount here:
+							</p>
+							<form
+								action="https://www.paypal.com/cgi-bin/webscr"
+								method="post"
+								target="_blank"
+								rel="noopener nofollow"
+								style="margin: 0.5em 0 0 3em"
+							>
+								<input type="hidden" name="cmd" value="_s-xclick" />
+								<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+								<input type="hidden" name="lc" value="en_US" />
+								<input
+									type="image"
+									src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+									name="submit"
+									title="PayPal - The safer, easier way to pay online!"
+									alt="Donate with PayPal button"
+									style="display: inline"
+								/>
+							</form>
+							<p>Thank you! - Sen</p>
+						</div>
+						<div class="news">
 							<em>June 20, 2022</em>
 							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
 							<p>
@@ -1405,14 +1446,6 @@
 								Exact collation (most notably uncommon/ratio for backgrounds) is still to be determined
 								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
 								when drafting this set!
-							</p>
-						</div>
-						<div class="news">
-							<em>April 28, 2022</em>
-							<p>
-								Experimental support for custom cards in cubes. Refer to the
-								<a href="cubeformat.html" target="_blank">Cube Format documentation</a> for more
-								information.
 							</p>
 						</div>
 					</div>
