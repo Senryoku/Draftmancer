@@ -1631,7 +1631,7 @@ export class Session implements IIndexable {
 		this.stopCountdown();
 		const totalVirtualPlayers = this.getVirtualPlayersCount();
 
-		// Boosters are empty, or we're discarding the remainding cards
+		// Boosters are empty, or we're discarding the remaining cards
 		if (s.boosters[0].length <= Math.max(0, this.discardRemainingCardsAt)) {
 			s.pickNumber = 0;
 			// Remove this round's boosters
@@ -1653,7 +1653,7 @@ export class Session implements IIndexable {
 		let virtualPlayers = this.getSortedVirtualPlayers();
 		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
 
-		const staggerDelay = 200; // Wil delay successive calls to the mtgdraftbots API
+		const staggerDelay = 200; // Will delay successive calls to the mtgdraftbots API
 		let inFlightBots = 0;
 		const delayRequest = (botType: string) => {
 			if (botType !== "mtgdraftbots") return Promise.resolve();
