@@ -35,13 +35,13 @@
 					<h2>{{ block.name }}</h2>
 					<div class="controls">
 						<span
-							@click="add(block.sets.map(s => s.code))"
+							@click="add(block.sets.map((s) => s.code))"
 							class="clickable"
 							v-tooltip="'Add all sets from this block'"
 							><i class="fas fa-plus-square"></i
 						></span>
 						<span
-							@click="remove(block.sets.map(s => s.code))"
+							@click="remove(block.sets.map((s) => s.code))"
 							class="clickable"
 							v-tooltip="'Remove all sets from this block'"
 							><i class="fas fa-minus-square"></i
@@ -82,8 +82,8 @@ export default {
 		return {
 			SetsInfos: SetsInfos,
 			blocks: [
-				{ name: "MtG: Arena", sets: constants.MTGASets.map(s => SetsInfos[s]).reverse() },
-				{ name: "Un-sets", sets: ["und", "ust", "unh", "ugl"].map(s => SetsInfos[s]) },
+				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
+				{ name: "Un-sets", sets: ["und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
 				{
 					name: "Masters",
 					sets: [
@@ -102,19 +102,19 @@ export default {
 						"me3",
 						"me2",
 						"me1", // Is 'med' in MTGA and MTGO
-					].map(s => SetsInfos[s]),
+					].map((s) => SetsInfos[s]),
 				},
 			],
-			irregularSets: ["clb", "cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn", "all"],
+			irregularSets: ["clb", "cmr", "ugl", "hml", "chr", "fem", "drk", "atq", "arn", "all", "2x2"],
 		};
 	},
 	props: {
 		value: { type: Array, required: true },
 	},
 	mounted() {
-		const assigned = this.blocks.map(b => b.sets).flat();
+		const assigned = this.blocks.map((b) => b.sets).flat();
 		let blocks = {};
-		for (let s of constants.PrimarySets.map(s => SetsInfos[s])) {
+		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 			let b = s.block;
 			if (!b && assigned.includes(s)) continue;
 			if (!b) b = "Others";

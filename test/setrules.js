@@ -115,6 +115,18 @@ describe("Set Specific Booster Rules", function () {
 		expect(Foil).to.equal(1);
 	};
 
+	const validate2X2Booster = function (booster) {
+		expect(booster.map((c) => c.set).every((s) => s === "2x2")).to.be.true;
+		const foils = booster.reduce((acc, val) => {
+			return acc + (val.foil ? 1 : 0);
+		}, 0);
+		expect(foils).to.equal(2);
+		const crypticSpires = booster.reduce((acc, val) => {
+			return acc + (val.name === "Cryptic Spires" ? 1 : 0);
+		}, 0);
+		expect(crypticSpires).to.equal(1);
+	};
+
 	beforeEach(function (done) {
 		disableLogs();
 		done();
@@ -184,6 +196,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("mid", validateMIDBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 	testSet("vow", validateVOWBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 	testSet("clb", validateCLBBooster, "one legendary creature or planeswalker, one legendary background");
+	testSet("2x2", validate2X2Booster, "two foils and one Cryptic Spires");
 
 	testSet("vow", validateColorBalance, "at least one common of each color.");
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, function (done) {

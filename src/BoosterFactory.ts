@@ -48,15 +48,15 @@ class ColorBalancedSlotCache {
 
 		this.monocolored = new Map();
 		for (let cardPool of Object.keys(this.byColor)
-			.filter(k => k.length === 1)
-			.map(k => this.byColor[k]))
+			.filter((k) => k.length === 1)
+			.map((k) => this.byColor[k]))
 			for (let [cid, val] of cardPool.entries()) this.monocolored.set(cid, val);
 
 		this.monocoloredCount = countCards(this.monocolored);
 		this.others = new Map();
 		for (let cardPool of Object.keys(this.byColor)
-			.filter(k => k.length !== 1)
-			.map(k => this.byColor[k]))
+			.filter((k) => k.length !== 1)
+			.map((k) => this.byColor[k]))
 			for (let [cid, val] of cardPool.entries()) this.others.set(cid, val);
 
 		this.othersCount = countCards(this.others);
@@ -152,7 +152,7 @@ export class BoosterFactory implements IBoosterFactory {
 		this.options = options;
 		if (this.options.colorBalance) this.colorBalancedSlot = new ColorBalancedSlot(this.cardPool["common"]);
 
-		this.onError = function(...args: any[]) {
+		this.onError = function (...args: any[]) {
 			if (this.options.onError) this.options.onError(...args);
 		};
 	}
@@ -216,7 +216,7 @@ export class BoosterFactory implements IBoosterFactory {
 		if (this.landSlot) booster.push(this.landSlot.pick());
 
 		// Last resort safety check
-		if (booster.some(v => typeof v === "undefined" || v === null)) {
+		if (booster.some((v) => typeof v === "undefined" || v === null)) {
 			const msg = `Unspecified error.`;
 			this.onError("Error generating boosters", msg);
 			console.error(msg, booster);
@@ -264,7 +264,7 @@ function rollSpecialCardRarity(
 			pickedRarity = "mythic";
 	}
 
-	if (cardCounts[pickedRarity] === 0) pickedRarity = Object.keys(cardCounts).find(v => cardCounts[v] > 0);
+	if (cardCounts[pickedRarity] === 0) pickedRarity = Object.keys(cardCounts).find((v) => cardCounts[v] > 0);
 
 	return pickedRarity;
 }
@@ -303,7 +303,7 @@ class WARBoosterFactory extends BoosterFactory {
 		if (
 			((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
 				(!("rare" in targets) || targets["rare"] <= 0)) ||
-			Object.values(plwCounts).every(c => c === 0)
+			Object.values(plwCounts).every((c) => c === 0)
 		) {
 			return super.generateBooster(targets);
 		} else {
@@ -340,7 +340,7 @@ class DOMBoosterFactory extends BoosterFactory {
 	generateBooster(targets: Targets) {
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
-		if (Object.values(legendaryCounts).every(c => c === 0)) {
+		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
 			// Roll for legendary rarity
@@ -378,7 +378,7 @@ class ZNRBoosterFactory extends BoosterFactory {
 		if (
 			((!("uncommon" in targets) || targets["uncommon"] <= 0) &&
 				(!("rare" in targets) || targets["rare"] <= 0)) ||
-			Object.values(mdfcCounts).every(c => c === 0)
+			Object.values(mdfcCounts).every((c) => c === 0)
 		) {
 			return super.generateBooster(targets);
 		} else {
@@ -435,7 +435,7 @@ class CMRBoosterFactory extends BoosterFactory {
 			};
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
-		if (Object.values(legendaryCounts).every(c => c === 0)) {
+		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
 			let updatedTargets = Object.assign({}, targets);
@@ -608,7 +608,7 @@ class MH2BoosterFactory extends BoosterFactory {
 	generateBooster(targets: Targets) {
 		const newToModernCounts = countBySlot(this.newToModern);
 		// Ignore the rule if there's no New-to-Modern reprint left
-		if (Object.values(newToModernCounts).every(c => c === 0)) {
+		if (Object.values(newToModernCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
 			// Roll for New-to-Modern rarity
@@ -834,7 +834,7 @@ class CLBBoosterFactory extends BoosterFactory {
 			};
 		const legendaryCounts = countBySlot(this.legendaryCreaturesAndPlaneswalkers);
 		// Ignore the rule if there's no legendary creatures or planeswalkers left
-		if (Object.values(legendaryCounts).every(c => c === 0)) {
+		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
 			let booster: Array<Card> | false = [];
@@ -887,6 +887,46 @@ class CLBBoosterFactory extends BoosterFactory {
 	}
 }
 
+/* Double Masters 2022
+ * 8 Commons
+ * 3 Uncommons
+ * 2 Rares and/or mythic rares
+ * 2 Traditional foil cards of any rarity
+ * 1 Cryptic Spires (As the land slot)
+ */
+class M2X2BoosterFactory extends BoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, options);
+	}
+
+	generateBooster(targets: Targets) {
+		if (targets === DefaultBoosterTargets) {
+			targets = {
+				rare: 2,
+				uncommon: 3,
+				common: 8,
+			};
+		}
+
+		let booster: Array<Card> | false = [];
+
+		booster = super.generateBooster(targets);
+		if (!booster) return false;
+		const mythicPromotion = this.options?.mythicPromotion ?? true;
+
+		// 2 Foils
+		for (let i = 0; i < 2; i++) {
+			const pickedRarity = rollSpecialCardRarity(countBySlot(this.cardPool), targets, {
+				minRarity: "common",
+				mythicPromotion,
+			});
+			booster.unshift(pickCard(this.cardPool[pickedRarity], [], { foil: true }));
+		}
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -904,6 +944,7 @@ export const SetSpecificFactories: {
 	dbl: DBLBoosterFactory,
 	neo: NEOBoosterFactory,
 	clb: CLBBoosterFactory,
+	"2x2": M2X2BoosterFactory,
 };
 
 /*
@@ -986,12 +1027,13 @@ export class PaperBoosterFactory implements IBoosterFactory {
 	generateBooster() {
 		const booster: Array<CardInfo> = [];
 		// Select one of the possible sheet arrangement
-		const boosterContent = this.possibleContent[
-			weightedRandomIdx(
-				this.possibleContent,
-				this.possibleContent.reduce((acc: number, val: BoosterInfo) => (acc += val.weight), 0)
-			)
-		];
+		const boosterContent =
+			this.possibleContent[
+				weightedRandomIdx(
+					this.possibleContent,
+					this.possibleContent.reduce((acc: number, val: BoosterInfo) => (acc += val.weight), 0)
+				)
+			];
 		// Pick cards from each sheet, color balancing if necessary
 		for (let sheetName in boosterContent.sheets) {
 			if (this.set.sheets[sheetName].balance_colors) {
@@ -1015,7 +1057,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 					// compensating for the color balance may introduce duplicates. This check makes sure it doesn't happen.
 					const noOther =
 						sheet["Others"].cards.length === 1 &&
-						pickedCards.some(c => c.id === sheet["Others"].cards[0].id);
+						pickedCards.some((c) => c.id === sheet["Others"].cards[0].id);
 					const selectedSheet = random.bool(x) || noOther ? sheet["Mono"] : sheet["Others"];
 					pickedCards.push(weightedRandomPick(selectedSheet.cards, selectedSheet.total_weight, pickedCards));
 				}
@@ -1033,7 +1075,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 				}
 			}
 		}
-		return booster.map(c => getUnique(c.id, { foil: c.foil })).reverse();
+		return booster.map((c) => getUnique(c.id, { foil: c.foil })).reverse();
 	}
 }
 
@@ -1085,11 +1127,11 @@ for (let s of PaperBoosterData as any[]) {
 			}
 		}
 	}
-	PaperBoosterFactories[set.code] = function(options: Options = {}) {
+	PaperBoosterFactories[set.code] = function (options: Options = {}) {
 		let possibleContent = set.boosters;
 		if (!options.foil) {
 			// (Attempt to) Filter out sheets with foils if option is disabled.
-			let nonFoil = set.boosters.filter((e: any) => !Object.keys(e.sheets).some(s => s.includes("foil")));
+			let nonFoil = set.boosters.filter((e: any) => !Object.keys(e.sheets).some((s) => s.includes("foil")));
 			if (nonFoil.length > 0) possibleContent = nonFoil;
 		}
 		return new PaperBoosterFactory(set, options, possibleContent);

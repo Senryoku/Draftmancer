@@ -225,6 +225,7 @@ describe("Sets content", function () {
 		vow: { common: 100, uncommon: 83, rare: 64, mythic: 20 },
 		snc: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		clb: { common: 141, uncommon: 120, rare: 77, mythic: 22, special: 1 },
+		"2x2": { common: 91, uncommon: 80, rare: 120, mythic: 40 },
 	};
 
 	beforeEach(function (done) {

@@ -194,6 +194,8 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 		],
 		5 / 12 // FIXME: This is arbitrary, we don't know the actual rate for now.
 	),
+	// Double Masters 2022: Always a Cryptic Spires
+	"2x2": new SpecialLandSlot("2x2", ["309a6684-ecb3-491c-899a-3aa15a51130b"], 1, []),
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};

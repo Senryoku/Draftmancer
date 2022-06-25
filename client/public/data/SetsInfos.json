@@ -27,10 +27,10 @@
         "cardCount": 579,
         "isPrimary": true,
         "icon": "img/sets/2x2.svg",
-        "commonCount": 98,
+        "commonCount": 101,
         "mythicCount": 105,
         "rareCount": 272,
-        "uncommonCount": 104
+        "uncommonCount": 101
     },
     "2xm": {
         "code": "2xm",
