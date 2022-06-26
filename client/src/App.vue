@@ -849,11 +849,9 @@
 								}"
 								v-show="booster.length > 0"
 							></i>
-							<span
-								><div><div class="spinner"></div></div>
-								{{ virtualPlayers.filter((p) => p.isBot || p.pickedThisRound).length }} /
-								{{ virtualPlayers.length }}</span
-							>
+							<span>
+								<div><div class="spinner"></div></div>
+							</span>
 							<i
 								class="fas passing-order"
 								:class="{
