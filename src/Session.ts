@@ -1561,6 +1561,8 @@ export class Session implements IIndexable {
 	// Pass a booster to the next player at the table
 	passBooster(booster: Array<Card>, userID: UserID) {
 		const s = this.draftState as DraftState;
+		if (!s) return;
+
 		// Booster is empty or the remaining cards have to be burned
 		if (booster.length <= Math.max(0, this.discardRemainingCardsAt)) {
 			// Don't re-insert it, and check for end of round
@@ -1793,7 +1795,6 @@ export class Session implements IIndexable {
 	}
 
 	async distributeBoosters() {
-		console.log(`Session ${this.id}: Distributing boosters.`);
 		if (this.draftState?.type !== "draft") return;
 		const s = this.draftState as DraftState;
 
@@ -1821,7 +1822,6 @@ export class Session implements IIndexable {
 
 		let index = 0;
 		for (let userID in s.players) {
-			console.log("Distributing to ", userID);
 			const p = s.players[userID];
 			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 			const boosterIndex = negMod(index, totalVirtualPlayers);
