@@ -38,8 +38,7 @@ describe("Rochester", function () {
 	});
 
 	it(`Launch Draft`, async function () {
-		// No idea why this one doesn't work.
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Rochester')]");
+		await sessionOwnerPage.hover(".handle"); // Hover over "Other Game Modes"
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Rochester')]");
 
 		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Rochester Draft')]", {

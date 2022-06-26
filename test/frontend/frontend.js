@@ -16,7 +16,7 @@ async function pickCard(page) {
 	let text = await page.evaluate((next) => next.innerText, next);
 	if (text === "Done drafting!") return true;
 
-	await page.waitForSelector(".booster-card");
+	await page.waitForSelector(".booster:not(.booster-waiting) .booster-card");
 	const cards = await page.$$(".booster-card");
 	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
@@ -139,7 +139,7 @@ describe("Front End - Multi, with bots", function () {
 			let ownerPromise = pickCard(sessionOwnerPage);
 			let otherPromise = pickCard(otherPlayerPage);
 			done = (await ownerPromise) && (await otherPromise);
-			await sessionOwnerPage.waitForTimeout(100);
+			await sessionOwnerPage.waitForTimeout(150);
 		}
 	});
 });
