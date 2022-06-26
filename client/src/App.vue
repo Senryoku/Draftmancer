@@ -650,8 +650,8 @@
 							</template>
 						</template>
 						<div class="player-name">{{ user.userName }}</div>
-						<template v-if="!user.isBot && !user.idDisconnected">
-							<div class="status-icons">
+						<div class="status-icons">
+							<template v-if="!user.isBot && !user.isDisconnected">
 								<i
 									v-if="user.userID === sessionOwner"
 									class="fas fa-crown subtle-gold"
@@ -701,28 +701,30 @@
 									></i>
 								</template>
 								<template v-else>
-									<template v-if="user.userID in disconnectedUsers">
-										<i class="fas fa-times red" v-tooltip="user.userName + ' is disconnected.'"></i>
-									</template>
-									<template v-if="user.boosterCount !== undefined">
-										<div
-											v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
-											v-if="user.boosterCount > 0"
-										>
-											{{ user.boosterCount }}
-											<!-- TODO: Add a Booster icon -->
-										</div>
-
-										<i
-											class="fas fa-spinner fa-spin"
-											v-tooltip="user.userName + ' is waiting...'"
-											v-else
-										></i>
-									</template>
+									<i
+										v-if="user.isDisconnected"
+										class="fas fa-times red"
+										v-tooltip="user.userName + ' is disconnected.'"
+									></i>
 								</template>
-							</div>
-							<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
-						</template>
+							</template>
+							<template v-if="user.boosterCount !== undefined">
+								<div
+									v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
+									v-if="user.boosterCount > 0"
+								>
+									{{ user.boosterCount }}
+									<!-- TODO: Add a Booster icon -->
+								</div>
+
+								<i
+									class="fas fa-spinner fa-spin"
+									v-tooltip="user.userName + ' is waiting...'"
+									v-else
+								></i>
+							</template>
+						</div>
+						<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
 					</li>
 				</ul>
 			</template>

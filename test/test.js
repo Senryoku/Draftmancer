@@ -364,6 +364,7 @@ describe("Single Draft (Two Players)", function () {
 					clients[idx].once("draftState", function (state) {
 						expect(state.booster).to.exist;
 						clients[idx].state = state;
+						clients[idx].pickedCards = [];
 						receivedBoosters += 1;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
@@ -391,6 +392,7 @@ describe("Single Draft (Two Players)", function () {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
+				clients[c].pickedCards.push(clients[c].state.booster[0]);
 				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
 			}
 		});
@@ -403,11 +405,9 @@ describe("Single Draft (Two Players)", function () {
 				clients[c].on("draftState", function (state) {
 					const idx = c;
 					if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
-						this.emit(
-							"pickCard",
-							{ pickedCards: [Math.floor(Math.random() * state.booster.length)] },
-							() => {}
-						);
+						const choice = Math.floor(Math.random() * state.booster.length);
+						clients[idx].pickedCards.push(state.booster[choice]);
+						this.emit("pickCard", { pickedCards: [choice] }, () => {});
 						clients[idx].state = state;
 					}
 				});
@@ -420,12 +420,19 @@ describe("Single Draft (Two Players)", function () {
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit(
-					"pickCard",
-					{ pickedCards: [Math.floor(Math.random() * clients[c].state.booster.length)] },
-					() => {}
-				);
+				const choice = Math.floor(Math.random() * clients[c].state.booster.length);
+				clients[c].pickedCards.push(clients[c].state.booster[choice]);
+				clients[c].emit("pickCard", { pickedCards: [choice] }, () => {});
 			}
+		});
+	}
+
+	function expectCardCount(cardCount) {
+		it(`Each player should have ${cardCount} cards`, function (done) {
+			for (let c = 0; c < clients.length; ++c) {
+				expect(clients[c].pickedCards.length).to.equal(cardCount);
+			}
+			done();
 		});
 	}
 
@@ -471,6 +478,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		singlePick();
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -525,6 +533,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 14);
 		disconnect();
 	});
 
@@ -541,6 +550,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 14);
 		disconnect();
 	});
 
@@ -589,10 +599,12 @@ describe("Single Draft (Two Players)", function () {
 						if (receivedBoosters == clients.length) done();
 					}
 				});
+				clients[c].pickedCards.push(clients[c].state.booster[0]);
 				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
 			}
 		});
 		endDraft();
+		expectCardCount(3 * (15 - 8));
 		disconnect();
 	});
 
@@ -609,6 +621,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -630,6 +643,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -660,6 +674,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -686,6 +701,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -726,6 +742,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -773,6 +790,7 @@ describe("Single Draft (Two Players)", function () {
 			}
 			endDraft();
 		}
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -793,6 +811,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -813,6 +832,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
+		expectCardCount(3 * 15);
 		disconnect();
 	});
 
@@ -967,6 +987,7 @@ describe("Single Draft (Two Players)", function () {
 				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 			}
 		});
+		expectCardCount(3 * Math.floor(15 / 3));
 		disconnect();
 	});
 

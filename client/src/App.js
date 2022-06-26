@@ -782,8 +782,6 @@ export default {
 			});
 
 			this.socket.on("draftState", (data) => {
-				this.botScores = data.botScores; // Get or Clear bot scores
-
 				// Only watching, not playing/receiving a booster ourself.
 				if (this.draftingState === DraftState.Watching) {
 					this.boosterNumber = data.boosterNumber;
@@ -793,6 +791,7 @@ export default {
 				this.selectedCards = [];
 				this.burningCards = [];
 				if (data.boosterCount > 0) {
+					if (this.pickNumber !== data.pickNumber) this.botScores = null; // Clear bot scores
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
 					this.booster = [];
