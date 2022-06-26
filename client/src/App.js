@@ -291,7 +291,7 @@ export default {
 					});
 			});
 
-			this.socket.on("reconnect", (attemptNumber) => {
+			this.socket.io.on("reconnect", (attemptNumber) => {
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
@@ -306,7 +306,7 @@ export default {
 
 			this.socket.on("alreadyConnected", (newID) => {
 				this.userID = newID;
-				this.socket.query.userID = newID;
+				this.socket.io.opts.query.userID = newID;
 				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
@@ -340,7 +340,7 @@ export default {
 
 			this.socket.on("setSession", (sessionID) => {
 				this.sessionID = sessionID;
-				this.socket.query.sessionID = sessionID;
+				this.socket.io.opts.query.sessionID = sessionID;
 				if (this.drafting) {
 					// Expelled during drafting
 					this.drafting = false;
@@ -2729,7 +2729,7 @@ export default {
 						console.error("Error parsing stored session settings: ", e);
 					}
 				}
-				this.socket.query.sessionID = this.sessionID;
+				this.socket.io.opts.query.sessionID = this.sessionID;
 				this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			history.replaceState(
@@ -2741,7 +2741,7 @@ export default {
 		},
 		userName() {
 			if (this.socket) {
-				this.socket.query.userName = this.userName;
+				this.socket.io.opts.query.userName = this.userName;
 				this.socket.emit("setUserName", this.userName);
 			}
 			setCookie("userName", this.userName);
