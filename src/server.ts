@@ -252,7 +252,9 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
 		} catch (err) {
-			ack?.({ code: 500, error: "Internal server error." });
+			const r = new SocketError("Internal server error.");
+			r.code = 500;
+			ack?.(r);
 			console.error("Error in pickCard:", err);
 			const data: any = {
 				draftState: Sessions[sessionID].draftState,

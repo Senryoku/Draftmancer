@@ -844,16 +844,13 @@ describe("Single Draft (Two Players)", function () {
 					if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
 				});
 
-				const _idx = nonOwnerIdx;
 				(() => {
+					const _idx = nonOwnerIdx;
 					clients[c].once("draftState", function (state) {
-						if (state.pickNumber !== clientStates[_idx].pickNumber && state.boosterCount > 0) {
-							expect(state.booster).to.exist;
-							clientStates[_idx] = state;
-							receivedBoosters += 1;
-							if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1)
-								done();
-						}
+						expect(state.booster).to.exist;
+						clients[_idx].state = state;
+						receivedBoosters += 1;
+						if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
 					});
 				})();
 			}
@@ -867,8 +864,8 @@ describe("Single Draft (Two Players)", function () {
 
 				const idx = c;
 				clients[c].on("draftState", function (state) {
-					if (state.pickNumber !== clientStates[idx].pickNumber && state.boosterCount > 0) {
-						clientStates[idx] = state;
+					if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
+						clients[idx].state = state;
 						this.emit(
 							"pickCard",
 							{ pickedCards: [Math.floor(Math.random() * state.booster.length)] },
@@ -880,7 +877,6 @@ describe("Single Draft (Two Players)", function () {
 					draftEnded += 1;
 					this.removeListener("draftState");
 					if (draftEnded == clients.length - 1) {
-						clientStates = [];
 						done();
 					}
 				});
@@ -889,7 +885,7 @@ describe("Single Draft (Two Players)", function () {
 				if (c === ownerIdx) continue; // Owner doesn't play in this mode
 				clients[c].emit(
 					"pickCard",
-					{ pickedCards: [Math.floor(Math.random() * clientStates[c].booster.length)] },
+					{ pickedCards: [Math.floor(Math.random() * clients[c].state.booster.length)] },
 					() => {}
 				);
 			}
@@ -933,15 +929,10 @@ describe("Single Draft (Two Players)", function () {
 				(() => {
 					const _idx = index;
 					c.once("draftState", function (state) {
-						if (
-							state.pickNumber !== clientState[_idx].pickNumber ||
-							state.boosterNumber !== clientState[_idx].boosterNumber
-						) {
-							expect(boosters).not.include(state.booster);
-							clientState[_idx] = state;
-							receivedBoosters += 1;
-							if (connectedClients == clients.length && receivedBoosters == clients.length) done();
-						}
+						expect(state.booster).to.exist;
+						clients[_idx].state = state;
+						receivedBoosters += 1;
+						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
 				})();
 				++index;
@@ -955,8 +946,8 @@ describe("Single Draft (Two Players)", function () {
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].on("draftState", function (state) {
 					const idx = c;
-					if (state.pickNumber !== clientStates[idx].pickNumber && state.boosterCount > 0) {
-						clientStates[idx] = state;
+					if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
+						clients[idx].state = state;
 						let burned = [];
 						for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < state.booster.length; ++cidx)
 							burned.push(cidx);
@@ -971,7 +962,7 @@ describe("Single Draft (Two Players)", function () {
 			}
 			for (let c = 0; c < clients.length; ++c) {
 				let burned = [];
-				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clientStates[c].booster.length; ++cidx)
+				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clients[c].state.booster.length; ++cidx)
 					burned.push(cidx);
 				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 			}
@@ -1031,13 +1022,10 @@ describe("Single Draft (Two Players)", function () {
 						(() => {
 							const _idx = index;
 							c.once("draftState", function (state) {
-								if (state.pickNumber !== clientStates[_idx].pickNumber || state.boosterCount > 0) {
-									expect(state.booster).to.exist;
-									clientStates[_idx] = state;
-									receivedBoosters += 1;
-									if (connectedClients == clients.length && receivedBoosters == clients.length)
-										done();
-								}
+								expect(state.booster).to.exist;
+								clients[_idx].state = state;
+								receivedBoosters += 1;
+								if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 							});
 						})();
 						++index;
@@ -1050,10 +1038,14 @@ describe("Single Draft (Two Players)", function () {
 					let draftEnded = 0;
 					for (let c = 0; c < clients.length; ++c) {
 						clients[c].on("draftState", function (state) {
-							let idx = c;
-							if (state.pickNumber !== clientStates[idx].pickNumber || state.boosterCount > 0) {
+							const idx = c;
+							if (state.error) {
+								console.error(state);
+								return;
+							}
+							if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
 								expect(state.booster).to.exist;
-								clientStates[idx] = state;
+								clients[idx].state = state;
 								let cidx = 0;
 								let picked = [];
 								while (cidx < pickPerRound && cidx < state.booster.length) picked.push(cidx++);
@@ -1071,9 +1063,9 @@ describe("Single Draft (Two Players)", function () {
 					for (let c = 0; c < clients.length; ++c) {
 						let cidx = 0;
 						let picked = [];
-						while (cidx < pickPerRound && cidx < clientStates[c].booster.length) picked.push(cidx++);
+						while (cidx < pickPerRound && cidx < clients[c].state.booster.length) picked.push(cidx++);
 						let burned = [];
-						while (burned.length < burnPerRound && cidx < clientStates[c].booster.length)
+						while (burned.length < burnPerRound && cidx < clients[c].state.booster.length)
 							burned.push(cidx++);
 						clients[c].emit("pickCard", { pickedCards: picked, burnedCards: burned }, () => {});
 					}
@@ -1304,8 +1296,8 @@ describe("Multiple Drafts", function () {
 		for (let sess = 0; sess < clients.length; ++sess) {
 			for (let c = 0; c < clients[sess].length; ++c) {
 				clients[sess][c].on("draftState", function (state) {
-					if (state.pickNumber !== clients[sess].state.pickNumber && state.boosterCount > 0) {
-						clients[sess] = state;
+					if (state.pickNumber !== clients[sess][c].state.pickNumber && state.boosterCount > 0) {
+						clients[sess][c] = state;
 						this.emit("pickCard", { pickedCards: [0] }, () => {});
 					}
 				});
