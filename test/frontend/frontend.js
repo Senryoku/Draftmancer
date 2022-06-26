@@ -16,6 +16,7 @@ async function pickCard(page) {
 	let text = await page.evaluate((next) => next.innerText, next);
 	if (text === "Done drafting!") return true;
 
+	await page.waitForSelector(".booster-card");
 	const cards = await page.$$(".booster-card");
 	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
@@ -94,6 +95,97 @@ describe("Front End - Multi", function () {
 			let otherPromise = pickCard(otherPlayerPage);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+	});
+});
+
+describe("Front End - Multi, with bots", function () {
+	this.timeout(100000);
+	it("Owner joins and set the bot count to 6", async function () {
+		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+		await sessionOwnerPage.focus("#bots");
+		await sessionOwnerPage.keyboard.type("6");
+		await sessionOwnerPage.keyboard.press("Enter");
+	});
+
+	it(`Another Player joins the session`, async function () {
+		// Get session link
+		await sessionOwnerPage.$$(".fa-share-square");
+		await sessionOwnerPage.click(".fa-share-square");
+		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
+		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
+
+		await otherPlayerPage.goto(clipboard);
+	});
+
+	it(`Launch Draft`, async function () {
+		await clickDraft();
+		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+	});
+
+	it("Each player picks a card", async function () {
+		let done = false;
+		while (!done) {
+			let ownerPromise = pickCard(sessionOwnerPage);
+			let otherPromise = pickCard(otherPlayerPage);
+			done = (await ownerPromise) && (await otherPromise);
+			await sessionOwnerPage.waitForTimeout(100);
+		}
+	});
+});
+
+describe("Front End - Multi, with Spectator", function () {
+	this.timeout(100000);
+	it("Owner joins", async function () {
+		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+	});
+
+	it(`Another Player joins the session`, async function () {
+		// Get session link
+		await sessionOwnerPage.$$(".fa-share-square");
+		await sessionOwnerPage.click(".fa-share-square");
+		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
+		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
+
+		await otherPlayerPage.goto(clipboard);
+	});
+
+	it(`Select Spectator mode and adds a bot`, async function () {
+		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Settings')]");
+		await waitAndClickSelector(sessionOwnerPage, "#is-owner-player");
+		await sessionOwnerPage.keyboard.press("Escape");
+
+		await sessionOwnerPage.focus("#bots");
+		await sessionOwnerPage.keyboard.type("1");
+		await sessionOwnerPage.keyboard.press("Enter");
+	});
+
+	it(`Launch Draft`, async function () {
+		await clickDraft();
+		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+			visible: true,
+		});
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+			hidden: true,
+		});
+	});
+
+	it(`Spectator clicks on a player`, async function () {
+		await waitAndClickSelector(sessionOwnerPage, ".player-name");
+	});
+
+	it("Active player picks cards until the end of the draft.", async function () {
+		while (!(await pickCard(otherPlayerPage)));
 	});
 });
 
