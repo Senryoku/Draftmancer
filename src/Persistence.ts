@@ -101,22 +101,8 @@ async function requestSavedConnections() {
 
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (let prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["botsInstances", "draftState", "owner"].includes(p)
-	)) {
+	for (let prop of Object.getOwnPropertyNames(s).filter((p) => !["draftState", "owner"].includes(p))) {
 		(r as IIndexable)[prop] = s[prop];
-	}
-
-	for (let userID in r.disconnectedUsers)
-		if (r.disconnectedUsers[userID].bot)
-			r.disconnectedUsers[userID].bot = restoreBot(r.disconnectedUsers[userID].bot);
-
-	if (s.botsInstances) {
-		r.botsInstances = [];
-		for (let bot of s.botsInstances) {
-			let b = restoreBot(bot);
-			if (b) r.botsInstances.push(b);
-		}
 	}
 
 	if (s.draftState) {
@@ -143,7 +129,8 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 		}
 		copyProps(s.draftState, r.draftState);
-		// TODO: Deal with draft players object
+		// TODO: Deal with draft players object properly
+		//       And especially properly restoring bots : restoreBot(bot);
 	}
 
 	return r;
@@ -153,7 +140,7 @@ export function getPoDSession(s: Session) {
 	const PoDSession: any = {};
 
 	for (let prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
+		(p) => !["users", "countdownInterval", "draftState"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
@@ -164,19 +151,20 @@ export function getPoDSession(s: Session) {
 			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 		}
 
-		if (s.botsInstances) {
-			PoDSession.botsInstances = [];
-			for (let bot of s.botsInstances) {
-				let podbot: any = {};
-				copyProps(bot, podbot);
-				if (podbot.fallbackBot) podbot.fallbackBot = undefined;
-				PoDSession.botsInstances.push(podbot);
-			}
-		}
-
 		if (s.draftState) {
 			PoDSession.draftState = {};
 			copyProps(s.draftState, PoDSession.draftState);
+
+			// TODO: Properly deal with bots in the players object in draft state
+			if (s.draftState instanceof DraftState) {
+				for (let userID in s.draftState.players) {
+					PoDSession.draftState.players[userID].botInstance = {};
+					copyProps(
+						s.draftState.players[userID].botInstance,
+						PoDSession.draftState.players[userID].botInstance
+					);
+				}
+			}
 		}
 	}
 	return PoDSession;

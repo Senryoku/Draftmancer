@@ -16,6 +16,7 @@ export class MessageError extends Message {
 }
 
 export class SocketAck {
+	code: number = 0;
 	error?: MessageError = undefined;
 
 	constructor(error?: MessageError) {
@@ -26,5 +27,6 @@ export class SocketAck {
 export class SocketError extends SocketAck {
 	constructor(title: string, text: string = "", footer: string = "") {
 		super(new MessageError(title, text, footer));
+		this.code = -1;
 	}
 }

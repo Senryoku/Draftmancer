@@ -650,7 +650,7 @@
 							</template>
 						</template>
 						<div class="player-name">{{ user.userName }}</div>
-						<template v-if="!user.isBot && !user.disconnected">
+						<template v-if="!user.isBot && !user.idDisconnected">
 							<div class="status-icons">
 								<i
 									v-if="user.userID === sessionOwner"

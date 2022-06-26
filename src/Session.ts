@@ -130,11 +130,12 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	draftPaused: isBoolean,
 };
 
-export type UserInfo = { [uid: UserID]: { isBot: boolean; disconnected?: boolean; instance?: IBot } };
+export type UserData = { [uid: UserID]: { userID: UserID; userName: string; isBot: boolean; isDisconnected: boolean } };
 
 export class DraftState extends IDraftState {
 	boosters: Array<Array<Card>>;
 	boosterNumber = 0;
+	numPicks = 0;
 	players: {
 		[userID: UserID]: {
 			isBot: boolean;
@@ -144,7 +145,8 @@ export class DraftState extends IDraftState {
 			countdownInterval: NodeJS.Timeout | null;
 		};
 	} = {};
-	constructor(boosters: Card[][] = [], players: UserID[], options: Options = {}) {
+
+	constructor(boosters: Card[][] = [], players: UserID[] = [], options: Options = {}) {
 		super("draft");
 		this.boosters = boosters;
 		let botIndex = 0;
@@ -167,7 +169,7 @@ export class DraftState extends IDraftState {
 		}
 
 		for (let user of playersToCreate) {
-			const userName = user.isBot ? Connections[user.userID].userName : `Bot #${++botIndex}`;
+			const userName = user.isBot ? `Bot #${++botIndex}` : Connections[user.userID].userName;
 			const botInstance = options.simpleBots
 				? new SimpleBot(userName, user.userID)
 				: new Bot(userName, user.userID);
@@ -180,6 +182,36 @@ export class DraftState extends IDraftState {
 				countdownInterval: null,
 			};
 		}
+	}
+
+	startCountdowns(maxTimer: number) {
+		if (maxTimer === 0) return;
+		// TODO
+		// setInterval
+	}
+	resumeCountdowns() {
+		// TODO
+	}
+	resetCountdown(userID: UserID, maxTimer: number) {
+		if (maxTimer === 0) return;
+		// TODO
+		let cardsPerBooster = 15; // FIXME
+		let dec = Math.floor(maxTimer / cardsPerBooster);
+		const countdown = maxTimer - this.players[userID].pickNumber * dec;
+	}
+	stopCountdowns() {
+		for (let userID in this.players) {
+			if (this.players[userID].countdownInterval) {
+				clearInterval(this.players[userID].countdownInterval as NodeJS.Timeout);
+				this.players[userID].countdownInterval = null;
+			}
+		}
+	}
+
+	countdown(userID: UserID, value: number) {
+		Connections[userID]?.socket.emit("timer", {
+			countdown: value,
+		});
 	}
 }
 
@@ -410,7 +442,7 @@ export class Session implements IIndexable {
 		if (this.owner == userID) this.owner = this.users.values().next().value;
 
 		if (this.drafting) {
-			this.stopCountdown();
+			if (this.draftState instanceof DraftState) this.draftState.stopCountdowns();
 			this.disconnectedUsers[userID] = this.getDisconnectedUserData(userID);
 			this.broadcastDisconnectedUsers();
 		} else {
@@ -1022,7 +1054,6 @@ export class Session implements IIndexable {
 					userName: u.userName,
 					collection: u.collection.size > 0,
 					useCollection: u.useCollection,
-					pickedThisRound: u.pickedThisRound,
 				});
 			}
 		}
@@ -1041,10 +1072,10 @@ export class Session implements IIndexable {
 	}
 
 	cleanDraftState() {
+		if (this.draftState instanceof DraftState) this.draftState.stopCountdowns();
 		this.draftState = undefined;
 		this.drafting = false;
 		this.draftPaused = false;
-		this.stopCountdown();
 		this.disconnectedUsers = {};
 	}
 
@@ -1062,7 +1093,7 @@ export class Session implements IIndexable {
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
 			Connections[user].socket.emit("startWinstonDraft", this.draftState);
 		}
@@ -1182,7 +1213,7 @@ export class Session implements IIndexable {
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
 			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
@@ -1272,7 +1303,7 @@ export class Session implements IIndexable {
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
 			Connections[user].socket.emit("startRochesterDraft", (this.draftState as RochesterDraftState).syncData());
 		}
@@ -1364,7 +1395,7 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
 			this.drafting = false;
-			return {}; // generateBoosters already emits errors.
+			return new SocketAck(); // generateBoosters already emits errors.
 		}
 
 		if (this.boosters.some((b) => b.length !== gridWidth * gridHeight)) {
@@ -1389,7 +1420,7 @@ export class Session implements IIndexable {
 		for (let user of this.users) {
 			Connections[user].pickedCards = [];
 			Connections[user].socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedHumanPlayers(),
+				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
 			Connections[user].socket.emit(
 				"startMinesweeperDraft",
@@ -1398,10 +1429,10 @@ export class Session implements IIndexable {
 		}
 
 		this.boosters = [];
-		return {};
+		return new SocketAck();
 	}
 
-	minesweeperDraftPick(userID: UserID, row: number, col: number) {
+	minesweeperDraftPick(userID: UserID, row: number, col: number): SocketAck {
 		const s = this.draftState as MinesweeperDraftState;
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState))
 			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
@@ -1445,7 +1476,7 @@ export class Session implements IIndexable {
 			});
 		}
 
-		return {};
+		return new SocketAck();
 	}
 
 	endMinesweeperDraft(options: Options = {}) {
@@ -1480,26 +1511,31 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		// Generate bots
+		// Determine bot type
 		const oracleIds = this.boosters.flat().map((card) => card.oracle_id);
 		const simpleBots = await fallbackToSimpleBots([...new Set(oracleIds)]);
+
+		this.draftState = new DraftState(this.boosters, this.getSortedHumanPlayersIDs(), {
+			simpleBots: simpleBots,
+			botCount: this.bots,
+		});
 
 		// Draft Log initialization
 		const log = this.initLogs("Draft");
 		for (let userID in log.users) log.users[userID].picks = [];
 
-		let virtualPlayers = this.getSortedVirtualPlayers();
+		let virtualPlayerData = this.getSortedVirtualPlayerData();
 		for (let uid of this.users) {
 			Connections[uid].pickedCards = [];
 			Connections[uid].socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayers,
+				virtualPlayersData: virtualPlayerData,
 			});
 			Connections[uid].socket.emit("startDraft");
 		}
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayers,
+				virtualPlayersData: virtualPlayerData,
 			});
 			Connections[this.owner].socket.emit("startDraft");
 			// Update draft log for live display if owner in not playing
@@ -1508,7 +1544,6 @@ export class Session implements IIndexable {
 			}
 		}
 
-		this.draftState = new DraftState(this.boosters, virtualPlayers, { simpleBots: simpleBots });
 		this.boosters = [];
 		await this.distributeBoosters();
 	}
@@ -1522,16 +1557,23 @@ export class Session implements IIndexable {
 			this.checkDraftRoundEnd();
 		} else {
 			// Re-insert the booster back for the next player
-			let idx = this.userOrder.findIndex((uid) => uid === userID);
+			const playerIds = Object.keys(s.players);
+			let idx = playerIds.indexOf(userID);
 			idx += s.boosterNumber % 2 ? 1 : -1;
-			idx = negMod(idx, this.userOrder.length);
-			const nextUserID = this.userOrder[idx];
+			idx = negMod(idx, playerIds.length);
+			const nextUserID = playerIds[idx];
 			s.players[nextUserID].boosters.push(booster);
 			// Synchronize concerned users
 			if (s.players[nextUserID].isBot) this.doBotPick(s.players[nextUserID].botInstance);
-			else this.sendDraftState(nextUserID);
+			else {
+				this.sendDraftState(nextUserID);
+				this.requestBotRecommendation(nextUserID);
+			}
 			if (s.players[userID].isBot) this.doBotPick(s.players[userID].botInstance);
-			else this.sendDraftState(userID);
+			else {
+				this.sendDraftState(userID);
+				this.requestBotRecommendation(userID);
+			}
 		}
 	}
 
@@ -1557,9 +1599,7 @@ export class Session implements IIndexable {
 			);
 		if (pickedCards.some((idx) => idx >= booster.length))
 			return reportError(
-				`Invalid card index [${pickedCards.join(", ")}] for booster #${booster} (${
-					s.boosters[boosterIndex].length
-				}).`
+				`Invalid card index [${pickedCards.join(", ")}] for booster #${booster} (${booster.length}).`
 			);
 
 		if (
@@ -1605,6 +1645,8 @@ export class Session implements IIndexable {
 
 		for (let idx of cardsToRemove) booster.splice(idx, 1);
 
+		++s.players[userID].pickNumber;
+
 		this.passBooster(booster, userID);
 
 		return new SocketAck();
@@ -1613,6 +1655,8 @@ export class Session implements IIndexable {
 	async doBotPick(instance: IBot) {
 		const s = this.draftState as DraftState;
 
+		// We'll have to wait for the next booster
+		if (s.players[instance.id].boosters.length === 0) return;
 		const booster = s.players[instance.id].boosters.splice(0, 1)[0];
 		const startingBooster = booster.map((c) => c.id);
 		const pickedIndices = [];
@@ -1623,11 +1667,11 @@ export class Session implements IIndexable {
 				s.boosterNumber,
 				this.boostersPerPlayer,
 				s.players[instance.id].pickNumber,
-				s.players[instance.id].pickNumber + booster.length
+				s.numPicks
 			);
 			pickedIndices.push(pickedIdx);
 			pickedCards.push(booster[pickedIdx]);
-			booster.splice(pickedIdx, 1);
+			booster.splice(pickedIdx, 1); // FIXME: Indices will be messed up if this.pickedCardsPerRound > 1 or this.burnedCardsPerRound > 0
 		}
 		const burned = [];
 		for (let i = 0; i < this.burnedCardsPerRound && booster.length > 0; ++i) {
@@ -1636,11 +1680,13 @@ export class Session implements IIndexable {
 				s.boosterNumber,
 				this.boostersPerPlayer,
 				s.players[instance.id].pickNumber,
-				s.players[instance.id].pickNumber + booster.length
+				s.numPicks
 			);
 			burned.push(burnedIdx);
-			booster.splice(burnedIdx, 1);
+			booster.splice(burnedIdx, 1); // FIXME: Indices will be messed up if this.pickedCardsPerRound > 1 or this.burnedCardsPerRound > 0
 		}
+
+		++s.players[instance.id].pickNumber;
 
 		// FIXME: Figure out if we should do this, or use the return value.
 		// If this bot is picking on behalf a disconnected player...
@@ -1673,7 +1719,40 @@ export class Session implements IIndexable {
 			});
 	}
 
+	requestBotRecommendation(userID: UserID) {
+		const s = this.draftState as DraftState;
+		const p = s.players[userID];
+		// Asyncronously ask for bot recommendations, and send then when available
+		if (!this.disableBotSuggestions && p.botInstance && p.boosters.length > 0) {
+			(() => {
+				const localData = {
+					booster: p.boosters[0],
+					boosterNumber: s.boosterNumber,
+					boostersPerPlayer: this.boostersPerPlayer,
+					pickNumber: p.pickNumber + 1,
+					numPicks: s.numPicks,
+				};
+				return p.botInstance
+					?.getScores(
+						localData.booster,
+						localData.boosterNumber,
+						localData.boostersPerPlayer,
+						localData.pickNumber,
+						localData.numPicks
+					)
+					.then((value) => {
+						Connections[userID]?.socket.emit("botRecommandations", {
+							pickNumber: localData.pickNumber,
+							scores: value,
+						});
+						return;
+					});
+			})();
+		}
+	}
+
 	async distributeBoosters() {
+		console.log(`Session ${this.id}: Distributing boosters.`);
 		if (this.draftState?.type !== "draft") return;
 		const s = this.draftState as DraftState;
 
@@ -1686,6 +1765,7 @@ export class Session implements IIndexable {
 		}
 
 		const boosters = s.boosters.splice(0, totalVirtualPlayers);
+		s.numPicks = boosters[0].length;
 
 		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
 
@@ -1700,14 +1780,15 @@ export class Session implements IIndexable {
 
 		let index = 0;
 		for (let userID in s.players) {
+			console.log("Distributing to ", userID);
 			const p = s.players[userID];
+			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 			const boosterIndex = negMod(index, totalVirtualPlayers);
 			p.boosters.push(boosters[boosterIndex]);
 			if (p.isBot) {
 				const botInstance = p.botInstance as IBot;
 				botPromises.push(delayRequest(botInstance.type).then(() => this.doBotPick(botInstance)));
 			} else {
-				assert(p.boosters.length === 0);
 				p.pickNumber = 0;
 				if (userID in this.disconnectedUsers) {
 					assert(p.botInstance);
@@ -1721,33 +1802,7 @@ export class Session implements IIndexable {
 					);
 				} else {
 					this.sendDraftState(userID);
-					// Asyncronously ask for bot recommendations, and send then when available
-					if (!this.disableBotSuggestions && p.botInstance) {
-						(() => {
-							const localData = {
-								booster: s.boosters[boosterIndex],
-								boosterNumber: s.boosterNumber,
-								boostersPerPlayer: this.boostersPerPlayer,
-								pickNumber: p.pickNumber + 1,
-								numPicks: p.pickNumber + s.boosters[boosterIndex].length,
-							};
-							return p.botInstance
-								?.getScores(
-									localData.booster,
-									localData.boosterNumber,
-									localData.boostersPerPlayer,
-									localData.pickNumber,
-									localData.numPicks
-								)
-								.then((value) => {
-									Connections[userID]?.socket.emit("botRecommandations", {
-										pickNumber: localData.pickNumber,
-										scores: value,
-									});
-									return;
-								});
-						})();
-					}
+					this.requestBotRecommendation(userID);
 				}
 			}
 			++index;
@@ -1759,7 +1814,7 @@ export class Session implements IIndexable {
 			});
 		}
 
-		this.startCountdown(); // Starts countdown now that everyone has their booster
+		s.startCountdowns(this.maxTimer); // Starts countdown now that everyone has their booster
 
 		Promise.all(botPromises).then(() => {
 			// Everyone is disconnected... Or human players picked before the bots :)
@@ -1768,10 +1823,9 @@ export class Session implements IIndexable {
 	}
 
 	checkDraftRoundEnd() {
-		if (this.draftState?.type !== "draft") return;
+		if (!(this.draftState instanceof DraftState)) return;
 		const s = this.draftState as DraftState;
-		// FIXME: IF NO ONE HAVE A PICK TO DO...
-		if (false) {
+		if ([...Object.values(s.players)].every((p) => p.boosters.length === 0)) {
 			++s.boosterNumber;
 			this.distributeBoosters();
 		}
@@ -1784,11 +1838,11 @@ export class Session implements IIndexable {
 
 		this.forUsers((user) =>
 			Connections[user]?.socket.emit("sessionOptions", {
-				virtualPlayersData: this.getSortedVirtualPlayers(),
+				virtualPlayersData: this.getSortedVirtualPlayerData(),
 			})
 		);
 
-		if (!this.draftPaused && this.draftState instanceof DraftState) this.resumeCountdown();
+		if (!this.draftPaused && this.draftState instanceof DraftState) this.draftState.resumeCountdowns();
 
 		this.forUsers((u) =>
 			Connections[u]?.socket.emit("resumeOnReconnection", {
@@ -1798,21 +1852,19 @@ export class Session implements IIndexable {
 	}
 
 	endDraft() {
-		if (!this.drafting || this.draftState?.type !== "draft") return;
+		if (!this.drafting) return;
+		const s = this.draftState as DraftState;
 
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
 			if (this.draftLog) {
-				const virtualPlayers = this.getSortedVirtualPlayers();
-				for (let userID in virtualPlayers) {
-					if (virtualPlayers[userID].isBot) {
-						this.draftLog.users[userID].cards = virtualPlayers[userID].instance?.cards.map(
-							(c: Card) => c.id
-						);
+				for (let userID in s.players) {
+					if (s.players[userID].isBot) {
+						this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map((c: Card) => c.id);
 					} else {
 						// Has this user been replaced by a bot?
 						this.draftLog.users[userID].cards = (
-							virtualPlayers[userID].disconnected ? this.disconnectedUsers[userID] : Connections[userID]
+							this.isDisconnected(userID) ? this.disconnectedUsers[userID] : Connections[userID]
 						).pickedCards.map((c: Card) => c.id);
 					}
 				}
@@ -1851,17 +1903,17 @@ export class Session implements IIndexable {
 	}
 
 	pauseDraft() {
-		if (!this.drafting || !this.countdownInterval) return;
+		if (!this.drafting) return;
 
 		this.draftPaused = true;
 
-		this.stopCountdown();
+		if (this.draftState instanceof DraftState) this.draftState.stopCountdowns();
 		this.forUsers((u) => Connections[u]?.socket.emit("pauseDraft"));
 	}
 
 	resumeDraft() {
 		if (!this.drafting || !this.draftPaused) return;
-		if (this.draftState instanceof DraftState) this.resumeCountdown();
+		if (this.draftState instanceof DraftState) this.draftState.resumeCountdowns();
 		this.draftPaused = false;
 		this.forUsers((u) => Connections[u]?.socket.emit("resumeDraft"));
 	}
@@ -1878,12 +1930,7 @@ export class Session implements IIndexable {
 			  }
 			: (cid: CardID) => Cards[cid];
 		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = getCard(c.id);
-		this.draftLog = new DraftLog(
-			type,
-			this,
-			carddata,
-			type === "Draft" ? this.getSortedVirtualPlayers() : this.getSortedHumanPlayers()
-		);
+		this.draftLog = new DraftLog(type, this, carddata, this.getSortedVirtualPlayerData());
 		return this.draftLog;
 	}
 
@@ -2125,7 +2172,7 @@ export class Session implements IIndexable {
 						: null,
 				boosterNumber: this.draftState.boosterNumber,
 				pickNumber: this.draftState.players[userID].pickNumber,
-				botScores: this.disconnectedUsers[userID].bot?.lastScores,
+				botScores: this.draftState.players[userID].botInstance.lastScores,
 			});
 			delete this.disconnectedUsers[userID];
 		}
@@ -2143,14 +2190,11 @@ export class Session implements IIndexable {
 		this.syncSessionOptions(userID);
 		this.notifyUserChange();
 		Connections[userID].socket.emit("sessionOptions", {
-			virtualPlayersData: this.getSortedVirtualPlayers(),
+			virtualPlayersData: this.getSortedVirtualPlayerData(),
 		});
 		if (this.drafting && this.draftState && this.draftState instanceof DraftState) {
 			Connections[userID].socket.emit("startDraft");
-			Connections[userID].socket.emit("distributeBoosters", {
-				boosterNumber: this.draftState.boosterNumber,
-				pickNumber: this.draftState.pickNumber,
-			});
+			this.sendDraftState(userID);
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
 				Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
@@ -2164,19 +2208,13 @@ export class Session implements IIndexable {
 
 		for (let uid in this.disconnectedUsers) {
 			// Immediately pick cards
-			if (!this.disconnectedUsers[uid].pickedThisRound) {
-				if (this.disconnectedUsers[uid].bot) {
-					const pickedCards = await this.doBotPick(this.disconnectedUsers[uid].bot as IBot);
-					this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
-				} else
-					console.error(
-						"Session::replaceDisconnectedPlayers(): this.disconnectedUsers[uid].bot is undefined!"
-					);
-				this.disconnectedUsers[uid].pickedThisRound = true;
+			while (this.draftState.players[uid].boosters.length > 0) {
+				const pickedCards = await this.doBotPick(this.draftState.players[uid].botInstance);
+				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
 			}
 		}
 
-		const virtualPlayers = this.getSortedVirtualPlayers();
+		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.forUsers((u) =>
 			Connections[u]?.socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
@@ -2188,53 +2226,6 @@ export class Session implements IIndexable {
 		});
 
 		this.checkDraftRoundEnd();
-	}
-
-	// Countdown Methods
-	startCountdown() {
-		if (!this.draftState) return;
-		let cardsPerBooster: number = this.cardsPerBooster ?? 15;
-		if (this.useCustomCardList && this.customCardList.customSheets)
-			cardsPerBooster = Object.values(this.customCardList.cardsPerBooster).reduce(
-				(acc: number, c: number) => acc + c
-			);
-		let dec = Math.floor(this.maxTimer / cardsPerBooster);
-		this.countdown = this.maxTimer - (this.draftState as DraftState).pickNumber * dec;
-		this.resumeCountdown();
-	}
-	resumeCountdown() {
-		this.stopCountdown(); // Cleanup if one is still running
-		if (this.maxTimer <= 0) {
-			// maxTimer <= 0 means no timer
-			this.forUsers((u) => Connections[u]?.socket.emit("disableTimer"));
-		} else {
-			// Immediately propagate current state
-			this.forUsers((u) =>
-				Connections[u]?.socket.emit("timer", {
-					countdown: this.countdown,
-				})
-			);
-			// Connections[user].socket.emit('timer', { countdown: 0 }); // Easy Debug
-			this.countdownInterval = setInterval(
-				((sess) => {
-					return () => {
-						sess.countdown--;
-						this.forUsers((u) =>
-							Connections[u]?.socket.emit("timer", {
-								countdown: sess.countdown,
-							})
-						);
-					};
-				})(this),
-				1000
-			);
-		}
-	}
-	stopCountdown() {
-		if (this.countdownInterval != null) {
-			clearInterval(this.countdownInterval);
-			this.countdownInterval = null;
-		}
 	}
 
 	// Includes disconnected players!
@@ -2253,15 +2244,44 @@ export class Session implements IIndexable {
 		return this.users.size + Object.keys(this.disconnectedUsers).length + this.bots;
 	}
 
-	getSortedHumanPlayers() {
-		let tmp: UserInfo = {};
+	isDisconnected(userID: UserID): boolean {
+		return userID in this.disconnectedUsers;
+	}
+
+	getSortedHumanPlayerData() {
+		let tmp: UserData = {};
 		for (let userID of this.getSortedHumanPlayersIDs()) {
 			tmp[userID] = {
+				userID: userID,
 				isBot: false,
-				disconnected: userID in this.disconnectedUsers,
+				userName: this.isDisconnected(userID)
+					? this.disconnectedUsers[userID].userName
+					: Connections[userID].userName,
+				isDisconnected: this.isDisconnected(userID),
 			};
 		}
 		return tmp;
+	}
+
+	getSortedVirtualPlayerData() {
+		const r: UserData = {};
+		if (this.draftState instanceof DraftState) {
+			for (let userID in this.draftState.players) {
+				r[userID] = {
+					userID: userID,
+					userName: this.draftState.players[userID].isBot
+						? this.draftState.players[userID].botInstance.name
+						: this.isDisconnected(userID)
+						? this.disconnectedUsers[userID].userName
+						: Connections[userID].userName,
+					isBot: this.draftState.players[userID].isBot,
+					isDisconnected: this.isDisconnected(userID),
+				};
+			}
+		} else {
+			return this.getSortedHumanPlayerData();
+		}
+		return r;
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {

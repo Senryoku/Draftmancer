@@ -280,6 +280,8 @@ export default {
 				},
 			});
 
+			console.log(this.socket);
+
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
 				// Avoid closing an already opened modal
@@ -781,25 +783,28 @@ export default {
 				});
 			});
 
-			this.socket.on("nextBooster", (data) => {
-				this.booster = [];
-				for (let u of this.sessionUsers) {
-					u.pickedThisRound = false;
-				}
-				this.boosterNumber = data.boosterNumber;
-				this.pickNumber = data.pickNumber;
+			this.socket.on("draftState", (data) => {
 				this.botScores = data.botScores; // Get or Clear bot scores
 
-				// Only watching, not playing/receiving a boost ourself.
-				if (this.draftingState == DraftState.Watching) return;
-
-				for (let c of data.booster) {
-					this.booster.push(c);
+				// Only watching, not playing/receiving a booster ourself.
+				if (this.draftingState === DraftState.Watching) {
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
 				}
-				this.playSound("next");
-				this.draftingState = DraftState.Picking;
+
 				this.selectedCards = [];
 				this.burningCards = [];
+				if (data.boosterCount > 0) {
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
+					this.booster = [];
+					for (let c of data.booster) this.booster.push(c);
+					this.playSound("next");
+					this.draftingState = DraftState.Picking;
+				} else {
+					// No new booster, don't update the state yet.
+					this.draftingState = DraftState.Waiting;
+				}
 			});
 
 			this.socket.on("botRecommandations", (data) => {
@@ -2584,13 +2589,11 @@ export default {
 			for (let id in this.virtualPlayersData) {
 				if (this.virtualPlayersData[id].isBot) {
 					r.push(this.virtualPlayersData[id]);
-					r[r.length - 1].userName = r[r.length - 1].instance.name;
-					r[r.length - 1].userID = r[r.length - 1].instance.id;
-				} else if (this.virtualPlayersData[id].disconnected) {
+				} else if (this.virtualPlayersData[id].isDisconnected) {
 					r.push({
 						userName: "(Disconnected)",
 						userID: "",
-						disconnected: true,
+						isDisconnected: true,
 					});
 				} else {
 					const p = this.sessionUsers.find((u) => u.userID === id);
