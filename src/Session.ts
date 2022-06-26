@@ -1683,51 +1683,48 @@ export class Session implements IIndexable {
 	async doBotPick(instance: IBot) {
 		const s = this.draftState as DraftState;
 
-		console.log(
-			`Call to doBotPick on ${instance.name}: ${s.players[instance.id].boosters.length} ${
-				s.players[instance.id].boosters[0]?.length
-			}`
-		);
-
 		assert(s.players[instance.id].boosters.length > 0, "Call to doBotPick with no boosters.");
-
-		console.log(`doBotPick on ${instance.name}: Picking cards!`);
 
 		// Choose cards
 		const pickedIndices = [];
 		const burnedIndices = [];
 		{
+			const boosterNumber = s.boosterNumber;
+			const pickNumber = s.players[instance.id].pickNumber;
+			const numPicks = s.numPicks;
+
 			const booster = s.players[instance.id].boosters[0];
 			const boosterCopy = [...booster]; // Working copy for multiple picks
-			for (let i = 0; i < this.pickedCardsPerRound && booster.length > 0; ++i) {
+			for (let i = 0; i < this.pickedCardsPerRound && boosterCopy.length > 0; ++i) {
 				const pickedIdx = await instance.pick(
 					boosterCopy,
-					s.boosterNumber,
+					boosterNumber,
 					this.boostersPerPlayer,
-					s.players[instance.id].pickNumber,
-					s.numPicks
+					pickNumber,
+					numPicks
 				);
 				pickedIndices.push(booster.indexOf(boosterCopy[pickedIdx]));
 				boosterCopy.splice(pickedIdx, 1);
 			}
-			for (let i = 0; i < this.burnedCardsPerRound && booster.length > 0; ++i) {
+			for (let i = 0; i < this.burnedCardsPerRound && boosterCopy.length > 0; ++i) {
 				const burnedIdx = await instance.burn(
 					boosterCopy,
-					s.boosterNumber,
+					boosterNumber,
 					this.boostersPerPlayer,
-					s.players[instance.id].pickNumber,
-					s.numPicks
+					pickNumber,
+					numPicks
 				);
 				burnedIndices.push(booster.indexOf(boosterCopy[burnedIdx]));
 				boosterCopy.splice(burnedIdx, 1);
 			}
 		}
 
-		console.log(`Call to doBotPick on ${instance.name}: Done!`);
-
 		// FIXME: Figure out if we should do this, or use the return value.
 		// If this bot is picking on behalf a disconnected player...
 		// if (instance.id in this.disconnectedUsers) this.disconnectedUsers[instance.id].pickedCards.push(...pickedCards);
+
+		// Draft may have been manually terminated by the owner.
+		if (!s?.players) return [];
 
 		const booster = s.players[instance.id].boosters.splice(0, 1)[0];
 		++s.players[instance.id].pickNumber;
@@ -1748,8 +1745,6 @@ export class Session implements IIndexable {
 		for (let idx of cardsToRemove) booster.splice(idx, 1);
 
 		this.passBooster(booster, instance.id);
-
-		!this.checkDraftRoundEnd();
 
 		return pickedCards;
 	}

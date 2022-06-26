@@ -786,6 +786,7 @@ export default {
 				if (this.draftingState === DraftState.Watching) {
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
+					return;
 				}
 
 				this.selectedCards = [];

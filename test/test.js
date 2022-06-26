@@ -519,6 +519,8 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
+	const latestSetCardPerBooster = 14;
+
 	describe(`Drafting without set restriction`, function () {
 		connect();
 		it("Clients should receive the updated setRestriction status.", function (done) {
@@ -533,7 +535,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * 14);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -550,7 +552,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * 14);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -621,7 +623,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -643,7 +645,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -674,7 +676,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -701,7 +703,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -742,7 +744,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * latestSetCardPerBooster);
 		disconnect();
 	});
 
@@ -832,7 +834,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * 15);
+		expectCardCount(3 * 14);
 		disconnect();
 	});
 
@@ -951,6 +953,7 @@ describe("Single Draft (Two Players)", function () {
 					c.once("draftState", function (state) {
 						expect(state.booster).to.exist;
 						clients[_idx].state = state;
+						clients[_idx].pickedCards = [];
 						receivedBoosters += 1;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
@@ -971,6 +974,7 @@ describe("Single Draft (Two Players)", function () {
 						let burned = [];
 						for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < state.booster.length; ++cidx)
 							burned.push(cidx);
+						clients[idx].pickedCards.push(clients[c].state.booster[0]);
 						this.emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 					}
 				});
@@ -984,6 +988,7 @@ describe("Single Draft (Two Players)", function () {
 				let burned = [];
 				for (let cidx = 1; cidx < 1 + burnedCardsPerRound && cidx < clients[c].state.booster.length; ++cidx)
 					burned.push(cidx);
+				clients[c].pickedCards.push(clients[c].state.booster[0]);
 				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: burned }, () => {});
 			}
 		});
@@ -1318,7 +1323,7 @@ describe("Multiple Drafts", function () {
 			for (let c = 0; c < clients[sess].length; ++c) {
 				clients[sess][c].on("draftState", function (state) {
 					if (state.pickNumber !== clients[sess][c].state.pickNumber && state.boosterCount > 0) {
-						clients[sess][c] = state;
+						clients[sess][c].state = state;
 						this.emit("pickCard", { pickedCards: [0] }, () => {});
 					}
 				});
