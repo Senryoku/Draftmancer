@@ -2588,14 +2588,11 @@ export default {
 				if (this.virtualPlayersData[id].isBot) {
 					r.push(this.virtualPlayersData[id]);
 				} else if (this.virtualPlayersData[id].isDisconnected) {
-					r.push({
-						userName: "(Disconnected)",
-						userID: "",
-						isDisconnected: true,
-					});
+					r.push(this.virtualPlayersData[id]);
 				} else {
 					const p = this.sessionUsers.find((u) => u.userID === id);
-					if (p) r.push(p);
+					let concat = Object.assign(this.virtualPlayersData[id], p);
+					r.push(concat);
 				}
 			}
 

@@ -130,7 +130,15 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	draftPaused: isBoolean,
 };
 
-export type UserData = { [uid: UserID]: { userID: UserID; userName: string; isBot: boolean; isDisconnected: boolean } };
+export type UserData = {
+	[uid: UserID]: {
+		userID: UserID;
+		userName: string;
+		isBot: boolean;
+		isDisconnected: boolean;
+		boosterCount: undefined | number;
+	};
+};
 
 export class DraftState extends IDraftState {
 	boosters: Array<Array<Card>>;
@@ -1574,6 +1582,13 @@ export class Session implements IIndexable {
 				this.sendDraftState(userID);
 				this.requestBotRecommendation(userID);
 			}
+			// Update player states
+			const virtualPlayersData = this.getSortedVirtualPlayerData();
+			this.forUsers((uid) =>
+				Connections[uid]?.socket.emit("sessionOptions", {
+					virtualPlayersData: virtualPlayersData,
+				})
+			);
 		}
 	}
 
@@ -1656,7 +1671,8 @@ export class Session implements IIndexable {
 		const s = this.draftState as DraftState;
 
 		// We'll have to wait for the next booster
-		if (s.players[instance.id].boosters.length === 0) return;
+		if (s.players[instance.id].boosters.length === 0) return [];
+
 		const booster = s.players[instance.id].boosters.splice(0, 1)[0];
 		const startingBooster = booster.map((c) => c.id);
 		const pickedIndices = [];
@@ -2253,11 +2269,12 @@ export class Session implements IIndexable {
 		for (let userID of this.getSortedHumanPlayersIDs()) {
 			tmp[userID] = {
 				userID: userID,
-				isBot: false,
 				userName: this.isDisconnected(userID)
 					? this.disconnectedUsers[userID].userName
 					: Connections[userID].userName,
+				isBot: false,
 				isDisconnected: this.isDisconnected(userID),
+				boosterCount: undefined,
 			};
 		}
 		return tmp;
@@ -2276,6 +2293,7 @@ export class Session implements IIndexable {
 						: Connections[userID].userName,
 					isBot: this.draftState.players[userID].isBot,
 					isDisconnected: this.isDisconnected(userID),
+					boosterCount: this.draftState.players[userID].boosters.length,
 				};
 			}
 		} else {

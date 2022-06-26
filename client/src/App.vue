@@ -657,7 +657,7 @@
 									class="fas fa-crown subtle-gold"
 									v-tooltip="`${user.userName} is the session's owner.`"
 								></i>
-								<template v-if="userID === sessionOwner && user.userID != sessionOwner">
+								<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
 									<img
 										src="./assets/img/pass_ownership.svg"
 										class="clickable"
@@ -704,16 +704,19 @@
 									<template v-if="user.userID in disconnectedUsers">
 										<i class="fas fa-times red" v-tooltip="user.userName + ' is disconnected.'"></i>
 									</template>
-									<template v-else-if="user.pickedThisRound">
-										<i
-											class="fas fa-check green"
-											v-tooltip="user.userName + ' has picked a card.'"
-										></i>
-									</template>
-									<template v-else>
+									<template v-if="user.boosterCount !== undefined">
+										<div
+											v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
+											v-if="user.boosterCount > 0"
+										>
+											{{ user.boosterCount }}
+											<!-- TODO: Add a Booster icon -->
+										</div>
+
 										<i
 											class="fas fa-spinner fa-spin"
-											v-tooltip="user.userName + ' is thinking...'"
+											v-tooltip="user.userName + ' is waiting...'"
+											v-else
 										></i>
 									</template>
 								</template>
@@ -778,7 +781,7 @@
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</div>
-						<div>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
+						<div>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
@@ -798,7 +801,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
 						<div class="controls">
-							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i> {{ pickTimer }}
 							</span>

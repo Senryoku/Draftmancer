@@ -156,7 +156,6 @@ export class Bot implements IBot {
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
-		console.log("Bot args:", booster.length, boosterNum, numBoosters, pickNum, numPicks);
 		const packOracleIds: OracleID[] = booster.map((c: Card) => c.oracle_id);
 		this.seen.push({ packNum: boosterNum, pickNum, numPicks, pack: packOracleIds });
 		const drafterState = {

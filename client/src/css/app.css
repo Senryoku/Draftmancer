@@ -773,9 +773,11 @@ ul.player-list {
 
 .status-icons {
 	display: inline-flex;
+	align-items: center;
+
 }
 
-.status-icons i {
+.status-icons > * {
 	margin-left: 0.5em;
 	font-size: 14px;
 }
