@@ -16,7 +16,7 @@ import {
 	IIndexable,
 } from "./Session.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
-import { Bot, SimpleBot } from "./Bot.js";
+import { Bot, IBot, SimpleBot } from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
@@ -47,7 +47,7 @@ function copyProps(obj: any, target: any) {
 	return target;
 }
 
-function restoreBot(bot: any) {
+function restoreBot(bot: any): IBot | undefined {
 	if (!bot) return undefined;
 
 	if (bot.type == "SimpleBot") {
@@ -131,6 +131,10 @@ export function restoreSession(s: any, owner: UserID) {
 		copyProps(s.draftState, r.draftState);
 		// TODO: Deal with draft players object properly
 		//       And especially properly restoring bots : restoreBot(bot);
+		if (r.draftState instanceof DraftState) {
+			for (let userID in r.draftState.players)
+				r.draftState.players[userID].botInstance = restoreBot(r.draftState.players[userID].botInstance) as IBot;
+		}
 	}
 
 	return r;
@@ -157,12 +161,14 @@ export function getPoDSession(s: Session) {
 
 			// TODO: Properly deal with bots in the players object in draft state
 			if (s.draftState instanceof DraftState) {
+				let players = {};
+				copyProps(s.draftState.players, players);
+				PoDSession.draftState.players = players;
+
 				for (let userID in s.draftState.players) {
-					PoDSession.draftState.players[userID].botInstance = {};
-					copyProps(
-						s.draftState.players[userID].botInstance,
-						PoDSession.draftState.players[userID].botInstance
-					);
+					let podBot = {};
+					copyProps(s.draftState.players[userID].botInstance, podBot);
+					PoDSession.draftState.players[userID].botInstance = podBot;
 				}
 			}
 		}

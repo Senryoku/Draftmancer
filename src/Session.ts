@@ -1572,12 +1572,13 @@ export class Session implements IIndexable {
 			const nextUserID = playerIds[idx];
 			s.players[nextUserID].boosters.push(booster);
 			// Synchronize concerned users
-			if (s.players[nextUserID].isBot) this.doBotPick(s.players[nextUserID].botInstance);
+			if (s.players[nextUserID].isBot || this.isDisconnected(nextUserID))
+				this.doBotPick(s.players[nextUserID].botInstance);
 			else {
 				this.sendDraftState(nextUserID);
 				this.requestBotRecommendation(nextUserID);
 			}
-			if (s.players[userID].isBot) this.doBotPick(s.players[userID].botInstance);
+			if (s.players[userID].isBot || this.isDisconnected(userID)) this.doBotPick(s.players[userID].botInstance);
 			else {
 				this.sendDraftState(userID);
 				this.requestBotRecommendation(userID);
@@ -2231,8 +2232,8 @@ export class Session implements IIndexable {
 		}
 
 		const virtualPlayers = this.getSortedVirtualPlayerData();
-		this.forUsers((u) =>
-			Connections[u]?.socket.emit("sessionOptions", {
+		this.forUsers((uid) =>
+			Connections[uid]?.socket.emit("sessionOptions", {
 				virtualPlayersData: virtualPlayers,
 			})
 		);
@@ -2240,8 +2241,6 @@ export class Session implements IIndexable {
 			title: "Resuming draft",
 			text: `Disconnected player(s) has been replaced by bot(s).`,
 		});
-
-		this.checkDraftRoundEnd();
 	}
 
 	// Includes disconnected players!

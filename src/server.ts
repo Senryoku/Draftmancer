@@ -334,12 +334,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	readyCheck(userID: UserID, sessionID: SessionID, ack: Function) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) {
-			ack?.({ code: 1 });
+			ack?.(new SocketError("Already drafting."));
 			return;
 		}
 
-		ack?.({ code: 0 });
 		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
+		ack?.(new SocketAck());
 	},
 	startDraft(userID: UserID, sessionID: SessionID) {
 		const sess = Sessions[sessionID];
