@@ -350,7 +350,6 @@ export default {
 
 			this.socket.on("sessionUsers", (users) => {
 				for (let u of users) {
-					if (!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
@@ -760,14 +759,16 @@ export default {
 					for (let c of data.pickedCards) this.addToDeck(c);
 
 					this.booster = [];
-					for (let c of data.booster) this.booster.push(c);
+					if (data.booster) {
+						for (let c of data.booster) this.booster.push(c);
+						this.draftingState = DraftState.Picking;
+					} else {
+						this.draftingState = DraftState.Waiting;
+					}
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
 					this.botScores = data.botScores;
 
-					this.pickedThisRound = data.pickedThisRound;
-					if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
-					else this.draftingState = DraftState.Picking;
 					this.selectedCards = [];
 					this.burningCards = [];
 

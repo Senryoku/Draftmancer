@@ -129,8 +129,6 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 		}
 		copyProps(s.draftState, r.draftState);
-		// TODO: Deal with draft players object properly
-		//       And especially properly restoring bots : restoreBot(bot);
 		if (r.draftState instanceof DraftState) {
 			for (let userID in r.draftState.players)
 				r.draftState.players[userID].botInstance = restoreBot(r.draftState.players[userID].botInstance) as IBot;
@@ -159,7 +157,6 @@ export function getPoDSession(s: Session) {
 			PoDSession.draftState = {};
 			copyProps(s.draftState, PoDSession.draftState);
 
-			// TODO: Properly deal with bots in the players object in draft state
 			if (s.draftState instanceof DraftState) {
 				let players = {};
 				copyProps(s.draftState.players, players);
