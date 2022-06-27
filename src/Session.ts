@@ -1681,33 +1681,40 @@ export class Session implements IIndexable {
 			const numPicks = s.numPicks;
 
 			const booster = s.players[instance.id].boosters[0];
-			const boosterCopy = [...booster]; // Working copy for multiple picks
-			for (let i = 0; i < this.pickedCardsPerRound && boosterCopy.length > 0; ++i) {
-				const pickedIdx = await instance.pick(
-					boosterCopy,
-					boosterNumber,
-					this.boostersPerPlayer,
-					pickNumber,
-					numPicks
-				);
-				const originalIdx = booster.indexOf(boosterCopy[pickedIdx]);
-				// Original booster was modified, most probable is that a player reconnected
-				if (originalIdx === -1) return [];
-				pickedIndices.push(originalIdx);
-				boosterCopy.splice(pickedIdx, 1);
-			}
-			for (let i = 0; i < this.burnedCardsPerRound && boosterCopy.length > 0; ++i) {
-				const burnedIdx = await instance.burn(
-					boosterCopy,
-					boosterNumber,
-					this.boostersPerPlayer,
-					pickNumber,
-					numPicks
-				);
-				const originalIdx = booster.indexOf(boosterCopy[burnedIdx]);
-				if (originalIdx === -1) return [];
-				burnedIndices.push(originalIdx);
-				boosterCopy.splice(burnedIdx, 1);
+			// Avoid using bots if it is not necessary: We're picking the whole pack.
+			if (this.pickedCardsPerRound >= booster.length) {
+				for (let i = 0; i < booster.length; i++) {
+					pickedIndices.push(i);
+				}
+			} else {
+				const boosterCopy = [...booster]; // Working copy for multiple picks
+				for (let i = 0; i < this.pickedCardsPerRound && boosterCopy.length > 0; ++i) {
+					const pickedIdx = await instance.pick(
+						boosterCopy,
+						boosterNumber,
+						this.boostersPerPlayer,
+						pickNumber,
+						numPicks
+					);
+					const originalIdx = booster.indexOf(boosterCopy[pickedIdx]);
+					// Original booster was modified, most probable is that a player reconnected
+					if (originalIdx === -1) return [];
+					pickedIndices.push(originalIdx);
+					boosterCopy.splice(pickedIdx, 1);
+				}
+				for (let i = 0; i < this.burnedCardsPerRound && boosterCopy.length > 0; ++i) {
+					const burnedIdx = await instance.burn(
+						boosterCopy,
+						boosterNumber,
+						this.boostersPerPlayer,
+						pickNumber,
+						numPicks
+					);
+					const originalIdx = booster.indexOf(boosterCopy[burnedIdx]);
+					if (originalIdx === -1) return [];
+					burnedIndices.push(originalIdx);
+					boosterCopy.splice(burnedIdx, 1);
+				}
 			}
 		}
 
