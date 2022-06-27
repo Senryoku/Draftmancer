@@ -435,12 +435,20 @@
 				>
 					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
 					<button
-						v-if="maxTimer > 0"
+						v-if="maxTimer > 0 && !draftPaused"
 						class="stop"
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="pauseDraft"
 					>
 						<i class="fas fa-pause"></i> Pause Draft
+					</button>
+					<button
+						v-else-if="maxTimer > 0 && draftPaused"
+						class="confirm"
+						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
+						@click="resumeDraft"
+					>
+						<i class="fas fa-play"></i> Resume Draft
 					</button>
 				</div>
 			</template>
@@ -1109,7 +1117,7 @@
 							Resume when you're ready.
 
 							<div style="margin-top: 1em">
-								<button @click="socket.emit('resumeDraft')">Resume</button>
+								<button class="confirm" @click="resumeDraft"><i class="fas fa-play"></i> Resume</button>
 							</div>
 						</template>
 						<template v-else> Wait for the session owner to resume. </template>

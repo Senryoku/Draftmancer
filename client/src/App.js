@@ -1047,6 +1047,10 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("pauseDraft");
 		},
+		resumeDraft() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("resumeDraft");
+		},
 		selectCard(e, c) {
 			if (!this.selectedCards.includes(c)) {
 				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
