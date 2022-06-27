@@ -793,14 +793,19 @@ export default {
 				this.selectedCards = [];
 				this.burningCards = [];
 				if (data.boosterCount > 0) {
-					if (this.pickNumber !== data.pickNumber) {
+					if (
+						!this.booster ||
+						this.booster.length === 0 ||
+						this.pickNumber !== data.pickNumber ||
+						this.boosterNumber !== data.boosterNumber
+					) {
 						this.botScores = null; // Clear bot scores
+						this.booster = [];
+						for (let c of data.booster) this.booster.push(c);
+						this.playSound("next");
 					}
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
-					this.booster = [];
-					for (let c of data.booster) this.booster.push(c);
-					this.playSound("next");
 					this.draftingState = DraftState.Picking;
 				} else {
 					// No new booster, don't update the state yet.
