@@ -791,8 +791,6 @@ export default {
 					return;
 				}
 
-				this.selectedCards = [];
-				this.burningCards = [];
 				if (data.boosterCount > 0) {
 					if (
 						!this.booster ||
@@ -801,6 +799,8 @@ export default {
 						this.boosterNumber !== data.boosterNumber
 					) {
 						this.botScores = null; // Clear bot scores
+						this.selectedCards = [];
+						this.burningCards = [];
 						this.booster = [];
 						for (let c of data.booster) this.booster.push(c);
 						this.playSound("next");
@@ -1178,6 +1178,9 @@ export default {
 							this.pickInFlight = false;
 							if (answer.code !== 0) {
 								Alert.fire(answer.error);
+							} else {
+								this.selectedCards = [];
+								this.burningCards = [];
 							}
 						}
 					);
