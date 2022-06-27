@@ -182,8 +182,9 @@ describe("Draft Logs", function () {
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 				(() => {
-					clients[c].once("nextBooster", () => {
+					clients[c].once("draftState", (state) => {
 						receivedBoosters += 1;
+						clients[c].state = state;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
 				})();
@@ -194,13 +195,16 @@ describe("Draft Logs", function () {
 	const endDraft = (validate) => (done) => {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
-			clients[c].on("nextBooster", function () {
-				this.emit("pickCard", { pickedCards: [0] }, () => {});
+			clients[c].on("draftState", function (state) {
+				if (state.pickNumber !== clients[c].state.pickNumber && state.boosterCount > 0) {
+					clients[c].state = state;
+					this.emit("pickCard", { pickedCards: [0] }, () => {});
+				}
 			});
 			clients[c].once("draftLog", function (draftLog) {
 				draftEnded += 1;
 				validate(c, draftLog);
-				this.removeListener("nextBooster");
+				this.removeListener("draftState");
 				if (draftEnded == clients.length) done();
 			});
 		}

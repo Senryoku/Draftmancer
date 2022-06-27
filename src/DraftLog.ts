@@ -1,7 +1,7 @@
 import { Card, CardID } from "./Cards.js";
 import { Connections } from "./Connection.js";
 import { SessionID } from "./IDTypes.js";
-import { Session, UserInfo } from "./Session.js";
+import { Session, UserData } from "./Session.js";
 
 export class DraftLog {
 	version: string = "2.0";
@@ -19,7 +19,7 @@ export class DraftLog {
 	personalLogs: boolean = true; // Necessary for the front-end to know when not to show the owner its own draft log
 	teamDraft: boolean = false;
 
-	constructor(type: string, session: Session, carddata: { [cid: string]: Card }, virtualPlayers: UserInfo) {
+	constructor(type: string, session: Session, carddata: { [cid: string]: Card }, virtualPlayers: UserData) {
 		this.type = type;
 		this.sessionID = session.id;
 		this.time = Date.now();
@@ -31,19 +31,6 @@ export class DraftLog {
 		this.personalLogs = session.personalLogs;
 		this.teamDraft = type === "Draft" && session.teamDraft;
 
-		for (let userID in virtualPlayers) {
-			if (virtualPlayers[userID].isBot) {
-				this.users[userID] = {
-					isBot: true,
-					userName: virtualPlayers[userID].instance?.name,
-					userID: virtualPlayers[userID].instance?.id,
-				};
-			} else {
-				this.users[userID] = {
-					userName: Connections[userID].userName,
-					userID: userID,
-				};
-			}
-		}
+		this.users = virtualPlayers;
 	}
 }

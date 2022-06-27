@@ -350,7 +350,6 @@ export default {
 
 			this.socket.on("sessionUsers", (users) => {
 				for (let u of users) {
-					if (!u.pickedThisRound) u.pickedThisRound = false;
 					u.readyState = ReadyState.DontCare;
 				}
 
@@ -739,8 +738,9 @@ export default {
 			};
 
 			// Standard Draft
-			this.socket.on("startDraft", () => {
+			this.socket.on("startDraft", (virtualPlayersData) => {
 				startDraftSetup();
+				if (virtualPlayersData) this.virtualPlayersData = virtualPlayersData;
 
 				// Are we just an Organizer, and not a player?
 				if (!this.virtualPlayers.map((u) => u.userID).includes(this.userID)) {
@@ -760,14 +760,16 @@ export default {
 					for (let c of data.pickedCards) this.addToDeck(c);
 
 					this.booster = [];
-					for (let c of data.booster) this.booster.push(c);
+					if (data.booster) {
+						for (let c of data.booster) this.booster.push(c);
+						this.draftingState = DraftState.Picking;
+					} else {
+						this.draftingState = DraftState.Waiting;
+					}
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
 					this.botScores = data.botScores;
 
-					this.pickedThisRound = data.pickedThisRound;
-					if (this.pickedThisRound) this.draftingState = DraftState.Waiting;
-					else this.draftingState = DraftState.Picking;
 					this.selectedCards = [];
 					this.burningCards = [];
 
@@ -781,25 +783,35 @@ export default {
 				});
 			});
 
-			this.socket.on("nextBooster", (data) => {
-				this.booster = [];
-				for (let u of this.sessionUsers) {
-					u.pickedThisRound = false;
+			this.socket.on("draftState", (data) => {
+				// Only watching, not playing/receiving a booster ourself.
+				if (this.draftingState === DraftState.Watching) {
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
+					return;
 				}
-				this.boosterNumber = data.boosterNumber;
-				this.pickNumber = data.pickNumber;
-				this.botScores = data.botScores; // Get or Clear bot scores
 
-				// Only watching, not playing/receiving a boost ourself.
-				if (this.draftingState == DraftState.Watching) return;
-
-				for (let c of data.booster) {
-					this.booster.push(c);
-				}
-				this.playSound("next");
-				this.draftingState = DraftState.Picking;
 				this.selectedCards = [];
 				this.burningCards = [];
+				if (data.boosterCount > 0) {
+					if (
+						!this.booster ||
+						this.booster.length === 0 ||
+						this.pickNumber !== data.pickNumber ||
+						this.boosterNumber !== data.boosterNumber
+					) {
+						this.botScores = null; // Clear bot scores
+						this.booster = [];
+						for (let c of data.booster) this.booster.push(c);
+						this.playSound("next");
+					}
+					this.boosterNumber = data.boosterNumber;
+					this.pickNumber = data.pickNumber;
+					this.draftingState = DraftState.Picking;
+				} else {
+					// No new booster, don't update the state yet.
+					this.draftingState = DraftState.Waiting;
+				}
 			});
 
 			this.socket.on("botRecommandations", (data) => {
@@ -916,13 +928,15 @@ export default {
 		},
 		clearState() {
 			this.disconnectedUsers = {};
+			this.virtualPlayersData = undefined;
 			this.clearSideboard();
 			this.clearDeck();
 			this.deckFilter = "";
 			this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			this.currentDraftLog = null;
-			this.boosterNumber = 0;
-			this.pickNumber = 0;
+			this.boosterNumber = -1;
+			this.pickNumber = -1;
+			this.booster = null;
 			this.botScores = null;
 		},
 		resetSessionSettings() {
@@ -1041,6 +1055,10 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("pauseDraft");
 		},
+		resumeDraft() {
+			if (this.userID != this.sessionOwner) return;
+			this.socket.emit("resumeDraft");
+		},
 		selectCard(e, c) {
 			if (!this.selectedCards.includes(c)) {
 				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
@@ -1158,7 +1176,9 @@ export default {
 						},
 						(answer) => {
 							this.pickInFlight = false;
-							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+							if (answer.code !== 0) {
+								Alert.fire(answer.error);
+							}
 						}
 					);
 					this.draftingState = DraftState.Waiting;
@@ -2584,17 +2604,12 @@ export default {
 			for (let id in this.virtualPlayersData) {
 				if (this.virtualPlayersData[id].isBot) {
 					r.push(this.virtualPlayersData[id]);
-					r[r.length - 1].userName = r[r.length - 1].instance.name;
-					r[r.length - 1].userID = r[r.length - 1].instance.id;
-				} else if (this.virtualPlayersData[id].disconnected) {
-					r.push({
-						userName: "(Disconnected)",
-						userID: "",
-						disconnected: true,
-					});
+				} else if (this.virtualPlayersData[id].isDisconnected) {
+					r.push(this.virtualPlayersData[id]);
 				} else {
 					const p = this.sessionUsers.find((u) => u.userID === id);
-					if (p) r.push(p);
+					let concat = Object.assign(this.virtualPlayersData[id], p);
+					r.push(concat);
 				}
 			}
 

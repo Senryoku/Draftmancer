@@ -252,7 +252,9 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
 		} catch (err) {
-			ack?.({ code: 500, error: "Internal server error." });
+			const r = new SocketError("Internal server error.");
+			r.code = 500;
+			ack?.(r);
 			console.error("Error in pickCard:", err);
 			const data: any = {
 				draftState: Sessions[sessionID].draftState,
@@ -334,12 +336,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	readyCheck(userID: UserID, sessionID: SessionID, ack: Function) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) {
-			ack?.({ code: 1 });
+			ack?.(new SocketError("Already drafting."));
 			return;
 		}
 
-		ack?.({ code: 0 });
 		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
+		ack?.(new SocketAck());
 	},
 	startDraft(userID: UserID, sessionID: SessionID) {
 		const sess = Sessions[sessionID];

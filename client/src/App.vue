@@ -435,12 +435,20 @@
 				>
 					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
 					<button
-						v-if="maxTimer > 0"
+						v-if="maxTimer > 0 && !draftPaused"
 						class="stop"
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="pauseDraft"
 					>
 						<i class="fas fa-pause"></i> Pause Draft
+					</button>
+					<button
+						v-else-if="maxTimer > 0 && draftPaused"
+						class="confirm"
+						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
+						@click="resumeDraft"
+					>
+						<i class="fas fa-play"></i> Resume Draft
 					</button>
 				</div>
 			</template>
@@ -650,14 +658,14 @@
 							</template>
 						</template>
 						<div class="player-name">{{ user.userName }}</div>
-						<template v-if="!user.isBot && !user.disconnected">
-							<div class="status-icons">
+						<div class="status-icons">
+							<template v-if="!user.isBot && !user.isDisconnected">
 								<i
 									v-if="user.userID === sessionOwner"
 									class="fas fa-crown subtle-gold"
 									v-tooltip="`${user.userName} is the session's owner.`"
 								></i>
-								<template v-if="userID === sessionOwner && user.userID != sessionOwner">
+								<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
 									<img
 										src="./assets/img/pass_ownership.svg"
 										class="clickable"
@@ -701,25 +709,56 @@
 									></i>
 								</template>
 								<template v-else>
-									<template v-if="user.userID in disconnectedUsers">
-										<i class="fas fa-times red" v-tooltip="user.userName + ' is disconnected.'"></i>
-									</template>
-									<template v-else-if="user.pickedThisRound">
-										<i
-											class="fas fa-check green"
-											v-tooltip="user.userName + ' has picked a card.'"
-										></i>
-									</template>
-									<template v-else>
-										<i
-											class="fas fa-spinner fa-spin"
-											v-tooltip="user.userName + ' is thinking...'"
-										></i>
-									</template>
+									<i
+										v-if="user.isDisconnected"
+										class="fas fa-times red"
+										v-tooltip="user.userName + ' is disconnected.'"
+									></i>
 								</template>
-							</div>
-							<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
-						</template>
+							</template>
+							<template v-if="user.boosterCount !== undefined">
+								<div
+									v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
+									v-if="user.boosterCount > 0"
+									class="booster-count"
+								>
+									<template v-if="user.boosterCount === 1">
+										<img src="./assets/img/booster.svg" />
+									</template>
+									<template v-else-if="user.boosterCount === 2">
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+										/>
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+										/>
+									</template>
+									<template v-else-if="user.boosterCount > 2">
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+										/>
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+										/>
+										<img src="./assets/img/booster.svg" style="z-index: 2" />
+										<div>
+											{{ user.boosterCount }}
+										</div>
+									</template>
+								</div>
+
+								<i
+									class="fas fa-spinner fa-spin"
+									v-tooltip="user.userName + ' is waiting...'"
+									v-else
+								></i>
+							</template>
+						</div>
+						<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
 					</li>
 				</ul>
 			</template>
@@ -778,7 +817,7 @@
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</div>
-						<div>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</div>
+						<div>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
@@ -798,7 +837,7 @@
 					<div id="booster-controls" class="section-title">
 						<h2>Your Booster ({{ booster.length }})</h2>
 						<div class="controls">
-							<span>Pack #{{ boosterNumber }}, Pick #{{ pickNumber }}</span>
+							<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
 								<i class="fas fa-clock"></i> {{ pickTimer }}
 							</span>
@@ -846,11 +885,9 @@
 								}"
 								v-show="booster.length > 0"
 							></i>
-							<span
-								><div><div class="spinner"></div></div>
-								{{ virtualPlayers.filter((p) => p.isBot || p.pickedThisRound).length }} /
-								{{ virtualPlayers.length }}</span
-							>
+							<span>
+								<div><div class="spinner"></div></div>
+							</span>
 							<i
 								class="fas passing-order"
 								:class="{
@@ -1080,7 +1117,7 @@
 							Resume when you're ready.
 
 							<div style="margin-top: 1em">
-								<button @click="socket.emit('resumeDraft')">Resume</button>
+								<button class="confirm" @click="resumeDraft"><i class="fas fa-play"></i> Resume</button>
 							</div>
 						</template>
 						<template v-else> Wait for the session owner to resume. </template>
@@ -1389,6 +1426,46 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<div class="news">
+								<em>June 27, 2022</em>
+								<p>
+									You can now pick from a booster as soon as it is passed to you, without having to
+									wait for the whole table to make its pick, speeding up the draft process.
+								</p>
+								<p>
+									This seemingly simple change actually necessitated re-writing a good portion of the
+									drafting system, I tested it as much as possible, but I likely missed some corner
+									cases. Please use the
+									<a href="https://discord.gg/XscXXNw">
+										<i class="fab fa-discord"></i> Discord server
+									</a>
+									to report any problem!
+								</p>
+								<p>
+									If you are using MTGADraft regularly and enjoying it, please consider supporting my
+									work by donating a small amount here:
+								</p>
+								<form
+									action="https://www.paypal.com/cgi-bin/webscr"
+									method="post"
+									target="_blank"
+									rel="noopener nofollow"
+									style="margin: 0.5em 0 0 3em"
+								>
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+									<input type="hidden" name="lc" value="en_US" />
+									<input
+										type="image"
+										src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+										name="submit"
+										title="PayPal - The safer, easier way to pay online!"
+										alt="Donate with PayPal button"
+										style="display: inline"
+									/>
+								</form>
+								<p>Thank you! - Sen</p>
+							</div>
 							<em>June 25, 2022</em>
 							<ul>
 								<li>
@@ -1404,48 +1481,12 @@
 									with your mouse wheel.
 								</li>
 							</ul>
-							<p>
-								If you are using MTGADraft regularly and enjoying it, please consider supporting my work
-								by donating a small amount here:
-							</p>
-							<form
-								action="https://www.paypal.com/cgi-bin/webscr"
-								method="post"
-								target="_blank"
-								rel="noopener nofollow"
-								style="margin: 0.5em 0 0 3em"
-							>
-								<input type="hidden" name="cmd" value="_s-xclick" />
-								<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
-								<input type="hidden" name="lc" value="en_US" />
-								<input
-									type="image"
-									src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-									name="submit"
-									title="PayPal - The safer, easier way to pay online!"
-									alt="Donate with PayPal button"
-									style="display: inline"
-								/>
-							</form>
-							<p>Thank you! - Sen</p>
 						</div>
 						<div class="news">
 							<em>June 20, 2022</em>
 							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
 							<p>
 								Default values are tuned for 4 players. Check it out in the "Other Game Modes" dropdown.
-							</p>
-						</div>
-						<div class="news">
-							<em>June 2, 2022</em>
-							<p>
-								<img src="img/sets/clb.svg" class="set-icon" style="--invertedness: 100%" />
-								Commander Legends: Battle for Baldur's Gate (CLB) initial support.
-							</p>
-							<p>
-								Exact collation (most notably uncommon/ratio for backgrounds) is still to be determined
-								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
-								when drafting this set!
 							</p>
 						</div>
 					</div>

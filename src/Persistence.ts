@@ -16,7 +16,7 @@ import {
 	IIndexable,
 } from "./Session.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
-import { Bot, SimpleBot } from "./Bot.js";
+import { Bot, IBot, SimpleBot } from "./Bot.js";
 import Mixpanel from "mixpanel";
 const MixPanelToken = process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null;
 const MixInstance = MixPanelToken
@@ -47,7 +47,7 @@ function copyProps(obj: any, target: any) {
 	return target;
 }
 
-function restoreBot(bot: any) {
+function restoreBot(bot: any): IBot | undefined {
 	if (!bot) return undefined;
 
 	if (bot.type == "SimpleBot") {
@@ -101,28 +101,14 @@ async function requestSavedConnections() {
 
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (let prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["botsInstances", "draftState", "owner"].includes(p)
-	)) {
+	for (let prop of Object.getOwnPropertyNames(s).filter((p) => !["draftState", "owner"].includes(p))) {
 		(r as IIndexable)[prop] = s[prop];
-	}
-
-	for (let userID in r.disconnectedUsers)
-		if (r.disconnectedUsers[userID].bot)
-			r.disconnectedUsers[userID].bot = restoreBot(r.disconnectedUsers[userID].bot);
-
-	if (s.botsInstances) {
-		r.botsInstances = [];
-		for (let bot of s.botsInstances) {
-			let b = restoreBot(bot);
-			if (b) r.botsInstances.push(b);
-		}
 	}
 
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				r.draftState = new DraftState([]);
+				r.draftState = new DraftState();
 				break;
 			}
 			case "winston": {
@@ -143,6 +129,10 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 		}
 		copyProps(s.draftState, r.draftState);
+		if (r.draftState instanceof DraftState) {
+			for (let userID in r.draftState.players)
+				r.draftState.players[userID].botInstance = restoreBot(r.draftState.players[userID].botInstance) as IBot;
+		}
 	}
 
 	return r;
@@ -152,7 +142,7 @@ export function getPoDSession(s: Session) {
 	const PoDSession: any = {};
 
 	for (let prop of Object.getOwnPropertyNames(s).filter(
-		(p) => !["users", "countdownInterval", "botsInstances", "draftState"].includes(p)
+		(p) => !["users", "countdownInterval", "draftState"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
 	}
@@ -163,19 +153,21 @@ export function getPoDSession(s: Session) {
 			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 		}
 
-		if (s.botsInstances) {
-			PoDSession.botsInstances = [];
-			for (let bot of s.botsInstances) {
-				let podbot: any = {};
-				copyProps(bot, podbot);
-				if (podbot.fallbackBot) podbot.fallbackBot = undefined;
-				PoDSession.botsInstances.push(podbot);
-			}
-		}
-
 		if (s.draftState) {
 			PoDSession.draftState = {};
 			copyProps(s.draftState, PoDSession.draftState);
+
+			if (s.draftState instanceof DraftState) {
+				let players = {};
+				copyProps(s.draftState.players, players);
+				PoDSession.draftState.players = players;
+
+				for (let userID in s.draftState.players) {
+					let podBot = {};
+					copyProps(s.draftState.players[userID].botInstance, podBot);
+					PoDSession.draftState.players[userID].botInstance = podBot;
+				}
+			}
 		}
 	}
 	return PoDSession;
@@ -233,10 +225,6 @@ async function tempDump(exitOnCompletion = false) {
 
 		for (let prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
 			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
-		}
-		if (c.bot) {
-			PoDConnection.bot = copyProps(c.bot, {});
-			if (c.bot instanceof Bot) PoDConnection.bot.fallbackBot = undefined;
 		}
 		PoDConnections.push(PoDConnection);
 	}

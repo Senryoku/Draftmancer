@@ -48,7 +48,7 @@ function disableAnimations(page) {
 	});
 }
 
-before(async function () {
+async function startBrowsers() {
 	ownerBrowser = await puppeteer.launch({
 		headless: !testDebug,
 		args: testDebug
@@ -75,11 +75,19 @@ before(async function () {
 	}
 	disableAnimations(sessionOwnerPage);
 	disableAnimations(otherPlayerPage);
+}
+
+async function closeBrowsers() {
+	await ownerBrowser.close();
+	await otherBrowser.close();
+}
+
+before(async function () {
+	await startBrowsers();
 });
 
 after(async function () {
-	await ownerBrowser.close();
-	await otherBrowser.close();
+	await closeBrowsers();
 });
 
 beforeEach(function (done) {
