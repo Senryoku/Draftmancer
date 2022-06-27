@@ -782,6 +782,31 @@ ul.player-list {
 	font-size: 14px;
 }
 
+.booster-count {
+	position: relative; min-width: 14px
+}
+
+.booster-count img {
+	width: 1em;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform-origin: center bottom;
+	transform: translate(-50%, -50%);
+	filter: drop-shadow(0 0 2px #00000080);
+}
+
+.booster-count div {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 3;
+	font-weight: 900;
+	color: black;
+	font-family: "Brush Script MT" ;
+}
+
 /* Booster passing animation */
 
 .slide-fade-right-enter-active,

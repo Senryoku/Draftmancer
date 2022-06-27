@@ -712,9 +712,35 @@
 								<div
 									v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
 									v-if="user.boosterCount > 0"
+									class="booster-count"
 								>
-									{{ user.boosterCount }}
-									<!-- TODO: Add a Booster icon -->
+									<template v-if="user.boosterCount === 1">
+										<img src="./assets/img/booster.svg" />
+									</template>
+									<template v-else-if="user.boosterCount === 2">
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+										/>
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+										/>
+									</template>
+									<template v-else-if="user.boosterCount > 2">
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+										/>
+										<img
+											src="./assets/img/booster.svg"
+											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+										/>
+										<img src="./assets/img/booster.svg" style="z-index: 2" />
+										<div>
+											{{ user.boosterCount }}
+										</div>
+									</template>
 								</div>
 
 								<i

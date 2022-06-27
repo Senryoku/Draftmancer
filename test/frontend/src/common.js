@@ -77,13 +77,17 @@ async function startBrowsers() {
 	disableAnimations(otherPlayerPage);
 }
 
+async function closeBrowsers() {
+	await ownerBrowser.close();
+	await otherBrowser.close();
+}
+
 before(async function () {
 	await startBrowsers();
 });
 
 after(async function () {
-	await ownerBrowser.close();
-	await otherBrowser.close();
+	await closeBrowsers();
 });
 
 beforeEach(function (done) {
