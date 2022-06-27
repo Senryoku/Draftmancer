@@ -1426,6 +1426,46 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<div class="news">
+								<em>June 27, 2022</em>
+								<p>
+									You can now pick from a booster as soon as it is passed to you, without having to
+									wait for the whole table to make its pick, speeding up the draft process.
+								</p>
+								<p>
+									This seemingly simple change actually necessitated re-writing a good portion of the
+									drafting system, I tested it as much as possible, but I likely missed some corner
+									cases. Please use the
+									<a href="https://discord.gg/XscXXNw">
+										<i class="fab fa-discord"></i> Discord server
+									</a>
+									to report any problem!
+								</p>
+								<p>
+									If you are using MTGADraft regularly and enjoying it, please consider supporting my
+									work by donating a small amount here:
+								</p>
+								<form
+									action="https://www.paypal.com/cgi-bin/webscr"
+									method="post"
+									target="_blank"
+									rel="noopener nofollow"
+									style="margin: 0.5em 0 0 3em"
+								>
+									<input type="hidden" name="cmd" value="_s-xclick" />
+									<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+									<input type="hidden" name="lc" value="en_US" />
+									<input
+										type="image"
+										src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+										name="submit"
+										title="PayPal - The safer, easier way to pay online!"
+										alt="Donate with PayPal button"
+										style="display: inline"
+									/>
+								</form>
+								<p>Thank you! - Sen</p>
+							</div>
 							<em>June 25, 2022</em>
 							<ul>
 								<li>
@@ -1441,48 +1481,12 @@
 									with your mouse wheel.
 								</li>
 							</ul>
-							<p>
-								If you are using MTGADraft regularly and enjoying it, please consider supporting my work
-								by donating a small amount here:
-							</p>
-							<form
-								action="https://www.paypal.com/cgi-bin/webscr"
-								method="post"
-								target="_blank"
-								rel="noopener nofollow"
-								style="margin: 0.5em 0 0 3em"
-							>
-								<input type="hidden" name="cmd" value="_s-xclick" />
-								<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
-								<input type="hidden" name="lc" value="en_US" />
-								<input
-									type="image"
-									src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-									name="submit"
-									title="PayPal - The safer, easier way to pay online!"
-									alt="Donate with PayPal button"
-									style="display: inline"
-								/>
-							</form>
-							<p>Thank you! - Sen</p>
 						</div>
 						<div class="news">
 							<em>June 20, 2022</em>
 							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
 							<p>
 								Default values are tuned for 4 players. Check it out in the "Other Game Modes" dropdown.
-							</p>
-						</div>
-						<div class="news">
-							<em>June 2, 2022</em>
-							<p>
-								<img src="img/sets/clb.svg" class="set-icon" style="--invertedness: 100%" />
-								Commander Legends: Battle for Baldur's Gate (CLB) initial support.
-							</p>
-							<p>
-								Exact collation (most notably uncommon/ratio for backgrounds) is still to be determined
-								but it should mostly be correct. Don't forget to set "Picked cards per booster" to 2
-								when drafting this set!
 							</p>
 						</div>
 					</div>

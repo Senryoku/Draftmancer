@@ -1,5 +1,12 @@
 [
 	{
+		"date": "27/06/2022",
+		"notes": [
+			"Rewrote the draft system to allow picking as soon as a booster is available.",
+			"Many tweaks and smalls fixes."
+		]
+	},
+	{
 		"date": "25/06/2022",
 		"notes": ["Double Masters 2022 (2X2) support."]
 	},
