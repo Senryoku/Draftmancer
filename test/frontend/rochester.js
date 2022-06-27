@@ -20,7 +20,6 @@ async function pickRochester(page) {
 	return false;
 }
 
-// Buggy: The draft isn't launched automatically
 describe("Rochester", function () {
 	this.timeout(100000);
 	it("Owner joins", async function () {
