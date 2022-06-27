@@ -1509,17 +1509,11 @@ export class Session implements IIndexable {
 		let virtualPlayerData = this.getSortedVirtualPlayerData();
 		for (let uid of this.users) {
 			Connections[uid].pickedCards = [];
-			Connections[uid].socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayerData,
-			});
-			Connections[uid].socket.emit("startDraft");
+			Connections[uid].socket.emit("startDraft", virtualPlayerData);
 		}
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
-			Connections[this.owner].socket.emit("sessionOptions", {
-				virtualPlayersData: virtualPlayerData,
-			});
-			Connections[this.owner].socket.emit("startDraft");
+			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
 			// Update draft log for live display if owner in not playing
 			if (this.shouldSendLiveUpdates()) {
 				Connections[this.owner].socket.emit("draftLogLive", { log: this.draftLog });
@@ -2218,15 +2212,16 @@ export class Session implements IIndexable {
 		Connections[userID].sessionID = this.id;
 		this.syncSessionOptions(userID);
 		this.notifyUserChange();
-		Connections[userID].socket.emit("sessionOptions", {
-			virtualPlayersData: this.getSortedVirtualPlayerData(),
-		});
 		if (this.drafting && this.draftState && this.draftState instanceof DraftState) {
-			Connections[userID].socket.emit("startDraft");
+			Connections[userID].socket.emit("startDraft", this.getSortedVirtualPlayerData());
 			this.sendDraftState(userID);
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
 				Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
+		} else {
+			Connections[userID].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedVirtualPlayerData(),
+			});
 		}
 	}
 

@@ -738,8 +738,9 @@ export default {
 			};
 
 			// Standard Draft
-			this.socket.on("startDraft", () => {
+			this.socket.on("startDraft", (virtualPlayersData) => {
 				startDraftSetup();
+				if (virtualPlayersData) this.virtualPlayersData = virtualPlayersData;
 
 				// Are we just an Organizer, and not a player?
 				if (!this.virtualPlayers.map((u) => u.userID).includes(this.userID)) {
@@ -927,13 +928,15 @@ export default {
 		},
 		clearState() {
 			this.disconnectedUsers = {};
+			this.virtualPlayersData = undefined;
 			this.clearSideboard();
 			this.clearDeck();
 			this.deckFilter = "";
 			this.lands = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			this.currentDraftLog = null;
-			this.boosterNumber = 0;
-			this.pickNumber = 0;
+			this.boosterNumber = -1;
+			this.pickNumber = -1;
+			this.booster = null;
 			this.botScores = null;
 		},
 		resetSessionSettings() {
@@ -1173,7 +1176,9 @@ export default {
 						},
 						(answer) => {
 							this.pickInFlight = false;
-							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+							if (answer.code !== 0) {
+								Alert.fire(answer.error);
+							}
 						}
 					);
 					this.draftingState = DraftState.Waiting;
