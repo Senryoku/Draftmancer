@@ -792,7 +792,9 @@ export default {
 				this.selectedCards = [];
 				this.burningCards = [];
 				if (data.boosterCount > 0) {
-					if (this.pickNumber !== data.pickNumber) this.botScores = null; // Clear bot scores
+					if (this.pickNumber !== data.pickNumber) {
+						this.botScores = null; // Clear bot scores
+					}
 					this.boosterNumber = data.boosterNumber;
 					this.pickNumber = data.pickNumber;
 					this.booster = [];
