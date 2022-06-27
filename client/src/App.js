@@ -1185,13 +1185,13 @@ export default {
 						}
 					);
 					this.draftingState = DraftState.Waiting;
+					// Removes picked & burned cards for animation
+					this.booster = this.booster.filter(
+						(c) => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
+					);
 				}
 				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
 				else this.addToDeck(this.selectedCards, options);
-				// Removes picked & burned cards for animation
-				this.booster = this.booster.filter(
-					(c) => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
-				);
 			});
 			this.pickInFlight = true;
 		},
