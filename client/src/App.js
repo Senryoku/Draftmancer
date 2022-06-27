@@ -2575,10 +2575,11 @@ export default {
 			return "Draft";
 		},
 		cardsToPick() {
-			if (this.rochesterDraftState) return 1;
+			if (this.rochesterDraftState || !this.booster) return 1;
 			return Math.min(this.pickedCardsPerRound, this.booster.length);
 		},
 		cardsToBurnThisRound() {
+			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		winstonCanSkipPile() {
