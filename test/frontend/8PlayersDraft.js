@@ -84,15 +84,6 @@ async function closeBrowsers() {
 	}
 }
 
-before(async function () {
-	this.timeout(100000);
-	await startBrowsers();
-});
-
-after(async function () {
-	await closeBrowsers();
-});
-
 beforeEach(function (done) {
 	disableLogs();
 	done();
@@ -119,6 +110,10 @@ async function pickCard(page) {
 
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(100000);
+	it("Starts Browsers", async function () {
+		await startBrowsers();
+	});
+
 	it("Owner joins", async function () {
 		await pages[0].goto(`http://localhost:${process.env.PORT}`);
 	});
@@ -178,5 +173,9 @@ describe("Front End - 8 Players Draft", function () {
 				done[i] = await promises[i];
 			}
 		}
+	});
+
+	it("Close Browsers", async function () {
+		await closeBrowsers();
 	});
 });
