@@ -1547,7 +1547,10 @@ export class Session implements IIndexable {
 				// Restart a pick chain if necessary
 				if (s.players[nextUserID].isBotWaiting) {
 					s.players[nextUserID].isBotWaiting = false;
-					this.doBotPick(s.players[nextUserID].botInstance);
+					this.doBotPick(s.players[nextUserID].botInstance).catch((error) => {
+						console.error(`Session.passBooster (nextUserID: ${nextUserID}): doBotPick errored:`);
+						console.error(error);
+					});
 				}
 			} else {
 				this.sendDraftState(nextUserID);
@@ -1560,8 +1563,14 @@ export class Session implements IIndexable {
 
 			if (s.players[userID].isBot || this.isDisconnected(userID)) {
 				// Chain calls
-				if (s.players[userID].boosters.length === 0) s.players[userID].isBotWaiting = true;
-				else this.doBotPick(s.players[userID].botInstance);
+				if (s.players[userID].boosters.length === 0) {
+					s.players[userID].isBotWaiting = true;
+				} else {
+					this.doBotPick(s.players[userID].botInstance).catch((error) => {
+						console.error(`Session.passBooster (userID: ${userID}): doBotPick errored:`);
+						console.error(error);
+					});
+				}
 			} else {
 				this.sendDraftState(userID);
 				if (s.players[userID].boosters.length > 0) {
@@ -1661,10 +1670,18 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	async doBotPick(instance: IBot) {
+	async doBotPick(instance: IBot): Promise<void> {
 		const s = this.draftState as DraftState;
 
 		assert(s.players[instance.id].boosters.length > 0, "Call to doBotPick with no boosters.");
+
+		const shouldStop = () => {
+			// Draft may have been manually terminated by the owner.
+			if (!s?.players) return true;
+			// Player may have reconnected
+			if (!s.players[instance.id].isBot && !this.isDisconnected(instance.id)) return true;
+			return false;
+		};
 
 		// Choose cards
 		const pickedIndices = [];
@@ -1690,9 +1707,10 @@ export class Session implements IIndexable {
 						pickNumber,
 						numPicks
 					);
+					if (shouldStop()) return;
 					const originalIdx = booster.indexOf(boosterCopy[pickedIdx]);
 					// Original booster was modified, most probable is that a player reconnected
-					if (originalIdx === -1) return [];
+					if (originalIdx === -1) return;
 					pickedIndices.push(originalIdx);
 					boosterCopy.splice(pickedIdx, 1);
 				}
@@ -1704,22 +1722,26 @@ export class Session implements IIndexable {
 						pickNumber,
 						numPicks
 					);
+					if (shouldStop()) return;
 					const originalIdx = booster.indexOf(boosterCopy[burnedIdx]);
-					if (originalIdx === -1) return [];
+					if (originalIdx === -1) return;
 					burnedIndices.push(originalIdx);
 					boosterCopy.splice(burnedIdx, 1);
 				}
 			}
 		}
 
-		// Draft may have been manually terminated by the owner.
-		if (!s?.players) return [];
+		if (shouldStop()) return;
 
 		const booster = s.players[instance.id].boosters.splice(0, 1)[0];
 		++s.players[instance.id].pickNumber;
 
 		const pickedCards = pickedIndices.map((idx) => booster[idx]);
-		if (pickedCards.some((c) => !c)) return []; // Should already be handled
+		if (pickedCards.some((c) => !c)) return; // Should already be handled
+
+		// We're actually picking on behalf of a disconnected player
+		if (!s.players[instance.id].isBot && this.isDisconnected(instance.id))
+			this.disconnectedUsers[instance.id].pickedCards.push(...pickedCards);
 
 		const pickData = {
 			pick: pickedIndices,
@@ -1727,6 +1749,7 @@ export class Session implements IIndexable {
 			booster: booster.map((c) => c.id),
 		};
 		this.draftLog?.users[instance.id].picks.push(pickData);
+
 		if (this.shouldSendLiveUpdates())
 			Connections[this.owner]?.socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
 
@@ -1735,8 +1758,6 @@ export class Session implements IIndexable {
 		for (let idx of cardsToRemove) booster.splice(idx, 1);
 
 		this.passBooster(booster, instance.id);
-
-		return pickedCards;
 	}
 
 	sendDraftState(userID: UserID) {
@@ -1776,7 +1797,10 @@ export class Session implements IIndexable {
 							pickNumber: localData.pickNumber,
 							scores: value,
 						});
-						return;
+					})
+					.catch((error) => {
+						console.error("Error in bot recommendation promise:");
+						console.error(error);
 					});
 			})();
 		}
@@ -1797,8 +1821,6 @@ export class Session implements IIndexable {
 		const boosters = s.boosters.splice(0, totalVirtualPlayers);
 		s.numPicks = boosters[0].length;
 
-		let botPromises: Promise<Card[] | void>[] = []; // Keep track of bot picks to be able to advance the draft state if they finish after the human players (very possible at least during tests and as doBotPick calls may rely on an external API)
-
 		const staggerDelay = 200; // Will delay successive calls to the mtgdraftbots API
 		let inFlightBots = 0;
 		const delayRequest = (botType: string) => {
@@ -1816,17 +1838,19 @@ export class Session implements IIndexable {
 			p.boosters.push(boosters[boosterIndex]);
 			if (p.isBot) {
 				const botInstance = p.botInstance as IBot;
-				botPromises.push(delayRequest(botInstance.type).then(() => this.doBotPick(botInstance)));
+				delayRequest(botInstance.type)
+					.then(() => this.doBotPick(botInstance))
+					.catch((error) => {
+						console.error(`Error in initial doBotPick promise (Bot ID: ${userID}):`);
+						console.error(error);
+					});
 			} else {
 				p.pickNumber = 0;
 				if (userID in this.disconnectedUsers) {
-					assert(p.botInstance);
-					botPromises.push(
-						this.doBotPick(p.botInstance as IBot).then((pickedCards) => {
-							if (this.disconnectedUsers[userID])
-								this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
-						})
-					);
+					this.doBotPick(p.botInstance as IBot).catch((error) => {
+						console.error(`Error in doBotPick promise for disconnected player ${userID}:`);
+						console.error(error);
+					});
 				} else {
 					this.sendDraftState(userID);
 					this.requestBotRecommendation(userID);
@@ -2228,14 +2252,14 @@ export class Session implements IIndexable {
 	async replaceDisconnectedPlayers() {
 		if (!this.drafting || !(this.draftState instanceof DraftState)) return;
 
-		console.warn("Replacing disconnected players with bots!");
+		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
 		for (let uid in this.disconnectedUsers) {
-			// Immediately pick cards
-			while (this.draftState.players[uid].boosters.length > 0) {
-				const pickedCards = await this.doBotPick(this.draftState.players[uid].botInstance);
-				this.disconnectedUsers[uid].pickedCards.push(...pickedCards);
-			}
+			// Start the pick chain for disconnected players.
+			this.doBotPick(this.draftState.players[uid].botInstance).catch((error) => {
+				console.error(`Error in initial call to doBotPack for disconnected player ${uid}:`);
+				console.error(error);
+			});
 		}
 
 		const virtualPlayers = this.getSortedVirtualPlayerData();
