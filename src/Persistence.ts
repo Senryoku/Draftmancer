@@ -166,6 +166,7 @@ export function getPoDSession(s: Session) {
 					let podBot = {};
 					copyProps(s.draftState.players[userID].botInstance, podBot);
 					PoDSession.draftState.players[userID].botInstance = podBot;
+					PoDSession.draftState.players[userID].countdownInterval = null;
 				}
 			}
 		}
