@@ -181,8 +181,8 @@ export default {
 }
 
 .picked {
-	filter: brightness(0.4);
-	transform: scale(0.8);
+	animation: card-pick 4s ease-in-out;
+	animation-fill-mode: forwards;
 }
 
 .turnover-enter-active,
@@ -211,6 +211,52 @@ export default {
 
 .turnover-leave-to {
 	transform: perspective(1000px) rotateY(90deg);
+}
+
+@keyframes card-pick {
+	0% {
+		z-index: 100;
+	}
+	2% {
+		box-shadow: 0 0 30px 24px rgba(255, 255, 255, 1);
+		transform: scale(1.4);
+		z-index: 100;
+	}
+	3% {
+		box-shadow: 0 0 20px 12px rgba(255, 255, 255, 1);
+		transform: scale(1.2);
+		z-index: 100;
+	}
+	10% {
+		box-shadow: 0 0 20px 12px rgba(255, 255, 255, 1);
+		transform: scale(1.2);
+		z-index: 100;
+	}
+	30% {
+		box-shadow: 0 0 28px 14px rgba(255, 255, 255, 1);
+		transform: scale(1.2);
+		z-index: 100;
+	}
+	50% {
+		box-shadow: 0 0 20px 12px rgba(255, 255, 255, 1);
+		transform: scale(1.2);
+		z-index: 100;
+		filter: brightness(1);
+	}
+	60% {
+		box-shadow: 0 0 12px 6px rgba(255, 255, 255, 1);
+		transform: scale(0.8);
+		filter: brightness(0.4);
+	}
+	90% {
+		box-shadow: 0 0 12px 6px rgba(255, 255, 255, 1);
+		transform: scale(0.8);
+		filter: brightness(0.4);
+	}
+	100% {
+		transform: scale(0.8);
+		filter: brightness(0.4);
+	}
 }
 </style>
 
