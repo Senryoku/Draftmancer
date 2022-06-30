@@ -1506,7 +1506,13 @@ export default {
 			const card = this.minesweeperDraftState.grid[row][col].card;
 			this.socket.emit("minesweeperDraftPick", row, col, (response) => {
 				if (response?.error) {
-					Alert.fire(response.error);
+					// These errors are not always prevented by the front-end because of latency, rather than adding a waiting state or something similar between
+					// the pick request and the server response, we'll simply ignore them as they're not fatal anyway.
+					if (response.error.title === "Invalid Coordinates" || response.error.title === "Not your turn.") {
+						console.warn(response.error);
+					} else {
+						Alert.fire(response.error);
+					}
 				} else {
 					this.addToDeck(card);
 				}
