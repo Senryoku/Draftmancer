@@ -1736,6 +1736,18 @@
         "rareCount": 7,
         "uncommonCount": 4
     },
+    "hbg": {
+        "code": "hbg",
+        "fullName": "Alchemy Horizons: Baldur's Gate",
+        "cardCount": 272,
+        "isPrimary": false,
+        "block": "Alchemy 2022",
+        "icon": "img/sets/hbg.svg",
+        "commonCount": 110,
+        "mythicCount": 18,
+        "rareCount": 64,
+        "uncommonCount": 80
+    },
     "hho": {
         "code": "hho",
         "fullName": "Happy Holidays",
