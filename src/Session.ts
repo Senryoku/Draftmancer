@@ -1547,7 +1547,7 @@ export class Session implements IIndexable {
 				// Restart a pick chain if necessary
 				if (s.players[nextUserID].isBotWaiting) {
 					s.players[nextUserID].isBotWaiting = false;
-					this.doBotPick(s.players[nextUserID].botInstance).catch((error) => {
+					this.doBotPick(nextUserID).catch((error) => {
 						console.error(`Session.passBooster (nextUserID: ${nextUserID}): doBotPick errored:`);
 						console.error(error);
 					});
@@ -1566,7 +1566,7 @@ export class Session implements IIndexable {
 				if (s.players[userID].boosters.length === 0) {
 					s.players[userID].isBotWaiting = true;
 				} else {
-					this.doBotPick(s.players[userID].botInstance).catch((error) => {
+					this.doBotPick(userID).catch((error) => {
 						console.error(`Session.passBooster (userID: ${userID}): doBotPick errored:`);
 						console.error(error);
 					});
@@ -1670,16 +1670,16 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	async doBotPick(instance: IBot): Promise<void> {
+	async doBotPick(userID: UserID): Promise<void> {
 		const s = this.draftState as DraftState;
 
-		assert(s.players[instance.id].boosters.length > 0, "Call to doBotPick with no boosters.");
+		assert(s.players[userID].boosters.length > 0, "Call to doBotPick with no boosters.");
 
 		const shouldStop = () => {
 			// Draft may have been manually terminated by the owner.
-			if (!s?.players) return true;
+			if (!(this.draftState as DraftState)?.players) return true;
 			// Player may have reconnected
-			if (!s.players[instance.id].isBot && !this.isDisconnected(instance.id)) return true;
+			if (!(this.draftState as DraftState).players[userID].isBot && !this.isDisconnected(userID)) return true;
 			return false;
 		};
 
@@ -1688,10 +1688,10 @@ export class Session implements IIndexable {
 		const burnedIndices = [];
 		{
 			const boosterNumber = s.boosterNumber;
-			const pickNumber = s.players[instance.id].pickNumber;
+			const pickNumber = s.players[userID].pickNumber;
 			const numPicks = s.numPicks;
 
-			const booster = s.players[instance.id].boosters[0];
+			const booster = s.players[userID].boosters[0];
 			// Avoid using bots if it is not necessary: We're picking the whole pack.
 			if (this.pickedCardsPerRound >= booster.length) {
 				for (let i = 0; i < booster.length; i++) {
@@ -1700,7 +1700,7 @@ export class Session implements IIndexable {
 			} else {
 				const boosterCopy = [...booster]; // Working copy for multiple picks
 				for (let i = 0; i < this.pickedCardsPerRound && boosterCopy.length > 0; ++i) {
-					const pickedIdx = await instance.pick(
+					const pickedIdx = await s.players[userID].botInstance.pick(
 						boosterCopy,
 						boosterNumber,
 						this.boostersPerPlayer,
@@ -1715,7 +1715,7 @@ export class Session implements IIndexable {
 					boosterCopy.splice(pickedIdx, 1);
 				}
 				for (let i = 0; i < this.burnedCardsPerRound && boosterCopy.length > 0; ++i) {
-					const burnedIdx = await instance.burn(
+					const burnedIdx = await s.players[userID].botInstance.burn(
 						boosterCopy,
 						boosterNumber,
 						this.boostersPerPlayer,
@@ -1733,31 +1733,31 @@ export class Session implements IIndexable {
 
 		if (shouldStop()) return;
 
-		const booster = s.players[instance.id].boosters.splice(0, 1)[0];
-		++s.players[instance.id].pickNumber;
+		const booster = s.players[userID].boosters.splice(0, 1)[0];
+		++s.players[userID].pickNumber;
 
 		const pickedCards = pickedIndices.map((idx) => booster[idx]);
 		if (pickedCards.some((c) => !c)) return; // Should already be handled
 
 		// We're actually picking on behalf of a disconnected player
-		if (!s.players[instance.id].isBot && this.isDisconnected(instance.id))
-			this.disconnectedUsers[instance.id].pickedCards.push(...pickedCards);
+		if (!s.players[userID].isBot && this.isDisconnected(userID))
+			this.disconnectedUsers[userID].pickedCards.push(...pickedCards);
 
 		const pickData = {
 			pick: pickedIndices,
 			burn: burnedIndices,
 			booster: booster.map((c) => c.id),
 		};
-		this.draftLog?.users[instance.id].picks.push(pickData);
+		this.draftLog?.users[userID].picks.push(pickData);
 
 		if (this.shouldSendLiveUpdates())
-			Connections[this.owner]?.socket.emit("draftLogLive", { userID: instance.id, pick: pickData });
+			Connections[this.owner]?.socket.emit("draftLogLive", { userID: userID, pick: pickData });
 
 		let cardsToRemove = pickedIndices.concat(burnedIndices);
 		cardsToRemove.sort((a, b) => b - a); // Remove last index first to avoid shifting indices
 		for (let idx of cardsToRemove) booster.splice(idx, 1);
 
-		this.passBooster(booster, instance.id);
+		this.passBooster(booster, userID);
 	}
 
 	sendDraftState(userID: UserID) {
@@ -1839,7 +1839,7 @@ export class Session implements IIndexable {
 			if (p.isBot) {
 				const botInstance = p.botInstance as IBot;
 				delayRequest(botInstance.type)
-					.then(() => this.doBotPick(botInstance))
+					.then(() => this.doBotPick(userID))
 					.catch((error) => {
 						console.error(`Error in initial doBotPick promise (Bot ID: ${userID}):`);
 						console.error(error);
@@ -1847,7 +1847,7 @@ export class Session implements IIndexable {
 			} else {
 				p.pickNumber = 0;
 				if (userID in this.disconnectedUsers) {
-					this.doBotPick(p.botInstance as IBot).catch((error) => {
+					this.doBotPick(userID).catch((error) => {
 						console.error(`Error in doBotPick promise for disconnected player ${userID}:`);
 						console.error(error);
 					});
@@ -2256,8 +2256,8 @@ export class Session implements IIndexable {
 
 		for (let uid in this.disconnectedUsers) {
 			// Start the pick chain for disconnected players.
-			this.doBotPick(this.draftState.players[uid].botInstance).catch((error) => {
-				console.error(`Error in initial call to doBotPack for disconnected player ${uid}:`);
+			this.doBotPick(uid).catch((error) => {
+				console.error(`Error in initial call to doBotPick for disconnected player ${uid}:`);
 				console.error(error);
 			});
 		}
