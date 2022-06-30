@@ -1423,8 +1423,8 @@ export default {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
 			let gridCount = 4;
-			let gridWidth = 9;
-			let gridHeight = 10;
+			let gridWidth = 10;
+			let gridHeight = 9;
 			let picksPerPlayerPerGrid = 9;
 			let revealBorders = true;
 
