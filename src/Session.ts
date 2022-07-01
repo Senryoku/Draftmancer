@@ -1697,8 +1697,7 @@ export class Session implements IIndexable {
 			const pickNumber = s.players[userID].pickNumber;
 			const numPicks = s.numPicks;
 
-			const picksThisRound =
-				this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound;
+			const picksThisRound = this.doubleMastersMode && pickNumber > 0 ? 1 : this.pickedCardsPerRound;
 
 			const booster = s.players[userID].boosters[0];
 			// Avoid using bots if it is not necessary: We're picking the whole pack.
@@ -1845,16 +1844,15 @@ export class Session implements IIndexable {
 			assert(p.boosters.length === 0, `distributeBoosters: ${userID} boosters.length ${p.boosters.length}`);
 			const boosterIndex = negMod(index, totalVirtualPlayers);
 			p.boosters.push(boosters[boosterIndex]);
+			p.pickNumber = 0;
 			if (p.isBot) {
-				const botInstance = p.botInstance as IBot;
-				delayRequest(botInstance.type)
+				delayRequest((p.botInstance as IBot).type)
 					.then(() => this.doBotPick(userID))
 					.catch((error) => {
 						console.error(`Error in initial doBotPick promise (Bot ID: ${userID}):`);
 						console.error(error);
 					});
 			} else {
-				p.pickNumber = 0;
 				if (userID in this.disconnectedUsers) {
 					this.doBotPick(userID).catch((error) => {
 						console.error(`Error in doBotPick promise for disconnected player ${userID}:`);
