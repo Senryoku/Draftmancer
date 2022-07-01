@@ -928,6 +928,19 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
+	setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
+		if (!SessionsSettingsProps.doubleMastersMode(doubleMastersMode)) return;
+		if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
+
+		Sessions[sessionID].doubleMastersMode = doubleMastersMode;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					doubleMastersMode: Sessions[sessionID].doubleMastersMode,
+				});
+		}
+		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+	},
 	setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound: number) {
 		if (!SessionsSettingsProps.pickedCardsPerRound(pickedCardsPerRound)) return;
 		if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;

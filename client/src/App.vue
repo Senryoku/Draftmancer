@@ -2248,7 +2248,7 @@
 						v-tooltip.right="{
 							classes: 'option-tooltip',
 							content:
-								'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p>',
+								'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p><p>First Pick Only: The custom value will only be used for the first pick of each booster, then revert to 1. For example, you should check this with a value of 2 for Double Masters sets.</p>',
 						}"
 					>
 						<label for="picked-cards-per-round">Picked cards per booster</label>
@@ -2262,6 +2262,8 @@
 								v-model.number="pickedCardsPerRound"
 								@change="if (pickedCardsPerRound < 1) pickedCardsPerRound = 1;"
 							/>
+							<label for="doubleMastersMode">First Pick Only</label
+							><input type="checkbox" id="doubleMastersMode" v-model="doubleMastersMode" />
 						</div>
 					</div>
 					<div

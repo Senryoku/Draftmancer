@@ -47,7 +47,6 @@ import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
-import { uint53Full } from "random-js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -110,6 +109,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
 	},
 	customBoosters: Array.isArray,
+	doubleMastersMode: isBoolean,
 	pickedCardsPerRound(val: any) {
 		if (!Number.isInteger(val)) return false;
 		return val >= 1;
@@ -354,6 +354,7 @@ export class Session implements IIndexable {
 	};
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
+	doubleMastersMode: boolean = false; // Apply the pickedCardsPerRound rule only for the first pick then revert to one.
 	pickedCardsPerRound: number = 1;
 	burnedCardsPerRound: number = 0;
 	discardRemainingCardsAt: number = 0;
@@ -1607,7 +1608,12 @@ export class Session implements IIndexable {
 
 		let booster = s.players[userID].boosters[0];
 
-		if (!pickedCards || pickedCards.length !== Math.min(this.pickedCardsPerRound, booster.length))
+		const picksThisRound = Math.min(
+			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
+			booster.length
+		);
+
+		if (!pickedCards || pickedCards.length !== picksThisRound)
 			return reportError(
 				`Invalid picked cards (pickedCards: ${pickedCards}, booster length: ${booster.length}).`
 			);
@@ -1691,15 +1697,18 @@ export class Session implements IIndexable {
 			const pickNumber = s.players[userID].pickNumber;
 			const numPicks = s.numPicks;
 
+			const picksThisRound =
+				this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound;
+
 			const booster = s.players[userID].boosters[0];
 			// Avoid using bots if it is not necessary: We're picking the whole pack.
-			if (this.pickedCardsPerRound >= booster.length) {
+			if (picksThisRound >= booster.length) {
 				for (let i = 0; i < booster.length; i++) {
 					pickedIndices.push(i);
 				}
 			} else {
 				const boosterCopy = [...booster]; // Working copy for multiple picks
-				for (let i = 0; i < this.pickedCardsPerRound && boosterCopy.length > 0; ++i) {
+				for (let i = 0; i < picksThisRound && boosterCopy.length > 0; ++i) {
 					const pickedIdx = await s.players[userID].botInstance.pick(
 						boosterCopy,
 						boosterNumber,

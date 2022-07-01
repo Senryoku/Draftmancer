@@ -187,6 +187,7 @@ export default {
 			drafting: false,
 			useCustomCardList: false,
 			customCardList: {},
+			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
 			discardRemainingCardsAt: 0,
@@ -2582,7 +2583,12 @@ export default {
 		},
 		cardsToPick() {
 			if (this.rochesterDraftState || !this.booster) return 1;
-			return Math.min(this.pickedCardsPerRound, this.booster.length);
+			let picksThisRound = this.pickedCardsPerRound;
+			// Special case for doubleMastersMode. The number of picks could (should?) be send as part of the draftState rather
+			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
+			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
+				picksThisRound = 1;
+			return Math.min(picksThisRound, this.booster.length);
 		},
 		cardsToBurnThisRound() {
 			if (this.rochesterDraftState || !this.booster) return 0;
@@ -2924,6 +2930,10 @@ export default {
 		useCustomCardList() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
+		},
+		doubleMastersMode() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setDoubleMastersMode", this.doubleMastersMode);
 		},
 		pickedCardsPerRound() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
