@@ -147,7 +147,7 @@ export class DraftState extends IDraftState {
 	players: {
 		[userID: UserID]: {
 			isBot: boolean;
-			isBotWaiting: boolean; // Set to true if the bot depleted its booters and it waiting for the next one. Basically, isBotWaiting === false means a call to doBotPick is already scheduled.
+			botPickInFlight: boolean; // Set to true if a call to doBotPick is already scheduled.
 			botInstance: IBot; // If a human player, this will be used for pick recommendations.
 			boosters: Card[][];
 			pickNumber: 0;
@@ -186,7 +186,7 @@ export class DraftState extends IDraftState {
 
 			this.players[user.userID] = {
 				isBot: user.isBot,
-				isBotWaiting: true,
+				botPickInFlight: false,
 				botInstance: botInstance,
 				boosters: [],
 				pickNumber: 0,
@@ -1660,8 +1660,8 @@ export class Session implements IIndexable {
 	// Restart a pick chain if necessary
 	startBotPickChain(userID: UserID) {
 		const s = this.draftState as DraftState;
-		if (s && s.players[userID].isBotWaiting && s.players[userID].boosters.length > 0) {
-			s.players[userID].isBotWaiting = false;
+		if (s && !s.players[userID].botPickInFlight && s.players[userID].boosters.length > 0) {
+			s.players[userID].botPickInFlight = true;
 			this.doBotPick(userID).catch((error) => {
 				console.error(
 					`Session.startBotPickChain (sessionID: ${this.id}, nextUserID: ${userID}): doBotPick errored:`
@@ -1676,18 +1676,18 @@ export class Session implements IIndexable {
 	async doBotPick(userID: UserID): Promise<void> {
 		const s = this.draftState as DraftState;
 
-		assert(!s.players[userID].isBotWaiting, "Error: Call to doBotPick with isBotWaiting set to true.");
+		assert(s.players[userID].botPickInFlight, "Error: Call to doBotPick with botPickInFlight not set to true.");
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
 
 		const shouldStop = () => {
 			// Draft may have been manually terminated by the owner.
 			if (!(this.draftState as DraftState)?.players) {
-				s.players[userID].isBotWaiting = true;
+				s.players[userID].botPickInFlight = false;
 				return true;
 			}
 			// Player may have reconnected
 			if (!(this.draftState as DraftState).players[userID].isBot && !this.isDisconnected(userID)) {
-				s.players[userID].isBotWaiting = true;
+				s.players[userID].botPickInFlight = false;
 				return true;
 			}
 			return false;
@@ -1774,7 +1774,7 @@ export class Session implements IIndexable {
 				console.error(`Session.doBotPick (sessionID: ${this.id}, userID: ${userID}): doBotPick errored:`);
 				console.error(error);
 			});
-		} else s.players[userID].isBotWaiting = true;
+		} else s.players[userID].botPickInFlight = false;
 	}
 
 	sendDraftState(userID: UserID) {
