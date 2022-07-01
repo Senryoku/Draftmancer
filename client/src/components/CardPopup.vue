@@ -143,7 +143,7 @@ export default {
 			if (!this.cardCache[this.card?.id]?.all_parts) return r;
 
 			for (let card of this.cardCache[this.card.id].all_parts) {
-				if (card.id !== this.card.id && card.component !== "combo_piece") {
+				if (card.id !== this.card.id) {
 					this.requestData(card.id);
 					r.push(this.additionalData(card.id));
 				}
