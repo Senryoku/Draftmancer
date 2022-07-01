@@ -591,9 +591,10 @@ describe("Single Draft (Two Players)", function () {
 		it(`Draft should advance to the next pack after cardPerBooster - ${discardRemainingCardsAt} picks.`, function (done) {
 			let receivedBoosters = 0;
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].once("draftState", function (state) {
+				clients[c].on("draftState", function (state) {
 					const idx = c;
 					if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
+						clients[c].removeListener("draftState");
 						receivedBoosters += 1;
 						expect(state.booster.length).to.equal(cardsPerPack);
 						expect(state.boosterNumber).to.equal(1);
