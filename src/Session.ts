@@ -147,7 +147,7 @@ export class DraftState extends IDraftState {
 	players: {
 		[userID: UserID]: {
 			isBot: boolean;
-			isBotWaiting: boolean; // Set to true if the bot depleted its booters and it waiting for the next one.
+			isBotWaiting: boolean; // Set to true if the bot depleted its booters and it waiting for the next one. Basically, isBotWaiting === false means a call to doBotPick is already scheduled.
 			botInstance: IBot; // If a human player, this will be used for pick recommendations.
 			boosters: Card[][];
 			pickNumber: 0;
@@ -186,7 +186,7 @@ export class DraftState extends IDraftState {
 
 			this.players[user.userID] = {
 				isBot: user.isBot,
-				isBotWaiting: false,
+				isBotWaiting: true,
 				botInstance: botInstance,
 				boosters: [],
 				pickNumber: 0,
@@ -1522,7 +1522,7 @@ export class Session implements IIndexable {
 		}
 
 		this.boosters = [];
-		await this.distributeBoosters();
+		this.distributeBoosters();
 	}
 
 	// Pass a booster to the next player at the table
@@ -1545,38 +1545,13 @@ export class Session implements IIndexable {
 
 			// Synchronize concerned users
 			if (s.players[nextUserID].isBot || this.isDisconnected(nextUserID)) {
-				// Restart a pick chain if necessary
-				if (s.players[nextUserID].isBotWaiting) {
-					s.players[nextUserID].isBotWaiting = false;
-					this.doBotPick(nextUserID).catch((error) => {
-						console.error(`Session.passBooster (nextUserID: ${nextUserID}): doBotPick errored:`);
-						console.error(error);
-					});
-				}
+				this.startBotPickChain(nextUserID);
 			} else {
 				this.sendDraftState(nextUserID);
 				// This user was waiting for a booster
 				if (s.players[nextUserID].boosters.length === 1) {
 					this.startCountdown(nextUserID);
 					this.requestBotRecommendation(nextUserID);
-				}
-			}
-
-			if (s.players[userID].isBot || this.isDisconnected(userID)) {
-				// Chain calls
-				if (s.players[userID].boosters.length === 0) {
-					s.players[userID].isBotWaiting = true;
-				} else {
-					this.doBotPick(userID).catch((error) => {
-						console.error(`Session.passBooster (userID: ${userID}): doBotPick errored:`);
-						console.error(error);
-					});
-				}
-			} else {
-				this.sendDraftState(userID);
-				if (s.players[userID].boosters.length > 0) {
-					this.startCountdown(userID);
-					this.requestBotRecommendation(userID);
 				}
 			}
 		}
@@ -1673,19 +1648,48 @@ export class Session implements IIndexable {
 
 		this.passBooster(booster, userID);
 
+		this.sendDraftState(userID);
+		if (s.players[userID].boosters.length > 0) {
+			this.startCountdown(userID);
+			this.requestBotRecommendation(userID);
+		}
+
 		return new SocketAck();
 	}
 
+	// Restart a pick chain if necessary
+	startBotPickChain(userID: UserID) {
+		const s = this.draftState as DraftState;
+		if (s && s.players[userID].isBotWaiting && s.players[userID].boosters.length > 0) {
+			s.players[userID].isBotWaiting = false;
+			this.doBotPick(userID).catch((error) => {
+				console.error(
+					`Session.startBotPickChain (sessionID: ${this.id}, nextUserID: ${userID}): doBotPick errored:`
+				);
+				console.error(error);
+			});
+		} // else: This bot is already picking, do nothing.
+	}
+
+	// To ensure a single call to doBotPick is in flight at any time,
+	// doBotPick should always recursively call itself, or set isBotWaiting to true.
 	async doBotPick(userID: UserID): Promise<void> {
 		const s = this.draftState as DraftState;
 
-		assert(s.players[userID].boosters.length > 0, "Call to doBotPick with no boosters.");
+		assert(!s.players[userID].isBotWaiting, "Error: Call to doBotPick with isBotWaiting set to true.");
+		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
 
 		const shouldStop = () => {
 			// Draft may have been manually terminated by the owner.
-			if (!(this.draftState as DraftState)?.players) return true;
+			if (!(this.draftState as DraftState)?.players) {
+				s.players[userID].isBotWaiting = true;
+				return true;
+			}
 			// Player may have reconnected
-			if (!(this.draftState as DraftState).players[userID].isBot && !this.isDisconnected(userID)) return true;
+			if (!(this.draftState as DraftState).players[userID].isBot && !this.isDisconnected(userID)) {
+				s.players[userID].isBotWaiting = true;
+				return true;
+			}
 			return false;
 		};
 
@@ -1739,13 +1743,10 @@ export class Session implements IIndexable {
 			}
 		}
 
-		if (shouldStop()) return;
-
 		const booster = s.players[userID].boosters.splice(0, 1)[0];
 		++s.players[userID].pickNumber;
 
 		const pickedCards = pickedIndices.map((idx) => booster[idx]);
-		if (pickedCards.some((c) => !c)) return; // Should already be handled
 
 		// We're actually picking on behalf of a disconnected player
 		if (!s.players[userID].isBot && this.isDisconnected(userID))
@@ -1766,6 +1767,14 @@ export class Session implements IIndexable {
 		for (let idx of cardsToRemove) booster.splice(idx, 1);
 
 		this.passBooster(booster, userID);
+
+		// Chain calls as long as we have boosters left
+		if (s.players[userID].boosters.length > 0) {
+			this.doBotPick(userID).catch((error) => {
+				console.error(`Session.doBotPick (sessionID: ${this.id}, userID: ${userID}): doBotPick errored:`);
+				console.error(error);
+			});
+		} else s.players[userID].isBotWaiting = true;
 	}
 
 	sendDraftState(userID: UserID) {
@@ -1814,7 +1823,7 @@ export class Session implements IIndexable {
 		}
 	}
 
-	async distributeBoosters() {
+	distributeBoosters() {
 		if (this.draftState?.type !== "draft") return;
 		const s = this.draftState as DraftState;
 
@@ -1847,17 +1856,16 @@ export class Session implements IIndexable {
 			p.pickNumber = 0;
 			if (p.isBot) {
 				delayRequest((p.botInstance as IBot).type)
-					.then(() => this.doBotPick(userID))
+					.then(() => this.startBotPickChain(userID))
 					.catch((error) => {
-						console.error(`Error in initial doBotPick promise (Bot ID: ${userID}):`);
+						console.error(
+							`Session ${this.id}: Error in initial startBotPickChain call (Bot ID: ${userID}):`
+						);
 						console.error(error);
 					});
 			} else {
 				if (userID in this.disconnectedUsers) {
-					this.doBotPick(userID).catch((error) => {
-						console.error(`Error in doBotPick promise for disconnected player ${userID}:`);
-						console.error(error);
-					});
+					this.startBotPickChain(userID);
 				} else {
 					this.sendDraftState(userID);
 					this.requestBotRecommendation(userID);
@@ -2261,13 +2269,7 @@ export class Session implements IIndexable {
 
 		console.warn(`Session ${this.id}: Replacing disconnected players with bots!`);
 
-		for (let uid in this.disconnectedUsers) {
-			// Start the pick chain for disconnected players.
-			this.doBotPick(uid).catch((error) => {
-				console.error(`Error in initial call to doBotPick for disconnected player ${uid}:`);
-				console.error(error);
-			});
-		}
+		for (let uid in this.disconnectedUsers) this.startBotPickChain(uid);
 
 		const virtualPlayers = this.getSortedVirtualPlayerData();
 		this.forUsers((uid) =>
