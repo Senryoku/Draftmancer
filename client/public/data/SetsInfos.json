@@ -1739,14 +1739,14 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 272,
+        "cardCount": 375,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
-        "commonCount": 110,
-        "mythicCount": 18,
-        "rareCount": 64,
-        "uncommonCount": 80
+        "commonCount": 105,
+        "mythicCount": 36,
+        "rareCount": 101,
+        "uncommonCount": 133
     },
     "hho": {
         "code": "hho",
