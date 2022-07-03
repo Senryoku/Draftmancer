@@ -829,7 +829,7 @@
 					</div>
 				</div>
 				<div
-					v-if="draftingState === DraftState.Waiting || draftingState === DraftState.Picking"
+					v-if="(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster"
 					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 					class="container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
