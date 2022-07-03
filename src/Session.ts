@@ -1680,13 +1680,16 @@ export class Session implements IIndexable {
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
 
 		const shouldStop = () => {
+			const state = this.draftState as DraftState;
 			// Draft may have been manually terminated by the owner.
-			if (!(this.draftState as DraftState)?.players) {
+			if (!state?.players) {
 				s.players[userID].botPickInFlight = false;
 				return true;
 			}
+			// An attempt at avoiding promises outliving the session (this all players disconnect for example).
+			if (!state?.players[userID].botPickInFlight) return true;
 			// Player may have reconnected
-			if (!(this.draftState as DraftState).players[userID].isBot && !this.isDisconnected(userID)) {
+			if (!state?.players[userID].isBot && !this.isDisconnected(userID)) {
 				s.players[userID].botPickInFlight = false;
 				return true;
 			}
@@ -1905,7 +1908,12 @@ export class Session implements IIndexable {
 			})
 		);
 
-		if (!this.draftPaused && this.draftState instanceof DraftState) this.resumeCountdowns();
+		if (this.draftState instanceof DraftState) {
+			if (!this.draftPaused) this.resumeCountdowns();
+			// Restart bot pick chains
+			for (let uid in this.draftState.players)
+				if (this.draftState.players[uid].isBot) this.startBotPickChain(uid);
+		}
 
 		this.forUsers((u) =>
 			Connections[u]?.socket.emit("resumeOnReconnection", {
