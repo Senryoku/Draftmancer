@@ -1743,10 +1743,10 @@
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
-        "commonCount": 105,
+        "commonCount": 102,
         "mythicCount": 36,
-        "rareCount": 101,
-        "uncommonCount": 133
+        "rareCount": 102,
+        "uncommonCount": 135
     },
     "hho": {
         "code": "hho",
