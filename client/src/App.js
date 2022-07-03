@@ -751,11 +751,10 @@ export default {
 
 			this.socket.on("rejoinDraft", (data) => {
 				this.drafting = true;
-
 				this.clearState();
 				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
-				if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of data.pickedCards) this.addToDeck(c);
@@ -781,6 +780,9 @@ export default {
 						showConfirmButton: false,
 						timer: 1500,
 					});
+
+					this.$refs.deckDisplay?.sync();
+					this.$refs.sideboardDisplay?.sync();
 				});
 			});
 
