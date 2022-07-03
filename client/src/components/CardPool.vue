@@ -169,7 +169,7 @@ export default {
 		group: { type: String },
 		filter: { type: String },
 	},
-	data: function() {
+	data() {
 		return {
 			options: {
 				layout: "default",
@@ -181,13 +181,13 @@ export default {
 			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */,
 		};
 	},
-	mounted: function() {
+	mounted() {
 		let options = localStorage.getItem("card-pool-options");
 		if (options) this.options = JSON.parse(options);
 		this.sync();
 	},
 	methods: {
-		reset: function() {
+		reset() {
 			const colCount = Math.max(1, this.options.columnCount);
 			this.rows = [[]];
 			for (let i = 0; i < colCount; ++i) this.rows[0].push([]);
@@ -196,26 +196,26 @@ export default {
 				for (let i = 0; i < colCount; ++i) this.rows[1].push([]);
 			}
 		},
-		sync: function() {
+		sync() {
 			this.reset();
 			for (let card of this.cards) this.addCard(card);
 		},
-		filterBasics: function() {
+		filterBasics() {
 			// Removes basics without affecting other cards ordering.
 			for (let r of this.rows)
 				for (let i = 0; i < r.length; ++i)
 					r.splice(
 						i,
 						1,
-						r[i].filter(c => c.type !== "Basic Land")
+						r[i].filter((c) => c.type !== "Basic Land")
 					);
 		},
-		selectRow: function(card) {
+		selectRow(card) {
 			return this.options.layout === "TwoRows" && !card.type.includes("Creature") && this.options.sort !== "type"
 				? this.rows[1]
 				: this.rows[0];
 		},
-		defaultColumnIdx: function(card) {
+		defaultColumnIdx(card) {
 			let columnIndex = card.cmc;
 			switch (this.options.sort) {
 				case "color":
@@ -230,21 +230,21 @@ export default {
 			}
 			return Math.min(columnIndex, this.rows[0].length - 1);
 		},
-		addCard: function(card, event) {
+		addCard(card, event) {
 			if (event) {
 				this.insertCard(this.getColumnFromCoordinates(event), card);
 			} else {
 				let columnIndex = this.defaultColumnIdx(card);
 				const row = this.selectRow(card);
-				let columnWithDuplicate = row.findIndex(column => column.findIndex(c => c.name === card.name) > -1);
+				let columnWithDuplicate = row.findIndex((column) => column.findIndex((c) => c.name === card.name) > -1);
 				if (columnWithDuplicate > -1) {
 					columnIndex = columnWithDuplicate;
 				}
 				this.insertCard(row[columnIndex], card);
 			}
 		},
-		insertCard: function(column, card) {
-			let duplicateIndex = column.findIndex(c => c.name === card.name);
+		insertCard(column, card) {
+			let duplicateIndex = column.findIndex((c) => c.name === card.name);
 			if (duplicateIndex != -1) {
 				column.splice(duplicateIndex, 0, card);
 			} else if (CardOrder.isOrdered(column, CardOrder.Comparators.arena)) {
@@ -254,7 +254,7 @@ export default {
 				column.push(card);
 			}
 		},
-		sort: function(comparator, columnSorter = CardOrder.orderByArenaInPlace) {
+		sort(comparator, columnSorter = CardOrder.orderByArenaInPlace) {
 			this.reset();
 			if (this.cards.length === 0) return;
 			for (let card of this.cards) {
@@ -264,27 +264,27 @@ export default {
 			}
 			for (let row of this.rows) for (let col of row) columnSorter(col);
 		},
-		sortByCMC: function() {
+		sortByCMC() {
 			this.options.sort = "cmc";
 			this.sort(CardOrder.Comparators.cmc);
 			this.saveOptions();
 		},
-		sortByColor: function() {
+		sortByColor() {
 			this.options.sort = "color";
 			this.sort(CardOrder.Comparators.color);
 			this.saveOptions();
 		},
-		sortByRarity: function() {
+		sortByRarity() {
 			this.options.sort = "rarity";
 			this.sort(CardOrder.Comparators.rarity, CardOrder.orderByColorInPlace);
 			this.saveOptions();
 		},
-		sortByType: function() {
+		sortByType() {
 			this.options.sort = "type";
 			this.sort(CardOrder.Comparators.type);
 			this.saveOptions();
 		},
-		remCard: function(card) {
+		remCard(card) {
 			for (let row of this.rows)
 				for (let col of row) {
 					let idx = col.indexOf(card);
@@ -294,32 +294,32 @@ export default {
 					}
 				}
 		},
-		change: function(e) {
+		change(e) {
 			// Sync. source array when adding/removing cards by drag & drop
 			if (e.removed)
 				this.cards.splice(
-					this.cards.findIndex(c => c === e.removed.element),
+					this.cards.findIndex((c) => c === e.removed.element),
 					1
 				);
 			if (e.added) this.cards.push(e.added.element);
 		},
-		addColumn: function() {
+		addColumn() {
 			for (let row of this.rows) {
 				row.push([]);
 				Vue.set(
 					row,
 					row.length - 1,
-					row[row.length - 2].filter(c => c.cmc > row.length - 2)
+					row[row.length - 2].filter((c) => c.cmc > row.length - 2)
 				);
 				Vue.set(
 					row,
 					row.length - 2,
-					row[row.length - 2].filter(c => c.cmc <= row.length - 2)
+					row[row.length - 2].filter((c) => c.cmc <= row.length - 2)
 				);
 			}
 			this.saveOptions();
 		},
-		remColumn: function(index) {
+		remColumn(index) {
 			if (this.rows[0].length < 2) return;
 			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
 			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
@@ -330,7 +330,7 @@ export default {
 			}
 			this.saveOptions();
 		},
-		getColumnFromCoordinates: function(event) {
+		getColumnFromCoordinates(event) {
 			// Search for the column at the supplied coordinates, creating a new one if necessary.
 			const x = event.clientX;
 			const y = event.clientY;
@@ -352,7 +352,7 @@ export default {
 				return this.rows[rowIdx][colIdx];
 			}
 		},
-		dropCard: function(event) {
+		dropCard(event) {
 			// Triggered when the last valid position of a card after a drop event is within the dummy draggable element surrounding the columns.
 			// This is either:
 			//   An invalid drop (outside of the card pool bounds): Revert the operation.
@@ -378,7 +378,7 @@ export default {
 				this.tempColumn = [];
 			}
 		},
-		toggleTwoRowsLayout: function() {
+		toggleTwoRowsLayout() {
 			if (this.options.layout === "TwoRows") {
 				for (let i = 0; i < this.rows[0].length; ++i) {
 					this.rows[0][i] = this.rows[0][i].concat(this.rows[1][i]);
@@ -397,11 +397,11 @@ export default {
 			}
 			this.saveOptions();
 		},
-		toggleDisplayHeaders: function() {
+		toggleDisplayHeaders() {
 			this.options.displayHeaders = !this.options.displayHeaders;
 			this.saveOptions();
 		},
-		saveOptions: function() {
+		saveOptions() {
 			// Trying to circumvent a rare issue.
 			const columnCount =
 				this.rows && this.rows[0] && this.rows[0].length
@@ -414,17 +414,17 @@ export default {
 		},
 	},
 	computed: {
-		columnNames: function() {
+		columnNames() {
 			let r = [];
 			switch (this.options.sort) {
 				default:
 				case "cmc":
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						let cards = this.rows.map(row => row[i]).flat();
+						let cards = this.rows.map((row) => row[i]).flat();
 						if (cards.length === 0 && i <= 20) {
 							r.push(`<img class="mana-icon" src="img/mana/${i}.svg">`);
 						} else {
-							let v = [...new Set(cards.map(c => c.cmc))];
+							let v = [...new Set(cards.map((c) => c.cmc))];
 							if (v.length === 1) r.push(`<img class="mana-icon" src="img/mana/${v[0]}.svg">`);
 							else r.push("");
 						}
@@ -433,11 +433,11 @@ export default {
 				case "color": {
 					const defaultValues = "WUBRGCM";
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						const cards = this.rows.map(row => row[i]).flat();
+						const cards = this.rows.map((row) => row[i]).flat();
 						if (cards.length === 0 && i < defaultValues.length) {
 							r.push(`<img class="mana-icon" src="img/mana/${defaultValues[i]}.svg">`);
 						} else {
-							let v = [...new Set(cards.map(c => c.colors).flat())];
+							let v = [...new Set(cards.map((c) => c.colors).flat())];
 							let c = "M";
 							if (v.length === 1) c = v[0];
 							else if (v.length === 0) c = "C";
@@ -449,11 +449,11 @@ export default {
 				case "rarity": {
 					const defaultValues = ["Mythic", "Rare", "Uncommon", "Common"];
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						let cards = this.rows.map(row => row[i]).flat();
+						let cards = this.rows.map((row) => row[i]).flat();
 						if (cards.length === 0 && i < defaultValues.length) {
 							r.push(defaultValues[i]);
 						} else {
-							let v = [...new Set(cards.map(c => c.rarity))];
+							let v = [...new Set(cards.map((c) => c.rarity))];
 							if (v.length === 1) r.push(v[0]);
 							else r.push("");
 						}
@@ -472,15 +472,15 @@ export default {
 						"Basic Land",
 					];
 					for (let i = 0; i < this.rows[0].length; ++i) {
-						const cards = this.rows.map(row => row[i]).flat();
+						const cards = this.rows.map((row) => row[i]).flat();
 						if (cards.length === 0 && i < defaultValues.length) {
 							r.push(defaultValues[i]);
 						} else {
-							let v = [...new Set(cards.map(c => c.type))];
+							let v = [...new Set(cards.map((c) => c.type))];
 							if (v.length === 1) r.push(v[0].split(" ").pop());
 							else {
 								// Try with simpler types
-								v = [...new Set(v.map(t => t.split(" ").pop()))];
+								v = [...new Set(v.map((t) => t.split(" ").pop()))];
 								if (v.length === 1) r.push(v[0]);
 								else r.push("");
 							}
@@ -492,7 +492,7 @@ export default {
 			while (r.length < this.rows[0].length) r.push("");
 			return r;
 		},
-		cardsPerColumn: function() {
+		cardsPerColumn() {
 			let r = [];
 			for (let i = 0; i < this.rows[0].length; ++i) {
 				r.push(0);
