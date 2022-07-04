@@ -1032,6 +1032,7 @@ ul.player-list {
 	line-height: 28px;
 }
 
+.selected.foil .card-image, /* .foil .card-image has an 'overflow:hidden' preventing the box-shadow to show up. We'll apply it earlier in this case. */
 .selected .card-image .front-image,
 .selected .card-image .back-image,
 .selected .card-placeholder {
