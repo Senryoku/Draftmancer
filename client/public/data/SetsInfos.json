@@ -1585,6 +1585,14 @@
         "rareCount": 10,
         "uncommonCount": 17
     },
+    "gn3": {
+        "code": "gn3",
+        "fullName": "Game Night 2022",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/gn3.svg",
+        "mythicCount": 5
+    },
     "gnt": {
         "code": "gnt",
         "fullName": "Game Night",
