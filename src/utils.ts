@@ -107,34 +107,13 @@ export function memoryReport() {
 	console.log(`	Heap total  ${bytesToMB(mem.heapTotal)} MB`);
 }
 
+export function escapeHTML(str: string) {
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
+}
+
 export type Options = { [key: string]: any };
-
-export class APIMessage {
-	title: string = "Title";
-	type: string = "info";
-	text?: string;
-	html?: string;
-	footer?: string;
-
-	constructor(props: { title: string; text?: string; html?: string; footer?: string }) {
-		Object.assign(this, props);
-	}
-}
-
-export class APIError extends APIMessage {
-	type: string = "error";
-
-	constructor(props: { title: string; text?: string; html?: string; footer?: string }) {
-		super(props);
-	}
-}
-
-export class APIResponse {
-	error?: APIError;
-}
-
-export function ackError(props: { title: string; text?: string; html?: string; footer?: string }): APIResponse {
-	return {
-		error: new APIError(props),
-	};
-}

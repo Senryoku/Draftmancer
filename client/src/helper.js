@@ -10,7 +10,7 @@ export function isEmpty(obj) {
 }
 
 export function arrayRemove(arr, value) {
-	return arr.filter(el => el != value);
+	return arr.filter((el) => el != value);
 }
 
 export function randomStr4() {
@@ -30,14 +30,14 @@ export function shortguid() {
 
 export function getUrlVars() {
 	let vars = {};
-	window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+	window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
 		vars[key] = value;
 	});
 	return vars;
 }
 
 // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
-export const copyToClipboard = str => {
+export const copyToClipboard = (str) => {
 	const el = document.createElement("textarea"); // Create a <textarea> element
 	el.value = str; // Set its value to the string that you want copied
 	el.setAttribute("readonly", ""); // Make it readonly to be tamper-proof
@@ -104,4 +104,13 @@ export function download(filename, text) {
 	element.click();
 
 	document.body.removeChild(element);
+}
+
+export function escapeHTML(str) {
+	return str
+		?.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
 }

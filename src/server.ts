@@ -20,7 +20,7 @@ import uuid from "uuid";
 const uuidv1 = uuid.v1;
 
 import { Options, shuffleArray } from "./utils.js";
-import { SocketAck, SocketError } from "./Message.js";
+import { ackError, MessageWarning, SocketAck, SocketError } from "./Message.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -110,33 +110,38 @@ const useCustomCardList = function (session: Session, list: CustomCardList) {
 	if (session.isPublic) updatePublicSession(session.id);
 };
 
-const parseCustomCardList = function (session: Session, txtlist: string, options: Options, ack: Function) {
+const parseCustomCardList = function (
+	session: Session,
+	txtlist: string,
+	options: Options,
+	ack: (result: SocketAck) => void
+) {
 	let parsedList = null;
 	try {
 		parsedList = parseCardList(txtlist, options);
 	} catch (e) {
 		console.error(e);
-		ack?.({ type: "error", title: "Internal Error" });
+		ack?.(new SocketError("Internal server error"));
 		return;
 	}
 
 	if (parsedList.error) {
-		ack?.(parsedList.error);
+		ack?.(parsedList);
 		return;
 	}
 
 	useCustomCardList(session, parsedList);
 
-	ack?.({ code: 0 });
+	ack?.(new SocketAck());
 };
 
-const checkDraftAction = function (userID: UserID, sess: Session, type: string, ack?: Function) {
+const checkDraftAction = function (userID: UserID, sess: Session, type: string, ack?: (result: SocketAck) => void) {
 	if (!sess.drafting || sess.draftState?.type !== type) {
-		ack?.({ code: 2, error: "Not drafting." });
+		ack?.(new SocketError("Not drafting."));
 		return false;
 	}
 	if (instanceOfTurnBased(sess.draftState) && userID !== (sess.draftState as TurnBased).currentPlayer()) {
-		ack?.({ code: 3, error: "Not your turn." });
+		ack?.(new SocketError("Not your turn."));
 		return false;
 	}
 	return true;
@@ -157,7 +162,12 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			})
 		);
 	},
-	setCollection(userID: UserID, sessionID: SessionID, collection: { [aid: string]: number }, ack: Function) {
+	setCollection(
+		userID: UserID,
+		sessionID: SessionID,
+		collection: { [aid: string]: number },
+		ack?: (response: SocketAck | { collection: CardPool }) => void
+	) {
 		if (!isObject(collection) || collection === null) return;
 
 		let processedCollection: CardPool = new Map();
@@ -186,25 +196,24 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
 		let cardList = parseCardList(txtcollection, { fallbackToCardName: true });
 		if (cardList.error) {
-			ack?.(cardList.error);
+			ack?.(cardList);
 			return;
 		}
 
 		let collection: CardPool = new Map();
-		let ret: any = { code: 0 };
+		let ret: any = new SocketAck();
 		for (let cardID of cardList.cards as Array<CardID>) {
 			let aid = Cards[cardID].arena_id;
 			if (!aid) {
-				if (ret.ignoredCards > 0) {
+				if (ret.warning?.ignoredCards > 0) {
 					++ret.ignoredCards;
-				} else
-					ret = {
-						code: 1,
-						type: "warning",
-						title: "Non-MTGA card(s) ignored.",
-						text: `${Cards[cardID].name} (${Cards[cardID].set}) is not a valid MTGA card and has been ignored.`,
-						ignoredCards: 1,
-					};
+				} else {
+					ret.warning = new MessageWarning(
+						"Non-MTGA card(s) ignored.",
+						`${Cards[cardID].name} (${Cards[cardID].set}) is not a valid MTGA card and has been ignored.`
+					);
+					ret.ignoredCards = 1;
+				}
 				continue;
 			}
 			if (collection.has(aid)) collection.set(aid, (collection.get(aid) as number) + 1);
@@ -244,7 +253,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		userID: UserID,
 		sessionID: SessionID,
 		data: { pickedCards: Array<number>; burnedCards: Array<number> },
-		ack: Function
+		ack: (result: SocketAck) => void
 	) {
 		// Removes picked card from corresponding booster and notify other players.
 		// Moves to next round when each player have picked a card.
@@ -252,9 +261,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 			ack?.(r);
 		} catch (err) {
-			const r = new SocketError("Internal server error.");
-			r.code = 500;
-			ack?.(r);
+			ack?.(new SocketError("Internal server error."));
 			console.error("Error in pickCard:", err);
 			const data: any = {
 				draftState: Sessions[sessionID].draftState,
@@ -265,46 +272,49 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
 		}
 	},
-	gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: Function) {
+	gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: (result: SocketAck) => void) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
 		const r = Sessions[sessionID].gridDraftPick(choice);
 
-		if (!r) ack?.({ code: 1, error: "Internal error." });
-		else ack?.({ code: 0 });
+		if (!r) ack?.(new SocketError("Internal error."));
+		else ack?.(new SocketAck());
 	},
-	rochesterDraftPick(userID: UserID, sessionID: SessionID, choices: Array<number>, ack: Function) {
+	rochesterDraftPick(userID: UserID, sessionID: SessionID, choices: Array<number>, ack: (result: SocketAck) => void) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "rochester", ack)) return;
 
 		const r = Sessions[sessionID].rochesterDraftPick(choices[0]);
 
-		if (!r) ack?.({ code: 1, error: "Internal error." });
-		else ack?.({ code: 0 });
+		if (!r) ack?.(new SocketError("Internal error."));
+		else ack?.(new SocketAck());
 	},
 	// Winston Draft
-	winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: Function) {
+	winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
 		const r = Sessions[sessionID].winstonTakePile();
 
-		if (!r) ack?.({ code: 1, error: "Internal error." });
-		else ack?.({ code: 0 });
+		if (!r) ack?.(new SocketError("Internal error."));
+		else ack?.(new SocketAck());
 	},
-	winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: Function) {
+	winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
 
 		const r = Sessions[sessionID].winstonSkipPile();
-
-		if (!r) ack?.({ code: 1, error: "This is your only choice!" });
-		else ack?.({ code: 0 });
+		ack?.(r);
 	},
-	minesweeperDraftPick(userID: UserID, sessionID: SessionID, row: number, col: number, ack: Function) {
+	minesweeperDraftPick(
+		userID: UserID,
+		sessionID: SessionID,
+		row: number,
+		col: number,
+		ack: (result: SocketAck) => void
+	) {
 		if (!checkDraftAction(userID, Sessions[sessionID], "minesweeper", ack)) return;
 
 		const r = Sessions[sessionID].minesweeperDraftPick(userID, row, col);
 
-		if (r?.error) ack?.(r);
-		else ack?.();
+		ack?.(r);
 	},
 	shareDecklist(userID: UserID, sessionID: SessionID, decklist: DeckList) {
 		Sessions[sessionID].shareDecklist(userID, decklist);
@@ -333,7 +343,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		for (let user of sess.users)
 			if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	},
-	readyCheck(userID: UserID, sessionID: SessionID, ack: Function) {
+	readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) {
 			ack?.(new SocketError("Already drafting."));
@@ -422,7 +432,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		gridHeight: number,
 		picksPerGrid: number,
 		revealBorders: boolean,
-		ack: Function
+		ack: (result: SocketAck) => void
 	) {
 		const sess = Sessions[sessionID];
 		if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
@@ -457,7 +467,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			return;
 		}
 		startPublicSession(sess);
-		ack?.();
+		ack?.(new SocketAck());
 	},
 	// Session Settings
 	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
@@ -576,70 +586,68 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
-	parseCustomCardList(userID: UserID, sessionID: SessionID, customCardList: string, ack: Function) {
+	parseCustomCardList(
+		userID: UserID,
+		sessionID: SessionID,
+		customCardList: string,
+		ack: (result: SocketAck) => void
+	) {
 		if (!customCardList) {
-			ack?.({ code: 1, type: "error", title: "No list supplied." });
+			ack?.(new SocketError("No list supplied."));
 			return;
 		}
 		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
 	},
-	importCube(userID: UserID, sessionID: SessionID, data: any, ack: Function) {
+	importCube(userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) {
 		if (!["Cube Cobra", "CubeArtisan"].includes(data.service)) {
-			ack?.({ code: 1, type: "error", title: `Invalid cube service ('${data.service}').` });
+			ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 			return;
 		}
 		// Cube Infos from Cube Cobra: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
 		// Plain text card list
-		const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: Function) => {
+		const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) => {
 			let url = null;
 			if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`;
 			if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/plaintext`;
 			if (!url) {
-				ack?.({ code: 1, type: "error", title: `Invalid cube service ('${data.service}').` });
+				ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 				return;
 			}
 			request({ url: url, timeout: 3000 }, (err, res, body) => {
 				try {
 					if (err) {
-						ack?.({
-							type: "error",
-							title: "Error",
-							text: `Couldn't retrieve the card list from ${data.service}.`,
-							footer: `Full error: ${err}`,
-							error: err,
-						});
+						ack?.(
+							new SocketError(
+								"Error retrieving cube.",
+								`Couldn't retrieve the card list from ${data.service}.`,
+								`Full error: ${err}`
+							)
+						);
 						return;
 					} else if (res.statusCode !== 200) {
-						ack?.({
-							type: "error",
-							title: "Error retrieving cube.",
-							text: `${data.service} responded '${res.statusCode}: ${body}'`,
-						});
+						ack?.(
+							new SocketError(
+								"Error retrieving cube.",
+								`${data.service} responded '${res.statusCode}: ${body}'`
+							)
+						);
 						return;
 					} else if (
 						(data.service === "Cube Cobra" && body === "Cube not found.") ||
 						(data.service === "CubeArtisan" && res.request.path.endsWith("/404"))
 					) {
-						ack?.({
-							type: "error",
-							title: "Cube not found.",
-							text: `Cube '${data.cubeID}' not found on ${data.service}.`,
-							error: err,
-						});
+						ack?.(
+							new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
+						);
 						return;
 					} else if (!body) {
-						ack?.({
-							type: "error",
-							title: "Empty Cube.",
-							text: `Cube '${data.cubeID}' on ${data.service} seems empty.`,
-							error: err,
-						});
+						ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
 						return;
 					} else {
 						parseCustomCardList(Sessions[sessionID], body, data, ack);
 					}
 				} catch (e) {
-					ack?.({ type: "error", title: "Internal server error." });
+					ack?.(new SocketError("Internal server error."));
 				}
 			});
 		};
@@ -649,43 +657,34 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
 			if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/xmage`;
 			if (!url) {
-				ack?.({ code: 1, type: "error", title: `Invalid cube service ('${data.service}').` });
+				ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 				return;
 			}
 			request({ url: url, timeout: 3000 }, (err, res, body) => {
 				try {
 					if (err) {
-						ack?.({
-							type: "error",
-							title: "Error",
-							text: `Couldn't retrieve the card list from ${data.service}.`,
-							footer: `Full error: ${err}`,
-							error: err,
-						});
+						new SocketError(
+							"Error retrieving cube",
+							`Couldn't retrieve the card list from ${data.service}.`,
+							`Full error: ${err}`
+						);
 						return;
 					} else if (res.statusCode !== 200) {
-						ack?.({
-							type: "error",
-							title: "Error retrieving cube.",
-							text: `${data.service} responded '${res.statusCode}: ${body}'`,
-						});
+						ack?.(
+							new SocketError(
+								"Error retrieving cube.",
+								`${data.service} responded '${res.statusCode}: ${body}'`
+							)
+						);
 						return;
 					} else if (res.request.path.endsWith("/404")) {
 						// Missing cube redirects to /404
-						ack?.({
-							type: "error",
-							title: "Cube not found.",
-							text: `Cube '${data.cubeID}' not found on ${data.service}.`,
-							error: err,
-						});
+						ack?.(
+							new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
+						);
 						return;
 					} else if (!body) {
-						ack?.({
-							type: "error",
-							title: "Empty Cube.",
-							text: `Cube '${data.cubeID}' on ${data.service} seems empty.`,
-							error: err,
-						});
+						ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
 						return;
 					} else {
 						let converted = XMageToArena(body);
@@ -700,22 +699,22 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 							);
 					}
 				} catch (e) {
-					ack?.({ type: "error", title: "Internal server error." });
+					ack?.(new SocketError("Internal server error."));
 				}
 			});
 		} else {
 			fromTextList(userID, sessionID, data, ack);
 		}
 	},
-	loadLocalCustomCardList(userID: UserID, sessionID: SessionID, cubeName: string, ack: Function) {
+	loadLocalCustomCardList(userID: UserID, sessionID: SessionID, cubeName: string, ack: (result: SocketAck) => void) {
 		if (!(cubeName in ParsedCubeLists)) {
-			ack?.({ code: 1, type: "error", title: `Unknown cube '${cubeName}'` });
+			ack?.(new SocketError(`Unknown cube '${cubeName}'`));
 			return;
 		}
 
 		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
 
-		ack?.({ code: 0 });
+		ack?.(new SocketAck());
 	},
 	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
 		if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
@@ -776,16 +775,21 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
-	setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value: boolean, ack: Function) {
+	setUsePredeterminedBoosters(
+		userID: UserID,
+		sessionID: SessionID,
+		value: boolean,
+		ack: (result: SocketAck) => void
+	) {
 		if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
 
 		Sessions[sessionID].usePredeterminedBoosters = value;
 		Sessions[sessionID].forNonOwners((uid) =>
 			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
 		);
-		ack?.({ code: 0 });
+		ack?.(new SocketAck());
 	},
-	setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: Function) {
+	setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
 		try {
 			let boosters = [];
 			let booster = [];
@@ -810,19 +814,19 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			if (booster.length > 0) boosters.push(booster);
 
 			if (boosters.length === 0) {
-				ack?.({ error: { title: "Empty list" } });
+				ack?.(new SocketError("Empty list"));
 				return;
 			}
 			for (let i = 1; i < boosters.length; ++i) {
 				if (boosters[i].length !== boosters[0].length) {
-					ack?.({
-						error: {
-							title: "Inconsistent booster sizes",
-							text: `All boosters must be of the same size. Booster #${i + 1} has ${
+					ack?.(
+						new SocketError(
+							"Inconsistent booster sizes",
+							`All boosters must be of the same size. Booster #${i + 1} has ${
 								boosters[i].length
-							} cards, expected ${boosters[0].length}.`,
-						},
-					});
+							} cards, expected ${boosters[0].length}.`
+						)
+					);
 					return;
 				}
 			}
@@ -832,17 +836,18 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			Sessions[sessionID].forUsers((uid) =>
 				Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
 			);
-			ack?.({ code: 0 });
+			ack?.(new SocketAck());
 		} catch (e) {
-			ack?.({ error: { title: "Internal error." } });
+			ack?.(new SocketError("Internal error."));
+			console.error("Error in setBoosters:", e);
 		}
 	},
-	shuffleBoosters(userID: UserID, sessionID: SessionID, ack: Function) {
+	shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 		if (!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
-			ack?.({ error: { type: "error", title: "No boosters to shuffle." } });
+			ack?.(new SocketError("No boosters to shuffle."));
 		} else {
 			shuffleArray(Sessions[sessionID].boosters);
-			ack?.({ code: 0 });
+			ack?.(new SocketAck());
 		}
 	},
 	setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
@@ -1001,7 +1006,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
 		Sessions[sessionID].distributeJumpstart(set);
 	},
-	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
+	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: (result: SocketAck) => void) {
 		if (
 			!(
 				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
@@ -1010,17 +1015,27 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		)
 			return;
 		Sessions[sessionID].generateBracket(players);
-		ack?.({ code: 0 });
+		ack?.(new SocketAck());
 	},
-	generateSwissBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
+	generateSwissBracket(
+		userID: UserID,
+		sessionID: SessionID,
+		players: Array<UserID>,
+		ack: (result: SocketAck) => void
+	) {
 		if (players.length !== 8 && players.length !== 6) return;
 		Sessions[sessionID].generateSwissBracket(players);
-		ack?.({ code: 0 });
+		ack?.(new SocketAck());
 	},
-	generateDoubleBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: Function) {
+	generateDoubleBracket(
+		userID: UserID,
+		sessionID: SessionID,
+		players: Array<UserID>,
+		ack: (result: SocketAck) => void
+	) {
 		if (players.length !== 8) return;
 		Sessions[sessionID].generateDoubleBracket(players);
-		ack?.({ code: 0 });
+		ack?.(new SocketAck());
 	},
 	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
 		if (!SessionsSettingsProps.bracketLocked(bracketLocked)) return;
@@ -1060,17 +1075,17 @@ function prepareSocketCallback(callback: Function, ownerOnly = false) {
 		}
 		const sessionID = Connections[userID].sessionID;
 		if (!sessionID || !(sessionID in Sessions)) {
-			ack?.({ code: 1, error: "Internal error. Session does not exist." });
+			ack?.(ackError({ code: 1, title: "Internal error", text: "Session does not exist." }));
 			return;
 		}
 		if (ownerOnly && Sessions[sessionID].owner !== userID) {
-			ack?.({ code: 401, error: "Unautorized. Must be session owner." });
+			ack?.(ackError({ code: 401, title: "Unautorized", text: "Must be session owner." }));
 			return;
 		}
 		try {
 			await callback(userID, sessionID, ...arguments);
 		} catch (e) {
-			ack?.({ code: 500, error: "Internal server error." });
+			ack?.(ackError({ code: 500, title: "Internal server error." }));
 			console.error(e);
 		}
 	};

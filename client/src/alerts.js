@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { escapeHTML } from "./helper.js";
 
 export const SwalCustomClasses = {
 	popup: "custom-swal-popup",
@@ -11,8 +12,8 @@ export function fireToast(type, title, text) {
 		toast: true,
 		position: "top-end",
 		icon: type,
-		title: title,
-		text: text,
+		title: escapeHTML(title),
+		text: escapeHTML(text),
 		customClass: SwalCustomClasses,
 		showConfirmButton: false,
 		timer: 3000,

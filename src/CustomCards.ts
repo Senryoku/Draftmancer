@@ -1,12 +1,15 @@
 import parseCost from "./parseCost.js";
-import { APIResponse, ackError } from "./utils.js";
+import { escapeHTML } from "./utils.js";
 import { Card, CardColor } from "./Cards.js";
+import { ackError, SocketError } from "./Message.js";
 
 function checkProperty(card: any, prop: string) {
 	if (!(prop in card))
 		return ackError({
 			title: `Missing Card Property`,
-			html: `Missing mandatory property '${prop}' in custom card: <pre>${JSON.stringify(card, null, 2)}</pre>`,
+			html: `Missing mandatory property '${prop}' in custom card: <pre>${escapeHTML(
+				JSON.stringify(card, null, 2)
+			)}</pre>`,
 		});
 	return null;
 }
@@ -41,7 +44,7 @@ function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
 
 let CustomCardAutoCollectorNumber = 0;
 
-export function validateCustomCard(inputCard: any): APIResponse | Card {
+export function validateCustomCard(inputCard: any): SocketError | Card {
 	let card = new Card();
 	// Check mandatory fields
 	let missing =

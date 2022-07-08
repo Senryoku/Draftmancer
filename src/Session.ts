@@ -1113,9 +1113,10 @@ export class Session implements IIndexable {
 		}
 	}
 
-	winstonSkipPile() {
+	winstonSkipPile(): SocketAck {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof WinstonDraftState)) return false;
+		if (!this.drafting || !s || !(s instanceof WinstonDraftState))
+			return new SocketError("This session is not drafting.");
 		// If the card pool is empty, make sure there is another pile to pick
 		if (
 			!s.cardPool.length &&
@@ -1123,8 +1124,7 @@ export class Session implements IIndexable {
 				(s.currentPile === 1 && !s.piles[2].length) ||
 				s.currentPile === 2)
 		) {
-			console.error("Session.winstonSkipPile: No other choice, you have to take that pile!");
-			return false;
+			return new SocketError("This is your only choice!");
 		}
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
@@ -1145,7 +1145,7 @@ export class Session implements IIndexable {
 			else for (let user of this.users) Connections[user].socket.emit("winstonDraftSync", s.syncData());
 		}
 
-		return true;
+		return new SocketAck();
 	}
 
 	winstonTakePile() {

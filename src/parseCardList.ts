@@ -1,7 +1,8 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
-import { Options, APIResponse, ackError } from "./utils.js";
+import { escapeHTML, Options } from "./utils.js";
+import { ackError, SocketError } from "./Message.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -115,7 +116,9 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				if (lines[lineIdx + 1][0] !== "[") {
 					return ackError({
 						title: `[CustomCards]`,
-						text: `Custom cards section must be a JSON Array. Line ${lineIdx}: Expected '[', got '${lines[lineIdx]}'.`,
+						text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
+							lines[lineIdx + 1]
+						}'.`,
 					});
 				}
 				// Search for the section (matching closing bracket)
@@ -144,14 +147,15 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 					let position = e.message.match(/at position (\d+)/);
 					if (position) {
 						position = parseInt(position[1]);
-						msg += `<pre>${customCardsStr.slice(
-							Math.max(0, position - 50),
-							Math.max(0, position - 1)
-						)}<span style="color: red; text-decoration: underline red;">${
+						msg += `<pre>${escapeHTML(
+							customCardsStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+						)}<span style="color: red; text-decoration: underline red;">${escapeHTML(
 							customCardsStr[position]
-						}</span>${customCardsStr.slice(
-							Math.min(position + 1, customCardsStr.length),
-							Math.min(position + 50, customCardsStr.length)
+						)}</span>${escapeHTML(
+							customCardsStr.slice(
+								Math.min(position + 1, customCardsStr.length),
+								Math.min(position + 50, customCardsStr.length)
+							)
 						)}</pre>`;
 					}
 					return ackError({
@@ -162,7 +166,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				cardList.customCards = {};
 				for (let c of customCards) {
 					const cardOrError = validateCustomCard(c);
-					if ((cardOrError as APIResponse).error) return cardOrError as APIResponse;
+					if ((cardOrError as SocketError).error) return cardOrError as SocketError;
 					const customCard = cardOrError as Card;
 					if (customCard.name in cardList.customCards)
 						return ackError({

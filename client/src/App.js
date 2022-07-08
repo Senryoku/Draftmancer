@@ -10,7 +10,7 @@ import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard } from "./helper.js";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
@@ -1166,7 +1166,7 @@ export default {
 						this.selectedCards.map((c) => this.rochesterDraftState.booster.findIndex((c2) => c === c2)),
 						(answer) => {
 							this.pickInFlight = false;
-							if (answer.code !== 0) alert(`pickCard: Unexpected answer: ${answer.error}`);
+							if (answer.code !== 0) Alert.fire(answer.error);
 						}
 					);
 					this.draftingState = DraftState.RochesterWaiting;
@@ -1383,7 +1383,7 @@ export default {
 				this.socket.emit("gridDraftPick", choice, (answer) => {
 					if (answer.code === 0) {
 						for (let c of cards) this.addToDeck(c);
-					} else alert("Error: ", answer.error);
+					} else Alert.fire(answer.error);
 				});
 			}
 		},
@@ -1616,7 +1616,7 @@ export default {
 							icon: "error",
 							title: "Invalid file",
 							text: `The uploaded file is not a valid MTGGoldFish CSV file (Invalid header).`,
-							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${lines[0]}'.`,
+							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(lines[0])}'.`,
 							showCancelButton: false,
 						});
 						return;
@@ -1653,12 +1653,12 @@ export default {
 					}
 				}
 
-				this.socket.emit("parseCollection", contents, (ret) => {
-					if (ret.type === "error") {
-						Alert.fire({ icon: "error", title: ret.title, text: ret.text });
+				this.socket.emit("parseCollection", contents, (response) => {
+					if (response.error) {
+						Alert.fire(response.error);
 						return;
 					}
-					this.setCollection(ret.collection); // Unnecessary round trip, consider removing if this ends up being the only way to update the collection
+					this.setCollection(response.collection); // Unnecessary round trip, consider removing if this ends up being the only way to update the collection
 					this.collectionInfos = {
 						wildcards: {
 							common: 0,
@@ -1671,11 +1671,11 @@ export default {
 					localStorage.setItem("Collection", JSON.stringify(this.collection));
 					localStorage.setItem("CollectionInfos", JSON.stringify(this.collectionInfos));
 					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
-					if (ret.type === "warning") Alert.fire({ icon: "warning", title: ret.title, text: ret.text });
+					if (response.warning) Alert.fire(response.warning);
 					else
 						fireToast(
 							"success",
-							`Collection successfully imported (${Object.values(ret.collection).reduce(
+							`Collection successfully imported (${Object.values(response.collection).reduce(
 								(a, b) => a + b,
 								0
 							)} cards).`
@@ -1767,7 +1767,7 @@ export default {
 							icon: "error",
 							title: "Parsing Error",
 							text: "An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
-							footer: "Full error: " + e,
+							footer: "Full error: " + escapeHTML(e),
 						});
 						return null;
 					}
@@ -1865,16 +1865,10 @@ export default {
 			let contents = await file.text();
 
 			this.socket.emit("parseCustomCardList", contents, (answer) => {
-				if (answer.code === 0) {
-					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+				if (answer?.error) {
+					Alert.fire(answer.error);
 				} else {
-					Alert.fire({
-						icon: "error",
-						title: answer.title,
-						text: answer.text,
-						html: answer.html,
-						footer: answer.footer,
-					});
+					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
 				}
 			});
 		},
@@ -1919,13 +1913,8 @@ export default {
 		},
 		selectCube(cube) {
 			const ack = (r) => {
-				if (r.type === "error") {
-					Alert.fire({
-						icon: "error",
-						title: r.title,
-						text: r.text,
-						footer: r.footer,
-					});
+				if (r?.error) {
+					Alert.fire(r.error);
 				} else {
 					fireToast("success", `Card list loaded (${this.customCardList.length} cards)`);
 				}
@@ -1945,7 +1934,7 @@ export default {
 					icon: "info",
 					title: `Loading Cube...`,
 					text: `Please wait as we retrieve the latest version from ${cube.service}...`,
-					footer: `CubeID: ${cube.cubeID}`,
+					footer: `CubeID: ${escapeHTML(cube.cubeID)}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
@@ -2011,13 +2000,8 @@ export default {
 			if (this.sessionOwner !== this.userID) return;
 			const text = document.querySelector("#upload-booster-text").value;
 			this.socket.emit("setBoosters", text, (response) => {
-				if (response.error) {
-					Alert.fire({
-						icon: "error",
-						title: response.error.title,
-						text: response.error.text,
-						footer: response.error.footer,
-					});
+				if (response?.error) {
+					Alert.fire(response.error);
 				} else {
 					fireToast("success", "Boosters successfuly uploaded!");
 					this.displayedModal = "sessionOptions";
@@ -2027,7 +2011,7 @@ export default {
 		shuffleUploadedBoosters() {
 			if (this.sessionOwner !== this.userID) return;
 			this.socket.emit("shuffleBoosters", (response) => {
-				if (response.error) {
+				if (response?.error) {
 					fireToast(response.error.type, response.error.title);
 				} else {
 					fireToast("success", "Boosters successfuly shuffled!");

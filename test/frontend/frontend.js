@@ -116,7 +116,7 @@ describe("Winston Draft", function () {
 		await otherPlayerPage.goto(clipboard);
 	});
 
-	it(`Launch Minesweeper Draft`, async function () {
+	it(`Launch Winston Draft`, async function () {
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Winston')]");
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Winston')]");
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Start Winston Draft')]");

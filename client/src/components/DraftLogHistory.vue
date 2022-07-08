@@ -100,20 +100,20 @@ export default {
 		};
 	},
 	computed: {
-		orderedLogs: function() {
+		orderedLogs: function () {
 			return [...this.draftLogs].sort((lhs, rhs) => rhs.time - lhs.time);
 		},
 	},
 	methods: {
 		shareable(draftlog) {
 			// Returns true if the draftlog is shareable, i.e. the full log is locally available and is marked as delayed (other players in the session should only have a partial log)
-			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every(user => user.cards);
+			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
 		},
-		downloadLog: function(draftLog) {
+		downloadLog: function (draftLog) {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
 			for (let uid in draftLog.users) {
 				draftLogFull.users[uid].exportString = exportToMTGA(
-					draftLogFull.users[uid].cards.map(cid => draftLogFull.carddata[cid]),
+					draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
 					null,
 					this.language,
 					0
@@ -121,7 +121,7 @@ export default {
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},
-		deleteLog: function(draftLog) {
+		deleteLog: function (draftLog) {
 			Alert.fire({
 				position: "center",
 				icon: "question",
@@ -133,10 +133,10 @@ export default {
 				confirmButtonText: "Delete",
 				cancelButtonText: "Cancel",
 				allowOutsideClick: false,
-			}).then(result => {
+			}).then((result) => {
 				if (result.isConfirmed) {
 					this.draftLogs.splice(
-						this.draftLogs.findIndex(e => e === draftLog),
+						this.draftLogs.findIndex((e) => e === draftLog),
 						1
 					);
 					this.expandedLogs = {};
@@ -144,19 +144,19 @@ export default {
 				}
 			});
 		},
-		importLog: function(e) {
+		importLog: function (e) {
 			let file = e.target.files[0];
 			if (!file) return;
 			const reader = new FileReader();
-			const displayError = e => {
+			const displayError = (e) => {
 				Alert.fire({
 					icon: "error",
 					title: "Parsing Error",
 					text: "An error occurred during parsing. Please make sure that you selected the correct file.",
-					footer: `Full error: ${e}`,
+					footer: `Full error: ${helper.escapeHTML(e)}`,
 				});
 			};
-			reader.onload = e => {
+			reader.onload = (e) => {
 				try {
 					let contents = e.target.result;
 					let json = JSON.parse(contents);
@@ -165,7 +165,7 @@ export default {
 						this.expandedLogs = {};
 						Vue.set(
 							this.expandedLogs,
-							this.orderedLogs.findIndex(e => e === json),
+							this.orderedLogs.findIndex((e) => e === json),
 							!this.expandedLogs[json]
 						);
 						this.$emit("storelogs");
@@ -176,10 +176,10 @@ export default {
 			};
 			reader.readAsText(file);
 		},
-		toggle: function(idx) {
+		toggle: function (idx) {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
-		printableType: function(draftLog) {
+		printableType: function (draftLog) {
 			let r = draftLog.type ? draftLog.type : "Draft";
 			if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
 			return r;
