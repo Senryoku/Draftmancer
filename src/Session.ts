@@ -1069,6 +1069,7 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(boosterCount)) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return false;
 		}
 		this.disconnectedUsers = {};
@@ -1181,6 +1182,7 @@ export class Session implements IIndexable {
 			})
 		) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return false;
 		}
 
@@ -1189,6 +1191,7 @@ export class Session implements IIndexable {
 		const s = this.draftState as GridDraftState;
 		if (s.error) {
 			this.emitError(s.error.title, s.error.text);
+			this.broadcastPreparationCancelation();
 			this.cleanDraftState();
 			return false;
 		}
@@ -1278,6 +1281,7 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true })) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return;
 		}
 
@@ -1378,11 +1382,13 @@ export class Session implements IIndexable {
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return new SocketAck(); // generateBoosters already emits errors.
 		}
 
 		if (this.boosters.some((b) => b.length !== gridWidth * gridHeight)) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return new SocketError(
 				"Erroneous Pack Size",
 				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
@@ -1491,6 +1497,7 @@ export class Session implements IIndexable {
 			!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })
 		) {
 			this.drafting = false;
+			this.broadcastPreparationCancelation();
 			return;
 		}
 
@@ -2085,9 +2092,10 @@ export class Session implements IIndexable {
 				useCustomBoosters: useCustomBoosters,
 				customBoosters: useCustomBoosters ? customBoosters : null,
 			})
-		)
+		) {
+			this.broadcastPreparationCancelation();
 			return;
-
+		}
 		const log = this.initLogs("Sealed");
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
@@ -2428,12 +2436,22 @@ export class Session implements IIndexable {
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
-		this.forUsers((u) =>
-			Connections[u]?.socket.emit("message", {
+		this.forUsers((uid) =>
+			Connections[uid]?.socket.emit("message", {
 				title: title,
 				text: text,
 				showConfirmButton: showConfirmButton,
 				timer: timer,
+			})
+		);
+	}
+
+	broadcastPreparationCancelation() {
+		this.forNonOwners((uid) =>
+			Connections[uid]?.socket.emit("message", {
+				icon: "warning",
+				toast: true,
+				title: "Game canceled",
 			})
 		);
 	}

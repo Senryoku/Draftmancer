@@ -425,6 +425,12 @@ export default {
 				if (data.html === undefined) data.html = null;
 				if (data.imageUrl === undefined) data.imageUrl = null;
 
+				const toast = !!data.toast;
+				if (toast) {
+					fireToast(data.icon, data.title, data.text);
+					return;
+				}
+
 				if (data.showConfirmButton === undefined) data.showConfirmButton = true;
 				else if (!data.showConfirmButton && data.timer === undefined) data.timer = 1500;
 
@@ -432,6 +438,7 @@ export default {
 
 				Alert.fire({
 					position: "center",
+					toast: !!data.toast,
 					icon: data.icon,
 					title: data.title,
 					text: data.text,
@@ -1367,16 +1374,15 @@ export default {
 		},
 		gridDraftPick(choice) {
 			const cards = [];
-			let pickedCards = 0;
+
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
 				let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 				if (this.gridDraftState.booster[idx]) {
 					cards.push(this.gridDraftState.booster[idx]);
-					++pickedCards;
 				}
 			}
-			if (pickedCards === 0) {
+			if (cards.length === 0) {
 				console.error("gridDraftPick: Should not reach that.");
 				return;
 			} else {
