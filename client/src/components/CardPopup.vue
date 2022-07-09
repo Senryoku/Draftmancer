@@ -94,6 +94,7 @@ export default {
 		});
 		this.$root.$on("closecardpopup", () => {
 			this.display = false;
+			document.removeEventListener("wheel", this.mouseWheel);
 		});
 	},
 	methods: {
