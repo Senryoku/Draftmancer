@@ -412,6 +412,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if c['set'] == "2x2" and int(c['collector_number']) >= 332:
                 selection['in_booster'] = False
 
+            # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
+            if c['id'] == "0826e210-2002-43fe-942d-41922dfd7bc2":
+                selection['in_booster'] = False
+
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:
                     selection['layout'] = 'split-left'
