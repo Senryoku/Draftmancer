@@ -70,13 +70,15 @@ import axios from "axios";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import CardImage from "./CardImage.vue";
 
+const scrollCooldown = 100; // ms
+
 export default {
 	components: { CardImage, CardPlaceholder },
 	props: {
 		language: { type: String, required: true },
 	},
 	data() {
-		return { display: false, card: null, position: "left", cardCache: {}, currentPart: 0 };
+		return { display: false, card: null, position: "left", cardCache: {}, currentPart: 0, lastScroll: 0 };
 	},
 	created() {
 		this.$root.$on("togglecardpopup", (event, card) => {
@@ -127,8 +129,11 @@ export default {
 		},
 		mouseWheel(event) {
 			if (this.relatedCards.length > 0) {
-				if (event.deltaY > 0) this.nextPart();
-				else this.previousPart();
+				if (Date.now() - this.lastScroll > scrollCooldown) {
+					if (event.deltaY > 0) this.nextPart();
+					else this.previousPart();
+					this.lastScroll = Date.now();
+				}
 				event.stopPropagation();
 				event.preventDefault();
 			}
