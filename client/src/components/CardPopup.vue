@@ -89,12 +89,13 @@ export default {
 				this.requestData(card.id);
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
-			} else document.removeEventListener("wheel", this.mouseWheel);
+				document.addEventListener("keydown", this.keyDown);
+			} else this.cleanupEventHandlers();
 			this.display = !this.display;
 		});
 		this.$root.$on("closecardpopup", () => {
 			this.display = false;
-			document.removeEventListener("wheel", this.mouseWheel);
+			this.cleanupEventHandlers();
 		});
 	},
 	methods: {
@@ -139,8 +140,28 @@ export default {
 				event.preventDefault();
 			}
 		},
+		keyDown(event) {
+			switch (event.key) {
+				case "ArrowUp":
+					this.previousPart();
+					break;
+				case "ArrowDown":
+					this.nextPart();
+					break;
+				default:
+					// Ignore this event
+					return;
+			}
+			// We handled it.
+			event.stopPropagation();
+			event.preventDefault();
+		},
 		negMod(x, n) {
 			return ((x % n) + n) % n;
+		},
+		cleanupEventHandlers() {
+			document.removeEventListener("wheel", this.mouseWheel);
+			document.removeEventListener("keydown", this.keyDown);
 		},
 	},
 	computed: {
