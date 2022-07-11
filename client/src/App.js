@@ -2358,6 +2358,9 @@ export default {
 				this.addToSideboard(c);
 			} else return;
 			this.$refs.deckDisplay.remCard(c);
+			// Card DOM element will move without emiting a mouse leave event,
+			// make sure to close the card popup.
+			this.$root.$emit("closecardpopup");
 		},
 		sideboardToDeck(e, c) {
 			// From sideboard to deck
@@ -2367,6 +2370,7 @@ export default {
 				this.addToDeck(c);
 			} else return;
 			this.$refs.sideboardDisplay.remCard(c);
+			this.$root.$emit("closecardpopup");
 		},
 		clearDeck() {
 			this.deck = [];
