@@ -89,16 +89,19 @@ export default {
 				this.requestData(card.id);
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
-				document.addEventListener("keydown", this.keyDown);
+				document.addEventListener("keydown", this.keyDown, { capture: true });
 			} else this.cleanupEventHandlers();
 			this.display = !this.display;
 		});
 		this.$root.$on("closecardpopup", () => {
-			this.display = false;
-			this.cleanupEventHandlers();
+			this.close();
 		});
 	},
 	methods: {
+		close() {
+			this.display = false;
+			this.cleanupEventHandlers();
+		},
 		requestData(cardID) {
 			// Note: This will always request the english version of the card data, regardless of the language prop.,
 			//	   but the all_parts (related cards) property doesn't seem to exist on translated cards anyway.
@@ -142,6 +145,9 @@ export default {
 		},
 		keyDown(event) {
 			switch (event.key) {
+				case "Escape":
+					this.close();
+					break;
 				case "ArrowUp":
 					this.previousPart();
 					break;
@@ -161,7 +167,7 @@ export default {
 		},
 		cleanupEventHandlers() {
 			document.removeEventListener("wheel", this.mouseWheel);
-			document.removeEventListener("keydown", this.keyDown);
+			document.removeEventListener("keydown", this.keyDown, { capture: true });
 		},
 	},
 	computed: {
