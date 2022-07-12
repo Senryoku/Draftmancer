@@ -1,7 +1,9 @@
 <template functional>
 	<div class="card-placeholder">
 		<div class="card-name" v-if="props.card && props.card.name">{{ props.card.name }}</div>
-		<div class="card-type" v-if="props.card && props.card.type">{{ $options.typeLine(props.card) }}</div>
+		<div class="card-type" v-if="props.card && (props.card.type || props.card.type_line)">
+			{{ $options.typeLine(props.card) }}
+		</div>
 	</div>
 </template>
 
@@ -10,7 +12,8 @@ export default {
 	name: "CardPlaceholder",
 	props: { card: { type: Object } },
 	typeLine(card) {
-		return `${card.type}${card.subtypes.length > 0 ? " — " : ""}${card.subtypes.join(" ")}`;
+		if (card.type_line) return card.type_line;
+		return `${card.type}${card.subtypes?.length > 0 ? " — " : ""}${card.subtypes.join(" ")}`;
 	},
 };
 </script>

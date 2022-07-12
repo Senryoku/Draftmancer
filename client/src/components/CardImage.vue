@@ -73,17 +73,18 @@ export default {
 		fixedLayout: { type: Boolean, default: false },
 	},
 	computed: {
-		imageURI: function () {
+		imageURI() {
 			if (this.language in this.card.image_uris) return this.card.image_uris[this.language];
 			return this.card.image_uris["en"];
 		},
-		hasBack: function () {
+		hasBack() {
 			return this.card.back !== null && this.card.back !== undefined;
 		},
-		backImageURI: function () {
+		backImageURI() {
+			if (!this.hasBack()) return null;
 			return this.language in this.card.back.image_uris
-				? this.card.back.image_uris[this.language]
-				: this.card.back.image_uris["en"];
+				? this.card.back?.image_uris[this.language]
+				: this.card.back?.image_uris["en"];
 		},
 	},
 };

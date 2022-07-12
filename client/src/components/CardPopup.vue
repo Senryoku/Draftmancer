@@ -29,11 +29,29 @@
 						'after-hidden': currentPart < idx,
 					}"
 				>
-					<template v-if="relatedCard.status !== 'ready'">
-						<card-placeholder class="card-image"></card-placeholder>
+					<template
+						v-if="
+							relatedCard.status !== 'ready' ||
+							!(
+								(relatedCard.image_uris && relatedCard.image_uris.border_crop) ||
+								(relatedCard.card_faces &&
+									relatedCard.card_faces[0] &&
+									relatedCard.card_faces[0].image_uris &&
+									relatedCard.card_faces[0].image_uris.border_crop)
+							)
+						"
+					>
+						<card-placeholder class="card-image" :card="relatedCard"></card-placeholder>
 					</template>
 					<template v-else>
-						<img :src="relatedCard.image_uris.border_crop" class="card-image" />
+						<img
+							:src="
+								relatedCard.image_uris
+									? relatedCard.image_uris.border_crop
+									: relatedCard.card_faces[0].border_crop
+							"
+							class="card-image"
+						/>
 					</template>
 				</div>
 				<div v-if="relatedCards.length > 0" class="all-parts">
@@ -78,7 +96,15 @@ export default {
 		language: { type: String, required: true },
 	},
 	data() {
-		return { display: false, card: null, position: "left", cardCache: {}, currentPart: 0, lastScroll: 0 };
+		return {
+			display: false,
+			card: null,
+			position: "left",
+			currentPart: 0,
+			lastScroll: 0,
+			cardCache: {},
+			spellbooks: {}, // Associates card names to their spellbooks (Sets of card ids)
+		};
 	},
 	created() {
 		this.$root.$on("togglecardpopup", (event, card) => {
@@ -86,7 +112,37 @@ export default {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
 				this.currentPart = 0;
-				this.requestData(card.id);
+				let promise = this.requestData(card.id);
+				// Also request associated spellbook if necessary
+				promise?.then(() => {
+					const cardData = this.additionalData(this.card.id);
+					if (!(card.name in this.spellbooks)) {
+						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
+							cardData.name
+						)}%22&unique=cards`;
+						cardData.status = "pending";
+						axios
+							.get(url)
+							.then((response) => {
+								if (response.status === 200 && response.data?.data?.length > 0) {
+									this.spellbooks[cardData.name] = new Set();
+									for (const card of response.data.data) {
+										card.status = "ready";
+										this.$set(this.cardCache, card.id, card);
+										this.spellbooks[cardData.name].add(card.id);
+									}
+								}
+								cardData.status = "ready";
+							})
+							.catch((error) => {
+								// There's no spellbook for this card, add an empty set so we don't request it again and return without error
+								if (error.response?.status === 404) {
+									this.spellbooks[cardData.name] = new Set();
+									cardData.status = "ready";
+								} else console.error("Error fetching spellbook:", error);
+							});
+					}
+				});
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
 				document.addEventListener("keydown", this.keyDown, { capture: true });
@@ -109,13 +165,19 @@ export default {
 			//     especially since I strongly suspect most of them won't be in Scryfall DB at all.
 			if (!this.cardCache[cardID]) {
 				this.$set(this.cardCache, cardID, { id: cardID, status: "pending" });
-				axios.get(`https://api.scryfall.com/cards/${cardID}`).then((response) => {
-					if (response.status === 200) {
-						response.data.status = "ready";
-						this.$set(this.cardCache, cardID, response.data);
-					} else this.$set(this.cardCache, cardID, undefined);
-				});
+				return axios
+					.get(`https://api.scryfall.com/cards/${cardID}`)
+					.then((response) => {
+						if (response.status === 200) {
+							response.data.status = "ready";
+							this.$set(this.cardCache, cardID, response.data);
+						} else this.$set(this.cardCache, cardID, undefined);
+					})
+					.catch((error) => {
+						console.error("Error fetching card data:", error);
+					});
 			}
+			return null;
 		},
 		hasPendingData(cardID) {
 			return cardID in this.cardCache && this.cardCache[cardID]?.status === "pending";
@@ -173,14 +235,15 @@ export default {
 	computed: {
 		relatedCards() {
 			let r = [];
-			if (!this.cardCache[this.card?.id]?.all_parts) return r;
-
-			for (let card of this.cardCache[this.card.id].all_parts) {
-				if (card.id !== this.card.id) {
-					this.requestData(card.id);
-					r.push(this.additionalData(card.id));
+			if (this.cardCache[this.card?.id]?.all_parts?.length > 0)
+				for (let card of this.cardCache[this.card.id].all_parts) {
+					if (card.id !== this.card.id) {
+						this.requestData(card.id);
+						r.push(this.additionalData(card.id));
+					}
 				}
-			}
+			if (this.spellbooks[this.card?.name]?.size > 0)
+				for (const cid of this.spellbooks[this.card.name]) r.push(this.additionalData(cid));
 			return r;
 		},
 	},
@@ -301,10 +364,11 @@ export default {
 	align-items: center;
 	gap: 0.5vh;
 
-	height: 50%;
+	min-height: 50%;
+	max-height: 95%;
 	width: 2em;
 	margin: 0 auto 0 auto;
-	padding: 1vh 0;
+	padding: 2.5em 0 1em 0;
 	background: #222;
 	border: 2px solid #aaa;
 
@@ -344,7 +408,7 @@ export default {
 	position: absolute;
 	color: #666;
 	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.7);
-	top: 1em;
+	top: 0.8em;
 	left: 50%;
 	transform: translateX(-50%);
 	display: flex;
