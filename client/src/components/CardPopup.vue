@@ -48,7 +48,7 @@
 							:src="
 								relatedCard.image_uris
 									? relatedCard.image_uris.border_crop
-									: relatedCard.card_faces[0].border_crop
+									: relatedCard.card_faces[0].image_uris.border_crop
 							"
 							class="card-image"
 						/>

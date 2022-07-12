@@ -81,7 +81,7 @@ export default {
 			return this.card.back !== null && this.card.back !== undefined;
 		},
 		backImageURI() {
-			if (!this.hasBack()) return null;
+			if (!this.hasBack) return null;
 			return this.language in this.card.back.image_uris
 				? this.card.back?.image_uris[this.language]
 				: this.card.back?.image_uris["en"];
