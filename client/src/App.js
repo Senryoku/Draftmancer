@@ -2874,6 +2874,8 @@ export default {
 		},
 		maxPlayers() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
+			if (this.maxPlayers < 1) return;
+			document.title = this.pageTitle;
 			this.socket.emit("setMaxPlayers", this.maxPlayers);
 		},
 		mythicPromotion() {
