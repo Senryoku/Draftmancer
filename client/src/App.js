@@ -1007,6 +1007,7 @@ export default {
 		// Draft Methods
 		async startDraft() {
 			if (this.userID != this.sessionOwner) return false;
+			const proposedBots = this.maxPlayers <= 1 ? 7 : Math.max(0, this.maxPlayers - 1);
 			if (!this.teamDraft && this.sessionUsers.length + this.bots < 2) {
 				let ret = await Alert.fire({
 					icon: "info",
@@ -1014,11 +1015,11 @@ export default {
 					text: `At least 2 players (including bots) are needed to start a draft.`,
 					showDenyButton: true,
 					denyButtonColor: "darkgreen",
-					denyButtonText: "Draft alone with bots",
+					denyButtonText: `Draft alone with ${proposedBots} bots`,
 					confirmButtonText: "Dismiss",
 				});
 				if (ret.isDenied) {
-					this.bots = Math.max(0, this.maxPlayers - 1);
+					this.bots = proposedBots;
 					await this.$nextTick();
 				} else return false;
 			}
