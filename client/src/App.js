@@ -1018,7 +1018,7 @@ export default {
 					confirmButtonText: "Dismiss",
 				});
 				if (ret.isDenied) {
-					this.bots = 7;
+					this.bots = Math.max(0, this.maxPlayers - 1);
 					await this.$nextTick();
 				} else return false;
 			}
