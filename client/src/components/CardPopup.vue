@@ -9,7 +9,7 @@
 			<div class="carousel">
 				<div
 					:class="{
-						selected: currentPart === 0,
+						'carousel-selected': currentPart === 0,
 						before: currentPart === 1,
 						'before-hidden': currentPart > 1,
 					}"
@@ -22,7 +22,7 @@
 					v-for="(relatedCard, idx) in relatedCards"
 					:key="relatedCard.id"
 					:class="{
-						selected: currentPart === idx + 1,
+						'carousel-selected': currentPart === idx + 1,
 						before: currentPart === idx + 2,
 						after: currentPart === idx,
 						'before-hidden': currentPart > idx + 2,
@@ -57,19 +57,19 @@
 				<div v-if="relatedCards.length > 0" class="all-parts">
 					<div class="mouse-hint"><i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i></div>
 					<i class="fas fa-angle-up"></i>
-					<i class="fas fa-square fa-sm" :class="{ selected: currentPart === 0 }"></i>
+					<i class="fas fa-square fa-sm" :class="{ 'carousel-selected': currentPart === 0 }"></i>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
 							><i
 								class="fas fa-square fa-sm"
 								:key="part.id"
-								:class="{ selected: currentPart === idx + 1 }"
+								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 							></i
 						></template>
 						<template v-else
 							><i
 								class="fas fa-spinner fa-spin"
-								:class="{ selected: currentPart === idx + 1 }"
+								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 								:key="part.id"
 							></i
 						></template>
@@ -311,29 +311,29 @@ export default {
 	transform-origin: right center;
 }
 
-.carousel .selected {
+.carousel .carousel-selected {
 	z-index: 1;
 }
 
-.carousel .before:not(.selected) {
+.carousel .before:not(.carousel-selected) {
 	z-index: 0;
 	transform: translateY(-25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .after:not(.selected) {
+.carousel .after:not(.carousel-selected) {
 	z-index: 0;
 	transform: translateY(25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .before-hidden:not(.selected) {
+.carousel .before-hidden:not(.carousel-selected) {
 	z-index: -1;
 	transform: translateY(-50%) scale(0%);
 	opacity: 0;
 }
 
-.carousel .after-hidden:not(.selected) {
+.carousel .after-hidden:not(.carousel-selected) {
 	z-index: -1;
 	transform: translateY(50%) scale(0%);
 	opacity: 0;
@@ -394,7 +394,7 @@ export default {
 	transition: all 0.1s;
 }
 
-.all-parts .selected {
+.all-parts .carousel-selected {
 	text-shadow: 0 0 6px white;
 	color: white;
 }
