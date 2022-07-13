@@ -160,8 +160,8 @@ export default {
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
 				document.addEventListener("keydown", this.keyDown, { capture: true });
 				document.addEventListener("keyup", this.keyUp, { capture: true });
-			} else this.cleanupEventHandlers();
-			this.display = !this.display;
+				this.display = true;
+			} else this.close();
 		});
 		this.$root.$on("closecardpopup", () => {
 			this.close();
@@ -170,6 +170,7 @@ export default {
 	methods: {
 		close() {
 			this.display = false;
+			this.displayCardText = false;
 			this.cleanupEventHandlers();
 		},
 		requestData(cardID) {
