@@ -89,9 +89,9 @@ export default {
 }
 
 .card-text > div {
-	background-color: rgba(28, 28, 28, 1);
+	background-color: #222;
 	overflow: hidden;
-	border: solid 2px black;
+	border: solid 2px #666;
 }
 
 .card-text .card-name {
@@ -100,7 +100,7 @@ export default {
 	left: 3%;
 	right: 3%;
 
-	height: 8%;
+	height: 7%;
 
 	display: flex;
 	justify-content: space-between;
@@ -113,7 +113,7 @@ export default {
 
 .card-text .card-type {
 	position: absolute;
-	top: 56%;
+	top: 55.5%;
 	left: 3%;
 	right: 3%;
 	height: 7%;
@@ -131,9 +131,9 @@ export default {
 
 .card-text .card-oracle {
 	position: absolute;
-	top: 63%;
-	left: 5%;
-	right: 5%;
+	top: 62.5%;
+	left: 5.5%;
+	right: 5.5%;
 	bottom: 6%;
 
 	display: flex;
@@ -142,7 +142,7 @@ export default {
 
 	border-radius: 1%;
 
-	padding: 3% 4%;
+	padding: 2% 3%;
 	text-align: left;
 	font-size: 0.8em;
 	font-family: MPlantin;
@@ -152,10 +152,10 @@ export default {
 .card-text .card-loyalty,
 .card-text .card-pt {
 	position: absolute;
-	width: 30%;
-	height: 8%;
+	width: 18%;
+	height: 6%;
 	right: 3%;
-	bottom: 1%;
+	bottom: 2%;
 	z-index: 2;
 
 	border-radius: 1000px;
