@@ -8,6 +8,7 @@
 		>
 			<div class="carousel">
 				<div
+					class="related-card"
 					:class="{
 						'carousel-selected': currentPart === 0,
 						before: currentPart === 1,
@@ -16,6 +17,11 @@
 					:key="card.id"
 				>
 					<CardImage :language="language" :card="card" :fixedLayout="true" />
+					<card-text
+						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
+						:card="cardAdditionalData"
+						class="alt-card-text"
+					/>
 				</div>
 				<div
 					class="related-card"
@@ -53,10 +59,17 @@
 							class="card-image"
 						/>
 					</template>
+					<card-text
+						v-if="relatedCard.status === 'ready' && displayCardText"
+						:card="relatedCard"
+						class="alt-card-text"
+					/>
 				</div>
-				<div v-if="relatedCards.length > 0" class="all-parts">
-					<div class="mouse-hint"><i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i></div>
-					<i class="fas fa-angle-up"></i>
+				<div class="all-parts">
+					<div class="mouse-hint" v-if="relatedCards.length > 0">
+						<i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i>
+					</div>
+					<i class="fas fa-angle-up" v-if="relatedCards.length > 0"></i>
 					<i class="fas fa-square fa-sm" :class="{ 'carousel-selected': currentPart === 0 }"></i>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
@@ -74,7 +87,8 @@
 							></i
 						></template>
 					</template>
-					<i class="fas fa-angle-down"></i>
+					<i class="fas fa-angle-down" v-if="relatedCards.length > 0"></i>
+					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>
 				</div>
 				<div v-if="hasPendingData(card.id)" class="all-parts"><i class="fas fa-spinner fa-spin" /></div>
 			</div>
@@ -86,12 +100,13 @@
 import axios from "axios";
 
 import CardPlaceholder from "./CardPlaceholder.vue";
+import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 
 const scrollCooldown = 100; // ms
 
 export default {
-	components: { CardImage, CardPlaceholder },
+	components: { CardImage, CardPlaceholder, CardText },
 	props: {
 		language: { type: String, required: true },
 	},
@@ -102,6 +117,7 @@ export default {
 			position: "left",
 			currentPart: 0,
 			lastScroll: 0,
+			displayCardText: false,
 			cardCache: {},
 			spellbooks: {}, // Associates card names to their spellbooks (Sets of card ids)
 		};
@@ -120,7 +136,6 @@ export default {
 						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
 							cardData.name
 						)}%22&unique=cards`;
-						cardData.status = "pending";
 						axios
 							.get(url)
 							.then((response) => {
@@ -132,13 +147,11 @@ export default {
 										this.spellbooks[cardData.name].add(card.id);
 									}
 								}
-								cardData.status = "ready";
 							})
 							.catch((error) => {
 								// There's no spellbook for this card, add an empty set so we don't request it again and return without error
 								if (error.response?.status === 404) {
 									this.spellbooks[cardData.name] = new Set();
-									cardData.status = "ready";
 								} else console.error("Error fetching spellbook:", error);
 							});
 					}
@@ -146,6 +159,7 @@ export default {
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
 				document.addEventListener("keydown", this.keyDown, { capture: true });
+				document.addEventListener("keyup", this.keyUp, { capture: true });
 			} else this.cleanupEventHandlers();
 			this.display = !this.display;
 		});
@@ -216,6 +230,24 @@ export default {
 				case "ArrowDown":
 					this.nextPart();
 					break;
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
+				default:
+					// Ignore this event
+					return;
+			}
+			// We handled it.
+			event.stopPropagation();
+			event.preventDefault();
+		},
+		keyUp(event) {
+			switch (event.key) {
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
 				default:
 					// Ignore this event
 					return;
@@ -230,9 +262,13 @@ export default {
 		cleanupEventHandlers() {
 			document.removeEventListener("wheel", this.mouseWheel);
 			document.removeEventListener("keydown", this.keyDown, { capture: true });
+			document.removeEventListener("keyup", this.keyUp, { capture: true });
 		},
 	},
 	computed: {
+		cardAdditionalData() {
+			return this.cardCache[this.card.id];
+		},
 		relatedCards() {
 			let r = [];
 			if (this.cardCache[this.card?.id]?.all_parts?.length > 0)
@@ -368,7 +404,7 @@ export default {
 	max-height: 95%;
 	width: 2em;
 	margin: 0 auto 0 auto;
-	padding: 2.5em 0 1em 0;
+	padding: 2.5em 0 2.5em 0;
 	background: #222;
 	border: 2px solid #aaa;
 
@@ -413,5 +449,25 @@ export default {
 	transform: translateX(-50%);
 	display: flex;
 	gap: 0.25em;
+}
+
+.alt-hint {
+	position: absolute;
+	color: #666;
+	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.7);
+	bottom: 0.8em;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 0.25em;
+}
+
+.alt-card-text {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 2;
 }
 </style>

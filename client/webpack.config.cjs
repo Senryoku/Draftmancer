@@ -47,6 +47,18 @@ module.exports = {
 			},
 			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
 			{ test: /\.tsx?$/, loader: "ts-loader" },
+			{
+				test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+						loader: "file-loader",
+						options: {
+							name: "[name].[ext]",
+							outputPath: "fonts/",
+						},
+					},
+				],
+			},
 		],
 	},
 	plugins: [
