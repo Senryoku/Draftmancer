@@ -40,7 +40,7 @@ export default {
 				});
 			});
 		},
-		fit_font_size(el, initial_size = 14) {
+		fit_font_size(el, initial_size = 16) {
 			el.classList.add("fitting");
 			let curr_font_size = initial_size;
 			el.style.fontSize = curr_font_size + "pt";
@@ -92,6 +92,7 @@ export default {
 	background-color: #222;
 	overflow: hidden;
 	border: solid 2px #666;
+	box-sizing: border-box;
 }
 
 .card-text .card-name {
@@ -106,14 +107,14 @@ export default {
 	justify-content: space-between;
 	white-space: nowrap;
 	align-items: center;
-	padding: 0 4%;
+	padding: 0.5% 4%;
 
-	border-radius: 1000px;
+	border-radius: 2% / 50%;
 }
 
 .card-text .card-type {
 	position: absolute;
-	top: 55.5%;
+	top: 56%;
 	left: 3%;
 	right: 3%;
 	height: 7%;
@@ -122,11 +123,12 @@ export default {
 	justify-content: flex-start;
 	white-space: nowrap;
 	align-items: center;
-	padding: 0 4%;
+	padding: 0.5% 4%;
 
-	border-radius: 1000px;
+	border-radius: 2% / 50%;
 
 	font-size: 0.8em;
+	z-index: 1;
 }
 
 .card-text .card-oracle {
