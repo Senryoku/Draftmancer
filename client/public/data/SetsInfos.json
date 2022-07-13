@@ -1747,14 +1747,14 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 375,
+        "cardCount": 393,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
-        "commonCount": 102,
+        "commonCount": 108,
         "mythicCount": 36,
-        "rareCount": 102,
-        "uncommonCount": 135
+        "rareCount": 108,
+        "uncommonCount": 141
     },
     "hho": {
         "code": "hho",
@@ -2773,11 +2773,11 @@
     "p22": {
         "code": "p22",
         "fullName": "Judge Gift Cards 2022",
-        "cardCount": 5,
+        "cardCount": 8,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p22.svg",
-        "rareCount": 5
+        "rareCount": 8
     },
     "p2hg": {
         "code": "p2hg",
