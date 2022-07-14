@@ -20,6 +20,7 @@
 						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
 						:card="cardAdditionalData"
 						class="alt-card-text"
+						:fixedLayout="true"
 					/>
 				</div>
 				<div

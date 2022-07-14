@@ -1,16 +1,28 @@
 <template>
 	<div class="card-text-container">
-		<div class="card-text">
-			<div class="card-name" v-if="card && card.name">
-				<span>{{ card.name }}</span>
-				<span>{{ card.mana_cost }}</span>
+		<div class="card-text" v-if="front">
+			<div class="card-name" v-if="front.name">
+				<span>{{ front.name }}</span>
+				<span>{{ front.mana_cost }}</span>
 			</div>
-			<div class="card-type" v-if="card && card.type_line">
-				{{ card.type_line }}
+			<div class="card-type" v-if="front.type_line">
+				{{ front.type_line }}
 			</div>
-			<div class="card-oracle" v-if="card && card.oracle_text">{{ card.oracle_text }}</div>
-			<div class="card-pt" v-if="card && card.power">{{ card.power }} / {{ card.toughness }}</div>
-			<div class="card-loyalty" v-if="card && card.loyalty">{{ card.loyalty }}</div>
+			<div class="card-oracle" v-if="front.oracle_text">{{ front.oracle_text }}</div>
+			<div class="card-pt" v-if="front.power">{{ front.power }} / {{ front.toughness }}</div>
+			<div class="card-loyalty" v-if="front.loyalty">{{ front.loyalty }}</div>
+		</div>
+		<div class="card-text" v-if="fixedLayout && back">
+			<div class="card-name" v-if="back.name">
+				<span>{{ back.name }}</span>
+				<span>{{ back.mana_cost }}</span>
+			</div>
+			<div class="card-type" v-if="back.type_line">
+				{{ back.type_line }}
+			</div>
+			<div class="card-oracle" v-if="back.oracle_text">{{ back.oracle_text }}</div>
+			<div class="card-pt" v-if="back.power">{{ back.power }} / {{ back.toughness }}</div>
+			<div class="card-loyalty" v-if="back.loyalty">{{ back.loyalty }}</div>
 		</div>
 	</div>
 </template>
@@ -27,7 +39,7 @@ function check_overflow(el) {
 // Displays a card using Scryfall card data instead of its image.
 export default {
 	name: "CardText",
-	props: { card: { type: Object } },
+	props: { card: { type: Object }, fixedLayout: { type: Boolean, default: false } },
 	mounted() {
 		// This has to be called when the component is visible:
 		// We can't use v-show or mounted will be called while the element is hidden and fit_all will do nothing.
@@ -53,6 +65,16 @@ export default {
 			el.classList.remove("fitting");
 		},
 	},
+	computed: {
+		front() {
+			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return this.card;
+			return this.card.card_faces[0];
+		},
+		back() {
+			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return null;
+			return this.card.card_faces[1];
+		},
+	},
 };
 </script>
 
@@ -76,9 +98,17 @@ export default {
 	font-style: italic;
 }
 
+.card-text-container {
+	display: flex;
+}
+
+.card-text-container > * {
+	flex: 1;
+}
+
 .card-text {
 	position: relative;
-	padding-top: 140%;
+	aspect-ratio: 100/140;
 	border-radius: 3%;
 	background-color: #00000060;
 	direction: ltr;
