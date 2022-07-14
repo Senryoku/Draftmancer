@@ -8,7 +8,6 @@
 		>
 			<div class="carousel">
 				<div
-					class="related-card"
 					:class="{
 						'carousel-selected': currentPart === 0,
 						before: currentPart === 1,
@@ -16,13 +15,12 @@
 					}"
 					:key="card.id"
 				>
-					<CardImage :language="language" :card="card" :fixedLayout="true">
-						<card-text
-							v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
-							:card="cardAdditionalData"
-							class="alt-card-text"
-						/>
-					</CardImage>
+					<CardImage :language="language" :card="card" :fixedLayout="true"> </CardImage>
+					<card-text
+						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
+						:card="cardAdditionalData"
+						class="alt-card-text"
+					/>
 				</div>
 				<div
 					class="related-card"
@@ -348,19 +346,18 @@ export default {
 .right .carousel > * {
 	transform-origin: right center;
 }
-
+/*
 .carousel .carousel-selected {
-	z-index: 1;
 }
-
+*/
 .carousel .before:not(.carousel-selected) {
-	z-index: 0;
+	z-index: -1;
 	transform: translateY(-25%) scale(70%);
 	opacity: 0.8;
 }
 
 .carousel .after:not(.carousel-selected) {
-	z-index: 0;
+	z-index: -1;
 	transform: translateY(25%) scale(70%);
 	opacity: 0.8;
 }
@@ -470,6 +467,6 @@ export default {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	z-index: 2;
+	z-index: 1;
 }
 </style>
