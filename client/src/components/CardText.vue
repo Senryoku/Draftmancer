@@ -162,7 +162,7 @@ export default {
 	bottom: 2%;
 	z-index: 2;
 
-	border-radius: 1000px;
+	border-radius: 10% / 50%;
 
 	display: flex;
 	justify-content: center;
