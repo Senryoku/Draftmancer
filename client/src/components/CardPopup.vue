@@ -16,12 +16,13 @@
 					}"
 					:key="card.id"
 				>
-					<CardImage :language="language" :card="card" :fixedLayout="true" />
-					<card-text
-						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
-						:card="cardAdditionalData"
-						class="alt-card-text"
-					/>
+					<CardImage :language="language" :card="card" :fixedLayout="true">
+						<card-text
+							v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
+							:card="cardAdditionalData"
+							class="alt-card-text"
+						/>
+					</CardImage>
 				</div>
 				<div
 					class="related-card"
@@ -140,7 +141,7 @@ export default {
 							.get(url)
 							.then((response) => {
 								if (response.status === 200 && response.data?.data?.length > 0) {
-									this.spellbooks[cardData.name] = new Set();
+									this.$set(this.spellbooks, cardData.name, new Set());
 									for (const card of response.data.data) {
 										card.status = "ready";
 										this.$set(this.cardCache, card.id, card);

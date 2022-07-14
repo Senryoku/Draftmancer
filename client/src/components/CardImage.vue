@@ -57,6 +57,7 @@
 		<div class="card-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
 		</div>
+		<slot></slot>
 	</div>
 </template>
 

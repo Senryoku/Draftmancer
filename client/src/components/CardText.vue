@@ -1,15 +1,17 @@
 <template>
-	<div class="card-text">
-		<div class="card-name" v-if="card && card.name">
-			<span>{{ card.name }}</span>
-			<span>{{ card.mana_cost }}</span>
+	<div class="card-text-container">
+		<div class="card-text">
+			<div class="card-name" v-if="card && card.name">
+				<span>{{ card.name }}</span>
+				<span>{{ card.mana_cost }}</span>
+			</div>
+			<div class="card-type" v-if="card && card.type_line">
+				{{ card.type_line }}
+			</div>
+			<div class="card-oracle" v-if="card && card.oracle_text">{{ card.oracle_text }}</div>
+			<div class="card-pt" v-if="card && card.power">{{ card.power }} / {{ card.toughness }}</div>
+			<div class="card-loyalty" v-if="card && card.loyalty">{{ card.loyalty }}</div>
 		</div>
-		<div class="card-type" v-if="card && card.type_line">
-			{{ card.type_line }}
-		</div>
-		<div class="card-oracle" v-if="card && card.oracle_text">{{ card.oracle_text }}</div>
-		<div class="card-pt" v-if="card && card.power">{{ card.power }} / {{ card.toughness }}</div>
-		<div class="card-loyalty" v-if="card && card.loyalty">{{ card.loyalty }}</div>
 	</div>
 </template>
 
