@@ -308,7 +308,7 @@ export default {
 	left: 3.5vw;
 }
 
-.card-popup >>> img {
+.card-popup >>> .card-image > img {
 	width: auto;
 	height: var(--image-height);
 }

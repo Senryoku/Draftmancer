@@ -1,34 +1,43 @@
 <template>
 	<div class="card-text-container">
 		<div class="card-text" v-if="front">
-			<div class="card-name" v-if="front.name">
-				<span>{{ front.name }}</span>
-				<span>{{ front.mana_cost }}</span>
+			<div class="card-top-line" v-if="front.name">
+				<span class="card-name font-size-fit">{{ front.name }}</span>
+				<span class="card-mana-cost" v-html="replaceManaSymbols(front.mana_cost)"></span>
 			</div>
-			<div class="card-type" v-if="front.type_line">
+			<div class="card-type font-size-fit" v-if="front.type_line">
 				{{ front.type_line }}
 			</div>
-			<div class="card-oracle" v-if="front.oracle_text">{{ front.oracle_text }}</div>
-			<div class="card-pt" v-if="front.power">{{ front.power }} / {{ front.toughness }}</div>
-			<div class="card-loyalty" v-if="front.loyalty">{{ front.loyalty }}</div>
+			<div
+				class="card-oracle font-size-fit"
+				v-if="front.oracle_text"
+				v-html="parseOracle(front.oracle_text)"
+			></div>
+			<div class="card-pt font-size-fit" v-if="front.power">{{ front.power }} / {{ front.toughness }}</div>
+			<div class="card-loyalty font-size-fit" v-if="front.loyalty">{{ front.loyalty }}</div>
 		</div>
 		<div class="card-text" v-if="fixedLayout && back">
-			<div class="card-name" v-if="back.name">
-				<span>{{ back.name }}</span>
-				<span>{{ back.mana_cost }}</span>
+			<div class="card-top-line" v-if="back.name">
+				<span class="card-name font-size-fit font-size-fit">{{ back.name }}</span>
+				<span class="card-mana-cost font-size-fit" v-html="replaceManaSymbols(back.mana_cost)"></span>
 			</div>
-			<div class="card-type" v-if="back.type_line">
+			<div class="card-type font-size-fit" v-if="back.type_line">
 				{{ back.type_line }}
 			</div>
-			<div class="card-oracle" v-if="back.oracle_text">{{ back.oracle_text }}</div>
-			<div class="card-pt" v-if="back.power">{{ back.power }} / {{ back.toughness }}</div>
-			<div class="card-loyalty" v-if="back.loyalty">{{ back.loyalty }}</div>
+			<div class="card-oracle font-size-fit" v-if="back.oracle_text" v-html="parseOracle(back.oracle_text)"></div>
+			<div class="card-pt font-size-fit" v-if="back.power">{{ back.power }} / {{ back.toughness }}</div>
+			<div class="card-loyalty font-size-fit" v-if="back.loyalty">{{ back.loyalty }}</div>
 		</div>
 	</div>
 </template>
 
 <script>
-function check_overflow(el) {
+const ManaRegex = /{([^}]+)}/g;
+const ManaSymbols = {};
+import ManaSymbolsList from "../../../data/symbology.json";
+for (let symbol of ManaSymbolsList.data) ManaSymbols[symbol.symbol] = symbol;
+
+function checkOverflow(el) {
 	const curOverflow = el.style.overflow;
 	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
 	const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
@@ -42,27 +51,48 @@ export default {
 	props: { card: { type: Object }, fixedLayout: { type: Boolean, default: false } },
 	mounted() {
 		// This has to be called when the component is visible:
-		// We can't use v-show or mounted will be called while the element is hidden and fit_all will do nothing.
+		// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
 		// There's no way to know when the element is visible becasue of v-show (apart from tracking it ourselves).
-		this.fit_all();
+		this.fitAll();
 	},
 	methods: {
-		fit_all() {
+		fitAll() {
 			this.$nextTick(() => {
-				this.$el.querySelectorAll(".card-text > div").forEach((div) => {
-					this.fit_font_size(div);
+				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div) => {
+					this.fitFontSize(div);
 				});
 			});
 		},
-		fit_font_size(el, initial_size = 16) {
+		fitFontSize(el, initial_size = 2.5) {
 			el.classList.add("fitting");
 			let curr_font_size = initial_size;
-			el.style.fontSize = curr_font_size + "pt";
-			while (check_overflow(el) && curr_font_size > 3) {
+			el.style.fontSize = curr_font_size + "vh";
+			while (checkOverflow(el) && curr_font_size > 0.1) {
 				curr_font_size *= 0.9;
-				el.style.fontSize = curr_font_size + "pt";
+				el.style.fontSize = curr_font_size + "vh";
 			}
 			el.classList.remove("fitting");
+		},
+		replaceManaSymbols(str) {
+			return str.replace(ManaRegex, (match, group) => this.genManaSymbol(group)?.outerHTML.trim() ?? match);
+		},
+		parseOracle(str) {
+			str = this.replaceManaSymbols(str);
+			// Included reminder text
+			str = str.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
+			return str
+				.split("\n")
+				.map((line) => `<div>${line}</div>`)
+				.join("");
+		},
+		genManaSymbol(str) {
+			if ("{" + str + "}" in ManaSymbols) {
+				let el = new Image();
+				el.src = ManaSymbols["{" + str + "}"].svg_uri;
+				el.className = "mana-symbol";
+				return el;
+			}
+			return null;
 		},
 	},
 	computed: {
@@ -127,7 +157,7 @@ export default {
 	box-sizing: border-box;
 }
 
-.card-text .card-name {
+.card-text .card-top-line {
 	position: absolute;
 	top: 2.5%;
 	left: 3%;
@@ -139,9 +169,16 @@ export default {
 	justify-content: space-between;
 	white-space: nowrap;
 	align-items: center;
-	padding: 0.5% 4%;
+	padding: 2% 4%;
 
 	border-radius: 2% / 50%;
+}
+
+.card-text .card-mana-cost {
+	display: flex;
+	justify-content: center;
+	font-size: 2.5vh;
+	gap: 0.2em;
 }
 
 .card-text .card-type {
@@ -171,8 +208,10 @@ export default {
 	bottom: 6%;
 
 	display: flex;
-	justify-content: flex-start;
-	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 0.2em;
 
 	border-radius: 1%;
 
@@ -180,7 +219,6 @@ export default {
 	text-align: left;
 	font-size: 0.8em;
 	font-family: MPlantin;
-	white-space: pre-wrap;
 }
 
 .card-text .card-loyalty,
@@ -197,5 +235,26 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.card-text >>> .mana-symbol {
+	display: inline-block;
+	width: 1em;
+	border-radius: 50%;
+}
+
+.card-text .card-mana-cost >>> .mana-symbol {
+	box-shadow: -0.14vh 0.14vh 0 rgba(0, 0, 0, 0.85);
+}
+
+.card-text .card-oracle >>> .mana-symbol {
+	width: 0.8em;
+	margin: 0 0.07em;
+	vertical-align: baseline;
+}
+
+.card-text .card-oracle >>> .oracle-reminder {
+	font-family: MPlantin-Italic;
+	font-style: italic;
 }
 </style>
