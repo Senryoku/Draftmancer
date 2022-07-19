@@ -13,7 +13,7 @@
 		<template v-for="(cid, index) in pick.booster">
 			<card
 				v-if="cid"
-				:key="index"
+				:key="index + '_' + cid"
 				:card="carddata[cid]"
 				:language="language"
 				:class="{ 'selected-high': pick.pick.includes(index) }"
