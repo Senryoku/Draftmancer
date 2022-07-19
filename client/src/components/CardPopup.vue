@@ -20,13 +20,7 @@
 						:language="language"
 						:card="card"
 						:fixedLayout="true"
-						style="position: sticky; /* Workaround for a z-index issue in Firefox */"
-					/>
-					<CardText
-						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
-						:card="cardAdditionalData"
-						class="alt-card-text"
-						:fixedLayout="true"
+						:displayCardText="displayCardText"
 					/>
 				</div>
 				<div
@@ -344,6 +338,9 @@ export default {
 .card-popup >>> .card-individual-image > img {
 	width: auto;
 	height: var(--image-height);
+	aspect-ratio: 100/140;
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
 }
 
 .related-card {

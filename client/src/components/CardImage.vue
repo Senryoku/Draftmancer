@@ -47,8 +47,8 @@
 					/>
 				</template>
 				<template v-else>
-					<div class="alt-card-text">
-						<i class="fas fa-spinner fa-spin" style="margin: 0.5em"></i>
+					<div class="alt-card-text pending-alt-card-text">
+						<i class="fas fa-spinner fa-spin"></i>
 					</div>
 				</template>
 			</template>
@@ -66,12 +66,15 @@
 	>
 		<div class="card-individual-image">
 			<img :src="imageURI" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData" />
 		</div>
 		<div class="card-individual-image" v-if="hasBack">
 			<img :src="backImageURI" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
 		</div>
 		<div class="card-individual-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
 		</div>
 	</div>
 </template>
@@ -116,7 +119,6 @@ export default {
 			else return data;
 		},
 		cardBackAdditionalData() {
-			if (!this.hasBack) return null;
 			const data = this.cardAdditionalData;
 			if (!data) return null;
 			if (data.status === "ready" && data.card_faces) return data.card_faces[1];
@@ -129,6 +131,7 @@ export default {
 <style scoped>
 .card-image,
 .card-individual-image {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	background-color: transparent;
@@ -302,5 +305,17 @@ img {
 	height: auto;
 	aspect-ratio: 100/140;
 	z-index: 10;
+}
+
+.pending-alt-card-text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #00000060;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

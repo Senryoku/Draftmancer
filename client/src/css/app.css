@@ -1071,7 +1071,7 @@ ul.player-list {
 
 /* Bug in webkit applies with style to another element while drag & dropping https://bugs.webkit.org/show_bug.cgi?id=134555 */
 .card-column .card:hover {
-	z-index: 999;
+	z-index: 800;
 }
 
 .card-column .card:last-child {

@@ -17,7 +17,6 @@
 			:lazyLoad="lazyLoad"
 			:displayCardText="displayCardText"
 			ref="image"
-			style="position: sticky; /* Workaround for a z-index issue in Firefox */"
 		/>
 	</div>
 </template>

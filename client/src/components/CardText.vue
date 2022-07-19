@@ -1,5 +1,8 @@
 <template>
 	<div class="card-text-container">
+		<div v-if="faces.length === 0">
+			<i class="fas fa-spinner fa-spin"></i>
+		</div>
 		<div class="card-text" v-for="(face, idx) in faces" :key="idx">
 			<div class="card-top-line" v-if="face.name">
 				<span class="card-name font-size-fit">{{ face.name }}</span>
