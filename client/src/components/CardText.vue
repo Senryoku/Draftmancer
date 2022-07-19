@@ -109,12 +109,12 @@ export default {
 }
 @font-face {
 	font-family: "MPlantin";
-	src: url("../assets/fonts/mplantin.eot") format("eot"), url("../assets/fonts/mplantin.woff") format("woff"),
-		url("../assets/fonts/mplantin.ttf") format("truetype");
+	src: url("../assets/fonts/mplantin.eot") format("eot"), url("../assets/fonts/mplantin.woff") format("woff");
 }
 @font-face {
 	font-family: "MPlantin-Italic";
-	src: url("../assets/fonts/MPlantin-Italic.ttf") format("truetype");
+	src: url("../assets/fonts/MPlantin-Italic.woff") format("woff"),
+		url("../assets/fonts/MPlantin-Italic.woff2") format("woff2");
 	font-style: italic;
 }
 
