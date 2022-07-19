@@ -48,15 +48,18 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<div class="card-image">
+		<clazy-load class="card-image" loadingClass="card-loading" :src="imageURI">
 			<img :src="imageURI" />
-		</div>
-		<div class="card-image" v-if="hasBack">
+			<img src="../assets/img/cardback.png" slot="placeholder" />
+		</clazy-load>
+		<clazy-load class="card-image" loadingClass="card-loading" :src="backImageURI" v-if="hasBack">
 			<img :src="backImageURI" />
-		</div>
-		<div class="card-image" v-if="card.layout === 'flip'">
+			<img src="../assets/img/cardback.png" slot="placeholder" />
+		</clazy-load>
+		<clazy-load class="card-image" loadingClass="card-loading" :src="imageURI" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
-		</div>
+			<img src="../assets/img/cardback.png" style="transform: rotate(180deg)" slot="placeholder" />
+		</clazy-load>
 	</div>
 </template>
 
