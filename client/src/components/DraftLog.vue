@@ -49,7 +49,7 @@
 					<!-- Color Summary of the picks, explicitly hidden for other players if the details are supposed to be delayed (Don't leak it to the owner) -->
 					<span class="color-list" v-if="(!draftlog.delayed || log.userID === userID) && log.colors">
 						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => log.colors[c] >= 10)"
+							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => log.colors[c] >= 10)"
 							:key="c"
 							:src="'img/mana/' + c + '.svg'"
 							class="mana-icon"
@@ -113,7 +113,7 @@
 					<template
 						v-if="
 							displayOptions.pack < picksPerPack.length &&
-								displayOptions.pick < picksPerPack[displayOptions.pack].length
+							displayOptions.pick < picksPerPack[displayOptions.pack].length
 						"
 					>
 						<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
@@ -154,7 +154,7 @@
 								{{
 									picksPerPack[displayOptions.pack][displayOptions.pick].data.pick
 										.map(
-											idx =>
+											(idx) =>
 												draftlog.carddata[
 													picksPerPack[displayOptions.pack][displayOptions.pick].data.booster[
 														idx
@@ -279,11 +279,11 @@ export default {
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,
 				method: "POST",
 				mode: "cors",
-			}).then(response => {
+			}).then((response) => {
 				if (response.status !== 200) {
 					fireToast("error", "An error occured submiting log to MagicProTools.");
 				} else {
-					response.json().then(json => {
+					response.json().then((json) => {
 						if (json.error) {
 							fireToast("error", `Error: ${json.error}.`);
 						} else {
@@ -302,7 +302,7 @@ export default {
 		exportSingleLog(id) {
 			helper.copyToClipboard(
 				exportToMTGA(
-					this.draftlog.users[id].cards.map(cid => this.draftlog.carddata[cid]),
+					this.draftlog.users[id].cards.map((cid) => this.draftlog.carddata[cid]),
 					null,
 					this.language,
 					0
@@ -350,7 +350,7 @@ export default {
 		},
 		selectedLogCards() {
 			let uniqueID = 0;
-			return this.selectedLog.cards.map(cid =>
+			return this.selectedLog.cards.map((cid) =>
 				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
 			);
 		},
@@ -418,7 +418,7 @@ export default {
 					return [];
 				case "Grid Draft": {
 					let key = 0;
-					return this.selectedLog.picks.map(p => {
+					return this.selectedLog.picks.map((p) => {
 						return {
 							key: key,
 							data: p,
@@ -507,68 +507,70 @@ ul.player-list-log > li {
 }
 
 ul.player-table li:nth-child(1) {
-	order: 5;
+	order: 1;
 }
 ul.player-table li:nth-child(2) {
-	order: 6;
-}
-ul.player-table li:nth-child(3) {
-	order: 7;
-}
-ul.player-table li:nth-child(4) {
-	order: 8;
-}
-ul.player-table li:nth-child(5) {
-	order: 4;
-}
-ul.player-table li:nth-child(6) {
-	order: 3;
-}
-ul.player-table li:nth-child(7) {
 	order: 2;
 }
+ul.player-table li:nth-child(3) {
+	order: 3;
+}
+ul.player-table li:nth-child(4) {
+	order: 4;
+}
+ul.player-table li:nth-child(5) {
+	order: 8;
+}
+ul.player-table li:nth-child(6) {
+	order: 7;
+}
+ul.player-table li:nth-child(7) {
+	order: 6;
+}
 ul.player-table li:nth-child(8) {
-	order: 1;
+	order: 5;
 }
 
 ul.player-table.six li:nth-child(4) {
-	order: 3;
+	order: 6;
 }
 ul.player-table.six li:nth-child(5) {
-	order: 2;
+	order: 5;
 }
 ul.player-table.six li:nth-child(6) {
-	order: 1;
+	order: 4;
 }
 
-ul.player-table li:nth-child(1):after,
-ul.player-table li:nth-child(2):after,
-ul.player-table li:nth-child(3):after {
+ul.player-table li:nth-child(6):after,
+ul.player-table li:nth-child(7):after,
+ul.player-table li:nth-child(8):after,
+ul.player-table.six li:nth-child(5):after,
+ul.player-table.six li:nth-child(6):after {
 	position: absolute;
 	top: 0;
 	right: calc(-2rem + 1px);
 	font-family: "Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
-	content: "\f100";
+	content: "\f100"; /* << */
 }
 
-ul.player-table li:nth-child(5):after,
-ul.player-table li:nth-child(6):after,
-ul.player-table li:nth-child(7):after,
-ul.player-table.six li:nth-child(4):after,
-ul.player-table.six li:nth-child(5):after {
+ul.player-table li:nth-child(2):after,
+ul.player-table li:nth-child(3):after,
+ul.player-table li:nth-child(4):after,
+ul.player-table.six li:nth-child(2):after,
+ul.player-table.six li:nth-child(3):after {
 	position: absolute;
 	top: 0;
 	left: calc(-2rem + 1px);
 	font-family: "Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
-	content: "\f101";
+	content: "\f101"; /* >> */
 }
 
-ul.player-table li:nth-child(4):before,
-ul.player-table.six li:nth-child(3):before {
+ul.player-table li:nth-child(5):before,
+ul.player-table.six li:nth-child(4):before {
 	position: absolute;
 	top: calc(-2rem - 2px);
 	left: calc(50%);
@@ -579,8 +581,8 @@ ul.player-table.six li:nth-child(3):before {
 	transform: translateX(-50%) rotate(-90deg);
 }
 
-ul.player-table li:nth-child(8):before,
-ul.player-table.six li:nth-child(6):before {
+ul.player-table li:nth-child(1):before,
+ul.player-table.six li:nth-child(1):before {
 	position: absolute;
 	bottom: calc(-2rem - 2px);
 	left: calc(50%);
@@ -591,9 +593,8 @@ ul.player-table.six li:nth-child(6):before {
 	transform: translateX(-50%) rotate(90deg);
 }
 
-ul.player-table.six li:nth-child(3):after,
-ul.player-table.six li:nth-child(6):after,
-ul.player-table.six li:nth-child(4):before {
+ul.player-table.six li:nth-child(4):after,
+ul.player-table.six li:nth-child(5):before {
 	content: "";
 }
 
