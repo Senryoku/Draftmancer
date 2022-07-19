@@ -95,6 +95,11 @@ export default {
 			return [this.front, this.back].filter((f) => !!f);
 		},
 	},
+	watch: {
+		card() {
+			this.fitAll();
+		},
+	},
 };
 </script>
 
