@@ -9,15 +9,22 @@
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
 		@mouseleave="mouseLeave"
-		@mouseenter="activateFoilEffect"
+		@mouseenter="mouseEnter"
 	>
-		<card-image :card="card" :language="language" :lazyLoad="lazyLoad" ref="image"></card-image>
-		<slot></slot>
+		<CardImage
+			:card="card"
+			:language="language"
+			:lazyLoad="lazyLoad"
+			:displayCardText="displayCardText"
+			ref="image"
+			style="position: sticky; /* Workaround for a z-index issue in Firefox */"
+		/>
 	</div>
 </template>
 
 <script>
 import CardImage from "./CardImage.vue";
+
 export default {
 	name: "Card",
 	components: { CardImage },
@@ -30,6 +37,7 @@ export default {
 	data() {
 		return {
 			foilInterval: null,
+			displayCardText: false,
 		};
 	},
 	computed: {
@@ -37,6 +45,9 @@ export default {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
 			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
+		},
+		additionalData() {
+			return this.$cardCache.get(this.card.id);
 		},
 	},
 	methods: {
@@ -46,6 +57,11 @@ export default {
 		},
 		mouseLeave(e) {
 			e.preventDefault();
+
+			this.displayCardText = false;
+			document.removeEventListener("keydown", this.keyDown, { capture: true });
+			document.removeEventListener("keyup", this.keyUp, { capture: true });
+
 			this.$root.$emit("closecardpopup");
 
 			if (this.card.foil) {
@@ -57,10 +73,13 @@ export default {
 				this.$el.style.setProperty("--transform-rotation-y", `0`);
 			}
 		},
-		activateFoilEffect() {
-			if (!this.card.foil) return;
+		mouseEnter() {
+			document.addEventListener("keydown", this.keyDown, { capture: true });
+			document.addEventListener("keyup", this.keyUp, { capture: true });
 
-			document.addEventListener("mousemove", this.foilEffect);
+			if (this.card.foil) {
+				document.addEventListener("mousemove", this.foilEffect);
+			}
 		},
 		foilEffect(e) {
 			const bounds = this.$el.getBoundingClientRect();
@@ -75,7 +94,7 @@ export default {
 			}
 			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
-			const rotScale = v => -20 + 40 * v;
+			const rotScale = (v) => -20 + 40 * v;
 			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
 			this.$el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
 			this.$el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
@@ -87,11 +106,36 @@ export default {
 				card.name.toLowerCase().includes(filter) ||
 				(this.language != "en" && card.printed_names[this.language]?.toLowerCase().includes(filter)) ||
 				card.type.toLowerCase().includes(filter) ||
-				card.subtypes
-					.join(" ")
-					.toLowerCase()
-					.includes(filter)
+				card.subtypes.join(" ").toLowerCase().includes(filter)
 			);
+		},
+		keyDown(event) {
+			switch (event.key) {
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
+				default:
+					// Ignore this event
+					return;
+			}
+			// We handled it.
+			event.stopPropagation();
+			event.preventDefault();
+		},
+		keyUp(event) {
+			switch (event.key) {
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
+				default:
+					// Ignore this event
+					return;
+			}
+			// We handled it.
+			event.stopPropagation();
+			event.preventDefault();
 		},
 	},
 };

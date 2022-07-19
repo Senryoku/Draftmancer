@@ -36,6 +36,22 @@
 				<img class="back-image" :src="backImageURI" />
 				<card-placeholder slot="placeholder" :card="card.back"></card-placeholder>
 			</clazy-load>
+
+			<template v-if="cardAdditionalData && displayCardText">
+				<template v-if="cardAdditionalData.status === 'ready'">
+					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData" />
+					<CardText
+						class="flip-back alt-card-text"
+						v-if="hasBack && cardBackAdditionalData"
+						:card="cardBackAdditionalData"
+					/>
+				</template>
+				<template v-else>
+					<div class="alt-card-text">
+						<i class="fas fa-spinner fa-spin" style="margin: 0.5em"></i>
+					</div>
+				</template>
+			</template>
 		</div>
 	</div>
 	<div
@@ -61,16 +77,19 @@
 </template>
 
 <script>
+import CardText from "./CardText.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
+
 export default {
 	name: "CardImage",
-	components: { CardPlaceholder, ClazyLoad },
+	components: { CardPlaceholder, ClazyLoad, CardText },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
 		lazyLoad: { type: Boolean, default: false },
 		fixedLayout: { type: Boolean, default: false },
+		displayCardText: { type: Boolean, default: false },
 	},
 	computed: {
 		imageURI() {
@@ -85,6 +104,23 @@ export default {
 			return this.language in this.card.back.image_uris
 				? this.card.back?.image_uris[this.language]
 				: this.card.back?.image_uris["en"];
+		},
+		cardAdditionalData() {
+			if (!this.displayCardText) return false; // Don't send the requests automatically
+			return this.$cardCache.get(this.card.id);
+		},
+		cardFrontAdditionalData() {
+			const data = this.cardAdditionalData;
+			if (!data) return null;
+			if (data.status === "ready" && data.card_faces) return data.card_faces[0];
+			else return data;
+		},
+		cardBackAdditionalData() {
+			if (!this.hasBack) return null;
+			const data = this.cardAdditionalData;
+			if (!data) return null;
+			if (data.status === "ready" && data.card_faces) return data.card_faces[1];
+			else return null;
 		},
 	},
 };
@@ -256,5 +292,15 @@ img {
 	max-height: calc(90vw / 1.41);
 	background-image: url("../assets/img/cardback.png");
 	background-size: cover;
+}
+
+.alt-card-text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: auto;
+	aspect-ratio: 100/140;
+	z-index: 10;
 }
 </style>
