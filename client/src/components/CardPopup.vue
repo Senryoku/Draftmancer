@@ -8,6 +8,7 @@
 		>
 			<div class="carousel">
 				<div
+					class="carousel-item"
 					:class="{
 						'carousel-selected': currentPart === 0,
 						before: currentPart === 1,
@@ -24,7 +25,7 @@
 					/>
 				</div>
 				<div
-					class="related-card"
+					class="carousel-item related-card"
 					v-for="(relatedCard, idx) in relatedCards"
 					:key="relatedCard.id"
 					:class="{
@@ -338,39 +339,42 @@ export default {
 	height: var(--image-height);
 }
 
-.carousel > * {
+.carousel > .carousel-item {
 	position: absolute;
+	z-index: 0;
 	transition: all 0.4s ease-out;
 	transform-origin: left center;
+	backface-visibility: hidden;
 }
 
-.right .carousel > * {
+.right .carousel > .carousel-item {
 	transform-origin: right center;
 }
-/*
-.carousel .carousel-selected {
+
+.carousel > .carousel-item:not(.carousel-selected) {
+	z-index: -2000;
 }
-*/
-.carousel .before:not(.carousel-selected) {
-	z-index: -1;
+
+.carousel .carousel-item.before {
+	z-index: -1000;
 	transform: translateY(-25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .after:not(.carousel-selected) {
-	z-index: -1;
+.carousel .carousel-item.after {
+	z-index: -1000;
 	transform: translateY(25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .before-hidden:not(.carousel-selected) {
-	z-index: -1;
+.carousel .carousel-item.before-hidden {
+	z-index: -2000;
 	transform: translateY(-50%) scale(1%);
 	opacity: 0;
 }
 
-.carousel .after-hidden:not(.carousel-selected) {
-	z-index: -1;
+.carousel .carousel-item.after-hidden {
+	z-index: -2000;
 	transform: translateY(50%) scale(1%);
 	opacity: 0;
 }
