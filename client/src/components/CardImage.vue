@@ -48,18 +48,15 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<clazy-load class="card-image" loadingClass="card-loading" :src="imageURI">
+		<div class="card-image">
 			<img :src="imageURI" />
-			<img src="../assets/img/cardback.png" slot="placeholder" />
-		</clazy-load>
-		<clazy-load class="card-image" loadingClass="card-loading" :src="backImageURI" v-if="hasBack">
+		</div>
+		<div class="card-image" v-if="hasBack">
 			<img :src="backImageURI" />
-			<img src="../assets/img/cardback.png" slot="placeholder" />
-		</clazy-load>
-		<clazy-load class="card-image" loadingClass="card-loading" :src="imageURI" v-if="card.layout === 'flip'">
+		</div>
+		<div class="card-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
-			<img src="../assets/img/cardback.png" style="transform: rotate(180deg)" slot="placeholder" />
-		</clazy-load>
+		</div>
 	</div>
 </template>
 
@@ -256,5 +253,7 @@ img {
 .layout-split-left img,
 .layout-split img {
 	max-height: calc(90vw / 1.41);
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
 }
 </style>
