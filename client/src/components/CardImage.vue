@@ -48,13 +48,13 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<div class="card-image">
+		<div class="card-individual-image">
 			<img :src="imageURI" />
 		</div>
-		<div class="card-image" v-if="hasBack">
+		<div class="card-individual-image" v-if="hasBack">
 			<img :src="backImageURI" />
 		</div>
-		<div class="card-image" v-if="card.layout === 'flip'">
+		<div class="card-individual-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
 		</div>
 	</div>
@@ -91,7 +91,8 @@ export default {
 </script>
 
 <style scoped>
-.card-image {
+.card-image,
+.card-individual-image {
 	width: 100%;
 	height: 100%;
 	background-color: transparent;

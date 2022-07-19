@@ -16,7 +16,12 @@
 					}"
 					:key="card.id"
 				>
-					<CardImage :language="language" :card="card" :fixedLayout="true"> </CardImage>
+					<CardImage
+						:language="language"
+						:card="card"
+						:fixedLayout="true"
+						style="position: sticky; /* Workaround for a z-index issue in Firefox */"
+					/>
 					<card-text
 						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
 						:card="cardAdditionalData"
@@ -36,30 +41,18 @@
 						'after-hidden': currentPart < idx,
 					}"
 				>
-					<template
-						v-if="
-							relatedCard.status !== 'ready' ||
-							!(
-								(relatedCard.image_uris && relatedCard.image_uris.border_crop) ||
-								(relatedCard.card_faces &&
-									relatedCard.card_faces[0] &&
-									relatedCard.card_faces[0].image_uris &&
-									relatedCard.card_faces[0].image_uris.border_crop)
-							)
+					<img
+						:src="
+							relatedCard.image_uris
+								? relatedCard.image_uris.border_crop
+								: relatedCard.card_faces &&
+								  relatedCard.card_faces[0] &&
+								  relatedCard.card_faces[0].image_uris
+								? relatedCard.card_faces[0].image_uris.border_crop
+								: null
 						"
-					>
-						<card-placeholder class="card-image" :card="relatedCard"></card-placeholder>
-					</template>
-					<template v-else>
-						<img
-							:src="
-								relatedCard.image_uris
-									? relatedCard.image_uris.border_crop
-									: relatedCard.card_faces[0].image_uris.border_crop
-							"
-							class="card-image"
-						/>
-					</template>
+						class="related-card-image"
+					/>
 					<card-text
 						v-if="relatedCard.status === 'ready' && displayCardText"
 						:card="relatedCard"
@@ -100,14 +93,13 @@
 <script>
 import axios from "axios";
 
-import CardPlaceholder from "./CardPlaceholder.vue";
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 
 const scrollCooldown = 100; // ms
 
 export default {
-	components: { CardImage, CardPlaceholder, CardText },
+	components: { CardImage, CardText },
 	props: {
 		language: { type: String, required: true },
 	},
@@ -295,7 +287,7 @@ export default {
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 999;
+	z-index: 10;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
@@ -307,11 +299,6 @@ export default {
 
 .card-popup.left {
 	left: 3.5vw;
-}
-
-.card-popup >>> .card-image > img {
-	width: auto;
-	height: var(--image-height);
 }
 
 .zoom-enter-active,
@@ -341,7 +328,7 @@ export default {
 
 .carousel > .carousel-item {
 	position: absolute;
-	z-index: 0;
+	z-index: -2000;
 	transition: all 0.4s ease-out;
 	transform-origin: left center;
 	backface-visibility: hidden;
@@ -351,8 +338,8 @@ export default {
 	transform-origin: right center;
 }
 
-.carousel > .carousel-item:not(.carousel-selected) {
-	z-index: -2000;
+.carousel .carousel-item.carousel-selected {
+	z-index: 0;
 }
 
 .carousel .carousel-item.before {
@@ -379,6 +366,11 @@ export default {
 	opacity: 0;
 }
 
+.card-popup >>> .card-individual-image > img {
+	width: auto;
+	height: var(--image-height);
+}
+
 .related-card {
 	width: calc(0.71 * var(--image-height));
 	height: var(--image-height);
@@ -387,10 +379,12 @@ export default {
 	border-radius: 3%;
 }
 
-.related-card .card-image {
+.related-card .related-card-image {
 	width: auto;
 	height: var(--image-height);
 	border-radius: 3%;
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
 }
 
 .all-parts {
@@ -472,6 +466,6 @@ export default {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	z-index: 1;
+	z-index: 10;
 }
 </style>
