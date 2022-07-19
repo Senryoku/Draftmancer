@@ -365,13 +365,13 @@ export default {
 
 .carousel .before-hidden:not(.carousel-selected) {
 	z-index: -1;
-	transform: translateY(-50%) scale(0%);
+	transform: translateY(-50%) scale(1%);
 	opacity: 0;
 }
 
 .carousel .after-hidden:not(.carousel-selected) {
 	z-index: -1;
-	transform: translateY(50%) scale(0%);
+	transform: translateY(50%) scale(1%);
 	opacity: 0;
 }
 
