@@ -22,7 +22,7 @@
 						:fixedLayout="true"
 						style="position: sticky; /* Workaround for a z-index issue in Firefox */"
 					/>
-					<card-text
+					<CardText
 						v-if="cardAdditionalData && cardAdditionalData.status === 'ready' && displayCardText"
 						:card="cardAdditionalData"
 						class="alt-card-text"
@@ -111,7 +111,6 @@ export default {
 			currentPart: 0,
 			lastScroll: 0,
 			displayCardText: false,
-			cardCache: {},
 			spellbooks: {}, // Associates card names to their spellbooks (Sets of card ids)
 		};
 	},
@@ -121,10 +120,10 @@ export default {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
 				this.currentPart = 0;
-				let promise = this.requestData(card.id);
+				let promise = this.$cardCache.request(card.id);
 				// Also request associated spellbook if necessary
 				promise?.then(() => {
-					const cardData = this.additionalData(this.card.id);
+					const cardData = this.$cardCache.get(card.id);
 					if (!(card.name in this.spellbooks)) {
 						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
 							cardData.name
@@ -136,7 +135,7 @@ export default {
 									this.$set(this.spellbooks, cardData.name, new Set());
 									for (const card of response.data.data) {
 										card.status = "ready";
-										this.$set(this.cardCache, card.id, card);
+										this.$set(this.$cardCache.cardCache, card.id, card);
 										this.spellbooks[cardData.name].add(card.id);
 									}
 								}
@@ -166,32 +165,11 @@ export default {
 			this.displayCardText = false;
 			this.cleanupEventHandlers();
 		},
-		requestData(cardID) {
-			// Note: This will always request the english version of the card data, regardless of the language prop.,
-			//	   but the all_parts (related cards) property doesn't seem to exist on translated cards anyway.
-			//     We could search for the translated cards from their english ID, but I'm not sure if that's worth it,
-			//     especially since I strongly suspect most of them won't be in Scryfall DB at all.
-			if (!this.cardCache[cardID]) {
-				this.$set(this.cardCache, cardID, { id: cardID, status: "pending" });
-				return axios
-					.get(`https://api.scryfall.com/cards/${cardID}`)
-					.then((response) => {
-						if (response.status === 200) {
-							response.data.status = "ready";
-							this.$set(this.cardCache, cardID, response.data);
-						} else this.$set(this.cardCache, cardID, undefined);
-					})
-					.catch((error) => {
-						console.error("Error fetching card data:", error);
-					});
-			}
-			return null;
-		},
 		hasPendingData(cardID) {
-			return cardID in this.cardCache && this.cardCache[cardID]?.status === "pending";
+			return this.$cardCache.get(cardID)?.status === "pending";
 		},
 		additionalData(cardID) {
-			return this.cardCache[cardID];
+			return this.$cardCache.get(cardID);
 		},
 		nextPart() {
 			if (this.relatedCards.length === 0) return;
@@ -261,19 +239,16 @@ export default {
 	},
 	computed: {
 		cardAdditionalData() {
-			return this.cardCache[this.card.id];
+			return this.$cardCache.get(this.card.id);
 		},
 		relatedCards() {
 			let r = [];
-			if (this.cardCache[this.card?.id]?.all_parts?.length > 0)
-				for (let card of this.cardCache[this.card.id].all_parts) {
-					if (card.id !== this.card.id) {
-						this.requestData(card.id);
-						r.push(this.additionalData(card.id));
-					}
+			if (this.$cardCache.get(this.card?.id)?.all_parts?.length > 0)
+				for (let card of this.$cardCache.get(this.card?.id).all_parts) {
+					if (card.id !== this.card.id) r.push(this.$cardCache.get(card.id));
 				}
 			if (this.spellbooks[this.card?.name]?.size > 0)
-				for (const cid of this.spellbooks[this.card.name]) r.push(this.additionalData(cid));
+				for (const cid of this.spellbooks[this.card.name]) r.push(this.$cardCache.get(cid));
 			return r;
 		},
 	},
@@ -287,7 +262,7 @@ export default {
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 10;
+	z-index: 900;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
