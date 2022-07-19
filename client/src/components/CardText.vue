@@ -1,32 +1,16 @@
 <template>
 	<div class="card-text-container">
-		<div class="card-text" v-if="front">
-			<div class="card-top-line" v-if="front.name">
-				<span class="card-name font-size-fit">{{ front.name }}</span>
-				<span class="card-mana-cost" v-html="replaceManaSymbols(front.mana_cost)"></span>
+		<div class="card-text" v-for="(face, idx) in faces" :key="idx">
+			<div class="card-top-line" v-if="face.name">
+				<span class="card-name font-size-fit">{{ face.name }}</span>
+				<span class="card-mana-cost" v-html="replaceManaSymbols(face.mana_cost)"></span>
 			</div>
-			<div class="card-type font-size-fit" v-if="front.type_line">
-				{{ front.type_line }}
+			<div class="card-type font-size-fit" v-if="face.type_line">
+				{{ face.type_line }}
 			</div>
-			<div
-				class="card-oracle font-size-fit"
-				v-if="front.oracle_text"
-				v-html="parseOracle(front.oracle_text)"
-			></div>
-			<div class="card-pt font-size-fit" v-if="front.power">{{ front.power }} / {{ front.toughness }}</div>
-			<div class="card-loyalty font-size-fit" v-if="front.loyalty">{{ front.loyalty }}</div>
-		</div>
-		<div class="card-text" v-if="fixedLayout && back">
-			<div class="card-top-line" v-if="back.name">
-				<span class="card-name font-size-fit font-size-fit">{{ back.name }}</span>
-				<span class="card-mana-cost font-size-fit" v-html="replaceManaSymbols(back.mana_cost)"></span>
-			</div>
-			<div class="card-type font-size-fit" v-if="back.type_line">
-				{{ back.type_line }}
-			</div>
-			<div class="card-oracle font-size-fit" v-if="back.oracle_text" v-html="parseOracle(back.oracle_text)"></div>
-			<div class="card-pt font-size-fit" v-if="back.power">{{ back.power }} / {{ back.toughness }}</div>
-			<div class="card-loyalty font-size-fit" v-if="back.loyalty">{{ back.loyalty }}</div>
+			<div class="card-oracle font-size-fit" v-if="face.oracle_text" v-html="parseOracle(face.oracle_text)"></div>
+			<div class="card-pt font-size-fit" v-if="face.power">{{ face.power }} / {{ face.toughness }}</div>
+			<div class="card-loyalty font-size-fit" v-if="face.loyalty">{{ face.loyalty }}</div>
 		</div>
 	</div>
 </template>
@@ -101,8 +85,11 @@ export default {
 			return this.card.card_faces[0];
 		},
 		back() {
-			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return null;
+			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1 || !this.fixedLayout) return null;
 			return this.card.card_faces[1];
+		},
+		faces() {
+			return [this.front, this.back].filter((f) => !!f);
 		},
 	},
 };
