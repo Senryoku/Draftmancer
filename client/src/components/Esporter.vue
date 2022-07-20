@@ -55,6 +55,7 @@ export default {
 		const splits = [
 			{ coach: "JustLolaman", date: new Date("May 30, 2022 4:00 pm PST") },
 			{ coach: "Chord_O_Calls", date: new Date("June 6, 2022 4:00 pm PST") },
+			{ coach: "Chord_O_Calls", date: new Date("July 25, 2022 4:00 pm PST") },
 		];
 		const now = new Date(Date.now());
 		let nextSplit = null;
