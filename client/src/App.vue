@@ -1482,13 +1482,6 @@
 								</li>
 							</ul>
 						</div>
-						<div class="news">
-							<em>June 20, 2022</em>
-							<p><i class="fas fa-bomb"></i> New draft variant for cubes: Minesweeper Draft!</p>
-							<p>
-								Default values are tuned for 4 players. Check it out in the "Other Game Modes" dropdown.
-							</p>
-						</div>
 					</div>
 				</div>
 				<div class="container" style="grid-area: Help">
