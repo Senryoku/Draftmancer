@@ -36,6 +36,22 @@
 				<img class="back-image" :src="backImageURI" />
 				<card-placeholder slot="placeholder" :card="card.back"></card-placeholder>
 			</clazy-load>
+
+			<template v-if="cardAdditionalData && displayCardText">
+				<template v-if="cardAdditionalData.status === 'ready'">
+					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData" />
+					<CardText
+						class="flip-back alt-card-text"
+						v-if="hasBack && cardBackAdditionalData"
+						:card="cardBackAdditionalData"
+					/>
+				</template>
+				<template v-else>
+					<div class="alt-card-text pending-alt-card-text">
+						<i class="fas fa-spinner fa-spin"></i>
+					</div>
+				</template>
+			</template>
 		</div>
 	</div>
 	<div
@@ -48,29 +64,35 @@
 			'layout-split-left': card.layout === 'split-left',
 		}"
 	>
-		<div class="card-image">
+		<div class="card-individual-image">
 			<img :src="imageURI" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardFrontAdditionalData" />
 		</div>
-		<div class="card-image" v-if="hasBack">
+		<div class="card-individual-image" v-if="hasBack">
 			<img :src="backImageURI" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
 		</div>
-		<div class="card-image" v-if="card.layout === 'flip'">
+		<div class="card-individual-image" v-if="card.layout === 'flip'">
 			<img :src="imageURI" style="transform: rotate(180deg)" />
+			<CardText class="alt-card-text" v-if="displayCardText" :card="cardBackAdditionalData" />
 		</div>
 	</div>
 </template>
 
 <script>
+import CardText from "./CardText.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
+
 export default {
 	name: "CardImage",
-	components: { CardPlaceholder, ClazyLoad },
+	components: { CardPlaceholder, ClazyLoad, CardText },
 	props: {
 		card: { type: Object, required: true },
 		language: { type: String, required: true },
 		lazyLoad: { type: Boolean, default: false },
 		fixedLayout: { type: Boolean, default: false },
+		displayCardText: { type: Boolean, default: false },
 	},
 	computed: {
 		imageURI() {
@@ -86,12 +108,30 @@ export default {
 				? this.card.back?.image_uris[this.language]
 				: this.card.back?.image_uris["en"];
 		},
+		cardAdditionalData() {
+			if (!this.displayCardText) return false; // Don't send the requests automatically
+			return this.$cardCache.get(this.card.id);
+		},
+		cardFrontAdditionalData() {
+			const data = this.cardAdditionalData;
+			if (!data) return null;
+			if (data.status === "ready" && data.card_faces) return data.card_faces[0];
+			else return data;
+		},
+		cardBackAdditionalData() {
+			const data = this.cardAdditionalData;
+			if (!data) return null;
+			if (data.status === "ready" && data.card_faces) return data.card_faces[1];
+			else return null;
+		},
 	},
 };
 </script>
 
 <style scoped>
-.card-image {
+.card-image,
+.card-individual-image {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	background-color: transparent;
@@ -253,5 +293,29 @@ img {
 .layout-split-left img,
 .layout-split img {
 	max-height: calc(90vw / 1.41);
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
+}
+
+.alt-card-text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: auto;
+	aspect-ratio: 100/140;
+	z-index: 10;
+}
+
+.pending-alt-card-text {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #00000060;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

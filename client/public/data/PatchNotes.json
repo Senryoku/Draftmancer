@@ -1,5 +1,9 @@
 [
 	{
+		"date": "21/07/2022",
+		"notes": ["Press alt while hovering or zooming on a card to display its oracle text."]
+	},
+	{
 		"date": "27/06/2022",
 		"notes": [
 			"Rewrote the draft system to allow picking as soon as a booster is available.",

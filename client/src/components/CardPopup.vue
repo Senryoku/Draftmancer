@@ -8,6 +8,7 @@
 		>
 			<div class="carousel">
 				<div
+					class="carousel-item"
 					:class="{
 						'carousel-selected': currentPart === 0,
 						before: currentPart === 1,
@@ -15,10 +16,15 @@
 					}"
 					:key="card.id"
 				>
-					<CardImage :language="language" :card="card" :fixedLayout="true" />
+					<CardImage
+						:language="language"
+						:card="card"
+						:fixedLayout="true"
+						:displayCardText="displayCardText"
+					/>
 				</div>
 				<div
-					class="related-card"
+					class="carousel-item related-card"
 					v-for="(relatedCard, idx) in relatedCards"
 					:key="relatedCard.id"
 					:class="{
@@ -29,34 +35,29 @@
 						'after-hidden': currentPart < idx,
 					}"
 				>
-					<template
-						v-if="
-							relatedCard.status !== 'ready' ||
-							!(
-								(relatedCard.image_uris && relatedCard.image_uris.border_crop) ||
-								(relatedCard.card_faces &&
-									relatedCard.card_faces[0] &&
-									relatedCard.card_faces[0].image_uris &&
-									relatedCard.card_faces[0].image_uris.border_crop)
-							)
+					<img
+						:src="
+							relatedCard.image_uris
+								? relatedCard.image_uris.border_crop
+								: relatedCard.card_faces &&
+								  relatedCard.card_faces[0] &&
+								  relatedCard.card_faces[0].image_uris
+								? relatedCard.card_faces[0].image_uris.border_crop
+								: null
 						"
-					>
-						<card-placeholder class="card-image" :card="relatedCard"></card-placeholder>
-					</template>
-					<template v-else>
-						<img
-							:src="
-								relatedCard.image_uris
-									? relatedCard.image_uris.border_crop
-									: relatedCard.card_faces[0].image_uris.border_crop
-							"
-							class="card-image"
-						/>
-					</template>
+						class="related-card-image"
+					/>
+					<card-text
+						v-if="relatedCard.status === 'ready' && displayCardText"
+						:card="relatedCard"
+						class="alt-card-text"
+					/>
 				</div>
-				<div v-if="relatedCards.length > 0" class="all-parts">
-					<div class="mouse-hint"><i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i></div>
-					<i class="fas fa-angle-up"></i>
+				<div class="all-parts">
+					<div class="mouse-hint" v-if="relatedCards.length > 0">
+						<i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i>
+					</div>
+					<i class="fas fa-angle-up" v-if="relatedCards.length > 0"></i>
 					<i class="fas fa-square fa-sm" :class="{ 'carousel-selected': currentPart === 0 }"></i>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
@@ -74,7 +75,8 @@
 							></i
 						></template>
 					</template>
-					<i class="fas fa-angle-down"></i>
+					<i class="fas fa-angle-down" v-if="relatedCards.length > 0"></i>
+					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>
 				</div>
 				<div v-if="hasPendingData(card.id)" class="all-parts"><i class="fas fa-spinner fa-spin" /></div>
 			</div>
@@ -85,13 +87,13 @@
 <script>
 import axios from "axios";
 
-import CardPlaceholder from "./CardPlaceholder.vue";
+import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
 
 const scrollCooldown = 100; // ms
 
 export default {
-	components: { CardImage, CardPlaceholder },
+	components: { CardImage, CardText },
 	props: {
 		language: { type: String, required: true },
 	},
@@ -102,7 +104,7 @@ export default {
 			position: "left",
 			currentPart: 0,
 			lastScroll: 0,
-			cardCache: {},
+			displayCardText: false,
 			spellbooks: {}, // Associates card names to their spellbooks (Sets of card ids)
 		};
 	},
@@ -112,33 +114,30 @@ export default {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
 				this.currentPart = 0;
-				let promise = this.requestData(card.id);
+				let promise = this.$cardCache.request(card.id);
 				// Also request associated spellbook if necessary
 				promise?.then(() => {
-					const cardData = this.additionalData(this.card.id);
+					const cardData = this.$cardCache.get(card.id);
 					if (!(card.name in this.spellbooks)) {
 						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
 							cardData.name
 						)}%22&unique=cards`;
-						cardData.status = "pending";
 						axios
 							.get(url)
 							.then((response) => {
 								if (response.status === 200 && response.data?.data?.length > 0) {
-									this.spellbooks[cardData.name] = new Set();
+									this.$set(this.spellbooks, cardData.name, new Set());
 									for (const card of response.data.data) {
 										card.status = "ready";
-										this.$set(this.cardCache, card.id, card);
+										this.$set(this.$cardCache.cardCache, card.id, card);
 										this.spellbooks[cardData.name].add(card.id);
 									}
 								}
-								cardData.status = "ready";
 							})
 							.catch((error) => {
 								// There's no spellbook for this card, add an empty set so we don't request it again and return without error
 								if (error.response?.status === 404) {
 									this.spellbooks[cardData.name] = new Set();
-									cardData.status = "ready";
 								} else console.error("Error fetching spellbook:", error);
 							});
 					}
@@ -146,8 +145,9 @@ export default {
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
 				document.addEventListener("keydown", this.keyDown, { capture: true });
-			} else this.cleanupEventHandlers();
-			this.display = !this.display;
+				document.addEventListener("keyup", this.keyUp, { capture: true });
+				this.display = true;
+			} else this.close();
 		});
 		this.$root.$on("closecardpopup", () => {
 			this.close();
@@ -156,34 +156,14 @@ export default {
 	methods: {
 		close() {
 			this.display = false;
+			this.displayCardText = false;
 			this.cleanupEventHandlers();
 		},
-		requestData(cardID) {
-			// Note: This will always request the english version of the card data, regardless of the language prop.,
-			//	   but the all_parts (related cards) property doesn't seem to exist on translated cards anyway.
-			//     We could search for the translated cards from their english ID, but I'm not sure if that's worth it,
-			//     especially since I strongly suspect most of them won't be in Scryfall DB at all.
-			if (!this.cardCache[cardID]) {
-				this.$set(this.cardCache, cardID, { id: cardID, status: "pending" });
-				return axios
-					.get(`https://api.scryfall.com/cards/${cardID}`)
-					.then((response) => {
-						if (response.status === 200) {
-							response.data.status = "ready";
-							this.$set(this.cardCache, cardID, response.data);
-						} else this.$set(this.cardCache, cardID, undefined);
-					})
-					.catch((error) => {
-						console.error("Error fetching card data:", error);
-					});
-			}
-			return null;
-		},
 		hasPendingData(cardID) {
-			return cardID in this.cardCache && this.cardCache[cardID]?.status === "pending";
+			return this.$cardCache.get(cardID)?.status === "pending";
 		},
 		additionalData(cardID) {
-			return this.cardCache[cardID];
+			return this.$cardCache.get(cardID);
 		},
 		nextPart() {
 			if (this.relatedCards.length === 0) return;
@@ -216,6 +196,24 @@ export default {
 				case "ArrowDown":
 					this.nextPart();
 					break;
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
+				default:
+					// Ignore this event
+					return;
+			}
+			// We handled it.
+			event.stopPropagation();
+			event.preventDefault();
+		},
+		keyUp(event) {
+			switch (event.key) {
+				case "Alt":
+					this.displayCardText = event.altKey;
+					this.$forceUpdate();
+					break;
 				default:
 					// Ignore this event
 					return;
@@ -230,20 +228,21 @@ export default {
 		cleanupEventHandlers() {
 			document.removeEventListener("wheel", this.mouseWheel);
 			document.removeEventListener("keydown", this.keyDown, { capture: true });
+			document.removeEventListener("keyup", this.keyUp, { capture: true });
 		},
 	},
 	computed: {
+		cardAdditionalData() {
+			return this.$cardCache.get(this.card.id);
+		},
 		relatedCards() {
 			let r = [];
-			if (this.cardCache[this.card?.id]?.all_parts?.length > 0)
-				for (let card of this.cardCache[this.card.id].all_parts) {
-					if (card.id !== this.card.id) {
-						this.requestData(card.id);
-						r.push(this.additionalData(card.id));
-					}
+			if (this.$cardCache.get(this.card?.id)?.all_parts?.length > 0)
+				for (let card of this.$cardCache.get(this.card?.id).all_parts) {
+					if (card.id !== this.card.id) r.push(this.$cardCache.get(card.id));
 				}
 			if (this.spellbooks[this.card?.name]?.size > 0)
-				for (const cid of this.spellbooks[this.card.name]) r.push(this.additionalData(cid));
+				for (const cid of this.spellbooks[this.card.name]) r.push(this.$cardCache.get(cid));
 			return r;
 		},
 	},
@@ -257,7 +256,7 @@ export default {
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 999;
+	z-index: 900;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
@@ -269,11 +268,6 @@ export default {
 
 .card-popup.left {
 	left: 3.5vw;
-}
-
-.card-popup >>> img {
-	width: auto;
-	height: var(--image-height);
 }
 
 .zoom-enter-active,
@@ -301,42 +295,52 @@ export default {
 	height: var(--image-height);
 }
 
-.carousel > * {
+.carousel > .carousel-item {
 	position: absolute;
+	z-index: -2000;
 	transition: all 0.4s ease-out;
 	transform-origin: left center;
+	backface-visibility: hidden;
 }
 
-.right .carousel > * {
+.right .carousel > .carousel-item {
 	transform-origin: right center;
 }
 
-.carousel .carousel-selected {
-	z-index: 1;
+.carousel .carousel-item.carousel-selected {
+	z-index: 0;
 }
 
-.carousel .before:not(.carousel-selected) {
-	z-index: 0;
+.carousel .carousel-item.before {
+	z-index: -1000;
 	transform: translateY(-25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .after:not(.carousel-selected) {
-	z-index: 0;
+.carousel .carousel-item.after {
+	z-index: -1000;
 	transform: translateY(25%) scale(70%);
 	opacity: 0.8;
 }
 
-.carousel .before-hidden:not(.carousel-selected) {
-	z-index: -1;
-	transform: translateY(-50%) scale(0%);
+.carousel .carousel-item.before-hidden {
+	z-index: -2000;
+	transform: translateY(-50%) scale(1%);
 	opacity: 0;
 }
 
-.carousel .after-hidden:not(.carousel-selected) {
-	z-index: -1;
-	transform: translateY(50%) scale(0%);
+.carousel .carousel-item.after-hidden {
+	z-index: -2000;
+	transform: translateY(50%) scale(1%);
 	opacity: 0;
+}
+
+.card-popup >>> .card-individual-image > img {
+	width: auto;
+	height: var(--image-height);
+	aspect-ratio: 100/140;
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
 }
 
 .related-card {
@@ -347,10 +351,12 @@ export default {
 	border-radius: 3%;
 }
 
-.related-card .card-image {
+.related-card .related-card-image {
 	width: auto;
 	height: var(--image-height);
 	border-radius: 3%;
+	background-image: url("../assets/img/cardback.png");
+	background-size: cover;
 }
 
 .all-parts {
@@ -368,7 +374,7 @@ export default {
 	max-height: 95%;
 	width: 2em;
 	margin: 0 auto 0 auto;
-	padding: 2.5em 0 1em 0;
+	padding: 2.5em 0 2.5em 0;
 	background: #222;
 	border: 2px solid #aaa;
 
@@ -413,5 +419,25 @@ export default {
 	transform: translateX(-50%);
 	display: flex;
 	gap: 0.25em;
+}
+
+.alt-hint {
+	position: absolute;
+	color: #666;
+	text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.7);
+	bottom: 0.8em;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 0.25em;
+}
+
+.alt-card-text {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
 }
 </style>
