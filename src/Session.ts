@@ -728,15 +728,13 @@ export class Session implements IIndexable {
 				const useColorBalance =
 					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
 
-				let pickOptions: Options = this.customCardList.customCards
-					? {
-							getCard: (cid: CardID) => {
-								return this.customCardList.customCards && cid in this.customCardList.customCards
-									? this.customCardList.customCards[cid]
-									: Cards[cid];
-							},
-					  }
-					: {};
+				let pickOptions: Options = { uniformAll: true };
+				if (this.customCardList.customCards)
+					pickOptions.getCard = (cid: CardID) => {
+						return this.customCardList.customCards && cid in this.customCardList.customCards
+							? this.customCardList.customCards[cid]
+							: Cards[cid];
+					};
 
 				// Generate Boosters
 				this.boosters = [];
@@ -779,6 +777,8 @@ export class Session implements IIndexable {
 
 				const cardsPerBooster = options.cardsPerBooster ?? 15;
 
+				const pickOptions: Options = { uniformAll: true };
+
 				let card_count = this.customCardList.cards.length;
 				let card_target = cardsPerBooster * boosterQuantity;
 				if (card_count < card_target) {
@@ -793,11 +793,12 @@ export class Session implements IIndexable {
 				if (this.colorBalance) {
 					const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection);
 					for (let i = 0; i < boosterQuantity; ++i)
-						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster));
+						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 				} else {
 					for (let i = 0; i < boosterQuantity; ++i) {
 						let booster: Array<Card> = [];
-						for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster));
+						for (let j = 0; j < cardsPerBooster; ++j)
+							booster.push(pickCard(localCollection, booster, pickOptions));
 						this.boosters.push(booster);
 					}
 				}
