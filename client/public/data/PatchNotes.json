@@ -1,7 +1,10 @@
 [
 	{
 		"date": "21/07/2022",
-		"notes": ["Press alt while hovering or zooming on a card to display its oracle text."]
+		"notes": [
+			"Press alt while hovering or zooming on a card to display its oracle text.",
+			"Modified cube distribution: Having multiple copies of a card will increase its chance to be included in a pack (Previously, each unique card had equal chances to be picked, regardless of the number of copies)."
+		]
 	},
 	{
 		"date": "27/06/2022",
