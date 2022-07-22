@@ -5,8 +5,10 @@
 		</div>
 		<div class="card-text" v-for="(face, idx) in faces" :key="idx">
 			<div class="card-top-line" v-if="face.name">
-				<span class="card-name font-size-fit">{{ face.name }}</span>
-				<span class="card-mana-cost" v-html="replaceManaSymbols(face.mana_cost)"></span>
+				<div class="card-top-line-inner">
+					<div class="card-name font-size-fit">{{ face.name }}</div>
+					<div class="card-mana-cost" v-html="replaceManaSymbols(face.mana_cost)"></div>
+				</div>
 			</div>
 			<div class="card-type font-size-fit" v-if="face.type_line">
 				{{ face.type_line }}
@@ -160,20 +162,34 @@ export default {
 
 	height: 7%;
 
+	border-radius: 2% / 50%;
+	padding: 0 2.6%;
+}
+
+.card-text .card-top-line-inner {
 	display: flex;
 	justify-content: space-between;
-	white-space: nowrap;
 	align-items: center;
-	padding: 2% 4%;
+	align-content: center;
+	white-space: nowrap;
+	width: 100%;
+	height: 100%;
+}
 
-	border-radius: 2% / 50%;
+.card-text .card-name {
+	flex: 0 1 auto;
+	max-height: 100%;
 }
 
 .card-text .card-mana-cost {
-	display: flex;
-	justify-content: center;
-	font-size: 2.5vh;
-	gap: 0.2em;
+	flex: 1 0 auto;
+
+	display: inline-flex;
+	justify-content: flex-end;
+	align-items: stretch;
+	gap: 2%;
+	height: 60%;
+	width: auto;
 }
 
 .card-text .card-type {
@@ -240,6 +256,7 @@ export default {
 
 .card-text .card-mana-cost >>> .mana-symbol {
 	box-shadow: -0.14vh 0.14vh 0 rgba(0, 0, 0, 0.85);
+	width: auto;
 }
 
 .card-text .card-oracle >>> .mana-symbol {
