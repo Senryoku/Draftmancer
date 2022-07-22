@@ -18,6 +18,7 @@
 			:displayCardText="displayCardText"
 			ref="image"
 		/>
+		<slot></slot>
 	</div>
 </template>
 
