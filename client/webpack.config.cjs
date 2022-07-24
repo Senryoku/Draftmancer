@@ -30,16 +30,7 @@ module.exports = {
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
-				use: [
-					{
-						loader: "file-loader",
-						options: {
-							publicPath: "dist/assets/",
-							outputPath: "assets/",
-							esModule: false,
-						},
-					},
-				],
+				type: "asset/resource",
 			},
 			{
 				test: /\.worker\.js$/,
@@ -48,7 +39,7 @@ module.exports = {
 			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
 			{ test: /\.tsx?$/, loader: "ts-loader" },
 			{
-				test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+				test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
 				use: [
 					{
 						loader: "file-loader",
