@@ -802,7 +802,6 @@ export default {
 				// Only watching, not playing/receiving a booster ourself.
 				if (this.draftingState === DraftState.Watching) {
 					this.boosterNumber = data.boosterNumber;
-					this.pickNumber = data.pickNumber;
 					return;
 				}
 

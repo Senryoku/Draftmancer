@@ -1530,7 +1530,9 @@ export class Session implements IIndexable {
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
 			// Update draft log for live display if owner in not playing
 			if (this.shouldSendLiveUpdates()) {
-				Connections[this.owner].socket.emit("draftLogLive", { log: this.draftLog });
+				Connections[this.owner].socket.emit("draftLogLive", {
+					log: this.draftLog,
+				});
 			}
 		}
 
@@ -1890,8 +1892,8 @@ export class Session implements IIndexable {
 			++index;
 		}
 
-		if (!this.ownerIsPlayer && this.owner in Connections) {
-			Connections[this.owner].socket.emit("distributeBoosters", {
+		if (!this.ownerIsPlayer) {
+			Connections[this.owner]?.socket.emit("draftState", {
 				boosterNumber: s.boosterNumber,
 			});
 		}
@@ -2281,7 +2283,9 @@ export class Session implements IIndexable {
 			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
-				Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
+				Connections[userID].socket.emit("draftLogLive", {
+					log: this.draftLog,
+				});
 		} else {
 			Connections[userID].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedVirtualPlayerData(),

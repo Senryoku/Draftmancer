@@ -817,7 +817,7 @@
 							<i class="fas fa-clock"></i>
 							{{ pickTimer }}
 						</div>
-						<div>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</div>
+						<div>Pack #{{ boosterNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
