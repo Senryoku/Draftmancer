@@ -2552,6 +2552,15 @@ export class Session implements IIndexable {
 		);
 	}
 
+	onCardMoved(userID: string, uniqueID: number, destStr: string) {
+		if (this.shouldSendLiveUpdates()) {
+			Connections[this.owner]?.socket.emit("spectatorCardMoved", {
+				userID: userID,
+				pickedCards: Connections[userID]?.pickedCards,
+			});
+		}
+	}
+
 	// Execute fn for each user. Owner included even if they're not playing.
 	forUsers(fn: (uid: UserID) => void) {
 		if (!this.ownerIsPlayer && this.owner in Connections) fn(this.owner);

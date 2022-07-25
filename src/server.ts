@@ -325,6 +325,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	},
 	moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, destStr: string) {
 		if (!["main", "side"].includes(destStr)) return;
+		if (!Connections[userID]?.pickedCards) return;
 
 		let dest, source;
 		if (destStr === "main") {
@@ -339,6 +340,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		if (index !== -1) {
 			const card = source.splice(index, 1)[0];
 			dest.push(card);
+			Sessions[sessionID].onCardMoved(userID, uniqueID, destStr);
 		}
 	},
 };
