@@ -46,27 +46,42 @@
 								:language="language"
 							></draft-log-pick>
 						</transition>
-						<div class="container">
-							<card-pool
-								:cards="selectedPlayerCards.main"
-								:language="language"
-								:readOnly="true"
-								:group="`deck-${player}`"
-								:key="`deck-${player}-${selectedPlayerCards.main.length}`"
-							>
-								<template v-slot:title>Deck ({{ selectedPlayerCards.main.length }})</template>
-							</card-pool>
-						</div>
-						<div class="container" v-if="selectedPlayerCards.side.length > 0">
-							<card-pool
-								:cards="selectedPlayerCards.side"
-								:language="language"
-								:readOnly="true"
-								:group="`side-${player}`"
-								:key="`side-${player}-${selectedPlayerCards.side.length}`"
-							>
-								<template v-slot:title>Sideboard ({{ selectedPlayerCards.side.length }})</template>
-							</card-pool>
+						<div
+							class="container deck-container"
+							style="min-height: calc(30vw); /* Workaround (Hackish) to avoid unwanted scrolls */"
+						>
+							<div class="deck">
+								<card-pool
+									:cards="selectedPlayerCards.main"
+									:language="language"
+									:readOnly="true"
+									:group="`deck-${player}`"
+									:key="`deck-${player}-${selectedPlayerCards.main.length}`"
+								>
+									<template v-slot:title>Deck ({{ selectedPlayerCards.main.length }})</template>
+								</card-pool>
+							</div>
+							<div class="collapsed-sideboard" v-if="selectedPlayerCards.side.length > 0">
+								<div class="section-title">
+									<h2>Sideboard ({{ selectedPlayerCards.side.length }})</h2>
+								</div>
+								<div class="card-container">
+									<draggable
+										:key="`side_col`"
+										class="card-column drag-column"
+										:list="selectedPlayerCards.side"
+										:group="`side-${player}`"
+										:animation="200"
+									>
+										<card
+											v-for="card in selectedPlayerCards.side"
+											:key="`side_card_${card.uniqueID}`"
+											:card="card"
+											:language="language"
+										></card>
+									</draggable>
+								</div>
+							</div>
 						</div>
 					</div>
 				</template>
@@ -85,10 +100,12 @@
 <script>
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
+import Card from "./Card.vue";
+import draggable from "vuedraggable";
 
 export default {
 	name: "DraftLogLive",
-	components: { DraftLogPick, CardPool },
+	components: { DraftLogPick, draggable, Card, CardPool },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object, required: true },
