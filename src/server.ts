@@ -32,7 +32,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card } from "./Cards.js";
+import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -322,6 +322,24 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
 		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
 		Sessions[sessionID].updateBracket(results);
+	},
+	moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, destStr: string) {
+		if (!["main", "side"].includes(destStr)) return;
+
+		let dest, source;
+		if (destStr === "main") {
+			dest = Connections[userID].pickedCards.main;
+			source = Connections[userID].pickedCards.side;
+		} else if (destStr === "side") {
+			dest = Connections[userID].pickedCards.side;
+			source = Connections[userID].pickedCards.main;
+		} else return;
+
+		const index = source.findIndex((c) => c.uniqueID === uniqueID);
+		if (index !== -1) {
+			const card = source.splice(index, 1)[0];
+			dest.push(card);
+		}
 	},
 };
 

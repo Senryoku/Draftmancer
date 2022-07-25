@@ -2,7 +2,7 @@
 
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
-import { Card, CardID, CardPool } from "./Cards";
+import { Card, CardID, CardPool, UniqueCard } from "./Cards";
 
 export let Connections: { [uid: string]: Connection } = {};
 export class Connection {
@@ -14,7 +14,7 @@ export class Connection {
 	collection: CardPool = new Map();
 	useCollection = true;
 
-	pickedCards: { main: Array<Card>; side: Array<Card> } = { main: [], side: [] };
+	pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> } = { main: [], side: [] };
 
 	constructor(socket: Socket, userID: UserID, userName: string) {
 		this.socket = socket;
@@ -23,6 +23,6 @@ export class Connection {
 	}
 }
 
-export function getPickedCardIds(pickedCards: { main: Array<Card>; side: Array<Card> }): CardID[] {
+export function getPickedCardIds(pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> }): CardID[] {
 	return pickedCards.main.map((c) => c.id).concat(pickedCards.side.map((c) => c.id));
 }
