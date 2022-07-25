@@ -2276,7 +2276,9 @@ export class Session implements IIndexable {
 		this.notifyUserChange();
 		if (this.drafting && this.draftState && this.draftState instanceof DraftState) {
 			Connections[userID].socket.emit("startDraft", this.getSortedVirtualPlayerData());
-			this.sendDraftState(userID);
+			Connections[userID].socket.emit("draftState", {
+				boosterNumber: this.draftState.boosterNumber,
+			});
 			// Update draft log for live display if owner in not playing
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
 				Connections[userID].socket.emit("draftLogLive", { log: this.draftLog });
