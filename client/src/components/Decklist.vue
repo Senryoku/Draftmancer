@@ -3,6 +3,7 @@
 		<card-pool
 			:cards="mainboard"
 			:language="language"
+			:readOnly="true"
 			:group="`deck-${_uid}`"
 			:key="`deck-${_uid}`"
 			ref="mainboardComponent"
@@ -10,7 +11,7 @@
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">Added basics:</span>
-				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter(c => list.lands[c] > 0)" :key="c">
+				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands[c] > 0)" :key="c">
 					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ list.lands[c] }}
 				</span>
@@ -51,6 +52,7 @@
 		<card-pool
 			:cards="sideboard"
 			:language="language"
+			:readOnly="true"
 			:group="`side-${_uid}`"
 			:key="`side-${_uid}`"
 			ref="sideboardComponent"
@@ -112,11 +114,11 @@ export default {
 	computed: {
 		mainboard() {
 			let uniqueID = 0;
-			return this.list.main.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		sideboard() {
 			let uniqueID = 0;
-			return this.list.side.map(cid => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list.side.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		landcount() {
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);

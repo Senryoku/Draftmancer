@@ -179,6 +179,7 @@
 						<card-pool
 							:cards="selectedLogCards"
 							:language="language"
+							:readOnly="true"
 							:group="`cardPool-${selectedLog.userID}`"
 							:key="`cardPool-${selectedLog.userID}`"
 						>

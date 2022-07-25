@@ -50,6 +50,7 @@
 							<card-pool
 								:cards="selectedPlayerCards"
 								:language="language"
+								:readOnly="true"
 								:group="`cardPool-${player}`"
 								:key="`cardPool-${player}-${selectedPlayerCards.length}`"
 							>
@@ -160,13 +161,13 @@ export default {
 			if (this.picksPerPack.length === 0 || !this.validPick) return "";
 			const pick = this.picksPerPack[this.pack][this.pick].data;
 			return pick.pick
-				.map(idx => pick.booster[idx])
+				.map((idx) => pick.booster[idx])
 				.map(this.getCardName)
 				.join(", ");
 		},
 		selectedPlayerCards() {
 			return this.draftlog.users[this.player].picks
-				.map(p => p.pick.map(idx => p.booster[idx]))
+				.map((p) => p.pick.map((idx) => p.booster[idx]))
 				.flat()
 				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
 		},
