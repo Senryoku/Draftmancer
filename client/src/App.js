@@ -885,9 +885,15 @@ export default {
 
 			this.socket.on("draftLogLive", (data) => {
 				if (data.log) this.draftLogLive = data.log;
+				if (data.pickedCards)
+					this.$nextTick(() => {
+						// This can be called on reconnect, give vue some time to mount the component
+						for (let entry of data.pickedCards)
+							this.$refs.draftloglive?.setDeck(entry.userID, entry.pickedCards);
+					});
 				if (data.pick) {
 					this.draftLogLive.users[data.userID].picks.push(data.pick);
-					if (this.$refs.draftloglive) this.$refs.draftloglive.newPick(data);
+					this.$refs.draftloglive?.newPick(data);
 				}
 			});
 
@@ -2383,26 +2389,26 @@ export default {
 			this.$root.$emit("closecardpopup");
 		},
 		onDeckChange(e) {
-			if (e.removed) {
+			// For movements between to columns of the pool, two events are emitted:
+			// One for removal from the source column and one for addition into the destination.
+			// We're emiting the event for server sync. only on addition, if this a movement within the pool,
+			// the card won't be found on the other pool and nothing will happen.
+			if (e.removed)
 				this.deck.splice(
 					this.deck.findIndex((c) => c === e.removed.element),
 					1
 				);
-				this.socket.emit("moveCard", e.removed.element.uniqueID, "side");
-			}
 			if (e.added) {
 				this.deck.push(e.added.element);
 				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
 			}
 		},
 		onSideChange(e) {
-			if (e.removed) {
+			if (e.removed)
 				this.sideboard.splice(
 					this.sideboard.findIndex((c) => c === e.removed.element),
 					1
 				);
-				this.socket.emit("moveCard", e.removed.element.uniqueID, "main");
-			}
 			if (e.added) {
 				this.sideboard.push(e.added.element);
 				this.socket.emit("moveCard", e.added.element.uniqueID, "side");

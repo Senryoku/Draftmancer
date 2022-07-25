@@ -48,13 +48,24 @@
 						</transition>
 						<div class="container">
 							<card-pool
-								:cards="selectedPlayerCards"
+								:cards="selectedPlayerCards.main"
 								:language="language"
 								:readOnly="true"
-								:group="`cardPool-${player}`"
-								:key="`cardPool-${player}-${selectedPlayerCards.length}`"
+								:group="`deck-${player}`"
+								:key="`deck-${player}-${selectedPlayerCards.main.length}`"
 							>
-								<template v-slot:title>Cards ({{ selectedPlayerCards.length }})</template>
+								<template v-slot:title>Deck ({{ selectedPlayerCards.main.length }})</template>
+							</card-pool>
+						</div>
+						<div class="container" v-if="selectedPlayerCards.side.length > 0">
+							<card-pool
+								:cards="selectedPlayerCards.side"
+								:language="language"
+								:readOnly="true"
+								:group="`side-${player}`"
+								:key="`side-${player}-${selectedPlayerCards.side.length}`"
+							>
+								<template v-slot:title>Sideboard ({{ selectedPlayerCards.side.length }})</template>
 							</card-pool>
 						</div>
 					</div>
@@ -90,6 +101,7 @@ export default {
 			pick: 0,
 			eventListeners: [],
 			pickTransition: "right",
+			playerDecks: {},
 		};
 	},
 	mounted() {
@@ -130,6 +142,9 @@ export default {
 					this.pick = this.picksPerPack[this.pack].length - 1;
 				});
 		},
+		setDeck(userID, pickedCards) {
+			this.$set(this.playerDecks, userID, pickedCards);
+		},
 		prevPick() {
 			if (this.pick === 0) {
 				if (this.pack === 0) return;
@@ -149,11 +164,19 @@ export default {
 			}
 		},
 		newPick(data) {
+			if (data.userID in this.playerDecks) {
+				for (let idx of data.pick.pick) {
+					this.playerDecks[data.userID].main.push(data.pick.booster[idx]);
+				}
+			}
 			// Skip to last pick if we're spectating this player
 			if (data.userID === this.player) {
 				this.pack = this.picksPerPack.length - 1;
 				this.pick = this.picksPerPack[this.pack].length - 1;
 			}
+		},
+		generateCardArray(cardIDs) {
+			return cardIDs.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
 		},
 	},
 	computed: {
@@ -166,10 +189,17 @@ export default {
 				.join(", ");
 		},
 		selectedPlayerCards() {
-			return this.draftlog.users[this.player].picks
-				.map((p) => p.pick.map((idx) => p.booster[idx]))
-				.flat()
-				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
+			if (this.player in this.playerDecks)
+				return {
+					main: this.generateCardArray(this.playerDecks[this.player].main),
+					side: this.generateCardArray(this.playerDecks[this.player].side),
+				};
+			return {
+				main: this.generateCardArray(
+					this.draftlog.users[this.player].picks.map((p) => p.pick.map((idx) => p.booster[idx])).flat()
+				),
+				side: [],
+			};
 		},
 		selectedLog() {
 			return this.draftlog.users[this.player];

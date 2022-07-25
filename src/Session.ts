@@ -2285,6 +2285,15 @@ export class Session implements IIndexable {
 			if (["owner", "everyone"].includes(this.draftLogRecipients))
 				Connections[userID].socket.emit("draftLogLive", {
 					log: this.draftLog,
+					pickedCards: [...this.users].map((uid: UserID) => {
+						return {
+							userID: uid,
+							pickedCards: {
+								main: Connections[uid]?.pickedCards.main.map((c) => c.id),
+								side: Connections[uid]?.pickedCards.side.map((c) => c.id),
+							},
+						};
+					}),
 				});
 		} else {
 			Connections[userID].socket.emit("sessionOptions", {
@@ -2560,9 +2569,16 @@ export class Session implements IIndexable {
 
 	onCardMoved(userID: string, uniqueID: number, destStr: string) {
 		if (this.shouldSendLiveUpdates()) {
-			Connections[this.owner]?.socket.emit("spectatorCardMoved", {
-				userID: userID,
-				pickedCards: Connections[userID]?.pickedCards,
+			Connections[this.owner]?.socket.emit("draftLogLive", {
+				pickedCards: [
+					{
+						userID: userID,
+						pickedCards: {
+							main: Connections[userID]?.pickedCards.main.map((c) => c.id),
+							side: Connections[userID]?.pickedCards.side.map((c) => c.id),
+						},
+					},
+				],
 			});
 		}
 	}
