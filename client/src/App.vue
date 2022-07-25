@@ -813,10 +813,6 @@
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
 						<h1>Players are drafting...</h1>
-						<div v-show="pickTimer >= 0">
-							<i class="fas fa-clock"></i>
-							{{ pickTimer }}
-						</div>
 						<div>Pack #{{ boosterNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
