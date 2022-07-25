@@ -296,12 +296,7 @@ export default {
 		},
 		change(e) {
 			// Sync. source array when adding/removing cards by drag & drop
-			if (e.removed)
-				this.cards.splice(
-					this.cards.findIndex((c) => c === e.removed.element),
-					1
-				);
-			if (e.added) this.cards.push(e.added.element);
+			this.$emit("cardPoolChange", e);
 		},
 		addColumn() {
 			for (let row of this.rows) {

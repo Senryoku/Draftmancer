@@ -542,7 +542,8 @@ export default {
 				this.$refs.deckDisplay.sync();
 				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards) this.addToDeck(c);
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.WinstonPicking;
 					else this.draftingState = DraftState.WinstonWaiting;
@@ -608,7 +609,8 @@ export default {
 				this.$refs.deckDisplay.sync();
 				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards) this.addToDeck(c);
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.GridPicking;
 					else this.draftingState = DraftState.GridWaiting;
@@ -662,7 +664,8 @@ export default {
 				this.$refs.deckDisplay.sync();
 				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards) this.addToDeck(c);
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.RochesterPicking;
 					else this.draftingState = DraftState.RochesterWaiting;
@@ -707,7 +710,8 @@ export default {
 				this.$refs.deckDisplay.sync();
 				this.$refs.sideboardDisplay.sync();
 				this.$nextTick(() => {
-					for (let c of data.pickedCards) this.addToDeck(c);
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
 
 					if (this.userID === data.state.currentPlayer) this.draftingState = DraftState.MinesweeperPicking;
 					else this.draftingState = DraftState.MinesweeperWaiting;
@@ -764,7 +768,8 @@ export default {
 				this.$refs.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
-					for (let c of data.pickedCards) this.addToDeck(c);
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
 
 					this.booster = [];
 					if (data.booster) {
@@ -1168,14 +1173,25 @@ export default {
 			// Give Vue one frame to react to state changes before triggering the
 			// transitions.
 			this.$nextTick(() => {
+				const toSideboard = options?.toSideboard;
+				const cUIDs = this.selectedCards.map((c) => c.uniqueID);
+
+				const ack = (answer) => {
+					this.pickInFlight = false;
+					if (answer.code !== 0) {
+						Alert.fire(answer.error);
+					} else {
+						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
+						this.selectedCards = [];
+						this.burningCards = [];
+					}
+				};
+
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
 						this.selectedCards.map((c) => this.rochesterDraftState.booster.findIndex((c2) => c === c2)),
-						(answer) => {
-							this.pickInFlight = false;
-							if (answer.code !== 0) Alert.fire(answer.error);
-						}
+						ack
 					);
 					this.draftingState = DraftState.RochesterWaiting;
 				} else {
@@ -1185,15 +1201,7 @@ export default {
 							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 						},
-						(answer) => {
-							this.pickInFlight = false;
-							if (answer.code !== 0) {
-								Alert.fire(answer.error);
-							} else {
-								this.selectedCards = [];
-								this.burningCards = [];
-							}
-						}
+						ack
 					);
 					this.draftingState = DraftState.Waiting;
 					// Removes picked & burned cards for animation
@@ -1201,7 +1209,7 @@ export default {
 						(c) => !this.selectedCards.includes(c) && !this.burningCards.includes(c)
 					);
 				}
-				if (options && options.toSideboard) this.addToSideboard(this.selectedCards, options);
+				if (options?.toSideboard) this.addToSideboard(this.selectedCards, options);
 				else this.addToDeck(this.selectedCards, options);
 			});
 			this.pickInFlight = true;
@@ -2357,6 +2365,7 @@ export default {
 			if (idx >= 0) {
 				this.deck.splice(idx, 1);
 				this.addToSideboard(c);
+				this.socket.emit("moveCard", c.uniqueID, "side");
 			} else return;
 			this.$refs.deckDisplay.remCard(c);
 			// Card DOM element will move without emiting a mouse leave event,
@@ -2369,9 +2378,39 @@ export default {
 			if (idx >= 0) {
 				this.sideboard.splice(idx, 1);
 				this.addToDeck(c);
+				this.socket.emit("moveCard", c.uniqueID, "main");
 			} else return;
 			this.$refs.sideboardDisplay.remCard(c);
 			this.$root.$emit("closecardpopup");
+		},
+		onDeckChange(e) {
+			if (e.removed) {
+				this.deck.splice(
+					this.deck.findIndex((c) => c === e.removed.element),
+					1
+				);
+				this.socket.emit("moveCard", e.removed.element.uniqueID, "side");
+			}
+			if (e.added) {
+				this.deck.push(e.added.element);
+				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
+			}
+		},
+		onSideChange(e) {
+			if (e.removed) {
+				this.sideboard.splice(
+					this.sideboard.findIndex((c) => c === e.removed.element),
+					1
+				);
+				this.socket.emit("moveCard", e.removed.element.uniqueID, "main");
+			}
+			if (e.added) {
+				this.sideboard.push(e.added.element);
+				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
+			}
+		},
+		onCollapsedSideChange() {
+			this.$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */
 		},
 		clearDeck() {
 			this.deck = [];

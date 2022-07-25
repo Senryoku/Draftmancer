@@ -1194,6 +1194,7 @@
 					:cards="deck"
 					:language="language"
 					:click="deckToSideboard"
+					@cardPoolChange="onDeckChange"
 					ref="deckDisplay"
 					group="deck"
 					@dragover.native="allowBoosterCardDrop($event)"
@@ -1363,7 +1364,7 @@
 						class="card-column drag-column"
 						:list="sideboard"
 						group="deck"
-						@change="$refs.sideboardDisplay.sync() /* Sync sideboard card-pool */"
+						@change="onCollapsedSideChange"
 						:animation="200"
 					>
 						<card
@@ -1392,6 +1393,7 @@
 				:cards="sideboard"
 				:language="language"
 				:click="sideboardToDeck"
+				@cardPoolChange="onSideChange"
 				ref="sideboardDisplay"
 				group="deck"
 				@dragover.native="allowBoosterCardDrop($event)"
