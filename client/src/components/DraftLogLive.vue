@@ -102,6 +102,7 @@ export default {
 			eventListeners: [],
 			pickTransition: "right",
 			playerDecks: {},
+			uniqueID: 0,
 		};
 	},
 	mounted() {
@@ -176,7 +177,7 @@ export default {
 			}
 		},
 		generateCardArray(cardIDs) {
-			return cardIDs.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
+			return cardIDs.map((cid) => Object.assign({ uniqueID: ++this.uniqueID }, this.draftlog.carddata[cid]));
 		},
 	},
 	computed: {
