@@ -18,6 +18,7 @@ import {
 	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
+	UniqueCard,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -141,7 +142,7 @@ export type UserData = {
 };
 
 export class DraftState extends IDraftState {
-	boosters: Array<Array<Card>>;
+	boosters: Array<Array<UniqueCard>>;
 	boosterNumber = 0;
 	numPicks = 0;
 	players: {
@@ -149,14 +150,14 @@ export class DraftState extends IDraftState {
 			isBot: boolean;
 			botPickInFlight: boolean; // Set to true if a call to doBotPick is already scheduled.
 			botInstance: IBot; // If a human player, this will be used for pick recommendations.
-			boosters: Card[][];
+			boosters: UniqueCard[][];
 			pickNumber: 0;
 			countdownInterval: NodeJS.Timeout | null;
 			timer: number;
 		};
 	} = {};
 
-	constructor(boosters: Card[][] = [], players: UserID[] = [], options: Options = {}) {
+	constructor(boosters: UniqueCard[][] = [], players: UserID[] = [], options: Options = {}) {
 		super("draft");
 		this.boosters = boosters;
 		let botIndex = 0;
@@ -200,10 +201,10 @@ export class DraftState extends IDraftState {
 export class WinstonDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	round = -1; // Will be immedialty incremented
-	cardPool: Array<Card> = [];
-	piles: [Array<Card>, Array<Card>, Array<Card>] = [[], [], []];
+	cardPool: Array<UniqueCard> = [];
+	piles: [Array<UniqueCard>, Array<UniqueCard>, Array<UniqueCard>] = [[], [], []];
 	currentPile: number = 0;
-	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
+	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("winston");
 		this.players = players;
 		if (boosters) {
@@ -211,7 +212,11 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 			shuffleArray(this.cardPool);
 		}
 		if (this.cardPool.length >= 3)
-			this.piles = [[this.cardPool.pop() as Card], [this.cardPool.pop() as Card], [this.cardPool.pop() as Card]];
+			this.piles = [
+				[this.cardPool.pop() as UniqueCard],
+				[this.cardPool.pop() as UniqueCard],
+				[this.cardPool.pop() as UniqueCard],
+			];
 	}
 
 	currentPlayer() {
@@ -231,12 +236,12 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 
 export class GridDraftState extends IDraftState implements TurnBased {
 	round = 0;
-	boosters: Array<Array<Card | null>> = []; // Array of [3x3 Grid, Row-Major order]
+	boosters: Array<Array<UniqueCard | null>> = []; // Array of [3x3 Grid, Row-Major order]
 	players: Array<UserID>;
 	error: any;
 	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: (Card | null)[] }[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
+	lastPicks: { userName: string; round: number; cards: (UniqueCard | null)[] }[] = [];
+	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("grid");
 		this.players = players;
 		if (boosters) {
@@ -273,10 +278,10 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	pickNumber = 0;
 	boosterNumber = 0;
-	boosters: Array<Array<Card>> = [];
+	boosters: Array<Array<UniqueCard>> = [];
 	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: Card[] }[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<Card>>) {
+	lastPicks: { userName: string; round: number; cards: UniqueCard[] }[] = [];
+	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("rochester");
 		this.players = players;
 		this.boosters = boosters;
@@ -313,7 +318,7 @@ export interface IIndexable {
 
 type DisconnectedUser = {
 	userName: string;
-	pickedCards: { main: Card[]; side: Card[] };
+	pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 };
 
 export class Session implements IIndexable {
@@ -363,7 +368,7 @@ export class Session implements IIndexable {
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
 
-	boosters: Array<Array<Card>> = [];
+	boosters: Array<Array<UniqueCard>> = [];
 
 	// Draft state
 	drafting: boolean = false;
@@ -742,7 +747,7 @@ export class Session implements IIndexable {
 					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], pickOptions)
 					: null;
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster: Array<Card> = [];
+					let booster: Array<UniqueCard> = [];
 
 					for (let r in this.customCardList.cardsPerBooster) {
 						if (useColorBalance && colorBalancedSlotGenerator && r === colorBalancedSlot) {
@@ -796,7 +801,7 @@ export class Session implements IIndexable {
 						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 				} else {
 					for (let i = 0; i < boosterQuantity; ++i) {
-						let booster: Array<Card> = [];
+						let booster: Array<UniqueCard> = [];
 						for (let j = 0; j < cardsPerBooster; ++j)
 							booster.push(pickCard(localCollection, booster, pickOptions));
 						this.boosters.push(booster);
@@ -1131,7 +1136,7 @@ export class Session implements IIndexable {
 
 		// Add a new card to skipped pile. (Make sure there's enough cards for the player to draw if this is the last pile)
 		if (s.cardPool.length > 1 || (s.currentPile < 2 && s.cardPool.length > 0))
-			s.piles[s.currentPile].push(s.cardPool.pop() as Card);
+			s.piles[s.currentPile].push(s.cardPool.pop() as UniqueCard);
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
 			const card = s.cardPool.pop() as Card;
@@ -1160,7 +1165,7 @@ export class Session implements IIndexable {
 		Connections[s.currentPlayer()].pickedCards.main = Connections[s.currentPlayer()].pickedCards.main.concat(
 			s.piles[s.currentPile]
 		);
-		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as Card];
+		if (s.cardPool.length > 0) s.piles[s.currentPile] = [s.cardPool.pop() as UniqueCard];
 		else s.piles[s.currentPile] = [];
 		this.winstonNextRound();
 		return true;
@@ -1252,7 +1257,7 @@ export class Session implements IIndexable {
 			//                     Column           Row
 			let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
-				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as Card);
+				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
 				pickedCards.push(s.boosters[0][idx]);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
@@ -1434,7 +1439,7 @@ export class Session implements IIndexable {
 		s.pick(row, col);
 		const currentGridState = s.syncData();
 
-		const pickedCard = s.grid().get(row, col)?.card as Card;
+		const pickedCard = s.grid().get(row, col)?.card as UniqueCard;
 		Connections[userID].pickedCards.main.push(pickedCard);
 
 		s.lastPicks.unshift({
@@ -1534,7 +1539,7 @@ export class Session implements IIndexable {
 	}
 
 	// Pass a booster to the next player at the table
-	passBooster(booster: Array<Card>, userID: UserID) {
+	passBooster(booster: Array<UniqueCard>, userID: UserID) {
 		const s = this.draftState as DraftState;
 		if (!s) return;
 

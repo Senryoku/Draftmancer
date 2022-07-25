@@ -58,7 +58,7 @@ export function getNextCardID() {
 }
 
 export class UniqueCard extends Card {
-	uniqueID?: UniqueCardID;
+	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
 }
 
