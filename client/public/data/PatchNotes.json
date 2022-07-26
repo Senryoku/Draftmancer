@@ -1,5 +1,13 @@
 [
 	{
+		"date": "25/07/2022",
+		"notes": [
+			"Sideboard will now be correctly restored on reconnection (previously all cards were reset to the mainboard).",
+			"Spectator now has access to every player deck and sideboard.",
+			"Some small bugfixes, notably around the spectator mode."
+		]
+	},
+	{
 		"date": "21/07/2022",
 		"notes": [
 			"Press alt while hovering or zooming on a card to display its oracle text.",

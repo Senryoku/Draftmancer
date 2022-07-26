@@ -88,7 +88,7 @@ export class ColorBalancedSlot {
 
 	// Returns cardCount color balanced cards picked from cardPool.
 	// pickedCards can contain pre-selected cards for this slot.
-	generate(cardCount: number, pickedCards: Array<Card> = [], options: Options = {}) {
+	generate(cardCount: number, pickedCards: Array<UniqueCard> = [], options: Options = {}) {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards, options);
@@ -135,7 +135,7 @@ export class ColorBalancedSlot {
 }
 
 export interface IBoosterFactory {
-	generateBooster(targets: Targets): Card[] | false;
+	generateBooster(targets: Targets): UniqueCard[] | false;
 }
 
 export class BoosterFactory implements IBoosterFactory {
@@ -276,8 +276,8 @@ function countBySlot(cardPool: SlotedCardPool) {
 	return counts;
 }
 
-function insertInBooster(card: Card, booster: Array<Card>) {
-	let boosterByRarity: { [slot: string]: Array<Card> } = { mythic: [], rare: [], uncommon: [], common: [] };
+function insertInBooster(card: UniqueCard, booster: Array<UniqueCard>) {
+	let boosterByRarity: { [slot: string]: Array<UniqueCard> } = { mythic: [], rare: [], uncommon: [], common: [] };
 	for (let c of booster) boosterByRarity[c.rarity].push(c);
 	boosterByRarity[card.rarity].push(card);
 	shuffleArray(boosterByRarity[card.rarity]);
@@ -440,7 +440,7 @@ class CMRBoosterFactory extends BoosterFactory {
 		} else {
 			let updatedTargets = Object.assign({}, targets);
 
-			let booster: Array<Card> | false = [];
+			let booster: Array<UniqueCard> | false = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
 			if (random.bool(1 / 6)) {
 				--updatedTargets.common;
@@ -537,7 +537,7 @@ class STXBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		let booster: Array<Card> | false = [];
+		let booster: Array<UniqueCard> | false = [];
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 		const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
 
@@ -717,7 +717,7 @@ class DBLBoosterFactory extends BoosterFactory {
 			};
 		}
 
-		let booster: Array<Card> | false = [];
+		let booster: Array<UniqueCard> | false = [];
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 
 		// Silver screen foil card (Note: We could eventually use actual DBL cards for this, to get the proper image)
@@ -837,7 +837,7 @@ class CLBBoosterFactory extends BoosterFactory {
 		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
-			let booster: Array<Card> | false = [];
+			let booster: Array<UniqueCard> | false = [];
 
 			booster = super.generateBooster(targets);
 			if (!booster) return false;
@@ -908,7 +908,7 @@ class M2X2BoosterFactory extends BoosterFactory {
 			};
 		}
 
-		let booster: Array<Card> | false = [];
+		let booster: Array<UniqueCard> | false = [];
 
 		booster = super.generateBooster(targets);
 		if (!booster) return false;

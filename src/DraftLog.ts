@@ -1,5 +1,4 @@
 import { Card, CardID } from "./Cards.js";
-import { Connections } from "./Connection.js";
 import { SessionID } from "./IDTypes.js";
 import { Session, UserData } from "./Session.js";
 

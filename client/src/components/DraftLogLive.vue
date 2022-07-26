@@ -46,15 +46,42 @@
 								:language="language"
 							></draft-log-pick>
 						</transition>
-						<div class="container">
-							<card-pool
-								:cards="selectedPlayerCards"
-								:language="language"
-								:group="`cardPool-${player}`"
-								:key="`cardPool-${player}-${selectedPlayerCards.length}`"
-							>
-								<template v-slot:title>Cards ({{ selectedPlayerCards.length }})</template>
-							</card-pool>
+						<div
+							class="container deck-container"
+							style="min-height: calc(30vw); /* Workaround (Hackish) to avoid unwanted scrolls */"
+						>
+							<div class="deck">
+								<card-pool
+									:cards="selectedPlayerCards.main"
+									:language="language"
+									:readOnly="true"
+									:group="`deck-${player}`"
+									:key="`deck-${player}-${selectedPlayerCards.main.length}`"
+								>
+									<template v-slot:title>Deck ({{ selectedPlayerCards.main.length }})</template>
+								</card-pool>
+							</div>
+							<div class="collapsed-sideboard" v-if="selectedPlayerCards.side.length > 0">
+								<div class="section-title">
+									<h2>Sideboard ({{ selectedPlayerCards.side.length }})</h2>
+								</div>
+								<div class="card-container">
+									<draggable
+										:key="`side_col`"
+										class="card-column drag-column"
+										:list="selectedPlayerCards.side"
+										:group="`side-${player}`"
+										:animation="200"
+									>
+										<card
+											v-for="card in selectedPlayerCards.side"
+											:key="`side_card_${card.uniqueID}`"
+											:card="card"
+											:language="language"
+										></card>
+									</draggable>
+								</div>
+							</div>
 						</div>
 					</div>
 				</template>
@@ -73,10 +100,12 @@
 <script>
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
+import Card from "./Card.vue";
+import draggable from "vuedraggable";
 
 export default {
 	name: "DraftLogLive",
-	components: { DraftLogPick, CardPool },
+	components: { DraftLogPick, draggable, Card, CardPool },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object, required: true },
@@ -89,6 +118,8 @@ export default {
 			pick: 0,
 			eventListeners: [],
 			pickTransition: "right",
+			playerDecks: {},
+			uniqueID: 0,
 		};
 	},
 	mounted() {
@@ -129,6 +160,9 @@ export default {
 					this.pick = this.picksPerPack[this.pack].length - 1;
 				});
 		},
+		setDeck(userID, pickedCards) {
+			this.$set(this.playerDecks, userID, pickedCards);
+		},
 		prevPick() {
 			if (this.pick === 0) {
 				if (this.pack === 0) return;
@@ -148,11 +182,19 @@ export default {
 			}
 		},
 		newPick(data) {
+			if (data.userID in this.playerDecks) {
+				for (let idx of data.pick.pick) {
+					this.playerDecks[data.userID].main.push(data.pick.booster[idx]);
+				}
+			}
 			// Skip to last pick if we're spectating this player
 			if (data.userID === this.player) {
 				this.pack = this.picksPerPack.length - 1;
 				this.pick = this.picksPerPack[this.pack].length - 1;
 			}
+		},
+		generateCardArray(cardIDs) {
+			return cardIDs.map((cid) => Object.assign({ uniqueID: ++this.uniqueID }, this.draftlog.carddata[cid]));
 		},
 	},
 	computed: {
@@ -160,15 +202,22 @@ export default {
 			if (this.picksPerPack.length === 0 || !this.validPick) return "";
 			const pick = this.picksPerPack[this.pack][this.pick].data;
 			return pick.pick
-				.map(idx => pick.booster[idx])
+				.map((idx) => pick.booster[idx])
 				.map(this.getCardName)
 				.join(", ");
 		},
 		selectedPlayerCards() {
-			return this.draftlog.users[this.player].picks
-				.map(p => p.pick.map(idx => p.booster[idx]))
-				.flat()
-				.map((cid, idx) => Object.assign({ uniqueID: idx }, this.draftlog.carddata[cid]));
+			if (this.player in this.playerDecks)
+				return {
+					main: this.generateCardArray(this.playerDecks[this.player].main),
+					side: this.generateCardArray(this.playerDecks[this.player].side),
+				};
+			return {
+				main: this.generateCardArray(
+					this.draftlog.users[this.player].picks.map((p) => p.pick.map((idx) => p.booster[idx])).flat()
+				),
+				side: [],
+			};
 		},
 		selectedLog() {
 			return this.draftlog.users[this.player];

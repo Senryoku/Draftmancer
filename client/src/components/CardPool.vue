@@ -168,6 +168,10 @@ export default {
 		click: { type: Function, default: () => {} },
 		group: { type: String },
 		filter: { type: String },
+		readOnly: {
+			type: Boolean,
+			default: false,
+		} /* This only serves as a mean to declare intentions and make sure the cardPoolChange event is correctly bound when necessary. By design this will not prevent the user to move cards within the pool. */,
 	},
 	data() {
 		return {
@@ -295,13 +299,15 @@ export default {
 				}
 		},
 		change(e) {
-			// Sync. source array when adding/removing cards by drag & drop
-			if (e.removed)
-				this.cards.splice(
-					this.cards.findIndex((c) => c === e.removed.element),
-					1
+			if (!this.readOnly && !("cardPoolChange" in this.$listeners)) {
+				console.warn(
+					"CardPool: Card not declared as readOnly, but has no 'cardPoolChange' event handler. Make sure to bind the cardPoolChange event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
 				);
-			if (e.added) this.cards.push(e.added.element);
+				console.warn(e);
+			}
+
+			// Sync. source array when adding/removing cards by drag & drop
+			this.$emit("cardPoolChange", e);
 		},
 		addColumn() {
 			for (let row of this.rows) {

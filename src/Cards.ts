@@ -9,6 +9,7 @@ import { memoryReport, Options } from "./utils.js";
 export type CardID = string;
 export type ArenaID = string;
 export type OracleID = string;
+export type UniqueCardID = number;
 
 export type CardColor = "W" | "U" | "B" | "R" | "G";
 
@@ -50,14 +51,14 @@ export type DeckList = {
 
 export let Cards: { [cid: string]: Card } = {};
 
-let UniqueID = 0;
+let UniqueID: UniqueCardID = 0;
 
 export function getNextCardID() {
 	return ++UniqueID;
 }
 
 export class UniqueCard extends Card {
-	uniqueID?: number;
+	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
 }
 
@@ -80,7 +81,7 @@ if (process.env.NODE_ENV !== "production") {
 	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
 	const cardsPromise = new Promise((resolve, reject) => {
 		const stream = JSONStream.parse("$*");
-		stream.on("data", function(entry: any) {
+		stream.on("data", function (entry: any) {
 			Cards[entry.key] = entry.value as Card;
 		});
 		stream.on("end", resolve);
@@ -127,7 +128,7 @@ for (let cid in Cards) {
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 
 export const CardIDs = Object.keys(Cards);
-export const MTGACardIDs = CardIDs.filter(cid => !!Cards[cid].arena_id);
+export const MTGACardIDs = CardIDs.filter((cid) => !!Cards[cid].arena_id);
 
 Object.freeze(Cards);
 Object.freeze(MTGACards);

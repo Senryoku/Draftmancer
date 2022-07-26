@@ -813,11 +813,7 @@
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
 						<h1>Players are drafting...</h1>
-						<div v-show="pickTimer >= 0">
-							<i class="fas fa-clock"></i>
-							{{ pickTimer }}
-						</div>
-						<div>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</div>
+						<div>Pack #{{ boosterNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
@@ -1194,6 +1190,8 @@
 					:cards="deck"
 					:language="language"
 					:click="deckToSideboard"
+					:readOnly="false"
+					@cardPoolChange="onDeckChange"
 					ref="deckDisplay"
 					group="deck"
 					@dragover.native="allowBoosterCardDrop($event)"
@@ -1363,7 +1361,7 @@
 						class="card-column drag-column"
 						:list="sideboard"
 						group="deck"
-						@change="$refs.sideboardDisplay.sync() /* Sync sideboard card-pool */"
+						@change="onCollapsedSideChange"
 						:animation="200"
 					>
 						<card
@@ -1392,6 +1390,8 @@
 				:cards="sideboard"
 				:language="language"
 				:click="sideboardToDeck"
+				:readOnly="false"
+				@cardPoolChange="onSideChange"
 				ref="sideboardDisplay"
 				group="deck"
 				@dragover.native="allowBoosterCardDrop($event)"

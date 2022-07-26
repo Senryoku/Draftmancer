@@ -670,7 +670,25 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Non-owner reconnects, draft restarts.", function (done) {
-			clients[ownerIdx].on("resumeOnReconnection", function () {
+			clients[ownerIdx].once("resumeOnReconnection", function () {
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		singlePick();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner reconnects and receives an appropriate event.", function (done) {
+			clients[nonOwnerIdx].once("rejoinDraft", function (data) {
+				expect(data.pickedCards.main.length).to.equal(1);
+				expect(data.pickedCards.side.length).to.equal(0);
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -678,6 +696,117 @@ describe("Single Draft (Two Players)", function () {
 
 		endDraft();
 		expectCardCount(3 * latestSetCardPerBooster);
+		disconnect();
+	});
+
+	describe("Checking card movement and reconnect", function () {
+		connect();
+
+		it("Owner will spectate.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (options) {
+				expect(options.ownerIsPlayer).to.equal(false);
+				done();
+			});
+			clients[ownerIdx].emit("setOwnerIsPlayer", false);
+		});
+
+		it("Clients should receive the updated bot count.", function (done) {
+			clients[nonOwnerIdx].once("bots", function (bots) {
+				expect(bots).to.equal(3);
+				done();
+			});
+			clients[ownerIdx].emit("bots", 3);
+		});
+
+		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
+			let connectedClients = 0;
+			let receivedBoosters = 0;
+			for (let c in clients) {
+				clients[c].once("startDraft", function () {
+					connectedClients += 1;
+					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+				});
+			}
+
+			// Only the players will receive a draftState event
+			(() => {
+				const idx = nonOwnerIdx;
+				clients[idx].once("draftState", function (state) {
+					expect(state.booster).to.exist;
+					clients[idx].state = state;
+					clients[idx].pickedCards = [];
+					receivedBoosters += 1;
+					if (connectedClients == clients.length && receivedBoosters == 1) done();
+				});
+			})();
+
+			clients[ownerIdx].emit("startDraft");
+		});
+
+		let lastPickedCardUID;
+
+		it("Player makes a single pick.", function (done) {
+			clients[nonOwnerIdx].on("draftState", function (state) {
+				const idx = nonOwnerIdx;
+				if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
+					expect(state.booster.length).to.equal(clients[idx].state.booster.length - 1);
+					clients[idx].state = state;
+					clients[nonOwnerIdx].removeListener("draftState");
+					done();
+				}
+			});
+			lastPickedCardUID = clients[nonOwnerIdx].state.booster[0].uniqueID;
+			clients[nonOwnerIdx].pickedCards.push(clients[nonOwnerIdx].state.booster[0]);
+			clients[nonOwnerIdx].emit("pickCard", { pickedCards: [0] }, () => {});
+		});
+
+		it("Non-owner moves a card to the side board, spectator receives an update.", function (done) {
+			clients[ownerIdx].once("draftLogLive", function (data) {
+				expect(data.pickedCards[0].userID).to.equal(clients[nonOwnerIdx].query.userID);
+				expect(data.pickedCards[0].pickedCards.main.length).to.equal(0);
+				expect(data.pickedCards[0].pickedCards.side.length).to.equal(1);
+				done();
+			});
+			clients[nonOwnerIdx].emit("moveCard", lastPickedCardUID, "side");
+		});
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner reconnects and receives an appropriate event.", function (done) {
+			clients[nonOwnerIdx].once("rejoinDraft", function (data) {
+				expect(data.pickedCards.main.length).to.equal(0);
+				expect(data.pickedCards.side.length).to.equal(1);
+				clients[nonOwnerIdx].state = data;
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		it("Pick enough times, and the draft should end.", function (done) {
+			clients[nonOwnerIdx].on("draftState", function (state) {
+				const idx = nonOwnerIdx;
+				if (state.pickNumber !== clients[idx].state.pickNumber && state.boosterCount > 0) {
+					const choice = Math.floor(Math.random() * state.booster.length);
+					clients[idx].pickedCards.push(state.booster[choice]);
+					this.emit("pickCard", { pickedCards: [choice] }, () => {});
+					clients[idx].state = state;
+				}
+			});
+			clients[nonOwnerIdx].once("endDraft", function () {
+				this.removeListener("draftState");
+				done();
+			});
+
+			const choice = Math.floor(Math.random() * clients[nonOwnerIdx].state.booster.length);
+			clients[nonOwnerIdx].pickedCards.push(clients[nonOwnerIdx].state.booster[choice]);
+			clients[nonOwnerIdx].emit("pickCard", { pickedCards: [choice] }, () => {});
+		});
+
 		disconnect();
 	});
 

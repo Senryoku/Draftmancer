@@ -35,7 +35,7 @@ describe("Front End - Solo", function () {
 		await clickDraft();
 
 		// On popup, choose 'Draft alone with bots'
-		const [button2] = await sessionOwnerPage.$x("//button[contains(., 'Draft alone with bots')]");
+		const [button2] = await sessionOwnerPage.$x("//button[contains(., 'Draft alone with 7 bots')]");
 		expect(button2).to.exist;
 		await button2.click();
 
