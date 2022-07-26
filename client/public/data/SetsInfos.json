@@ -1024,6 +1024,24 @@
         "rareCount": 8,
         "uncommonCount": 15
     },
+    "dmc": {
+        "code": "dmc",
+        "fullName": "Dominaria United Commander",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/dmc.svg",
+        "uncommonCount": 6
+    },
+    "dmu": {
+        "code": "dmu",
+        "fullName": "Dominaria United",
+        "cardCount": 16,
+        "isPrimary": true,
+        "icon": "img/sets/dmu.svg",
+        "commonCount": 5,
+        "mythicCount": 4,
+        "rareCount": 7
+    },
     "dom": {
         "code": "dom",
         "fullName": "Dominaria",
@@ -1118,6 +1136,16 @@
         "mythicCount": 2,
         "rareCount": 15,
         "uncommonCount": 19
+    },
+    "ea1": {
+        "code": "ea1",
+        "fullName": "Explorer Anthology 1",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/ea1.svg",
+        "mythicCount": 1,
+        "rareCount": 1,
+        "uncommonCount": 1
     },
     "eld": {
         "code": "eld",
@@ -1546,11 +1574,11 @@
     "gdy": {
         "code": "gdy",
         "fullName": "Game Day Promos",
-        "cardCount": 3,
+        "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/gdy.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "mythicCount": 2,
+        "rareCount": 4
     },
     "gk1": {
         "code": "gk1",
@@ -1607,13 +1635,13 @@
     "gpt": {
         "code": "gpt",
         "fullName": "Guildpact",
-        "cardCount": 165,
+        "cardCount": 166,
         "isPrimary": true,
         "block": "Ravnica",
         "icon": "img/sets/gpt.svg",
         "commonCount": 55,
         "rareCount": 55,
-        "uncommonCount": 55
+        "uncommonCount": 56
     },
     "grn": {
         "code": "grn",
@@ -1743,6 +1771,14 @@
         "mythicCount": 5,
         "rareCount": 7,
         "uncommonCount": 4
+    },
+    "ha6": {
+        "code": "ha6",
+        "fullName": "Historic Anthology 6",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/ha6.svg",
+        "mythicCount": 3
     },
     "hbg": {
         "code": "hbg",
@@ -2786,6 +2822,15 @@
         "isPrimary": false,
         "icon": "img/sets/p2hg.svg",
         "rareCount": 1
+    },
+    "p30a": {
+        "code": "p30a",
+        "fullName": "30th Anniversary Promos",
+        "cardCount": 2,
+        "isPrimary": false,
+        "icon": "img/sets/p30a.svg",
+        "rareCount": 1,
+        "uncommonCount": 1
     },
     "p5dn": {
         "code": "p5dn",
@@ -4016,10 +4061,10 @@
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
-        "commonCount": 388,
+        "commonCount": 386,
         "mythicCount": 270,
-        "rareCount": 1141,
-        "uncommonCount": 468
+        "rareCount": 1140,
+        "uncommonCount": 471
     },
     "prna": {
         "code": "prna",
@@ -4670,10 +4715,11 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships 2022",
-        "cardCount": 3,
+        "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
-        "rareCount": 3
+        "mythicCount": 1,
+        "rareCount": 5
     },
     "shm": {
         "code": "shm",
@@ -5190,13 +5236,13 @@
     "unf": {
         "code": "unf",
         "fullName": "Unfinity",
-        "cardCount": 26,
+        "cardCount": 34,
         "isPrimary": false,
         "icon": "img/sets/unf.svg",
-        "commonCount": 10,
-        "mythicCount": 1,
+        "commonCount": 11,
+        "mythicCount": 4,
         "rareCount": 12,
-        "uncommonCount": 3
+        "uncommonCount": 7
     },
     "unh": {
         "code": "unh",
