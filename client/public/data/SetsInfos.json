@@ -1775,10 +1775,12 @@
     "ha6": {
         "code": "ha6",
         "fullName": "Historic Anthology 6",
-        "cardCount": 3,
+        "cardCount": 12,
         "isPrimary": false,
         "icon": "img/sets/ha6.svg",
-        "mythicCount": 3
+        "commonCount": 4,
+        "mythicCount": 4,
+        "rareCount": 4
     },
     "hbg": {
         "code": "hbg",

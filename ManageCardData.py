@@ -113,30 +113,30 @@ for path in MTGACardsFiles:
                 if o["set"] == "akr":
                     if o['rarity'] != 1:
                         AKRCards[fixed_name] = (
-                            o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
+                            o['grpId'], collectorNumber, ArenaRarity[o['rarity']])
                 if o["set"] == "klr":
                     if o['rarity'] != 1:
                         KLRCards[fixed_name] = (
-                            o['grpid'], collectorNumber, ArenaRarity[o['rarity']])
+                            o['grpId'], collectorNumber, ArenaRarity[o['rarity']])
                 else:
                     # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
                     # Adding name to disambiguate.
                     CardsCollectorNumberAndSet[(
-                        fixed_name, collectorNumber, o['set'])] = o['grpid']
+                        fixed_name, collectorNumber, o['set'])] = o['grpId']
 
                 # Also look of the Arena only version (ajmp) of the card on Scryfall
                 if o['set'] == 'jmp':
                     CardsCollectorNumberAndSet[(
-                        fixed_name, collectorNumber, 'ajmp')] = o['grpid']
+                        fixed_name, collectorNumber, 'ajmp')] = o['grpId']
 
                 # From Jumpstart: Prioritizing cards from JMP and M21
                 if fixed_name not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
-                    CardNameToArenaID[fixed_name] = o['grpid']
+                    CardNameToArenaID[fixed_name] = o['grpId']
 
                 if "IsRebalanced" in o and o["IsRebalanced"]:
                     CardsCollectorNumberAndSet[(
-                        "A-"+fixed_name, "A-"+collectorNumber, o['set'])] = o['grpid']
-                    CardNameToArenaID["A-"+fixed_name] = o['grpid']
+                        "A-"+fixed_name, "A-"+collectorNumber, o['set'])] = o['grpId']
+                    CardNameToArenaID["A-"+fixed_name] = o['grpId']
             # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
             #        (Also for secondary cards as there's some created cards in this set.)
             if o['set'] == 'j21':
