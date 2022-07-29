@@ -1140,12 +1140,13 @@
     "ea1": {
         "code": "ea1",
         "fullName": "Explorer Anthology 1",
-        "cardCount": 3,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/ea1.svg",
+        "commonCount": 4,
         "mythicCount": 1,
-        "rareCount": 1,
-        "uncommonCount": 1
+        "rareCount": 9,
+        "uncommonCount": 6
     },
     "eld": {
         "code": "eld",
@@ -1775,12 +1776,12 @@
     "ha6": {
         "code": "ha6",
         "fullName": "Historic Anthology 6",
-        "cardCount": 12,
+        "cardCount": 19,
         "isPrimary": false,
         "icon": "img/sets/ha6.svg",
-        "commonCount": 4,
+        "commonCount": 9,
         "mythicCount": 4,
-        "rareCount": 4
+        "rareCount": 6
     },
     "hbg": {
         "code": "hbg",
