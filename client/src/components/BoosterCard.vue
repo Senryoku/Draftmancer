@@ -4,6 +4,7 @@
 		:language="language"
 		:class="{ selected: selected, burned: burned, 'bot-picked': botpicked }"
 		class="booster-card"
+		:style="`--booster-card-scale: ${scale}`"
 	>
 		<div
 			v-if="wildcardneeded"
@@ -44,14 +45,15 @@ export default {
 		hasenoughwildcards: { type: Boolean, default: true },
 		botscore: { type: Number, default: null },
 		botpicked: { type: Boolean, default: false },
+		scale: { type: Number, default: 1 },
 	},
 	methods: {
-		burnCard: function(e) {
+		burnCard(e) {
 			this.$emit("burn");
 			e.stopPropagation();
 			e.preventDefault();
 		},
-		restoreCard: function(e) {
+		restoreCard(e) {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();
@@ -72,6 +74,9 @@ export default {
 	margin: 0.75em;
 	transition: transform 0.08s ease-out;
 	will-change: transform;
+
+	width: calc(200px * var(--booster-card-scale));
+	height: calc(282px * var(--booster-card-scale));
 }
 
 .card:hover {

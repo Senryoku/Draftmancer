@@ -2,7 +2,7 @@
 	<div>
 		<div class="section-title">
 			<h2>Minesweeper Draft</h2>
-			<div class="controls">
+			<div class="controls" style="flex-grow: 1">
 				<span>
 					Grid #{{ state.gridNumber + 1 }}/{{ state.gridCount }}, Pick #{{ state.pickNumber + 1 }}/{{
 						state.picksPerGrid
@@ -24,20 +24,8 @@
 						{{ currentPlayerUsername !== "" ? currentPlayerUsername : "the next grid" }}...
 					</template>
 				</span>
-				<span>
-					<i class="fas fa-search-minus clickable" @click="gridScale = Math.max(gridScale - 0.1, 0.1)"></i>
-					<input
-						type="range"
-						min="0.1"
-						max="2"
-						value="1"
-						step="0.01"
-						v-model="gridScale"
-						style="vertical-align: bottom"
-					/>
-					<i class="fas fa-search-plus clickable" @click="gridScale = Math.min(gridScale + 0.1, 2.0)"></i>
-				</span>
 			</div>
+			<scale-slider v-model="gridScale" />
 		</div>
 		<div class="minesweeper-draft" :style="`--grid-scale: ${gridScale}`" ref="grid">
 			<transition name="slide-fade-left" mode="out-in">
@@ -72,11 +60,13 @@
 <script>
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
+import ScaleSlider from "./ScaleSlider.vue";
+
 export default {
 	data() {
 		return { gridScale: 1, gridScrollState: { left: 0, top: 0, x: 0, y: 0, moved: false } };
 	},
-	components: { Card, CardPlaceholder },
+	components: { Card, CardPlaceholder, ScaleSlider },
 	props: {
 		state: { type: Object, required: true },
 		currentPlayerUsername: { type: String, required: true },

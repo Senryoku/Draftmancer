@@ -1,5 +1,9 @@
 [
 	{
+		"date": "07/08/2022",
+		"notes": ["Added a zoom slider for the draft booster."]
+	},
+	{
 		"date": "25/07/2022",
 		"notes": [
 			"Sideboard will now be correctly restored on reconnection (previously all cards were reset to the mainboard).",

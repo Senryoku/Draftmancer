@@ -36,6 +36,7 @@ import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import PickSummary from "./components/PickSummary.vue";
 import SetRestriction from "./components/SetRestriction.vue";
+import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
@@ -91,6 +92,7 @@ const defaultSettings = {
 	enableNotifications: false,
 	collapseSideboard: false,
 	sideboardBasics: 5,
+	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 
@@ -135,6 +137,7 @@ export default {
 		Multiselect,
 		PatchNotes,
 		PickSummary,
+		ScaleSlider,
 		SetRestriction,
 		draggable,
 	},
@@ -229,6 +232,7 @@ export default {
 			draftingState: undefined,
 			displayBotScores: defaultSettings.displayBotScores,
 			pickOnDblclick: defaultSettings.pickOnDblclick,
+			boosterCardScale: defaultSettings.boosterCardScale,
 			enableSound: defaultSettings.enableSound,
 			enableNotifications:
 				typeof Notification !== "undefined" &&
@@ -2845,6 +2849,9 @@ export default {
 			this.storeSettings();
 		},
 		collapseSideboard() {
+			this.storeSettings();
+		},
+		boosterCardScale() {
 			this.storeSettings();
 		},
 		deck() {
