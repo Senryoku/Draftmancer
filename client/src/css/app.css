@@ -973,6 +973,12 @@ ul.player-list {
 	padding: 0.2em;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
+
+	display: inline-flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 2.4em;
+	will-change: transform;
 }
 
 .section-title {

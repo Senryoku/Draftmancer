@@ -835,7 +835,7 @@
 						<div class="controls" style="flex-grow: 2">
 							<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-								<i class="fas fa-clock"></i> {{ pickTimer }}
+								<i class="fas fa-clock"></i><span>{{ pickTimer }}</span>
 							</span>
 							<template v-if="draftingState == DraftState.Picking">
 								<input
