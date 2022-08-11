@@ -1776,10 +1776,10 @@
     "ha6": {
         "code": "ha6",
         "fullName": "Historic Anthology 6",
-        "cardCount": 19,
+        "cardCount": 20,
         "isPrimary": false,
         "icon": "img/sets/ha6.svg",
-        "commonCount": 9,
+        "commonCount": 10,
         "mythicCount": 4,
         "rareCount": 6
     },
@@ -2829,10 +2829,10 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Promos",
-        "cardCount": 2,
+        "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
-        "rareCount": 1,
+        "rareCount": 4,
         "uncommonCount": 1
     },
     "p5dn": {
@@ -4017,8 +4017,7 @@
         "isPrimary": false,
         "icon": "img/sets/ppro.svg",
         "mythicCount": 5,
-        "rareCount": 8,
-        "uncommonCount": 1
+        "rareCount": 9
     },
     "pptk": {
         "code": "pptk",
@@ -4035,6 +4034,15 @@
         "isPrimary": false,
         "block": "Ravnica",
         "icon": "img/sets/prav.svg",
+        "rareCount": 2
+    },
+    "prcq": {
+        "code": "prcq",
+        "fullName": "Regional Championship Qualifiers 2022",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/prcq.svg",
+        "mythicCount": 1,
         "rareCount": 2
     },
     "pres": {
@@ -4500,15 +4508,6 @@
         "rareCount": 94,
         "uncommonCount": 24
     },
-    "pwcq": {
-        "code": "pwcq",
-        "fullName": "World Magic Cup Qualifiers",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pwcq.svg",
-        "mythicCount": 2,
-        "rareCount": 3
-    },
     "pwor": {
         "code": "pwor",
         "fullName": "World Championship Promos",
@@ -4746,13 +4745,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 576,
+        "cardCount": 589,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
         "mythicCount": 108,
-        "rareCount": 409,
-        "uncommonCount": 20
+        "rareCount": 421,
+        "uncommonCount": 21
     },
     "slu": {
         "code": "slu",
@@ -5509,6 +5508,15 @@
         "commonCount": 33,
         "rareCount": 34,
         "uncommonCount": 33
+    },
+    "wmc": {
+        "code": "wmc",
+        "fullName": "World Magic Cup Qualifiers",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/wmc.svg",
+        "mythicCount": 2,
+        "rareCount": 3
     },
     "wth": {
         "code": "wth",
