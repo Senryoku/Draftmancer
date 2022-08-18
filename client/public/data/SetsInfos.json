@@ -1786,14 +1786,14 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 413,
+        "cardCount": 437,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
-        "commonCount": 128,
+        "commonCount": 142,
         "mythicCount": 36,
         "rareCount": 108,
-        "uncommonCount": 141
+        "uncommonCount": 151
     },
     "hho": {
         "code": "hho",
@@ -2829,10 +2829,10 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Promos",
-        "cardCount": 5,
+        "cardCount": 4,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
-        "rareCount": 4,
+        "rareCount": 3,
         "uncommonCount": 1
     },
     "p5dn": {
@@ -3103,11 +3103,11 @@
     "pcel": {
         "code": "pcel",
         "fullName": "Celebration Cards",
-        "cardCount": 7,
+        "cardCount": 8,
         "isPrimary": false,
         "icon": "img/sets/pcel.svg",
         "mythicCount": 2,
-        "rareCount": 5
+        "rareCount": 6
     },
     "pchk": {
         "code": "pchk",
@@ -4745,12 +4745,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 589,
+        "cardCount": 611,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
         "mythicCount": 108,
-        "rareCount": 421,
+        "rareCount": 443,
         "uncommonCount": 21
     },
     "slu": {
