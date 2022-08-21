@@ -156,7 +156,7 @@ export default {
 			socket: undefined,
 
 			// Session status
-			sessionID: getCookie("sessionID", shortguid()),
+			sessionID: null,
 			sessionOwner: null,
 			sessionOwnerUsername: null,
 			sessionUsers: [],
@@ -272,6 +272,8 @@ export default {
 				// Server will handle the reconnect attempt if draft is still ongoing
 				console.log("storedUserID: " + storedUserID);
 			}
+
+			this.sessionID = getCookie("sessionID", shortguid());
 
 			const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
