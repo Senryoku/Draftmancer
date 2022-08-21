@@ -95,21 +95,6 @@ const defaultSettings = {
 	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
-
-// Also get the settings from the cookies for backwards compatibility.
-// FIXME: Should be removed after a while.
-function getSettingFromCookie(name) {
-	if (name in storedSettings) return; // Prioritize the localStore settings.
-	const cookieValue = getCookie(name, null);
-	if (cookieValue) {
-		storedSettings[name] = cookieValue;
-		// 'Cast' strings from cookies into booleans
-		if (typeof defaultSettings[name] === "boolean" && typeof storedSettings[name] === "string")
-			storedSettings[name] = storedSettings[name] === "true";
-	}
-}
-for (const name in defaultSettings) getSettingFromCookie(name);
-
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
 export default {
