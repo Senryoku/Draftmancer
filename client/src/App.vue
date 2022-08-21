@@ -1478,9 +1478,6 @@
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
 					</div>
 				</div>
-				<div class="container" style="grid-area: Coaching">
-					<Esporter />
-				</div>
 				<div class="container" style="grid-area: Tools">
 					<div class="section-title">
 						<h2>Tools</h2>
