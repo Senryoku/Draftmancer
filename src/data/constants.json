@@ -257,6 +257,7 @@
         }
     ],
     "PrimarySets": [
+        "dmr",
         "2x2",
         "clb",
         "snc",

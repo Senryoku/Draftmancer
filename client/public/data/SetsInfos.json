@@ -57,11 +57,12 @@
     "40k": {
         "code": "40k",
         "fullName": "Warhammer 40,000",
-        "cardCount": 5,
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
         "mythicCount": 2,
-        "rareCount": 3
+        "rareCount": 3,
+        "uncommonCount": 4
     },
     "4ed": {
         "code": "4ed",
@@ -1027,20 +1028,33 @@
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 6,
+        "cardCount": 62,
         "isPrimary": false,
         "icon": "img/sets/dmc.svg",
-        "uncommonCount": 6
+        "commonCount": 1,
+        "mythicCount": 17,
+        "rareCount": 34,
+        "uncommonCount": 10
+    },
+    "dmr": {
+        "code": "dmr",
+        "fullName": "Dominaria Remastered",
+        "cardCount": 6,
+        "isPrimary": true,
+        "icon": "img/sets/dmr.svg",
+        "mythicCount": 3,
+        "rareCount": 3
     },
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 16,
+        "cardCount": 137,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
-        "commonCount": 5,
-        "mythicCount": 4,
-        "rareCount": 7
+        "commonCount": 44,
+        "mythicCount": 24,
+        "rareCount": 49,
+        "uncommonCount": 20
     },
     "dom": {
         "code": "dom",
@@ -2829,10 +2843,10 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Promos",
-        "cardCount": 4,
+        "cardCount": 8,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
-        "rareCount": 3,
+        "rareCount": 7,
         "uncommonCount": 1
     },
     "p5dn": {
@@ -4745,12 +4759,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 611,
+        "cardCount": 613,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
         "mythicCount": 108,
-        "rareCount": 443,
+        "rareCount": 445,
         "uncommonCount": 21
     },
     "slu": {
