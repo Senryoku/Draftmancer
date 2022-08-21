@@ -28,7 +28,7 @@ import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import Dropdown from "./components/Dropdown.vue";
-import Adsense from "./components/Adsense.vue";
+import Esporter from "./components/Esporter.vue";
 import GridDraft from "./components/GridDraft.vue";
 import MinesweeperDraft from "./components/MinesweeperDraft.vue";
 import LandControl from "./components/LandControl.vue";
@@ -129,7 +129,7 @@ export default {
 		DraftLogLive,
 		DraftLogPick,
 		Dropdown,
-		Adsense,
+		Esporter,
 		GridDraft,
 		MinesweeperDraft,
 		LandControl,

@@ -1479,7 +1479,7 @@
 					</div>
 				</div>
 				<div class="container" style="grid-area: Coaching">
-					<Adsense />
+					<Esporter />
 				</div>
 				<div class="container" style="grid-area: Tools">
 					<div class="section-title">
