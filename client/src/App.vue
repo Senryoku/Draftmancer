@@ -1429,6 +1429,13 @@
 					<div class="welcome-section">
 						<div class="news">
 							<div class="news">
+								<em>August, 2022</em>
+								<p>
+									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
+									Dominara United support.
+								</p>
+							</div>
+							<div class="news">
 								<em>June 27, 2022</em>
 								<p>
 									You can now pick from a booster as soon as it is passed to you, without having to
