@@ -1028,12 +1028,12 @@
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 62,
+        "cardCount": 64,
         "isPrimary": false,
         "icon": "img/sets/dmc.svg",
         "commonCount": 1,
         "mythicCount": 17,
-        "rareCount": 34,
+        "rareCount": 36,
         "uncommonCount": 10
     },
     "dmr": {
@@ -1048,13 +1048,13 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 137,
+        "cardCount": 331,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
-        "commonCount": 44,
-        "mythicCount": 24,
-        "rareCount": 49,
-        "uncommonCount": 20
+        "commonCount": 63,
+        "mythicCount": 40,
+        "rareCount": 124,
+        "uncommonCount": 104
     },
     "dom": {
         "code": "dom",
@@ -4759,12 +4759,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 613,
+        "cardCount": 645,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 39,
-        "mythicCount": 108,
-        "rareCount": 445,
+        "mythicCount": 112,
+        "rareCount": 473,
         "uncommonCount": 21
     },
     "slu": {
