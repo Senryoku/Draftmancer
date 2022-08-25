@@ -927,6 +927,51 @@ class M2X2BoosterFactory extends BoosterFactory {
 	}
 }
 
+/* Dominaria United
+ * 1 Legendary Creature in every pack (75% U, 25% R/M)
+ */
+class DMUBoosterFactory extends BoosterFactory {
+	static regex = /Legendary.*Creature/;
+	completeCardPool: SlotedCardPool;
+	legendaryCreatures: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].type.match(CMRBoosterFactory.regex)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.completeCardPool = cardPool;
+		this.legendaryCreatures = legendaryCreatures;
+	}
+
+	// Not using the suplied cardpool here
+	generateBooster(targets: Targets) {
+		const legendaryCounts = countBySlot(this.legendaryCreatures);
+		// Ignore the rule if there's no legendary creatures left
+		if (Object.values(legendaryCounts).every((c) => c === 0)) {
+			return super.generateBooster(targets);
+		} else {
+			let updatedTargets = Object.assign({}, targets);
+
+			let legendaryCreature = null;
+			if (updatedTargets["uncommon"] > 0 && random.realZeroToOneInclusive() < 0.75) {
+				--updatedTargets["uncommon"];
+				legendaryCreature = pickCard(this.legendaryCreatures["uncommon"]);
+			} else if (updatedTargets["rare"] > 0) {
+				--updatedTargets["rare"];
+				if (random.realZeroToOneInclusive() < 1 / 7.4)
+					legendaryCreature = pickCard(this.legendaryCreatures["mythic"]);
+				else legendaryCreature = pickCard(this.legendaryCreatures["rare"]);
+			}
+
+			let booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+			if (legendaryCreature) booster.unshift(legendaryCreature);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -945,6 +990,7 @@ export const SetSpecificFactories: {
 	neo: NEOBoosterFactory,
 	clb: CLBBoosterFactory,
 	"2x2": M2X2BoosterFactory,
+	dmu: DMUBoosterFactory,
 };
 
 /*
