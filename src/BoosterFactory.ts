@@ -297,7 +297,7 @@ class WARBoosterFactory extends BoosterFactory {
 	}
 
 	// Not using the suplied cardpool here
-	generateBooster(targets: { [slot: string]: number }) {
+	generateBooster(targets: Targets) {
 		const plwCounts = countBySlot(this.planeswalkers);
 		// Ignore the rule if suitable rarities are ignored, or there's no planeswalker left
 		if (
@@ -931,16 +931,14 @@ class M2X2BoosterFactory extends BoosterFactory {
  * 1 Legendary Creature in every pack (75% U, 25% R/M)
  */
 class DMUBoosterFactory extends BoosterFactory {
-	static regex = /Legendary.*Creature/;
-	completeCardPool: SlotedCardPool;
+	static legendaryCreatureRegex = /Legendary.*Creature/;
 	legendaryCreatures: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
 		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			Cards[cid].type.match(CMRBoosterFactory.regex)
+			Cards[cid].type.match(DMUBoosterFactory.legendaryCreatureRegex)
 		);
 		super(filteredCardPool, landSlot, options);
-		this.completeCardPool = cardPool;
 		this.legendaryCreatures = legendaryCreatures;
 	}
 
@@ -954,12 +952,20 @@ class DMUBoosterFactory extends BoosterFactory {
 			let updatedTargets = Object.assign({}, targets);
 
 			let legendaryCreature = null;
-			if (updatedTargets["uncommon"] > 0 && random.realZeroToOneInclusive() < 0.75) {
+			if (
+				updatedTargets["uncommon"] > 0 &&
+				legendaryCounts["uncommon"] > 0 &&
+				random.realZeroToOneInclusive() < 0.75
+			) {
 				--updatedTargets["uncommon"];
 				legendaryCreature = pickCard(this.legendaryCreatures["uncommon"]);
-			} else if (updatedTargets["rare"] > 0) {
+			} else if (updatedTargets["rare"] > 0 && legendaryCounts["rare"] > 0) {
 				--updatedTargets["rare"];
-				if (random.realZeroToOneInclusive() < 1 / 7.4)
+				if (
+					this.options.mythicPromotion &&
+					legendaryCounts["mythic"] > 0 &&
+					random.realZeroToOneInclusive() < 1 / 7.4
+				)
 					legendaryCreature = pickCard(this.legendaryCreatures["mythic"]);
 				else legendaryCreature = pickCard(this.legendaryCreatures["rare"]);
 			}
