@@ -1494,6 +1494,11 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 
 const secretKey = process.env.SECRET_KEY || "1234";
 
+function requireAPIKey(req: express.Request, res: express.Response, next: express.NextFunction) {
+	if (req.params.key === secretKey) next();
+	else res.sendStatus(401).end();
+}
+
 let express_json_cache: any = []; // Clear this before calling
 app.set("json replacer", function (key: string, value: any) {
 	if (!express_json_cache) express_json_cache = [];
@@ -1519,69 +1524,53 @@ function returnJSON(res: any, data: any) {
 	express_json_cache = null; // Enable garbage collection
 }
 
-app.get("/getSessionsDebug/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		returnJSON(res, Sessions);
-	} else {
-		res.sendStatus(401).end();
-	}
+app.get("/getSessionsDebug/:key", requireAPIKey, (req, res) => {
+	returnJSON(res, Sessions);
 });
 
-app.get("/getConnections/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		returnJSON(res, Connections);
-	} else {
-		res.sendStatus(401).end();
-	}
+app.get("/getConnections/:key", requireAPIKey, (req, res) => {
+	returnJSON(res, Connections);
 });
 
-app.get("/getStatus/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		let draftingSessions = 0;
-		let draftingPlayers = 0;
-		for (let sID in Sessions) {
-			if (Sessions[sID].drafting) {
-				++draftingSessions;
-				draftingPlayers += Sessions[sID].users.size;
-			}
+app.get("/getStatus/:key", requireAPIKey, (req, res) => {
+	let draftingSessions = 0;
+	let draftingPlayers = 0;
+	for (let sID in Sessions) {
+		if (Sessions[sID].drafting) {
+			++draftingSessions;
+			draftingPlayers += Sessions[sID].users.size;
 		}
-		let uptime = process.uptime();
-		returnJSON(res, {
-			uptime: uptime,
-			sessionCount: Object.keys(Sessions).length,
-			playerCount: Object.keys(Connections).length,
-			draftingSessions: draftingSessions,
-			draftingPlayers: draftingPlayers,
-			canRestart: draftingSessions === 0,
-		});
-	} else {
-		res.sendStatus(401).end();
 	}
+	let uptime = process.uptime();
+	returnJSON(res, {
+		uptime: uptime,
+		sessionCount: Object.keys(Sessions).length,
+		playerCount: Object.keys(Connections).length,
+		draftingSessions: draftingSessions,
+		draftingPlayers: draftingPlayers,
+		canRestart: draftingSessions === 0,
+	});
 });
 
 // Used by Discord Bot
-app.get("/getSessions/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		let localSess: { [sid: string]: any } = {};
-		for (let sid in Sessions)
-			localSess[sid] = {
-				id: sid,
-				drafting: Sessions[sid].drafting,
-				users: Sessions[sid].users,
-				maxPlayers: Sessions[sid].maxPlayers,
-				useCustomCardList: Sessions[sid].useCustomCardList,
-				customCardList: Sessions[sid].customCardList
-					? {
-							name: Sessions[sid].customCardList.name,
-							length: Sessions[sid].customCardList.length,
-					  }
-					: null,
-				setRestriction: Sessions[sid].setRestriction,
-			};
-		returnJSON(res, localSess);
-	} else {
-		res.sendStatus(401).end();
-	}
+app.get("/getSessions/:key", requireAPIKey, (req, res) => {
+	let localSess: { [sid: string]: any } = {};
+	for (let sid in Sessions)
+		localSess[sid] = {
+			id: sid,
+			drafting: Sessions[sid].drafting,
+			users: Sessions[sid].users,
+			maxPlayers: Sessions[sid].maxPlayers,
+			useCustomCardList: Sessions[sid].useCustomCardList,
+			customCardList: Sessions[sid].customCardList
+				? {
+						name: Sessions[sid].customCardList.name,
+						length: Sessions[sid].customCardList.length,
+				  }
+				: null,
+			setRestriction: Sessions[sid].setRestriction,
+		};
+	returnJSON(res, localSess);
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
