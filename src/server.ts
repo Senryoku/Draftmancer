@@ -1359,7 +1359,10 @@ app.use("/bracket", express.static("client/public/bracket.html"));
 // Endpoints
 // (TODO: Should be cleaned up)
 
-// Not actually in use right, remove?
+app.get("/healthCheck", (req, res) => {
+	res.sendStatus(200);
+});
+
 function getCollection(res: express.Response, sessionID: SessionID) {
 	try {
 		if (!sessionID) {
