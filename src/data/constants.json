@@ -68,7 +68,8 @@
         "vow",
         "neo",
         "snc",
-        "hbg"
+        "hbg",
+        "dmu"
     ],
     "StandardSets": [
         "znr",
@@ -257,6 +258,7 @@
         }
     ],
     "PrimarySets": [
+        "dmu",
         "2x2",
         "clb",
         "snc",
