@@ -1359,24 +1359,26 @@ app.use("/bracket", express.static("client/public/bracket.html"));
 // Endpoints
 // (TODO: Should be cleaned up)
 
-app.get("/getCollection", (req, res) => {
-	if (!req.cookies.sessionID) {
-		res.sendStatus(400);
-	} else if (req.cookies.sessionID in Sessions) {
-		res.send(Sessions[req.cookies.sessionID].collection(false));
-	} else {
-		res.sendStatus(404);
+function getCollection(res: express.Response, sessionID: SessionID) {
+	try {
+		if (!sessionID) {
+			res.sendStatus(400);
+		} else if (sessionID in Sessions) {
+			res.send(Sessions[sessionID].collection(false));
+		} else {
+			res.sendStatus(404);
+		}
+	} catch (e) {
+		res.sendStatus(500);
 	}
+}
+
+app.get("/getCollection", (req, res) => {
+	getCollection(res, req.cookies.sessionID);
 });
 
 app.get("/getCollection/:sessionID", (req, res) => {
-	if (!req.params.sessionID) {
-		res.sendStatus(400);
-	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.params.sessionID].collection(false));
-	} else {
-		res.sendStatus(404);
-	}
+	getCollection(res, req.params.sessionID);
 });
 
 function returnCollectionPlainText(res: any, sid: SessionID) {
@@ -1386,7 +1388,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
 		for (let cid in coll) r += `${coll.get(cid)} ${Cards[cid].name}\n`;
-		res.set("Content-disposition", `attachment; filename=collection_${sid}`);
+		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
 	} else {
@@ -1406,7 +1408,7 @@ app.get("/getUsers/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(JSON.stringify([...Sessions[req.params.sessionID].users]));
+		res.json([...Sessions[req.params.sessionID].users]);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1418,13 +1420,12 @@ app.post("/getCards", (req, res) => {
 		res.sendStatus(400);
 	} else {
 		try {
-			res.setHeader("Content-Type", "application/json");
 			if (Array.isArray(req.body)) {
-				res.send(JSON.stringify(req.body.map((cid) => Cards[cid])));
+				res.json(req.body.map((cid) => Cards[cid]));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
 				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
-				res.send(JSON.stringify(r));
+				res.json(r);
 			} else {
 				res.sendStatus(400);
 			}
@@ -1456,10 +1457,9 @@ app.post("/getDeck", (req, res) => {
 					return;
 				}
 			}
-			res.setHeader("Content-Type", "application/json");
-			res.send(JSON.stringify(r));
+			res.json(r);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			res.sendStatus(500);
 		}
 	}
@@ -1470,8 +1470,7 @@ app.get("/getBracket/:sessionID", (req, res) => {
 	if (!sid) {
 		res.sendStatus(400);
 	} else if (sid in Sessions && Sessions[sid].bracket) {
-		res.setHeader("Content-Type", "application/json");
-		res.send(JSON.stringify(Sessions[sid].bracket));
+		res.json(Sessions[sid].bracket);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1481,10 +1480,8 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
-		res.setHeader("Content-Type", "application/json");
-		if (Sessions[req.params.sessionID].draftLog?.delayed)
-			res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
-		else res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
+		if (Sessions[req.params.sessionID].draftLog?.delayed) res.json(Sessions[req.params.sessionID].getStrippedLog());
+		else res.json(Sessions[req.params.sessionID].draftLog);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1499,37 +1496,29 @@ function requireAPIKey(req: express.Request, res: express.Response, next: expres
 	else res.sendStatus(401).end();
 }
 
-let express_json_cache: any = []; // Clear this before calling
-app.set("json replacer", function (key: string, value: any) {
-	if (!express_json_cache) express_json_cache = [];
-	// Deal with sets
-	if (typeof value === "object" && value instanceof Set) {
-		return [...value];
-	}
-	// Deal with circular references
-	if (typeof value === "object" && value !== null) {
-		if (express_json_cache.indexOf(value) !== -1) {
-			// Circular reference found, discard key
-			return;
+const getCircularReplacer = () => {
+	const seen = new WeakSet();
+	return (key: string, value: any) => {
+		if (typeof value === "object" && value !== null) {
+			if (seen.has(value)) return;
+			seen.add(value);
 		}
-		// Store value in our collection
-		express_json_cache.push(value);
-	}
-	return value;
-});
+		return value;
+	};
+};
 
-function returnJSON(res: any, data: any) {
-	express_json_cache = [];
-	res.json(data);
-	express_json_cache = null; // Enable garbage collection
+// Ignore circular references in data when converting to JSON
+function returnCircularJSON(res: express.Response, data: any) {
+	res.setHeader("Content-Type", "application/json");
+	return res.send(JSON.stringify(data, getCircularReplacer()));
 }
 
 app.get("/getSessionsDebug/:key", requireAPIKey, (req, res) => {
-	returnJSON(res, Sessions);
+	return returnCircularJSON(res, Sessions);
 });
 
 app.get("/getConnections/:key", requireAPIKey, (req, res) => {
-	returnJSON(res, Connections);
+	return returnCircularJSON(res, Connections);
 });
 
 app.get("/getStatus/:key", requireAPIKey, (req, res) => {
@@ -1542,7 +1531,7 @@ app.get("/getStatus/:key", requireAPIKey, (req, res) => {
 		}
 	}
 	let uptime = process.uptime();
-	returnJSON(res, {
+	return returnCircularJSON(res, {
 		uptime: uptime,
 		sessionCount: Object.keys(Sessions).length,
 		playerCount: Object.keys(Connections).length,
@@ -1570,7 +1559,7 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 				: null,
 			setRestriction: Sessions[sid].setRestriction,
 		};
-	returnJSON(res, localSess);
+	return returnCircularJSON(res, localSess);
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
