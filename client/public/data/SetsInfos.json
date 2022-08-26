@@ -1028,13 +1028,13 @@
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 64,
+        "cardCount": 194,
         "isPrimary": false,
         "icon": "img/sets/dmc.svg",
-        "commonCount": 1,
-        "mythicCount": 17,
-        "rareCount": 36,
-        "uncommonCount": 10
+        "commonCount": 20,
+        "mythicCount": 25,
+        "rareCount": 94,
+        "uncommonCount": 55
     },
     "dmr": {
         "code": "dmr",
@@ -1048,13 +1048,13 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 331,
+        "cardCount": 421,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
-        "commonCount": 63,
-        "mythicCount": 40,
-        "rareCount": 124,
-        "uncommonCount": 104
+        "commonCount": 111,
+        "mythicCount": 45,
+        "rareCount": 142,
+        "uncommonCount": 123
     },
     "dom": {
         "code": "dom",
@@ -4762,10 +4762,10 @@
         "cardCount": 645,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 39,
+        "commonCount": 40,
         "mythicCount": 112,
         "rareCount": 473,
-        "uncommonCount": 21
+        "uncommonCount": 20
     },
     "slu": {
         "code": "slu",

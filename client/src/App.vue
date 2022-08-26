@@ -1429,10 +1429,10 @@
 					<div class="welcome-section">
 						<div class="news">
 							<div class="news">
-								<em>August, 2022</em>
+								<em>August 26, 2022</em>
 								<p>
 									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
-									Dominara United support.
+									Dominara United (DMU) support.
 								</p>
 							</div>
 							<div class="news">

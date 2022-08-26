@@ -1,5 +1,9 @@
 [
 	{
+		"date": "26/08/2022",
+		"notes": ["Dominaria United (DMU) support."]
+	},
+	{
 		"date": "07/08/2022",
 		"notes": ["Added a zoom slider for the draft booster."]
 	},
