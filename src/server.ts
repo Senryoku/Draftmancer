@@ -1359,12 +1359,13 @@ app.use("/bracket", express.static("client/public/bracket.html"));
 // Endpoints
 // (TODO: Should be cleaned up)
 
+// Not actually in use right, remove?
 function getCollection(res: express.Response, sessionID: SessionID) {
 	try {
 		if (!sessionID) {
 			res.sendStatus(400);
 		} else if (sessionID in Sessions) {
-			res.send(Sessions[sessionID].collection(false));
+			res.json([...Sessions[sessionID].collection(false).entries()]);
 		} else {
 			res.sendStatus(404);
 		}
