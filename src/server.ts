@@ -1359,6 +1359,10 @@ app.use("/bracket", express.static("client/public/bracket.html"));
 // Endpoints
 // (TODO: Should be cleaned up)
 
+app.get("/healthCheck", (req, res) => {
+	res.sendStatus(200);
+});
+
 app.get("/getCollection", (req, res) => {
 	if (!req.cookies.sessionID) {
 		res.sendStatus(400);
