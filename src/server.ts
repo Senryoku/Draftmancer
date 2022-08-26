@@ -10,14 +10,10 @@ import fs from "fs";
 import request from "request";
 import compression from "compression";
 import express from "express";
-const app = express();
 import http from "http";
-const httpServer = new http.Server(app);
 import { Server, Socket } from "socket.io";
-const io = new Server(httpServer);
 import cookieParser from "cookie-parser";
 import uuid from "uuid";
-const uuidv1 = uuid.v1;
 
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, MessageWarning, SocketAck, SocketError } from "./Message.js";
@@ -39,6 +35,10 @@ import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
+
+const app = express();
+const httpServer = new http.Server(app);
+const io = new Server(httpServer);
 
 app.use(compression());
 app.use(cookieParser());
@@ -1139,7 +1139,7 @@ io.on("connection", async function (socket) {
 				targetSocket.emit("stillAlive", () => {
 					// Previous connection is still alive, generate a new userID.
 					clearTimeout(timeout);
-					query.userID = uuidv1();
+					query.userID = uuid.v1();
 					socket.emit("alreadyConnected", query.userID);
 					resolve();
 				});
