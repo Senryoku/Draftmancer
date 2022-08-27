@@ -1048,13 +1048,13 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 421,
+        "cardCount": 432,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
-        "commonCount": 111,
+        "commonCount": 122,
         "mythicCount": 45,
-        "rareCount": 142,
-        "uncommonCount": 123
+        "rareCount": 141,
+        "uncommonCount": 124
     },
     "dom": {
         "code": "dom",
