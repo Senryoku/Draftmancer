@@ -1432,7 +1432,7 @@
 								<em>August 26, 2022</em>
 								<p>
 									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
-									Dominara United (DMU) support.
+									Dominaria United (DMU) support.
 								</p>
 							</div>
 							<div class="news">
