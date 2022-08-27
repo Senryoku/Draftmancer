@@ -32,6 +32,10 @@ export const DefaultBoosterTargets = {
 	rare: 1,
 };
 
+function isEmpty(slotedCardPool: SlotedCardPool): boolean {
+	return Object.values(slotedCardPool).every((value: CardPool) => value.size === 0);
+}
+
 class ColorBalancedSlotCache {
 	byColor: { [color: string]: CardPool } = {};
 	monocolored: CardPool;
@@ -542,17 +546,16 @@ class STXBoosterFactory extends BoosterFactory {
 		const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
 
 		// Lesson
-		const lessonsCounts = countBySlot(this.lessonsByRarity);
 		const rarityRoll = random.real(0, 1);
 		const pickedRarity = allowRares
-			? mythicPromotion && rarityRoll < 0.006 && lessonsCounts["mythic"] > 0
+			? mythicPromotion && rarityRoll < 0.006 && this.lessonsByRarity["mythic"].size > 0
 				? "mythic"
-				: rarityRoll < 0.08 && lessonsCounts["rare"] > 0
+				: rarityRoll < 0.08 && this.lessonsByRarity["rare"].size > 0
 				? "rare"
 				: "common"
 			: "common";
 
-		if (lessonsCounts[pickedRarity] <= 0) {
+		if (this.lessonsByRarity[pickedRarity].size <= 0) {
 			this.onError("Error generating boosters", "Not enough Lessons available.");
 			return false;
 		}
@@ -832,9 +835,8 @@ class CLBBoosterFactory extends BoosterFactory {
 				uncommon: 3,
 				rare: 1,
 			};
-		const legendaryCounts = countBySlot(this.legendaryCreaturesAndPlaneswalkers);
 		// Ignore the rule if there's no legendary creatures or planeswalkers left
-		if (Object.values(legendaryCounts).every((c) => c === 0)) {
+		if (isEmpty(this.legendaryCreaturesAndPlaneswalkers)) {
 			return super.generateBooster(targets);
 		} else {
 			let booster: Array<UniqueCard> | false = [];
@@ -851,16 +853,17 @@ class CLBBoosterFactory extends BoosterFactory {
 			const pickedLegend = pickCard(this.legendaryCreaturesAndPlaneswalkers[legendaryRarity], booster);
 			removeCardFromCardPool(pickedLegend.id, this.completeCardPool[pickedLegend.rarity]);
 
-			const backgroundCounts = countBySlot(this.legendaryBackgrounds);
 			let backgroundRarity = "common";
 			const backgroundRarityCheck = random.real(0, 1);
 			// Rare in 1 of 12 boosters, no idea about uncommon/common ratio
 			// There's 4 Mythics, 5 Rares, 15 Uncommons and 5 Commons
-			if (backgroundRarityCheck < 1.0 / 12.0 / 8.0 && backgroundCounts["mythic"] > 0) backgroundRarity = "mythic";
-			else if (backgroundRarityCheck < 1.0 / 12.0 && backgroundCounts["rare"] > 0) backgroundRarity = "rare";
-			else if (backgroundRarityCheck < 1.0 / 2.0 && backgroundCounts["uncommon"] > 0)
+			if (backgroundRarityCheck < 1.0 / 12.0 / 8.0 && this.legendaryBackgrounds["mythic"].size > 0)
+				backgroundRarity = "mythic";
+			else if (backgroundRarityCheck < 1.0 / 12.0 && this.legendaryBackgrounds["rare"].size > 0)
+				backgroundRarity = "rare";
+			else if (backgroundRarityCheck < 1.0 / 2.0 && this.legendaryBackgrounds["uncommon"].size > 0)
 				backgroundRarity = "uncommon"; // This ratio is completely arbitrary
-			if (backgroundCounts[backgroundRarity] <= 0) return false;
+			if (this.legendaryBackgrounds[backgroundRarity].size <= 0) return false;
 			const pickedBackground = pickCard(this.legendaryBackgrounds[backgroundRarity], booster);
 			removeCardFromCardPool(pickedBackground.id, this.completeCardPool[pickedBackground.rarity]);
 
@@ -952,9 +955,8 @@ class DMUBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
-		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
-		if (Object.values(legendaryCounts).every((c) => c === 0)) {
+		if (isEmpty(this.legendaryCreatures)) {
 			return super.generateBooster(targets);
 		} else {
 			let updatedTargets = Object.assign({}, targets);
@@ -962,16 +964,16 @@ class DMUBoosterFactory extends BoosterFactory {
 			let legendaryCreature = null;
 			if (
 				updatedTargets["uncommon"] > 0 &&
-				legendaryCounts["uncommon"] > 0 &&
+				this.legendaryCreatures["uncommon"].size > 0 &&
 				random.realZeroToOneInclusive() < 0.75
 			) {
 				--updatedTargets["uncommon"];
 				legendaryCreature = pickCard(this.legendaryCreatures["uncommon"]);
-			} else if (updatedTargets["rare"] > 0 && legendaryCounts["rare"] > 0) {
+			} else if (updatedTargets["rare"] > 0 && this.legendaryCreatures["rare"].size > 0) {
 				--updatedTargets["rare"];
 				if (
 					this.options.mythicPromotion &&
-					legendaryCounts["mythic"] > 0 &&
+					this.legendaryCreatures["mythic"].size > 0 &&
 					random.realZeroToOneInclusive() < 1 / 7.4
 				)
 					legendaryCreature = pickCard(this.legendaryCreatures["mythic"]);
