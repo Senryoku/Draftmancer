@@ -258,7 +258,9 @@ export default {
 				console.log("storedUserID: " + storedUserID);
 			}
 
-			this.sessionID = getCookie("sessionID", shortguid());
+			let urlParamSession = getUrlVars()["session"];
+			if (urlParamSession) this.sessionID = decodeURIComponent(urlParamSession);
+			else this.sessionID = getCookie("sessionID", shortguid());
 
 			const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
@@ -2731,9 +2733,6 @@ export default {
 	mounted: async function () {
 		// Load all card informations
 		try {
-			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURIComponent(urlParamSession);
-
 			// Load set informations
 			this.setsInfos = Object.freeze(SetsInfos);
 
