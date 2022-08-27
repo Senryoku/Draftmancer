@@ -929,17 +929,25 @@ class M2X2BoosterFactory extends BoosterFactory {
 
 /* Dominaria United
  * 1 Legendary Creature in every pack (75% U, 25% R/M)
+ * 1 Common land in every pack (To be confirmed)
  */
 class DMUBoosterFactory extends BoosterFactory {
 	static legendaryCreatureRegex = /Legendary.*Creature/;
 	legendaryCreatures: SlotedCardPool;
+	commonLands: CardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+		let [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
 			Cards[cid].type.match(DMUBoosterFactory.legendaryCreatureRegex)
+		);
+		let commonLands: SlotedCardPool;
+		[commonLands, filteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => Cards[cid].rarity === "common" && Cards[cid].type.match("Land")
 		);
 		super(filteredCardPool, landSlot, options);
 		this.legendaryCreatures = legendaryCreatures;
+		this.commonLands = commonLands["common"];
 	}
 
 	// Not using the suplied cardpool here
@@ -970,9 +978,16 @@ class DMUBoosterFactory extends BoosterFactory {
 				else legendaryCreature = pickCard(this.legendaryCreatures["rare"]);
 			}
 
+			let commonLand: UniqueCard | null = null;
+			if (updatedTargets["common"] > 0 && this.commonLands.size > 0) {
+				--updatedTargets["common"];
+				commonLand = pickCard(this.commonLands);
+			}
+
 			let booster = super.generateBooster(updatedTargets);
 			if (!booster) return false;
-			if (legendaryCreature) booster.unshift(legendaryCreature);
+			if (legendaryCreature) booster.splice(updatedTargets["rare"] ?? 0, 0, legendaryCreature);
+			if (commonLand) booster.push(commonLand);
 			return booster;
 		}
 	}
