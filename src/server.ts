@@ -1500,6 +1500,8 @@ function requireAPIKey(req: express.Request, res: express.Response, next: expres
 const getCircularReplacer = () => {
 	const seen = new WeakSet();
 	return (key: string, value: any) => {
+		// Handle Sets (Notably Session.users)
+		if (typeof value === "object" && value instanceof Set) return [...value];
 		if (typeof value === "object" && value !== null) {
 			if (seen.has(value)) return;
 			seen.add(value);
