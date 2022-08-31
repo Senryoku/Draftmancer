@@ -1028,13 +1028,13 @@
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 194,
+        "cardCount": 238,
         "isPrimary": false,
         "icon": "img/sets/dmc.svg",
-        "commonCount": 20,
-        "mythicCount": 25,
-        "rareCount": 94,
-        "uncommonCount": 55
+        "commonCount": 21,
+        "mythicCount": 33,
+        "rareCount": 127,
+        "uncommonCount": 57
     },
     "dmr": {
         "code": "dmr",
@@ -3710,14 +3710,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 814,
+        "cardCount": 889,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 101,
-        "mythicCount": 108,
-        "rareCount": 368,
-        "specialCount": 3,
-        "uncommonCount": 234
+        "commonCount": 113,
+        "mythicCount": 116,
+        "rareCount": 404,
+        "specialCount": 4,
+        "uncommonCount": 252
     },
     "plrw": {
         "code": "plrw",
