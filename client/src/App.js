@@ -2725,9 +2725,14 @@ export default {
 		},
 
 		pageTitle() {
-			return `MTGA Draft (${this.sessionUsers.length}/${this.maxPlayers}) ${
-				this.titleNotification ? this.titleNotification.message : ""
-			}`;
+			if (this.sessionUsers.length < 2)
+				return `MTGADraft ${
+					this.titleNotification ? this.titleNotification.message : "- Multi-Player Draft Simulator"
+				}`;
+			else
+				return `MTGADraft (${this.sessionUsers.length}/${this.maxPlayers}) ${
+					this.titleNotification ? this.titleNotification.message : ""
+				}`;
 		},
 	},
 	mounted: async function () {
