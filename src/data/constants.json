@@ -258,7 +258,6 @@
         }
     ],
     "PrimarySets": [
-        "dmr",
         "dmu",
         "2x2",
         "clb",
