@@ -2826,11 +2826,11 @@
     "p22": {
         "code": "p22",
         "fullName": "Judge Gift Cards 2022",
-        "cardCount": 8,
+        "cardCount": 10,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p22.svg",
-        "rareCount": 8
+        "rareCount": 10
     },
     "p2hg": {
         "code": "p2hg",
@@ -3239,6 +3239,15 @@
         "icon": "img/sets/pdka.svg",
         "rareCount": 4,
         "uncommonCount": 1
+    },
+    "pdmu": {
+        "code": "pdmu",
+        "fullName": "Dominaria United Promos",
+        "cardCount": 160,
+        "isPrimary": false,
+        "icon": "img/sets/pdmu.svg",
+        "mythicCount": 40,
+        "rareCount": 120
     },
     "pdom": {
         "code": "pdom",
@@ -4759,12 +4768,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 645,
+        "cardCount": 646,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
         "mythicCount": 112,
-        "rareCount": 473,
+        "rareCount": 474,
         "uncommonCount": 20
     },
     "slu": {
