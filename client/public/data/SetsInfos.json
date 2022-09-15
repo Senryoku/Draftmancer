@@ -57,12 +57,13 @@
     "40k": {
         "code": "40k",
         "fullName": "Warhammer 40,000",
-        "cardCount": 9,
+        "cardCount": 96,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
-        "mythicCount": 2,
-        "rareCount": 3,
-        "uncommonCount": 4
+        "commonCount": 21,
+        "mythicCount": 9,
+        "rareCount": 46,
+        "uncommonCount": 20
     },
     "4ed": {
         "code": "4ed",
