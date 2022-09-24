@@ -24,7 +24,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		basics: [], // FIXME: Should not be necessary anymore.
 		cardsInPack: oracleIds,
 		picked: [],
-		seen: [], //[{ packNum: 0, pickNum: 0, numPicks: 1, pack: oracleIds }],
+		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: oracleIds }],
 		packNum: 0,
 		numPacks: 1,
 		pickNum: 0,
