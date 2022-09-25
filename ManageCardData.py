@@ -215,7 +215,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
         with open(path, 'r', encoding="utf8") as file:
             text = file.read()
             matches = re.findall(
-                r"<h3>([^<]+)<\/h3>\s*<b>AI Rating: [^<]+<\/b><br \/>\s*<b>Pro Rating: ([0-9]*\.?[0-9]*( \/\/ )?[0-9]*\.?[0-9]*)<\/b>", text)
+                r"<b>([^<]+)<\/b>.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n\s*<td>([0-9]*\.?[0-9]*)<\/td>", text)
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
@@ -760,6 +760,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "dmu", "dmr"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "dmr"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

@@ -57,12 +57,13 @@
     "40k": {
         "code": "40k",
         "fullName": "Warhammer 40,000",
-        "cardCount": 9,
+        "cardCount": 321,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
-        "mythicCount": 2,
-        "rareCount": 3,
-        "uncommonCount": 4
+        "commonCount": 52,
+        "mythicCount": 25,
+        "rareCount": 171,
+        "uncommonCount": 73
     },
     "4ed": {
         "code": "4ed",
@@ -1028,13 +1029,13 @@
     "dmc": {
         "code": "dmc",
         "fullName": "Dominaria United Commander",
-        "cardCount": 62,
+        "cardCount": 240,
         "isPrimary": false,
         "icon": "img/sets/dmc.svg",
-        "commonCount": 1,
-        "mythicCount": 17,
-        "rareCount": 34,
-        "uncommonCount": 10
+        "commonCount": 21,
+        "mythicCount": 36,
+        "rareCount": 126,
+        "uncommonCount": 57
     },
     "dmr": {
         "code": "dmr",
@@ -1048,13 +1049,13 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 137,
+        "cardCount": 432,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
-        "commonCount": 44,
-        "mythicCount": 24,
-        "rareCount": 49,
-        "uncommonCount": 20
+        "commonCount": 122,
+        "mythicCount": 45,
+        "rareCount": 141,
+        "uncommonCount": 124
     },
     "dom": {
         "code": "dom",
@@ -2826,11 +2827,11 @@
     "p22": {
         "code": "p22",
         "fullName": "Judge Gift Cards 2022",
-        "cardCount": 8,
+        "cardCount": 10,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p22.svg",
-        "rareCount": 8
+        "rareCount": 10
     },
     "p2hg": {
         "code": "p2hg",
@@ -3239,6 +3240,15 @@
         "icon": "img/sets/pdka.svg",
         "rareCount": 4,
         "uncommonCount": 1
+    },
+    "pdmu": {
+        "code": "pdmu",
+        "fullName": "Dominaria United Promos",
+        "cardCount": 160,
+        "isPrimary": false,
+        "icon": "img/sets/pdmu.svg",
+        "mythicCount": 40,
+        "rareCount": 120
     },
     "pdom": {
         "code": "pdom",
@@ -3710,14 +3720,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 814,
+        "cardCount": 889,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 101,
-        "mythicCount": 108,
-        "rareCount": 368,
-        "specialCount": 3,
-        "uncommonCount": 234
+        "commonCount": 113,
+        "mythicCount": 116,
+        "rareCount": 404,
+        "specialCount": 4,
+        "uncommonCount": 252
     },
     "plrw": {
         "code": "plrw",
@@ -4027,11 +4037,12 @@
     "ppro": {
         "code": "ppro",
         "fullName": "Pro Tour Promos",
-        "cardCount": 14,
+        "cardCount": 17,
         "isPrimary": false,
         "icon": "img/sets/ppro.svg",
-        "mythicCount": 5,
-        "rareCount": 9
+        "mythicCount": 6,
+        "rareCount": 10,
+        "uncommonCount": 1
     },
     "pptk": {
         "code": "pptk",
@@ -4086,8 +4097,8 @@
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
-        "commonCount": 386,
-        "mythicCount": 270,
+        "commonCount": 387,
+        "mythicCount": 269,
         "rareCount": 1140,
         "uncommonCount": 471
     },
@@ -4759,13 +4770,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 613,
+        "cardCount": 651,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 39,
-        "mythicCount": 108,
-        "rareCount": 445,
-        "uncommonCount": 21
+        "commonCount": 40,
+        "mythicCount": 112,
+        "rareCount": 479,
+        "uncommonCount": 20
     },
     "slu": {
         "code": "slu",
@@ -4916,6 +4927,14 @@
         "commonCount": 90,
         "rareCount": 121,
         "uncommonCount": 95
+    },
+    "sunf": {
+        "code": "sunf",
+        "fullName": "Unfinity Sticker Sheets",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/sunf.svg",
+        "commonCount": 6
     },
     "svow": {
         "code": "svow",
@@ -5252,13 +5271,13 @@
     "unf": {
         "code": "unf",
         "fullName": "Unfinity",
-        "cardCount": 34,
+        "cardCount": 300,
         "isPrimary": false,
         "icon": "img/sets/unf.svg",
-        "commonCount": 11,
-        "mythicCount": 4,
-        "rareCount": 12,
-        "uncommonCount": 7
+        "commonCount": 75,
+        "mythicCount": 34,
+        "rareCount": 93,
+        "uncommonCount": 98
     },
     "unh": {
         "code": "unh",

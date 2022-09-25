@@ -10,14 +10,10 @@ import fs from "fs";
 import request from "request";
 import compression from "compression";
 import express from "express";
-const app = express();
 import http from "http";
-const httpServer = new http.Server(app);
 import { Server, Socket } from "socket.io";
-const io = new Server(httpServer);
 import cookieParser from "cookie-parser";
 import uuid from "uuid";
-const uuidv1 = uuid.v1;
 
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, MessageWarning, SocketAck, SocketError } from "./Message.js";
@@ -39,6 +35,10 @@ import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
+
+const app = express();
+const httpServer = new http.Server(app);
+const io = new Server(httpServer);
 
 app.use(compression());
 app.use(cookieParser());
@@ -1139,7 +1139,7 @@ io.on("connection", async function (socket) {
 				targetSocket.emit("stillAlive", () => {
 					// Previous connection is still alive, generate a new userID.
 					clearTimeout(timeout);
-					query.userID = uuidv1();
+					query.userID = uuid.v1();
 					socket.emit("alreadyConnected", query.userID);
 					resolve();
 				});
@@ -1363,24 +1363,26 @@ app.get("/healthCheck", (req, res) => {
 	res.sendStatus(200);
 });
 
-app.get("/getCollection", (req, res) => {
-	if (!req.cookies.sessionID) {
-		res.sendStatus(400);
-	} else if (req.cookies.sessionID in Sessions) {
-		res.send(Sessions[req.cookies.sessionID].collection(false));
-	} else {
-		res.sendStatus(404);
+function getCollection(res: express.Response, sessionID: SessionID) {
+	try {
+		if (!sessionID) {
+			res.sendStatus(400);
+		} else if (sessionID in Sessions) {
+			res.json([...Sessions[sessionID].collection(false).entries()]);
+		} else {
+			res.sendStatus(404);
+		}
+	} catch (e) {
+		res.sendStatus(500);
 	}
+}
+
+app.get("/getCollection", (req, res) => {
+	getCollection(res, req.cookies.sessionID);
 });
 
 app.get("/getCollection/:sessionID", (req, res) => {
-	if (!req.params.sessionID) {
-		res.sendStatus(400);
-	} else if (req.params.sessionID in Sessions) {
-		res.send(Sessions[req.params.sessionID].collection(false));
-	} else {
-		res.sendStatus(404);
-	}
+	getCollection(res, req.params.sessionID);
 });
 
 function returnCollectionPlainText(res: any, sid: SessionID) {
@@ -1390,7 +1392,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
 		for (let cid in coll) r += `${coll.get(cid)} ${Cards[cid].name}\n`;
-		res.set("Content-disposition", `attachment; filename=collection_${sid}`);
+		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
 	} else {
@@ -1410,7 +1412,7 @@ app.get("/getUsers/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions) {
-		res.send(JSON.stringify([...Sessions[req.params.sessionID].users]));
+		res.json([...Sessions[req.params.sessionID].users]);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1422,13 +1424,12 @@ app.post("/getCards", (req, res) => {
 		res.sendStatus(400);
 	} else {
 		try {
-			res.setHeader("Content-Type", "application/json");
 			if (Array.isArray(req.body)) {
-				res.send(JSON.stringify(req.body.map((cid) => Cards[cid])));
+				res.json(req.body.map((cid) => Cards[cid]));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
 				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
-				res.send(JSON.stringify(r));
+				res.json(r);
 			} else {
 				res.sendStatus(400);
 			}
@@ -1460,10 +1461,9 @@ app.post("/getDeck", (req, res) => {
 					return;
 				}
 			}
-			res.setHeader("Content-Type", "application/json");
-			res.send(JSON.stringify(r));
+			res.json(r);
 		} catch (e) {
-			console.log(e);
+			console.error(e);
 			res.sendStatus(500);
 		}
 	}
@@ -1474,8 +1474,7 @@ app.get("/getBracket/:sessionID", (req, res) => {
 	if (!sid) {
 		res.sendStatus(400);
 	} else if (sid in Sessions && Sessions[sid].bracket) {
-		res.setHeader("Content-Type", "application/json");
-		res.send(JSON.stringify(Sessions[sid].bracket));
+		res.json(Sessions[sid].bracket);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1485,10 +1484,8 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 	if (!req.params.sessionID) {
 		res.sendStatus(400);
 	} else if (req.params.sessionID in Sessions && Sessions[req.params.sessionID].draftLog) {
-		res.setHeader("Content-Type", "application/json");
-		if (Sessions[req.params.sessionID].draftLog?.delayed)
-			res.send(JSON.stringify(Sessions[req.params.sessionID].getStrippedLog()));
-		else res.send(JSON.stringify(Sessions[req.params.sessionID].draftLog));
+		if (Sessions[req.params.sessionID].draftLog?.delayed) res.json(Sessions[req.params.sessionID].getStrippedLog());
+		else res.json(Sessions[req.params.sessionID].draftLog);
 	} else {
 		res.sendStatus(404);
 	}
@@ -1498,94 +1495,77 @@ app.get("/getDraftLog/:sessionID", (req, res) => {
 
 const secretKey = process.env.SECRET_KEY || "1234";
 
-let express_json_cache: any = []; // Clear this before calling
-app.set("json replacer", function (key: string, value: any) {
-	if (!express_json_cache) express_json_cache = [];
-	// Deal with sets
-	if (typeof value === "object" && value instanceof Set) {
-		return [...value];
-	}
-	// Deal with circular references
-	if (typeof value === "object" && value !== null) {
-		if (express_json_cache.indexOf(value) !== -1) {
-			// Circular reference found, discard key
-			return;
-		}
-		// Store value in our collection
-		express_json_cache.push(value);
-	}
-	return value;
-});
-
-function returnJSON(res: any, data: any) {
-	express_json_cache = [];
-	res.json(data);
-	express_json_cache = null; // Enable garbage collection
+function requireAPIKey(req: express.Request, res: express.Response, next: express.NextFunction) {
+	if (req.params.key === secretKey) next();
+	else res.sendStatus(401).end();
 }
 
-app.get("/getSessionsDebug/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		returnJSON(res, Sessions);
-	} else {
-		res.sendStatus(401).end();
-	}
-});
-
-app.get("/getConnections/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		returnJSON(res, Connections);
-	} else {
-		res.sendStatus(401).end();
-	}
-});
-
-app.get("/getStatus/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		let draftingSessions = 0;
-		let draftingPlayers = 0;
-		for (let sID in Sessions) {
-			if (Sessions[sID].drafting) {
-				++draftingSessions;
-				draftingPlayers += Sessions[sID].users.size;
-			}
+const getCircularReplacer = () => {
+	const seen = new WeakSet();
+	return (key: string, value: any) => {
+		// Handle Sets (Notably Session.users)
+		if (typeof value === "object" && value instanceof Set) return [...value];
+		if (typeof value === "object" && value !== null) {
+			if (seen.has(value)) return;
+			seen.add(value);
 		}
-		let uptime = process.uptime();
-		returnJSON(res, {
-			uptime: uptime,
-			sessionCount: Object.keys(Sessions).length,
-			playerCount: Object.keys(Connections).length,
-			draftingSessions: draftingSessions,
-			draftingPlayers: draftingPlayers,
-			canRestart: draftingSessions === 0,
-		});
-	} else {
-		res.sendStatus(401).end();
+		return value;
+	};
+};
+
+// Ignore circular references in data when converting to JSON
+function returnCircularJSON(res: express.Response, data: any) {
+	res.setHeader("Content-Type", "application/json");
+	return res.send(JSON.stringify(data, getCircularReplacer()));
+}
+
+app.get("/getSessionsDebug/:key", requireAPIKey, (req, res) => {
+	return returnCircularJSON(res, Sessions);
+});
+
+app.get("/getConnections/:key", requireAPIKey, (req, res) => {
+	return returnCircularJSON(res, Connections);
+});
+
+app.get("/getStatus/:key", requireAPIKey, (req, res) => {
+	let draftingSessions = 0;
+	let draftingPlayers = 0;
+	for (let sID in Sessions) {
+		if (Sessions[sID].drafting) {
+			++draftingSessions;
+			draftingPlayers += Sessions[sID].users.size;
+		}
 	}
+	let uptime = process.uptime();
+	return returnCircularJSON(res, {
+		uptime: uptime,
+		sessionCount: Object.keys(Sessions).length,
+		playerCount: Object.keys(Connections).length,
+		draftingSessions: draftingSessions,
+		draftingPlayers: draftingPlayers,
+		canRestart: draftingSessions === 0,
+	});
 });
 
 // Used by Discord Bot
-app.get("/getSessions/:key", (req, res) => {
-	if (req.params.key === secretKey) {
-		let localSess: { [sid: string]: any } = {};
-		for (let sid in Sessions)
-			localSess[sid] = {
-				id: sid,
-				drafting: Sessions[sid].drafting,
-				users: Sessions[sid].users,
-				maxPlayers: Sessions[sid].maxPlayers,
-				useCustomCardList: Sessions[sid].useCustomCardList,
-				customCardList: Sessions[sid].customCardList
-					? {
-							name: Sessions[sid].customCardList.name,
-							length: Sessions[sid].customCardList.length,
-					  }
-					: null,
-				setRestriction: Sessions[sid].setRestriction,
-			};
-		returnJSON(res, localSess);
-	} else {
-		res.sendStatus(401).end();
-	}
+app.get("/getSessions/:key", requireAPIKey, (req, res) => {
+	let localSess: { [sid: string]: any } = {};
+	for (let sid in Sessions)
+		localSess[sid] = {
+			id: sid,
+			drafting: Sessions[sid].drafting,
+			users: Sessions[sid].users,
+			maxPlayers: Sessions[sid].maxPlayers,
+			useCustomCardList: Sessions[sid].useCustomCardList,
+			customCardList: Sessions[sid].customCardList
+				? {
+						name: Sessions[sid].customCardList.name,
+						length: Sessions[sid].customCardList.length,
+				  }
+				: null,
+			setRestriction: Sessions[sid].setRestriction,
+		};
+	return returnCircularJSON(res, localSess);
 });
 
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {

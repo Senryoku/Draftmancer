@@ -11,12 +11,12 @@ body {
 
 .backgound-image {
 	position: absolute;
-	right: 5em;
+	right: -2em;
 	top: 7em;
 	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
-		url("../assets/img/neo_sma_v2_fb_1000x1000_en-min.jpg");
-	background-position: center, center 40%;
-	background-size: 100%;
+		url("../assets/img/dmu_sma_fb_1000x1000_en-min.jpg");
+	background-position: center, center 22%;
+	background-size: 80%;
 	background-repeat: no-repeat;
 	z-index: -1;
 	width: 60em;

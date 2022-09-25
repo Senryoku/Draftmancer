@@ -1429,27 +1429,61 @@
 					<div class="welcome-section">
 						<div class="news">
 							<div class="news">
-								<em>June 27, 2022</em>
+								<em>September 2, 2022</em> <strong></strong>
 								<p>
-									You can now pick from a booster as soon as it is passed to you, without having to
-									wait for the whole table to make its pick, speeding up the draft process.
+									Heroku are shutting down their free plans, pushing me to search for a better suited
+									hosting plateform.
+									<strong>
+										If you're still using the .herokuapp.com domain, please switch to
+										<a href="https://www.mtgadraft.tk">MTGADraft.tk</a> before November 28.
+									</strong>
+								</p>
+								<div style="display: flex; margin-top: 0.5em; margin-left: 1em; gap: 1em">
+									<iframe
+										src="https://github.com/sponsors/Senryoku/button"
+										title="Sponsor Senryoku"
+										height="35"
+										width="116"
+										style="border: 0; margin: 0.25em"
+									></iframe>
+									<div>
+										I am looking for a free solution, however I'd like to make sure I have other
+										options if anything goes wrong. You can contribute using
+										<a href="https://github.com/sponsors/Senryoku" target="_blank">
+											<i class="fa fa-github"></i> GitHub Sponsor
+										</a>
+										to ensure MTGADraft stays online and up-to-date.
+									</div>
+								</div>
+							</div>
+							<div class="news">
+								<em>August 26, 2022</em>
+								<p>
+									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
+									Dominaria United (DMU) support.
 								</p>
 							</div>
-							<em>June 25, 2022</em>
-							<ul>
-								<li>
-									<img src="img/sets/2x2.svg" class="set-icon" style="--invertedness: 100%" />
-									Double Masters 2022 (2X2) support: Check out the full set selection menu (<i
-										class="fas fa-ellipsis-h"
-									></i
-									>).
-								</li>
-								<li>
-									In preparation for Baldur's Gate Alchemy Horizons specialize mechanics, zooming in
-									on a card (right-click) will now also allow you to scroll through the related cards
-									with your mouse wheel.
-								</li>
-							</ul>
+							<div class="news">
+								<em>June, 2022</em>
+								<ul>
+									<li>
+										You can now pick from a booster as soon as it is passed to you, without having
+										to wait for the whole table to make its pick, speeding up the draft process.
+									</li>
+									<li>
+										<img src="img/sets/2x2.svg" class="set-icon" style="--invertedness: 100%" />
+										Double Masters 2022 (2X2) support: Check out the full set selection menu (<i
+											class="fas fa-ellipsis-h"
+										></i
+										>).
+									</li>
+									<li>
+										In preparation for Baldur's Gate Alchemy Horizons specialize mechanics, zooming
+										in on a card (right-click) will now also allow you to scroll through the related
+										cards with your mouse wheel.
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -2513,29 +2547,42 @@
 					<p>
 						If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by
 						adding support for new cards appearing on MTGA and improving it, both with your and my ideas. If
-						that sounds like a good use of my time and you want to help me stay motivated and high on
-						cafeine, you can donate here via
+						that sounds like a good use of my time and you want to help me cover potential hosting cost and
+						keep me motivated and caffeinated, you can donate here via
+						<a href="https://github.com/sponsors/Senryoku" target="_blank"
+							><i class="fa fa-github"></i> <em>GitHub Sponsor</em></a
+						>
+						or
 						<em><i class="fab fa-paypal"></i> PayPal</em>
 						:
 					</p>
-					<form
-						action="https://www.paypal.com/cgi-bin/webscr"
-						method="post"
-						target="_blank"
-						rel="noopener nofollow"
-						style="margin-left: 1em"
-					>
-						<input type="hidden" name="cmd" value="_s-xclick" />
-						<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
-						<input type="hidden" name="lc" value="en_US" />
-						<input
-							type="image"
-							src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-							name="submit"
-							title="PayPal - The safer, easier way to pay online!"
-							alt="Donate with PayPal button"
-						/>
-					</form>
+					<div style="display: flex; justify-content: center">
+						<iframe
+							src="https://github.com/sponsors/Senryoku/button"
+							title="Sponsor Senryoku"
+							height="35"
+							width="116"
+							style="border: 0"
+						></iframe>
+						<form
+							action="https://www.paypal.com/cgi-bin/webscr"
+							method="post"
+							target="_blank"
+							rel="noopener nofollow"
+							style="margin-left: 1em"
+						>
+							<input type="hidden" name="cmd" value="_s-xclick" />
+							<input type="hidden" name="hosted_button_id" value="6L2CUS6DH82DL" />
+							<input type="hidden" name="lc" value="en_US" />
+							<input
+								type="image"
+								src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
+								name="submit"
+								title="PayPal - The safer, easier way to pay online!"
+								alt="Donate with PayPal button"
+							/>
+						</form>
+					</div>
 					<p>
 						ruler101, developper of mtgdraftbots (which MTGADraft uses when possible) and
 						<a href="https://cubeartisan.net" target="_blank" rel="noopener nofollow">cubeartisan</a>, also
