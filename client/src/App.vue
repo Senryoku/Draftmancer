@@ -49,7 +49,7 @@
 					id="collection-file-input"
 					@change="uploadCardListAsCollection"
 					style="display: none"
-					accept=".txt,.csv"
+					accept=".txt,.csv,.log"
 				/>
 				<button @click="uploadMTGALogs" v-tooltip="'Import your collection by uploading your Player.log file.'">
 					Upload
@@ -1428,6 +1428,24 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>September 28, 2022</em>
+							<ul>
+								<li>
+									Application migrated to a new hosting platform. Please let me know if any problem
+									arises, especially performance-wise.
+								</li>
+								<li>
+									Users of
+									<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank"
+										>MTGA Pro Tracker</a
+									>
+									can now directly import their collections by uploading their
+									<code>Player.log</code> file (see
+									<a @click="displayedModal = 'collectionHelp'">instructions</a>).
+								</li>
+							</ul>
+						</div>
+						<div class="news">
 							<div class="news">
 								<em>September 2, 2022</em> <strong></strong>
 								<p>
@@ -1462,27 +1480,6 @@
 									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
 									Dominaria United (DMU) support.
 								</p>
-							</div>
-							<div class="news">
-								<em>June, 2022</em>
-								<ul>
-									<li>
-										You can now pick from a booster as soon as it is passed to you, without having
-										to wait for the whole table to make its pick, speeding up the draft process.
-									</li>
-									<li>
-										<img src="img/sets/2x2.svg" class="set-icon" style="--invertedness: 100%" />
-										Double Masters 2022 (2X2) support: Check out the full set selection menu (<i
-											class="fas fa-ellipsis-h"
-										></i
-										>).
-									</li>
-									<li>
-										In preparation for Baldur's Gate Alchemy Horizons specialize mechanics, zooming
-										in on a card (right-click) will now also allow you to scroll through the related
-										cards with your mouse wheel.
-									</li>
-								</ul>
 							</div>
 						</div>
 					</div>
@@ -1777,13 +1774,58 @@
 		</modal>
 		<modal v-if="displayedModal === 'collectionHelp'" @close="displayedModal = ''">
 			<h2 slot="header">Collection Import Help</h2>
-			<div slot="body" style="font-size: 1.1em">
-				Each player can import their MTGA collection to restrict the card pool to cards they own. (Session
-				owners can bypass this feature by enabling "Ignore Collections"):
+			<div slot="body" style="font-size: 1.1em" class="collection-import-help">
+				<p>
+					Each player can import their MTGA collection to restrict the card pool to cards they own. (Session
+					owners can bypass this feature by enabling "Ignore Collections").
+				</p>
+				<p>
+					With the August 2021 update, WotC disabled native collection export via their logs, requiring the
+					use of an external service to generate your collection file. Vote for
+					<a
+						href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855"
+						target="_blank"
+						rel="noopener nofollow"
+					>
+						this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
+					></a>
+					if you want this to change.
+				</p>
+				<h3>Supported File Formats</h3>
+				<ul>
+					<li>
+						Player.log MTGA log file
+						<strong
+							>with
+							<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a>
+							installed</strong
+						>
+						(see instructions below)
+					</li>
+					<li>.txt card list in the MTGA format</li>
+					<li>
+						.csv file following the
+						<a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank"
+							>MTGGoldFish CSV format</a
+						>
+						(the
+						<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a> website
+						exports to this format)
+					</li>
+				</ul>
+				<h3>
+					Player.log and
+					<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a>
+				</h3>
 				<ol>
 					<li>
-						Enable "Detailed Logs" in MTG Arena. It is required for the collection import to work. The
-						toggle can be found in <em>Options > Account > Detailed Logs (Plugin Support)</em>.
+						Install
+						<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a> and launch
+						it.
+					</li>
+					<li>
+						Launch MTG Arena and enable "Detailed Logs". The toggle can be found in
+						<em>Options > Account > Detailed Logs (Plugin Support)</em>.
 					</li>
 					<li>
 						<a @click="uploadMTGALogs">Upload</a>
@@ -2649,3 +2691,10 @@
 <style src="./css/vue-multiselect.min.css"></style>
 <style src="./css/app.css"></style>
 <style src="./css/chat.css"></style>
+
+<style scoped>
+.collection-import-help ol li,
+.collection-import-help ul li {
+	margin: 0.2em 0;
+}
+</style>

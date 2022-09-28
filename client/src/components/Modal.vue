@@ -32,20 +32,20 @@
 export default {
 	name: "Modal",
 	methods: {
-		close: function(e) {
+		close: function (e) {
 			if (e.target == e.currentTarget) this.$emit("close");
 		},
-		shortcuts: function(e) {
+		shortcuts: function (e) {
 			if (e.which === 27)
 				// Escape
 				this.$emit("close");
 		},
 	},
-	mounted: function() {
+	mounted: function () {
 		document.activeElement.blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy: function() {
+	beforeDestroy: function () {
 		document.removeEventListener("keydown", this.shortcuts);
 	},
 };

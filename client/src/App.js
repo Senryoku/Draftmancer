@@ -1586,28 +1586,9 @@ export default {
 			this.socket.emit("setCollection", this.collection);
 		},
 		uploadMTGALogs() {
+			document.querySelector("#collection-file-input").click();
 			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
 			//document.querySelector("#mtga-logs-file-input").click();
-			Alert.fire({
-				icon: "warning",
-				title: "Logs import is disabled",
-				html: `With the Jumpstart: Historic Horizons update, Wizards removed player collection from MTGA player logs which was our only non-intrusive way to get them. Collection import is thus disabled until the situation is resolved.
-				<br />
-				You can vote for <a href="https://feedback.wizards.com/forums/918667-mtg-arena-bugs-product-suggestions/suggestions/44050746-broken-logs-in-2021-8-0-3855" target="_blank" rel="noopener nofollow"> this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i></a> to draw to their attention to the problem.
-				<hr />
-				<h2 class="swal2-title custom-swal-title">Other Imports</h2>
-				As a workaround, you can use a 
-				<ul style="text-align: left">
-				<li>.txt card list in the MTGA format</li>
-				<li>.csv file following the <a href="https://www.mtggoldfish.com/help/import_formats#mtggoldfish" target="_blank">MTGGoldFish CSV format</a> (<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank">MTGA Pro Tracker</a> exports to it)</li>
-				</ul>`,
-				showCancelButton: true,
-				confirmButtonText: "Upload a .txt or .csv list",
-			}).then((r) => {
-				if (r.value) {
-					document.querySelector("#collection-file-input").click();
-				}
-			});
 		},
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
 		uploadCardListAsCollection(e) {
@@ -1616,6 +1597,19 @@ export default {
 			const reader = new FileReader();
 			reader.onload = async (e) => {
 				let contents = e.target.result;
+
+				// Player.log, with MTGA Pro Tracker running.
+				if (file.name.endsWith(".log")) {
+					if (this.parseMTGAProTrackerLog(contents)) {
+						fireToast("success", `Collection successfully imported.`);
+					} else {
+						fireToast(
+							"error",
+							`An error occured while processing '${file.name}', make sure it is the correct file (Player.log) and that MTGAProTracker is running.`
+						);
+					}
+					return;
+				}
 
 				// Convert MTGGoldFish CSV format (https://www.mtggoldfish.com/help/import_formats#mtggoldfish) to our format
 				if (file.name.endsWith(".csv")) {
@@ -1696,6 +1690,47 @@ export default {
 				});
 			};
 			reader.readAsText(file);
+		},
+		parseMTGAProTrackerLog(content) {
+			try {
+				const inventoryHeader = "[MTGA.Pro Logger] **InventoryContent** ";
+				const inventoryIndex = content.lastIndexOf(inventoryHeader);
+				if (inventoryIndex >= 0) {
+					const inventoryStart = inventoryIndex + inventoryHeader.length;
+					const inventoryEnd = content.indexOf("\n", inventoryStart);
+					const inventoryData = JSON.parse(content.substring(inventoryStart, inventoryEnd))["Payload"];
+					const inventory = {
+						wildcards: {
+							common: Math.max(0, inventoryData.wcCommon),
+							uncommon: Math.max(0, inventoryData.wcUncommon),
+							rare: Math.max(0, inventoryData.wcRare),
+							mythic: Math.max(0, inventoryData.wcMythic),
+						},
+						vaultProgress: Math.max(0, inventoryData.vaultProgress),
+					};
+					localStorage.setItem("CollectionInfos", JSON.stringify(inventory));
+					this.collectionInfos = inventory;
+				}
+			} catch (e) {
+				console.error("Exception raised while extracting inventory information: ", e);
+			}
+
+			try {
+				const collectionHeader = "[MTGA.Pro Logger] **Collection** ";
+				const collectionIndex = content.lastIndexOf(collectionHeader);
+				if (collectionIndex >= 0) {
+					const collectionStart = collectionIndex + collectionHeader.length;
+					const collectionEnd = content.indexOf("\n", collectionStart);
+					const collectionData = JSON.parse(content.substring(collectionStart, collectionEnd))["Payload"];
+					localStorage.setItem("Collection", JSON.stringify(collectionData));
+					localStorage.setItem("CollectionDate", new Date().toLocaleDateString());
+					this.setCollection(collectionData);
+					return true;
+				}
+			} catch (e) {
+				console.error("Exception raised while extracting collection information: ", e);
+			}
+			return false;
 		},
 		parseMTGALog(e) {
 			const file = e.target.files[0];

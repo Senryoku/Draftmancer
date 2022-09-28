@@ -1,5 +1,9 @@
 [
 	{
+		"date": "28/09/2022",
+		"notes": ["Support importing collection directly from a Player.log with MTGA Pro Tracker running."]
+	},
+	{
 		"date": "26/08/2022",
 		"notes": ["Dominaria United (DMU) support."]
 	},
