@@ -110,6 +110,9 @@ for (let cid in Cards) {
 	CardVersionsByName[firstFaceName].push(cid);
 }
 
+Object.freeze(Cards);
+for (let card in Cards) Object.freeze(card);
+
 // Prefered version of each card
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
 
@@ -130,7 +133,6 @@ BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vo
 export const CardIDs = Object.keys(Cards);
 export const MTGACardIDs = CardIDs.filter((cid) => !!Cards[cid].arena_id);
 
-Object.freeze(Cards);
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);
 Object.freeze(CardVersionsByName);
