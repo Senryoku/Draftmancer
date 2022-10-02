@@ -38,10 +38,10 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
-import { SocketAck, SocketError } from "./Message.js";
+import { MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
-import { CustomCardList } from "./CustomCardList.js";
+import { CustomCardList, generateBoosterFromCustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { isBoolean, isObject, isString } from "./TypeChecks.js";
@@ -351,11 +351,9 @@ export class Session implements IIndexable {
 	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
 	customCardList: CustomCardList = {
-		cards: null,
-		cardsPerBooster: {},
-		customSheets: null,
+		slots: {},
+		layouts: false,
 		customCards: null,
-		length: 0,
 	};
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
@@ -700,113 +698,14 @@ export class Session implements IIndexable {
 		}
 
 		if (this.useCustomCardList) {
-			if (!this.customCardList.cards) {
-				this.emitError("Error generating boosters", "No custom card list provided.");
+			let cclOptions = Object.assign({ colorBalance: this.colorBalance }, options);
+			let ret = generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
+			if (ret instanceof MessageError) {
+				this.emitError(ret.title, ret.text);
 				return false;
-			}
-			// List is using custom booster slots
-			if (this.customCardList.customSheets) {
-				let cardsByRarity: SlotedCardPool = {};
-				for (let r in this.customCardList.cardsPerBooster) {
-					cardsByRarity[r] = new Map();
-					for (let cardId of (this.customCardList.cards as { [slot: string]: Array<CardID> })[r])
-						if (cardsByRarity[r].has(cardId))
-							// Duplicates adds one copy of the card
-							cardsByRarity[r].set(cardId, (cardsByRarity[r].get(cardId) as number) + 1);
-						else cardsByRarity[r].set(cardId, 1);
-
-					const card_count = countCards(cardsByRarity[r]);
-					const card_target = this.customCardList.cardsPerBooster[r] * boosterQuantity;
-					if (card_count < card_target) {
-						const msg = `Not enough cards (${card_count}/${card_target} ${r}) in custom card list.`;
-						this.emitError("Error generating boosters", msg);
-						console.warn(msg);
-						return false;
-					}
-				}
-
-				// Color balance the largest slot
-				const colorBalancedSlot = Object.keys(this.customCardList.cardsPerBooster).reduce((max, curr) =>
-					this.customCardList.cardsPerBooster[curr] > this.customCardList.cardsPerBooster[max] ? curr : max
-				);
-				// Do not color balance if we don't have at least a 5 cards slot
-				const useColorBalance =
-					this.colorBalance && this.customCardList.cardsPerBooster[colorBalancedSlot] >= 5;
-
-				let pickOptions: Options = { uniformAll: true };
-				if (this.customCardList.customCards)
-					pickOptions.getCard = (cid: CardID) => {
-						return this.customCardList.customCards && cid in this.customCardList.customCards
-							? this.customCardList.customCards[cid]
-							: Cards[cid];
-					};
-
-				// Generate Boosters
-				this.boosters = [];
-				const colorBalancedSlotGenerator = useColorBalance
-					? new ColorBalancedSlot(cardsByRarity[colorBalancedSlot], pickOptions)
-					: null;
-				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster: Array<UniqueCard> = [];
-
-					for (let r in this.customCardList.cardsPerBooster) {
-						if (useColorBalance && colorBalancedSlotGenerator && r === colorBalancedSlot) {
-							booster = booster.concat(
-								colorBalancedSlotGenerator.generate(
-									this.customCardList.cardsPerBooster[r],
-									[],
-									pickOptions
-								)
-							);
-						} else {
-							for (let i = 0; i < this.customCardList.cardsPerBooster[r]; ++i) {
-								const pickedCard = pickCard(cardsByRarity[r], booster, pickOptions);
-								booster.push(pickedCard);
-							}
-						}
-					}
-
-					this.boosters.push(booster);
-				}
 			} else {
-				// Generate fully random 15-cards booster for cube (not considering rarity)
-				// Getting custom card list
-				let localCollection: CardPool = new Map();
-
-				for (let cardId of this.customCardList.cards as Array<CardID>) {
-					// Duplicates adds one copy of the card
-					if (localCollection.has(cardId))
-						localCollection.set(cardId, (localCollection.get(cardId) as number) + 1);
-					else localCollection.set(cardId, 1);
-				}
-
-				const cardsPerBooster = options.cardsPerBooster ?? 15;
-
-				const pickOptions: Options = { uniformAll: true };
-
-				let card_count = this.customCardList.cards.length;
-				let card_target = cardsPerBooster * boosterQuantity;
-				if (card_count < card_target) {
-					const msg = `Not enough cards (${card_count}/${card_target}) in custom list.`;
-					this.emitError("Error generating boosters", msg);
-					console.warn(msg);
-					return false;
-				}
-
-				this.boosters = [];
-
-				if (this.colorBalance) {
-					const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection);
-					for (let i = 0; i < boosterQuantity; ++i)
-						this.boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
-				} else {
-					for (let i = 0; i < boosterQuantity; ++i) {
-						let booster: Array<UniqueCard> = [];
-						for (let j = 0; j < cardsPerBooster; ++j)
-							booster.push(pickCard(localCollection, booster, pickOptions));
-						this.boosters.push(booster);
-					}
-				}
+				this.boosters = ret as UniqueCard[][];
+				return true;
 			}
 		} else {
 			// Standard draft boosters
