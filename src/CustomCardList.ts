@@ -11,7 +11,7 @@ export type PackLayout = {
 
 export type CustomCardList = {
 	name?: string;
-	slots: { [slot: string]: Array<CardID> };
+	slots: { [slot: string]: { [cid: CardID]: number } };
 	layouts: { [name: string]: PackLayout } | false;
 	customCards: { [cardID: string]: Card } | null;
 };
@@ -35,11 +35,8 @@ export function generateBoosterFromCustomCardList(
 		let cardsBySlot: SlotedCardPool = {};
 		for (let slotName in customCardList.slots) {
 			cardsBySlot[slotName] = new Map();
-			for (let cardId of customCardList.slots[slotName])
-				if (cardsBySlot[slotName].has(cardId))
-					// Duplicates adds one copy of the card
-					cardsBySlot[slotName].set(cardId, (cardsBySlot[slotName].get(cardId) as number) + 1);
-				else cardsBySlot[slotName].set(cardId, 1);
+			for (let cardId in customCardList.slots[slotName])
+				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
 		}
 
 		let pickOptions: Options = { uniformAll: true };
@@ -107,11 +104,8 @@ export function generateBoosterFromCustomCardList(
 		// Getting custom card list
 		let localCollection: CardPool = new Map();
 
-		for (let cardId of customCardList.slots["default"]) {
-			// Duplicates adds one copy of the card
-			if (localCollection.has(cardId)) localCollection.set(cardId, (localCollection.get(cardId) as number) + 1);
-			else localCollection.set(cardId, 1);
-		}
+		for (let cardId in customCardList.slots["default"])
+			localCollection.set(cardId, customCardList.slots["default"][cardId]);
 
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
