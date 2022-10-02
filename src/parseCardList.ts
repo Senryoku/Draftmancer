@@ -256,7 +256,9 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 			}
 			// Check layout declarations
 			if (cardList.layouts) {
+				let commonPackSize = -1;
 				for (let layoutName in cardList.layouts) {
+					let packSize = 0;
 					for (let slotName in cardList.layouts[layoutName].slots) {
 						if (!cardList.slots.hasOwnProperty(slotName)) {
 							return ackError({
@@ -264,6 +266,14 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 								text: `Layout ${layoutName} refers to slot ${slotName} which is not defined.`,
 							});
 						}
+						packSize += cardList.layouts[layoutName].slots[slotName];
+					}
+					if (commonPackSize == -1) commonPackSize = packSize;
+					else if (commonPackSize != packSize) {
+						return ackError({
+							title: `Parsing Error`,
+							text: `All layouts must contains the same total number of cards.`,
+						});
 					}
 				}
 			}
