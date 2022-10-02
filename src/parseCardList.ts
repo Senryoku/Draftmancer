@@ -237,14 +237,17 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 						slotName = match[1];
 						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
 					}
-					cardList.slots[slotName] = [];
+					cardList.slots[slotName] = {};
 					++lineIdx;
 					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
 							let [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
 							if (typeof cardID !== "undefined") {
-								for (let i = 0; i < countOrError; ++i) cardList.slots[slotName].push(cardID);
+								// Merge duplicate declarations
+								if (cardList.slots[slotName].hasOwnProperty(cardID))
+									cardList.slots[slotName][cardID] += countOrError;
+								else cardList.slots[slotName][cardID] = countOrError;
 							} else return countOrError; // Return error from parseLine
 						}
 						++lineIdx;
@@ -265,16 +268,18 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				}
 			}
 		} else {
-			const cards: CardID[] = [];
+			cardList.slots["default"] = {};
 			for (let line of lines) {
 				if (line) {
-					let [count, cardID] = parseLine(line, options);
+					let [countOrError, cardID] = parseLine(line, options);
 					if (typeof cardID !== "undefined") {
-						for (let i = 0; i < count; ++i) cards.push(cardID as CardID);
-					} else return count; // Return error from parseLine
+						// Merge duplicate declarations
+						if (cardList.slots["default"].hasOwnProperty(cardID))
+							cardList.slots["default"][cardID] += countOrError;
+						cardList.slots["default"][cardID] = countOrError;
+					} else return countOrError; // Return error from parseLine
 				}
 			}
-			cardList.slots["default"] = cards;
 			cardList.layouts = false;
 		}
 		if (options?.name) cardList.name = options.name;
