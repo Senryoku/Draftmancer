@@ -1009,6 +1009,7 @@ describe("Single Draft (Two Players)", function () {
 				done();
 			});
 		});
+		disconnect();
 	});
 
 	describe("Using an observer and bots.", function () {
