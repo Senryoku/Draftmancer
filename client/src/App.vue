@@ -199,8 +199,7 @@
 					<span v-if="useCustomCardList">
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
 						(
-						<template v-if="customCardList.length > 0">
-							{{ customCardList.length }} cards
+						<template v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
 							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
 								<i class="fas fa-file-alt"></i>
 							</a>
@@ -2376,8 +2375,7 @@
 									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
 							}"
 							:class="{
-								'disabled-simple':
-									!useCustomCardList || (customCardList && customCardList.customSheets),
+								'disabled-simple': !useCustomCardList || (customCardList && customCardList.layouts),
 							}"
 						>
 							<label for="cards-per-booster">Cards per Booster</label>
@@ -2391,7 +2389,7 @@
 								v-model.number="cardsPerBooster"
 							/>
 						</div>
-						<div v-if="customCardList.length > 0">
+						<div v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
 							<i
 								class="fas fa-check green"
 								v-if="useCustomCardList"
@@ -2402,10 +2400,8 @@
 								v-else
 								v-tooltip="'Card list successfuly loaded, but not used.'"
 							></i>
-							<span v-if="customCardList.name"
-								>Loaded '{{ customCardList.name }}' ({{ customCardList.length }} cards).</span
-							>
-							<span v-else>Loaded list with {{ customCardList.length }} cards.</span>
+							<span v-if="customCardList.name">Loaded '{{ customCardList.name }}'.</span>
+							<span v-else>Unamed list loaded.</span>
 							<button @click="displayedModal = 'cardList'">
 								<i class="fas fa-file-alt"></i>
 								Review.
