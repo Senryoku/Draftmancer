@@ -1916,7 +1916,7 @@ export default {
 				if (answer?.error) {
 					Alert.fire(answer.error);
 				} else {
-					fireToast("success", `Card list uploaded (${this.customCardList.length} cards)`);
+					fireToast("success", `Card list uploaded`);
 				}
 			});
 		},
@@ -1964,7 +1964,7 @@ export default {
 				if (r?.error) {
 					Alert.fire(r.error);
 				} else {
-					fireToast("success", `Card list loaded (${this.customCardList.length} cards)`);
+					fireToast("success", `Card list loaded`);
 				}
 			};
 
