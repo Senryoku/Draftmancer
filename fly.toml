@@ -1,0 +1,46 @@
+# fly.toml file generated for mtgadraft on 2022-10-02T22:31:20+02:00
+
+app = "mtgadraft"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  builder = "heroku/buildpacks:20"
+
+[env]
+  PORT = "8080"
+  NODE_ENV = "production"
+
+[build.args]
+  NODE_ENV = "production"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 1000
+    soft_limit = 800
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

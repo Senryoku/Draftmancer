@@ -1428,6 +1428,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>October 3, 2022</em>
+							<p>
+								Application migrated to yet another new hosting platform, hopefully solving the frequent
+								disconnects.
+							</p>
+						</div>
+						<div class="news">
 							<em>September 28, 2022</em>
 							<ul>
 								<li>
@@ -1473,13 +1480,6 @@
 										to ensure MTGADraft stays online and up-to-date.
 									</div>
 								</div>
-							</div>
-							<div class="news">
-								<em>August 26, 2022</em>
-								<p>
-									<img src="img/sets/dmu.svg" class="set-icon" style="--invertedness: 100%" />
-									Dominaria United (DMU) support.
-								</p>
 							</div>
 						</div>
 					</div>
