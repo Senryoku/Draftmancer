@@ -1128,6 +1128,8 @@ class UNFBoosterFactory extends BoosterFactory {
 		}
 	}
 }
+// TODO
+class BROBoosterFactory extends BoosterFactory {}
 
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
@@ -1150,6 +1152,7 @@ export const SetSpecificFactories: {
 	dmu: DMUBoosterFactory,
 	unf: UNFBoosterFactory,
 	ydmu: YDMUBoosterFactory,
+	bro: BROBoosterFactory,
 };
 
 /*
