@@ -1560,9 +1560,6 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 			customCardList: Sessions[sid].customCardList
 				? {
 						name: Sessions[sid].customCardList.name,
-						length: Sessions[sid].customCardList.layouts
-							? 0
-							: Sessions[sid].customCardList.slots["default"].length,
 				  }
 				: null,
 			setRestriction: Sessions[sid].setRestriction,
