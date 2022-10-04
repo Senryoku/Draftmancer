@@ -1427,6 +1427,14 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>October 4, 2022</em>
+							<p>
+								Extended the cube format with <strong>Pack Layouts</strong> to allow more customization,
+								such as emulating the mythic rarity. More information
+								<a href="cubeformat.html#layouts" target="_blank">here</a>.
+							</p>
+						</div>
+						<div class="news">
 							<em>October 3, 2022</em>
 							<p>
 								Application migrated to yet another new hosting platform, hopefully solving the frequent
