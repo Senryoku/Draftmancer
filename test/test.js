@@ -38,7 +38,13 @@ const checkDuplicates = function (booster) {
 	}
 };
 
-const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
+const CustomSlotsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
+const CustomLayoutsTestFile = fs.readFileSync(`./test/data/CustomLayouts.txt`, "utf8");
+const CustomLayouts_WrongPackSizeTestFile = fs.readFileSync(`./test/data/CustomLayouts_WrongPackSize.txt`, "utf8");
+const CustomLayouts_MixedLayoutDefinitionsTestFile = fs.readFileSync(
+	`./test/data/CustomLayouts_MixedLayoutDefinitions.txt`,
+	"utf8"
+);
 
 describe("Inter client communication", function () {
 	const sessionID = "sessionID";
@@ -947,7 +953,7 @@ describe("Single Draft (Two Players)", function () {
 		disconnect();
 	});
 
-	describe("Using cube with custom sheets", function () {
+	describe("Using cube with custom slots", function () {
 		connect();
 		it("Clients should receive the updated useCustomCardList.", function (done) {
 			clients[nonOwnerIdx].once("sessionOptions", function (val) {
@@ -960,11 +966,49 @@ describe("Single Draft (Two Players)", function () {
 			clients[nonOwnerIdx].once("sessionOptions", function () {
 				done();
 			});
-			clients[ownerIdx].emit("parseCustomCardList", CustomSheetsTestFile);
+			clients[ownerIdx].emit("parseCustomCardList", CustomSlotsTestFile);
 		});
 		startDraft();
 		endDraft();
 		expectCardCount(3 * 14);
+		disconnect();
+	});
+
+	describe("Using cube with custom layouts", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function () {
+				done();
+			});
+			clients[ownerIdx].emit("parseCustomCardList", CustomLayoutsTestFile);
+		});
+		startDraft();
+		endDraft();
+		expectCardCount(3 * 14);
+		disconnect();
+	});
+
+	describe("Custom card list with incorrect custom layouts should fail.", function () {
+		connect();
+		it("Wrong Pack Size.", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", CustomLayouts_WrongPackSizeTestFile, (response) => {
+				expect(response.error).to.not.be.null;
+				done();
+			});
+		});
+		it("Mixed Layout Definitions.", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", CustomLayouts_MixedLayoutDefinitionsTestFile, (response) => {
+				expect(response.error).to.not.be.null;
+				done();
+			});
+		});
 		disconnect();
 	});
 

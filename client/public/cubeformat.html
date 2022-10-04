@@ -48,8 +48,14 @@
 			<br />
 			Boosters will be 15 cards without regards for rarity distribution. Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity,
 			Maximum duplicate copies and Foil.
+			<ol>
+				<li><a href="#card-spec">Advanced Card Specification</a></li>
+				<li><a href="#slots">Slots</a></li>
+				<li><a href="#layouts">Pack Layouts</a></li>
+				<li><a href="#custom-cards">Custom Cards</a></li>
+			</ol>
 			<section>
-				<h2>Advanced Card Specification</h2>
+				<h2 id="card-spec">Advanced Card Specification</h2>
 				Full syntax for a card line is inspired by the Arena Import/Export format and is defined as follows:
 				<pre>[Count] CardName [(Set) [CollectorNumber]]</pre>
 				All parameters between brackets ([]) are optional, only the card name is required.
@@ -82,14 +88,14 @@ Incubation Druid</pre
 				</section>
 			</section>
 			<section>
-				<h2>Custom Card Slots</h2>
+				<h2 id="slots">Slots</h2>
 				If you want more control over your booster, like a custom 'rarity' distribution, you can use the following format:
 				<pre>
-[SlotName(CardPerBooster)]
+[SlotName(CardsPerBooster)]
 Card Name 1
 Card Name 2
 ...
-[Slot2Name(CardPerBooster)]
+[Slot2Name(CardsPerBooster)]
 Card Name 3
 Card Name 4
 ...</pre
@@ -133,8 +139,100 @@ Card Name 6
 				previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
 			</section>
 			<section>
-				<h2>Custom Cards</h2>
-				A cube can also be composed of user-defined cards specified as JSON data. The CustomCards section must be the first one in the file.
+				<h2 id="layouts">Pack Layouts</h2>
+				<p>
+					For even more control, you can specify multiple
+					<strong>Pack Layouts</strong>
+					describing variations of a pack, each with an associated weight (or probability to be chosen).
+					<strong>Important Note:</strong>
+					When using pack layouts, slots should be declared without a
+					<code>CardsPerBooster</code>
+					parameter. Every layouts should contain the same total number of cards.
+				</p>
+				<p>
+					After the
+					<code>[Layouts]</code>
+					header, the syntax of a layout is as follow:
+				</p>
+				<pre>
+- LayoutName (Weight)
+  7 SlotName1
+  3 SlotName2</pre
+				>
+				<p>
+					Where
+					<code>Weight</code>
+					is an integer specifying how often this layout will be chosen when generating a pack. In this example, each pack will contain
+					<code>7</code>
+					cards picked from
+					<code>SlotName1</code>
+					(user defined card list) and
+					<code>3</code>
+					cards picked from
+					<code>SlotName2</code>
+					.
+				</p>
+				<p>Example implementing a mythic rarity:</p>
+				<pre>
+[Layouts]
+- Rare (7)
+  10 Common
+  3 Uncommon
+  1 Rare
+- Mythic (1)
+  10 Common
+  3 Uncommon
+  1 Mythic
+[Common]
+..Card List..
+[Uncommon]
+..Card List..
+[Rare]
+..Card List..
+[Mythic]
+..Card List..</pre
+				>
+				<p>More complex example mimicking the collation of Dominaria United (Exactly one legendary creature of varying rarity in each pack):</p>
+				<pre>
+[Layouts]
+- Rare (21)
+  10 Common
+  2 Uncommon
+  1 UncommonLegendary
+  1 Rare
+- Mythic (3)
+  10 Common
+  2 Uncommon
+  1 UncommonLegendary
+  1 Mythic
+- RareLegendary (7)
+  10 Common
+  3 Uncommon
+  1 RareLegendary
+- MythicLegendary (1)
+  10 Common
+  3 Uncommon
+  1 MythicLegendary
+[Common]
+..List of all non-Legendary Creature Commons..
+[Uncommon]
+..List of all non-Legendary Creature Uncommons..
+[Rare]
+..List of all non-Legendary Creature Rares..
+[Mythic]
+..List of all non-Legendary Creature Mythics..
+[UncommonLegendary]
+..List of all Uncommon Legendary Creatures..
+[RareLegendary]
+..List of all Rare Legendary Creatures..
+[MythicLegendary]
+..List of all Mythic Legendary Creatures..</pre
+				>
+			</section>
+			<section>
+				<h2 id="custom-cards">Custom Cards</h2>
+				A cube can also be composed of user-defined cards specified as JSON data. The CustomCards section must be the first one in the file. Once defined in this section,
+				custom cards can be refered to by name in slots, just like regular cards.
 				<pre>
 [CustomCards]
 [

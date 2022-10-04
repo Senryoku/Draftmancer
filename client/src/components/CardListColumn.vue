@@ -35,7 +35,7 @@ export default {
 	},
 	components: { Card },
 	computed: {
-		missingCard: function() {
+		missingCard() {
 			let r = {};
 			for (let card of this.column) {
 				if (card.arena_id in this.collection) {
@@ -43,7 +43,7 @@ export default {
 				} else {
 					const alternates = MTGAAlternates[card.name];
 					if (!alternates || alternates.length === 0) r[card.id] = "NonExistent";
-					else if (alternates.some(cid => this.collection[cid] > 0)) r[card.id] = "Equivalent";
+					else if (alternates.some((cid) => this.collection[cid] > 0)) r[card.id] = "Equivalent";
 					else r[card.id] = "Missing";
 				}
 			}

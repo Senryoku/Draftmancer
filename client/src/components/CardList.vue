@@ -1,27 +1,12 @@
 <template>
 	<div v-if="isValid" class="card-list">
-		Loaded {{ cardlist.name ? cardlist.name : "list" }} with {{ cardlist.length }} cards.
+		Loaded {{ cardlist.name ? cardlist.name : "list" }}.
 		<span v-if="missing && missing.total > 0">
 			<i class="fas fa-exclamation-triangle yellow"></i>
 			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
 		<button @click="download">Download List</button>
-		<template v-if="cardlist.customSheets">
-			<div v-for="(slot, key) in cardlist.cards" :key="key">
-				<h2>{{ key }} ({{ cardlist.cardsPerBooster[key] }})</h2>
-				<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
-					<card-list-column
-						v-for="(column, colIndex) in row"
-						:key="'col' + colIndex"
-						:column="column"
-						:checkcollection="checkCollection"
-						:collection="collection"
-						:language="language"
-					></card-list-column>
-				</div>
-			</div>
-		</template>
-		<template v-else>
+		<template v-if="defaultLayout">
 			<div v-for="(row, rowIndex) in rows" :key="'row' + rowIndex" class="category-wrapper">
 				<card-list-column
 					v-for="(column, colIndex) in row"
@@ -31,6 +16,33 @@
 					:collection="collection"
 					:language="language"
 				></card-list-column>
+			</div>
+		</template>
+		<template v-else>
+			<div v-if="cardlist.layouts">
+				<h2>Layouts</h2>
+				<div class="layouts">
+					<div v-for="(value, name) in cardlist.layouts" :key="name">
+						<h3>{{ name }} ({{ value.weight }})</h3>
+						<div v-for="(num, slot) in value.slots" :key="slot">{{ num }} {{ slot }}</div>
+					</div>
+				</div>
+			</div>
+			<h2>Slots</h2>
+			<div v-for="(slot, key) in cardlist.slots" :key="key">
+				<h3>{{ key }}</h3>
+				<template v-if="cards">
+					<div v-for="(row, rowIndex) in rowsBySlot[key]" :key="'row' + rowIndex" class="category-wrapper">
+						<card-list-column
+							v-for="(column, colIndex) in row"
+							:key="'col' + colIndex"
+							:column="column"
+							:checkcollection="checkCollection"
+							:collection="collection"
+							:language="language"
+						></card-list-column></div
+				></template>
+				<template v-else>(<i class="fas fa-spinner fa-spin"></i> Loading...)</template>
 			</div>
 		</template>
 	</div>
@@ -58,16 +70,19 @@ export default {
 	},
 	computed: {
 		isValid() {
-			return this.cardlist && this.cardlist.length;
+			return this.cardlist?.slots && Object.keys(this.cardlist.slots).length > 0;
+		},
+		defaultLayout() {
+			return !this.cardlist.layouts;
 		},
 		rows() {
-			if (this.cardlist.customSheets || !this.cards) return [];
-			return this.rowsByColor(this.cards);
+			if (!this.defaultLayout || !this.cards || !this.cards["default"]) return [];
+			return this.rowsByColor(this.cards["default"]);
 		},
 		rowsBySlot() {
-			if (!this.cardlist.customSheets || !this.cards) return [];
+			if (this.defaultLayout || !this.cards) return [];
 			let rowsBySlot = {};
-			for (let slot in this.cardlist.cards) rowsBySlot[slot] = this.rowsByColor(this.cards[slot]);
+			for (let slot in this.cardlist.slots) rowsBySlot[slot] = this.rowsByColor(this.cards[slot]);
 			return rowsBySlot;
 		},
 		checkCollection() {
@@ -76,19 +91,18 @@ export default {
 		missing() {
 			if (!this.checkCollection || !this.cards) return null;
 			let missing = { total: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			const count = arr => {
+			const count = (arr) => {
 				for (let c of arr)
 					if (!(c.arena_id in this.collection)) {
 						missing.total += 1;
 						missing[c.rarity] += 1;
 					}
 			};
-			if (this.cardlist.customSheets) for (let slot in this.cards) count(this.cards[slot]);
-			else count(this.cards);
+			for (let slot in this.cards) count(this.cards[slot]);
 			return missing;
 		},
 		missingText() {
-			return ["common", "uncommon", "rare", "mythic"].map(r => `${this.missing[r]} ${r}s`).join(", ");
+			return ["common", "uncommon", "rare", "mythic"].map((r) => `${this.missing[r]} ${r}s`).join(", ");
 		},
 	},
 	methods: {
@@ -100,16 +114,16 @@ export default {
 				str += JSON.stringify(this.cardlist.customCards, null, 2);
 				str += "\n";
 			}
-			if (this.cardlist.customSheets) {
-				for (let slot in this.cardlist.cards) {
-					str += `[${slot}(${this.cardlist.cardsPerBooster[slot]})]\n`;
-					for (let card of this.cards[slot]) {
-						str += card.name + "\n";
-					}
-				}
-			} else {
-				for (let card of this.cards) {
-					str += card.name + "\n";
+			str += `[Layouts]\n`;
+			for (let layout in this.cardlist.layouts) {
+				const l = this.cardlist.layouts[layout];
+				str += `- ${layout} (${l.weight})\n`;
+				for (let slot in l.slots) str += `  ${l.slots[slot]} ${slot}\n`;
+			}
+			for (let slot in this.cardlist.slots) {
+				str += `[${slot}]\n`;
+				for (let card in this.cardlist.slots[slot]) {
+					str += `${this.cardlist.slots[slot][card]} ${this.cards[slot].find((c) => c.id === card).name}\n`;
 				}
 			}
 			download("Cube.txt", str);
@@ -133,31 +147,17 @@ export default {
 			return a;
 		},
 		async getCards() {
-			if (!this.cardlist || !this.cardlist.cards) return;
-			let cards = [];
-			let tofetch = [];
-			if (this.cardlist.customCards) {
-				if (this.cardlist.customSheets) {
-					cards = {};
-					tofetch = {};
-					for (let slot in this.cardlist.cards) {
-						cards[slot] = [];
-						tofetch[slot] = [];
-						for (let cid of this.cardlist.cards[slot]) {
-							if (this.cardlist.customCards && cid in this.cardlist.customCards)
-								cards[slot].push(this.cardlist.customCards[cid]);
-							else tofetch[slot].push(cid);
-						}
-					}
-				} else {
-					for (let cid of this.cardlist.cards) {
-						if (this.cardlist.customCards && cid in this.cardlist.customCards)
-							cards.push(this.cardlist.customCards[cid]);
-						else tofetch.push(cid);
-					}
+			if (!this.cardlist || !this.cardlist.slots) return;
+			let cards = {};
+			let tofetch = {};
+			for (let slot in this.cardlist.slots) {
+				cards[slot] = [];
+				tofetch[slot] = [];
+				for (let cid in this.cardlist.slots[slot]) {
+					if (this.cardlist.customCards && cid in this.cardlist.customCards)
+						cards[slot].push(this.cardlist.customCards[cid]);
+					else tofetch[slot].push(cid);
 				}
-			} else {
-				tofetch = this.cardlist.cards;
 			}
 			const response = await fetch("/getCards", {
 				method: "POST",
@@ -171,11 +171,11 @@ export default {
 				referrerPolicy: "no-referrer",
 				body: JSON.stringify(tofetch),
 			});
-			const fetchedCards = await response.json();
-			if (this.cardlist.customSheets) {
-				for (let slot in this.cardlist.cards) if (fetchedCards[slot]) cards[slot].push(...fetchedCards[slot]);
-			} else {
-				cards.push(...fetchedCards);
+			if (response.status === 200) {
+				const json = await response.json();
+				for (let slot in json) {
+					for (let card of json[slot]) cards[slot].push(card);
+				}
 			}
 			this.cards = cards;
 		},
@@ -202,5 +202,10 @@ export default {
 .card-wrapper {
 	position: relative;
 	margin: 0;
+}
+
+.layouts {
+	display: flex;
+	gap: 1em;
 }
 </style>

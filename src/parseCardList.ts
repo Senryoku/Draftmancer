@@ -95,11 +95,9 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 	try {
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		let cardList: CustomCardList = {
-			customSheets: false,
 			customCards: null,
-			cardsPerBooster: {},
-			cards: [],
-			length: 0,
+			layouts: false,
+			slots: {},
 		};
 		// Custom slots
 		let lineIdx = 0;
@@ -178,50 +176,124 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
 			}
 			// List has to start with a header if it has custom slots
-			let cardCount = 0;
-			cardList.customSheets = true;
-			cardList.cards = {};
-			// Groups: SlotName, '(Count)', Count
-			let headerRegex = new RegExp(String.raw`\[([^\(\]]+)(\((\d+)\))?\]`);
 			while (lineIdx < lines.length) {
-				let header = lines[lineIdx].match(headerRegex);
-				if (!header) {
+				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
 					return ackError({
-						title: `Slot`,
-						text: `Error parsing slot '${lines[lineIdx]}' (line ${lineIdx + 1}).`,
+						title: `Parsing Error`,
+						text: `Expected header (for section or slot), got '${lines[lineIdx]}' (line ${lineIdx + 1}).`,
 					});
 				}
-				cardList.cardsPerBooster[header[1]] = parseInt(header[3]);
-				cardList.cards[header[1]] = [];
-				++lineIdx;
-				const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
-				while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
-					if (lines[lineIdx]) {
-						let [count, cardID] = parseLine(lines[lineIdx], parseLineOptions);
-						if (typeof cardID !== "undefined") {
-							for (let i = 0; i < count; ++i) cardList.cards[header[1]].push(cardID);
-							cardCount += count;
-						} else return count; // Return error from parseLine
+				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
+				if (header === "Layouts") {
+					if (cardList.layouts) {
+						return ackError({
+							title: `Parsing Error`,
+							text: `Layouts already defined, redefined on line ${lineIdx + 1}.`,
+						});
 					}
+					cardList.layouts = {};
 					++lineIdx;
+					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
+						let match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
+						if (!match) {
+							return ackError({
+								title: `Parsing Error`,
+								text: `Expected layout declaration (' - LayoutName (Weight)'), got '${
+									lines[lineIdx]
+								}' (line ${lineIdx + 1}).`,
+							});
+						}
+						const layoutName = match[1];
+						const layoutWeight = parseInt(match[2]);
+						cardList.layouts[layoutName] = { weight: layoutWeight, slots: {} };
+						++lineIdx;
+						while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
+							let slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
+							if (!slotMatch) {
+								return ackError({
+									title: `Parsing Error`,
+									text: `Expected slot specification (' CardCount SlotName'), got '${
+										lines[lineIdx]
+									}' (line ${lineIdx + 1}).`,
+								});
+							}
+							cardList.layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
+							++lineIdx;
+						}
+					}
+				} else {
+					let slotName = header;
+					// Header with card count: Default layout.
+					const match = header.match(/([a-zA-Z]+)\s*\((\d+)\)/);
+					if (match) {
+						if (cardList.layouts && !cardList.layouts["default"]) {
+							return ackError({
+								title: `Parsing Error`,
+								text: `Default layout (defining slot sizes in their headers) and custom layouts should not be mixed.`,
+							});
+						}
+						if (!cardList.layouts) cardList.layouts = {};
+						if (!cardList.layouts["default"]) cardList.layouts["default"] = { weight: 1, slots: {} };
+						slotName = match[1];
+						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
+					}
+					cardList.slots[slotName] = {};
+					++lineIdx;
+					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
+					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
+						if (lines[lineIdx]) {
+							let [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
+							if (typeof cardID !== "undefined") {
+								// Merge duplicate declarations
+								if (cardList.slots[slotName].hasOwnProperty(cardID))
+									cardList.slots[slotName][cardID] += countOrError;
+								else cardList.slots[slotName][cardID] = countOrError;
+							} else return countOrError; // Return error from parseLine
+						}
+						++lineIdx;
+					}
 				}
 			}
-			cardList.length = cardCount;
+			// Check layout declarations
+			if (cardList.layouts) {
+				let commonPackSize = -1;
+				for (let layoutName in cardList.layouts) {
+					let packSize = 0;
+					for (let slotName in cardList.layouts[layoutName].slots) {
+						if (!cardList.slots.hasOwnProperty(slotName)) {
+							return ackError({
+								title: `Parsing Error`,
+								text: `Layout ${layoutName} refers to slot ${slotName} which is not defined.`,
+							});
+						}
+						packSize += cardList.layouts[layoutName].slots[slotName];
+					}
+					if (commonPackSize == -1) commonPackSize = packSize;
+					else if (commonPackSize != packSize) {
+						return ackError({
+							title: `Parsing Error`,
+							text: `All layouts must contains the same total number of cards.`,
+						});
+					}
+				}
+			}
 		} else {
-			const cards: CardID[] = [];
+			cardList.slots["default"] = {};
 			for (let line of lines) {
 				if (line) {
-					let [count, cardID] = parseLine(line, options);
+					let [countOrError, cardID] = parseLine(line, options);
 					if (typeof cardID !== "undefined") {
-						for (let i = 0; i < count; ++i) cards.push(cardID as CardID);
-					} else return count; // Return error from parseLine
+						// Merge duplicate declarations
+						if (cardList.slots["default"].hasOwnProperty(cardID))
+							cardList.slots["default"][cardID] += countOrError;
+						cardList.slots["default"][cardID] = countOrError;
+					} else return countOrError; // Return error from parseLine
 				}
 			}
-			cardList.cards = cards;
-			cardList.length = cards.length;
+			cardList.layouts = false;
 		}
-		if (options && options.name) cardList.name = options.name;
-		if (cardList.cards?.length === 0)
+		if (options?.name) cardList.name = options.name;
+		if (Object.keys(cardList.slots).every((key) => cardList.slots[key].length === 0))
 			return ackError({
 				title: "Empty List",
 				text: `Supplied card list is empty.`,
