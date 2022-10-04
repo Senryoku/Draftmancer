@@ -70,11 +70,10 @@ export default {
 	},
 	computed: {
 		isValid() {
-			return this.cardlist && this.cardlist.slots && Object.keys(this.cardlist.slots).length > 0;
+			return this.cardlist?.slots && Object.keys(this.cardlist.slots).length > 0;
 		},
 		defaultLayout() {
 			return !this.cardlist.layouts;
-			// && Object.keys(this.cardlist.slots).length === 1 && this.cardlist.slots["default"];
 		},
 		rows() {
 			if (!this.defaultLayout || !this.cards || !this.cards["default"]) return [];
