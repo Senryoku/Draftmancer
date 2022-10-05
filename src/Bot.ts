@@ -1,14 +1,21 @@
 "use strict";
 
 import axios from "axios";
+import dotenv from "dotenv";
+if (process.env.NODE_ENV !== "production") {
+	dotenv.config();
+}
 
 import { shuffleArray } from "./utils.js";
 import { Card, OracleID } from "./Cards";
 
 const mtgdraftbotsAPITimeout = 3500;
-const mtgdraftbotsAPIURL = "https://mtgml.cubeartisan.net/draft";
+const MTGDraftbotsAuthToken = process.env.MTGDRAFTBOTS_AUTHTOKEN;
+const mtgdraftbotsAPIURL = `https://mtgml.cubeartisan.net/draft?auth_token=${MTGDraftbotsAuthToken}`;
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
+	if (!MTGDraftbotsAuthToken) return true;
+
 	// Send a dummy request to make sure the API is up and running that most of the cards are recognized.
 
 	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
@@ -19,7 +26,6 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
 	// FIXME: This feels hackish.
 	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
-
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
 		cardsInPack: oracleIds,
@@ -28,7 +34,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		packNum: 0,
 		numPacks: 1,
 		pickNum: 0,
-		numPicks: 1,
+		numPicks: oracleIds.length,
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
