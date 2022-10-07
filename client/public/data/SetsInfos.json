@@ -43,6 +43,16 @@
         "rareCount": 143,
         "uncommonCount": 80
     },
+    "30a": {
+        "code": "30a",
+        "fullName": "30th Anniversary Edition",
+        "cardCount": 594,
+        "isPrimary": false,
+        "icon": "img/sets/30a.svg",
+        "commonCount": 178,
+        "rareCount": 226,
+        "uncommonCount": 190
+    },
     "3ed": {
         "code": "3ed",
         "fullName": "Revised Edition",
@@ -382,6 +392,14 @@
         "rareCount": 55,
         "uncommonCount": 55
     },
+    "bot": {
+        "code": "bot",
+        "fullName": "Transformers",
+        "cardCount": 29,
+        "isPrimary": false,
+        "icon": "img/sets/bot.svg",
+        "mythicCount": 29
+    },
     "brb": {
         "code": "brb",
         "fullName": "Battle Royale Box Set",
@@ -391,6 +409,38 @@
         "commonCount": 96,
         "rareCount": 8,
         "uncommonCount": 32
+    },
+    "brc": {
+        "code": "brc",
+        "fullName": "The Brothers' War Commander",
+        "cardCount": 12,
+        "isPrimary": false,
+        "icon": "img/sets/brc.svg",
+        "commonCount": 2,
+        "mythicCount": 6,
+        "rareCount": 1,
+        "uncommonCount": 3
+    },
+    "bro": {
+        "code": "bro",
+        "fullName": "The Brothers' War",
+        "cardCount": 25,
+        "isPrimary": true,
+        "icon": "img/sets/bro.svg",
+        "commonCount": 10,
+        "mythicCount": 6,
+        "rareCount": 8,
+        "uncommonCount": 1
+    },
+    "brr": {
+        "code": "brr",
+        "fullName": "The Brothers' War Retro Artifacts",
+        "cardCount": 12,
+        "isPrimary": false,
+        "commonCount": 1,
+        "mythicCount": 2,
+        "rareCount": 6,
+        "uncommonCount": 3
     },
     "btd": {
         "code": "btd",
@@ -1040,11 +1090,12 @@
     "dmr": {
         "code": "dmr",
         "fullName": "Dominaria Remastered",
-        "cardCount": 6,
+        "cardCount": 21,
         "isPrimary": true,
         "icon": "img/sets/dmr.svg",
-        "mythicCount": 3,
-        "rareCount": 3
+        "mythicCount": 6,
+        "rareCount": 12,
+        "uncommonCount": 3
     },
     "dmu": {
         "code": "dmu",
@@ -1590,11 +1641,11 @@
     "gdy": {
         "code": "gdy",
         "fullName": "Game Day Promos",
-        "cardCount": 6,
+        "cardCount": 8,
         "isPrimary": false,
         "icon": "img/sets/gdy.svg",
-        "mythicCount": 2,
-        "rareCount": 4
+        "mythicCount": 3,
+        "rareCount": 5
     },
     "gk1": {
         "code": "gk1",
@@ -2843,12 +2894,13 @@
     },
     "p30a": {
         "code": "p30a",
-        "fullName": "30th Anniversary Promos",
-        "cardCount": 8,
+        "fullName": "30th Anniversary Play Promos",
+        "cardCount": 24,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
-        "rareCount": 7,
-        "uncommonCount": 1
+        "mythicCount": 1,
+        "rareCount": 21,
+        "uncommonCount": 2
     },
     "p5dn": {
         "code": "p5dn",
@@ -4037,12 +4089,11 @@
     "ppro": {
         "code": "ppro",
         "fullName": "Pro Tour Promos",
-        "cardCount": 17,
+        "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/ppro.svg",
-        "mythicCount": 6,
-        "rareCount": 10,
-        "uncommonCount": 1
+        "mythicCount": 5,
+        "rareCount": 9
     },
     "pptk": {
         "code": "pptk",
@@ -4050,6 +4101,15 @@
         "cardCount": 2,
         "isPrimary": false,
         "icon": "img/sets/pptk.svg",
+        "rareCount": 2
+    },
+    "pr23": {
+        "code": "pr23",
+        "fullName": "Regional Championship Qualifiers 2023",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/pr23.svg",
+        "mythicCount": 1,
         "rareCount": 2
     },
     "prav": {
@@ -4728,6 +4788,14 @@
         "rareCount": 35,
         "uncommonCount": 55
     },
+    "scd": {
+        "code": "scd",
+        "fullName": "Starter Commander Decks",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/scd.svg",
+        "mythicCount": 5
+    },
     "scg": {
         "code": "scg",
         "fullName": "Scourge",
@@ -4767,15 +4835,25 @@
         "icon": "img/sets/skhm.svg",
         "commonCount": 9
     },
+    "slc": {
+        "code": "slc",
+        "fullName": "Secret Lair 30th Anniversary Countdown Kit",
+        "cardCount": 7,
+        "isPrimary": false,
+        "icon": "img/sets/slc.svg",
+        "mythicCount": 4,
+        "rareCount": 2,
+        "uncommonCount": 1
+    },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 651,
+        "cardCount": 659,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
-        "mythicCount": 112,
-        "rareCount": 479,
+        "mythicCount": 117,
+        "rareCount": 482,
         "uncommonCount": 20
     },
     "slu": {
@@ -4814,6 +4892,14 @@
         "mythicCount": 53,
         "rareCount": 152,
         "uncommonCount": 113
+    },
+    "sneo": {
+        "code": "sneo",
+        "fullName": "Kamigawa: Neon Dynasty Substitute Cards",
+        "cardCount": 9,
+        "isPrimary": false,
+        "icon": "img/sets/sneo.svg",
+        "commonCount": 9
     },
     "soi": {
         "code": "soi",
@@ -4909,13 +4995,13 @@
     "stx": {
         "code": "stx",
         "fullName": "Strixhaven: School of Mages",
-        "cardCount": 394,
+        "cardCount": 393,
         "isPrimary": true,
         "icon": "img/sets/stx.svg",
         "commonCount": 116,
         "mythicCount": 44,
         "rareCount": 141,
-        "uncommonCount": 93
+        "uncommonCount": 92
     },
     "sum": {
         "code": "sum",
@@ -4931,10 +5017,10 @@
     "sunf": {
         "code": "sunf",
         "fullName": "Unfinity Sticker Sheets",
-        "cardCount": 6,
+        "cardCount": 46,
         "isPrimary": false,
         "icon": "img/sets/sunf.svg",
-        "commonCount": 6
+        "commonCount": 46
     },
     "svow": {
         "code": "svow",
@@ -5202,6 +5288,14 @@
         "icon": "img/sets/tund.svg",
         "commonCount": 1
     },
+    "tunf": {
+        "code": "tunf",
+        "fullName": "Unfinity Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/tunf.svg",
+        "commonCount": 1
+    },
     "uds": {
         "code": "uds",
         "fullName": "Urza's Destiny",
@@ -5271,13 +5365,13 @@
     "unf": {
         "code": "unf",
         "fullName": "Unfinity",
-        "cardCount": 300,
+        "cardCount": 638,
         "isPrimary": false,
         "icon": "img/sets/unf.svg",
-        "commonCount": 75,
-        "mythicCount": 34,
-        "rareCount": 93,
-        "uncommonCount": 98
+        "commonCount": 232,
+        "mythicCount": 52,
+        "rareCount": 156,
+        "uncommonCount": 198
     },
     "unh": {
         "code": "unh",
@@ -5288,6 +5382,15 @@
         "commonCount": 74,
         "rareCount": 50,
         "uncommonCount": 44
+    },
+    "uplist": {
+        "code": "uplist",
+        "fullName": "The List (Unfinity Foil Edition)",
+        "cardCount": 62,
+        "isPrimary": true,
+        "icon": "img/sets/uplist.svg",
+        "mythicCount": 11,
+        "rareCount": 51
     },
     "usg": {
         "code": "usg",
@@ -5596,6 +5699,17 @@
         "mythicCount": 17,
         "rareCount": 65,
         "uncommonCount": 82
+    },
+    "ydmu": {
+        "code": "ydmu",
+        "fullName": "Alchemy: Dominaria",
+        "cardCount": 23,
+        "isPrimary": false,
+        "block": "Alchemy 2023",
+        "icon": "img/sets/ydmu.svg",
+        "mythicCount": 3,
+        "rareCount": 12,
+        "uncommonCount": 8
     },
     "ymid": {
         "code": "ymid",
