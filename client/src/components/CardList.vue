@@ -174,7 +174,10 @@ export default {
 			if (response.status === 200) {
 				const json = await response.json();
 				for (let slot in json) {
-					for (let card of json[slot]) cards[slot].push(card);
+					for (let card of json[slot]) {
+						cards[slot].push(card);
+						card.count = this.cardlist.slots[slot][card.id];
+					}
 				}
 			}
 			this.cards = cards;

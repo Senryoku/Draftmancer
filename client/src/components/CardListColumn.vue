@@ -18,6 +18,7 @@
 					v-tooltip="'This card is not available on MTGA.'"
 				></i>
 			</div>
+			<div v-if="card.count && card.count > 1" class="card-count">{{ card.count }} x</div>
 		</card>
 	</div>
 </template>
@@ -66,6 +67,13 @@ export default {
 	top: 0.55em;
 	left: -0.25em;
 	z-index: 1;
+	text-shadow: 0 0 3px black;
+}
+
+.card-count {
+	position: absolute;
+	top: 0.55em;
+	left: -1.5em;
 	text-shadow: 0 0 3px black;
 }
 </style>
