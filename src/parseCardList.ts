@@ -286,7 +286,7 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 						// Merge duplicate declarations
 						if (cardList.slots["default"].hasOwnProperty(cardID))
 							cardList.slots["default"][cardID] += countOrError;
-						cardList.slots["default"][cardID] = countOrError;
+						else cardList.slots["default"][cardID] = countOrError;
 					} else return countOrError; // Return error from parseLine
 				}
 			}
