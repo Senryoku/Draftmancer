@@ -13,7 +13,7 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import cookieParser from "cookie-parser";
-import uuid from "uuid";
+import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, MessageWarning, SocketAck, SocketError } from "./Message.js";
@@ -1139,7 +1139,7 @@ io.on("connection", async function (socket) {
 				targetSocket.emit("stillAlive", () => {
 					// Previous connection is still alive, generate a new userID.
 					clearTimeout(timeout);
-					query.userID = uuid.v1();
+					query.userID = uuidv1();
 					socket.emit("alreadyConnected", query.userID);
 					resolve();
 				});

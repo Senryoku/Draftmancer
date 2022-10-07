@@ -335,7 +335,7 @@ export default {
 	opacity: 0;
 }
 
-.card-popup >>> .card-individual-image > img {
+.card-popup :deep(.card-individual-image > img) {
 	width: auto;
 	height: var(--image-height);
 	aspect-ratio: 100/140;

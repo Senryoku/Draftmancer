@@ -1,7 +1,6 @@
 "use strict";
 
-import uuid from "uuid";
-const uuidv1 = uuid.v1;
+import { v1 as uuidv1 } from "uuid";
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";

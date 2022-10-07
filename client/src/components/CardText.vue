@@ -248,24 +248,24 @@ export default {
 	align-items: center;
 }
 
-.card-text >>> .mana-symbol {
+.card-text :deep(.mana-symbol) {
 	display: inline-block;
 	width: 1em;
 	border-radius: 50%;
 }
 
-.card-text .card-mana-cost >>> .mana-symbol {
+.card-text .card-mana-cost :deep(.mana-symbol) {
 	box-shadow: -0.14vh 0.14vh 0 rgba(0, 0, 0, 0.85);
 	width: auto;
 }
 
-.card-text .card-oracle >>> .mana-symbol {
+.card-text .card-oracle :deep(.mana-symbol) {
 	width: 0.8em;
 	margin: 0 0.07em;
 	vertical-align: baseline;
 }
 
-.card-text .card-oracle >>> .oracle-reminder {
+.card-text .card-oracle :deep(.oracle-reminder) {
 	font-family: MPlantin-Italic;
 	font-style: italic;
 }
