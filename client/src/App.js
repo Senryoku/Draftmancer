@@ -2346,6 +2346,7 @@ export default {
 			let players = this.prepareBracketPlayers(this.teamDraft ? [0, 3, 2, 5, 4, 1] : [0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
+				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
 		generateSwissBracket() {
@@ -2356,6 +2357,7 @@ export default {
 					: this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateSwissBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
+				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
 		generateDoubleBracket() {
@@ -2363,6 +2365,7 @@ export default {
 			let players = this.prepareBracketPlayers([0, 4, 2, 6, 1, 5, 3, 7]);
 			this.socket.emit("generateDoubleBracket", players, (answer) => {
 				if (answer.code === 0) this.displayedModal = "bracket";
+				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
 		updateBracket(matchIndex, index, value) {

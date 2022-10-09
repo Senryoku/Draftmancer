@@ -1043,7 +1043,16 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		players: Array<UserID>,
 		ack: (result: SocketAck) => void
 	) {
-		if (players.length !== 8 && players.length !== 6) return;
+		const realPlayerCount = players.filter((u) => u).length;
+		if (realPlayerCount !== 8 && realPlayerCount !== 6) {
+			ack?.(
+				new SocketError(
+					"Error generating Swiss bracket",
+					"Swiss brackets are only available for pools of 6 or 8 players exactly."
+				)
+			);
+			return;
+		}
 		Sessions[sessionID].generateSwissBracket(players);
 		ack?.(new SocketAck());
 	},

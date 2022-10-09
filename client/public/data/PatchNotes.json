@@ -1,5 +1,9 @@
 [
 	{
+		"date": "09/10/2022",
+		"notes": ["Adjusted the Swiss bracket generation algorithm. Only usable by 6 or 8 players pods."]
+	},
+	{
 		"date": "28/09/2022",
 		"notes": ["Support importing collection directly from a Player.log with MTGA Pro Tracker running."]
 	},
