@@ -1259,10 +1259,11 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		let sess = Sessions[sessionID];
 		// User was the owner, but not playing
 		if (userID === sess.owner && !sess.ownerIsPlayer) {
+			sess.reconnectOwner(userID);
 			Connections[userID].socket.emit("message", {
+				toast: true,
 				title: "Reconnected as Organizer",
 			});
-			sess.reconnectOwner(userID);
 			return;
 		}
 
