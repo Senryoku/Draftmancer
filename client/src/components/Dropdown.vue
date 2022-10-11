@@ -1,6 +1,6 @@
 <template>
-	<span class="dropdown-container" @mouseenter="updateHeight">
-		<div class="handle"><slot name="handle"></slot></div>
+	<span class="dropdown-container" @mouseenter="updateHeight" :class="{ 'forced-open': forcedOpen }">
+		<div class="handle" @touchstart="toggleKeepOpen"><slot name="handle"></slot></div>
 		<div class="dropdown">
 			<div class="content" ref="content">
 				<slot name="dropdown"></slot>
@@ -11,15 +11,22 @@
 
 <script>
 export default {
+	data() {
+		return { forcedOpen: false };
+	},
 	props: {
 		minwidth: { type: String, default: "12em" },
 	},
-	mounted: function() {
+	mounted: function () {
 		this.updateHeight();
 	},
 	methods: {
-		updateHeight: function() {
+		updateHeight() {
 			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px); --min-width: ${this.minwidth}`;
+		},
+		toggleKeepOpen() {
+			this.forcedOpen = !this.forcedOpen;
+			this.updateHeight();
 		},
 	},
 };
@@ -62,6 +69,7 @@ export default {
 	text-align: center;
 }
 
+.forced-open .dropdown,
 .dropdown-container:active .dropdown,
 .dropdown-container:hover .dropdown {
 	max-height: var(--unrolled-height);
