@@ -330,10 +330,7 @@
 				</span>
 				<span v-show="userID === sessionOwner">
 					<dropdown :class="{ disabled: sessionOwner != userID }">
-						<template v-slot:handle>
-							Other Game Modes
-							<i class="fas fa-caret-down"></i>
-						</template>
+						<template v-slot:handle> Other Game Modes </template>
 						<template v-slot:dropdown>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Draft</span>

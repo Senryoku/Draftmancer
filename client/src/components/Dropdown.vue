@@ -69,6 +69,21 @@ export default {
 	text-align: center;
 }
 
+.handle:after {
+	position: absolute;
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	content: "\f0d7";
+	right: 5px;
+	bottom: -5px;
+}
+
+.forced-open .handle:after,
+.dropdown-container:active .handle:after,
+.dropdown-container:hover .handle:after {
+	content: "";
+}
+
 .forced-open .dropdown,
 .dropdown-container:active .dropdown,
 .dropdown-container:hover .dropdown {
