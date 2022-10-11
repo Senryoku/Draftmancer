@@ -221,17 +221,10 @@
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
-							<label
-								for="set-restriction"
-								v-tooltip="
-									'Restricts to the selected sets. No selection means all cards present in Arena.'
-								"
-								>Set(s)</label
-							>
 							<multiselect
 								v-if="setsInfos"
 								v-model="setRestriction"
-								placeholder="All"
+								placeholder="All Cards"
 								:options="sets.slice().reverse()"
 								:searchable="false"
 								:allow-empty="true"

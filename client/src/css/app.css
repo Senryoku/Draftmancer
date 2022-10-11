@@ -1415,7 +1415,7 @@ ul.player-list {
 .multiselect {
 	display: inline-block;
 	vertical-align: baseline;
-	width: 17.5em;
+	width: 16em;
 	min-height: auto;
 	--invertedness: 100%;
 }
