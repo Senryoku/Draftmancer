@@ -29,7 +29,7 @@ module.exports = {
 				use: ["vue-style-loader", "css-loader"],
 			},
 			{
-				test: /\.(png|svg|jpg|gif)$/,
+				test: /\.(png|svg|jpg|gif|webp)$/,
 				type: "asset/resource",
 			},
 			{
