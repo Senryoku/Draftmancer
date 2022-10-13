@@ -28,9 +28,9 @@ import DraftLogHistory from "./components/DraftLogHistory.vue";
 import DraftLogLive from "./components/DraftLogLive.vue";
 import DraftLogPick from "./components/DraftLogPick.vue";
 import Dropdown from "./components/Dropdown.vue";
-import Esporter from "./components/Esporter.vue";
 import GridDraft from "./components/GridDraft.vue";
 import MinesweeperDraft from "./components/MinesweeperDraft.vue";
+import CollectionImportHelp from "./components/CollectionImportHelp.vue";
 import LandControl from "./components/LandControl.vue";
 import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
@@ -108,13 +108,13 @@ export default {
 		CardPopup,
 		CardStats: () => import("./components/CardStats.vue"),
 		Collection: () => import("./components/Collection.vue"),
+		CollectionImportHelp,
 		DelayedInput,
 		DraftLog,
 		DraftLogHistory,
 		DraftLogLive,
 		DraftLogPick,
 		Dropdown,
-		Esporter,
 		GridDraft,
 		MinesweeperDraft,
 		LandControl,
