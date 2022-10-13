@@ -1246,12 +1246,15 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		}
 
 		console.log(`Restoring inactive session '${sessionID}'...`);
+		if (InactiveSessions[sessionID].deleteTimeout) {
+			clearTimeout(InactiveSessions[sessionID].deleteTimeout);
+			delete InactiveSessions[sessionID].deleteTimeout;
+		}
 		// Always having a valid owner is more important than preserving the old one - probably.
 		Sessions[sessionID] = restoreSession(
 			InactiveSessions[sessionID],
 			InactiveSessions[sessionID].ownerIsPlayer ? userID : InactiveSessions[sessionID].owner
 		);
-		if (InactiveSessions[sessionID].deleteTimeout) clearTimeout(InactiveSessions[sessionID].deleteTimeout);
 		delete InactiveSessions[sessionID];
 	}
 
