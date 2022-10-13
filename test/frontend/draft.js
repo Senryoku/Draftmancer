@@ -16,6 +16,9 @@ async function pickCard(page) {
 	let text = await page.evaluate((next) => next.innerText, next);
 	if (text === "Done drafting!") return true;
 
+	const waiting = await page.$(".booster-waiting");
+	if (waiting) return false;
+
 	await page.waitForSelector(".booster:not(.booster-waiting) .booster-card");
 	const cards = await page.$$(".booster-card");
 	const card = cards[Math.floor(Math.random() * cards.length)];
@@ -195,7 +198,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	this.timeout(100000);
 	it("Owner joins and set the bot count to 6", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}?session=${Math.random()}`);
 		await sessionOwnerPage.focus("#bots");
 		await sessionOwnerPage.keyboard.type("6");
 		await sessionOwnerPage.keyboard.press("Enter");
