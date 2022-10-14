@@ -48,7 +48,6 @@
         "fullName": "30th Anniversary Edition",
         "cardCount": 594,
         "isPrimary": false,
-        "icon": "img/sets/30a.svg",
         "commonCount": 178,
         "rareCount": 226,
         "uncommonCount": 190
@@ -66,14 +65,14 @@
     },
     "40k": {
         "code": "40k",
-        "fullName": "Warhammer 40,000",
-        "cardCount": 321,
+        "fullName": "Warhammer 40,000 Commander",
+        "cardCount": 618,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
-        "commonCount": 52,
-        "mythicCount": 25,
-        "rareCount": 171,
-        "uncommonCount": 73
+        "commonCount": 104,
+        "mythicCount": 26,
+        "rareCount": 342,
+        "uncommonCount": 146
     },
     "4ed": {
         "code": "4ed",
@@ -1852,14 +1851,14 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 437,
+        "cardCount": 436,
         "isPrimary": false,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
         "commonCount": 142,
         "mythicCount": 36,
         "rareCount": 108,
-        "uncommonCount": 151
+        "uncommonCount": 150
     },
     "hho": {
         "code": "hho",
@@ -2177,12 +2176,12 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 426,
+        "cardCount": 423,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 130,
-        "mythicCount": 45,
-        "rareCount": 132,
+        "mythicCount": 44,
+        "rareCount": 130,
         "uncommonCount": 119
     },
     "kld": {
@@ -2899,8 +2898,7 @@
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 21,
-        "uncommonCount": 2
+        "rareCount": 23
     },
     "p5dn": {
         "code": "p5dn",
@@ -4580,8 +4578,7 @@
         "isPrimary": false,
         "icon": "img/sets/pw22.svg",
         "mythicCount": 1,
-        "rareCount": 2,
-        "uncommonCount": 1
+        "rareCount": 3
     },
     "pwar": {
         "code": "pwar",
@@ -4842,18 +4839,17 @@
         "isPrimary": false,
         "icon": "img/sets/slc.svg",
         "mythicCount": 4,
-        "rareCount": 2,
-        "uncommonCount": 1
+        "rareCount": 3
     },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 659,
+        "cardCount": 664,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
-        "mythicCount": 117,
-        "rareCount": 482,
+        "mythicCount": 118,
+        "rareCount": 486,
         "uncommonCount": 20
     },
     "slu": {
@@ -4885,13 +4881,13 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 456,
+        "cardCount": 499,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
-        "commonCount": 138,
+        "commonCount": 168,
         "mythicCount": 53,
         "rareCount": 152,
-        "uncommonCount": 113
+        "uncommonCount": 126
     },
     "sneo": {
         "code": "sneo",
@@ -5017,10 +5013,10 @@
     "sunf": {
         "code": "sunf",
         "fullName": "Unfinity Sticker Sheets",
-        "cardCount": 46,
+        "cardCount": 48,
         "isPrimary": false,
         "icon": "img/sets/sunf.svg",
-        "commonCount": 46
+        "commonCount": 48
     },
     "svow": {
         "code": "svow",
@@ -5703,13 +5699,12 @@
     "ydmu": {
         "code": "ydmu",
         "fullName": "Alchemy: Dominaria",
-        "cardCount": 23,
+        "cardCount": 30,
         "isPrimary": false,
         "block": "Alchemy 2023",
-        "icon": "img/sets/ydmu.svg",
-        "mythicCount": 3,
-        "rareCount": 12,
-        "uncommonCount": 8
+        "mythicCount": 5,
+        "rareCount": 15,
+        "uncommonCount": 10
     },
     "ymid": {
         "code": "ymid",
@@ -5779,12 +5774,12 @@
     "znr": {
         "code": "znr",
         "fullName": "Zendikar Rising",
-        "cardCount": 409,
+        "cardCount": 408,
         "isPrimary": true,
         "icon": "img/sets/znr.svg",
         "commonCount": 134,
         "mythicCount": 42,
-        "rareCount": 136,
+        "rareCount": 135,
         "uncommonCount": 97
     }
 }
