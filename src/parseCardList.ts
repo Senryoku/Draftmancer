@@ -91,7 +91,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	];
 }
 
-export function parseCardList(txtcardlist: string, options: { [key: string]: any }) {
+export function parseCardList(txtcardlist: string, options: { [key: string]: any }): CustomCardList | SocketError {
 	try {
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		let cardList: CustomCardList = {

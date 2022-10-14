@@ -125,7 +125,7 @@ const parseCustomCardList = function (
 		return;
 	}
 
-	if (parsedList.error) {
+	if (parsedList instanceof SocketError) {
 		ack?.(parsedList);
 		return;
 	}
@@ -195,14 +195,14 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	// Parse a card list and uses it as collection
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
 		let cardList = parseCardList(txtcollection, { fallbackToCardName: true });
-		if (cardList.error) {
+		if (cardList instanceof SocketError) {
 			ack?.(cardList);
 			return;
 		}
 
 		let collection: CardPool = new Map();
 		let ret: any = new SocketAck();
-		for (let cardID in cardList.slots["default"] as Array<CardID>) {
+		for (let cardID in cardList.slots["default"]) {
 			let aid = Cards[cardID].arena_id;
 			if (!aid) {
 				if (ret.warning?.ignoredCards > 0) {
