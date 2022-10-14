@@ -191,7 +191,7 @@ Jaxis, the Troublemaker
 Manaform Hellkite
 Neheb, Dreadhorde Champion
 Torbran, Thane of Red Fell
-A-Goldspan Dragon
+Goldspan Dragon
 Cavalier of Flame
 Ilharg, the Raze-Boar
 Siege-Gang Commander
@@ -281,7 +281,7 @@ Cultivate
 Settle the Wilds
 Storm the Festival
 Pool of Vigorous Growth
-A-Esika's Chariot
+Esika's Chariot
 The Great Henge
 Parallel Lives
 Unnatural Growth

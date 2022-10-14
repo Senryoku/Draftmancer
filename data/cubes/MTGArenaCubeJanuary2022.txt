@@ -7,7 +7,7 @@ Mikaeus, the Lunarch
 Selfless Savior
 Thraben Inspector
 Usher of the Fallen
-A-Luminarch Aspirant
+Luminarch Aspirant
 Adanto Vanguard
 Ambitious Farmhand
 Cathar Commando
@@ -369,7 +369,7 @@ Primal Command
 Rishkar's Expertise
 Turntimber Symbiosis
 Lifecrafter's Bestiary
-A-Esika's Chariot
+Esika's Chariot
 The Great Henge
 Ranger Class
 Wolfwillow Haven
