@@ -202,7 +202,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 
 		let collection: CardPool = new Map();
 		let ret: any = new SocketAck();
-		for (let cardID of cardList.cards as Array<CardID>) {
+		for (let cardID in cardList.slots["default"] as Array<CardID>) {
 			let aid = Cards[cardID].arena_id;
 			if (!aid) {
 				if (ret.warning?.ignoredCards > 0) {
@@ -216,8 +216,9 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 				}
 				continue;
 			}
-			if (collection.has(aid)) collection.set(aid, (collection.get(aid) as number) + 1);
-			else collection.set(aid, 1);
+			if (collection.has(aid))
+				collection.set(aid, (collection.get(aid) as number) + cardList.slots["default"][cardID]);
+			else collection.set(aid, cardList.slots["default"][cardID]);
 		}
 		if (ret.ignoredCards > 1) {
 			ret.text += ` (${ret.ignoredCards} cards ignored in total.)`;
