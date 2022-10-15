@@ -48,6 +48,7 @@
         "fullName": "30th Anniversary Edition",
         "cardCount": 594,
         "isPrimary": false,
+        "icon": "img/sets/30a.svg",
         "commonCount": 178,
         "rareCount": 226,
         "uncommonCount": 190
@@ -5362,7 +5363,7 @@
         "code": "unf",
         "fullName": "Unfinity",
         "cardCount": 638,
-        "isPrimary": false,
+        "isPrimary": true,
         "icon": "img/sets/unf.svg",
         "commonCount": 232,
         "mythicCount": 52,

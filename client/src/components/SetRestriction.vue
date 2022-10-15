@@ -83,11 +83,11 @@ export default {
 			SetsInfos: SetsInfos,
 			blocks: [
 				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
-				{ name: "Un-sets", sets: ["und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
+				{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
 				{
 					name: "Masters",
 					sets: [
-						//"tsr", // Not available yet
+						"tsr",
 						"2xm",
 						"uma",
 						"a25",

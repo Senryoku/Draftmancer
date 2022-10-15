@@ -1,7 +1,17 @@
 "use strict";
 
-import { CardID, Card, CardPool, SlotedCardPool, Cards, getUnique, BoosterCardsBySet, UniqueCard } from "./Cards.js";
-import { shuffleArray, randomInt, Options, random } from "./utils.js";
+import {
+	CardID,
+	Card,
+	CardPool,
+	SlotedCardPool,
+	Cards,
+	getUnique,
+	BoosterCardsBySet,
+	UniqueCard,
+	CardsBySet,
+} from "./Cards.js";
+import { shuffleArray, randomInt, Options, random, getRandom } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import constants from "./data/constants.json";
@@ -592,6 +602,7 @@ class STXBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Modern Horizons 2
 // 1 New-to-Modern reprint card (uncommon, rare, or mythic rare) [numbered #261-#303]
 class MH2BoosterFactory extends BoosterFactory {
 	newToModern: SlotedCardPool;
@@ -980,6 +991,65 @@ class DMUBoosterFactory extends BoosterFactory {
 	}
 }
 
+/* Unfinity - Sparse implementation.
+ *  1 Planetary space-ic basic land, orbital space-ic basic land, or borderless shock land (Not implemented)
+ *  1 Rare or mythic rare (can be a showcase or borderless planeswalker card)
+ *  2 Attraction cards of any rarity (and both can be the same rarity, including two rares)
+ *  3 Uncommons
+ *  6 Commons
+ *  1 Common or a traditional foil card of any rarity (can be a showcase or borderless planeswalker card, or an Attraction card) (Not implemented)
+ *  1 Sticker insert (with a variety of stickers for gameplay use)
+ *  1 Token or ad insert
+ */
+class UNFBoosterFactory extends BoosterFactory {
+	attractions: SlotedCardPool;
+	stickers: CardID[];
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		let [attractions, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].subtypes.includes("Attraction")
+		);
+		super(filteredCardPool, landSlot, options);
+		this.attractions = attractions;
+		this.stickers = CardsBySet["sunf"];
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.attractions)) {
+			return super.generateBooster(targets);
+		} else {
+			let updatedTargets = Object.assign({}, targets);
+			if (targets === DefaultBoosterTargets) {
+				updatedTargets = {
+					rare: 1,
+					uncommon: 3,
+					common: 7,
+				};
+			} else {
+				updatedTargets["common"] = Math.max(0, updatedTargets["common"] - 2);
+			}
+
+			let booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+
+			for (let i = 0; i < 2; ++i) {
+				const attractionRarity = rollSpecialCardRarity(
+					countBySlot(this.attractions),
+					updatedTargets,
+					this.options
+				);
+				const attraction = pickCard(this.attractions[attractionRarity]);
+				booster.unshift(attraction);
+			}
+
+			const stickerID = getRandom(this.stickers);
+			booster.push(getUnique(stickerID));
+
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -999,6 +1069,7 @@ export const SetSpecificFactories: {
 	clb: CLBBoosterFactory,
 	"2x2": M2X2BoosterFactory,
 	dmu: DMUBoosterFactory,
+	unf: UNFBoosterFactory,
 };
 
 /*
