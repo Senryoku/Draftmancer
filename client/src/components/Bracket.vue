@@ -237,7 +237,7 @@ export default {
 						scores[match.players[0].userID] += diff;
 						scores[match.players[1].userID] -= diff;
 					}
-					let sortedPlayers = Object.keys(scores).sort((lhs, rhs) => scores[lhs] < scores[rhs]);
+					let sortedPlayers = Object.keys(scores).sort((lhs, rhs) => scores[rhs] - scores[lhs]);
 					while (sortedPlayers.length > 0) {
 						const firstPlayer = sortedPlayers.shift();
 						let index = 0;
