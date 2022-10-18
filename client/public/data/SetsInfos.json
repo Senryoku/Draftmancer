@@ -5783,5 +5783,16 @@
         "mythicCount": 42,
         "rareCount": 135,
         "uncommonCount": 97
+    },
+    "planeshifted_snc": {
+        "code": "planeshifted_snc",
+        "fullName": "Planeshifted New Capenna",
+        "cardCount": 499,
+        "isPrimary": true,
+        "icon": "img/sets/snc.svg",
+        "commonCount": 168,
+        "mythicCount": 53,
+        "rareCount": 152,
+        "uncommonCount": 126
     }
 }

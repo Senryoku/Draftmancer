@@ -458,7 +458,7 @@ select.swal2-input option {
 		gap: 0 1em;
 		grid-template-areas:
 			"News News Help"
-			"News News Coaching"
+			"News News Support"
 			"News News Tools"
 			"PublicSessions PublicSessions PublicSessions";
 	}

@@ -170,7 +170,7 @@ SetsInfos = json.load(open(ScryfallSets, 'r', encoding="utf8"))['data']
 PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
 PrimarySets.extend(['unf', 'ugl', 'unh', 'ust', 'und'])  # Add Un-Sets as primary.
-PrimarySets.extend(['hbg', 'ydmu'])
+PrimarySets.extend(['hbg', 'planeshifted_snc', 'ydmu'])
 
 
 def append_set_cards(allcards, results):
@@ -754,6 +754,14 @@ for mtgset, group in groups:
     for rarity, rarityGroup in groupby(cardList, lambda c: c['rarity']):
         rarityGroupList = list(rarityGroup)
         setinfos[mtgset][rarity + "Count"] = len(rarityGroupList)
+
+setinfos["planeshifted_snc"] = {}
+setinfos["planeshifted_snc"].update(setinfos["snc"])
+setinfos["planeshifted_snc"].update({"code": "planeshifted_snc",
+                                     "fullName": "Planeshifted New Capenna",
+                                     "isPrimary": True,
+                                     })
+
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False, indent=4)
 

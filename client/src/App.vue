@@ -1417,6 +1417,28 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>October 18, 2022</em>
+							<p>Experimental support for some Alchemy draft formats:</p>
+							<ul>
+								<li>
+									<img
+										src="img/sets/ydmu.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									Alchemy Dominaria
+								</li>
+								<li>
+									<img
+										src="img/sets/snc.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									Planeshifted Streets of New Capenna
+								</li>
+							</ul>
+						</div>
+						<div class="news">
 							<em>October 4, 2022</em>
 							<p>
 								Extended the cube format with <strong>Pack Layouts</strong> to allow more customization,
@@ -1449,36 +1471,6 @@
 								</li>
 							</ul>
 						</div>
-						<div class="news">
-							<div class="news">
-								<em>September 2, 2022</em> <strong></strong>
-								<p>
-									Heroku are shutting down their free plans, pushing me to search for a better suited
-									hosting plateform.
-									<strong>
-										If you're still using the .herokuapp.com domain, please switch to
-										<a href="https://www.mtgadraft.tk">MTGADraft.tk</a> before November 28.
-									</strong>
-								</p>
-								<div style="display: flex; margin-top: 0.5em; margin-left: 1em; gap: 1em">
-									<iframe
-										src="https://github.com/sponsors/Senryoku/button"
-										title="Sponsor Senryoku"
-										height="35"
-										width="116"
-										style="border: 0; margin: 0.25em"
-									></iframe>
-									<div>
-										I am looking for a free solution, however I'd like to make sure I have other
-										options if anything goes wrong. You can contribute using
-										<a href="https://github.com/sponsors/Senryoku" target="_blank">
-											<i class="fa fa-github"></i> GitHub Sponsor
-										</a>
-										to ensure MTGADraft stays online and up-to-date.
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="container" style="grid-area: Help">
@@ -1504,6 +1496,27 @@
 						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 						or join the
 						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+					</div>
+				</div>
+				<div class="container" style="grid-area: Support">
+					<div class="section-title">
+						<h2>Sponsor</h2>
+					</div>
+					<div class="welcome-section welcome-alt" style="display: flex; gap: 0.5em">
+						<iframe
+							src="https://github.com/sponsors/Senryoku/button"
+							title="Sponsor Senryoku"
+							height="35"
+							width="116"
+							style="border: 0; margin: 0.25em"
+						></iframe>
+						<div>
+							Support MTGADraft on
+							<a href="https://github.com/sponsors/Senryoku" target="_blank">
+								<i class="fa fa-github"></i> GitHub Sponsor
+							</a>
+							to make sure it stays online and updated.
+						</div>
 					</div>
 				</div>
 				<div class="container" style="grid-area: Tools">

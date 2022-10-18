@@ -1,5 +1,11 @@
 [
 	{
+		"date": "18/10/2022",
+		"notes": [
+			"Added experimental support for some Alchemy draft formats (Alchemy Dominaria and Planeshifted New Capenna)."
+		]
+	},
+	{
 		"date": "09/10/2022",
 		"notes": ["Adjusted the Swiss bracket generation algorithm. Only usable by 6 or 8 players pods."]
 	},

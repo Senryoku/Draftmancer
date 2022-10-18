@@ -118,7 +118,7 @@ export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json",
 
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = {};
-export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [] };
+export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 for (let cid in Cards) {
 	if (Cards[cid].in_booster || ["und", "j21"].includes(Cards[cid].set)) {
 		// Force cache for Unsanctioned (UND) and Jumpstart: Historic Horizons as they're not originally draft products
@@ -129,6 +129,14 @@ for (let cid in Cards) {
 	CardsBySet[Cards[cid].set].push(cid);
 
 	if (Cards[cid].set === "ydmu") BoosterCardsBySet["alchemy_dmu"].push(cid);
+	// Planeshifted New Capenna
+	if (Cards[cid].set === "snc" && Cards[cid].in_booster) {
+		// Search for a rebalanced version of the card
+		const rebalancedName = "A-" + Cards[cid].name;
+		if (rebalancedName in CardsByName && Cards[CardsByName[rebalancedName]].set === "snc")
+			BoosterCardsBySet["planeshifted_snc"].push(CardsByName[rebalancedName]);
+		else BoosterCardsBySet["planeshifted_snc"].push(cid);
+	}
 }
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
