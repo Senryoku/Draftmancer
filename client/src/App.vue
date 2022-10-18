@@ -250,7 +250,7 @@
 										<span
 											style="
 												display: inline-block;
-												max-width: 13.5em;
+												max-width: 12em;
 												overflow: hidden;
 												text-overflow: ellipsis;
 											"

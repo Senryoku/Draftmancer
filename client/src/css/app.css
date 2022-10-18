@@ -1479,7 +1479,7 @@ ul.player-list {
 	min-height: auto;
 	width: auto;
 	font-size: inherit;
-	max-width: 17.5em;
+	max-width: 16em;
 	text-overflow: ellipsis;
 	display: inline-block;
 	overflow: hidden;
