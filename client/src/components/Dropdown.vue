@@ -75,13 +75,14 @@ export default {
 	font-weight: 900;
 	content: "\f0d7";
 	right: 5px;
-	bottom: -5px;
+	bottom: -7px;
+	transition: transform 0.2s ease;
 }
 
 .forced-open .handle:after,
 .dropdown-container:active .handle:after,
 .dropdown-container:hover .handle:after {
-	content: "";
+	transform: rotate(180deg);
 }
 
 .forced-open .dropdown,
