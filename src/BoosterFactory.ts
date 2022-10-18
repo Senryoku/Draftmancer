@@ -991,6 +991,85 @@ class DMUBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Dominaria United Alchemy
+// Replaces a DMU common with a YDMU card.
+class YDMUBoosterFactory extends BoosterFactory {
+	static legendaryCreatureRegex = /Legendary.*Creature/;
+	legendaryCreatures: SlotedCardPool;
+	alchemyCards: SlotedCardPool;
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		let [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
+			Cards[cid].type.match(DMUBoosterFactory.legendaryCreatureRegex)
+		);
+		super(filteredCardPool, landSlot, options);
+		this.legendaryCreatures = legendaryCreatures;
+
+		// Filter YDMU cards according to session collections
+		if (options.session && !options.session.unrestrictedCardPool()) {
+			const YDMUCards: CardPool = options.session.restrictedCollection(["ydmu"]);
+			this.alchemyCards = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+			for (let cid of YDMUCards.keys())
+				this.alchemyCards[Cards[cid].rarity].set(
+					cid,
+					Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, YDMUCards.get(cid) as number)
+				);
+		} else {
+			this.alchemyCards = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+			for (let cid of BoosterCardsBySet["alchemy_dmu"])
+				this.alchemyCards[Cards[cid].rarity].set(cid, options.maxDuplicates?.[Cards[cid].rarity] ?? 99);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		// Ignore the rule if there's no legendary creatures left
+		if (isEmpty(this.legendaryCreatures)) {
+			return super.generateBooster(targets);
+		} else {
+			let updatedTargets = Object.assign({}, targets);
+
+			let legendaryCreature = null;
+			if (
+				updatedTargets["uncommon"] > 0 &&
+				this.legendaryCreatures["uncommon"].size > 0 &&
+				random.realZeroToOneInclusive() < 0.75
+			) {
+				--updatedTargets["uncommon"];
+				legendaryCreature = pickCard(this.legendaryCreatures["uncommon"]);
+			} else if (updatedTargets["rare"] > 0 && this.legendaryCreatures["rare"].size > 0) {
+				--updatedTargets["rare"];
+				if (
+					this.options.mythicPromotion &&
+					this.legendaryCreatures["mythic"].size > 0 &&
+					random.realZeroToOneInclusive() < 1 / 7.4
+				)
+					legendaryCreature = pickCard(this.legendaryCreatures["mythic"]);
+				else legendaryCreature = pickCard(this.legendaryCreatures["rare"]);
+			}
+
+			// Alchemy Card
+			updatedTargets["common"] = Math.max(0, updatedTargets["common"] - 1);
+			const alchemyCardsCounts = countBySlot(this.alchemyCards);
+			const alchemyRarityRoll = random.real(0, 1);
+			const pickedRarity =
+				updatedTargets["rare"] > 0
+					? this.options.mythicPromotion && alchemyCardsCounts["mythic"] > 0 && alchemyRarityRoll < 0.066
+						? "mythic"
+						: alchemyCardsCounts["rare"] > 0 && alchemyRarityRoll < 0.066 + 0.264
+						? "rare"
+						: "uncommon"
+					: "uncommon";
+			const alchemyCard = pickCard(this.alchemyCards[pickedRarity], []);
+
+			let booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+			if (legendaryCreature) booster.splice(updatedTargets["rare"] ?? 0, 0, legendaryCreature);
+			if (alchemyCard) booster.unshift(alchemyCard);
+			return booster;
+		}
+	}
+}
+
 /* Unfinity - Sparse implementation.
  *  1 Planetary space-ic basic land, orbital space-ic basic land, or borderless shock land (Not implemented)
  *  1 Rare or mythic rare (can be a showcase or borderless planeswalker card)
@@ -1070,6 +1149,7 @@ export const SetSpecificFactories: {
 	"2x2": M2X2BoosterFactory,
 	dmu: DMUBoosterFactory,
 	unf: UNFBoosterFactory,
+	ydmu: YDMUBoosterFactory,
 };
 
 /*

@@ -1,406 +1,415 @@
 {
-	"Languages": [
-		{
-			"code": "de",
-			"name": "Deutsch"
-		},
-		{
-			"code": "en",
-			"name": "English"
-		},
-		{
-			"code": "es",
-			"name": "Español"
-		},
-		{
-			"code": "fr",
-			"name": "Français"
-		},
-		{
-			"code": "it",
-			"name": "Italiano"
-		},
-		{
-			"code": "pt",
-			"name": "Português"
-		},
-		{
-			"code": "ru",
-			"name": "Русский"
-		},
-		{
-			"code": "ja",
-			"name": "日本語"
-		},
-		{
-			"code": "ko",
-			"name": "한국어"
-		},
-		{
-			"code": "zhs",
-			"name": "简体中文"
-		},
-		{
-			"code": "zht",
-			"name": "繁体中文"
-		}
-	],
-	"MTGASets": [
-		"xln",
-		"rix",
-		"dom",
-		"m19",
-		"grn",
-		"rna",
-		"war",
-		"m20",
-		"eld",
-		"thb",
-		"iko",
-		"m21",
-		"akr",
-		"znr",
-		"klr",
-		"khm",
-		"stx",
-		"afr",
-		"mid",
-		"vow",
-		"neo",
-		"snc",
-		"hbg",
-		"dmu"
-	],
-	"StandardSets": ["mid", "vow", "neo", "snc", "dmu"],
-	"BasicLandNames": {
-		"en": {
-			"W": "Plains",
-			"U": "Island",
-			"B": "Swamp",
-			"R": "Mountain",
-			"G": "Forest"
-		},
-		"es": {
-			"W": "Llanura",
-			"U": "Isla",
-			"B": "Pantano",
-			"R": "Montaña",
-			"G": "Bosque"
-		},
-		"fr": {
-			"W": "Plaine",
-			"U": "Île",
-			"B": "Marais",
-			"R": "Montagne",
-			"G": "Forêt"
-		},
-		"de": {
-			"W": "Ebene",
-			"U": "Insel",
-			"B": "Sumpf",
-			"R": "Gebirge",
-			"G": "Wald"
-		},
-		"it": {
-			"W": "Pianura",
-			"U": "Isola",
-			"B": "Palude",
-			"R": "Montagna",
-			"G": "Foresta"
-		},
-		"pt": {
-			"W": "Planície",
-			"U": "Ilha",
-			"B": "Pântano",
-			"R": "Montanha",
-			"G": "Floresta"
-		},
-		"ja": {
-			"W": "平地",
-			"U": "島",
-			"B": "沼",
-			"R": "山",
-			"G": "森"
-		},
-		"ko": {
-			"W": "들",
-			"U": "섬",
-			"B": "늪",
-			"R": "산",
-			"G": "숲"
-		},
-		"ru": {
-			"W": "Равнина",
-			"U": "Остров",
-			"B": "Болото",
-			"R": "Гора",
-			"G": "Лес"
-		},
-		"zhs": {
-			"W": "平原",
-			"U": "海岛",
-			"B": "沼泽",
-			"R": "山脉",
-			"G": "树林"
-		},
-		"zht": {
-			"W": "平原",
-			"U": "海島",
-			"B": "沼澤",
-			"R": "山脈",
-			"G": "樹林"
-		}
-	},
-	"CubeLists": [
-		{
-			"name": "Arena Chromatic Cube June 2022, No Alchemy",
-			"filename": "ChromaticCubeMTGArenaJune2022_NoAlchemy.txt",
-			"description": "MTGA Official Chromatic Cube June 2022, without the Alchemy cards. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtga-chromatic-cube\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "Arena Chromatic Cube June 2022",
-			"filename": "ChromaticCubeMTGArenaJune2022.txt",
-			"description": "MTGA Official Chromatic Cube June 2022. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtga-chromatic-cube\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "Arena Tinkerer's Cube #4 (April 2022, No Alchemy)",
-			"filename": "TinkerersCubeApril2022NoAlchemy.txt",
-			"description": "MTGA Official Tinkerer's Cube from April 2022, excluding Alchemy re-balanced cards. Use this version if you intend to play 40-cards decks in Arena Direct Challenge as Alchemy cards aren't allowed there.. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/tinkerers-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>"
-		},
-		{
-			"name": "Arena Tinkerer's Cube #4 (April 2022)",
-			"filename": "TinkerersCubeApril2022.txt",
-			"description": "MTGA Official Tinkerer's Cube from April 2022. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/tinkerers-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>"
-		},
-		{
-			"name": "Arena Cube - January 2022 - No Alchemy",
-			"filename": "MTGArenaCubeJanuary2022NoAlchemy.txt",
-			"description": "MTGA Official Cube from January 2022, excluding Alchemy re-balanced cards. Use this version if you intend to play 40-cards decks in Arena Direct Challenge as Alchemy cards aren't allowed there."
-		},
-		{
-			"name": "Arena Cube - January 2022",
-			"filename": "MTGArenaCubeJanuary2022.txt",
-			"description": "MTGA Official Cube from January 2022. First version with Alchemy rebalanced cards. NOTE: Alchemy cards cannot be played in 40-cards deck using Arena Direct Challenge."
-		},
-		{
-			"name": "Arena Tinkerer's Cube #3",
-			"filename": "TinkerersCubeSeptember2021.txt",
-			"description": "MTGA Official Tinkerer's Cube from September 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>. Card list from <a href=\"https://cubecobra.com/cube/list/1ajpw\" target=\"_blank\">Cube Cobra</a>"
-		},
-		{
-			"name": "Arena Chromatic Cube June 2021",
-			"filename": "ArenaChromaticCubeJune2021.txt",
-			"description": "MTGA Official Chromatic Cube June 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/chromatic-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "Arena Historic Cube #3 - June 2021 (STX)",
-			"filename": "MTGArenaCubeJune2021.txt",
-			"description": "MTGA Official Historic Cube from June 2021 (Strixhaven version)."
-		},
-		{
-			"name": "Arena Tinkerer's Cube #2",
-			"filename": "TinkerersCubeJanuary2021.txt",
-			"description": "MTGA Official Tinkerer's Cube from January 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>. Card list from <a href=\"https://cubecobra.com/cube/list/tinkererjanuary21\" target=\"_blank\">Cube Cobra</a>"
-		},
-		{
-			"name": "Arena Historic Cube #2",
-			"filename": "MTGArenaCubeDecember2020.txt",
-			"description": "MTGA Official Historic Cube from December 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtg-arena-state-game-december-2020-12-07\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "DJV Arena Cube",
-			"cubeCobraID": "djvarenacube",
-			"description": "The goal of this cube is to provide the closest experience to a powered cube using only cards available on Arena. It includes cards not legal in historic."
-		},
-		{
-			"name": "Jank Divers Peasant Cube",
-			"cubeCobraID": "jdgp",
-			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
-		},
-		{
-			"name": "Jank Divers Unrestricted Cube",
-			"cubeCobraID": "jdgu",
-			"description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
-		},
-		{
-			"name": "JiRock's Historic Cube",
-			"cubeCobraID": "5e7368d540eaf0158e2360e9",
-			"description": "Latest version of Jean-Emmanuel Depraz (JiRock) Historic Cube."
-		},
-		{
-			"name": "Arena Tinkerer's Cube",
-			"filename": "MTGATinkererCube.txt",
-			"description": "MTGA Official Tinkerer's Cube from September 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "Arena Historic Cube #1",
-			"filename": "ArenaHistoricCube1.txt",
-			"description": "MTGA Official Historic Cube from June 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=\"_blank\">Wizards announcement</a>."
-		},
-		{
-			"name": "JiRock's Historic Cube 2.2",
-			"filename": "JiRockHistoricCube22.txt",
-			"description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Throne of Eldraine."
-		},
-		{
-			"name": "JiRock's Historic Cube 3.3 (Jumpstart Edition)",
-			"filename": "JiRockHistoricCube33.txt",
-			"description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Jumpstart."
-		}
-	],
-	"PrimarySets": [
-		"dmu",
-		"2x2",
-		"clb",
-		"snc",
-		"neo",
-		"dbl",
-		"vow",
-		"mid",
-		"j21",
-		"afr",
-		"mh2",
-		"stx",
-		"tsr",
-		"khm",
-		"cmr",
-		"klr",
-		"plist",
-		"znr",
-		"akr",
-		"2xm",
-		"jmp",
-		"m21",
-		"iko",
-		"thb",
-		"mb1",
-		"eld",
-		"m20",
-		"mh1",
-		"war",
-		"rna",
-		"uma",
-		"grn",
-		"m19",
-		"bbd",
-		"dom",
-		"a25",
-		"rix",
-		"ima",
-		"xln",
-		"hou",
-		"akh",
-		"mm3",
-		"aer",
-		"kld",
-		"cn2",
-		"emn",
-		"ema",
-		"soi",
-		"ogw",
-		"bfz",
-		"ori",
-		"mm2",
-		"tpr",
-		"dtk",
-		"frf",
-		"ktk",
-		"m15",
-		"vma",
-		"cns",
-		"jou",
-		"bng",
-		"ths",
-		"m14",
-		"mma",
-		"dgm",
-		"gtc",
-		"rtr",
-		"m13",
-		"avr",
-		"dka",
-		"isd",
-		"m12",
-		"nph",
-		"mbs",
-		"me4",
-		"som",
-		"m11",
-		"roe",
-		"wwk",
-		"zen",
-		"me3",
-		"m10",
-		"arb",
-		"con",
-		"ala",
-		"me2",
-		"eve",
-		"shm",
-		"mor",
-		"lrw",
-		"me1",
-		"10e",
-		"fut",
-		"plc",
-		"tsp",
-		"csp",
-		"dis",
-		"gpt",
-		"rav",
-		"9ed",
-		"sok",
-		"bok",
-		"chk",
-		"5dn",
-		"dst",
-		"mrd",
-		"8ed",
-		"scg",
-		"lgn",
-		"ons",
-		"jud",
-		"tor",
-		"ody",
-		"apc",
-		"7ed",
-		"pls",
-		"inv",
-		"pcy",
-		"nem",
-		"mmq",
-		"uds",
-		"6ed",
-		"ulg",
-		"usg",
-		"exo",
-		"sth",
-		"tmp",
-		"wth",
-		"5ed",
-		"vis",
-		"mir",
-		"all",
-		"hml",
-		"chr",
-		"ice",
-		"4ed",
-		"fem",
-		"drk",
-		"sum",
-		"leg",
-		"3ed",
-		"atq",
-		"arn",
-		"2ed",
-		"leb",
-		"lea",
-		"unf",
-		"ugl",
-		"unh",
-		"ust",
-		"und",
-		"hbg",
-		"ydmu"
-	]
+    "Languages": [
+        {
+            "code": "de",
+            "name": "Deutsch"
+        },
+        {
+            "code": "en",
+            "name": "English"
+        },
+        {
+            "code": "es",
+            "name": "Español"
+        },
+        {
+            "code": "fr",
+            "name": "Français"
+        },
+        {
+            "code": "it",
+            "name": "Italiano"
+        },
+        {
+            "code": "pt",
+            "name": "Português"
+        },
+        {
+            "code": "ru",
+            "name": "Русский"
+        },
+        {
+            "code": "ja",
+            "name": "日本語"
+        },
+        {
+            "code": "ko",
+            "name": "한국어"
+        },
+        {
+            "code": "zhs",
+            "name": "简体中文"
+        },
+        {
+            "code": "zht",
+            "name": "繁体中文"
+        }
+    ],
+    "MTGASets": [
+        "xln",
+        "rix",
+        "dom",
+        "m19",
+        "grn",
+        "rna",
+        "war",
+        "m20",
+        "eld",
+        "thb",
+        "iko",
+        "m21",
+        "akr",
+        "znr",
+        "klr",
+        "khm",
+        "stx",
+        "afr",
+        "mid",
+        "vow",
+        "neo",
+        "snc",
+        "dmu"
+    ],
+    "AlchemySets": [
+        "hbg",
+        "ydmu"
+    ],
+    "StandardSets": [
+        "mid",
+        "vow",
+        "neo",
+        "snc",
+        "dmu"
+    ],
+    "BasicLandNames": {
+        "en": {
+            "W": "Plains",
+            "U": "Island",
+            "B": "Swamp",
+            "R": "Mountain",
+            "G": "Forest"
+        },
+        "es": {
+            "W": "Llanura",
+            "U": "Isla",
+            "B": "Pantano",
+            "R": "Montaña",
+            "G": "Bosque"
+        },
+        "fr": {
+            "W": "Plaine",
+            "U": "Île",
+            "B": "Marais",
+            "R": "Montagne",
+            "G": "Forêt"
+        },
+        "de": {
+            "W": "Ebene",
+            "U": "Insel",
+            "B": "Sumpf",
+            "R": "Gebirge",
+            "G": "Wald"
+        },
+        "it": {
+            "W": "Pianura",
+            "U": "Isola",
+            "B": "Palude",
+            "R": "Montagna",
+            "G": "Foresta"
+        },
+        "pt": {
+            "W": "Planície",
+            "U": "Ilha",
+            "B": "Pântano",
+            "R": "Montanha",
+            "G": "Floresta"
+        },
+        "ja": {
+            "W": "平地",
+            "U": "島",
+            "B": "沼",
+            "R": "山",
+            "G": "森"
+        },
+        "ko": {
+            "W": "들",
+            "U": "섬",
+            "B": "늪",
+            "R": "산",
+            "G": "숲"
+        },
+        "ru": {
+            "W": "Равнина",
+            "U": "Остров",
+            "B": "Болото",
+            "R": "Гора",
+            "G": "Лес"
+        },
+        "zhs": {
+            "W": "平原",
+            "U": "海岛",
+            "B": "沼泽",
+            "R": "山脉",
+            "G": "树林"
+        },
+        "zht": {
+            "W": "平原",
+            "U": "海島",
+            "B": "沼澤",
+            "R": "山脈",
+            "G": "樹林"
+        }
+    },
+    "CubeLists": [
+        {
+            "name": "Arena Chromatic Cube June 2022, No Alchemy",
+            "filename": "ChromaticCubeMTGArenaJune2022_NoAlchemy.txt",
+            "description": "MTGA Official Chromatic Cube June 2022, without the Alchemy cards. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtga-chromatic-cube\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "Arena Chromatic Cube June 2022",
+            "filename": "ChromaticCubeMTGArenaJune2022.txt",
+            "description": "MTGA Official Chromatic Cube June 2022. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtga-chromatic-cube\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "Arena Tinkerer's Cube #4 (April 2022, No Alchemy)",
+            "filename": "TinkerersCubeApril2022NoAlchemy.txt",
+            "description": "MTGA Official Tinkerer's Cube from April 2022, excluding Alchemy re-balanced cards. Use this version if you intend to play 40-cards decks in Arena Direct Challenge as Alchemy cards aren't allowed there.. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/tinkerers-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>"
+        },
+        {
+            "name": "Arena Tinkerer's Cube #4 (April 2022)",
+            "filename": "TinkerersCubeApril2022.txt",
+            "description": "MTGA Official Tinkerer's Cube from April 2022. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/tinkerers-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>"
+        },
+        {
+            "name": "Arena Cube - January 2022 - No Alchemy",
+            "filename": "MTGArenaCubeJanuary2022NoAlchemy.txt",
+            "description": "MTGA Official Cube from January 2022, excluding Alchemy re-balanced cards. Use this version if you intend to play 40-cards decks in Arena Direct Challenge as Alchemy cards aren't allowed there."
+        },
+        {
+            "name": "Arena Cube - January 2022",
+            "filename": "MTGArenaCubeJanuary2022.txt",
+            "description": "MTGA Official Cube from January 2022. First version with Alchemy rebalanced cards. NOTE: Alchemy cards cannot be played in 40-cards deck using Arena Direct Challenge."
+        },
+        {
+            "name": "Arena Tinkerer's Cube #3",
+            "filename": "TinkerersCubeSeptember2021.txt",
+            "description": "MTGA Official Tinkerer's Cube from September 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>. Card list from <a href=\"https://cubecobra.com/cube/list/1ajpw\" target=\"_blank\">Cube Cobra</a>"
+        },
+        {
+            "name": "Arena Chromatic Cube June 2021",
+            "filename": "ArenaChromaticCubeJune2021.txt",
+            "description": "MTGA Official Chromatic Cube June 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/chromatic-cube-comes-mtg-arena\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "Arena Historic Cube #3 - June 2021 (STX)",
+            "filename": "MTGArenaCubeJune2021.txt",
+            "description": "MTGA Official Historic Cube from June 2021 (Strixhaven version)."
+        },
+        {
+            "name": "Arena Tinkerer's Cube #2",
+            "filename": "TinkerersCubeJanuary2021.txt",
+            "description": "MTGA Official Tinkerer's Cube from January 2021. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>. Card list from <a href=\"https://cubecobra.com/cube/list/tinkererjanuary21\" target=\"_blank\">Cube Cobra</a>"
+        },
+        {
+            "name": "Arena Historic Cube #2",
+            "filename": "MTGArenaCubeDecember2020.txt",
+            "description": "MTGA Official Historic Cube from December 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/magic-digital/mtg-arena-state-game-december-2020-12-07\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "DJV Arena Cube",
+            "cubeCobraID": "djvarenacube",
+            "description": "The goal of this cube is to provide the closest experience to a powered cube using only cards available on Arena. It includes cards not legal in historic."
+        },
+        {
+            "name": "Jank Divers Peasant Cube",
+            "cubeCobraID": "jdgp",
+            "description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
+        },
+        {
+            "name": "Jank Divers Unrestricted Cube",
+            "cubeCobraID": "jdgu",
+            "description": "A cube community delivering balanced, fun design through player feedback & data analysis. Play, discuss, and check out our data on <a href=\"https://discord.gg/RMaEexX\" target=\"_blank\">Discord</a>."
+        },
+        {
+            "name": "JiRock's Historic Cube",
+            "cubeCobraID": "5e7368d540eaf0158e2360e9",
+            "description": "Latest version of Jean-Emmanuel Depraz (JiRock) Historic Cube."
+        },
+        {
+            "name": "Arena Tinkerer's Cube",
+            "filename": "MTGATinkererCube.txt",
+            "description": "MTGA Official Tinkerer's Cube from September 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/tinkerers-cube-2020-09-03\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "Arena Historic Cube #1",
+            "filename": "ArenaHistoricCube1.txt",
+            "description": "MTGA Official Historic Cube from June 2020. Check the <a href=\"https://magic.wizards.com/en/articles/archive/mtg-arena-cube-draft-card-list-2020-06-10\" target=\"_blank\">Wizards announcement</a>."
+        },
+        {
+            "name": "JiRock's Historic Cube 2.2",
+            "filename": "JiRockHistoricCube22.txt",
+            "description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Throne of Eldraine."
+        },
+        {
+            "name": "JiRock's Historic Cube 3.3 (Jumpstart Edition)",
+            "filename": "JiRockHistoricCube33.txt",
+            "description": "Jean-Emmanuel Depraz (JiRock) Historic Cube updated for Jumpstart."
+        }
+    ],
+    "PrimarySets": [
+        "dmu",
+        "2x2",
+        "clb",
+        "snc",
+        "neo",
+        "dbl",
+        "vow",
+        "mid",
+        "j21",
+        "afr",
+        "mh2",
+        "stx",
+        "tsr",
+        "khm",
+        "cmr",
+        "klr",
+        "plist",
+        "znr",
+        "akr",
+        "2xm",
+        "jmp",
+        "m21",
+        "iko",
+        "thb",
+        "mb1",
+        "eld",
+        "m20",
+        "mh1",
+        "war",
+        "rna",
+        "uma",
+        "grn",
+        "m19",
+        "bbd",
+        "dom",
+        "a25",
+        "rix",
+        "ima",
+        "xln",
+        "hou",
+        "akh",
+        "mm3",
+        "aer",
+        "kld",
+        "cn2",
+        "emn",
+        "ema",
+        "soi",
+        "ogw",
+        "bfz",
+        "ori",
+        "mm2",
+        "tpr",
+        "dtk",
+        "frf",
+        "ktk",
+        "m15",
+        "vma",
+        "cns",
+        "jou",
+        "bng",
+        "ths",
+        "m14",
+        "mma",
+        "dgm",
+        "gtc",
+        "rtr",
+        "m13",
+        "avr",
+        "dka",
+        "isd",
+        "m12",
+        "nph",
+        "mbs",
+        "me4",
+        "som",
+        "m11",
+        "roe",
+        "wwk",
+        "zen",
+        "me3",
+        "m10",
+        "arb",
+        "con",
+        "ala",
+        "me2",
+        "eve",
+        "shm",
+        "mor",
+        "lrw",
+        "me1",
+        "10e",
+        "fut",
+        "plc",
+        "tsp",
+        "csp",
+        "dis",
+        "gpt",
+        "rav",
+        "9ed",
+        "sok",
+        "bok",
+        "chk",
+        "5dn",
+        "dst",
+        "mrd",
+        "8ed",
+        "scg",
+        "lgn",
+        "ons",
+        "jud",
+        "tor",
+        "ody",
+        "apc",
+        "7ed",
+        "pls",
+        "inv",
+        "pcy",
+        "nem",
+        "mmq",
+        "uds",
+        "6ed",
+        "ulg",
+        "usg",
+        "exo",
+        "sth",
+        "tmp",
+        "wth",
+        "5ed",
+        "vis",
+        "mir",
+        "all",
+        "hml",
+        "chr",
+        "ice",
+        "4ed",
+        "fem",
+        "drk",
+        "sum",
+        "leg",
+        "3ed",
+        "atq",
+        "arn",
+        "2ed",
+        "leb",
+        "lea",
+        "unf",
+        "ugl",
+        "unh",
+        "ust",
+        "und",
+        "hbg",
+        "ydmu"
+    ]
 }

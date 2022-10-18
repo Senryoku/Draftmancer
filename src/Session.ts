@@ -53,7 +53,11 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	ownerIsPlayer: isBoolean,
 	setRestriction(val: any) {
 		if (!Array.isArray(val)) return false;
-		for (let s of val) if (constants.PrimarySets.indexOf(s) === -1) return false;
+		for (let s of val)
+			if (constants.PrimarySets.indexOf(s) === -1) {
+				console.error(`Error: Set ${s} in not marked as primary.`);
+				return false;
+			}
 		return true;
 	},
 	isPublic: isBoolean,

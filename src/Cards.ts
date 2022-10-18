@@ -118,7 +118,7 @@ export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json",
 
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = {};
-export const BoosterCardsBySet: { [set: string]: Array<CardID> } = {};
+export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [] };
 for (let cid in Cards) {
 	if (Cards[cid].in_booster || ["und", "j21"].includes(Cards[cid].set)) {
 		// Force cache for Unsanctioned (UND) and Jumpstart: Historic Horizons as they're not originally draft products
@@ -127,8 +127,11 @@ for (let cid in Cards) {
 	}
 	if (!(Cards[cid].set in CardsBySet)) CardsBySet[Cards[cid].set] = [];
 	CardsBySet[Cards[cid].set].push(cid);
+
+	if (Cards[cid].set === "ydmu") BoosterCardsBySet["alchemy_dmu"].push(cid);
 }
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
+BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 
 export const CardIDs = Object.keys(Cards);
 export const MTGACardIDs = CardIDs.filter((cid) => !!Cards[cid].arena_id);

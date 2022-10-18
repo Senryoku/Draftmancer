@@ -170,6 +170,7 @@ SetsInfos = json.load(open(ScryfallSets, 'r', encoding="utf8"))['data']
 PrimarySets = [s['code'] for s in SetsInfos if s['set_type']
                in ['core', 'expansion', 'masters', 'draft_innovation']]
 PrimarySets.extend(['unf', 'ugl', 'unh', 'ust', 'und'])  # Add Un-Sets as primary.
+PrimarySets.extend(['hbg', 'ydmu'])
 
 
 def append_set_cards(allcards, results):

@@ -83,6 +83,7 @@ export default {
 			SetsInfos: SetsInfos,
 			blocks: [
 				{ name: "MtG: Arena", sets: constants.MTGASets.map((s) => SetsInfos[s]).reverse() },
+				{ name: "Alchemy", sets: constants.AlchemySets.map((s) => SetsInfos[s]).reverse() },
 				{ name: "Un-sets", sets: ["unf", "und", "ust", "unh", "ugl"].map((s) => SetsInfos[s]) },
 				{
 					name: "Masters",
