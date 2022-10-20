@@ -1,5 +1,9 @@
 [
 	{
+		"date": "20/10/2022",
+		"notes": ["Added a setting to specify a prefered set for basic lands."]
+	},
+	{
 		"date": "18/10/2022",
 		"notes": [
 			"Added experimental support for some Alchemy draft formats (Alchemy Dominaria and Planeshifted New Capenna)."

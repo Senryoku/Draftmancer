@@ -305,8 +305,7 @@ export default {
 				exportToMTGA(
 					this.draftlog.users[id].cards.map((cid) => this.draftlog.carddata[cid]),
 					null,
-					this.language,
-					0
+					this.language
 				),
 				null,
 				"\t"

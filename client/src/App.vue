@@ -1201,12 +1201,16 @@
 					<template v-slot:controls>
 						<div style="font-variant: small-caps" v-if="deck.length > 0">
 							Export
-							<button type="button" @click="exportDeck" v-tooltip.top="'Export deck and sideboard'">
+							<button
+								type="button"
+								@click="exportDeck($event, true)"
+								v-tooltip.top="'Export deck and sideboard'"
+							>
 								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
 							</button>
 							<button
 								type="button"
-								@click="exportDeck(false)"
+								@click="exportDeck($event, false)"
 								v-tooltip.top="'Export without set information'"
 							>
 								<i class="fas fa-clipboard"></i> Simple
@@ -1231,6 +1235,7 @@
 							:autoland.sync="autoLand"
 							:targetDeckSize.sync="targetDeckSize"
 							:sideboardBasics.sync="sideboardBasics"
+							:preferedBasics.sync="preferedBasics"
 							:otherbasics="basicsInDeck"
 							@removebasics="removeBasicsFromDeck"
 							@update:lands="(c, n) => (lands[c] = n)"
@@ -1417,6 +1422,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>October 20, 2022</em>
+							<p>
+								Players can now specify the set of their basic lands when exporting to Arena. This
+								setting can be found in the Basic Lands dropdown, just above the deck.
+							</p>
+						</div>
+						<div class="news">
 							<em>October 18, 2022</em>
 							<p>Experimental support for some Alchemy draft formats:</p>
 							<ul>
@@ -1452,24 +1464,6 @@
 								Application migrated to yet another new hosting platform, hopefully solving the frequent
 								disconnects.
 							</p>
-						</div>
-						<div class="news">
-							<em>September 28, 2022</em>
-							<ul>
-								<li>
-									Application migrated to a new hosting platform. Please let me know if any problem
-									arises, especially performance-wise.
-								</li>
-								<li>
-									Users of
-									<a href="https://mtgarena.pro/mtga-pro-tracker/" target="_blank"
-										>MTGA Pro Tracker</a
-									>
-									can now directly import their collections by uploading their
-									<code>Player.log</code> file (see
-									<a @click="displayedModal = 'collectionHelp'">instructions</a>).
-								</li>
-							</ul>
 						</div>
 					</div>
 				</div>

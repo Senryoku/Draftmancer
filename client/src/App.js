@@ -31,11 +31,9 @@ import Dropdown from "./components/Dropdown.vue";
 import GridDraft from "./components/GridDraft.vue";
 import MinesweeperDraft from "./components/MinesweeperDraft.vue";
 import CollectionImportHelp from "./components/CollectionImportHelp.vue";
-import LandControl from "./components/LandControl.vue";
 import Modal from "./components/Modal.vue";
 import PatchNotes from "./components/PatchNotes.vue";
 import PickSummary from "./components/PickSummary.vue";
-import SetRestriction from "./components/SetRestriction.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
@@ -92,6 +90,7 @@ const defaultSettings = {
 	enableNotifications: false,
 	collapseSideboard: false,
 	sideboardBasics: 5,
+	preferedBasics: "",
 	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
@@ -117,13 +116,13 @@ export default {
 		Dropdown,
 		GridDraft,
 		MinesweeperDraft,
-		LandControl,
+		LandControl: () => import("./components/LandControl.vue"),
 		Modal,
 		Multiselect,
 		PatchNotes,
 		PickSummary,
 		ScaleSlider,
-		SetRestriction,
+		SetRestriction: () => import("./components/SetRestriction.vue"),
 		draggable,
 	},
 	data: () => {
@@ -240,6 +239,7 @@ export default {
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
+			preferedBasics: initialSettings.preferedBasics,
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -1995,9 +1995,13 @@ export default {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
 		},
-		exportDeck(full = true) {
+		exportDeck(event, full = true) {
 			copyToClipboard(
-				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, this.sideboardBasics, full)
+				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, {
+					preferedBasics: this.preferedBasics,
+					sideboardBasics: this.sideboardBasics,
+					full: full,
+				})
 			);
 			fireToast("success", "Deck exported to clipboard!");
 		},
@@ -2894,6 +2898,9 @@ export default {
 			this.storeSettings();
 		},
 		sideboardBasics() {
+			this.storeSettings();
+		},
+		preferedBasics() {
 			this.storeSettings();
 		},
 		// Session settings
