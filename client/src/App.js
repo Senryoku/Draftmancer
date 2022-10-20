@@ -17,23 +17,13 @@ import exportToMTGA from "./exportToMTGA.js";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
-import Bracket from "./components/Bracket.vue";
 import Card from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import CardPool from "./components/CardPool.vue";
 import CardPopup from "./components/CardPopup.vue";
 import DelayedInput from "./components/DelayedInput.vue";
-import DraftLog from "./components/DraftLog.vue";
-import DraftLogHistory from "./components/DraftLogHistory.vue";
-import DraftLogLive from "./components/DraftLogLive.vue";
-import DraftLogPick from "./components/DraftLogPick.vue";
 import Dropdown from "./components/Dropdown.vue";
-import GridDraft from "./components/GridDraft.vue";
-import MinesweeperDraft from "./components/MinesweeperDraft.vue";
-import CollectionImportHelp from "./components/CollectionImportHelp.vue";
 import Modal from "./components/Modal.vue";
-import PatchNotes from "./components/PatchNotes.vue";
-import PickSummary from "./components/PickSummary.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
@@ -99,7 +89,7 @@ const initialSettings = Object.assign(defaultSettings, storedSettings);
 export default {
 	components: {
 		BoosterCard,
-		Bracket,
+		Bracket: () => import("./components/Bracket.vue"),
 		Card,
 		CardList: () => import("./components/CardList.vue"),
 		CardPlaceholder,
@@ -107,20 +97,20 @@ export default {
 		CardPopup,
 		CardStats: () => import("./components/CardStats.vue"),
 		Collection: () => import("./components/Collection.vue"),
-		CollectionImportHelp,
+		CollectionImportHelp: () => import("./components/CollectionImportHelp.vue"),
 		DelayedInput,
-		DraftLog,
-		DraftLogHistory,
-		DraftLogLive,
-		DraftLogPick,
+		DraftLog: () => import("./components/DraftLog.vue"),
+		DraftLogHistory: () => import("./components/DraftLogHistory.vue"),
+		DraftLogLive: () => import("./components/DraftLogLive.vue"),
+		DraftLogPick: () => import("./components/DraftLogPick.vue"),
 		Dropdown,
-		GridDraft,
-		MinesweeperDraft,
+		GridDraft: () => import("./components/GridDraft.vue"),
+		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
 		Modal,
 		Multiselect,
-		PatchNotes,
-		PickSummary,
+		PatchNotes: () => import("./components/PatchNotes.vue"),
+		PickSummary: () => import("./components/PickSummary.vue"),
 		ScaleSlider,
 		SetRestriction: () => import("./components/SetRestriction.vue"),
 		draggable,
