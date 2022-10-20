@@ -1449,6 +1449,10 @@
 									Planeshifted Streets of New Capenna
 								</li>
 							</ul>
+							<p>
+								Note: Alchemy rebalanced cards cannot currently be played in 40-cards decks using Arena
+								Direct Challenge.
+							</p>
 						</div>
 						<div class="news">
 							<em>October 4, 2022</em>
