@@ -242,3 +242,7 @@ export class Bot implements IBot {
 		this.fallbackBot?.addCard(card);
 	}
 }
+
+export function isBot(obj: any): obj is IBot {
+	return obj instanceof Bot || obj instanceof SimpleBot;
+}

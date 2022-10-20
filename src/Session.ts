@@ -19,7 +19,7 @@ import {
 	SlotedCardPool,
 	UniqueCard,
 } from "./Cards.js";
-import { IBot, Bot, SimpleBot, fallbackToSimpleBots } from "./Bot.js";
+import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -1584,6 +1584,7 @@ export class Session implements IIndexable {
 					`Session.startBotPickChain (sessionID: ${this.id}, nextUserID: ${userID}): doBotPick errored:`
 				);
 				console.error(error);
+				console.error("Associated Player:", s.players[userID]);
 			});
 		} // else: This bot is already picking, do nothing.
 	}
@@ -1596,6 +1597,7 @@ export class Session implements IIndexable {
 		assert(s.players[userID].botPickInFlight, "Error: Call to doBotPick with botPickInFlight not set to true.");
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
 
+		// Since this runs asynchronously, there's multiple points were we should make sure the session state is still valid (mostly that the draft has not been prematurely stopped) before continuing.
 		const shouldStop = () => {
 			const state = this.draftState as DraftState;
 			// Draft may have been manually terminated by the owner.
@@ -1604,14 +1606,26 @@ export class Session implements IIndexable {
 				return true;
 			}
 			// An attempt at avoiding promises outliving the session (this all players disconnect for example).
-			if (!state?.players[userID].botPickInFlight) return true;
+			if (!state?.players[userID]?.botPickInFlight) return true;
 			// Player may have reconnected
 			if (!state?.players[userID].isBot && !this.isDisconnected(userID)) {
 				s.players[userID].botPickInFlight = false;
 				return true;
 			}
+
+			// Session has been automatically stashed away
+			if (!isBot(s.players[userID].botInstance)) {
+				s.players[userID].botPickInFlight = false;
+				return true;
+			}
+
 			return false;
 		};
+
+		// Since startBotPickChain can be deplayed by multiple seconds to stagger the API calls, the session may be
+		// stashed away when we reach this point (if the user left the application right after launching a draft for example),
+		// in this case the session is turned into a PoD structure ('isBot' test will fail) and we should stop there.
+		if (shouldStop()) return;
 
 		// Choose cards
 		const pickedIndices = [];
