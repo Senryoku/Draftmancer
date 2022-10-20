@@ -1393,18 +1393,14 @@ export class Session implements IIndexable {
 		if (this.drafting) return;
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
-		this.drafting = true;
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
 
 		let boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		this.disconnectedUsers = {};
-
 		if (
 			!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })
 		) {
-			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return;
 		}
@@ -1413,10 +1409,20 @@ export class Session implements IIndexable {
 		const oracleIds = this.boosters.flat().map((card) => card.oracle_id);
 		const simpleBots = await fallbackToSimpleBots([...new Set(oracleIds)]);
 
-		this.draftState = new DraftState(this.boosters, this.getSortedHumanPlayersIDs(), {
-			simpleBots: simpleBots,
-			botCount: this.bots,
-		});
+		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
+		// raising an exception and leaving the session in an invalid state. I hope this will catch all possible failure cases.
+		try {
+			this.draftState = new DraftState(this.boosters, this.getSortedHumanPlayersIDs(), {
+				simpleBots: simpleBots,
+				botCount: this.bots,
+			});
+			this.disconnectedUsers = {};
+			this.drafting = true;
+		} catch (e) {
+			console.error("Exception raised while constructing the DraftState: ", e);
+			this.cleanDraftState();
+			return;
+		}
 
 		// Draft Log initialization
 		const log = this.initLogs("Draft");
