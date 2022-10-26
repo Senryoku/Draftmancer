@@ -1,6 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import axios from "axios";
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
 
 Vue.config.productionTip = false;
 
@@ -42,8 +44,15 @@ cardCachePlugin.install = function () {
 		},
 	});
 };
-Vue.use(cardCachePlugin);
 
-new Vue({
+Vue.use(cardCachePlugin);
+Vue.use(FloatingVue, {
+	placement: "bottom-start",
+	boundariesElement: "window",
+	delay: 250,
+});
+
+const app = new Vue({
 	render: (h) => h(App),
-}).$mount("#main-vue");
+});
+app.$mount("#main-vue");

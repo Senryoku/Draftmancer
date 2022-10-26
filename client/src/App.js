@@ -3,7 +3,6 @@
 import io from "socket.io-client";
 import Vue from "vue";
 import draggable from "vuedraggable";
-import VTooltip from "v-tooltip";
 import { Multiselect } from "vue-multiselect";
 import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
@@ -59,12 +58,6 @@ const Sounds = {
 	countdown: new Audio("sound/click_001.ogg"),
 	readyCheck: new Audio("sound/drop_003.ogg"),
 };
-
-Vue.use(VTooltip, {
-	defaultPlacement: "bottom-start",
-	defaultBoundariesElement: "window",
-	defaultDelay: 250,
-});
 
 const localStorageSettingsKey = "mtgadraft-settings";
 const localStorageSessionSettingsKey = "mtgadraft-session-settings";

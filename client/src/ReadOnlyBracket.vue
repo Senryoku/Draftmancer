@@ -25,13 +25,12 @@
 
 <script>
 import Vue from "vue";
-import VTooltip from "v-tooltip";
 import { getUrlVars } from "./helper.js";
 import Bracket from "./components/Bracket.vue";
+import FloatingVue from "floating-vue";
+import "floating-vue/dist/style.css";
 
-Vue.use(VTooltip);
-VTooltip.options.defaultPlacement = "bottom-start";
-VTooltip.options.defaultBoundariesElement = "window";
+Vue.use(FloatingVue);
 
 export default {
 	components: { Bracket },
@@ -44,7 +43,7 @@ export default {
 			draftlog: null,
 		};
 	},
-	mounted: async function() {
+	mounted: async function () {
 		let urlParamSession = getUrlVars()["session"];
 		if (urlParamSession) this.sessionID = decodeURI(urlParamSession);
 

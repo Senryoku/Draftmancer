@@ -91,9 +91,12 @@
 						style="font-size: 1.2em; vertical-align: -20%"
 						:class="{ faded: !pickOnDblclick, crossed: !pickOnDblclick }"
 						@click="pickOnDblclick = !pickOnDblclick"
-						v-tooltip="
-							`Pick cards by double clicking: <strong>${pickOnDblclick ? 'Enabled' : 'Disabled'}</strong>`
-						"
+						v-tooltip="{
+							content: `Pick cards by double clicking: <strong>${
+								pickOnDblclick ? 'Enabled' : 'Disabled'
+							}</strong>`,
+							html: true,
+						}"
 					/>
 				</div>
 				<div style="min-width: 20px">
@@ -102,11 +105,12 @@
 						style="width: 20px; margin-top: 5px"
 						:class="{ faded: !displayBotScores, crossed: !displayBotScores }"
 						@click="displayBotScores = !displayBotScores"
-						v-tooltip="
-							`Display Bot Recommendations: <strong>${
+						v-tooltip="{
+							content: `Display Bot Recommendations: <strong>${
 								displayBotScores ? 'Enabled' : 'Disabled'
-							}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`
-						"
+							}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`,
+							html: true,
+						}"
 					>
 						<img src="./assets/img/bot-score.svg" />
 					</div>
@@ -116,18 +120,23 @@
 						class="fas clickable"
 						:class="{ 'fa-volume-mute': !enableSound, 'fa-volume-up': enableSound, faded: !enableSound }"
 						@click="enableSound = !enableSound"
-						v-tooltip="`Sound: <strong>${enableSound ? 'Enabled' : 'Disabled'}</strong>`"
+						v-tooltip="{
+							content: `Sound: <strong>${enableSound ? 'Enabled' : 'Disabled'}</strong>`,
+							html: true,
+						}"
 					/>
 				</div>
 				<div style="min-width: 20px; text-align: center">
 					<i
-						v-tooltip="
-							notificationPermission === 'denied'
-								? 'Notifications for this domain are blocked in your browser'
-								: `Desktop Notifications: <strong>${
-										enableNotifications ? 'Enabled' : 'Disabled'
-								  }</strong>`
-						"
+						v-tooltip="{
+							content:
+								notificationPermission === 'denied'
+									? 'Notifications for this domain are blocked in your browser'
+									: `Desktop Notifications: <strong>${
+											enableNotifications ? 'Enabled' : 'Disabled'
+									  }</strong>`,
+							html: true,
+						}"
 						class="fas clickable"
 						:class="{
 							'greyed-out': notificationPermission === 'denied',
@@ -480,11 +489,12 @@
 					clickable: userID === sessionOwner,
 				}"
 				@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
-				v-tooltip="
-					`Randomize Seating Order on draft start: <strong>${
+				v-tooltip="{
+					content: `Randomize Seating Order on draft start: <strong>${
 						randomizeSeatingOrder ? 'Enabled' : 'Disabled'
-					}</strong>`
-				"
+					}</strong>`,
+					html: true,
+				}"
 			></i>
 			<template v-if="!drafting">
 				<draggable
@@ -1864,8 +1874,9 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: '<p>Share this session ID with everyone.</p>',
+							html: true,
 						}"
 					>
 						<label for="is-public">Public</label>
@@ -1876,9 +1887,10 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Public description for your session. Ex: Peasant Cube, will launch at 8pm. Matches played on Arena.</p>',
+							html: true,
 						}"
 					>
 						<label for="session-desc">Description</label>
@@ -1896,10 +1908,11 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: `<p>Spectate the game as the Session Owner, without participating.<br>
 								If checked, the owner will still be able to observe the picks of each player (as long as the logs are available).<br>
 								Mostly useful to tournament organizers.</p>`,
+							html: true,
 						}"
 					>
 						<label for="is-owner-player">Spectate as Session Owner</label>
@@ -1929,9 +1942,10 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>If set, the system will attempt to smooth out the color distribution in each pack, as opposed to being completely random.</p>',
+							html: true,
 						}"
 						:class="{ disabled: usePredeterminedBoosters }"
 					>
@@ -1944,9 +1958,10 @@
 						class="line"
 						:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>If enabled (default) Rares can be promoted to a Mythic at a 1/8 rate.</p><p>Disabled for Custom Card Lists.</p>',
+							html: true,
 						}"
 					>
 						<label for="mythic-promotion">Rare promotion to Mythic</label>
@@ -1957,8 +1972,9 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: '<p>Upload your own boosters.</p>',
+							html: true,
 						}"
 					>
 						<label for="use-predetermined-boosters">Use Pre-Determined Boosters</label>
@@ -1979,9 +1995,10 @@
 						class="option-section"
 						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
+							html: true,
 						}"
 					>
 						<div class="option-column-title">
@@ -2010,9 +2027,10 @@
 						class="option-section"
 						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Sets a duplicate limit for each rarity across the entire draft. Only used if no player collection is used to limit the card pool. Default: Off.</p>',
+							html: true,
 						}"
 					>
 						<div class="option-column-title">
@@ -2045,9 +2063,10 @@
 						class="line"
 						v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>If enabled, each pack will have a chance to contain a \'foil\' card of any rarity in place of one common.</p>',
+							html: true,
 						}"
 					>
 						<label for="option-foil">Foil</label>
@@ -2058,9 +2077,10 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>If enabled, players will receive a log of their own draft, regardless of the full game log settings.</p>',
+							html: true,
 						}"
 					>
 						<label for="option-personal-logs">Personal Logs</label>
@@ -2071,9 +2091,10 @@
 					<div
 						class="line"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Controls who is going to receive the full game logs. Note that this setting doesn\'t affect personal logs.</p><p>\'Everyone, on owner approval\': The session owner will choose when to reveal the full game logs. Useful for tournaments.</p>',
+							html: true,
 						}"
 					>
 						<label for="draft-log-recipients">Send full game logs to</label>
@@ -2092,9 +2113,10 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Team Draft, which is a 6-player, 3v3 mode where teams alternate seats.</p><p>This creates a bracket where you face each player on the other team.</p>',
+							html: true,
 						}"
 					>
 						<label for="team-draft">Team Draft</label>
@@ -2105,8 +2127,9 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: '<p>Draft: Boosters per Player; default is 3.</p>',
+							html: true,
 						}"
 					>
 						<label for="boosters-per-player">Boosters per Player</label>
@@ -2132,9 +2155,10 @@
 						<div
 							class="line"
 							v-tooltip.right="{
-								classes: 'option-tooltip',
+								popperClass: 'option-tooltip',
 								content:
 									'<p>Controls how the boosters will be distributed. This setting will have no effect if no individual booster rules are specified below.</p><ul><li>Regular: Every player will receive boosters from the same sets and will open them in the specified order.</li><li>Shuffle Player Boosters: Each player will receive boosters from the same sets but will open them in a random order.</li><li>Shuffle Booster Pool: Boosters will be shuffled all together and randomly handed to each player.</li></ul>',
+								html: true,
 							}"
 						>
 							<label for="distribution-mode">Distribution Mode</label>
@@ -2151,9 +2175,10 @@
 						</div>
 						<div
 							v-tooltip.right="{
-								classes: 'option-tooltip',
+								popperClass: 'option-tooltip',
 								content:
 									'<p>Specify the set of indiviual boosters handed to each player. Useful for classic Chaos Draft or Ixalan/Rivals of Ixalan draft for example.</p><p>Note: Collections are ignored for each booster with any other value than (Default).</p>',
+								html: true,
 							}"
 						>
 							<div v-for="(value, index) in customBoosters" class="line" :key="index">
@@ -2180,9 +2205,10 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Number of cards to pick from each booster. Useful for Commander Legends for example (2 cards per booster).</p><p>Default is 1.</p><p>First Pick Only: The custom value will only be used for the first pick of each booster, then revert to 1. For example, you should check this with a value of 2 for Double Masters sets.</p>',
+							html: true,
 						}"
 					>
 						<label for="picked-cards-per-round">Picked cards per booster</label>
@@ -2203,9 +2229,10 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>In addition to picking a card, you will also remove this number of cards from the same booster.</p><p>This is typically used in conjunction with a higher count of boosters per player for drafting with 2 to 4 players. Burn or Glimpse Draft is generally 9 boosters per player with 2 cards being burned in addition to a pick.</p><p>Default is 0.</p>',
+							html: true,
 						}"
 					>
 						<label for="burned-cards-per-round">Burned cards per booster</label>
@@ -2225,8 +2252,9 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: '<p>Discard (burn) the remaining N cards of each packs automatically.</p>',
+							html: true,
 						}"
 					>
 						<label for="discard-remaining-cards">Discard the remaining</label>
@@ -2252,9 +2280,10 @@
 					<div
 						class="line"
 						v-tooltip.right="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content:
 								'<p>Disable the bot suggestions mechanism for every player in the session. Useful for tournaments for example.</p>',
+							html: true,
 						}"
 					>
 						<label for="disable-bot-suggestions">Disable Bot Suggestions</label>
@@ -2270,9 +2299,10 @@
 					<div style="display: flex; justify-content: space-between; align-items: center">
 						<div
 							v-tooltip.left="{
-								classes: 'option-tooltip',
+								popperClass: 'option-tooltip',
 								content:
 									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
+								html: true,
 							}"
 							:class="{
 								'disabled-simple': !useCustomCardList || (customCardList && customCardList.layouts),
@@ -2320,9 +2350,10 @@
 						<div
 							class="file-drop clickable"
 							v-tooltip.left="{
-								classes: 'option-tooltip',
+								popperClass: 'option-tooltip',
 								content:
 									'<p>Upload any card list from your computer.</p><p>You can use services like Cube Cobra to find cubes or craft your own list and export it to .txt.</p>',
+								html: true,
 							}"
 							@drop="dropCustomList"
 							onclick="document.querySelector('#card-list-input').click()"
@@ -2362,8 +2393,9 @@
 					<div
 						class="option-cube-select"
 						v-tooltip.left="{
-							classes: 'option-tooltip',
+							popperClass: 'option-tooltip',
 							content: '<p>Load a pre-built cube from a curated list.</p>',
+							html: true,
 						}"
 					>
 						<label for="curated-cubes">Load a Pre-Build Cube:</label>
