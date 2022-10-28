@@ -237,6 +237,8 @@ describe("Sets content", function () {
 		snc: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		clb: { common: 141, uncommon: 120, rare: 77, mythic: 22, special: 1 },
 		"2x2": { common: 91, uncommon: 80, rare: 120, mythic: 40 },
+		dmu: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 	};
 
 	beforeEach(function (done) {
