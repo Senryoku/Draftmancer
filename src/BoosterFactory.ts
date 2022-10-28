@@ -30,7 +30,8 @@ const foilRarityRates: { [slot: string]: number } = {
 
 export function getSetFoilRate(set: string | null) {
 	if (set === null) return foilRate;
-	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid", "vow", "neo"].includes(set)) return 1.0 / 3.0;
+	if (["eld", "thb", "iko", "znr", "khm", "stx", "afr", "mid", "vow", "neo", "snc", "dmu", "bro"].includes(set))
+		return 1.0 / 3.0;
 	return foilRate;
 }
 
@@ -1128,7 +1129,14 @@ class UNFBoosterFactory extends BoosterFactory {
 		}
 	}
 }
+
 // TODO
+/* 1 Rare or mythic rare
+ * 1 Retro artifact or retro schematic card
+ * 3 Non-foil uncommons
+ * 10 Non-foil commons, unless one is replaced by a traditional foil card of any rarity (33%)
+ * 1 Basic land or mech land card
+ */
 class BROBoosterFactory extends BoosterFactory {}
 
 // Set specific rules.
