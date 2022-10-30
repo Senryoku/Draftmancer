@@ -161,6 +161,9 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     allcardURL = next(x for x in bulkdata['data'] if x['type'] == "all_cards")[
         'download_uri']
     print("Downloading {}...".format(allcardURL))
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
+    urllib.request.install_opener(opener)
     urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
 
@@ -769,6 +772,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "dmr", "bro"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "dmr"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

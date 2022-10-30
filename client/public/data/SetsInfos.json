@@ -413,34 +413,34 @@
     "brc": {
         "code": "brc",
         "fullName": "The Brothers' War Commander",
-        "cardCount": 12,
+        "cardCount": 175,
         "isPrimary": false,
         "icon": "img/sets/brc.svg",
-        "commonCount": 2,
-        "mythicCount": 6,
-        "rareCount": 1,
-        "uncommonCount": 3
+        "commonCount": 39,
+        "mythicCount": 19,
+        "rareCount": 80,
+        "uncommonCount": 37
     },
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 25,
+        "cardCount": 81,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
-        "commonCount": 10,
-        "mythicCount": 6,
-        "rareCount": 8,
-        "uncommonCount": 1
+        "commonCount": 21,
+        "mythicCount": 16,
+        "rareCount": 35,
+        "uncommonCount": 9
     },
     "brr": {
         "code": "brr",
         "fullName": "The Brothers' War Retro Artifacts",
-        "cardCount": 12,
+        "cardCount": 21,
         "isPrimary": false,
-        "commonCount": 1,
-        "mythicCount": 2,
-        "rareCount": 6,
-        "uncommonCount": 3
+        "icon": "img/sets/brr.svg",
+        "mythicCount": 4,
+        "rareCount": 11,
+        "uncommonCount": 6
     },
     "btd": {
         "code": "btd",
@@ -1682,11 +1682,14 @@
     },
     "gn3": {
         "code": "gn3",
-        "fullName": "Game Night 2022",
-        "cardCount": 5,
+        "fullName": "Game Night: Free-for-All",
+        "cardCount": 135,
         "isPrimary": false,
         "icon": "img/sets/gn3.svg",
-        "mythicCount": 5
+        "commonCount": 55,
+        "mythicCount": 5,
+        "rareCount": 27,
+        "uncommonCount": 48
     },
     "gnt": {
         "code": "gnt",
@@ -2108,6 +2111,16 @@
         "mythicCount": 13,
         "rareCount": 59,
         "uncommonCount": 125
+    },
+    "j22": {
+        "code": "j22",
+        "fullName": "Jumpstart 2022",
+        "cardCount": 4,
+        "isPrimary": true,
+        "icon": "img/sets/j22.svg",
+        "mythicCount": 2,
+        "rareCount": 1,
+        "uncommonCount": 1
     },
     "jgp": {
         "code": "jgp",
@@ -2895,11 +2908,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 24,
+        "cardCount": 25,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 23
+        "rareCount": 24
     },
     "p5dn": {
         "code": "p5dn",
@@ -3423,6 +3436,14 @@
         "isPrimary": false,
         "block": "Shadowmoor",
         "icon": "img/sets/peve.svg",
+        "rareCount": 2
+    },
+    "pewk": {
+        "code": "pewk",
+        "fullName": "Eternal Weekend 2022",
+        "cardCount": 2,
+        "isPrimary": false,
+        "icon": "img/sets/pewk.svg",
         "rareCount": 2
     },
     "pexo": {
@@ -4132,10 +4153,10 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 31,
+        "cardCount": 33,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 31
+        "rareCount": 33
     },
     "prix": {
         "code": "prix",
@@ -4152,14 +4173,14 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 2268,
+        "cardCount": 2916,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
-        "commonCount": 387,
-        "mythicCount": 269,
-        "rareCount": 1140,
-        "uncommonCount": 471
+        "commonCount": 396,
+        "mythicCount": 347,
+        "rareCount": 1677,
+        "uncommonCount": 495
     },
     "prna": {
         "code": "prna",
@@ -4525,11 +4546,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 93,
+        "cardCount": 105,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
-        "mythicCount": 22,
-        "rareCount": 71
+        "mythicCount": 25,
+        "rareCount": 80
     },
     "pw09": {
         "code": "pw09",
@@ -4836,21 +4857,21 @@
     "slc": {
         "code": "slc",
         "fullName": "Secret Lair 30th Anniversary Countdown Kit",
-        "cardCount": 7,
+        "cardCount": 30,
         "isPrimary": false,
         "icon": "img/sets/slc.svg",
-        "mythicCount": 4,
-        "rareCount": 3
+        "mythicCount": 6,
+        "rareCount": 24
     },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 664,
+        "cardCount": 724,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
-        "mythicCount": 118,
-        "rareCount": 486,
+        "mythicCount": 124,
+        "rareCount": 540,
         "uncommonCount": 20
     },
     "slu": {

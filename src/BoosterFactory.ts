@@ -1154,7 +1154,7 @@ class BROBoosterFactory extends BoosterFactory {
 					Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, BRRCards.get(cid) as number)
 				);
 		} else {
-			for (let cid of BoosterCardsBySet["brr"])
+			for (let cid of CardsBySet["brr"])
 				this.retroArtifacts[Cards[cid].rarity].set(cid, options.maxDuplicates?.[Cards[cid].rarity] ?? 99);
 		}
 	}
