@@ -1130,14 +1130,61 @@ class UNFBoosterFactory extends BoosterFactory {
 	}
 }
 
-// TODO
+// TODO: Check retro mythics and rares ratio.
 /* 1 Rare or mythic rare
  * 1 Retro artifact or retro schematic card
  * 3 Non-foil uncommons
  * 10 Non-foil commons, unless one is replaced by a traditional foil card of any rarity (33%)
  * 1 Basic land or mech land card
  */
-class BROBoosterFactory extends BoosterFactory {}
+class BROBoosterFactory extends BoosterFactory {
+	readonly RetroMythicChance = 0.066;
+	readonly RetroRareChance = 0.264;
+
+	retroArtifacts: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, options);
+
+		if (options.session && !options.session.unrestrictedCardPool()) {
+			const BRRCards: CardPool = options.session.restrictedCollection(["brr"]);
+			for (let cid of BRRCards.keys())
+				this.retroArtifacts[Cards[cid].rarity].set(
+					cid,
+					Math.min(options.maxDuplicates?.[Cards[cid].rarity] ?? 99, BRRCards.get(cid) as number)
+				);
+		} else {
+			for (let cid of BoosterCardsBySet["brr"])
+				this.retroArtifacts[Cards[cid].rarity].set(cid, options.maxDuplicates?.[Cards[cid].rarity] ?? 99);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.retroArtifacts)) {
+			return super.generateBooster(targets);
+		} else {
+			const retroCardsCounts = countBySlot(this.retroArtifacts);
+			const retroRarityRoll = random.real(0, 1);
+			const pickedRarity =
+				targets["rare"] > 0
+					? this.options.mythicPromotion &&
+					  retroCardsCounts["mythic"] > 0 &&
+					  retroRarityRoll < this.RetroMythicChance
+						? "mythic"
+						: retroCardsCounts["rare"] > 0 &&
+						  retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
+						? "rare"
+						: "uncommon"
+					: "uncommon";
+			const retroArtifact = pickCard(this.retroArtifacts[pickedRarity], []);
+
+			let booster = super.generateBooster(targets);
+			if (!booster) return false;
+			if (retroArtifact) booster.unshift(retroArtifact);
+			return booster;
+		}
+	}
+}
 
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
