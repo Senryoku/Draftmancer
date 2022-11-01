@@ -11,16 +11,16 @@ body {
 
 .backgound-image {
 	position: absolute;
-	right: -2em;
+	right: 2em;
 	top: 7em;
 	background: radial-gradient(closest-side, rgba(32, 32, 32, 0.5), rgba(32, 32, 32, 0.5) 50%, rgb(32, 32, 32)),
-		url("../assets/img/dmu_sma_fb_1000x1000_en-min.webp");
-	background-position: center, center 22%;
-	background-size: 80%;
+		url("../assets/img/bro_sma_fb_1000x1000_en.webp");
+	background-position: center, center 46%;
+	background-size: 100%;
 	background-repeat: no-repeat;
 	z-index: -1;
-	width: 60em;
-	height: 26em;
+	width: 70em;
+	height: 35em;
 }
 
 @media (max-width: 1600px) {
