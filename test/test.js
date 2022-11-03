@@ -527,7 +527,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster = 14;
+	const latestSetCardPerBooster = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
@@ -543,7 +543,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * latestSetCardPerBooster);
+		expectCardCount(3 * 14);
 		disconnect();
 	});
 
@@ -887,7 +887,7 @@ describe("Single Draft (Two Players)", function () {
 	});
 
 	describe("With custom boosters and bots", function () {
-		const CustomBoosters = ["xln", "rix", ""];
+		const CustomBoosters = ["xln", "rix", latestSetCardPerBooster === 14 ? "" : "dmu"];
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
