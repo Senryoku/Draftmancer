@@ -424,13 +424,13 @@
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 287,
+        "cardCount": 291,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
-        "commonCount": 62,
+        "commonCount": 63,
         "mythicCount": 43,
-        "rareCount": 111,
-        "uncommonCount": 71
+        "rareCount": 112,
+        "uncommonCount": 73
     },
     "brr": {
         "code": "brr",
@@ -438,10 +438,9 @@
         "cardCount": 82,
         "isPrimary": false,
         "icon": "img/sets/brr.svg",
-        "commonCount": 2,
-        "mythicCount": 14,
-        "rareCount": 45,
-        "uncommonCount": 21
+        "mythicCount": 20,
+        "rareCount": 39,
+        "uncommonCount": 23
     },
     "btd": {
         "code": "btd",
