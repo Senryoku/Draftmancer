@@ -67,12 +67,12 @@
     "40k": {
         "code": "40k",
         "fullName": "Warhammer 40,000 Commander",
-        "cardCount": 618,
+        "cardCount": 617,
         "isPrimary": false,
         "icon": "img/sets/40k.svg",
         "commonCount": 104,
         "mythicCount": 26,
-        "rareCount": 342,
+        "rareCount": 341,
         "uncommonCount": 146
     },
     "4ed": {
@@ -413,34 +413,35 @@
     "brc": {
         "code": "brc",
         "fullName": "The Brothers' War Commander",
-        "cardCount": 175,
+        "cardCount": 196,
         "isPrimary": false,
         "icon": "img/sets/brc.svg",
         "commonCount": 39,
-        "mythicCount": 19,
-        "rareCount": 80,
+        "mythicCount": 21,
+        "rareCount": 99,
         "uncommonCount": 37
     },
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 81,
+        "cardCount": 287,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
-        "commonCount": 21,
-        "mythicCount": 16,
-        "rareCount": 35,
-        "uncommonCount": 9
+        "commonCount": 62,
+        "mythicCount": 43,
+        "rareCount": 111,
+        "uncommonCount": 71
     },
     "brr": {
         "code": "brr",
         "fullName": "The Brothers' War Retro Artifacts",
-        "cardCount": 21,
+        "cardCount": 82,
         "isPrimary": false,
         "icon": "img/sets/brr.svg",
-        "mythicCount": 4,
-        "rareCount": 11,
-        "uncommonCount": 6
+        "commonCount": 2,
+        "mythicCount": 14,
+        "rareCount": 45,
+        "uncommonCount": 21
     },
     "btd": {
         "code": "btd",
@@ -4178,8 +4179,8 @@
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 396,
-        "mythicCount": 347,
-        "rareCount": 1677,
+        "mythicCount": 346,
+        "rareCount": 1678,
         "uncommonCount": 495
     },
     "prna": {
@@ -4866,12 +4867,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 724,
+        "cardCount": 726,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
         "mythicCount": 124,
-        "rareCount": 540,
+        "rareCount": 542,
         "uncommonCount": 20
     },
     "slu": {
