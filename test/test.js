@@ -284,13 +284,19 @@ describe("Sets content", function () {
 		it(`Checking ${set}`, function (done) {
 			let ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("setRestriction", function () {
+			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
+				let noError = true; // Log all errors before exiting.
 				for (let r in sets[set]) {
-					expect([...localCollection[r].keys()].map((cid) => Cards[cid].set).every((s) => s === set)).to.be
-						.true;
-					expect([...localCollection[r].keys()]).to.have.lengthOf(sets[set][r]);
+					const cardIDs = [...localCollection[r].keys()];
+					if (cardIDs.length !== sets[set][r]) {
+						console.error(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
+						noError = false;
+					}
+					expect(cardIDs.map((cid) => Cards[cid].set).every((s) => s === set)).to.be.true;
+					// expect(cardIDs).to.have.lengthOf(sets[set][r]); // FIXME: For some reason, this times out on error, instead of correctly reporting the error
 				}
+				expect(noError).to.be.true;
 				done();
 			});
 			clients[ownerIdx].emit("ignoreCollections", true);

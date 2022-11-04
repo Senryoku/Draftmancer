@@ -413,24 +413,24 @@
     "brc": {
         "code": "brc",
         "fullName": "The Brothers' War Commander",
-        "cardCount": 196,
+        "cardCount": 205,
         "isPrimary": false,
         "icon": "img/sets/brc.svg",
         "commonCount": 39,
-        "mythicCount": 21,
-        "rareCount": 99,
+        "mythicCount": 23,
+        "rareCount": 106,
         "uncommonCount": 37
     },
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 291,
+        "cardCount": 380,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
-        "commonCount": 63,
-        "mythicCount": 43,
-        "rareCount": 112,
-        "uncommonCount": 73
+        "commonCount": 123,
+        "mythicCount": 45,
+        "rareCount": 129,
+        "uncommonCount": 83
     },
     "brr": {
         "code": "brr",
