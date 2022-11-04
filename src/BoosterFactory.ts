@@ -1130,16 +1130,15 @@ class UNFBoosterFactory extends BoosterFactory {
 	}
 }
 
-// TODO: Check retro mythics and rares ratio.
 /* 1 Rare or mythic rare
- * 1 Retro artifact or retro schematic card
+ * 1 Retro artifact or retro schematic card ("It's an uncommon approximately 66% of the time, a rare ~27% of the time, and a mythic rare ~7% of the time")
  * 3 Non-foil uncommons
  * 10 Non-foil commons, unless one is replaced by a traditional foil card of any rarity (33%)
  * 1 Basic land or mech land card
  */
 class BROBoosterFactory extends BoosterFactory {
-	readonly RetroMythicChance = 0.066;
-	readonly RetroRareChance = 0.264;
+	readonly RetroMythicChance = 0.07;
+	readonly RetroRareChance = 0.27;
 
 	retroArtifacts: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
 
