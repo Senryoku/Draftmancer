@@ -68,7 +68,8 @@
         "vow",
         "neo",
         "snc",
-        "dmu"
+        "dmu",
+        "bro"
     ],
     "AlchemySets": [
         "hbg",
@@ -80,7 +81,8 @@
         "vow",
         "neo",
         "snc",
-        "dmu"
+        "dmu",
+        "bro"
     ],
     "BasicLandNames": {
         "en": {
@@ -259,6 +261,7 @@
         }
     ],
     "PrimarySets": [
+        "bro",
         "dmu",
         "2x2",
         "clb",

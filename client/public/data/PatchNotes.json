@@ -1,5 +1,9 @@
 [
 	{
+		"date": "05/11/2022",
+		"notes": ["The Brothers' War preliminary support."]
+	},
+	{
 		"date": "20/10/2022",
 		"notes": ["Added a setting to specify a prefered set for basic lands."]
 	},

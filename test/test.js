@@ -237,6 +237,8 @@ describe("Sets content", function () {
 		snc: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		clb: { common: 141, uncommon: 120, rare: 77, mythic: 22, special: 1 },
 		"2x2": { common: 91, uncommon: 80, rare: 120, mythic: 40 },
+		dmu: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 	};
 
 	beforeEach(function (done) {
@@ -282,13 +284,19 @@ describe("Sets content", function () {
 		it(`Checking ${set}`, function (done) {
 			let ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("setRestriction", function () {
+			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
+				let noError = true; // Log all errors before exiting.
 				for (let r in sets[set]) {
-					expect([...localCollection[r].keys()].map((cid) => Cards[cid].set).every((s) => s === set)).to.be
-						.true;
-					expect([...localCollection[r].keys()]).to.have.lengthOf(sets[set][r]);
+					const cardIDs = [...localCollection[r].keys()];
+					if (cardIDs.length !== sets[set][r]) {
+						console.error(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
+						noError = false;
+					}
+					expect(cardIDs.map((cid) => Cards[cid].set).every((s) => s === set)).to.be.true;
+					// expect(cardIDs).to.have.lengthOf(sets[set][r]); // FIXME: For some reason, this times out on error, instead of correctly reporting the error
 				}
+				expect(noError).to.be.true;
 				done();
 			});
 			clients[ownerIdx].emit("ignoreCollections", true);
@@ -525,7 +533,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster = 14;
+	const latestSetCardPerBooster = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
@@ -541,7 +549,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 		startDraft();
 		endDraft();
-		expectCardCount(3 * latestSetCardPerBooster);
+		expectCardCount(3 * 14);
 		disconnect();
 	});
 
@@ -885,7 +893,7 @@ describe("Single Draft (Two Players)", function () {
 	});
 
 	describe("With custom boosters and bots", function () {
-		const CustomBoosters = ["xln", "rix", ""];
+		const CustomBoosters = ["xln", "rix", latestSetCardPerBooster === 14 ? "" : "dmu"];
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);

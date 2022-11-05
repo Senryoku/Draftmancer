@@ -1432,6 +1432,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>November 5, 2022</em>
+							<p>
+								<img src="img/sets/bro.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
+								The Brothers' War is now available!
+							</p>
+						</div>
+						<div class="news">
 							<em>October 20, 2022</em>
 							<p>
 								Players can now specify the set of their basic lands when exporting to Arena. This
@@ -1470,13 +1477,6 @@
 								Extended the cube format with <strong>Pack Layouts</strong> to allow more customization,
 								such as emulating the mythic rarity. More information
 								<a href="cubeformat.html#layouts" target="_blank">here</a>.
-							</p>
-						</div>
-						<div class="news">
-							<em>October 3, 2022</em>
-							<p>
-								Application migrated to yet another new hosting platform, hopefully solving the frequent
-								disconnects.
 							</p>
 						</div>
 					</div>
