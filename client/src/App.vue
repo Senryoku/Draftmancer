@@ -1432,7 +1432,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>November, 2022</em>
+							<em>November 5, 2022</em>
 							<p>
 								<img src="img/sets/bro.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
 								The Brothers' War is now available!
