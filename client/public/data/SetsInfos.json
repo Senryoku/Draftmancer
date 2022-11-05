@@ -427,10 +427,10 @@
         "cardCount": 380,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
-        "commonCount": 123,
+        "commonCount": 121,
         "mythicCount": 45,
         "rareCount": 129,
-        "uncommonCount": 83
+        "uncommonCount": 85
     },
     "brr": {
         "code": "brr",
