@@ -413,34 +413,34 @@
     "brc": {
         "code": "brc",
         "fullName": "The Brothers' War Commander",
-        "cardCount": 205,
+        "cardCount": 209,
         "isPrimary": false,
         "icon": "img/sets/brc.svg",
-        "commonCount": 39,
-        "mythicCount": 23,
-        "rareCount": 106,
+        "commonCount": 40,
+        "mythicCount": 25,
+        "rareCount": 107,
         "uncommonCount": 37
     },
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 380,
+        "cardCount": 387,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
         "commonCount": 121,
-        "mythicCount": 45,
-        "rareCount": 129,
+        "mythicCount": 47,
+        "rareCount": 134,
         "uncommonCount": 85
     },
     "brr": {
         "code": "brr",
         "fullName": "The Brothers' War Retro Artifacts",
-        "cardCount": 82,
+        "cardCount": 126,
         "isPrimary": false,
         "icon": "img/sets/brr.svg",
-        "mythicCount": 20,
-        "rareCount": 39,
-        "uncommonCount": 23
+        "mythicCount": 30,
+        "rareCount": 60,
+        "uncommonCount": 36
     },
     "btd": {
         "code": "btd",
@@ -2908,11 +2908,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 25,
+        "cardCount": 24,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 24
+        "rareCount": 23
     },
     "p5dn": {
         "code": "p5dn",
@@ -4178,8 +4178,8 @@
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 396,
-        "mythicCount": 346,
-        "rareCount": 1678,
+        "mythicCount": 341,
+        "rareCount": 1683,
         "uncommonCount": 495
     },
     "prna": {
@@ -4866,12 +4866,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 726,
+        "cardCount": 733,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
         "mythicCount": 124,
-        "rareCount": 542,
+        "rareCount": 549,
         "uncommonCount": 20
     },
     "slu": {
