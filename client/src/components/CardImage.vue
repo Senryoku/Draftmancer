@@ -293,7 +293,7 @@ img {
 .layout-split-left img,
 .layout-split img {
 	max-height: calc(90vw / 1.41);
-	background-image: url("../assets/img/cardback.png");
+	background-image: url("../assets/img/cardback.webp");
 	background-size: cover;
 }
 
