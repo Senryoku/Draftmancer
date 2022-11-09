@@ -26,7 +26,7 @@ import Modal from "./components/Modal.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
-import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.png";
+import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 const img = new Image();
 img.src = CardBack;
 
