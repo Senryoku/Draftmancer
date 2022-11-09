@@ -339,14 +339,14 @@ export default {
 	width: auto;
 	height: var(--image-height);
 	aspect-ratio: 100/140;
-	background-image: url("../assets/img/cardback.png");
+	background-image: url("../assets/img/cardback.webp");
 	background-size: cover;
 }
 
 .related-card {
 	width: calc(0.71 * var(--image-height));
 	height: var(--image-height);
-	background: url("../assets/img/cardback.png");
+	background: url("../assets/img/cardback.webp");
 	background-size: 100%;
 	border-radius: 3%;
 }
@@ -355,7 +355,7 @@ export default {
 	width: auto;
 	height: var(--image-height);
 	border-radius: 3%;
-	background-image: url("../assets/img/cardback.png");
+	background-image: url("../assets/img/cardback.webp");
 	background-size: cover;
 }
 

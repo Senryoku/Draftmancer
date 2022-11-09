@@ -23,7 +23,7 @@ export default {
 	position: relative;
 	padding-top: 140%;
 	border-radius: 5px;
-	background: url("../assets/img/cardback.png");
+	background: url("../assets/img/cardback.webp");
 	background-repeat: no-repeat;
 	background-size: 100%;
 }
