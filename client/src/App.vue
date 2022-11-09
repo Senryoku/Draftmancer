@@ -1265,7 +1265,7 @@
 												collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
 										}"
 									>
-										<img class="wildcard-icon" :src="`img/wc_rare.png`" />
+										<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
 										{{ neededWildcards.main.rare }}
 									</span>
 									<span
@@ -1275,7 +1275,7 @@
 												collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
 										}"
 									>
-										<img class="wildcard-icon" :src="`img/wc_mythic.png`" />
+										<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
 										{{ neededWildcards.main.mythic }}
 									</span>
 								</span>
@@ -1290,7 +1290,7 @@
 												collectionInfos.wildcards && collectionInfos.wildcards[rarity] < value,
 										}"
 									>
-										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.png`" /></td>
+										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
 										<td>{{ value }}</td>
 										<td>({{ neededWildcards.side[rarity] }})</td>
 										<template v-if="collectionInfos && collectionInfos.wildcards">

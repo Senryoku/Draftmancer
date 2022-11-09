@@ -2121,7 +2121,7 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit("setCardSelection", cards);
 				Connections[user].socket.emit("message", {
 					icon: "success",
-					imageUrl: "/img/2JumpstartBoosters-min.png",
+					imageUrl: "/img/2JumpstartBoosters.webp",
 					title: "Here are your Jumpstart boosters!",
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
 					showConfirmButton: false,
