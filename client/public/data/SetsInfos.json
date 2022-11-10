@@ -1641,11 +1641,11 @@
     "gdy": {
         "code": "gdy",
         "fullName": "Game Day Promos",
-        "cardCount": 8,
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/gdy.svg",
         "mythicCount": 3,
-        "rareCount": 5
+        "rareCount": 6
     },
     "gk1": {
         "code": "gk1",
@@ -4596,11 +4596,11 @@
     "pw22": {
         "code": "pw22",
         "fullName": "Wizards Play Network 2022",
-        "cardCount": 4,
+        "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/pw22.svg",
         "mythicCount": 1,
-        "rareCount": 3
+        "rareCount": 4
     },
     "pwar": {
         "code": "pwar",
