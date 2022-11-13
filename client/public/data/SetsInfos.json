@@ -1452,6 +1452,14 @@
         "rareCount": 36,
         "uncommonCount": 30
     },
+    "fj22": {
+        "code": "fj22",
+        "fullName": "Jumpstart 2022 Front Cards",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/fj22.svg",
+        "commonCount": 1
+    },
     "fjmp": {
         "code": "fjmp",
         "fullName": "Jumpstart Front Cards",
@@ -2115,12 +2123,12 @@
     "j22": {
         "code": "j22",
         "fullName": "Jumpstart 2022",
-        "cardCount": 4,
+        "cardCount": 9,
         "isPrimary": true,
         "icon": "img/sets/j22.svg",
-        "mythicCount": 2,
-        "rareCount": 1,
-        "uncommonCount": 1
+        "mythicCount": 5,
+        "rareCount": 2,
+        "uncommonCount": 2
     },
     "jgp": {
         "code": "jgp",
@@ -2908,11 +2916,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 24,
+        "cardCount": 25,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 23
+        "rareCount": 24
     },
     "p5dn": {
         "code": "p5dn",
@@ -4866,12 +4874,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 733,
+        "cardCount": 740,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 40,
-        "mythicCount": 124,
-        "rareCount": 549,
+        "mythicCount": 126,
+        "rareCount": 554,
         "uncommonCount": 20
     },
     "slu": {
