@@ -78,6 +78,7 @@
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
 							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
+							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks Summary</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -172,7 +173,7 @@
 							:type="draftlog.type"
 						></draft-log-pick>
 					</template>
-					<template v-else>No picks.</template>
+					<template v-else><div class="log-container">No picks.</div></template>
 				</template>
 				<template v-else-if="displayOptions.category === 'Cards'">
 					<div class="log-container">
@@ -195,6 +196,22 @@
 							:carddata="draftlog.carddata"
 							:language="language"
 							:hashesonly="selectedLog.delayed"
+						/>
+					</div>
+				</template>
+				<template v-else-if="displayOptions.category === 'Picks Summary'">
+					<div class="log-container">
+						<draft-log-picks-summary
+							:picks="picksPerPack"
+							:carddata="draftlog.carddata"
+							:language="language"
+							@selectPick="
+								(pack, pick) => {
+									displayOptions.pack = pack;
+									displayOptions.pick = pick;
+									displayOptions.category = 'Picks';
+								}
+							"
 						/>
 					</div>
 				</template>
@@ -223,10 +240,11 @@ import exportToMTGA from "../exportToMTGA.js";
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
+import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 
 export default {
 	name: "DraftLog",
-	components: { CardPool, DraftLogPick, Decklist },
+	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist },
 	props: {
 		draftlog: { type: Object, required: true },
 		language: { type: String, required: true },

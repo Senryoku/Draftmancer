@@ -7,7 +7,7 @@
 			<div class="card-top-line" v-if="face.name">
 				<div class="card-top-line-inner">
 					<div class="card-name font-size-fit">{{ face.name }}</div>
-					<div class="card-mana-cost" v-html="replaceManaSymbols(face.mana_cost)"></div>
+					<div class="card-mana-cost" v-html="transformManaCost(face.mana_cost)"></div>
 				</div>
 			</div>
 			<div class="card-type font-size-fit" v-if="face.type_line">
@@ -21,10 +21,7 @@
 </template>
 
 <script>
-const ManaRegex = /{([^}]+)}/g;
-const ManaSymbols = {};
-import ManaSymbolsList from "../../../data/symbology.json";
-for (let symbol of ManaSymbolsList.data) ManaSymbols[symbol.symbol] = symbol;
+import { replaceManaSymbols } from "../ManaSymbols.js";
 
 function checkOverflow(el) {
 	const curOverflow = el.style.overflow;
@@ -62,11 +59,8 @@ export default {
 			}
 			el.classList.remove("fitting");
 		},
-		replaceManaSymbols(str) {
-			return str.replace(ManaRegex, (match, group) => this.genManaSymbol(group)?.outerHTML.trim() ?? match);
-		},
 		parseOracle(str) {
-			str = this.replaceManaSymbols(str);
+			str = replaceManaSymbols(str);
 			// Included reminder text
 			str = str.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
 			return str
@@ -74,14 +68,8 @@ export default {
 				.map((line) => `<div>${line}</div>`)
 				.join("");
 		},
-		genManaSymbol(str) {
-			if ("{" + str + "}" in ManaSymbols) {
-				let el = new Image();
-				el.src = ManaSymbols["{" + str + "}"].svg_uri;
-				el.className = "mana-symbol";
-				return el;
-			}
-			return null;
+		transformManaCost(str) {
+			return replaceManaSymbols(str);
 		},
 	},
 	computed: {
