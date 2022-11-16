@@ -2123,12 +2123,12 @@
     "j22": {
         "code": "j22",
         "fullName": "Jumpstart 2022",
-        "cardCount": 9,
+        "cardCount": 7,
         "isPrimary": true,
         "icon": "img/sets/j22.svg",
         "mythicCount": 5,
-        "rareCount": 2,
-        "uncommonCount": 2
+        "rareCount": 1,
+        "uncommonCount": 1
     },
     "jgp": {
         "code": "jgp",
