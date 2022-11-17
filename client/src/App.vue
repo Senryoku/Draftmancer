@@ -1209,30 +1209,32 @@
 						>)
 					</template>
 					<template v-slot:controls>
-						<div style="font-variant: small-caps" v-if="deck.length > 0">
-							Export
-							<button
-								type="button"
-								@click="exportDeck($event, true)"
-								v-tooltip.top="'Export deck and sideboard'"
+						<dropdown v-if="deck.length > 0">
+							<template v-slot:handle><div @click="exportDeck($event, true)">Export</div></template>
+							<template v-slot:dropdown>
+								<button
+									type="button"
+									@click="exportDeck($event, true)"
+									v-tooltip.right="'Export deck and sideboard for Arena'"
+								>
+									<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
+								</button>
+								<button
+									type="button"
+									@click="exportDeck($event, false)"
+									v-tooltip.right="'Export without set information'"
+								>
+									<i class="fas fa-clipboard"></i> Card Names
+								</button>
+								<button
+									type="button"
+									@click="exportDeckMTGO($event, false)"
+									v-tooltip.right="'Export for MTGO (.dek)'"
+								>
+									MTGO .dek
+								</button></template
 							>
-								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
-							</button>
-							<button
-								type="button"
-								@click="exportDeck($event, false)"
-								v-tooltip.top="'Export without set information'"
-							>
-								<i class="fas fa-clipboard"></i> Simple
-							</button>
-							<button
-								type="button"
-								@click="exportDeckMTGO($event, false)"
-								v-tooltip.top="'Export for MTGO (.dek)'"
-							>
-								MTGO .dek
-							</button>
-						</div>
+						</dropdown>
 						<button
 							v-if="deck.length > 0 && (currentDraftLog || draftLogRecipients === 'owner')"
 							type="button"
