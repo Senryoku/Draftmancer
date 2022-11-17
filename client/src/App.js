@@ -9,7 +9,7 @@ import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.js";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML, download } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, Alert, fireToast } from "./alerts.js";
 import exportToMTGA from "./exportToMTGA.js";
@@ -1987,6 +1987,42 @@ export default {
 				})
 			);
 			fireToast("success", "Deck exported to clipboard!");
+		},
+		async exportDeckMTGO() {
+			try {
+				await this.$cardCache.requestBulk([...new Set(this.deck.map((card) => card.id))]);
+				await this.$cardCache.requestBulk([...new Set(this.sideboard.map((card) => card.id))]);
+			} catch (e) {
+				fireToast("error", `An error occured while requesting card information. Please try again later.`);
+				return;
+			}
+
+			let cardsStr = "";
+			for (let card of this.deck) {
+				let scryfall_card = this.$cardCache.get(card.id);
+				if (!scryfall_card.mtgo_id) {
+					fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
+					return;
+				}
+				cardsStr += `\n  <Cards CatID="${scryfall_card.mtgo_id}" Quantity="1" Sideboard="false" Name="${scryfall_card.name}" Annotation="0"/>`;
+			}
+			for (let card of this.sideboard) {
+				let scryfall_card = this.$cardCache.get(card.id);
+				if (!scryfall_card.mtgo_id) {
+					fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
+					return;
+				}
+				cardsStr += `\n  <Cards CatID="${scryfall_card.mtgo_id}" Quantity="1" Sideboard="true" Name="${scryfall_card.name}" Annotation="0"/>`;
+			}
+
+			let exportStr = `<?xml version="1.0" encoding="UTF-8"?>
+<Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <NetDeckID>0</NetDeckID>
+  <PreconstructedDeckID>0</PreconstructedDeckID>
+  ${cardsStr}
+</Deck>
+`;
+			download(`DraftDeck.dek`, exportStr);
 		},
 		shareDecklist() {
 			this.socket.emit("shareDecklist", {

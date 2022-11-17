@@ -1225,6 +1225,13 @@
 							>
 								<i class="fas fa-clipboard"></i> Simple
 							</button>
+							<button
+								type="button"
+								@click="exportDeckMTGO($event, false)"
+								v-tooltip.top="'Export for MTGO (.dek)'"
+							>
+								MTGO .dek
+							</button>
 						</div>
 						<button
 							v-if="deck.length > 0 && (currentDraftLog || draftLogRecipients === 'owner')"
