@@ -72,7 +72,7 @@ const defaultSettings = {
 	enableSound: true,
 	enableNotifications: false,
 	collapseSideboard: false,
-	sideboardBasics: 5,
+	sideboardBasics: 0,
 	preferedBasics: "",
 	boosterCardScale: 1,
 };
