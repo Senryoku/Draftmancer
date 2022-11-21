@@ -76,6 +76,10 @@ for path in MTGACardDBFiles:
         for key in MTGALocalization:
             MTGALocalization[key][row["LocId"]] = row[key]
 
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
+urllib.request.install_opener(opener)
+
 # Get mana symbols info from Scryfall
 SymbologyFile = "./data/symbology.json"
 if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
@@ -161,9 +165,6 @@ if not os.path.isfile(BulkDataPath) or ForceDownload:
     allcardURL = next(x for x in bulkdata['data'] if x['type'] == "all_cards")[
         'download_uri']
     print("Downloading {}...".format(allcardURL))
-    opener = urllib.request.build_opener()
-    opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
-    urllib.request.install_opener(opener)
     urllib.request.urlretrieve(allcardURL, BulkDataPath)
 
 
