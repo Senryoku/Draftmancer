@@ -6,14 +6,12 @@ import draggable from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
 import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
-import axios from "axios";
 
 import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML, download } from "./helper.js";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, Alert, fireToast } from "./alerts.js";
-import { fixSetCode, exportToMTGA } from "./exportToMTGA.js";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
@@ -23,6 +21,7 @@ import CardPool from "./components/CardPool.vue";
 import CardPopup from "./components/CardPopup.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
+import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
@@ -98,6 +97,7 @@ export default {
 		DraftLogLive: () => import("./components/DraftLogLive.vue"),
 		DraftLogPick: () => import("./components/DraftLogPick.vue"),
 		Dropdown,
+		ExportDropdown,
 		GridDraft: () => import("./components/GridDraft.vue"),
 		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
@@ -1978,91 +1978,6 @@ export default {
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
-		},
-		exportDeck(event, full = true) {
-			copyToClipboard(
-				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, {
-					preferedBasics: this.preferedBasics,
-					sideboardBasics: this.sideboardBasics,
-					full: full,
-				})
-			);
-			fireToast("success", "Deck exported to clipboard!");
-		},
-		async exportDeckMTGO() {
-			fireToast("info", `Preparing MTGO deck list...`);
-			const basics = {
-				W: { mtgo_id: 104600, name: "Plains" },
-				U: { mtgo_id: 104604, name: "Island" },
-				B: { mtgo_id: 104608, name: "Swamp" },
-				R: { mtgo_id: 104612, name: "Mountain" },
-				G: { mtgo_id: 104616, name: "Forest" },
-			};
-			try {
-				await this.$cardCache.requestBulk([...new Set(this.deck.map((card) => card.id))]);
-				await this.$cardCache.requestBulk([...new Set(this.sideboard.map((card) => card.id))]);
-				if (this.preferedBasics !== "") {
-					const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
-						return { name: Constant.BasicLandNames["en"][c], set: fixSetCode(this.preferedBasics) };
-					});
-					let basicsRequest = await axios
-						.post(`https://api.scryfall.com/cards/collection`, {
-							identifiers: basicsIdentifiers,
-						})
-						.catch(() => {
-							console.error("exportDeckMTGO: Could not get requested basics, reverting to default ones.");
-						});
-					if (basicsRequest.status === 200) {
-						let idx = 0;
-						for (let c of ["W", "U", "B", "R", "G"]) basics[c] = basicsRequest.data.data[idx++];
-					}
-				}
-			} catch (e) {
-				fireToast("error", `An error occured while requesting card information. Please try again later.`);
-				console.error("exportDeckMTGO Error: ", e);
-				return;
-			}
-
-			let cardsStr = "";
-			const addCard = (mtgo_id, name, count = 1, sideboard = false) => {
-				cardsStr += `\n  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
-					sideboard ? "true" : "false"
-				}" Name="${name}" Annotation="0"/>`;
-			};
-
-			for (let card of this.deck) {
-				let scryfall_card = this.$cardCache.get(card.id);
-				if (!scryfall_card.mtgo_id) {
-					fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
-					return;
-				}
-				addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, false);
-			}
-			if (this.lands)
-				for (let c in this.lands)
-					if (this.lands[c] > 0) addCard(basics[c].mtgo_id, basics[c].name, this.lands[c], false);
-
-			for (let card of this.sideboard) {
-				let scryfall_card = this.$cardCache.get(card.id);
-				if (!scryfall_card.mtgo_id) {
-					fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
-					return;
-				}
-				addCard(scryfall_card.mtgo_id, scryfall_card.name, true);
-			}
-			if (this.sideboardBasics > 0)
-				for (let c in ["W", "U", "B", "R", "G"])
-					addCard(basics[c].mtgo_id, basics[c].name, this.sideboardBasics[c], false);
-
-			let exportStr = `<?xml version="1.0" encoding="UTF-8"?>
-<Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <NetDeckID>0</NetDeckID>
-  <PreconstructedDeckID>0</PreconstructedDeckID>
-  ${cardsStr}
-</Deck>
-`;
-			download(`DraftDeck.dek`, exportStr);
-			fireToast("success", `MTGO export ready!`);
 		},
 		shareDecklist() {
 			this.socket.emit("shareDecklist", {

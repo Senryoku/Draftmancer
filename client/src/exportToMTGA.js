@@ -41,7 +41,10 @@ export function exportToMTGA(deck, sideboard, language, lands = null, options = 
 		if (!Object.prototype.hasOwnProperty.call(options, key)) options[key] = MTGAExportDefaultOptions[key];
 
 	// Note: The importer requires the collector number, but it can be wrong and the import will succeed        ↓
-	const basicsSet = options.full && options.preferedBasics !== "" ? ` (${fixSetCode(options.preferedBasics)}) 1` : "";
+	const basicsSet =
+		options.full && options.preferedBasics && options.preferedBasics !== ""
+			? ` (${fixSetCode(options.preferedBasics)}) 1`
+			: "";
 
 	let str = options.full ? "Deck\n" : "";
 	for (let c of deck) str += exportCardToMTGA(c, language, options.full);
