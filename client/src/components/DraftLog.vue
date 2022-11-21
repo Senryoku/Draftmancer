@@ -235,7 +235,7 @@
 <script>
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
-import exportToMTGA from "../exportToMTGA.js";
+import { exportToMTGA } from "../exportToMTGA.js";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";

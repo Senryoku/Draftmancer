@@ -90,7 +90,7 @@
 
 <script>
 import { copyToClipboard } from "../helper.js";
-import exportToMTGA from "../exportToMTGA.js";
+import { exportToMTGA } from "../exportToMTGA.js";
 import { fireToast } from "../alerts.js";
 import Modal from "./Modal.vue";
 import CardPool from "./CardPool.vue";

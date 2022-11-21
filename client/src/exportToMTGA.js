@@ -8,7 +8,7 @@ const MTGASetConversions = {
 	AJMP: "JMP", // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
 };
 
-function fixSetCode(set) {
+export function fixSetCode(set) {
 	let r = set.toUpperCase();
 	if (r in MTGASetConversions) r = MTGASetConversions[r];
 	return r;
@@ -36,7 +36,7 @@ function exportCardToMTGA(c, language, full) {
 
 const MTGAExportDefaultOptions = { preferedBasics: "", sideboardBasics: 0, full: true };
 
-export default function exportToMTGA(deck, sideboard, language, lands = null, options = MTGAExportDefaultOptions) {
+export function exportToMTGA(deck, sideboard, language, lands = null, options = MTGAExportDefaultOptions) {
 	for (let key in MTGAExportDefaultOptions)
 		if (!Object.prototype.hasOwnProperty.call(options, key)) options[key] = MTGAExportDefaultOptions[key];
 
