@@ -1123,12 +1123,16 @@ function prepareSocketCallback(callback: Function, ownerOnly = false) {
 
 io.on("connection", async function (socket) {
 	const query = socket.handshake.query;
-	console.log(
-		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
-	);
+	if (query.userID === undefined || query.userName === undefined) {
+		socket.disconnect(true);
+		return;
+	}
+	const userID = query.userID as string;
 
-	if (query.userID in Connections) {
-		console.log(`${query.userName} [${query.userID}] already connected.`);
+	console.log(`${query.userName} [${userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
+
+	if (userID in Connections) {
+		console.log(`${query.userName} [${userID}] already connected.`);
 		// For some reason sockets doesn't always cleanly disconnects.
 		// Give 3sec. for the original socket to respond or we'll close it.
 		// Ask the user to wait while we test the previous connection...
@@ -1153,28 +1157,28 @@ io.on("connection", async function (socket) {
 					socket.emit("alreadyConnected", query.userID);
 					resolve();
 				});
-			})(Connections[query.userID].socket);
+			})(Connections[userID].socket);
 		});
 	}
 
-	if (query.userID in InactiveConnections) {
+	if (userID in InactiveConnections) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
-		InactiveConnections[query.userID].socket = socket;
-		let connection = new Connection(socket, query.userID, query.userName);
-		for (let prop of Object.getOwnPropertyNames(InactiveConnections[query.userID])) {
-			(connection as IIndexable)[prop] = InactiveConnections[query.userID][prop];
+		InactiveConnections[userID].socket = socket;
+		let connection = new Connection(socket, userID, query.userName as string);
+		for (let prop of Object.getOwnPropertyNames(InactiveConnections[userID])) {
+			(connection as IIndexable)[prop] = InactiveConnections[userID][prop];
 		}
-		Connections[query.userID] = connection;
-		delete InactiveConnections[query.userID];
+		Connections[userID] = connection;
+		delete InactiveConnections[userID];
 	} else {
-		Connections[query.userID] = new Connection(socket, query.userID, query.userName);
+		Connections[userID] = new Connection(socket, userID, query.userName as string);
 	}
 
 	// Messages
 
 	socket.on("disconnect", function (this: Socket) {
-		const userID = (this.handshake.query as any).userID;
+		const userID = this.handshake.query.userID as string;
 		if (userID in Connections && Connections[userID].socket === this) {
 			console.log(
 				`${Connections[userID].userName} [${userID}] disconnected. (${
@@ -1194,7 +1198,7 @@ io.on("connection", async function (socket) {
 	});
 
 	socket.on("setSession", function (this: Socket, sessionID: SessionID, sessionSettings: Options) {
-		const userID = (this.handshake.query as any).userID;
+		const userID = this.handshake.query.userID as string;
 		if (sessionID === Connections[userID].sessionID) return;
 
 		const filteredSettings: Options = {};
@@ -1212,7 +1216,7 @@ io.on("connection", async function (socket) {
 	let filteredSettings: Options = {};
 	try {
 		if (query.sessionSettings) {
-			const sessionSettings: Options = JSON.parse(query.sessionSettings);
+			const sessionSettings: Options = JSON.parse(query.sessionSettings as string);
 			for (let prop of Object.keys(SessionsSettingsProps))
 				if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
 					filteredSettings[prop] = sessionSettings[prop];
@@ -1222,7 +1226,7 @@ io.on("connection", async function (socket) {
 		console.error("query.sessionSettings: ", query.sessionSettings);
 	}
 
-	joinSession(query.sessionID, query.userID, filteredSettings);
+	joinSession(query.sessionID as string, userID, filteredSettings);
 	socket.emit("publicSessions", getPublicSessions());
 });
 

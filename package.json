@@ -51,7 +51,7 @@
 		"mixpanel": "^0.11.0",
 		"random-js": "^2.1.0",
 		"request": "^2.88.2",
-		"socket.io": "^3.0.0",
+		"socket.io": "^4.0.0",
 		"socket.io-client": "^4.0.0",
 		"sweetalert2": "^10.16.9",
 		"threads": "^1.7",
