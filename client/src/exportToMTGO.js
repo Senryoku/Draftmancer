@@ -4,19 +4,6 @@ import Constant from "../../src/data/constants.json";
 import { fireToast } from "./alerts.js";
 import { download } from "./helper.js";
 
-// FIXME: These are copied from MTGA, no idea if they are valid.
-const MTGOSetConversions = {
-	DOM: "DAR",
-	CON: "CONF",
-	AJMP: "JMP",
-};
-
-function fixSetCode(set) {
-	let r = set.toUpperCase();
-	if (r in MTGOSetConversions) r = MTGOSetConversions[r];
-	return r;
-}
-
 export async function exportToMTGO(deck, sideboard, options = {}) {
 	fireToast("info", `Preparing MTGO deck list...`);
 	const basics = {
@@ -31,7 +18,7 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 		if (sideboard) await vueCardCache.requestBulk([...new Set(sideboard.map((card) => card.id))]);
 		if (options?.preferedBasics && options.preferedBasics !== "") {
 			const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
-				return { name: Constant.BasicLandNames["en"][c], set: fixSetCode(options.preferedBasics) };
+				return { name: Constant.BasicLandNames["en"][c], set: options.preferedBasics };
 			});
 			let basicsRequest = await axios
 				.post(`https://api.scryfall.com/cards/collection`, {
