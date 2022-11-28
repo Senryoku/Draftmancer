@@ -38,7 +38,9 @@ import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
 
 const app = express();
 const httpServer = new http.Server(app);
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
+});
 
 app.use(compression());
 app.use(cookieParser());
