@@ -1455,10 +1455,10 @@
     "fj22": {
         "code": "fj22",
         "fullName": "Jumpstart 2022 Front Cards",
-        "cardCount": 1,
+        "cardCount": 5,
         "isPrimary": false,
         "icon": "img/sets/fj22.svg",
-        "commonCount": 1
+        "commonCount": 5
     },
     "fjmp": {
         "code": "fjmp",
@@ -1875,10 +1875,10 @@
     "hho": {
         "code": "hho",
         "fullName": "Happy Holidays",
-        "cardCount": 18,
+        "cardCount": 19,
         "isPrimary": false,
         "icon": "img/sets/hho.svg",
-        "mythicCount": 8,
+        "mythicCount": 9,
         "rareCount": 10
     },
     "hml": {
@@ -2123,12 +2123,13 @@
     "j22": {
         "code": "j22",
         "fullName": "Jumpstart 2022",
-        "cardCount": 7,
+        "cardCount": 835,
         "isPrimary": true,
         "icon": "img/sets/j22.svg",
-        "mythicCount": 5,
-        "rareCount": 1,
-        "uncommonCount": 1
+        "commonCount": 422,
+        "mythicCount": 33,
+        "rareCount": 118,
+        "uncommonCount": 262
     },
     "jgp": {
         "code": "jgp",
@@ -4161,10 +4162,10 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 33,
+        "cardCount": 34,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 33
+        "rareCount": 34
     },
     "prix": {
         "code": "prix",
@@ -4865,19 +4866,19 @@
     "slc": {
         "code": "slc",
         "fullName": "Secret Lair 30th Anniversary Countdown Kit",
-        "cardCount": 30,
+        "cardCount": 31,
         "isPrimary": false,
         "icon": "img/sets/slc.svg",
-        "mythicCount": 6,
+        "mythicCount": 7,
         "rareCount": 24
     },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 740,
+        "cardCount": 742,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 40,
+        "commonCount": 42,
         "mythicCount": 126,
         "rareCount": 554,
         "uncommonCount": 20
