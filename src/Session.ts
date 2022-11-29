@@ -4,7 +4,7 @@ import { v1 as uuidv1 } from "uuid";
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { pickCard, countCards } from "./cardUtils.js";
-import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom } from "./utils.js";
+import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
@@ -838,6 +838,8 @@ export class Session implements IIndexable {
 							? defaultBasics
 							: BasicLandSlots[this.setRestriction[0]];
 
+				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
+
 				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
 					const playerBoosterFactories = [];
 					for (let boosterSet of customBoosters) {
@@ -845,12 +847,16 @@ export class Session implements IIndexable {
 						if (boosterSet === "") {
 							playerBoosterFactories.push(defaultFactory);
 						} else {
+							// "Random Set from Card Pool" in Chaos Draft
 							if (boosterSet === "random") {
-								// Random booster from one of the sets in Card Pool
-								boosterSet =
-									this.setRestriction.length === 0
-										? getRandom(constants.PrimarySets)
-										: getRandom(this.setRestriction);
+								// Refill the bag with all possible sets
+								if (randomSetsPool.length === 0)
+									randomSetsPool = [
+										...(this.setRestriction.length === 0
+											? constants.PrimarySets
+											: this.setRestriction),
+									];
+								boosterSet = pickRandom(randomSetsPool);
 							}
 							// Compile necessary data for this set (Multiple boosters of the same set will share it)
 							if (!usedSets[boosterSet]) {

@@ -19,6 +19,14 @@ export function getRandom<Type>(arr: Array<Type>): Type {
 	return arr[random.integer(0, arr.length - 1)];
 }
 
+// Returns a random element and removes it from the array
+export function pickRandom<Type>(arr: Array<Type>): Type {
+	const idx = random.integer(0, arr.length - 1);
+	const r = arr[idx];
+	arr.splice(idx, 1);
+	return r;
+}
+
 export function getNDisctinctRandom<Type>(arr: Type[], n: number): Type[] {
 	return random.sample(arr, n);
 }
