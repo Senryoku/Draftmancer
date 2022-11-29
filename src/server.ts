@@ -1129,12 +1129,13 @@ io.on("connection", async function (socket) {
 		socket.disconnect(true);
 		return;
 	}
-	const userID = query.userID as string;
 
-	console.log(`${query.userName} [${userID}] connected. (${Object.keys(Connections).length + 1} players online)`);
+	console.log(
+		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
+	);
 
-	if (userID in Connections) {
-		console.log(`${query.userName} [${userID}] already connected.`);
+	if ((query.userID as string) in Connections) {
+		console.log(`${query.userName} [${query.userID}] already connected.`);
 		// For some reason sockets doesn't always cleanly disconnects.
 		// Give 3sec. for the original socket to respond or we'll close it.
 		// Ask the user to wait while we test the previous connection...
@@ -1159,9 +1160,11 @@ io.on("connection", async function (socket) {
 					socket.emit("alreadyConnected", query.userID);
 					resolve();
 				});
-			})(Connections[userID].socket);
+			})(Connections[query.userID as string].socket);
 		});
 	}
+
+	const userID = query.userID as string;
 
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
