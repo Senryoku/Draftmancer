@@ -84,14 +84,6 @@
 							</option>
 						</select>
 						<button
-							@click="exportSingleLog(selectedLog.userID)"
-							v-tooltip="
-								`Copy ${selectedLog.userName}'s cards in your clipboard, ready to be imported in MTGA.`
-							"
-						>
-							<i class="fas fa-clipboard-list"></i> Export Card List in MTGA format
-						</button>
-						<button
 							@click="downloadMPT(selectedLog.userID)"
 							v-tooltip="`Download ${selectedLog.userName} picks in MTGO draft log format.`"
 							v-if="type === 'Draft'"
@@ -185,6 +177,9 @@
 							:key="`cardPool-${selectedLog.userID}`"
 						>
 							<template v-slot:title>Cards ({{ selectedLogCards.length }})</template>
+							<template v-slot:controls>
+								<ExportDropdown :language="language" :deck="selectedLogCards" />
+							</template>
 						</card-pool>
 					</div>
 				</template>
@@ -235,16 +230,16 @@
 <script>
 import * as helper from "../helper.js";
 import { fireToast } from "../alerts.js";
-import exportToMTGA from "../exportToMTGA.js";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
+import ExportDropdown from "./ExportDropdown.vue";
 
 export default {
 	name: "DraftLog",
-	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist },
+	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
 	props: {
 		draftlog: { type: Object, required: true },
 		language: { type: String, required: true },
@@ -317,18 +312,6 @@ export default {
 					});
 				}
 			});
-		},
-		exportSingleLog(id) {
-			helper.copyToClipboard(
-				exportToMTGA(
-					this.draftlog.users[id].cards.map((cid) => this.draftlog.carddata[cid]),
-					null,
-					this.language
-				),
-				null,
-				"\t"
-			);
-			fireToast("success", "Card list exported to clipboard!");
 		},
 		colorsInCardList(cards) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };

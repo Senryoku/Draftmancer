@@ -12,7 +12,6 @@ import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.js";
 import { getCookie, setCookie } from "./cookies.js";
 import { ButtonColor, Alert, fireToast } from "./alerts.js";
-import exportToMTGA from "./exportToMTGA.js";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
@@ -22,6 +21,7 @@ import CardPool from "./components/CardPool.vue";
 import CardPopup from "./components/CardPopup.vue";
 import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
+import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
@@ -72,7 +72,7 @@ const defaultSettings = {
 	enableSound: true,
 	enableNotifications: false,
 	collapseSideboard: false,
-	sideboardBasics: 5,
+	sideboardBasics: 0,
 	preferedBasics: "",
 	boosterCardScale: 1,
 };
@@ -97,6 +97,7 @@ export default {
 		DraftLogLive: () => import("./components/DraftLogLive.vue"),
 		DraftLogPick: () => import("./components/DraftLogPick.vue"),
 		Dropdown,
+		ExportDropdown,
 		GridDraft: () => import("./components/GridDraft.vue"),
 		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
@@ -1977,16 +1978,6 @@ export default {
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
-		},
-		exportDeck(event, full = true) {
-			copyToClipboard(
-				exportToMTGA(this.deck, this.sideboard, this.language, this.lands, {
-					preferedBasics: this.preferedBasics,
-					sideboardBasics: this.sideboardBasics,
-					full: full,
-				})
-			);
-			fireToast("success", "Deck exported to clipboard!");
 		},
 		shareDecklist() {
 			this.socket.emit("shareDecklist", {

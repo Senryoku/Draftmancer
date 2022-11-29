@@ -1209,23 +1209,17 @@
 						>)
 					</template>
 					<template v-slot:controls>
-						<div style="font-variant: small-caps" v-if="deck.length > 0">
-							Export
-							<button
-								type="button"
-								@click="exportDeck($event, true)"
-								v-tooltip.top="'Export deck and sideboard'"
-							>
-								<img class="set-icon" src="./assets/img/mtga-icon.png" /> MTGA
-							</button>
-							<button
-								type="button"
-								@click="exportDeck($event, false)"
-								v-tooltip.top="'Export without set information'"
-							>
-								<i class="fas fa-clipboard"></i> Simple
-							</button>
-						</div>
+						<ExportDropdown
+							v-if="deck.length > 0"
+							:language="language"
+							:deck="deck"
+							:sideboard="sideboard"
+							:options="{
+								lands: lands,
+								preferedBasics: preferedBasics,
+								sideboardBasics: sideboardBasics,
+							}"
+						/>
 						<button
 							v-if="deck.length > 0 && (currentDraftLog || draftLogRecipients === 'owner')"
 							type="button"

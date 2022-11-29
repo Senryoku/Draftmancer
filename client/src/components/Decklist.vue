@@ -20,22 +20,14 @@
 					@click="displayStats = true"
 					v-tooltip="'Deck Statistics'"
 				></i>
-				<button
-					type="button"
-					@click="exportDeck"
-					v-tooltip="`Copy ${username}'s deck and sideboard, ready to be imported in MTGA.`"
-				>
-					<i class="fas fa-clipboard-list"></i> Export Deck to MTGA
-				</button>
-				<button
-					type="button"
-					@click="exportDeck(false)"
-					v-tooltip="
-						`Export ${username}'s deck and sideboard without set information, ready to be imported in MTGA or another program.`
-					"
-				>
-					<i class="fas fa-clipboard"></i> Export Deck (Simple)
-				</button>
+				<ExportDropdown
+					:language="language"
+					:deck="mainboard"
+					:sideboard="sideboard"
+					:options="{
+						lands: list.lands,
+					}"
+				/>
 				<template v-if="list.hashes">
 					<span
 						@click="copyHash(list.hashes.cockatrice)"
@@ -90,9 +82,9 @@
 
 <script>
 import { copyToClipboard } from "../helper.js";
-import exportToMTGA from "../exportToMTGA.js";
 import { fireToast } from "../alerts.js";
 import Modal from "./Modal.vue";
+import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
 
 export default {
@@ -100,6 +92,7 @@ export default {
 		Modal,
 		CardPool,
 		CardStats: () => import("./CardStats.vue"),
+		ExportDropdown,
 	},
 	props: {
 		list: { type: Object },
@@ -125,12 +118,6 @@ export default {
 		},
 	},
 	methods: {
-		exportDeck(full = true) {
-			copyToClipboard(
-				exportToMTGA(this.mainboard, this.sideboard, this.language, this.list.lands, { full: full })
-			);
-			fireToast("success", "Deck exported to clipboard!");
-		},
 		copyHash(hash) {
 			copyToClipboard(hash);
 			fireToast("success", "Hash copied to clipboard!");
