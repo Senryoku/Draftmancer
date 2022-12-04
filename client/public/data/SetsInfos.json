@@ -416,10 +416,10 @@
         "cardCount": 209,
         "isPrimary": false,
         "icon": "img/sets/brc.svg",
-        "commonCount": 40,
+        "commonCount": 41,
         "mythicCount": 25,
         "rareCount": 107,
-        "uncommonCount": 37
+        "uncommonCount": 36
     },
     "bro": {
         "code": "bro",
@@ -3166,6 +3166,15 @@
         "icon": "img/sets/pbook.svg",
         "mythicCount": 1
     },
+    "pbro": {
+        "code": "pbro",
+        "fullName": "The Brothers' War Promos",
+        "cardCount": 178,
+        "isPrimary": false,
+        "icon": "img/sets/pbro.svg",
+        "mythicCount": 52,
+        "rareCount": 126
+    },
     "pc2": {
         "code": "pc2",
         "fullName": "Planechase 2012",
@@ -3776,10 +3785,10 @@
     "plg22": {
         "code": "plg22",
         "fullName": "Love Your LGS 2022",
-        "cardCount": 1,
+        "cardCount": 2,
         "isPrimary": false,
         "icon": "img/sets/plg22.svg",
-        "rareCount": 1
+        "rareCount": 2
     },
     "plgm": {
         "code": "plgm",
@@ -3801,14 +3810,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 889,
+        "cardCount": 964,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 113,
-        "mythicCount": 116,
-        "rareCount": 404,
+        "commonCount": 117,
+        "mythicCount": 123,
+        "rareCount": 442,
         "specialCount": 4,
-        "uncommonCount": 252
+        "uncommonCount": 278
     },
     "plrw": {
         "code": "plrw",
@@ -3950,11 +3959,11 @@
     "pmh2": {
         "code": "pmh2",
         "fullName": "Modern Horizons 2 Promos",
-        "cardCount": 80,
+        "cardCount": 102,
         "isPrimary": false,
         "icon": "img/sets/pmh2.svg",
-        "mythicCount": 20,
-        "rareCount": 60
+        "mythicCount": 24,
+        "rareCount": 78
     },
     "pmid": {
         "code": "pmid",
@@ -4186,10 +4195,10 @@
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
-        "commonCount": 396,
+        "commonCount": 395,
         "mythicCount": 341,
         "rareCount": 1682,
-        "uncommonCount": 496
+        "uncommonCount": 497
     },
     "prna": {
         "code": "prna",
@@ -4555,11 +4564,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 105,
+        "cardCount": 108,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
-        "mythicCount": 25,
-        "rareCount": 80
+        "mythicCount": 26,
+        "rareCount": 82
     },
     "pw09": {
         "code": "pw09",
@@ -4605,11 +4614,11 @@
     "pw22": {
         "code": "pw22",
         "fullName": "Wizards Play Network 2022",
-        "cardCount": 5,
+        "cardCount": 4,
         "isPrimary": false,
         "icon": "img/sets/pw22.svg",
         "mythicCount": 1,
-        "rareCount": 4
+        "rareCount": 3
     },
     "pwar": {
         "code": "pwar",
@@ -4875,12 +4884,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 742,
+        "cardCount": 771,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 42,
-        "mythicCount": 126,
-        "rareCount": 554,
+        "mythicCount": 130,
+        "rareCount": 579,
         "uncommonCount": 20
     },
     "slu": {
@@ -5730,11 +5739,11 @@
     "ydmu": {
         "code": "ydmu",
         "fullName": "Alchemy: Dominaria",
-        "cardCount": 30,
+        "cardCount": 39,
         "isPrimary": true,
         "block": "Alchemy 2023",
         "icon": "img/sets/ydmu.svg",
-        "mythicCount": 5,
+        "mythicCount": 14,
         "rareCount": 15,
         "uncommonCount": 10
     },
