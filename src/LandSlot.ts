@@ -1,6 +1,6 @@
 "use strict";
 
-import { CardID, CardPool, getUnique, Cards } from "./Cards.js";
+import { CardID, CardPool, getUnique, Cards, getCard } from "./Cards.js";
 import { getRandomMapKey, getRandom } from "./utils.js";
 import { removeCardFromCardPool } from "./cardUtils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json";
@@ -175,7 +175,7 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 			"b2dd0b71-5a60-418c-82fc-f13d1b5075d0", // Woodland Chasm
 		],
 		5 / 12,
-		BasicLandIDs["khm"].filter((cid: CardID) => Cards[cid]["type"].startsWith("Basic Snow"))
+		BasicLandIDs["khm"].filter((cid: CardID) => getCard(cid)["type"].startsWith("Basic Snow"))
 	), // Always one snow-covered land, either basic or tapped. Shimmerdrift Vale (f09d98db-0176-41a7-b99b-ead29876cdab) appears in the common slot
 	neo: new SpecialLandSlot(
 		"neo",

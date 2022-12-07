@@ -3,7 +3,7 @@
 import { v1 as uuidv1 } from "uuid";
 import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
-import { pickCard, countCards } from "./cardUtils.js";
+import { countCards } from "./cardUtils.js";
 import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
 import { Connections, getPickedCardIds } from "./Connection.js";
 import {
@@ -18,6 +18,7 @@ import {
 	CardPool,
 	SlotedCardPool,
 	UniqueCard,
+	getCard,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -576,13 +577,13 @@ export class Session implements IIndexable {
 			let cardPool: CardPool = new Map();
 			// Returns all cards if there's no set restriction
 			if (this.setRestriction.length === 0) {
-				for (let cid in Cards)
-					if (Cards[cid].in_booster) cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
+				for (let [cid, card] of Cards)
+					if (card.in_booster) cardPool.set(cid, this.maxDuplicates?.[card.rarity] ?? 99);
 			} else {
 				// Use cache otherwise
 				for (let set of this.setRestriction)
 					for (let cid of BoosterCardsBySet[set])
-						cardPool.set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
+						cardPool.set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? 99);
 			}
 			return cardPool;
 		}
@@ -616,10 +617,10 @@ export class Session implements IIndexable {
 		let arrays = [];
 		// Start from the first user's collection, or the list of all cards if not available/used
 		if (!useCollection[0])
-			if (inBoosterOnly) arrays.push(MTGACardIDs.filter((c) => Cards[c].in_booster));
+			if (inBoosterOnly) arrays.push(MTGACardIDs.filter((cid) => getCard(cid).in_booster));
 			else arrays.push(MTGACardIDs);
 		else if (inBoosterOnly)
-			arrays.push([...Connections[user_list[0]].collection.keys()].filter((c) => Cards[c].in_booster));
+			arrays.push([...Connections[user_list[0]].collection.keys()].filter((cid) => getCard(cid).in_booster));
 		else arrays.push([...Connections[user_list[0]].collection.keys()]);
 		for (let i = 1; i < user_list.length; ++i)
 			if (useCollection[i]) arrays.push([...Connections[user_list[i]].collection.keys()]);
@@ -648,8 +649,8 @@ export class Session implements IIndexable {
 		};
 		const cardPool = this.cardPool();
 		for (let cid of cardPool.keys()) {
-			if (!(Cards[cid].rarity in cardPoolByRarity)) cardPoolByRarity[Cards[cid].rarity] = new Map();
-			cardPoolByRarity[Cards[cid].rarity].set(cid, cardPool.get(cid) as number);
+			if (!(getCard(cid).rarity in cardPoolByRarity)) cardPoolByRarity[getCard(cid).rarity] = new Map();
+			cardPoolByRarity[getCard(cid).rarity].set(cid, cardPool.get(cid) as number);
 		}
 		return cardPoolByRarity;
 	}
@@ -663,8 +664,8 @@ export class Session implements IIndexable {
 			mythic: new Map(),
 		};
 		for (let cid of BoosterCardsBySet[set]) {
-			if (!(Cards[cid].rarity in local)) local[Cards[cid].rarity] = new Map();
-			local[Cards[cid].rarity].set(cid, this.maxDuplicates?.[Cards[cid].rarity] ?? 99);
+			if (!(getCard(cid).rarity in local)) local[getCard(cid).rarity] = new Map();
+			local[getCard(cid).rarity].set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? 99);
 		}
 		return local;
 	}
@@ -1938,14 +1939,14 @@ export class Session implements IIndexable {
 
 	initLogs(type: string = "Draft"): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
-		const getCard = this.customCardList?.customCards
+		const customGetCard = this.customCardList?.customCards
 			? (cid: CardID) => {
 					return this.customCardList.customCards && cid in this.customCardList.customCards
 						? this.customCardList.customCards[cid]
-						: Cards[cid];
+						: getCard(cid);
 			  }
-			: (cid: CardID) => Cards[cid];
-		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = getCard(c.id);
+			: getCard;
+		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = customGetCard(c.id);
 		this.draftLog = new DraftLog(type, this, carddata, this.getSortedVirtualPlayerData());
 		return this.draftLog;
 	}
@@ -1976,8 +1977,8 @@ export class Session implements IIndexable {
 				// We also have to supply card data for all cards seen by the player.
 				if (this.draftLog.type === "Draft" && this.draftLog.users[uid].picks)
 					for (let pick of this.draftLog.users[uid].picks)
-						for (let cid of pick.booster) strippedLog.carddata[cid] = Cards[cid];
-				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = Cards[cid];
+						for (let cid of pick.booster) strippedLog.carddata[cid] = getCard(cid);
+				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = getCard(cid);
 			} else {
 				strippedLog.users[uid] = {
 					userID: this.draftLog.users[uid].userID,
@@ -2106,7 +2107,7 @@ export class Session implements IIndexable {
 				Connections[user].socket.emit("selectJumpstartPacks", choices, (user: UserID, cards: CardID[]) => {
 					if (!this.draftLog) return;
 					this.draftLog.users[user].cards = cards;
-					for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = Cards[cid];
+					for (let cid of this.draftLog.users[user].cards) this.draftLog.carddata[cid] = getCard(cid);
 					if (
 						Object.keys(this.draftLog.users).every(
 							(uid: UserID) => this.draftLog?.users[uid].cards !== null
@@ -2124,7 +2125,7 @@ export class Session implements IIndexable {
 				const cards = boosters.map((b) => b.cards.map((cid: CardID) => getUnique(cid)));
 
 				log.users[user].cards = cards.flat().map((c: Card) => c.id);
-				for (let cid of log.users[user].cards) log.carddata[cid] = Cards[cid];
+				for (let cid of log.users[user].cards) log.carddata[cid] = getCard(cid);
 
 				Connections[user].socket.emit("setCardSelection", cards);
 				Connections[user].socket.emit("message", {

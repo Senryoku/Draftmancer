@@ -49,7 +49,7 @@ export type DeckList = {
 	lands?: { [key: string]: number };
 };
 
-export let Cards: { [cid: string]: Card } = {};
+export let Cards = new Map<string, Card>();
 
 let UniqueID: UniqueCardID = 0;
 
@@ -62,8 +62,18 @@ export class UniqueCard extends Card {
 	foil?: boolean = false;
 }
 
+export function getCard(cid: CardID): Card {
+	const card = Cards.get(cid);
+	if (!card) {
+		console.error("Error in getCard: Unknown cardID: ", cid);
+		console.error(new Error().stack);
+		throw Error(`Error in getCard: Unknown cardID '${cid}'.`);
+	}
+	return card;
+}
+
 export function getUnique(cid: CardID, options: Options = {}) {
-	let uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : Cards[cid]);
+	let uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : getCard(cid));
 	uc.uniqueID = getNextCardID();
 	if (options.foil) uc.foil = options.foil;
 	return uc;
@@ -76,13 +86,13 @@ console.time("Total");
 
 console.time("Parsing Cards");
 if (process.env.NODE_ENV !== "production") {
-	Cards = JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"));
+	Cards = new Map<string, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
 } else {
 	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
 	const cardsPromise = new Promise((resolve, reject) => {
 		const stream = JSONStream.parse("$*");
 		stream.on("data", function (entry: any) {
-			Cards[entry.key] = entry.value as Card;
+			Cards.set(entry.key, entry.value as Card);
 		});
 		stream.on("end", resolve);
 		fs.createReadStream("./data/MTGCards.json").pipe(stream);
@@ -98,20 +108,21 @@ console.time("Preparing Cards and caches");
 export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by their arena id
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
-for (let cid in Cards) {
-	if (!("in_booster" in Cards[cid])) Cards[cid].in_booster = true;
-	Object.assign(Cards[cid], parseCost(Cards[cid].mana_cost));
+for (let [cid, card] of Cards) {
+	if (!("in_booster" in card)) card.in_booster = true;
+	Object.assign(card, parseCost(card.mana_cost));
 
-	const aid = Cards[cid].arena_id;
-	if (aid !== undefined) MTGACards[aid] = Cards[cid];
+	const aid = card.arena_id;
+	if (aid !== undefined) MTGACards[aid] = card;
 
-	const firstFaceName = Cards[cid].name.split(" //")[0];
+	const firstFaceName = card.name.split(" //")[0];
 	if (!CardVersionsByName[firstFaceName]) CardVersionsByName[firstFaceName] = [];
 	CardVersionsByName[firstFaceName].push(cid);
+
+	Object.freeze(card);
 }
 
 Object.freeze(Cards);
-for (let card in Cards) Object.freeze(card);
 
 // Prefered version of each card
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
@@ -119,21 +130,21 @@ export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json",
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = {};
 export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
-for (let cid in Cards) {
-	if (Cards[cid].in_booster || ["und", "j21"].includes(Cards[cid].set)) {
+for (let [cid, card] of Cards.entries()) {
+	if (card.in_booster || ["und", "j21"].includes(card.set)) {
 		// Force cache for Unsanctioned (UND) and Jumpstart: Historic Horizons as they're not originally draft products
-		if (!(Cards[cid].set in BoosterCardsBySet)) BoosterCardsBySet[Cards[cid].set] = [];
-		BoosterCardsBySet[Cards[cid].set].push(cid);
+		if (!(card.set in BoosterCardsBySet)) BoosterCardsBySet[card.set] = [];
+		BoosterCardsBySet[card.set].push(cid);
 	}
-	if (!(Cards[cid].set in CardsBySet)) CardsBySet[Cards[cid].set] = [];
-	CardsBySet[Cards[cid].set].push(cid);
+	if (!(card.set in CardsBySet)) CardsBySet[card.set] = [];
+	CardsBySet[card.set].push(cid);
 
-	if (Cards[cid].set === "ydmu") BoosterCardsBySet["alchemy_dmu"].push(cid);
+	if (card.set === "ydmu") BoosterCardsBySet["alchemy_dmu"].push(cid);
 	// Planeshifted New Capenna
-	if (Cards[cid].set === "snc" && Cards[cid].in_booster) {
+	if (card.set === "snc" && card.in_booster) {
 		// Search for a rebalanced version of the card
-		const rebalancedName = "A-" + Cards[cid].name;
-		if (rebalancedName in CardsByName && Cards[CardsByName[rebalancedName]].set === "snc")
+		const rebalancedName = "A-" + card.name;
+		if (rebalancedName in CardsByName && getCard(CardsByName[rebalancedName]).set === "snc")
 			BoosterCardsBySet["planeshifted_snc"].push(CardsByName[rebalancedName]);
 		else BoosterCardsBySet["planeshifted_snc"].push(cid);
 	}
@@ -142,7 +153,7 @@ BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vo
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 
 export const CardIDs = Object.keys(Cards);
-export const MTGACardIDs = CardIDs.filter((cid) => !!Cards[cid].arena_id);
+export const MTGACardIDs = CardIDs.filter((cid) => !!getCard(cid).arena_id);
 
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);

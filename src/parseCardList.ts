@@ -1,5 +1,5 @@
 import { validateCustomCard } from "./CustomCards.js";
-import { Card, CardID, Cards, CardsByName, CardVersionsByName } from "./Cards.js";
+import { Card, CardID, Cards, CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
 import { ackError, SocketError } from "./Message.js";
@@ -60,14 +60,14 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	}
 
 	let cardIDs = candidates.filter(
-		(id) => (!set || Cards[id].set === set) && (!number || Cards[id].collector_number === number)
+		(cid) => (!set || getCard(cid).set === set) && (!number || getCard(cid).collector_number === number)
 	);
 
 	if (cardIDs.length > 0) {
 		return [
 			count,
 			cardIDs.reduce((best, cid) => {
-				if (parseInt(Cards[cid].collector_number) < parseInt(Cards[best].collector_number)) return cid;
+				if (parseInt(getCard(cid).collector_number) < parseInt(getCard(best).collector_number)) return cid;
 				return best;
 			}, cardIDs[0]),
 			!!foil,

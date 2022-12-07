@@ -1,5 +1,5 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
-import { CardID, Card, SlotedCardPool, Cards, UniqueCard, CardPool } from "./Cards.js";
+import { CardID, Card, SlotedCardPool, Cards, UniqueCard, CardPool, getCard } from "./Cards.js";
 import { countCards, pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { Options, random } from "./utils.js";
@@ -44,7 +44,7 @@ export function generateBoosterFromCustomCardList(
 			pickOptions.getCard = (cid: CardID) => {
 				return customCardList.customCards && cid in customCardList.customCards
 					? customCardList.customCards[cid]
-					: Cards[cid];
+					: getCard(cid);
 			};
 
 		// Color balance the largest slot of each layout

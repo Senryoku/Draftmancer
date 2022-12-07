@@ -3,7 +3,7 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards } from "./../dist/Cards.js";
+import { Cards, getCard } from "./../dist/Cards.js";
 import { Connections } from "../dist/Connection.js";
 import { Sessions } from "../dist/Session.js";
 import randomjs from "random-js";
@@ -293,7 +293,7 @@ describe("Sets content", function () {
 						console.error(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
 						noError = false;
 					}
-					expect(cardIDs.map((cid) => Cards[cid].set).every((s) => s === set)).to.be.true;
+					expect(cardIDs.map((cid) => getCard(cid).set).every((s) => s === set)).to.be.true;
 					// expect(cardIDs).to.have.lengthOf(sets[set][r]); // FIXME: For some reason, this times out on error, instead of correctly reporting the error
 				}
 				expect(noError).to.be.true;
@@ -1636,7 +1636,7 @@ describe("Jumpstart", function () {
 		for (let b of JumpstartBoosters) {
 			expect(b.cards.length).to.equals(20);
 			for (let c of b.cards) {
-				expect(Cards).to.have.deep.property(c);
+				expect(Cards.has(c)).to.be.true;
 			}
 		}
 		done();
@@ -1717,8 +1717,8 @@ describe("Jumpstart: Historic Horizons", function () {
 			}
 		});
 		for (let client of clients) {
-			let cards = [...client.packChoices[0][0].cards];
-			cards.push(...client.packChoices[1][0][1].cards);
+			let cards = client.packChoices[0][0].cards.map((card) => card.id);
+			cards.concat(client.packChoices[1][0][1].cards.map((card) => card.id));
 			client.ack(client.query.userID, cards);
 		}
 	});
@@ -1784,8 +1784,8 @@ describe("Jumpstart: Super Jump!", function () {
 			}
 		});
 		for (let client of clients) {
-			let cards = [...client.packChoices[0][0].cards];
-			cards.push(...client.packChoices[1][0][1].cards);
+			let cards = client.packChoices[0][0].cards.map((card) => card.id);
+			cards.concat(client.packChoices[1][0][1].cards.map((card) => card.id));
 			client.ack(client.query.userID, cards);
 		}
 	});
