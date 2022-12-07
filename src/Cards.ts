@@ -152,15 +152,13 @@ for (let [cid, card] of Cards.entries()) {
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 
-export const CardIDs = Object.keys(Cards);
-export const MTGACardIDs = CardIDs.filter((cid) => !!getCard(cid).arena_id);
+export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 
 Object.freeze(MTGACards);
 Object.freeze(CardsByName);
 Object.freeze(CardVersionsByName);
 Object.freeze(BoosterCardsBySet);
 Object.freeze(CardsBySet);
-Object.freeze(CardIDs);
 Object.freeze(MTGACardIDs);
 
 console.timeEnd("Preparing Cards and caches");
