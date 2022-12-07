@@ -30,9 +30,9 @@ describe("Statistical color balancing tests", function () {
 			rare: new Map(),
 			mythic: new Map(),
 		};
-		for (let cid of Cards) {
-			if (getCard(cid).in_booster && getCard(cid).set === "znr") {
-				cardPoolByRarity[getCard(cid).rarity].set(cid, trials);
+		for (let [cid, card] of Cards) {
+			if (card.in_booster && card.set === "znr") {
+				cardPoolByRarity[card.rarity].set(cid, trials);
 			}
 		}
 		const factory = new SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);

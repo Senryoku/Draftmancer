@@ -28,7 +28,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID, getCard } from "./Cards.js";
+import { MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
