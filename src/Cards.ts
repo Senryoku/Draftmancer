@@ -49,7 +49,7 @@ export type DeckList = {
 	lands?: { [key: string]: number };
 };
 
-export let Cards = new Map<string, Card>();
+export let Cards = new Map<CardID, Card>();
 
 let UniqueID: UniqueCardID = 0;
 
@@ -86,7 +86,7 @@ console.time("Total");
 
 console.time("Parsing Cards");
 if (process.env.NODE_ENV !== "production") {
-	Cards = new Map<string, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
+	Cards = new Map<CardID, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
 } else {
 	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
 	const cardsPromise = new Promise((resolve, reject) => {
