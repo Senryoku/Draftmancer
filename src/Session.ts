@@ -649,8 +649,9 @@ export class Session implements IIndexable {
 		};
 		const cardPool = this.cardPool();
 		for (let cid of cardPool.keys()) {
-			if (!(getCard(cid).rarity in cardPoolByRarity)) cardPoolByRarity[getCard(cid).rarity] = new Map();
-			cardPoolByRarity[getCard(cid).rarity].set(cid, cardPool.get(cid) as number);
+			const rarity = getCard(cid).rarity;
+			if (!(rarity in cardPoolByRarity)) cardPoolByRarity[rarity] = new Map();
+			cardPoolByRarity[rarity].set(cid, cardPool.get(cid) as number);
 		}
 		return cardPoolByRarity;
 	}
@@ -664,8 +665,9 @@ export class Session implements IIndexable {
 			mythic: new Map(),
 		};
 		for (let cid of BoosterCardsBySet[set]) {
-			if (!(getCard(cid).rarity in local)) local[getCard(cid).rarity] = new Map();
-			local[getCard(cid).rarity].set(cid, this.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+			const rarity = getCard(cid).rarity;
+			if (!(rarity in local)) local[rarity] = new Map();
+			local[rarity].set(cid, this.maxDuplicates?.[rarity] ?? 99);
 		}
 		return local;
 	}
