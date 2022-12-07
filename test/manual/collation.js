@@ -115,7 +115,7 @@ describe("Statistical color balancing tests", function () {
 	}
 
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate WITHOUT color balancing`, function (done) {
-		this.timeout(500);
+		this.timeout(2000);
 		const trials = 500;
 		const SessionInst = new Session("UniqueID");
 		SessionInst.useCustomCardList = true;
@@ -145,7 +145,10 @@ describe("Statistical color balancing tests", function () {
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
 		SessionInst.setCustomCardList(parseCardList(CustomSheetsTestFile));
-		const trackedCards = SessionInst.customCardList.cards.Common.reduce((o, key) => ({ ...o, [key]: 0 }), {});
+		const trackedCards = Object.keys(SessionInst.customCardList.slots.Common).reduce(
+			(o, key) => ({ ...o, [key]: 0 }),
+			{}
+		);
 		runTrials(SessionInst, trials, trackedCards);
 		compareRandomCards(trackedCards);
 		done();
