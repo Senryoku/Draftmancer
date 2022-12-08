@@ -3,7 +3,7 @@
 import { describe, it, beforeEach, afterEach, before, after } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards } from "./../dist/Cards.js";
+import { getCard } from "./../dist/Cards.js";
 import { Sessions } from "../dist/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
@@ -75,7 +75,7 @@ describe("Collection Restriction", function () {
 	it(`All cards in Session collection should be in all user collections.`, function (done) {
 		const sessColl = Sessions[sessionID].collection();
 		for (let cid in sessColl) {
-			const arena_id = Cards[cid].arena_id;
+			const arena_id = getCard(cid).arena_id;
 			for (let col of collections) {
 				expect(col).to.have.own.property(arena_id);
 				expect(col[arena_id]).gte(sessColl[cid]);
@@ -87,7 +87,7 @@ describe("Collection Restriction", function () {
 	it(`All cards in Session Card Pool (e.g. Session collection with applied set restrictions) should be in all user collections.`, function (done) {
 		const sessCardPool = Sessions[sessionID].cardPool();
 		for (let cid in sessCardPool) {
-			const arena_id = Cards[cid].arena_id;
+			const arena_id = getCard(cid).arena_id;
 			for (let col of collections) {
 				expect(col).to.have.own.property(arena_id);
 				expect(col[arena_id]).gte(sessCardPool[cid]);

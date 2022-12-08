@@ -28,7 +28,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID } from "./Cards.js";
+import { MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -205,14 +205,16 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		let collection: CardPool = new Map();
 		let ret: any = new SocketAck();
 		for (let cardID in cardList.slots["default"]) {
-			let aid = Cards[cardID].arena_id;
+			let aid = getCard(cardID).arena_id;
 			if (!aid) {
 				if (ret.warning?.ignoredCards > 0) {
 					++ret.ignoredCards;
 				} else {
 					ret.warning = new MessageWarning(
 						"Non-MTGA card(s) ignored.",
-						`${Cards[cardID].name} (${Cards[cardID].set}) is not a valid MTGA card and has been ignored.`
+						`${getCard(cardID).name} (${
+							getCard(cardID).set
+						}) is not a valid MTGA card and has been ignored.`
 					);
 					ret.ignoredCards = 1;
 				}
@@ -1414,7 +1416,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 	} else if (sid in Sessions) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
-		for (let cid in coll) r += `${coll.get(cid)} ${Cards[cid].name}\n`;
+		for (let cid in coll) r += `${coll.get(cid)} ${getCard(cid).name}\n`;
 		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
@@ -1448,10 +1450,10 @@ app.post("/getCards", (req, res) => {
 	} else {
 		try {
 			if (Array.isArray(req.body)) {
-				res.json(req.body.map((cid) => Cards[cid]));
+				res.json(req.body.map((cid) => getCard(cid)));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
-				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
+				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => getCard(cid));
 				res.json(r);
 			} else {
 				res.sendStatus(400);

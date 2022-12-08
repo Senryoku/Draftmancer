@@ -4,7 +4,7 @@ import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
 import randomjs from "random-js";
-import { Cards } from "./../../dist/Cards.js";
+import { Cards, getCard } from "./../../dist/Cards.js";
 import { Session } from "../../dist/Session.js";
 import { SetSpecificFactories } from "../../dist/BoosterFactory.js";
 import parseCardList from "../../dist/parseCardList.js";
@@ -30,9 +30,9 @@ describe("Statistical color balancing tests", function () {
 			rare: new Map(),
 			mythic: new Map(),
 		};
-		for (let cid in Cards) {
-			if (Cards[cid].in_booster && Cards[cid].set === "znr") {
-				cardPoolByRarity[Cards[cid].rarity].set(cid, trials);
+		for (let [cid, card] of Cards) {
+			if (card.in_booster && card.set === "znr") {
+				cardPoolByRarity[card.rarity].set(cid, trials);
 			}
 		}
 		const factory = new SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
@@ -81,9 +81,9 @@ describe("Statistical color balancing tests", function () {
 			const relativeDifference =
 				2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
 			logTable.push({
-				"1st Card Name": Cards[id0].name,
+				"1st Card Name": getCard(id0).name,
 				"1st Card Count": trackedCards[id0],
-				"2nd Card Name": Cards[id1].name,
+				"2nd Card Name": getCard(id1).name,
 				"2nd Card Count": trackedCards[id1],
 				"Relative Difference (%)": Math.round(10000.0 * relativeDifference) / 100.0,
 			});
@@ -169,16 +169,16 @@ describe("Statistical color balancing tests", function () {
 
 			const logTable = [];
 			let maxRelativeDifference = 0;
-			const MDFCs = Object.keys(trackedCards).filter((cid) => Cards[cid].name.includes("//"));
+			const MDFCs = Object.keys(trackedCards).filter((cid) => getCard(cid).name.includes("//"));
 			for (let id0 of MDFCs) {
 				let id1 = getRandomKey(trackedCards);
 				while (MDFCs.includes(id1) || id1 === id0) id1 = getRandomKey(trackedCards);
 				const relativeDifference =
 					2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
 				logTable.push({
-					"1st Card Name": Cards[id0].name,
+					"1st Card Name": getCard(id0).name,
 					"1st Card Count": trackedCards[id0],
-					"2nd Card Name": Cards[id1].name,
+					"2nd Card Name": getCard(id1).name,
 					"2nd Card Count": trackedCards[id1],
 					"Relative Difference (%)": Math.round(10000.0 * relativeDifference) / 100.0,
 				});
@@ -202,18 +202,18 @@ describe("Statistical color balancing tests", function () {
 		for (let rarity of ["common", "uncommon", "rare", "mythic"]) {
 			const logTable = [];
 			let maxRelativeDifference = 0;
-			let candidates = Object.keys(trackedCards).filter((cid) => Cards[cid].rarity === rarity);
-			const Lessons = candidates.filter((cid) => Cards[cid].subtypes.includes("Lesson"));
-			candidates = candidates.filter((cid) => !Cards[cid].subtypes.includes("Lesson"));
+			let candidates = Object.keys(trackedCards).filter((cid) => getCard(cid).rarity === rarity);
+			const Lessons = candidates.filter((cid) => getCard(cid).subtypes.includes("Lesson"));
+			candidates = candidates.filter((cid) => !getCard(cid).subtypes.includes("Lesson"));
 			for (let id0 of Lessons) {
 				let id1 = getRandom(candidates);
 				while (Lessons.includes(id1) || id1 === id0) id1 = getRandom(candidates);
 				const relativeDifference =
 					2 * Math.abs((trackedCards[id1] - trackedCards[id0]) / (trackedCards[id1] + trackedCards[id0]));
 				logTable.push({
-					"1st Card Name": Cards[id0].name,
+					"1st Card Name": getCard(id0).name,
 					"1st Card Count": trackedCards[id0],
-					"2nd Card Name": Cards[id1].name,
+					"2nd Card Name": getCard(id1).name,
 					"2nd Card Count": trackedCards[id1],
 					"Relative Difference (%)": Math.round(10000.0 * relativeDifference) / 100.0,
 				});
