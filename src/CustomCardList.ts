@@ -108,6 +108,17 @@ export function generateBoosterFromCustomCardList(
 		}
 		return boosters;
 	} else {
+		if (!customCardList.slots["default"]) {
+			// FIXME: I don't think this should be possible, I must have messed something up.
+			//        Print some information to help diagnose the issue.
+			console.error("[CustomCardList] Error: customCardList.slots.default is undefined. Dump of customCardList:");
+			console.error(customCardList);
+			return new MessageError(
+				"Error generating boosters",
+				`Slot 'default' of supplied custom card list is undefined.`
+			);
+		}
+
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
 		let localCollection: CardPool = new Map();
