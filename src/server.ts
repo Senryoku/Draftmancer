@@ -196,37 +196,42 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	},
 	// Parse a card list and uses it as collection
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
-		let cardList = parseCardList(txtcollection, { fallbackToCardName: true });
+		const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
+		let cardList = parseCardList(txtcollection, options);
 		if (cardList instanceof SocketError) {
 			ack?.(cardList);
 			return;
 		}
 
-		let collection: CardPool = new Map();
 		let ret: any = new SocketAck();
+
+		let warningMessages = [];
+
+		if (options.unknownCards)
+			warningMessages.push(
+				`The following cards could not be found and were ignored:<br />${options.unknownCards.join("<br />")}`
+			);
+
+		const ignoredCards = [];
+
+		let collection: CardPool = new Map();
 		for (let cardID in cardList.slots["default"]) {
 			let aid = getCard(cardID).arena_id;
 			if (!aid) {
-				if (ret.warning?.ignoredCards > 0) {
-					++ret.ignoredCards;
-				} else {
-					ret.warning = new MessageWarning(
-						"Non-MTGA card(s) ignored.",
-						`${getCard(cardID).name} (${
-							getCard(cardID).set
-						}) is not a valid MTGA card and has been ignored.`
-					);
-					ret.ignoredCards = 1;
-				}
+				ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);
 				continue;
 			}
 			if (collection.has(aid))
 				collection.set(aid, (collection.get(aid) as number) + cardList.slots["default"][cardID]);
 			else collection.set(aid, cardList.slots["default"][cardID]);
 		}
-		if (ret.ignoredCards > 1) {
-			ret.text += ` (${ret.ignoredCards} cards ignored in total.)`;
-		}
+		if (ignoredCards.length > 1)
+			warningMessages.push(
+				`The following cards are not valid MTGA and were ignored:<br/>${ignoredCards.join("<br />")}`
+			);
+
+		if (warningMessages.length > 0)
+			ret.warning = new MessageWarning("Cards Ignored.", "", "", "" + warningMessages.join("<br /><br />"));
 
 		ret.collection = Object.fromEntries(collection);
 		ack?.(ret);

@@ -91,7 +91,10 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	];
 }
 
-export function parseCardList(txtcardlist: string, options: { [key: string]: any }): CustomCardList | SocketError {
+// options:
+//   - fallbackToCardName: boolean
+//   - ignoreUnknownCards: boolean, this wil return the list of unknown cards by mutating the options object, adding a 'unknownCards' property.
+export function parseCardList(txtcardlist: string, options: Options): CustomCardList | SocketError {
 	try {
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		let cardList: CustomCardList = {
@@ -248,7 +251,13 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 								if (cardList.slots[slotName].hasOwnProperty(cardID))
 									cardList.slots[slotName][cardID] += countOrError;
 								else cardList.slots[slotName][cardID] = countOrError;
-							} else return countOrError; // Return error from parseLine
+							} else {
+								// Just ignore the missing card and add it to the list of errors
+								if (options?.ignoreUnknownCards) {
+									if (!options.unknownCards) options.unknownCards = [];
+									options.unknownCards.push(lines[lineIdx]);
+								} else return countOrError; // Return error from parseLine
+							}
 						}
 						++lineIdx;
 					}
@@ -287,7 +296,13 @@ export function parseCardList(txtcardlist: string, options: { [key: string]: any
 						if (cardList.slots["default"].hasOwnProperty(cardID))
 							cardList.slots["default"][cardID] += countOrError;
 						else cardList.slots["default"][cardID] = countOrError;
-					} else return countOrError; // Return error from parseLine
+					} else {
+						// Just ignore the missing card and add it to the list of errors
+						if (options?.ignoreUnknownCards) {
+							if (!options.unknownCards) options.unknownCards = [];
+							options.unknownCards.push(line);
+						} else return countOrError; // Return error from parseLine
+					}
 				}
 			}
 			cardList.layouts = false;
