@@ -227,11 +227,17 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		}
 		if (ignoredCards.length > 1)
 			warningMessages.push(
-				`The following cards are not valid MTGA and were ignored:<br/>${ignoredCards.join("<br />")}`
+				`The following cards are not valid MTGA cards and were ignored:<br/>${ignoredCards.join("<br />")}`
 			);
 
 		if (warningMessages.length > 0)
-			ret.warning = new MessageWarning("Cards Ignored.", "", "", "" + warningMessages.join("<br /><br />"));
+			ret.warning = new MessageWarning(
+				"Cards Ignored.",
+				"",
+				"",
+				"Collection was imported with the following warnings:<br /><br />" +
+					warningMessages.join("<br /><br />")
+			);
 
 		ret.collection = Object.fromEntries(collection);
 		ack?.(ret);
