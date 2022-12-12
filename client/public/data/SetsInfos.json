@@ -1090,12 +1090,13 @@
     "dmr": {
         "code": "dmr",
         "fullName": "Dominaria Remastered",
-        "cardCount": 21,
+        "cardCount": 457,
         "isPrimary": true,
         "icon": "img/sets/dmr.svg",
-        "mythicCount": 6,
-        "rareCount": 12,
-        "uncommonCount": 3
+        "commonCount": 136,
+        "mythicCount": 57,
+        "rareCount": 144,
+        "uncommonCount": 120
     },
     "dmu": {
         "code": "dmu",
@@ -1213,6 +1214,17 @@
         "mythicCount": 1,
         "rareCount": 9,
         "uncommonCount": 6
+    },
+    "ea2": {
+        "code": "ea2",
+        "fullName": "Explorer Anthology 2",
+        "cardCount": 25,
+        "isPrimary": false,
+        "icon": "img/sets/ea2.svg",
+        "commonCount": 6,
+        "mythicCount": 4,
+        "rareCount": 10,
+        "uncommonCount": 5
     },
     "eld": {
         "code": "eld",
@@ -1888,8 +1900,8 @@
         "isPrimary": true,
         "icon": "img/sets/hml.svg",
         "commonCount": 71,
-        "rareCount": 43,
-        "uncommonCount": 26
+        "rareCount": 42,
+        "uncommonCount": 27
     },
     "hop": {
         "code": "hop",
@@ -1912,51 +1924,6 @@
         "mythicCount": 14,
         "rareCount": 44,
         "uncommonCount": 62
-    },
-    "htr16": {
-        "code": "htr16",
-        "fullName": "2016 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
-        "block": "Heroes of the Realm",
-        "icon": "img/sets/htr16.svg",
-        "mythicCount": 3
-    },
-    "htr17": {
-        "code": "htr17",
-        "fullName": "2017 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
-        "block": "Heroes of the Realm",
-        "icon": "img/sets/htr17.svg",
-        "mythicCount": 3
-    },
-    "htr18": {
-        "code": "htr18",
-        "fullName": "2018 Heroes of the Realm",
-        "cardCount": 5,
-        "isPrimary": false,
-        "block": "Heroes of the Realm",
-        "icon": "img/sets/htr18.svg",
-        "mythicCount": 5
-    },
-    "htr19": {
-        "code": "htr19",
-        "fullName": "2019 Heroes of the Realm",
-        "cardCount": 7,
-        "isPrimary": false,
-        "block": "Heroes of the Realm",
-        "icon": "img/sets/htr19.svg",
-        "mythicCount": 7
-    },
-    "htr20": {
-        "code": "htr20",
-        "fullName": "2020 Heroes of the Realm",
-        "cardCount": 3,
-        "isPrimary": false,
-        "block": "Heroes of the Realm",
-        "icon": "img/sets/htr20.svg",
-        "mythicCount": 3
     },
     "ice": {
         "code": "ice",
@@ -2906,6 +2873,15 @@
         "icon": "img/sets/p22.svg",
         "rareCount": 10
     },
+    "p23": {
+        "code": "p23",
+        "fullName": "Judge Gift Cards 2023",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Judge Gift Cards",
+        "icon": "img/sets/p23.svg",
+        "mythicCount": 1
+    },
     "p2hg": {
         "code": "p2hg",
         "fullName": "Two-Headed Giant Tournament",
@@ -3588,6 +3564,51 @@
         "icon": "img/sets/pgtw.svg",
         "rareCount": 3
     },
+    "ph17": {
+        "code": "ph17",
+        "fullName": "2017 Heroes of the Realm",
+        "cardCount": 3,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph17.svg",
+        "mythicCount": 3
+    },
+    "ph18": {
+        "code": "ph18",
+        "fullName": "2018 Heroes of the Realm",
+        "cardCount": 5,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph18.svg",
+        "mythicCount": 5
+    },
+    "ph19": {
+        "code": "ph19",
+        "fullName": "2019 Heroes of the Realm",
+        "cardCount": 7,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph19.svg",
+        "mythicCount": 7
+    },
+    "ph20": {
+        "code": "ph20",
+        "fullName": "2020 Heroes of the Realm",
+        "cardCount": 3,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph20.svg",
+        "mythicCount": 3
+    },
+    "ph21": {
+        "code": "ph21",
+        "fullName": "2021 Heroes of the Realm",
+        "cardCount": 2,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/ph21.svg",
+        "mythicCount": 2
+    },
     "phed": {
         "code": "phed",
         "fullName": "Heads I Win, Tails You Lose",
@@ -3617,6 +3638,15 @@
         "isPrimary": false,
         "icon": "img/sets/phpr.svg",
         "rareCount": 5
+    },
+    "phtr": {
+        "code": "phtr",
+        "fullName": "2016 Heroes of the Realm",
+        "cardCount": 3,
+        "isPrimary": false,
+        "block": "Heroes of the Realm",
+        "icon": "img/sets/phtr.svg",
+        "mythicCount": 3
     },
     "phuk": {
         "code": "phuk",
@@ -3815,9 +3845,9 @@
         "icon": "img/sets/plist.svg",
         "commonCount": 117,
         "mythicCount": 123,
-        "rareCount": 442,
+        "rareCount": 441,
         "specialCount": 4,
-        "uncommonCount": 278
+        "uncommonCount": 279
     },
     "plrw": {
         "code": "plrw",
@@ -4191,13 +4221,13 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 2916,
+        "cardCount": 3014,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
-        "commonCount": 395,
-        "mythicCount": 341,
-        "rareCount": 1682,
+        "commonCount": 396,
+        "mythicCount": 368,
+        "rareCount": 1752,
         "uncommonCount": 497
     },
     "prna": {
@@ -4828,10 +4858,13 @@
     "scd": {
         "code": "scd",
         "fullName": "Starter Commander Decks",
-        "cardCount": 5,
+        "cardCount": 352,
         "isPrimary": false,
         "icon": "img/sets/scd.svg",
-        "mythicCount": 5
+        "commonCount": 66,
+        "mythicCount": 24,
+        "rareCount": 137,
+        "uncommonCount": 125
     },
     "scg": {
         "code": "scg",
@@ -4884,12 +4917,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 771,
+        "cardCount": 798,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 42,
-        "mythicCount": 130,
-        "rareCount": 579,
+        "commonCount": 45,
+        "mythicCount": 134,
+        "rareCount": 599,
         "uncommonCount": 20
     },
     "slu": {
@@ -5735,6 +5768,17 @@
         "mythicCount": 17,
         "rareCount": 65,
         "uncommonCount": 82
+    },
+    "ybro": {
+        "code": "ybro",
+        "fullName": "Alchemy: The Brothers' War",
+        "cardCount": 30,
+        "isPrimary": false,
+        "block": "Alchemy 2023",
+        "icon": "img/sets/ybro.svg",
+        "mythicCount": 5,
+        "rareCount": 15,
+        "uncommonCount": 10
     },
     "ydmu": {
         "code": "ydmu",

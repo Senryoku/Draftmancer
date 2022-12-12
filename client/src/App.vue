@@ -1435,6 +1435,14 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>December 13, 2022</em>
+							<p>
+								<img src="img/sets/dmr.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
+								Dominaria Remastered is now available in the 'More sets
+								<i class="fas fa-ellipsis-h"></i>' menu!
+							</p>
+						</div>
+						<div class="news">
 							<em>November 5, 2022</em>
 							<p>
 								<img src="img/sets/bro.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
@@ -1472,14 +1480,6 @@
 							<p>
 								Note: Alchemy rebalanced cards cannot currently be played in 40-cards decks using Arena
 								Direct Challenge.
-							</p>
-						</div>
-						<div class="news">
-							<em>October 4, 2022</em>
-							<p>
-								Extended the cube format with <strong>Pack Layouts</strong> to allow more customization,
-								such as emulating the mythic rarity. More information
-								<a href="cubeformat.html#layouts" target="_blank">here</a>.
 							</p>
 						</div>
 					</div>
