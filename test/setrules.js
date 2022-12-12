@@ -127,6 +127,14 @@ describe("Set Specific Booster Rules", function () {
 		expect(crypticSpires).to.equal(1);
 	};
 
+	const validateDMRBooster = function (booster) {
+		expect(booster.map((c) => c.set).every((s) => s === "dmr")).to.be.true;
+		const retro = booster.reduce((acc, val) => {
+			return acc + (parseInt(val.collector_number) >= 262 && parseInt(val.collector_number) <= 401 ? 1 : 0);
+		}, 0);
+		expect(retro).to.equal(1);
+	};
+
 	beforeEach(function (done) {
 		disableLogs();
 		done();
@@ -197,6 +205,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("vow", validateVOWBooster, "exactly one common DFC and at most one uncommon DFC per pack");
 	testSet("clb", validateCLBBooster, "one legendary creature or planeswalker, one legendary background");
 	testSet("2x2", validate2X2Booster, "two foils and one Cryptic Spires");
+	testSet("dmr", validateDMRBooster, "one retro frame card");
 
 	testSet("vow", validateColorBalance, "at least one common of each color.");
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, function (done) {
