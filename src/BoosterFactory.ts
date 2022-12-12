@@ -1188,6 +1188,53 @@ class BROBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Dominaria Remastered
+// 1 Retro C/U/R/M in every pack. If R/M is Retro, C/U is not Retro, and vice versa.
+class DMRBoosterFactory extends BoosterFactory {
+	readonly RetroRareChance = 0.25; // "Retro Rare or higher replaces a non-Retro Rare or higher in 25% of boosters"
+
+	retroCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		let [retroCards, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) =>
+				parseInt(getCard(cid).collector_number) >= 262 && parseInt(getCard(cid).collector_number) <= 401
+		);
+		super(filteredCardPool, landSlot, options);
+		this.retroCards = retroCards;
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.retroCards)) {
+			return super.generateBooster(targets);
+		} else {
+			const retroCardsCounts = countBySlot(this.retroCards);
+			const retroRarityRoll = random.real(0, 1);
+
+			const updatedTargets = Object.assign({}, targets);
+
+			let pickedRarity = "common";
+			if (retroCardsCounts["rare"] > 0 && retroRarityRoll < this.RetroRareChance) {
+				--updatedTargets["rare"];
+				if (retroCardsCounts["mythic"] > 0 && retroRarityRoll < (1.0 / 8.0) * this.RetroRareChance)
+					pickedRarity = "mythic";
+				else pickedRarity = "rare";
+			} else if (retroCardsCounts["uncommon"] > 0 && retroRarityRoll < 0.55)
+				// FIXME: We don't know the actual rate.
+				pickedRarity = "uncommon";
+
+			const retroCard = pickCard(this.retroCards[pickedRarity], []);
+
+			let booster = super.generateBooster(updatedTargets);
+			if (!booster) return false;
+			// Insert the Retro card right after the rare.
+			if (retroCard) booster.splice(updatedTargets["rare"], 0, retroCard);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1210,6 +1257,7 @@ export const SetSpecificFactories: {
 	unf: UNFBoosterFactory,
 	ydmu: YDMUBoosterFactory,
 	bro: BROBoosterFactory,
+	dmr: DMRBoosterFactory,
 };
 
 /*

@@ -271,6 +271,7 @@
         }
     ],
     "PrimarySets": [
+        "dmr",
         "bro",
         "dmu",
         "2x2",

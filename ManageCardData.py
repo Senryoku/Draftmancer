@@ -57,7 +57,7 @@ if len(sys.argv) > 1:
     ForceJumpstartHH = Arg == "jhh"
     ForceSymbology = Arg == "symb"
     FetchSet = Arg == "set" and len(sys.argv) > 2
-    if(FetchSet):
+    if (FetchSet):
         SetToFetch = sys.argv[2].lower()
         ForceCache = True
 
@@ -224,7 +224,7 @@ if not os.path.isfile(RatingsDest) or ForceRatings:
             print("Extracting ratings from ", path,
                   ": Found ", len(matches), " matches.")
             for m in matches:
-                if(m[1] == ''):
+                if (m[1] == ''):
                     continue
                 else:
                     try:
@@ -285,13 +285,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
                                                             c['collector_number'], c['set'].lower())]
 
             # Workaround for Teferi, Master of Time (M21) variations (exclude all except the first one from boosters)
-            if(c['set'] == 'm21' and c['collector_number'] in ['275', '276', '277']):
+            if (c['set'] == 'm21' and c['collector_number'] in ['275', '276', '277']):
                 c['booster'] = False
             # Workaround for premium version of some afr cards
             cnAsInt = 0
             try:
                 cnAsInt = int(c['collector_number'])
-                if(c['set'] == 'afr' and ('★' in c['collector_number'] or cnAsInt > 281)):
+                if (c['set'] == 'afr' and ('★' in c['collector_number'] or cnAsInt > 281)):
                     c['booster'] = False
             except ValueError:
                 pass
@@ -417,6 +417,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if c['set'] == "2x2" and int(c['collector_number']) >= 332:
                 selection['in_booster'] = False
 
+            # Make sure retro cards from DMR are marked as in_booster
+            if c['set'] == "dmr" and (int(c['collector_number']) >= 262 and int(c['collector_number']) <= 401):
+                selection['in_booster'] = True
+
             # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
             if c['id'] == "0826e210-2002-43fe-942d-41922dfd7bc2":
                 selection['in_booster'] = False
@@ -493,7 +497,7 @@ with open(FinalDataPath, 'r', encoding="utf8") as file:
 BasicLandIDs = {}
 for cid in cards:
     if cards[cid]["type"].startswith("Basic"):
-        if(cards[cid]["set"] not in BasicLandIDs):
+        if (cards[cid]["set"] not in BasicLandIDs):
             BasicLandIDs[cards[cid]["set"]] = []
         BasicLandIDs[cards[cid]["set"]].append(cid)
     for mtgset in BasicLandIDs:
@@ -610,7 +614,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
 
     def fix_cardname(n):
         r = n.split(" //")[0].strip()
-        if(r in NameFixes):
+        if (r in NameFixes):
             return NameFixes[r]
         return r
 
@@ -632,7 +636,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
         rarest_card = None
         for c in cards_matches:
             cardname = fix_cardname(c[1])
-            if(cardname == "Cycling Land"):
+            if (cardname == "Cycling Land"):
                 jhh_cards.append(CyclingLands[next(iter(colors))])
                 continue
             cid = getIDFromNameForJHH(cardname)
@@ -641,7 +645,7 @@ if not os.path.isfile(JumpstartHHBoostersDist) or ForceJumpstartHH:
             if cid != None:
                 for color in filter(lambda a: a in "WUBRG", cards[cid]["mana_cost"]):
                     colors.add(color)
-                if(rarest_card == None or Rarity[cards[cid]["rarity"]] < Rarity[cards[rarest_card]["rarity"]]):
+                if (rarest_card == None or Rarity[cards[cid]["rarity"]] < Rarity[cards[rarest_card]["rarity"]]):
                     rarest_card = cid
                 for i in range(int(c[0])):  # Add the card c[0] times
                     jhh_cards.append(cid)
@@ -738,7 +742,7 @@ for mtgset, group in groups:
         print("\nWarning: Set '{}' not found in SetsInfos.\n".format(mtgset))
         continue
     setdata = candidates[0]
-    if("parent_set_code" in setdata):
+    if ("parent_set_code" in setdata):
         subsets.append(mtgset)
     setinfos[mtgset] = {"code": mtgset,
                         "fullName": setdata['name'],
@@ -773,6 +777,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "dmr", "j22"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)
