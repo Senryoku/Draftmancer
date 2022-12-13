@@ -11,6 +11,7 @@ processes = []
 [env]
   PORT = "8080"
   NODE_ENV = "production"
+  NODE_OPTIONS = "--max-old-space-size=400" # 'Tuned' for a 512MB RAM VM
 
 [build.args]
   NODE_ENV = "production"

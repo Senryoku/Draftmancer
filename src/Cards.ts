@@ -165,3 +165,5 @@ console.timeEnd("Preparing Cards and caches");
 
 console.timeEnd("Total");
 console.groupEnd();
+
+memoryReport();
