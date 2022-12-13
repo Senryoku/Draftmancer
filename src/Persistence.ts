@@ -317,7 +317,7 @@ function saveLog(type: string, session: Session) {
 		}
 
 		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey && type === "Draft") {
+		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
 			const data: MTGDraftbotsLog = {
 				players: [],
 				apiKey: MTGDraftbotsAPIKey,
