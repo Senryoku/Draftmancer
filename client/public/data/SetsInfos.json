@@ -1101,11 +1101,11 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 432,
+        "cardCount": 433,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
         "commonCount": 122,
-        "mythicCount": 45,
+        "mythicCount": 46,
         "rareCount": 141,
         "uncommonCount": 124
     },
@@ -2166,11 +2166,11 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 423,
+        "cardCount": 424,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 130,
-        "mythicCount": 44,
+        "mythicCount": 45,
         "rareCount": 130,
         "uncommonCount": 119
     },
@@ -2647,11 +2647,11 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 498,
+        "cardCount": 499,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 145,
-        "mythicCount": 60,
+        "mythicCount": 61,
         "rareCount": 186,
         "uncommonCount": 107
     },
@@ -2724,6 +2724,16 @@
         "block": "Commander",
         "icon": "img/sets/omic.svg",
         "mythicCount": 2
+    },
+    "one": {
+        "code": "one",
+        "fullName": "Phyrexia: All Will Be One",
+        "cardCount": 25,
+        "isPrimary": true,
+        "icon": "img/sets/one.svg",
+        "commonCount": 10,
+        "mythicCount": 7,
+        "rareCount": 8
     },
     "ons": {
         "code": "ons",
@@ -2876,11 +2886,12 @@
     "p23": {
         "code": "p23",
         "fullName": "Judge Gift Cards 2023",
-        "cardCount": 1,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p23.svg",
-        "mythicCount": 1
+        "mythicCount": 1,
+        "rareCount": 2
     },
     "p2hg": {
         "code": "p2hg",
@@ -4917,12 +4928,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 798,
+        "cardCount": 800,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
-        "mythicCount": 134,
-        "rareCount": 599,
+        "mythicCount": 135,
+        "rareCount": 600,
         "uncommonCount": 20
     },
     "slu": {
@@ -4936,11 +4947,11 @@
     "slx": {
         "code": "slx",
         "fullName": "Universes Within",
-        "cardCount": 9,
+        "cardCount": 17,
         "isPrimary": true,
         "icon": "img/sets/slx.svg",
         "mythicCount": 1,
-        "rareCount": 8
+        "rareCount": 16
     },
     "smid": {
         "code": "smid",
@@ -4954,11 +4965,11 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 499,
+        "cardCount": 500,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 53,
+        "mythicCount": 54,
         "rareCount": 152,
         "uncommonCount": 126
     },
@@ -5870,11 +5881,11 @@
     "planeshifted_snc": {
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
-        "cardCount": 499,
+        "cardCount": 500,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 53,
+        "mythicCount": 54,
         "rareCount": 152,
         "uncommonCount": 126
     }
