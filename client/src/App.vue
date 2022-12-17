@@ -2017,7 +2017,7 @@
 										type="number"
 										:id="'booster-content-' + r"
 										min="0"
-										max="16"
+										max="30"
 										step="1"
 										v-model.number="boosterContent[r]"
 										@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
