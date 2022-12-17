@@ -16,7 +16,7 @@
 			"
 		>
 			<i class="fas fa-exclamation-triangle yellow missing-warning" v-if="!hasenoughwildcards"></i>
-			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.png`" />
+			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.webp`" />
 		</div>
 		<div class="bot-score" v-if="botscore && displayBotScore">{{ displayBotScore }}</div>
 		<template v-if="canbeburned && !selected">
