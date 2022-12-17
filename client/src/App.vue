@@ -1256,7 +1256,10 @@
 						</land-control>
 						<dropdown
 							v-if="displayWildcardInfo && neededWildcards"
-							v-tooltip.top="`Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`"
+							v-tooltip.top="{
+								content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
+								html: true,
+							}"
 							minwidth="8em"
 						>
 							<template v-slot:handle>
