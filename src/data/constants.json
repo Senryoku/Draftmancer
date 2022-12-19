@@ -165,9 +165,9 @@
     },
     "CubeLists": [
         {
-          "name": "Arena Cube, December 2022",
-          "filename": "ArenaCubeDecember2022.txt",
-          "description": "MTGA Official Cube from December 2022."
+            "name": "Arena Cube, December 2022",
+            "filename": "ArenaCubeDecember2022.txt",
+            "description": "MTGA Official Cube from December 2022."
         },
         {
             "name": "Arena Chromatic Cube November 2022, No Alchemy",
