@@ -1101,11 +1101,11 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 433,
+        "cardCount": 434,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
         "commonCount": 122,
-        "mythicCount": 46,
+        "mythicCount": 47,
         "rareCount": 141,
         "uncommonCount": 124
     },
@@ -2166,11 +2166,11 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 424,
+        "cardCount": 425,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 130,
-        "mythicCount": 45,
+        "mythicCount": 46,
         "rareCount": 130,
         "uncommonCount": 119
     },
@@ -2647,11 +2647,11 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 499,
+        "cardCount": 500,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
         "commonCount": 145,
-        "mythicCount": 61,
+        "mythicCount": 62,
         "rareCount": 186,
         "uncommonCount": 107
     },
@@ -2728,12 +2728,12 @@
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 25,
+        "cardCount": 32,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
         "commonCount": 10,
-        "mythicCount": 7,
-        "rareCount": 8
+        "mythicCount": 11,
+        "rareCount": 11
     },
     "ons": {
         "code": "ons",
@@ -4168,11 +4168,11 @@
     "ppro": {
         "code": "ppro",
         "fullName": "Pro Tour Promos",
-        "cardCount": 14,
+        "cardCount": 15,
         "isPrimary": false,
         "icon": "img/sets/ppro.svg",
         "mythicCount": 5,
-        "rareCount": 9
+        "rareCount": 10
     },
     "pptk": {
         "code": "pptk",
@@ -4928,13 +4928,22 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 800,
+        "cardCount": 814,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 45,
+        "commonCount": 46,
         "mythicCount": 135,
-        "rareCount": 600,
-        "uncommonCount": 20
+        "rareCount": 611,
+        "uncommonCount": 22
+    },
+    "slp": {
+        "code": "slp",
+        "fullName": "Secret Lair Showdown",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/slp.svg",
+        "mythicCount": 1,
+        "rareCount": 2
     },
     "slu": {
         "code": "slu",
@@ -4965,11 +4974,11 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 500,
+        "cardCount": 501,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 54,
+        "mythicCount": 55,
         "rareCount": 152,
         "uncommonCount": 126
     },
@@ -5467,7 +5476,7 @@
         "code": "uplist",
         "fullName": "The List (Unfinity Foil Edition)",
         "cardCount": 62,
-        "isPrimary": true,
+        "isPrimary": false,
         "icon": "img/sets/uplist.svg",
         "mythicCount": 11,
         "rareCount": 51
@@ -5881,11 +5890,11 @@
     "planeshifted_snc": {
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
-        "cardCount": 500,
+        "cardCount": 501,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 54,
+        "mythicCount": 55,
         "rareCount": 152,
         "uncommonCount": 126
     }
