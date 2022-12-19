@@ -51,10 +51,15 @@
 					style="display: none"
 					accept=".txt,.csv,.log"
 				/>
-				<button @click="uploadMTGALogs" v-tooltip="'Import your collection by uploading your Player.log file.'">
-					Upload
-					<i v-if="hasCollection" class="fas fa-check green" v-tooltip="'Collection uploaded.'"></i>
-				</button>
+				<span v-tooltip="'Import your collection by uploading your Player.log file.'">
+					<button @click="uploadMTGALogs">
+						Upload
+						<i
+							v-if="hasCollection"
+							class="fas fa-check green"
+							v-tooltip="'Collection uploaded.'"
+						></i></button
+				></span>
 				<button
 					v-if="hasCollection"
 					v-tooltip="'Display some statistics about your collection.'"
@@ -333,9 +338,9 @@
 							v-model.number="maxTimer"
 						/>
 					</div>
-					<button @click="startDraft" v-tooltip="'Starts a Draft Session.'" v-show="userID === sessionOwner">
-						Draft
-					</button>
+					<span v-tooltip="'Starts a Draft Session.'">
+						<button @click="startDraft" v-show="userID === sessionOwner">Draft</button>
+					</span>
 				</span>
 				<span v-show="userID === sessionOwner">
 					<dropdown :class="{ disabled: sessionOwner != userID }">
@@ -343,72 +348,76 @@
 						<template v-slot:dropdown>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Draft</span>
-								<button
-									@click="startWinstonDraft()"
+								<div
 									v-tooltip.left="
 										'Starts a Winston Draft. This is a draft variant for only two players.'
 									"
 								>
-									Winston (2p.)
-								</button>
-								<button
-									@click="startGridDraft()"
+									<button @click="startWinstonDraft()">Winston (2p.)</button>
+								</div>
+								<div
 									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for only two players.'
 									"
 								>
-									Grid (2p.)
-								</button>
-								<button
-									@click="startGlimpseDraft()"
+									<button @click="startGridDraft()">Grid (2p.)</button>
+								</div>
+								<div
 									v-tooltip.left="
 										'Starts a Glimpse Draft. Players also remove cards from the draft each pick.'
 									"
 								>
-									Glimpse/Burn
-								</button>
-								<button
-									@click="startRochesterDraft()"
+									<button @click="startGlimpseDraft()">Glimpse/Burn</button>
+								</div>
+								<div
 									v-tooltip.left="
 										'Starts a Rochester Draft. Every players picks from a single booster.'
 									"
 								>
-									Rochester
-								</button>
-								<button @click="startMinesweeperDraft()" v-tooltip.left="'Starts a Minesweeper Draft.'">
-									Minesweeper
-								</button>
+									<button @click="startRochesterDraft()">Rochester</button>
+								</div>
+								<div v-tooltip.left="'Starts a Minesweeper Draft.'">
+									<button @click="startMinesweeperDraft()">Minesweeper</button>
+								</div>
 							</div>
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
-								<button
-									@click="sealedDialog"
-									v-tooltip.left="'Distributes boosters to everyone for a sealed session.'"
-								>
-									Sealed
-								</button>
-								<button
-									@click="deckWarning(distributeJumpstart)"
-									v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'"
-								>
-									Jumpstart
-								</button>
-								<button
-									@click="deckWarning(distributeJumpstartHH)"
+								<div v-tooltip.left="'Distributes boosters to everyone for a sealed session.'">
+									<button @click="sealedDialog">Sealed</button>
+								</div>
+								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
+									<button @click="deckWarning(distributeJumpstart)">Jumpstart</button>
+								</div>
+								<div
 									v-tooltip.left="
 										'Distributes two Jumpstart: Historic Horizons boosters to everyone.'
 									"
-									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
 								>
-									Jumpstart: Historic Horizons
-								</button>
-								<button
-									@click="deckWarning(distributeSuperJump)"
-									v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'"
-									style="white-space: normal; line-height: normal; height: auto; padding: 0.5em 0.5em"
-								>
-									Super Jump!
-								</button>
+									<button
+										@click="deckWarning(distributeJumpstartHH)"
+										style="
+											white-space: normal;
+											line-height: normal;
+											height: auto;
+											padding: 0.5em 0.5em;
+										"
+									>
+										Jumpstart: Historic Horizons
+									</button>
+								</div>
+								<div v-tooltip.left="'Distributes two Super Jump! boosters to everyone.'">
+									<button
+										@click="deckWarning(distributeSuperJump)"
+										style="
+											white-space: normal;
+											line-height: normal;
+											height: auto;
+											padding: 0.5em 0.5em;
+										"
+									>
+										Super Jump!
+									</button>
+								</div>
 							</div>
 						</template>
 					</dropdown>
@@ -1247,7 +1256,10 @@
 						</land-control>
 						<dropdown
 							v-if="displayWildcardInfo && neededWildcards"
-							v-tooltip.top="`Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`"
+							v-tooltip.top="{
+								content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
+								html: true,
+							}"
 							minwidth="8em"
 						>
 							<template v-slot:handle>
@@ -1426,6 +1438,14 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>December 13, 2022</em>
+							<p>
+								<img src="img/sets/dmr.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
+								Dominaria Remastered is now available in the 'More sets
+								<i class="fas fa-ellipsis-h"></i>' menu!
+							</p>
+						</div>
+						<div class="news">
 							<em>November 5, 2022</em>
 							<p>
 								<img src="img/sets/bro.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
@@ -1463,14 +1483,6 @@
 							<p>
 								Note: Alchemy rebalanced cards cannot currently be played in 40-cards decks using Arena
 								Direct Challenge.
-							</p>
-						</div>
-						<div class="news">
-							<em>October 4, 2022</em>
-							<p>
-								Extended the cube format with <strong>Pack Layouts</strong> to allow more customization,
-								such as emulating the mythic rarity. More information
-								<a href="cubeformat.html#layouts" target="_blank">here</a>.
 							</p>
 						</div>
 					</div>
@@ -2008,7 +2020,7 @@
 										type="number"
 										:id="'booster-content-' + r"
 										min="0"
-										max="16"
+										max="30"
 										step="1"
 										v-model.number="boosterContent[r]"
 										@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"

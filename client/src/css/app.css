@@ -658,6 +658,12 @@ select.swal2-input option {
 	flex-direction: column;
 }
 
+.game-modes-cat button {
+    display: block;
+	width: calc(100% - 0.5em);
+	box-sizing: border-box;
+}
+
 .game-modes-cat-title {
 	text-align: center;
 	font-variant: small-caps;

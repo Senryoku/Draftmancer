@@ -1,8 +1,8 @@
 import axios from "axios";
 import vueCardCache from "./vueCardCache.js";
 import Constant from "../../src/data/constants.json";
-import { fireToast } from "./alerts.js";
-import { download } from "./helper.js";
+import { Alert, fireToast } from "./alerts.js";
+import { download, escapeHTML } from "./helper.js";
 
 export async function exportToMTGO(deck, sideboard, options = {}) {
 	fireToast("info", `Preparing MTGO deck list...`);
@@ -38,48 +38,70 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 		return;
 	}
 
-	let cardsStr = "";
+	const cardsLines = [];
 	const addCard = (mtgo_id, name, count = 1, sideboard = false) => {
-		cardsStr += `\n  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
-			sideboard ? "true" : "false"
-		}" Name="${name}" Annotation="0"/>`;
+		cardsLines.push(
+			`  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
+				sideboard ? "true" : "false"
+			}" Name="${name}" Annotation="0"/>`
+		);
 	};
 
-	for (let card of deck) {
+	const missingCards = [];
+	const addMatchingCard = async (card, toSideboard) => {
 		let scryfall_card = vueCardCache.get(card.id);
+		// Exact match doesn't have an associated MTGO id, check other printings.
 		if (!scryfall_card.mtgo_id) {
-			fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
-			return;
+			let allPrintings = await axios.get(`https://api.scryfall.com/cards/search?q=${card.name}&unique=prints`);
+			if (allPrintings.status === 200 && allPrintings.data.object === "list")
+				for (const candidate of allPrintings.data.data)
+					if (candidate.mtgo_id) {
+						scryfall_card = candidate;
+						break;
+					}
 		}
-		addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, false);
-	}
+
+		if (scryfall_card.mtgo_id) addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, toSideboard);
+		else missingCards.push(card.name); // If we were still unable to find an MTGO id, skip it and report it as missing.
+	};
+
+	// The order do not matter and we may have to issue multiple requests to find out all MTGO ids.
+	// We'll avoid awaiting for each addMatchingCard call and allow firing multiple requests simultaneously.
+	const addMatchingCardPromises = [];
+
+	for (let card of deck) addMatchingCardPromises.push(addMatchingCard(card, false));
+
 	if (options?.lands)
 		for (let c in options.lands)
 			if (options.lands[c] > 0) addCard(basics[c].mtgo_id, basics[c].name, options.lands[c], false);
 
 	if (sideboard && sideboard.length > 0) {
-		for (let card of sideboard) {
-			let scryfall_card = vueCardCache.get(card.id);
-			if (!scryfall_card.mtgo_id) {
-				fireToast("error", `Card ${card.name} (${card.set}) cannot be exported to MTGO (no MTGO id).`);
-				return;
-			}
-			addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, true);
-		}
+		for (let card of sideboard) addMatchingCardPromises.push(addMatchingCard(card, true));
 		if (options?.sideboardBasics > 0)
 			for (let c in ["W", "U", "B", "R", "G"])
 				addCard(basics[c].mtgo_id, basics[c].name, options.sideboardBasics[c], false);
 	}
 
-	let exportStr = `<?xml version="1.0" encoding="UTF-8"?>
+	await Promise.all(addMatchingCardPromises); // Wait for all addMatchingCard calls to return.
+
+	const exportStr = `<?xml version="1.0" encoding="UTF-8"?>
 <Deck xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<NetDeckID>0</NetDeckID>
-<PreconstructedDeckID>0</PreconstructedDeckID>
-${cardsStr}
+  <NetDeckID>0</NetDeckID>
+  <PreconstructedDeckID>0</PreconstructedDeckID>
+${cardsLines.join("\n")}
 </Deck>
 `;
 	download(`DraftDeck.dek`, exportStr);
-	fireToast("success", `MTGO export ready!`);
+
+	if (missingCards.length === 0) fireToast("success", `MTGO export ready!`);
+	else
+		Alert.fire(
+			"Missing cards",
+			"Deck partially exported to .dek format.<br />We were unable to find a suitable MTGO id for the following cards:<ul><li>" +
+				missingCards.map((str) => escapeHTML(str)).join("</li><li>") +
+				"</li></ul>",
+			"warning"
+		);
 }
 
 export default exportToMTGO;

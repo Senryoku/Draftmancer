@@ -28,7 +28,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { Cards, MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID } from "./Cards.js";
+import { MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -196,35 +196,48 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	},
 	// Parse a card list and uses it as collection
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
-		let cardList = parseCardList(txtcollection, { fallbackToCardName: true });
+		const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
+		let cardList = parseCardList(txtcollection, options);
 		if (cardList instanceof SocketError) {
 			ack?.(cardList);
 			return;
 		}
 
-		let collection: CardPool = new Map();
 		let ret: any = new SocketAck();
+
+		let warningMessages = [];
+
+		if (options.unknownCards)
+			warningMessages.push(
+				`The following cards could not be found and were ignored:<br />${options.unknownCards.join("<br />")}`
+			);
+
+		const ignoredCards = [];
+
+		let collection: CardPool = new Map();
 		for (let cardID in cardList.slots["default"]) {
-			let aid = Cards[cardID].arena_id;
+			let aid = getCard(cardID).arena_id;
 			if (!aid) {
-				if (ret.warning?.ignoredCards > 0) {
-					++ret.ignoredCards;
-				} else {
-					ret.warning = new MessageWarning(
-						"Non-MTGA card(s) ignored.",
-						`${Cards[cardID].name} (${Cards[cardID].set}) is not a valid MTGA card and has been ignored.`
-					);
-					ret.ignoredCards = 1;
-				}
+				ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);
 				continue;
 			}
 			if (collection.has(aid))
 				collection.set(aid, (collection.get(aid) as number) + cardList.slots["default"][cardID]);
 			else collection.set(aid, cardList.slots["default"][cardID]);
 		}
-		if (ret.ignoredCards > 1) {
-			ret.text += ` (${ret.ignoredCards} cards ignored in total.)`;
-		}
+		if (ignoredCards.length > 1)
+			warningMessages.push(
+				`The following cards are not valid MTGA cards and were ignored:<br/>${ignoredCards.join("<br />")}`
+			);
+
+		if (warningMessages.length > 0)
+			ret.warning = new MessageWarning(
+				"Cards Ignored.",
+				"",
+				"",
+				"Collection was imported with the following warnings:<br /><br />" +
+					warningMessages.join("<br /><br />")
+			);
 
 		ret.collection = Object.fromEntries(collection);
 		ack?.(ret);
@@ -1414,7 +1427,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 	} else if (sid in Sessions) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
-		for (let cid in coll) r += `${coll.get(cid)} ${Cards[cid].name}\n`;
+		for (let cid in coll) r += `${coll.get(cid)} ${getCard(cid).name}\n`;
 		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
@@ -1448,10 +1461,10 @@ app.post("/getCards", (req, res) => {
 	} else {
 		try {
 			if (Array.isArray(req.body)) {
-				res.json(req.body.map((cid) => Cards[cid]));
+				res.json(req.body.map((cid) => getCard(cid)));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
-				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => Cards[cid]);
+				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => getCard(cid));
 				res.json(r);
 			} else {
 				res.sendStatus(400);

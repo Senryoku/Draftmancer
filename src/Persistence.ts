@@ -33,7 +33,7 @@ const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 import { UserID } from "./IDTypes.js";
-import { Cards } from "./Cards.js";
+import { getCard } from "./Cards.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -317,7 +317,7 @@ function saveLog(type: string, session: Session) {
 		}
 
 		// Send log to MTGDraftbots endpoint
-		if (MTGDraftbotsAPIKey && type === "Draft") {
+		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
 			const data: MTGDraftbotsLog = {
 				players: [],
 				apiKey: MTGDraftbotsAPIKey,
@@ -341,7 +341,7 @@ function saveLog(type: string, session: Session) {
 						}
 						lastPackSize = p.booster.length;
 						player.push({
-							pack: p.booster.map((cid: string) => Cards[cid].oracle_id),
+							pack: p.booster.map((cid: string) => getCard(cid).oracle_id),
 							picks: p.pick,
 							trash: p.burn,
 							packNum: packNum,
