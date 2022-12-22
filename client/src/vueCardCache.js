@@ -12,7 +12,7 @@ const cardCachePlugin = new Vue({
 			if (!this.cardCache[cardID]) {
 				this.$set(this.cardCache, cardID, { id: cardID, status: "pending" });
 				return axios
-					.get(`https://api.scryfall.com/cards/${cardID}`)
+					.get(`https://api.scryfall.com/cards/${cardID}`, { timeout: 5000 })
 					.then((response) => {
 						if (response.status === 200) {
 							response.data.status = "ready";
@@ -43,7 +43,7 @@ const cardCachePlugin = new Vue({
 			}
 			promises.push(
 				axios
-					.post(`https://api.scryfall.com/cards/collection`, { identifiers })
+					.post(`https://api.scryfall.com/cards/collection`, { identifiers }, { timeout: 10000 })
 					.then((response) => {
 						if (response.status === 200) {
 							for (let card of response.data.data) {

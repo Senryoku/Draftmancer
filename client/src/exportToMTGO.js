@@ -21,9 +21,13 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 				return { name: Constant.BasicLandNames["en"][c], set: options.preferedBasics };
 			});
 			let basicsRequest = await axios
-				.post(`https://api.scryfall.com/cards/collection`, {
-					identifiers: basicsIdentifiers,
-				})
+				.post(
+					`https://api.scryfall.com/cards/collection`,
+					{
+						identifiers: basicsIdentifiers,
+					},
+					{ timeout: 10000 }
+				)
 				.catch(() => {
 					console.warn("exportDeckMTGO: Could not get requested basics, reverting to default ones.");
 				});
@@ -52,13 +56,20 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 		let scryfall_card = vueCardCache.get(card.id);
 		// Exact match doesn't have an associated MTGO id, check other printings.
 		if (!scryfall_card.mtgo_id) {
-			let allPrintings = await axios.get(`https://api.scryfall.com/cards/search?q=${card.name}&unique=prints`);
-			if (allPrintings.status === 200 && allPrintings.data.object === "list")
+			const allPrintings = await axios.get(
+				`https://api.scryfall.com/cards/search?q=!"${card.name}"&unique=prints`,
+				{ timeout: 5000 }
+			);
+			if (allPrintings.status === 200 && allPrintings.data.object === "list") {
 				for (const candidate of allPrintings.data.data)
 					if (candidate.mtgo_id) {
 						scryfall_card = candidate;
 						break;
 					}
+			} else {
+				console.error(`exportToMTGO: Unexpected response from Scryfall API for card '${card.name}'. Response:`);
+				console.error(allPrintings);
+			}
 		}
 
 		if (scryfall_card.mtgo_id) addCard(scryfall_card.mtgo_id, scryfall_card.name, 1, toSideboard);
