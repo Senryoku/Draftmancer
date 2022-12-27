@@ -2728,12 +2728,12 @@
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 32,
+        "cardCount": 33,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
         "commonCount": 10,
         "mythicCount": 11,
-        "rareCount": 11
+        "rareCount": 12
     },
     "ons": {
         "code": "ons",
@@ -4922,18 +4922,18 @@
         "cardCount": 31,
         "isPrimary": false,
         "icon": "img/sets/slc.svg",
-        "mythicCount": 7,
-        "rareCount": 24
+        "mythicCount": 10,
+        "rareCount": 21
     },
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 814,
+        "cardCount": 817,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
         "mythicCount": 135,
-        "rareCount": 611,
+        "rareCount": 614,
         "uncommonCount": 22
     },
     "slp": {
