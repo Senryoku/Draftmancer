@@ -31,6 +31,7 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 				.catch(() => {
 					console.warn("exportDeckMTGO: Could not get requested basics, reverting to default ones.");
 				});
+
 			if (basicsRequest?.status === 200) {
 				let idx = 0;
 				for (let c of ["W", "U", "B", "R", "G"]) basics[c] = basicsRequest.data.data[idx++];
@@ -89,7 +90,7 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 	if (sideboard && sideboard.length > 0) {
 		for (let card of sideboard) addMatchingCardPromises.push(addMatchingCard(card, true));
 		if (options?.sideboardBasics > 0)
-			for (let c in ["W", "U", "B", "R", "G"])
+			for (let c of ["W", "U", "B", "R", "G"])
 				addCard(basics[c].mtgo_id, basics[c].name, options.sideboardBasics[c], false);
 	}
 
