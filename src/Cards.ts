@@ -128,7 +128,7 @@ Object.freeze(Cards);
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
 
 // Cache for cards organized by set.
-export const CardsBySet: { [set: string]: Array<CardID> } = {};
+export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 for (let [cid, card] of Cards.entries()) {
 	if (card.in_booster || ["und", "j21"].includes(card.set)) {
@@ -139,14 +139,21 @@ for (let [cid, card] of Cards.entries()) {
 	if (!(card.set in CardsBySet)) CardsBySet[card.set] = [];
 	CardsBySet[card.set].push(cid);
 
-	if (card.set === "ydmu") BoosterCardsBySet["alchemy_dmu"].push(cid);
+	if (card.set === "ydmu") {
+		CardsBySet["alchemy_dmu"].push(cid);
+		BoosterCardsBySet["alchemy_dmu"].push(cid);
+	}
 	// Planeshifted New Capenna
 	if (card.set === "snc" && card.in_booster) {
 		// Search for a rebalanced version of the card
 		const rebalancedName = "A-" + card.name;
-		if (rebalancedName in CardsByName && getCard(CardsByName[rebalancedName]).set === "snc")
+		if (rebalancedName in CardsByName && getCard(CardsByName[rebalancedName]).set === "snc") {
+			CardsBySet["planeshifted_snc"].push(cid);
 			BoosterCardsBySet["planeshifted_snc"].push(CardsByName[rebalancedName]);
-		else BoosterCardsBySet["planeshifted_snc"].push(cid);
+		} else {
+			CardsBySet["planeshifted_snc"].push(cid);
+			BoosterCardsBySet["planeshifted_snc"].push(cid);
+		}
 	}
 }
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
