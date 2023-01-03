@@ -84,23 +84,27 @@ export function generateBoosterFromCustomCardList(
 					slotName === colorBalancedSlots[pickedLayoutName] &&
 					pickedLayout.slots[slotName] >= 5 &&
 					colorBalancedSlotGenerators[slotName];
-				if (useColorBalance) {
-					booster = booster.concat(
-						colorBalancedSlotGenerators[slotName].generate(pickedLayout.slots[slotName], [], pickOptions)
-					);
-				} else {
-					for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
-						// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
-						try {
+				// Checking the card count beforehand is tricky, we'll rely on pickCard throwing an exception if we run out of cards to pick.
+				try {
+					if (useColorBalance) {
+						booster = booster.concat(
+							colorBalancedSlotGenerators[slotName].generate(
+								pickedLayout.slots[slotName],
+								[],
+								pickOptions
+							)
+						);
+					} else {
+						for (let i = 0; i < pickedLayout.slots[slotName]; ++i) {
 							const pickedCard = pickCard(cardsBySlot[slotName], booster, pickOptions);
 							booster.push(pickedCard);
-						} catch (e) {
-							return new MessageError(
-								"Error generating boosters",
-								"An error occured while generating boosters, make sure there is enough cards in the list."
-							);
 						}
 					}
+				} catch (e) {
+					return new MessageError(
+						"Error generating boosters",
+						"An error occured while generating boosters, make sure there is enough cards in the list."
+					);
 				}
 			}
 

@@ -27,6 +27,7 @@ function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 
 // TODO: Prevent multiples by name?
 export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options: Options = {}) {
+	if (cardPool.size === 0) throw `Called pickCard on an empty card pool.`;
 	// if uniformAll is false, distribution will be uniform across UNIQUE cards
 	// (the probability of picking a card with a given ID is the same for any ID, regardeless of the number of copies)
 	// if it is true, distribution will be uniform across ALL cards (for a given card ID, more copies means a higher chance to be picked).
