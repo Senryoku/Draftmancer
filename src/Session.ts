@@ -41,7 +41,7 @@ Object.freeze(SuperJumpBoosters);
 import { MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
-import { CustomCardList, generateBoosterFromCustomCardList } from "./CustomCardList.js";
+import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { isBoolean, isObject, isString } from "./TypeChecks.js";
@@ -558,6 +558,11 @@ export class Session implements IIndexable {
 		};
 		for (let p of Object.keys(SessionsSettingsProps)) options[p] = (this as IIndexable)[p];
 		Connections[userID]?.socket.emit("sessionOptions", options);
+	}
+
+	// Returns a getCard function using the custom card data, if any are present in the custom card list.
+	getCustomGetCardFunction() {
+		return generateCustomGetCardFunction(this.customCardList);
 	}
 
 	// Returns true if the card pool is not restricted by players collections (and ignoreCollections is true or no-one is using their collection)
@@ -1941,13 +1946,7 @@ export class Session implements IIndexable {
 
 	initLogs(type: string = "Draft"): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
-		const customGetCard = this.customCardList?.customCards
-			? (cid: CardID) => {
-					return this.customCardList.customCards && cid in this.customCardList.customCards
-						? this.customCardList.customCards[cid]
-						: getCard(cid);
-			  }
-			: getCard;
+		const customGetCard = this.getCustomGetCardFunction();
 		if (this.boosters) for (let c of this.boosters.flat()) carddata[c.id] = customGetCard(c.id);
 		this.draftLog = new DraftLog(type, this, carddata, this.getSortedVirtualPlayerData());
 		return this.draftLog;
@@ -1973,14 +1972,16 @@ export class Session implements IIndexable {
 			teamDraft: this.draftLog.teamDraft,
 		};
 
+		const getCardFunc = this.getCustomGetCardFunction();
+
 		for (let uid in this.draftLog.users) {
 			if (uid === recipientUID) {
 				strippedLog.users[uid] = this.draftLog.users[uid];
 				// We also have to supply card data for all cards seen by the player.
 				if (this.draftLog.type === "Draft" && this.draftLog.users[uid].picks)
 					for (let pick of this.draftLog.users[uid].picks)
-						for (let cid of pick.booster) strippedLog.carddata[cid] = getCard(cid);
-				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = getCard(cid);
+						for (let cid of pick.booster) strippedLog.carddata[cid] = getCardFunc(cid);
+				else for (let cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = getCardFunc(cid);
 			} else {
 				strippedLog.users[uid] = {
 					userID: this.draftLog.users[uid].userID,
@@ -2451,7 +2452,7 @@ export class Session implements IIndexable {
 			console.log("Cannot find log for shared decklist.");
 			return;
 		}
-		decklist = computeHashes(decklist);
+		decklist = computeHashes(decklist, { getCard: this.getCustomGetCardFunction() });
 		this.draftLog.users[userID].decklist = decklist;
 		// Update clients
 		const shareData = {

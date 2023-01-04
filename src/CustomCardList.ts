@@ -16,10 +16,19 @@ export type CustomCardList = {
 	customCards: { [cardID: string]: Card } | null;
 };
 
+export function generateCustomGetCardFunction(customCardList: CustomCardList): (cid: CardID) => Card {
+	if (!customCardList?.customCards) return getCard;
+	return (cid: CardID) => {
+		return customCardList.customCards && cid in customCardList.customCards
+			? customCardList.customCards[cid]
+			: getCard(cid);
+	};
+}
+
 export function generateBoosterFromCustomCardList(
 	customCardList: CustomCardList,
 	boosterQuantity: number,
-	options: Options
+	options: { colorBalance?: boolean; cardsPerBooster?: number }
 ): MessageError | Array<UniqueCard>[] {
 	if (
 		!customCardList.slots ||
@@ -40,12 +49,7 @@ export function generateBoosterFromCustomCardList(
 		}
 
 		let pickOptions: Options = { uniformAll: true };
-		if (customCardList.customCards)
-			pickOptions.getCard = (cid: CardID) => {
-				return customCardList.customCards && cid in customCardList.customCards
-					? customCardList.customCards[cid]
-					: getCard(cid);
-			};
+		pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 		// Color balance the largest slot of each layout
 		const colorBalancedSlots: { [layoutName: string]: string } = {};
