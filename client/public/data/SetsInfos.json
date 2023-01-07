@@ -3156,11 +3156,11 @@
     "pbro": {
         "code": "pbro",
         "fullName": "The Brothers' War Promos",
-        "cardCount": 178,
+        "cardCount": 177,
         "isPrimary": false,
         "icon": "img/sets/pbro.svg",
         "mythicCount": 52,
-        "rareCount": 126
+        "rareCount": 125
     },
     "pc2": {
         "code": "pc2",
@@ -3614,11 +3614,11 @@
     "ph21": {
         "code": "ph21",
         "fullName": "2021 Heroes of the Realm",
-        "cardCount": 2,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph21.svg",
-        "mythicCount": 2
+        "mythicCount": 3
     },
     "phed": {
         "code": "phed",
@@ -4928,13 +4928,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 817,
+        "cardCount": 825,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
         "mythicCount": 135,
-        "rareCount": 614,
-        "uncommonCount": 22
+        "rareCount": 621,
+        "uncommonCount": 23
     },
     "slp": {
         "code": "slp",
