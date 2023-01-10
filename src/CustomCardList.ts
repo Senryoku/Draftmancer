@@ -131,15 +131,16 @@ export function generateBoosterFromCustomCardList(
 		// Getting custom card list
 		let localCollection: CardPool = new Map();
 
-		for (let cardId in customCardList.slots["default"])
+		let card_count = 0;
+		for (let cardId in customCardList.slots["default"]) {
 			localCollection.set(cardId, customCardList.slots["default"][cardId]);
-
+			card_count += customCardList.slots["default"][cardId];
+		}
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
 		const pickOptions: Options = { uniformAll: true };
 
-		let card_count = customCardList.slots["default"].length;
-		let card_target = cardsPerBooster * boosterQuantity;
+		const card_target = cardsPerBooster * boosterQuantity;
 		if (card_count < card_target) {
 			return new MessageError(
 				"Error generating boosters",
