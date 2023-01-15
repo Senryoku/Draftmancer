@@ -4,7 +4,8 @@ import randomjs from "random-js";
 export const random = new randomjs.Random(randomjs.nodeCrypto);
 
 export function isEmpty(obj: Object) {
-	return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+	for (let _ in obj) return false;
+	return true;
 }
 
 export function randomInt(min: number, max: number) {
