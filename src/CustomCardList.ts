@@ -2,7 +2,7 @@ import { ColorBalancedSlot } from "./BoosterFactory.js";
 import { CardID, Card, SlotedCardPool, Cards, UniqueCard, CardPool, getCard } from "./Cards.js";
 import { countCards, pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
-import { Options, random } from "./utils.js";
+import { isEmpty, Options, random } from "./utils.js";
 
 export type PackLayout = {
 	weight: number;
@@ -37,7 +37,7 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 	// List is using custom layouts
-	if (customCardList.layouts) {
+	if (customCardList.layouts && !isEmpty(customCardList.layouts)) {
 		const layouts = customCardList.layouts;
 		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => (acc += layouts[key].weight), 0);
 
@@ -116,7 +116,7 @@ export function generateBoosterFromCustomCardList(
 		}
 		return boosters;
 	} else {
-		if (!customCardList.slots["default"]) {
+		if (!customCardList.slots?.["default"]) {
 			// FIXME: I don't think this should be possible, I must have messed something up.
 			//        Print some information to help diagnose the issue.
 			console.error("[CustomCardList] Error: customCardList.slots.default is undefined. Dump of customCardList:");
