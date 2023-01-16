@@ -389,7 +389,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
 		ack?.(new SocketAck());
 	},
-	startDraft(userID: UserID, sessionID: SessionID) {
+	async startDraft(userID: UserID, sessionID: SessionID) {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 
@@ -405,7 +405,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 				text: `Can't start draft: Not enough players (min. 2 including bots).`,
 			});
 		} else {
-			sess.startDraft();
+			await sess.startDraft();
 			startPublicSession(sess);
 		}
 	},
