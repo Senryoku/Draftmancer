@@ -1467,10 +1467,10 @@
     "fj22": {
         "code": "fj22",
         "fullName": "Jumpstart 2022 Front Cards",
-        "cardCount": 5,
+        "cardCount": 46,
         "isPrimary": false,
         "icon": "img/sets/fj22.svg",
-        "commonCount": 5
+        "commonCount": 46
     },
     "fjmp": {
         "code": "fjmp",
@@ -2725,15 +2725,25 @@
         "icon": "img/sets/omic.svg",
         "mythicCount": 2
     },
+    "onc": {
+        "code": "onc",
+        "fullName": "Phyrexia: All Will Be One Commander",
+        "cardCount": 23,
+        "isPrimary": false,
+        "icon": "img/sets/onc.svg",
+        "mythicCount": 7,
+        "rareCount": 16
+    },
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 33,
+        "cardCount": 201,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
-        "commonCount": 10,
-        "mythicCount": 11,
-        "rareCount": 12
+        "commonCount": 18,
+        "mythicCount": 42,
+        "rareCount": 125,
+        "uncommonCount": 16
     },
     "ons": {
         "code": "ons",
@@ -3614,11 +3624,11 @@
     "ph21": {
         "code": "ph21",
         "fullName": "2021 Heroes of the Realm",
-        "cardCount": 3,
+        "cardCount": 4,
         "isPrimary": false,
         "block": "Heroes of the Realm",
         "icon": "img/sets/ph21.svg",
-        "mythicCount": 3
+        "mythicCount": 4
     },
     "phed": {
         "code": "phed",
@@ -3851,14 +3861,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 964,
+        "cardCount": 1014,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 117,
-        "mythicCount": 123,
-        "rareCount": 441,
+        "commonCount": 131,
+        "mythicCount": 134,
+        "rareCount": 452,
         "specialCount": 4,
-        "uncommonCount": 279
+        "uncommonCount": 293
     },
     "plrw": {
         "code": "plrw",
@@ -4890,12 +4900,12 @@
     },
     "sch": {
         "code": "sch",
-        "fullName": "Store Championships 2022",
-        "cardCount": 6,
+        "fullName": "Store Championships",
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
         "mythicCount": 1,
-        "rareCount": 5
+        "rareCount": 8
     },
     "shm": {
         "code": "shm",
@@ -4928,13 +4938,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 825,
+        "cardCount": 826,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 46,
         "mythicCount": 135,
-        "rareCount": 621,
-        "uncommonCount": 23
+        "rareCount": 624,
+        "uncommonCount": 21
     },
     "slp": {
         "code": "slp",
