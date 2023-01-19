@@ -1546,11 +1546,12 @@ export class Session implements IIndexable {
 				`Invalid burned cards (expected length: ${this.burnedCardsPerRound}, burnedCards: ${burnedCards.length}, booster: ${booster.length}).`
 			);
 
-		console.log(
-			`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
-				(idx) => booster[idx].name
-			)}', burning ${burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"}.`
-		);
+		if (process.env.NODE_ENV !== "production")
+			console.log(
+				`Session ${this.id}: ${Connections[userID].userName} [${userID}] picked card '${pickedCards.map(
+					(idx) => booster[idx].name
+				)}', burning ${burnedCards && burnedCards.length > 0 ? burnedCards.length : "nothing"}.`
+			);
 
 		// Request is valid, actually extract the booster and proceed
 		this.stopCountdown(userID);

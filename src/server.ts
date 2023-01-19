@@ -1143,9 +1143,10 @@ io.on("connection", async function (socket) {
 		return;
 	}
 
-	console.log(
-		`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
-	);
+	if (process.env.NODE_ENV !== "production")
+		console.log(
+			`${query.userName} [${query.userID}] connected. (${Object.keys(Connections).length + 1} players online)`
+		);
 
 	if ((query.userID as string) in Connections) {
 		console.log(`${query.userName} [${query.userID}] already connected.`);
@@ -1198,11 +1199,12 @@ io.on("connection", async function (socket) {
 	socket.on("disconnect", function (this: Socket) {
 		const userID = this.handshake.query.userID as string;
 		if (userID in Connections && Connections[userID].socket === this) {
-			console.log(
-				`${Connections[userID].userName} [${userID}] disconnected. (${
-					Object.keys(Connections).length - 1
-				} players online)`
-			);
+			if (process.env.NODE_ENV !== "production")
+				console.log(
+					`${Connections[userID].userName} [${userID}] disconnected. (${
+						Object.keys(Connections).length - 1
+					} players online)`
+				);
 			removeUserFromSession(userID);
 			process.nextTick(() => {
 				if (Connections[userID]?.socket === this) delete Connections[userID];
