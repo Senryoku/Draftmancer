@@ -285,6 +285,18 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 						});
 					}
 				}
+			} else {
+				// No explicit or default (via slot sizes) layout, expect a single slot.
+				if (Object.keys(cardList.slots).length === 0)
+					return ackError({
+						title: `Parsing Error`,
+						text: `No slot defined.`,
+					});
+				else if (Object.keys(cardList.slots).length !== 1)
+					return ackError({
+						title: `Parsing Error`,
+						text: `Multiple 'default' slots defined. Merge them into a single one, or use layouts (you can define a default layout by explicitly setting slot sizes).`,
+					});
 			}
 		} else {
 			cardList.slots["default"] = {};

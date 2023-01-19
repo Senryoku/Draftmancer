@@ -36,6 +36,10 @@ export function generateBoosterFromCustomCardList(
 	) {
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
+
+	let pickOptions: Options = { uniformAll: true };
+	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
+
 	// List is using custom layouts
 	if (customCardList.layouts && !isEmpty(customCardList.layouts)) {
 		const layouts = customCardList.layouts;
@@ -47,9 +51,6 @@ export function generateBoosterFromCustomCardList(
 			for (let cardId in customCardList.slots[slotName])
 				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
 		}
-
-		let pickOptions: Options = { uniformAll: true };
-		pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 		// Color balance the largest slot of each layout
 		const colorBalancedSlots: { [layoutName: string]: string } = {};
@@ -116,42 +117,45 @@ export function generateBoosterFromCustomCardList(
 		}
 		return boosters;
 	} else {
-		if (!customCardList.slots?.["default"]) {
-			// FIXME: I don't think this should be possible, I must have messed something up.
-			//        Print some information to help diagnose the issue.
-			console.error("[CustomCardList] Error: customCardList.slots.default is undefined. Dump of customCardList:");
-			console.error(customCardList);
+		// In the absence of layouts, we expect the presence of a single slot.
+		// Number of cards in pack is determined by the session settings.
+
+		// These errors should have been caught during list parsing, double checking just in case.
+		const slotsCount = Object.keys(customCardList.slots).length;
+		if (slotsCount === 0) {
+			return new MessageError("Error generating boosters", `No slot defined.`);
+		} else if (slotsCount !== 1) {
 			return new MessageError(
 				"Error generating boosters",
-				`Slot 'default' of supplied custom card list is undefined.`
+				`Multiple 'default' slots defined. Merge them into a single one, or use layouts (you can define a default layout by explicitly setting slot sizes).`
 			);
 		}
+
+		const defaultSlot = Object.values(customCardList.slots)[0];
 
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
 		let localCollection: CardPool = new Map();
 
-		let card_count = 0;
-		for (let cardId in customCardList.slots["default"]) {
-			localCollection.set(cardId, customCardList.slots["default"][cardId]);
-			card_count += customCardList.slots["default"][cardId];
+		let cardCount = 0;
+		for (let cardId in defaultSlot) {
+			localCollection.set(cardId, defaultSlot[cardId]);
+			cardCount += defaultSlot[cardId];
 		}
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
-		const pickOptions: Options = { uniformAll: true };
-
-		const card_target = cardsPerBooster * boosterQuantity;
-		if (card_count < card_target) {
+		const cardTarget = cardsPerBooster * boosterQuantity;
+		if (cardCount < cardTarget) {
 			return new MessageError(
 				"Error generating boosters",
-				`Not enough cards (${card_count}/${card_target}) in custom list.`
+				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`
 			);
 		}
 
 		let boosters = [];
 
 		if (options.colorBalance && cardsPerBooster >= 5) {
-			const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection);
+			const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection, pickOptions);
 			for (let i = 0; i < boosterQuantity; ++i)
 				boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 		} else {
