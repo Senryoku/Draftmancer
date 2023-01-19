@@ -810,13 +810,7 @@ export default {
 			});
 
 			this.socket.on("endDraft", () => {
-				Alert.fire({
-					position: "center",
-					icon: "success",
-					title: "Done drafting!",
-					showConfirmButton: false,
-					timer: 1500,
-				});
+				fireToast("success", "Done drafting!");
 				this.drafting = false;
 				this.draftPaused = false;
 				if (this.draftingState === DraftState.Watching) {
