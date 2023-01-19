@@ -45,6 +45,12 @@ const CustomLayouts_MixedLayoutDefinitionsTestFile = fs.readFileSync(
 	`./test/data/CustomLayouts_MixedLayoutDefinitions.txt`,
 	"utf8"
 );
+const CustomCards_NoLayout = fs.readFileSync(`./test/data/CustomCards_NoLayout.txt`, "utf8");
+const CustomCards_SlotSize = fs.readFileSync(`./test/data/CustomCards_SlotSize.txt`, "utf8");
+const CustomCards_MultipleDefaultSlots_Invalid = fs.readFileSync(
+	`./test/data/CustomCards_MultipleDefaultSlots_Invalid.txt`,
+	"utf8"
+);
 
 describe("Inter client communication", function () {
 	const sessionID = "sessionID";
@@ -1004,6 +1010,48 @@ describe("Single Draft (Two Players)", function () {
 		disconnect();
 	});
 
+	describe("Using cube with custom cards and no layout", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function () {
+				done();
+			});
+			clients[ownerIdx].emit("parseCustomCardList", CustomCards_NoLayout);
+		});
+		startDraft();
+		endDraft();
+		expectCardCount(3 * 15);
+		disconnect();
+	});
+
+	describe("Using cube with custom cards and default layout (sized slot)", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function () {
+				done();
+			});
+			clients[ownerIdx].emit("parseCustomCardList", CustomCards_SlotSize);
+		});
+		startDraft();
+		endDraft();
+		expectCardCount(3 * 12);
+		disconnect();
+	});
+
 	describe("Custom card list with incorrect custom layouts should fail.", function () {
 		connect();
 		it("Wrong Pack Size.", function (done) {
@@ -1014,6 +1062,12 @@ describe("Single Draft (Two Players)", function () {
 		});
 		it("Mixed Layout Definitions.", function (done) {
 			clients[ownerIdx].emit("parseCustomCardList", CustomLayouts_MixedLayoutDefinitionsTestFile, (response) => {
+				expect(response.error).to.not.be.null;
+				done();
+			});
+		});
+		it("Multiple default slots definitions.", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", CustomCards_MultipleDefaultSlots_Invalid, (response) => {
 				expect(response.error).to.not.be.null;
 				done();
 			});
