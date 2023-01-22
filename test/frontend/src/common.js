@@ -73,6 +73,13 @@ async function startBrowsers() {
 		sessionOwnerPage.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
 		otherPlayerPage.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
 	}
+	// Skip the confirmation dialog when exiting/refreshing while there's a pending call to storeDraftLogs
+	sessionOwnerPage.on("dialog", async (dialog) => {
+		await dialog.accept();
+	});
+	otherPlayerPage.on("dialog", async (dialog) => {
+		await dialog.accept();
+	});
 	disableAnimations(sessionOwnerPage);
 	disableAnimations(otherPlayerPage);
 }

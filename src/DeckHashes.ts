@@ -18,12 +18,11 @@ function decklistToArray(
 	};
 
 	const main = [...decklist.main.map((cid: CardID) => filter(options.getCard(cid).name))];
-	for (let c in decklist.lands) for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(basicNames[c]));
+	if (decklist.lands)
+		for (let c in decklist.lands) for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(basicNames[c]));
 
 	const side = [...decklist.side.map((cid: CardID) => sidePrefix + filter(options.getCard(cid).name))];
-	if (side.length > 0)
-		for (let c of ["W", "U", "B", "R", "G"])
-			for (let i = 0; i < 10; ++i) side.push(sidePrefix + filter(basicNames[c]));
+	// Front-end might add some basic lands to the sideboard, but we don't have access to this information.
 
 	return main.concat(side).sort();
 }

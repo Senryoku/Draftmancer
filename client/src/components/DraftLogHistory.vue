@@ -112,11 +112,12 @@ export default {
 		downloadLog: function (draftLog) {
 			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
 			for (let uid in draftLog.users) {
-				draftLogFull.users[uid].exportString = exportToMTGA(
-					draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
-					null,
-					this.language
-				);
+				if (draftLogFull.users[uid].cards)
+					draftLogFull.users[uid].exportString = exportToMTGA(
+						draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
+						null,
+						this.language
+					);
 			}
 			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
 		},

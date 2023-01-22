@@ -783,9 +783,9 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Non-owner moves a card to the side board, spectator receives an update.", function (done) {
 			clients[ownerIdx].once("draftLogLive", function (data) {
-				expect(data.pickedCards[0].userID).to.equal(clients[nonOwnerIdx].query.userID);
-				expect(data.pickedCards[0].pickedCards.main.length).to.equal(0);
-				expect(data.pickedCards[0].pickedCards.side.length).to.equal(1);
+				expect(data.userID).to.equal(clients[nonOwnerIdx].query.userID);
+				expect(data.decklist.main.length).to.equal(0);
+				expect(data.decklist.side.length).to.equal(1);
 				done();
 			});
 			clients[nonOwnerIdx].emit("moveCard", lastPickedCardUID, "side");

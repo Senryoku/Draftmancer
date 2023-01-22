@@ -40,13 +40,15 @@ export class Card {
 	};
 }
 
+export type DeckBasicLands = { [key: string]: number };
+
 export type CardPool = Map<string, number>;
 export type SlotedCardPool = { [slot: string]: CardPool };
 export type DeckList = {
 	main: Array<CardID>;
 	side: Array<CardID>;
 	hashes?: { [key: string]: string };
-	lands?: { [key: string]: number };
+	lands?: DeckBasicLands;
 };
 
 export let Cards = new Map<CardID, Card>();

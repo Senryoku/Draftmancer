@@ -437,7 +437,12 @@ export default {
 			immediate: true,
 			handler() {
 				// Displayed log defaults to first player
-				if (this.draftlog && this.draftlog.users && Object.keys(this.draftlog.users)[0])
+				if (
+					this.draftlog &&
+					this.draftlog.users &&
+					Object.keys(this.draftlog.users)[0] &&
+					!this.draftlog.users[this.displayOptions.detailsUserID]
+				)
 					this.displayOptions.detailsUserID = Object.keys(this.draftlog.users)[0];
 			},
 		},

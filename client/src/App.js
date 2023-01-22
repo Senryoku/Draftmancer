@@ -227,6 +227,9 @@ export default {
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
+			// Used to debounce calls to doStoreDraftLogs
+			storeDraftLogsTimeout: null,
+
 			// Chat
 			currentChatMessage: "",
 			displayChatHistory: false,
@@ -849,23 +852,15 @@ export default {
 			this.socket.on("shareDecklist", (data) => {
 				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
 				if (idx && data.userID in this.draftLogs[idx].users) {
-					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
+					this.$set(this.draftLogs[idx].users[data.userID], "decklist", data.decklist);
 					this.storeDraftLogs();
 				}
 			});
 
 			this.socket.on("draftLogLive", (data) => {
 				if (data.log) this.draftLogLive = data.log;
-				if (data.pickedCards)
-					this.$nextTick(() => {
-						// This can be called on reconnect, give vue some time to mount the component
-						for (let entry of data.pickedCards)
-							this.$refs.draftloglive?.setDeck(entry.userID, entry.pickedCards);
-					});
-				if (data.pick) {
-					this.draftLogLive.users[data.userID].picks.push(data.pick);
-					this.$refs.draftloglive?.newPick(data);
-				}
+				if (data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
+				if (data.decklist) this.$set(this.draftLogLive.users[data.userID], "decklist", data.decklist);
 			});
 
 			this.socket.on("pickAlert", (data) => {
@@ -875,6 +870,7 @@ export default {
 						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
+				this.$refs.draftloglive?.newPick(data);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
@@ -1973,16 +1969,7 @@ export default {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
 		},
-		shareDecklist() {
-			this.socket.emit("shareDecklist", {
-				main: this.deck.map((c) => c.id),
-				side: this.sideboard.map((c) => c.id),
-				lands: this.lands,
-				timestamp: Date.now(),
-			});
-			fireToast("success", "Deck now visible in logs and bracket!");
-		},
-		importDeck: async function () {
+		async importDeck() {
 			const response = await fetch("/getDeck", {
 				method: "POST",
 				mode: "cors",
@@ -2417,8 +2404,9 @@ export default {
 				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 			}
 		},
-		onCollapsedSideChange() {
+		onCollapsedSideChange(e) {
 			this.$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */
+			if (e.added) this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 		},
 		clearDeck() {
 			this.deck = [];
@@ -2550,9 +2538,15 @@ export default {
 				this.draftLogs.splice(idx, 1);
 			}
 
+			// Debounce the compression and store
+			if (this.storeDraftLogsTimeout) clearTimeout(this.storeDraftLogsTimeout);
+			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
+		},
+		doStoreDraftLogs() {
 			let worker = new LogStoreWorker();
 			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
+				this.storeDraftLogsTimeout = null;
 				console.log("Stored Draft Logs.");
 			};
 			worker.postMessage(["compress", this.draftLogs]);
@@ -2608,6 +2602,19 @@ export default {
 				settings[key] = this[key];
 			}
 			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
+		},
+
+		beforeunload(event) {
+			// Force the call to doStoreDraftLogs and ask the user to wait a bit.
+			if (this.storeDraftLogsTimeout) {
+				clearTimeout(this.storeDraftLogsTimeout);
+				this.storeDraftLogsTimeout = null;
+				this.doStoreDraftLogs();
+				event.preventDefault();
+				return (event.returnValue =
+					"Processing draft logs, please wait a brief moment before navigating away...");
+			}
+			return false;
 		},
 	},
 	computed: {
@@ -2745,7 +2752,7 @@ export default {
 				}`;
 		},
 	},
-	mounted: async function () {
+	async mounted() {
 		// Load all card informations
 		try {
 			// Load set informations
@@ -2786,6 +2793,9 @@ export default {
 				worker.postMessage(["decompress", storedLogs]);
 			}
 
+			// If we're waiting on a storeDraftLogsTimeout, ask the user to wait and trigger the compressiong/storing immediatly
+			window.addEventListener("beforeunload", this.beforeunload);
+
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
 
@@ -2793,6 +2803,9 @@ export default {
 		} catch (e) {
 			alert(e);
 		}
+	},
+	unmounted() {
+		window.removeEventListener("beforeunload", this.beforeunload);
 	},
 	watch: {
 		sessionID() {
@@ -2860,6 +2873,13 @@ export default {
 		},
 		autoLand() {
 			this.updateAutoLands();
+		},
+		lands: {
+			deep: true,
+			handler() {
+				if (!this.socket) return;
+				this.socket.emit("updateDeckLands", this.lands);
+			},
 		},
 		targetDeckSize() {
 			this.updateAutoLands();

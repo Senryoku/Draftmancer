@@ -1229,14 +1229,6 @@
 								sideboardBasics: sideboardBasics,
 							}"
 						/>
-						<button
-							v-if="deck.length > 0 && (currentDraftLog || draftLogRecipients === 'owner')"
-							type="button"
-							@click="shareDecklist()"
-							v-tooltip.top="'Share deck, lands, and sideboard with other players in your session.'"
-						>
-							<i class="fas fa-share-square"></i> Share
-						</button>
 						<i
 							class="fas fa-chart-pie fa-lg clickable"
 							@click="displayedModal = 'deckStats'"
