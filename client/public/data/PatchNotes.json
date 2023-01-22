@@ -1,5 +1,9 @@
 [
 	{
+		"date": "22/01/2023",
+		"notes": ["Removed deck sharing button: It is now automatic."]
+	},
+	{
 		"date": "05/11/2022",
 		"notes": ["The Brothers' War preliminary support."]
 	},
