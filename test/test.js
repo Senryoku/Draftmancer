@@ -541,7 +541,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster = 15;
+	const latestSetCardPerBooster = 14;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
