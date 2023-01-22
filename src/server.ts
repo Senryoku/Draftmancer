@@ -28,7 +28,17 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { MTGACards, getUnique, CardPool, DeckList, CardID, Card, UniqueCardID, getCard } from "./Cards.js";
+import {
+	MTGACards,
+	getUnique,
+	CardPool,
+	DeckList,
+	CardID,
+	Card,
+	UniqueCardID,
+	getCard,
+	DeckBasicLands,
+} from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -332,12 +342,12 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 
 		ack?.(r);
 	},
-	shareDecklist(userID: UserID, sessionID: SessionID, decklist: DeckList) {
-		Sessions[sessionID].shareDecklist(userID, decklist);
-	},
 	updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
 		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
 		Sessions[sessionID].updateBracket(results);
+	},
+	updateDeckLands(userID: UserID, sessionID: SessionID, lands: DeckBasicLands) {
+		Sessions[sessionID].updateDeckLands(userID, lands);
 	},
 	moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, destStr: string) {
 		if (!["main", "side"].includes(destStr)) return;
@@ -356,7 +366,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		if (index !== -1) {
 			const card = source.splice(index, 1)[0];
 			dest.push(card);
-			Sessions[sessionID].onCardMoved(userID, uniqueID, destStr);
+			Sessions[sessionID].updateDecklist(userID);
 		}
 	},
 };

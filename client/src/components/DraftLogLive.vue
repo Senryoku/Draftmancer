@@ -118,7 +118,6 @@ export default {
 			pick: 0,
 			eventListeners: [],
 			pickTransition: "right",
-			playerDecks: {},
 			uniqueID: 0,
 		};
 	},
@@ -160,9 +159,6 @@ export default {
 					this.pick = this.picksPerPack[this.pack].length - 1;
 				});
 		},
-		setDeck(userID, pickedCards) {
-			this.$set(this.playerDecks, userID, pickedCards);
-		},
 		prevPick() {
 			if (this.pick === 0) {
 				if (this.pack === 0) return;
@@ -182,11 +178,6 @@ export default {
 			}
 		},
 		newPick(data) {
-			if (data.userID in this.playerDecks) {
-				for (let idx of data.pick.pick) {
-					this.playerDecks[data.userID].main.push(data.pick.booster[idx]);
-				}
-			}
 			// Skip to last pick if we're spectating this player
 			if (data.userID === this.player) {
 				this.pack = this.picksPerPack.length - 1;
@@ -207,10 +198,10 @@ export default {
 				.join(", ");
 		},
 		selectedPlayerCards() {
-			if (this.player in this.playerDecks)
+			if (this.draftlog.users?.[this.player]?.decklist?.main)
 				return {
-					main: this.generateCardArray(this.playerDecks[this.player].main),
-					side: this.generateCardArray(this.playerDecks[this.player].side),
+					main: this.generateCardArray(this.draftlog.users[this.player].decklist.main),
+					side: this.generateCardArray(this.draftlog.users[this.player].decklist.side),
 				};
 			return {
 				main: this.generateCardArray(

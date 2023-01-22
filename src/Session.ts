@@ -19,6 +19,7 @@ import {
 	SlotedCardPool,
 	UniqueCard,
 	getCard,
+	DeckBasicLands,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -1575,8 +1576,13 @@ export class Session implements IIndexable {
 
 		// Update draft log for live display if owner in not playing (Do this before removing the cards, damnit!)
 		if (this.shouldSendLiveUpdates()) {
-			Connections[this.owner].socket.emit("draftLogLive", { userID: userID, pick: pickData });
+			Connections[this.owner].socket.emit("draftLogLive", {
+				userID: userID,
+				pick: pickData,
+			});
+			this.updateDecklist(userID);
 			Connections[this.owner].socket.emit("pickAlert", {
+				userID: userID,
 				userName: Connections[userID].userName,
 				cards: pickedCards.map((idx) => booster[idx]),
 			});
@@ -2217,18 +2223,9 @@ export class Session implements IIndexable {
 				boosterNumber: this.draftState.boosterNumber,
 			});
 			// Update draft log for live display if owner in not playing
-			if (["owner", "everyone"].includes(this.draftLogRecipients))
+			if (this.shouldSendLiveUpdates())
 				Connections[userID].socket.emit("draftLogLive", {
 					log: this.draftLog,
-					pickedCards: [...this.users].map((uid: UserID) => {
-						return {
-							userID: uid,
-							pickedCards: {
-								main: Connections[uid]?.pickedCards.main.map((c) => c.id),
-								side: Connections[uid]?.pickedCards.side.map((c) => c.id),
-							},
-						};
-					}),
 				});
 		} else {
 			Connections[userID].socket.emit("sessionOptions", {
@@ -2448,50 +2445,62 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	shareDecklist(userID: UserID, decklist: DeckList) {
-		if (this.draftLog === undefined || this.draftLog.users[userID] === undefined) {
-			console.log("Cannot find log for shared decklist.");
-			return;
-		}
-		decklist = computeHashes(decklist, { getCard: this.getCustomGetCardFunction() });
-		this.draftLog.users[userID].decklist = decklist;
+	updateDeckLands(userID: UserID, lands: DeckBasicLands) {
+		if (!this.draftLog?.users[userID]) return;
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = {};
+		this.draftLog.users[userID].decklist.lands = lands;
+		this.updateDecklist(userID);
+	}
+
+	updateDecklist(userID: UserID) {
+		if (!this.draftLog?.users[userID]) return;
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = {};
+		this.draftLog.users[userID].decklist.main = Connections[userID].pickedCards.main.map((c) => c.id);
+		this.draftLog.users[userID].decklist.side = Connections[userID].pickedCards.side.map((c) => c.id);
+		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist, {
+			getCard: this.getCustomGetCardFunction(),
+		});
 		// Update clients
 		const shareData = {
 			sessionID: this.id,
 			time: this.draftLog?.time,
 			userID: userID,
-			decklist: decklist,
+			decklist: this.draftLog.users[userID].decklist,
 		};
 		const hashesOnly = {
 			sessionID: this.id,
 			time: this.draftLog?.time,
 			userID: userID,
-			decklist: { hashes: decklist.hashes },
+			decklist: { hashes: this.draftLog.users[userID].decklist.hashes },
 		};
-		// Note: The session setting draftLogRecipients may have change since the game ended.
-		switch (this.draftLogRecipients) {
-			default:
-			case "delayed":
-				if (this.draftLog.delayed) {
-					// Complete log has not been shared yet, send only hashes to non-owners.
+		if (this.drafting) {
+			if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+		} else {
+			// Note: The session setting draftLogRecipients may have changed since the game ended.
+			switch (this.draftLogRecipients) {
+				default:
+				case "delayed":
+					if (this.draftLog.delayed) {
+						// Complete log has not been shared yet, send only hashes to non-owners.
+						Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+						this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+						break;
+					}
+				// Else, fall through to "everyone"
+				case "everyone":
+					// Also send the update to the organiser separately if they're not playing
+					if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
+					this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
+					break;
+				case "owner":
 					Connections[this.owner]?.socket.emit("shareDecklist", shareData);
 					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
 					break;
-				}
-			// Else, fall through to "everyone"
-			case "everyone":
-				// Also send the update to the organiser separately if they're not playing
-				if (!this.ownerIsPlayer) Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-				this.forUsers((uid) => Connections[uid]?.socket.emit("shareDecklist", shareData));
-				break;
-			case "owner":
-				Connections[this.owner]?.socket.emit("shareDecklist", shareData);
-				this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
-				break;
-			case "none":
-				Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
-				this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
-				break;
+				case "none":
+					Connections[this.owner]?.socket.emit("shareDecklist", hashesOnly);
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("shareDecklist", hashesOnly));
+					break;
+			}
 		}
 	}
 
@@ -2500,22 +2509,6 @@ export class Session implements IIndexable {
 		return (
 			!this.ownerIsPlayer && ["owner", "everyone"].includes(this.draftLogRecipients) && this.owner in Connections
 		);
-	}
-
-	onCardMoved(userID: string, uniqueID: number, destStr: string) {
-		if (this.shouldSendLiveUpdates()) {
-			Connections[this.owner]?.socket.emit("draftLogLive", {
-				pickedCards: [
-					{
-						userID: userID,
-						pickedCards: {
-							main: Connections[userID]?.pickedCards.main.map((c) => c.id),
-							side: Connections[userID]?.pickedCards.side.map((c) => c.id),
-						},
-					},
-				],
-			});
-		}
 	}
 
 	// Execute fn for each user. Owner included even if they're not playing.
