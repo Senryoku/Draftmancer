@@ -1453,12 +1453,11 @@ export class Session implements IIndexable {
 
 		if (!this.ownerIsPlayer && this.owner in Connections) {
 			Connections[this.owner].socket.emit("startDraft", virtualPlayerData);
-			// Update draft log for live display if owner in not playing
-			if (this.shouldSendLiveUpdates()) {
+			// Update draft log for live display if owner is not playing
+			if (this.shouldSendLiveUpdates())
 				Connections[this.owner].socket.emit("draftLogLive", {
 					log: this.draftLog,
 				});
-			}
 		}
 
 		this.boosters = [];
