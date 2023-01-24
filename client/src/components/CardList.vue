@@ -132,7 +132,7 @@ export default {
 			if (!cards) return [];
 			let a = cards.reduce(
 				(acc, item) => {
-					const c = item.colors;
+					const c = item.colors.sort();
 					if (c in acc[0]) {
 						acc[0][c].push(item);
 					} else {
