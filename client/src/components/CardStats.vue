@@ -2,7 +2,15 @@
 	<div class="charts">
 		<div>
 			<h2>Mana Curve</h2>
-			<cmcchart :curve="manacurve"></cmcchart>
+			<Bar
+				:data="cmcChartData"
+				:options="{
+					scales: {
+						x: { stacked: true },
+						y: { beginAtZero: true, stacked: true },
+					},
+				}"
+			/>
 			<div class="info">Average Mana Cost: {{ manaAverage }}</div>
 			<table class="type-table">
 				<tr>
@@ -23,7 +31,7 @@
 		</div>
 		<div>
 			<h2>Colors in Mana Cost</h2>
-			<colorchart :colors="colors"></colorchart>
+			<Pie :data="colorsChartData" />
 			<table class="type-table">
 				<tr>
 					<th>Mana Color</th>
@@ -37,7 +45,7 @@
 		</div>
 		<div>
 			<h2>Types</h2>
-			<cardtypechart :types="types"></cardtypechart>
+			<Pie :data="cardTypeChartData" />
 			<table class="type-table">
 				<tr>
 					<th>Type</th>
@@ -60,116 +68,32 @@
 </template>
 
 <script>
-import Chart from "chart.js";
 import { Bar, Pie } from "vue-chartjs";
+import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale } from "chart.js";
 
 const Colors = {
 	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
 	current: 0,
-	next: function() {
+	next() {
 		const r = this.current;
 		this.current = (this.current + 1) % this.codes.length;
 		return this.codes[r];
 	},
-	reset: function() {
+	reset() {
 		this.current = 0;
 	},
 };
 
-Chart.defaults.global.defaultFontColor = "#ddd";
-
-const CMCChart = {
-	extends: Bar,
-	props: { curve: { type: Object, required: true } },
-	mounted() {
-		Colors.reset();
-		this.renderChart(this.chartdata, {
-			scales: {
-				xAxes: [{ stacked: true }],
-				yAxes: [{ ticks: { beginAtZero: true }, stacked: true }],
-			},
-		});
-	},
-	computed: {
-		chartdata: function() {
-			let data = {
-				labels: [],
-				datasets: [],
-			};
-			data.labels = Object.keys(this.curve);
-			data.datasets.push({
-				label: "Creatures",
-				backgroundColor: "#ff9900",
-				data: Object.values(this.curve).map(cmc => cmc.creatures),
-			});
-			data.datasets.push({
-				label: "Non-Creatures",
-				backgroundColor: "#7dd6ff",
-				data: Object.values(this.curve).map(cmc => cmc.nonCreatures),
-			});
-			return data;
-		},
-	},
-};
-
-const ColorChart = {
-	extends: Pie,
-	props: { colors: { type: Object, required: true }, options: { type: Object } },
-	mounted() {
-		this.renderChart(this.chartdata, this.options);
-	},
-	computed: {
-		chartdata: function() {
-			let data = {
-				labels: [],
-				datasets: [],
-			};
-			data.labels = Object.keys(this.colors);
-			data.datasets.push({
-				label: "Deck",
-				backgroundColor: [
-					"rgb(249, 250, 244)",
-					"rgb(14, 104, 171)",
-					"rgb(21, 11, 0)",
-					"rgb(211, 32, 42)",
-					"rgb(0, 115, 62)",
-				],
-				data: Object.values(this.colors),
-			});
-			return data;
-		},
-	},
-};
-
-const CardTypeChart = {
-	extends: Pie,
-	props: { types: { type: Object, required: true }, options: { type: Object } },
-	mounted() {
-		this.renderChart(this.chartdata, this.options);
-	},
-	computed: {
-		chartdata: function() {
-			return {
-				labels: Object.keys(this.types),
-				datasets: [
-					{
-						label: "Deck",
-						backgroundColor: Object.keys(this.types).map(() => Colors.next()),
-						data: Object.values(this.types),
-					},
-				],
-			};
-		},
-	},
-};
+Chart.defaults.color = "#ddd";
+Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
 
 export default {
 	props: { cards: { type: Array, required: true }, addedbasics: { type: Number, required: true } },
-	components: { cmcchart: CMCChart, colorchart: ColorChart, cardtypechart: CardTypeChart },
+	components: { Bar, Pie },
 	computed: {
-		types: function() {
+		types() {
 			let r = this.cards
-				.map(c => {
+				.map((c) => {
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
 					return c.type;
 				})
@@ -181,7 +105,7 @@ export default {
 			r["Basic Land"] = (r["Basic Land"] || 0) + this.addedbasics;
 			return r;
 		},
-		colors: function() {
+		colors() {
 			let fullNames = {
 				W: "White",
 				U: "Blue",
@@ -190,7 +114,7 @@ export default {
 				G: "Green",
 			};
 			return this.cards
-				.map(c => {
+				.map((c) => {
 					let colors = [];
 					for (let s of ["{W}", "{U}", "{B}", "{R}", "{G}"]) {
 						const matches = c.mana_cost.match(new RegExp(s, "g")) || [];
@@ -210,19 +134,68 @@ export default {
 					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 }
 				);
 		},
-		nonLands: function() {
-			return this.cards.filter(c => !c.type.includes("Land"));
+		nonLands() {
+			return this.cards.filter((c) => !c.type.includes("Land"));
 		},
-		manacurve: function() {
+		manacurve() {
+			let o = {};
+			for (let i = 0; i < 8; ++i) o[i] = { creatures: 0, nonCreatures: 0 };
 			return this.nonLands.reduce((acc, c) => {
 				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
 				if (c.type.includes("Creature")) ++acc[c.cmc].creatures;
 				else ++acc[c.cmc].nonCreatures;
 				return acc;
-			}, {});
+			}, o);
 		},
-		manaAverage: function() {
+		manaAverage() {
 			return (this.nonLands.reduce((acc, c) => acc + c.cmc, 0) / this.nonLands.length).toPrecision(3);
+		},
+		cmcChartData() {
+			return {
+				labels: Object.keys(this.manacurve),
+				datasets: [
+					{
+						label: "Creatures",
+						backgroundColor: "#ff9900",
+						data: Object.values(this.manacurve).map((cmc) => cmc.creatures),
+					},
+					{
+						label: "Non-Creatures",
+						backgroundColor: "#7dd6ff",
+						data: Object.values(this.manacurve).map((cmc) => cmc.nonCreatures),
+					},
+				],
+			};
+		},
+		colorsChartData() {
+			return {
+				labels: Object.keys(this.colors),
+				datasets: [
+					{
+						label: "Deck",
+						backgroundColor: [
+							"rgb(249, 250, 244)",
+							"rgb(14, 104, 171)",
+							"rgb(21, 11, 0)",
+							"rgb(211, 32, 42)",
+							"rgb(0, 115, 62)",
+						],
+						data: Object.values(this.colors),
+					},
+				],
+			};
+		},
+		cardTypeChartData() {
+			return {
+				labels: Object.keys(this.types),
+				datasets: [
+					{
+						label: "Deck",
+						backgroundColor: Object.keys(this.types).map(() => Colors.next()),
+						data: Object.values(this.types),
+					},
+				],
+			};
 		},
 	},
 };
