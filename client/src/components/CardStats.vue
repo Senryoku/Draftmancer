@@ -69,23 +69,10 @@
 
 <script>
 import { Bar, Pie } from "vue-chartjs";
-import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale } from "chart.js";
-
-const Colors = {
-	codes: ["#7fc97f", "#beaed4", "#fdc086", "#ffff99", "#386cb0", "#f0027f", "#bf5b17", "#666666"],
-	current: 0,
-	next() {
-		const r = this.current;
-		this.current = (this.current + 1) % this.codes.length;
-		return this.codes[r];
-	},
-	reset() {
-		this.current = 0;
-	},
-};
+import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors } from "chart.js";
 
 Chart.defaults.color = "#ddd";
-Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
+Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors);
 
 export default {
 	props: { cards: { type: Array, required: true }, addedbasics: { type: Number, required: true } },
@@ -191,7 +178,6 @@ export default {
 				datasets: [
 					{
 						label: "Deck",
-						backgroundColor: Object.keys(this.types).map(() => Colors.next()),
 						data: Object.values(this.types),
 					},
 				],
