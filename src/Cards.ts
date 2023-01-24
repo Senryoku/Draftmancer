@@ -111,7 +111,6 @@ export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by th
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
 for (let [cid, card] of Cards) {
-	if (!("in_booster" in card)) card.in_booster = true;
 	Object.assign(card, parseCost(card.mana_cost));
 
 	const aid = card.arena_id;
