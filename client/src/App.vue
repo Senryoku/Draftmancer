@@ -1430,7 +1430,7 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
-							<em>January, 2023</em>
+							<em>January 27, 2023</em>
 							<p>
 								<img src="img/sets/one.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
 								Phyrexia: All Will Be One is now available!
