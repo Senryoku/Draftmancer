@@ -178,6 +178,7 @@ PrimarySets.extend(['hbg', 'planeshifted_snc', 'ydmu'])
 
 
 def append_set_cards(allcards, results):
+    print(f"Processing {len(results['data'])} cards...")
     for c in results["data"]:
         try:
             idx = next(i for i, card in enumerate(allcards) if c["id"] == card["id"])
@@ -195,6 +196,7 @@ if FetchSet:
     allcards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         allcards = json.load(file)
+    print(f"All cards: {setcards['total_cards']}")
     append_set_cards(allcards, setcards)
     while setcards["has_more"]:
         setcards = requests.get(setcards["next_page"]).json()
@@ -428,6 +430,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             # Workaround: Remove cards from HBG that received a rebalanced version from packs
             if c['id'] in ["057c66a8-9424-4c88-9707-5d8ef9170119", "e07d5fd5-d513-46d4-8812-6e6e55a6dfda", "a5cbda07-53a0-4526-9955-36f902073cf1", "ea4f1d5d-7991-4a2d-b907-3522e951ad4c", "884565bb-ed33-4372-8c81-487c2ee2f73c"]:
                 selection['in_booster'] = False
+
+            # Workaround: Temp. fix for 'in_booster' flag in Phyrexia: All Will Be One
+            if c['set'] == "one" and int(c['collector_number']) <= 261:
+                selection['in_booster'] = True
 
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:
@@ -777,6 +783,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "one"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

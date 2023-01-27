@@ -1430,6 +1430,13 @@
 					</div>
 					<div class="welcome-section">
 						<div class="news">
+							<em>January 27, 2023</em>
+							<p>
+								<img src="img/sets/one.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
+								Phyrexia: All Will Be One is now available!
+							</p>
+						</div>
+						<div class="news">
 							<em>December 13, 2022</em>
 							<p>
 								<img src="img/sets/dmr.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
@@ -1449,32 +1456,6 @@
 							<p>
 								Players can now specify the set of their basic lands when exporting to Arena. This
 								setting can be found in the Basic Lands dropdown, just above the deck.
-							</p>
-						</div>
-						<div class="news">
-							<em>October 18, 2022</em>
-							<p>Experimental support for some Alchemy draft formats:</p>
-							<ul>
-								<li>
-									<img
-										src="img/sets/ydmu.svg"
-										class="set-icon"
-										style="--invertedness: 100%; width: 2em"
-									/>
-									Alchemy Dominaria
-								</li>
-								<li>
-									<img
-										src="img/sets/snc.svg"
-										class="set-icon"
-										style="--invertedness: 100%; width: 2em"
-									/>
-									Planeshifted Streets of New Capenna
-								</li>
-							</ul>
-							<p>
-								Note: Alchemy rebalanced cards cannot currently be played in 40-cards decks using Arena
-								Direct Challenge.
 							</p>
 						</div>
 					</div>

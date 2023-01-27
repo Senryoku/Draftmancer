@@ -246,6 +246,7 @@ describe("Sets content", function () {
 		dmu: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 		dmr: { common: 101 + 24, uncommon: 80 + 36, rare: 60 + 60, mythic: 20 + 20 }, // Includes retro frame cards
+		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
@@ -540,7 +541,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster = 15;
+	const latestSetCardPerBooster = 14;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
