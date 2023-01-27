@@ -431,10 +431,6 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if c['id'] in ["057c66a8-9424-4c88-9707-5d8ef9170119", "e07d5fd5-d513-46d4-8812-6e6e55a6dfda", "a5cbda07-53a0-4526-9955-36f902073cf1", "ea4f1d5d-7991-4a2d-b907-3522e951ad4c", "884565bb-ed33-4372-8c81-487c2ee2f73c"]:
                 selection['in_booster'] = False
 
-            # Workaround: Temp. fix for 'in_booster' flag in Phyrexia: All Will Be One
-            if c['set'] == "one" and int(c['collector_number']) <= 261:
-                selection['in_booster'] = True
-
             if c['layout'] == "split":
                 if 'Aftermath' in c['keywords']:
                     selection['layout'] = 'split-left'

@@ -2728,25 +2728,25 @@
     "onc": {
         "code": "onc",
         "fullName": "Phyrexia: All Will Be One Commander",
-        "cardCount": 170,
+        "cardCount": 172,
         "isPrimary": false,
         "icon": "img/sets/onc.svg",
         "commonCount": 10,
         "mythicCount": 16,
-        "rareCount": 93,
+        "rareCount": 95,
         "specialCount": 1,
         "uncommonCount": 50
     },
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 441,
+        "cardCount": 456,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
-        "commonCount": 123,
-        "mythicCount": 73,
-        "rareCount": 149,
-        "uncommonCount": 96
+        "commonCount": 124,
+        "mythicCount": 76,
+        "rareCount": 158,
+        "uncommonCount": 98
     },
     "ons": {
         "code": "ons",
