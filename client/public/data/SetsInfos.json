@@ -2899,12 +2899,12 @@
     "p23": {
         "code": "p23",
         "fullName": "Judge Gift Cards 2023",
-        "cardCount": 3,
+        "cardCount": 5,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/p23.svg",
         "mythicCount": 1,
-        "rareCount": 2
+        "rareCount": 4
     },
     "p2hg": {
         "code": "p2hg",
@@ -4093,11 +4093,11 @@
     "pneo": {
         "code": "pneo",
         "fullName": "Kamigawa: Neon Dynasty Promos",
-        "cardCount": 145,
+        "cardCount": 146,
         "isPrimary": false,
         "icon": "img/sets/pneo.svg",
         "mythicCount": 33,
-        "rareCount": 112
+        "rareCount": 113
     },
     "pnph": {
         "code": "pnph",
