@@ -78,7 +78,9 @@
 							<option>Cards</option>
 							<!-- Winston Draft picks display is not implemented -->
 							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks</option>
-							<option v-if="type.includes('Draft') && type !== 'Winston Draft'">Picks Summary</option>
+							<option v-if="type.includes('Draft') && type !== 'Winston Draft' && type !== 'Grid Draft'">
+								Picks Summary
+							</option>
 							<option v-if="selectedLogDecklist !== undefined || displayOptions.category === 'Deck'">
 								Deck
 							</option>
@@ -420,12 +422,14 @@ export default {
 				case "Grid Draft": {
 					let key = 0;
 					return this.selectedLog.picks.map((p) => {
-						return {
-							key: key,
-							data: p,
-							packNumber: key++,
-							pickNumber: 0,
-						};
+						return [
+							{
+								key: key,
+								data: p,
+								packNumber: key++,
+								pickNumber: 0,
+							},
+						];
 					});
 				}
 			}
