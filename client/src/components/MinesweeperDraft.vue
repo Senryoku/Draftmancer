@@ -25,7 +25,7 @@
 					</template>
 				</span>
 			</div>
-			<scale-slider v-model="gridScale" />
+			<scale-slider v-model.number="gridScale" />
 		</div>
 		<div class="minesweeper-draft" :style="`--grid-scale: ${gridScale}`" ref="grid">
 			<transition name="slide-fade-left" mode="out-in">

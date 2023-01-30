@@ -874,7 +874,7 @@
 								Waiting for other players to pick...
 							</template>
 						</div>
-						<scale-slider v-model="boosterCardScale" style="float: right" />
+						<scale-slider v-model.number="boosterCardScale" style="float: right" />
 					</div>
 					<transition-group
 						tag="div"
