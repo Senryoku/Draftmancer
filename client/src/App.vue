@@ -820,7 +820,8 @@
 			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
 				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
-						<h1>Players are drafting...</h1>
+						<h1 v-if="!draftPaused">Players are drafting...</h1>
+						<h1 v-else>Draft Paused</h1>
 						<div>Pack #{{ boosterNumber + 1 }}</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
@@ -1113,7 +1114,10 @@
 				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
 			</div>
 			<transition name="fade">
-				<div v-if="draftPaused && !waitingForDisconnectedUsers" class="disconnected-user-popup-container">
+				<div
+					v-if="draftPaused && !waitingForDisconnectedUsers && !(userID === sessionOwner && !ownerIsPlayer)"
+					class="disconnected-user-popup-container"
+				>
 					<div class="disconnected-user-popup">
 						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
 							<div class="swal2-icon-content">!</div>
