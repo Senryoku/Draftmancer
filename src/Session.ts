@@ -2057,6 +2057,8 @@ export class Session implements IIndexable {
 				currIdx += this.users.size;
 			}
 			Connections[userID].socket.emit("setCardSelection", playersBoosters);
+			Connections[userID].pickedCards.main = playersBoosters.flat();
+			Connections[userID].pickedCards.side = [];
 			log.users[userID].cards = playersBoosters.flat().map((c) => c.id);
 			++idx;
 		}
