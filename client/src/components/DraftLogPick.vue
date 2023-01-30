@@ -1,13 +1,14 @@
 <template>
 	<div class="card-container" v-if="type === 'Draft' || type === 'Rochester Draft'">
-		<card
+		<booster-card
 			v-for="(cid, index) in pick.booster"
 			:key="index"
 			:card="carddata[cid]"
 			:language="language"
 			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
 			:lazyLoad="true"
-		></card>
+			:scale="scale"
+		></booster-card>
 	</div>
 	<div class="card-container grid3x3" v-else-if="type === 'Grid Draft'">
 		<template v-for="(cid, index) in pick.booster">
@@ -28,15 +29,17 @@
 
 <script>
 import Card from "./Card.vue";
+import BoosterCard from "./BoosterCard.vue";
 
 export default {
 	name: "DraftLogPick",
-	components: { Card },
+	components: { Card, BoosterCard },
 	props: {
 		pick: { type: Object, required: true },
 		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
 		type: { type: String, default: "Draft" },
+		scale: { type: Number, default: 1 },
 	},
 };
 </script>

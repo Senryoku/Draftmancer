@@ -31,6 +31,7 @@
 							@click="nextPick"
 						></i>
 						<h2>{{ pickNames }}</h2>
+						<scale-slider v-model.number="cardScale" style="float: right" />
 					</span>
 				</div>
 				<template v-if="draftlog.users[player].picks.length === 0">
@@ -44,6 +45,7 @@
 								:pick="picksPerPack[pack][pick].data"
 								:carddata="draftlog.carddata"
 								:language="language"
+								:scale="cardScale"
 							></draft-log-pick>
 						</transition>
 						<div
@@ -101,11 +103,12 @@
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import Card from "./Card.vue";
+import ScaleSlider from "./ScaleSlider.vue";
 import draggable from "vuedraggable";
 
 export default {
 	name: "DraftLogLive",
-	components: { DraftLogPick, draggable, Card, CardPool },
+	components: { DraftLogPick, draggable, Card, CardPool, ScaleSlider },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object, required: true },
@@ -119,6 +122,7 @@ export default {
 			eventListeners: [],
 			pickTransition: "right",
 			uniqueID: 0,
+			cardScale: 1,
 		};
 	},
 	mounted() {
