@@ -1124,8 +1124,6 @@
 						</div>
 						<h1>Draft Paused</h1>
 						<template v-if="userID === sessionOwner">
-							Resume when you're ready.
-
 							<div style="margin-top: 1em">
 								<button class="confirm" @click="resumeDraft"><i class="fas fa-play"></i> Resume</button>
 							</div>
