@@ -42,6 +42,7 @@
 			</template>
 		</card-pool>
 		<card-pool
+			v-if="sideboard && sideboard.length > 0"
 			:cards="sideboard"
 			:language="language"
 			:readOnly="true"
