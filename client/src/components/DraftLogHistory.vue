@@ -232,4 +232,14 @@ export default {
 	transform: scale(1, 0);
 	opacity: 0;
 }
+
+/* Modals are scrollable, deeper modals fixed position will be relative to this new scrollable context and not the main one, not behaving as expected.
+   As a workaround, this overrides the style of modals inside decklists (i.e. the Deck Stats. modals) to be confined to their decklist container. 
+*/
+:deep(.decklist) {
+	position: relative;
+}
+:deep(.decklist) .modal-mask {
+	position: absolute;
+}
 </style>

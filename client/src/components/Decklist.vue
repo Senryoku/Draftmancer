@@ -1,5 +1,5 @@
 <template>
-	<div v-if="list && list.main && !hashesonly">
+	<div v-if="list && list.main && !hashesonly" class="decklist">
 		<card-pool
 			:cards="mainboard"
 			:language="language"
