@@ -133,12 +133,16 @@ export default {
 			el.classList.add("clickable");
 			el.addEventListener("click", callback);
 		}
+
+		document.addEventListener("keydown", this.shortcuts);
 	},
 	beforeDestroy() {
 		for (let tuple of this.eventListeners) {
 			tuple.element.removeEventListener("click", tuple.callback);
 			tuple.element.classList.remove("clickable");
 		}
+
+		document.removeEventListener("keydown", this.shortcuts);
 	},
 	methods: {
 		getCardName(cid) {
@@ -186,6 +190,15 @@ export default {
 		},
 		generateCardArray(cardIDs) {
 			return cardIDs.map((cid) => Object.assign({ uniqueID: ++this.uniqueID }, this.draftlog.carddata[cid]));
+		},
+		shortcuts(e) {
+			if (e.key === "ArrowLeft") {
+				this.prevPick();
+				e.preventDefault();
+			} else if (e.key === "ArrowRight") {
+				this.nextPick();
+				e.preventDefault();
+			}
 		},
 	},
 	computed: {
