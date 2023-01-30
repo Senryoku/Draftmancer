@@ -851,7 +851,7 @@ export default {
 
 			this.socket.on("shareDecklist", (data) => {
 				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
-				if (idx && data.userID in this.draftLogs[idx].users) {
+				if (idx && this.draftLogs[idx] && data.userID in this.draftLogs[idx].users) {
 					this.$set(this.draftLogs[idx].users[data.userID], "decklist", data.decklist);
 					this.storeDraftLogs();
 				}
