@@ -270,9 +270,12 @@ export default {
 					for (let uid of userIDs)
 						if (this.draftlog.users[uid].userName === this.userName)
 							this.displayOptions.detailsUserID = uid;
+				// Defaults to deck display if available
 				if (
 					this.displayOptions.detailsUserID &&
-					this.draftlog.users[this.displayOptions.detailsUserID].decklist
+					this.draftlog.users[this.displayOptions.detailsUserID].decklist &&
+					(this.draftlog.users[this.displayOptions.detailsUserID].decklist.main.length > 0 ||
+						this.draftlog.users[this.displayOptions.detailsUserID].decklist.side.length > 0)
 				)
 					this.displayOptions.category = "Deck";
 			}
@@ -358,6 +361,11 @@ export default {
 			);
 		},
 		selectedLogDecklist() {
+			if (
+				!this.selectedLog.decklist ||
+				(this.selectedLog.decklist.main.length === 0 && this.selectedLog.decklist.side.length === 0)
+			)
+				return undefined;
 			return this.selectedLog.decklist;
 		},
 		tableSummary() {
