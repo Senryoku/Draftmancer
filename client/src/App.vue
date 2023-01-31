@@ -1233,11 +1233,17 @@
 								sideboardBasics: sideboardBasics,
 							}"
 						/>
-						<i
-							class="fas fa-chart-pie fa-lg clickable"
-							@click="displayedModal = 'deckStats'"
-							v-tooltip.top="'Deck Statistics'"
-						></i>
+						<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
+							<i class="fas fa-chart-pie fa-lg" v-tooltip.top="'Deck Statistics'"></i>
+							<div class="deck-stat" v-tooltip="'Creatures in deck'">
+								{{ deckCreatureCount }}
+								<img src="./assets/img/Creature.svg" />
+							</div>
+							<div class="deck-stat" v-tooltip="'Lands in deck'">
+								{{ deckLandCount }}
+								<img src="./assets/img/Land_symbol_white.svg" />
+							</div>
+						</div>
 						<land-control
 							v-if="draftingState === DraftState.Brewing"
 							:lands="lands"

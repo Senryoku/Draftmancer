@@ -1037,6 +1037,25 @@ ul.player-list {
 	flex: 1 1 auto;
 }
 
+.deck-stat-container {
+	display: flex;
+	gap: 8px;
+}
+
+.deck-stat {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.deck-stat img {
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+	margin-left: 2px;
+	filter: brightness(0.5);
+}
+
 .collapsed-sideboard {
 	flex: 0 0 auto;
 	margin-left: 1em;

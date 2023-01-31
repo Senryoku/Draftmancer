@@ -2711,6 +2711,12 @@ export default {
 				this.deck.some((c) => c.type === "Basic Land") || this.sideboard.some((c) => c.type === "Basic Land")
 			);
 		},
+		deckCreatureCount() {
+			return this.deck?.filter((c) => c.type.includes("Creature")).length ?? 0;
+		},
+		deckLandCount() {
+			return this.deck?.filter((c) => c.type.includes("Land")).length ?? 0;
+		},
 		neededWildcards() {
 			if (!this.hasCollection) return null;
 			const main = this.countMissing(this.deck);
