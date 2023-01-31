@@ -110,6 +110,10 @@ select.swal2-input option {
 	background-color: #383838;
 }
 
+#main-container button.blue {
+	background-color: rgb(0, 62, 145);
+}
+
 #main-container .button,
 #main-container button,
 #main-container input[type="button"],

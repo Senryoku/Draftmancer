@@ -339,7 +339,7 @@
 						/>
 					</div>
 					<span v-tooltip="'Starts a Draft Session.'">
-						<button @click="startDraft" v-show="userID === sessionOwner">Draft</button>
+						<button @click="startDraft" v-show="userID === sessionOwner" class="blue">Start</button>
 					</span>
 				</span>
 				<span v-show="userID === sessionOwner">
