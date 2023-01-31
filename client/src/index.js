@@ -11,6 +11,7 @@ Vue.use(FloatingVue, {
 	placement: "bottom-start",
 	boundariesElement: "window",
 	delay: 250,
+	distance: 8,
 });
 
 const app = new Vue({
