@@ -816,13 +816,15 @@
 		</div>
 
 		<!-- Draft Controls -->
-		<div v-if="drafting" id="draft-container" class="generic-container">
+		<div v-if="drafting || draftingState === DraftState.Watching" id="draft-container" class="generic-container">
 			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
-				<div v-if="draftingState == DraftState.Watching" key="draft-watching" class="draft-watching">
+				<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
 					<div class="draft-watching-state">
-						<h1 v-if="!draftPaused">Players are drafting...</h1>
+						<h1 v-if="!drafting">Draft Completed</h1>
+						<h1 v-else-if="!draftPaused">Players are drafting...</h1>
 						<h1 v-else>Draft Paused</h1>
-						<div>Pack #{{ boosterNumber + 1 }}</div>
+						<div v-if="drafting">Pack #{{ boosterNumber + 1 }}</div>
+						<div v-else>Players are now brewing their decks</div>
 					</div>
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live

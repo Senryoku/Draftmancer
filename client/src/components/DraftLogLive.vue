@@ -126,25 +126,12 @@ export default {
 		};
 	},
 	mounted() {
-		const self = this;
-		const playerEls = document.querySelectorAll("ul.player-list li");
-		for (let el of playerEls) {
-			const callback = () => {
-				const id = el.dataset.userid;
-				self.setPlayer(id);
-			};
-			this.eventListeners.push({ element: el, callback: callback });
-			el.classList.add("clickable");
-			el.addEventListener("click", callback);
-		}
+		this.registerPlayerSelectEvents();
 
 		document.addEventListener("keydown", this.shortcuts);
 	},
 	beforeDestroy() {
-		for (let tuple of this.eventListeners) {
-			tuple.element.removeEventListener("click", tuple.callback);
-			tuple.element.classList.remove("clickable");
-		}
+		this.clearPlayerSelectEvents();
 
 		document.removeEventListener("keydown", this.shortcuts);
 	},
@@ -203,6 +190,27 @@ export default {
 				this.nextPick();
 				e.preventDefault();
 			}
+		},
+		registerPlayerSelectEvents() {
+			this.clearPlayerSelectEvents();
+			const self = this;
+			const playerEls = document.querySelectorAll("ul.player-list li");
+			for (let el of playerEls) {
+				const callback = () => {
+					const id = el.dataset.userid;
+					self.setPlayer(id);
+				};
+				this.eventListeners.push({ element: el, callback: callback });
+				el.classList.add("clickable");
+				el.addEventListener("click", callback);
+			}
+		},
+		clearPlayerSelectEvents() {
+			for (let tuple of this.eventListeners) {
+				tuple.element.removeEventListener("click", tuple.callback);
+				tuple.element.classList.remove("clickable");
+			}
+			this.eventListeners = [];
 		},
 	},
 	computed: {

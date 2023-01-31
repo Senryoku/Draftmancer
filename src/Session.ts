@@ -2474,9 +2474,10 @@ export class Session implements IIndexable {
 			userID: userID,
 			decklist: { hashes: this.draftLog.users[userID].decklist.hashes },
 		};
-		if (this.drafting) {
-			if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
-		} else {
+
+		if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);
+
+		if (!this.drafting) {
 			// Note: The session setting draftLogRecipients may have changed since the game ended.
 			switch (this.draftLogRecipients) {
 				default:

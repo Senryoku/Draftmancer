@@ -817,11 +817,11 @@ export default {
 				this.drafting = false;
 				this.draftPaused = false;
 				if (this.draftingState === DraftState.Watching) {
-					this.draftingState = undefined;
-				} else {
-					// User was playing
-					this.draftingState = DraftState.Brewing;
-				}
+					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
+					this.$nextTick(() => {
+						this.$refs.draftloglive?.registerPlayerSelectEvents();
+					});
+				} else this.draftingState = DraftState.Brewing;
 			});
 
 			this.socket.on("pauseDraft", () => {
