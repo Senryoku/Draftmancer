@@ -1670,6 +1670,7 @@ export class Session implements IIndexable {
 			if (picksThisRound >= booster.length) {
 				for (let i = 0; i < booster.length; i++) {
 					pickedIndices.push(i);
+					s.players[userID].botInstance.addCard(booster[i]);
 				}
 			} else {
 				const boosterCopy = [...booster]; // Working copy for multiple picks
