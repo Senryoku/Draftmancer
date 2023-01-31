@@ -121,6 +121,7 @@
 				</slot>
 			</div>
 			<div class="column-headers" v-show="options.displayHeaders">
+				<div v-if="rowHeaders" class="row-header-placeholder">&nbsp;</div>
 				<div class="column-header" v-for="index in rows[0].length" :key="index">
 					<span class="column-header-count">{{ cardsPerColumn[index - 1] }}</span>
 					<span class="column-header-name" v-html="columnNames[index - 1]"></span>
@@ -128,6 +129,10 @@
 				</div>
 			</div>
 			<div class="card-columns" v-for="(row, index) in rows" :key="index">
+				<div class="row-header" v-if="rowHeaders">
+					<span class="row-count">{{ rowHeaders[index].count }}</span>
+					<span class="row-name">{{ rowHeaders[index].name }}</span>
+				</div>
 				<draggable
 					v-for="(column, colIdx) in row"
 					:key="`col_${colIdx}`"
@@ -506,6 +511,23 @@ export default {
 			}
 			return r;
 		},
+		rowHeaders() {
+			if (this.options.layout !== "TwoRows") return null;
+			return [
+				{
+					count: this.rows[0].reduce((acc, val) => {
+						return val.length + acc;
+					}, 0),
+					name: this.rows[0].flat().every((card) => card.type.includes("Creature")) ? "Creatures" : "-",
+				},
+				{
+					count: this.rows[1].reduce((acc, val) => {
+						return val.length + acc;
+					}, 0),
+					name: this.rows[1].flat().every((card) => !card.type.includes("Creature")) ? "Non-Creatures" : "-",
+				},
+			];
+		},
 	},
 };
 </script>
@@ -595,6 +617,39 @@ export default {
 	font-variant: small-caps;
 	font-size: 0.75em;
 	margin: 0 0 0 0.25rem;
+}
+
+.row-header-placeholder {
+	width: 22px;
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
+
+.row-header {
+	width: 22px;
+	box-sizing: border-box;
+
+	position: relative;
+	display: flex;
+	justify-content: center;
+	padding-left: 6px;
+	background-color: #333;
+	border-radius: 6px 0 0 6px;
+	margin: 0.375em 0;
+	box-shadow: 6px 0 0 #333;
+	flex-shrink: 0;
+}
+
+.row-header .row-name {
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+	text-align: center;
+	/*writing-mode: sideways-lr;*/
+}
+
+.row-count {
+	position: absolute;
+	top: 6px;
 }
 
 .sort-button {
