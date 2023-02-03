@@ -979,6 +979,18 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 	},
+	setCustomCardListWithReplacement(userID: UserID, sessionID: SessionID, customCardListWithReplacement: boolean) {
+		if (!SessionsSettingsProps.customCardListWithReplacement(customCardListWithReplacement)) return;
+		if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
+
+		Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
+		for (let user of Sessions[sessionID].users) {
+			if (user !== userID && user in Connections)
+				Connections[user].socket.emit("sessionOptions", {
+					customCardListWithReplacement: Sessions[sessionID].customCardListWithReplacement,
+				});
+		}
+	},
 	setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
 		if (!SessionsSettingsProps.doubleMastersMode(doubleMastersMode)) return;
 		if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;

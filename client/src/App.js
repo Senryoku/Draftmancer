@@ -157,6 +157,7 @@ export default {
 			setRestriction: [],
 			drafting: false,
 			useCustomCardList: false,
+			customCardListWithReplacement: false,
 			customCardList: {},
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
@@ -3010,6 +3011,10 @@ export default {
 		useCustomCardList() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setUseCustomCardList", this.useCustomCardList);
+		},
+		customCardListWithReplacement() {
+			if (this.userID != this.sessionOwner || !this.socket) return;
+			this.socket.emit("setCustomCardListWithReplacement", this.customCardListWithReplacement);
 		},
 		doubleMastersMode() {
 			if (this.userID != this.sessionOwner || !this.socket) return;

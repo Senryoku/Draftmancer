@@ -2287,26 +2287,48 @@
 					</div>
 					<div style="display: flex; justify-content: space-between; align-items: center">
 						<div
-							v-tooltip.left="{
-								popperClass: 'option-tooltip',
-								content:
-									'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
-								html: true,
-							}"
+							style="display: flex; align-items: center; gap: 1.5em"
 							:class="{
-								'disabled-simple': !useCustomCardList || (customCardList && customCardList.layouts),
+								'disabled-simple': !useCustomCardList,
 							}"
 						>
-							<label for="cards-per-booster">Cards per Booster</label>
-							<input
-								type="number"
-								id="cards-per-booster"
-								class="small-number-input"
-								min="1"
-								max="100"
-								step="1"
-								v-model.number="cardsPerBooster"
-							/>
+							<div
+								v-tooltip.left="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>Cards per Booster when using a Custom Card List, ignored when using custom sheets; Default is 15.</p>',
+									html: true,
+								}"
+								:class="{
+									'disabled-simple': useCustomCardList && customCardList && customCardList.layouts,
+								}"
+							>
+								<label for="cards-per-booster">Cards per Booster</label>
+								<input
+									type="number"
+									id="cards-per-booster"
+									class="small-number-input"
+									min="1"
+									max="100"
+									step="1"
+									v-model.number="cardsPerBooster"
+								/>
+							</div>
+							<div
+								v-tooltip.left="{
+									popperClass: 'option-tooltip',
+									content:
+										'<p>If checked, picked cards will be replaced in the card pool, meaning there\'s an unlimited supply of each card in the list.</p>',
+									html: true,
+								}"
+							>
+								<input
+									type="checkbox"
+									v-model="customCardListWithReplacement"
+									id="custom-card-list-with-replacement"
+								/>
+								<label for="custom-card-list-with-replacement">With Replacement</label>
+							</div>
 						</div>
 						<div v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
 							<i

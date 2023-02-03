@@ -110,6 +110,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 		return ["Paper", "MTGA"].includes(val);
 	},
 	useCustomCardList: isBoolean,
+	customCardListWithReplacement: isBoolean,
 	customCardList: isObject,
 	distributionMode(val: any) {
 		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
@@ -360,6 +361,7 @@ export class Session implements IIndexable {
 		layouts: false,
 		customCards: null,
 	};
+	customCardListWithReplacement: boolean = false;
 	distributionMode: DistributionMode = "regular"; // Specifies how boosters are distributed when using boosters from different sets (see customBoosters)
 	customBoosters: Array<string> = ["", "", ""]; // Specify a set for an individual booster (Draft Only)
 	doubleMastersMode: boolean = false; // Apply the pickedCardsPerRound rule only for the first pick then revert to one.
@@ -710,7 +712,10 @@ export class Session implements IIndexable {
 		}
 
 		if (this.useCustomCardList) {
-			let cclOptions = Object.assign({ colorBalance: this.colorBalance }, options);
+			let cclOptions = Object.assign(
+				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement },
+				options
+			);
 			let ret = generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
 			if (ret instanceof MessageError) {
 				this.emitError(ret.title, ret.text);

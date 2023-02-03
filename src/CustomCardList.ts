@@ -28,7 +28,7 @@ export function generateCustomGetCardFunction(customCardList: CustomCardList): (
 export function generateBoosterFromCustomCardList(
 	customCardList: CustomCardList,
 	boosterQuantity: number,
-	options: { colorBalance?: boolean; cardsPerBooster?: number }
+	options: { colorBalance?: boolean; cardsPerBooster?: number; withReplacement?: boolean }
 ): MessageError | Array<UniqueCard>[] {
 	if (
 		!customCardList.slots ||
@@ -37,7 +37,7 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
-	let pickOptions: Options = { uniformAll: true };
+	let pickOptions: Options = { uniformAll: true, withReplacement: options?.withReplacement };
 	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 	// List is using custom layouts
@@ -145,7 +145,7 @@ export function generateBoosterFromCustomCardList(
 		const cardsPerBooster = options.cardsPerBooster ?? 15;
 
 		const cardTarget = cardsPerBooster * boosterQuantity;
-		if (cardCount < cardTarget) {
+		if (options?.withReplacement !== true && cardCount < cardTarget) {
 			return new MessageError(
 				"Error generating boosters",
 				`Not enough cards (${cardCount}/${cardTarget}) in custom list.`

@@ -51,6 +51,8 @@ const CustomCards_MultipleDefaultSlots_Invalid = fs.readFileSync(
 	`./test/data/CustomCards_MultipleDefaultSlots_Invalid.txt`,
 	"utf8"
 );
+const WithReplacement = fs.readFileSync(`./test/data/ReplacementTest.txt`, "utf8");
+const WithReplacementLayouts = fs.readFileSync(`./test/data/ReplacementTest_Layouts.txt`, "utf8");
 
 describe("Inter client communication", function () {
 	const sessionID = "sessionID";
@@ -1053,6 +1055,62 @@ describe("Single Draft (Two Players)", function () {
 		disconnect();
 	});
 
+	describe("With replacement", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated CustomCardListWithReplacement.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.customCardListWithReplacement).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setCustomCardListWithReplacement", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function () {
+				done();
+			});
+			clients[ownerIdx].emit("parseCustomCardList", WithReplacement);
+		});
+		startDraft();
+		endDraft();
+		expectCardCount(3 * 15);
+		disconnect();
+	});
+
+	describe("With replacement (Layout)", function () {
+		connect();
+		it("Clients should receive the updated useCustomCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.useCustomCardList).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setUseCustomCardList", true);
+		});
+		it("Clients should receive the updated CustomCardListWithReplacement.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (val) {
+				expect(val.customCardListWithReplacement).to.equal(true);
+				done();
+			});
+			clients[ownerIdx].emit("setCustomCardListWithReplacement", true);
+		});
+		it("Clients should receive the updated customCardList.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function () {
+				done();
+			});
+			clients[ownerIdx].emit("parseCustomCardList", WithReplacementLayouts);
+		});
+		startDraft();
+		endDraft();
+		expectCardCount(3 * 10);
+		disconnect();
+	});
+
 	describe("Custom card list with incorrect custom layouts should fail.", function () {
 		connect();
 		it("Wrong Pack Size.", function (done) {
@@ -1069,6 +1127,18 @@ describe("Single Draft (Two Players)", function () {
 		});
 		it("Multiple default slots definitions.", function (done) {
 			clients[ownerIdx].emit("parseCustomCardList", CustomCards_MultipleDefaultSlots_Invalid, (response) => {
+				expect(response.error).to.not.be.null;
+				done();
+			});
+		});
+		it("Too small without replacement.", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", WithReplacement, (response) => {
+				expect(response.error).to.not.be.null;
+				done();
+			});
+		});
+		it("Too small without replacement (layout).", function (done) {
+			clients[ownerIdx].emit("parseCustomCardList", WithReplacementLayouts, (response) => {
 				expect(response.error).to.not.be.null;
 				done();
 			});

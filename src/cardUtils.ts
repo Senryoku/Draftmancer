@@ -40,7 +40,7 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 			++prevention_attempts;
 		}
 	}
-	removeCardFromCardPool(cid, cardPool);
+	if (options?.withReplacement !== true) removeCardFromCardPool(cid, cardPool);
 	return getUnique(cid, options);
 }
 

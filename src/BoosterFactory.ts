@@ -111,12 +111,13 @@ export class ColorBalancedSlot {
 		for (let c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				let pickedCard = pickCard(this.cache.byColor[c], pickedCards, options);
-				removeCardFromCardPool(pickedCard.id, this.cardPool);
+				if (options?.withReplacement !== true) removeCardFromCardPool(pickedCard.id, this.cardPool);
 				if (pickedCard.colors.length === 1) {
-					removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
+					if (options?.withReplacement !== true)
+						removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
 					--this.cache.monocoloredCount;
 				} else {
-					removeCardFromCardPool(pickedCard.id, this.cache.others);
+					if (options?.withReplacement !== true) removeCardFromCardPool(pickedCard.id, this.cache.others);
 					--this.cache.othersCount;
 				}
 				pickedCards.push(pickedCard);
@@ -144,8 +145,10 @@ export class ColorBalancedSlot {
 			if (type) --this.cache.monocoloredCount;
 			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
-			removeCardFromCardPool(pickedCard.id, this.cardPool);
-			removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
+			if (options?.withReplacement !== true) {
+				removeCardFromCardPool(pickedCard.id, this.cardPool);
+				removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
+			}
 		}
 		// Shuffle to avoid obvious signals to other players
 		shuffleArray(pickedCards);
