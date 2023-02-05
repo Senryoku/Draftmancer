@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="dark" />
-		<title>MTGADraft Cube Format</title>
+		<title>MTGADraft Custom Card List Format</title>
 		<style>
 			body {
 				margin: 0;
@@ -44,17 +44,23 @@
 	</head>
 	<body>
 		<div class="content">
-			<h1>MTGADraft Cube Format</h1>
-			Basic cube list is one English card name per line, just like .txt export in either Cube Cobra.
-			<br />
-			Boosters will be 15 cards without regards for rarity distribution. Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity,
-			Maximum duplicate copies and Foil.
+			<h1>MTGADraft Custom Card List Format</h1>
 			<ol>
+				<li><a href="#cube">Cube</a></li>
 				<li><a href="#card-spec">Advanced Card Specification</a></li>
 				<li><a href="#slots">Slots</a></li>
 				<li><a href="#layouts">Pack Layouts</a></li>
 				<li><a href="#custom-cards">Custom Cards</a></li>
 			</ol>
+			<section>
+				<h2 id="cun">Cube</h2>
+				<p>
+					The simplest Custom Card List is a list of card names, one per line (see Advanced Card Specification). This will define a Cube, meaning packs will be composed
+					of 15 (configurable) random cards from the list without replacement and without regards for their rarity.
+				</p>
+				<p>Pack collation can be further customized by specifying Slots and Layouts (see below).</p>
+				<p>Note: Using a Custom Card List disables the following options: Restrict to Collection, Maximum rarity, Maximum duplicate copies and Foil.</p>
+			</section>
 			<section>
 				<h2 id="card-spec">Advanced Card Specification</h2>
 				Full syntax for a card line is inspired by the Arena Import/Export format and is defined as follows:
