@@ -831,6 +831,7 @@
 							:draftlog="draftLogLive"
 							:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
 							:language="language"
+							:key="draftLogLive.time"
 							ref="draftloglive"
 						></draft-log-live>
 					</div>
