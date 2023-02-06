@@ -2515,7 +2515,9 @@ export class Session implements IIndexable {
 	// Indicates if the DraftLogLive feature is in use
 	shouldSendLiveUpdates() {
 		return (
-			!this.ownerIsPlayer && ["owner", "everyone"].includes(this.draftLogRecipients) && this.owner in Connections
+			!this.ownerIsPlayer &&
+			["owner", "delayed", "everyone"].includes(this.draftLogRecipients) &&
+			this.owner in Connections
 		);
 	}
 

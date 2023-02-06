@@ -829,7 +829,7 @@
 					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
 						<draft-log-live
 							:draftlog="draftLogLive"
-							:show="['owner', 'everyone'].includes(draftLogRecipients)"
+							:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
 							:language="language"
 							ref="draftloglive"
 						></draft-log-live>
