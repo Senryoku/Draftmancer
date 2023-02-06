@@ -2740,8 +2740,8 @@
         "isPrimary": false,
         "icon": "img/sets/onc.svg",
         "commonCount": 10,
-        "mythicCount": 18,
-        "rareCount": 95,
+        "mythicCount": 17,
+        "rareCount": 96,
         "uncommonCount": 51
     },
     "one": {
@@ -2750,10 +2750,10 @@
         "cardCount": 456,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
-        "commonCount": 124,
+        "commonCount": 123,
         "mythicCount": 76,
         "rareCount": 158,
-        "uncommonCount": 98
+        "uncommonCount": 99
     },
     "ons": {
         "code": "ons",
@@ -2924,11 +2924,11 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 25,
+        "cardCount": 26,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
         "mythicCount": 1,
-        "rareCount": 24
+        "rareCount": 25
     },
     "p5dn": {
         "code": "p5dn",
@@ -3176,11 +3176,11 @@
     "pbro": {
         "code": "pbro",
         "fullName": "The Brothers' War Promos",
-        "cardCount": 177,
+        "cardCount": 178,
         "isPrimary": false,
         "icon": "img/sets/pbro.svg",
         "mythicCount": 52,
-        "rareCount": 125
+        "rareCount": 126
     },
     "pc2": {
         "code": "pc2",
@@ -3816,6 +3816,14 @@
         "icon": "img/sets/pl22.svg",
         "rareCount": 5
     },
+    "pl23": {
+        "code": "pl23",
+        "fullName": "Year of the Rabbit 2023",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pl23.svg",
+        "rareCount": 5
+    },
     "plc": {
         "code": "plc",
         "fullName": "Planar Chaos",
@@ -4252,13 +4260,13 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3014,
+        "cardCount": 3017,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 396,
-        "mythicCount": 369,
-        "rareCount": 1751,
+        "mythicCount": 370,
+        "rareCount": 1753,
         "uncommonCount": 497
     },
     "prna": {
