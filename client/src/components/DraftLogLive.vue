@@ -92,8 +92,7 @@
 		</template>
 		<template v-else>
 			<p class="draft-log-live-instructions">
-				(Live review is only available when draft logs are immediatly send to the owner (Option set to 'Owner'
-				or 'Everyone'))
+				(Live review is not available when the draft logs recipients setting is set to 'No-one')
 			</p>
 		</template>
 	</div>
