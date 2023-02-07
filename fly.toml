@@ -16,6 +16,9 @@ processes = []
 [build.args]
   NODE_ENV = "production"
 
+[deploy]
+  strategy = "rolling"
+
 [experimental]
   allowed_public_ports = []
   auto_rollback = true
