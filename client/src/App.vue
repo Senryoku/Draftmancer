@@ -2335,12 +2335,12 @@
 							<i
 								class="fas fa-check green"
 								v-if="useCustomCardList"
-								v-tooltip="'Card list successfuly loaded!'"
+								v-tooltip="'Card list successfully loaded!'"
 							></i>
 							<i
 								class="fas fa-exclamation-triangle yellow"
 								v-else
-								v-tooltip="'Card list successfuly loaded, but not used.'"
+								v-tooltip="'Card list successfully loaded, but not used.'"
 							></i>
 							<span v-if="customCardList.name">Loaded '{{ customCardList.name }}'.</span>
 							<span v-else>Unamed list loaded.</span>

@@ -42,7 +42,7 @@
 							class="fas fa-clipboard-check green"
 							v-if="log.hasDeck"
 							@click="displayOptions.category = 'Deck'"
-							v-tooltip="`${log.userName} submited their deck.`"
+							v-tooltip="`${log.userName} submitted their deck.`"
 							style="margin: 0 0.5em"
 						></i>
 					</div>
