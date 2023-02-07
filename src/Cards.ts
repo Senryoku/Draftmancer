@@ -160,6 +160,12 @@ for (let [cid, card] of Cards.entries()) {
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
 
+// Manually add the Praetors from previous sets to ONE packs.
+BoosterCardsBySet["one"].push("92613468-205e-488b-930d-11908477e9f8"); // Vorinclex, Monstrous Raider (KHM) 199
+BoosterCardsBySet["one"].push("d67be074-cdd4-41d9-ac89-0a0456c4e4b2"); // Sheoldred, the Apocalypse (DMU) 107
+BoosterCardsBySet["one"].push("c57b4876-5387-4f73-b8e2-8e7bdca8b0bc"); // Jin-Gitaxias, Progress Tyrant (NEO) 59
+BoosterCardsBySet["one"].push("d9a4ec18-1da4-43c6-a79a-03fbd4aef3db"); // Urabrask, Heretic Praetor (SNC) 129
+
 export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 
 Object.freeze(MTGACards);

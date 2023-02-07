@@ -248,7 +248,7 @@ describe("Sets content", function () {
 		dmu: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 		dmr: { common: 101 + 24, uncommon: 80 + 36, rare: 60 + 60, mythic: 20 + 20 }, // Includes retro frame cards
-		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 + 4 }, // + 4 Praetors from previous sets
 	};
 
 	beforeEach(function (done) {
@@ -303,7 +303,8 @@ describe("Sets content", function () {
 						console.error(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
 						noError = false;
 					}
-					expect(cardIDs.map((cid) => getCard(cid).set).every((s) => s === set)).to.be.true;
+					if (set !== "one")
+						expect(cardIDs.map((cid) => getCard(cid).set).every((s) => s === set)).to.be.true;
 					// expect(cardIDs).to.have.lengthOf(sets[set][r]); // FIXME: For some reason, this times out on error, instead of correctly reporting the error
 				}
 				expect(noError).to.be.true;
