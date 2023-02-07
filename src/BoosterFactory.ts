@@ -1240,6 +1240,43 @@ class DMRBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Phyrexia: All Will be One
+// Chance (exact probability unknown) at a 'Borderless Concept Praetor'.
+class ONEBoosterFactory extends BoosterFactory {
+	praetorsIDs: CardID[] = [
+		"649be99a-fa52-469e-85df-11ecc576ea39", // Elesh Norn, Mother of Machines (ONE) 416
+		"ff018fe2-9feb-431d-b4c5-61b2ed0d919d", // Vorinclex, Monstrous Raider (KHM) 406
+		"8df6603a-38c1-4d18-8b84-6211e9a7cc09", // Sheoldred, the Apocalypse (DMU) 435
+		"8c395a69-b60d-4510-b04b-86b59ed2b158", // Jin-Gitaxias, Progress Tyrant (NEO) 513
+		"c13670af-e266-4e19-b479-92fae2b15f4a", // Urabrask, Heretic Praetor (SNC) 468
+	];
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, options);
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = Object.assign({}, targets);
+		let booster: Array<UniqueCard> | false = [];
+
+		let conceptPraetor: null | UniqueCard = null;
+		const praetorRarityRoll = random.real(0, 1);
+		// There's 20 other mythics, we give the 'concept praetor' the same probability as any other (counting all 5 as a single mythic).
+		if (targets.rare > 0 && this.options?.mythicPromotion && praetorRarityRoll < (1.0 / 8.0) * (1.0 / 21.0)) {
+			const conceptPraetorID = getRandom(this.praetorsIDs);
+			conceptPraetor = getUnique(conceptPraetorID);
+			--updatedTargets["rare"];
+		}
+
+		booster = super.generateBooster(updatedTargets);
+		if (!booster) return false;
+
+		if (conceptPraetor) booster.unshift(conceptPraetor);
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1263,6 +1300,7 @@ export const SetSpecificFactories: {
 	ydmu: YDMUBoosterFactory,
 	bro: BROBoosterFactory,
 	dmr: DMRBoosterFactory,
+	one: ONEBoosterFactory,
 };
 
 /*
