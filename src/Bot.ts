@@ -20,21 +20,22 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 
 	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
 	// we'll just take a random sample (of 15 cards, just because) and test these.
-	shuffleArray(oracleIds);
-	oracleIds = oracleIds.slice(0, 15);
+	let chosenOracleIds = [...oracleIds];
+	shuffleArray(chosenOracleIds);
+	chosenOracleIds = oracleIds.slice(0, 15);
 
 	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
 	// FIXME: This feels hackish.
 	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
-		cardsInPack: oracleIds,
+		cardsInPack: chosenOracleIds,
 		picked: [],
-		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: oracleIds }],
+		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: chosenOracleIds }],
 		packNum: 0,
 		numPacks: 1,
 		pickNum: 0,
-		numPicks: oracleIds.length,
+		numPicks: chosenOracleIds.length,
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
