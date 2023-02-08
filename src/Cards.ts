@@ -110,7 +110,7 @@ console.time("Preparing Cards and caches");
 export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by their arena id
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
-for (let [cid, card] of Cards) {
+for (const [cid, card] of Cards) {
 	Object.assign(card, parseCost(card.mana_cost));
 
 	const aid = card.arena_id;
@@ -131,7 +131,7 @@ export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json",
 // Cache for cards organized by set.
 export const CardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
 export const BoosterCardsBySet: { [set: string]: Array<CardID> } = { alchemy_dmu: [], planeshifted_snc: [] };
-for (let [cid, card] of Cards.entries()) {
+for (const [cid, card] of Cards.entries()) {
 	if (card.in_booster || ["und", "j21"].includes(card.set)) {
 		// Force cache for Unsanctioned (UND) and Jumpstart: Historic Horizons as they're not originally draft products
 		if (!(card.set in BoosterCardsBySet)) BoosterCardsBySet[card.set] = [];
