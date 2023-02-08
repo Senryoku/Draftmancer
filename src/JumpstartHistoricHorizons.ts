@@ -17,7 +17,7 @@ export type JHHBoosterPattern = {
 export type JHHBooster = { name: string; colors: Array<string>; image?: string | null; cards: UniqueCard[] };
 
 export function generateJHHBooster(boosterPattern: JHHBoosterPattern): JHHBooster {
-	let booster: JHHBooster = {
+	const booster: JHHBooster = {
 		name: boosterPattern.name,
 		colors: boosterPattern.colors,
 		image: boosterPattern.image,
@@ -27,8 +27,8 @@ export function generateJHHBooster(boosterPattern: JHHBoosterPattern): JHHBooste
 	booster.cards = boosterPattern.cards.map((cid: CardID) => getUnique(cid));
 	// Random variations
 	if (boosterPattern.alts) {
-		for (let slot of boosterPattern.alts) {
-			const totalWeight = slot.map(o => o.weight).reduce((p, c) => p + c, 0); // FIXME: Should always be 100, but since cards are still missing from the database, we'll compute it correctly.
+		for (const slot of boosterPattern.alts) {
+			const totalWeight = slot.map((o) => o.weight).reduce((p, c) => p + c, 0); // FIXME: Should always be 100, but since cards are still missing from the database, we'll compute it correctly.
 			const pickIdx = weightedRandomIdx(slot, totalWeight);
 			booster.cards.push(getUnique(slot[pickIdx].id));
 		}
