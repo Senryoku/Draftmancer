@@ -1,5 +1,5 @@
 <template>
-	<div v-if="list && list.main && !hashesonly" class="decklist">
+	<div v-if="list && !hashesonly && (mainboard.length > 0 || sideboard.length > 0)" class="decklist">
 		<card-pool
 			:cards="mainboard"
 			:language="language"
