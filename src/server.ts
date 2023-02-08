@@ -32,7 +32,6 @@ import {
 	MTGACards,
 	getUnique,
 	CardPool,
-	DeckList,
 	CardID,
 	Card,
 	UniqueCardID,

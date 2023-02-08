@@ -10,7 +10,6 @@ import {
 	CardID,
 	Card,
 	Cards,
-	DeckList,
 	getUnique,
 	BoosterCardsBySet,
 	CardsBySet,
