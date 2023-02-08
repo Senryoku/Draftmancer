@@ -1,11 +1,36 @@
-import { Card, CardID } from "./Cards.js";
-import { SessionID } from "./IDTypes.js";
-import { Session, UserData } from "./Session.js";
+import { Card, CardID, DeckList, UniqueCard } from "./Cards.js";
+import { SessionID, UserID } from "./IDTypes.js";
+import { Session, UsersData } from "./Session.js";
+
+export type DraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
+export type GridDraftPick = { pick: number[]; burn?: number[]; booster: (CardID | null)[] };
+export type WinstonDraftPick =
+	| {
+			randomCard: CardID;
+			piles: UniqueCard[][];
+	  }
+	| {
+			pickedPile: number;
+			piles: UniqueCard[][];
+	  };
+
+export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick;
+
+export type DraftLogUsersData = {
+	[uid: UserID]: {
+		userID: UserID;
+		userName: string;
+		isBot: boolean;
+		picks: GenericDraftPick[];
+		cards: CardID[];
+		decklist?: DeckList;
+	};
+};
 
 export class DraftLog {
 	version: string = "2.0";
 	type: string;
-	users: any = {};
+	users: DraftLogUsersData = {};
 	sessionID: SessionID;
 	time: number;
 	setRestriction: string[];
@@ -18,7 +43,7 @@ export class DraftLog {
 	personalLogs: boolean = true; // Necessary for the front-end to know when not to show the owner its own draft log
 	teamDraft: boolean = false;
 
-	constructor(type: string, session: Session, carddata: { [cid: string]: Card }, virtualPlayers: UserData) {
+	constructor(type: string, session: Session, carddata: { [cid: string]: Card }, virtualPlayers: UsersData) {
 		this.type = type;
 		this.sessionID = session.id;
 		this.time = Date.now();
@@ -30,6 +55,11 @@ export class DraftLog {
 		this.personalLogs = session.personalLogs;
 		this.teamDraft = type === "Draft" && session.teamDraft;
 
-		this.users = virtualPlayers;
+		for (const uid in virtualPlayers)
+			this.users[uid] = {
+				...(({ userID, userName, isBot }) => ({ userID, userName, isBot }))(virtualPlayers[uid]),
+				picks: [],
+				cards: [],
+			};
 	}
 }

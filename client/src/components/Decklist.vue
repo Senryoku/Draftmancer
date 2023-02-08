@@ -107,15 +107,17 @@ export default {
 	},
 	computed: {
 		mainboard() {
+			if (!this.list.main) return [];
 			let uniqueID = 0;
-			return this.list.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list?.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		sideboard() {
+			if (!this.list?.side) return [];
 			let uniqueID = 0;
 			return this.list.side.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		landcount() {
-			if (!this.list.lands) return 0;
+			if (!this.list?.lands) return 0;
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 	},

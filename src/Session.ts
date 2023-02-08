@@ -19,6 +19,7 @@ import {
 	UniqueCard,
 	getCard,
 	DeckBasicLands,
+	DeckList,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -41,7 +42,7 @@ import { MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
-import { DraftLog } from "./DraftLog.js";
+import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
@@ -136,13 +137,15 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 };
 
 export type UserData = {
-	[uid: UserID]: {
-		userID: UserID;
-		userName: string;
-		isBot: boolean;
-		isDisconnected: boolean;
-		boosterCount: undefined | number;
-	};
+	userID: UserID;
+	userName: string;
+	isBot: boolean;
+	isDisconnected: boolean;
+	boosterCount: undefined | number;
+};
+
+export type UsersData = {
+	[uid: UserID]: UserData;
 };
 
 export class DraftState extends IDraftState {
@@ -1174,7 +1177,7 @@ export class Session implements IIndexable {
 		const s = this.draftState as GridDraftState;
 		if (!this.drafting || !s || !(s instanceof GridDraftState)) return false;
 
-		const log: any = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
+		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
 		const pickedCards = [];
 		for (let i = 0; i < 3; ++i) {
@@ -1567,7 +1570,7 @@ export class Session implements IIndexable {
 			s.players[userID].botInstance?.addCard(booster[idx]);
 		}
 
-		const pickData = {
+		const pickData: DraftPick = {
 			pick: pickedCards,
 			burn: burnedCards,
 			booster: booster.map((c) => c.id),
@@ -1720,7 +1723,7 @@ export class Session implements IIndexable {
 		if (!s.players[userID].isBot && this.isDisconnected(userID))
 			this.disconnectedUsers[userID].pickedCards.main.push(...pickedCards);
 
-		const pickData = {
+		const pickData: DraftPick = {
 			pick: pickedIndices,
 			burn: burnedIndices,
 			booster: booster.map((c) => c.id),
@@ -1992,15 +1995,22 @@ export class Session implements IIndexable {
 				// We also have to supply card data for all cards seen by the player.
 				if (this.draftLog.type === "Draft" && this.draftLog.users[uid].picks)
 					for (const pick of this.draftLog.users[uid].picks)
-						for (const cid of pick.booster) strippedLog.carddata[cid] = getCardFunc(cid);
+						for (const cid of (pick as DraftPick).booster) strippedLog.carddata[cid] = getCardFunc(cid);
 				else for (const cid of this.draftLog.users[uid].cards) strippedLog.carddata[cid] = getCardFunc(cid);
 			} else {
 				strippedLog.users[uid] = {
 					userID: this.draftLog.users[uid].userID,
 					userName: this.draftLog.users[uid].userName,
+					picks: [],
+					cards: [],
+					isBot: this.draftLog.users[uid].isBot,
 				};
 				if (this.draftLog.users[uid].decklist)
-					strippedLog.users[uid].decklist = { hashes: this.draftLog.users[uid].decklist.hashes };
+					strippedLog.users[uid].decklist = {
+						main: [],
+						side: [],
+						hashes: this.draftLog.users[uid].decklist?.hashes,
+					};
 			}
 		}
 		return strippedLog;
@@ -2359,7 +2369,7 @@ export class Session implements IIndexable {
 	}
 
 	getSortedHumanPlayerData() {
-		const tmp: UserData = {};
+		const tmp: UsersData = {};
 		for (const userID of this.getSortedHumanPlayersIDs()) {
 			tmp[userID] = {
 				userID: userID,
@@ -2375,7 +2385,7 @@ export class Session implements IIndexable {
 	}
 
 	getSortedVirtualPlayerData() {
-		const r: UserData = {};
+		const r: UsersData = {};
 		if (this.draftState instanceof DraftState) {
 			for (const userID in this.draftState.players) {
 				r[userID] = {
@@ -2454,17 +2464,17 @@ export class Session implements IIndexable {
 
 	updateDeckLands(userID: UserID, lands: DeckBasicLands) {
 		if (!this.draftLog?.users[userID]) return;
-		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = {};
-		this.draftLog.users[userID].decklist.lands = lands;
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
+		(this.draftLog.users[userID].decklist as DeckList).lands = lands;
 		this.updateDecklist(userID);
 	}
 
 	updateDecklist(userID: UserID) {
 		if (!this.draftLog?.users[userID]) return;
-		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = {};
-		this.draftLog.users[userID].decklist.main = Connections[userID].pickedCards.main.map((c) => c.id);
-		this.draftLog.users[userID].decklist.side = Connections[userID].pickedCards.side.map((c) => c.id);
-		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist, {
+		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
+		(this.draftLog.users[userID].decklist as DeckList).main = Connections[userID].pickedCards.main.map((c) => c.id);
+		(this.draftLog.users[userID].decklist as DeckList).side = Connections[userID].pickedCards.side.map((c) => c.id);
+		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist as DeckList, {
 			getCard: this.getCustomGetCardFunction(),
 		});
 		// Update clients
@@ -2478,7 +2488,7 @@ export class Session implements IIndexable {
 			sessionID: this.id,
 			time: this.draftLog?.time,
 			userID: userID,
-			decklist: { hashes: this.draftLog.users[userID].decklist.hashes },
+			decklist: { hashes: this.draftLog.users[userID].decklist?.hashes },
 		};
 
 		if (this.shouldSendLiveUpdates()) Connections[this.owner]?.socket.emit("draftLogLive", shareData);

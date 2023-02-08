@@ -106,7 +106,8 @@ describe("Draft Logs", function () {
 			setSettings("everyone", true),
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.true;
-				for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+				for (let i = 0; i < clients.length; ++i)
+					expect(draftLog.users[clients[i].query.userID].cards).to.be.not.empty;
 			}
 		);
 
@@ -115,7 +116,8 @@ describe("Draft Logs", function () {
 			setSettings("everyone", false),
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.false;
-				for (let i = 0; i < clients.length; ++i) expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+				for (let i = 0; i < clients.length; ++i)
+					expect(draftLog.users[clients[i].query.userID].cards).to.be.not.empty;
 			}
 		);
 
@@ -126,11 +128,11 @@ describe("Draft Logs", function () {
 				expect(draftLog.personalLogs).to.be.true;
 				if (clientIndex === ownerIdx) {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+						expect(draftLog.users[clients[i].query.userID].cards).to.be.not.empty;
 				} else {
-					expect(draftLog.users[clients[clientIndex].query.userID].cards).to.exist;
+					expect(draftLog.users[clients[clientIndex].query.userID].cards).to.be.not.empty;
 					for (let i = 0; i < clients.length; ++i)
-						if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+						if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.be.empty;
 				}
 			}
 		);
@@ -142,10 +144,10 @@ describe("Draft Logs", function () {
 				expect(draftLog.personalLogs).to.be.false;
 				if (clientIndex === ownerIdx) {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[clients[i].query.userID].cards).to.exist;
+						expect(draftLog.users[clients[i].query.userID].cards).to.be.not.empty;
 				} else {
 					for (let i = 0; i < clients.length; ++i)
-						expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+						expect(draftLog.users[clients[i].query.userID].cards).to.be.empty;
 				}
 			}
 		);
@@ -155,9 +157,9 @@ describe("Draft Logs", function () {
 			setSettings("none", true),
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.true;
-				expect(draftLog.users[clients[clientIndex].query.userID].cards).to.exist;
+				expect(draftLog.users[clients[clientIndex].query.userID].cards).to.be.not.empty;
 				for (let i = 0; i < clients.length; ++i)
-					if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+					if (i !== clientIndex) expect(draftLog.users[clients[i].query.userID].cards).to.be.empty;
 			}
 		);
 
@@ -167,7 +169,7 @@ describe("Draft Logs", function () {
 			(clientIndex, draftLog) => {
 				expect(draftLog.personalLogs).to.be.false;
 				for (let i = 0; i < clients.length; ++i)
-					expect(draftLog.users[clients[i].query.userID].cards).to.not.exist;
+					expect(draftLog.users[clients[i].query.userID].cards).to.be.empty;
 			}
 		);
 	}

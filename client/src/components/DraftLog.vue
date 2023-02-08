@@ -65,7 +65,8 @@
 			<!-- Display the log if available (contains cards) and is not delayed or is personal, otherwise only display the deck hash -->
 			<template
 				v-if="
-					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) && selectedLog.cards
+					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) &&
+					selectedLog.cards?.length > 0
 				"
 			>
 				<div class="section-title">
@@ -362,8 +363,10 @@ export default {
 		},
 		selectedLogDecklist() {
 			if (
-				!this.selectedLog.decklist ||
-				(this.selectedLog.decklist.main?.length === 0 && this.selectedLog.decklist.side?.length === 0)
+				!this.selectedLog?.decklist ||
+				(this.selectedLog.decklist.main?.length === 0 &&
+					this.selectedLog.decklist.side?.length === 0 &&
+					!this.selectedLog.decklist.hashes)
 			)
 				return undefined;
 			return this.selectedLog.decklist;
