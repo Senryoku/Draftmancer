@@ -18,7 +18,7 @@ export function removeCardFromCardPool(cid: CardID, dict: CardPool) {
 function getRandomCardFromCardPool(cardPool: CardPool): CardID {
 	const idx = random.integer(0, countCards(cardPool) - 1);
 	let acc = 0;
-	for (let [cid, count] of cardPool) {
+	for (const [cid, count] of cardPool) {
 		acc += count;
 		if (acc > idx) return cid;
 	}
@@ -46,6 +46,6 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 
 export function countCards(dict: CardPool): number {
 	let acc = 0;
-	for (let v of dict.values()) acc += v;
+	for (const v of dict.values()) acc += v;
 	return acc;
 }

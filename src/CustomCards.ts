@@ -45,15 +45,15 @@ function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
 let CustomCardAutoCollectorNumber = 0;
 
 export function validateCustomCard(inputCard: any): SocketError | Card {
-	let card = new Card();
+	const card = new Card();
 	// Check mandatory fields
-	let missing =
+	const missing =
 		checkProperty(inputCard, "name") ??
 		checkProperty(inputCard, "mana_cost") ??
 		checkProperty(inputCard, "type") ??
 		checkProperty(inputCard, "image_uris");
 	if (missing) return missing;
-	let typeError =
+	const typeError =
 		checkPropertyType(inputCard, "name", "string") ??
 		checkPropertyType(inputCard, "mana_cost", "string") ??
 		checkPropertyType(inputCard, "type", "string") ??
@@ -97,13 +97,13 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 			});
 	}
 
-	let arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "subtypes");
+	const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "subtypes");
 	if (arrayCheck) return arrayCheck;
 
 	// Create the final Card object,
 	// Assign default value to missing optional fields
 	card.name = card.id = card.oracle_id = inputCard.name;
-	let { cmc, colors } = parseCost(inputCard.mana_cost);
+	const { cmc, colors } = parseCost(inputCard.mana_cost);
 	card.cmc = cmc;
 	card.colors = inputCard.colors ?? colors;
 	card.set = inputCard.set ?? "custom";
@@ -118,12 +118,12 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.image_uris = inputCard.image_uris;
 
 	if ("back" in inputCard) {
-		let missing =
+		const missing =
 			checkProperty(inputCard.back, "name") ??
 			checkProperty(inputCard.back, "type") ??
 			checkProperty(inputCard.back, "image_uris");
 		if (missing) return missing;
-		let arrayCheck = checkPropertyIsArrayOrUndefined(inputCard.back, "subtypes");
+		const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard.back, "subtypes");
 		if (arrayCheck) return arrayCheck;
 		card.back = {
 			name: inputCard.back.name,

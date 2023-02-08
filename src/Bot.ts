@@ -20,25 +20,26 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 
 	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
 	// we'll just take a random sample (of 15 cards, just because) and test these.
-	shuffleArray(oracleIds);
-	oracleIds = oracleIds.slice(0, 15);
+	let chosenOracleIds = [...oracleIds];
+	shuffleArray(chosenOracleIds);
+	chosenOracleIds = oracleIds.slice(0, 15);
 
 	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
 	// FIXME: This feels hackish.
 	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
-		cardsInPack: oracleIds,
+		cardsInPack: chosenOracleIds,
 		picked: [],
-		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: oracleIds }],
+		seen: [{ packNum: 0, pickNum: 0, numPicks: 1, pack: chosenOracleIds }],
 		packNum: 0,
 		numPacks: 1,
 		pickNum: 0,
-		numPicks: oracleIds.length,
+		numPicks: chosenOracleIds.length,
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
-		let response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
+		const response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
 		if (
 			response.status !== 200 ||
 			!response.data.success ||
@@ -100,7 +101,7 @@ export class SimpleBot implements IBot {
 		pickNum: number,
 		numPicks: number
 	): Promise<number> {
-		let scores = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
+		const scores = await this.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		this.addCard(booster[scores.chosenOption]);
 		return scores.chosenOption;
 	}
@@ -119,11 +120,11 @@ export class SimpleBot implements IBot {
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
 		let maxScore = 0;
 		let bestPick = 0;
-		let scores: number[] = [];
+		const scores: number[] = [];
 		for (let idx = 0; idx < booster.length; ++idx) {
-			let c = booster[idx];
+			const c = booster[idx];
 			let score = c.rating;
-			for (let color of c.colors) score += 0.35 * this.pickedColors[color];
+			for (const color of c.colors) score += 0.35 * this.pickedColors[color];
 			scores.push(score / 10);
 			if (score > maxScore) {
 				maxScore = score;
@@ -138,7 +139,7 @@ export class SimpleBot implements IBot {
 	}
 
 	addCard(card: Card) {
-		for (let color of card.colors) ++this.pickedColors[color];
+		for (const color of card.colors) ++this.pickedColors[color];
 		this.cards.push(card);
 	}
 }
@@ -176,7 +177,11 @@ export class Bot implements IBot {
 			seed: Math.floor(Math.random() * 65536),
 		};
 		try {
-			let response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
+			const response = await axios.post(
+				mtgdraftbotsAPIURL,
+				{ drafterState },
+				{ timeout: mtgdraftbotsAPITimeout }
+			);
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;
 				for (let i = 1; i < response.data.scores.length; ++i) {
@@ -208,7 +213,7 @@ export class Bot implements IBot {
 	) {
 		if (!this.fallbackBot) {
 			this.fallbackBot = new SimpleBot(this.name, this.id);
-			for (let card of this.cards) this.fallbackBot.addCard(card);
+			for (const card of this.cards) this.fallbackBot.addCard(card);
 		}
 		this.lastScores = await this.fallbackBot.getScores(booster, boosterNum, numBoosters, pickNum, numPicks);
 		return this.lastScores;

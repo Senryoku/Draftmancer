@@ -13,13 +13,12 @@ function decklistToArray(
 	// Keep only the first face for two sided cards
 	const filter = (name: string) => {
 		const idx = name.indexOf(" //");
-		if (idx !== -1) name = name.substring(0, idx);
-		return nameFilter(name);
+		return nameFilter(idx !== -1 ? name.substring(0, idx) : name);
 	};
 
 	const main = [...decklist.main.map((cid: CardID) => filter(options.getCard(cid).name))];
 	if (decklist.lands)
-		for (let c in decklist.lands) for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(basicNames[c]));
+		for (const c in decklist.lands) for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(basicNames[c]));
 
 	const side = [...decklist.side.map((cid: CardID) => sidePrefix + filter(options.getCard(cid).name))];
 	// Front-end might add some basic lands to the sideboard, but we don't have access to this information.

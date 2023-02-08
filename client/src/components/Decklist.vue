@@ -1,5 +1,5 @@
 <template>
-	<div v-if="list && list.main && !hashesonly" class="decklist">
+	<div v-if="list && !hashesonly && (mainboard.length > 0 || sideboard.length > 0)" class="decklist">
 		<card-pool
 			:cards="mainboard"
 			:language="language"
@@ -107,15 +107,17 @@ export default {
 	},
 	computed: {
 		mainboard() {
+			if (!this.list.main) return [];
 			let uniqueID = 0;
-			return this.list.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
+			return this.list?.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		sideboard() {
+			if (!this.list?.side) return [];
 			let uniqueID = 0;
 			return this.list.side.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
 		landcount() {
-			if (!this.list.lands) return 0;
+			if (!this.list?.lands) return 0;
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 	},

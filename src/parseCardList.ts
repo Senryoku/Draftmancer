@@ -4,26 +4,27 @@ import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
 import { ackError, SocketError } from "./Message.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
+const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
 export function parseLine(line: string, options: Options = { fallbackToCardName: false }) {
-	line = line.trim();
-	const match = line.match(lineRegex);
+	const trimedLine = line.trim();
+	const match = trimedLine.match(lineRegex);
 	if (!match) {
 		return [
 			ackError({
 				title: `Syntax Error`,
-				text: `The line '${line}' doesn't match the card syntax.`,
-				footer: `Full line: '${line}'`,
+				text: `The line '${trimedLine}' doesn't match the card syntax.`,
+				footer: `Full line: '${trimedLine}'`,
 			}),
 			undefined,
 		];
 	}
 
-	let [, countStr, name, set, number, foil] = match;
+	const [, countStr, name, , number, foil] = match;
+	let [, , , set, ,] = match;
 	let count = parseInt(countStr);
 	if (!Number.isInteger(count)) count = 1;
 
@@ -42,7 +43,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 	if (number && !set) {
 		console.log(
 			`Collector number without Set`,
-			`You should not specify a collector number without also specifying a set: '${line}'.`
+			`You should not specify a collector number without also specifying a set: '${trimedLine}'.`
 		);
 	}
 
@@ -59,7 +60,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 		candidates = CardVersionsByName[name.split(" //")[0]];
 	}
 
-	let cardIDs = candidates.filter(
+	const cardIDs = candidates.filter(
 		(cid) => (!set || getCard(cid).set === set) && (!number || getCard(cid).collector_number === number)
 	);
 
@@ -84,7 +85,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 		ackError({
 			title: `Card not found`,
 			text: message,
-			footer: `Full line: '${line}'`,
+			footer: `Full line: '${trimedLine}'`,
 		}),
 		undefined,
 		undefined,
@@ -97,7 +98,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 export function parseCardList(txtcardlist: string, options: Options): CustomCardList | SocketError {
 	try {
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
-		let cardList: CustomCardList = {
+		const cardList: CustomCardList = {
 			customCards: null,
 			layouts: false,
 			slots: {},
@@ -165,7 +166,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					});
 				}
 				cardList.customCards = {};
-				for (let c of customCards) {
+				for (const c of customCards) {
 					const cardOrError = validateCustomCard(c);
 					if ((cardOrError as SocketError).error) return cardOrError as SocketError;
 					const customCard = cardOrError as Card;
@@ -197,7 +198,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					cardList.layouts = {};
 					++lineIdx;
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
-						let match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
+						const match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
 						if (!match) {
 							return ackError({
 								title: `Parsing Error`,
@@ -211,7 +212,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 						cardList.layouts[layoutName] = { weight: layoutWeight, slots: {} };
 						++lineIdx;
 						while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
-							let slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
+							const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
 							if (!slotMatch) {
 								return ackError({
 									title: `Parsing Error`,
@@ -245,10 +246,10 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
-							let [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
+							const [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
 							if (typeof cardID !== "undefined") {
 								// Merge duplicate declarations
-								if (cardList.slots[slotName].hasOwnProperty(cardID))
+								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
 									cardList.slots[slotName][cardID] += countOrError;
 								else cardList.slots[slotName][cardID] = countOrError;
 							} else {
@@ -266,10 +267,10 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 			// Check layout declarations
 			if (cardList.layouts) {
 				let commonPackSize = -1;
-				for (let layoutName in cardList.layouts) {
+				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
-					for (let slotName in cardList.layouts[layoutName].slots) {
-						if (!cardList.slots.hasOwnProperty(slotName)) {
+					for (const slotName in cardList.layouts[layoutName].slots) {
+						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName)) {
 							return ackError({
 								title: `Parsing Error`,
 								text: `Layout ${layoutName} refers to slot ${slotName} which is not defined.`,
@@ -300,12 +301,12 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 			}
 		} else {
 			cardList.slots["default"] = {};
-			for (let line of lines) {
+			for (const line of lines) {
 				if (line) {
-					let [countOrError, cardID] = parseLine(line, options);
+					const [countOrError, cardID] = parseLine(line, options);
 					if (typeof cardID !== "undefined") {
 						// Merge duplicate declarations
-						if (cardList.slots["default"].hasOwnProperty(cardID))
+						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
 							cardList.slots["default"][cardID] += countOrError;
 						else cardList.slots["default"][cardID] = countOrError;
 					} else {
@@ -338,7 +339,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 const XMageLine = /(\d+) \[([^:]+):([^\]]+)\] (.*)/i;
 export function XMageToArena(txt: string) {
 	let r = "";
-	for (let line of txt.split("\n")) {
+	for (const line of txt.split("\n")) {
 		if (line === "") {
 			r += "\n";
 		} else {

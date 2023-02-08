@@ -21,8 +21,8 @@
 			"extends": ["eslint:recommended", "prettier", "plugin:@typescript-eslint/recommended"],
 			"plugins": ["@typescript-eslint"],
 			"rules": {
-				"no-param-reassign": "error",
-				"@typescript-eslint/no-inferrable-types": "warn"
+				"no-param-reassign": "warn",
+				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }]
 			}
 		}
 	]

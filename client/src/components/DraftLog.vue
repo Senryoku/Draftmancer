@@ -65,7 +65,8 @@
 			<!-- Display the log if available (contains cards) and is not delayed or is personal, otherwise only display the deck hash -->
 			<template
 				v-if="
-					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) && selectedLog.cards
+					(!draftlog.delayed || (draftlog.personalLogs && userID === selectedLog.userID)) &&
+					selectedLog.cards?.length > 0
 				"
 			>
 				<div class="section-title">
@@ -273,7 +274,7 @@ export default {
 				// Defaults to deck display if available
 				if (
 					this.displayOptions.detailsUserID &&
-					this.draftlog.users[this.displayOptions.detailsUserID].decklist &&
+					this.hasSubmittedDeck(this.draftlog.users[this.displayOptions.detailsUserID]) &&
 					(this.draftlog.users[this.displayOptions.detailsUserID].decklist.main?.length > 0 ||
 						this.draftlog.users[this.displayOptions.detailsUserID].decklist.side?.length > 0)
 				)
@@ -346,6 +347,11 @@ export default {
 				++this.displayOptions.pick;
 			}
 		},
+		hasSubmittedDeck(log) {
+			return (
+				log?.decklist && (log.decklist.main?.length > 0 || log.decklist.side?.length > 0 || log.decklist.hashes)
+			);
+		},
 	},
 	computed: {
 		type() {
@@ -361,11 +367,7 @@ export default {
 			);
 		},
 		selectedLogDecklist() {
-			if (
-				!this.selectedLog.decklist ||
-				(this.selectedLog.decklist.main?.length === 0 && this.selectedLog.decklist.side?.length === 0)
-			)
-				return undefined;
+			if (!this.hasSubmittedDeck(this.selectedLog)) return undefined;
 			return this.selectedLog.decklist;
 		},
 		tableSummary() {
@@ -375,12 +377,13 @@ export default {
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
-					hasDeck: !!this.draftlog.users[userID].decklist,
-					colors: this.draftlog.users[userID].decklist
-						? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
-						: this.type === "Draft"
-						? this.colorsInCardList(this.draftlog.users[userID].cards)
-						: null,
+					hasDeck: this.hasSubmittedDeck(this.draftlog.users[userID].decklist),
+					colors:
+						this.draftlog.users[userID].decklist?.main?.length > 0
+							? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
+							: this.type === "Draft"
+							? this.colorsInCardList(this.draftlog.users[userID].cards)
+							: null,
 				});
 			}
 			// Add empty seats to better visualize the draft table

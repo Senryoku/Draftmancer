@@ -2,9 +2,9 @@
 
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
-import { Card, CardID, CardPool, UniqueCard } from "./Cards";
+import { CardID, CardPool, UniqueCard } from "./Cards";
 
-export let Connections: { [uid: string]: Connection } = {};
+export const Connections: { [uid: string]: Connection } = {};
 export class Connection {
 	socket: Socket;
 	userID: UserID;

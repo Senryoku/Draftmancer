@@ -1,6 +1,6 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
-import { CardID, Card, SlotedCardPool, Cards, UniqueCard, CardPool, getCard } from "./Cards.js";
-import { countCards, pickCard } from "./cardUtils.js";
+import { CardID, Card, SlotedCardPool, UniqueCard, CardPool, getCard } from "./Cards.js";
+import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, Options, random } from "./utils.js";
 
@@ -37,18 +37,18 @@ export function generateBoosterFromCustomCardList(
 		return new MessageError("Error generating boosters", "No custom card list provided.");
 	}
 
-	let pickOptions: Options = { uniformAll: true, withReplacement: options?.withReplacement };
+	const pickOptions: Options = { uniformAll: true, withReplacement: options?.withReplacement };
 	pickOptions.getCard = generateCustomGetCardFunction(customCardList);
 
 	// List is using custom layouts
 	if (customCardList.layouts && !isEmpty(customCardList.layouts)) {
 		const layouts = customCardList.layouts;
-		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => (acc += layouts[key].weight), 0);
+		const layoutsTotalWeights = Object.keys(layouts).reduce((acc, key) => acc + layouts[key].weight, 0);
 
-		let cardsBySlot: SlotedCardPool = {};
-		for (let slotName in customCardList.slots) {
+		const cardsBySlot: SlotedCardPool = {};
+		for (const slotName in customCardList.slots) {
 			cardsBySlot[slotName] = new Map();
-			for (let cardId in customCardList.slots[slotName])
+			for (const cardId in customCardList.slots[slotName])
 				cardsBySlot[slotName].set(cardId, customCardList.slots[slotName][cardId]);
 		}
 
@@ -56,25 +56,25 @@ export function generateBoosterFromCustomCardList(
 		const colorBalancedSlots: { [layoutName: string]: string } = {};
 		const colorBalancedSlotGenerators: { [slotName: string]: ColorBalancedSlot } = {};
 		if (options.colorBalance) {
-			for (let layoutName in layouts) {
+			for (const layoutName in layouts) {
 				colorBalancedSlots[layoutName] = Object.keys(layouts[layoutName].slots).reduce((max, curr) =>
 					layouts[layoutName].slots[curr] > layouts[layoutName].slots[max] ? curr : max
 				);
 			}
-			for (let slotName of new Set(Object.values(colorBalancedSlots))) {
+			for (const slotName of new Set(Object.values(colorBalancedSlots))) {
 				colorBalancedSlotGenerators[slotName] = new ColorBalancedSlot(cardsBySlot[slotName], pickOptions);
 			}
 		}
 
 		// Generate Boosters
-		let boosters: Array<UniqueCard>[] = [];
+		const boosters: Array<UniqueCard>[] = [];
 		for (let i = 0; i < boosterQuantity; ++i) {
 			let booster: Array<UniqueCard> = [];
 
 			// Pick a layout
 			let randomLayout = random.real(0, layoutsTotalWeights);
 			let pickedLayoutName = Object.keys(layouts)[0];
-			for (let layoutName in layouts) {
+			for (const layoutName in layouts) {
 				randomLayout -= layouts[layoutName].weight;
 				if (randomLayout <= 0) {
 					pickedLayoutName = layoutName;
@@ -83,7 +83,7 @@ export function generateBoosterFromCustomCardList(
 			}
 			const pickedLayout = layouts[pickedLayoutName];
 
-			for (let slotName in pickedLayout.slots) {
+			for (const slotName in pickedLayout.slots) {
 				const useColorBalance =
 					options.colorBalance &&
 					slotName === colorBalancedSlots[pickedLayoutName] &&
@@ -135,10 +135,10 @@ export function generateBoosterFromCustomCardList(
 
 		// Generate fully random 15-cards booster for cube (not considering rarity)
 		// Getting custom card list
-		let localCollection: CardPool = new Map();
+		const localCollection: CardPool = new Map();
 
 		let cardCount = 0;
-		for (let cardId in defaultSlot) {
+		for (const cardId in defaultSlot) {
 			localCollection.set(cardId, defaultSlot[cardId]);
 			cardCount += defaultSlot[cardId];
 		}
@@ -152,7 +152,7 @@ export function generateBoosterFromCustomCardList(
 			);
 		}
 
-		let boosters = [];
+		const boosters = [];
 
 		if (options.colorBalance && cardsPerBooster >= 5) {
 			const colorBalancedSlotGenerator = new ColorBalancedSlot(localCollection, pickOptions);
@@ -160,7 +160,7 @@ export function generateBoosterFromCustomCardList(
 				boosters.push(colorBalancedSlotGenerator.generate(cardsPerBooster, [], pickOptions));
 		} else {
 			for (let i = 0; i < boosterQuantity; ++i) {
-				let booster: Array<UniqueCard> = [];
+				const booster: Array<UniqueCard> = [];
 				for (let j = 0; j < cardsPerBooster; ++j) booster.push(pickCard(localCollection, booster, pickOptions));
 				boosters.push(booster);
 			}

@@ -1,6 +1,6 @@
 "use strict";
 
-import { CardID, CardPool, getUnique, Cards, getCard } from "./Cards.js";
+import { CardID, CardPool, getUnique, getCard } from "./Cards.js";
 import { getRandomMapKey, getRandom } from "./utils.js";
 import { removeCardFromCardPool } from "./cardUtils.js";
 import BasicLandIDs from "./data/BasicLandIDs.json";
@@ -31,7 +31,7 @@ export class SpecialLandSlot extends BasicLandSlot {
 	}
 
 	setup(commons: CardPool) {
-		for (let c of this.commonLandsIds) {
+		for (const c of this.commonLandsIds) {
 			if (commons.has(c)) {
 				this.landsToDistribute.set(c, commons.get(c) as number);
 				commons.delete(c);
@@ -41,7 +41,7 @@ export class SpecialLandSlot extends BasicLandSlot {
 
 	pick() {
 		if (Math.random() <= this.rate && this.landsToDistribute.size > 0) {
-			let c = getRandomMapKey(this.landsToDistribute);
+			const c = getRandomMapKey(this.landsToDistribute);
 			removeCardFromCardPool(c, this.landsToDistribute);
 			return getUnique(c);
 		} else {
@@ -201,4 +201,4 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};
-for (let set in BasicLandIDs) BasicLandSlots[set] = new BasicLandSlot(set);
+for (const set in BasicLandIDs) BasicLandSlots[set] = new BasicLandSlot(set);
