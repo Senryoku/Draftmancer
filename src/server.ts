@@ -38,6 +38,7 @@ import {
 	UniqueCardID,
 	getCard,
 	DeckBasicLands,
+	UniqueCard,
 } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
@@ -102,7 +103,7 @@ function startPublicSession(s: Session) {
 
 // Prepare local custom card lists
 const ParsedCubeLists: { [name: string]: any } = {};
-for (let cube of constants.CubeLists) {
+for (const cube of constants.CubeLists) {
 	if (cube.filename) {
 		ParsedCubeLists[cube.name] = parseCardList(fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
 			name: cube.name,
@@ -182,9 +183,9 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	) {
 		if (!isObject(collection) || collection === null) return;
 
-		let processedCollection: CardPool = new Map();
+		const processedCollection: CardPool = new Map();
 		// Remove unknown cards immediatly.
-		for (let aid in collection) {
+		for (const aid in collection) {
 			if (aid in MTGACards) {
 				processedCollection.set(MTGACards[aid].id, collection[aid]);
 			}
@@ -207,15 +208,15 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	// Parse a card list and uses it as collection
 	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
 		const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
-		let cardList = parseCardList(txtcollection, options);
+		const cardList = parseCardList(txtcollection, options);
 		if (cardList instanceof SocketError) {
 			ack?.(cardList);
 			return;
 		}
 
-		let ret: any = new SocketAck();
+		const ret: any = new SocketAck();
 
-		let warningMessages = [];
+		const warningMessages = [];
 
 		if (options.unknownCards)
 			warningMessages.push(
@@ -224,9 +225,9 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 
 		const ignoredCards = [];
 
-		let collection: CardPool = new Map();
-		for (let cardID in cardList.slots["default"]) {
-			let aid = getCard(cardID).arena_id;
+		const collection: CardPool = new Map();
+		for (const cardID in cardList.slots["default"]) {
+			const aid = getCard(cardID).arena_id;
 			if (!aid) {
 				ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);
 				continue;
@@ -293,7 +294,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 				draftState: Sessions[sessionID].draftState,
 				sessionProps: {},
 			};
-			for (let p of Object.keys(SessionsSettingsProps))
+			for (const p of Object.keys(SessionsSettingsProps))
 				data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
 			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
 		}
@@ -386,7 +387,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.users.delete(userID);
 			sess.notifyUserChange();
 		}
-		for (let user of sess.users)
+		for (const user of sess.users)
 			if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 	},
 	readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
@@ -396,7 +397,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			return;
 		}
 
-		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
+		for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
 		ack?.(new SocketAck());
 	},
 	async startDraft(userID: UserID, sessionID: SessionID) {
@@ -600,7 +601,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.distributionMode(distributionMode)) return;
 
 		Sessions[sessionID].distributionMode = distributionMode;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID)
 				Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
 		}
@@ -609,7 +610,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.customBoosters(customBoosters)) return;
 
 		Sessions[sessionID].customBoosters = customBoosters;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
 		}
 	},
@@ -619,7 +620,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (bots == Sessions[sessionID].bots) return;
 
 		Sessions[sessionID].bots = bots;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("bots", bots);
 		}
 	},
@@ -627,7 +628,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
 
 		Sessions[sessionID].setRestriction = setRestriction;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("setRestriction", setRestriction);
 		}
 		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
@@ -733,7 +734,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 						ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
 						return;
 					} else {
-						let converted = XMageToArena(body);
+						const converted = XMageToArena(body);
 						if (!converted) fromTextList(userID, sessionID, data, ack);
 						// Fallback to plain text list
 						else
@@ -765,7 +766,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
 		if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
 		Sessions[sessionID].ignoreCollections = ignoreCollections;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user != userID)
 				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
 		}
@@ -774,7 +775,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.maxTimer(maxTimer)) return;
 
 		Sessions[sessionID].maxTimer = maxTimer;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user != userID) Connections[user].socket.emit("setPickTimer", maxTimer);
 		}
 	},
@@ -782,7 +783,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
 
 		Sessions[sessionID].maxPlayers = maxPlayers;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
 		}
 	},
@@ -790,7 +791,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.mythicPromotion(mythicPromotion)) return;
 
 		Sessions[sessionID].mythicPromotion = mythicPromotion;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
 		}
 	},
@@ -798,7 +799,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.useBoosterContent(useBoosterContent)) return;
 
 		Sessions[sessionID].useBoosterContent = useBoosterContent;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID)
 				Connections[user].socket.emit("sessionOptions", { useBoosterContent: useBoosterContent });
 		}
@@ -817,7 +818,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			return;
 
 		Sessions[sessionID].boosterContent = boosterContent;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
 		}
 	},
@@ -837,18 +838,18 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	},
 	setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
 		try {
-			let boosters = [];
-			let booster = [];
-			for (let line of text.split("\n")) {
+			const boosters: UniqueCard[][] = [];
+			let booster: UniqueCard[] = [];
+			for (const line of text.split("\n")) {
 				if (!line || line === "") {
 					if (booster.length === 0) continue;
 					boosters.push(booster);
 					booster = [];
 				} else {
-					let [count, cardID, foil] = parseLine(line);
+					const [count, cardID, foil] = parseLine(line);
 					if (typeof cardID !== "undefined") {
 						for (let i = 0; i < count; ++i) {
-							let card = getUnique(cardID, { foil });
+							const card = getUnique(cardID, { foil });
 							booster.push(card);
 						}
 					} else {
@@ -908,7 +909,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
 
 		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID)
 				Connections[user].socket.emit("sessionOptions", {
 					draftLogRecipients: draftLogRecipients,
@@ -923,7 +924,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
 
 		Sessions[sessionID].maxDuplicates = maxDuplicates;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID)
 				Connections[user].socket.emit("sessionOptions", {
 					maxDuplicates: maxDuplicates,
@@ -935,7 +936,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (colorBalance === Sessions[sessionID].colorBalance) return;
 
 		Sessions[sessionID].colorBalance = colorBalance;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					colorBalance: Sessions[sessionID].colorBalance,
@@ -947,7 +948,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (foil === Sessions[sessionID].foil) return;
 
 		Sessions[sessionID].foil = foil;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					foil: Sessions[sessionID].foil,
@@ -959,7 +960,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (preferedCollation === Sessions[sessionID].preferedCollation) return;
 
 		Sessions[sessionID].preferedCollation = preferedCollation;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					preferedCollation: Sessions[sessionID].preferedCollation,
@@ -971,7 +972,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
 		Sessions[sessionID].useCustomCardList = useCustomCardList;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					useCustomCardList: Sessions[sessionID].useCustomCardList,
@@ -984,7 +985,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
 
 		Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					customCardListWithReplacement: Sessions[sessionID].customCardListWithReplacement,
@@ -996,7 +997,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
 
 		Sessions[sessionID].doubleMastersMode = doubleMastersMode;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
 					doubleMastersMode: Sessions[sessionID].doubleMastersMode,
@@ -1009,7 +1010,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;
 
 		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
 		}
@@ -1019,7 +1020,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (burnedCardsPerRound === Sessions[sessionID].burnedCardsPerRound) return;
 
 		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
 		}
@@ -1029,7 +1030,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (discardRemainingCardsAt === Sessions[sessionID].discardRemainingCardsAt) return;
 
 		Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", { discardRemainingCardsAt: discardRemainingCardsAt });
 		}
@@ -1039,7 +1040,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (isPublic === Sessions[sessionID].isPublic) return;
 
 		Sessions[sessionID].isPublic = isPublic;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
 		}
 		updatePublicSession(sessionID);
@@ -1049,7 +1050,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (description === Sessions[sessionID].description) return;
 
 		Sessions[sessionID].description = description.substring(0, 70);
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
 		}
 		updatePublicSession(sessionID);
@@ -1109,7 +1110,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (bracketLocked === Sessions[sessionID].bracketLocked) return;
 
 		Sessions[sessionID].bracketLocked = bracketLocked;
-		for (let user of Sessions[sessionID].users) {
+		for (const user of Sessions[sessionID].users) {
 			if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
 		}
 	},
@@ -1124,7 +1125,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 		// Send the full copy to everyone
 		draftLog.delayed = false;
-		for (let user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
+		for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
 	},
 };
 
@@ -1206,8 +1207,8 @@ io.on("connection", async function (socket) {
 		// Restore previously saved connection
 		// TODO: Front and Back end may be out of sync after this!
 		InactiveConnections[userID].socket = socket;
-		let connection = new Connection(socket, userID, query.userName as string);
-		for (let prop of Object.getOwnPropertyNames(InactiveConnections[userID])) {
+		const connection = new Connection(socket, userID, query.userName as string);
+		for (const prop of Object.getOwnPropertyNames(InactiveConnections[userID])) {
 			(connection as IIndexable)[prop] = InactiveConnections[userID][prop];
 		}
 		Connections[userID] = connection;
@@ -1245,21 +1246,21 @@ io.on("connection", async function (socket) {
 
 		const filteredSettings: Options = {};
 		if (sessionSettings)
-			for (let prop of Object.keys(SessionsSettingsProps))
+			for (const prop of Object.keys(SessionsSettingsProps))
 				if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
 		joinSession(sessionID, userID, filteredSettings);
 	});
 
-	for (let key in socketCallbacks) socket.on(key, prepareSocketCallback(socketCallbacks[key]));
+	for (const key in socketCallbacks) socket.on(key, prepareSocketCallback(socketCallbacks[key]));
 
-	for (let key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
+	for (const key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
 	// Apply prefered session settings in case we're creating a new one, filtering out invalid ones.
-	let filteredSettings: Options = {};
+	const filteredSettings: Options = {};
 	try {
 		if (query.sessionSettings) {
 			const sessionSettings: Options = JSON.parse(query.sessionSettings as string);
-			for (let prop of Object.keys(SessionsSettingsProps))
+			for (const prop of Object.keys(SessionsSettingsProps))
 				if (prop in sessionSettings && SessionsSettingsProps[prop](sessionSettings[prop]))
 					filteredSettings[prop] = sessionSettings[prop];
 		}
@@ -1306,7 +1307,7 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 	}
 
 	if (sessionID in Sessions) {
-		let sess = Sessions[sessionID];
+		const sess = Sessions[sessionID];
 		// User was the owner, but not playing
 		if (userID === sess.owner && !sess.ownerIsPlayer) {
 			sess.reconnectOwner(userID);
@@ -1358,7 +1359,7 @@ function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSe
 		if (currentSession && currentSession in Sessions)
 			if (userID === Sessions[currentSession].owner)
 				// Transfer session settings to the new one if applicable
-				for (let p of Object.keys(SessionsSettingsProps))
+				for (const p of Object.keys(SessionsSettingsProps))
 					defaultSessionSettings[p] = (Sessions[currentSession] as IIndexable)[p];
 
 		Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
@@ -1380,7 +1381,7 @@ function deleteSession(sessionID: SessionID) {
 function removeUserFromSession(userID: UserID) {
 	const sessionID = Connections[userID].sessionID;
 	if (sessionID && sessionID in Sessions) {
-		let sess = Sessions[sessionID];
+		const sess = Sessions[sessionID];
 		if (sess.users.has(userID)) {
 			sess.remUser(userID);
 			if (sess.isPublic) updatePublicSession(sessionID);
@@ -1451,7 +1452,7 @@ function returnCollectionPlainText(res: any, sid: SessionID) {
 	} else if (sid in Sessions) {
 		const coll = Sessions[sid].collection(false);
 		let r = "";
-		for (let cid in coll) r += `${coll.get(cid)} ${getCard(cid).name}\n`;
+		for (const cid in coll) r += `${coll.get(cid)} ${getCard(cid).name}\n`;
 		res.set("Content-disposition", `attachment; filename=collection_${sid}.txt`);
 		res.set("Content-Type", "text/plain");
 		res.send(r);
@@ -1488,7 +1489,7 @@ app.post("/getCards", (req, res) => {
 				res.json(req.body.map((cid) => getCard(cid)));
 			} else if (typeof req.body === "object") {
 				const r: { [key: string]: Card[] } = {};
-				for (let slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => getCard(cid));
+				for (const slot in req.body) r[slot] = req.body[slot].map((cid: CardID) => getCard(cid));
 				res.json(r);
 			} else {
 				res.sendStatus(400);
@@ -1505,7 +1506,7 @@ app.post("/getDeck", (req, res) => {
 		res.status(400).send({ error: { message: `Bad request.` } });
 	} else {
 		try {
-			let r = { deck: [] as Card[], sideboard: [] as Card[] };
+			const r = { deck: [] as Card[], sideboard: [] as Card[] };
 			const lines = req.body.split(/\r?\n/);
 			let target: Card[] = r.deck;
 			for (let line of lines) {
@@ -1513,7 +1514,7 @@ app.post("/getDeck", (req, res) => {
 				if (line === "Deck") target = r.deck;
 				if (line === "Sideboard" || (line === "" && r.deck.length > 0)) target = r.sideboard;
 				if (["", "Deck", "Sideboard"].includes(line)) continue;
-				let [count, cardID] = parseLine(line);
+				const [count, cardID] = parseLine(line);
 				if (typeof cardID !== "undefined") {
 					for (let i = 0; i < count; ++i) target.push(getUnique(cardID));
 				} else {
@@ -1590,13 +1591,13 @@ app.get("/getConnections/:key", requireAPIKey, (req, res) => {
 app.get("/getStatus/:key", requireAPIKey, (req, res) => {
 	let draftingSessions = 0;
 	let draftingPlayers = 0;
-	for (let sID in Sessions) {
+	for (const sID in Sessions) {
 		if (Sessions[sID].drafting) {
 			++draftingSessions;
 			draftingPlayers += Sessions[sID].users.size;
 		}
 	}
-	let uptime = process.uptime();
+	const uptime = process.uptime();
 	return returnCircularJSON(res, {
 		uptime: uptime,
 		sessionCount: Object.keys(Sessions).length,
@@ -1609,8 +1610,8 @@ app.get("/getStatus/:key", requireAPIKey, (req, res) => {
 
 // Used by Discord Bot
 app.get("/getSessions/:key", requireAPIKey, (req, res) => {
-	let localSess: { [sid: string]: any } = {};
-	for (let sid in Sessions)
+	const localSess: { [sid: string]: any } = {};
+	for (const sid in Sessions)
 		localSess[sid] = {
 			id: sid,
 			drafting: Sessions[sid].drafting,
