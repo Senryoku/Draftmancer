@@ -190,9 +190,9 @@ export class BoosterFactory implements IBoosterFactory {
 		if (this.options.foil && random.bool(localFoilRate)) {
 			const rarityCheck = random.real(0, 1);
 			const foilCardPool: SlotedCardPool = this.options.foilCardPool ?? this.cardPool;
-			for (let r in foilRarityRates)
+			for (const r in foilRarityRates)
 				if (rarityCheck <= foilRarityRates[r] && foilCardPool[r].size > 0) {
-					let pickedCard = pickCard(foilCardPool[r]);
+					const pickedCard = pickCard(foilCardPool[r]);
 					// Synchronize color balancing dictionary
 					if (this.options.colorBalance && this.colorBalancedSlot && pickedCard.rarity == "common")
 						this.colorBalancedSlot.syncCache(pickedCard);
@@ -549,7 +549,7 @@ class STXBoosterFactory extends BoosterFactory {
 				);
 		} else {
 			this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
-			for (let cid of BoosterCardsBySet["sta"])
+			for (const cid of BoosterCardsBySet["sta"])
 				this.mysticalArchiveByRarity[getCard(cid).rarity].set(
 					cid,
 					options.maxDuplicates?.[getCard(cid).rarity] ?? 99
@@ -724,14 +724,15 @@ class DBLBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
+		let updatedTargets = Object.assign({}, targets);
 		if (targets !== DefaultBoosterTargets) {
-			targets = {
+			updatedTargets = {
 				rare: Math.ceil(targets["rare"] / 2),
 				uncommon: Math.ceil(targets["uncommon"] / 2),
 				common: Math.ceil(targets["common"] / 2),
 			};
 		} else {
-			targets = {
+			updatedTargets = {
 				rare: 1,
 				uncommon: 2,
 				common: 4,
@@ -743,16 +744,16 @@ class DBLBoosterFactory extends BoosterFactory {
 
 		// Silver screen foil card (Note: We could eventually use actual DBL cards for this, to get the proper image)
 		const pickedPool = random.pick([this.midCardPool, this.vowCardPool]);
-		const pickedRarity = rollSpecialCardRarity(countBySlot(pickedPool), targets, {
+		const pickedRarity = rollSpecialCardRarity(countBySlot(pickedPool), updatedTargets, {
 			minRarity: "common",
 			mythicPromotion,
 		});
 		booster.push(pickCard(pickedPool[pickedRarity], [])); // Allow duplicates here
 
-		for (const rarity in targets) {
+		for (const rarity in updatedTargets) {
 			const pickedCards: Array<UniqueCard> = [];
 			for (const pool of [this.midCardPool, this.vowCardPool])
-				for (let i = 0; i < targets[rarity]; i++) {
+				for (let i = 0; i < updatedTargets[rarity]; i++) {
 					const promotion =
 						rarity === "rare" && mythicPromotion && pool["mythic"].size > 0 && random.bool(mythicRate);
 					pickedCards.push(pickCard(pool[promotion ? "mythic" : rarity], pickedCards));
@@ -846,20 +847,21 @@ class CLBBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
+		let updatedTargets = Object.assign({}, targets);
 		// These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
 		if (targets === DefaultBoosterTargets)
-			targets = {
+			updatedTargets = {
 				common: 13,
 				uncommon: 3,
 				rare: 1,
 			};
 		// Ignore the rule if there's no legendary creatures or planeswalkers left
 		if (isEmpty(this.legendaryCreaturesAndPlaneswalkers)) {
-			return super.generateBooster(targets);
+			return super.generateBooster(updatedTargets);
 		} else {
 			let booster: Array<UniqueCard> | false = [];
 
-			booster = super.generateBooster(targets);
+			booster = super.generateBooster(updatedTargets);
 			if (!booster) return false;
 
 			// 1 Legendary creature or planeswalker (rare or mythic rare in 31% of boosters)
@@ -1389,7 +1391,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 			this.possibleContent[
 				weightedRandomIdx(
 					this.possibleContent,
-					this.possibleContent.reduce((acc: number, val: BoosterInfo) => (acc += val.weight), 0)
+					this.possibleContent.reduce((acc: number, val: BoosterInfo) => acc + val.weight, 0)
 				)
 			];
 		// Pick cards from each sheet, color balancing if necessary
@@ -1452,7 +1454,7 @@ for (const s of PaperBoosterData as any[]) {
 
 	set.colorBalancedSheets = {};
 	for (const sheetName in set.sheets) {
-		for (let card of set.sheets[sheetName].cards) {
+		for (const card of set.sheets[sheetName].cards) {
 			let num = card.number;
 			card.id = CardsBySetAndCollectorNumber[`${card.set}:${num}`];
 			if (!card.id) {
@@ -1496,7 +1498,7 @@ for (const s of PaperBoosterData as any[]) {
 		return new PaperBoosterFactory(set, options, possibleContent);
 	};
 	PaperBoosterSizes[set.code] = Object.keys(set.boosters[0].sheets).reduce(
-		(acc: number, curr: string): number => (acc += set.boosters[0].sheets[curr]),
+		(acc: number, curr: string): number => acc + set.boosters[0].sheets[curr],
 		0
 	);
 }
