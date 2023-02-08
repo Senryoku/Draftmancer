@@ -52,10 +52,10 @@ export class MinesweeperGrid {
 		}
 		// Reveal the middle card(s)
 		let rowStart = Math.floor(height / 2);
-		let rowEnd = rowStart + 1;
+		const rowEnd = rowStart + 1;
 		if (height % 2 === 0) --rowStart;
 		let colStart = Math.floor(width / 2);
-		let colEnd = colStart + 1;
+		const colEnd = colStart + 1;
 		if (width % 2 === 0) --colStart;
 		if (height % 2 === 1 && width % 2 === 1) {
 		}
@@ -111,7 +111,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		this.gridWidth = gridWidth;
 		this.gridHeight = gridHeight;
 		this.picksPerGrid = picksPerGrid;
-		for (let p of packs) this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, options));
+		for (const p of packs) this.grids.push(new MinesweeperGrid(p, gridWidth, gridHeight, options));
 	}
 
 	grid() {
@@ -153,9 +153,9 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	strippedGrid() {
 		const ret: any = [];
 		let rowIdx = 0;
-		for (let row of this.grid().state) {
+		for (const row of this.grid().state) {
 			ret.push([]);
-			for (let cell of row) {
+			for (const cell of row) {
 				ret[rowIdx].push({ ...cell });
 				if (cell.state === MinesweeperCellState.Hidden) ret[rowIdx][ret[rowIdx].length - 1].card = undefined;
 			}
