@@ -249,7 +249,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 							const [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
 							if (typeof cardID !== "undefined") {
 								// Merge duplicate declarations
-								if (cardList.slots[slotName].hasOwnProperty(cardID))
+								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
 									cardList.slots[slotName][cardID] += countOrError;
 								else cardList.slots[slotName][cardID] = countOrError;
 							} else {
@@ -270,7 +270,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 				for (const layoutName in cardList.layouts) {
 					let packSize = 0;
 					for (const slotName in cardList.layouts[layoutName].slots) {
-						if (!cardList.slots.hasOwnProperty(slotName)) {
+						if (!Object.prototype.hasOwnProperty.call(cardList.slots, slotName)) {
 							return ackError({
 								title: `Parsing Error`,
 								text: `Layout ${layoutName} refers to slot ${slotName} which is not defined.`,
@@ -306,7 +306,7 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					const [countOrError, cardID] = parseLine(line, options);
 					if (typeof cardID !== "undefined") {
 						// Merge duplicate declarations
-						if (cardList.slots["default"].hasOwnProperty(cardID))
+						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
 							cardList.slots["default"][cardID] += countOrError;
 						else cardList.slots["default"][cardID] = countOrError;
 					} else {
