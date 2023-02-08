@@ -745,11 +745,11 @@ export class Session implements IIndexable {
 				landSlot: BasicLandSlot | null,
 				options: Options
 			) {
-				options = Object.assign({ foilRate: getSetFoilRate(set) }, options);
+				const localOptions = Object.assign({ foilRate: getSetFoilRate(set) }, options);
 				// Check for a special booster factory
 				if (set && set in SetSpecificFactories)
-					return new SetSpecificFactories[set](cardPool, landSlot, options);
-				return new BoosterFactory(cardPool, landSlot, options);
+					return new SetSpecificFactories[set](cardPool, landSlot, localOptions);
+				return new BoosterFactory(cardPool, landSlot, localOptions);
 			};
 
 			const customBoosters = options?.customBoosters ?? this.customBoosters; // Use override value if provided via options
