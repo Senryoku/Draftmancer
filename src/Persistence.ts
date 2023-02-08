@@ -43,7 +43,7 @@ const MTGDraftbotsLogEndpoint =
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
 function copyProps(obj: any, target: any) {
-	for (let prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
+	for (const prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
 	return target;
 }
 
@@ -64,7 +64,7 @@ function restoreBot(bot: any): IBot | undefined {
 }
 
 async function requestSavedConnections() {
-	let InactiveConnections: { [uid: string]: any } = {};
+	const InactiveConnections: { [uid: string]: any } = {};
 
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/connections`, {
@@ -79,7 +79,7 @@ async function requestSavedConnections() {
 		} else {
 			const connections = response.data;
 			if (connections && connections.length > 0) {
-				for (let c of connections) {
+				for (const c of connections) {
 					InactiveConnections[c.userID] = c;
 					if (InactiveConnections[c.userID].bot)
 						InactiveConnections[c.userID].bot = restoreBot(InactiveConnections[c.userID].bot);
@@ -101,7 +101,7 @@ async function requestSavedConnections() {
 
 export function restoreSession(s: any, owner: UserID) {
 	const r = new Session(s.id, owner);
-	for (let prop of Object.getOwnPropertyNames(s).filter((p) => !["draftState", "owner"].includes(p))) {
+	for (const prop of Object.getOwnPropertyNames(s).filter((p) => !["draftState", "owner"].includes(p))) {
 		(r as IIndexable)[prop] = s[prop];
 	}
 
@@ -130,7 +130,7 @@ export function restoreSession(s: any, owner: UserID) {
 		}
 		copyProps(s.draftState, r.draftState);
 		if (r.draftState instanceof DraftState) {
-			for (let userID in r.draftState.players)
+			for (const userID in r.draftState.players)
 				r.draftState.players[userID].botInstance = restoreBot(r.draftState.players[userID].botInstance) as IBot;
 		}
 	}
@@ -141,7 +141,7 @@ export function restoreSession(s: any, owner: UserID) {
 export function getPoDSession(s: Session) {
 	const PoDSession: any = {};
 
-	for (let prop of Object.getOwnPropertyNames(s).filter(
+	for (const prop of Object.getOwnPropertyNames(s).filter(
 		(p) => !["users", "countdownInterval", "draftState"].includes(p)
 	)) {
 		if (!((s as IIndexable)[prop] instanceof Function)) PoDSession[prop] = (s as IIndexable)[prop];
@@ -149,7 +149,7 @@ export function getPoDSession(s: Session) {
 
 	if (s.drafting) {
 		// Flag every user as disconnected so they can reconnect later
-		for (let userID of s.users) {
+		for (const userID of s.users) {
 			if (Connections[userID]) PoDSession.disconnectedUsers[userID] = s.getDisconnectedUserData(userID);
 		}
 
@@ -158,12 +158,12 @@ export function getPoDSession(s: Session) {
 			copyProps(s.draftState, PoDSession.draftState);
 
 			if (s.draftState instanceof DraftState) {
-				let players = {};
+				const players = {};
 				copyProps(s.draftState.players, players);
 				PoDSession.draftState.players = players;
 
-				for (let userID in s.draftState.players) {
-					let podBot = {};
+				for (const userID in s.draftState.players) {
+					const podBot = {};
 					copyProps(s.draftState.players[userID].botInstance, podBot);
 					PoDSession.draftState.players[userID].botInstance = podBot;
 					PoDSession.draftState.players[userID].botPickInFlight = false;
@@ -176,7 +176,7 @@ export function getPoDSession(s: Session) {
 }
 
 async function requestSavedSessions() {
-	let InactiveSessions: { [sid: string]: Session } = {};
+	const InactiveSessions: { [sid: string]: Session } = {};
 	try {
 		const response = await axios.get(`${PersistenceStoreURL}/temp/sessions`, {
 			headers: {
@@ -189,7 +189,7 @@ async function requestSavedSessions() {
 			console.error(`	Data: `, response.data);
 		} else {
 			if (response.data && response.data.length > 0) {
-				for (let s of response.data) {
+				for (const s of response.data) {
 					InactiveSessions[s.id] = s;
 				}
 				console.log(`Restored ${response.data.length} saved sessions.`);
@@ -218,14 +218,14 @@ async function tempDump(exitOnCompletion = false) {
 		}
 	}
 
-	let Promises = [];
+	const Promises = [];
 
-	let PoDConnections = [];
+	const PoDConnections = [];
 	for (const userID in Connections) {
 		const c = Connections[userID];
 		const PoDConnection: any = {};
 
-		for (let prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
+		for (const prop of Object.getOwnPropertyNames(c).filter((p) => !["socket", "bot"].includes(p))) {
 			if (!((c as IIndexable)[prop] instanceof Function)) PoDConnection[prop] = (c as IIndexable)[prop];
 		}
 		PoDConnections.push(PoDConnection);
@@ -281,28 +281,28 @@ async function tempDump(exitOnCompletion = false) {
 }
 
 type MTGDraftbotsLogEntry = {
-	pack: String[];
-	picks: Number[];
-	trash: Number[];
-	packNum: Number;
-	numPacks: Number;
-	pickNum: Number;
-	numPicks: Number;
+	pack: string[];
+	picks: number[];
+	trash: number[];
+	packNum: number;
+	numPacks: number;
+	pickNum: number;
+	numPicks: number;
 };
 
 type MTGDraftbotsLog = {
 	players: MTGDraftbotsLogEntry[][];
-	apiKey: String;
+	apiKey: string;
 };
 
 function saveLog(type: string, session: Session) {
 	if (session.draftLog) {
-		let localLog = JSON.parse(JSON.stringify(session.draftLog));
+		const localLog = JSON.parse(JSON.stringify(session.draftLog));
 		// Anonymize Draft Log
 		localLog.sessionID = new Date().toISOString();
 		let idx = 0;
 		if (localLog.users)
-			for (let uid in localLog.users)
+			for (const uid in localLog.users)
 				if (!localLog.users[uid].userName.startsWith("Bot #"))
 					localLog.users[uid].userName = `Anonymous Player #${++idx}`;
 
@@ -322,7 +322,7 @@ function saveLog(type: string, session: Session) {
 				players: [],
 				apiKey: MTGDraftbotsAPIKey,
 			};
-			for (let uid in localLog.users) {
+			for (const uid in localLog.users) {
 				const u = localLog.users[uid];
 				if (!u.isBot && u.picks.length > 0) {
 					const player: MTGDraftbotsLogEntry[] = [];
@@ -330,7 +330,7 @@ function saveLog(type: string, session: Session) {
 					let pickNum = 0;
 					let lastPackSize = u.picks[0].booster.length + 1;
 					let lastPackPicks = 0;
-					for (let p of u.picks) {
+					for (const p of u.picks) {
 						if (p.booster.length >= lastPackSize) {
 							// Patch last pack picks with the correct numPicks
 							for (let i = player.length - lastPackPicks; i < player.length; ++i)
@@ -353,7 +353,7 @@ function saveLog(type: string, session: Session) {
 						++lastPackPicks;
 					}
 					// Patch each pick with the correct numPacks and the last pack with the correct numPicks
-					for (let p of player) {
+					for (const p of player) {
 						p.numPacks = packNum + 1;
 						if (p.numPicks === -1) p.numPicks = pickNum;
 					}
@@ -393,11 +393,11 @@ export function logSession(type: string, session: Session) {
 	}
 
 	if (!MixInstance) return;
-	let mixdata: any = {
+	const mixdata: any = {
 		distinct_id: process.env.NODE_ENV || "development",
 		playerCount: session.users.size,
 	};
-	for (let prop of [
+	for (const prop of [
 		"boostersPerPlayer",
 		"teamDraft",
 		"cardsPerBooster",
