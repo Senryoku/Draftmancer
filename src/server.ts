@@ -1129,13 +1129,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	},
 };
 
-function prepareSocketCallback(callback: Function, ownerOnly = false) {
-	return async function (this: Socket) {
+function prepareSocketCallback(
+	callback: (userID: UserID, sessionID: SessionID, ...rest: unknown[]) => void,
+	ownerOnly = false
+) {
+	return async function (this: Socket, ...rest: any[]) {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
-		const ack =
-			arguments.length > 0 && arguments[arguments.length - 1] instanceof Function
-				? arguments[arguments.length - 1]
-				: null;
+		const ack = rest.length > 0 && rest[rest.length - 1] instanceof Function ? rest[rest.length - 1] : null;
 		const userID = (this.handshake.query as any).userID;
 		if (!(userID in Connections)) {
 			ack?.({ code: 1, error: "Internal error. User does not exist." });
@@ -1151,7 +1151,7 @@ function prepareSocketCallback(callback: Function, ownerOnly = false) {
 			return;
 		}
 		try {
-			await callback(userID, sessionID, ...arguments);
+			await callback(userID, sessionID, ...rest);
 		} catch (e) {
 			ack?.(ackError({ code: 500, title: "Internal server error." }));
 			console.error(e);
