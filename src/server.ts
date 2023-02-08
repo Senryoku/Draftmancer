@@ -206,7 +206,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 		);
 	},
 	// Parse a card list and uses it as collection
-	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: Function) {
+	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: (...rest: any[]) => void) {
 		const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
 		const cardList = parseCardList(txtcollection, options);
 		if (cardList instanceof SocketError) {
