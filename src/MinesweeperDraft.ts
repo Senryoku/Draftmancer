@@ -57,8 +57,6 @@ export class MinesweeperGrid {
 		let colStart = Math.floor(width / 2);
 		const colEnd = colStart + 1;
 		if (width % 2 === 0) --colStart;
-		if (height % 2 === 1 && width % 2 === 1) {
-		}
 
 		for (let i = rowStart; i < rowEnd; i++) {
 			for (let j = colStart; j < colEnd; j++) {
