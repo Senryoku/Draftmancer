@@ -432,8 +432,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		const sess = Sessions[sessionID];
 		if (sess.drafting) return;
 		if (sess.users.size == 2) {
-			if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-			sess.startGridDraft(boosterCount && !isNaN(boosterCount) ? boosterCount : 18);
+			const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+			sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
 			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
@@ -460,8 +460,8 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		const sess = Sessions[sessionID];
 		if (!sess || sess.owner != userID || sess.drafting) return;
 		if (sess.users.size == 2) {
-			if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-			sess.startWinstonDraft(boosterCount ? boosterCount : 6);
+			const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+			sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
 			startPublicSession(sess);
 		} else {
 			Connections[userID].socket.emit("message", {
