@@ -733,8 +733,8 @@ export class Session implements IIndexable {
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
 				maxDuplicates: this.maxDuplicates,
-				onError: (...args: any[]) => {
-					this.emitError(...args);
+				onError: (title: string, text: string) => {
+					this.emitError(title, text);
 				},
 				session: this,
 			};

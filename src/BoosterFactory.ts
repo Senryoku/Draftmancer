@@ -164,7 +164,7 @@ export class BoosterFactory implements IBoosterFactory {
 	cardPool: SlotedCardPool;
 	landSlot: BasicLandSlot | null;
 	options: Options;
-	onError: Function;
+	onError: (title: string, text: string) => void;
 	colorBalancedSlot?: ColorBalancedSlot;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
@@ -174,8 +174,8 @@ export class BoosterFactory implements IBoosterFactory {
 		this.options = options;
 		if (this.options.colorBalance) this.colorBalancedSlot = new ColorBalancedSlot(this.cardPool["common"]);
 
-		this.onError = function (...args: any[]) {
-			if (this.options.onError) this.options.onError(...args);
+		this.onError = function (title: string, text: string) {
+			this.options?.onError?.(title, text);
 		};
 	}
 
@@ -249,7 +249,7 @@ export class BoosterFactory implements IBoosterFactory {
 	}
 }
 
-function filterCardPool(slotedCardPool: SlotedCardPool, predicate: Function) {
+function filterCardPool(slotedCardPool: SlotedCardPool, predicate: (cid: CardID) => boolean) {
 	const specialCards: SlotedCardPool = {};
 	const filteredCardPool: SlotedCardPool = {};
 	for (const slot in slotedCardPool) {
@@ -351,8 +351,9 @@ class DOMBoosterFactory extends BoosterFactory {
 	legendaryCreatures: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			getCard(cid).type.match(DOMBoosterFactory.regex)
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) => getCard(cid).type.match(DOMBoosterFactory.regex) !== null
 		);
 		super(filteredCardPool, landSlot, options);
 		this.legendaryCreatures = legendaryCreatures;
@@ -436,8 +437,9 @@ class CMRBoosterFactory extends BoosterFactory {
 	legendaryCreatures: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			getCard(cid).type.match(CMRBoosterFactory.regex)
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) => getCard(cid).type.match(CMRBoosterFactory.regex) !== null
 		);
 		filteredCardPool["common"].delete("a69e6d8f-f742-4508-a83a-38ae84be228c"); // Remove Prismatic Piper from the common pool (can still be found in the foil pool completeCardPool)
 		super(filteredCardPool, landSlot, options);
@@ -832,7 +834,7 @@ class CLBBoosterFactory extends BoosterFactory {
 		const [legendaryCreaturesAndPlaneswalkers, intermediaryFilteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
-				getCard(cid).type.match(CMRBoosterFactory.regex) &&
+				getCard(cid).type.match(CMRBoosterFactory.regex) !== null &&
 				!["Vivien, Champion of the Wilds", "Xenagos, the Reveler", "Faceless One"].includes(getCard(cid).name) // These two cannot be your commander
 		);
 		const [legendaryBackgrounds, filteredCardPool] = filterCardPool(
@@ -959,8 +961,9 @@ class DMUBoosterFactory extends BoosterFactory {
 	legendaryCreatures: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex)
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) => getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex) !== null
 		);
 		super(filteredCardPool, landSlot, options);
 		this.legendaryCreatures = legendaryCreatures;
@@ -1008,8 +1011,9 @@ class YDMUBoosterFactory extends BoosterFactory {
 	alchemyCards: SlotedCardPool;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
-		const [legendaryCreatures, filteredCardPool] = filterCardPool(cardPool, (cid: CardID) =>
-			getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex)
+		const [legendaryCreatures, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) => getCard(cid).type.match(DMUBoosterFactory.legendaryCreatureRegex) !== null
 		);
 		super(filteredCardPool, landSlot, options);
 		this.legendaryCreatures = legendaryCreatures;
