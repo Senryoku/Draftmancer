@@ -447,10 +447,11 @@ class CMRBoosterFactory extends BoosterFactory {
 
 	// Not using the suplied cardpool here
 	generateBooster(targets: Targets) {
+		let updatedTargets = Object.assign({}, targets);
 		// 20 Cards: *13 Commons (Higher chance of a Prismatic Piper); *3 Uncommons; 2 Legendary Creatures; *1 Non-"Legendary Creature" Rare/Mythic; 1 Foil
 		// * These slots are handled by the originalGenBooster function; Others are special slots with custom logic.
 		if (targets === DefaultBoosterTargets)
-			targets = {
+			updatedTargets = {
 				common: 13,
 				uncommon: 3,
 				rare: 1,
@@ -458,10 +459,8 @@ class CMRBoosterFactory extends BoosterFactory {
 		const legendaryCounts = countBySlot(this.legendaryCreatures);
 		// Ignore the rule if there's no legendary creatures left
 		if (Object.values(legendaryCounts).every((c) => c === 0)) {
-			return super.generateBooster(targets);
+			return super.generateBooster(updatedTargets);
 		} else {
-			let updatedTargets = Object.assign({}, targets);
-
 			let booster: Array<UniqueCard> | false = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
 			if (random.bool(1 / 6)) {
@@ -1262,7 +1261,11 @@ class ONEBoosterFactory extends BoosterFactory {
 		let conceptPraetor: null | UniqueCard = null;
 		const praetorRarityRoll = random.real(0, 1);
 		// There's 20 other mythics, we give the 'concept praetor' the same probability as any other (counting all 5 as a single mythic).
-		if (targets.rare > 0 && this.options?.mythicPromotion && praetorRarityRoll < (1.0 / 8.0) * (1.0 / 21.0)) {
+		if (
+			updatedTargets.rare > 0 &&
+			this.options?.mythicPromotion &&
+			praetorRarityRoll < (1.0 / 8.0) * (1.0 / 21.0)
+		) {
 			const conceptPraetorID = getRandom(this.praetorsIDs);
 			conceptPraetor = getUnique(conceptPraetorID);
 			--updatedTargets["rare"];

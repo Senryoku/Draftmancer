@@ -10,5 +10,20 @@
 		"sourceType": "module"
 	},
 	"plugins": ["vue"],
-	"rules": {"vue/script-setup-uses-vars": "off"}
+	"rules": {
+		"vue/script-setup-uses-vars": "off"
+	},
+	"overrides": [
+		// For Typescript files
+		{
+			"files": ["*.ts"],
+			"parser": "@typescript-eslint/parser",
+			"extends": ["eslint:recommended", "prettier", "plugin:@typescript-eslint/recommended"],
+			"plugins": ["@typescript-eslint"],
+			"rules": {
+				"no-param-reassign": "error",
+				"@typescript-eslint/no-inferrable-types": "warn"
+			}
+		}
+	]
 }

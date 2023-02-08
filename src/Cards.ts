@@ -75,7 +75,7 @@ export function getCard(cid: CardID): Card {
 }
 
 export function getUnique(cid: CardID, options: Options = {}) {
-	let uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : getCard(cid));
+	const uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : getCard(cid));
 	uc.uniqueID = getNextCardID();
 	if (options.foil) uc.foil = options.foil;
 	return uc;
