@@ -4,7 +4,7 @@ import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
 import { ackError, SocketError } from "./Message.js";
 
-const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^\+\s]+))?)?(?:\s+\+?(F))?$/;
+const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
