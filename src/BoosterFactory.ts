@@ -925,8 +925,9 @@ class M2X2BoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
+		let updatedTargets = Object.assign({}, targets);
 		if (targets === DefaultBoosterTargets) {
-			targets = {
+			updatedTargets = {
 				rare: 2,
 				uncommon: 3,
 				common: 8,
@@ -935,13 +936,13 @@ class M2X2BoosterFactory extends BoosterFactory {
 
 		let booster: Array<UniqueCard> | false = [];
 
-		booster = super.generateBooster(targets);
+		booster = super.generateBooster(updatedTargets);
 		if (!booster) return false;
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 
 		// 2 Foils
 		for (let i = 0; i < 2; i++) {
-			const pickedRarity = rollSpecialCardRarity(countBySlot(this.cardPool), targets, {
+			const pickedRarity = rollSpecialCardRarity(countBySlot(this.cardPool), updatedTargets, {
 				minRarity: "common",
 				mythicPromotion,
 			});
