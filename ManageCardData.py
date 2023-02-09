@@ -65,7 +65,12 @@ print("Don't forget to update Arena itself!")
 MTGAFolder = "H:\\MtGA\\"
 MTGADataFolder = f"{MTGAFolder}MTGA_Data\\Downloads\\Raw\\"
 MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
-MTGACardsFiles = glob.glob(f'{MTGADataFolder}Raw_cards_*.mtga')
+
+CardsCollectorNumberAndSet = {}
+CardNameToArenaID = {}
+AKRCards = {}
+KLRCards = {}
+J21MTGACollectorNumbers = {}
 
 LangCodes = ["enUS", "frFR", "deDE", "itIT", "esES", "ptBR", "ruRU", "jaJP", "koKR", "zhCN", "zhTW"]
 MTGALocalization = {key: {} for key in LangCodes}
@@ -75,6 +80,54 @@ for path in MTGACardDBFiles:
     for row in MTGACardDB.execute(f'SELECT LocId, {", ".join(LangCodes)} FROM Localizations').fetchall():
         for key in MTGALocalization:
             MTGALocalization[key][row["LocId"]] = row[key]
+    for o in MTGACardDB.execute(f'SELECT * FROM Cards').fetchall():
+        # Ignore... Wildcards?! (TitleId 0)
+        if o['TitleId'] not in MTGALocalization['enUS']:
+            continue
+        fixed_name = MTGALocalization['enUS'][o['TitleId']].replace(" /// ", " // ")
+        fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
+        setCode = o['ExpansionCode'].lower()
+        if o['IsPrimaryCard'] == 1:
+            if setCode == 'conf':
+                setCode = 'con'
+            if setCode == 'dar':
+                setCode = 'dom'
+            collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['CollectorNumber']
+            # Process AKR cards separately (except basics)
+            if setCode == "akr":
+                if o['Rarity'] != 1:
+                    AKRCards[fixed_name] = (
+                        o['GrpId'], collectorNumber, ArenaRarity[o['Rarity']])
+            if setCode == "klr":
+                if o['Rarity'] != 1:
+                    KLRCards[fixed_name] = (
+                        o['GrpId'], collectorNumber, ArenaRarity[o['Rarity']])
+            else:
+                # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
+                # Adding name to disambiguate.
+                CardsCollectorNumberAndSet[(
+                    fixed_name, collectorNumber, setCode)] = o['GrpId']
+
+            # Also look of the Arena only version (ajmp) of the card on Scryfall
+            if setCode == 'jmp':
+                CardsCollectorNumberAndSet[(
+                    fixed_name, collectorNumber, 'ajmp')] = o['GrpId']
+
+            # From Jumpstart: Prioritizing cards from JMP and M21
+            if fixed_name not in CardNameToArenaID or setCode in ['jmp', 'm21']:
+                CardNameToArenaID[fixed_name] = o['GrpId']
+
+            if "IsRebalanced" in o and o["IsRebalanced"]:
+                CardsCollectorNumberAndSet[(
+                    "A-"+fixed_name, "A-"+collectorNumber, setCode)] = o['GrpId']
+                CardNameToArenaID["A-"+fixed_name] = o['GrpId']
+            # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
+            #        (Also for secondary cards as there's some created cards in this set.)
+            if setCode == 'j21':
+                J21MTGACollectorNumbers[fixed_name] = collectorNumber
+
+print("AKRCards length: {}".format(len(AKRCards.keys())))
+print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 opener = urllib.request.build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0'), ('Accept', '*/*')]
@@ -95,60 +148,6 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
     with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
         json.dump(mana_symbols, outfile)
 
-CardsCollectorNumberAndSet = {}
-CardNameToArenaID = {}
-AKRCards = {}
-KLRCards = {}
-J21MTGACollectorNumbers = {}
-for path in MTGACardsFiles:
-    with open(path, 'r', encoding="utf8") as file:
-        carddata = json.load(file)
-        for o in carddata:
-            fixed_name = MTGALocalization['enUS'][o['titleId']].replace(" /// ", " // ")
-            fixed_name = re.sub(r'<[^>]*>', '', fixed_name)
-            o['set'] = o['set'].lower()
-            if not ('isSecondaryCard' in o and o['isSecondaryCard']):
-                if o['set'] == 'conf':
-                    o['set'] = 'con'
-                if o['set'] == 'dar':
-                    o['set'] = 'dom'
-                collectorNumber = o['CollectorNumber'] if "CollectorNumber" in o else o['collectorNumber']
-                # Process AKR cards separately (except basics)
-                if o["set"] == "akr":
-                    if o['rarity'] != 1:
-                        AKRCards[fixed_name] = (
-                            o['grpId'], collectorNumber, ArenaRarity[o['rarity']])
-                if o["set"] == "klr":
-                    if o['rarity'] != 1:
-                        KLRCards[fixed_name] = (
-                            o['grpId'], collectorNumber, ArenaRarity[o['rarity']])
-                else:
-                    # Jumpstart introduced duplicate (CollectorNumbet, Set), thanks Wizard! :D
-                    # Adding name to disambiguate.
-                    CardsCollectorNumberAndSet[(
-                        fixed_name, collectorNumber, o['set'])] = o['grpId']
-
-                # Also look of the Arena only version (ajmp) of the card on Scryfall
-                if o['set'] == 'jmp':
-                    CardsCollectorNumberAndSet[(
-                        fixed_name, collectorNumber, 'ajmp')] = o['grpId']
-
-                # From Jumpstart: Prioritizing cards from JMP and M21
-                if fixed_name not in CardNameToArenaID or o['set'] in ['jmp', 'm21']:
-                    CardNameToArenaID[fixed_name] = o['grpId']
-
-                if "IsRebalanced" in o and o["IsRebalanced"]:
-                    CardsCollectorNumberAndSet[(
-                        "A-"+fixed_name, "A-"+collectorNumber, o['set'])] = o['grpId']
-                    CardNameToArenaID["A-"+fixed_name] = o['grpId']
-            # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
-            #        (Also for secondary cards as there's some created cards in this set.)
-            if o['set'] == 'j21':
-                J21MTGACollectorNumbers[fixed_name] = collectorNumber
-
-
-print("AKRCards length: {}".format(len(AKRCards.keys())))
-print("KLRCards length: {}".format(len(KLRCards.keys())))
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
