@@ -122,35 +122,35 @@
     "7ed": {
         "code": "7ed",
         "fullName": "Seventh Edition",
-        "cardCount": 350,
+        "cardCount": 700,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/7ed.svg",
-        "commonCount": 130,
-        "rareCount": 110,
-        "uncommonCount": 110
+        "commonCount": 260,
+        "rareCount": 220,
+        "uncommonCount": 220
     },
     "8ed": {
         "code": "8ed",
         "fullName": "Eighth Edition",
-        "cardCount": 357,
+        "cardCount": 707,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/8ed.svg",
-        "commonCount": 133,
-        "rareCount": 111,
-        "uncommonCount": 113
+        "commonCount": 263,
+        "rareCount": 221,
+        "uncommonCount": 223
     },
     "9ed": {
         "code": "9ed",
         "fullName": "Ninth Edition",
-        "cardCount": 359,
+        "cardCount": 709,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/9ed.svg",
-        "commonCount": 136,
-        "rareCount": 111,
-        "uncommonCount": 112
+        "commonCount": 266,
+        "rareCount": 221,
+        "uncommonCount": 222
     },
     "a25": {
         "code": "a25",
@@ -4137,6 +4137,15 @@
         "rareCount": 51,
         "uncommonCount": 1
     },
+    "pone": {
+        "code": "pone",
+        "fullName": "Phyrexia: All Will Be One Promos",
+        "cardCount": 160,
+        "isPrimary": false,
+        "icon": "img/sets/pone.svg",
+        "mythicCount": 40,
+        "rareCount": 120
+    },
     "pons": {
         "code": "pons",
         "fullName": "Onslaught Promos",
@@ -4967,11 +4976,11 @@
     "slp": {
         "code": "slp",
         "fullName": "Secret Lair Showdown",
-        "cardCount": 3,
+        "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/slp.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "mythicCount": 2,
+        "rareCount": 4
     },
     "slu": {
         "code": "slu",
