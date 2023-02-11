@@ -20,6 +20,7 @@ import {
 	getCard,
 	DeckBasicLands,
 	DeckList,
+	UniqueCardID,
 } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
@@ -48,6 +49,7 @@ import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
+import { extend } from "vue/types/umd";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -313,6 +315,23 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 			boosterCount: this.boosterCount,
 			lastPicks: this.lastPicks,
 		};
+	}
+}
+
+class TeamSealedCard extends UniqueCard {
+	owner?: UserID;
+}
+
+export class TeamSealedState extends IDraftState {
+	teamPools: Array<{ cards: TeamSealedCard[]; team: Array<UserID> }> = [];
+
+	constructor() {
+		super("teamSealed");
+	}
+
+	syncData(userID: UserID) {
+		for (const teamPool of this.teamPools) if (teamPool.team.includes(userID)) return teamPool;
+		return null;
 	}
 }
 
@@ -2094,6 +2113,91 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
+	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]) {
+		this.emitMessage("Distributing sealed boosters...", "", false, 0);
+
+		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+		if (
+			!this.generateBoosters(teams.length * boostersPerPlayer, {
+				boostersPerPlayer: boostersPerPlayer,
+				useCustomBoosters: useCustomBoosters,
+				customBoosters: useCustomBoosters ? customBoosters : null,
+			})
+		) {
+			this.broadcastPreparationCancelation();
+			return;
+		}
+		const log = this.initLogs("TeamSealed");
+		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
+
+		let idx = 0;
+		const state = new TeamSealedState();
+		for (const team of teams) {
+			const teamBoosters = [];
+			let currIdx = idx;
+			while (currIdx < this.boosters.length) {
+				teamBoosters.push(this.boosters[currIdx]);
+				currIdx += teams.length;
+			}
+			const teamPool = { cards: teamBoosters.flat(), team: team };
+			state.teamPools.push(teamPool);
+			for (const userID of team) {
+				Connections[userID].socket.emit("startTeamSealed", { teamPool });
+				Connections[userID].pickedCards.main = [];
+				Connections[userID].pickedCards.side = [];
+				log.users[userID].cards = teamPool.cards.map((c) => c.id);
+			}
+			++idx;
+		}
+		this.draftState = state;
+
+		this.sendLogs();
+
+		// If owner is not playing, let them know everything went ok.
+		if (!this.ownerIsPlayer && this.owner in Connections) {
+			Connections[this.owner].socket.emit("message", {
+				title: "Sealed pools successfly distributed!",
+				showConfirmButton: false,
+			});
+		}
+
+		logSession("TeamSealed", this);
+
+		this.boosters = [];
+	}
+
+	teamSealedPick(userID: UserID, cardUniqueID: UniqueCardID): SocketAck {
+		const state = this.draftState as TeamSealedState;
+		if (!state) return new SocketError("Not playing", "No Team Sealed active in this session.");
+		for (const teamPool of state.teamPools) {
+			if (teamPool.team.includes(userID)) {
+				const card = teamPool.cards.find((c) => c.uniqueID === cardUniqueID);
+				if (!card)
+					return new SocketError("Unknown Card", "Could not find specified card in your team sealed pool.");
+				if (card.owner && card.owner !== userID)
+					return new SocketError("Unavailable Card", "Another player already took this card.");
+				// Release the card
+				if (card.owner === userID) {
+					card.owner = undefined;
+					Connections[userID].pickedCards.main = Connections[userID].pickedCards.main.filter(
+						(c) => c.uniqueID !== cardUniqueID
+					);
+					Connections[userID].pickedCards.side = Connections[userID].pickedCards.side.filter(
+						(c) => c.uniqueID !== cardUniqueID
+					);
+				} else {
+					card.owner = userID;
+					Connections[userID].pickedCards.main.push(card);
+				}
+				for (const uid of teamPool.team)
+					Connections[uid]?.socket.emit("teamSealedUpdateCard", cardUniqueID, card.owner);
+				this.updateDecklist(userID);
+				return new SocketAck();
+			}
+		}
+		return new SocketError("Not playing", "You're not playing in this team sealed?!");
+	}
+
 	distributeJumpstart(set: string | null) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
@@ -2198,10 +2302,14 @@ export class Session implements IIndexable {
 				case "minesweeper":
 					msgData = { name: "rejoinMinesweeperDraft", state: this.draftState };
 					break;
+				case "teamSealed": {
+					msgData = { name: "startTeamSealed", state: this.draftState };
+					break;
+				}
 			}
 			Connections[userID].socket.emit(msgData.name, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
-				state: msgData.state.syncData(),
+				state: msgData.state.syncData(userID),
 			});
 
 			delete this.disconnectedUsers[userID];

@@ -43,6 +43,7 @@ const DraftState = {
 	RochesterWaiting: "RochesterWaiting",
 	MinesweeperPicking: "MinesweeperPicking",
 	MinesweeperWaiting: "MinesweeperWaiting",
+	TeamSealed: "TeamSealed",
 };
 
 const ReadyState = {
@@ -100,6 +101,7 @@ export default {
 		ExportDropdown,
 		GridDraft: () => import("./components/GridDraft.vue"),
 		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
+		TeamSealed: () => import("./components/TeamSealed.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
 		Modal,
 		Multiselect,
@@ -182,6 +184,7 @@ export default {
 			gridDraftState: null,
 			rochesterDraftState: null,
 			minesweeperDraftState: null,
+			teamSealedState: null,
 			draftPaused: false,
 
 			publicSessions: [],
@@ -705,6 +708,40 @@ export default {
 						timer: 1500,
 					});
 				});
+			});
+
+			this.socket.on("startTeamSealed", (data) => {
+				this.drafting = true;
+
+				this.clearState();
+				this.teamSealedState = data.teamPool;
+				this.draftingState = DraftState.TeamSealed;
+
+				// We'll use the same call in case of reconnection
+				if (data.pickedCards) {
+					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
+					this.$nextTick(() => {
+						for (let c of data.pickedCards.main) this.addToDeck(c);
+						for (let c of data.pickedCards.side) this.addToSideboard(c);
+					});
+				}
+			});
+
+			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
+				if (!this.drafting || this.draftingState !== DraftState.TeamSealed) return;
+
+				const card = this.teamSealedState.cards.find((c) => c.uniqueID === cardUniqueID);
+				if (card.owner === this.userID) {
+					this.deck = this.deck.filter((c) => c.uniqueID !== cardUniqueID);
+					this.sideboard = this.sideboard.filter((c) => c.uniqueID !== cardUniqueID);
+				}
+				if (newOwnerID === this.userID) {
+					this.addToDeck(card);
+				}
+				card.owner = newOwnerID;
+				this.$refs.deckDisplay.sync();
+				this.$refs.sideboardDisplay.sync();
 			});
 
 			const startDraftSetup = (name = "draft") => {
@@ -2083,7 +2120,7 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		sealedDialog: async function () {
+		sealedDialog: async function (teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
 			Alert.fire({
@@ -2096,7 +2133,7 @@ export default {
 						display: grid;
 						grid-template-columns: 1fr 1fr 1fr;
 						grid-column-gap: 0.5em;
-					"></div></p>`,
+					"></div><div id="teams-selector"></div></p>`,
 				inputValue: 6,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
@@ -2105,17 +2142,29 @@ export default {
 				width: "auto",
 				preConfirm() {
 					return new Promise(function (resolve) {
+						let teams = null;
+						const players = [...document.getElementById("teams-selector").querySelectorAll("div")];
+						if (teamSealed) {
+							teams = [];
+							for (const p of players) {
+								const teamNumber = parseInt(p.querySelector("input").value);
+								while (teams.length < teamNumber) teams.push([]);
+								teams[teamNumber - 1].push(p.dataset.userID);
+							}
+						}
 						resolve({
 							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
 							customBoosters: [
 								...document.getElementById("input-customBoosters").querySelectorAll("select"),
 							].map((s) => s.value),
+							teams: teams,
 						});
 					});
 				},
 				didOpen: (el) => {
 					let customBoostersEl = el.querySelector("#input-customBoosters");
 					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
+					let teamsSelector = el.querySelector("#teams-selector");
 					// Create the set selects according to the number of booster per player
 					function updateCustomBoosterInput(target) {
 						while (customBoostersEl.children.length < target) {
@@ -2150,10 +2199,28 @@ export default {
 					boostersPerPlayerEl.addEventListener("change", function (e) {
 						updateCustomBoosterInput(e.target.value);
 					});
+					if (teamSealed) {
+						for (let user of this.sessionUsers) {
+							const el = document.createElement("div");
+							el.innerText = user.userName;
+							el.dataset.userID = user.userID;
+							const input = document.createElement("input");
+							input.type = "number";
+							input.min = 1;
+							input.step = 1;
+							input.value = 1;
+							el.appendChild(input);
+							teamsSelector.appendChild(el);
+						}
+					}
 				},
 			}).then((r) => {
 				if (r.isConfirmed) {
-					this.deckWarning(this.distributeSealed, [r.value.boostersPerPlayer, r.value.customBoosters]);
+					this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
+						r.value.boostersPerPlayer,
+						r.value.customBoosters,
+						r.value.teams,
+					]);
 				}
 			});
 		},
@@ -2180,6 +2247,16 @@ export default {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
+		},
+		startTeamSealed(boosterCount, customBoosters, teams) {
+			if (this.userID !== this.sessionOwner) return;
+			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+			this.socket.emit("startTeamSealed", boosterCount, useCustomBoosters ? customBoosters : null, teams);
+		},
+		teamSealedPick(card) {
+			this.socket.emit("teamSealedPick", card.uniqueID, (r) => {
+				console.log(r);
+			});
 		},
 		distributeJumpstart() {
 			if (this.userID != this.sessionOwner) return;

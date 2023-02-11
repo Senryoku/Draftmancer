@@ -385,6 +385,9 @@
 								<div v-tooltip.left="'Distributes boosters to everyone for a sealed session.'">
 									<button @click="sealedDialog">Sealed</button>
 								</div>
+								<div v-tooltip.left="'Starts a Team Sealed.'">
+									<button @click="sealedDialog(true)">Team Sealed</button>
+								</div>
 								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
 									<button @click="deckWarning(distributeJumpstart)">Jumpstart</button>
 								</div>
@@ -1152,6 +1155,12 @@
 				:picking="userID === minesweeperDraftState.currentPlayer"
 				@pick="minesweeperDraftPick"
 			></minesweeper-draft>
+			<team-sealed
+				v-if="draftingState === DraftState.TeamSealed"
+				:language="language"
+				:cards="teamSealedState.cards"
+				@pick="teamSealedPick"
+			></team-sealed>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
