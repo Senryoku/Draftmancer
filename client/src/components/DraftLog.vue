@@ -22,19 +22,7 @@
 						teamb: type === 'Draft' && teamDraft && index % 2 === 1,
 						self: userID === log.userID || userName === log.userName,
 					}"
-					@click="
-						() => {
-							if (log.userName !== '(empty)') {
-								displayOptions.detailsUserID = log.userID;
-								if (log.hasDeck) {
-									if (displayOptions.category === 'Cards') displayOptions.category = 'Deck';
-								} else {
-									if (displayOptions.category === 'Deck') displayOptions.category = 'Cards';
-								}
-								displayOptions.pack = displayOptions.pick = 0;
-							}
-						}
-					"
+					@click="selectPlayer(log)"
 				>
 					<div>
 						{{ log.userName }}
@@ -351,6 +339,17 @@ export default {
 			return (
 				log?.decklist && (log.decklist.main?.length > 0 || log.decklist.side?.length > 0 || log.decklist.hashes)
 			);
+		},
+		selectPlayer(userLogSummary) {
+			if (userLogSummary.userName !== "(empty)") {
+				this.displayOptions.detailsUserID = userLogSummary.userID;
+				if (userLogSummary.hasDeck) {
+					if (this.displayOptions.category === "Cards") this.displayOptions.category = "Deck";
+				} else {
+					if (this.displayOptions.category === "Deck") this.displayOptions.category = "Cards";
+				}
+				this.displayOptions.pack = this.displayOptions.pick = 0;
+			}
 		},
 	},
 	computed: {
