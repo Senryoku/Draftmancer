@@ -713,7 +713,7 @@ export default {
 			this.socket.on("startTeamSealed", (data) => {
 				this.drafting = true;
 
-				this.clearState();
+				startDraftSetup("team sealed", "Team Sealed started!");
 				this.teamSealedState = data.state;
 				this.draftingState = DraftState.TeamSealed;
 
@@ -726,8 +726,6 @@ export default {
 						for (let c of data.pickedCards.side) this.addToSideboard(c);
 					});
 				}
-				if (Swal.isVisible()) Swal.close();
-				this.pushNotification("Cards received!");
 			});
 
 			this.socket.on("endTeamSealed", () => {
@@ -760,7 +758,7 @@ export default {
 				});
 			});
 
-			const startDraftSetup = (name = "draft") => {
+			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
 
@@ -770,14 +768,14 @@ export default {
 				Alert.fire({
 					position: "center",
 					icon: "success",
-					title: "Now drafting!",
+					title: msg,
 					showConfirmButton: false,
 					timer: 1500,
 				});
 
 				this.playSound("start");
 
-				this.pushNotification("Now drafting!", {
+				this.pushNotification(msg, {
 					body: `Your ${name} '${this.sessionID}' is starting!`,
 				});
 				this.pushTitleNotification("🏁");
@@ -2136,7 +2134,7 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		sealedDialog: async function (teamSealed = false) {
+		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
 			Alert.fire({

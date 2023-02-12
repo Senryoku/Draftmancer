@@ -1,7 +1,6 @@
 <template>
 	<div
-		class="card"
-		:class="{ foil: card.foil, faded: isFiltered }"
+		:class="classes"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
 		@click="$emit('click')"
@@ -33,6 +32,7 @@ export default {
 		language: { type: String, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
 		filter: { type: String },
+		conditionalClasses: { type: Function },
 	},
 	data() {
 		return {
@@ -45,6 +45,13 @@ export default {
 			if (!this.filter || this.filter === "") return false;
 			const filter = this.filter.toLowerCase();
 			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
+		},
+		classes() {
+			let classes = this.conditionalClasses ? this.conditionalClasses(this.card) : [];
+			classes.push("card");
+			if (this.foil) classes.push("foil");
+			if (this.isFiltered) classes.push("faded");
+			return classes;
 		},
 		additionalData() {
 			return this.$cardCache.get(this.card.id);

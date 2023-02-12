@@ -49,7 +49,6 @@ import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
-import { extend } from "vue/types/umd";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -319,7 +318,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 }
 
 class TeamSealedCard extends UniqueCard {
-	owner?: UserID;
+	owner: UserID | null = null;
 }
 
 export class TeamSealedState extends IDraftState {
@@ -2144,7 +2143,10 @@ export class Session implements IIndexable {
 				teamBoosters.push(this.boosters[currIdx]);
 				currIdx += teams.length;
 			}
-			const teamPool = { cards: teamBoosters.flat(), team: team };
+			const teamPool = {
+				cards: teamBoosters.flat().map((card) => Object.assign(card, { owner: null })),
+				team: team,
+			};
 			state.teamPools.push(teamPool);
 			for (const userID of team) {
 				Connections[userID].socket.emit("startTeamSealed", { state: teamPool });
@@ -2176,7 +2178,10 @@ export class Session implements IIndexable {
 		logSession("TeamSealed", this);
 		this.cleanDraftState();
 
-		this.forUsers((u) => Connections[u].socket.emit("endTeamSealed"));
+		this.forUsers((uid) => {
+			this.updateDecklist(uid);
+			Connections[uid].socket.emit("endTeamSealed");
+		});
 		console.log(`Session ${this.id} Team Sealed stopped.`);
 	}
 
@@ -2192,7 +2197,7 @@ export class Session implements IIndexable {
 					return new SocketError("Unavailable Card", "Another player already took this card.");
 				// Release the card
 				if (card.owner === userID) {
-					card.owner = undefined;
+					card.owner = null;
 					Connections[userID].pickedCards.main = Connections[userID].pickedCards.main.filter(
 						(c) => c.uniqueID !== cardUniqueID
 					);

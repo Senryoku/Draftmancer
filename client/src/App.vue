@@ -383,7 +383,7 @@
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
 								<div v-tooltip.left="'Distributes boosters to everyone for a sealed session.'">
-									<button @click="sealedDialog">Sealed</button>
+									<button @click="sealedDialog(false)">Sealed</button>
 								</div>
 								<div v-tooltip.left="'Starts a Team Sealed.'">
 									<button @click="sealedDialog(true)">Team Sealed</button>
@@ -1158,7 +1158,8 @@
 			<team-sealed
 				v-if="draftingState === DraftState.TeamSealed"
 				:language="language"
-				:cards="teamSealedState.cards"
+				:state="teamSealedState"
+				:users="sessionUsers"
 				@pick="teamSealedPick"
 			></team-sealed>
 			<!-- Disconnected User(s) Modal -->
