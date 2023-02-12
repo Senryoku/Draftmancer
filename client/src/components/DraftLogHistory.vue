@@ -145,6 +145,14 @@ export default {
 			});
 		},
 		importLog: function (e) {
+			if (this.draftLogs.length >= 25) {
+				Alert.fire({
+					icon: "error",
+					title: "Limit Reached",
+					text: "Game logs history is limited to 25. Please delete a game log before importing a new one.",
+				});
+				return;
+			}
 			let file = e.target.files[0];
 			if (!file) return;
 			const reader = new FileReader();
