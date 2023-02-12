@@ -1957,6 +1957,10 @@ export class Session implements IIndexable {
 				this.endDraft();
 				break;
 			}
+			case "teamSealed": {
+				this.endTeamSealed();
+				break;
+			}
 		}
 	}
 
@@ -2114,6 +2118,7 @@ export class Session implements IIndexable {
 	}
 
 	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]) {
+		this.drafting = true;
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
@@ -2142,7 +2147,7 @@ export class Session implements IIndexable {
 			const teamPool = { cards: teamBoosters.flat(), team: team };
 			state.teamPools.push(teamPool);
 			for (const userID of team) {
-				Connections[userID].socket.emit("startTeamSealed", { teamPool });
+				Connections[userID].socket.emit("startTeamSealed", { state: teamPool });
 				Connections[userID].pickedCards.main = [];
 				Connections[userID].pickedCards.side = [];
 				log.users[userID].cards = teamPool.cards.map((c) => c.id);
@@ -2164,6 +2169,15 @@ export class Session implements IIndexable {
 		logSession("TeamSealed", this);
 
 		this.boosters = [];
+	}
+
+	endTeamSealed() {
+		if (!this.drafting || this.draftState?.type !== "teamSealed") return;
+		logSession("TeamSealed", this);
+		this.cleanDraftState();
+
+		this.forUsers((u) => Connections[u].socket.emit("endTeamSealed"));
+		console.log(`Session ${this.id} Team Sealed stopped.`);
 	}
 
 	teamSealedPick(userID: UserID, cardUniqueID: UniqueCardID): SocketAck {

@@ -714,7 +714,7 @@ export default {
 				this.drafting = true;
 
 				this.clearState();
-				this.teamSealedState = data.teamPool;
+				this.teamSealedState = data.state;
 				this.draftingState = DraftState.TeamSealed;
 
 				// We'll use the same call in case of reconnection
@@ -726,6 +726,20 @@ export default {
 						for (let c of data.pickedCards.side) this.addToSideboard(c);
 					});
 				}
+				if (Swal.isVisible()) Swal.close();
+				this.pushNotification("Cards received!");
+			});
+
+			this.socket.on("endTeamSealed", () => {
+				fireToast("success", "Team Sealed stopped!");
+				this.drafting = false;
+				this.draftPaused = false;
+				if (this.draftingState === DraftState.Watching) {
+					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
+					this.$nextTick(() => {
+						this.$refs.draftloglive?.registerPlayerSelectEvents();
+					});
+				} else this.draftingState = DraftState.Brewing;
 			});
 
 			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
@@ -740,8 +754,10 @@ export default {
 					this.addToDeck(card);
 				}
 				card.owner = newOwnerID;
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$nextTick(() => {
+					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
+				});
 			});
 
 			const startDraftSetup = (name = "draft") => {
@@ -2253,9 +2269,9 @@ export default {
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit("startTeamSealed", boosterCount, useCustomBoosters ? customBoosters : null, teams);
 		},
-		teamSealedPick(card) {
-			this.socket.emit("teamSealedPick", card.uniqueID, (r) => {
-				console.log(r);
+		teamSealedPick(uniqueCardID) {
+			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
+				if (r.code !== 0) Alert.fire(r.error);
 			});
 		},
 		distributeJumpstart() {
@@ -2703,6 +2719,7 @@ export default {
 			return ReadyState;
 		},
 		gameModeName() {
+			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.winstonDraftState) return "Winston Draft";
 			if (this.gridDraftState) return "Grid Draft";

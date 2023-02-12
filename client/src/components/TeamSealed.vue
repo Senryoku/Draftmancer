@@ -20,7 +20,7 @@ export default {
 	methods: {
 		onCardClick(event, card) {
 			console.log("teamSealedPick", card);
-			this.$emit("pick", card.id);
+			this.$emit("pick", card.uniqueID);
 		},
 	},
 };
