@@ -377,7 +377,7 @@ export default {
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
-					hasDeck: this.hasSubmittedDeck(this.draftlog.users[userID].decklist),
+					hasDeck: this.hasSubmittedDeck(this.draftlog.users[userID]),
 					colors:
 						this.draftlog.users[userID].decklist?.main?.length > 0
 							? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
