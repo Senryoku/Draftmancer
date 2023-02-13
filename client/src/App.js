@@ -23,6 +23,7 @@ import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
+import SealedDialog from "./components/SealedDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
@@ -2137,106 +2138,26 @@ export default {
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			Alert.fire({
-				title: "Start Sealed",
-				html: `
-					<p>How many boosters for each player (default is 6)?
-					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block" placeholder="Boosters per Player"></p>
-					<p>(Optional) Customize the set of each booster:
-					<div id="input-customBoosters" style="
-						display: grid;
-						grid-template-columns: 1fr 1fr 1fr;
-						grid-column-gap: 0.5em;
-					"></div><div id="teams-selector"></div></p>`,
-				inputValue: 6,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Distribute boosters",
-				width: "auto",
-				preConfirm() {
-					return new Promise(function (resolve) {
-						let teams = null;
-						const players = [...document.getElementById("teams-selector").querySelectorAll("div")];
-						if (teamSealed) {
-							teams = [];
-							for (const p of players) {
-								const teamNumber = parseInt(p.querySelector("input").value);
-								while (teams.length < teamNumber) teams.push([]);
-								teams[teamNumber - 1].push(p.dataset.userID);
-							}
-						}
-						resolve({
-							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
-							customBoosters: [
-								...document.getElementById("input-customBoosters").querySelectorAll("select"),
-							].map((s) => s.value),
-							teams: teams,
-						});
-					});
+			const DialogClass = Vue.extend(SealedDialog);
+			let instance = new DialogClass({
+				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
+				beforeDestroy() {
+					instance.$el.parentNode.removeChild(instance.$el);
 				},
-				didOpen: (el) => {
-					let customBoostersEl = el.querySelector("#input-customBoosters");
-					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
-					let teamsSelector = el.querySelector("#teams-selector");
-					// Create the set selects according to the number of booster per player
-					function updateCustomBoosterInput(target) {
-						while (customBoostersEl.children.length < target) {
-							let sel = document.createElement("select");
-							sel.classList.add("standard-input");
-							sel.style.margin = "0.5em auto";
-							const addOption = (val, txt) => {
-								let op = document.createElement("option");
-								op.value = val;
-								op.innerHTML = txt;
-								sel.appendChild(op);
-								return op;
-							};
-							const addSeparator = () => {
-								const separator = addOption("", "————————————————");
-								separator.style = "color: #888";
-								separator.disabled = true;
-							};
-							addOption("", "(Default)");
-							addOption("random", "Random set from Card Pool");
-							addSeparator();
-							for (let s of Constant.MTGASets.slice().reverse()) addOption(s, SetsInfos[s].fullName);
-							addSeparator();
-							for (let s of Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)))
-								addOption(s, SetsInfos[s].fullName);
-							customBoostersEl.appendChild(sel);
-						}
-						while (customBoostersEl.children.length > target)
-							customBoostersEl.removeChild(customBoostersEl.lastChild);
-					}
-					updateCustomBoosterInput(boostersPerPlayerEl.value);
-					boostersPerPlayerEl.addEventListener("change", function (e) {
-						updateCustomBoosterInput(e.target.value);
-					});
-					if (teamSealed) {
-						for (let user of this.sessionUsers) {
-							const el = document.createElement("div");
-							el.innerText = user.userName;
-							el.dataset.userID = user.userID;
-							const input = document.createElement("input");
-							input.type = "number";
-							input.min = 1;
-							input.step = 1;
-							input.value = 1;
-							el.appendChild(input);
-							teamsSelector.appendChild(el);
-						}
-					}
-				},
-			}).then((r) => {
-				if (r.isConfirmed) {
-					this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
-						r.value.boostersPerPlayer,
-						r.value.customBoosters,
-						r.value.teams,
-					]);
-				}
 			});
+			instance.$on("cancel", () => {
+				instance.$destroy();
+			});
+			instance.$on("distribute", (boostersPerPlayer, customBoosters, teams) => {
+				this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
+					boostersPerPlayer,
+					customBoosters,
+					teams,
+				]);
+				instance.$destroy();
+			});
+			instance.$mount();
+			this.$el.appendChild(instance.$el);
 		},
 		deckWarning(call, options = []) {
 			if (this.deck.length > 0) {

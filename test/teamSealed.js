@@ -23,38 +23,13 @@ describe("Team Sealed", function () {
 
 	before(function (done) {
 		clients = makeClients(
-			[
-				{
-					userID: "id1",
+			[0, 1, 2, 3, 4, 5].map((idx) => {
+				return {
+					userID: "id" + idx,
 					sessionID: sessionID,
-					userName: "Client1",
-				},
-				{
-					userID: "id2",
-					sessionID: sessionID,
-					userName: "Client2",
-				},
-				{
-					userID: "id3",
-					sessionID: sessionID,
-					userName: "Client3",
-				},
-				{
-					userID: "id4",
-					sessionID: sessionID,
-					userName: "Client4",
-				},
-				{
-					userID: "id5",
-					sessionID: sessionID,
-					userName: "Client5",
-				},
-				{
-					userID: "id6",
-					sessionID: sessionID,
-					userName: "Client6",
-				},
-			],
+					userName: "Client" + idx,
+				};
+			}),
 			done
 		);
 	});
