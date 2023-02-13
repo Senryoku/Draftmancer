@@ -2669,7 +2669,8 @@ export default {
 			);
 		},
 		waitingForDisconnectedUsers() {
-			if (!this.drafting) return false;
+			//                    Disconnected players do not matter for Team Sealed
+			if (!this.drafting || this.teamSealedState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames() {
