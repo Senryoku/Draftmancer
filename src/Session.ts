@@ -2130,8 +2130,6 @@ export class Session implements IIndexable {
 				if (!Connections[uid]) return new SocketError("Invalid user.", `UserID '${uid}' not connected.`);
 			}
 
-		this.emitMessage("Distributing sealed boosters...", "", false, 0);
-
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 		if (
 			!this.generateBoosters(teams.length * boostersPerPlayer, {
@@ -2140,7 +2138,6 @@ export class Session implements IIndexable {
 				customBoosters: useCustomBoosters ? customBoosters : null,
 			})
 		) {
-			this.broadcastPreparationCancelation();
 			return new SocketError("Error generating boosters.");
 		}
 		const log = this.initLogs("TeamSealed");

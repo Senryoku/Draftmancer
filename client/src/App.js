@@ -2186,7 +2186,17 @@ export default {
 		startTeamSealed(boosterCount, customBoosters, teams) {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-			this.socket.emit("startTeamSealed", boosterCount, useCustomBoosters ? customBoosters : null, teams);
+			this.socket.emit(
+				"startTeamSealed",
+				boosterCount,
+				useCustomBoosters ? customBoosters : null,
+				teams,
+				(err) => {
+					if (err.code < 0) {
+						Alert.fire(err.error);
+					}
+				}
+			);
 		},
 		teamSealedPick(uniqueCardID) {
 			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
