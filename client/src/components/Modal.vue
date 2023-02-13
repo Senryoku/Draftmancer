@@ -80,12 +80,16 @@ export default {
 	border-radius: 1em;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
 	transition: all 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	max-height: 90vh;
 }
 
 .modal-header {
 	position: relative;
 	text-align: center;
 	padding-right: 2em;
+	flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -99,6 +103,7 @@ export default {
 	background-color: rgba(255, 255, 255, 0.1);
 	padding: 0.5em;
 	border-radius: 0.5em;
+	flex-shrink: 1;
 }
 
 .modal-default-button {
@@ -115,6 +120,7 @@ export default {
 
 .modal-footer {
 	text-align: right;
+	flex-shrink: 0;
 }
 
 /*

@@ -2208,7 +2208,7 @@ export class Session implements IIndexable {
 				if (!card)
 					return new SocketError("Unknown Card", "Could not find specified card in your team sealed pool.");
 				if (card.owner && card.owner !== userID)
-					return new SocketError("Unavailable Card", "Another player already took this card.");
+					return new SocketError("Card Unavailable", "Another player already took this card.");
 				// Release the card
 				if (card.owner === userID) {
 					card.owner = null;

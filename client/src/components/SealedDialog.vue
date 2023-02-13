@@ -24,7 +24,7 @@
 					<h3>Assign players to a team:</h3>
 					<div class="teams">
 						<div v-for="(team, idx) in teams" :key="idx" class="team">
-							<div style="width: 3em">Team #{{ idx + 1 }}</div>
+							<div>Team #{{ idx + 1 }}</div>
 							<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
 								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid).userName }}</div>
 							</draggable>
@@ -145,7 +145,7 @@ export default {
 
 .teams {
 	display: flex;
-	align-items: center;
+	align-items: start;
 	justify-content: center;
 	gap: 1em;
 }
@@ -162,7 +162,7 @@ export default {
 	flex-direction: column;
 	background-color: #ffffff20;
 	min-width: 10em;
-	min-height: 8em;
+	min-height: 5em;
 	border-radius: 0.5em;
 	padding: 0.5em;
 	gap: 0.2em;
