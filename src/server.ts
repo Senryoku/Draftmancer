@@ -525,9 +525,11 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		sessionID: SessionID,
 		boostersPerPlayer: number,
 		customBoosters: Array<string>,
-		teams: UserID[][]
+		teams: UserID[][],
+		ack: (result: SocketAck) => void
 	) {
-		Sessions[sessionID].startTeamSealed(boostersPerPlayer, customBoosters, teams);
+		const r = Sessions[sessionID].startTeamSealed(boostersPerPlayer, customBoosters, teams);
+		ack?.(r);
 	},
 	// Session Settings
 	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {

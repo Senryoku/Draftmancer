@@ -2116,8 +2116,20 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]) {
+	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]): SocketAck {
 		this.drafting = true;
+
+		// Validate 'teams' parameters
+		const seenIds: UserID[] = []; // Reject duplicates UserIDs
+		for (const team of teams)
+			for (const uid of team) {
+				if (seenIds.includes(uid)) new SocketError("Invalid team parameter.", `Duplicate UserID '${uid}'.`);
+				seenIds.push(uid);
+				if (!this.users.has(uid))
+					return new SocketError("Invalid team parameter.", `UserID '${uid}' not in session.`);
+				if (!Connections[uid]) return new SocketError("Invalid user.", `UserID '${uid}' not connected.`);
+			}
+
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
@@ -2129,7 +2141,7 @@ export class Session implements IIndexable {
 			})
 		) {
 			this.broadcastPreparationCancelation();
-			return;
+			return new SocketError("Error generating boosters.");
 		}
 		const log = this.initLogs("TeamSealed");
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
@@ -2171,6 +2183,8 @@ export class Session implements IIndexable {
 		logSession("TeamSealed", this);
 
 		this.boosters = [];
+
+		return new SocketAck();
 	}
 
 	endTeamSealed() {
