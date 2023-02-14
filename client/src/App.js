@@ -2639,6 +2639,24 @@ export default {
 			}
 			return false;
 		},
+
+		resizableDeckMouseDown(evt) {
+			this.resizableDeck.x = evt.screenX;
+			this.resizableDeck.y = evt.screenY;
+			document.body.addEventListener("mousemove", this.resizeDeck);
+			document.body.addEventListener("mouseup", () => {
+				document.body.removeEventListener("mousemove", this.resizeDeck);
+			});
+			evt.preventDefault();
+		},
+		resizeDeck(evt) {
+			if (!this.$refs.resizableDeck) return;
+			this.resizableDeck.dy = this.resizableDeck.y - evt.screenY;
+			this.resizableDeck.y = evt.screenY;
+			this.resizableDeck.ht += this.resizableDeck.dy;
+			this.resizableDeck.ht = Math.min(Math.max(this.resizableDeck.ht, 200), 600);
+			this.$refs.resizableDeck.style.height = this.resizableDeck.ht + "px";
+		},
 	},
 	computed: {
 		DraftState() {
@@ -2829,6 +2847,12 @@ export default {
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
+
+			this.resizableDeck = {
+				ht: 400,
+				y: 0,
+				dy: 0,
+			};
 
 			this.ready = true;
 		} catch (e) {
