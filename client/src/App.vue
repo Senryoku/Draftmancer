@@ -3,7 +3,7 @@
 		<div class="loading"></div>
 		<span>Loading cards data...</span>
 	</div>
-	<div id="main-container" :style="`height: ${fixedDeck ? this.resizableDeck.mainHeight : '100vh'}`" v-else>
+	<div id="main-container" :style="`height: ${displayFixedDeck ? this.resizableDeck.mainHeight : '100vh'}`" v-else>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -1234,14 +1234,15 @@
 
 			<!-- Brewing controls (Deck & Sideboard) -->
 			<div
-				:class="{ 'fixed-deck-and-sideboard-container': fixedDeck, 'deck-and-sideboard-container ': true }"
-				v-show="(drafting && draftingState !== DraftState.Watching) || draftingState === DraftState.Brewing"
+				class="deck-and-sideboard-container"
+				:class="{ 'fixed-deck-and-sideboard-container': displayFixedDeck }"
+				v-show="displayDeckAndSideboard"
 				ref="resizableDeck"
 			>
 				<div
 					class="deck-and-sideboard-container-resize-bar"
 					@mousedown="resizableDeckMouseDown"
-					v-if="fixedDeck"
+					v-if="displayFixedDeck"
 				></div>
 				<div class="deck-and-sideboard">
 					<div
@@ -1489,7 +1490,7 @@
 				</div>
 			</div>
 
-			<div class="welcome" v-if="draftingState === undefined">
+			<div class="welcome" v-if="draftingState === DraftState.None">
 				<h1>Welcome to MTGADraft.tk!</h1>
 				<p class="important">
 					Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with

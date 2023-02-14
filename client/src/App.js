@@ -32,6 +32,7 @@ const img = new Image();
 img.src = CardBack;
 
 const DraftState = {
+	None: "None",
 	Waiting: "Waiting",
 	Picking: "Picking",
 	Brewing: "Brewing",
@@ -203,7 +204,7 @@ export default {
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
-			draftingState: undefined,
+			draftingState: DraftState.None,
 			displayBotScores: defaultSettings.displayBotScores,
 			fixedDeck: defaultSettings.fixedDeck,
 
@@ -2663,11 +2664,14 @@ export default {
 			this.resizableDeck.dy = this.resizableDeck.y - evt.screenY;
 			this.resizableDeck.y = evt.screenY;
 			this.resizableDeck.ht += this.resizableDeck.dy;
-			this.resizableDeck.ht = Math.min(Math.max(this.resizableDeck.ht, 200), 600);
+			this.resizableDeck.ht = Math.min(
+				Math.max(this.resizableDeck.ht, window.innerHeight * 0.2),
+				window.innerHeight * 0.8
+			);
 			this.applyFixedDeckSize();
 		},
 		applyFixedDeckSize() {
-			if (this.fixedDeck) {
+			if (this.displayFixedDeck) {
 				this.$refs.resizableDeck.style.height = this.resizableDeck.ht + "px";
 				this.resizableDeck.mainHeight = `calc(100vh - ${this.resizableDeck.ht}px)`;
 			} else {
@@ -2800,6 +2804,15 @@ export default {
 					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
+		displayDeckAndSideboard() {
+			return (
+				(this.drafting && this.draftingState !== DraftState.Watching) ||
+				this.draftingState === DraftState.Brewing
+			);
+		},
+		displayFixedDeck() {
+			return this.displayDeckAndSideboard && this.fixedDeck && this.draftingState !== DraftState.Brewing;
+		},
 
 		userByID() {
 			let r = {};
@@ -2916,8 +2929,10 @@ export default {
 			this.storeSettings();
 		},
 		fixedDeck() {
-			this.applyFixedDeckSize();
 			this.storeSettings();
+		},
+		displayFixedDeck() {
+			this.applyFixedDeckSize();
 		},
 		pickOnDblclick() {
 			this.storeSettings();
