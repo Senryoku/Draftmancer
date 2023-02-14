@@ -46,7 +46,7 @@ describe("Front End - Solo", function () {
 		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -84,10 +84,10 @@ describe("Front End - Multi", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -129,10 +129,10 @@ describe("Front End - Multi, with bots", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -180,7 +180,7 @@ describe("Front End - Multi, with Spectator", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -223,10 +223,10 @@ describe("Front End - Multi, with disconnects", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});

@@ -47,10 +47,10 @@ describe("Rochester", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Rochester Draft')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});

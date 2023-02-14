@@ -115,7 +115,7 @@ describe("Front End - 8 Players Draft", function () {
 		promises = [];
 		for (let i = 0; i < 8; i++) {
 			promises.push(
-				pages[i].waitForXPath("//div[contains(., 'Now drafting!')]", {
+				pages[i].waitForXPath("//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
 			);
