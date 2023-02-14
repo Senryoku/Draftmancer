@@ -80,16 +80,24 @@ export default {
 }
 
 .forced-open .handle:after,
-.dropdown-container:active .handle:after,
-.dropdown-container:hover .handle:after {
+.dropdown-container:active .handle:after {
 	transform: rotate(180deg);
 }
 
 .forced-open .dropdown,
-.dropdown-container:active .dropdown,
-.dropdown-container:hover .dropdown {
+.dropdown-container:active .dropdown {
 	max-height: var(--unrolled-height);
 	z-index: 1;
+}
+
+@media (hover: hover) {
+	.dropdown-container:hover .handle:after {
+		transform: rotate(180deg);
+	}
+	.dropdown-container:hover .dropdown {
+		max-height: var(--unrolled-height);
+		z-index: 1;
+	}
 }
 
 .content {
