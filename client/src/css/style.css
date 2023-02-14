@@ -5,8 +5,7 @@ body {
 	color: #ddd;
 	font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	position: relative;
-	min-height: calc(100vh - 2em);
-	padding-bottom: 2em;
+	min-height: calc(100vh);
 }
 
 .backgound-image {

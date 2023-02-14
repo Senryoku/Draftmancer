@@ -70,6 +70,7 @@ const defaultSettings = {
 	hideSessionID: false,
 	displayCollectionStatus: true,
 	displayBotScores: false,
+	fixedDeck: false,
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
@@ -204,6 +205,14 @@ export default {
 			setsInfos: undefined,
 			draftingState: undefined,
 			displayBotScores: defaultSettings.displayBotScores,
+			fixedDeck: defaultSettings.fixedDeck,
+
+			resizableDeck: {
+				ht: 400,
+				mainHeight: "100vh",
+				y: 0,
+				dy: 0,
+			},
 			pickOnDblclick: defaultSettings.pickOnDblclick,
 			boosterCardScale: defaultSettings.boosterCardScale,
 			enableSound: defaultSettings.enableSound,
@@ -2655,7 +2664,15 @@ export default {
 			this.resizableDeck.y = evt.screenY;
 			this.resizableDeck.ht += this.resizableDeck.dy;
 			this.resizableDeck.ht = Math.min(Math.max(this.resizableDeck.ht, 200), 600);
-			this.$refs.resizableDeck.style.height = this.resizableDeck.ht + "px";
+			this.applyFixedDeckSize();
+		},
+		applyFixedDeckSize() {
+			if (this.fixedDeck) {
+				this.$refs.resizableDeck.style.height = this.resizableDeck.ht + "px";
+				this.resizableDeck.mainHeight = `calc(100vh - ${this.resizableDeck.ht}px)`;
+			} else {
+				this.$refs.resizableDeck.style.height = "auto";
+			}
 		},
 	},
 	computed: {
@@ -2847,13 +2864,9 @@ export default {
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
-
-			this.resizableDeck = {
-				ht: 400,
-				y: 0,
-				dy: 0,
-			};
-
+			this.$nextTick(() => {
+				this.applyFixedDeckSize();
+			});
 			this.ready = true;
 		} catch (e) {
 			alert(e);
@@ -2900,6 +2913,10 @@ export default {
 			setCookie("language", this.language);
 		},
 		displayBotScores() {
+			this.storeSettings();
+		},
+		fixedDeck() {
+			this.applyFixedDeckSize();
 			this.storeSettings();
 		},
 		pickOnDblclick() {
