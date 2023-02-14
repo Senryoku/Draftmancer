@@ -1203,239 +1203,247 @@
 
 		<!-- Brewing controls (Deck & Sideboard) -->
 		<div
-			class="container deck-container"
-			v-show="
-				(deck !== undefined && deck.length > 0) ||
-				(drafting && draftingState !== DraftState.Watching) ||
-				draftingState == DraftState.Brewing
-			"
+			class="deck-and-sideboard-container"
+			v-show="(drafting && draftingState !== DraftState.Watching) || draftingState === DraftState.Brewing"
+			ref="resizableDeck"
 		>
-			<div class="deck">
-				<card-pool
-					:cards="deck"
-					:language="language"
-					:click="deckToSideboard"
-					:readOnly="false"
-					@cardPoolChange="onDeckChange"
-					ref="deckDisplay"
-					group="deck"
-					@dragover.native="allowBoosterCardDrop($event)"
-					@drop.native="dropBoosterCard($event)"
-					:filter="deckFilter"
-				>
-					<template v-slot:title>
-						Deck ({{ deck.length
-						}}<span
-							v-show="draftingState == DraftState.Brewing && totalLands > 0"
-							v-tooltip="'Added basics on export (Not shown in decklist below).'"
-						>
-							+ {{ totalLands }}</span
-						>)
-					</template>
-					<template v-slot:controls>
-						<ExportDropdown
-							v-if="deck.length > 0"
-							:language="language"
-							:deck="deck"
-							:sideboard="sideboard"
-							:options="{
-								lands: lands,
-								preferedBasics: preferedBasics,
-								sideboardBasics: sideboardBasics,
-							}"
-						/>
-						<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
-							<i class="fas fa-chart-pie fa-lg" v-tooltip.top="'Deck Statistics'"></i>
-							<div class="deck-stat" v-tooltip="'Creatures in deck'">
-								{{ deckCreatureCount }}
-								<img src="./assets/img/Creature.svg" />
-							</div>
-							<div class="deck-stat" v-tooltip="'Lands in deck'">
-								{{ deckLandCount }}
-								<img src="./assets/img/Land_symbol_white.svg" />
-							</div>
-						</div>
-						<land-control
-							v-if="draftingState === DraftState.Brewing"
-							:lands="lands"
-							:autoland.sync="autoLand"
-							:targetDeckSize.sync="targetDeckSize"
-							:sideboardBasics.sync="sideboardBasics"
-							:preferedBasics.sync="preferedBasics"
-							:otherbasics="basicsInDeck"
-							@removebasics="removeBasicsFromDeck"
-							@update:lands="(c, n) => (lands[c] = n)"
-						>
-						</land-control>
-						<dropdown
-							v-if="displayWildcardInfo && neededWildcards"
-							v-tooltip.top="{
-								content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
-								html: true,
-							}"
-							minwidth="8em"
-						>
-							<template v-slot:handle>
-								<span style="display: flex; justify-content: space-around">
-									<span
-										:class="{
-											yellow:
-												collectionInfos.wildcards &&
-												collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
-										}"
-									>
-										<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
-										{{ neededWildcards.main.rare }}
-									</span>
-									<span
-										:class="{
-											yellow:
-												collectionInfos.wildcards &&
-												collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
-										}"
-									>
-										<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
-										{{ neededWildcards.main.mythic }}
-									</span>
-								</span>
-							</template>
-							<template v-slot:dropdown>
-								<table style="margin: auto">
-									<tr
-										v-for="(value, rarity) in neededWildcards.main"
-										:key="rarity"
-										:class="{
-											yellow:
-												collectionInfos.wildcards && collectionInfos.wildcards[rarity] < value,
-										}"
-									>
-										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
-										<td>{{ value }}</td>
-										<td>({{ neededWildcards.side[rarity] }})</td>
-										<template v-if="collectionInfos && collectionInfos.wildcards">
-											<td style="font-size: 0.75em; color: #bbb">/</td>
-											<td style="font-size: 0.75em; color: #bbb">
-												{{ collectionInfos.wildcards[rarity] }}
-											</td>
-										</template>
-									</tr>
-								</table>
-
-								<div
-									v-if="collectionInfos.vaultProgress"
-									v-tooltip.right="
-										'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
-									"
-									style="
-										display: flex;
-										align-items: center;
-										justify-content: space-evenly;
-										margin: 0.25em 0 0 0;
-									"
-								>
-									<img src="./assets/img/vault.png" style="height: 1.5rem" /><span
-										style="font-size: 0.8em"
-										>{{ collectionInfos.vaultProgress }}%</span
-									>
-								</div>
-							</template>
-						</dropdown>
-						<div
-							class="input-delete-icon"
-							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
-						>
-							<input type="text" placeholder="Search..." v-model="deckFilter" /><span
-								@click="deckFilter = ''"
-								><i class="fas fa-times-circle"></i
-							></span>
-						</div>
-					</template>
-					<template v-slot:empty>
-						<h3>Your deck is currently empty!</h3>
-						<p>Click on cards in your sideboard to move them here.</p>
-					</template>
-				</card-pool>
-			</div>
-			<!-- Collapsed Sideboard -->
+			<div class="deck-and-sideboard-container-resize-bar" @mousedown="resizableDeckMouseDown"></div>
 			<div
-				v-if="
-					collapseSideboard &&
+				class="container deck-container"
+				v-show="
+					(deck !== undefined && deck.length > 0) ||
+					(drafting && draftingState !== DraftState.Watching) ||
+					draftingState === DraftState.Brewing
+				"
+			>
+				<div class="deck">
+					<card-pool
+						:cards="deck"
+						:language="language"
+						:click="deckToSideboard"
+						:readOnly="false"
+						@cardPoolChange="onDeckChange"
+						ref="deckDisplay"
+						group="deck"
+						@dragover.native="allowBoosterCardDrop($event)"
+						@drop.native="dropBoosterCard($event)"
+						:filter="deckFilter"
+					>
+						<template v-slot:title>
+							Deck ({{ deck.length
+							}}<span
+								v-show="draftingState == DraftState.Brewing && totalLands > 0"
+								v-tooltip="'Added basics on export (Not shown in decklist below).'"
+							>
+								+ {{ totalLands }}</span
+							>)
+						</template>
+						<template v-slot:controls>
+							<ExportDropdown
+								v-if="deck.length > 0"
+								:language="language"
+								:deck="deck"
+								:sideboard="sideboard"
+								:options="{
+									lands: lands,
+									preferedBasics: preferedBasics,
+									sideboardBasics: sideboardBasics,
+								}"
+							/>
+							<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
+								<i class="fas fa-chart-pie fa-lg" v-tooltip.top="'Deck Statistics'"></i>
+								<div class="deck-stat" v-tooltip="'Creatures in deck'">
+									{{ deckCreatureCount }}
+									<img src="./assets/img/Creature.svg" />
+								</div>
+								<div class="deck-stat" v-tooltip="'Lands in deck'">
+									{{ deckLandCount }}
+									<img src="./assets/img/Land_symbol_white.svg" />
+								</div>
+							</div>
+							<land-control
+								v-if="draftingState === DraftState.Brewing"
+								:lands="lands"
+								:autoland.sync="autoLand"
+								:targetDeckSize.sync="targetDeckSize"
+								:sideboardBasics.sync="sideboardBasics"
+								:preferedBasics.sync="preferedBasics"
+								:otherbasics="basicsInDeck"
+								@removebasics="removeBasicsFromDeck"
+								@update:lands="(c, n) => (lands[c] = n)"
+							>
+							</land-control>
+							<dropdown
+								v-if="displayWildcardInfo && neededWildcards"
+								v-tooltip.top="{
+									content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
+									html: true,
+								}"
+								minwidth="8em"
+							>
+								<template v-slot:handle>
+									<span style="display: flex; justify-content: space-around">
+										<span
+											:class="{
+												yellow:
+													collectionInfos.wildcards &&
+													collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
+											}"
+										>
+											<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
+											{{ neededWildcards.main.rare }}
+										</span>
+										<span
+											:class="{
+												yellow:
+													collectionInfos.wildcards &&
+													collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
+											}"
+										>
+											<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
+											{{ neededWildcards.main.mythic }}
+										</span>
+									</span>
+								</template>
+								<template v-slot:dropdown>
+									<table style="margin: auto">
+										<tr
+											v-for="(value, rarity) in neededWildcards.main"
+											:key="rarity"
+											:class="{
+												yellow:
+													collectionInfos.wildcards &&
+													collectionInfos.wildcards[rarity] < value,
+											}"
+										>
+											<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
+											<td>{{ value }}</td>
+											<td>({{ neededWildcards.side[rarity] }})</td>
+											<template v-if="collectionInfos && collectionInfos.wildcards">
+												<td style="font-size: 0.75em; color: #bbb">/</td>
+												<td style="font-size: 0.75em; color: #bbb">
+													{{ collectionInfos.wildcards[rarity] }}
+												</td>
+											</template>
+										</tr>
+									</table>
+
+									<div
+										v-if="collectionInfos.vaultProgress"
+										v-tooltip.right="
+											'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
+										"
+										style="
+											display: flex;
+											align-items: center;
+											justify-content: space-evenly;
+											margin: 0.25em 0 0 0;
+										"
+									>
+										<img src="./assets/img/vault.png" style="height: 1.5rem" /><span
+											style="font-size: 0.8em"
+											>{{ collectionInfos.vaultProgress }}%</span
+										>
+									</div>
+								</template>
+							</dropdown>
+							<div
+								class="input-delete-icon"
+								v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
+							>
+								<input type="text" placeholder="Search..." v-model="deckFilter" /><span
+									@click="deckFilter = ''"
+									><i class="fas fa-times-circle"></i
+								></span>
+							</div>
+						</template>
+						<template v-slot:empty>
+							<h3>Your deck is currently empty!</h3>
+							<p>Click on cards in your sideboard to move them here.</p>
+						</template>
+					</card-pool>
+				</div>
+				<!-- Collapsed Sideboard -->
+				<div
+					v-if="
+						collapseSideboard &&
+						((sideboard != undefined && sideboard.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState == DraftState.Brewing)
+					"
+					class="collapsed-sideboard"
+				>
+					<div class="section-title">
+						<h2>Sideboard ({{ sideboard.length }})</h2>
+						<div class="controls">
+							<i
+								class="far fa-window-maximize clickable"
+								@click="collapseSideboard = false"
+								v-tooltip="'Maximize sideboard'"
+							></i>
+						</div>
+					</div>
+					<div
+						class="card-container"
+						@dragover="allowBoosterCardDrop($event)"
+						@drop="dropBoosterCard($event, { toSideboard: true })"
+					>
+						<draggable
+							:key="`${_uid}_col`"
+							class="card-column drag-column"
+							:list="sideboard"
+							group="deck"
+							@change="onCollapsedSideChange"
+							:animation="200"
+						>
+							<card
+								v-for="card in sideboard"
+								:key="`${_uid}_card_${card.uniqueID}`"
+								:card="card"
+								:language="language"
+								@click="sideboardToDeck($event, card)"
+								:filter="deckFilter"
+							></card>
+						</draggable>
+					</div>
+				</div>
+			</div>
+			<!-- Full size Sideboard -->
+			<div
+				v-show="
+					!collapseSideboard &&
 					((sideboard != undefined && sideboard.length > 0) ||
 						(drafting && draftingState !== DraftState.Watching) ||
 						draftingState == DraftState.Brewing)
 				"
-				class="collapsed-sideboard"
+				class="container"
 			>
-				<div class="section-title">
-					<h2>Sideboard ({{ sideboard.length }})</h2>
-					<div class="controls">
-						<i
-							class="far fa-window-maximize clickable"
-							@click="collapseSideboard = false"
-							v-tooltip="'Maximize sideboard'"
-						></i>
-					</div>
-				</div>
-				<div
-					class="card-container"
-					@dragover="allowBoosterCardDrop($event)"
-					@drop="dropBoosterCard($event, { toSideboard: true })"
+				<card-pool
+					:cards="sideboard"
+					:language="language"
+					:click="sideboardToDeck"
+					:readOnly="false"
+					@cardPoolChange="onSideChange"
+					ref="sideboardDisplay"
+					group="deck"
+					@dragover.native="allowBoosterCardDrop($event)"
+					@drop.native="dropBoosterCard($event, { toSideboard: true })"
+					:filter="deckFilter"
 				>
-					<draggable
-						:key="`${_uid}_col`"
-						class="card-column drag-column"
-						:list="sideboard"
-						group="deck"
-						@change="onCollapsedSideChange"
-						:animation="200"
-					>
-						<card
-							v-for="card in sideboard"
-							:key="`${_uid}_card_${card.uniqueID}`"
-							:card="card"
-							:language="language"
-							@click="sideboardToDeck($event, card)"
-							:filter="deckFilter"
-						></card>
-					</draggable>
-				</div>
+					<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
+					<template v-slot:controls>
+						<i
+							class="fas fa-columns clickable"
+							@click="collapseSideboard = true"
+							v-tooltip="'Minimize sideboard'"
+						></i>
+					</template>
+					<template v-slot:empty>
+						<h3>Your sideboard is currently empty!</h3>
+						<p>Click on cards in your deck to move them here.</p>
+					</template>
+				</card-pool>
 			</div>
-		</div>
-		<!-- Full size Sideboard -->
-		<div
-			v-show="
-				!collapseSideboard &&
-				((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
-			"
-			class="container"
-		>
-			<card-pool
-				:cards="sideboard"
-				:language="language"
-				:click="sideboardToDeck"
-				:readOnly="false"
-				@cardPoolChange="onSideChange"
-				ref="sideboardDisplay"
-				group="deck"
-				@dragover.native="allowBoosterCardDrop($event)"
-				@drop.native="dropBoosterCard($event, { toSideboard: true })"
-				:filter="deckFilter"
-			>
-				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
-				<template v-slot:controls>
-					<i
-						class="fas fa-columns clickable"
-						@click="collapseSideboard = true"
-						v-tooltip="'Minimize sideboard'"
-					></i>
-				</template>
-				<template v-slot:empty>
-					<h3>Your sideboard is currently empty!</h3>
-					<p>Click on cards in your deck to move them here.</p>
-				</template>
-			</card-pool>
 		</div>
 
 		<div class="welcome" v-if="draftingState === undefined">
