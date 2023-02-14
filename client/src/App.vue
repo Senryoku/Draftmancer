@@ -441,7 +441,7 @@
 				</div>
 				<div
 					v-if="sessionOwner === userID"
-					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%)"
+					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%); z-index: 11"
 				>
 					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
 					<button
