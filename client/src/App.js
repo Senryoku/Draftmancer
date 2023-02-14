@@ -1080,12 +1080,12 @@ export default {
 			const self = this;
 			Alert.fire({
 				title: "Are you sure?",
-				text: "Do you really want to stop the draft for all players?",
+				text: "Do you really want to stop the game for all players?",
 				icon: "warning",
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
-				confirmButtonText: "Stop the draft!",
+				confirmButtonText: "Stop the game!",
 			}).then((result) => {
 				if (result.value) {
 					self.socket.emit("stopDraft");

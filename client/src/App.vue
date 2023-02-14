@@ -443,14 +443,14 @@
 					v-if="sessionOwner === userID"
 					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%); z-index: 11"
 				>
-					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
+					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop</button>
 					<button
 						v-if="maxTimer > 0 && !draftPaused"
 						class="stop"
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="pauseDraft"
 					>
-						<i class="fas fa-pause"></i> Pause Draft
+						<i class="fas fa-pause"></i> Pause
 					</button>
 					<button
 						v-else-if="maxTimer > 0 && draftPaused"
@@ -458,7 +458,7 @@
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="resumeDraft"
 					>
-						<i class="fas fa-play"></i> Resume Draft
+						<i class="fas fa-play"></i> Resume
 					</button>
 				</div>
 			</template>
