@@ -1581,7 +1581,15 @@ ul.player-list {
 	z-index: 801;
 }
 
+.fixed-deck-and-sideboard-close {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+
+}
+
 .fixed-deck-and-sideboard-container .deck-and-sideboard {
+	position: relative;
 	overflow: auto;
 	padding: 1em;
 	padding-top: 0;

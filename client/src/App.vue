@@ -1245,6 +1245,12 @@
 					v-if="displayFixedDeck"
 				></div>
 				<div class="deck-and-sideboard">
+					<i
+						@click="fixedDeck = false"
+						class="fa fa-times fa-lg fixed-deck-and-sideboard-close clickable"
+						aria-hidden="true"
+						v-if="displayFixedDeck"
+					></i>
 					<div
 						class="container deck-container"
 						v-show="
