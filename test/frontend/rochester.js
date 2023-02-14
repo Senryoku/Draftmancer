@@ -1,7 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
 
 async function pickRochester(page) {
 	let next = await page.waitForXPath(
@@ -46,10 +47,10 @@ describe("Rochester", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Rochester Draft')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});

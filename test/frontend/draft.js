@@ -1,11 +1,12 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
 
 async function clickDraft() {
-	// Click 'Draft' button
-	const [button] = await sessionOwnerPage.$x("//button[contains(., 'Draft')]");
+	// Click 'Start' button
+	const [button] = await sessionOwnerPage.$x("//button[contains(., 'Start')]");
 	expect(button).to.exist;
 	await button.click();
 }
@@ -45,7 +46,7 @@ describe("Front End - Solo", function () {
 		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -83,10 +84,10 @@ describe("Front End - Multi", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -128,10 +129,10 @@ describe("Front End - Multi, with bots", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -179,7 +180,7 @@ describe("Front End - Multi, with Spectator", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -222,10 +223,10 @@ describe("Front End - Multi, with disconnects", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});

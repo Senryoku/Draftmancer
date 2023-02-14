@@ -14,6 +14,7 @@ import {
 	GridDraftState,
 	RochesterDraftState,
 	IIndexable,
+	TeamSealedState,
 } from "./Session.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -127,6 +128,15 @@ export function restoreSession(s: any, owner: UserID) {
 				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
 				break;
 			}
+			case "teamSealed": {
+				r.draftState = new TeamSealedState();
+				break;
+			}
+		}
+		if (!r.draftState) {
+			console.error(`[Persistence::restoreSession] Error: Unsupported draft state type "${s.draftState.type}".`);
+			r.drafting = false;
+			return r;
 		}
 		copyProps(s.draftState, r.draftState);
 		if (r.draftState instanceof DraftState) {

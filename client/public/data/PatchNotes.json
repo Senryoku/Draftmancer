@@ -1,5 +1,9 @@
 [
 	{
+		"date": "14/02/2023",
+		"notes": ["New game mode: Team Sealed."]
+	},
+	{
 		"date": "27/01/2023",
 		"notes": ["Phyrexia: All Will Be One initial support."]
 	},

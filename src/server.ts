@@ -342,6 +342,11 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 
 		ack?.(r);
 	},
+	teamSealedPick(userID: UserID, sessionID: SessionID, uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) {
+		if (!checkDraftAction(userID, Sessions[sessionID], "teamSealed", ack)) return;
+		const r = Sessions[sessionID].teamSealedPick(userID, uniqueCardID);
+		ack?.(r);
+	},
 	updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
 		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
 		Sessions[sessionID].updateBracket(results);
@@ -514,6 +519,17 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 		startPublicSession(sess);
 		ack?.(new SocketAck());
+	},
+	startTeamSealed(
+		userID: UserID,
+		sessionID: SessionID,
+		boostersPerPlayer: number,
+		customBoosters: Array<string>,
+		teams: UserID[][],
+		ack: (result: SocketAck) => void
+	) {
+		const r = Sessions[sessionID].startTeamSealed(boostersPerPlayer, customBoosters, teams);
+		ack?.(r);
 	},
 	// Session Settings
 	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {

@@ -383,7 +383,10 @@
 							<div class="game-modes-cat">
 								<span class="game-modes-cat-title">Sealed</span>
 								<div v-tooltip.left="'Distributes boosters to everyone for a sealed session.'">
-									<button @click="sealedDialog">Sealed</button>
+									<button @click="sealedDialog(false)">Sealed</button>
+								</div>
+								<div v-tooltip.left="'Starts a Team Sealed.'">
+									<button @click="sealedDialog(true)">Team Sealed</button>
 								</div>
 								<div v-tooltip.left="'Distributes two Jumpstart boosters to everyone.'">
 									<button @click="deckWarning(distributeJumpstart)">Jumpstart</button>
@@ -438,16 +441,16 @@
 				</div>
 				<div
 					v-if="sessionOwner === userID"
-					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%)"
+					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%); z-index: 11"
 				>
-					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop Draft</button>
+					<button class="stop" @click="stopDraft"><i class="fas fa-stop"></i> Stop</button>
 					<button
 						v-if="maxTimer > 0 && !draftPaused"
 						class="stop"
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="pauseDraft"
 					>
-						<i class="fas fa-pause"></i> Pause Draft
+						<i class="fas fa-pause"></i> Pause
 					</button>
 					<button
 						v-else-if="maxTimer > 0 && draftPaused"
@@ -455,7 +458,7 @@
 						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
 						@click="resumeDraft"
 					>
-						<i class="fas fa-play"></i> Resume Draft
+						<i class="fas fa-play"></i> Resume
 					</button>
 				</div>
 			</template>
@@ -1152,6 +1155,13 @@
 				:picking="userID === minesweeperDraftState.currentPlayer"
 				@pick="minesweeperDraftPick"
 			></minesweeper-draft>
+			<team-sealed
+				v-if="draftingState === DraftState.TeamSealed"
+				:language="language"
+				:state="teamSealedState"
+				:users="sessionUsers"
+				@pick="teamSealedPick"
+			></team-sealed>
 			<!-- Disconnected User(s) Modal -->
 			<transition name="fade">
 				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">

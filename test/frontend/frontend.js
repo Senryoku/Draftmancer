@@ -1,7 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath } from "./src/common.js";
 
 async function pickMinesweeper(page) {
 	let next = await page.waitForXPath(
@@ -52,10 +53,10 @@ describe("Minesweeper Draft", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -127,10 +128,10 @@ describe("Winston Draft", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Winston Draft')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Now drafting!')]", {
+		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});

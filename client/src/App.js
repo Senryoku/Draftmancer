@@ -23,6 +23,7 @@ import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
+import SealedDialog from "./components/SealedDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
@@ -43,6 +44,7 @@ const DraftState = {
 	RochesterWaiting: "RochesterWaiting",
 	MinesweeperPicking: "MinesweeperPicking",
 	MinesweeperWaiting: "MinesweeperWaiting",
+	TeamSealed: "TeamSealed",
 };
 
 const ReadyState = {
@@ -100,6 +102,7 @@ export default {
 		ExportDropdown,
 		GridDraft: () => import("./components/GridDraft.vue"),
 		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
+		TeamSealed: () => import("./components/TeamSealed.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
 		Modal,
 		Multiselect,
@@ -182,6 +185,7 @@ export default {
 			gridDraftState: null,
 			rochesterDraftState: null,
 			minesweeperDraftState: null,
+			teamSealedState: null,
 			draftPaused: false,
 
 			publicSessions: [],
@@ -707,7 +711,55 @@ export default {
 				});
 			});
 
-			const startDraftSetup = (name = "draft") => {
+			this.socket.on("startTeamSealed", (data) => {
+				this.drafting = true;
+
+				startDraftSetup("team sealed", "Team Sealed started!");
+				this.teamSealedState = data.state;
+				this.draftingState = DraftState.TeamSealed;
+
+				// We'll use the same call in case of reconnection
+				if (data.pickedCards) {
+					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
+					this.$nextTick(() => {
+						for (let c of data.pickedCards.main) this.addToDeck(c);
+						for (let c of data.pickedCards.side) this.addToSideboard(c);
+					});
+				}
+			});
+
+			this.socket.on("endTeamSealed", () => {
+				fireToast("success", "Team Sealed stopped!");
+				this.drafting = false;
+				this.draftPaused = false;
+				if (this.draftingState === DraftState.Watching) {
+					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
+					this.$nextTick(() => {
+						this.$refs.draftloglive?.registerPlayerSelectEvents();
+					});
+				} else this.draftingState = DraftState.Brewing;
+			});
+
+			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
+				if (!this.drafting || this.draftingState !== DraftState.TeamSealed) return;
+
+				const card = this.teamSealedState.cards.find((c) => c.uniqueID === cardUniqueID);
+				if (card.owner === this.userID) {
+					this.deck = this.deck.filter((c) => c.uniqueID !== cardUniqueID);
+					this.sideboard = this.sideboard.filter((c) => c.uniqueID !== cardUniqueID);
+				}
+				if (newOwnerID === this.userID) {
+					this.addToDeck(card);
+				}
+				card.owner = newOwnerID;
+				this.$nextTick(() => {
+					this.$refs.deckDisplay.sync();
+					this.$refs.sideboardDisplay.sync();
+				});
+			});
+
+			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
 
@@ -717,14 +769,14 @@ export default {
 				Alert.fire({
 					position: "center",
 					icon: "success",
-					title: "Now drafting!",
+					title: msg,
 					showConfirmButton: false,
 					timer: 1500,
 				});
 
 				this.playSound("start");
 
-				this.pushNotification("Now drafting!", {
+				this.pushNotification(msg, {
 					body: `Your ${name} '${this.sessionID}' is starting!`,
 				});
 				this.pushTitleNotification("🏁");
@@ -1028,12 +1080,12 @@ export default {
 			const self = this;
 			Alert.fire({
 				title: "Are you sure?",
-				text: "Do you really want to stop the draft for all players?",
+				text: "Do you really want to stop the game for all players?",
 				icon: "warning",
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Critical,
 				cancelButtonColor: ButtonColor.Safe,
-				confirmButtonText: "Stop the draft!",
+				confirmButtonText: "Stop the game!",
 			}).then((result) => {
 				if (result.value) {
 					self.socket.emit("stopDraft");
@@ -2083,79 +2135,29 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		sealedDialog: async function () {
+		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			Alert.fire({
-				title: "Start Sealed",
-				html: `
-					<p>How many boosters for each player (default is 6)?
-					<input type="number" value="6" min="4" max="24" step="1" id="input-boostersPerPlayer" class="swal2-input" style="display:block" placeholder="Boosters per Player"></p>
-					<p>(Optional) Customize the set of each booster:
-					<div id="input-customBoosters" style="
-						display: grid;
-						grid-template-columns: 1fr 1fr 1fr;
-						grid-column-gap: 0.5em;
-					"></div></p>`,
-				inputValue: 6,
-				showCancelButton: true,
-				confirmButtonColor: ButtonColor.Safe,
-				cancelButtonColor: ButtonColor.Critical,
-				confirmButtonText: "Distribute boosters",
-				width: "auto",
-				preConfirm() {
-					return new Promise(function (resolve) {
-						resolve({
-							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
-							customBoosters: [
-								...document.getElementById("input-customBoosters").querySelectorAll("select"),
-							].map((s) => s.value),
-						});
-					});
+			const DialogClass = Vue.extend(SealedDialog);
+			let instance = new DialogClass({
+				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
+				beforeDestroy() {
+					instance.$el.parentNode.removeChild(instance.$el);
 				},
-				didOpen: (el) => {
-					let customBoostersEl = el.querySelector("#input-customBoosters");
-					let boostersPerPlayerEl = el.querySelector("#input-boostersPerPlayer");
-					// Create the set selects according to the number of booster per player
-					function updateCustomBoosterInput(target) {
-						while (customBoostersEl.children.length < target) {
-							let sel = document.createElement("select");
-							sel.classList.add("standard-input");
-							sel.style.margin = "0.5em auto";
-							const addOption = (val, txt) => {
-								let op = document.createElement("option");
-								op.value = val;
-								op.innerHTML = txt;
-								sel.appendChild(op);
-								return op;
-							};
-							const addSeparator = () => {
-								const separator = addOption("", "————————————————");
-								separator.style = "color: #888";
-								separator.disabled = true;
-							};
-							addOption("", "(Default)");
-							addOption("random", "Random set from Card Pool");
-							addSeparator();
-							for (let s of Constant.MTGASets.slice().reverse()) addOption(s, SetsInfos[s].fullName);
-							addSeparator();
-							for (let s of Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)))
-								addOption(s, SetsInfos[s].fullName);
-							customBoostersEl.appendChild(sel);
-						}
-						while (customBoostersEl.children.length > target)
-							customBoostersEl.removeChild(customBoostersEl.lastChild);
-					}
-					updateCustomBoosterInput(boostersPerPlayerEl.value);
-					boostersPerPlayerEl.addEventListener("change", function (e) {
-						updateCustomBoosterInput(e.target.value);
-					});
-				},
-			}).then((r) => {
-				if (r.isConfirmed) {
-					this.deckWarning(this.distributeSealed, [r.value.boostersPerPlayer, r.value.customBoosters]);
-				}
 			});
+			instance.$on("cancel", () => {
+				instance.$destroy();
+			});
+			instance.$on("distribute", (boostersPerPlayer, customBoosters, teams) => {
+				this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
+					boostersPerPlayer,
+					customBoosters,
+					teams,
+				]);
+				instance.$destroy();
+			});
+			instance.$mount();
+			this.$el.appendChild(instance.$el);
 		},
 		deckWarning(call, options = []) {
 			if (this.deck.length > 0) {
@@ -2180,6 +2182,26 @@ export default {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
+		},
+		startTeamSealed(boosterCount, customBoosters, teams) {
+			if (this.userID !== this.sessionOwner) return;
+			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+			this.socket.emit(
+				"startTeamSealed",
+				boosterCount,
+				useCustomBoosters ? customBoosters : null,
+				teams,
+				(err) => {
+					if (err.code < 0) {
+						Alert.fire(err.error);
+					}
+				}
+			);
+		},
+		teamSealedPick(uniqueCardID) {
+			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
+				if (r.code !== 0) Alert.fire(r.error);
+			});
 		},
 		distributeJumpstart() {
 			if (this.userID != this.sessionOwner) return;
@@ -2626,6 +2648,7 @@ export default {
 			return ReadyState;
 		},
 		gameModeName() {
+			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.winstonDraftState) return "Winston Draft";
 			if (this.gridDraftState) return "Grid Draft";
@@ -2656,7 +2679,8 @@ export default {
 			);
 		},
 		waitingForDisconnectedUsers() {
-			if (!this.drafting) return false;
+			//                    Disconnected players do not matter for Team Sealed
+			if (!this.drafting || this.teamSealedState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames() {

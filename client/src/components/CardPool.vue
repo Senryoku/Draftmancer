@@ -149,6 +149,7 @@
 						:language="language"
 						@click="click($event, card)"
 						:filter="filter"
+						:conditionalClasses="cardConditionalClasses"
 					></card>
 				</draggable>
 			</div>
@@ -173,6 +174,7 @@ export default {
 		click: { type: Function, default: () => {} },
 		group: { type: String },
 		filter: { type: String },
+		cardConditionalClasses: { type: Function },
 		readOnly: {
 			type: Boolean,
 			default: false,
