@@ -1,7 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
 
 async function pickRochester(page) {
 	let next = await page.waitForXPath(

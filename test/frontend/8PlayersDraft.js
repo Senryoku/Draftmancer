@@ -1,47 +1,13 @@
-import { before, after, beforeEach, afterEach } from "mocha";
+import { beforeEach, afterEach } from "mocha";
 import puppeteer from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
+import { waitAndClickSelector, disableAnimations } from "./src/common.js";
 
 const testDebug = true; // Display tests for debugging
 const debugWindowWidth = 2560 / 4;
 const debugWindowHeight = 1440 / 2;
-
-export async function waitAndClickXpath(page, xpath) {
-	const element = await page.waitForXPath(xpath, {
-		visible: true,
-	});
-	expect(element).to.exist;
-	await element.click();
-}
-
-export async function waitAndClickSelector(page, selector) {
-	await page.waitForSelector(selector, {
-		visible: true,
-	});
-	const [element] = await page.$$(selector);
-	expect(element).to.exist;
-	await element.click();
-}
-
-function disableAnimations(page) {
-	page.on("load", () => {
-		const content = `
-		*,
-		*::after,
-		*::before {
-			transition-delay: 0s !important;
-			transition-duration: 0s !important;
-			animation-delay: -0.0001s !important;
-			animation-duration: 0s !important;
-			animation-play-state: paused !important;
-			caret-color: transparent !important;
-		}`;
-
-		page.addStyleTag({ content });
-	});
-}
 
 let browsers = [];
 let pages = [];
@@ -133,7 +99,7 @@ describe("Front End - 8 Players Draft", function () {
 	});
 
 	it(`Launch Draft`, async function () {
-		const [button] = await pages[0].$x("//button[contains(., 'Draft')]");
+		const [button] = await pages[0].$x("//button[contains(., 'Start')]");
 		expect(button).to.exist;
 		await button.click();
 

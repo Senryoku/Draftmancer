@@ -1,7 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath } from "./src/common.js";
 
 async function pickMinesweeper(page) {
 	let next = await page.waitForXPath(

@@ -1,11 +1,12 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage, waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
+import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
 
 async function clickDraft() {
-	// Click 'Draft' button
-	const [button] = await sessionOwnerPage.$x("//button[contains(., 'Draft')]");
+	// Click 'Start' button
+	const [button] = await sessionOwnerPage.$x("//button[contains(., 'Start')]");
 	expect(button).to.exist;
 	await button.click();
 }
