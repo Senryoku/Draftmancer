@@ -23,6 +23,7 @@
 			:click="onCardClick"
 			group="team-sealed"
 			:cardConditionalClasses="cardConditionalClasses"
+			:readOnly="true"
 		></card-pool>
 	</div>
 </template>
