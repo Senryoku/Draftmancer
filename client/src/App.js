@@ -73,7 +73,7 @@ const defaultSettings = {
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
-	collapseSideboard: false,
+	collapseSideboard: true,
 	sideboardBasics: 0,
 	preferedBasics: "",
 	boosterCardScale: 1,
