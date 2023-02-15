@@ -1,5 +1,9 @@
 [
 	{
+		"date": "15/02/2023",
+		"notes": ["Fixed Deck setting."]
+	},
+	{
 		"date": "14/02/2023",
 		"notes": ["New game mode: Team Sealed."]
 	},

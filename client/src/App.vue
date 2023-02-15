@@ -1510,6 +1510,19 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>February 15, 2023</em>
+								<p>
+									New game mode: <strong>Team Sealed</strong>!<br />Each team must build one deck for
+									each teammate from a common card pool (typically 12 packs for teams of 3).
+								</p>
+								<p>
+									Added a setting to pin your deck to the bottom of the screen so it's always visible.
+									Should be pretty handy in Team Sealed! Toggle it using the
+									<i class="fas fa-thumbtack"></i>
+									thumbtack in your personal settings, at the top right of the screen.
+								</p>
+							</div>
+							<div class="news">
 								<em>January 27, 2023</em>
 								<p>
 									<img
@@ -1541,13 +1554,6 @@
 										style="--invertedness: 100%; width: 2em"
 									/>
 									The Brothers' War is now available!
-								</p>
-							</div>
-							<div class="news">
-								<em>October 20, 2022</em>
-								<p>
-									Players can now specify the set of their basic lands when exporting to Arena. This
-									setting can be found in the Basic Lands dropdown, just above the deck.
 								</p>
 							</div>
 						</div>
