@@ -73,9 +73,11 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+
 import constants from "../../../src/data/constants.json";
-import SetsInfos from "../../public/data/SetsInfos.json";
+import { SetCode, SetInfo, SetsInfos } from "../SetInfos";
 
 export default {
 	data() {
@@ -110,11 +112,11 @@ export default {
 		};
 	},
 	props: {
-		value: { type: Array, required: true },
+		value: { type: Object as PropType<SetCode[]>, required: true },
 	},
 	mounted() {
 		const assigned = this.blocks.map((b) => b.sets).flat();
-		let blocks = {};
+		let blocks: { [code: SetCode]: SetInfo[] } = {};
 		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 			let b = s.block;
 			if (!b && assigned.includes(s)) continue;
@@ -125,7 +127,7 @@ export default {
 		for (let b in blocks) this.blocks.push({ name: b, sets: blocks[b] });
 	},
 	methods: {
-		update(newVal) {
+		update(newVal: SetCode[]) {
 			this.$emit("input", newVal);
 		},
 		addAll() {
@@ -134,7 +136,7 @@ export default {
 		clear() {
 			this.update([]);
 		},
-		remove(arr) {
+		remove(arr: SetCode[]) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -142,7 +144,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		add(arr) {
+		add(arr: SetCode[]) {
 			const newVal = [...this.value];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
@@ -150,7 +152,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		toggle(s) {
+		toggle(s: SetCode) {
 			const newVal = [...this.value];
 			const index = newVal.indexOf(s);
 			if (index !== -1) {
@@ -160,7 +162,7 @@ export default {
 			}
 			this.update(newVal);
 		},
-		selected(s) {
+		selected(s: SetCode) {
 			return this.value.includes(s);
 		},
 	},

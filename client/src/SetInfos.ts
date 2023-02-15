@@ -1,5 +1,7 @@
+export type SetCode = string;
+
 export type SetInfo = {
-	code: string;
+	code: SetCode;
 	fullName: string;
 	cardCount: number;
 	isPrimary: boolean;
