@@ -3,7 +3,12 @@
 		<div class="loading"></div>
 		<span>Loading cards data...</span>
 	</div>
-	<div id="main-container" :style="`height: ${displayFixedDeck ? this.fixedDeckState.mainHeight : '100vh'}`" v-else>
+	<div
+		id="main-container"
+		:style="`height: ${displayFixedDeck ? this.fixedDeckState.mainHeight : '100vh'}`"
+		:class="{ 'using-fixed-deck': displayFixedDeck }"
+		v-else
+	>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>

@@ -210,7 +210,7 @@ export default {
 
 			fixedDeckState: {
 				ht: 400,
-				mainHeight: "100vh",
+				mainHeight: "100vh", // Applied in the template as an inlined style
 				y: 0,
 				dy: 0,
 			},
