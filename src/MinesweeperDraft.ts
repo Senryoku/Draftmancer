@@ -86,6 +86,16 @@ export class MinesweeperGrid {
 	}
 }
 
+export type MinesweeperSyncData = {
+	gridCount: number;
+	gridNumber: number;
+	picksPerGrid: number;
+	pickNumber: number;
+	currentPlayer: string;
+	grid: any;
+	lastPicks: PickSummary[];
+};
+
 export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	grids: Array<MinesweeperGrid> = [];
@@ -163,7 +173,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		return ret;
 	}
 
-	syncData() {
+	syncData(): MinesweeperSyncData {
 		const grid = this.strippedGrid();
 		return {
 			gridCount: this.grids.length,

@@ -57,7 +57,10 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+import { MinesweeperSyncData } from "../../../src/MinesweeperDraft";
+
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ScaleSlider from "./ScaleSlider.vue";
@@ -68,7 +71,7 @@ export default {
 	},
 	components: { Card, CardPlaceholder, ScaleSlider },
 	props: {
-		state: { type: Object, required: true },
+		state: { type: Object as PropType<MinesweeperSyncData>, required: true },
 		currentPlayerUsername: { type: String, required: true },
 		picking: { type: Boolean, required: true },
 	},
@@ -76,12 +79,12 @@ export default {
 		this.$refs.grid.addEventListener("mousedown", this.gridOnMouseDown);
 	},
 	methods: {
-		pick(row, col) {
+		pick(row: number, col: number) {
 			if (this.picking && this.state.grid[row][col].state === 1) {
 				this.$emit("pick", row, col);
 			}
 		},
-		gridOnMouseDown(e) {
+		gridOnMouseDown(e: MouseEvent) {
 			this.gridScrollState = {
 				left: this.$refs.grid.scrollLeft,
 				top: this.$refs.grid.scrollTop,
@@ -92,7 +95,7 @@ export default {
 			document.addEventListener("mousemove", this.gridOnMouseMove);
 			document.addEventListener("mouseup", this.gridOnMouseUp);
 		},
-		gridOnMouseMove(e) {
+		gridOnMouseMove(e: MouseEvent) {
 			const dx = e.clientX - this.gridScrollState.x;
 			const dy = e.clientY - this.gridScrollState.y;
 			this.$refs.grid.scrollTop = this.gridScrollState.top - dy;
