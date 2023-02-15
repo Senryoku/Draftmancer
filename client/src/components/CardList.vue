@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { download, isEmpty } from "../helper.js";
+import { download, isEmpty } from "../helper";
 import CardOrder from "../cardorder.js";
 import CardListColumn from "./CardListColumn.vue";
 

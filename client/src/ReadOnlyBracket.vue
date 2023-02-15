@@ -25,7 +25,7 @@
 
 <script>
 import Vue from "vue";
-import { getUrlVars } from "./helper.js";
+import { getUrlVars } from "./helper.ts";
 import Bracket from "./components/Bracket.vue";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";

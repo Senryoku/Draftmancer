@@ -219,8 +219,8 @@
 </template>
 
 <script>
-import * as helper from "../helper.js";
-import { fireToast } from "../alerts.js";
+import * as helper from "../helper";
+import { fireToast } from "../alerts";
 
 import CardPool from "./CardPool.vue";
 import Decklist from "./Decklist.vue";

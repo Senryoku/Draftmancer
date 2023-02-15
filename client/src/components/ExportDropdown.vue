@@ -21,9 +21,9 @@
 
 <script lang="ts">
 import { exportToMTGA } from "../exportToMTGA.js";
-import { exportToMTGO } from "../exportToMTGO.js";
-import { fireToast } from "../alerts.js";
-import { copyToClipboard } from "../helper.js";
+import { exportToMTGO } from "../exportToMTGO";
+import { fireToast } from "../alerts";
+import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
 
 export default {

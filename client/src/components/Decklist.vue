@@ -82,8 +82,8 @@
 </template>
 
 <script>
-import { copyToClipboard } from "../helper.js";
-import { fireToast } from "../alerts.js";
+import { copyToClipboard } from "../helper.ts";
+import { fireToast } from "../alerts";
 import Modal from "./Modal.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
