@@ -1,5 +1,21 @@
 {
+	"include": ["**/*"],
 	"compilerOptions": {
-		"rootDir": "./src"
+		"allowJs": true,
+		"baseUrl": ".",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"paths": {
+			"@/*": ["src/*"]
+		},
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "esnext",
+		"resolveJsonModule": true,
+		"esModuleInterop": true
+	},
+	"vueCompilerOptions": {
+		"target": 2.7
 	}
 }

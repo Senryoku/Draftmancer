@@ -37,7 +37,14 @@ module.exports = {
 				use: { loader: "worker-loader" },
 			},
 			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
-			{ test: /\.tsx?$/, loader: "ts-loader" },
+			{
+				test: /\.tsx?$/,
+				loader: "ts-loader",
+				options: {
+					appendTsSuffixTo: [/\.vue$/],
+					transpileOnly: true,
+				},
+			},
 			{
 				test: /\.(woff(2)?|ttf|eot)$/,
 				type: "asset/resource",

@@ -1,28 +1,41 @@
 {
-	"env": {
-		"browser": true,
-		"es2020": true,
-		"node": true
-	},
-	"extends": ["eslint:recommended", "plugin:vue/essential", "prettier"],
-	"parserOptions": {
-		"ecmaVersion": 11,
-		"sourceType": "module"
-	},
-	"plugins": ["vue"],
-	"rules": {
-		"vue/script-setup-uses-vars": "off"
-	},
 	"overrides": [
 		// For Typescript files
 		{
 			"files": ["*.ts"],
+			"env": {
+				"es2020": true,
+				"node": true
+			},
 			"parser": "@typescript-eslint/parser",
 			"extends": ["eslint:recommended", "prettier", "plugin:@typescript-eslint/recommended"],
 			"plugins": ["@typescript-eslint"],
 			"rules": {
 				"no-param-reassign": "warn",
 				"@typescript-eslint/no-inferrable-types": ["off", { "ignoreRestArgs": true }]
+			}
+		},
+		{
+			"files": "client/*",
+			"env": {
+				"browser": true,
+				"es2020": true
+			},
+			"parser": "vue-eslint-parser",
+			"parserOptions": {
+				"parser": "@typescript-eslint/parser"
+			},
+			"extends": [
+				"plugin:vue/strongly-recommended",
+				"eslint:recommended",
+				"plugin:vue/essential",
+				"@vue/typescript/recommended",
+				"prettier"
+			],
+			"plugins": ["@typescript-eslint", "prettier"],
+			"rules": {
+				"prettier/prettier": "error",
+				"vue/no-multiple-template-root": "off"
 			}
 		}
 	]
