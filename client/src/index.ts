@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import cardCachePlugin from "./vueCardCache.js";
+import cardCachePlugin from "./vueCardCache";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 

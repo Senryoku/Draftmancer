@@ -1,10 +1,20 @@
 import Vue from "vue";
 import axios from "axios";
+import { CardID } from "../../src/CardTypes";
+
+declare module "vue/types/vue" {
+	interface Vue {
+		$cardCache: { [cardID: CardID]: any };
+	}
+}
 
 const cardCachePlugin = new Vue({
-	data: { cardCache: {} },
+	data() {
+		const r: { cardCache: { [cardID: CardID]: any } } = { cardCache: {} };
+		return r;
+	},
 	methods: {
-		request(cardID) {
+		request(cardID: CardID) {
 			// Note: This will always request the english version of the card data, regardless of the language prop.,
 			//	   but the all_parts (related cards) property doesn't seem to exist on translated cards anyway.
 			//     We could search for the translated cards from their english ID, but I'm not sure if that's worth it,
@@ -26,9 +36,9 @@ const cardCachePlugin = new Vue({
 			}
 			return null;
 		},
-		requestBulk(cardIDs) {
+		requestBulk(cardIDs: CardID[]): Promise<any[]> | null {
 			cardIDs = cardIDs.filter((cid) => !this.cardCache[cid]); // Request only missing cards
-			if (cardIDs.length === 0) return;
+			if (cardIDs.length === 0) return null;
 			let promises = [];
 			// Scryfall API accepts requests for maximum 75 cards at once.
 			if (cardIDs.length > 75) {
@@ -61,7 +71,7 @@ const cardCachePlugin = new Vue({
 			);
 			return Promise.all(promises);
 		},
-		get(cardID) {
+		get(cardID: CardID) {
 			this.request(cardID);
 			return this.cardCache[cardID];
 		},
