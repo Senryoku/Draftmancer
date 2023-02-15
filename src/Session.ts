@@ -49,6 +49,7 @@ import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
+import { PickSummary } from "./PickSummary";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -248,7 +249,7 @@ export class GridDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	error: any;
 	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: (UniqueCard | null)[] }[] = [];
+	lastPicks: PickSummary[] = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("grid");
 		this.players = players;
@@ -288,7 +289,7 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	boosterNumber = 0;
 	boosters: Array<Array<UniqueCard>> = [];
 	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: UniqueCard[] }[] = [];
+	lastPicks: PickSummary[] = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("rochester");
 		this.players = players;
@@ -1197,13 +1198,13 @@ export class Session implements IIndexable {
 
 		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
-		const pickedCards = [];
+		const pickedCards: UniqueCard[] = [];
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
-				pickedCards.push(s.boosters[0][idx]);
+				pickedCards.push(s.boosters[0][idx] as UniqueCard);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
 			}

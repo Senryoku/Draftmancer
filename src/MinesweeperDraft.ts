@@ -1,6 +1,7 @@
 import { Card } from "./Cards.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
+import { PickSummary } from "./PickSummary";
 import { negMod, Options } from "./utils.js";
 
 export enum MinesweeperCellState {
@@ -93,7 +94,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	pickNumber = 0;
 	gridNumber = 0;
 	picksPerGrid = 2;
-	lastPicks: { userName: string; round: number; cards: Card[] }[] = [];
+	lastPicks: PickSummary[] = [];
 
 	// Warning: this will empty the packs.
 	constructor(

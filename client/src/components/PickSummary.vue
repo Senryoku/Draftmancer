@@ -12,13 +12,15 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+import { PickSummary } from "../../../src/PickSummary";
 import Card from "./Card.vue";
 
 export default {
 	components: { Card },
 	props: {
-		picks: { type: Array, required: true },
+		picks: { type: Object as PropType<PickSummary[]>, required: true },
 	},
 };
 </script>
