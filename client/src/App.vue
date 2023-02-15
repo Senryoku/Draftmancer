@@ -3,7 +3,12 @@
 		<div class="loading"></div>
 		<span>Loading cards data...</span>
 	</div>
-	<div id="main-container" v-else>
+	<div
+		id="main-container"
+		:style="`height: ${displayFixedDeck ? this.fixedDeckState.mainHeight : '100vh'}`"
+		:class="{ 'using-fixed-deck': displayFixedDeck }"
+		v-else
+	>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -90,6 +95,18 @@
 				</button>
 			</div>
 			<span style="display: flex; gap: 0.75em; align-items: center; margin-right: 0.25em">
+				<div style="min-width: 20px; text-align: center">
+					<i
+						class="fas clickable fa-thumbtack"
+						style="font-size: 1.2em; vertical-align: -20%"
+						:class="{ faded: !fixedDeck, crossed: !fixedDeck }"
+						@click="fixedDeck = !fixedDeck"
+						v-tooltip="{
+							content: `Deck always visible: <strong>${fixedDeck ? 'Enabled' : 'Disabled'}</strong>`,
+							html: true,
+						}"
+					/>
+				</div>
 				<div style="min-width: 20px; text-align: center">
 					<i
 						class="fas clickable fa-mouse-pointer"
@@ -817,794 +834,855 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Draft Controls -->
-		<div v-if="drafting || draftingState === DraftState.Watching" id="draft-container" class="generic-container">
-			<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
-				<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
-					<div class="draft-watching-state">
-						<h1 v-if="!drafting">Draft Completed</h1>
-						<h1 v-else-if="!draftPaused">Players are drafting...</h1>
-						<h1 v-else>Draft Paused</h1>
-						<div v-if="drafting">Pack #{{ boosterNumber + 1 }}</div>
-						<div v-else>Players are now brewing their decks</div>
-					</div>
-					<div v-if="draftLogLive && draftLogLive.sessionID === sessionID" class="draft-watching-live-log">
-						<draft-log-live
-							:draftlog="draftLogLive"
-							:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
-							:language="language"
-							:key="draftLogLive.time"
-							ref="draftloglive"
-						></draft-log-live>
-					</div>
-				</div>
-				<div
-					v-if="(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster"
-					:key="`draft-picking-${boosterNumber}-${pickNumber}`"
-					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-				>
-					<div id="booster-controls" class="section-title">
-						<h2 style="white-space: nowrap">Your Booster ({{ booster.length }})</h2>
-						<div class="controls" style="flex-grow: 2">
-							<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
-							<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
-								<i class="fas fa-clock"></i><span>{{ pickTimer }}</span>
-							</span>
-							<template v-if="draftingState == DraftState.Picking">
-								<input
-									type="button"
-									@click="pickCard"
-									value="Confirm Pick"
-									v-if="
-										selectedCards.length === cardsToPick &&
-										burningCards.length === cardsToBurnThisRound
-									"
-								/>
-								<span v-else>
-									<span v-if="cardsToPick === 1">Pick a card</span>
-									<span v-else>
-										Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
-									</span>
-									<span v-if="cardsToBurnThisRound === 1"> and remove a card from the pool.</span>
-									<span v-else-if="cardsToBurnThisRound > 1">
-										and remove {{ cardsToBurnThisRound }} cards from the pool ({{
-											burningCards.length
-										}}/{{ cardsToBurnThisRound }}).
-									</span>
-								</span>
-							</template>
-							<template v-else>
-								<i class="fas fa-spinner fa-spin"></i>
-								Waiting for other players to pick...
-							</template>
+		<div class="main-content">
+			<!-- Draft Controls -->
+			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
+				<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
+					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
+						<div class="draft-watching-state">
+							<h1 v-if="!drafting">Draft Completed</h1>
+							<h1 v-else-if="!draftPaused">Players are drafting...</h1>
+							<h1 v-else>Draft Paused</h1>
+							<div v-if="drafting">Pack #{{ boosterNumber + 1 }}</div>
+							<div v-else>Players are now brewing their decks</div>
 						</div>
-						<scale-slider v-model.number="boosterCardScale" style="float: right" />
-					</div>
-					<transition-group
-						tag="div"
-						name="booster-cards"
-						class="booster card-container"
-						:class="{ 'booster-waiting': draftingState === DraftState.Waiting }"
-					>
-						<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
-							<i
-								class="fas passing-order"
-								:class="{
-									'fa-angle-double-left': boosterNumber % 2 == 1,
-									'fa-angle-double-right': boosterNumber % 2 == 0,
-								}"
-								v-show="booster.length > 0"
-							></i>
-							<span>
-								<div><div class="spinner"></div></div>
-							</span>
-							<i
-								class="fas passing-order"
-								:class="{
-									'fa-angle-double-left': boosterNumber % 2 == 1,
-									'fa-angle-double-right': boosterNumber % 2 == 0,
-								}"
-								v-show="booster.length > 0"
-							></i>
-						</div>
-						<booster-card
-							v-for="(card, idx) in booster"
-							:key="`card-booster-${card.uniqueID}`"
-							:card="card"
-							:language="language"
-							:canbeburned="burnedCardsPerRound > 0"
-							:burned="burningCards.includes(card)"
-							:class="{ selected: selectedCards.includes(card) }"
-							@click.native="selectCard($event, card)"
-							@dblclick.native="doubleClickCard($event, card)"
-							@burn="burnCard($event, card)"
-							@restore="restoreCard($event, card)"
-							draggable
-							@dragstart.native="dragBoosterCard($event, card)"
-							:hasenoughwildcards="hasEnoughWildcards(card)"
-							:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-							:botscore="
-								draftingState !== DraftState.Waiting &&
-								botScores &&
-								botScores.scores &&
-								displayBotScores
-									? botScores.scores[idx]
-									: null
-							"
-							:botpicked="
-								draftingState !== DraftState.Waiting &&
-								botScores &&
-								displayBotScores &&
-								idx === botScores.chosenOption
-							"
-							:scale="boosterCardScale"
-						></booster-card>
-					</transition-group>
-				</div>
-			</transition>
-			<!-- Winston Draft -->
-			<div
-				class="container"
-				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-				v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
-			>
-				<div class="section-title">
-					<h2>Winston Draft</h2>
-					<div class="controls">
-						<span>
-							<template v-if="userID === winstonDraftState.currentPlayer"
-								>Your turn to pick a pile of cards!</template
-							>
-							<template v-else>
-								Waiting for
-								{{
-									winstonDraftState.currentPlayer in userByID
-										? userByID[winstonDraftState.currentPlayer].userName
-										: "(Disconnected)"
-								}}...
-							</template>
-							There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
-						</span>
-					</div>
-				</div>
-				<div class="winston-piles">
-					<div
-						v-for="(pile, index) in winstonDraftState.piles"
-						:key="`winston-pile-${index}`"
-						class="winston-pile"
-						:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
-					>
-						<template
-							v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile"
+						<div
+							v-if="draftLogLive && draftLogLive.sessionID === sessionID"
+							class="draft-watching-live-log"
 						>
-							<div class="card-column winstom-card-column">
-								<card
-									v-for="card in pile"
-									:key="card.uniqueID"
-									:card="card"
-									:language="language"
-								></card>
-							</div>
-							<div class="winston-current-pile-options">
-								<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
-								<button class="stop" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
-									Skip Pile
-									<span v-show="index === 2">and Draw</span>
-								</button>
-							</div>
-						</template>
-						<template v-else>
-							<div class="card-column winstom-card-column">
-								<div v-for="card in pile" :key="card.uniqueID" class="card">
-									<card-placeholder></card-placeholder>
-								</div>
-							</div>
-							<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
-								{{ userByID[winstonDraftState.currentPlayer].userName }} is looking at this pile...
-							</div>
-						</template>
+							<draft-log-live
+								:draftlog="draftLogLive"
+								:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
+								:language="language"
+								:key="draftLogLive.time"
+								ref="draftloglive"
+							></draft-log-live>
+						</div>
 					</div>
-				</div>
-			</div>
-			<!-- Grid Draft -->
-			<div
-				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-				v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
-			>
-				<div class="section-title">
-					<h2>Grid Draft</h2>
-					<div class="controls">
-						<span>
-							Pack #{{
-								Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
-							}}/{{ gridDraftState.boosterCount }}
-						</span>
-						<span>
-							<template v-if="userID === gridDraftState.currentPlayer">
-								<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
-							</template>
-							<template v-else-if="gridDraftState.currentPlayer === null">
-								<template v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount">
-									This was the last booster! Let me push these booster wrappers off the table...
-								</template>
-								<template v-else>Advancing to the next booster...</template>
-							</template>
-							<template v-else>
-								<i class="fas fa-spinner fa-spin"></i>
-								Waiting for
-								{{
-									gridDraftState.currentPlayer in userByID
-										? userByID[gridDraftState.currentPlayer].userName
-										: "(Disconnected)"
-								}}...
-							</template>
-						</span>
-					</div>
-				</div>
-				<grid-draft
-					:state="gridDraftState"
-					:picking="userID === gridDraftState.currentPlayer"
-					@pick="gridDraftPick"
-				></grid-draft>
-			</div>
-			<!-- Rochester Draft -->
-			<div
-				class="rochester-container"
-				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-				v-if="draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting"
-			>
-				<div style="flex-grow: 1">
-					<div class="section-title controls">
-						<h2>Rochester Draft</h2>
-						<div class="controls">
-							<span>
-								Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
-									rochesterDraftState.boosterCount
-								}}, Pick #{{ rochesterDraftState.pickNumber + 1 }}
-							</span>
-							<template v-if="userID === rochesterDraftState.currentPlayer">
-								<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
-								<span>
+					<div
+						v-if="(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster"
+						:key="`draft-picking-${boosterNumber}-${pickNumber}`"
+						class="container"
+						:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					>
+						<div id="booster-controls" class="section-title">
+							<h2 style="white-space: nowrap">Your Booster ({{ booster.length }})</h2>
+							<div class="controls" style="flex-grow: 2">
+								<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
+								<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
+									<i class="fas fa-clock"></i><span>{{ pickTimer }}</span>
+								</span>
+								<template v-if="draftingState == DraftState.Picking">
 									<input
 										type="button"
 										@click="pickCard"
 										value="Confirm Pick"
-										v-if="selectedCards.length === cardsToPick"
+										v-if="
+											selectedCards.length === cardsToPick &&
+											burningCards.length === cardsToBurnThisRound
+										"
 									/>
-								</span>
-							</template>
-							<template v-else>
-								<span>
+									<span v-else>
+										<span v-if="cardsToPick === 1">Pick a card</span>
+										<span v-else>
+											Pick {{ cardsToPick }} cards ({{ selectedCards.length }}/{{ cardsToPick }})
+										</span>
+										<span v-if="cardsToBurnThisRound === 1"> and remove a card from the pool.</span>
+										<span v-else-if="cardsToBurnThisRound > 1">
+											and remove {{ cardsToBurnThisRound }} cards from the pool ({{
+												burningCards.length
+											}}/{{ cardsToBurnThisRound }}).
+										</span>
+									</span>
+								</template>
+								<template v-else>
 									<i class="fas fa-spinner fa-spin"></i>
-									Waiting for
-									{{
-										rochesterDraftState.currentPlayer in userByID
-											? userByID[rochesterDraftState.currentPlayer].userName
-											: "(Disconnected)"
-									}}...
-								</span>
-							</template>
+									Waiting for other players to pick...
+								</template>
+							</div>
+							<scale-slider v-model.number="boosterCardScale" style="float: right" />
 						</div>
-					</div>
-					<transition-group name="booster-cards" tag="div" class="booster card-container">
-						<template v-if="userID === rochesterDraftState.currentPlayer">
+						<transition-group
+							tag="div"
+							name="booster-cards"
+							class="booster card-container"
+							:class="{ 'booster-waiting': draftingState === DraftState.Waiting }"
+						>
+							<div class="wait" key="wait" v-if="draftingState === DraftState.Waiting">
+								<i
+									class="fas passing-order"
+									:class="{
+										'fa-angle-double-left': boosterNumber % 2 == 1,
+										'fa-angle-double-right': boosterNumber % 2 == 0,
+									}"
+									v-show="booster.length > 0"
+								></i>
+								<span>
+									<div><div class="spinner"></div></div>
+								</span>
+								<i
+									class="fas passing-order"
+									:class="{
+										'fa-angle-double-left': boosterNumber % 2 == 1,
+										'fa-angle-double-right': boosterNumber % 2 == 0,
+									}"
+									v-show="booster.length > 0"
+								></i>
+							</div>
 							<booster-card
-								v-for="card in rochesterDraftState.booster"
+								v-for="(card, idx) in booster"
 								:key="`card-booster-${card.uniqueID}`"
 								:card="card"
 								:language="language"
-								:canbeburned="false"
+								:canbeburned="burnedCardsPerRound > 0"
+								:burned="burningCards.includes(card)"
 								:class="{ selected: selectedCards.includes(card) }"
 								@click.native="selectCard($event, card)"
 								@dblclick.native="doubleClickCard($event, card)"
+								@burn="burnCard($event, card)"
+								@restore="restoreCard($event, card)"
 								draggable
 								@dragstart.native="dragBoosterCard($event, card)"
 								:hasenoughwildcards="hasEnoughWildcards(card)"
 								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+								:botscore="
+									draftingState !== DraftState.Waiting &&
+									botScores &&
+									botScores.scores &&
+									displayBotScores
+										? botScores.scores[idx]
+										: null
+								"
+								:botpicked="
+									draftingState !== DraftState.Waiting &&
+									botScores &&
+									displayBotScores &&
+									idx === botScores.chosenOption
+								"
+								:scale="boosterCardScale"
 							></booster-card>
-						</template>
-						<template v-else>
-							<booster-card
-								v-for="card in rochesterDraftState.booster"
-								:key="`card-booster-${card.uniqueID}`"
-								:card="card"
-								:language="language"
-								:hasenoughwildcards="hasEnoughWildcards(card)"
-								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
-							></booster-card>
-						</template>
-					</transition-group>
-				</div>
-				<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
-			</div>
-			<transition name="fade">
-				<div
-					v-if="draftPaused && !waitingForDisconnectedUsers && !(userID === sessionOwner && !ownerIsPlayer)"
-					class="disconnected-user-popup-container"
-				>
-					<div class="disconnected-user-popup">
-						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
-							<div class="swal2-icon-content">!</div>
-						</div>
-						<h1>Draft Paused</h1>
-						<template v-if="userID === sessionOwner">
-							<div style="margin-top: 1em">
-								<button class="confirm" @click="resumeDraft"><i class="fas fa-play"></i> Resume</button>
-							</div>
-						</template>
-						<template v-else> Wait for the session owner to resume. </template>
+						</transition-group>
 					</div>
-				</div>
-			</transition>
-			<!-- Minesweeper Draft -->
-			<minesweeper-draft
-				:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-				v-if="
-					draftingState === DraftState.MinesweeperPicking || draftingState === DraftState.MinesweeperWaiting
-				"
-				:state="minesweeperDraftState"
-				:currentPlayerUsername="
-					minesweeperDraftState.currentPlayer in userByID
-						? userByID[minesweeperDraftState.currentPlayer].userName
-						: minesweeperDraftState.currentPlayer == ''
-						? ''
-						: '(Disconnected)'
-				"
-				:picking="userID === minesweeperDraftState.currentPlayer"
-				@pick="minesweeperDraftPick"
-			></minesweeper-draft>
-			<team-sealed
-				v-if="draftingState === DraftState.TeamSealed"
-				:language="language"
-				:state="teamSealedState"
-				:users="sessionUsers"
-				@pick="teamSealedPick"
-			></team-sealed>
-			<!-- Disconnected User(s) Modal -->
-			<transition name="fade">
-				<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
-					<div class="disconnected-user-popup">
-						<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
-							<div class="swal2-icon-content">!</div>
+				</transition>
+				<!-- Winston Draft -->
+				<div
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
+				>
+					<div class="section-title">
+						<h2>Winston Draft</h2>
+						<div class="controls">
+							<span>
+								<template v-if="userID === winstonDraftState.currentPlayer"
+									>Your turn to pick a pile of cards!</template
+								>
+								<template v-else>
+									Waiting for
+									{{
+										winstonDraftState.currentPlayer in userByID
+											? userByID[winstonDraftState.currentPlayer].userName
+											: "(Disconnected)"
+									}}...
+								</template>
+								There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
+							</span>
 						</div>
-						<h1>Player(s) disconnected</h1>
-
+					</div>
+					<div class="winston-piles">
 						<div
-							v-if="
-								this.winstonDraftState ||
-								this.gridDraftState ||
-								this.rochesterDraftState ||
-								this.minesweeperDraftState
-							"
+							v-for="(pile, index) in winstonDraftState.piles"
+							:key="`winston-pile-${index}`"
+							class="winston-pile"
+							:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
 						>
-							{{ `Wait for ${disconnectedUserNames} to come back...` }}
-						</div>
-						<div v-else>
-							<template v-if="userID === sessionOwner">
-								{{ `Wait for ${disconnectedUserNames} to come back, or...` }}
-								<div style="margin-top: 1em">
-									<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">
-										Replace them by bot(s)
+							<template
+								v-if="
+									userID === winstonDraftState.currentPlayer &&
+									index === winstonDraftState.currentPile
+								"
+							>
+								<div class="card-column winstom-card-column">
+									<card
+										v-for="card in pile"
+										:key="card.uniqueID"
+										:card="card"
+										:language="language"
+									></card>
+								</div>
+								<div class="winston-current-pile-options">
+									<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
+									<button class="stop" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
+										Skip Pile
+										<span v-show="index === 2">and Draw</span>
 									</button>
 								</div>
 							</template>
 							<template v-else>
-								{{
-									`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`
-								}}
-							</template>
-						</div>
-					</div>
-				</div>
-			</transition>
-		</div>
-
-		<!-- Brewing controls (Deck & Sideboard) -->
-		<div
-			class="container deck-container"
-			v-show="
-				(deck !== undefined && deck.length > 0) ||
-				(drafting && draftingState !== DraftState.Watching) ||
-				draftingState == DraftState.Brewing
-			"
-		>
-			<div class="deck">
-				<card-pool
-					:cards="deck"
-					:language="language"
-					:click="deckToSideboard"
-					:readOnly="false"
-					@cardPoolChange="onDeckChange"
-					ref="deckDisplay"
-					group="deck"
-					@dragover.native="allowBoosterCardDrop($event)"
-					@drop.native="dropBoosterCard($event)"
-					:filter="deckFilter"
-				>
-					<template v-slot:title>
-						Deck ({{ deck.length
-						}}<span
-							v-show="draftingState == DraftState.Brewing && totalLands > 0"
-							v-tooltip="'Added basics on export (Not shown in decklist below).'"
-						>
-							+ {{ totalLands }}</span
-						>)
-					</template>
-					<template v-slot:controls>
-						<ExportDropdown
-							v-if="deck.length > 0"
-							:language="language"
-							:deck="deck"
-							:sideboard="sideboard"
-							:options="{
-								lands: lands,
-								preferedBasics: preferedBasics,
-								sideboardBasics: sideboardBasics,
-							}"
-						/>
-						<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
-							<i class="fas fa-chart-pie fa-lg" v-tooltip.top="'Deck Statistics'"></i>
-							<div class="deck-stat" v-tooltip="'Creatures in deck'">
-								{{ deckCreatureCount }}
-								<img src="./assets/img/Creature.svg" />
-							</div>
-							<div class="deck-stat" v-tooltip="'Lands in deck'">
-								{{ deckLandCount }}
-								<img src="./assets/img/Land_symbol_white.svg" />
-							</div>
-						</div>
-						<land-control
-							v-if="draftingState === DraftState.Brewing"
-							:lands="lands"
-							:autoland.sync="autoLand"
-							:targetDeckSize.sync="targetDeckSize"
-							:sideboardBasics.sync="sideboardBasics"
-							:preferedBasics.sync="preferedBasics"
-							:otherbasics="basicsInDeck"
-							@removebasics="removeBasicsFromDeck"
-							@update:lands="(c, n) => (lands[c] = n)"
-						>
-						</land-control>
-						<dropdown
-							v-if="displayWildcardInfo && neededWildcards"
-							v-tooltip.top="{
-								content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
-								html: true,
-							}"
-							minwidth="8em"
-						>
-							<template v-slot:handle>
-								<span style="display: flex; justify-content: space-around">
-									<span
-										:class="{
-											yellow:
-												collectionInfos.wildcards &&
-												collectionInfos.wildcards['rare'] < neededWildcards.main.rare,
-										}"
-									>
-										<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
-										{{ neededWildcards.main.rare }}
-									</span>
-									<span
-										:class="{
-											yellow:
-												collectionInfos.wildcards &&
-												collectionInfos.wildcards['mythic'] < neededWildcards.main.mythic,
-										}"
-									>
-										<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
-										{{ neededWildcards.main.mythic }}
-									</span>
-								</span>
-							</template>
-							<template v-slot:dropdown>
-								<table style="margin: auto">
-									<tr
-										v-for="(value, rarity) in neededWildcards.main"
-										:key="rarity"
-										:class="{
-											yellow:
-												collectionInfos.wildcards && collectionInfos.wildcards[rarity] < value,
-										}"
-									>
-										<td><img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" /></td>
-										<td>{{ value }}</td>
-										<td>({{ neededWildcards.side[rarity] }})</td>
-										<template v-if="collectionInfos && collectionInfos.wildcards">
-											<td style="font-size: 0.75em; color: #bbb">/</td>
-											<td style="font-size: 0.75em; color: #bbb">
-												{{ collectionInfos.wildcards[rarity] }}
-											</td>
-										</template>
-									</tr>
-								</table>
-
-								<div
-									v-if="collectionInfos.vaultProgress"
-									v-tooltip.right="
-										'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
-									"
-									style="
-										display: flex;
-										align-items: center;
-										justify-content: space-evenly;
-										margin: 0.25em 0 0 0;
-									"
-								>
-									<img src="./assets/img/vault.png" style="height: 1.5rem" /><span
-										style="font-size: 0.8em"
-										>{{ collectionInfos.vaultProgress }}%</span
-									>
+								<div class="card-column winstom-card-column">
+									<div v-for="card in pile" :key="card.uniqueID" class="card">
+										<card-placeholder></card-placeholder>
+									</div>
+								</div>
+								<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
+									{{ userByID[winstonDraftState.currentPlayer].userName }} is looking at this pile...
 								</div>
 							</template>
-						</dropdown>
-						<div
-							class="input-delete-icon"
-							v-tooltip.top="'Quick search for English card names and types in your deck/sideboard.'"
-						>
-							<input type="text" placeholder="Search..." v-model="deckFilter" /><span
-								@click="deckFilter = ''"
-								><i class="fas fa-times-circle"></i
-							></span>
 						</div>
-					</template>
-					<template v-slot:empty>
-						<h3>Your deck is currently empty!</h3>
-						<p>Click on cards in your sideboard to move them here.</p>
-					</template>
-				</card-pool>
-			</div>
-			<!-- Collapsed Sideboard -->
-			<div
-				v-if="
-					collapseSideboard &&
-					((sideboard != undefined && sideboard.length > 0) ||
-						(drafting && draftingState !== DraftState.Watching) ||
-						draftingState == DraftState.Brewing)
-				"
-				class="collapsed-sideboard"
-			>
-				<div class="section-title">
-					<h2>Sideboard ({{ sideboard.length }})</h2>
-					<div class="controls">
-						<i
-							class="far fa-window-maximize clickable"
-							@click="collapseSideboard = false"
-							v-tooltip="'Maximize sideboard'"
-						></i>
 					</div>
 				</div>
+				<!-- Grid Draft -->
 				<div
-					class="card-container"
-					@dragover="allowBoosterCardDrop($event)"
-					@drop="dropBoosterCard($event, { toSideboard: true })"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
 				>
-					<draggable
-						:key="`${_uid}_col`"
-						class="card-column drag-column"
-						:list="sideboard"
-						group="deck"
-						@change="onCollapsedSideChange"
-						:animation="200"
+					<div class="section-title">
+						<h2>Grid Draft</h2>
+						<div class="controls">
+							<span>
+								Pack #{{
+									Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
+								}}/{{ gridDraftState.boosterCount }}
+							</span>
+							<span>
+								<template v-if="userID === gridDraftState.currentPlayer">
+									<i class="fas fa-exclamation-circle"></i> It's your turn! Pick a column or a row.
+								</template>
+								<template v-else-if="gridDraftState.currentPlayer === null">
+									<template
+										v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
+									>
+										This was the last booster! Let me push these booster wrappers off the table...
+									</template>
+									<template v-else>Advancing to the next booster...</template>
+								</template>
+								<template v-else>
+									<i class="fas fa-spinner fa-spin"></i>
+									Waiting for
+									{{
+										gridDraftState.currentPlayer in userByID
+											? userByID[gridDraftState.currentPlayer].userName
+											: "(Disconnected)"
+									}}...
+								</template>
+							</span>
+						</div>
+					</div>
+					<grid-draft
+						:state="gridDraftState"
+						:picking="userID === gridDraftState.currentPlayer"
+						@pick="gridDraftPick"
+					></grid-draft>
+				</div>
+				<!-- Rochester Draft -->
+				<div
+					class="rochester-container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					v-if="
+						draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting
+					"
+				>
+					<div style="flex-grow: 1">
+						<div class="section-title controls">
+							<h2>Rochester Draft</h2>
+							<div class="controls">
+								<span>
+									Pack #{{ rochesterDraftState.boosterNumber + 1 }}/{{
+										rochesterDraftState.boosterCount
+									}}, Pick #{{ rochesterDraftState.pickNumber + 1 }}
+								</span>
+								<template v-if="userID === rochesterDraftState.currentPlayer">
+									<span><i class="fas fa-exclamation-circle"></i> It's your turn! Pick a card. </span>
+									<span>
+										<input
+											type="button"
+											@click="pickCard"
+											value="Confirm Pick"
+											v-if="selectedCards.length === cardsToPick"
+										/>
+									</span>
+								</template>
+								<template v-else>
+									<span>
+										<i class="fas fa-spinner fa-spin"></i>
+										Waiting for
+										{{
+											rochesterDraftState.currentPlayer in userByID
+												? userByID[rochesterDraftState.currentPlayer].userName
+												: "(Disconnected)"
+										}}...
+									</span>
+								</template>
+							</div>
+						</div>
+						<transition-group name="booster-cards" tag="div" class="booster card-container">
+							<template v-if="userID === rochesterDraftState.currentPlayer">
+								<booster-card
+									v-for="card in rochesterDraftState.booster"
+									:key="`card-booster-${card.uniqueID}`"
+									:card="card"
+									:language="language"
+									:canbeburned="false"
+									:class="{ selected: selectedCards.includes(card) }"
+									@click.native="selectCard($event, card)"
+									@dblclick.native="doubleClickCard($event, card)"
+									draggable
+									@dragstart.native="dragBoosterCard($event, card)"
+									:hasenoughwildcards="hasEnoughWildcards(card)"
+									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+								></booster-card>
+							</template>
+							<template v-else>
+								<booster-card
+									v-for="card in rochesterDraftState.booster"
+									:key="`card-booster-${card.uniqueID}`"
+									:card="card"
+									:language="language"
+									:hasenoughwildcards="hasEnoughWildcards(card)"
+									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
+								></booster-card>
+							</template>
+						</transition-group>
+					</div>
+					<pick-summary :picks="rochesterDraftState.lastPicks"></pick-summary>
+				</div>
+				<transition name="fade">
+					<div
+						v-if="
+							draftPaused && !waitingForDisconnectedUsers && !(userID === sessionOwner && !ownerIsPlayer)
+						"
+						class="disconnected-user-popup-container"
 					>
-						<card
-							v-for="card in sideboard"
-							:key="`${_uid}_card_${card.uniqueID}`"
-							:card="card"
-							:language="language"
-							@click="sideboardToDeck($event, card)"
-							:filter="deckFilter"
-						></card>
-					</draggable>
-				</div>
-			</div>
-		</div>
-		<!-- Full size Sideboard -->
-		<div
-			v-show="
-				!collapseSideboard &&
-				((sideboard != undefined && sideboard.length > 0) ||
-					(drafting && draftingState !== DraftState.Watching) ||
-					draftingState == DraftState.Brewing)
-			"
-			class="container"
-		>
-			<card-pool
-				:cards="sideboard"
-				:language="language"
-				:click="sideboardToDeck"
-				:readOnly="false"
-				@cardPoolChange="onSideChange"
-				ref="sideboardDisplay"
-				group="deck"
-				@dragover.native="allowBoosterCardDrop($event)"
-				@drop.native="dropBoosterCard($event, { toSideboard: true })"
-				:filter="deckFilter"
-			>
-				<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
-				<template v-slot:controls>
-					<i
-						class="fas fa-columns clickable"
-						@click="collapseSideboard = true"
-						v-tooltip="'Minimize sideboard'"
-					></i>
-				</template>
-				<template v-slot:empty>
-					<h3>Your sideboard is currently empty!</h3>
-					<p>Click on cards in your deck to move them here.</p>
-				</template>
-			</card-pool>
-		</div>
+						<div class="disconnected-user-popup">
+							<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
+								<div class="swal2-icon-content">!</div>
+							</div>
+							<h1>Draft Paused</h1>
+							<template v-if="userID === sessionOwner">
+								<div style="margin-top: 1em">
+									<button class="confirm" @click="resumeDraft">
+										<i class="fas fa-play"></i> Resume
+									</button>
+								</div>
+							</template>
+							<template v-else> Wait for the session owner to resume. </template>
+						</div>
+					</div>
+				</transition>
+				<!-- Minesweeper Draft -->
+				<minesweeper-draft
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					v-if="
+						draftingState === DraftState.MinesweeperPicking ||
+						draftingState === DraftState.MinesweeperWaiting
+					"
+					:state="minesweeperDraftState"
+					:currentPlayerUsername="
+						minesweeperDraftState.currentPlayer in userByID
+							? userByID[minesweeperDraftState.currentPlayer].userName
+							: minesweeperDraftState.currentPlayer == ''
+							? ''
+							: '(Disconnected)'
+					"
+					:picking="userID === minesweeperDraftState.currentPlayer"
+					@pick="minesweeperDraftPick"
+				></minesweeper-draft>
+				<team-sealed
+					v-if="draftingState === DraftState.TeamSealed"
+					:language="language"
+					:state="teamSealedState"
+					:users="sessionUsers"
+					@pick="teamSealedPick"
+				></team-sealed>
+				<!-- Disconnected User(s) Modal -->
+				<transition name="fade">
+					<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">
+						<div class="disconnected-user-popup">
+							<div class="swal2-icon swal2-warning swal2-icon-show" style="display: flex">
+								<div class="swal2-icon-content">!</div>
+							</div>
+							<h1>Player(s) disconnected</h1>
 
-		<div class="welcome" v-if="draftingState === undefined">
-			<h1>Welcome to MTGADraft.tk!</h1>
-			<p class="important">
-				Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with them,
-				in pod!
-			</p>
-			<div class="welcome-sections">
-				<div class="container" style="grid-area: News">
-					<div class="section-title">
-						<h2>News</h2>
-					</div>
-					<div class="welcome-section">
-						<div class="news">
-							<em>January 27, 2023</em>
-							<p>
-								<img src="img/sets/one.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
-								Phyrexia: All Will Be One is now available!
-							</p>
-						</div>
-						<div class="news">
-							<em>December 13, 2022</em>
-							<p>
-								<img src="img/sets/dmr.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
-								Dominaria Remastered is now available in the 'More sets
-								<i class="fas fa-ellipsis-h"></i>' menu!
-							</p>
-						</div>
-						<div class="news">
-							<em>November 5, 2022</em>
-							<p>
-								<img src="img/sets/bro.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
-								The Brothers' War is now available!
-							</p>
-						</div>
-						<div class="news">
-							<em>October 20, 2022</em>
-							<p>
-								Players can now specify the set of their basic lands when exporting to Arena. This
-								setting can be found in the Basic Lands dropdown, just above the deck.
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="container" style="grid-area: Help">
-					<div class="section-title">
-						<h2>Help</h2>
-					</div>
-					<div class="welcome-section welcome-alt">
-						<div style="display: flex; justify-content: space-between">
-							<div>
-								<a @click="displayedModal = 'gettingStarted'"
-									><i class="fas fa-rocket"></i> Get Started</a
-								>
-								guide
-							</div>
-							<div>
-								<a @click="displayedModal = 'help'"
-									><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
-								>
-							</div>
-						</div>
-						<br />
-						For any question/bug report/feature request you can email to
-						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
-						or join the
-						<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
-					</div>
-				</div>
-				<div class="container" style="grid-area: Support">
-					<div class="section-title">
-						<h2>Sponsor</h2>
-					</div>
-					<div class="welcome-section welcome-alt" style="display: flex; gap: 0.5em">
-						<iframe
-							src="https://github.com/sponsors/Senryoku/button"
-							title="Sponsor Senryoku"
-							height="35"
-							width="116"
-							style="border: 0; margin: 0.25em"
-						></iframe>
-						<div>
-							Support MTGADraft on
-							<a href="https://github.com/sponsors/Senryoku" target="_blank">
-								<i class="fa fa-github"></i> GitHub Sponsor
-							</a>
-							to make sure it stays online and updated.
-						</div>
-					</div>
-				</div>
-				<div class="container" style="grid-area: Tools">
-					<div class="section-title">
-						<h2>Tools</h2>
-					</div>
-					<div class="welcome-section welcome-alt">
-						<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
-							<li>
-								<a @click="displayedModal = 'importdeck'"
-									><i class="fas fa-file-export"></i> Card List Importer</a
-								>
-							</li>
-							<li
-								v-tooltip="
-									'Download the intersection of the collections of players in the session in text format.'
+							<div
+								v-if="
+									this.winstonDraftState ||
+									this.gridDraftState ||
+									this.rochesterDraftState ||
+									this.minesweeperDraftState
 								"
 							>
-								<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
-									><i class="fas fa-file-download"></i> Download Session Collection</a
-								>
-							</li>
-						</ul>
-					</div>
-				</div>
-				<div class="container" style="grid-area: PublicSessions">
-					<div class="section-title">
-						<h2>Public Sessions</h2>
-					</div>
-					<div class="welcome-section">
-						<div v-if="userID === sessionOwner" style="display: flex">
-							<button @click="isPublic = !isPublic">
-								Set session as {{ isPublic ? "Private" : "Public" }}
-							</button>
-							<delayed-input
-								style="flex-grow: 1"
-								v-model="description"
-								type="text"
-								placeholder="Enter a description for your session"
-								maxlength="70"
-							/>
+								{{ `Wait for ${disconnectedUserNames} to come back...` }}
+							</div>
+							<div v-else>
+								<template v-if="userID === sessionOwner">
+									{{ `Wait for ${disconnectedUserNames} to come back, or...` }}
+									<div style="margin-top: 1em">
+										<button @click="socket.emit('replaceDisconnectedPlayers')" class="stop">
+											Replace them by bot(s)
+										</button>
+									</div>
+								</template>
+								<template v-else>
+									{{
+										`Wait for ${disconnectedUserNames} to come back or for the owner to replace them by bot(s).`
+									}}
+								</template>
+							</div>
 						</div>
+					</div>
+				</transition>
+			</div>
 
-						<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
-						<table v-else class="public-sessions">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Set(s)</th>
-									<th>Players</th>
-									<th>Description</th>
-									<th>Join</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="s in publicSessions" :key="s.id">
-									<td :title="s.id" class="id">{{ s.id }}</td>
-									<td
-										v-tooltip="
-											s.cube ? 'Cube' : s.sets.map((code) => setsInfos[code].fullName).join(', ')
+			<!-- Brewing controls (Deck & Sideboard) -->
+			<div
+				class="deck-and-sideboard-container"
+				:class="{ 'fixed-deck-and-sideboard-container': displayFixedDeck }"
+				v-show="displayDeckAndSideboard"
+				ref="fixedDeckContainer"
+			>
+				<div
+					class="deck-and-sideboard-container-resize-bar"
+					@mousedown="fixedDeckMouseDown"
+					v-if="displayFixedDeck"
+				></div>
+				<div class="deck-and-sideboard">
+					<i
+						@click="fixedDeck = false"
+						class="fa fa-times fa-lg fixed-deck-and-sideboard-close clickable"
+						aria-hidden="true"
+						v-if="displayFixedDeck"
+					></i>
+					<div
+						class="container deck-container"
+						v-show="
+							(deck !== undefined && deck.length > 0) ||
+							(drafting && draftingState !== DraftState.Watching) ||
+							draftingState === DraftState.Brewing
+						"
+					>
+						<div class="deck">
+							<card-pool
+								:cards="deck"
+								:language="language"
+								:click="deckToSideboard"
+								:readOnly="false"
+								@cardPoolChange="onDeckChange"
+								ref="deckDisplay"
+								group="deck"
+								@dragover.native="allowBoosterCardDrop($event)"
+								@drop.native="dropBoosterCard($event)"
+								:filter="deckFilter"
+							>
+								<template v-slot:title>
+									Deck ({{ deck.length
+									}}<span
+										v-show="draftingState == DraftState.Brewing && totalLands > 0"
+										v-tooltip="'Added basics on export (Not shown in decklist below).'"
+									>
+										+ {{ totalLands }}</span
+									>)
+								</template>
+								<template v-slot:controls>
+									<ExportDropdown
+										v-if="deck.length > 0"
+										:language="language"
+										:deck="deck"
+										:sideboard="sideboard"
+										:options="{
+											lands: lands,
+											preferedBasics: preferedBasics,
+											sideboardBasics: sideboardBasics,
+										}"
+									/>
+									<div class="deck-stat-container clickable" @click="displayedModal = 'deckStats'">
+										<i class="fas fa-chart-pie fa-lg" v-tooltip.top="'Deck Statistics'"></i>
+										<div class="deck-stat" v-tooltip="'Creatures in deck'">
+											{{ deckCreatureCount }}
+											<img src="./assets/img/Creature.svg" />
+										</div>
+										<div class="deck-stat" v-tooltip="'Lands in deck'">
+											{{ deckLandCount }}
+											<img src="./assets/img/Land_symbol_white.svg" />
+										</div>
+									</div>
+									<land-control
+										v-if="draftingState === DraftState.Brewing"
+										:lands="lands"
+										:autoland.sync="autoLand"
+										:targetDeckSize.sync="targetDeckSize"
+										:sideboardBasics.sync="sideboardBasics"
+										:preferedBasics.sync="preferedBasics"
+										:otherbasics="basicsInDeck"
+										@removebasics="removeBasicsFromDeck"
+										@update:lands="(c, n) => (lands[c] = n)"
+									>
+									</land-control>
+									<dropdown
+										v-if="displayWildcardInfo && neededWildcards"
+										v-tooltip.top="{
+											content: `Wildcards needed to craft this deck.<br>Main Deck (Sideboard) / Available`,
+											html: true,
+										}"
+										minwidth="8em"
+									>
+										<template v-slot:handle>
+											<span style="display: flex; justify-content: space-around">
+												<span
+													:class="{
+														yellow:
+															collectionInfos.wildcards &&
+															collectionInfos.wildcards['rare'] <
+																neededWildcards.main.rare,
+													}"
+												>
+													<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
+													{{ neededWildcards.main.rare }}
+												</span>
+												<span
+													:class="{
+														yellow:
+															collectionInfos.wildcards &&
+															collectionInfos.wildcards['mythic'] <
+																neededWildcards.main.mythic,
+													}"
+												>
+													<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
+													{{ neededWildcards.main.mythic }}
+												</span>
+											</span>
+										</template>
+										<template v-slot:dropdown>
+											<table style="margin: auto">
+												<tr
+													v-for="(value, rarity) in neededWildcards.main"
+													:key="rarity"
+													:class="{
+														yellow:
+															collectionInfos.wildcards &&
+															collectionInfos.wildcards[rarity] < value,
+													}"
+												>
+													<td>
+														<img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" />
+													</td>
+													<td>{{ value }}</td>
+													<td>({{ neededWildcards.side[rarity] }})</td>
+													<template v-if="collectionInfos && collectionInfos.wildcards">
+														<td style="font-size: 0.75em; color: #bbb">/</td>
+														<td style="font-size: 0.75em; color: #bbb">
+															{{ collectionInfos.wildcards[rarity] }}
+														</td>
+													</template>
+												</tr>
+											</table>
+
+											<div
+												v-if="collectionInfos.vaultProgress"
+												v-tooltip.right="
+													'Vault Progress. For every 100% you\'ll receive 1 mythic, 2 rare and 3 uncommon wildcards when opened.'
+												"
+												style="
+													display: flex;
+													align-items: center;
+													justify-content: space-evenly;
+													margin: 0.25em 0 0 0;
+												"
+											>
+												<img src="./assets/img/vault.png" style="height: 1.5rem" /><span
+													style="font-size: 0.8em"
+													>{{ collectionInfos.vaultProgress }}%</span
+												>
+											</div>
+										</template>
+									</dropdown>
+									<div
+										class="input-delete-icon"
+										v-tooltip.top="
+											'Quick search for English card names and types in your deck/sideboard.'
 										"
 									>
-										<template v-if="s.cube">
-											<img src="./assets/img/cube.png" class="set-icon" />
-										</template>
-										<template v-else-if="s.sets.length === 1">
-											<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
-										</template>
-										<template v-else-if="s.sets.length === 0">All</template>
-										<template v-else>[{{ s.sets.length }}]</template>
-									</td>
-									<td>{{ s.players }} / {{ s.maxPlayers }}</td>
-									<td class="desc">{{ s.description }}</td>
-									<td>
-										<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
-										<i class="fas fa-check green" v-tooltip="`You are in this session!`" v-else></i>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+										<input type="text" placeholder="Search..." v-model="deckFilter" /><span
+											@click="deckFilter = ''"
+											><i class="fas fa-times-circle"></i
+										></span>
+									</div>
+								</template>
+								<template v-slot:empty>
+									<h3>Your deck is currently empty!</h3>
+									<p>Click on cards in your sideboard to move them here.</p>
+								</template>
+							</card-pool>
+						</div>
+						<!-- Collapsed Sideboard -->
+						<div
+							v-if="
+								collapseSideboard &&
+								((sideboard != undefined && sideboard.length > 0) ||
+									(drafting && draftingState !== DraftState.Watching) ||
+									draftingState == DraftState.Brewing)
+							"
+							class="collapsed-sideboard"
+						>
+							<div class="section-title">
+								<h2>Sideboard ({{ sideboard.length }})</h2>
+								<div class="controls">
+									<i
+										class="far fa-window-maximize clickable"
+										@click="collapseSideboard = false"
+										v-tooltip="'Maximize sideboard'"
+									></i>
+								</div>
+							</div>
+							<div
+								class="card-container"
+								@dragover="allowBoosterCardDrop($event)"
+								@drop="dropBoosterCard($event, { toSideboard: true })"
+							>
+								<draggable
+									:key="`${_uid}_col`"
+									class="card-column drag-column"
+									:list="sideboard"
+									group="deck"
+									@change="onCollapsedSideChange"
+									:animation="200"
+								>
+									<card
+										v-for="card in sideboard"
+										:key="`${_uid}_card_${card.uniqueID}`"
+										:card="card"
+										:language="language"
+										@click="sideboardToDeck($event, card)"
+										:filter="deckFilter"
+									></card>
+								</draggable>
+							</div>
+						</div>
+					</div>
+					<!-- Full size Sideboard -->
+					<div
+						v-show="
+							!collapseSideboard &&
+							((sideboard != undefined && sideboard.length > 0) ||
+								(drafting && draftingState !== DraftState.Watching) ||
+								draftingState == DraftState.Brewing)
+						"
+						class="container"
+					>
+						<card-pool
+							:cards="sideboard"
+							:language="language"
+							:click="sideboardToDeck"
+							:readOnly="false"
+							@cardPoolChange="onSideChange"
+							ref="sideboardDisplay"
+							group="deck"
+							@dragover.native="allowBoosterCardDrop($event)"
+							@drop.native="dropBoosterCard($event, { toSideboard: true })"
+							:filter="deckFilter"
+						>
+							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
+							<template v-slot:controls>
+								<i
+									class="fas fa-columns clickable"
+									@click="collapseSideboard = true"
+									v-tooltip="'Minimize sideboard'"
+								></i>
+							</template>
+							<template v-slot:empty>
+								<h3>Your sideboard is currently empty!</h3>
+								<p>Click on cards in your deck to move them here.</p>
+							</template>
+						</card-pool>
+					</div>
+				</div>
+			</div>
+
+			<div class="welcome" v-if="draftingState === DraftState.None">
+				<h1>Welcome to MTGADraft.tk!</h1>
+				<p class="important">
+					Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with
+					them, in pod!
+				</p>
+				<div class="welcome-sections">
+					<div class="container" style="grid-area: News">
+						<div class="section-title">
+							<h2>News</h2>
+						</div>
+						<div class="welcome-section">
+							<div class="news">
+								<em>January 27, 2023</em>
+								<p>
+									<img
+										src="img/sets/one.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									Phyrexia: All Will Be One is now available!
+								</p>
+							</div>
+							<div class="news">
+								<em>December 13, 2022</em>
+								<p>
+									<img
+										src="img/sets/dmr.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									Dominaria Remastered is now available in the 'More sets
+									<i class="fas fa-ellipsis-h"></i>' menu!
+								</p>
+							</div>
+							<div class="news">
+								<em>November 5, 2022</em>
+								<p>
+									<img
+										src="img/sets/bro.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									The Brothers' War is now available!
+								</p>
+							</div>
+							<div class="news">
+								<em>October 20, 2022</em>
+								<p>
+									Players can now specify the set of their basic lands when exporting to Arena. This
+									setting can be found in the Basic Lands dropdown, just above the deck.
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="container" style="grid-area: Help">
+						<div class="section-title">
+							<h2>Help</h2>
+						</div>
+						<div class="welcome-section welcome-alt">
+							<div style="display: flex; justify-content: space-between">
+								<div>
+									<a @click="displayedModal = 'gettingStarted'"
+										><i class="fas fa-rocket"></i> Get Started</a
+									>
+									guide
+								</div>
+								<div>
+									<a @click="displayedModal = 'help'"
+										><i class="fas fa-info-circle"></i> FAQ / Settings Description</a
+									>
+								</div>
+							</div>
+							<br />
+							For any question/bug report/feature request you can email to
+							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+							or join the
+							<a href="https://discord.gg/XscXXNw"><i class="fab fa-discord"></i> MTGADraft Discord</a>.
+						</div>
+					</div>
+					<div class="container" style="grid-area: Support">
+						<div class="section-title">
+							<h2>Sponsor</h2>
+						</div>
+						<div class="welcome-section welcome-alt" style="display: flex; gap: 0.5em">
+							<iframe
+								src="https://github.com/sponsors/Senryoku/button"
+								title="Sponsor Senryoku"
+								height="35"
+								width="116"
+								style="border: 0; margin: 0.25em"
+							></iframe>
+							<div>
+								Support MTGADraft on
+								<a href="https://github.com/sponsors/Senryoku" target="_blank">
+									<i class="fa fa-github"></i> GitHub Sponsor
+								</a>
+								to make sure it stays online and updated.
+							</div>
+						</div>
+					</div>
+					<div class="container" style="grid-area: Tools">
+						<div class="section-title">
+							<h2>Tools</h2>
+						</div>
+						<div class="welcome-section welcome-alt">
+							<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
+								<li>
+									<a @click="displayedModal = 'importdeck'"
+										><i class="fas fa-file-export"></i> Card List Importer</a
+									>
+								</li>
+								<li
+									v-tooltip="
+										'Download the intersection of the collections of players in the session in text format.'
+									"
+								>
+									<a :href="encodeURI(`/getCollectionPlainText/${sessionID}`)" target="_blank"
+										><i class="fas fa-file-download"></i> Download Session Collection</a
+									>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="container" style="grid-area: PublicSessions">
+						<div class="section-title">
+							<h2>Public Sessions</h2>
+						</div>
+						<div class="welcome-section">
+							<div v-if="userID === sessionOwner" style="display: flex">
+								<button @click="isPublic = !isPublic">
+									Set session as {{ isPublic ? "Private" : "Public" }}
+								</button>
+								<delayed-input
+									style="flex-grow: 1"
+									v-model="description"
+									type="text"
+									placeholder="Enter a description for your session"
+									maxlength="70"
+								/>
+							</div>
+
+							<p v-if="publicSessions.length === 0" style="text-align: center">No public sessions</p>
+							<table v-else class="public-sessions">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Set(s)</th>
+										<th>Players</th>
+										<th>Description</th>
+										<th>Join</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="s in publicSessions" :key="s.id">
+										<td :title="s.id" class="id">{{ s.id }}</td>
+										<td
+											v-tooltip="
+												s.cube
+													? 'Cube'
+													: s.sets.map((code) => setsInfos[code].fullName).join(', ')
+											"
+										>
+											<template v-if="s.cube">
+												<img src="./assets/img/cube.png" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 1">
+												<img :src="setsInfos[s.sets[0]].icon" class="set-icon" />
+											</template>
+											<template v-else-if="s.sets.length === 0">All</template>
+											<template v-else>[{{ s.sets.length }}]</template>
+										</td>
+										<td>{{ s.players }} / {{ s.maxPlayers }}</td>
+										<td class="desc">{{ s.description }}</td>
+										<td>
+											<button v-if="s.id !== sessionID" @click="sessionID = s.id">Join</button>
+											<i
+												class="fas fa-check green"
+												v-tooltip="`You are in this session!`"
+												v-else
+											></i>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

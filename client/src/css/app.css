@@ -1,15 +1,33 @@
 @media only screen and (min-width: 800px) {
-	body {
+	body, #main-container {
 		overflow-x: hidden;
 	}
 }
 
+body {
+	overflow-y: hidden;
+}
+
+#main-container {
+	box-sizing: border-box;
+	position: relative;
+	overflow-y: auto;
+	height: 100vh;
+	padding-top: 0.25em;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+}
+
+#main-container .main-content {
+	flex-grow: 1;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
 footer {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	left: 0;
 	padding: 1em;
+	margin-top: 1em;
 	background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 	display: flex;
 	justify-content: flex-end;
@@ -67,11 +85,6 @@ select.swal2-input option {
 
 .disconnected-user-popup h1 {
 	margin-top: 0;
-}
-
-#main-container {
-	padding: 1em;
-	padding-top: 0.5em;
 }
 
 /* Inputs */
@@ -620,9 +633,7 @@ select.swal2-input option {
 
 .main-controls {
 	background-color: #333;
-	padding: 0.25em;
-	margin: 0.25em;
-	border-radius: 0.25em;
+	padding: 0.2em 0.5em;
 }
 
 .main-controls input[type="checkbox"] {
@@ -682,10 +693,12 @@ select.swal2-input option {
 
 .session-players {
 	background: #181818;
-	padding: 0.5em;
+	padding: 0.25em 0.5em;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	margin: 0 0.5em;
+	border-radius: 0.5em;
 }
 
 ul.player-list {
@@ -1539,4 +1552,51 @@ ul.player-list {
 	text-align: left;
 	font-size: 0.8em;
     white-space: pre-wrap;
+}
+
+.fixed-deck-and-sideboard-container {
+	box-sizing: border-box;
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 400px;
+	margin: 0px;
+	background-color: rgb(32, 32, 32);
+	z-index: 800;
+	box-shadow: 0 -4px 5px #000;
+
+}
+
+.deck-and-sideboard-container-resize-bar {
+	position: absolute;
+	top: -1px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: #888;
+	border-top: 1px solid #BBB;
+	border-bottom: 1px solid #222;
+	cursor: ns-resize;
+	z-index: 801;
+}
+
+.fixed-deck-and-sideboard-close {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+
+}
+
+.fixed-deck-and-sideboard-container .deck-and-sideboard {
+	box-sizing: border-box;
+	position: relative;
+	overflow: auto;
+	padding: 1em;
+	padding-top: 0;
+	max-height: 100%;
+}
+
+.fixed-deck-and-sideboard-container .deck-container {
+	margin-top: 0.25em;
 }

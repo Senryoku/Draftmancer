@@ -122,9 +122,14 @@ export default {
 	border-radius: 10px;
 	box-shadow: inset 0 0 8px #383838;
 	padding: 0.5em;
-	overflow: scroll;
+	overflow: auto;
 
 	max-height: 90vh;
+}
+
+/* Disable vertical scrolling when using the fixed deck feature*/
+.using-fixed-deck .minesweeper-draft {
+	max-height: initial;
 }
 
 .dragging {

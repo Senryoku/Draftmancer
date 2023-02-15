@@ -32,6 +32,7 @@ const img = new Image();
 img.src = CardBack;
 
 const DraftState = {
+	None: "None",
 	Waiting: "Waiting",
 	Picking: "Picking",
 	Brewing: "Brewing",
@@ -70,10 +71,11 @@ const defaultSettings = {
 	hideSessionID: false,
 	displayCollectionStatus: true,
 	displayBotScores: false,
+	fixedDeck: false,
 	pickOnDblclick: true,
 	enableSound: true,
 	enableNotifications: false,
-	collapseSideboard: false,
+	collapseSideboard: window.innerWidth > 1200,
 	sideboardBasics: 0,
 	preferedBasics: "",
 	boosterCardScale: 1,
@@ -202,8 +204,16 @@ export default {
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: undefined,
-			draftingState: undefined,
+			draftingState: DraftState.None,
 			displayBotScores: defaultSettings.displayBotScores,
+			fixedDeck: defaultSettings.fixedDeck,
+
+			fixedDeckState: {
+				ht: 400,
+				mainHeight: "100vh", // Applied in the template as an inlined style
+				y: 0,
+				dy: 0,
+			},
 			pickOnDblclick: defaultSettings.pickOnDblclick,
 			boosterCardScale: defaultSettings.boosterCardScale,
 			enableSound: defaultSettings.enableSound,
@@ -2639,6 +2649,36 @@ export default {
 			}
 			return false;
 		},
+
+		fixedDeckMouseDown(evt) {
+			this.fixedDeckState.x = evt.screenX;
+			this.fixedDeckState.y = evt.screenY;
+			document.body.addEventListener("mousemove", this.resizeDeck);
+			document.body.addEventListener("mouseup", () => {
+				document.body.removeEventListener("mousemove", this.resizeDeck);
+			});
+			evt.preventDefault();
+		},
+		resizeDeck(evt) {
+			if (!this.$refs.fixedDeckContainer) return;
+			this.fixedDeckState.dy = this.fixedDeckState.y - evt.screenY;
+			this.fixedDeckState.y = evt.screenY;
+			this.fixedDeckState.ht += this.fixedDeckState.dy;
+			this.fixedDeckState.ht = Math.min(
+				Math.max(this.fixedDeckState.ht, window.innerHeight * 0.2),
+				window.innerHeight * 0.8
+			);
+			this.applyFixedDeckSize();
+		},
+		applyFixedDeckSize() {
+			if (!this.$refs.fixedDeckContainer) return;
+			if (this.displayFixedDeck) {
+				this.$refs.fixedDeckContainer.style.height = this.fixedDeckState.ht + "px";
+				this.fixedDeckState.mainHeight = `calc(100vh - ${this.fixedDeckState.ht}px)`;
+			} else {
+				this.$refs.fixedDeckContainer.style.height = "auto";
+			}
+		},
 	},
 	computed: {
 		DraftState() {
@@ -2765,6 +2805,15 @@ export default {
 					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
+		displayDeckAndSideboard() {
+			return (
+				(this.drafting && this.draftingState !== DraftState.Watching) ||
+				this.draftingState === DraftState.Brewing
+			);
+		},
+		displayFixedDeck() {
+			return this.displayDeckAndSideboard && this.fixedDeck && this.draftingState !== DraftState.Brewing;
+		},
 
 		userByID() {
 			let r = {};
@@ -2829,7 +2878,9 @@ export default {
 
 			for (let key in Sounds) Sounds[key].volume = 0.4;
 			Sounds["countdown"].volume = 0.11;
-
+			this.$nextTick(() => {
+				this.applyFixedDeckSize();
+			});
 			this.ready = true;
 		} catch (e) {
 			alert(e);
@@ -2877,6 +2928,12 @@ export default {
 		},
 		displayBotScores() {
 			this.storeSettings();
+		},
+		fixedDeck() {
+			this.storeSettings();
+		},
+		displayFixedDeck() {
+			this.applyFixedDeckSize();
 		},
 		pickOnDblclick() {
 			this.storeSettings();
