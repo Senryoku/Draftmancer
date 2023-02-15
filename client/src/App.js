@@ -2671,6 +2671,7 @@ export default {
 			this.applyFixedDeckSize();
 		},
 		applyFixedDeckSize() {
+			if (!this.$refs.fixedDeckContainer) return;
 			if (this.displayFixedDeck) {
 				this.$refs.fixedDeckContainer.style.height = this.fixedDeckState.ht + "px";
 				this.fixedDeckState.mainHeight = `calc(100vh - ${this.fixedDeckState.ht}px)`;

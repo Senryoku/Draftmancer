@@ -836,11 +836,7 @@
 		</div>
 		<div class="main-content">
 			<!-- Draft Controls -->
-			<div
-				v-if="drafting || draftingState === DraftState.Watching"
-				id="draft-container"
-				class="generic-container"
-			>
+			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
 				<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
 					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
 						<div class="draft-watching-state">
