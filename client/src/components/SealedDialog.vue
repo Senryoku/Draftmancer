@@ -76,7 +76,7 @@ import Draggable from "vuedraggable";
 export default {
 	components: { Modal, Draggable },
 	props: {
-		users: { type: Object as PropType<UserData[]>, required: true },
+		users: { type: Array as PropType<UserData[]>, required: true },
 		teamSealed: { type: Boolean, default: false },
 	},
 	data() {

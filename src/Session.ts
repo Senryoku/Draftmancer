@@ -9,19 +9,14 @@ import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
 	Card,
-	Cards,
-	getUnique,
-	BoosterCardsBySet,
-	CardsBySet,
-	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
 	UniqueCard,
-	getCard,
+	UniqueCardID,
 	DeckBasicLands,
 	DeckList,
-	UniqueCardID,
-} from "./Cards.js";
+} from "./CardTypes.js";
+import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -50,6 +45,7 @@ import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
 import { PickSummary } from "./PickSummary";
+import { TeamSealedState } from "./TeamSealed.js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -315,23 +311,6 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 			boosterCount: this.boosterCount,
 			lastPicks: this.lastPicks,
 		};
-	}
-}
-
-class TeamSealedCard extends UniqueCard {
-	owner: UserID | null = null;
-}
-
-export class TeamSealedState extends IDraftState {
-	teamPools: Array<{ cards: TeamSealedCard[]; team: Array<UserID> }> = [];
-
-	constructor() {
-		super("teamSealed");
-	}
-
-	syncData(userID: UserID) {
-		for (const teamPool of this.teamPools) if (teamPool.team.includes(userID)) return teamPool;
-		return null;
 	}
 }
 

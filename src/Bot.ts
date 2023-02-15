@@ -7,7 +7,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { shuffleArray } from "./utils.js";
-import { Card, OracleID } from "./Cards";
+import { Card, OracleID } from "./CardTypes.js";
 
 const mtgdraftbotsAPITimeout = 3500;
 const MTGDraftbotsAuthToken = process.env.MTGDRAFTBOTS_AUTHTOKEN;

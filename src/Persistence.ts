@@ -14,8 +14,8 @@ import {
 	GridDraftState,
 	RochesterDraftState,
 	IIndexable,
-	TeamSealedState,
 } from "./Session.js";
+import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
 import Mixpanel from "mixpanel";

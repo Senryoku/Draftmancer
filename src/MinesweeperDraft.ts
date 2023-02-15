@@ -1,4 +1,4 @@
-import { Card } from "./Cards.js";
+import { Card } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { PickSummary } from "./PickSummary";

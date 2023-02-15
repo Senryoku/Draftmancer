@@ -101,11 +101,12 @@
 	</dropdown>
 </template>
 
-<script>
-import Constant from "../../../src/data/constants.json";
+<script lang="ts">
+import Constants from "../../../src/Constants";
 
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
+import { CardColor } from "../../../src/CardTypes";
 
 const DefaultPreferedBasicsMessage =
 	"Enter the set code of your prefered basic lands, or leave blank to get MTGA's default ones.";
@@ -121,16 +122,16 @@ export default {
 		otherbasics: { type: Boolean },
 	},
 	data() {
-		return { preferedBasicsError: null };
+		return { preferedBasicsError: null as string | null };
 	},
 	mounted() {
 		this.checkState();
 	},
 	methods: {
-		add(c) {
+		add(c: string) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] + 1));
 		},
-		rem(c) {
+		rem(c: string) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] - 1));
 		},
 		onPreferedBasicsError(/*event*/) {
@@ -151,8 +152,8 @@ export default {
 	computed: {
 		basicsImages() {
 			let r = [];
-			for (let c of ["W", "U", "B", "R", "G"]) {
-				const name = Constant.BasicLandNames["en"][c];
+			for (let c in CardColor) {
+				const name = Constants.BasicLandNames["en"][c as CardColor];
 				r.push(`https://api.scryfall.com/cards/named?exact=${name}&set=${this.preferedBasics}&format=image`);
 			}
 			return r;

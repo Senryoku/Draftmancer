@@ -1,3 +1,3 @@
-import { UniqueCard } from "./Cards";
+import { UniqueCard } from "./CardTypes.js";
 
 export type PickSummary = { userName: string; round: number; cards: UniqueCard[] };

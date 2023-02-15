@@ -5,13 +5,16 @@
 	</card>
 </template>
 
-<script>
-import Card from "./Card.vue";
+<script lang="ts">
+import { PropType } from "vue";
+import { Card } from "../../../src/CardTypes";
+import CardComponent from "./Card.vue";
+
 export default {
 	name: "MissingCard",
-	components: { Card },
+	components: { Card: CardComponent },
 	props: {
-		card: { type: Object, required: true },
+		card: { type: Object as PropType<Card & { count: number }>, required: true },
 		language: { type: String, default: "en" },
 	},
 };

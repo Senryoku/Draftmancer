@@ -1,5 +1,6 @@
 import { weightedRandomIdx } from "./BoosterFactory.js";
-import { CardID, getUnique, UniqueCard } from "./Cards.js";
+import { CardID, UniqueCard } from "./CardTypes.js";
+import { getUnique } from "./Cards.js";
 
 export type JHHBoosterPattern = {
 	name: string;

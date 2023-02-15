@@ -112,7 +112,7 @@ export default {
 		};
 	},
 	props: {
-		value: { type: Object as PropType<SetCode[]>, required: true },
+		value: { type: Array as PropType<SetCode[]>, required: true },
 	},
 	mounted() {
 		const assigned = this.blocks.map((b) => b.sets).flat();

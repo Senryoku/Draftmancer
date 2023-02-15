@@ -6,63 +6,9 @@ import parseCost from "./parseCost.js";
 import JSONStream from "JSONStream";
 import { memoryReport, Options } from "./utils.js";
 
-export type CardID = string;
-export type ArenaID = string;
-export type OracleID = string;
-export type UniqueCardID = number;
-
-export type CardColor = "W" | "U" | "B" | "R" | "G";
-
-export class Card {
-	id: CardID = "";
-	arena_id?: ArenaID;
-	oracle_id: OracleID = "";
-	name: string = "";
-	mana_cost: string = "";
-	cmc: number = 0;
-	colors: Array<CardColor> = [];
-	set: string = "";
-	collector_number: string = "";
-	rarity: string = "";
-	type: string = "";
-	subtypes: Array<string> = [];
-	rating: number = 0;
-	in_booster: boolean = true;
-	layout?: string;
-	printed_names: { [lang: string]: string } = {};
-	image_uris: { [lang: string]: string } = {};
-	back?: {
-		name: string;
-		printed_names: { [lang: string]: string };
-		image_uris: { [lang: string]: string };
-		type: string;
-		subtypes: Array<string>;
-	};
-}
-
-export type DeckBasicLands = { [key: string]: number };
-
-export type CardPool = Map<string, number>;
-export type SlotedCardPool = { [slot: string]: CardPool };
-export type DeckList = {
-	main: Array<CardID>;
-	side: Array<CardID>;
-	hashes?: { [key: string]: string };
-	lands?: DeckBasicLands;
-};
+import { Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
 export let Cards = new Map<CardID, Card>();
-
-let UniqueID: UniqueCardID = 0;
-
-export function getNextCardID() {
-	return ++UniqueID;
-}
-
-export class UniqueCard extends Card {
-	uniqueID: UniqueCardID = 0;
-	foil?: boolean = false;
-}
 
 export function getCard(cid: CardID): Card {
 	const card = Cards.get(cid);

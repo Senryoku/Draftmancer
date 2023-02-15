@@ -1,6 +1,6 @@
 import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
-import { Card, CardColor } from "./Cards.js";
+import { Card, CardColor } from "./CardTypes.js";
 import { ackError, SocketError } from "./Message.js";
 
 function checkProperty(card: any, prop: string) {

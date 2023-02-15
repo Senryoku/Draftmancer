@@ -1,5 +1,6 @@
 import { validateCustomCard } from "./CustomCards.js";
-import { Card, CardID, CardsByName, CardVersionsByName, getCard } from "./Cards.js";
+import { Card, CardID } from "./CardTypes.js";
+import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
 import { ackError, SocketError } from "./Message.js";

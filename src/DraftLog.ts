@@ -1,4 +1,4 @@
-import { Card, CardID, DeckList, UniqueCard } from "./Cards.js";
+import { Card, CardID, DeckList, UniqueCard } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session, UsersData } from "./Session.js";
 
