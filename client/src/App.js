@@ -10,7 +10,7 @@ import LogStoreWorker from "./logstore.worker.js";
 import Constant from "../../src/data/constants.json";
 import SetsInfos from "../public/data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.ts";
-import { getCookie, setCookie } from "./cookies.js";
+import { getCookie, setCookie } from "./cookies.ts";
 import { ButtonColor, Alert, fireToast } from "./alerts.ts";
 import parseCSV from "./parseCSV.js";
 
