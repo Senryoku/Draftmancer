@@ -167,8 +167,8 @@ describe("Front End - Team Sealed", function () {
 	});
 
 	it("Owner stops the event", async function () {
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop Draft')]");
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop the draft!')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop the game!')]");
 		let promises = [];
 		for (let i = 0; i < pages.length; i++) {
 			promises.push(
