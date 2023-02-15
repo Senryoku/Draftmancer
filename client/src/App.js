@@ -208,7 +208,7 @@ export default {
 			displayBotScores: defaultSettings.displayBotScores,
 			fixedDeck: defaultSettings.fixedDeck,
 
-			fixedDeck: {
+			fixedDeckState: {
 				ht: 400,
 				mainHeight: "100vh",
 				y: 0,
@@ -2651,8 +2651,8 @@ export default {
 		},
 
 		fixedDeckMouseDown(evt) {
-			this.fixedDeck.x = evt.screenX;
-			this.fixedDeck.y = evt.screenY;
+			this.fixedDeckState.x = evt.screenX;
+			this.fixedDeckState.y = evt.screenY;
 			document.body.addEventListener("mousemove", this.resizeDeck);
 			document.body.addEventListener("mouseup", () => {
 				document.body.removeEventListener("mousemove", this.resizeDeck);
@@ -2661,19 +2661,19 @@ export default {
 		},
 		resizeDeck(evt) {
 			if (!this.$refs.fixedDeckContainer) return;
-			this.fixedDeck.dy = this.fixedDeck.y - evt.screenY;
-			this.fixedDeck.y = evt.screenY;
-			this.fixedDeck.ht += this.fixedDeck.dy;
-			this.fixedDeck.ht = Math.min(
-				Math.max(this.fixedDeck.ht, window.innerHeight * 0.2),
+			this.fixedDeckState.dy = this.fixedDeckState.y - evt.screenY;
+			this.fixedDeckState.y = evt.screenY;
+			this.fixedDeckState.ht += this.fixedDeckState.dy;
+			this.fixedDeckState.ht = Math.min(
+				Math.max(this.fixedDeckState.ht, window.innerHeight * 0.2),
 				window.innerHeight * 0.8
 			);
 			this.applyFixedDeckSize();
 		},
 		applyFixedDeckSize() {
 			if (this.displayFixedDeck) {
-				this.$refs.fixedDeckContainer.style.height = this.fixedDeck.ht + "px";
-				this.fixedDeck.mainHeight = `calc(100vh - ${this.fixedDeck.ht}px)`;
+				this.$refs.fixedDeckContainer.style.height = this.fixedDeckState.ht + "px";
+				this.fixedDeckState.mainHeight = `calc(100vh - ${this.fixedDeckState.ht}px)`;
 			} else {
 				this.$refs.fixedDeckContainer.style.height = "auto";
 			}
