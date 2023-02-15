@@ -19,7 +19,7 @@
 	</dropdown>
 </template>
 
-<script>
+<script lang="ts">
 import { exportToMTGA } from "../exportToMTGA.js";
 import { exportToMTGO } from "../exportToMTGO.js";
 import { fireToast } from "../alerts.js";
@@ -40,7 +40,7 @@ export default {
 		},
 	},
 	methods: {
-		exportDeck(event, full = true) {
+		exportDeck(event: Event, full = true) {
 			copyToClipboard(
 				exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
 					preferedBasics: this.options.preferedBasics,
