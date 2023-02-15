@@ -28,21 +28,19 @@
 	</transition>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: "Modal",
 	methods: {
-		close: function (e) {
+		close(e: Event) {
 			if (e.target == e.currentTarget) this.$emit("close");
 		},
-		shortcuts: function (e) {
-			if (e.which === 27)
-				// Escape
-				this.$emit("close");
+		shortcuts(e: KeyboardEvent) {
+			if (e.key === "Escape") this.$emit("close");
 		},
 	},
 	mounted: function () {
-		document.activeElement.blur();
+		(document.activeElement as HTMLElement).blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
 	beforeDestroy: function () {
