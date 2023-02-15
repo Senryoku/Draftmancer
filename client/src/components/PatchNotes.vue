@@ -9,15 +9,15 @@
 	</ol>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: "PatchNotes",
-	data: function() {
+	data() {
 		return {
-			notes: null,
+			notes: null as { date: string; notes: string[] }[] | null,
 		};
 	},
-	mounted: async function() {
+	async mounted() {
 		this.notes = (await import("../../public/data/PatchNotes.json")).default;
 	},
 };
