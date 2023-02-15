@@ -208,7 +208,7 @@ export default {
 			displayBotScores: defaultSettings.displayBotScores,
 			fixedDeck: defaultSettings.fixedDeck,
 
-			resizableDeck: {
+			fixedDeck: {
 				ht: 400,
 				mainHeight: "100vh",
 				y: 0,
@@ -2650,9 +2650,9 @@ export default {
 			return false;
 		},
 
-		resizableDeckMouseDown(evt) {
-			this.resizableDeck.x = evt.screenX;
-			this.resizableDeck.y = evt.screenY;
+		fixedDeckMouseDown(evt) {
+			this.fixedDeck.x = evt.screenX;
+			this.fixedDeck.y = evt.screenY;
 			document.body.addEventListener("mousemove", this.resizeDeck);
 			document.body.addEventListener("mouseup", () => {
 				document.body.removeEventListener("mousemove", this.resizeDeck);
@@ -2660,22 +2660,22 @@ export default {
 			evt.preventDefault();
 		},
 		resizeDeck(evt) {
-			if (!this.$refs.resizableDeck) return;
-			this.resizableDeck.dy = this.resizableDeck.y - evt.screenY;
-			this.resizableDeck.y = evt.screenY;
-			this.resizableDeck.ht += this.resizableDeck.dy;
-			this.resizableDeck.ht = Math.min(
-				Math.max(this.resizableDeck.ht, window.innerHeight * 0.2),
+			if (!this.$refs.fixedDeckContainer) return;
+			this.fixedDeck.dy = this.fixedDeck.y - evt.screenY;
+			this.fixedDeck.y = evt.screenY;
+			this.fixedDeck.ht += this.fixedDeck.dy;
+			this.fixedDeck.ht = Math.min(
+				Math.max(this.fixedDeck.ht, window.innerHeight * 0.2),
 				window.innerHeight * 0.8
 			);
 			this.applyFixedDeckSize();
 		},
 		applyFixedDeckSize() {
 			if (this.displayFixedDeck) {
-				this.$refs.resizableDeck.style.height = this.resizableDeck.ht + "px";
-				this.resizableDeck.mainHeight = `calc(100vh - ${this.resizableDeck.ht}px)`;
+				this.$refs.fixedDeckContainer.style.height = this.fixedDeck.ht + "px";
+				this.fixedDeck.mainHeight = `calc(100vh - ${this.fixedDeck.ht}px)`;
 			} else {
-				this.$refs.resizableDeck.style.height = "auto";
+				this.$refs.fixedDeckContainer.style.height = "auto";
 			}
 		},
 	},

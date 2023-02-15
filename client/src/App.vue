@@ -3,7 +3,7 @@
 		<div class="loading"></div>
 		<span>Loading cards data...</span>
 	</div>
-	<div id="main-container" :style="`height: ${displayFixedDeck ? this.resizableDeck.mainHeight : '100vh'}`" v-else>
+	<div id="main-container" :style="`height: ${displayFixedDeck ? this.fixedDeck.mainHeight : '100vh'}`" v-else>
 		<!-- Personal Options -->
 		<div id="view-controls" class="main-controls">
 			<span>
@@ -1237,11 +1237,11 @@
 				class="deck-and-sideboard-container"
 				:class="{ 'fixed-deck-and-sideboard-container': displayFixedDeck }"
 				v-show="displayDeckAndSideboard"
-				ref="resizableDeck"
+				ref="fixedDeckContainer"
 			>
 				<div
 					class="deck-and-sideboard-container-resize-bar"
-					@mousedown="resizableDeckMouseDown"
+					@mousedown="fixedDeckMouseDown"
 					v-if="displayFixedDeck"
 				></div>
 				<div class="deck-and-sideboard">
