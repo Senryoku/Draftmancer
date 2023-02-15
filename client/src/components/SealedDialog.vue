@@ -26,7 +26,7 @@
 						<div v-for="(team, idx) in teams" :key="idx" class="team">
 							<div>Team #{{ idx + 1 }}</div>
 							<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
-								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid).userName }}</div>
+								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid)?.userName }}</div>
 							</draggable>
 						</div>
 					</div>
@@ -63,27 +63,33 @@
 	</modal>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+import { UserID } from "../../../src/IDTypes";
+import { UserData } from "../../../src/Session";
 import Constant from "../../../src/data/constants.json";
-import SetsInfos from "../../public/data/SetsInfos.json";
+import SetsInfos from "../SetInfos";
 
 import Modal from "./Modal.vue";
 import Draggable from "vuedraggable";
 
 export default {
 	components: { Modal, Draggable },
-	props: { users: { type: Array, required: true }, teamSealed: { type: Boolean, default: false } },
+	props: {
+		users: { type: Object as PropType<UserData[]>, required: true },
+		teamSealed: { type: Boolean, default: false },
+	},
 	data() {
 		// Max of 4 teams, empty ones will simply be ignored.
 		// FIXME: Allow more teams?
-		const teams = [[], [], [], []];
+		const teams: UserID[][] = [[], [], [], []];
 		// Defaults to two teams, distribute players among them.
 		for (let i = 0; i < this.users.length; i++) teams[i % 2].push(this.users[i].userID);
 		const boostersPerPlayer = this.teamSealed ? 12 : 6;
 		return { boostersPerPlayer, customBoosters: Array(boostersPerPlayer).fill(""), teams: teams };
 	},
 	methods: {
-		userById(uid) {
+		userById(uid: UserID) {
 			return this.users.find((user) => user.userID === uid);
 		},
 		cancel() {
@@ -97,12 +103,12 @@ export default {
 		MTGASets() {
 			return Constant.MTGASets.slice()
 				.reverse()
-				.map((s) => {
+				.map((s: string) => {
 					return { code: s, fullName: SetsInfos[s].fullName };
 				});
 		},
 		PrimarySets() {
-			return Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s) => {
+			return Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s: string) => {
 				return { code: s, fullName: SetsInfos[s].fullName };
 			});
 		},
