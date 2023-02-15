@@ -6,15 +6,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { Connections } from "./Connection.js";
-import {
-	Session,
-	Sessions,
-	DraftState,
-	WinstonDraftState,
-	GridDraftState,
-	RochesterDraftState,
-	IIndexable,
-} from "./Session.js";
+import { Session, Sessions, DraftState, WinstonDraftState, RochesterDraftState, IIndexable } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -35,6 +27,7 @@ const SaveLogs = false; // Disabled for now.
 import axios from "axios";
 import { UserID } from "./IDTypes.js";
 import { getCard } from "./Cards.js";
+import { GridDraftState } from "./GridDraft.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";

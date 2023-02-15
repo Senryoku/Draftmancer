@@ -20,7 +20,7 @@ import Card from "./Card.vue";
 export default {
 	components: { Card },
 	props: {
-		picks: { type: Object as PropType<PickSummary[]>, required: true },
+		picks: { type: Array as PropType<PickSummary[]>, required: true },
 	},
 };
 </script>

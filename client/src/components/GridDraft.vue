@@ -50,15 +50,22 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType } from "vue";
+import { GridDraftSyncData } from "../../../src/GridDraft";
+import { UniqueCard } from "../../../src/CardTypes";
+
 import Card from "./Card.vue";
 import PickSummary from "./PickSummary.vue";
 
 export default {
 	components: { Card, PickSummary },
-	props: { state: { type: Object, required: true }, picking: { type: Boolean, required: true } },
+	props: {
+		state: { type: Object as PropType<GridDraftSyncData>, required: true },
+		picking: { type: Boolean, required: true },
+	},
 	methods: {
-		isValidChoice: function(choice) {
+		isValidChoice(choice: number) {
 			let validCards = 0;
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
@@ -67,20 +74,20 @@ export default {
 			}
 			return validCards > 0;
 		},
-		highlight: function(event, type, index) {
-			this.$el.querySelectorAll(`.${type}-${index}`).forEach(el => {
+		highlight(event: Event, type: string, index: number) {
+			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el) => {
 				if (event.type === "mouseenter") el.classList.add("highlight");
 				else if (event.type === "mouseleave") el.classList.remove("highlight");
 			});
 		},
 	},
 	computed: {
-		cardTransition: function() {
+		cardTransition: function () {
 			// Use special card transition on pick and a simple fading between boosters.
-			return this.state.booster.some(c => c === null) ? "card-select" : "fade";
+			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "card-select" : "fade";
 		},
-		arrowTransition: function() {
-			return this.state.booster.some(c => c === null) ? "fade-delayed" : "fade";
+		arrowTransition: function () {
+			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "fade-delayed" : "fade";
 		},
 	},
 };

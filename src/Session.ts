@@ -46,6 +46,7 @@ import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.
 import { assert } from "console";
 import { PickSummary } from "./PickSummary";
 import { TeamSealedState } from "./TeamSealed.js";
+import { GridDraftState } from "./GridDraft.js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -235,46 +236,6 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 			piles: this.piles,
 			currentPile: this.currentPile,
 			remainingCards: this.cardPool.length,
-		};
-	}
-}
-
-export class GridDraftState extends IDraftState implements TurnBased {
-	round = 0;
-	boosters: Array<Array<UniqueCard | null>> = []; // Array of [3x3 Grid, Row-Major order]
-	players: Array<UserID>;
-	error: any;
-	boosterCount: number;
-	lastPicks: PickSummary[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
-		super("grid");
-		this.players = players;
-		if (boosters) {
-			for (const booster of boosters) {
-				if (booster.length > 9) booster.length = 9;
-				if (booster.length < 9)
-					this.error = {
-						title: "Not enough cards in boosters.",
-						text: "At least one booster has less than 9 cards.",
-					};
-				shuffleArray(booster);
-				this.boosters.push(booster);
-			}
-		}
-		this.boosterCount = this.boosters.length;
-	}
-
-	currentPlayer() {
-		return this.players[[0, 1, 1, 0][this.round % 4]];
-	}
-
-	syncData() {
-		return {
-			round: this.round,
-			currentPlayer: this.currentPlayer(),
-			booster: this.boosters[0],
-			boosterCount: this.boosterCount,
-			lastPicks: this.lastPicks,
 		};
 	}
 }
