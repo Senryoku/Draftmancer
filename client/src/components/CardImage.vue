@@ -79,17 +79,21 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import CardText from "./CardText.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
+import { defineComponent, PropType } from "vue";
+import { Language } from "@/Types";
+import { UniqueCard } from "../../../src/CardTypes";
+import { ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
-export default {
+export default defineComponent({
 	name: "CardImage",
 	components: { CardPlaceholder, ClazyLoad, CardText },
 	props: {
-		card: { type: Object, required: true },
-		language: { type: String, required: true },
+		card: { type: Object as PropType<UniqueCard>, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		lazyLoad: { type: Boolean, default: false },
 		fixedLayout: { type: Boolean, default: false },
 		displayCardText: { type: Boolean, default: false },
@@ -103,8 +107,8 @@ export default {
 			return this.card.back !== null && this.card.back !== undefined;
 		},
 		backImageURI() {
-			if (!this.hasBack) return null;
-			return this.language in this.card.back.image_uris
+			if (!this.hasBack) return undefined;
+			return this.language in this.card.back!.image_uris
 				? this.card.back?.image_uris[this.language]
 				: this.card.back?.image_uris["en"];
 		},
@@ -112,20 +116,20 @@ export default {
 			if (!this.displayCardText) return false; // Don't send the requests automatically
 			return this.$cardCache.get(this.card.id);
 		},
-		cardFrontAdditionalData() {
+		cardFrontAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | undefined {
 			const data = this.cardAdditionalData;
-			if (!data) return null;
-			if (data.status === "ready" && data.card_faces) return data.card_faces[0];
+			if (!data) return undefined;
+			if (isReady(data) && data.card_faces) return data.card_faces[0];
 			else return data;
 		},
-		cardBackAdditionalData() {
+		cardBackAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | undefined {
 			const data = this.cardAdditionalData;
-			if (!data) return null;
-			if (data.status === "ready" && data.card_faces) return data.card_faces[1];
-			else return null;
+			if (!data) return undefined;
+			if (isReady(data) && data.card_faces) return data.card_faces[1];
+			else return undefined;
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

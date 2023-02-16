@@ -21,15 +21,19 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { Language } from "@/Types";
+import { defineComponent, PropType } from "vue";
+import { UniqueCard } from "../../../src/CardTypes";
+
 import CardImage from "./CardImage.vue";
 
-export default {
+export default defineComponent({
 	name: "Card",
 	components: { CardImage },
 	props: {
-		card: { type: Object, required: true },
-		language: { type: String, default: "en" },
+		card: { type: Object as PropType<UniqueCard>, required: true },
+		language: { type: String as PropType<Language>, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
 		filter: { type: String },
 		conditionalClasses: { type: Function },
@@ -49,7 +53,7 @@ export default {
 		classes() {
 			let classes = this.conditionalClasses ? this.conditionalClasses(this.card) : [];
 			classes.push("card");
-			if (this.foil) classes.push("foil");
+			if (this.card.foil) classes.push("foil");
 			if (this.isFiltered) classes.push("faded");
 			return classes;
 		},
@@ -58,11 +62,11 @@ export default {
 		},
 	},
 	methods: {
-		toggleZoom(e) {
+		toggleZoom(e: Event) {
 			e.preventDefault();
 			this.$root.$emit("togglecardpopup", e, this.card);
 		},
-		mouseLeave(e) {
+		mouseLeave(e: Event) {
 			e.preventDefault();
 
 			this.displayCardText = false;
@@ -73,11 +77,12 @@ export default {
 
 			if (this.card.foil) {
 				document.removeEventListener("mousemove", this.foilEffect);
-				this.$el.style.setProperty("--brightness", `100%`);
-				this.$el.style.setProperty("--foil-initial-top", `-16%`);
-				this.$el.style.setProperty("--foil-initial-left", `32%`);
-				this.$el.style.setProperty("--transform-rotation-x", `0`);
-				this.$el.style.setProperty("--transform-rotation-y", `0`);
+				const el = this.$el as HTMLElement;
+				el.style.setProperty("--brightness", `100%`);
+				el.style.setProperty("--foil-initial-top", `-16%`);
+				el.style.setProperty("--foil-initial-left", `32%`);
+				el.style.setProperty("--transform-rotation-x", `0`);
+				el.style.setProperty("--transform-rotation-y", `0`);
 			}
 		},
 		mouseEnter() {
@@ -88,9 +93,10 @@ export default {
 				document.addEventListener("mousemove", this.foilEffect);
 			}
 		},
-		foilEffect(e) {
+		foilEffect(e: MouseEvent) {
+			const el = this.$el as HTMLElement;
 			const bounds = this.$el.getBoundingClientRect();
-			const style = this.$el.currentStyle || window.getComputedStyle(this.$el);
+			const style = window.getComputedStyle(this.$el);
 			bounds.width += (parseInt(style.marginLeft) || 0) + (parseInt(style.marginRight) || 0);
 			bounds.height += (parseInt(style.marginTop) || 0) + (parseInt(style.marginBottom) || 0);
 			const factor = (e.clientX - bounds.left) / bounds.width;
@@ -99,16 +105,19 @@ export default {
 				document.removeEventListener("mousemove", this.foilEffect);
 				return;
 			}
-			const imageBounds = this.$refs.image.$el.getBoundingClientRect(); // Different from bounds when inside a card column
+			const imageBounds = ((this.$refs.image as Vue).$el as HTMLElement).getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
-			const rotScale = (v) => -20 + 40 * v;
-			this.$el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
-			this.$el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
-			this.$el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
-			this.$el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
-			this.$el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
+			const rotScale = (v: number) => -20 + 40 * v;
+			el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);
+			el.style.setProperty("--transform-rotation-x", `${rotScale(factor)}deg`);
+			el.style.setProperty("--transform-rotation-y", `${ratio * -rotScale(factorY)}deg`);
+			el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
+			el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
-		passFilter(card, filter) {
+		passFilter(
+			card: { name: string; printed_names: { [lang: string]: string }; type: string; subtypes: string[] },
+			filter: string
+		) {
 			return (
 				card.name.toLowerCase().includes(filter) ||
 				(this.language != "en" && card.printed_names[this.language]?.toLowerCase().includes(filter)) ||
@@ -116,7 +125,7 @@ export default {
 				card.subtypes.join(" ").toLowerCase().includes(filter)
 			);
 		},
-		keyDown(event) {
+		keyDown(event: KeyboardEvent) {
 			switch (event.key) {
 				case "Alt":
 					this.displayCardText = event.altKey;
@@ -130,7 +139,7 @@ export default {
 			event.stopPropagation();
 			event.preventDefault();
 		},
-		keyUp(event) {
+		keyUp(event: KeyboardEvent) {
 			switch (event.key) {
 				case "Alt":
 					this.displayCardText = event.altKey;
@@ -145,7 +154,7 @@ export default {
 			event.preventDefault();
 		},
 	},
-};
+});
 </script>
 
 <style>
