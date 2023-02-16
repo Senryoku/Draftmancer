@@ -1071,7 +1071,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
 		Sessions[sessionID].distributeJumpstart(set);
 	},
-	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: (result: SocketAck) => void) {
+	generateBracket(
+		userID: UserID,
+		sessionID: SessionID,
+		players: Array<{ userID: UserID; userName: string }>,
+		ack: (result: SocketAck) => void
+	) {
 		if (
 			!(
 				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
@@ -1085,7 +1090,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	generateSwissBracket(
 		userID: UserID,
 		sessionID: SessionID,
-		players: Array<UserID>,
+		players: Array<{ userID: UserID; userName: string }>,
 		ack: (result: SocketAck) => void
 	) {
 		const realPlayerCount = players.filter((u) => u).length;
@@ -1104,7 +1109,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	generateDoubleBracket(
 		userID: UserID,
 		sessionID: SessionID,
-		players: Array<UserID>,
+		players: Array<{ userID: UserID; userName: string }>,
 		ack: (result: SocketAck) => void
 	) {
 		if (players.length !== 8) return;

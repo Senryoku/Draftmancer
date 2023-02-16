@@ -2516,7 +2516,7 @@ export class Session implements IIndexable {
 		});
 	}
 
-	generateBracket(players: Array<UserID>) {
+	generateBracket(players: Array<{ userID: UserID; userName: string }>) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
 		} else {
@@ -2525,12 +2525,12 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateSwissBracket(players: Array<UserID>) {
+	generateSwissBracket(players: Array<{ userID: UserID; userName: string }>) {
 		this.bracket = new SwissBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateDoubleBracket(players: Array<UserID>) {
+	generateDoubleBracket(players: Array<{ userID: UserID; userName: string }>) {
 		this.bracket = new DoubleBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}

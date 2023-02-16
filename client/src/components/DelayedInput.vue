@@ -19,7 +19,7 @@ import { defineComponent, PropType } from "vue";
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 export default defineComponent({
 	props: {
-		value: { type: Object as PropType<any>, required: true },
+		value: { required: true },
 		inputstyle: { type: String },
 		delay: { type: Number, default: 0 },
 		validate: { type: Function as PropType<(val: string) => string> },

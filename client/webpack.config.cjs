@@ -5,7 +5,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
 	mode: "production",
-	entry: { index: "./client/src/index.ts", readOnlyBracket: "./client/src/readOnlyBracket.js" },
+	entry: { index: "./client/src/index.ts", readOnlyBracket: "./client/src/readOnlyBracket.ts" },
 	output: {
 		filename: "[name].[contenthash].js",
 		path: path.resolve(__dirname, "dist/"),
