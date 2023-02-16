@@ -1419,8 +1419,8 @@ function removeUserFromSession(userID: UserID) {
 // Express server setup
 
 // Serve files in the public directory
-app.use(express.static("./client/public/"));
-app.use("/bracket", express.static("client/public/bracket.html"));
+app.use(express.static("./client/dist/"));
+app.use("/bracket", express.static("./client/dist/bracket.html"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints

@@ -1,14 +1,16 @@
 const path = require("path");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-//const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
 	mode: "production",
 	entry: { index: "./client/src/index.ts", readOnlyBracket: "./client/src/readOnlyBracket.js" },
 	output: {
-		filename: "[name].js",
-		path: path.resolve(__dirname, "public/dist/"),
-		publicPath: "/dist/",
+		filename: "[name].[contenthash].js",
+		path: path.resolve(__dirname, "dist/"),
+		publicPath: "/",
+		clean: true,
 	},
 	resolve: {
 		extensions: [".ts", ".tsx", ".js"],
@@ -52,6 +54,21 @@ module.exports = {
 		],
 	},
 	plugins: [
-		new VueLoaderPlugin(), //new BundleAnalyzerPlugin()
+		new CopyPlugin({
+			patterns: [{ from: "./client/public", to: "." }],
+		}),
+		new HtmlWebpackPlugin({
+			filename: "index.html",
+			template: "./client/template/index.html",
+			inject: "body",
+			chunks: ["index"],
+		}),
+		new HtmlWebpackPlugin({
+			filename: "bracket.html",
+			template: "./client/template/bracket.html",
+			inject: "body",
+			chunks: ["readOnlyBracket"],
+		}),
+		new VueLoaderPlugin(),
 	],
 };
