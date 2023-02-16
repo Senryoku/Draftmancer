@@ -256,7 +256,7 @@ export default {
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 900;
+	z-index: 2000;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
