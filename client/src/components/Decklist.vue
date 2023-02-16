@@ -97,7 +97,7 @@ export default defineComponent({
 		ExportDropdown,
 	},
 	props: {
-		list: { type: Object as PropType<DeckList>, required: true },
+		list: { type: Object as PropType<DeckList> },
 		username: { type: String, default: "Player" },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String as PropType<Language>, required: true },
@@ -122,12 +122,12 @@ export default defineComponent({
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
 		hashes() {
-			return this.list.hashes!;
+			return this.list!.hashes!;
 		},
 		lands() {
 			if (!this.list?.lands) return {};
 			const r: typeof this.list.lands = {};
-			for (const c of Object.keys(this.list.lands).filter((c) => this.list.lands![c] > 0))
+			for (const c of Object.keys(this.list.lands).filter((c) => this.list!.lands![c] > 0))
 				r[c] = this.list.lands![c];
 			return r;
 		},

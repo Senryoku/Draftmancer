@@ -59,3 +59,5 @@ export class UniqueCard extends Card {
 	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
 }
+
+export type PlainCollection = { [aid: ArenaID]: number };
