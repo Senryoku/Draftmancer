@@ -4,16 +4,16 @@
 			:cards="mainboard"
 			:language="language"
 			:readOnly="true"
-			:group="`deck-${_uid}`"
-			:key="`deck-${_uid}`"
+			:group="`deck-${uid}`"
+			:key="`deck-${uid}`"
 			ref="mainboardComponent"
 		>
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">Added basics:</span>
-				<span v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => list.lands?.[c] > 0)" :key="c">
-					<img :src="`img/mana/${c}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
-					{{ list.lands[c] }}
+				<span v-for="(color, value) in lands" :key="color">
+					<img :src="`img/mana/${color}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
+					{{ value }}
 				</span>
 				<i
 					class="fas fa-chart-pie fa-lg clickable"
@@ -30,13 +30,13 @@
 				/>
 				<template v-if="list.hashes">
 					<span
-						@click="copyHash(list.hashes.cockatrice)"
+						@click="copyHash(hashes.cockatrice)"
 						class="clickable"
 						v-tooltip.top="'Copy hash to clipboard.'"
-						>Cockatrice: {{ list.hashes.cockatrice }}</span
+						>Cockatrice: {{ hashes.cockatrice }}</span
 					>
-					<span @click="copyHash(list.hashes.mws)" class="clickable" v-tooltip.top="'Copy hash to clipboard.'"
-						>MWS: {{ list.hashes.mws }}</span
+					<span @click="copyHash(hashes.mws)" class="clickable" v-tooltip.top="'Copy hash to clipboard.'"
+						>MWS: {{ hashes.mws }}</span
 					>
 				</template>
 			</template>
@@ -46,8 +46,8 @@
 			:cards="sideboard"
 			:language="language"
 			:readOnly="true"
-			:group="`side-${_uid}`"
-			:key="`side-${_uid}`"
+			:group="`side-${uid}`"
+			:key="`side-${uid}`"
 			ref="sideboardComponent"
 		>
 			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
@@ -62,18 +62,14 @@
 		<table class="hashes">
 			<tr>
 				<td>Cockatrice</td>
-				<td
-					@click="copyHash(list.hashes.cockatrice)"
-					class="clickable"
-					v-tooltip.right="'Copy hash to clipboard.'"
-				>
-					<code>{{ list.hashes.cockatrice }}</code>
+				<td @click="copyHash(hashes.cockatrice)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
+					<code>{{ hashes.cockatrice }}</code>
 				</td>
 			</tr>
 			<tr>
 				<td>MWS</td>
-				<td @click="copyHash(list.hashes.mws)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
-					<code>{{ list.hashes.mws }}</code>
+				<td @click="copyHash(hashes.mws)" class="clickable" v-tooltip.right="'Copy hash to clipboard.'">
+					<code>{{ hashes.mws }}</code>
 				</td>
 			</tr>
 		</table>
@@ -87,11 +83,13 @@ import { fireToast } from "../alerts";
 import Modal from "./Modal.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
-import { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { Card, CardID, DeckList } from "../../../src/CardTypes";
 import { Language } from "@/Types";
 
-export default {
+let deckUIDs = 0;
+
+export default defineComponent({
 	components: {
 		Modal,
 		CardPool,
@@ -99,14 +97,14 @@ export default {
 		ExportDropdown,
 	},
 	props: {
-		list: { type: Object as PropType<DeckList> },
+		list: { type: Object as PropType<DeckList>, required: true },
 		username: { type: String, default: "Player" },
 		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
 	data() {
-		return { displayStats: false };
+		return { displayStats: false, uid: deckUIDs++ };
 	},
 	computed: {
 		mainboard() {
@@ -123,6 +121,16 @@ export default {
 			if (!this.list?.lands) return 0;
 			return Object.values(this.list.lands).reduce((acc, c) => acc + c);
 		},
+		hashes() {
+			return this.list.hashes!;
+		},
+		lands() {
+			if (!this.list?.lands) return {};
+			const r: typeof this.list.lands = {};
+			for (const c of Object.keys(this.list.lands).filter((c) => this.list.lands![c] > 0))
+				r[c] = this.list.lands![c];
+			return r;
+		},
 	},
 	methods: {
 		copyHash(hash: string) {
@@ -138,7 +146,7 @@ export default {
 			});
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
