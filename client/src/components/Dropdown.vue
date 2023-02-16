@@ -9,8 +9,10 @@
 	</span>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	data() {
 		return { forcedOpen: false };
 	},
@@ -22,14 +24,19 @@ export default {
 	},
 	methods: {
 		updateHeight() {
-			this.$el.style = `--unrolled-height: calc(1em + ${this.$refs.content.clientHeight}px); --min-width: ${this.minwidth}`;
+			this.$el.setAttribute(
+				"style",
+				`--unrolled-height: calc(1em + ${(this.$refs.content as HTMLElement).clientHeight}px); --min-width: ${
+					this.minwidth
+				}`
+			);
 		},
 		toggleKeepOpen() {
 			this.forcedOpen = !this.forcedOpen;
 			this.updateHeight();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
