@@ -12,15 +12,14 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
+import PatchNotes from "../data/PatchNotes.json";
+
 export default defineComponent({
 	name: "PatchNotes",
 	data() {
 		return {
-			notes: null as { date: string; notes: string[] }[] | null,
+			notes: PatchNotes,
 		};
-	},
-	async mounted() {
-		this.notes = (await import("../../public/data/PatchNotes.json")).default;
 	},
 });
 </script>

@@ -31,15 +31,16 @@
 import { PropType, defineComponent } from "vue";
 import { DraftPick } from "../../../src/DraftLog";
 
-import Card from "./Card.vue";
+import CardComponent from "./Card.vue";
 import BoosterCard from "./BoosterCard.vue";
+import { Card, CardID } from "../../../src/CardTypes";
 
 export default defineComponent({
 	name: "DraftLogPick",
-	components: { Card, BoosterCard },
+	components: { Card: CardComponent, BoosterCard },
 	props: {
 		pick: { type: Object as PropType<DraftPick>, required: true },
-		carddata: { type: Object, required: true },
+		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
 		language: { type: String, required: true },
 		type: { type: String, default: "Draft" },
 		scale: { type: Number, default: 1 },

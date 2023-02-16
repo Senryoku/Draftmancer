@@ -13,46 +13,53 @@
 	</form>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
-export default {
+export default defineComponent({
 	props: {
 		value: { required: true },
 		inputstyle: { type: String },
 		delay: { type: Number, default: 0 },
-		validate: { type: Function },
+		validate: { type: Function as PropType<(val: string) => string> },
 		waitOnEmpty: { type: Boolean, default: true },
 	},
-	data: function() {
+	data() {
 		return {
 			timeout: null,
 			inputEl: null,
-		};
+		} as { timeout: ReturnType<typeof setTimeout> | null; inputEl: HTMLInputElement | null };
 	},
-	mounted: function() {
+	mounted() {
 		this.inputEl = this.$el.querySelector("input");
 	},
 	methods: {
-		update: function(e) {
+		update() {
+			if (!this.inputEl) return;
+
 			if (this.validate) this.inputEl.value = this.validate(this.inputEl.value);
+
 			this.$emit("input", this.inputEl.value);
 			this.inputEl.classList.remove("dirty");
 			this.inputEl.classList.add("updated");
-			clearTimeout(this.timeout);
+			clearTimeout(this.timeout!);
 		},
-		modified: function(e) {
+		modified() {
+			if (!this.inputEl) return;
+
 			this.inputEl.classList.add("dirty");
 			this.inputEl.classList.remove("updated");
 			//                    Avoid automatically validating & propagating changes when the input is empty
 			if (this.delay > 0 && !(this.waitOnEmpty && this.inputEl.value === "")) {
-				clearTimeout(this.timeout);
+				clearTimeout(this.timeout!);
 				this.timeout = setTimeout(() => {
 					this.update();
 				}, 1000 * this.delay);
 			}
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

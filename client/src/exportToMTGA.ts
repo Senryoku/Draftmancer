@@ -1,20 +1,23 @@
-import Constant from "../../src/data/constants.json";
+import Constants from "../../src/Constants";
 
 import J21MTGACollectorNumber from "../../data/J21MTGACollectorNumbers.json";
+import { SetCode } from "./SetInfos";
+import { Card, CardColor } from "../../src/CardTypes";
+import { Language } from "./Types";
 
-const MTGASetConversions = {
+const MTGASetConversions: { [key: string]: string } = {
 	DOM: "DAR", // DOM is called DAR in MTGA
 	CON: "CONF", // CON is called CONF in MTGA
 	AJMP: "JMP", // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
 };
 
-export function fixSetCode(set) {
+export function fixSetCode(set: SetCode) {
 	let r = set.toUpperCase();
 	if (r in MTGASetConversions) r = MTGASetConversions[r];
 	return r;
 }
 
-function exportCardToMTGA(c, language, full) {
+function exportCardToMTGA(c: Card, language: Language, full: boolean) {
 	let set = fixSetCode(c.set);
 	let name = c.name;
 	if (language in c.printed_names) name = c.printed_names[language];
@@ -27,19 +30,28 @@ function exportCardToMTGA(c, language, full) {
 
 	// FIXME: Translate J21 Collector Numbers to MTGA, this should be avoidable
 	let collector_number =
-		c.set === "j21" && c.name in J21MTGACollectorNumber ? J21MTGACollectorNumber[c.name] : c.collector_number;
+		c.set === "j21" && c.name in J21MTGACollectorNumber
+			? J21MTGACollectorNumber[c.name as keyof typeof J21MTGACollectorNumber]
+			: c.collector_number;
 	if (collector_number?.startsWith("A-")) collector_number = collector_number.substr(2);
 
 	if (full) return `1 ${name} (${set}) ${collector_number}\n`;
 	else return `1 ${name}\n`;
 }
 
-const MTGAExportDefaultOptions = { preferredBasics: "", sideboardBasics: 0, full: true };
+class MTGAExportOptions {
+	preferredBasics: SetCode = "";
+	sideboardBasics: number = 0;
+	full: boolean = true;
+}
 
-export function exportToMTGA(deck, sideboard, language, lands = null, options = MTGAExportDefaultOptions) {
-	for (let key in MTGAExportDefaultOptions)
-		if (!Object.prototype.hasOwnProperty.call(options, key)) options[key] = MTGAExportDefaultOptions[key];
-
+export function exportToMTGA(
+	deck: Card[],
+	sideboard: Card[],
+	language: Language,
+	lands: { [c in CardColor]: number } | null = null,
+	options: MTGAExportOptions = new MTGAExportOptions()
+) {
 	// Note: The importer requires the collector number, but it can be wrong and the import will succeed        ↓
 	const basicsSet =
 		options.full && options.preferredBasics && options.preferredBasics !== ""
@@ -50,7 +62,8 @@ export function exportToMTGA(deck, sideboard, language, lands = null, options = 
 	for (let c of deck) str += exportCardToMTGA(c, language, options.full);
 	if (lands) {
 		for (let c in lands)
-			if (lands[c] > 0) str += `${lands[c]} ${Constant.BasicLandNames[language][c]}${basicsSet}\n`;
+			if (lands[c as CardColor] > 0)
+				str += `${lands[c as CardColor]} ${Constants.BasicLandNames[language][c as CardColor]}${basicsSet}\n`;
 	}
 	if (sideboard && sideboard.length > 0) {
 		str += options.full ? "\nSideboard\n" : "\n";
@@ -67,7 +80,7 @@ export function exportToMTGA(deck, sideboard, language, lands = null, options = 
 		// Add some basic lands to the sideboard
 		if (options.sideboardBasics && options.sideboardBasics > 0)
 			for (let c of ["W", "U", "B", "R", "G"])
-				str += `${options.sideboardBasics} ${Constant.BasicLandNames[language][c]}${basicsSet}\n`;
+				str += `${options.sideboardBasics} ${Constants.BasicLandNames[language][c as CardColor]}${basicsSet}\n`;
 	}
 	return str;
 }

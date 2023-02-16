@@ -232,6 +232,7 @@ import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import { CardColor, CardID } from "../../../src/CardTypes";
+import { Language } from "@/Types";
 
 export type PickDetails = {
 	key: number;
@@ -252,7 +253,7 @@ export default defineComponent({
 	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
 	props: {
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
-		language: { type: String, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		userID: { type: String as PropType<UserID>, required: true },
 		userName: { type: String },
 	},

@@ -23,16 +23,17 @@
 import { PropType, defineComponent } from "vue";
 import { UniqueCard } from "../../../src/CardTypes";
 
-import { exportToMTGA } from "../exportToMTGA.js";
+import { exportToMTGA } from "../exportToMTGA";
 import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
 import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
+import { Language } from "@/Types";
 
 export default defineComponent({
 	components: { Dropdown },
 	props: {
-		language: { type: String, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		deck: { type: Array as PropType<UniqueCard[]>, required: true },
 		sideboard: { type: Array as PropType<UniqueCard[]>, default: null },
 		options: {

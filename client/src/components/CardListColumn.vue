@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import MTGAAlternates from "../MTGAAlternates.js";
+import MTGAAlternates from "../MTGAAlternates";
 import Card from "./Card.vue";
 
 export default {

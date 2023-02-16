@@ -81,7 +81,7 @@
 import Vue from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper.ts";
-import { exportToMTGA } from "../exportToMTGA.js";
+import { exportToMTGA } from "../exportToMTGA";
 import DraftLog from "./DraftLog.vue";
 
 export default {
