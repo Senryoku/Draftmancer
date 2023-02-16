@@ -104,31 +104,11 @@ import { defineComponent, PropType } from "vue";
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
-import BracketMatch from "./BracketMatch.vue";
+import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
 import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
 import { DraftLog } from "../../../src/DraftLog";
 import { Language } from "@/Types";
 import { UserID } from "../../../src/IDTypes";
-
-type MatchPlayerData = {
-	userID?: UserID;
-	userName?: string;
-	tbd?: string;
-	empty?: boolean;
-};
-
-class Match {
-	index: number;
-	players: MatchPlayerData[];
-
-	constructor(index: number, players: MatchPlayerData[]) {
-		this.index = index;
-		this.players = players;
-	}
-	isValid() {
-		return !this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd;
-	}
-}
 
 function* generate_pairs<T>(arr: T[]): Generator<[T, T][]> {
 	if (arr.length < 2) return [];
@@ -393,8 +373,9 @@ export default defineComponent({
 			return r;
 		},
 		selectedDeckList() {
-			if (this.selectedUser?.userID) return this.draftlog?.users?.[this.selectedUser?.userID].decklist ?? null;
-			return null;
+			if (this.selectedUser?.userID)
+				return this.draftlog?.users?.[this.selectedUser?.userID].decklist ?? undefined;
+			return undefined;
 		},
 		isSwissBracket() {
 			return isSwissBracket(this.bracket);

@@ -81,12 +81,15 @@
 	<div class="message" v-else>{{ username }} did not submit their decklist.</div>
 </template>
 
-<script>
-import { copyToClipboard } from "../helper.ts";
+<script lang="ts">
+import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Modal from "./Modal.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
+import { PropType } from "vue";
+import { Card, CardID, DeckList } from "../../../src/CardTypes";
+import { Language } from "@/Types";
 
 export default {
 	components: {
@@ -96,10 +99,10 @@ export default {
 		ExportDropdown,
 	},
 	props: {
-		list: { type: Object },
+		list: { type: Object as PropType<DeckList> },
 		username: { type: String, default: "Player" },
-		carddata: { type: Object, required: true },
-		language: { type: String, required: true },
+		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		hashesonly: { type: Boolean, default: false },
 	},
 	data() {
@@ -107,7 +110,7 @@ export default {
 	},
 	computed: {
 		mainboard() {
-			if (!this.list.main) return [];
+			if (!this.list?.main) return [];
 			let uniqueID = 0;
 			return this.list?.main.map((cid) => Object.assign({ uniqueID: ++uniqueID }, this.carddata[cid]));
 		},
@@ -122,7 +125,7 @@ export default {
 		},
 	},
 	methods: {
-		copyHash(hash) {
+		copyHash(hash: string) {
 			copyToClipboard(hash);
 			fireToast("success", "Hash copied to clipboard!");
 		},

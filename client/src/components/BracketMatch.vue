@@ -9,8 +9,8 @@
 					class="bracket-player"
 					:class="{
 						'bracket-winner': result[index] > result[(index + 1) % 2],
-						teama: bracket.teamDraft && index % 2 === 0,
-						teamb: bracket.teamDraft && index % 2 === 1,
+						teama: isTeamBracket && index % 2 === 0,
+						teamb: isTeamBracket && index % 2 === 1,
 					}"
 					v-else
 				>
@@ -39,7 +39,7 @@
 							type="number"
 							:value="result[index]"
 							min="0"
-							@change="$emit('updated', index, $event.target.value)"
+							@change="update($event, index)"
 						/>
 						<div class="bracket-result" v-else>{{ result[index] }}</div>
 					</template>
@@ -49,40 +49,73 @@
 	</div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { Bracket, isDoubleBracket, isTeamBracket } from "../../../src/Brackets";
+import { DraftLog } from "../../../src/DraftLog";
+import { UserID } from "../../../src/IDTypes";
+
+export type MatchPlayerData = {
+	userID?: UserID;
+	userName?: string;
+	tbd?: string;
+	empty?: boolean;
+};
+
+export class Match {
+	index: number;
+	players: MatchPlayerData[];
+
+	constructor(index: number, players: MatchPlayerData[]) {
+		this.index = index;
+		this.players = players;
+	}
+	isValid() {
+		return !this.players[0].empty && !this.players[1].empty && !this.players[0].tbd && !this.players[1].tbd;
+	}
+}
+
+export default defineComponent({
 	props: {
-		result: { type: Array, required: true },
+		result: { type: Array as PropType<number[]>, required: true },
 		editable: { type: Boolean, default: false },
-		match: { type: Object, required: true },
-		bracket: { type: Object, required: true },
+		match: { type: Object as PropType<Match>, required: true },
+		bracket: { type: Object as PropType<Bracket>, required: true },
 		records: { type: Object, required: true },
-		teamrecords: { type: Array, required: true },
-		draftlog: { type: Object, default: null },
+		teamrecords: { type: Array as PropType<number[]>, required: true },
+		draftlog: { type: Object as PropType<DraftLog>, default: null },
 		final: { type: Boolean, default: false },
 	},
 	methods: {
-		hasDeckList(userID) {
-			return this.draftlog && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
+		hasDeckList(userID: UserID | undefined) {
+			return this.draftlog && userID && this.draftlog.users[userID] && this.draftlog.users[userID].decklist;
 		},
-		isGold(p, index) {
-			if (this.bracket.teamDraft) {
+		isGold(p: MatchPlayerData, index: number) {
+			if (isTeamBracket(this.bracket)) {
 				return this.teamrecords[index] >= 5;
-			} else if (this.bracket.double) {
+			} else if (isDoubleBracket(this.bracket)) {
 				return this.final && this.result[index] > this.result[(index + 1) % 2];
 			} else {
-				return this.records[p.userID].wins === 3;
+				return this.records[p.userID!].wins === 3;
 			}
 		},
-		isSilver(p, index) {
-			if (this.bracket.double) return this.final && this.result[index] < this.result[(index + 1) % 2];
-			return !this.bracket.teamDraft && this.records[p.userID].wins === 2;
+		isSilver(p: MatchPlayerData, index: number) {
+			if (isDoubleBracket(this.bracket)) return this.final && this.result[index] < this.result[(index + 1) % 2];
+			return !isTeamBracket(this.bracket) && this.records[p.userID!].wins === 2;
 		},
-		recordString(p) {
-			return `${this.records[p.userID].wins} - ${this.records[p.userID].losses}`;
+		recordString(p: MatchPlayerData) {
+			return `${this.records[p.userID!].wins} - ${this.records[p.userID!].losses}`;
+		},
+		update(event: Event, index: number) {
+			this.$emit("updated", index, (event.target as HTMLInputElement)?.value);
 		},
 	},
-};
+	computed: {
+		isTeamBracket() {
+			return isTeamBracket(this.bracket);
+		},
+	},
+});
 </script>
 
 <style scoped>
