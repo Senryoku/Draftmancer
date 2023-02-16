@@ -13,16 +13,16 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { PickSummary } from "../../../src/PickSummary";
 import Card from "./Card.vue";
 
-export default {
+export default defineComponent({
 	components: { Card },
 	props: {
 		picks: { type: Array as PropType<PickSummary[]>, required: true },
 	},
-};
+});
 </script>
 
 <style scoped>

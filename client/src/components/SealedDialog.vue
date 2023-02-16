@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { UserID } from "../../../src/IDTypes";
 import { UserData } from "../../../src/Session";
 import Constant from "../../../src/data/constants.json";
@@ -73,7 +73,7 @@ import SetsInfos from "../SetInfos";
 import Modal from "./Modal.vue";
 import Draggable from "vuedraggable";
 
-export default {
+export default defineComponent({
 	components: { Modal, Draggable },
 	props: {
 		users: { type: Array as PropType<UserData[]>, required: true },
@@ -119,7 +119,7 @@ export default {
 			while (this.customBoosters.length > this.boostersPerPlayer) this.customBoosters.pop();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

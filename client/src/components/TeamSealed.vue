@@ -24,13 +24,13 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { CardColor } from "../../../src/CardTypes";
 import { UserData } from "../../../src/Session";
 import { TeamSealedPool, TeamSealedCard } from "../../../src/TeamSealed";
 import CardPool from "./CardPool.vue";
 
-export default {
+export default defineComponent({
 	components: { CardPool },
 	props: {
 		language: { type: String, required: true },
@@ -80,7 +80,7 @@ export default {
 			return ["team-sealed-picked", "team-sealed-player-" + this.state.team.findIndex((t) => t === card.owner)];
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

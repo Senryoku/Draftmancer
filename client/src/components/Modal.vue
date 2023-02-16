@@ -29,7 +29,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	name: "Modal",
 	methods: {
 		close(e: Event) {
@@ -39,14 +41,14 @@ export default {
 			if (e.key === "Escape") this.$emit("close");
 		},
 	},
-	mounted: function () {
+	mounted() {
 		(document.activeElement as HTMLElement).blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy: function () {
+	beforeDestroy() {
 		document.removeEventListener("keydown", this.shortcuts);
 	},
-};
+});
 </script>
 
 <style>

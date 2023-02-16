@@ -10,7 +10,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	name: "PatchNotes",
 	data() {
 		return {
@@ -20,7 +22,7 @@ export default {
 	async mounted() {
 		this.notes = (await import("../../public/data/PatchNotes.json")).default;
 	},
-};
+});
 </script>
 
 <style scoped>

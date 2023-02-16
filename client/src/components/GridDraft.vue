@@ -51,14 +51,14 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { GridDraftSyncData } from "../../../src/GridDraft";
 import { UniqueCard } from "../../../src/CardTypes";
 
 import Card from "./Card.vue";
 import PickSummary from "./PickSummary.vue";
 
-export default {
+export default defineComponent({
 	components: { Card, PickSummary },
 	props: {
 		state: { type: Object as PropType<GridDraftSyncData>, required: true },
@@ -90,7 +90,7 @@ export default {
 			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "fade-delayed" : "fade";
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

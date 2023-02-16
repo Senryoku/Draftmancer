@@ -98,6 +98,8 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from "vue";
+
 import Constants from "../../../src/Constants";
 
 import Dropdown from "./Dropdown.vue";
@@ -107,7 +109,7 @@ import { CardColor } from "../../../src/CardTypes";
 const DefaultpreferredBasicsMessage =
 	"Enter the set code of your preferred basic lands, or leave blank to get MTGA's default ones.";
 
-export default {
+export default defineComponent({
 	components: { Dropdown, Checkbox },
 	props: {
 		autoland: { type: Boolean, required: true },
@@ -175,7 +177,7 @@ export default {
 			this.checkState();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

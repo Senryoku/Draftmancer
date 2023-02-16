@@ -6,18 +6,18 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { Card } from "../../../src/CardTypes";
 import CardComponent from "./Card.vue";
 
-export default {
+export default defineComponent({
 	name: "MissingCard",
 	components: { Card: CardComponent },
 	props: {
 		card: { type: Object as PropType<Card & { count: number }>, required: true },
 		language: { type: String, default: "en" },
 	},
-};
+});
 </script>
 
 <style scoped>

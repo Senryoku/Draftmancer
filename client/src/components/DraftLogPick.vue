@@ -27,21 +27,24 @@
 	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType, defineComponent } from "vue";
+import { DraftPick } from "../../../src/DraftLog";
+
 import Card from "./Card.vue";
 import BoosterCard from "./BoosterCard.vue";
 
-export default {
+export default defineComponent({
 	name: "DraftLogPick",
 	components: { Card, BoosterCard },
 	props: {
-		pick: { type: Object, required: true },
+		pick: { type: Object as PropType<DraftPick>, required: true },
 		carddata: { type: Object, required: true },
 		language: { type: String, required: true },
 		type: { type: String, default: "Draft" },
 		scale: { type: Number, default: 1 },
 	},
-};
+});
 </script>
 
 <style scoped>

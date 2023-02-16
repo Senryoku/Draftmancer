@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 import { UniqueCard } from "../../../src/CardTypes";
 
 import { exportToMTGA } from "../exportToMTGA.js";
@@ -29,7 +29,7 @@ import { fireToast } from "../alerts";
 import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
 
-export default {
+export default defineComponent({
 	components: { Dropdown },
 	props: {
 		language: { type: String, required: true },
@@ -57,5 +57,5 @@ export default {
 			exportToMTGO(this.deck, this.sideboard, this.options);
 		},
 	},
-};
+});
 </script>

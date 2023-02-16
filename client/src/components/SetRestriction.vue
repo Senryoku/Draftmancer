@@ -74,12 +74,12 @@
 </template>
 
 <script lang="ts">
-import { PropType } from "vue";
+import { PropType, defineComponent } from "vue";
 
 import constants from "../../../src/data/constants.json";
 import { SetCode, SetInfo, SetsInfos } from "../SetInfos";
 
-export default {
+export default defineComponent({
 	data() {
 		return {
 			SetsInfos: SetsInfos,
@@ -166,7 +166,7 @@ export default {
 			return this.value.includes(s);
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

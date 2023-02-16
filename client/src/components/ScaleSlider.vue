@@ -8,7 +8,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	props: {
 		value: { type: Number, required: true },
 		min: { type: Number, default: 0.1 },
@@ -22,7 +24,7 @@ export default {
 			this.$emit("input", value);
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
