@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { replaceManaSymbols } from "../ManaSymbols.js";
+import { replaceManaSymbols } from "../ManaSymbols";
 
 function checkOverflow(el) {
 	const curOverflow = el.style.overflow;

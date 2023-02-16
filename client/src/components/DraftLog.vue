@@ -218,7 +218,11 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { DraftLog, DraftLogUserData, DraftPick, GenericDraftPick } from "../../../src/DraftLog";
+import { UserID } from "../../../src/IDTypes";
+
 import * as helper from "../helper";
 import { fireToast } from "../alerts";
 
@@ -227,25 +231,47 @@ import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
+import { CardColor, CardID } from "../../../src/CardTypes";
 
-export default {
+export type PickDetails = {
+	key: number;
+	data: GenericDraftPick;
+	packNumber: number;
+	pickNumber: number;
+};
+
+type PlayerSummary = {
+	userID: UserID;
+	userName: string;
+	hasDeck: boolean;
+	colors: { W: number; U: number; B: number; R: number; G: number };
+};
+
+export default defineComponent({
 	name: "DraftLog",
 	components: { CardPool, DraftLogPick, DraftLogPicksSummary, Decklist, ExportDropdown },
 	props: {
-		draftlog: { type: Object, required: true },
+		draftlog: { type: Object as PropType<DraftLog>, required: true },
 		language: { type: String, required: true },
-		userID: { type: String },
+		userID: { type: String as PropType<UserID>, required: true },
 		userName: { type: String },
 	},
 	data() {
+		const displayOptions: {
+			detailsUserID?: UserID;
+			category: string;
+			textList: boolean;
+			pack: number;
+			pick: number;
+		} = {
+			detailsUserID: undefined,
+			category: "Cards",
+			textList: false,
+			pack: 0,
+			pick: 0,
+		};
 		return {
-			displayOptions: {
-				detailsUserID: undefined,
-				category: "Cards",
-				textList: false,
-				pack: 0,
-				pick: 0,
-			},
+			displayOptions,
 		};
 	},
 	mounted() {
@@ -271,10 +297,10 @@ export default {
 		}
 	},
 	methods: {
-		downloadMPT(id) {
+		downloadMPT(id: UserID) {
 			helper.download(`DraftLog_${id}.txt`, helper.exportToMagicProTools(this.draftlog, id));
 		},
-		submitToMPT(id) {
+		submitToMPT(id: UserID) {
 			fetch("https://magicprotools.com/api/draft/add", {
 				credentials: "omit",
 				headers: {
@@ -307,14 +333,10 @@ export default {
 				}
 			});
 		},
-		colorsInCardList(cards) {
+		colorsInCardList(cardIDs: CardID[]): { W: number; U: number; B: number; R: number; G: number } {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
-			if (!cards) return r;
-			for (let cid of cards) {
-				for (let color of this.draftlog.carddata[cid].colors) {
-					r[color] += 1;
-				}
-			}
+			if (!cardIDs) return r;
+			for (let cid of cardIDs) for (let color of this.draftlog.carddata[cid].colors) r[color as CardColor] += 1;
 			return r;
 		},
 		prevPick() {
@@ -335,12 +357,13 @@ export default {
 				++this.displayOptions.pick;
 			}
 		},
-		hasSubmittedDeck(log) {
+		hasSubmittedDeck(log: DraftLogUserData): boolean {
 			return (
-				log?.decklist && (log.decklist.main?.length > 0 || log.decklist.side?.length > 0 || log.decklist.hashes)
+				log?.decklist !== undefined &&
+				(log.decklist.main?.length > 0 || log.decklist.side?.length > 0 || log.decklist.hashes !== undefined)
 			);
 		},
-		selectPlayer(userLogSummary) {
+		selectPlayer(userLogSummary: PlayerSummary) {
 			if (userLogSummary.userName !== "(empty)") {
 				this.displayOptions.detailsUserID = userLogSummary.userID;
 				if (userLogSummary.hasDeck) {
@@ -356,33 +379,34 @@ export default {
 		type() {
 			return this.draftlog.type ? this.draftlog.type : "Draft";
 		},
-		selectedLog() {
+		selectedLog(): DraftLogUserData | undefined {
+			if (!this.displayOptions.detailsUserID) return undefined;
 			return this.draftlog.users[this.displayOptions.detailsUserID];
 		},
 		selectedLogCards() {
 			let uniqueID = 0;
-			return this.selectedLog.cards.map((cid) =>
+			return this.selectedLog?.cards.map((cid: CardID) =>
 				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
 			);
 		},
 		selectedLogDecklist() {
-			if (!this.hasSubmittedDeck(this.selectedLog)) return undefined;
+			if (!this.selectedLog || !this.hasSubmittedDeck(this.selectedLog)) return undefined;
 			return this.selectedLog.decklist;
 		},
-		tableSummary() {
+		tableSummary(): PlayerSummary[] {
 			// Aggregate information about each player
-			let tableSummary = [];
+			let tableSummary: PlayerSummary[] = [];
 			for (let userID in this.draftlog.users) {
 				tableSummary.push({
 					userID: userID,
 					userName: this.draftlog.users[userID].userName,
 					hasDeck: this.hasSubmittedDeck(this.draftlog.users[userID]),
 					colors:
-						this.draftlog.users[userID].decklist?.main?.length > 0
-							? this.colorsInCardList(this.draftlog.users[userID].decklist.main)
+						(this.draftlog.users[userID].decklist?.main?.length ?? 0) > 0
+							? this.colorsInCardList(this.draftlog.users[userID].decklist?.main ?? [])
 							: this.type === "Draft"
 							? this.colorsInCardList(this.draftlog.users[userID].cards)
-							: null,
+							: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 				});
 			}
 			// Add empty seats to better visualize the draft table
@@ -390,6 +414,7 @@ export default {
 				tableSummary.push({
 					userID: "none",
 					userName: "(empty)",
+					hasDeck: false,
 					colors: this.colorsInCardList([]),
 				});
 			return tableSummary;
@@ -397,7 +422,7 @@ export default {
 		teamDraft() {
 			return this.draftlog.teamDraft;
 		},
-		picksPerPack() {
+		picksPerPack(): PickDetails[][] {
 			if (!this.selectedLog || !this.selectedLog.picks || this.selectedLog.picks.length === 0) return [];
 			switch (this.type) {
 				default:
@@ -405,24 +430,25 @@ export default {
 				case "Rochester Draft":
 				case "Draft": {
 					// Infer PackNumber & PickNumber
-					let r = [];
+					let r: PickDetails[][] = [];
 					let currPick = 0;
 					let currBooster = -1;
 					let lastSize = 0;
 					let currPickNumber = 0;
 					while (currPick < this.selectedLog.picks.length) {
-						if (this.selectedLog.picks[currPick].booster.length > lastSize) {
+						const p = this.selectedLog.picks[currPick] as DraftPick;
+						if (p.booster.length > lastSize) {
 							++currBooster;
 							currPickNumber = 0;
 							r.push([]);
 						} else ++currPickNumber;
 						r[currBooster].push({
 							key: currPick,
-							data: this.selectedLog.picks[currPick],
+							data: p,
 							packNumber: currBooster,
 							pickNumber: currPickNumber,
 						});
-						lastSize = this.selectedLog.picks[currPick].booster.length;
+						lastSize = p.booster.length;
 						++currPick;
 					}
 					return r;
@@ -455,7 +481,7 @@ export default {
 					this.draftlog &&
 					this.draftlog.users &&
 					Object.keys(this.draftlog.users)[0] &&
-					!this.draftlog.users[this.displayOptions.detailsUserID]
+					(!this.displayOptions.detailsUserID || !this.draftlog.users[this.displayOptions.detailsUserID])
 				)
 					this.displayOptions.detailsUserID = Object.keys(this.draftlog.users)[0];
 			},
@@ -472,7 +498,7 @@ export default {
 			},
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

@@ -20,6 +20,9 @@
 </template>
 
 <script lang="ts">
+import { PropType } from "vue";
+import { UniqueCard } from "../../../src/CardTypes";
+
 import { exportToMTGA } from "../exportToMTGA.js";
 import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
@@ -30,8 +33,8 @@ export default {
 	components: { Dropdown },
 	props: {
 		language: { type: String, required: true },
-		deck: { type: Array, required: true },
-		sideboard: { type: Array, default: null },
+		deck: { type: Array as PropType<UniqueCard[]>, required: true },
+		sideboard: { type: Array as PropType<UniqueCard[]>, default: null },
 		options: {
 			type: Object,
 			default: () => {
