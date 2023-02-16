@@ -58,6 +58,8 @@ import { CustomCardList } from "../../../src/CustomCardList";
 import { defineComponent, PropType } from "vue";
 import { Card, CardID, PlainCollection } from "../../../src/CardTypes";
 
+type CardWithCount = Card & { count: number };
+
 export default defineComponent({
 	components: { CardListColumn },
 	props: {
@@ -66,7 +68,7 @@ export default defineComponent({
 		collection: { type: Object as PropType<PlainCollection> },
 	},
 	data() {
-		return { cards: {} } as { cards: { [slot: string]: Card[] } };
+		return { cards: {} } as { cards: { [slot: string]: CardWithCount[] } };
 	},
 	mounted() {
 		// Could be useful to cache this, but also quite annoying to keep it in sync with the cardlist.
@@ -85,7 +87,7 @@ export default defineComponent({
 		},
 		rowsBySlot() {
 			if (this.defaultLayout || !this.cards) return {};
-			let rowsBySlot: { [slot: string]: { [s: string]: Card[] }[] } = {};
+			let rowsBySlot: { [slot: string]: { [s: string]: CardWithCount[] }[] } = {};
 			for (let slot in this.cardlist.slots) rowsBySlot[slot] = this.rowsByColor(this.cards[slot]);
 			return rowsBySlot;
 		},
@@ -136,7 +138,7 @@ export default defineComponent({
 			}
 			download("Cube.txt", str);
 		},
-		rowsByColor(cards: Card[]) {
+		rowsByColor(cards: CardWithCount[]) {
 			if (!cards) return [];
 			let a = cards.reduce(
 				(acc, item) => {
@@ -149,7 +151,7 @@ export default defineComponent({
 					}
 					return acc;
 				},
-				[{ "": [], W: [], U: [], B: [], R: [], G: [] } as { [s: string]: Card[] }, {}]
+				[{ "": [], W: [], U: [], B: [], R: [], G: [] } as { [s: string]: CardWithCount[] }, {}]
 			);
 			for (let row of a) for (let col in row) CardOrder.orderByArenaInPlace(row[col]);
 			return a;
@@ -163,7 +165,10 @@ export default defineComponent({
 				tofetch[slot] = [];
 				for (let cid in this.cardlist.slots[slot]) {
 					if (this.cardlist.customCards && cid in this.cardlist.customCards)
-						cards[slot].push(this.cardlist.customCards[cid]);
+						cards[slot].push({
+							...this.cardlist.customCards[cid],
+							count: this.cardlist.slots[slot][cid],
+						});
 					else tofetch[slot].push(cid);
 				}
 			}

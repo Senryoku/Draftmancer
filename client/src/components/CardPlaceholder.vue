@@ -1,21 +1,28 @@
 <template functional>
 	<div class="card-placeholder">
-		<div class="card-name" v-if="props.card && props.card.name">{{ props.card.name }}</div>
-		<div class="card-type" v-if="props.card && (props.card.type || props.card.type_line)">
-			{{ $options.typeLine(props.card) }}
+		<div class="card-name" v-if="card && card.name">{{ card.name }}</div>
+		<div class="card-type" v-if="card && typeLine">
+			{{ typeLine }}
 		</div>
 	</div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { isScryfallCard, ScryfallCard } from "@/vueCardCache";
+import { defineComponent, PropType } from "vue";
+import { Card } from "../../../src/CardTypes";
+
+export default defineComponent({
 	name: "CardPlaceholder",
-	props: { card: { type: Object } },
-	typeLine(card) {
-		if (card.type_line) return card.type_line;
-		return `${card.type}${card.subtypes?.length > 0 ? " — " : ""}${card.subtypes.join(" ")}`;
+	props: { card: { type: Object as PropType<Card | ScryfallCard> } },
+	computed: {
+		typeLine() {
+			if (!this.card) return undefined;
+			if (isScryfallCard(this.card)) return this.card.type_line;
+			return `${this.card.type}${this.card.subtypes?.length > 0 ? " — " : ""}${this.card.subtypes.join(" ")}`;
+		},
 	},
-};
+});
 </script>
 
 <style>
