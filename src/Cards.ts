@@ -71,7 +71,7 @@ for (const [cid, card] of Cards) {
 
 Object.freeze(Cards);
 
-// Prefered version of each card
+// preferred version of each card
 export const CardsByName = JSON.parse(fs.readFileSync("./data/CardsByName.json", "utf-8"));
 
 // Cache for cards organized by set.

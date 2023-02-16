@@ -77,7 +77,7 @@ const defaultSettings = {
 	enableNotifications: false,
 	collapseSideboard: window.innerWidth > 1200,
 	sideboardBasics: 0,
-	preferedBasics: "",
+	preferredBasics: "",
 	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
@@ -238,7 +238,7 @@ export default {
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
-			preferedBasics: initialSettings.preferedBasics,
+			preferredBasics: initialSettings.preferredBasics,
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -2976,7 +2976,7 @@ export default {
 		sideboardBasics() {
 			this.storeSettings();
 		},
-		preferedBasics() {
+		preferredBasics() {
 			this.storeSettings();
 		},
 		// Session settings

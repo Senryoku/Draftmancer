@@ -34,7 +34,7 @@ function exportCardToMTGA(c, language, full) {
 	else return `1 ${name}\n`;
 }
 
-const MTGAExportDefaultOptions = { preferedBasics: "", sideboardBasics: 0, full: true };
+const MTGAExportDefaultOptions = { preferredBasics: "", sideboardBasics: 0, full: true };
 
 export function exportToMTGA(deck, sideboard, language, lands = null, options = MTGAExportDefaultOptions) {
 	for (let key in MTGAExportDefaultOptions)
@@ -42,8 +42,8 @@ export function exportToMTGA(deck, sideboard, language, lands = null, options = 
 
 	// Note: The importer requires the collector number, but it can be wrong and the import will succeed        ↓
 	const basicsSet =
-		options.full && options.preferedBasics && options.preferedBasics !== ""
-			? ` (${fixSetCode(options.preferedBasics)}) 1`
+		options.full && options.preferredBasics && options.preferredBasics !== ""
+			? ` (${fixSetCode(options.preferredBasics)}) 1`
 			: "";
 
 	let str = options.full ? "Deck\n" : "";

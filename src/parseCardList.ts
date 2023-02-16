@@ -48,7 +48,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 		);
 	}
 
-	// Only the name is supplied, get the prefered version of the card
+	// Only the name is supplied, get the preferred version of the card
 	if (!set && !number && name in CardsByName) return [count, CardsByName[name], !!foil];
 
 	// Search for the correct set and collector number

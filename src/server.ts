@@ -961,15 +961,15 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 				});
 		}
 	},
-	setCollationType(userID: UserID, sessionID: SessionID, preferedCollation: string) {
-		if (!SessionsSettingsProps.preferedCollation(preferedCollation)) return;
-		if (preferedCollation === Sessions[sessionID].preferedCollation) return;
+	setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
+		if (!SessionsSettingsProps.preferredCollation(preferredCollation)) return;
+		if (preferredCollation === Sessions[sessionID].preferredCollation) return;
 
-		Sessions[sessionID].preferedCollation = preferedCollation;
+		Sessions[sessionID].preferredCollation = preferredCollation;
 		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
-					preferedCollation: Sessions[sessionID].preferedCollation,
+					preferredCollation: Sessions[sessionID].preferredCollation,
 				});
 		}
 	},
@@ -1261,7 +1261,7 @@ io.on("connection", async function (socket) {
 
 	for (const key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
-	// Apply prefered session settings in case we're creating a new one, filtering out invalid ones.
+	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 	const filteredSettings: Options = {};
 	try {
 		if (query.sessionSettings) {

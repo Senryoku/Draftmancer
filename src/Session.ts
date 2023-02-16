@@ -104,7 +104,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 		return true;
 	},
 	foil: isBoolean,
-	preferedCollation(val: any) {
+	preferredCollation(val: any) {
 		return ["Paper", "MTGA"].includes(val);
 	},
 	useCustomCardList: isBoolean,
@@ -314,7 +314,7 @@ export class Session implements IIndexable {
 	colorBalance: boolean = true;
 	maxDuplicates?: { [slot: string]: number } = undefined;
 	foil: boolean = false;
-	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
+	preferredCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
 	customCardList: CustomCardList = {
 		slots: {},
@@ -739,8 +739,8 @@ export class Session implements IIndexable {
 
 				// Proper-ish implementation:
 				/*
-				// Is Arena Collation available?              Is it the prefered choice, or our only one?                           MTGA collations don't have foil sheets.
-				if(`${set}-arena` in PaperBoosterFactories && (this.preferedCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
+				// Is Arena Collation available?              Is it the preferred choice, or our only one?                           MTGA collations don't have foil sheets.
+				if(`${set}-arena` in PaperBoosterFactories && (this.preferredCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
 					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
 				return PaperBoosterFactories[set](BoosterFactoryOptions);
 				*/

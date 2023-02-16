@@ -35,7 +35,7 @@ export default {
 		options: {
 			type: Object,
 			default: () => {
-				return { lands: null, preferedBasics: "", sideboardBasics: 0 };
+				return { lands: null, preferredBasics: "", sideboardBasics: 0 };
 			},
 		},
 	},
@@ -43,7 +43,7 @@ export default {
 		exportDeck(event: Event, full = true) {
 			copyToClipboard(
 				exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
-					preferedBasics: this.options.preferedBasics,
+					preferredBasics: this.options.preferredBasics,
 					sideboardBasics: this.options.sideboardBasics,
 					full: full,
 				})

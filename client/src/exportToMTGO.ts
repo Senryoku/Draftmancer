@@ -9,7 +9,7 @@ export async function exportToMTGO(
 	deck: UniqueCard[],
 	sideboard: UniqueCard[],
 	options: {
-		preferedBasics?: string;
+		preferredBasics?: string;
 		lands?: { [color in CardColor]: number };
 		sideboardBasics?: number;
 	} = {}
@@ -25,9 +25,9 @@ export async function exportToMTGO(
 	try {
 		await vueCardCache.requestBulk([...new Set(deck.map((card) => card.id))]);
 		if (sideboard) await vueCardCache.requestBulk([...new Set(sideboard.map((card) => card.id))]);
-		if (options?.preferedBasics && options.preferedBasics !== "") {
+		if (options?.preferredBasics && options.preferredBasics !== "") {
 			const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
-				return { name: Constants.BasicLandNames["en"][c as CardColor], set: options.preferedBasics };
+				return { name: Constants.BasicLandNames["en"][c as CardColor], set: options.preferredBasics };
 			});
 			let basicsRequest = await axios
 				.post(
