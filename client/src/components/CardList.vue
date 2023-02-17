@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { download, isEmpty } from "../helper";
-import CardOrder from "../cardorder.js";
+import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
 import { Language } from "@/Types";
 import { CustomCardList } from "../../../src/CustomCardList";

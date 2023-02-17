@@ -8,17 +8,17 @@
 </template>
 
 <script lang="ts">
-import { isScryfallCard, ScryfallCard } from "@/vueCardCache";
+import { isScryfallCard, ScryfallCard, ScryfallCardFace, isScryfallCardFace } from "../vueCardCache";
 import { defineComponent, PropType } from "vue";
-import { Card } from "../../../src/CardTypes";
+import { Card, CardBack } from "../../../src/CardTypes";
 
 export default defineComponent({
 	name: "CardPlaceholder",
-	props: { card: { type: Object as PropType<Card | ScryfallCard> } },
+	props: { card: { type: Object as PropType<Card | CardBack | ScryfallCard | ScryfallCardFace> } },
 	computed: {
 		typeLine() {
 			if (!this.card) return undefined;
-			if (isScryfallCard(this.card)) return this.card.type_line;
+			if (isScryfallCard(this.card) || isScryfallCardFace(this.card)) return this.card.type_line;
 			return `${this.card.type}${this.card.subtypes?.length > 0 ? " — " : ""}${this.card.subtypes.join(" ")}`;
 		},
 	},

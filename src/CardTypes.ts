@@ -11,6 +11,16 @@ export enum CardColor {
 	G = "G",
 }
 
+export type CardBack = {
+	name: string;
+	printed_names: { [lang: string]: string };
+	image_uris: { [lang: string]: string };
+	type: string;
+	subtypes: Array<string>;
+};
+
+export type CardRarity = string;
+
 export class Card {
 	id: CardID = "";
 	arena_id?: ArenaID;
@@ -21,7 +31,7 @@ export class Card {
 	colors: Array<CardColor> = [];
 	set: string = "";
 	collector_number: string = "";
-	rarity: string = "";
+	rarity: CardRarity = "";
 	type: string = "";
 	subtypes: Array<string> = [];
 	rating: number = 0;
@@ -29,13 +39,7 @@ export class Card {
 	layout?: string;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
-	back?: {
-		name: string;
-		printed_names: { [lang: string]: string };
-		image_uris: { [lang: string]: string };
-		type: string;
-		subtypes: Array<string>;
-	};
+	back?: CardBack;
 }
 
 export type DeckBasicLands = { [key: string]: number };

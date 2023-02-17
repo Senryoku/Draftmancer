@@ -28,7 +28,7 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard } from "./CardTypes.js";
+import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard, PlainCollection } from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
@@ -168,7 +168,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	setCollection(
 		userID: UserID,
 		sessionID: SessionID,
-		collection: { [aid: string]: number },
+		collection: PlainCollection,
 		ack?: (response: SocketAck | { collection: CardPool }) => void
 	) {
 		if (!isObject(collection) || collection === null) return;

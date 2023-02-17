@@ -1,3 +1,5 @@
+import { CardColor, CardID, CardRarity } from "../../src/CardTypes";
+
 const ColorOrder = {
 	W: 0,
 	U: 1,
@@ -56,7 +58,12 @@ function typeOrder(type) {
 	else return 1;
 }
 
-const Comparators = {
+export type ComparatorType = (
+	lhs: { cmc: number; type: string; colors: CardColor[]; rarity: CardRarity; name: string; id: CardID },
+	rhs: { cmc: number; type: string; colors: CardColor[]; rarity: CardRarity; name: string; id: CardID }
+) => number;
+
+const Comparators: { [name: string]: ComparatorType } = {
 	// Arena counts each X as 100 basically
 	// Arena uses the front half of split cards here
 	// TODO: handle X, handle split cards
@@ -90,7 +97,7 @@ const Comparators = {
 	},
 
 	id: (lhs, rhs) => {
-		return lhs.id - rhs.id;
+		return lhs.id.localeCompare(rhs.id);
 	},
 
 	arena: (lhs, rhs) => {
@@ -151,7 +158,7 @@ export function idColumnCMC(cardids) {
 }
 
 export function orderByCMCInPlace(cards) {
-	return cards.sort(function(lhs, rhs) {
+	return cards.sort(function (lhs, rhs) {
 		if (lhs.cmc == rhs.cmc) return Comparators.color(lhs, rhs);
 		return lhs.cmc - rhs.cmc;
 	});
@@ -162,7 +169,7 @@ export function orderByCMC(cards) {
 }
 
 export function orderByColorInPlace(cards) {
-	return cards.sort(function(lhs, rhs) {
+	return cards.sort(function (lhs, rhs) {
 		if (Comparators.color(lhs, rhs) == 0) return Comparators.arena(lhs, rhs);
 		return Comparators.color(lhs, rhs);
 	});
@@ -173,7 +180,7 @@ export function orderByColor(cards) {
 }
 
 export function orderByRarityInPlace(cards) {
-	return cards.sort(function(lhs, rhs) {
+	return cards.sort(function (lhs, rhs) {
 		if (RarityOrder[lhs.rarity] == RarityOrder[rhs.rarity]) Comparators.arena(lhs, rhs);
 		return RarityOrder[lhs.rarity] - RarityOrder[rhs.rarity];
 	});
