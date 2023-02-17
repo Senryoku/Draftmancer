@@ -263,7 +263,7 @@ export default defineComponent({
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 2000;
+	z-index: 1040;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }

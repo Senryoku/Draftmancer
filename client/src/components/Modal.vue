@@ -54,7 +54,7 @@ export default defineComponent({
 <style>
 .modal-mask {
 	position: fixed;
-	z-index: 1500;
+	z-index: 1020;
 	top: 0;
 	left: 0;
 	width: 100%;
