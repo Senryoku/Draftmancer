@@ -147,14 +147,13 @@ export class ColorBalancedSlot {
 }
 
 export interface IBoosterFactory {
-	generateBooster(targets: Targets): UniqueCard[] | false;
+	generateBooster(targets: Targets): UniqueCard[] | MessageError;
 }
 
 export class BoosterFactory implements IBoosterFactory {
 	cardPool: SlotedCardPool;
 	landSlot: BasicLandSlot | null;
 	options: Options;
-	onError: (title: string, text: string) => void;
 	colorBalancedSlot?: ColorBalancedSlot;
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
@@ -163,16 +162,12 @@ export class BoosterFactory implements IBoosterFactory {
 		if (this.landSlot && this.landSlot.setup) this.landSlot.setup(this.cardPool["common"]);
 		this.options = options;
 		if (this.options.colorBalance) this.colorBalancedSlot = new ColorBalancedSlot(this.cardPool["common"]);
-
-		this.onError = function (title: string, text: string) {
-			this.options?.onError?.(title, text);
-		};
 	}
 
 	/* Returns a standard draft booster
 	 *   targets: Card count for each slot (e.g. {common:10, uncommon:3, rare:1})
 	 */
-	generateBooster(targets: Targets) {
+	generateBooster(targets: Targets): UniqueCard[] | MessageError {
 		let booster: Array<UniqueCard> = [];
 
 		let addedFoils = 0;
@@ -196,10 +191,7 @@ export class BoosterFactory implements IBoosterFactory {
 		for (let i = 0; i < targets["rare"]; ++i) {
 			// 1 Rare/Mythic
 			if (this.cardPool["mythic"].size === 0 && this.cardPool["rare"].size === 0) {
-				const msg = `Not enough rare or mythic cards in collection.`;
-				this.onError("Error generating boosters", msg);
-				console.error(msg);
-				return false;
+				return new MessageError("Error generating boosters", `Not enough rare or mythic cards in collection.`);
 			} else if (this.cardPool["mythic"].size === 0) {
 				booster.push(pickCard(this.cardPool["rare"]));
 			} else if (this.options.mythicPromotion && this.cardPool["rare"].size === 0) {
@@ -228,12 +220,8 @@ export class BoosterFactory implements IBoosterFactory {
 		if (this.landSlot) booster.push(this.landSlot.pick());
 
 		// Last resort safety check
-		if (booster.some((v) => typeof v === "undefined" || v === null)) {
-			const msg = `Unspecified error.`;
-			this.onError("Error generating boosters", msg);
-			console.error(msg, booster);
-			return false;
-		}
+		if (booster.some((v) => typeof v === "undefined" || v === null))
+			return new MessageError("Unspecified error", `Error generating boosters.`);
 
 		return booster;
 	}
@@ -327,7 +315,7 @@ class WARBoosterFactory extends BoosterFactory {
 			else --updatedTargets[pickedRarity];
 
 			let booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			booster = insertInBooster(pickedPL, booster);
 			return booster;
 		}
@@ -365,7 +353,7 @@ class DOMBoosterFactory extends BoosterFactory {
 			else --updatedTargets[pickedRarity];
 
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			// Insert the card in the appropriate slot, for Dominaria, the added Legendary is always the last card
 			booster.unshift(pickedCard);
 			return booster;
@@ -404,7 +392,7 @@ class ZNRBoosterFactory extends BoosterFactory {
 			else --updatedTargets[pickedRarity];
 
 			let booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			booster = insertInBooster(pickedMDFC, booster);
 			return booster;
 		}
@@ -453,16 +441,16 @@ class CMRBoosterFactory extends BoosterFactory {
 		if (Object.values(legendaryCounts).every((c) => c === 0)) {
 			return super.generateBooster(updatedTargets);
 		} else {
-			let booster: Array<UniqueCard> | false = [];
+			let booster: Array<UniqueCard> | MessageError = [];
 			// Prismatic Piper instead of a common in about 1 of every 6 packs
 			if (random.bool(1 / 6)) {
 				--updatedTargets.common;
 				booster = super.generateBooster(updatedTargets);
-				if (!booster) return false;
+				if (isMessageError(booster)) return booster;
 				booster.push(getUnique("a69e6d8f-f742-4508-a83a-38ae84be228c"));
 			} else {
 				booster = super.generateBooster(updatedTargets);
-				if (!booster) return false;
+				if (isMessageError(booster)) return booster;
 			}
 
 			// 2 Legends: any combination of Uncommon/Rare/Mythic, except two Mythics
@@ -510,8 +498,8 @@ class TSRBoosterFactory extends BoosterFactory {
 	}
 	generateBooster(targets: Targets) {
 		const booster = super.generateBooster(targets);
+		if (isMessageError(booster)) return booster;
 		const timeshifted = pickCard(this.cardPool["special"], []);
-		if (!booster) return false;
 		booster.push(timeshifted);
 		return booster;
 	}
@@ -550,7 +538,6 @@ class STXBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
-		let booster: Array<UniqueCard> | false = [];
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 		const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
 
@@ -564,18 +551,16 @@ class STXBoosterFactory extends BoosterFactory {
 				: "common"
 			: "common";
 
-		if (this.lessonsByRarity[pickedRarity].size <= 0) {
-			this.onError("Error generating boosters", "Not enough Lessons available.");
-			return false;
-		}
+		if (this.lessonsByRarity[pickedRarity].size <= 0)
+			return new MessageError("Error generating boosters", `Not enough Lessons available.`);
 
 		const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
 		const updatedTargets = Object.assign({}, targets);
 		if (updatedTargets["common"] > 0) --updatedTargets["common"];
 
-		booster = super.generateBooster(updatedTargets);
-		if (!booster) return false;
+		let booster = super.generateBooster(updatedTargets);
+		if (isMessageError(booster)) return booster;
 		booster.push(pickedLesson);
 
 		// Mystical Archive
@@ -589,10 +574,8 @@ class STXBoosterFactory extends BoosterFactory {
 				: "uncommon"
 			: "uncommon";
 
-		if (archiveCounts[archiveRarity] <= 0) {
-			this.onError("Error generating boosters", "Not enough Mystical Archive cards.");
-			return false;
-		}
+		if (archiveCounts[archiveRarity] <= 0)
+			return new MessageError("Error generating boosters", `Not enough Mystical Archive cards.`);
 
 		const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
 		booster.push(archive);
@@ -629,7 +612,7 @@ class MH2BoosterFactory extends BoosterFactory {
 			const pickedCard = pickCard(this.newToModern[pickedRarity], []);
 
 			const booster = super.generateBooster(targets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			// Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown
 			booster.unshift(pickedCard);
 			return booster;
@@ -676,7 +659,7 @@ class MIDBoosterFactory extends BoosterFactory {
 				--updatedTargets["rare"];
 			}
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			const hasFoil = booster[0].foil ? 1 : 0;
 			// Insert the Double-Faced common as the first common in the pack
 			if (pickedDoubleFacedCommon)
@@ -789,7 +772,7 @@ class NEOBoosterFactory extends BoosterFactory {
 				--updatedTargets["common"];
 			}
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			const hasFoil = booster[0].foil ? 1 : 0;
 			const pickedRarity = rollSpecialCardRarity(
 				countBySlot(this.doubleFacedUCs),
@@ -851,10 +834,8 @@ class CLBBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.legendaryCreaturesAndPlaneswalkers)) {
 			return super.generateBooster(updatedTargets);
 		} else {
-			let booster: Array<UniqueCard> | false = [];
-
-			booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			const booster = super.generateBooster(updatedTargets);
+			if (isMessageError(booster)) return booster;
 
 			// 1 Legendary creature or planeswalker (rare or mythic rare in 31% of boosters)
 			let legendaryRarity = "uncommon";
@@ -875,7 +856,8 @@ class CLBBoosterFactory extends BoosterFactory {
 				backgroundRarity = "rare";
 			else if (backgroundRarityCheck < 1.0 / 2.0 && this.legendaryBackgrounds["uncommon"].size > 0)
 				backgroundRarity = "uncommon"; // This ratio is completely arbitrary
-			if (this.legendaryBackgrounds[backgroundRarity].size <= 0) return false;
+			if (this.legendaryBackgrounds[backgroundRarity].size <= 0)
+				return new MessageError("Error generating boosters", `Not enough legendary backgrounds.`);
 			const pickedBackground = pickCard(this.legendaryBackgrounds[backgroundRarity], booster);
 			removeCardFromCardPool(pickedBackground.id, this.completeCardPool[pickedBackground.rarity]);
 
@@ -924,10 +906,8 @@ class M2X2BoosterFactory extends BoosterFactory {
 			};
 		}
 
-		let booster: Array<UniqueCard> | false = [];
-
-		booster = super.generateBooster(updatedTargets);
-		if (!booster) return false;
+		const booster = super.generateBooster(updatedTargets);
+		if (isMessageError(booster)) return booster;
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 
 		// 2 Foils
@@ -987,7 +967,7 @@ class DMUBoosterFactory extends BoosterFactory {
 			}
 
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			if (legendaryCreature) booster.splice(updatedTargets["rare"] ?? 0, 0, legendaryCreature);
 			return booster;
 		}
@@ -1066,7 +1046,7 @@ class YDMUBoosterFactory extends BoosterFactory {
 			const alchemyCard = pickCard(this.alchemyCards[pickedRarity], []);
 
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			if (legendaryCreature) booster.splice(updatedTargets["rare"] ?? 0, 0, legendaryCreature);
 			if (alchemyCard) booster.unshift(alchemyCard);
 			return booster;
@@ -1113,7 +1093,7 @@ class UNFBoosterFactory extends BoosterFactory {
 			}
 
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 
 			for (let i = 0; i < 2; ++i) {
 				const attractionRarity = rollSpecialCardRarity(
@@ -1181,7 +1161,7 @@ class BROBoosterFactory extends BoosterFactory {
 			const retroArtifact = pickCard(this.retroArtifacts[pickedRarity], []);
 
 			const booster = super.generateBooster(targets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			if (retroArtifact) booster.unshift(retroArtifact);
 			return booster;
 		}
@@ -1227,7 +1207,7 @@ class DMRBoosterFactory extends BoosterFactory {
 			const retroCard = pickCard(this.retroCards[pickedRarity], []);
 
 			const booster = super.generateBooster(updatedTargets);
-			if (!booster) return false;
+			if (isMessageError(booster)) return booster;
 			// Insert the Retro card right after the rare.
 			if (retroCard) booster.splice(updatedTargets["rare"], 0, retroCard);
 			return booster;
@@ -1252,7 +1232,6 @@ class ONEBoosterFactory extends BoosterFactory {
 
 	generateBooster(targets: Targets) {
 		const updatedTargets = Object.assign({}, targets);
-		let booster: Array<UniqueCard> | false = [];
 
 		let conceptPraetor: null | UniqueCard = null;
 		const praetorRarityRoll = random.real(0, 1);
@@ -1267,8 +1246,8 @@ class ONEBoosterFactory extends BoosterFactory {
 			--updatedTargets["rare"];
 		}
 
-		booster = super.generateBooster(updatedTargets);
-		if (!booster) return false;
+		const booster = super.generateBooster(updatedTargets);
+		if (isMessageError(booster)) return booster;
 
 		if (conceptPraetor) booster.unshift(conceptPraetor);
 
@@ -1307,6 +1286,7 @@ export const SetSpecificFactories: {
  */
 
 import PaperBoosterData from "./data/sealed_extended_data.json";
+import { isMessageError, MessageError } from "./Message.js";
 
 class CardInfo {
 	set: string = "";

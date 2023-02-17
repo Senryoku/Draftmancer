@@ -21,6 +21,10 @@ export class MessageError extends Message {
 	}
 }
 
+export function isMessageError(obj: any): obj is MessageError {
+	return obj instanceof MessageError;
+}
+
 export class MessageWarning extends Message {
 	icon: string = "warning";
 	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
@@ -35,6 +39,7 @@ export class SocketAck {
 
 	constructor(error?: MessageError) {
 		this.error = error;
+		if (isMessageError(error)) this.code = -1;
 	}
 }
 

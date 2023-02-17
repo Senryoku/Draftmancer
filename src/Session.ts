@@ -34,7 +34,7 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
-import { MessageError, SocketAck, SocketError } from "./Message.js";
+import { isMessageError, MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
@@ -647,26 +647,24 @@ export class Session implements IIndexable {
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
-	generateBoosters(boosterQuantity: number, options: Options = {}) {
+	generateBoosters(boosterQuantity: number, options: Options = {}): true | MessageError {
+		const onError = options.onError ?? this.emitError;
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
 			if (!this.boosters) {
-				this.emitError(
+				return new MessageError(
 					"No Provided Boosters",
 					`Please upload your boosters in the session settings to use Pre-determined boosters.`
 				);
-				return false;
 			}
 			if (this.boosters.length !== boosterQuantity) {
-				this.emitError(
+				return new MessageError(
 					"Incorrect Provided Boosters",
 					`Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`
 				);
-				return false;
 			}
 			if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
-				this.emitError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
-				return false;
+				return new MessageError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
 			}
 			return true;
 		}
@@ -677,13 +675,9 @@ export class Session implements IIndexable {
 				options
 			);
 			const ret = generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
-			if (ret instanceof MessageError) {
-				this.emitError(ret.title, ret.text);
-				return false;
-			} else {
-				this.boosters = ret as UniqueCard[][];
-				return true;
-			}
+			if (isMessageError(ret)) return new MessageError(ret.title, ret.text);
+			this.boosters = ret;
+			return true;
 		} else {
 			// Standard draft boosters
 			const targets = options?.targets ?? this.getBoosterContent();
@@ -693,9 +687,6 @@ export class Session implements IIndexable {
 				colorBalance: this.colorBalance,
 				mythicPromotion: this.mythicPromotion,
 				maxDuplicates: this.maxDuplicates,
-				onError: (title: string, text: string) => {
-					this.emitError(title, text);
-				},
 				session: this,
 			};
 
@@ -772,9 +763,11 @@ export class Session implements IIndexable {
 						const card_target = targets[slot] * boosterQuantity;
 						if (card_count < card_target) {
 							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
-							this.emitError("Error generating boosters", msg);
 							console.warn(msg);
-							return false;
+							return new MessageError(
+								"Error generating boosters",
+								`Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`
+							);
 						}
 					}
 				}
@@ -782,11 +775,12 @@ export class Session implements IIndexable {
 
 			// Simple case, generate all boosters using the default rule
 			if (!boosterSpecificRules) {
+				if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
 				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
-					const booster = defaultFactory?.generateBooster(targets);
-					if (booster) this.boosters.push(booster);
-					else return false;
+					const booster = defaultFactory.generateBooster(targets);
+					if (isMessageError(booster)) return booster;
+					this.boosters.push(booster);
 				}
 			} else {
 				// Booster specific rules
@@ -868,9 +862,8 @@ export class Session implements IIndexable {
 											multiplier * this.getVirtualPlayersCount() * targets[slot]
 										) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-											this.emitError("Error generating boosters", msg, true, 0);
 											console.warn(msg);
-											return false;
+											return new MessageError("Error generating boosters", msg);
 										}
 									}
 								}
@@ -890,9 +883,10 @@ export class Session implements IIndexable {
 				for (let b = 0; b < boostersPerPlayer; ++b) {
 					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
 						const rule = boosterFactories[p][b];
+						if (!rule) return new MessageError("Internal Error");
 						const booster = rule?.generateBooster(targets);
-						if (booster) this.boosters.push(booster);
-						else return false;
+						if (isMessageError(booster)) return booster;
+						this.boosters.push(booster);
 					}
 				}
 
@@ -903,12 +897,11 @@ export class Session implements IIndexable {
 				if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
 					if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
-						this.emitError("Error generating boosters", msg);
 						console.error(msg);
 						console.error(
 							this.boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`)
 						);
-						return false;
+						return new MessageError("Error generating boosters", msg);
 					}
 				}
 			}
@@ -957,7 +950,10 @@ export class Session implements IIndexable {
 		if (this.users.size !== 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
-		if (!this.generateBoosters(boosterCount)) {
+		const ret = this.generateBoosters(boosterCount);
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return false;
@@ -1066,12 +1062,13 @@ export class Session implements IIndexable {
 		// Use boosterContent setting only if it is valid (adds up to 9 cards)
 		const cardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
 
-		if (
-			!this.generateBoosters(boosterCount, {
-				targets: cardsPerBooster === 9 ? this.getBoosterContent() : { rare: 1, uncommon: 3, common: 5 },
-				cardsPerBooster: 9,
-			})
-		) {
+		const ret = this.generateBoosters(boosterCount, {
+			targets: cardsPerBooster === 9 ? this.getBoosterContent() : { rare: 1, uncommon: 3, common: 5 },
+			cardsPerBooster: 9,
+		});
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return false;
@@ -1171,10 +1168,13 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
-		if (!this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true })) {
+		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true });
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
-			return;
+			return false;
 		}
 
 		this.disconnectedUsers = {};
@@ -1272,10 +1272,13 @@ export class Session implements IIndexable {
 		}
 		this.drafting = true;
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
-		if (!this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight })) {
+		const ret = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
-			return new SocketAck(); // generateBoosters already emits errors.
+			return new SocketAck(); // Error already emitted above.
 		}
 
 		if (this.boosters.some((b) => b.length !== gridWidth * gridHeight)) {
@@ -1374,7 +1377,7 @@ export class Session implements IIndexable {
 
 	///////////////////// Traditional Draft Methods //////////////////////
 	async startDraft() {
-		if (this.drafting) return;
+		if (this.drafting) return new MessageError("Game is already in progress.");
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
@@ -1382,9 +1385,13 @@ export class Session implements IIndexable {
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		if (
-			!this.generateBoosters(boosterQuantity, { useCustomBoosters: true, cardsPerBooster: this.cardsPerBooster })
-		) {
+		const ret = this.generateBoosters(boosterQuantity, {
+			useCustomBoosters: true,
+			cardsPerBooster: this.cardsPerBooster,
+		});
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.broadcastPreparationCancelation();
 			return;
 		}
@@ -2014,15 +2021,16 @@ export class Session implements IIndexable {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		if (
-			!this.generateBoosters(this.users.size * boostersPerPlayer, {
-				boostersPerPlayer: boostersPerPlayer,
-				useCustomBoosters: useCustomBoosters,
-				customBoosters: useCustomBoosters ? customBoosters : null,
-			})
-		) {
+		const ret = this.generateBoosters(this.users.size * boostersPerPlayer, {
+			boostersPerPlayer: boostersPerPlayer,
+			useCustomBoosters: useCustomBoosters,
+			customBoosters: useCustomBoosters ? customBoosters : null,
+		});
+		if (isMessageError(ret)) {
+			// FIXME: We should propagate to ack.
+			this.emitError(ret.title, ret.text);
 			this.broadcastPreparationCancelation();
-			return;
+			return false;
 		}
 		const log = this.initLogs("Sealed");
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
@@ -2058,6 +2066,8 @@ export class Session implements IIndexable {
 	}
 
 	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]): SocketAck {
+		if (this.drafting) return new SocketError("Game already in progress.");
+
 		this.drafting = true;
 
 		// Validate 'teams' parameters
@@ -2072,15 +2082,16 @@ export class Session implements IIndexable {
 			}
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		if (
-			!this.generateBoosters(teams.length * boostersPerPlayer, {
-				boostersPerPlayer: boostersPerPlayer,
-				useCustomBoosters: useCustomBoosters,
-				customBoosters: useCustomBoosters ? customBoosters : null,
-			})
-		) {
-			return new SocketAck(); // generateBoosters already emits errors.
+		const ret = this.generateBoosters(teams.length * boostersPerPlayer, {
+			boostersPerPlayer: boostersPerPlayer,
+			useCustomBoosters: useCustomBoosters,
+			customBoosters: useCustomBoosters ? customBoosters : null,
+		});
+		if (isMessageError(ret)) {
+			this.drafting = false;
+			return new SocketAck(ret);
 		}
+
 		const log = this.initLogs("TeamSealed");
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
