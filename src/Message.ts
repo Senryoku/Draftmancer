@@ -6,6 +6,13 @@ export class Message {
 	text: string = "";
 	html: string = "";
 	footer: string = "";
+
+	toast: boolean = true;
+	allowOutsideClick: boolean = true;
+	showConfirmButton: boolean = true;
+	timer: number = 0;
+	imageUrl: string = "";
+
 	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
 		this.title = title;
 		this.text = text;

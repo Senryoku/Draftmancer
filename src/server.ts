@@ -16,7 +16,7 @@ import cookieParser from "cookie-parser";
 import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
-import { ackError, MessageWarning, SocketAck, SocketError } from "./Message.js";
+import { ackError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
 import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -27,6 +27,7 @@ import {
 	DistributionMode,
 	DraftLogRecipients,
 	IIndexable,
+	getPublicSessionData,
 } from "./Session.js";
 import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard, PlainCollection } from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
@@ -36,10 +37,12 @@ import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
+import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
+import { SetCode } from "./Types.js";
 
 const app = express();
 const httpServer = new http.Server(app);
-const io = new Server(httpServer, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
 	maxHttpBufferSize: 1e7, // Increase max. message size to 10MB to accomodate larger custom card lists.
 });
 
@@ -55,17 +58,6 @@ function shortguid() {
 			.substring(1);
 	}
 	return s4() + s4() + s4();
-}
-
-function getPublicSessionData(s: Session) {
-	return {
-		id: s.id,
-		description: s.description,
-		players: s.users.size,
-		maxPlayers: s.maxPlayers,
-		cube: s.useCustomCardList,
-		sets: s.setRestriction,
-	};
 }
 
 function getPublicSessions() {
@@ -401,15 +393,18 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 
 		if (sess.teamDraft && sess.users.size !== 6) {
 			const verb = sess.users.size < 6 ? "add" : "remove";
-			Connections[userID].socket.emit("message", {
-				title: `Wrong player count`,
-				text: `Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`,
-			});
+			Connections[userID].socket.emit(
+				"message",
+				new Message(
+					`Wrong player count`,
+					`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
+				)
+			);
 		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
-			Connections[userID].socket.emit("message", {
-				title: `Not enough players`,
-				text: `Can't start draft: Not enough players (min. 2 including bots).`,
-			});
+			Connections[userID].socket.emit(
+				"message",
+				new Message(`Not enough players`, `Can't start draft: Not enough players (min. 2 including bots).`)
+			);
 		} else {
 			await sess.startDraft();
 			startPublicSession(sess);
@@ -432,10 +427,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
 			startPublicSession(sess);
 		} else {
-			Connections[userID].socket.emit("message", {
-				title: `2 Players Only`,
-				text: `Grid Draft can only be played with exactly 2 players. Bots are not supported!`,
-			});
+			Connections[userID].socket.emit(
+				"message",
+				new Message(
+					`2 Players Only`,
+					`Grid Draft can only be played with exactly 2 players. Bots are not supported!`
+				)
+			);
 		}
 	},
 	startRochesterDraft(userID: UserID, sessionID: SessionID) {
@@ -443,10 +441,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		if (!sess || sess.owner != userID || sess.drafting) return;
 
 		if (sess.users.size < 2) {
-			Connections[userID].socket.emit("message", {
-				title: `Not enough players`,
-				text: `Rochester Draft can only be played with at least 2 players. Bots are not supported!`,
-			});
+			Connections[userID].socket.emit(
+				"message",
+				new Message(
+					`Not enough players`,
+					`Rochester Draft can only be played with at least 2 players. Bots are not supported!`
+				)
+			);
 		} else {
 			sess.startRochesterDraft();
 			startPublicSession(sess);
@@ -460,10 +461,13 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
 			startPublicSession(sess);
 		} else {
-			Connections[userID].socket.emit("message", {
-				title: `2 Players Only`,
-				text: `Winston Draft can only be played with exactly 2 players. Bots are not supported!`,
-			});
+			Connections[userID].socket.emit(
+				"message",
+				new Message(
+					`2 Players Only`,
+					`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
+				)
+			);
 		}
 	},
 	startMinesweeperDraft(
@@ -555,10 +559,10 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		const newSession = shortguid();
 		joinSession(newSession, userToRemove);
 		Connections[userToRemove].socket.emit("setSession", newSession);
-		Connections[userToRemove].socket.emit("message", {
-			title: "Removed from session",
-			text: `You've been removed from session '${sessionID}' by its owner.`,
-		});
+		Connections[userToRemove].socket.emit(
+			"message",
+			new Message("Removed from session", `You've been removed from session '${sessionID}' by its owner.`)
+		);
 	},
 	setSeating(userID: UserID, sessionID: SessionID, seating: Array<UserID>) {
 		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
@@ -630,7 +634,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 			if (user !== userID) Connections[user].socket.emit("bots", bots);
 		}
 	},
-	setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<string>) {
+	setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<SetCode>) {
 		if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
 
 		Sessions[sessionID].setRestriction = setRestriction;
@@ -1187,10 +1191,9 @@ io.on("connection", async function (socket) {
 		// For some reason sockets doesn't always cleanly disconnects.
 		// Give 3sec. for the original socket to respond or we'll close it.
 		// Ask the user to wait while we test the previous connection...
-		socket.emit("message", {
-			title: "Connecting...",
-			allowOutsideClick: false,
-		});
+		const msg = new Message("Connecting...");
+		msg.allowOutsideClick = false;
+		socket.emit("message", msg);
 		await new Promise<void>((resolve) => {
 			((targetSocket) => {
 				const timeout = setTimeout(() => {
@@ -1262,9 +1265,11 @@ io.on("connection", async function (socket) {
 		joinSession(sessionID, userID, filteredSettings);
 	});
 
-	for (const key in socketCallbacks) socket.on(key, prepareSocketCallback(socketCallbacks[key]));
+	for (const key in socketCallbacks)
+		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(socketCallbacks[key]));
 
-	for (const key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
+	for (const key in ownerSocketCallbacks)
+		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
 	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 	const filteredSettings: Options = {};
@@ -1289,10 +1294,7 @@ io.on("connection", async function (socket) {
 function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSettings: Options = {}) {
 	// Fallback to previous session if possible, or generate a new one
 	const refuse = (msg: string) => {
-		Connections[userID].socket.emit("message", {
-			title: "Cannot join session",
-			html: msg,
-		});
+		Connections[userID].socket.emit("message", new Message("Cannot join session", "", "", msg));
 		if (!Connections[userID].sessionID) sessionID = shortguid();
 		else sessionID = Connections[userID].sessionID as SessionID;
 		Connections[userID].socket.emit("setSession", sessionID);
@@ -1322,10 +1324,9 @@ function joinSession(sessionID: SessionID, userID: UserID, defaultSessionSetting
 		// User was the owner, but not playing
 		if (userID === sess.owner && !sess.ownerIsPlayer) {
 			sess.reconnectOwner(userID);
-			Connections[userID].socket.emit("message", {
-				toast: true,
-				title: "Reconnected as Organizer",
-			});
+			const msg = new Message("Reconnected as Organizer");
+			msg.toast = true;
+			Connections[userID].socket.emit("message", msg);
 			return;
 		}
 

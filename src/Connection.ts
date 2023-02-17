@@ -3,10 +3,11 @@
 import { Socket } from "socket.io";
 import { UserID, SessionID } from "./IDTypes.js";
 import { CardID, CardPool, UniqueCard } from "./CardTypes.js";
+import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 
 export const Connections: { [uid: string]: Connection } = {};
 export class Connection {
-	socket: Socket;
+	socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
 	userID: UserID;
 	userName: string;
 
@@ -16,7 +17,11 @@ export class Connection {
 
 	pickedCards: { main: Array<UniqueCard>; side: Array<UniqueCard> } = { main: [], side: [] };
 
-	constructor(socket: Socket, userID: UserID, userName: string) {
+	constructor(
+		socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+		userID: UserID,
+		userName: string
+	) {
 		this.socket = socket;
 		this.userID = userID;
 		this.userName = userName;
