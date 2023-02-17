@@ -67,18 +67,23 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
 import { Bar, Pie } from "vue-chartjs";
 import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors } from "chart.js";
+import { Card } from "../../../src/CardTypes";
 
 Chart.defaults.color = "#ddd";
 Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors);
 
-export default {
-	props: { cards: { type: Array, required: true }, addedbasics: { type: Number, required: true } },
+export default defineComponent({
+	props: {
+		cards: { type: Array as PropType<Card[]>, required: true },
+		addedbasics: { type: Number, required: true },
+	},
 	components: { Bar, Pie },
 	computed: {
-		types() {
+		types(): { [type: string]: number } {
 			let r = this.cards
 				.map((c) => {
 					if (c.type.startsWith("Legendary ")) return c.type.slice(10);
@@ -88,12 +93,12 @@ export default {
 					if (!(t in acc)) acc[t] = 1;
 					else ++acc[t];
 					return acc;
-				}, {});
+				}, {} as { [type: string]: number });
 			r["Basic Land"] = (r["Basic Land"] || 0) + this.addedbasics;
 			return r;
 		},
 		colors() {
-			let fullNames = {
+			const fullNames: { [color: string]: string } = {
 				W: "White",
 				U: "Blue",
 				B: "Black",
@@ -118,14 +123,14 @@ export default {
 						}
 						return acc;
 					},
-					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 }
+					{ White: 0, Blue: 0, Black: 0, Red: 0, Green: 0 } as { [color: string]: number }
 				);
 		},
 		nonLands() {
 			return this.cards.filter((c) => !c.type.includes("Land"));
 		},
 		manacurve() {
-			let o = {};
+			let o: { [mana: number]: { creatures: number; nonCreatures: number } } = {};
 			for (let i = 0; i < 8; ++i) o[i] = { creatures: 0, nonCreatures: 0 };
 			return this.nonLands.reduce((acc, c) => {
 				if (!(c.cmc in acc)) acc[c.cmc] = { creatures: 0, nonCreatures: 0 };
@@ -184,7 +189,7 @@ export default {
 			};
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
