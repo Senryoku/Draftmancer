@@ -1,7 +1,7 @@
 import { GridDraftState, GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftState } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
-import { Message } from "./Message";
+import { Message, SocketAck } from "./Message";
 import { getPublicSessionData, UsersData } from "./Session";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
@@ -119,6 +119,23 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
 	setSession: (sid: SessionID, options: Options) => void;
+
+	// Owner Only
+	setDescription: (description: string) => void;
+	replaceDisconnectedPlayers: () => void;
+	distributeJumpstart: (set: string) => void;
+	generateBracket: (players: Array<{ userID: UserID; userName: string }>, ack: (result: SocketAck) => void) => void;
+	generateSwissBracket: (
+		players: Array<{ userID: UserID; userName: string }>,
+		ack: (result: SocketAck) => void
+	) => void;
+	generateDoubleBracket: (
+		players: Array<{ userID: UserID; userName: string }>,
+		ack: (result: SocketAck) => void
+	) => void;
+	lockBracket: (bracketLocked: boolean) => void;
+	shareDraftLog: (draftLog: DraftLog) => void;
+	distributeSealed: (boostersPerPlayer: number, customBoosters: Array<string>) => void;
 }
 
 export interface InterServerEvents {}

@@ -1055,102 +1055,116 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 		}
 		updatePublicSession(sessionID);
 	},
-	setDescription(userID: UserID, sessionID: SessionID, description: string) {
-		if (!SessionsSettingsProps.description(description)) return;
-		if (description === Sessions[sessionID].description) return;
-
-		Sessions[sessionID].description = description.substring(0, 70);
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
-		}
-		updatePublicSession(sessionID);
-	},
-	replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
-		Sessions[sessionID].replaceDisconnectedPlayers();
-	},
-	distributeSealed(userID: UserID, sessionID: SessionID, boostersPerPlayer: number, customBoosters: Array<string>) {
-		if (isNaN(boostersPerPlayer)) return;
-		Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
-	},
-	distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
-		Sessions[sessionID].distributeJumpstart(set);
-	},
-	generateBracket(
-		userID: UserID,
-		sessionID: SessionID,
-		players: Array<{ userID: UserID; userName: string }>,
-		ack: (result: SocketAck) => void
-	) {
-		if (
-			!(
-				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
-				(players.length === 6 && Sessions[sessionID].teamDraft)
-			)
-		)
-			return;
-		Sessions[sessionID].generateBracket(players);
-		ack?.(new SocketAck());
-	},
-	generateSwissBracket(
-		userID: UserID,
-		sessionID: SessionID,
-		players: Array<{ userID: UserID; userName: string }>,
-		ack: (result: SocketAck) => void
-	) {
-		const realPlayerCount = players.filter((u) => u).length;
-		if (realPlayerCount !== 8 && realPlayerCount !== 6) {
-			ack?.(
-				new SocketError(
-					"Error generating Swiss bracket",
-					"Swiss brackets are only available for pools of 6 or 8 players exactly."
-				)
-			);
-			return;
-		}
-		Sessions[sessionID].generateSwissBracket(players);
-		ack?.(new SocketAck());
-	},
-	generateDoubleBracket(
-		userID: UserID,
-		sessionID: SessionID,
-		players: Array<{ userID: UserID; userName: string }>,
-		ack: (result: SocketAck) => void
-	) {
-		if (players.length !== 8) return;
-		Sessions[sessionID].generateDoubleBracket(players);
-		ack?.(new SocketAck());
-	},
-	lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
-		if (!SessionsSettingsProps.bracketLocked(bracketLocked)) return;
-		if (bracketLocked === Sessions[sessionID].bracketLocked) return;
-
-		Sessions[sessionID].bracketLocked = bracketLocked;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
-		}
-	},
-	shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
-		const sess = Sessions[sessionID];
-		if (!draftLog) return;
-
-		// Update local copy to be public
-		if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
-		else if (sess.draftLog?.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
-			sess.draftLog.delayed = false;
-
-		// Send the full copy to everyone
-		draftLog.delayed = false;
-		for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
-	},
 };
 
-function prepareSocketCallback(
-	callback: (userID: UserID, sessionID: SessionID, ...rest: unknown[]) => void,
-	ownerOnly = false
+function setDescription(userID: UserID, sessionID: SessionID, description: string) {
+	if (!SessionsSettingsProps.description(description)) return;
+	if (description === Sessions[sessionID].description) return;
+
+	Sessions[sessionID].description = description.substring(0, 70);
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
+	}
+	updatePublicSession(sessionID);
+}
+
+function replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].replaceDisconnectedPlayers();
+}
+
+function distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
+	Sessions[sessionID].distributeJumpstart(set);
+}
+
+function generateBracket(
+	userID: UserID,
+	sessionID: SessionID,
+	players: Array<{ userID: UserID; userName: string }>,
+	ack: (result: SocketAck) => void
 ) {
-	return async function (this: Socket, ...rest: any[]) {
+	if (
+		!(
+			(players.length === 8 && !Sessions[sessionID].teamDraft) ||
+			(players.length === 6 && Sessions[sessionID].teamDraft)
+		)
+	)
+		return;
+	Sessions[sessionID].generateBracket(players);
+	ack?.(new SocketAck());
+}
+
+function generateSwissBracket(
+	userID: UserID,
+	sessionID: SessionID,
+	players: Array<{ userID: UserID; userName: string }>,
+	ack: (result: SocketAck) => void
+) {
+	const realPlayerCount = players.filter((u) => u).length;
+	if (realPlayerCount !== 8 && realPlayerCount !== 6) {
+		ack?.(
+			new SocketError(
+				"Error generating Swiss bracket",
+				"Swiss brackets are only available for pools of 6 or 8 players exactly."
+			)
+		);
+		return;
+	}
+	Sessions[sessionID].generateSwissBracket(players);
+	ack?.(new SocketAck());
+}
+
+function generateDoubleBracket(
+	userID: UserID,
+	sessionID: SessionID,
+	players: Array<{ userID: UserID; userName: string }>,
+	ack: (result: SocketAck) => void
+) {
+	if (players.length !== 8) return;
+	Sessions[sessionID].generateDoubleBracket(players);
+	ack?.(new SocketAck());
+}
+
+function lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolean) {
+	if (!SessionsSettingsProps.bracketLocked(bracketLocked)) return;
+	if (bracketLocked === Sessions[sessionID].bracketLocked) return;
+
+	Sessions[sessionID].bracketLocked = bracketLocked;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
+	}
+}
+
+function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
+	const sess = Sessions[sessionID];
+	if (!draftLog) return;
+
+	// Update local copy to be public
+	if (!sess.draftLog && sess.id === draftLog.sessionID) sess.draftLog = draftLog;
+	else if (sess.draftLog?.sessionID === draftLog.sessionID && sess.draftLog.time === draftLog.time)
+		sess.draftLog.delayed = false;
+
+	// Send the full copy to everyone
+	draftLog.delayed = false;
+	for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
+}
+
+function distributeSealed(
+	userID: UserID,
+	sessionID: SessionID,
+	boostersPerPlayer: number,
+	customBoosters: Array<string>
+) {
+	if (isNaN(boostersPerPlayer)) return;
+	Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+}
+
+const prepareSocketCallback = <T extends Array<any>>(
+	callback: (userID: UserID, sessionID: SessionID, ...args: T) => void,
+	ownerOnly = false
+) => {
+	return async function (this: Socket, ...args: T): Promise<void> {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
-		const ack = rest.length > 0 && rest[rest.length - 1] instanceof Function ? rest[rest.length - 1] : null;
+		const ack = args.length > 0 && args[args.length - 1] instanceof Function ? args[args.length - 1] : null;
 		const userID = (this.handshake.query as any).userID;
 		if (!(userID in Connections)) {
 			ack?.({ code: 1, error: "Internal error. User does not exist." });
@@ -1166,13 +1180,13 @@ function prepareSocketCallback(
 			return;
 		}
 		try {
-			await callback(userID, sessionID, ...rest);
+			await callback(userID, sessionID, ...args);
 		} catch (e) {
 			ack?.(ackError({ code: 500, title: "Internal server error." }));
 			console.error(e);
 		}
 	};
-}
+};
 
 io.on("connection", async function (socket) {
 	const query = socket.handshake.query;
@@ -1270,6 +1284,16 @@ io.on("connection", async function (socket) {
 
 	for (const key in ownerSocketCallbacks)
 		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(ownerSocketCallbacks[key], true));
+
+	socket.on("setDescription", prepareSocketCallback(setDescription, true));
+	socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
+	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
+	socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
+	socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
+	socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
+	socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
+	socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
+	socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));
 
 	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 	const filteredSettings: Options = {};
