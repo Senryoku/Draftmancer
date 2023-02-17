@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import axios from "axios";
 
 import CardText from "./CardText.vue";

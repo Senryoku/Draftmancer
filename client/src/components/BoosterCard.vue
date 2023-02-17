@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import { defineComponent, PropType } from "vue";
 import { UniqueCard } from "../../../src/CardTypes";
 import CardComponent from "./Card.vue";

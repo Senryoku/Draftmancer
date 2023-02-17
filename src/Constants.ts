@@ -1,8 +1,6 @@
 import { CardColor } from "./CardTypes";
-
+import { SetCode } from "./Types";
 import _constants from "./data/constants.json";
-
-export type SetCode = string;
 
 const Constants = _constants as {
 	Languages: { code: string; name: string }[];

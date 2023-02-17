@@ -11,3 +11,5 @@ export enum Language {
 	zhs = "zhs",
 	zht = "zht",
 }
+
+export type SetCode = string;

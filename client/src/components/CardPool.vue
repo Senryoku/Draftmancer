@@ -164,7 +164,7 @@ import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import { UniqueCard } from "../../../src/CardTypes";
 
 export default defineComponent({
@@ -339,13 +339,13 @@ export default defineComponent({
 			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
 			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
 			for (let row of this.rows) {
-				Vue.set(row, other, [].concat(row[other], row[index]));
+				Vue.set(row, other, ([] as UniqueCard[]).concat(row[other], row[index]));
 				CardOrder.orderByArenaInPlace(row[other]);
 				row.splice(index, 1);
 			}
 			this.saveOptions();
 		},
-		getColumnFromCoordinates(event: MouseEvent) {
+		getColumnFromCoordinates(event: { clientX: number; clientY: number }) {
 			// Search for the column at the supplied coordinates, creating a new one if necessary.
 			const x = event.clientX;
 			const y = event.clientY;

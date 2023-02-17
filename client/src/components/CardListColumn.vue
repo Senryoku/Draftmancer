@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import { defineComponent, PropType } from "vue";
 import { Card, CardID, PlainCollection } from "../../../src/CardTypes";
 import MTGAAlternates from "../MTGAAlternates";

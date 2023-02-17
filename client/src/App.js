@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
-import SetsInfos from "../public/data/SetsInfos.json";
+import SetsInfos from "./data/SetsInfos.json";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.ts";
 import { getCookie, setCookie } from "./cookies.ts";
 import { ButtonColor, Alert, fireToast } from "./alerts.ts";
@@ -125,6 +125,7 @@ export default {
 			collection: {},
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
+				vaultProgress: 0,
 			},
 			socket: undefined,
 

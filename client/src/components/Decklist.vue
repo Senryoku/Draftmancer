@@ -11,7 +11,7 @@
 			<template v-slot:title>Mainboard ({{ list.main.length }})</template>
 			<template v-slot:controls>
 				<span v-if="landcount > 0">Added basics:</span>
-				<span v-for="(color, value) in lands" :key="color">
+				<span v-for="(value, color) in lands" :key="color">
 					<img :src="`img/mana/${color}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ value }}
 				</span>
@@ -85,7 +85,7 @@ import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
 import { defineComponent, PropType } from "vue";
 import { Card, CardID, DeckList } from "../../../src/CardTypes";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 
 let deckUIDs = 0;
 

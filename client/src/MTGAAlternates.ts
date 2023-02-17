@@ -1,5 +1,5 @@
 import { ArenaID } from "../../src/CardTypes";
-import MTGACards from "../public/data/MTGACards.json";
+import MTGACards from "./MTGACards";
 
 // List of arena_ids for a given card name
 const MTGAAlternates: { [name: string]: ArenaID[] } = {};

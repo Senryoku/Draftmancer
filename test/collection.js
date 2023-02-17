@@ -7,7 +7,7 @@ import { getCard } from "./../dist/Cards.js";
 import { Sessions } from "../dist/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
-import MTGACards from "../client/public/data/MTGACards.json";
+import MTGACards from "../MTGACards";
 
 describe("Collection Restriction", function () {
 	let clients = [];

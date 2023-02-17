@@ -28,7 +28,7 @@ import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
 import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 
 export default defineComponent({
 	components: { Dropdown },

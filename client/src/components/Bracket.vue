@@ -107,7 +107,7 @@ import Decklist from "./Decklist.vue";
 import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
 import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
 import { DraftLog } from "../../../src/DraftLog";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import { UserID } from "../../../src/IDTypes";
 
 function* generate_pairs<T>(arr: T[]): Generator<[T, T][]> {

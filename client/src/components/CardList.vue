@@ -53,7 +53,7 @@
 import { download, isEmpty } from "../helper";
 import CardOrder from "../cardorder";
 import CardListColumn from "./CardListColumn.vue";
-import { Language } from "@/Types";
+import { Language } from "../../../src/Types";
 import { CustomCardList } from "../../../src/CustomCardList";
 import { defineComponent, PropType } from "vue";
 import { Card, CardID, PlainCollection } from "../../../src/CardTypes";

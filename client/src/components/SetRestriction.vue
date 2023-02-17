@@ -77,7 +77,8 @@
 import { PropType, defineComponent } from "vue";
 
 import constants from "../../../src/data/constants.json";
-import { SetCode, SetInfo, SetsInfos } from "../SetInfos";
+import { SetInfo, SetsInfos } from "../SetInfos";
+import { SetCode } from "../../../src/Types";
 
 export default defineComponent({
 	data() {

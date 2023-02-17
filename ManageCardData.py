@@ -28,7 +28,7 @@ ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
 FinalDataPath = 'data/MTGCards.json'
-SetsInfosPath = 'client/public/data/SetsInfos.json'
+SetsInfosPath = 'client/src/data/SetsInfos.json'
 BasicLandIDsPath = 'src/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
 JumpstartBoostersFolder = 'data/JumpstartBoosters'
@@ -487,7 +487,7 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
     with open("data/CardsByName.json", 'w', encoding="utf8") as outfile:
         json.dump(cardsByName, outfile, ensure_ascii=False, indent=4)
 
-    with open("client/public/data/MTGACards.json", 'w', encoding="utf8") as outfile:
+    with open("client/src/data/MTGACards.json", 'w', encoding="utf8") as outfile:
         json.dump(MTGACards, outfile, ensure_ascii=False, indent=4)
 
 cards = {}

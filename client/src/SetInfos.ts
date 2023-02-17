@@ -1,4 +1,5 @@
-export type SetCode = string;
+import { SetCode } from "../../src/Types";
+import _setsInfos from "./data/SetsInfos.json";
 
 export type SetInfo = {
 	code: SetCode;
@@ -11,8 +12,6 @@ export type SetInfo = {
 	rareCount?: number;
 	uncommonCount?: number;
 };
-
-import _setsInfos from "../public/data/SetsInfos.json";
 
 export const SetsInfos = _setsInfos as { [code: string]: SetInfo };
 

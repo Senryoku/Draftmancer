@@ -1,5 +1,5 @@
 {
-	"include": ["**/*"],
+	"include": ["**/*", "../src/Types.ts", "../src/Types.ts"],
 	"compilerOptions": {
 		"allowJs": true,
 		"baseUrl": ".",
