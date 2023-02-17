@@ -1330,14 +1330,18 @@ io.on("connection", async function (socket) {
 	});
 
 	socket.on("setSession", function (this: Socket, sessionID: SessionID, sessionSettings: Options) {
-		const userID = this.handshake.query.userID as string;
-		if (sessionID === Connections[userID].sessionID) return;
+		try {
+			const userID = this.handshake.query.userID as string;
+			if (sessionID === Connections[userID].sessionID) return;
 
-		const filteredSettings: Options = {};
-		if (sessionSettings)
-			for (const prop of Object.keys(SessionsSettingsProps))
-				if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
-		joinSession(sessionID, userID, filteredSettings);
+			const filteredSettings: Options = {};
+			if (sessionSettings)
+				for (const prop of Object.keys(SessionsSettingsProps))
+					if (prop in sessionSettings) filteredSettings[prop] = sessionSettings[prop];
+			joinSession(sessionID, userID, filteredSettings);
+		} catch (e) {
+			console.error("Error in socket event setSession: ", e);
+		}
 	});
 
 	// Personal events
