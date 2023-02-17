@@ -2,7 +2,7 @@ import { GridDraftState, GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftState } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck } from "./Message";
-import { getPublicSessionData, UsersData } from "./Session";
+import { DistributionMode, DraftLogRecipients, getPublicSessionData, UsersData } from "./Session";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
@@ -121,6 +121,66 @@ export interface ClientToServerEvents {
 	setSession: (sid: SessionID, options: Options) => void;
 
 	// Owner Only
+	setOwnerIsPlayer: (val: boolean) => void;
+	readyCheck: (ack: (result: SocketAck) => void) => void;
+	startDraft: () => void;
+	stopDraft: () => void;
+	pauseDraft: () => void;
+	resumeDraft: () => void;
+	startGridDraft: (boosterCount: number) => void;
+	startRochesterDraft: () => void;
+	startWinstonDraft: (boosterCount: number) => void;
+	startMinesweeperDraft: (
+		gridCount: number,
+		gridWidth: number,
+		gridHeight: number,
+		picksPerGrid: number,
+		revealBorders: boolean,
+		ack: (result: SocketAck) => void
+	) => void;
+	startTeamSealed: (
+		boostersPerTeam: number,
+		customBoosters: Array<string>,
+		teams: UserID[][],
+		ack: (result: SocketAck) => void
+	) => void;
+	setSessionOwner: (newOwnerID: UserID) => void;
+	removePlayer: (userToRemove: UserID) => void;
+	setSeating: (seating: Array<UserID>) => void;
+	boostersPerPlayer: (boostersPerPlayer: number) => void;
+	cardsPerBooster: (cardsPerBooster: number) => void;
+	teamDraft: (teamDraft: boolean) => void;
+	setRandomizeSeatingOrder: (randomizeSeatingOrder: boolean) => void;
+	setDisableBotSuggestions: (disableBotSuggestions: boolean) => void;
+	setDistributionMode: (distributionMode: DistributionMode) => void;
+	setCustomBoosters: (customBoosters: Array<string>) => void;
+	bots: (bots: number) => void;
+	setRestriction: (setRestriction: Array<SetCode>) => void;
+	parseCustomCardList: (customCardList: string, ack: (result: SocketAck) => void) => void;
+	importCube: (data: any, ack: (result: SocketAck) => void) => void; // FIXME
+	loadLocalCustomCardList: (cubeName: string, ack: (result: SocketAck) => void) => void;
+	ignoreCollections: (ignoreCollections: boolean) => void;
+	setPickTimer: (maxTimer: number) => void;
+	setMaxPlayers: (maxPlayers: number) => void;
+	setMythicPromotion: (mythicPromotion: boolean) => void;
+	setUseBoosterContent: (useBoosterContent: boolean) => void;
+	setBoosterContent: (boosterContent: { common: number; uncommon: number; rare: number }) => void;
+	setUsePredeterminedBoosters: (value: boolean, ack: (result: SocketAck) => void) => void;
+	setBoosters: (text: string, ack: (result: SocketAck) => void) => void;
+	shuffleBoosters: (ack: (result: SocketAck) => void) => void;
+	setPersonalLogs: (value: boolean) => void;
+	setDraftLogRecipients: (draftLogRecipients: DraftLogRecipients) => void;
+	setMaxDuplicates: (maxDuplicates: { common: number; uncommon: number; rare: number }) => void;
+	setColorBalance: (colorBalance: boolean) => void;
+	setFoil: (foil: boolean) => void;
+	setCollationType: (preferredCollation: string) => void;
+	setUseCustomCardList: (useCustomCardList: boolean) => void;
+	setCustomCardListWithReplacement: (customCardListWithReplacement: boolean) => void;
+	setDoubleMastersMode: (doubleMastersMode: boolean) => void;
+	setPickedCardsPerRound: (pickedCardsPerRound: number) => void;
+	setBurnedCardsPerRound: (burnedCardsPerRound: number) => void;
+	setDiscardRemainingCardsAt: (discardRemainingCardsAt: number) => void;
+	setPublic: (isPublic: boolean) => void;
 	setDescription: (description: string) => void;
 	replaceDisconnectedPlayers: () => void;
 	distributeJumpstart: (set: string) => void;

@@ -359,703 +359,741 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	},
 };
 
-// Socket callback available only to session owners
-const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
-	setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
-		if (!SessionsSettingsProps.ownerIsPlayer(val)) return;
-		const sess = Sessions[sessionID];
-		if (sess.drafting) return;
+function setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
+	if (!SessionsSettingsProps.ownerIsPlayer(val)) return;
+	const sess = Sessions[sessionID];
+	if (sess.drafting) return;
 
-		if (val) {
-			sess.ownerIsPlayer = true;
-			sess.addUser(userID);
-		} else {
-			sess.ownerIsPlayer = false;
-			sess.users.delete(userID);
-			sess.notifyUserChange();
-		}
-		for (const user of sess.users)
-			if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
-	},
-	readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
-		const sess = Sessions[sessionID];
-		if (sess.drafting) {
-			ack?.(new SocketError("Already drafting."));
-			return;
-		}
+	if (val) {
+		sess.ownerIsPlayer = true;
+		sess.addUser(userID);
+	} else {
+		sess.ownerIsPlayer = false;
+		sess.users.delete(userID);
+		sess.notifyUserChange();
+	}
+	for (const user of sess.users)
+		if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
+}
 
-		for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
-		ack?.(new SocketAck());
-	},
-	async startDraft(userID: UserID, sessionID: SessionID) {
-		const sess = Sessions[sessionID];
-		if (sess.drafting) return;
+function readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	const sess = Sessions[sessionID];
+	if (sess.drafting) {
+		ack?.(new SocketError("Already drafting."));
+		return;
+	}
 
-		if (sess.teamDraft && sess.users.size !== 6) {
-			const verb = sess.users.size < 6 ? "add" : "remove";
-			Connections[userID].socket.emit(
-				"message",
-				new Message(
-					`Wrong player count`,
-					`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
-				)
-			);
-		} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
-			Connections[userID].socket.emit(
-				"message",
-				new Message(`Not enough players`, `Can't start draft: Not enough players (min. 2 including bots).`)
-			);
-		} else {
-			await sess.startDraft();
-			startPublicSession(sess);
-		}
-	},
-	stopDraft(userID: UserID, sessionID: SessionID) {
-		Sessions[sessionID].stopDraft();
-	},
-	pauseDraft(userID: UserID, sessionID: SessionID) {
-		Sessions[sessionID].pauseDraft();
-	},
-	resumeDraft(userID: UserID, sessionID: SessionID) {
-		Sessions[sessionID].resumeDraft();
-	},
-	startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
-		const sess = Sessions[sessionID];
-		if (sess.drafting) return;
-		if (sess.users.size == 2) {
-			const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
-			sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
-			startPublicSession(sess);
-		} else {
-			Connections[userID].socket.emit(
-				"message",
-				new Message(
-					`2 Players Only`,
-					`Grid Draft can only be played with exactly 2 players. Bots are not supported!`
-				)
-			);
-		}
-	},
-	startRochesterDraft(userID: UserID, sessionID: SessionID) {
-		const sess = Sessions[sessionID];
-		if (!sess || sess.owner != userID || sess.drafting) return;
+	for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("readyCheck");
+	ack?.(new SocketAck());
+}
 
-		if (sess.users.size < 2) {
-			Connections[userID].socket.emit(
-				"message",
-				new Message(
-					`Not enough players`,
-					`Rochester Draft can only be played with at least 2 players. Bots are not supported!`
-				)
-			);
-		} else {
-			sess.startRochesterDraft();
-			startPublicSession(sess);
-		}
-	},
-	startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
-		const sess = Sessions[sessionID];
-		if (!sess || sess.owner != userID || sess.drafting) return;
-		if (sess.users.size == 2) {
-			const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
-			sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
-			startPublicSession(sess);
-		} else {
-			Connections[userID].socket.emit(
-				"message",
-				new Message(
-					`2 Players Only`,
-					`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
-				)
-			);
-		}
-	},
-	startMinesweeperDraft(
-		userID: UserID,
-		sessionID: SessionID,
-		gridCount: number,
-		gridWidth: number,
-		gridHeight: number,
-		picksPerGrid: number,
-		revealBorders: boolean,
-		ack: (result: SocketAck) => void
-	) {
-		const sess = Sessions[sessionID];
-		if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
-		if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
-		if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
-		if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
-		if (
-			typeof gridCount !== "number" ||
-			gridCount <= 0 ||
-			typeof gridWidth !== "number" ||
-			gridWidth <= 0 ||
-			typeof gridHeight !== "number" ||
-			gridHeight <= 0 ||
-			typeof picksPerGrid !== "number" ||
-			picksPerGrid <= 0 ||
-			picksPerGrid > gridWidth * gridHeight
-		) {
-			ack?.(
-				new SocketError(
-					`Invalid parameters`,
-					`Grid parameters are invalid. Please check your settings.`,
-					`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`
-				)
-			);
-			return;
-		}
-		const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
-			revealBorders: revealBorders,
-		});
-		if (ret?.error) {
-			ack?.(ret);
-			return;
-		}
-		startPublicSession(sess);
-		ack?.(new SocketAck());
-	},
-	startTeamSealed(
-		userID: UserID,
-		sessionID: SessionID,
-		boostersPerTeam: number,
-		customBoosters: Array<string>,
-		teams: UserID[][],
-		ack: (result: SocketAck) => void
-	) {
-		const r = Sessions[sessionID].startTeamSealed(boostersPerTeam, customBoosters, teams);
-		ack?.(r);
-	},
-	// Session Settings
-	setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
-		const sess = Sessions[sessionID];
-		if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
+async function startDraft(userID: UserID, sessionID: SessionID) {
+	const sess = Sessions[sessionID];
+	if (sess.drafting) return;
 
-		if (!sess.ownerIsPlayer) {
-			// Prevent changing owner during drafting if owner is not playing
-			if (sess.drafting) return;
-
-			sess.users.delete(newOwnerID);
-			sess.owner = newOwnerID;
-			sess.addUser(userID);
-		} else {
-			sess.owner = newOwnerID;
-		}
-		sess.forUsers((user) =>
-			Connections[user]?.socket.emit(
-				"sessionOwner",
-				sess.owner,
-				sess.owner in Connections ? Connections[sess.owner].userName : null
+	if (sess.teamDraft && sess.users.size !== 6) {
+		const verb = sess.users.size < 6 ? "add" : "remove";
+		Connections[userID].socket.emit(
+			"message",
+			new Message(
+				`Wrong player count`,
+				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
 			)
 		);
-	},
-	removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID) {
-		if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
-
-		removeUserFromSession(userToRemove);
-		Sessions[sessionID].replaceDisconnectedPlayers();
-		Sessions[sessionID].notifyUserChange();
-
-		const newSession = shortguid();
-		joinSession(newSession, userToRemove);
-		Connections[userToRemove].socket.emit("setSession", newSession);
-		Connections[userToRemove].socket.emit(
+	} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
+		Connections[userID].socket.emit(
 			"message",
-			new Message("Removed from session", `You've been removed from session '${sessionID}' by its owner.`)
+			new Message(`Not enough players`, `Can't start draft: Not enough players (min. 2 including bots).`)
 		);
-	},
-	setSeating(userID: UserID, sessionID: SessionID, seating: Array<UserID>) {
-		if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
-	},
-	boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer: number) {
-		if (!SessionsSettingsProps.boostersPerPlayer(boostersPerPlayer)) return;
+	} else {
+		await sess.startDraft();
+		startPublicSession(sess);
+	}
+}
 
-		if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
+function stopDraft(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].stopDraft();
+}
 
-		Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer, userID);
-	},
-	cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: number) {
-		if (!SessionsSettingsProps.cardsPerBooster(cardsPerBooster)) return;
+function pauseDraft(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].pauseDraft();
+}
 
-		if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
+function resumeDraft(userID: UserID, sessionID: SessionID) {
+	Sessions[sessionID].resumeDraft();
+}
 
-		Sessions[sessionID].setCardsPerBooster(cardsPerBooster, userID);
-	},
-	teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
-		if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
-		if (!SessionsSettingsProps.teamDraft(teamDraft)) return;
+function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
+	const sess = Sessions[sessionID];
+	if (sess.drafting) return;
+	if (sess.users.size == 2) {
+		const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+		sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
+		startPublicSession(sess);
+	} else {
+		Connections[userID].socket.emit(
+			"message",
+			new Message(
+				`2 Players Only`,
+				`Grid Draft can only be played with exactly 2 players. Bots are not supported!`
+			)
+		);
+	}
+}
 
-		if (teamDraft === Sessions[sessionID].teamDraft) return;
+function startRochesterDraft(userID: UserID, sessionID: SessionID) {
+	const sess = Sessions[sessionID];
+	if (!sess || sess.owner != userID || sess.drafting) return;
 
-		Sessions[sessionID].setTeamDraft(teamDraft);
-	},
-	setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, randomizeSeatingOrder: boolean) {
-		if (!(typeof randomizeSeatingOrder === "boolean"))
-			randomizeSeatingOrder = randomizeSeatingOrder === "true" || !!randomizeSeatingOrder;
-		if (!SessionsSettingsProps.randomizeSeatingOrder(randomizeSeatingOrder)) return;
+	if (sess.users.size < 2) {
+		Connections[userID].socket.emit(
+			"message",
+			new Message(
+				`Not enough players`,
+				`Rochester Draft can only be played with at least 2 players. Bots are not supported!`
+			)
+		);
+	} else {
+		sess.startRochesterDraft();
+		startPublicSession(sess);
+	}
+}
 
-		if (randomizeSeatingOrder === Sessions[sessionID].randomizeSeatingOrder) return;
+function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
+	const sess = Sessions[sessionID];
+	if (!sess || sess.owner != userID || sess.drafting) return;
+	if (sess.users.size == 2) {
+		const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+		sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
+		startPublicSession(sess);
+	} else {
+		Connections[userID].socket.emit(
+			"message",
+			new Message(
+				`2 Players Only`,
+				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
+			)
+		);
+	}
+}
 
-		Sessions[sessionID].setRandomizeSeatingOrder(randomizeSeatingOrder);
-	},
-	setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
-		if (!(typeof disableBotSuggestions === "boolean"))
-			disableBotSuggestions = disableBotSuggestions === "true" || !!disableBotSuggestions;
-		if (!SessionsSettingsProps.disableBotSuggestions(disableBotSuggestions)) return;
-
-		if (disableBotSuggestions === Sessions[sessionID].disableBotSuggestions) return;
-
-		Sessions[sessionID].setDisableBotSuggestions(disableBotSuggestions);
-	},
-	setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode: DistributionMode) {
-		if (!SessionsSettingsProps.distributionMode(distributionMode)) return;
-
-		Sessions[sessionID].distributionMode = distributionMode;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
-		}
-	},
-	setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters: Array<string>) {
-		if (!SessionsSettingsProps.customBoosters(customBoosters)) return;
-
-		Sessions[sessionID].customBoosters = customBoosters;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
-		}
-	},
-	bots(userID: UserID, sessionID: SessionID, bots: number) {
-		if (!SessionsSettingsProps.bots(bots)) return;
-
-		if (bots == Sessions[sessionID].bots) return;
-
-		Sessions[sessionID].bots = bots;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("bots", bots);
-		}
-	},
-	setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<SetCode>) {
-		if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
-
-		Sessions[sessionID].setRestriction = setRestriction;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("setRestriction", setRestriction);
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-	},
-	parseCustomCardList(
-		userID: UserID,
-		sessionID: SessionID,
-		customCardList: string,
-		ack: (result: SocketAck) => void
+function startMinesweeperDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	gridCount: number,
+	gridWidth: number,
+	gridHeight: number,
+	picksPerGrid: number,
+	revealBorders: boolean,
+	ack: (result: SocketAck) => void
+) {
+	const sess = Sessions[sessionID];
+	if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
+	if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
+	if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
+	if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
+	if (
+		typeof gridCount !== "number" ||
+		gridCount <= 0 ||
+		typeof gridWidth !== "number" ||
+		gridWidth <= 0 ||
+		typeof gridHeight !== "number" ||
+		gridHeight <= 0 ||
+		typeof picksPerGrid !== "number" ||
+		picksPerGrid <= 0 ||
+		picksPerGrid > gridWidth * gridHeight
 	) {
-		if (!customCardList) {
-			ack?.(new SocketError("No list supplied."));
-			return;
-		}
-		parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
-	},
-	importCube(userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) {
-		if (!["Cube Cobra", "CubeArtisan"].includes(data.service)) {
+		ack?.(
+			new SocketError(
+				`Invalid parameters`,
+				`Grid parameters are invalid. Please check your settings.`,
+				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`
+			)
+		);
+		return;
+	}
+	const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
+		revealBorders: revealBorders,
+	});
+	if (ret?.error) {
+		ack?.(ret);
+		return;
+	}
+	startPublicSession(sess);
+	ack?.(new SocketAck());
+}
+
+function startTeamSealed(
+	userID: UserID,
+	sessionID: SessionID,
+	boostersPerTeam: number,
+	customBoosters: Array<string>,
+	teams: UserID[][],
+	ack: (result: SocketAck) => void
+) {
+	const r = Sessions[sessionID].startTeamSealed(boostersPerTeam, customBoosters, teams);
+	ack?.(r);
+}
+
+function // Session Settings
+setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
+	const sess = Sessions[sessionID];
+	if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
+
+	if (!sess.ownerIsPlayer) {
+		// Prevent changing owner during drafting if owner is not playing
+		if (sess.drafting) return;
+
+		sess.users.delete(newOwnerID);
+		sess.owner = newOwnerID;
+		sess.addUser(userID);
+	} else {
+		sess.owner = newOwnerID;
+	}
+	sess.forUsers((user) =>
+		Connections[user]?.socket.emit(
+			"sessionOwner",
+			sess.owner,
+			sess.owner in Connections ? Connections[sess.owner].userName : null
+		)
+	);
+}
+
+function removePlayer(userID: UserID, sessionID: SessionID, userToRemove: UserID) {
+	if (userToRemove === Sessions[sessionID].owner || !Sessions[sessionID].users.has(userToRemove)) return;
+
+	removeUserFromSession(userToRemove);
+	Sessions[sessionID].replaceDisconnectedPlayers();
+	Sessions[sessionID].notifyUserChange();
+
+	const newSession = shortguid();
+	joinSession(newSession, userToRemove);
+	Connections[userToRemove].socket.emit("setSession", newSession);
+	Connections[userToRemove].socket.emit(
+		"message",
+		new Message("Removed from session", `You've been removed from session '${sessionID}' by its owner.`)
+	);
+}
+function setSeating(userID: UserID, sessionID: SessionID, seating: Array<UserID>) {
+	if (!Sessions[sessionID].setSeating(seating)) Sessions[sessionID].notifyUserChange(); // Something unexpected happened, notify to avoid any potential de-sync.
+}
+function boostersPerPlayer(userID: UserID, sessionID: SessionID, boostersPerPlayer: number) {
+	if (!SessionsSettingsProps.boostersPerPlayer(boostersPerPlayer)) return;
+
+	if (boostersPerPlayer === Sessions[sessionID].boostersPerPlayer) return;
+
+	Sessions[sessionID].setBoostersPerPlayer(boostersPerPlayer, userID);
+}
+
+function cardsPerBooster(userID: UserID, sessionID: SessionID, cardsPerBooster: number) {
+	if (!SessionsSettingsProps.cardsPerBooster(cardsPerBooster)) return;
+
+	if (cardsPerBooster === Sessions[sessionID].cardsPerBooster) return;
+
+	Sessions[sessionID].setCardsPerBooster(cardsPerBooster, userID);
+}
+
+function teamDraft(userID: UserID, sessionID: SessionID, teamDraft: boolean) {
+	if (!(typeof teamDraft === "boolean")) teamDraft = teamDraft === "true" || !!teamDraft;
+	if (!SessionsSettingsProps.teamDraft(teamDraft)) return;
+
+	if (teamDraft === Sessions[sessionID].teamDraft) return;
+
+	Sessions[sessionID].setTeamDraft(teamDraft);
+}
+
+function setRandomizeSeatingOrder(userID: UserID, sessionID: SessionID, randomizeSeatingOrder: boolean) {
+	if (!(typeof randomizeSeatingOrder === "boolean"))
+		randomizeSeatingOrder = randomizeSeatingOrder === "true" || !!randomizeSeatingOrder;
+	if (!SessionsSettingsProps.randomizeSeatingOrder(randomizeSeatingOrder)) return;
+
+	if (randomizeSeatingOrder === Sessions[sessionID].randomizeSeatingOrder) return;
+
+	Sessions[sessionID].setRandomizeSeatingOrder(randomizeSeatingOrder);
+}
+
+function setDisableBotSuggestions(userID: UserID, sessionID: SessionID, disableBotSuggestions: boolean) {
+	if (!(typeof disableBotSuggestions === "boolean"))
+		disableBotSuggestions = disableBotSuggestions === "true" || !!disableBotSuggestions;
+	if (!SessionsSettingsProps.disableBotSuggestions(disableBotSuggestions)) return;
+
+	if (disableBotSuggestions === Sessions[sessionID].disableBotSuggestions) return;
+
+	Sessions[sessionID].setDisableBotSuggestions(disableBotSuggestions);
+}
+
+function setDistributionMode(userID: UserID, sessionID: SessionID, distributionMode: DistributionMode) {
+	if (!SessionsSettingsProps.distributionMode(distributionMode)) return;
+
+	Sessions[sessionID].distributionMode = distributionMode;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
+	}
+}
+
+function setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters: Array<string>) {
+	if (!SessionsSettingsProps.customBoosters(customBoosters)) return;
+
+	Sessions[sessionID].customBoosters = customBoosters;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
+	}
+}
+
+function bots(userID: UserID, sessionID: SessionID, bots: number) {
+	if (!SessionsSettingsProps.bots(bots)) return;
+
+	if (bots == Sessions[sessionID].bots) return;
+
+	Sessions[sessionID].bots = bots;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("bots", bots);
+	}
+}
+
+function setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<SetCode>) {
+	if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
+
+	Sessions[sessionID].setRestriction = setRestriction;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("setRestriction", setRestriction);
+	}
+	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+}
+
+function parseCustomCardListEvent(
+	userID: UserID,
+	sessionID: SessionID,
+	customCardList: string,
+	ack: (result: SocketAck) => void
+) {
+	if (!customCardList) {
+		ack?.(new SocketError("No list supplied."));
+		return;
+	}
+	parseCustomCardList(Sessions[sessionID], customCardList, {}, ack);
+}
+
+function importCube(userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) {
+	if (!["Cube Cobra", "CubeArtisan"].includes(data.service)) {
+		ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
+		return;
+	}
+	// Cube Infos from Cube Cobra: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
+	// Plain text card list
+	const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) => {
+		let url = null;
+		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`;
+		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/plaintext`;
+		if (!url) {
 			ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
 			return;
 		}
-		// Cube Infos from Cube Cobra: https://cubecobra.com/cube/api/cubeJSON/${data.cubeID} ; Cards are listed in the cards array and hold a scryfall id (cardID property), but this endpoint is extremely rate limited.
-		// Plain text card list
-		const fromTextList = (userID: UserID, sessionID: SessionID, data: any, ack: (result: SocketAck) => void) => {
-			let url = null;
-			if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/api/cubelist/${data.cubeID}`;
-			if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/plaintext`;
-			if (!url) {
-				ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-				return;
-			}
-			request({ url: url, timeout: 3000 }, (err, res, body) => {
-				try {
-					if (err) {
-						ack?.(
-							new SocketError(
-								"Error retrieving cube.",
-								`Couldn't retrieve the card list from ${data.service}.`,
-								`Full error: ${err}`
-							)
-						);
-						return;
-					} else if (res.statusCode !== 200) {
-						ack?.(
-							new SocketError(
-								"Error retrieving cube.",
-								`${data.service} responded '${res.statusCode}: ${body}'`
-							)
-						);
-						return;
-					} else if (
-						(data.service === "Cube Cobra" && body === "Cube not found.") ||
-						(data.service === "CubeArtisan" && res.request.path.endsWith("/404"))
-					) {
-						ack?.(
-							new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
-						);
-						return;
-					} else if (!body) {
-						ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
-						return;
-					} else {
-						parseCustomCardList(Sessions[sessionID], body, data, ack);
-					}
-				} catch (e) {
-					ack?.(new SocketError("Internal server error."));
-				}
-			});
-		};
-		if (data.matchVersions) {
-			// Xmage (.dck) format
-			let url = null;
-			if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
-			if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/xmage`;
-			if (!url) {
-				ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
-				return;
-			}
-			request({ url: url, timeout: 3000 }, (err, res, body) => {
-				try {
-					if (err) {
-						new SocketError(
-							"Error retrieving cube",
-							`Couldn't retrieve the card list from ${data.service}.`,
-							`Full error: ${err}`
-						);
-						return;
-					} else if (res.statusCode !== 200) {
-						ack?.(
-							new SocketError(
-								"Error retrieving cube.",
-								`${data.service} responded '${res.statusCode}: ${body}'`
-							)
-						);
-						return;
-					} else if (res.request.path.endsWith("/404")) {
-						// Missing cube redirects to /404
-						ack?.(
-							new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`)
-						);
-						return;
-					} else if (!body) {
-						ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
-						return;
-					} else {
-						const converted = XMageToArena(body);
-						if (!converted) fromTextList(userID, sessionID, data, ack);
-						// Fallback to plain text list
-						else
-							parseCustomCardList(
-								Sessions[sessionID],
-								converted,
-								Object.assign({ fallbackToCardName: true }, data),
-								ack
-							);
-					}
-				} catch (e) {
-					ack?.(new SocketError("Internal server error."));
-				}
-			});
-		} else {
-			fromTextList(userID, sessionID, data, ack);
-		}
-	},
-	loadLocalCustomCardList(userID: UserID, sessionID: SessionID, cubeName: string, ack: (result: SocketAck) => void) {
-		if (!(cubeName in ParsedCubeLists)) {
-			ack?.(new SocketError(`Unknown cube '${cubeName}'`));
-			return;
-		}
-
-		useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
-
-		ack?.(new SocketAck());
-	},
-	ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
-		if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
-		Sessions[sessionID].ignoreCollections = ignoreCollections;
-		for (const user of Sessions[sessionID].users) {
-			if (user != userID)
-				Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
-		}
-	},
-	setPickTimer(userID: UserID, sessionID: SessionID, maxTimer: number) {
-		if (!SessionsSettingsProps.maxTimer(maxTimer)) return;
-
-		Sessions[sessionID].maxTimer = maxTimer;
-		for (const user of Sessions[sessionID].users) {
-			if (user != userID) Connections[user].socket.emit("setPickTimer", maxTimer);
-		}
-	},
-	setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
-		if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
-
-		Sessions[sessionID].maxPlayers = maxPlayers;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
-		}
-	},
-	setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion: boolean) {
-		if (!SessionsSettingsProps.mythicPromotion(mythicPromotion)) return;
-
-		Sessions[sessionID].mythicPromotion = mythicPromotion;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
-		}
-	},
-	setUseBoosterContent(userID: UserID, sessionID: SessionID, useBoosterContent: boolean) {
-		if (!SessionsSettingsProps.useBoosterContent(useBoosterContent)) return;
-
-		Sessions[sessionID].useBoosterContent = useBoosterContent;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", { useBoosterContent: useBoosterContent });
-		}
-	},
-	setBoosterContent(
-		userID: UserID,
-		sessionID: SessionID,
-		boosterContent: { common: number; uncommon: number; rare: number }
-	) {
-		if (!SessionsSettingsProps.boosterContent(boosterContent)) return;
-		if (
-			Object.keys(boosterContent).every(
-				(r) => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]
-			)
-		)
-			return;
-
-		Sessions[sessionID].boosterContent = boosterContent;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
-		}
-	},
-	setUsePredeterminedBoosters(
-		userID: UserID,
-		sessionID: SessionID,
-		value: boolean,
-		ack: (result: SocketAck) => void
-	) {
-		if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
-
-		Sessions[sessionID].usePredeterminedBoosters = value;
-		Sessions[sessionID].forNonOwners((uid) =>
-			Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
-		);
-		ack?.(new SocketAck());
-	},
-	setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
-		try {
-			const boosters: UniqueCard[][] = [];
-			let booster: UniqueCard[] = [];
-			for (const line of text.split("\n")) {
-				if (!line || line === "") {
-					if (booster.length === 0) continue;
-					boosters.push(booster);
-					booster = [];
-				} else {
-					const [count, cardID, foil] = parseLine(line);
-					if (typeof cardID !== "undefined") {
-						for (let i = 0; i < count; ++i) {
-							const card = getUnique(cardID, { foil });
-							booster.push(card);
-						}
-					} else {
-						ack?.(count);
-						return;
-					}
-				}
-			}
-			if (booster.length > 0) boosters.push(booster);
-
-			if (boosters.length === 0) {
-				ack?.(new SocketError("Empty list"));
-				return;
-			}
-			for (let i = 1; i < boosters.length; ++i) {
-				if (boosters[i].length !== boosters[0].length) {
+		request({ url: url, timeout: 3000 }, (err, res, body) => {
+			try {
+				if (err) {
 					ack?.(
 						new SocketError(
-							"Inconsistent booster sizes",
-							`All boosters must be of the same size. Booster #${i + 1} has ${
-								boosters[i].length
-							} cards, expected ${boosters[0].length}.`
+							"Error retrieving cube.",
+							`Couldn't retrieve the card list from ${data.service}.`,
+							`Full error: ${err}`
 						)
 					);
 					return;
+				} else if (res.statusCode !== 200) {
+					ack?.(
+						new SocketError(
+							"Error retrieving cube.",
+							`${data.service} responded '${res.statusCode}: ${body}'`
+						)
+					);
+					return;
+				} else if (
+					(data.service === "Cube Cobra" && body === "Cube not found.") ||
+					(data.service === "CubeArtisan" && res.request.path.endsWith("/404"))
+				) {
+					ack?.(new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`));
+					return;
+				} else if (!body) {
+					ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
+					return;
+				} else {
+					parseCustomCardList(Sessions[sessionID], body, data, ack);
+				}
+			} catch (e) {
+				ack?.(new SocketError("Internal server error."));
+			}
+		});
+	};
+	if (data.matchVersions) {
+		// Xmage (.dck) format
+		let url = null;
+		if (data.service === "Cube Cobra") url = `https://cubecobra.com/cube/download/xmage/${data.cubeID}`;
+		if (data.service === "CubeArtisan") url = `https://cubeartisan.net/cube/${data.cubeID}/export/xmage`;
+		if (!url) {
+			ack?.(new SocketError(`Invalid cube service ('${data.service}').`));
+			return;
+		}
+		request({ url: url, timeout: 3000 }, (err, res, body) => {
+			try {
+				if (err) {
+					new SocketError(
+						"Error retrieving cube",
+						`Couldn't retrieve the card list from ${data.service}.`,
+						`Full error: ${err}`
+					);
+					return;
+				} else if (res.statusCode !== 200) {
+					ack?.(
+						new SocketError(
+							"Error retrieving cube.",
+							`${data.service} responded '${res.statusCode}: ${body}'`
+						)
+					);
+					return;
+				} else if (res.request.path.endsWith("/404")) {
+					// Missing cube redirects to /404
+					ack?.(new SocketError("Cube not found.", `Cube '${data.cubeID}' not found on ${data.service}.`));
+					return;
+				} else if (!body) {
+					ack?.(new SocketError("Empty Cube.", `Cube '${data.cubeID}' on ${data.service} seems empty.`));
+					return;
+				} else {
+					const converted = XMageToArena(body);
+					if (!converted) fromTextList(userID, sessionID, data, ack);
+					// Fallback to plain text list
+					else
+						parseCustomCardList(
+							Sessions[sessionID],
+							converted,
+							Object.assign({ fallbackToCardName: true }, data),
+							ack
+						);
+				}
+			} catch (e) {
+				ack?.(new SocketError("Internal server error."));
+			}
+		});
+	} else {
+		fromTextList(userID, sessionID, data, ack);
+	}
+}
+
+function loadLocalCustomCardList(
+	userID: UserID,
+	sessionID: SessionID,
+	cubeName: string,
+	ack: (result: SocketAck) => void
+) {
+	if (!(cubeName in ParsedCubeLists)) {
+		ack?.(new SocketError(`Unknown cube '${cubeName}'`));
+		return;
+	}
+
+	useCustomCardList(Sessions[sessionID], ParsedCubeLists[cubeName]);
+
+	ack?.(new SocketAck());
+}
+
+function ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
+	if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
+	Sessions[sessionID].ignoreCollections = ignoreCollections;
+	for (const user of Sessions[sessionID].users) {
+		if (user != userID) Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
+	}
+}
+
+function setPickTimer(userID: UserID, sessionID: SessionID, maxTimer: number) {
+	if (!SessionsSettingsProps.maxTimer(maxTimer)) return;
+
+	Sessions[sessionID].maxTimer = maxTimer;
+	for (const user of Sessions[sessionID].users) {
+		if (user != userID) Connections[user].socket.emit("setPickTimer", maxTimer);
+	}
+}
+
+function setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
+	if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
+
+	Sessions[sessionID].maxPlayers = maxPlayers;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
+	}
+}
+
+function setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion: boolean) {
+	if (!SessionsSettingsProps.mythicPromotion(mythicPromotion)) return;
+
+	Sessions[sessionID].mythicPromotion = mythicPromotion;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
+	}
+}
+
+function setUseBoosterContent(userID: UserID, sessionID: SessionID, useBoosterContent: boolean) {
+	if (!SessionsSettingsProps.useBoosterContent(useBoosterContent)) return;
+
+	Sessions[sessionID].useBoosterContent = useBoosterContent;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("sessionOptions", { useBoosterContent: useBoosterContent });
+	}
+}
+
+function setBoosterContent(
+	userID: UserID,
+	sessionID: SessionID,
+	boosterContent: { common: number; uncommon: number; rare: number }
+) {
+	if (!SessionsSettingsProps.boosterContent(boosterContent)) return;
+	if (Object.keys(boosterContent).every((r) => (boosterContent as any)[r] === Sessions[sessionID].boosterContent[r]))
+		return;
+
+	Sessions[sessionID].boosterContent = boosterContent;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
+	}
+}
+
+function setUsePredeterminedBoosters(
+	userID: UserID,
+	sessionID: SessionID,
+	value: boolean,
+	ack: (result: SocketAck) => void
+) {
+	if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
+
+	Sessions[sessionID].usePredeterminedBoosters = value;
+	Sessions[sessionID].forNonOwners((uid) =>
+		Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
+	);
+	ack?.(new SocketAck());
+}
+
+function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
+	try {
+		const boosters: UniqueCard[][] = [];
+		let booster: UniqueCard[] = [];
+		for (const line of text.split("\n")) {
+			if (!line || line === "") {
+				if (booster.length === 0) continue;
+				boosters.push(booster);
+				booster = [];
+			} else {
+				const [count, cardID, foil] = parseLine(line);
+				if (typeof cardID !== "undefined") {
+					for (let i = 0; i < count; ++i) {
+						const card = getUnique(cardID, { foil });
+						booster.push(card);
+					}
+				} else {
+					ack?.(count);
+					return;
 				}
 			}
-
-			Sessions[sessionID].boosters = boosters;
-			Sessions[sessionID].usePredeterminedBoosters = true;
-			Sessions[sessionID].forUsers((uid) =>
-				Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
-			);
-			ack?.(new SocketAck());
-		} catch (e) {
-			ack?.(new SocketError("Internal error."));
-			console.error("Error in setBoosters:", e);
 		}
-	},
-	shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
-		if (!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
-			ack?.(new SocketError("No boosters to shuffle."));
-		} else {
-			shuffleArray(Sessions[sessionID].boosters);
-			ack?.(new SocketAck());
-		}
-	},
-	setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
-		if (!SessionsSettingsProps.personalLogs(value)) return;
+		if (booster.length > 0) boosters.push(booster);
 
-		Sessions[sessionID].personalLogs = value;
-		Sessions[sessionID].forNonOwners((uid) =>
-			Connections[uid].socket.emit("sessionOptions", { personalLogs: value })
+		if (boosters.length === 0) {
+			ack?.(new SocketError("Empty list"));
+			return;
+		}
+		for (let i = 1; i < boosters.length; ++i) {
+			if (boosters[i].length !== boosters[0].length) {
+				ack?.(
+					new SocketError(
+						"Inconsistent booster sizes",
+						`All boosters must be of the same size. Booster #${i + 1} has ${
+							boosters[i].length
+						} cards, expected ${boosters[0].length}.`
+					)
+				);
+				return;
+			}
+		}
+
+		Sessions[sessionID].boosters = boosters;
+		Sessions[sessionID].usePredeterminedBoosters = true;
+		Sessions[sessionID].forUsers((uid) =>
+			Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
 		);
-	},
-	setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
-		if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
+		ack?.(new SocketAck());
+	} catch (e) {
+		ack?.(new SocketError("Internal error."));
+		console.error("Error in setBoosters:", e);
+	}
+}
 
-		Sessions[sessionID].draftLogRecipients = draftLogRecipients;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", {
-					draftLogRecipients: draftLogRecipients,
-				});
-		}
-	},
-	setMaxDuplicates(
-		userID: UserID,
-		sessionID: SessionID,
-		maxDuplicates: { common: number; uncommon: number; rare: number }
-	) {
-		if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
+function shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	if (!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
+		ack?.(new SocketError("No boosters to shuffle."));
+	} else {
+		shuffleArray(Sessions[sessionID].boosters);
+		ack?.(new SocketAck());
+	}
+}
 
-		Sessions[sessionID].maxDuplicates = maxDuplicates;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID)
-				Connections[user].socket.emit("sessionOptions", {
-					maxDuplicates: maxDuplicates,
-				});
-		}
-	},
-	setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boolean) {
-		if (!SessionsSettingsProps.colorBalance(colorBalance)) return;
-		if (colorBalance === Sessions[sessionID].colorBalance) return;
+function setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
+	if (!SessionsSettingsProps.personalLogs(value)) return;
 
-		Sessions[sessionID].colorBalance = colorBalance;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					colorBalance: Sessions[sessionID].colorBalance,
-				});
-		}
-	},
-	setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
-		if (!SessionsSettingsProps.foil(foil)) return;
-		if (foil === Sessions[sessionID].foil) return;
+	Sessions[sessionID].personalLogs = value;
+	Sessions[sessionID].forNonOwners((uid) => Connections[uid].socket.emit("sessionOptions", { personalLogs: value }));
+}
 
-		Sessions[sessionID].foil = foil;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					foil: Sessions[sessionID].foil,
-				});
-		}
-	},
-	setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
-		if (!SessionsSettingsProps.preferredCollation(preferredCollation)) return;
-		if (preferredCollation === Sessions[sessionID].preferredCollation) return;
+function setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
+	if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
 
-		Sessions[sessionID].preferredCollation = preferredCollation;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					preferredCollation: Sessions[sessionID].preferredCollation,
-				});
-		}
-	},
-	setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
-		if (!SessionsSettingsProps.useCustomCardList(useCustomCardList)) return;
-		if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
+	Sessions[sessionID].draftLogRecipients = draftLogRecipients;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID)
+			Connections[user].socket.emit("sessionOptions", {
+				draftLogRecipients: draftLogRecipients,
+			});
+	}
+}
 
-		Sessions[sessionID].useCustomCardList = useCustomCardList;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					useCustomCardList: Sessions[sessionID].useCustomCardList,
-				});
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-	},
-	setCustomCardListWithReplacement(userID: UserID, sessionID: SessionID, customCardListWithReplacement: boolean) {
-		if (!SessionsSettingsProps.customCardListWithReplacement(customCardListWithReplacement)) return;
-		if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
+function setMaxDuplicates(
+	userID: UserID,
+	sessionID: SessionID,
+	maxDuplicates: { common: number; uncommon: number; rare: number }
+) {
+	if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
 
-		Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					customCardListWithReplacement: Sessions[sessionID].customCardListWithReplacement,
-				});
-		}
-	},
-	setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
-		if (!SessionsSettingsProps.doubleMastersMode(doubleMastersMode)) return;
-		if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
+	Sessions[sessionID].maxDuplicates = maxDuplicates;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID)
+			Connections[user].socket.emit("sessionOptions", {
+				maxDuplicates: maxDuplicates,
+			});
+	}
+}
 
-		Sessions[sessionID].doubleMastersMode = doubleMastersMode;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", {
-					doubleMastersMode: Sessions[sessionID].doubleMastersMode,
-				});
-		}
-		if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
-	},
-	setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound: number) {
-		if (!SessionsSettingsProps.pickedCardsPerRound(pickedCardsPerRound)) return;
-		if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;
+function setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boolean) {
+	if (!SessionsSettingsProps.colorBalance(colorBalance)) return;
+	if (colorBalance === Sessions[sessionID].colorBalance) return;
 
-		Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
-		}
-	},
-	setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound: number) {
-		if (!SessionsSettingsProps.burnedCardsPerRound(burnedCardsPerRound)) return;
-		if (burnedCardsPerRound === Sessions[sessionID].burnedCardsPerRound) return;
+	Sessions[sessionID].colorBalance = colorBalance;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				colorBalance: Sessions[sessionID].colorBalance,
+			});
+	}
+}
 
-		Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
-		}
-	},
-	setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discardRemainingCardsAt: number) {
-		if (!SessionsSettingsProps.discardRemainingCardsAt(discardRemainingCardsAt)) return;
-		if (discardRemainingCardsAt === Sessions[sessionID].discardRemainingCardsAt) return;
+function setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
+	if (!SessionsSettingsProps.foil(foil)) return;
+	if (foil === Sessions[sessionID].foil) return;
 
-		Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID && user in Connections)
-				Connections[user].socket.emit("sessionOptions", { discardRemainingCardsAt: discardRemainingCardsAt });
-		}
-	},
-	setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
-		if (!SessionsSettingsProps.isPublic(isPublic)) return;
-		if (isPublic === Sessions[sessionID].isPublic) return;
+	Sessions[sessionID].foil = foil;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				foil: Sessions[sessionID].foil,
+			});
+	}
+}
 
-		Sessions[sessionID].isPublic = isPublic;
-		for (const user of Sessions[sessionID].users) {
-			if (user !== userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
-		}
-		updatePublicSession(sessionID);
-	},
-};
+function setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
+	if (!SessionsSettingsProps.preferredCollation(preferredCollation)) return;
+	if (preferredCollation === Sessions[sessionID].preferredCollation) return;
+
+	Sessions[sessionID].preferredCollation = preferredCollation;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				preferredCollation: Sessions[sessionID].preferredCollation,
+			});
+	}
+}
+
+function setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
+	if (!SessionsSettingsProps.useCustomCardList(useCustomCardList)) return;
+	if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
+
+	Sessions[sessionID].useCustomCardList = useCustomCardList;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				useCustomCardList: Sessions[sessionID].useCustomCardList,
+			});
+	}
+	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+}
+
+function setCustomCardListWithReplacement(
+	userID: UserID,
+	sessionID: SessionID,
+	customCardListWithReplacement: boolean
+) {
+	if (!SessionsSettingsProps.customCardListWithReplacement(customCardListWithReplacement)) return;
+	if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
+
+	Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				customCardListWithReplacement: Sessions[sessionID].customCardListWithReplacement,
+			});
+	}
+}
+
+function setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
+	if (!SessionsSettingsProps.doubleMastersMode(doubleMastersMode)) return;
+	if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
+
+	Sessions[sessionID].doubleMastersMode = doubleMastersMode;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", {
+				doubleMastersMode: Sessions[sessionID].doubleMastersMode,
+			});
+	}
+	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
+}
+
+function setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCardsPerRound: number) {
+	if (!SessionsSettingsProps.pickedCardsPerRound(pickedCardsPerRound)) return;
+	if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;
+
+	Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
+	}
+}
+
+function setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound: number) {
+	if (!SessionsSettingsProps.burnedCardsPerRound(burnedCardsPerRound)) return;
+	if (burnedCardsPerRound === Sessions[sessionID].burnedCardsPerRound) return;
+
+	Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
+	}
+}
+
+function setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discardRemainingCardsAt: number) {
+	if (!SessionsSettingsProps.discardRemainingCardsAt(discardRemainingCardsAt)) return;
+	if (discardRemainingCardsAt === Sessions[sessionID].discardRemainingCardsAt) return;
+
+	Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID && user in Connections)
+			Connections[user].socket.emit("sessionOptions", { discardRemainingCardsAt: discardRemainingCardsAt });
+	}
+}
+
+function setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
+	if (!SessionsSettingsProps.isPublic(isPublic)) return;
+	if (isPublic === Sessions[sessionID].isPublic) return;
+
+	Sessions[sessionID].isPublic = isPublic;
+	for (const user of Sessions[sessionID].users) {
+		if (user !== userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
+	}
+	updatePublicSession(sessionID);
+}
 
 function setDescription(userID: UserID, sessionID: SessionID, description: string) {
 	if (!SessionsSettingsProps.description(description)) return;
@@ -1282,18 +1320,61 @@ io.on("connection", async function (socket) {
 	for (const key in socketCallbacks)
 		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(socketCallbacks[key]));
 
-	for (const key in ownerSocketCallbacks)
-		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(ownerSocketCallbacks[key], true));
-
+	socket.on("readyCheck", prepareSocketCallback(readyCheck, true));
+	socket.on("startDraft", prepareSocketCallback(startDraft, true));
+	socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
+	socket.on("pauseDraft", prepareSocketCallback(pauseDraft, true));
+	socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
+	socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
+	socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
+	socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
+	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
+	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
+	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
+	socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));
+	socket.on("setSessionOwner", prepareSocketCallback(setSessionOwner, true));
+	socket.on("setOwnerIsPlayer", prepareSocketCallback(setOwnerIsPlayer, true));
+	socket.on("removePlayer", prepareSocketCallback(removePlayer, true));
+	socket.on("setSeating", prepareSocketCallback(setSeating, true));
+	socket.on("boostersPerPlayer", prepareSocketCallback(boostersPerPlayer, true));
+	socket.on("cardsPerBooster", prepareSocketCallback(cardsPerBooster, true));
+	socket.on("teamDraft", prepareSocketCallback(teamDraft, true));
+	socket.on("setRandomizeSeatingOrder", prepareSocketCallback(setRandomizeSeatingOrder, true));
+	socket.on("setDisableBotSuggestions", prepareSocketCallback(setDisableBotSuggestions, true));
+	socket.on("setDistributionMode", prepareSocketCallback(setDistributionMode, true));
+	socket.on("setCustomBoosters", prepareSocketCallback(setCustomBoosters, true));
+	socket.on("bots", prepareSocketCallback(bots, true));
+	socket.on("setRestriction", prepareSocketCallback(setRestriction, true));
+	socket.on("parseCustomCardList", prepareSocketCallback(parseCustomCardListEvent, true));
+	socket.on("importCube", prepareSocketCallback(importCube, true));
+	socket.on("loadLocalCustomCardList", prepareSocketCallback(loadLocalCustomCardList, true));
+	socket.on("ignoreCollections", prepareSocketCallback(ignoreCollections, true));
+	socket.on("setPickTimer", prepareSocketCallback(setPickTimer, true));
+	socket.on("setMythicPromotion", prepareSocketCallback(setMythicPromotion, true));
+	socket.on("setUseBoosterContent", prepareSocketCallback(setUseBoosterContent, true));
+	socket.on("setBoosterContent", prepareSocketCallback(setBoosterContent, true));
+	socket.on("setUsePredeterminedBoosters", prepareSocketCallback(setUsePredeterminedBoosters, true));
+	socket.on("setBoosters", prepareSocketCallback(setBoosters, true));
+	socket.on("shuffleBoosters", prepareSocketCallback(shuffleBoosters, true));
+	socket.on("setPersonalLogs", prepareSocketCallback(setPersonalLogs, true));
+	socket.on("setDraftLogRecipients", prepareSocketCallback(setDraftLogRecipients, true));
+	socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
+	socket.on("setFoil", prepareSocketCallback(setFoil, true));
+	socket.on("setCollationType", prepareSocketCallback(setCollationType, true));
+	socket.on("setUseCustomCardList", prepareSocketCallback(setUseCustomCardList, true));
+	socket.on("setCustomCardListWithReplacement", prepareSocketCallback(setCustomCardListWithReplacement, true));
+	socket.on("setDoubleMastersMode", prepareSocketCallback(setDoubleMastersMode, true));
+	socket.on("setPickedCardsPerRound", prepareSocketCallback(setPickedCardsPerRound, true));
+	socket.on("setBurnedCardsPerRound", prepareSocketCallback(setBurnedCardsPerRound, true));
+	socket.on("setDiscardRemainingCardsAt", prepareSocketCallback(setDiscardRemainingCardsAt, true));
+	socket.on("setPublic", prepareSocketCallback(setPublic, true));
 	socket.on("setDescription", prepareSocketCallback(setDescription, true));
 	socket.on("replaceDisconnectedPlayers", prepareSocketCallback(replaceDisconnectedPlayers, true));
-	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
 	socket.on("generateBracket", prepareSocketCallback(generateBracket, true));
 	socket.on("generateSwissBracket", prepareSocketCallback(generateSwissBracket, true));
 	socket.on("generateDoubleBracket", prepareSocketCallback(generateDoubleBracket, true));
 	socket.on("lockBracket", prepareSocketCallback(lockBracket, true));
 	socket.on("shareDraftLog", prepareSocketCallback(shareDraftLog, true));
-	socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));
 
 	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 	const filteredSettings: Options = {};
