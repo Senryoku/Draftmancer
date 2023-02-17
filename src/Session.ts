@@ -2079,7 +2079,7 @@ export class Session implements IIndexable {
 				customBoosters: useCustomBoosters ? customBoosters : null,
 			})
 		) {
-			return new SocketError("Error generating boosters.");
+			return new SocketAck(); // generateBoosters already emits errors.
 		}
 		const log = this.initLogs("TeamSealed");
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
