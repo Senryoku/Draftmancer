@@ -46,8 +46,8 @@ import { assert } from "console";
 import { TeamSealedState } from "./TeamSealed.js";
 import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
-import { RochesterDraftState } from "./RochesterDraftState.js";
-import { WinstonDraftState } from "./WinstonDraftState.js";
+import { RochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState } from "./WinstonDraft.js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {

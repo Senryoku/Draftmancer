@@ -9,6 +9,7 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 	cardPool: Array<UniqueCard> = [];
 	piles: [Array<UniqueCard>, Array<UniqueCard>, Array<UniqueCard>] = [[], [], []];
 	currentPile: number = 0;
+
 	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("winston");
 		this.players = players;

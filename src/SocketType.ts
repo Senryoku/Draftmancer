@@ -1,5 +1,5 @@
-import { GridDraftState } from "./GridDraft";
-import { WinstonDraftState } from "./WinstonDraftState";
+import { GridDraftState, GridDraftSyncData } from "./GridDraft";
+import { WinstonDraftState } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message } from "./Message";
 import { getPublicSessionData, UsersData } from "./Session";
@@ -7,7 +7,7 @@ import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
 import { CardID, DeckList, UniqueCard, UniqueCardID } from "./CardTypes";
-import { RochesterDraftState } from "./RochesterDraftState";
+import { RochesterDraftState } from "./RochesterDraft";
 import { MinesweeperDraftState } from "./MinesweeperDraft";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
@@ -75,8 +75,8 @@ export interface ServerToClientEvents {
 	winstonDraftRandomCard: (card: UniqueCard) => void;
 	winstonDraftEnd: () => void;
 
-	startGridDraft: (syncData: ReturnType<GridDraftState["syncData"]>) => void;
-	gridDraftNextRound: (syncData: ReturnType<GridDraftState["syncData"]>) => void;
+	startGridDraft: (syncData: GridDraftSyncData) => void;
+	gridDraftNextRound: (syncData: GridDraftSyncData) => void;
 	gridDraftEnd: () => void;
 
 	startRochesterDraft: (syncData: ReturnType<RochesterDraftState["syncData"]>) => void;

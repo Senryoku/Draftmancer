@@ -29,8 +29,8 @@ import { UserID } from "./IDTypes.js";
 import { getCard } from "./Cards.js";
 import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
-import { RochesterDraftState } from "./RochesterDraftState.js";
-import { WinstonDraftState } from "./WinstonDraftState.js";
+import { RochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState } from "./WinstonDraft.js";
 import { Message } from "./Message.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
