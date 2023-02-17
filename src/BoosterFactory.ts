@@ -101,16 +101,18 @@ export class ColorBalancedSlot {
 		for (const c of "WUBRG") {
 			if (this.cache.byColor[c] && this.cache.byColor[c].size > 0) {
 				const pickedCard = pickCard(this.cache.byColor[c], pickedCards, options);
-				if (options?.withReplacement !== true) removeCardFromCardPool(pickedCard.id, this.cardPool);
-				if (pickedCard.colors.length === 1) {
-					if (options?.withReplacement !== true)
-						removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
-					--this.cache.monocoloredCount;
-				} else {
-					if (options?.withReplacement !== true) removeCardFromCardPool(pickedCard.id, this.cache.others);
-					--this.cache.othersCount;
-				}
 				pickedCards.push(pickedCard);
+
+				if (options?.withReplacement !== true) {
+					removeCardFromCardPool(pickedCard.id, this.cardPool);
+					if (pickedCard.colors.length === 1) {
+						removeCardFromCardPool(pickedCard.id, this.cache.monocolored);
+						--this.cache.monocoloredCount;
+					} else {
+						removeCardFromCardPool(pickedCard.id, this.cache.others);
+						--this.cache.othersCount;
+					}
+				}
 			}
 		}
 		// a is the number of non-monocolor commons (often artifacts)
@@ -132,12 +134,13 @@ export class ColorBalancedSlot {
 		for (let i = pickedCards.length; i < cardCount; ++i) {
 			const type = (random.bool(x) && this.cache.monocoloredCount !== 0) || this.cache.othersCount === 0;
 			const pickedCard = pickCard(type ? this.cache.monocolored : this.cache.others, pickedCards, options);
-			if (type) --this.cache.monocoloredCount;
-			else --this.cache.othersCount;
 			pickedCards.push(pickedCard);
+
 			if (options?.withReplacement !== true) {
 				removeCardFromCardPool(pickedCard.id, this.cardPool);
 				removeCardFromCardPool(pickedCard.id, this.cache.byColor[pickedCard.colors.join()]);
+				if (type) --this.cache.monocoloredCount;
+				else --this.cache.othersCount;
 			}
 		}
 		// Shuffle to avoid obvious signals to other players
