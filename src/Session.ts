@@ -648,7 +648,8 @@ export class Session implements IIndexable {
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
 	generateBoosters(boosterQuantity: number, options: Options = {}): true | MessageError {
-		const onError = options.onError ?? this.emitError;
+		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
+
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
 			if (!this.boosters) {
@@ -1387,7 +1388,6 @@ export class Session implements IIndexable {
 
 		const ret = this.generateBoosters(boosterQuantity, {
 			useCustomBoosters: true,
-			cardsPerBooster: this.cardsPerBooster,
 		});
 		if (isMessageError(ret)) {
 			// FIXME: We should propagate to ack.
