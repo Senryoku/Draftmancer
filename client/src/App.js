@@ -740,6 +740,11 @@ export default {
 				}
 			});
 
+			this.socket.on("startTeamSealedSpectator", () => {
+				this.drafting = true;
+				this.draftingState = DraftState.Watching;
+			});
+
 			this.socket.on("endTeamSealed", () => {
 				fireToast("success", "Team Sealed stopped!");
 				this.drafting = false;
@@ -923,6 +928,9 @@ export default {
 
 			this.socket.on("draftLogLive", (data) => {
 				if (data.log) this.draftLogLive = data.log;
+
+				if (!this.draftLogLive) return;
+
 				if (data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
 				if (data.decklist) this.$set(this.draftLogLive.users[data.userID], "decklist", data.decklist);
 			});

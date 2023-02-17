@@ -2130,6 +2130,7 @@ export class Session implements IIndexable {
 				title: "Sealed pools successfly distributed!",
 				showConfirmButton: false,
 			});
+			Connections[this.owner].socket.emit("startTeamSealedSpectator");
 		}
 
 		logSession("TeamSealed", this);
