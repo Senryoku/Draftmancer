@@ -1,6 +1,7 @@
-import { Card } from "./Cards.js";
+import { Card } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
+import { PickSummary } from "./PickSummary";
 import { negMod, Options } from "./utils.js";
 
 export enum MinesweeperCellState {
@@ -85,6 +86,16 @@ export class MinesweeperGrid {
 	}
 }
 
+export type MinesweeperSyncData = {
+	gridCount: number;
+	gridNumber: number;
+	picksPerGrid: number;
+	pickNumber: number;
+	currentPlayer: string;
+	grid: any;
+	lastPicks: PickSummary[];
+};
+
 export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	grids: Array<MinesweeperGrid> = [];
@@ -93,7 +104,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	pickNumber = 0;
 	gridNumber = 0;
 	picksPerGrid = 2;
-	lastPicks: { userName: string; round: number; cards: Card[] }[] = [];
+	lastPicks: PickSummary[] = [];
 
 	// Warning: this will empty the packs.
 	constructor(
@@ -162,7 +173,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		return ret;
 	}
 
-	syncData() {
+	syncData(): MinesweeperSyncData {
 		const grid = this.strippedGrid();
 		return {
 			gridCount: this.grids.length,

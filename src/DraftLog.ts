@@ -1,4 +1,4 @@
-import { Card, CardID, DeckList, UniqueCard } from "./Cards.js";
+import { Card, CardID, DeckList, UniqueCard } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { Session, UsersData } from "./Session.js";
 
@@ -16,15 +16,17 @@ export type WinstonDraftPick =
 
 export type GenericDraftPick = DraftPick | GridDraftPick | WinstonDraftPick;
 
+export type DraftLogUserData = {
+	userID: UserID;
+	userName: string;
+	isBot: boolean;
+	picks: GenericDraftPick[];
+	cards: CardID[];
+	decklist?: DeckList;
+};
+
 export type DraftLogUsersData = {
-	[uid: UserID]: {
-		userID: UserID;
-		userName: string;
-		isBot: boolean;
-		picks: GenericDraftPick[];
-		cards: CardID[];
-		decklist?: DeckList;
-	};
+	[uid: UserID]: DraftLogUserData;
 };
 
 export class DraftLog {

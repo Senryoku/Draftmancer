@@ -3,7 +3,7 @@
 		<booster-card
 			v-for="(cid, index) in pick.booster"
 			:key="index"
-			:card="carddata[cid]"
+			:card="getUnique(cid)"
 			:language="language"
 			:class="{ 'selected-high': pick.pick.includes(index), burned: pick.burn && pick.burn.includes(index) }"
 			:lazyLoad="true"
@@ -15,7 +15,7 @@
 			<card
 				v-if="cid"
 				:key="index + '_' + cid"
-				:card="carddata[cid]"
+				:card="getUnique(cid)"
 				:language="language"
 				:class="{ 'selected-high': pick.pick.includes(index) }"
 				:lazyLoad="true"
@@ -27,21 +27,31 @@
 	<div class="card-container" v-else>Not Implemented</div>
 </template>
 
-<script>
-import Card from "./Card.vue";
-import BoosterCard from "./BoosterCard.vue";
+<script lang="ts">
+import { PropType, defineComponent } from "vue";
+import { DraftPick } from "../../../src/DraftLog";
 
-export default {
+import CardComponent from "./Card.vue";
+import BoosterCard from "./BoosterCard.vue";
+import { Card, CardID, UniqueCard, toUnique } from "../../../src/CardTypes";
+import { Language } from "../../../src/Types";
+
+export default defineComponent({
 	name: "DraftLogPick",
-	components: { Card, BoosterCard },
+	components: { Card: CardComponent, BoosterCard },
 	props: {
-		pick: { type: Object, required: true },
-		carddata: { type: Object, required: true },
-		language: { type: String, required: true },
+		pick: { type: Object as PropType<DraftPick>, required: true },
+		carddata: { type: Object as PropType<{ [cid: CardID]: Card }>, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		type: { type: String, default: "Draft" },
 		scale: { type: Number, default: 1 },
 	},
-};
+	methods: {
+		getUnique(cid: CardID): UniqueCard {
+			return toUnique(this.carddata[cid]);
+		},
+	},
+});
 </script>
 
 <style scoped>

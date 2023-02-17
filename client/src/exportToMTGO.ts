@@ -1,12 +1,21 @@
 import axios from "axios";
-import vueCardCache from "./vueCardCache.js";
-import Constant from "../../src/data/constants.json";
-import { Alert, fireToast } from "./alerts.js";
-import { download, escapeHTML } from "./helper.js";
+import vueCardCache from "./vueCardCache";
+import Constants from "../../src/Constants";
+import { Alert, fireToast } from "./alerts";
+import { download, escapeHTML } from "./helper";
+import { CardColor, UniqueCard } from "../../src/CardTypes.js";
 
-export async function exportToMTGO(deck, sideboard, options = {}) {
+export async function exportToMTGO(
+	deck: UniqueCard[],
+	sideboard: UniqueCard[],
+	options: {
+		preferredBasics?: string;
+		lands?: { [color in CardColor]: number };
+		sideboardBasics?: number;
+	} = {}
+) {
 	fireToast("info", `Preparing MTGO deck list...`);
-	const basics = {
+	const basics: { [color in CardColor]: { mtgo_id: number; name: string } } = {
 		W: { mtgo_id: 104600, name: "Plains" },
 		U: { mtgo_id: 104604, name: "Island" },
 		B: { mtgo_id: 104608, name: "Swamp" },
@@ -16,9 +25,9 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 	try {
 		await vueCardCache.requestBulk([...new Set(deck.map((card) => card.id))]);
 		if (sideboard) await vueCardCache.requestBulk([...new Set(sideboard.map((card) => card.id))]);
-		if (options?.preferedBasics && options.preferedBasics !== "") {
+		if (options?.preferredBasics && options.preferredBasics !== "") {
 			const basicsIdentifiers = ["W", "U", "B", "R", "G"].map((c) => {
-				return { name: Constant.BasicLandNames["en"][c], set: options.preferedBasics };
+				return { name: Constants.BasicLandNames["en"][c as CardColor], set: options.preferredBasics };
 			});
 			let basicsRequest = await axios
 				.post(
@@ -34,7 +43,7 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 
 			if (basicsRequest?.status === 200) {
 				let idx = 0;
-				for (let c of ["W", "U", "B", "R", "G"]) basics[c] = basicsRequest.data.data[idx++];
+				for (let c of ["W", "U", "B", "R", "G"]) basics[c as CardColor] = basicsRequest.data.data[idx++];
 			}
 		}
 	} catch (e) {
@@ -43,8 +52,8 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 		return;
 	}
 
-	const cardsLines = [];
-	const addCard = (mtgo_id, name, count = 1, sideboard = false) => {
+	const cardsLines: string[] = [];
+	const addCard = (mtgo_id: number, name: string, count = 1, sideboard = false) => {
 		cardsLines.push(
 			`  <Cards CatID="${mtgo_id}" Quantity="${count ?? 1}" Sideboard="${
 				sideboard ? "true" : "false"
@@ -52,8 +61,8 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 		);
 	};
 
-	const missingCards = [];
-	const addMatchingCard = async (card, toSideboard) => {
+	const missingCards: string[] = [];
+	const addMatchingCard = async (card: any, toSideboard: boolean) => {
 		let scryfall_card = vueCardCache.get(card.id);
 		// Exact match doesn't have an associated MTGO id, check other printings.
 		if (!scryfall_card.mtgo_id) {
@@ -85,13 +94,19 @@ export async function exportToMTGO(deck, sideboard, options = {}) {
 
 	if (options?.lands)
 		for (let c in options.lands)
-			if (options.lands[c] > 0) addCard(basics[c].mtgo_id, basics[c].name, options.lands[c], false);
+			if (options.lands[c as CardColor] > 0)
+				addCard(
+					basics[c as CardColor].mtgo_id,
+					basics[c as CardColor].name,
+					options.lands[c as CardColor],
+					false
+				);
 
 	if (sideboard && sideboard.length > 0) {
 		for (let card of sideboard) addMatchingCardPromises.push(addMatchingCard(card, true));
-		if (options?.sideboardBasics > 0)
+		if (options?.sideboardBasics && options?.sideboardBasics > 0)
 			for (let c of ["W", "U", "B", "R", "G"])
-				addCard(basics[c].mtgo_id, basics[c].name, options.sideboardBasics[c], false);
+				addCard(basics[c as CardColor].mtgo_id, basics[c as CardColor].name, options.sideboardBasics, false);
 	}
 
 	await Promise.all(addMatchingCardPromises); // Wait for all addMatchingCard calls to return.

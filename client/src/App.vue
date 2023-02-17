@@ -1290,7 +1290,7 @@
 										:sideboard="sideboard"
 										:options="{
 											lands: lands,
-											preferedBasics: preferedBasics,
+											preferredBasics: preferredBasics,
 											sideboardBasics: sideboardBasics,
 										}"
 									/>
@@ -1311,7 +1311,7 @@
 										:autoland.sync="autoLand"
 										:targetDeckSize.sync="targetDeckSize"
 										:sideboardBasics.sync="sideboardBasics"
-										:preferedBasics.sync="preferedBasics"
+										:preferredBasics.sync="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
 										@update:lands="(c, n) => (lands[c] = n)"

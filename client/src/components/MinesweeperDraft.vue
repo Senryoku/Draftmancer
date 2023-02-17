@@ -57,34 +57,39 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType, defineComponent } from "vue";
+import { MinesweeperSyncData } from "../../../src/MinesweeperDraft";
+
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 
-export default {
+export default /*#__PURE__*/ defineComponent({
 	data() {
 		return { gridScale: 1, gridScrollState: { left: 0, top: 0, x: 0, y: 0, moved: false } };
 	},
 	components: { Card, CardPlaceholder, ScaleSlider },
 	props: {
-		state: { type: Object, required: true },
+		state: { type: Object as PropType<MinesweeperSyncData>, required: true },
 		currentPlayerUsername: { type: String, required: true },
 		picking: { type: Boolean, required: true },
 	},
 	mounted() {
-		this.$refs.grid.addEventListener("mousedown", this.gridOnMouseDown);
+		(this.$refs.grid as HTMLElement)?.addEventListener("mousedown", this.gridOnMouseDown);
 	},
 	methods: {
-		pick(row, col) {
+		pick(row: number, col: number) {
 			if (this.picking && this.state.grid[row][col].state === 1) {
 				this.$emit("pick", row, col);
 			}
 		},
-		gridOnMouseDown(e) {
+		gridOnMouseDown(e: MouseEvent) {
+			if (!this.$refs.grid) return;
+			const grid = this.$refs.grid as HTMLElement;
 			this.gridScrollState = {
-				left: this.$refs.grid.scrollLeft,
-				top: this.$refs.grid.scrollTop,
+				left: grid.scrollLeft,
+				top: grid.scrollTop,
 				x: e.clientX,
 				y: e.clientY,
 				moved: false,
@@ -92,14 +97,16 @@ export default {
 			document.addEventListener("mousemove", this.gridOnMouseMove);
 			document.addEventListener("mouseup", this.gridOnMouseUp);
 		},
-		gridOnMouseMove(e) {
+		gridOnMouseMove(e: MouseEvent) {
+			if (!this.$refs.grid) return;
+			const grid = this.$refs.grid as HTMLElement;
 			const dx = e.clientX - this.gridScrollState.x;
 			const dy = e.clientY - this.gridScrollState.y;
-			this.$refs.grid.scrollTop = this.gridScrollState.top - dy;
-			this.$refs.grid.scrollLeft = this.gridScrollState.left - dx;
+			grid.scrollTop = this.gridScrollState.top - dy;
+			grid.scrollLeft = this.gridScrollState.left - dx;
 
 			if (!this.gridScrollState.moved) {
-				this.$refs.grid.classList.add("dragging");
+				grid.classList.add("dragging");
 				this.gridScrollState.moved = true;
 			}
 		},
@@ -108,12 +115,11 @@ export default {
 			document.removeEventListener("mouseup", this.gridOnMouseUp);
 
 			if (this.gridScrollState.moved) {
-				this.$refs.grid.classList.remove("dragging");
+				(this.$refs.grid as HTMLElement)?.classList.remove("dragging");
 			}
 		},
 	},
-	computed: {},
-};
+});
 </script>
 
 <style scoped>

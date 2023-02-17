@@ -11,11 +11,13 @@
 	</span>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	props: {
 		value: { type: Boolean, required: true },
 		label: { type: String, required: false },
 	},
-};
+});
 </script>

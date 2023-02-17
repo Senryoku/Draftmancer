@@ -9,18 +9,19 @@
 	</ol>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+import PatchNotes from "../data/PatchNotes.json";
+
+export default defineComponent({
 	name: "PatchNotes",
-	data: function() {
+	data() {
 		return {
-			notes: null,
+			notes: PatchNotes,
 		};
 	},
-	mounted: async function() {
-		this.notes = (await import("../../public/data/PatchNotes.json")).default;
-	},
-};
+});
 </script>
 
 <style scoped>

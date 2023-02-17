@@ -28,17 +28,8 @@ import {
 	DraftLogRecipients,
 	IIndexable,
 } from "./Session.js";
-import {
-	MTGACards,
-	getUnique,
-	CardPool,
-	CardID,
-	Card,
-	UniqueCardID,
-	getCard,
-	DeckBasicLands,
-	UniqueCard,
-} from "./Cards.js";
+import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard, PlainCollection } from "./CardTypes.js";
+import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
@@ -177,7 +168,7 @@ const socketCallbacks: { [name: string]: SocketSessionCallback } = {
 	setCollection(
 		userID: UserID,
 		sessionID: SessionID,
-		collection: { [aid: string]: number },
+		collection: PlainCollection,
 		ack?: (response: SocketAck | { collection: CardPool }) => void
 	) {
 		if (!isObject(collection) || collection === null) return;
@@ -970,15 +961,15 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 				});
 		}
 	},
-	setCollationType(userID: UserID, sessionID: SessionID, preferedCollation: string) {
-		if (!SessionsSettingsProps.preferedCollation(preferedCollation)) return;
-		if (preferedCollation === Sessions[sessionID].preferedCollation) return;
+	setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
+		if (!SessionsSettingsProps.preferredCollation(preferredCollation)) return;
+		if (preferredCollation === Sessions[sessionID].preferredCollation) return;
 
-		Sessions[sessionID].preferedCollation = preferedCollation;
+		Sessions[sessionID].preferredCollation = preferredCollation;
 		for (const user of Sessions[sessionID].users) {
 			if (user !== userID && user in Connections)
 				Connections[user].socket.emit("sessionOptions", {
-					preferedCollation: Sessions[sessionID].preferedCollation,
+					preferredCollation: Sessions[sessionID].preferredCollation,
 				});
 		}
 	},
@@ -1080,7 +1071,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
 		Sessions[sessionID].distributeJumpstart(set);
 	},
-	generateBracket(userID: UserID, sessionID: SessionID, players: Array<UserID>, ack: (result: SocketAck) => void) {
+	generateBracket(
+		userID: UserID,
+		sessionID: SessionID,
+		players: Array<{ userID: UserID; userName: string }>,
+		ack: (result: SocketAck) => void
+	) {
 		if (
 			!(
 				(players.length === 8 && !Sessions[sessionID].teamDraft) ||
@@ -1094,7 +1090,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	generateSwissBracket(
 		userID: UserID,
 		sessionID: SessionID,
-		players: Array<UserID>,
+		players: Array<{ userID: UserID; userName: string }>,
 		ack: (result: SocketAck) => void
 	) {
 		const realPlayerCount = players.filter((u) => u).length;
@@ -1113,7 +1109,7 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	generateDoubleBracket(
 		userID: UserID,
 		sessionID: SessionID,
-		players: Array<UserID>,
+		players: Array<{ userID: UserID; userName: string }>,
 		ack: (result: SocketAck) => void
 	) {
 		if (players.length !== 8) return;
@@ -1270,7 +1266,7 @@ io.on("connection", async function (socket) {
 
 	for (const key in ownerSocketCallbacks) socket.on(key, prepareSocketCallback(ownerSocketCallbacks[key], true));
 
-	// Apply prefered session settings in case we're creating a new one, filtering out invalid ones.
+	// Apply preferred session settings in case we're creating a new one, filtering out invalid ones.
 	const filteredSettings: Options = {};
 	try {
 		if (query.sessionSettings) {
@@ -1428,8 +1424,8 @@ function removeUserFromSession(userID: UserID) {
 // Express server setup
 
 // Serve files in the public directory
-app.use(express.static("./client/public/"));
-app.use("/bracket", express.static("client/public/bracket.html"));
+app.use(express.static("./client/dist/"));
+app.use("/bracket", express.static("./client/dist/bracket.html"));
 
 ///////////////////////////////////////////////////////////////////////////////
 // Endpoints

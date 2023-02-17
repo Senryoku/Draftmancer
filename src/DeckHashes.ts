@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Card, CardID, DeckList } from "./Cards.js";
+import { Card, CardID, DeckList } from "./CardTypes.js";
 import constants from "./data/constants.json";
 
 const basicNames: { [color: string]: string } = constants.BasicLandNames["en"];

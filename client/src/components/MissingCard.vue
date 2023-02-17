@@ -1,20 +1,29 @@
 <template>
-	<card :card="card" :language="language" :lazyLoad="true">
+	<card :card="uniqueCard" :language="language" :lazyLoad="true">
 		<div class="not-booster" v-if="!card.in_booster">Can't be obtained in boosters.</div>
 		<div class="card-count" v-if="card.count < 4">x{{ 4 - card.count }}</div>
 	</card>
 </template>
 
-<script>
-import Card from "./Card.vue";
-export default {
+<script lang="ts">
+import { PropType, defineComponent } from "vue";
+import { Card, toUnique } from "../../../src/CardTypes";
+import { Language } from "../../../src/Types";
+import CardComponent from "./Card.vue";
+
+export default defineComponent({
 	name: "MissingCard",
-	components: { Card },
+	components: { Card: CardComponent },
 	props: {
-		card: { type: Object, required: true },
-		language: { type: String, default: "en" },
+		card: { type: Object as PropType<Card & { count: number }>, required: true },
+		language: { type: String as PropType<Language>, default: "en" },
 	},
-};
+	computed: {
+		uniqueCard() {
+			return toUnique(this.card);
+		},
+	},
+});
 </script>
 
 <style scoped>

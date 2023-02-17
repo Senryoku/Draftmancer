@@ -7,12 +7,12 @@
 					<option
 						v-for="set in ['all', 'standard', 'others']"
 						:key="collectionStats[set].code"
-						:value="collectionStats[set].name"
+						:value="collectionStats[set].code"
 					>
 						{{ collectionStats[set].fullName }}
 					</option>
 					<option style="color: #888" disabled>————————————————</option>
-					<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].name">
+					<option v-for="set in sets" :key="collectionStats[set].code" :value="collectionStats[set].code">
 						{{ collectionStats[set].fullName }}
 					</option>
 				</select>
@@ -20,7 +20,7 @@
 			<div>
 				<input
 					type="checkbox"
-					@change="$emit('display-collection-status', $event.target.checked)"
+					@change="updateDisplayCollectionStatus"
 					:checked="displaycollectionstatus"
 					id="display-collection-status"
 				/><label for="display-collection-status">Highlight required wildcards in games</label>
@@ -69,10 +69,10 @@
 					</tr>
 					<tr v-for="r in ['common', 'uncommon', 'rare', 'mythic', 'all']" :key="r">
 						<td style="text-transform: capitalize">{{ r }}</td>
-						<td>{{ selectedSet.owned.unique[r] }} / {{ selectedSet.total[r] }}</td>
+						<td>{{ selectedSet.ownedUnique[r] }} / {{ selectedSet.total[r] }}</td>
 						<td>{{ selectedSet.owned[r] }} / {{ 4 * selectedSet.total[r] }}</td>
 						<td>{{ 4 * selectedSet.total[r] - selectedSet.owned[r] }}</td>
-						<td>{{ selectedSet.inBoosters.owned.unique[r] }} / {{ selectedSet.inBoosters.total[r] }}</td>
+						<td>{{ selectedSet.inBoosters.ownedUnique[r] }} / {{ selectedSet.inBoosters.total[r] }}</td>
 						<td>{{ selectedSet.inBoosters.owned[r] }} / {{ 4 * selectedSet.inBoosters.total[r] }}</td>
 						<td>{{ 4 * selectedSet.inBoosters.total[r] - selectedSet.inBoosters.owned[r] }}</td>
 					</tr>
@@ -91,7 +91,7 @@
 				</h3>
 				<div class="card-container">
 					<missing-card
-						v-for="card in selectedSet[missingCardsRarity].filter(
+						v-for="card in selectedSet.cards[missingCardsRarity].filter(
 							(c) => (showNonBooster || c.in_booster) && c.count < 4
 						)"
 						:key="card.arena_id"
@@ -105,94 +105,112 @@
 	<div v-else>Collection statistics not available.</div>
 </template>
 
-<script>
-import MTGACards from "../../public/data/MTGACards.json";
-import Constant from "../../../src/data/constants.json";
-import SetsInfos from "../../public/data/SetsInfos.json";
+<script lang="ts">
+import { Language, SetCode } from "../../../src/Types";
+import { defineComponent, PropType } from "vue";
+import { Card, PlainCollection } from "../../../src/CardTypes";
+import MTGACards from "../MTGACards";
+import Constants from "../../../src/Constants";
+import SetsInfos from "../SetInfos";
 import MissingCard from "./MissingCard.vue";
 
-export default {
+type CardWithCount = Card & { count: number };
+class StatsByRarity {
+	all: number = 0;
+	common: number = 0;
+	uncommon: number = 0;
+	rare: number = 0;
+	mythic: number = 0;
+	[rarity: string]: number;
+}
+
+class SetStat {
+	code: SetCode;
+	fullName: string;
+	cards: {
+		[rarity: string]: CardWithCount[];
+	} = {};
+	owned: StatsByRarity = new StatsByRarity();
+	ownedUnique: StatsByRarity = new StatsByRarity();
+	total: StatsByRarity = new StatsByRarity();
+	inBoosters: {
+		owned: StatsByRarity;
+		ownedUnique: StatsByRarity;
+		total: StatsByRarity;
+	} = { owned: new StatsByRarity(), ownedUnique: new StatsByRarity(), total: new StatsByRarity() };
+	icon: string | undefined = undefined;
+
+	constructor(setCode: string, name: string) {
+		this.code = setCode;
+		this.fullName = name;
+	}
+}
+
+export default defineComponent({
 	name: "Collection",
 	components: { MissingCard },
 	props: {
-		collection: { type: Object, required: true },
-		collectionInfos: { type: Object, required: true },
-		language: { type: String, required: true },
+		collection: { type: Object as PropType<PlainCollection>, required: true },
+		collectionInfos: {
+			type: Object as PropType<{
+				wildcards: {
+					common: number;
+					uncommon: number;
+					rare: number;
+					mythic: number;
+				};
+				vaultProgress: number;
+			}>,
+			required: true,
+		},
+		language: { type: String as PropType<Language>, required: true },
 		displaycollectionstatus: { type: Boolean, required: true },
 	},
 	data: () => {
 		return {
 			missingCardsRarity: "rare",
 			showNonBooster: false,
-			selectedSetCode: Constant.MTGASets[Constant.MTGASets.length - 1],
+			selectedSetCode: Constants.MTGASets[Constants.MTGASets.length - 1],
 		};
 	},
 	computed: {
-		collectionStats: function () {
+		collectionStats() {
 			if (!this.collection || !SetsInfos) return null;
-			const baseSet = (setCode, fullName) => {
-				return {
-					name: setCode,
-					fullName: fullName,
-					common: [],
-					uncommon: [],
-					rare: [],
-					mythic: [],
-					owned: {
-						unique: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
-						all: 0,
-						common: 0,
-						uncommon: 0,
-						rare: 0,
-						mythic: 0,
-					},
-					total: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
-					inBoosters: {
-						owned: {
-							unique: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
-							all: 0,
-							common: 0,
-							uncommon: 0,
-							rare: 0,
-							mythic: 0,
-						},
-						total: { all: 0, common: 0, uncommon: 0, rare: 0, mythic: 0 },
-					},
-				};
+			const stats: { [key: string]: SetStat } = {
+				all: new SetStat("all", "All"),
+				standard: new SetStat("standard", "Standard"),
+				others: new SetStat("others", "Other Sets"),
 			};
-			let stats = {
-				all: baseSet("all", "All"),
-				standard: baseSet("standard", "Standard"),
-				others: baseSet("others", "Other Sets"),
-			};
-			for (let s of Constant.MTGASets) {
-				stats[s] = baseSet(s, SetsInfos[s].fullName);
+			for (let s of Constants.MTGASets) {
+				stats[s] = new SetStat(s, SetsInfos[s].fullName);
 				stats[s].icon = SetsInfos[s].icon;
 			}
 			for (let id in MTGACards) {
-				const card = MTGACards[id];
-				const completeSet = Constant.MTGASets.includes(card.set);
+				const card = { ...MTGACards[id], count: 0 };
+				const completeSet = Constants.MTGASets.includes(card.set);
 				if (card && !card["type"].startsWith("Basic")) {
 					card.count = this.collection[id] ? this.collection[id] : 0;
 					const set = completeSet ? card.set : "others";
 					let categories = [set, "all"];
-					if (Constant.StandardSets.includes(card.set)) categories.push("standard");
+					if (Constants.StandardSets.includes(card.set)) categories.push("standard");
 					for (let s of categories) {
-						if (!(card.rarity in stats[s])) {
-							stats[s][card.rarity] = [];
-						}
-						stats[s][card.rarity].push(card);
+						if (!(card.rarity in stats[s].cards)) stats[s].cards[card.rarity] = [];
+						stats[s].cards[card.rarity].push(card);
 
-						const count = (target) => {
+						const count = (target: {
+							owned: StatsByRarity;
+							ownedUnique: StatsByRarity;
+							total: StatsByRarity;
+						}) => {
 							target.total.all += 1;
 							if (!(card.rarity in target.total)) target.total[card.rarity] = 0;
 							target.total[card.rarity] += 1;
 							target.owned.all += card.count;
 							if (!(card.rarity in target.owned)) target.owned[card.rarity] = 0;
 							target.owned[card.rarity] += card.count;
-							target.owned.unique.all += card.count > 0 ? 1 : 0;
-							if (!(card.rarity in target.owned.unique)) target.owned.unique[card.rarity] = 0;
-							target.owned.unique[card.rarity] += card.count > 0 ? 1 : 0;
+							target.ownedUnique.all += card.count > 0 ? 1 : 0;
+							if (!(card.rarity in target.ownedUnique)) target.ownedUnique[card.rarity] = 0;
+							target.ownedUnique[card.rarity] += card.count > 0 ? 1 : 0;
 						};
 
 						count(stats[s]);
@@ -202,14 +220,19 @@ export default {
 			}
 			return stats;
 		},
-		selectedSet: function () {
-			return this.collectionStats[this.selectedSetCode];
+		selectedSet() {
+			return this.collectionStats?.[this.selectedSetCode];
 		},
-		sets: function () {
-			return Constant.MTGASets.slice().reverse();
+		sets() {
+			return Constants.MTGASets.slice().reverse();
 		},
 	},
-};
+	methods: {
+		updateDisplayCollectionStatus(event: Event) {
+			this.$emit("display-collection-status", (event.target as HTMLInputElement).checked);
+		},
+	},
+});
 </script>
 
 <style scoped>

@@ -28,33 +28,33 @@
 	</transition>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
 	name: "Modal",
 	methods: {
-		close: function (e) {
+		close(e: Event) {
 			if (e.target == e.currentTarget) this.$emit("close");
 		},
-		shortcuts: function (e) {
-			if (e.which === 27)
-				// Escape
-				this.$emit("close");
+		shortcuts(e: KeyboardEvent) {
+			if (e.key === "Escape") this.$emit("close");
 		},
 	},
-	mounted: function () {
-		document.activeElement.blur();
+	mounted() {
+		(document.activeElement as HTMLElement).blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy: function () {
+	beforeDestroy() {
 		document.removeEventListener("keydown", this.shortcuts);
 	},
-};
+});
 </script>
 
 <style>
 .modal-mask {
 	position: fixed;
-	z-index: 2000;
+	z-index: 1500;
 	top: 0;
 	left: 0;
 	width: 100%;

@@ -1,5 +1,6 @@
 import { validateCustomCard } from "./CustomCards.js";
-import { Card, CardID, CardsByName, CardVersionsByName, getCard } from "./Cards.js";
+import { Card, CardID } from "./CardTypes.js";
+import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
 import { ackError, SocketError } from "./Message.js";
@@ -47,7 +48,7 @@ export function parseLine(line: string, options: Options = { fallbackToCardName:
 		);
 	}
 
-	// Only the name is supplied, get the prefered version of the card
+	// Only the name is supplied, get the preferred version of the card
 	if (!set && !number && name in CardsByName) return [count, CardsByName[name], !!foil];
 
 	// Search for the correct set and collector number

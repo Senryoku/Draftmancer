@@ -1,4 +1,4 @@
-export function getCookie(cname, def = "") {
+export function getCookie(cname: string, def = "") {
 	const name = cname + "=";
 	const decodedCookie = decodeURIComponent(document.cookie);
 	const ca = decodedCookie.split(";");
@@ -14,10 +14,10 @@ export function getCookie(cname, def = "") {
 	return def;
 }
 
-export function setCookie(name, value) {
+export function setCookie(name: string, value: string) {
 	document.cookie = name + "=" + (value || "") + ";max-age=31536000;path=/;samesite=strict";
 }
 
-export function eraseCookie(name) {
+export function eraseCookie(name: string) {
 	document.cookie = name + "=;max-age=-99999999;path=/;samesite=strict";
 }

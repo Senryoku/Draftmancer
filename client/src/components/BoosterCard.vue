@@ -30,14 +30,18 @@
 	</card>
 </template>
 
-<script>
-import Card from "./Card.vue";
-export default {
+<script lang="ts">
+import { Language } from "../../../src/Types";
+import { defineComponent, PropType } from "vue";
+import { UniqueCard } from "../../../src/CardTypes";
+import CardComponent from "./Card.vue";
+
+export default defineComponent({
 	name: "BoosterCard",
-	components: { Card },
+	components: { Card: CardComponent },
 	props: {
-		card: { type: Object, required: true },
-		language: { type: String, default: "en" },
+		card: { type: Object as PropType<UniqueCard>, required: true },
+		language: { type: String as PropType<Language>, default: "en" },
 		selected: { type: Boolean, default: false },
 		canbeburned: { type: Boolean, default: false },
 		burned: { type: Boolean, default: false },
@@ -48,12 +52,12 @@ export default {
 		scale: { type: Number, default: 1 },
 	},
 	methods: {
-		burnCard(e) {
+		burnCard(e: Event) {
 			this.$emit("burn");
 			e.stopPropagation();
 			e.preventDefault();
 		},
-		restoreCard(e) {
+		restoreCard(e: Event) {
 			this.$emit("restore");
 			e.stopPropagation();
 			e.preventDefault();
@@ -66,7 +70,7 @@ export default {
 			return (10 * this.botscore).toFixed(1);
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

@@ -19,31 +19,35 @@
 	</dropdown>
 </template>
 
-<script>
-import { exportToMTGA } from "../exportToMTGA.js";
-import { exportToMTGO } from "../exportToMTGO.js";
-import { fireToast } from "../alerts.js";
-import { copyToClipboard } from "../helper.js";
-import Dropdown from "./Dropdown.vue";
+<script lang="ts">
+import { PropType, defineComponent } from "vue";
+import { UniqueCard } from "../../../src/CardTypes";
 
-export default {
+import { exportToMTGA } from "../exportToMTGA";
+import { exportToMTGO } from "../exportToMTGO";
+import { fireToast } from "../alerts";
+import { copyToClipboard } from "../helper";
+import Dropdown from "./Dropdown.vue";
+import { Language } from "../../../src/Types";
+
+export default defineComponent({
 	components: { Dropdown },
 	props: {
-		language: { type: String, required: true },
-		deck: { type: Array, required: true },
-		sideboard: { type: Array, default: null },
+		language: { type: String as PropType<Language>, required: true },
+		deck: { type: Array as PropType<UniqueCard[]>, required: true },
+		sideboard: { type: Array as PropType<UniqueCard[]>, default: null },
 		options: {
 			type: Object,
 			default: () => {
-				return { lands: null, preferedBasics: "", sideboardBasics: 0 };
+				return { lands: null, preferredBasics: "", sideboardBasics: 0 };
 			},
 		},
 	},
 	methods: {
-		exportDeck(event, full = true) {
+		exportDeck(event: Event, full = true) {
 			copyToClipboard(
 				exportToMTGA(this.deck, this.sideboard, this.language, this.options.lands, {
-					preferedBasics: this.options.preferedBasics,
+					preferredBasics: this.options.preferredBasics,
 					sideboardBasics: this.options.sideboardBasics,
 					full: full,
 				})
@@ -54,5 +58,5 @@ export default {
 			exportToMTGO(this.deck, this.sideboard, this.options);
 		},
 	},
-};
+});
 </script>

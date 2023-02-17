@@ -1,6 +1,12 @@
 <template>
 	<div class="card-column" v-show="column.length > 0">
-		<card v-for="(card, index) in column" :key="index" :card="card" :language="language" :lazyLoad="true">
+		<card
+			v-for="(card, index) in column"
+			:key="index"
+			:card="{ ...card, uniqueID: index }"
+			:language="language"
+			:lazyLoad="true"
+		>
 			<div v-if="checkcollection && missingCard[card.id] !== 'Present'" class="collection-warning">
 				<i
 					class="fas fa-exclamation-triangle green"
@@ -23,35 +29,40 @@
 	</div>
 </template>
 
-<script>
-import MTGAAlternates from "../MTGAAlternates.js";
-import Card from "./Card.vue";
+<script lang="ts">
+import { Language } from "../../../src/Types";
+import { defineComponent, PropType } from "vue";
+import { Card, CardID, PlainCollection } from "../../../src/CardTypes";
+import MTGAAlternates from "../MTGAAlternates";
+import CardComponent from "./Card.vue";
 
-export default {
+export default defineComponent({
 	props: {
-		column: { type: Array, required: true },
-		language: { type: String, required: true },
+		column: { type: Array as PropType<(Card & { count: number })[]>, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		checkcollection: { type: Boolean },
-		collection: { type: Object },
+		collection: { type: Object as PropType<PlainCollection> },
 	},
-	components: { Card },
+	components: { Card: CardComponent },
 	computed: {
 		missingCard() {
-			let r = {};
+			if (!this.collection) return {};
+
+			let r: { [cid: CardID]: "Present" | "Missing" | "NonExistent" | "Equivalent" } = {};
 			for (let card of this.column) {
-				if (card.arena_id in this.collection) {
+				if (card.arena_id && card.arena_id in this.collection) {
 					r[card.id] = "Present";
 				} else {
 					const alternates = MTGAAlternates[card.name];
 					if (!alternates || alternates.length === 0) r[card.id] = "NonExistent";
-					else if (alternates.some((cid) => this.collection[cid] > 0)) r[card.id] = "Equivalent";
+					else if (alternates.some((cid) => this.collection![cid] > 0)) r[card.id] = "Equivalent";
 					else r[card.id] = "Missing";
 				}
 			}
 			return r;
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

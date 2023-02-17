@@ -1,17 +1,7 @@
 "use strict";
 
-import {
-	CardID,
-	Card,
-	CardPool,
-	SlotedCardPool,
-	Cards,
-	getUnique,
-	BoosterCardsBySet,
-	UniqueCard,
-	CardsBySet,
-	getCard,
-} from "./Cards.js";
+import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
+import { Cards, getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Cards.js";
 import { shuffleArray, randomInt, Options, random, getRandom } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";

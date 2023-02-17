@@ -9,19 +9,14 @@ import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
 	Card,
-	Cards,
-	getUnique,
-	BoosterCardsBySet,
-	CardsBySet,
-	MTGACardIDs,
 	CardPool,
 	SlotedCardPool,
 	UniqueCard,
-	getCard,
+	UniqueCardID,
 	DeckBasicLands,
 	DeckList,
-	UniqueCardID,
-} from "./Cards.js";
+} from "./CardTypes.js";
+import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
@@ -49,6 +44,9 @@ import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
+import { PickSummary } from "./PickSummary";
+import { TeamSealedState } from "./TeamSealed.js";
+import { GridDraftState } from "./GridDraft.js";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -106,7 +104,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 		return true;
 	},
 	foil: isBoolean,
-	preferedCollation(val: any) {
+	preferredCollation(val: any) {
 		return ["Paper", "MTGA"].includes(val);
 	},
 	useCustomCardList: isBoolean,
@@ -242,53 +240,13 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-export class GridDraftState extends IDraftState implements TurnBased {
-	round = 0;
-	boosters: Array<Array<UniqueCard | null>> = []; // Array of [3x3 Grid, Row-Major order]
-	players: Array<UserID>;
-	error: any;
-	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: (UniqueCard | null)[] }[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
-		super("grid");
-		this.players = players;
-		if (boosters) {
-			for (const booster of boosters) {
-				if (booster.length > 9) booster.length = 9;
-				if (booster.length < 9)
-					this.error = {
-						title: "Not enough cards in boosters.",
-						text: "At least one booster has less than 9 cards.",
-					};
-				shuffleArray(booster);
-				this.boosters.push(booster);
-			}
-		}
-		this.boosterCount = this.boosters.length;
-	}
-
-	currentPlayer() {
-		return this.players[[0, 1, 1, 0][this.round % 4]];
-	}
-
-	syncData() {
-		return {
-			round: this.round,
-			currentPlayer: this.currentPlayer(),
-			booster: this.boosters[0],
-			boosterCount: this.boosterCount,
-			lastPicks: this.lastPicks,
-		};
-	}
-}
-
 export class RochesterDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
 	pickNumber = 0;
 	boosterNumber = 0;
 	boosters: Array<Array<UniqueCard>> = [];
 	boosterCount: number;
-	lastPicks: { userName: string; round: number; cards: UniqueCard[] }[] = [];
+	lastPicks: PickSummary[] = [];
 	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
 		super("rochester");
 		this.players = players;
@@ -314,23 +272,6 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 			boosterCount: this.boosterCount,
 			lastPicks: this.lastPicks,
 		};
-	}
-}
-
-class TeamSealedCard extends UniqueCard {
-	owner: UserID | null = null;
-}
-
-export class TeamSealedState extends IDraftState {
-	teamPools: Array<{ cards: TeamSealedCard[]; team: Array<UserID> }> = [];
-
-	constructor() {
-		super("teamSealed");
-	}
-
-	syncData(userID: UserID) {
-		for (const teamPool of this.teamPools) if (teamPool.team.includes(userID)) return teamPool;
-		return null;
 	}
 }
 
@@ -373,7 +314,7 @@ export class Session implements IIndexable {
 	colorBalance: boolean = true;
 	maxDuplicates?: { [slot: string]: number } = undefined;
 	foil: boolean = false;
-	preferedCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
+	preferredCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
 	customCardList: CustomCardList = {
 		slots: {},
@@ -798,8 +739,8 @@ export class Session implements IIndexable {
 
 				// Proper-ish implementation:
 				/*
-				// Is Arena Collation available?              Is it the prefered choice, or our only one?                           MTGA collations don't have foil sheets.
-				if(`${set}-arena` in PaperBoosterFactories && (this.preferedCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
+				// Is Arena Collation available?              Is it the preferred choice, or our only one?                           MTGA collations don't have foil sheets.
+				if(`${set}-arena` in PaperBoosterFactories && (this.preferredCollation === 'MTGA' || !(set in PaperBoosterFactories) && !this.foil))
 					return PaperBoosterFactories[`${set}-arena`](BoosterFactoryOptions);
 				return PaperBoosterFactories[set](BoosterFactoryOptions);
 				*/
@@ -1197,13 +1138,13 @@ export class Session implements IIndexable {
 
 		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
-		const pickedCards = [];
+		const pickedCards: UniqueCard[] = [];
 		for (let i = 0; i < 3; ++i) {
 			//                     Column           Row
 			const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
-				pickedCards.push(s.boosters[0][idx]);
+				pickedCards.push(s.boosters[0][idx] as UniqueCard);
 				log.pick.push(idx);
 				s.boosters[0][idx] = null;
 			}
@@ -2575,7 +2516,7 @@ export class Session implements IIndexable {
 		});
 	}
 
-	generateBracket(players: Array<UserID>) {
+	generateBracket(players: Array<{ userID: UserID; userName: string }>) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
 		} else {
@@ -2584,12 +2525,12 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateSwissBracket(players: Array<UserID>) {
+	generateSwissBracket(players: Array<{ userID: UserID; userName: string }>) {
 		this.bracket = new SwissBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateDoubleBracket(players: Array<UserID>) {
+	generateDoubleBracket(players: Array<{ userID: UserID; userName: string }>) {
 		this.bracket = new DoubleBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}

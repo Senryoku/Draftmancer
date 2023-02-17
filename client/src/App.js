@@ -8,10 +8,10 @@ import Swal from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
-import SetsInfos from "../public/data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.js";
-import { getCookie, setCookie } from "./cookies.js";
-import { ButtonColor, Alert, fireToast } from "./alerts.js";
+import SetsInfos from "./data/SetsInfos.json";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.ts";
+import { getCookie, setCookie } from "./cookies.ts";
+import { ButtonColor, Alert, fireToast } from "./alerts.ts";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
@@ -77,7 +77,7 @@ const defaultSettings = {
 	enableNotifications: false,
 	collapseSideboard: window.innerWidth > 1200,
 	sideboardBasics: 0,
-	preferedBasics: "",
+	preferredBasics: "",
 	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
@@ -125,6 +125,7 @@ export default {
 			collection: {},
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
+				vaultProgress: 0,
 			},
 			socket: undefined,
 
@@ -238,7 +239,7 @@ export default {
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
-			preferedBasics: initialSettings.preferedBasics,
+			preferredBasics: initialSettings.preferredBasics,
 			//
 			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
 
@@ -2976,7 +2977,7 @@ export default {
 		sideboardBasics() {
 			this.storeSettings();
 		},
-		preferedBasics() {
+		preferredBasics() {
 			this.storeSettings();
 		},
 		// Session settings

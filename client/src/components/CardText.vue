@@ -1,29 +1,43 @@
 <template>
 	<div class="card-text-container">
-		<div v-if="faces.length === 0">
-			<i class="fas fa-spinner fa-spin"></i>
-		</div>
-		<div class="card-text" v-for="(face, idx) in faces" :key="idx">
-			<div class="card-top-line" v-if="face.name">
-				<div class="card-top-line-inner">
-					<div class="card-name font-size-fit">{{ face.name }}</div>
-					<div class="card-mana-cost" v-html="transformManaCost(face.mana_cost)"></div>
+		<template v-if="faces.length === 0">
+			<div>
+				<i class="fas fa-spinner fa-spin"></i>
+			</div>
+		</template>
+		<template v-else>
+			<div class="card-text" v-for="(face, idx) in faces" :key="idx">
+				<div class="card-top-line" v-if="face.name">
+					<div class="card-top-line-inner">
+						<div class="card-name font-size-fit">{{ face.name }}</div>
+						<div
+							class="card-mana-cost"
+							v-if="face.mana_cost"
+							v-html="transformManaCost(face.mana_cost)"
+						></div>
+					</div>
 				</div>
+				<div class="card-type font-size-fit" v-if="face.type_line">
+					{{ face.type_line }}
+				</div>
+				<div
+					class="card-oracle font-size-fit"
+					v-if="face.oracle_text"
+					v-html="parseOracle(face.oracle_text)"
+				></div>
+				<div class="card-pt font-size-fit" v-if="face.power">{{ face.power }} / {{ face.toughness }}</div>
+				<div class="card-loyalty font-size-fit" v-if="face.loyalty">{{ face.loyalty }}</div>
 			</div>
-			<div class="card-type font-size-fit" v-if="face.type_line">
-				{{ face.type_line }}
-			</div>
-			<div class="card-oracle font-size-fit" v-if="face.oracle_text" v-html="parseOracle(face.oracle_text)"></div>
-			<div class="card-pt font-size-fit" v-if="face.power">{{ face.power }} / {{ face.toughness }}</div>
-			<div class="card-loyalty font-size-fit" v-if="face.loyalty">{{ face.loyalty }}</div>
-		</div>
+		</template>
 	</div>
 </template>
 
-<script>
-import { replaceManaSymbols } from "../ManaSymbols.js";
+<script lang="ts">
+import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
+import { defineComponent, PropType } from "vue";
+import { replaceManaSymbols } from "../ManaSymbols";
 
-function checkOverflow(el) {
+function checkOverflow(el: HTMLElement) {
 	const curOverflow = el.style.overflow;
 	if (!curOverflow || curOverflow === "visible") el.style.overflow = "hidden";
 	const isOverflowing = el.clientWidth < el.scrollWidth || el.clientHeight < el.scrollHeight;
@@ -32,9 +46,12 @@ function checkOverflow(el) {
 }
 
 // Displays a card using Scryfall card data instead of its image.
-export default {
+export default defineComponent({
 	name: "CardText",
-	props: { card: { type: Object }, fixedLayout: { type: Boolean, default: false } },
+	props: {
+		card: { type: Object as PropType<ScryfallCard | ScryfallCardFace | CardCacheEntry> },
+		fixedLayout: { type: Boolean, default: false },
+	},
 	mounted() {
 		// This has to be called when the component is visible:
 		// We can't use v-show or mounted will be called while the element is hidden and fitAll will do nothing.
@@ -44,12 +61,12 @@ export default {
 	methods: {
 		fitAll() {
 			this.$nextTick(() => {
-				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div) => {
-					this.fitFontSize(div);
+				this.$el.querySelectorAll(".card-text .font-size-fit").forEach((div: Element) => {
+					this.fitFontSize(div as HTMLElement);
 				});
 			});
 		},
-		fitFontSize(el, initial_size = 2.5) {
+		fitFontSize(el: HTMLElement, initial_size = 2.5) {
 			el.classList.add("fitting");
 			let curr_font_size = initial_size;
 			el.style.fontSize = curr_font_size + "vh";
@@ -59,7 +76,7 @@ export default {
 			}
 			el.classList.remove("fitting");
 		},
-		parseOracle(str) {
+		parseOracle(str: string) {
 			str = replaceManaSymbols(str);
 			// Included reminder text
 			str = str.replace(/\([^)]+\)/g, (match) => `<span class="oracle-reminder">${match}</span>`);
@@ -68,21 +85,28 @@ export default {
 				.map((line) => `<div>${line}</div>`)
 				.join("");
 		},
-		transformManaCost(str) {
+		transformManaCost(str: string) {
 			return replaceManaSymbols(str);
 		},
 	},
 	computed: {
 		front() {
-			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return this.card;
-			return this.card.card_faces[0];
+			if (isScryfallCard(this.card)) {
+				if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return this.card;
+				return this.card.card_faces[0];
+			} else return this.card;
 		},
 		back() {
-			if (!this.card?.card_faces || this.card?.card_faces?.length <= 1 || !this.fixedLayout) return null;
-			return this.card.card_faces[1];
+			if (isScryfallCard(this.card)) {
+				if (!this.card?.card_faces || this.card?.card_faces?.length <= 1 || !this.fixedLayout) return null;
+				return this.card.card_faces[1];
+			} else return this.card;
 		},
 		faces() {
-			return [this.front, this.back].filter((f) => !!f);
+			return [this.front, this.back].filter((f) => isScryfallCard(f) || isScryfallCardFace(f)) as (
+				| ScryfallCard
+				| ScryfallCardFace
+			)[];
 		},
 	},
 	watch: {
@@ -90,7 +114,7 @@ export default {
 			this.fitAll();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

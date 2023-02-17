@@ -1,5 +1,6 @@
 import { ColorBalancedSlot } from "./BoosterFactory.js";
-import { CardID, Card, SlotedCardPool, UniqueCard, CardPool, getCard } from "./Cards.js";
+import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.js";
+import { getCard } from "./Cards.js";
 import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, Options, random } from "./utils.js";

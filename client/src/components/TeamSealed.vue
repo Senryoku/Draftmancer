@@ -6,12 +6,7 @@
 				<div v-for="user in teamDisplay" :key="user.idx" :class="`player player-${user.idx}`">
 					<span>{{ user.userName }}</span>
 					<span class="color-list" v-if="user.colors">
-						<img
-							v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => user.colors[c] >= 3)"
-							:key="c"
-							:src="'img/mana/' + c + '.svg'"
-							class="mana-icon"
-						/>
+						<img v-for="c in user.colors" :key="c" :src="'img/mana/' + c + '.svg'" class="mana-icon" />
 					</span>
 				</div>
 			</div>
@@ -28,15 +23,19 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { CardColor } from "../../../src/CardTypes";
+import { UserData } from "../../../src/Session";
+import { TeamSealedPool, TeamSealedCard } from "../../../src/TeamSealed";
 import CardPool from "./CardPool.vue";
 
-export default {
+export default defineComponent({
 	components: { CardPool },
 	props: {
 		language: { type: String, required: true },
-		state: { type: Object, required: true },
-		users: { type: Array, required: true },
+		state: { type: Object as PropType<TeamSealedPool>, required: true },
+		users: { type: Array as PropType<UserData[]>, required: true },
 	},
 	computed: {
 		cssVariables() {
@@ -52,7 +51,7 @@ export default {
 
 			for (let i = 0; i < this.state.team.length; ++i) {
 				const user = this.users.find((u) => u.userID === this.state.team[i]);
-				const colors = this.state.cards
+				const colors: { [c in CardColor]: number } = this.state.cards
 					.filter((c) => c.owner === this.state.team[i])
 					.reduce(
 						(acc, card) => {
@@ -61,21 +60,27 @@ export default {
 						},
 						{ W: 0, U: 0, B: 0, R: 0, G: 0 }
 					);
-				r.push({ idx: i, userName: user ? user.userName : "(Disconnected)", colors });
+				const finalColors = [];
+				for (const c in CardColor) if (colors[c as CardColor] >= 3) finalColors.push(c);
+				r.push({
+					idx: i,
+					userName: user ? user.userName : "(Disconnected)",
+					colors: finalColors,
+				});
 			}
 			return r;
 		},
 	},
 	methods: {
-		onCardClick(event, card) {
+		onCardClick(event: Event, card: TeamSealedCard) {
 			this.$emit("pick", card.uniqueID);
 		},
-		cardConditionalClasses(card) {
+		cardConditionalClasses(card: TeamSealedCard) {
 			if (!card.owner) return [];
 			return ["team-sealed-picked", "team-sealed-player-" + this.state.team.findIndex((t) => t === card.owner)];
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

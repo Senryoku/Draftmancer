@@ -35,18 +35,7 @@
 						'after-hidden': currentPart < idx,
 					}"
 				>
-					<img
-						:src="
-							relatedCard.image_uris
-								? relatedCard.image_uris.border_crop
-								: relatedCard.card_faces &&
-								  relatedCard.card_faces[0] &&
-								  relatedCard.card_faces[0].image_uris
-								? relatedCard.card_faces[0].image_uris.border_crop
-								: null
-						"
-						class="related-card-image"
-					/>
+					<img :src="relatedCardImage(idx)" class="related-card-image" />
 					<card-text
 						v-if="relatedCard.status === 'ready' && displayCardText"
 						:card="relatedCard"
@@ -84,32 +73,36 @@
 	</transition>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { Language } from "../../../src/Types";
 import axios from "axios";
 
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
+import { Card, CardID } from "../../../src/CardTypes";
+import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 
 const scrollCooldown = 100; // ms
 
-export default {
+export default defineComponent({
 	components: { CardImage, CardText },
 	props: {
-		language: { type: String, required: true },
+		language: { type: String as PropType<Language>, required: true },
 	},
 	data() {
 		return {
 			display: false,
-			card: null,
+			card: null as Card | null,
 			position: "left",
 			currentPart: 0,
 			lastScroll: 0,
 			displayCardText: false,
-			spellbooks: {}, // Associates card names to their spellbooks (Sets of card ids)
+			spellbooks: {} as { [name: string]: Set<CardID> }, // Associates card names to their spellbooks (Sets of card ids)
 		};
 	},
 	created() {
-		this.$root.$on("togglecardpopup", (event, card) => {
+		this.$root.$on("togglecardpopup", (event: MouseEvent, card: Card) => {
 			if (!this.display) {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
@@ -117,7 +110,7 @@ export default {
 				let promise = this.$cardCache.request(card.id);
 				// Also request associated spellbook if necessary
 				promise?.then(() => {
-					const cardData = this.$cardCache.get(card.id);
+					const cardData = this.$cardCache.get(card.id) as ScryfallCard;
 					if (!(card.name in this.spellbooks)) {
 						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
 							cardData.name
@@ -129,7 +122,7 @@ export default {
 									this.$set(this.spellbooks, cardData.name, new Set());
 									for (const card of response.data.data) {
 										card.status = "ready";
-										this.$set(this.$cardCache.cardCache, card.id, card);
+										this.$cardCache.add(card);
 										this.spellbooks[cardData.name].add(card.id);
 									}
 								}
@@ -159,10 +152,10 @@ export default {
 			this.displayCardText = false;
 			this.cleanupEventHandlers();
 		},
-		hasPendingData(cardID) {
+		hasPendingData(cardID: CardID) {
 			return this.$cardCache.get(cardID)?.status === "pending";
 		},
-		additionalData(cardID) {
+		additionalData(cardID: CardID) {
 			return this.$cardCache.get(cardID);
 		},
 		nextPart() {
@@ -174,7 +167,7 @@ export default {
 			this.currentPart = (this.currentPart - 1) % (this.relatedCards.length + 1);
 			while (this.currentPart < 0) this.currentPart += this.relatedCards.length + 1;
 		},
-		mouseWheel(event) {
+		mouseWheel(event: WheelEvent) {
 			if (this.relatedCards.length > 0) {
 				if (Date.now() - this.lastScroll > scrollCooldown) {
 					if (event.deltaY > 0) this.nextPart();
@@ -185,7 +178,7 @@ export default {
 				event.preventDefault();
 			}
 		},
-		keyDown(event) {
+		keyDown(event: KeyboardEvent) {
 			switch (event.key) {
 				case "Escape":
 					this.close();
@@ -208,7 +201,7 @@ export default {
 			event.stopPropagation();
 			event.preventDefault();
 		},
-		keyUp(event) {
+		keyUp(event: KeyboardEvent) {
 			switch (event.key) {
 				case "Alt":
 					this.displayCardText = event.altKey;
@@ -222,7 +215,7 @@ export default {
 			event.stopPropagation();
 			event.preventDefault();
 		},
-		negMod(x, n) {
+		negMod(x: number, n: number) {
 			return ((x % n) + n) % n;
 		},
 		cleanupEventHandlers() {
@@ -230,15 +223,29 @@ export default {
 			document.removeEventListener("keydown", this.keyDown, { capture: true });
 			document.removeEventListener("keyup", this.keyUp, { capture: true });
 		},
+		relatedCardImage(index: number) {
+			if (this.relatedCards.length <= index) return undefined;
+			const card = this.relatedCards[index];
+			if (!isReady(card)) return undefined;
+			return card.image_uris
+				? card.image_uris.border_crop
+				: card.card_faces && card.card_faces[0] && card.card_faces[0].image_uris
+				? card.card_faces[0].image_uris.border_crop
+				: undefined;
+		},
 	},
 	computed: {
 		cardAdditionalData() {
-			return this.$cardCache.get(this.card.id);
+			return this.$cardCache.get(this.card!.id);
 		},
 		relatedCards() {
-			let r = [];
-			if (this.$cardCache.get(this.card?.id)?.all_parts?.length > 0)
-				for (let card of this.$cardCache.get(this.card?.id).all_parts) {
+			let r: CardCacheEntry[] = [];
+			if (!this.card) return r;
+			const c = this.$cardCache.get(this.card.id);
+			if (!isReady(c)) return r;
+
+			if (c.all_parts?.length > 0)
+				for (let card of c.all_parts) {
 					if (card.id !== this.card.id) r.push(this.$cardCache.get(card.id));
 				}
 			if (this.spellbooks[this.card?.name]?.size > 0)
@@ -246,7 +253,7 @@ export default {
 			return r;
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
@@ -256,7 +263,7 @@ export default {
 	position: fixed;
 	top: 15vh;
 	height: var(--image-height);
-	z-index: 900;
+	z-index: 2000;
 	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }

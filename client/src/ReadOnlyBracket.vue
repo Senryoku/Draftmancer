@@ -23,25 +23,35 @@
 	</div>
 </template>
 
-<script>
-import Vue from "vue";
-import { getUrlVars } from "./helper.js";
-import Bracket from "./components/Bracket.vue";
+<script lang="ts">
+import Vue, { defineComponent } from "vue";
+import { getUrlVars } from "./helper";
+import BracketComponent from "./components/Bracket.vue";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
+import { SessionID } from "../../src/IDTypes";
+import { Bracket } from "../../src/Brackets";
+import { DraftLog } from "../../src/DraftLog";
 
 Vue.use(FloatingVue);
 
-export default {
-	components: { Bracket },
+export default defineComponent({
+	components: { Bracket: BracketComponent },
 	data: () => {
-		return {
+		const r: {
+			bracket: Bracket | null;
+			sessionID: SessionID | null;
+			response: Response | null;
+			error: string | null;
+			draftlog: DraftLog | null;
+		} = {
 			bracket: null,
 			sessionID: null,
 			response: null,
 			error: null,
 			draftlog: null,
 		};
+		return r;
 	},
 	mounted: async function () {
 		let urlParamSession = getUrlVars()["session"];
@@ -64,7 +74,7 @@ export default {
 			this.error = "Client-side error.";
 		}
 	},
-};
+});
 </script>
 
 <style src="./css/style.css"></style>

@@ -37,7 +37,7 @@
 					type="number"
 					:id="`${c}-mana`"
 					:value="lands[c]"
-					@input="$emit('update:lands', c, $event.target.value === '' ? 0 : parseInt($event.target.value))"
+					@input="updateLands($event, c)"
 					min="0"
 					max="999"
 					onclick="this.select();"
@@ -59,9 +59,7 @@
 					type="number"
 					id="deck-size"
 					:value="targetDeckSize"
-					@input="
-						$emit('update:targetDeckSize', $event.target.value === '' ? 0 : parseInt($event.target.value))
-					"
+					@input="updateTargetDeckSize"
 					min="1"
 					max="999"
 				/>
@@ -73,97 +71,113 @@
 					type="number"
 					id="sideboard-basics"
 					:value="sideboardBasics"
-					@input="
-						$emit('update:sideboardBasics', $event.target.value === '' ? 0 : parseInt($event.target.value))
-					"
+					@input="updateSideboardBasics"
 					min="0"
 					max="99"
 				/>
 			</div>
 			<div>
-				<label for="prefered-basics">Basics Set</label>
+				<label for="preferred-basics">Basics Set</label>
 				<input
 					class="small-input"
 					type="text"
-					id="prefered-basics"
-					:value="preferedBasics"
-					@input="$emit('update:preferedBasics', $event.target.value)"
+					id="preferred-basics"
+					:value="preferredBasics"
+					@input="updatePreferredBasics"
 					placeholder="Default"
 				/>
 			</div>
-			<div v-if="preferedBasicsError" class="basics-preview-error">{{ preferedBasicsError }}</div>
+			<div v-if="preferredBasicsError" class="basics-preview-error">{{ preferredBasicsError }}</div>
 			<div v-else class="basics-preview">
 				<div class="basics-preview-window">
-					<img v-for="url in basicsImages" :src="url" :key="url" @error="onPreferedBasicsError" />
+					<img v-for="url in basicsImages" :src="url" :key="url" @error="onpreferredBasicsError" />
 				</div>
 			</div>
 		</template>
 	</dropdown>
 </template>
 
-<script>
-import Constant from "../../../src/data/constants.json";
+<script lang="ts">
+import { defineComponent } from "vue";
+
+import Constants from "../../../src/Constants";
 
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
+import { CardColor } from "../../../src/CardTypes";
 
-const DefaultPreferedBasicsMessage =
-	"Enter the set code of your prefered basic lands, or leave blank to get MTGA's default ones.";
+const DefaultpreferredBasicsMessage =
+	"Enter the set code of your preferred basic lands, or leave blank to get MTGA's default ones.";
 
-export default {
+export default defineComponent({
 	components: { Dropdown, Checkbox },
 	props: {
 		autoland: { type: Boolean, required: true },
 		lands: { type: Object, required: true },
 		targetDeckSize: { type: Number, required: true },
 		sideboardBasics: { type: Number, required: true },
-		preferedBasics: { type: String, required: true },
+		preferredBasics: { type: String, required: true },
 		otherbasics: { type: Boolean },
 	},
 	data() {
-		return { preferedBasicsError: null };
+		return { preferredBasicsError: null as string | null };
 	},
 	mounted() {
 		this.checkState();
 	},
 	methods: {
-		add(c) {
+		add(c: string) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] + 1));
 		},
-		rem(c) {
+		rem(c: string) {
 			this.$emit("update:lands", c, Math.max(0, this.lands[c] - 1));
 		},
-		onPreferedBasicsError(/*event*/) {
-			if (this.preferedBasics === "") {
-				this.preferedBasicsError = DefaultPreferedBasicsMessage;
+		onpreferredBasicsError(/*event*/) {
+			if (this.preferredBasics === "") {
+				this.preferredBasicsError = DefaultpreferredBasicsMessage;
 			} else {
-				this.preferedBasicsError = `Could not find basics for set '${this.preferedBasics}'. Importing in Arena may not work.`;
+				this.preferredBasicsError = `Could not find basics for set '${this.preferredBasics}'. Importing in Arena may not work.`;
 			}
 		},
 		checkState() {
-			if (this.preferedBasics === "") this.preferedBasicsError = DefaultPreferedBasicsMessage;
-			else this.preferedBasicsError = null;
+			if (this.preferredBasics === "") this.preferredBasicsError = DefaultpreferredBasicsMessage;
+			else this.preferredBasicsError = null;
 			this.$nextTick(() => {
 				this.$refs.dropdown.updateHeight();
 			});
+		},
+		updateLands(event: Event, color: string) {
+			const target = event.target as HTMLInputElement;
+			this.$emit("update:lands", color, target.value === "" ? 0 : parseInt(target.value));
+		},
+		updateTargetDeckSize(event: Event) {
+			const target = event.target as HTMLInputElement;
+			this.$emit("update:targetDeckSize", target.value === "" ? 0 : parseInt(target.value));
+		},
+		updateSideboardBasics(event: Event) {
+			const target = event.target as HTMLInputElement;
+			this.$emit("update:sideboardBasics", target.value === "" ? 0 : parseInt(target.value));
+		},
+		updatePreferredBasics(event: Event) {
+			this.$emit("update:preferredBasics", (event.target as HTMLInputElement).value);
 		},
 	},
 	computed: {
 		basicsImages() {
 			let r = [];
-			for (let c of ["W", "U", "B", "R", "G"]) {
-				const name = Constant.BasicLandNames["en"][c];
-				r.push(`https://api.scryfall.com/cards/named?exact=${name}&set=${this.preferedBasics}&format=image`);
+			for (let c in CardColor) {
+				const name = Constants.BasicLandNames["en"][c as CardColor];
+				r.push(`https://api.scryfall.com/cards/named?exact=${name}&set=${this.preferredBasics}&format=image`);
 			}
 			return r;
 		},
 	},
 	watch: {
-		preferedBasics() {
+		preferredBasics() {
 			this.checkState();
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

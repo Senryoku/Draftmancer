@@ -39,7 +39,7 @@
 							<div style="display: flex; justify-content: space-evenly">
 								<i
 									class="fas fa-minus fa-lg clickable"
-									@click="remColumn()"
+									@click="remColumn(undefined)"
 									v-tooltip="'Remove the last column'"
 									:class="{ disabled: rows[0].length <= 1 }"
 								></i>
@@ -157,21 +157,23 @@
 	</div>
 </template>
 
-<script>
-import Vue from "vue";
-import draggable from "vuedraggable";
-import CardOrder from "../cardorder.js";
+<script lang="ts">
+import Vue, { defineComponent, PropType } from "vue";
+import draggable, { MoveEvent } from "vuedraggable";
+import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
+import { Language } from "../../../src/Types";
+import { UniqueCard } from "../../../src/CardTypes";
 
-export default {
+export default defineComponent({
 	name: "CardPool",
 	components: { draggable, Card, Dropdown, Checkbox },
 	props: {
-		cards: { type: Array, required: true },
-		language: { type: String, required: true },
-		click: { type: Function, default: () => {} },
+		cards: { type: Array as PropType<UniqueCard[]>, required: true },
+		language: { type: String as PropType<Language>, required: true },
+		click: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
 		group: { type: String },
 		filter: { type: String },
 		cardConditionalClasses: { type: Function },
@@ -188,8 +190,8 @@ export default {
 				sort: "cmc",
 				displayHeaders: true,
 			},
-			rows: [[[], [], [], [], [], [], []]],
-			tempColumn: [] /* Temp. destination for card when creating a new column by drag & drop */,
+			rows: [[[], [], [], [], [], [], []]] as UniqueCard[][][],
+			tempColumn: [] as UniqueCard[] /* Temp. destination for card when creating a new column by drag & drop */,
 		};
 	},
 	mounted() {
@@ -209,7 +211,7 @@ export default {
 		},
 		sync() {
 			this.reset();
-			for (let card of this.cards) this.addCard(card);
+			for (let card of this.cards) this.addCard(card, undefined);
 		},
 		filterBasics() {
 			// Removes basics without affecting other cards ordering.
@@ -221,12 +223,12 @@ export default {
 						r[i].filter((c) => c.type !== "Basic Land")
 					);
 		},
-		selectRow(card) {
+		selectRow(card: UniqueCard) {
 			return this.options.layout === "TwoRows" && !card.type.includes("Creature") && this.options.sort !== "type"
 				? this.rows[1]
 				: this.rows[0];
 		},
-		defaultColumnIdx(card) {
+		defaultColumnIdx(card: UniqueCard) {
 			let columnIndex = card.cmc;
 			switch (this.options.sort) {
 				case "color":
@@ -241,7 +243,7 @@ export default {
 			}
 			return Math.min(columnIndex, this.rows[0].length - 1);
 		},
-		addCard(card, event) {
+		addCard(card: UniqueCard, event: MouseEvent | undefined) {
 			if (event) {
 				this.insertCard(this.getColumnFromCoordinates(event), card);
 			} else {
@@ -254,7 +256,7 @@ export default {
 				this.insertCard(row[columnIndex], card);
 			}
 		},
-		insertCard(column, card) {
+		insertCard(column: UniqueCard[], card: UniqueCard) {
 			let duplicateIndex = column.findIndex((c) => c.name === card.name);
 			if (duplicateIndex != -1) {
 				column.splice(duplicateIndex, 0, card);
@@ -265,7 +267,7 @@ export default {
 				column.push(card);
 			}
 		},
-		sort(comparator, columnSorter = CardOrder.orderByArenaInPlace) {
+		sort(comparator: ComparatorType, columnSorter = CardOrder.orderByArenaInPlace) {
 			this.reset();
 			if (this.cards.length === 0) return;
 			for (let card of this.cards) {
@@ -295,7 +297,7 @@ export default {
 			this.sort(CardOrder.Comparators.type);
 			this.saveOptions();
 		},
-		remCard(card) {
+		remCard(card: UniqueCard) {
 			for (let row of this.rows)
 				for (let col of row) {
 					let idx = col.indexOf(card);
@@ -305,7 +307,7 @@ export default {
 					}
 				}
 		},
-		change(e) {
+		change(e: Event) {
 			if (!this.readOnly && !("cardPoolChange" in this.$listeners)) {
 				console.warn(
 					"CardPool: Card not declared as readOnly, but has no 'cardPoolChange' event handler. Make sure to bind the cardPoolChange event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
@@ -332,18 +334,18 @@ export default {
 			}
 			this.saveOptions();
 		},
-		remColumn(index) {
+		remColumn(index: number | undefined) {
 			if (this.rows[0].length < 2) return;
 			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
 			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
 			for (let row of this.rows) {
-				Vue.set(row, other, [].concat(row[other], row[index]));
+				Vue.set(row, other, ([] as UniqueCard[]).concat(row[other], row[index]));
 				CardOrder.orderByArenaInPlace(row[other]);
 				row.splice(index, 1);
 			}
 			this.saveOptions();
 		},
-		getColumnFromCoordinates(event) {
+		getColumnFromCoordinates(event: { clientX: number; clientY: number }) {
 			// Search for the column at the supplied coordinates, creating a new one if necessary.
 			const x = event.clientX;
 			const y = event.clientY;
@@ -365,7 +367,7 @@ export default {
 				return this.rows[rowIdx][colIdx];
 			}
 		},
-		dropCard(event) {
+		dropCard(event: MoveEvent<HTMLElement>) {
 			// Triggered when the last valid position of a card after a drop event is within the dummy draggable element surrounding the columns.
 			// This is either:
 			//   An invalid drop (outside of the card pool bounds): Revert the operation.
@@ -493,7 +495,7 @@ export default {
 							if (v.length === 1) r.push(v[0].split(" ").pop());
 							else {
 								// Try with simpler types
-								v = [...new Set(v.map((t) => t.split(" ").pop()))];
+								v = [...new Set(v.map((t) => t.split(" ").pop()!))];
 								if (v.length === 1) r.push(v[0]);
 								else r.push("");
 							}
@@ -531,7 +533,7 @@ export default {
 			];
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
