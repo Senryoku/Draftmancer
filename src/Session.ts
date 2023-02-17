@@ -2065,7 +2065,7 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
+	startTeamSealed(boostersPerTeam: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
 		if (this.drafting) return new SocketError("Game already in progress.");
 
 		this.drafting = true;
@@ -2085,8 +2085,8 @@ export class Session implements IIndexable {
 			}
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		const ret = this.generateBoosters(teams.length * boostersPerPlayer, {
-			boostersPerPlayer: boostersPerPlayer,
+		const ret = this.generateBoosters(teams.length * boostersPerTeam, {
+			boostersPerPlayer: boostersPerTeam,
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});

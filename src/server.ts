@@ -514,12 +514,12 @@ const ownerSocketCallbacks: { [key: string]: SocketSessionCallback } = {
 	startTeamSealed(
 		userID: UserID,
 		sessionID: SessionID,
-		boostersPerPlayer: number,
+		boostersPerTeam: number,
 		customBoosters: Array<string>,
 		teams: UserID[][],
 		ack: (result: SocketAck) => void
 	) {
-		const r = Sessions[sessionID].startTeamSealed(boostersPerPlayer, customBoosters, teams);
+		const r = Sessions[sessionID].startTeamSealed(boostersPerTeam, customBoosters, teams);
 		ack?.(r);
 	},
 	// Session Settings
