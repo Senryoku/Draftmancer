@@ -1,5 +1,5 @@
 import Vue from "vue";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { CardID, CardColor, OracleID } from "../../src/CardTypes";
 
 export type ScryfallRelatedCard = {
@@ -224,12 +224,19 @@ const cardCachePlugin = new Vue({
 			this.request(cardID);
 			return this.cardCache[cardID];
 		},
+		add(card: ScryfallCard) {
+			this.$set(this.cardCache, card.id, card);
+		},
 	},
 });
 
 declare module "vue/types/vue" {
 	interface Vue {
-		$cardCache: { get: (cardID: CardID) => CardCacheEntry };
+		$cardCache: {
+			get: (cardID: CardID) => CardCacheEntry;
+			add: (card: ScryfallCard) => void;
+			request: (cardID: CardID) => Promise<AxiosResponse> | null;
+		};
 	}
 }
 

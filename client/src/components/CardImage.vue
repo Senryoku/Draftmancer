@@ -85,14 +85,14 @@ import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
 import { defineComponent, PropType } from "vue";
 import { Language } from "@/Types";
-import { UniqueCard } from "../../../src/CardTypes";
+import { Card } from "../../../src/CardTypes";
 import { ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
 export default defineComponent({
 	name: "CardImage",
 	components: { CardPlaceholder, ClazyLoad, CardText },
 	props: {
-		card: { type: Object as PropType<UniqueCard>, required: true },
+		card: { type: Object as PropType<Card>, required: true },
 		language: { type: String as PropType<Language>, required: true },
 		lazyLoad: { type: Boolean, default: false },
 		fixedLayout: { type: Boolean, default: false },
