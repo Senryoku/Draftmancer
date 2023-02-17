@@ -142,222 +142,245 @@ const checkDraftAction = function (userID: UserID, sess: Session, type: string, 
 	return true;
 };
 
-type SocketSessionCallback = (userID: UserID, sessionID: SessionID, ...args: any) => void;
+// Personnal options
+function setUserName(userID: UserID, sessionID: SessionID, userName: string) {
+	Connections[userID].userName = userName;
+	Sessions[sessionID].forUsers((uid: UserID) =>
+		Connections[uid]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				userName: userName,
+			},
+		})
+	);
+}
+function setCollection(
+	userID: UserID,
+	sessionID: SessionID,
+	collection: PlainCollection,
+	ack?: (response: SocketAck | { collection: CardPool }) => void
+) {
+	if (!isObject(collection) || collection === null) return;
 
-const socketCallbacks: { [name: string]: SocketSessionCallback } = {
-	// Personnal options
-	setUserName(userID: UserID, sessionID: SessionID, userName: string) {
-		Connections[userID].userName = userName;
-		Sessions[sessionID].forUsers((uid: UserID) =>
-			Connections[uid]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					userName: userName,
-				},
-			})
+	const processedCollection: CardPool = new Map();
+	// Remove unknown cards immediatly.
+	for (const aid in collection) {
+		if (aid in MTGACards) {
+			processedCollection.set(MTGACards[aid].id, collection[aid]);
+		}
+	}
+
+	Connections[userID].collection = processedCollection;
+
+	ack?.({ collection: processedCollection });
+
+	const hasCollection = processedCollection.size > 0;
+	Sessions[sessionID].forUsers((user) =>
+		Connections[user]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				collection: hasCollection,
+			},
+		})
+	);
+}
+
+// Parse a card list and uses it as collection
+function parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: (...rest: any[]) => void) {
+	const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
+	const cardList = parseCardList(txtcollection, options);
+	if (cardList instanceof SocketError) {
+		ack?.(cardList);
+		return;
+	}
+
+	const ret: any = new SocketAck();
+
+	const warningMessages = [];
+
+	if (options.unknownCards)
+		warningMessages.push(
+			`The following cards could not be found and were ignored:<br />${options.unknownCards.join("<br />")}`
 		);
-	},
-	setCollection(
-		userID: UserID,
-		sessionID: SessionID,
-		collection: PlainCollection,
-		ack?: (response: SocketAck | { collection: CardPool }) => void
-	) {
-		if (!isObject(collection) || collection === null) return;
 
-		const processedCollection: CardPool = new Map();
-		// Remove unknown cards immediatly.
-		for (const aid in collection) {
-			if (aid in MTGACards) {
-				processedCollection.set(MTGACards[aid].id, collection[aid]);
-			}
+	const ignoredCards = [];
+
+	const collection: CardPool = new Map();
+	for (const cardID in cardList.slots["default"]) {
+		const aid = getCard(cardID).arena_id;
+		if (!aid) {
+			ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);
+			continue;
 		}
-
-		Connections[userID].collection = processedCollection;
-
-		ack?.({ collection: processedCollection });
-
-		const hasCollection = processedCollection.size > 0;
-		Sessions[sessionID].forUsers((user) =>
-			Connections[user]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					collection: hasCollection,
-				},
-			})
+		if (collection.has(aid))
+			collection.set(aid, (collection.get(aid) as number) + cardList.slots["default"][cardID]);
+		else collection.set(aid, cardList.slots["default"][cardID]);
+	}
+	if (ignoredCards.length > 1)
+		warningMessages.push(
+			`The following cards are not valid MTGA cards and were ignored:<br/>${ignoredCards.join("<br />")}`
 		);
-	},
-	// Parse a card list and uses it as collection
-	parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: (...rest: any[]) => void) {
-		const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
-		const cardList = parseCardList(txtcollection, options);
-		if (cardList instanceof SocketError) {
-			ack?.(cardList);
-			return;
-		}
 
-		const ret: any = new SocketAck();
-
-		const warningMessages = [];
-
-		if (options.unknownCards)
-			warningMessages.push(
-				`The following cards could not be found and were ignored:<br />${options.unknownCards.join("<br />")}`
-			);
-
-		const ignoredCards = [];
-
-		const collection: CardPool = new Map();
-		for (const cardID in cardList.slots["default"]) {
-			const aid = getCard(cardID).arena_id;
-			if (!aid) {
-				ignoredCards.push(`${getCard(cardID).name} (${getCard(cardID).set})`);
-				continue;
-			}
-			if (collection.has(aid))
-				collection.set(aid, (collection.get(aid) as number) + cardList.slots["default"][cardID]);
-			else collection.set(aid, cardList.slots["default"][cardID]);
-		}
-		if (ignoredCards.length > 1)
-			warningMessages.push(
-				`The following cards are not valid MTGA cards and were ignored:<br/>${ignoredCards.join("<br />")}`
-			);
-
-		if (warningMessages.length > 0)
-			ret.warning = new MessageWarning(
-				"Cards Ignored.",
-				"",
-				"",
-				"Collection was imported with the following warnings:<br /><br />" +
-					warningMessages.join("<br /><br />")
-			);
-
-		ret.collection = Object.fromEntries(collection);
-		ack?.(ret);
-	},
-	useCollection(userID: UserID, sessionID: SessionID, useCollection: boolean) {
-		if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
-
-		Connections[userID].useCollection = useCollection;
-		Sessions[sessionID].forUsers((user) =>
-			Connections[user]?.socket.emit("updateUser", {
-				userID: userID,
-				updatedProperties: {
-					useCollection: useCollection,
-				},
-			})
+	if (warningMessages.length > 0)
+		ret.warning = new MessageWarning(
+			"Cards Ignored.",
+			"",
+			"",
+			"Collection was imported with the following warnings:<br /><br />" + warningMessages.join("<br /><br />")
 		);
-	},
-	chatMessage(userID: UserID, sessionID: SessionID, message: { author: string; text: string; timestamp: number }) {
-		if (!isObject(message) || !isString(message.author) || !isString(message.text) || !isNumber(message.timestamp))
-			return;
-		message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
-		Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("chatMessage", message));
-	},
-	setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
-		if (!isString(readyState)) return;
-		Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
-	},
-	async pickCard(
-		userID: UserID,
-		sessionID: SessionID,
-		data: { pickedCards: Array<number>; burnedCards: Array<number> },
-		ack: (result: SocketAck) => void
-	) {
-		// Removes picked card from corresponding booster and notify other players.
-		// Moves to next round when each player have picked a card.
-		try {
-			const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
-			ack?.(r);
-		} catch (err) {
-			ack?.(new SocketError("Internal server error."));
-			console.error("Error in pickCard:", err);
-			const data: any = {
-				draftState: Sessions[sessionID].draftState,
-				sessionProps: {},
-			};
-			for (const p of Object.keys(SessionsSettingsProps))
-				data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
-			dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
-		}
-	},
-	gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: (result: SocketAck) => void) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
-		const r = Sessions[sessionID].gridDraftPick(choice);
+	ret.collection = Object.fromEntries(collection);
+	ack?.(ret);
+}
 
-		if (!r) ack?.(new SocketError("Internal error."));
-		else ack?.(new SocketAck());
-	},
-	rochesterDraftPick(userID: UserID, sessionID: SessionID, choices: Array<number>, ack: (result: SocketAck) => void) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "rochester", ack)) return;
+function useCollection(userID: UserID, sessionID: SessionID, useCollection: boolean) {
+	if (!isBoolean(useCollection) || useCollection === Connections[userID].useCollection) return;
 
-		const r = Sessions[sessionID].rochesterDraftPick(choices[0]);
+	Connections[userID].useCollection = useCollection;
+	Sessions[sessionID].forUsers((user) =>
+		Connections[user]?.socket.emit("updateUser", {
+			userID: userID,
+			updatedProperties: {
+				useCollection: useCollection,
+			},
+		})
+	);
+}
 
-		if (!r) ack?.(new SocketError("Internal error."));
-		else ack?.(new SocketAck());
-	},
-	// Winston Draft
-	winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
+function chatMessage(
+	userID: UserID,
+	sessionID: SessionID,
+	message: { author: string; text: string; timestamp: number }
+) {
+	if (!isObject(message) || !isString(message.author) || !isString(message.text) || !isNumber(message.timestamp))
+		return;
+	message.text = message.text.substring(0, Math.min(255, message.text.length)); // Limits chat message length
+	Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("chatMessage", message));
+}
 
-		const r = Sessions[sessionID].winstonTakePile();
+function setReady(userID: UserID, sessionID: SessionID, readyState: boolean) {
+	if (!isString(readyState)) return;
+	Sessions[sessionID].forUsers((user) => Connections[user]?.socket.emit("setReady", userID, readyState));
+}
 
-		if (!r) ack?.(new SocketError("Internal error."));
-		else ack?.(new SocketAck());
-	},
-	winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
-
-		const r = Sessions[sessionID].winstonSkipPile();
+async function pickCard(
+	userID: UserID,
+	sessionID: SessionID,
+	data: { pickedCards: Array<number>; burnedCards: Array<number> },
+	ack: (result: SocketAck) => void
+) {
+	// Removes picked card from corresponding booster and notify other players.
+	// Moves to next round when each player have picked a card.
+	try {
+		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
 		ack?.(r);
-	},
-	minesweeperDraftPick(
-		userID: UserID,
-		sessionID: SessionID,
-		row: number,
-		col: number,
-		ack: (result: SocketAck) => void
-	) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "minesweeper", ack)) return;
+	} catch (err) {
+		ack?.(new SocketError("Internal server error."));
+		console.error("Error in pickCard:", err);
+		const data: any = {
+			draftState: Sessions[sessionID].draftState,
+			sessionProps: {},
+		};
+		for (const p of Object.keys(SessionsSettingsProps))
+			data.sessionProps[p] = (Sessions[sessionID] as IIndexable)[p];
+		dumpError(`Error_PickCard_${sessionID}_${new Date().toISOString()}`, data);
+	}
+}
 
-		const r = Sessions[sessionID].minesweeperDraftPick(userID, row, col);
+function gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
-		ack?.(r);
-	},
-	teamSealedPick(userID: UserID, sessionID: SessionID, uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) {
-		if (!checkDraftAction(userID, Sessions[sessionID], "teamSealed", ack)) return;
-		const r = Sessions[sessionID].teamSealedPick(userID, uniqueCardID);
-		ack?.(r);
-	},
-	updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
-		if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
-		Sessions[sessionID].updateBracket(results);
-	},
-	updateDeckLands(userID: UserID, sessionID: SessionID, lands: DeckBasicLands) {
-		Sessions[sessionID].updateDeckLands(userID, lands);
-	},
-	moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, destStr: string) {
-		if (!["main", "side"].includes(destStr)) return;
-		if (!Connections[userID]?.pickedCards) return;
+	const r = Sessions[sessionID].gridDraftPick(choice);
 
-		let dest, source;
-		if (destStr === "main") {
-			dest = Connections[userID].pickedCards.main;
-			source = Connections[userID].pickedCards.side;
-		} else if (destStr === "side") {
-			dest = Connections[userID].pickedCards.side;
-			source = Connections[userID].pickedCards.main;
-		} else return;
+	if (!r) ack?.(new SocketError("Internal error."));
+	else ack?.(new SocketAck());
+}
 
-		const index = source.findIndex((c) => c.uniqueID === uniqueID);
-		if (index !== -1) {
-			const card = source.splice(index, 1)[0];
-			dest.push(card);
-			Sessions[sessionID].updateDecklist(userID);
-		}
-	},
-};
+function rochesterDraftPick(
+	userID: UserID,
+	sessionID: SessionID,
+	choices: Array<number>,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "rochester", ack)) return;
+
+	const r = Sessions[sessionID].rochesterDraftPick(choices[0]);
+
+	if (!r) ack?.(new SocketError("Internal error."));
+	else ack?.(new SocketAck());
+}
+
+// Winston Draft
+function winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
+
+	const r = Sessions[sessionID].winstonTakePile();
+
+	if (!r) ack?.(new SocketError("Internal error."));
+	else ack?.(new SocketAck());
+}
+
+function winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
+
+	const r = Sessions[sessionID].winstonSkipPile();
+	ack?.(r);
+}
+
+function minesweeperDraftPick(
+	userID: UserID,
+	sessionID: SessionID,
+	row: number,
+	col: number,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "minesweeper", ack)) return;
+
+	const r = Sessions[sessionID].minesweeperDraftPick(userID, row, col);
+
+	ack?.(r);
+}
+
+function teamSealedPick(
+	userID: UserID,
+	sessionID: SessionID,
+	uniqueCardID: UniqueCardID,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "teamSealed", ack)) return;
+	const r = Sessions[sessionID].teamSealedPick(userID, uniqueCardID);
+	ack?.(r);
+}
+
+function updateBracket(userID: UserID, sessionID: SessionID, results: Array<[number, number]>) {
+	if (Sessions[sessionID].owner !== userID && Sessions[sessionID].bracketLocked) return;
+	Sessions[sessionID].updateBracket(results);
+}
+
+function updateDeckLands(userID: UserID, sessionID: SessionID, lands: DeckBasicLands) {
+	Sessions[sessionID].updateDeckLands(userID, lands);
+}
+
+function moveCard(userID: UserID, sessionID: SessionID, uniqueID: UniqueCardID, destStr: string) {
+	if (!["main", "side"].includes(destStr)) return;
+	if (!Connections[userID]?.pickedCards) return;
+
+	let dest, source;
+	if (destStr === "main") {
+		dest = Connections[userID].pickedCards.main;
+		source = Connections[userID].pickedCards.side;
+	} else if (destStr === "side") {
+		dest = Connections[userID].pickedCards.side;
+		source = Connections[userID].pickedCards.main;
+	} else return;
+
+	const index = source.findIndex((c) => c.uniqueID === uniqueID);
+	if (index !== -1) {
+		const card = source.splice(index, 1)[0];
+		dest.push(card);
+		Sessions[sessionID].updateDecklist(userID);
+	}
+}
 
 function setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
 	if (!SessionsSettingsProps.ownerIsPlayer(val)) return;
@@ -1317,9 +1340,25 @@ io.on("connection", async function (socket) {
 		joinSession(sessionID, userID, filteredSettings);
 	});
 
-	for (const key in socketCallbacks)
-		socket.on(key as keyof ClientToServerEvents, prepareSocketCallback(socketCallbacks[key]));
+	// Personal events
+	socket.on("setUserName", prepareSocketCallback(setUserName));
+	socket.on("setCollection", prepareSocketCallback(setCollection));
+	socket.on("parseCollection", prepareSocketCallback(parseCollection));
+	socket.on("useCollection", prepareSocketCallback(useCollection));
+	socket.on("chatMessage", prepareSocketCallback(chatMessage));
+	socket.on("setReady", prepareSocketCallback(setReady));
+	socket.on("pickCard", prepareSocketCallback(pickCard));
+	socket.on("gridDraftPick", prepareSocketCallback(gridDraftPick));
+	socket.on("rochesterDraftPick", prepareSocketCallback(rochesterDraftPick));
+	socket.on("winstonDraftTakePile", prepareSocketCallback(winstonDraftTakePile));
+	socket.on("winstonDraftSkipPile", prepareSocketCallback(winstonDraftSkipPile));
+	socket.on("minesweeperDraftPick", prepareSocketCallback(minesweeperDraftPick));
+	socket.on("teamSealedPick", prepareSocketCallback(teamSealedPick));
+	socket.on("updateBracket", prepareSocketCallback(updateBracket));
+	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
+	socket.on("moveCard", prepareSocketCallback(moveCard));
 
+	// Owner Only
 	socket.on("readyCheck", prepareSocketCallback(readyCheck, true));
 	socket.on("startDraft", prepareSocketCallback(startDraft, true));
 	socket.on("stopDraft", prepareSocketCallback(stopDraft, true));
@@ -1358,6 +1397,7 @@ io.on("connection", async function (socket) {
 	socket.on("shuffleBoosters", prepareSocketCallback(shuffleBoosters, true));
 	socket.on("setPersonalLogs", prepareSocketCallback(setPersonalLogs, true));
 	socket.on("setDraftLogRecipients", prepareSocketCallback(setDraftLogRecipients, true));
+	socket.on("setMaxDuplicates", prepareSocketCallback(setMaxDuplicates, true));
 	socket.on("setColorBalance", prepareSocketCallback(setColorBalance, true));
 	socket.on("setFoil", prepareSocketCallback(setFoil, true));
 	socket.on("setCollationType", prepareSocketCallback(setCollationType, true));

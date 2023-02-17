@@ -6,7 +6,7 @@ import { DistributionMode, DraftLogRecipients, getPublicSessionData, UsersData }
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
-import { CardID, DeckList, UniqueCard, UniqueCardID } from "./CardTypes";
+import { CardID, CardPool, DeckBasicLands, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "./CardTypes";
 import { RochesterDraftState } from "./RochesterDraft";
 import { MinesweeperDraftState } from "./MinesweeperDraft";
 import { DraftState } from "./DraftState";
@@ -119,6 +119,30 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
 	setSession: (sid: SessionID, options: Options) => void;
+
+	// Personal events
+	setUserName: (userName: string) => void;
+	setCollection: (
+		collection: PlainCollection,
+		ack?: (response: SocketAck | { collection: CardPool }) => void
+	) => void;
+	parseCollection: (txtcollection: string, ack: (...rest: any[]) => void) => void;
+	useCollection: (useCollection: boolean) => void;
+	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
+	setReady: (readyState: boolean) => void;
+	pickCard: (
+		data: { pickedCards: Array<number>; burnedCards: Array<number> },
+		ack: (result: SocketAck) => void
+	) => void;
+	gridDraftPick: (choice: number, ack: (result: SocketAck) => void) => void;
+	rochesterDraftPick: (choices: Array<number>, ack: (result: SocketAck) => void) => void;
+	winstonDraftTakePile: (ack: (result: SocketAck) => void) => void;
+	winstonDraftSkipPile: (ack: (result: SocketAck) => void) => void;
+	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;
+	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
+	updateBracket: (results: Array<[number, number]>) => void;
+	updateDeckLands: (lands: DeckBasicLands) => void;
+	moveCard: (uniqueID: UniqueCardID, destStr: string) => void;
 
 	// Owner Only
 	setOwnerIsPlayer: (val: boolean) => void;
