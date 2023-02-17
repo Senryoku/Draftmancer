@@ -2065,10 +2065,13 @@ export class Session implements IIndexable {
 		this.boosters = [];
 	}
 
-	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, teams: UserID[][]): SocketAck {
+	startTeamSealed(boostersPerPlayer: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
 		if (this.drafting) return new SocketError("Game already in progress.");
 
 		this.drafting = true;
+
+		// Filter out empty teams (we don't have to generate boosters for them).
+		const teams = rawTeams.filter((t) => t.length > 0);
 
 		// Validate 'teams' parameters
 		const seenIds: UserID[] = []; // Reject duplicates UserIDs
