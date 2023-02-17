@@ -395,8 +395,7 @@ function setOwnerIsPlayer(userID: UserID, sessionID: SessionID, val: boolean) {
 		sess.users.delete(userID);
 		sess.notifyUserChange();
 	}
-	for (const user of sess.users)
-		if (user != userID) Connections[user]?.socket.emit("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
+	sess.emitToConnectedNonOwners("sessionOptions", { ownerIsPlayer: sess.ownerIsPlayer });
 }
 
 function readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
@@ -558,8 +557,8 @@ function startTeamSealed(
 	ack?.(r);
 }
 
-function // Session Settings
-setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
+// Session Settings
+function setSessionOwner(userID: UserID, sessionID: SessionID, newOwnerID: UserID) {
 	const sess = Sessions[sessionID];
 	if (newOwnerID === sess.owner || !sess.users.has(newOwnerID)) return;
 
@@ -649,18 +648,14 @@ function setDistributionMode(userID: UserID, sessionID: SessionID, distributionM
 	if (!SessionsSettingsProps.distributionMode(distributionMode)) return;
 
 	Sessions[sessionID].distributionMode = distributionMode;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("sessionOptions", { distributionMode: distributionMode });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { distributionMode: distributionMode });
 }
 
 function setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters: Array<string>) {
 	if (!SessionsSettingsProps.customBoosters(customBoosters)) return;
 
 	Sessions[sessionID].customBoosters = customBoosters;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("sessionOptions", { customBoosters: customBoosters });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customBoosters: customBoosters });
 }
 
 function bots(userID: UserID, sessionID: SessionID, bots: number) {
@@ -669,18 +664,14 @@ function bots(userID: UserID, sessionID: SessionID, bots: number) {
 	if (bots == Sessions[sessionID].bots) return;
 
 	Sessions[sessionID].bots = bots;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("bots", bots);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("bots", bots);
 }
 
 function setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<SetCode>) {
 	if (!SessionsSettingsProps.setRestriction(setRestriction)) return;
 
 	Sessions[sessionID].setRestriction = setRestriction;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("setRestriction", setRestriction);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("setRestriction", setRestriction);
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
@@ -821,45 +812,31 @@ function loadLocalCustomCardList(
 function ignoreCollections(userID: UserID, sessionID: SessionID, ignoreCollections: boolean) {
 	if (!SessionsSettingsProps.ignoreCollections(ignoreCollections)) return;
 	Sessions[sessionID].ignoreCollections = ignoreCollections;
-	for (const user of Sessions[sessionID].users) {
-		if (user != userID) Connections[user].socket.emit("ignoreCollections", Sessions[sessionID].ignoreCollections);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("ignoreCollections", Sessions[sessionID].ignoreCollections);
 }
 
 function setPickTimer(userID: UserID, sessionID: SessionID, maxTimer: number) {
 	if (!SessionsSettingsProps.maxTimer(maxTimer)) return;
-
 	Sessions[sessionID].maxTimer = maxTimer;
-	for (const user of Sessions[sessionID].users) {
-		if (user != userID) Connections[user].socket.emit("setPickTimer", maxTimer);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("setPickTimer", maxTimer);
 }
 
 function setMaxPlayers(userID: UserID, sessionID: SessionID, maxPlayers: number) {
 	if (!SessionsSettingsProps.maxPlayers(maxPlayers)) return;
-
 	Sessions[sessionID].maxPlayers = maxPlayers;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("setMaxPlayers", maxPlayers);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("setMaxPlayers", maxPlayers);
 }
 
 function setMythicPromotion(userID: UserID, sessionID: SessionID, mythicPromotion: boolean) {
 	if (!SessionsSettingsProps.mythicPromotion(mythicPromotion)) return;
-
 	Sessions[sessionID].mythicPromotion = mythicPromotion;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("sessionOptions", { mythicPromotion: mythicPromotion });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { mythicPromotion: mythicPromotion });
 }
 
 function setUseBoosterContent(userID: UserID, sessionID: SessionID, useBoosterContent: boolean) {
 	if (!SessionsSettingsProps.useBoosterContent(useBoosterContent)) return;
-
 	Sessions[sessionID].useBoosterContent = useBoosterContent;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("sessionOptions", { useBoosterContent: useBoosterContent });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { useBoosterContent: useBoosterContent });
 }
 
 function setBoosterContent(
@@ -872,9 +849,7 @@ function setBoosterContent(
 		return;
 
 	Sessions[sessionID].boosterContent = boosterContent;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("sessionOptions", { boosterContent: boosterContent });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { boosterContent: boosterContent });
 }
 
 function setUsePredeterminedBoosters(
@@ -886,9 +861,7 @@ function setUsePredeterminedBoosters(
 	if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
 
 	Sessions[sessionID].usePredeterminedBoosters = value;
-	Sessions[sessionID].forNonOwners((uid) =>
-		Connections[uid].socket.emit("sessionOptions", { usePredeterminedBoosters: value })
-	);
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { usePredeterminedBoosters: value });
 	ack?.(new SocketAck());
 }
 
@@ -957,21 +930,14 @@ function shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: Soc
 
 function setPersonalLogs(userID: UserID, sessionID: SessionID, value: boolean) {
 	if (!SessionsSettingsProps.personalLogs(value)) return;
-
 	Sessions[sessionID].personalLogs = value;
-	Sessions[sessionID].forNonOwners((uid) => Connections[uid].socket.emit("sessionOptions", { personalLogs: value }));
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { personalLogs: value });
 }
 
 function setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRecipients: DraftLogRecipients) {
 	if (!SessionsSettingsProps.draftLogRecipients(draftLogRecipients)) return;
-
 	Sessions[sessionID].draftLogRecipients = draftLogRecipients;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID)
-			Connections[user].socket.emit("sessionOptions", {
-				draftLogRecipients: draftLogRecipients,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { draftLogRecipients });
 }
 
 function setMaxDuplicates(
@@ -980,14 +946,8 @@ function setMaxDuplicates(
 	maxDuplicates: { common: number; uncommon: number; rare: number }
 ) {
 	if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
-
 	Sessions[sessionID].maxDuplicates = maxDuplicates;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID)
-			Connections[user].socket.emit("sessionOptions", {
-				maxDuplicates: maxDuplicates,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { maxDuplicates });
 }
 
 function setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boolean) {
@@ -995,12 +955,7 @@ function setColorBalance(userID: UserID, sessionID: SessionID, colorBalance: boo
 	if (colorBalance === Sessions[sessionID].colorBalance) return;
 
 	Sessions[sessionID].colorBalance = colorBalance;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				colorBalance: Sessions[sessionID].colorBalance,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { colorBalance });
 }
 
 function setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
@@ -1008,12 +963,7 @@ function setFoil(userID: UserID, sessionID: SessionID, foil: boolean) {
 	if (foil === Sessions[sessionID].foil) return;
 
 	Sessions[sessionID].foil = foil;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				foil: Sessions[sessionID].foil,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { foil });
 }
 
 function setCollationType(userID: UserID, sessionID: SessionID, preferredCollation: string) {
@@ -1021,12 +971,7 @@ function setCollationType(userID: UserID, sessionID: SessionID, preferredCollati
 	if (preferredCollation === Sessions[sessionID].preferredCollation) return;
 
 	Sessions[sessionID].preferredCollation = preferredCollation;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				preferredCollation: Sessions[sessionID].preferredCollation,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { preferredCollation });
 }
 
 function setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCardList: boolean) {
@@ -1034,12 +979,7 @@ function setUseCustomCardList(userID: UserID, sessionID: SessionID, useCustomCar
 	if (useCustomCardList == Sessions[sessionID].useCustomCardList) return;
 
 	Sessions[sessionID].useCustomCardList = useCustomCardList;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				useCustomCardList: Sessions[sessionID].useCustomCardList,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { useCustomCardList });
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
@@ -1052,12 +992,7 @@ function setCustomCardListWithReplacement(
 	if (customCardListWithReplacement == Sessions[sessionID].customCardListWithReplacement) return;
 
 	Sessions[sessionID].customCardListWithReplacement = customCardListWithReplacement;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				customCardListWithReplacement: Sessions[sessionID].customCardListWithReplacement,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customCardListWithReplacement });
 }
 
 function setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMastersMode: boolean) {
@@ -1065,12 +1000,7 @@ function setDoubleMastersMode(userID: UserID, sessionID: SessionID, doubleMaster
 	if (doubleMastersMode === Sessions[sessionID].doubleMastersMode) return;
 
 	Sessions[sessionID].doubleMastersMode = doubleMastersMode;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", {
-				doubleMastersMode: Sessions[sessionID].doubleMastersMode,
-			});
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { doubleMastersMode });
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
@@ -1079,10 +1009,7 @@ function setPickedCardsPerRound(userID: UserID, sessionID: SessionID, pickedCard
 	if (pickedCardsPerRound === Sessions[sessionID].pickedCardsPerRound) return;
 
 	Sessions[sessionID].pickedCardsPerRound = pickedCardsPerRound;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", { pickedCardsPerRound: pickedCardsPerRound });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { pickedCardsPerRound });
 }
 
 function setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCardsPerRound: number) {
@@ -1090,10 +1017,7 @@ function setBurnedCardsPerRound(userID: UserID, sessionID: SessionID, burnedCard
 	if (burnedCardsPerRound === Sessions[sessionID].burnedCardsPerRound) return;
 
 	Sessions[sessionID].burnedCardsPerRound = burnedCardsPerRound;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", { burnedCardsPerRound: burnedCardsPerRound });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { burnedCardsPerRound });
 }
 
 function setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discardRemainingCardsAt: number) {
@@ -1101,10 +1025,7 @@ function setDiscardRemainingCardsAt(userID: UserID, sessionID: SessionID, discar
 	if (discardRemainingCardsAt === Sessions[sessionID].discardRemainingCardsAt) return;
 
 	Sessions[sessionID].discardRemainingCardsAt = discardRemainingCardsAt;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID && user in Connections)
-			Connections[user].socket.emit("sessionOptions", { discardRemainingCardsAt: discardRemainingCardsAt });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { discardRemainingCardsAt });
 }
 
 function setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
@@ -1112,9 +1033,7 @@ function setPublic(userID: UserID, sessionID: SessionID, isPublic: boolean) {
 	if (isPublic === Sessions[sessionID].isPublic) return;
 
 	Sessions[sessionID].isPublic = isPublic;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("isPublic", Sessions[sessionID].isPublic);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("isPublic", isPublic);
 	updatePublicSession(sessionID);
 }
 
@@ -1123,9 +1042,7 @@ function setDescription(userID: UserID, sessionID: SessionID, description: strin
 	if (description === Sessions[sessionID].description) return;
 
 	Sessions[sessionID].description = description.substring(0, 70);
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user].socket.emit("description", Sessions[sessionID].description);
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("description", Sessions[sessionID].description);
 	updatePublicSession(sessionID);
 }
 
@@ -1190,9 +1107,7 @@ function lockBracket(userID: UserID, sessionID: SessionID, bracketLocked: boolea
 	if (bracketLocked === Sessions[sessionID].bracketLocked) return;
 
 	Sessions[sessionID].bracketLocked = bracketLocked;
-	for (const user of Sessions[sessionID].users) {
-		if (user !== userID) Connections[user]?.socket.emit("sessionOptions", { bracketLocked: bracketLocked });
-	}
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { bracketLocked });
 }
 
 function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog) {
@@ -1206,7 +1121,7 @@ function shareDraftLog(userID: UserID, sessionID: SessionID, draftLog: DraftLog)
 
 	// Send the full copy to everyone
 	draftLog.delayed = false;
-	for (const user of sess.users) if (user !== userID) Connections[user]?.socket.emit("draftLog", draftLog);
+	sess.emitToConnectedNonOwners("draftLog", draftLog);
 }
 
 function distributeSealed(

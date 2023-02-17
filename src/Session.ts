@@ -4,7 +4,7 @@ import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { countCards } from "./cardUtils.js";
 import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
-import { Connections, getPickedCardIds } from "./Connection.js";
+import { Connection, Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
 	Card,
@@ -48,6 +48,7 @@ import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
+import { ClientToServerEvents, ServerToClientEvents } from "./SocketType";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -2497,6 +2498,14 @@ export class Session implements IIndexable {
 	}
 	forNonOwners(fn: (uid: UserID) => void) {
 		for (const uid of this.users) if (uid !== this.owner) fn(uid);
+	}
+
+	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(
+		eventKey: T,
+		...args: Parameters<ServerToClientEvents[T]>
+	) {
+		for (const uid of this.users)
+			if (uid in Connections && uid !== this.owner) Connections[uid].socket.emit(eventKey, ...args);
 	}
 }
 

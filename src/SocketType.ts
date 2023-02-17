@@ -33,7 +33,7 @@ export interface ServerToClientEvents {
 	updateUser: (data: { userID: UserID; updatedProperties: any }) => void; // FIXME
 
 	userDisconnected: (data: { owner: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
-	sessionOptions: (sessionOptions: Options) => void; // FIXME
+	sessionOptions: (sessionOptions: Options) => void; // FIXME: Specify allowed options and their types
 	bots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
