@@ -2718,7 +2718,7 @@
 	</div>
 </template>
 
-<script src="./App.js"></script>
+<script src="./App.ts"></script>
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>

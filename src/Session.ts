@@ -48,7 +48,7 @@ import { GridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
-import { ClientToServerEvents, ServerToClientEvents } from "./SocketType";
+import { ServerToClientEvents } from "./SocketType";
 
 // Validate session settings types and values.
 export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
@@ -2512,6 +2512,7 @@ export class Session implements IIndexable {
 export function getPublicSessionData(s: Session) {
 	return {
 		id: s.id,
+		isPrivate: false,
 		description: s.description,
 		players: s.users.size,
 		maxPlayers: s.maxPlayers,

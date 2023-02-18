@@ -1,17 +1,30 @@
 "use strict";
+import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
+import { SessionID, UserID } from "../../src/IDTypes.js";
+import { SetCode } from "../../src/Types.js";
+import { DraftLogRecipients, SessionsSettingsProps, UsersData } from "../../src/Session.js";
+import { UniqueCard } from "../../src/CardTypes.js";
+import { DraftLog } from "../../src/DraftLog.js";
+import { BotScores } from "../../src/Bot.js";
+import { WinstonDraftState } from "../../src/WinstonDraft.js";
+import { GridDraftState } from "../../src/GridDraft.js";
+import { MinesweeperDraftState } from "../../src/MinesweeperDraft.js";
+import { RochesterDraftState, RochesterDraftSyncDataType } from "../../src/RochesterDraft.js";
+import { TeamSealedState } from "../../src/TeamSealed.js";
+import { Bracket } from "../../src/Brackets.js";
 
-import io from "socket.io-client";
-import Vue from "vue";
-import draggable from "vuedraggable";
+import io, { Socket } from "socket.io-client";
+import Vue, { defineComponent } from "vue";
+import draggable, { MoveEvent } from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
-import Swal from "sweetalert2";
+import Swal, { SweetAlertOptions } from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
 import SetsInfos from "./data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.ts";
-import { getCookie, setCookie } from "./cookies.ts";
-import { ButtonColor, Alert, fireToast } from "./alerts.ts";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
+import { getCookie, setCookie } from "./cookies";
+import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
@@ -28,8 +41,13 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { SocketAck } from "../../src/Message.js";
 const img = new Image();
 img.src = CardBack;
+
+type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
+	? ElementType
+	: never;
 
 const DraftState = {
 	None: "None",
@@ -83,7 +101,7 @@ const defaultSettings = {
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
-export default {
+export default defineComponent({
 	components: {
 		BoosterCard,
 		Bracket: () => import("./components/Bracket.vue"),
@@ -115,25 +133,52 @@ export default {
 		draggable,
 	},
 	data: () => {
+		let userID: UserID = guid();
+		let storedUserID: UserID | undefined = getCookie("userID", undefined);
+		if (storedUserID !== undefined) {
+			userID = storedUserID;
+			// Server will handle the reconnect attempt if draft is still ongoing
+			console.log("storedUserID: " + storedUserID);
+		}
+
+		let urlParamSession = getUrlVars()["session"];
+		const sessionID: SessionID = urlParamSession
+			? decodeURIComponent(urlParamSession)
+			: getCookie("sessionID", shortguid());
+
+		const userName = getCookie("userName", `Player_${randomStr4()}`);
+
+		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+
+		// Socket Setup
+		const socket = io({
+			query: {
+				userID: userID,
+				sessionID: sessionID,
+				userName: userName,
+				sessionSettings: storedSessionSettings,
+			},
+		}) as Socket<ServerToClientEvents, ClientToServerEvents>;
+
 		return {
 			ready: false, // Wait for initial loading
 
 			// User Data
-			userID: guid(),
-			userName: getCookie("userName", `Player_${randomStr4()}`),
+			userID: userID,
+			userName: userName,
 			useCollection: true,
 			collection: {},
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
 				vaultProgress: 0,
 			},
-			socket: undefined,
+			socket: socket as Socket<ServerToClientEvents, ClientToServerEvents>,
 
 			// Session status
-			sessionID: null,
-			sessionOwner: null,
-			sessionOwnerUsername: null,
-			sessionUsers: [],
+			sessionID: sessionID,
+			sessionOwner: null as UserID | null,
+			sessionOwnerUsername: null as string | null,
+			sessionUsers: [] as { userID: string; userName: string; collection: boolean; useCollection: boolean }[],
 			disconnectedUsers: {},
 			// Session settings
 			ownerIsPlayer: true,
@@ -157,10 +202,10 @@ export default {
 			},
 			usePredeterminedBoosters: false,
 			colorBalance: true,
-			maxDuplicates: null,
+			maxDuplicates: null as { common: number; uncommon: number; rare: number } | null,
 			foil: false,
 			bots: 0,
-			setRestriction: [],
+			setRestriction: [] as SetCode[],
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
@@ -172,30 +217,37 @@ export default {
 			maxTimer: 75,
 			pickTimer: 75,
 			personalLogs: true,
-			draftLogRecipients: "everyone",
+			draftLogRecipients: "everyone" as DraftLogRecipients,
 			bracketLocked: false,
 			//
-			draftLogs: [],
-			currentDraftLog: null,
-			draftLogLive: null,
-			bracket: null,
-			virtualPlayersData: undefined,
-			booster: [],
+			draftLogs: [] as DraftLog[],
+			currentDraftLog: null as DraftLog | null,
+			draftLogLive: null as DraftLog | null,
+			bracket: null as Bracket | null,
+			virtualPlayersData: null as UsersData | null,
+			booster: [] as UniqueCard[],
 			boosterNumber: 0,
 			pickNumber: 0,
-			botScores: null,
-			winstonDraftState: null,
-			gridDraftState: null,
-			rochesterDraftState: null,
-			minesweeperDraftState: null,
-			teamSealedState: null,
+			botScores: null as BotScores | null,
+			winstonDraftState: null as WinstonDraftState | null,
+			gridDraftState: null as GridDraftState | null,
+			rochesterDraftState: null as RochesterDraftSyncDataType | null,
+			minesweeperDraftState: null as MinesweeperDraftState | null,
+			teamSealedState: null as TeamSealedState | null,
 			draftPaused: false,
 
-			publicSessions: [],
+			publicSessions: [] as {
+				id: string;
+				description: string;
+				players: number;
+				maxPlayers: number;
+				cube: boolean;
+				sets: string[];
+			}[],
 
 			// Front-end options & data
 			displayedModal: "",
-			userOrder: [],
+			userOrder: [] as UserID[],
 			hideSessionID: initialSettings.hideSessionID,
 			languages: Constant.Languages,
 			language: getCookie("language", "en"),
@@ -224,15 +276,15 @@ export default {
 				Notification.permission == "granted" &&
 				defaultSettings.enableNotifications,
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
-			titleNotification: null,
+			titleNotification: null as { timeout: ReturnType<typeof setTimeout>; message: string } | null,
 			// Draft Booster
 			pickInFlight: false,
-			selectedCards: [],
-			burningCards: [],
+			selectedCards: [] as UniqueCard[],
+			burningCards: [] as UniqueCard[],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
-			deck: [],
-			sideboard: [],
+			deck: [] as UniqueCard[],
+			sideboard: [] as UniqueCard[],
 			deckFilter: "",
 			collapseSideboard: defaultSettings.collapseSideboard,
 			autoLand: true,
@@ -249,34 +301,15 @@ export default {
 			// Chat
 			currentChatMessage: "",
 			displayChatHistory: false,
-			messagesHistory: [],
+			messagesHistory: [] as {
+				author: string;
+				text: string;
+				timestamp: number;
+			}[],
 		};
 	},
 	methods: {
 		initializeSocket() {
-			let storedUserID = getCookie("userID", null);
-			if (storedUserID != null) {
-				this.userID = storedUserID;
-				// Server will handle the reconnect attempt if draft is still ongoing
-				console.log("storedUserID: " + storedUserID);
-			}
-
-			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURIComponent(urlParamSession);
-			else this.sessionID = getCookie("sessionID", shortguid());
-
-			const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
-
-			// Socket Setup
-			this.socket = io({
-				query: {
-					userID: this.userID,
-					sessionID: this.sessionID,
-					userName: this.userName,
-					sessionSettings: storedSessionSettings,
-				},
-			});
-
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
 				// Avoid closing an already opened modal
@@ -314,11 +347,14 @@ export default {
 			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
 				// TODO: Cleanup this?
-				let bubble = document.querySelector("#chat-bubble-" + message.author);
-				bubble.innerText = message.text;
-				bubble.style.opacity = 1;
-				if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
-				bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = 0), 5000);
+				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
+				if (bubbleEl) {
+					const bubble = bubbleEl as HTMLElement;
+					bubble.innerText = message.text;
+					bubble.style.opacity = "1";
+					if ((bubble as any).timeoutHandler) clearTimeout((bubble as any).timeoutHandler);
+					(bubble as any).timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
+				}
 			});
 
 			this.socket.on("publicSessions", (sessions) => {
@@ -360,9 +396,9 @@ export default {
 				this.disconnectedUsers = data.disconnectedUsers;
 			});
 
-			this.socket.on("resumeOnReconnection", (data) => {
+			this.socket.on("resumeOnReconnection", (msg) => {
 				this.disconnectedUsers = {};
-				fireToast("success", data.msg.title, data.msg.text);
+				fireToast("success", msg.title, msg.text);
 			});
 
 			this.socket.on("updateUser", (data) => {
@@ -379,7 +415,8 @@ export default {
 			});
 
 			this.socket.on("sessionOptions", (sessionOptions) => {
-				for (let prop in sessionOptions) this[prop] = sessionOptions[prop];
+				// FIXME: Use accurate key type once we have it.
+				for (let prop in sessionOptions) this[prop as keyof typeof this] = sessionOptions[prop];
 			});
 
 			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {
@@ -453,8 +490,8 @@ export default {
 				this.initReadyCheck();
 
 				const ownerUsername =
-					this.sessionOwner in this.userByID
-						? this.userByID[this.sessionOwner].userName
+					this.sessionOwner! in this.userByID
+						? this.userByID[this.sessionOwner!].userName
 						: this.sessionOwnerUsername
 						? this.sessionOwnerUsername
 						: "Session owner";
@@ -535,8 +572,8 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -1119,21 +1156,21 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("resumeDraft");
 		},
-		selectCard(e, c) {
+		selectCard(e: Event | null, c: UniqueCard) {
 			if (!this.selectedCards.includes(c)) {
 				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
 				this.selectedCards.push(c);
 				this.restoreCard(null, c);
 			}
 		},
-		burnCard(e, c) {
+		burnCard(e: Event, c: UniqueCard) {
 			if (this.burningCards.includes(c)) return;
 			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
-		restoreCard(e, c) {
+		restoreCard(e: Event | null, c: UniqueCard) {
 			if (!this.burningCards.includes(c)) return;
 			this.burningCards.splice(
 				this.burningCards.findIndex((o) => o === c),
@@ -1141,7 +1178,7 @@ export default {
 			);
 			if (e) e.stopPropagation();
 		},
-		doubleClickCard(e, c) {
+		doubleClickCard(e: MouseEvent, c: UniqueCard) {
 			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
@@ -1161,16 +1198,18 @@ export default {
 				return false;
 			}
 		},
-		dragBoosterCard(e, card) {
-			e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
-			e.dataTransfer.setData("text", card.id);
-			e.dataTransfer.effectAllowed = "move";
+		dragBoosterCard(e: DragEvent, card: UniqueCard) {
+			if (e.dataTransfer) {
+				e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
+				e.dataTransfer.setData("text", card.id);
+				e.dataTransfer.effectAllowed = "move";
+			}
 			this.selectCard(null, card);
 		},
-		dropBoosterCard(e, options) {
+		dropBoosterCard(e: DragEvent, options: { toSideboard?: boolean } | undefined) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
-				e.dataTransfer.getData("isboostercard") !== "true" ||
+				e.dataTransfer?.getData("isboostercard") !== "true" ||
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
 			)
 				return;
@@ -1191,7 +1230,7 @@ export default {
 				this.pickCard(options);
 			}
 		},
-		pickCard(options) {
+		pickCard(options: { toSideboard?: boolean } | undefined = undefined) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
@@ -1220,10 +1259,10 @@ export default {
 				const toSideboard = options?.toSideboard;
 				const cUIDs = this.selectedCards.map((c) => c.uniqueID);
 
-				const ack = (answer) => {
+				const ack = (answer: SocketAck) => {
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
-						Alert.fire(answer.error);
+						Alert.fire(answer.error as SweetAlertOptions<any, any>);
 					} else {
 						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
 						this.selectedCards = [];
@@ -2380,23 +2419,23 @@ export default {
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck(card, options) {
+		addToDeck(card: UniqueCard, options: MouseEvent | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
 				this.deck.push(card);
-				this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+				this.$refs.deckDisplay?.addCard(card, options ? options.event : null);
 			}
 		},
-		addToSideboard(card, options) {
+		addToSideboard(card: UniqueCard, options: Options | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
-				this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+				this.$refs.sideboardDisplay?.addCard(card, options ? options.event : null);
 			}
 		},
-		deckToSideboard(e, c) {
+		deckToSideboard(e: Event, c: UniqueCard) {
 			// From deck to sideboard
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
@@ -2404,12 +2443,12 @@ export default {
 				this.addToSideboard(c);
 				this.socket.emit("moveCard", c.uniqueID, "side");
 			} else return;
-			this.$refs.deckDisplay.remCard(c);
+			this.$refs.deckDisplay?.remCard(c);
 			// Card DOM element will move without emiting a mouse leave event,
 			// make sure to close the card popup.
 			this.$root.$emit("closecardpopup");
 		},
-		sideboardToDeck(e, c) {
+		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
@@ -2417,7 +2456,7 @@ export default {
 				this.addToDeck(c);
 				this.socket.emit("moveCard", c.uniqueID, "main");
 			} else return;
-			this.$refs.sideboardDisplay.remCard(c);
+			this.$refs.sideboardDisplay?.remCard(c);
 			this.$root.$emit("closecardpopup");
 		},
 		onDeckChange(e) {
@@ -2536,7 +2575,7 @@ export default {
 				new Notification(title, data);
 			}
 		},
-		pushTitleNotification(msg) {
+		pushTitleNotification(msg: string) {
 			if (this.titleNotification) {
 				clearTimeout(this.titleNotification.timeout);
 				this.titleNotification = null;
@@ -2825,7 +2864,7 @@ export default {
 		},
 
 		userByID() {
-			let r = {};
+			let r: { [uid: UserID]: any } = {}; // FIXME: any
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
@@ -3143,4 +3182,4 @@ export default {
 			}
 		},
 	},
-};
+});

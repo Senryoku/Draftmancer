@@ -11,6 +11,7 @@ import { RochesterDraftState } from "./RochesterDraft";
 import { MinesweeperDraftState } from "./MinesweeperDraft";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
+import { SessionsSettingsProps } from "./Session";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -33,7 +34,7 @@ export interface ServerToClientEvents {
 	updateUser: (data: { userID: UserID; updatedProperties: any }) => void; // FIXME
 
 	userDisconnected: (data: { owner: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
-	sessionOptions: (sessionOptions: Options) => void; // FIXME: Specify allowed options and their types
+	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
 	bots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
@@ -226,5 +227,5 @@ export interface InterServerEvents {}
 
 // TODO: We can now use socket.data to store some user info.
 export interface SocketData {
-	userID: string;
+	userID: UserID;
 }
