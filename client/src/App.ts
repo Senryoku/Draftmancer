@@ -132,8 +132,8 @@ export default defineComponent({
 	},
 	data: () => {
 		let userID: UserID = guid();
-		let storedUserID: UserID | undefined = getCookie("userID", undefined);
-		if (storedUserID !== undefined) {
+		let storedUserID = getCookie("userID");
+		if (storedUserID !== "") {
 			userID = storedUserID;
 			// Server will handle the reconnect attempt if draft is still ongoing
 			console.log("storedUserID: " + storedUserID);
