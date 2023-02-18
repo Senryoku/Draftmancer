@@ -35,7 +35,7 @@ import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
 import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
-import parseCSV from "./parseCSV.js";
+import parseCSV from "./parseCSV";
 
 import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
@@ -340,7 +340,7 @@ export default defineComponent({
 
 			this.socket.on("alreadyConnected", (newID) => {
 				this.userID = newID;
-				this.socket.io.opts.query.userID = newID;
+				this.socket.io.opts.query!.userID = newID;
 				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
@@ -377,7 +377,7 @@ export default defineComponent({
 
 			this.socket.on("setSession", (sessionID) => {
 				this.sessionID = sessionID;
-				this.socket.io.opts.query.sessionID = sessionID;
+				this.socket.io.opts.query!.sessionID = sessionID;
 				if (this.drafting) {
 					// Expelled during drafting
 					this.drafting = false;
@@ -1715,7 +1715,9 @@ export default defineComponent({
 							icon: "error",
 							title: "Invalid file",
 							text: `The uploaded file is not a valid MTGGoldFish CSV file (Invalid header).`,
-							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(lines[0])}'.`,
+							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(
+								lines[0].join(",")
+							)}'.`,
 							showCancelButton: false,
 						});
 						return;
@@ -2296,7 +2298,7 @@ export default defineComponent({
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart", "super");
 		},
-		async displayPackChoice(boosters, currentPack, packCount) {
+		async displayPackChoice(boosters: JHHBooster[], currentPack: number, packCount: number) {
 			let boostersDisplay = "";
 			for (let b of boosters) {
 				let colors = b.colors
@@ -2434,8 +2436,8 @@ export default defineComponent({
 				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
-		updateBracket(matchIndex, index, value) {
-			if (this.userID != this.sessionOwner && this.bracketLocked) return;
+		updateBracket(matchIndex: number, index: number, value: number) {
+			if (!this.bracket || (this.userID != this.sessionOwner && this.bracketLocked)) return;
 			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
