@@ -51,6 +51,7 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { CustomCardList } from "../../src/CustomCardList";
 const img = new Image();
 img.src = CardBack;
 
@@ -174,8 +175,8 @@ export default defineComponent({
 
 			// Session status
 			sessionID: sessionID,
-			sessionOwner: null as UserID | null,
-			sessionOwnerUsername: null as string | null,
+			sessionOwner: userID as UserID,
+			sessionOwnerUsername: userName as string,
 			sessionUsers: [] as {
 				userID: string;
 				userName: string;
@@ -213,7 +214,7 @@ export default defineComponent({
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
-			customCardList: {},
+			customCardList: {} as CustomCardList,
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
@@ -297,7 +298,7 @@ export default defineComponent({
 			sideboardBasics: initialSettings.sideboardBasics,
 			preferredBasics: initialSettings.preferredBasics,
 			//
-			selectedCube: Constants.CubeLists.length > 0 ? Constants.CubeLists[0] : null,
+			selectedCube: Constants.CubeLists[0],
 
 			// Used to debounce calls to doStoreDraftLogs
 			storeDraftLogsTimeout: null as ReturnType<typeof setTimeout> | null,
@@ -1200,7 +1201,7 @@ export default defineComponent({
 			}
 			this.selectCard(null, card);
 		},
-		dropBoosterCard(e: DragEvent, options: { toSideboard?: boolean } | undefined) {
+		dropBoosterCard(e: DragEvent, options?: { toSideboard?: boolean }) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
 				e.dataTransfer?.getData("isboostercard") !== "true" ||
@@ -1972,7 +1973,7 @@ export default defineComponent({
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile(e: Event, callback: (file: File, options: Options) => void, options: Options) {
+		uploadFile(e: Event, callback: (file: File, options?: Options) => void, options?: Options) {
 			let file = (e.target as HTMLInputElement)?.files?.[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
@@ -2229,17 +2230,18 @@ export default defineComponent({
 				instance.$destroy();
 			});
 			instance.$on("distribute", (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
-				this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
+				this.deckWarning(
+					teamSealed ? this.startTeamSealed : this.distributeSealed,
 					boostersPerPlayer,
 					customBoosters,
-					teams,
-				]);
+					teams
+				);
 				instance.$destroy();
 			});
 			instance.$mount();
 			this.$el.appendChild(instance.$el);
 		},
-		deckWarning<T extends any[]>(call: (...args: T) => void, options: T) {
+		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
