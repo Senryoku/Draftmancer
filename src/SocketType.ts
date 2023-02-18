@@ -37,7 +37,6 @@ export interface ServerToClientEvents {
 
 	userDisconnected: (data: { owner: UserID; disconnectedUsers: { [uid: string]: any } }) => void; // FIXME
 	sessionOptions: (sessionOptions: { [key: keyof typeof SessionsSettingsProps]: any }) => void; // FIXME: Specify allowed options and their types
-	bots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	ignoreCollections: (ignoreCollections: boolean) => void;
 	setPickTimer: (pickTimer: number) => void;
@@ -200,7 +199,7 @@ export interface ClientToServerEvents {
 	setDisableBotSuggestions: (disableBotSuggestions: boolean) => void;
 	setDistributionMode: (distributionMode: DistributionMode) => void;
 	setCustomBoosters: (customBoosters: Array<string>) => void;
-	bots: (bots: number) => void;
+	setBots: (bots: number) => void;
 	setRestriction: (setRestriction: Array<SetCode>) => void;
 	parseCustomCardList: (customCardList: string, ack: (result: SocketAck) => void) => void;
 	importCube: (data: any, ack: (result: SocketAck) => void) => void; // FIXME

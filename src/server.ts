@@ -657,13 +657,13 @@ function setCustomBoosters(userID: UserID, sessionID: SessionID, customBoosters:
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { customBoosters: customBoosters });
 }
 
-function bots(userID: UserID, sessionID: SessionID, bots: number) {
+function setBots(userID: UserID, sessionID: SessionID, bots: number) {
 	if (!SessionsSettingsProps.bots(bots)) return;
 
 	if (bots == Sessions[sessionID].bots) return;
 
 	Sessions[sessionID].bots = bots;
-	Sessions[sessionID].emitToConnectedNonOwners("bots", bots);
+	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { bots: bots });
 }
 
 function setRestriction(userID: UserID, sessionID: SessionID, setRestriction: Array<SetCode>) {
@@ -1307,7 +1307,7 @@ io.on("connection", async function (socket) {
 	socket.on("setDisableBotSuggestions", prepareSocketCallback(setDisableBotSuggestions, true));
 	socket.on("setDistributionMode", prepareSocketCallback(setDistributionMode, true));
 	socket.on("setCustomBoosters", prepareSocketCallback(setCustomBoosters, true));
-	socket.on("bots", prepareSocketCallback(bots, true));
+	socket.on("setBots", prepareSocketCallback(setBots, true));
 	socket.on("setRestriction", prepareSocketCallback(setRestriction, true));
 	socket.on("parseCustomCardList", prepareSocketCallback(parseCustomCardListEvent, true));
 	socket.on("importCube", prepareSocketCallback(importCube, true));

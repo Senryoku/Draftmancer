@@ -432,8 +432,8 @@ export default defineComponent({
 			this.socket.on("ignoreCollections", (ignoreCollections) => {
 				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("bots", (data) => {
-				this.bots = parseInt(data);
+			this.socket.on("setBots", (data) => {
+				this.bots = data;
 			});
 			this.socket.on("setMaxPlayers", (maxPlayers) => {
 				this.maxPlayers = maxPlayers;
@@ -3085,7 +3085,7 @@ export default defineComponent({
 		},
 		bots() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("bots", this.bots);
+			this.socket.emit("setBots", this.bots);
 		},
 		maxPlayers() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
