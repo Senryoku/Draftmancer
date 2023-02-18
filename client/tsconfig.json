@@ -13,7 +13,8 @@
 		"strict": true,
 		"target": "esnext",
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"lib": ["webworker", "dom"]
 	},
 	"vueCompilerOptions": {
 		"target": 2.7

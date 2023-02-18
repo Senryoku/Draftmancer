@@ -6,10 +6,10 @@ import {
 	DisconnectedUser,
 	DistributionMode,
 	DraftLogRecipients,
-	SessionsSettingsProps,
+	ReadyState,
 	UserData,
 	UsersData,
-} from "../../src/Session.js";
+} from "../../src/Session/SessionTypes";
 import { PlainCollection, UniqueCard } from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
@@ -20,16 +20,15 @@ import { RochesterDraftSyncData } from "../../src/RochesterDraft";
 import { TeamSealedSyncData } from "../../src/TeamSealed";
 import { Bracket } from "../../src/Brackets";
 import { SocketAck } from "../../src/Message";
-import { CubeDescription } from "../../src/Constants";
+import Constants, { CubeDescription } from "../../src/Constants";
 
 import io, { Socket } from "socket.io-client";
 import Vue, { defineComponent } from "vue";
 import draggable, { MoveEvent } from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
-import Swal, { SweetAlertOptions } from "sweetalert2";
-import LogStoreWorker from "./logstore.worker.js";
+import Swal, { SweetAlertIcon, SweetAlertOptions } from "sweetalert2";
+import LogStoreWorker from "./logstore.worker";
 
-import Constant from "../../src/data/constants.json";
 import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
 import { getCookie, setCookie } from "./cookies";
@@ -68,13 +67,6 @@ const DraftState = {
 	MinesweeperPicking: "MinesweeperPicking",
 	MinesweeperWaiting: "MinesweeperWaiting",
 	TeamSealed: "TeamSealed",
-};
-
-const ReadyState = {
-	Unknown: "Unknown",
-	Ready: "Ready",
-	NotReady: "NotReady",
-	DontCare: "DontCare",
 };
 
 const Sounds: { [name: string]: HTMLAudioElement } = {
@@ -253,12 +245,12 @@ export default defineComponent({
 			displayedModal: null as string | null,
 			userOrder: [] as UserID[],
 			hideSessionID: initialSettings.hideSessionID,
-			languages: Constant.Languages,
+			languages: Constants.Languages,
 			language: getCookie("language", "en"),
 			displayCollectionStatus: defaultSettings.displayCollectionStatus,
-			sets: Constant.MTGASets,
-			primarySets: Constant.PrimarySets,
-			cubeLists: Constant.CubeLists,
+			sets: Constants.MTGASets,
+			primarySets: Constants.PrimarySets,
+			cubeLists: Constants.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: SetsInfos,
 			draftingState: DraftState.None,
@@ -297,7 +289,7 @@ export default defineComponent({
 			sideboardBasics: initialSettings.sideboardBasics,
 			preferredBasics: initialSettings.preferredBasics,
 			//
-			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
+			selectedCube: Constants.CubeLists.length > 0 ? Constants.CubeLists[0] : null,
 
 			// Used to debounce calls to doStoreDraftLogs
 			storeDraftLogsTimeout: null,
@@ -458,13 +450,10 @@ export default defineComponent({
 			this.socket.on("message", (data) => {
 				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
-				if (data.text === undefined) data.text = "";
-				if (data.html === undefined) data.html = null;
-				if (data.imageUrl === undefined) data.imageUrl = null;
 
 				const toast = !!data.toast;
 				if (toast) {
-					fireToast(data.icon, data.title, data.text);
+					fireToast(data.icon as SweetAlertIcon, data.title, data.text);
 					return;
 				}
 
@@ -476,7 +465,7 @@ export default defineComponent({
 				Alert.fire({
 					position: "center",
 					toast: !!data.toast,
-					icon: data.icon,
+					icon: data.icon as SweetAlertIcon,
 					title: data.title,
 					text: data.text,
 					html: data.html,

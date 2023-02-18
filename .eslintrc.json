@@ -28,6 +28,7 @@
 			"files": "client/*",
 			"env": {
 				"browser": true,
+				"worker": true,
 				"es2020": true
 			},
 			"parser": "vue-eslint-parser",

@@ -1,8 +1,8 @@
-import { GridDraftState, GridDraftSyncData } from "./GridDraft";
+import { GridDraftSyncData } from "./GridDraft";
 import { WinstonDraftState, WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck } from "./Message";
-import { DistributionMode, DraftLogRecipients, getPublicSessionData, UsersData } from "./Session";
+import { DistributionMode, DraftLogRecipients, ReadyState, UsersData } from "./Session/SessionTypes";
 import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
@@ -11,7 +11,8 @@ import { RochesterDraftState, RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperDraftState, MinesweeperSyncData } from "./MinesweeperDraft";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
-import { SessionsSettingsProps } from "./Session";
+import SessionsSettingsProps from "./Session/SessionProps";
+import { getPublicSessionData } from "./Session";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -22,7 +23,7 @@ export interface ServerToClientEvents {
 	message: (msg: Message) => void;
 	chatMessage: (msg: { author: string; text: string; timestamp: number }) => void;
 	readyCheck: () => void;
-	setReady: (userID: UserID, readyState: boolean) => void;
+	setReady: (userID: UserID, readyState: ReadyState) => void;
 	sessionUsers: (
 		users: {
 			userID: UserID;
@@ -146,7 +147,7 @@ export interface ClientToServerEvents {
 	parseCollection: (txtcollection: string, ack: (...rest: any[]) => void) => void;
 	useCollection: (useCollection: boolean) => void;
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
-	setReady: (readyState: boolean) => void;
+	setReady: (readyState: ReadyState) => void;
 	pickCard: (
 		data: { pickedCards: Array<number>; burnedCards: Array<number> },
 		ack: (result: SocketAck) => void

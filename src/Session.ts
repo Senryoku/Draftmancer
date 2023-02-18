@@ -1,10 +1,8 @@
 "use strict";
-
-import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { countCards } from "./cardUtils.js";
 import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
-import { Connection, Connections, getPickedCardIds } from "./Connection.js";
+import { Connections, getPickedCardIds } from "./Connection.js";
 import {
 	CardID,
 	Card,
@@ -39,7 +37,6 @@ import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
-import { isBoolean, isObject, isString } from "./TypeChecks.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
@@ -49,117 +46,13 @@ import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
-
-// Validate session settings types and values.
-export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
-	ownerIsPlayer: isBoolean,
-	setRestriction(val: any) {
-		if (!Array.isArray(val)) return false;
-		for (const s of val)
-			if (constants.PrimarySets.indexOf(s) === -1) {
-				console.error(`Error: Set ${s} in not marked as primary.`);
-				return false;
-			}
-		return true;
-	},
-	isPublic: isBoolean,
-	description: isString,
-	ignoreCollections: isBoolean,
-	boostersPerPlayer(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	cardsPerBooster(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	teamDraft: isBoolean,
-	randomizeSeatingOrder: isBoolean,
-	disableBotSuggestions: isBoolean,
-	bots(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	maxTimer(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	maxPlayers(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	mythicPromotion: isBoolean,
-	useBoosterContent: isBoolean,
-	boosterContent(val: any) {
-		// Validate input (a value for each rarity and at least one card)
-		if (!isObject(val)) return false;
-		if (!["common", "uncommon", "rare"].every((r) => r in val)) return false;
-		if (Object.values(val).some((i: any) => !Number.isInteger(i) || i < 0)) return false;
-		if (Object.values(val).reduce((acc, val) => acc + val) <= 0) return false;
-		return true;
-	},
-	usePredeterminedBoosters: isBoolean,
-	colorBalance: isBoolean,
-	maxDuplicates(val: any) {
-		if (!isObject(val)) return false;
-		if (Object.values(val).some((i) => !Number.isInteger(i))) return false;
-		return true;
-	},
-	foil: isBoolean,
-	preferredCollation(val: any) {
-		return ["Paper", "MTGA"].includes(val);
-	},
-	useCustomCardList: isBoolean,
-	customCardListWithReplacement: isBoolean,
-	customCardList: isObject,
-	distributionMode(val: any) {
-		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
-	},
-	customBoosters: Array.isArray,
-	doubleMastersMode: isBoolean,
-	pickedCardsPerRound(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	burnedCardsPerRound(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	discardRemainingCardsAt(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	personalLogs: isBoolean,
-	draftLogRecipients(val: any) {
-		return ["everyone", "delayed", "owner", "none"].includes(val);
-	},
-	bracketLocked: isBoolean,
-	draftPaused: isBoolean,
-};
-
-export type UserData = {
-	userID: UserID;
-	userName: string;
-	isBot: boolean;
-	isDisconnected: boolean;
-	boosterCount: undefined | number;
-};
-
-export type UsersData = {
-	[uid: UserID]: UserData;
-};
-
-export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
-export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
+import Constants from "./Constants.js";
+import { SessionsSettingsProps } from "./Session/SessionProps.js";
+import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 
 export interface IIndexable {
 	[key: string]: any;
 }
-
-export type DisconnectedUser = {
-	userName: string;
-	pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
-};
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -169,7 +62,7 @@ export class Session implements IIndexable {
 
 	// Options
 	ownerIsPlayer: boolean = true;
-	setRestriction: Array<string> = [constants.MTGASets[constants.MTGASets.length - 1]];
+	setRestriction: Array<string> = [Constants.MTGASets[Constants.MTGASets.length - 1]];
 	isPublic: boolean = false;
 	description: string = "";
 	ignoreCollections: boolean = true;
@@ -696,7 +589,7 @@ export class Session implements IIndexable {
 								if (randomSetsPool.length === 0)
 									randomSetsPool = [
 										...(this.setRestriction.length === 0
-											? constants.PrimarySets
+											? Constants.PrimarySets
 											: this.setRestriction),
 									];
 								boosterSet = pickRandom(randomSetsPool);
@@ -2388,7 +2281,7 @@ export class Session implements IIndexable {
 		);
 	}
 
-	emitError(title = "Error", text = "Unspecified Error", showConfirmButton = true, timer = 0) {
+	emitError(title: string = "Error", text: string | null = "Unspecified Error", showConfirmButton = true, timer = 0) {
 		Connections[this.owner]?.socket.emit("message", {
 			icon: "error",
 			title: title,

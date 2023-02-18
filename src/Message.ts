@@ -1,28 +1,35 @@
 import { escapeHTML } from "./utils.js";
 
-export class Message {
-	icon: string = "info";
-	title: string = "Title";
-	text: string = "";
-	html: string = "";
-	footer: string = "";
+type MessageIcon = "error" | "success" | "warning" | "info" | "question";
 
-	toast: boolean = true;
+export class Message {
+	icon: MessageIcon = "info";
+	title: string = "Title";
+	text?: string = undefined;
+	html?: string = undefined;
+	footer?: string = undefined;
+
+	toast: boolean = false;
 	allowOutsideClick: boolean = true;
 	showConfirmButton: boolean = true;
 	timer: number = 0;
-	imageUrl: string = "";
+	imageUrl?: string = undefined;
 
-	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
+	constructor(
+		title: string,
+		text: string | undefined = undefined,
+		footer: string | undefined = undefined,
+		html: string | undefined = undefined
+	) {
 		this.title = title;
 		this.text = text;
 		this.html = html;
-		this.footer = escapeHTML(footer); // footer is not escaped by swal2
+		this.footer = footer ? escapeHTML(footer) : undefined; // footer is not escaped by swal2
 	}
 }
 
 export class MessageError extends Message {
-	icon: string = "error";
+	icon: MessageIcon = "error";
 	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
 		super(title, text, footer, html);
 	}
@@ -33,7 +40,7 @@ export function isMessageError(obj: any): obj is MessageError {
 }
 
 export class MessageWarning extends Message {
-	icon: string = "warning";
+	icon: MessageIcon = "warning";
 	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
 		super(title, text, footer, html);
 	}
@@ -51,7 +58,12 @@ export class SocketAck {
 }
 
 export class SocketError extends SocketAck {
-	constructor(title: string, text: string = "", footer: string = "", html: string = "") {
+	constructor(
+		title: string,
+		text: string | undefined = undefined,
+		footer: string | undefined = undefined,
+		html: string | undefined = undefined
+	) {
 		super(new MessageError(title, text, footer, html));
 		this.code = -1;
 	}
