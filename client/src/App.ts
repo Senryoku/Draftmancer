@@ -2386,10 +2386,7 @@ export default defineComponent({
 				return { userID: u.userID, userName: u.userName };
 			});
 			let players = [];
-			for (let i = 0; i < pairingOrder.length; ++i) {
-				if (pairingOrder[i] < playerInfos.length) players[i] = playerInfos[pairingOrder[i]];
-				else players[i] = null;
-			}
+			for (let i = 0; i < pairingOrder.length; ++i) players[i] = playerInfos[pairingOrder[i]];
 			return players;
 		},
 		// Bracket (Server communication)

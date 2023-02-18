@@ -210,7 +210,7 @@ export interface ClientToServerEvents {
 	setMythicPromotion: (mythicPromotion: boolean) => void;
 	setUseBoosterContent: (useBoosterContent: boolean) => void;
 	setBoosterContent: (boosterContent: { common: number; uncommon: number; rare: number }) => void;
-	setUsePredeterminedBoosters: (value: boolean, ack: (result: SocketAck) => void) => void;
+	setUsePredeterminedBoosters: (value: boolean) => void;
 	setBoosters: (text: string, ack: (result: SocketAck) => void) => void;
 	shuffleBoosters: (ack: (result: SocketAck) => void) => void;
 	setPersonalLogs: (value: boolean) => void;

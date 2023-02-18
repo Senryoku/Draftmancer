@@ -855,17 +855,11 @@ function setBoosterContent(
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { boosterContent: boosterContent });
 }
 
-function setUsePredeterminedBoosters(
-	userID: UserID,
-	sessionID: SessionID,
-	value: boolean,
-	ack: (result: SocketAck) => void
-) {
+function setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value: boolean) {
 	if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
 
 	Sessions[sessionID].usePredeterminedBoosters = value;
 	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { usePredeterminedBoosters: value });
-	ack?.(new SocketAck());
 }
 
 function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
