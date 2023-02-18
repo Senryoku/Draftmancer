@@ -81,7 +81,6 @@
 import Vue, { defineComponent, PropType } from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
-import { exportToMTGA } from "../exportToMTGA";
 import DraftLogComponent from "./DraftLog.vue";
 import { DraftLog } from "../../../src/DraftLog";
 import { Language } from "../../../src/Types";
@@ -111,16 +110,7 @@ export default defineComponent({
 			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
 		},
 		downloadLog(draftLog: DraftLog) {
-			let draftLogFull = { ...draftLog };
-			for (let uid in draftLog.users) {
-				if (draftLogFull.users[uid].cards)
-					draftLogFull.users[uid].exportString = exportToMTGA(
-						draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
-						null,
-						this.language
-					);
-			}
-			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
+			helper.download(`DraftLog_${draftLog.sessionID}.txt`, JSON.stringify(draftLog, null, "\t"));
 		},
 		deleteLog(draftLog: DraftLog) {
 			Alert.fire({
