@@ -173,7 +173,13 @@ export default defineComponent({
 			sessionID: sessionID,
 			sessionOwner: null as UserID | null,
 			sessionOwnerUsername: null as string | null,
-			sessionUsers: [] as { userID: string; userName: string; collection: boolean; useCollection: boolean }[],
+			sessionUsers: [] as {
+				userID: string;
+				userName: string;
+				collection: boolean;
+				useCollection: boolean;
+				readyState: ReadyState;
+			}[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
 			// Session settings
 			ownerIsPlayer: true,
@@ -377,11 +383,9 @@ export default defineComponent({
 			});
 
 			this.socket.on("sessionUsers", (users) => {
-				for (let u of users) {
-					u.readyState = ReadyState.DontCare;
-				}
-
-				this.sessionUsers = users;
+				this.sessionUsers = users.map((u) => {
+					return { ...u, readyState: ReadyState.DontCare };
+				});
 				this.userOrder = users.map((u) => u.userID);
 			});
 

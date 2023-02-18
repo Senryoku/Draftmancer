@@ -13,7 +13,7 @@ export type UserData = {
 	userName: string;
 	isBot: boolean;
 	isDisconnected: boolean;
-	boosterCount: undefined | number;
+	boosterCount?: number;
 };
 
 export type UsersData = {
