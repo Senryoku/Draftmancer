@@ -64,7 +64,7 @@
 		"@types/cookie-parser": "^1.4.3",
 		"@types/node": "^18.14.0",
 		"@types/request": "^2.48.8",
-		"@types/uuid": "^8.3.4",
+		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.52.0",
 		"@typescript-eslint/parser": "^5.52.0",
 		"babel-loader": "^9.1.2",
