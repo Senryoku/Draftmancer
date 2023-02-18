@@ -969,8 +969,8 @@ export default defineComponent({
 
 				if (!this.draftLogLive) return;
 
-				if (data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
-				if (data.decklist) this.$set(this.draftLogLive.users[data.userID], "decklist", data.decklist);
+				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
+				if (data.decklist) this.$set(this.draftLogLive.users[data.userID!], "decklist", data.decklist);
 			});
 
 			this.socket.on("pickAlert", (data) => {
@@ -1004,7 +1004,7 @@ export default defineComponent({
 			});
 
 			this.socket.on("timer", (data) => {
-				if (data.countdown == 0) this.forcePick(this.booster);
+				if (data.countdown == 0) this.forcePick();
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
 					if (chrono) {
@@ -1274,7 +1274,7 @@ export default defineComponent({
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.selectedCards.map((c) => this.rochesterDraftState.booster.findIndex((c2) => c === c2)),
+						this.selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
 						ack
 					);
 					this.draftingState = DraftState.RochesterWaiting;
@@ -1306,7 +1306,7 @@ export default defineComponent({
 				let orderedPicks = [];
 				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
 				orderedPicks.sort((lhs, rhs) => {
-					return this.botScores.scores[lhs] < this.botScores.scores[rhs];
+					return this.botScores!.scores[lhs] - this.botScores!.scores[rhs];
 				});
 				let currIdx = 0;
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
@@ -2445,7 +2445,7 @@ export default defineComponent({
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck(card: UniqueCard, options: MouseEvent | undefined = undefined) {
+		addToDeck(card: UniqueCard | UniqueCard[], options: Options | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
@@ -2453,7 +2453,7 @@ export default defineComponent({
 				this.$refs.deckDisplay?.addCard(card, options ? options.event : null);
 			}
 		},
-		addToSideboard(card: UniqueCard, options: Options | undefined = undefined) {
+		addToSideboard(card: UniqueCard | UniqueCard[], options: Options | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
