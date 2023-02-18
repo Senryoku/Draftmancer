@@ -21,7 +21,7 @@ import constants from "./data/constants.json";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
-import { Session, Sessions, IIndexable, getPublicSessionData } from "./Session.js";
+import { Session, Sessions, getPublicSessionData } from "./Session.js";
 import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard, PlainCollection } from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
@@ -31,7 +31,7 @@ import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
-import { SetCode } from "./Types.js";
+import { IIndexable, SetCode } from "./Types.js";
 import SessionsSettingsProps from "./Session/SessionProps.js";
 
 const app = express();
@@ -1049,7 +1049,7 @@ function replaceDisconnectedPlayers(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].replaceDisconnectedPlayers();
 }
 
-function distributeJumpstart(userID: UserID, sessionID: SessionID, set: string) {
+function distributeJumpstart(userID: UserID, sessionID: SessionID, set?: string) {
 	Sessions[sessionID].distributeJumpstart(set);
 }
 

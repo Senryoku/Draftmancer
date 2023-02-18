@@ -1,14 +1,14 @@
 {
 	"include": ["**/*", "../src/Types.ts", "../src/Types.ts"],
 	"compilerOptions": {
-		"allowJs": true,
+		"allowJs": false,
 		"baseUrl": ".",
 		"module": "ESNext",
 		"moduleResolution": "node",
 		"paths": {
 			"@/*": ["src/*"]
 		},
-		"skipLibCheck": true,
+		"skipLibCheck": false,
 		"sourceMap": true,
 		"strict": true,
 		"target": "esnext",

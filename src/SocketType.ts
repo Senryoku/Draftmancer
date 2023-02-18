@@ -13,6 +13,7 @@ import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
 import SessionsSettingsProps from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
+import { JHHBooster } from "./JumpstartHistoricHorizons";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -117,7 +118,10 @@ export interface ServerToClientEvents {
 	endTeamSealed: () => void;
 	teamSealedUpdateCard: (cid: UniqueCardID, owner: UserID | null) => void;
 
-	selectJumpstartPacks: (choices: any, callback: (user: UserID, cards: CardID[]) => void) => void; // FIXME
+	selectJumpstartPacks: (
+		choices: [JHHBooster[], JHHBooster[][]],
+		callback: (user: UserID, cards: CardID[]) => void
+	) => void; // FIXME
 
 	shareDecklist: (data: {
 		sessionID: string;
@@ -225,7 +229,7 @@ export interface ClientToServerEvents {
 	setPublic: (isPublic: boolean) => void;
 	setDescription: (description: string) => void;
 	replaceDisconnectedPlayers: () => void;
-	distributeJumpstart: (set: string) => void;
+	distributeJumpstart: (set?: string) => void;
 	generateBracket: (players: Array<{ userID: UserID; userName: string }>, ack: (result: SocketAck) => void) => void;
 	generateSwissBracket: (
 		players: Array<{ userID: UserID; userName: string }>,

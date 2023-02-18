@@ -63,62 +63,55 @@
 	</modal>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, watch, toRefs } from "vue";
+import Modal from "./Modal.vue";
+import Draggable from "vuedraggable";
 import { UserID } from "../../../src/IDTypes";
 import { UserData } from "../../../src/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
+import { SetCode } from "../../../src/Types";
 
-import Modal from "./Modal.vue";
-import Draggable from "vuedraggable";
+const props = withDefaults(
+	defineProps<{
+		users: UserData[];
+		teamSealed: Boolean;
+	}>(),
+	{ teamSealed: () => false }
+);
+const { users, teamSealed } = toRefs(props);
 
-export default defineComponent({
-	components: { Modal, Draggable },
-	props: {
-		users: { type: Array as PropType<UserData[]>, required: true },
-		teamSealed: { type: Boolean, default: false },
-	},
-	data() {
-		// Max of 4 teams, empty ones will simply be ignored.
-		// FIXME: Allow more teams?
-		const teams: UserID[][] = [[], [], [], []];
-		// Defaults to two teams, distribute players among them.
-		for (let i = 0; i < this.users.length; i++) teams[i % 2].push(this.users[i].userID);
-		const boostersPerPlayer = this.teamSealed ? 12 : 6;
-		return { boostersPerPlayer, customBoosters: Array(boostersPerPlayer).fill(""), teams: teams };
-	},
-	methods: {
-		userById(uid: UserID) {
-			return this.users.find((user) => user.userID === uid);
-		},
-		cancel() {
-			this.$emit("cancel");
-		},
-		distribute() {
-			this.$emit("distribute", this.boostersPerPlayer, this.customBoosters, this.teams);
-		},
-	},
-	computed: {
-		MTGASets() {
-			return Constant.MTGASets.slice()
-				.reverse()
-				.map((s: string) => {
-					return { code: s, fullName: SetsInfos[s].fullName };
-				});
-		},
-		PrimarySets() {
-			return Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s: string) => {
-				return { code: s, fullName: SetsInfos[s].fullName };
-			});
-		},
-	},
-	watch: {
-		boostersPerPlayer() {
-			while (this.customBoosters.length < this.boostersPerPlayer) this.customBoosters.push("");
-			while (this.customBoosters.length > this.boostersPerPlayer) this.customBoosters.pop();
-		},
-	},
+const teams = ref([[], [], [], []] as UserID[][]);
+const boostersPerPlayer = ref(teamSealed.value ? 12 : 6);
+const customBoosters = ref(Array(boostersPerPlayer.value).fill(""));
+
+// Defaults to two teams, distribute players among them.
+for (let i = 0; i < users.value.length; i++) teams.value[i % 2].push(users.value[i].userID);
+
+const PrimarySets = Constant.PrimarySets.filter((s) => !Constant.MTGASets.includes(s)).map((s: string) => {
+	return { code: s, fullName: SetsInfos[s].fullName };
+});
+const MTGASets = Constant.MTGASets.slice()
+	.reverse()
+	.map((s: string) => {
+		return { code: s, fullName: SetsInfos[s].fullName };
+	});
+
+const emit = defineEmits<{
+	(e: "cancel"): void;
+	(e: "distribute", boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]): void;
+}>();
+
+// Methods
+const userById = (uid: UserID) => users.value.find((user) => user.userID === uid);
+const cancel = () => emit("cancel");
+const distribute = () => emit("distribute", boostersPerPlayer.value, customBoosters.value, teams.value);
+
+// Watch
+watch(boostersPerPlayer, () => {
+	while (customBoosters.value.length < boostersPerPlayer.value) customBoosters.value.push("");
+	while (customBoosters.value.length > boostersPerPlayer.value) customBoosters.value.pop();
 });
 </script>
 

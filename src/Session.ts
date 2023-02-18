@@ -36,7 +36,7 @@ import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
-import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
+import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
@@ -49,10 +49,7 @@ import { ServerToClientEvents } from "./SocketType";
 import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
-
-export interface IIndexable {
-	[key: string]: any;
-}
+import { IIndexable } from "./Types.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1944,7 +1941,7 @@ export class Session implements IIndexable {
 		return new SocketError("Not playing", "You're not playing in this team sealed?!");
 	}
 
-	distributeJumpstart(set: string | null) {
+	distributeJumpstart(set?: string) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
 		const log = this.initLogs("Jumpstart");
@@ -1954,11 +1951,11 @@ export class Session implements IIndexable {
 		if (set === "j21" || set === "super") {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
-				const choices: any = [];
+				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
 				if (set === "j21") {
-					choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
+					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
 					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-					const secondchoice = [];
+					const secondchoice: JHHBooster[][] = [];
 					for (let i = 0; i < 3; ++i) {
 						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
 							if (p.name === choices[0][i].name) return false; // Prevent duplicates
@@ -1973,11 +1970,11 @@ export class Session implements IIndexable {
 						});
 						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
 					}
-					choices.push(secondchoice);
+					choices[1] = secondchoice;
 				} else {
-					choices.push(getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster));
+					choices[0] = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
-					choices.push([]);
+					choices[1] = [];
 					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
 				}

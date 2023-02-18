@@ -1,7 +1,7 @@
 "use strict";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
 import { SessionID, UserID } from "../../src/IDTypes";
-import { SetCode } from "../../src/Types";
+import { SetCode, IIndexable } from "../../src/Types";
 import {
 	DisconnectedUser,
 	DistributionMode,
@@ -10,7 +10,7 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import { PlainCollection, UniqueCard } from "../../src/CardTypes";
+import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
 import { WinstonDraftState, WinstonDraftSyncData } from "../../src/WinstonDraft";
@@ -21,6 +21,9 @@ import { TeamSealedSyncData } from "../../src/TeamSealed";
 import { Bracket } from "../../src/Brackets";
 import { SocketAck } from "../../src/Message";
 import Constants, { CubeDescription } from "../../src/Constants";
+import { Options } from "../../src/utils";
+import { JHHBooster } from "../../src/JumpstartHistoricHorizons";
+import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
 import Vue, { defineComponent } from "vue";
@@ -48,7 +51,6 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
-import { Options } from "../../src/utils";
 const img = new Image();
 img.src = CardBack;
 
@@ -290,7 +292,7 @@ export default defineComponent({
 			deckFilter: "",
 			collapseSideboard: defaultSettings.collapseSideboard,
 			autoLand: true,
-			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
+			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 } as { [c in CardColor]: number },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
 			preferredBasics: initialSettings.preferredBasics,
@@ -416,7 +418,8 @@ export default defineComponent({
 
 			this.socket.on("sessionOptions", (sessionOptions) => {
 				// FIXME: Use accurate key type once we have it.
-				for (let prop in sessionOptions) this[prop as keyof typeof this] = sessionOptions[prop];
+				for (let prop in sessionOptions)
+					(this as IIndexable)[prop as keyof typeof SessionsSettingsProps] = sessionOptions[prop];
 			});
 
 			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {
@@ -2222,13 +2225,13 @@ export default defineComponent({
 			let instance = new DialogClass({
 				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
 				beforeDestroy() {
-					instance.$el.parentNode.removeChild(instance.$el);
+					instance.$el.parentNode?.removeChild(instance.$el);
 				},
 			});
 			instance.$on("cancel", () => {
 				instance.$destroy();
 			});
-			instance.$on("distribute", (boostersPerPlayer, customBoosters, teams) => {
+			instance.$on("distribute", (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
 				this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
 					boostersPerPlayer,
 					customBoosters,
@@ -2239,7 +2242,7 @@ export default defineComponent({
 			instance.$mount();
 			this.$el.appendChild(instance.$el);
 		},
-		deckWarning(call, options = []) {
+		deckWarning<T extends any[]>(call: (...args: T) => void, options: T) {
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -2258,12 +2261,12 @@ export default defineComponent({
 				call(...options);
 			}
 		},
-		distributeSealed(boosterCount, customBoosters) {
+		distributeSealed(boosterCount: number, customBoosters: string[]) {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
 		},
-		startTeamSealed(boosterCount, customBoosters, teams) {
+		startTeamSealed(boosterCount: number, customBoosters: string[], teams: UserID[][]) {
 			if (this.userID !== this.sessionOwner) return;
 			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 			this.socket.emit(
@@ -2272,15 +2275,13 @@ export default defineComponent({
 				useCustomBoosters ? customBoosters : null,
 				teams,
 				(err) => {
-					if (err.code < 0) {
-						Alert.fire(err.error);
-					}
+					if (err.error) Alert.fire(err.error);
 				}
 			);
 		},
-		teamSealedPick(uniqueCardID) {
+		teamSealedPick(uniqueCardID: UniqueCardID) {
 			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
-				if (r.code !== 0) Alert.fire(r.error);
+				if (r.error) Alert.fire(r.error);
 			});
 		},
 		distributeJumpstart() {
@@ -2327,7 +2328,10 @@ export default defineComponent({
 			});
 			return choice;
 		},
-		selectJumpstartPacks: async function (choices, ack) {
+		async selectJumpstartPacks(
+			choices: [JHHBooster[], JHHBooster[][]],
+			ack: (user: UserID, cards: CardID[]) => void
+		) {
 			this.clearState();
 			this.draftingState = DraftState.Brewing;
 			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
@@ -2365,7 +2369,7 @@ export default defineComponent({
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog(storedDraftLog) {
+		shareSavedDraftLog(storedDraftLog: DraftLog) {
 			if (this.userID != this.sessionOwner) {
 				Alert.fire({
 					title: "You need to be the session owner to share logs.",
@@ -2391,7 +2395,7 @@ export default defineComponent({
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
-		prepareBracketPlayers(pairingOrder) {
+		prepareBracketPlayers(pairingOrder: number[]) {
 			const playerInfos = this.sessionUsers.map((u) => {
 				return { userID: u.userID, userName: u.userName };
 			});
@@ -2435,7 +2439,7 @@ export default defineComponent({
 			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
-		lockBracket(val) {
+		lockBracket(val: boolean) {
 			if (this.userID != this.sessionOwner) return;
 			this.bracketLocked = val;
 			this.socket.emit("lockBracket", this.bracketLocked);
@@ -2537,27 +2541,29 @@ export default defineComponent({
 
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
-				for (let c in colorCount) totalColor += colorCount[c];
+				for (let c in colorCount) totalColor += colorCount[c as CardColor];
 				if (totalColor <= 0) return;
 
-				for (let c in this.lands) this.lands[c] = Math.round(landToAdd * (colorCount[c] / totalColor));
+				for (let c in this.lands)
+					this.lands[c as CardColor] = Math.round(landToAdd * (colorCount[c as CardColor] / totalColor));
 				let addedLands = this.totalLands;
 
 				if (this.deck.length + addedLands > targetDeckSize) {
-					let max = "W";
+					let max: CardColor = CardColor.W;
 					for (let i = 0; i < this.deck.length + addedLands - targetDeckSize; ++i) {
-						for (let c in this.lands) if (this.lands[c] > this.lands[max]) max = c;
+						for (let c in this.lands)
+							if (this.lands[c as CardColor] > this.lands[max]) max = c as CardColor;
 						this.lands[max] = Math.max(0, this.lands[max] - 1);
 					}
 				} else if (this.deck.length + addedLands < targetDeckSize) {
-					let min = "W";
+					let min: CardColor = CardColor.W;
 					for (let i = 0; i < targetDeckSize - (this.deck.length + addedLands); ++i) {
 						for (let c in this.lands)
 							if (
 								this.colorsInDeck[min] == 0 ||
-								(this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min])
+								(this.colorsInDeck[c as CardColor] > 0 && this.lands[c as CardColor] < this.lands[min])
 							)
-								min = c;
+								min = c as CardColor;
 						this.lands[min] += 1;
 					}
 				}
@@ -2569,7 +2575,7 @@ export default defineComponent({
 			this.$refs.deckDisplay?.filterBasics();
 			this.$refs.sideboardDisplay?.filterBasics();
 		},
-		colorsInCardPool(pool) {
+		colorsInCardPool(pool: Card[]) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			for (let card of pool) {
 				for (let color of card.colors) {
@@ -2582,7 +2588,7 @@ export default defineComponent({
 		toggleNotifications() {
 			this.enableNotifications = !this.enableNotifications;
 			if (typeof Notification === "undefined") {
-				this.notificationPermission = "unavailable";
+				this.notificationPermission = "denied";
 				return;
 			}
 			if (this.enableNotifications && Notification.permission !== "granted") {
@@ -2592,10 +2598,8 @@ export default defineComponent({
 				});
 			}
 		},
-		pushNotification(title, data) {
-			if (this.enableNotifications && !document.hasFocus()) {
-				new Notification(title, data);
-			}
+		pushNotification(title: string, data?: NotificationOptions) {
+			if (this.enableNotifications && !document.hasFocus()) new Notification(title, data);
 		},
 		pushTitleNotification(msg: string) {
 			if (this.titleNotification) {
@@ -2622,13 +2626,13 @@ export default defineComponent({
 		disconnectedReminder() {
 			fireToast("error", "Disconnected from server!");
 		},
-		toClipboard(data, message = "Copied to clipboard!") {
+		toClipboard(data: string, message = "Copied to clipboard!") {
 			copyToClipboard(data);
 			fireToast("success", message);
 		},
-		updateStoredSessionSettings(data) {
-			let previous = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
-			previous = JSON.parse(previous);
+		updateStoredSessionSettings(data: { [key: string]: any }) {
+			const previousStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+			const previous = JSON.parse(previousStr);
 			for (let key in data) previous[key] = data[key];
 			localStorage.setItem(localStorageSessionSettingsKey, JSON.stringify(previous));
 		},
@@ -2664,31 +2668,31 @@ export default defineComponent({
 					mythic: 1,
 				};
 		},
-		countMissing(cards) {
+		countMissing(cards: Card[]) {
 			if (!this.hasCollection || !cards) return null;
 			const r = { common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			const counts = {};
+			const counts: { [aid: ArenaID]: { rarity: string; count: number } } = {};
 			for (let card of cards) {
 				if (!("arena_id" in card)) return null;
 				if (card.type.includes("Basic")) continue;
-				if (!(card.arena_id in counts)) counts[card.arena_id] = { rarity: card.rarity, count: 0 };
-				++counts[card.arena_id].count;
+				if (!(card.arena_id! in counts)) counts[card.arena_id!] = { rarity: card.rarity, count: 0 };
+				++counts[card.arena_id!].count;
 			}
 			for (let cid in counts)
-				r[counts[cid].rarity] += Math.max(
+				r[counts[cid]!.rarity as keyof typeof r] += Math.max(
 					0,
 					Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0)
 				);
 			return r;
 		},
-		wildcardCost(card) {
+		wildcardCost(card: Card) {
 			if (!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
 			if (!(card.arena_id in this.collection)) return true;
 			if (this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
 			return currentCount >= this.collection[card.arena_id];
 		},
-		hasEnoughWildcards(card) {
+		hasEnoughWildcards(card: Card) {
 			if (
 				!this.neededWildcards ||
 				!this.neededWildcards.main ||
@@ -2696,18 +2700,16 @@ export default defineComponent({
 				!this.collectionInfos.wildcards
 			)
 				return true;
-			const needed = this.neededWildcards.main[card.rarity] || 0;
-			return needed < this.collectionInfos.wildcards[card.rarity];
+			const needed = this.neededWildcards.main[card.rarity as keyof typeof this.neededWildcards.main] || 0;
+			return needed < this.collectionInfos.wildcards[card.rarity as keyof typeof this.collectionInfos.wildcards];
 		},
 		storeSettings() {
-			let settings = {};
-			for (let key in defaultSettings) {
-				settings[key] = this[key];
-			}
+			let settings: { [key: string]: any } = {};
+			for (let key in defaultSettings) settings[key] = this[key as keyof typeof defaultSettings];
 			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
 		},
 
-		beforeunload(event) {
+		beforeunload(event: BeforeUnloadEvent) {
 			// Force the call to doStoreDraftLogs and ask the user to wait a bit.
 			if (this.storeDraftLogsTimeout) {
 				clearTimeout(this.storeDraftLogsTimeout);
@@ -2720,16 +2722,15 @@ export default defineComponent({
 			return false;
 		},
 
-		fixedDeckMouseDown(evt) {
-			this.fixedDeckState.x = evt.screenX;
+		fixedDeckMouseDown(evt: MouseEvent) {
 			this.fixedDeckState.y = evt.screenY;
-			document.body.addEventListener("mousemove", this.resizeDeck);
+			document.body.addEventListener("mousemove", this.resizeFixedDeck);
 			document.body.addEventListener("mouseup", () => {
-				document.body.removeEventListener("mousemove", this.resizeDeck);
+				document.body.removeEventListener("mousemove", this.resizeFixedDeck);
 			});
 			evt.preventDefault();
 		},
-		resizeDeck(evt) {
+		resizeFixedDeck(evt: MouseEvent) {
 			if (!this.$refs.fixedDeckContainer) return;
 			this.fixedDeckState.dy = this.fixedDeckState.y - evt.screenY;
 			this.fixedDeckState.y = evt.screenY;
@@ -2743,10 +2744,10 @@ export default defineComponent({
 		applyFixedDeckSize() {
 			if (!this.$refs.fixedDeckContainer) return;
 			if (this.displayFixedDeck) {
-				this.$refs.fixedDeckContainer.style.height = this.fixedDeckState.ht + "px";
+				(this.$refs.fixedDeckContainer as HTMLElement).style.height = this.fixedDeckState.ht + "px";
 				this.fixedDeckState.mainHeight = `calc(100vh - ${this.fixedDeckState.ht}px)`;
 			} else {
-				this.$refs.fixedDeckContainer.style.height = "auto";
+				(this.$refs.fixedDeckContainer as HTMLElement).style.height = "auto";
 			}
 		},
 	},
@@ -2766,21 +2767,22 @@ export default defineComponent({
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
 		},
-		cardsToPick() {
+		cardsToPick(): number {
 			if (this.rochesterDraftState || !this.booster) return 1;
-			let picksThisRound = this.pickedCardsPerRound;
+			let picksThisRound: number = this.pickedCardsPerRound;
 			// Special case for doubleMastersMode. The number of picks could (should?) be send as part of the draftState rather
 			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
 			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
 				picksThisRound = 1;
 			return Math.min(picksThisRound, this.booster.length);
 		},
-		cardsToBurnThisRound() {
+		cardsToBurnThisRound(): number {
 			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		winstonCanSkipPile() {
-			const s = this.winstonDraftState;
+			if (!this.winstonDraftState) return false;
+			const s: WinstonDraftSyncData = this.winstonDraftState;
 			return !(
 				!s.remainingCards &&
 				((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
@@ -2788,12 +2790,12 @@ export default defineComponent({
 					s.currentPile === 2)
 			);
 		},
-		waitingForDisconnectedUsers() {
+		waitingForDisconnectedUsers(): boolean {
 			//                    Disconnected players do not matter for Team Sealed
 			if (!this.drafting || this.teamSealedState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
-		disconnectedUserNames() {
+		disconnectedUserNames(): string {
 			return Object.values(this.disconnectedUsers)
 				.map((u) => u.userName)
 				.join(", ");
@@ -2828,9 +2830,7 @@ export default defineComponent({
 			return this.colorsInCardPool(this.deck);
 		},
 		totalLands() {
-			let addedLands = 0;
-			for (let c in this.lands) addedLands += this.lands[c];
-			return addedLands;
+			return Object.values(this.lands).reduce((a, b) => a + b, 0);
 		},
 		basicsInDeck() {
 			return (
@@ -2851,7 +2851,7 @@ export default defineComponent({
 			return { main: main, side: side };
 		},
 		deckSummary() {
-			const r = {};
+			const r: { [id: CardID]: number } = {};
 			for (let c of this.deck) {
 				if (!(c.id in r)) r[c.id] = 0;
 				++r[c.id];
