@@ -1467,11 +1467,12 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Turn off usePredeterminedBoosters", function (done) {
 			expect(Sessions[sessionID].usePredeterminedBoosters);
-			clients[ownerIdx].emit("setUsePredeterminedBoosters", false, (r) => {
-				expect(r.code === 0);
-				expect(!Sessions[sessionID].usePredeterminedBoosters);
+			clients[nonOwnerIdx].once("sessionOptions", function (sessionOptions) {
+				expect(sessionOptions.usePredeterminedBoosters).to.be.false;
+				expect(Sessions[sessionID].usePredeterminedBoosters).to.be.false;
 				done();
 			});
+			clients[ownerIdx].emit("setUsePredeterminedBoosters", false);
 		});
 
 		startDraft();
