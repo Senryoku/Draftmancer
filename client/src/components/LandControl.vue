@@ -8,13 +8,7 @@
 	>
 		<template v-slot:handle>
 			<span v-if="Object.values(lands).every((n) => n === 0)"> No basic land added. </span>
-			<span
-				v-for="c in ['W', 'U', 'B', 'R', 'G'].filter((c) => lands[c] > 0)"
-				:key="c"
-				@click="add(c)"
-				@contextmenu.prevent="rem(c)"
-				class="clickable"
-			>
+			<span v-for="c in displayedColors" :key="c" @click="add(c)" @contextmenu.prevent="rem(c)" class="clickable">
 				<img :src="`img/mana/${c}.svg`" class="mana-icon" />
 				{{ lands[c] }}
 			</span>
@@ -23,7 +17,7 @@
 			<span class="header">
 				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Auto. Land" />
 			</span>
-			<div class="land-input" v-for="c in ['W', 'U', 'B', 'R', 'G']" :key="c">
+			<div class="land-input" v-for="c in CardColor" :key="c">
 				<i class="fas fa-minus fa-lg clickable" @click="rem(c)" :class="{ disabled: lands[c] <= 0 }"></i>
 				<img
 					:src="`img/mana/${c}.svg`"
@@ -97,9 +91,8 @@
 	</dropdown>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-
+<script setup lang="ts">
+import { computed, nextTick, onMounted, ref, toRefs, watch } from "vue";
 import Constants from "../../../src/Constants";
 
 import Dropdown from "./Dropdown.vue";
@@ -109,74 +102,78 @@ import { CardColor } from "../../../src/CardTypes";
 const DefaultpreferredBasicsMessage =
 	"Enter the set code of your preferred basic lands, or leave blank to get MTGA's default ones.";
 
-export default defineComponent({
-	components: { Dropdown, Checkbox },
-	props: {
-		autoland: { type: Boolean, required: true },
-		lands: { type: Object, required: true },
-		targetDeckSize: { type: Number, required: true },
-		sideboardBasics: { type: Number, required: true },
-		preferredBasics: { type: String, required: true },
-		otherbasics: { type: Boolean },
-	},
-	data() {
-		return { preferredBasicsError: null as string | null };
-	},
-	mounted() {
-		this.checkState();
-	},
-	methods: {
-		add(c: string) {
-			this.$emit("update:lands", c, Math.max(0, this.lands[c] + 1));
-		},
-		rem(c: string) {
-			this.$emit("update:lands", c, Math.max(0, this.lands[c] - 1));
-		},
-		onpreferredBasicsError(/*event*/) {
-			if (this.preferredBasics === "") {
-				this.preferredBasicsError = DefaultpreferredBasicsMessage;
-			} else {
-				this.preferredBasicsError = `Could not find basics for set '${this.preferredBasics}'. Importing in Arena may not work.`;
-			}
-		},
-		checkState() {
-			if (this.preferredBasics === "") this.preferredBasicsError = DefaultpreferredBasicsMessage;
-			else this.preferredBasicsError = null;
-			this.$nextTick(() => {
-				this.$refs.dropdown.updateHeight();
-			});
-		},
-		updateLands(event: Event, color: string) {
-			const target = event.target as HTMLInputElement;
-			this.$emit("update:lands", color, target.value === "" ? 0 : parseInt(target.value));
-		},
-		updateTargetDeckSize(event: Event) {
-			const target = event.target as HTMLInputElement;
-			this.$emit("update:targetDeckSize", target.value === "" ? 0 : parseInt(target.value));
-		},
-		updateSideboardBasics(event: Event) {
-			const target = event.target as HTMLInputElement;
-			this.$emit("update:sideboardBasics", target.value === "" ? 0 : parseInt(target.value));
-		},
-		updatePreferredBasics(event: Event) {
-			this.$emit("update:preferredBasics", (event.target as HTMLInputElement).value);
-		},
-	},
-	computed: {
-		basicsImages() {
-			let r = [];
-			for (let c in CardColor) {
-				const name = Constants.BasicLandNames["en"][c as CardColor];
-				r.push(`https://api.scryfall.com/cards/named?exact=${name}&set=${this.preferredBasics}&format=image`);
-			}
-			return r;
-		},
-	},
-	watch: {
-		preferredBasics() {
-			this.checkState();
-		},
-	},
+// Data
+const dropdown = ref(null as typeof Dropdown | null);
+const preferredBasicsError = ref(null as string | null);
+
+// Props
+const props = defineProps<{
+	autoland: boolean;
+	lands: { [c in CardColor]: number };
+	targetDeckSize: number;
+	sideboardBasics: number;
+	preferredBasics: string;
+	otherbasics: boolean;
+}>();
+const { autoland, lands, targetDeckSize, sideboardBasics, preferredBasics, otherbasics } = toRefs(props);
+
+const emit = defineEmits(["update:lands", "update:targetDeckSize", "update:sideboardBasics", "update:preferredBasics"]);
+
+// Methods;
+const add = (c: CardColor) => emit("update:lands", c, Math.max(0, lands.value[c] + 1));
+const rem = (c: CardColor) => emit("update:lands", c, Math.max(0, lands.value[c] - 1));
+
+const onpreferredBasicsError = () => {
+	preferredBasicsError.value =
+		preferredBasics.value === ""
+			? DefaultpreferredBasicsMessage
+			: `Could not find basics for set '${preferredBasics.value}'. Importing in Arena may not work.`;
+};
+
+const checkState = () => {
+	preferredBasicsError.value = preferredBasics.value === "" ? DefaultpreferredBasicsMessage : null;
+	nextTick(() => {
+		dropdown.value?.updateHeight();
+	});
+};
+
+const updateLands = (event: Event, color: string) => {
+	const target = event.target as HTMLInputElement;
+	emit("update:lands", color, target.value === "" ? 0 : parseInt(target.value));
+};
+const updateTargetDeckSize = (event: Event) => {
+	const target = event.target as HTMLInputElement;
+	emit("update:targetDeckSize", target.value === "" ? 0 : parseInt(target.value));
+};
+const updateSideboardBasics = (event: Event) => {
+	const target = event.target as HTMLInputElement;
+	emit("update:sideboardBasics", target.value === "" ? 0 : parseInt(target.value));
+};
+const updatePreferredBasics = (event: Event) => {
+	emit("update:preferredBasics", (event.target as HTMLInputElement).value);
+};
+
+onMounted(() => {
+	checkState();
+});
+
+// Computed
+const displayedColors = computed(() => {
+	return ["W", "U", "B", "R", "G"].filter((c) => lands.value[c as CardColor] > 0) as CardColor[];
+});
+
+const basicsImages = computed(() => {
+	let r = [];
+	for (let c in CardColor) {
+		const name = Constants.BasicLandNames["en"][c as CardColor];
+		r.push(`https://api.scryfall.com/cards/named?exact=${name}&set=${preferredBasics.value}&format=image`);
+	}
+	return r;
+});
+
+// Watch
+watch(preferredBasics, () => {
+	checkState();
 });
 </script>
 
