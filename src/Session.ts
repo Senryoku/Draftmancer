@@ -408,6 +408,7 @@ export class Session implements IIndexable {
 	// Options object properties:
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
+	//  - playerCount: For use with useCustomBoosters: override getVirtualPlayersCount() as the number of players in the session (allow ignoring bots).
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
@@ -551,6 +552,7 @@ export class Session implements IIndexable {
 				// Booster specific rules
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
 				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
+				const playerCount = options?.playerCount ?? this.getVirtualPlayersCount(); // Allow overriding via options
 				const boosterFactories = [];
 				const usedSets: { [set: string]: IBoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
@@ -573,7 +575,7 @@ export class Session implements IIndexable {
 
 				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
 
-				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
+				for (let i = 0; i < playerCount; ++i) {
 					const playerBoosterFactories = [];
 					for (let boosterSet of customBoosters) {
 						// No specific rules
@@ -624,7 +626,7 @@ export class Session implements IIndexable {
 									for (const slot of ["common", "uncommon", "rare"]) {
 										if (
 											countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
-											multiplier * this.getVirtualPlayersCount() * targets[slot]
+											multiplier * playerCount * targets[slot]
 										) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
 											console.warn(msg);
@@ -646,7 +648,7 @@ export class Session implements IIndexable {
 				// Generate Boosters
 				this.boosters = [];
 				for (let b = 0; b < boostersPerPlayer; ++b) {
-					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
+					for (let p = 0; p < playerCount; ++p) {
 						const rule = boosterFactories[p][b];
 						if (!rule) return new MessageError("Internal Error");
 						const booster = rule?.generateBooster(targets);
@@ -938,7 +940,11 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
-		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true });
+		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
+			useCustomBoosters: true,
+			boostersPerPlayer: this.boostersPerPlayer,
+			playerCount: this.users.size,
+		});
 		if (isMessageError(ret)) {
 			// FIXME: We should propagate to ack.
 			this.emitError(ret.title, ret.text);
@@ -1155,9 +1161,7 @@ export class Session implements IIndexable {
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		const ret = this.generateBoosters(boosterQuantity, {
-			useCustomBoosters: true,
-		});
+		const ret = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
 		if (isMessageError(ret)) {
 			// FIXME: We should propagate to ack.
 			this.emitError(ret.title, ret.text);
@@ -1787,8 +1791,9 @@ export class Session implements IIndexable {
 			return false;
 		}
 		const ret = this.generateBoosters(this.users.size * boostersPerPlayer, {
-			boostersPerPlayer: boostersPerPlayer,
 			useCustomBoosters: useCustomBoosters,
+			boostersPerPlayer: boostersPerPlayer,
+			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
 		if (isMessageError(ret)) {
@@ -1855,6 +1860,7 @@ export class Session implements IIndexable {
 		}
 		const ret = this.generateBoosters(teams.length * boostersPerTeam, {
 			boostersPerPlayer: boostersPerTeam,
+			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
