@@ -6,23 +6,23 @@ import { Sessions } from "../dist/Session.js";
 import { Connections } from "../dist/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
 
-describe("Grid Draft", function() {
+describe("Grid Draft", function () {
 	let clients = [];
 	let sessionID = "sessionID";
 	var ownerIdx;
 	var nonOwnerIdx;
 
-	beforeEach(function(done) {
+	beforeEach(function (done) {
 		disableLogs();
 		done();
 	});
 
-	afterEach(function(done) {
+	afterEach(function (done) {
 		enableLogs(this.currentTest.state == "failed");
 		done();
 	});
 
-	before(function(done) {
+	before(function (done) {
 		clients = makeClients(
 			[
 				{
@@ -40,7 +40,7 @@ describe("Grid Draft", function() {
 		);
 	});
 
-	after(function(done) {
+	after(function (done) {
 		disableLogs();
 		for (let c of clients) {
 			c.disconnect();
@@ -48,18 +48,18 @@ describe("Grid Draft", function() {
 		waitForClientDisconnects(done);
 	});
 
-	it("2 clients with different userID should be connected.", function(done) {
+	it("2 clients with different userID should be connected.", function (done) {
 		expect(Object.keys(Connections).length).to.equal(2);
 		done();
 	});
 
 	const startDraft = () => {
-		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function(done) {
-			ownerIdx = clients.findIndex(c => c.query.userID == Sessions[sessionID].owner);
+		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
+			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			let connectedClients = 0;
 			for (let c of clients) {
-				c.once("startGridDraft", function() {
+				c.once("startGridDraft", function () {
 					connectedClients += 1;
 					if (connectedClients == clients.length) done();
 				});
@@ -69,48 +69,44 @@ describe("Grid Draft", function() {
 	};
 
 	const endDraft = () => {
-		it("Every player randomly chooses a row or column and the draft should end.", function(done) {
+		it("Every player randomly chooses a row or column and the draft should end.", function (done) {
 			let draftEnded = 0;
 
 			for (let c = 0; c < clients.length; ++c) {
 				// Pick randomly and retry on error (empty col/row)
 				const pick = () => {
 					const cl = clients[c];
-					cl.emit("gridDraftPick", Math.floor(Math.random() * 6), response => {
+					cl.emit("gridDraftPick", Math.floor(Math.random() * 6), (response) => {
 						if (response.code !== 0) pick();
 					});
 				};
-				clients[c].on("gridDraftSync", function(state) {
-					if (state.booster) expect(state.booster.length).to.equal(9);
-				});
-				clients[c].on("gridDraftNextRound", function(state) {
+				clients[c].on("gridDraftNextRound", function (state) {
 					if (state.booster) expect(state.booster.length).to.equal(9);
 					if (state.currentPlayer === clients[c].query.userID) pick();
 				});
-				clients[c].once("gridDraftEnd", function() {
+				clients[c].once("gridDraftEnd", function () {
 					draftEnded += 1;
-					this.removeListener("gridDraftSync");
 					this.removeListener("gridDraftNextRound");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			let currentPlayerID = Sessions[sessionID].draftState.currentPlayer();
-			let currentPlayerIdx = clients.findIndex(c => c.query.userID == currentPlayerID);
+			let currentPlayerIdx = clients.findIndex((c) => c.query.userID == currentPlayerID);
 			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
 		});
 	};
 
 	startDraft();
 
-	it("Non-owner disconnects, owner receives updated user infos.", function(done) {
-		clients[ownerIdx].once("userDisconnected", function() {
+	it("Non-owner disconnects, owner receives updated user infos.", function (done) {
+		clients[ownerIdx].once("userDisconnected", function () {
 			waitForSocket(clients[nonOwnerIdx], done);
 		});
 		clients[nonOwnerIdx].disconnect();
 	});
 
-	it("Non-owner reconnects, draft restarts.", function(done) {
-		clients[nonOwnerIdx].once("rejoinGridDraft", function(state) {
+	it("Non-owner reconnects, draft restarts.", function (done) {
+		clients[nonOwnerIdx].once("rejoinGridDraft", function (state) {
 			done();
 		});
 		clients[nonOwnerIdx].connect();
@@ -118,9 +114,9 @@ describe("Grid Draft", function() {
 
 	endDraft();
 
-	describe("Using a Cube", function() {
-		it("Emit Settings.", function(done) {
-			clients[nonOwnerIdx].once("sessionOptions", function(options) {
+	describe("Using a Cube", function () {
+		it("Emit Settings.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (options) {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);

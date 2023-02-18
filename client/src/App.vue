@@ -5,7 +5,7 @@
 	</div>
 	<div
 		id="main-container"
-		:style="`height: ${displayFixedDeck ? this.fixedDeckState.mainHeight : '100vh'}`"
+		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 		v-else
 	>
@@ -2718,7 +2718,7 @@
 	</div>
 </template>
 
-<script src="./App.ts"></script>
+<script src="./App.ts" lang="ts"></script>
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>

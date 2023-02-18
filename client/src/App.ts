@@ -149,14 +149,14 @@ export default defineComponent({
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
 		// Socket Setup
-		const socket = io({
+		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
 			query: {
 				userID: userID,
 				sessionID: sessionID,
 				userName: userName,
 				sessionSettings: storedSessionSettings,
 			},
-		}) as Socket<ServerToClientEvents, ClientToServerEvents>;
+		});
 
 		return {
 			ready: false, // Wait for initial loading
@@ -170,7 +170,7 @@ export default defineComponent({
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
 				vaultProgress: 0,
 			},
-			socket: socket as Socket<ServerToClientEvents, ClientToServerEvents>,
+			socket: socket,
 
 			// Session status
 			sessionID: sessionID,
@@ -432,9 +432,6 @@ export default defineComponent({
 			this.socket.on("ignoreCollections", (ignoreCollections) => {
 				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("setBots", (data) => {
-				this.bots = data;
-			});
 			this.socket.on("setMaxPlayers", (maxPlayers) => {
 				this.maxPlayers = maxPlayers;
 			});
@@ -589,9 +586,6 @@ export default defineComponent({
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 			});
-			this.socket.on("gridDraftSync", (gridDraftState) => {
-				this.setGridDraftState(gridDraftState);
-			});
 			this.socket.on("gridDraftNextRound", (state) => {
 				const doNextRound = () => {
 					this.setGridDraftState(state);
@@ -654,9 +648,6 @@ export default defineComponent({
 				startDraftSetup("Rochester draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
-				this.setRochesterDraftState(state);
-			});
-			this.socket.on("rochesterDraftSync", (state) => {
 				this.setRochesterDraftState(state);
 			});
 			this.socket.on("rochesterDraftNextRound", (state) => {
