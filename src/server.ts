@@ -1307,6 +1307,7 @@ io.on("connection", async function (socket) {
 	socket.on("loadLocalCustomCardList", prepareSocketCallback(loadLocalCustomCardList, true));
 	socket.on("ignoreCollections", prepareSocketCallback(ignoreCollections, true));
 	socket.on("setPickTimer", prepareSocketCallback(setPickTimer, true));
+	socket.on("setMaxPlayers", prepareSocketCallback(setMaxPlayers, true));
 	socket.on("setMythicPromotion", prepareSocketCallback(setMythicPromotion, true));
 	socket.on("setUseBoosterContent", prepareSocketCallback(setUseBoosterContent, true));
 	socket.on("setBoosterContent", prepareSocketCallback(setBoosterContent, true));

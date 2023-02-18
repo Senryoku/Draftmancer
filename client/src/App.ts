@@ -445,7 +445,7 @@ export default defineComponent({
 				this.bots = parseInt(data);
 			});
 			this.socket.on("setMaxPlayers", (maxPlayers) => {
-				this.maxPlayers = parseInt(maxPlayers);
+				this.maxPlayers = maxPlayers;
 			});
 			this.socket.on("setRestriction", (setRestriction) => {
 				this.setRestriction = setRestriction;
