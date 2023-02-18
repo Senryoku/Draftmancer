@@ -2061,7 +2061,7 @@ export class Session implements IIndexable {
 					msgData.name = "rejoinMinesweeperDraft";
 					break;
 				case "teamSealed": {
-					msgData.name = "startTeamSealed";
+					msgData.name = "rejoinTeamSealed";
 					break;
 				}
 			}

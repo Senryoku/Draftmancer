@@ -756,16 +756,21 @@ export default defineComponent({
 				startDraftSetup("team sealed", "Team Sealed started!");
 				this.teamSealedState = data.state;
 				this.draftingState = DraftState.TeamSealed;
+			});
 
-				// We'll use the same call in case of reconnection
-				if (data.pickedCards) {
-					this.$refs.deckDisplay?.sync();
-					this.$refs.sideboardDisplay?.sync();
-					this.$nextTick(() => {
-						for (let c of data.pickedCards.main) this.addToDeck(c);
-						for (let c of data.pickedCards.side) this.addToSideboard(c);
-					});
-				}
+			this.socket.on("rejoinTeamSealed", (data) => {
+				this.drafting = true;
+
+				startDraftSetup("team sealed", "Rejoined Team Sealed!");
+				this.teamSealedState = data.state;
+				this.draftingState = DraftState.TeamSealed;
+
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+				});
 			});
 
 			this.socket.on("startTeamSealedSpectator", () => {
@@ -883,22 +888,28 @@ export default defineComponent({
 					return;
 				}
 
-				if (data.boosterCount > 0) {
+				const fullState = data as {
+					booster: UniqueCard[];
+					boosterCount: number;
+					boosterNumber: number;
+					pickNumber: 0;
+				};
+				if (fullState.boosterCount > 0) {
 					if (
 						!this.booster ||
 						this.booster.length === 0 ||
-						this.pickNumber !== data.pickNumber ||
+						this.pickNumber !== fullState.pickNumber! ||
 						this.boosterNumber !== data.boosterNumber
 					) {
 						this.botScores = null; // Clear bot scores
 						this.selectedCards = [];
 						this.burningCards = [];
 						this.booster = [];
-						for (let c of data.booster) this.booster.push(c);
+						for (let c of fullState.booster!) this.booster.push(c);
 						this.playSound("next");
 					}
-					this.boosterNumber = data.boosterNumber;
-					this.pickNumber = data.pickNumber;
+					this.boosterNumber = fullState.boosterNumber;
+					this.pickNumber = fullState.pickNumber!;
 					this.draftingState = DraftState.Picking;
 				} else {
 					// No new booster, don't update the state yet.
@@ -1213,7 +1224,8 @@ export default defineComponent({
 			}
 			if (!this.selectedCards.some((c) => cardid === c.id)) {
 				console.error(
-					`dropBoosterCard error: cardid (${cardid}) != this.selectedCards.id (${this.selectedCards.id})`
+					`dropBoosterCard error: cardid (${cardid}) could not be found in this.selectedCards:`,
+					this.selectedCards
 				);
 				return;
 			} else {

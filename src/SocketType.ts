@@ -46,7 +46,18 @@ export interface ServerToClientEvents {
 	description: (description: string) => void;
 
 	draftLog: (draftLog: DraftLog) => void;
-	draftLogLive: (data: { log?: DraftLog; userID?: UserID; pick?: DraftPick }) => void;
+	draftLogLive: (data: {
+		log?: DraftLog;
+		userID?: UserID;
+		pick?: DraftPick;
+		decklist?:
+			| DeckList
+			| {
+					hashes: {
+						[key: string]: string;
+					};
+			  };
+	}) => void;
 	pickAlert: (data: { userID: UserID; userName: string; cards: UniqueCard[] }) => void;
 
 	botRecommandations: (data: { pickNumber: number; scores: BotScores }) => void;
@@ -112,6 +123,15 @@ export interface ServerToClientEvents {
 			})[];
 			team: string[];
 		};
+	}) => void;
+	rejoinTeamSealed: (data: {
+		state: {
+			cards: (UniqueCard & {
+				owner: null;
+			})[];
+			team: string[];
+		};
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 	startTeamSealedSpectator: () => void;
 	endTeamSealed: () => void;
