@@ -1,10 +1,12 @@
 import { UserID } from "./IDTypes.js";
 
-export class IDraftState {
+export abstract class IDraftState {
 	type: string;
 	constructor(type: string) {
 		this.type = type;
 	}
+
+	abstract syncData(userID: UserID): unknown;
 }
 
 export interface TurnBased extends IDraftState {

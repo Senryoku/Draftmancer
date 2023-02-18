@@ -1,6 +1,7 @@
 import { Card, CardID, DeckList, UniqueCard } from "./CardTypes.js";
 import { SessionID, UserID } from "./IDTypes.js";
-import { Session, UsersData } from "./Session.js";
+import { Session } from "./Session.js";
+import { UsersData } from "./Session/SessionTypes.js";
 
 export type DraftPick = { pick: number[]; burn?: number[]; booster: CardID[] };
 export type GridDraftPick = { pick: number[]; burn?: number[]; booster: (CardID | null)[] };

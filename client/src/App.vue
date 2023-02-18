@@ -5,7 +5,7 @@
 	</div>
 	<div
 		id="main-container"
-		:style="`height: ${displayFixedDeck ? this.fixedDeckState.mainHeight : '100vh'}`"
+		:style="`height: ${displayFixedDeck ? fixedDeckState.mainHeight : '100vh'}`"
 		:class="{ 'using-fixed-deck': displayFixedDeck }"
 		v-else
 	>
@@ -814,7 +814,7 @@
 						<ol>
 							<li
 								v-for="msg in messagesHistory.slice().reverse()"
-								:title="new Date(msg.timestamp)"
+								:title="new Date(msg.timestamp).toLocaleTimeString()"
 								:key="msg.timestamp"
 							>
 								<span class="chat-author">
@@ -1205,10 +1205,7 @@
 
 							<div
 								v-if="
-									this.winstonDraftState ||
-									this.gridDraftState ||
-									this.rochesterDraftState ||
-									this.minesweeperDraftState
+									winstonDraftState || gridDraftState || rochesterDraftState || minesweeperDraftState
 								"
 							>
 								{{ `Wait for ${disconnectedUserNames} to come back...` }}
@@ -1439,7 +1436,7 @@
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
 								<draggable
-									:key="`${_uid}_col`"
+									key="collapsed-sideboard-col"
 									class="card-column drag-column"
 									:list="sideboard"
 									group="deck"
@@ -1448,7 +1445,7 @@
 								>
 									<card
 										v-for="card in sideboard"
-										:key="`${_uid}_card_${card.uniqueID}`"
+										:key="`collapsed-sideboard-card-${card.uniqueID}`"
 										:card="card"
 										:language="language"
 										@click="sideboardToDeck($event, card)"
@@ -2350,9 +2347,9 @@
 								min="0"
 								:max="
 									Math.max(
-										Object.values(this.boosterContent).reduce((v, a) => (a += v)),
-										this.cardsPerBooster
-									) - this.pickedCardsPerRound
+										Object.values(boosterContent).reduce((v, a) => (a += v)),
+										cardsPerBooster
+									) - pickedCardsPerRound
 								"
 								step="1"
 								v-model.number="discardRemainingCardsAt"
@@ -2718,7 +2715,7 @@
 	</div>
 </template>
 
-<script src="./App.js"></script>
+<script src="./App.ts" lang="ts"></script>
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>

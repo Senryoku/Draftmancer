@@ -13,6 +13,6 @@ export type SetInfo = {
 	uncommonCount?: number;
 };
 
-export const SetsInfos = _setsInfos as { [code: string]: SetInfo };
+export const SetsInfos = Object.freeze(_setsInfos) as { [code: string]: SetInfo };
 
 export default SetsInfos;

@@ -77,51 +77,42 @@
 	</div>
 </template>
 
-<script>
-import Vue from "vue";
+<script lang="ts">
+import Vue, { defineComponent, PropType } from "vue";
 import { ButtonColor, Alert } from "../alerts";
-import * as helper from "../helper.ts";
-import { exportToMTGA } from "../exportToMTGA";
-import DraftLog from "./DraftLog.vue";
+import * as helper from "../helper";
+import DraftLogComponent from "./DraftLog.vue";
+import { DraftLog } from "../../../src/DraftLog";
+import { Language } from "../../../src/Types";
+import { UserID } from "../../../src/IDTypes";
 
-export default {
-	components: {
-		DraftLog,
-	},
+export default defineComponent({
+	components: { DraftLog: DraftLogComponent },
 	props: {
-		draftLogs: { type: Array, required: true },
-		language: { type: String, required: true },
-		userID: { type: String },
+		draftLogs: { type: Array as PropType<DraftLog[]>, required: true },
+		language: { type: String as PropType<Language>, required: true },
+		userID: { type: String as PropType<UserID>, required: true },
 		userName: { type: String },
 	},
 	data: () => {
 		return {
-			expandedLogs: {},
+			expandedLogs: {} as { [idx: number]: boolean },
 		};
 	},
 	computed: {
 		orderedLogs: function () {
-			return [...this.draftLogs].sort((lhs, rhs) => rhs.time - lhs.time);
+			return [...this.draftLogs].sort((lhs: DraftLog, rhs: DraftLog) => rhs.time - lhs.time);
 		},
 	},
 	methods: {
-		shareable(draftlog) {
+		shareable(draftlog: DraftLog) {
 			// Returns true if the draftlog is shareable, i.e. the full log is locally available and is marked as delayed (other players in the session should only have a partial log)
 			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
 		},
-		downloadLog: function (draftLog) {
-			let draftLogFull = JSON.parse(JSON.stringify(draftLog));
-			for (let uid in draftLog.users) {
-				if (draftLogFull.users[uid].cards)
-					draftLogFull.users[uid].exportString = exportToMTGA(
-						draftLogFull.users[uid].cards.map((cid) => draftLogFull.carddata[cid]),
-						null,
-						this.language
-					);
-			}
-			helper.download(`DraftLog_${draftLogFull.sessionID}.txt`, JSON.stringify(draftLogFull, null, "\t"));
+		downloadLog(draftLog: DraftLog) {
+			helper.download(`DraftLog_${draftLog.sessionID}.txt`, JSON.stringify(draftLog, null, "\t"));
 		},
-		deleteLog: function (draftLog) {
+		deleteLog(draftLog: DraftLog) {
 			Alert.fire({
 				position: "center",
 				icon: "question",
@@ -144,7 +135,7 @@ export default {
 				}
 			});
 		},
-		importLog: function (e) {
+		importLog: function (e: Event) {
 			if (this.draftLogs.length >= 25) {
 				Alert.fire({
 					icon: "error",
@@ -153,10 +144,10 @@ export default {
 				});
 				return;
 			}
-			let file = e.target.files[0];
+			let file = (e.target as HTMLInputElement)?.files?.[0];
 			if (!file) return;
 			const reader = new FileReader();
-			const displayError = (e) => {
+			const displayError = (e: string) => {
 				Alert.fire({
 					icon: "error",
 					title: "Parsing Error",
@@ -166,7 +157,7 @@ export default {
 			};
 			reader.onload = (e) => {
 				try {
-					let contents = e.target.result;
+					let contents = e.target?.result as string;
 					let json = JSON.parse(contents);
 					if (json.users) {
 						this.draftLogs.push(json);
@@ -179,21 +170,21 @@ export default {
 						this.$emit("storelogs");
 					} else displayError("Missing required data.");
 				} catch (e) {
-					displayError(e);
+					displayError(e as string);
 				}
 			};
 			reader.readAsText(file);
 		},
-		toggle: function (idx) {
+		toggle(idx: number) {
 			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
 		},
-		printableType: function (draftLog) {
+		printableType(draftLog: DraftLog) {
 			let r = draftLog.type ? draftLog.type : "Draft";
 			if (r === "Draft" && draftLog.teamDraft) return "Team Draft";
 			return r;
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

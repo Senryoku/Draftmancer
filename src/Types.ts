@@ -13,3 +13,7 @@ export enum Language {
 }
 
 export type SetCode = string;
+
+export interface IIndexable {
+	[key: string]: any;
+}

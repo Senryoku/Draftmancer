@@ -641,11 +641,11 @@ describe("Single Draft (Two Players)", function () {
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 		startDraft();
 		endDraft();
@@ -656,11 +656,11 @@ describe("Single Draft (Two Players)", function () {
 	describe("With Bots and foils", function () {
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 		it("Clients should receive the updated session option (foil).", function (done) {
 			clients[nonOwnerIdx].once("sessionOptions", function (val) {
@@ -678,11 +678,11 @@ describe("Single Draft (Two Players)", function () {
 	describe("With Bots and Disconnect", function () {
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		startDraft();
@@ -736,11 +736,11 @@ describe("Single Draft (Two Players)", function () {
 		});
 
 		it("Clients should receive the updated bot count.", function (done) {
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(3);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(3);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 3);
+			clients[ownerIdx].emit("setBots", 3);
 		});
 
 		it("When session owner launches draft, everyone should receive a startDraft event", function (done) {
@@ -865,11 +865,11 @@ describe("Single Draft (Two Players)", function () {
 	describe("With Bots and all players disconnecting", function () {
 		connect();
 		it("Clients should receive the updated bot count.", function (done) {
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		startDraft();
@@ -909,11 +909,11 @@ describe("Single Draft (Two Players)", function () {
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		it("Clients should receive the updated booster spec.", function (done) {
@@ -1157,11 +1157,11 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].emit("setOwnerIsPlayer", false);
 		});
 		it("Clients should receive the updated bot count.", function (done) {
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		it("When session owner launches draft, players should receive a startDraft event", function (done) {
@@ -1232,11 +1232,11 @@ describe("Single Draft (Two Players)", function () {
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		it("Clients should receive the updated burn count.", function (done) {
@@ -1310,11 +1310,11 @@ describe("Single Draft (Two Players)", function () {
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(6);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(6);
 				done();
 			});
-			clients[ownerIdx].emit("bots", 6);
+			clients[ownerIdx].emit("setBots", 6);
 		});
 
 		// Settings are not propagated to other clients when the values do not change
@@ -1467,11 +1467,12 @@ describe("Single Draft (Two Players)", function () {
 
 		it("Turn off usePredeterminedBoosters", function (done) {
 			expect(Sessions[sessionID].usePredeterminedBoosters);
-			clients[ownerIdx].emit("setUsePredeterminedBoosters", false, (r) => {
-				expect(r.code === 0);
-				expect(!Sessions[sessionID].usePredeterminedBoosters);
+			clients[nonOwnerIdx].once("sessionOptions", function (sessionOptions) {
+				expect(sessionOptions.usePredeterminedBoosters).to.be.false;
+				expect(Sessions[sessionID].usePredeterminedBoosters).to.be.false;
 				done();
 			});
+			clients[ownerIdx].emit("setUsePredeterminedBoosters", false);
 		});
 
 		startDraft();
@@ -1487,12 +1488,12 @@ describe("Single Draft (Two Players)", function () {
 		it("Clients should receive the updated bot count.", function (done) {
 			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
-			clients[nonOwnerIdx].once("bots", function (bots) {
-				expect(bots).to.equal(2);
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(2);
 				global.FORCE_MTGDRAFTBOTS = true;
 				done();
 			});
-			clients[ownerIdx].emit("bots", 2);
+			clients[ownerIdx].emit("setBots", 2);
 		});
 		startDraft();
 		endDraft();

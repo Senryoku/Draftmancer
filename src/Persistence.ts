@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 import { Connections } from "./Connection.js";
-import { Session, Sessions, DraftState, WinstonDraftState, RochesterDraftState, IIndexable } from "./Session.js";
+import { Session, Sessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { Bot, IBot, SimpleBot } from "./Bot.js";
@@ -28,6 +28,11 @@ import axios from "axios";
 import { UserID } from "./IDTypes.js";
 import { getCard } from "./Cards.js";
 import { GridDraftState } from "./GridDraft.js";
+import { DraftState } from "./DraftState.js";
+import { RochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState } from "./WinstonDraft.js";
+import { Message } from "./Message.js";
+import { IIndexable } from "./Types.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -211,13 +216,11 @@ async function tempDump(exitOnCompletion = false) {
 	// disconnecting socket prevents their automatic reconnection)
 	if (exitOnCompletion) {
 		for (const userID in Connections) {
-			Connections[userID].socket.emit("message", {
-				title: "Server Restarting",
-				text: "Please wait...",
-				showConfirmButton: false,
-				timer: 0,
-				allowOutsideClick: false,
-			});
+			const msg = new Message("Server Restarting", "Please wait...");
+			msg.showConfirmButton = false;
+			msg.allowOutsideClick = false;
+			msg.timer = 0;
+			Connections[userID].socket.emit("message", msg);
 		}
 	}
 

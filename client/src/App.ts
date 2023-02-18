@@ -1,21 +1,44 @@
 "use strict";
+import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
+import { SessionID, UserID } from "../../src/IDTypes";
+import { SetCode, IIndexable } from "../../src/Types";
+import {
+	DisconnectedUser,
+	DistributionMode,
+	DraftLogRecipients,
+	ReadyState,
+	UserData,
+	UsersData,
+} from "../../src/Session/SessionTypes";
+import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
+import { DraftLog } from "../../src/DraftLog";
+import { BotScores } from "../../src/Bot";
+import { WinstonDraftState, WinstonDraftSyncData } from "../../src/WinstonDraft";
+import { GridDraftSyncData } from "../../src/GridDraft";
+import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
+import { RochesterDraftSyncData } from "../../src/RochesterDraft";
+import { TeamSealedSyncData } from "../../src/TeamSealed";
+import { Bracket } from "../../src/Brackets";
+import { SocketAck } from "../../src/Message";
+import Constants, { CubeDescription } from "../../src/Constants";
+import { Options } from "../../src/utils";
+import { JHHBooster } from "../../src/JumpstartHistoricHorizons";
+import SessionsSettingsProps from "../../src/Session/SessionProps";
 
-import io from "socket.io-client";
-import Vue from "vue";
+import io, { Socket } from "socket.io-client";
+import Vue, { defineComponent } from "vue";
 import draggable from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
-import Swal from "sweetalert2";
-import LogStoreWorker from "./logstore.worker.js";
+import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
-import Constant from "../../src/data/constants.json";
-import SetsInfos from "./data/SetsInfos.json";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper.ts";
-import { getCookie, setCookie } from "./cookies.ts";
-import { ButtonColor, Alert, fireToast } from "./alerts.ts";
-import parseCSV from "./parseCSV.js";
+import SetsInfos, { SetInfo } from "./SetInfos";
+import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
+import { getCookie, setCookie } from "./cookies";
+import { ButtonColor, Alert, fireToast } from "./alerts";
+import parseCSV from "./parseCSV";
 
 import BoosterCard from "./components/BoosterCard.vue";
-import Card from "./components/Card.vue";
+import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import CardPool from "./components/CardPool.vue";
 import CardPopup from "./components/CardPopup.vue";
@@ -28,6 +51,7 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { CustomCardList } from "../../src/CustomCardList";
 const img = new Image();
 img.src = CardBack;
 
@@ -48,14 +72,7 @@ const DraftState = {
 	TeamSealed: "TeamSealed",
 };
 
-const ReadyState = {
-	Unknown: "Unknown",
-	Ready: "Ready",
-	NotReady: "NotReady",
-	DontCare: "DontCare",
-};
-
-const Sounds = {
+const Sounds: { [name: string]: HTMLAudioElement } = {
 	start: new Audio("sound/drop_003.ogg"),
 	next: new Audio("sound/next.mp3"),
 	countdown: new Audio("sound/click_001.ogg"),
@@ -83,11 +100,11 @@ const defaultSettings = {
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
-export default {
+export default defineComponent({
 	components: {
 		BoosterCard,
 		Bracket: () => import("./components/Bracket.vue"),
-		Card,
+		Card: CardComponent,
 		CardList: () => import("./components/CardList.vue"),
 		CardPlaceholder,
 		CardPool,
@@ -115,26 +132,59 @@ export default {
 		draggable,
 	},
 	data: () => {
+		let userID: UserID = guid();
+		let storedUserID = getCookie("userID");
+		if (storedUserID !== "") {
+			userID = storedUserID;
+			// Server will handle the reconnect attempt if draft is still ongoing
+			console.log("storedUserID: " + storedUserID);
+		}
+
+		let urlParamSession = getUrlVars()["session"];
+		const sessionID: SessionID = urlParamSession
+			? decodeURIComponent(urlParamSession)
+			: getCookie("sessionID", shortguid());
+
+		const userName = getCookie("userName", `Player_${randomStr4()}`);
+
+		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+
+		// Socket Setup
+		const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io({
+			query: {
+				userID: userID,
+				sessionID: sessionID,
+				userName: userName,
+				sessionSettings: storedSessionSettings,
+			},
+		});
+
 		return {
 			ready: false, // Wait for initial loading
 
 			// User Data
-			userID: guid(),
-			userName: getCookie("userName", `Player_${randomStr4()}`),
+			userID: userID,
+			userName: userName,
 			useCollection: true,
-			collection: {},
+			collection: {} as PlainCollection,
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
 				vaultProgress: 0,
 			},
-			socket: undefined,
+			socket: socket,
 
 			// Session status
-			sessionID: null,
-			sessionOwner: null,
-			sessionOwnerUsername: null,
-			sessionUsers: [],
-			disconnectedUsers: {},
+			sessionID: sessionID,
+			sessionOwner: userID as UserID,
+			sessionOwnerUsername: userName as string,
+			sessionUsers: [] as {
+				userID: string;
+				userName: string;
+				collection: boolean;
+				useCollection: boolean;
+				readyState: ReadyState;
+			}[],
+			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
 			// Session settings
 			ownerIsPlayer: true,
 			isPublic: false,
@@ -145,7 +195,7 @@ export default {
 			teamDraft: false,
 			randomizeSeatingOrder: false,
 			disableBotSuggestions: false,
-			distributionMode: "regular",
+			distributionMode: "regular" as DistributionMode,
 			customBoosters: ["", "", ""],
 			maxPlayers: 8,
 			mythicPromotion: true,
@@ -157,14 +207,14 @@ export default {
 			},
 			usePredeterminedBoosters: false,
 			colorBalance: true,
-			maxDuplicates: null,
+			maxDuplicates: null as { common: number; uncommon: number; rare: number; mythic: number } | null,
 			foil: false,
 			bots: 0,
-			setRestriction: [],
+			setRestriction: [] as SetCode[],
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
-			customCardList: {},
+			customCardList: {} as CustomCardList,
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
@@ -172,39 +222,46 @@ export default {
 			maxTimer: 75,
 			pickTimer: 75,
 			personalLogs: true,
-			draftLogRecipients: "everyone",
+			draftLogRecipients: "everyone" as DraftLogRecipients,
 			bracketLocked: false,
 			//
-			draftLogs: [],
-			currentDraftLog: null,
-			draftLogLive: null,
-			bracket: null,
-			virtualPlayersData: undefined,
-			booster: [],
+			draftLogs: [] as DraftLog[],
+			currentDraftLog: null as DraftLog | null,
+			draftLogLive: null as DraftLog | null,
+			bracket: null as Bracket | null,
+			virtualPlayersData: null as UsersData | null,
+			booster: [] as UniqueCard[],
 			boosterNumber: 0,
 			pickNumber: 0,
-			botScores: null,
-			winstonDraftState: null,
-			gridDraftState: null,
-			rochesterDraftState: null,
-			minesweeperDraftState: null,
-			teamSealedState: null,
+			botScores: null as BotScores | null,
+			winstonDraftState: null as WinstonDraftSyncData | null,
+			gridDraftState: null as GridDraftSyncData | null,
+			rochesterDraftState: null as RochesterDraftSyncData | null,
+			minesweeperDraftState: null as MinesweeperSyncData | null,
+			teamSealedState: null as TeamSealedSyncData | null,
 			draftPaused: false,
 
-			publicSessions: [],
+			publicSessions: [] as {
+				id: string;
+				description: string;
+				players: number;
+				maxPlayers: number;
+				cube: boolean;
+				sets: string[];
+			}[],
 
 			// Front-end options & data
-			displayedModal: "",
-			userOrder: [],
+			displayedModal: null as string | null,
+			userOrder: [] as UserID[],
 			hideSessionID: initialSettings.hideSessionID,
-			languages: Constant.Languages,
+			languages: Constants.Languages,
 			language: getCookie("language", "en"),
 			displayCollectionStatus: defaultSettings.displayCollectionStatus,
-			sets: Constant.MTGASets,
-			primarySets: Constant.PrimarySets,
-			cubeLists: Constant.CubeLists,
+			sets: Constants.MTGASets,
+			primarySets: Constants.PrimarySets,
+			cubeLists: Constants.CubeLists,
 			pendingReadyCheck: false,
-			setsInfos: undefined,
+			setsInfos: SetsInfos,
 			draftingState: DraftState.None,
 			displayBotScores: defaultSettings.displayBotScores,
 			fixedDeck: defaultSettings.fixedDeck,
@@ -224,59 +281,40 @@ export default {
 				Notification.permission == "granted" &&
 				defaultSettings.enableNotifications,
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
-			titleNotification: null,
+			titleNotification: null as { timeout: ReturnType<typeof setTimeout>; message: string } | null,
 			// Draft Booster
 			pickInFlight: false,
-			selectedCards: [],
-			burningCards: [],
+			selectedCards: [] as UniqueCard[],
+			burningCards: [] as UniqueCard[],
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
-			deck: [],
-			sideboard: [],
+			deck: [] as UniqueCard[],
+			sideboard: [] as UniqueCard[],
 			deckFilter: "",
 			collapseSideboard: defaultSettings.collapseSideboard,
 			autoLand: true,
-			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 },
+			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 } as { [c in CardColor]: number },
 			targetDeckSize: initialSettings.targetDeckSize,
 			sideboardBasics: initialSettings.sideboardBasics,
 			preferredBasics: initialSettings.preferredBasics,
 			//
-			selectedCube: Constant.CubeLists.length > 0 ? Constant.CubeLists[0] : null,
+			selectedCube: Constants.CubeLists[0],
 
 			// Used to debounce calls to doStoreDraftLogs
-			storeDraftLogsTimeout: null,
+			storeDraftLogsTimeout: null as ReturnType<typeof setTimeout> | null,
 
 			// Chat
 			currentChatMessage: "",
 			displayChatHistory: false,
-			messagesHistory: [],
+			messagesHistory: [] as {
+				author: string;
+				text: string;
+				timestamp: number;
+			}[],
 		};
 	},
 	methods: {
 		initializeSocket() {
-			let storedUserID = getCookie("userID", null);
-			if (storedUserID != null) {
-				this.userID = storedUserID;
-				// Server will handle the reconnect attempt if draft is still ongoing
-				console.log("storedUserID: " + storedUserID);
-			}
-
-			let urlParamSession = getUrlVars()["session"];
-			if (urlParamSession) this.sessionID = decodeURIComponent(urlParamSession);
-			else this.sessionID = getCookie("sessionID", shortguid());
-
-			const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
-
-			// Socket Setup
-			this.socket = io({
-				query: {
-					userID: this.userID,
-					sessionID: this.sessionID,
-					userName: this.userName,
-					sessionSettings: storedSessionSettings,
-				},
-			});
-
 			this.socket.on("disconnect", () => {
 				console.log("Disconnected from server.");
 				// Avoid closing an already opened modal
@@ -303,7 +341,7 @@ export default {
 
 			this.socket.on("alreadyConnected", (newID) => {
 				this.userID = newID;
-				this.socket.io.opts.query.userID = newID;
+				this.socket.io.opts.query!.userID = newID;
 				fireToast("warning", "Duplicate UserID: A new UserID as been affected to this instance.");
 			});
 
@@ -314,11 +352,14 @@ export default {
 			this.socket.on("chatMessage", (message) => {
 				this.messagesHistory.push(message);
 				// TODO: Cleanup this?
-				let bubble = document.querySelector("#chat-bubble-" + message.author);
-				bubble.innerText = message.text;
-				bubble.style.opacity = 1;
-				if (bubble.timeoutHandler) clearTimeout(bubble.timeoutHandler);
-				bubble.timeoutHandler = window.setTimeout(() => (bubble.style.opacity = 0), 5000);
+				const bubbleEl = document.querySelector("#chat-bubble-" + message.author);
+				if (bubbleEl) {
+					const bubble = bubbleEl as HTMLElement;
+					bubble.innerText = message.text;
+					bubble.style.opacity = "1";
+					if ((bubble as any).timeoutHandler) clearTimeout((bubble as any).timeoutHandler);
+					(bubble as any).timeoutHandler = window.setTimeout(() => (bubble.style.opacity = "0"), 5000);
+				}
 			});
 
 			this.socket.on("publicSessions", (sessions) => {
@@ -337,7 +378,7 @@ export default {
 
 			this.socket.on("setSession", (sessionID) => {
 				this.sessionID = sessionID;
-				this.socket.io.opts.query.sessionID = sessionID;
+				this.socket.io.opts.query!.sessionID = sessionID;
 				if (this.drafting) {
 					// Expelled during drafting
 					this.drafting = false;
@@ -346,11 +387,9 @@ export default {
 			});
 
 			this.socket.on("sessionUsers", (users) => {
-				for (let u of users) {
-					u.readyState = ReadyState.DontCare;
-				}
-
-				this.sessionUsers = users;
+				this.sessionUsers = users.map((u) => {
+					return { ...u, readyState: ReadyState.DontCare };
+				});
 				this.userOrder = users.map((u) => u.userID);
 			});
 
@@ -360,9 +399,9 @@ export default {
 				this.disconnectedUsers = data.disconnectedUsers;
 			});
 
-			this.socket.on("resumeOnReconnection", (data) => {
+			this.socket.on("resumeOnReconnection", (msg) => {
 				this.disconnectedUsers = {};
-				fireToast("success", data.msg.title, data.msg.text);
+				fireToast("success", msg.title, msg.text);
 			});
 
 			this.socket.on("updateUser", (data) => {
@@ -379,7 +418,9 @@ export default {
 			});
 
 			this.socket.on("sessionOptions", (sessionOptions) => {
-				for (let prop in sessionOptions) this[prop] = sessionOptions[prop];
+				// FIXME: Use accurate key type once we have it.
+				for (let prop in sessionOptions)
+					(this as IIndexable)[prop as keyof typeof SessionsSettingsProps] = sessionOptions[prop];
 			});
 
 			this.socket.on("sessionOwner", (ownerID, ownerUserName) => {
@@ -392,20 +433,8 @@ export default {
 			this.socket.on("ignoreCollections", (ignoreCollections) => {
 				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("boostersPerPlayer", (data) => {
-				this.boostersPerPlayer = parseInt(data);
-			});
-			this.socket.on("cardsPerBooster", (data) => {
-				this.cardsPerBooster = parseInt(data);
-			});
-			this.socket.on("teamDraft", (data) => {
-				this.teamDraft = data;
-			});
-			this.socket.on("bots", (data) => {
-				this.bots = parseInt(data);
-			});
 			this.socket.on("setMaxPlayers", (maxPlayers) => {
-				this.maxPlayers = parseInt(maxPlayers);
+				this.maxPlayers = maxPlayers;
 			});
 			this.socket.on("setRestriction", (setRestriction) => {
 				this.setRestriction = setRestriction;
@@ -417,13 +446,10 @@ export default {
 			this.socket.on("message", (data) => {
 				if (data.icon === undefined) data.icon = "info";
 				if (data.title === undefined) data.title = "[Missing Title]";
-				if (data.text === undefined) data.text = "";
-				if (data.html === undefined) data.html = null;
-				if (data.imageUrl === undefined) data.imageUrl = null;
 
 				const toast = !!data.toast;
 				if (toast) {
-					fireToast(data.icon, data.title, data.text);
+					fireToast(data.icon as SweetAlertIcon, data.title, data.text);
 					return;
 				}
 
@@ -435,7 +461,7 @@ export default {
 				Alert.fire({
 					position: "center",
 					toast: !!data.toast,
-					icon: data.icon,
+					icon: data.icon as SweetAlertIcon,
 					title: data.title,
 					text: data.text,
 					html: data.html,
@@ -453,8 +479,8 @@ export default {
 				this.initReadyCheck();
 
 				const ownerUsername =
-					this.sessionOwner in this.userByID
-						? this.userByID[this.sessionOwner].userName
+					this.sessionOwner! in this.userByID
+						? this.userByID[this.sessionOwner!].userName
 						: this.sessionOwnerUsername
 						? this.sessionOwnerUsername
 						: "Session owner";
@@ -517,7 +543,7 @@ export default {
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const ComponentClass = Vue.extend(Card);
+				const ComponentClass = Vue.extend(CardComponent);
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
 				Alert.fire({
@@ -535,8 +561,8 @@ export default {
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -561,9 +587,6 @@ export default {
 					this.userID === state.currentPlayer ? DraftState.GridPicking : DraftState.GridWaiting;
 				this.setGridDraftState(state);
 			});
-			this.socket.on("gridDraftSync", (gridDraftState) => {
-				this.setGridDraftState(gridDraftState);
-			});
 			this.socket.on("gridDraftNextRound", (state) => {
 				const doNextRound = () => {
 					this.setGridDraftState(state);
@@ -580,7 +603,7 @@ export default {
 				};
 
 				// Next booster, add a slight delay so user can see the last pick.
-				if (this.gridDraftState.currentPlayer === null) {
+				if (this.gridDraftState?.currentPlayer === null) {
 					setTimeout(doNextRound, 2500);
 				} else doNextRound();
 			});
@@ -593,7 +616,7 @@ export default {
 						this.draftingState = DraftState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
-					this.gridDraftState.currentPlayer === null ? 2500 : 0
+					this.gridDraftState?.currentPlayer === null ? 2500 : 0
 				);
 			});
 
@@ -602,8 +625,8 @@ export default {
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -626,9 +649,6 @@ export default {
 				startDraftSetup("Rochester draft");
 				this.draftingState =
 					this.userID === state.currentPlayer ? DraftState.RochesterPicking : DraftState.RochesterWaiting;
-				this.setRochesterDraftState(state);
-			});
-			this.socket.on("rochesterDraftSync", (state) => {
 				this.setRochesterDraftState(state);
 			});
 			this.socket.on("rochesterDraftNextRound", (state) => {
@@ -657,8 +677,8 @@ export default {
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -703,8 +723,8 @@ export default {
 
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -728,16 +748,21 @@ export default {
 				startDraftSetup("team sealed", "Team Sealed started!");
 				this.teamSealedState = data.state;
 				this.draftingState = DraftState.TeamSealed;
+			});
 
-				// We'll use the same call in case of reconnection
-				if (data.pickedCards) {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
-					this.$nextTick(() => {
-						for (let c of data.pickedCards.main) this.addToDeck(c);
-						for (let c of data.pickedCards.side) this.addToSideboard(c);
-					});
-				}
+			this.socket.on("rejoinTeamSealed", (data) => {
+				this.drafting = true;
+
+				startDraftSetup("team sealed", "Rejoined Team Sealed!");
+				this.teamSealedState = data.state;
+				this.draftingState = DraftState.TeamSealed;
+
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+				});
 			});
 
 			this.socket.on("startTeamSealedSpectator", () => {
@@ -758,9 +783,10 @@ export default {
 			});
 
 			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
-				if (!this.drafting || this.draftingState !== DraftState.TeamSealed) return;
+				if (!this.drafting || this.draftingState !== DraftState.TeamSealed || !this.teamSealedState) return;
 
 				const card = this.teamSealedState.cards.find((c) => c.uniqueID === cardUniqueID);
+				if (!card) return;
 				if (card.owner === this.userID) {
 					this.deck = this.deck.filter((c) => c.uniqueID !== cardUniqueID);
 					this.sideboard = this.sideboard.filter((c) => c.uniqueID !== cardUniqueID);
@@ -770,8 +796,8 @@ export default {
 				}
 				card.owner = newOwnerID;
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
+					this.$refs.deckDisplay?.sync();
+					this.$refs.sideboardDisplay?.sync();
 				});
 			});
 
@@ -854,22 +880,28 @@ export default {
 					return;
 				}
 
-				if (data.boosterCount > 0) {
+				const fullState = data as {
+					booster: UniqueCard[];
+					boosterCount: number;
+					boosterNumber: number;
+					pickNumber: 0;
+				};
+				if (fullState.boosterCount > 0) {
 					if (
 						!this.booster ||
 						this.booster.length === 0 ||
-						this.pickNumber !== data.pickNumber ||
+						this.pickNumber !== fullState.pickNumber! ||
 						this.boosterNumber !== data.boosterNumber
 					) {
 						this.botScores = null; // Clear bot scores
 						this.selectedCards = [];
 						this.burningCards = [];
 						this.booster = [];
-						for (let c of data.booster) this.booster.push(c);
+						for (let c of fullState.booster!) this.booster.push(c);
 						this.playSound("next");
 					}
-					this.boosterNumber = data.boosterNumber;
-					this.pickNumber = data.pickNumber;
+					this.boosterNumber = fullState.boosterNumber;
+					this.pickNumber = fullState.pickNumber!;
 					this.draftingState = DraftState.Picking;
 				} else {
 					// No new booster, don't update the state yet.
@@ -931,8 +963,8 @@ export default {
 
 				if (!this.draftLogLive) return;
 
-				if (data.pick) this.draftLogLive.users[data.userID].picks.push(data.pick);
-				if (data.decklist) this.$set(this.draftLogLive.users[data.userID], "decklist", data.decklist);
+				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
+				if (data.decklist) this.$set(this.draftLogLive.users[data.userID!], "decklist", data.decklist);
 			});
 
 			this.socket.on("pickAlert", (data) => {
@@ -966,7 +998,7 @@ export default {
 			});
 
 			this.socket.on("timer", (data) => {
-				if (data.countdown == 0) this.forcePick(this.booster);
+				if (data.countdown == 0) this.forcePick();
 				if (data.countdown < 10) {
 					let chrono = document.getElementById("chrono");
 					if (chrono) {
@@ -987,7 +1019,7 @@ export default {
 		},
 		clearState() {
 			this.disconnectedUsers = {};
-			this.virtualPlayersData = undefined;
+			this.virtualPlayersData = null;
 			this.clearSideboard();
 			this.clearDeck();
 			this.deckFilter = "";
@@ -995,7 +1027,7 @@ export default {
 			this.currentDraftLog = null;
 			this.boosterNumber = -1;
 			this.pickNumber = -1;
-			this.booster = null;
+			this.booster = [];
 			this.botScores = null;
 		},
 		resetSessionSettings() {
@@ -1040,7 +1072,7 @@ export default {
 
 			fireToast("success", "Session settings reset to default values.");
 		},
-		playSound(key) {
+		playSound(key: keyof typeof Sounds) {
 			if (this.enableSound) Sounds[key].play();
 		},
 		// Chat Methods
@@ -1119,21 +1151,21 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("resumeDraft");
 		},
-		selectCard(e, c) {
+		selectCard(e: Event | null, c: UniqueCard) {
 			if (!this.selectedCards.includes(c)) {
 				if (this.selectedCards.length === this.cardsToPick) this.selectedCards.shift();
 				this.selectedCards.push(c);
 				this.restoreCard(null, c);
 			}
 		},
-		burnCard(e, c) {
+		burnCard(e: Event, c: UniqueCard) {
 			if (this.burningCards.includes(c)) return;
 			if (this.selectedCards.includes(c)) this.selectedCards.splice(this.selectedCards.indexOf(c), 1);
 			this.burningCards.push(c);
 			if (this.burningCards.length > this.burnedCardsPerRound) this.burningCards.shift();
 			if (e) e.stopPropagation();
 		},
-		restoreCard(e, c) {
+		restoreCard(e: Event | null, c: UniqueCard) {
 			if (!this.burningCards.includes(c)) return;
 			this.burningCards.splice(
 				this.burningCards.findIndex((o) => o === c),
@@ -1141,11 +1173,11 @@ export default {
 			);
 			if (e) e.stopPropagation();
 		},
-		doubleClickCard(e, c) {
+		doubleClickCard(e: MouseEvent, c: UniqueCard) {
 			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
-		allowBoosterCardDrop(e) {
+		allowBoosterCardDrop(e: DragEvent) {
 			// Allow dropping only if the dragged object is the selected card
 
 			// A better (?) solution would be something like
@@ -1155,22 +1187,24 @@ export default {
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
 
-			if (e.dataTransfer.types.includes("isboostercard")) {
+			if (e.dataTransfer?.types.includes("isboostercard")) {
 				e.preventDefault();
 				e.dataTransfer.dropEffect = "move";
 				return false;
 			}
 		},
-		dragBoosterCard(e, card) {
-			e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
-			e.dataTransfer.setData("text", card.id);
-			e.dataTransfer.effectAllowed = "move";
+		dragBoosterCard(e: DragEvent, card: UniqueCard) {
+			if (e.dataTransfer) {
+				e.dataTransfer.setData("isboostercard", "true"); // Workaround: See allowBoosterCardDrop
+				e.dataTransfer.setData("text", card.id);
+				e.dataTransfer.effectAllowed = "move";
+			}
 			this.selectCard(null, card);
 		},
-		dropBoosterCard(e, options) {
+		dropBoosterCard(e: DragEvent, options?: { toSideboard?: boolean }) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
-				e.dataTransfer.getData("isboostercard") !== "true" ||
+				e.dataTransfer?.getData("isboostercard") !== "true" ||
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
 			)
 				return;
@@ -1181,17 +1215,14 @@ export default {
 				return;
 			}
 			if (!this.selectedCards.some((c) => cardid === c.id)) {
-				console.error(
-					`dropBoosterCard error: cardid (${cardid}) != this.selectedCards.id (${this.selectedCards.id})`
-				);
+				console.error("dropBoosterCard error: cardid (%s) could not be found in this.selectedCards:", cardid);
+				console.error(this.selectedCards);
 				return;
 			} else {
-				if (!options) options = {};
-				options.event = e;
-				this.pickCard(options);
+				this.pickCard(Object.assign(options ?? {}, { event: e }));
 			}
 		},
-		pickCard(options) {
+		pickCard(options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
@@ -1220,10 +1251,10 @@ export default {
 				const toSideboard = options?.toSideboard;
 				const cUIDs = this.selectedCards.map((c) => c.uniqueID);
 
-				const ack = (answer) => {
+				const ack = (answer: SocketAck) => {
 					this.pickInFlight = false;
 					if (answer.code !== 0) {
-						Alert.fire(answer.error);
+						Alert.fire(answer.error as SweetAlertOptions<any, any>);
 					} else {
 						if (toSideboard) for (let cuid of cUIDs) this.socket.emit("moveCard", cuid, "side");
 						this.selectedCards = [];
@@ -1234,7 +1265,7 @@ export default {
 				if (this.rochesterDraftState) {
 					this.socket.emit(
 						"rochesterDraftPick",
-						this.selectedCards.map((c) => this.rochesterDraftState.booster.findIndex((c2) => c === c2)),
+						this.selectedCards.map((c) => this.rochesterDraftState!.booster.findIndex((c2) => c === c2)),
 						ack
 					);
 					this.draftingState = DraftState.RochesterWaiting;
@@ -1266,7 +1297,7 @@ export default {
 				let orderedPicks = [];
 				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
 				orderedPicks.sort((lhs, rhs) => {
-					return this.botScores.scores[lhs] < this.botScores.scores[rhs];
+					return this.botScores!.scores[lhs] - this.botScores!.scores[rhs];
 				});
 				let currIdx = 0;
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
@@ -1315,15 +1346,8 @@ export default {
 			}
 			this.pickCard();
 		},
-		setWinstonDraftState(state) {
+		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
-			const piles = [];
-			for (let p of state.piles) {
-				let pile = [];
-				for (let c of p) pile.push(c);
-				piles.push(pile);
-			}
-			this.winstonDraftState.piles = piles;
 		},
 		startWinstonDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -1343,9 +1367,9 @@ export default {
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
-					min: 6,
-					max: 12,
-					step: 1,
+					min: "6",
+					max: "12",
+					step: "1",
 				},
 				inputValue: 6,
 				showCancelButton: true,
@@ -1360,6 +1384,7 @@ export default {
 			}
 		},
 		winstonDraftTakePile() {
+			if (!this.winstonDraftState) return;
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
 			this.socket.emit("winstonDraftTakePile", (answer) => {
 				if (answer.code === 0) {
@@ -1376,14 +1401,14 @@ export default {
 				}
 			});
 		},
-		setGridDraftState(state) {
+		setGridDraftState(state: GridDraftSyncData) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
 			const booster = [];
 			let idx = 0;
 			for (let card of this.gridDraftState.booster) {
 				if (card) {
-					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id)
+					if (prevBooster && prevBooster[idx] && prevBooster[idx]!.id === card.id)
 						booster.push(prevBooster[idx]);
 					else booster.push(card);
 				} else booster.push(null);
@@ -1409,9 +1434,9 @@ export default {
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
-					min: 6,
-					max: 32,
-					step: 1,
+					min: "6",
+					max: "32",
+					step: "1",
 				},
 				inputValue: 18,
 				showCancelButton: true,
@@ -1425,28 +1450,30 @@ export default {
 				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
-		gridDraftPick(choice) {
-			const cards = [];
+		gridDraftPick(choice: number) {
+			if (!this.gridDraftState) return;
+
+			const cards: UniqueCard[] = [];
 
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
 				let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 				if (this.gridDraftState.booster[idx]) {
-					cards.push(this.gridDraftState.booster[idx]);
+					cards.push(this.gridDraftState.booster[idx]!);
 				}
 			}
 			if (cards.length === 0) {
 				console.error("gridDraftPick: Should not reach that.");
 				return;
 			} else {
-				this.socket.emit("gridDraftPick", choice, (answer) => {
+				this.socket.emit("gridDraftPick", choice, (answer: SocketAck) => {
 					if (answer.code === 0) {
 						for (let c of cards) this.addToDeck(c);
-					} else Alert.fire(answer.error);
+					} else if (answer.error) Alert.fire(answer.error);
 				});
 			}
 		},
-		setRochesterDraftState(state) {
+		setRochesterDraftState(state: RochesterDraftSyncData) {
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function () {
@@ -1462,7 +1489,7 @@ export default {
 			}
 			this.socket.emit("startRochesterDraft");
 		},
-		setMinesweeperDraftState(state) {
+		setMinesweeperDraftState(state: MinesweeperSyncData) {
 			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
 
 			const execute = () => {
@@ -1537,15 +1564,17 @@ export default {
 				preConfirm() {
 					return new Promise(function (resolve) {
 						resolve({
-							gridCount: document.getElementById("input-gridCount").valueAsNumber,
-							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
-							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
-							picksPerPlayerPerGrid: document.getElementById("input-picksPerPlayerPerGrid").valueAsNumber,
-							revealBorders: document.getElementById("input-revealBorders").checked,
+							gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
+							gridWidth: (document.getElementById("input-gridWidth") as HTMLInputElement).valueAsNumber,
+							gridHeight: (document.getElementById("input-gridHeight") as HTMLInputElement).valueAsNumber,
+							picksPerPlayerPerGrid: (
+								document.getElementById("input-picksPerPlayerPerGrid") as HTMLInputElement
+							).valueAsNumber,
+							revealBorders: (document.getElementById("input-revealBorders") as HTMLInputElement).checked,
 						});
 					});
 				},
-			}).then((r) => {
+			}).then((r: any) => {
 				if (r.isConfirmed) {
 					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
@@ -1555,7 +1584,7 @@ export default {
 						r.value.gridHeight,
 						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
 						r.value.revealBorders,
-						(response) => {
+						(response: SocketAck) => {
 							if (response?.error) {
 								Alert.fire(response.error);
 							}
@@ -1564,7 +1593,8 @@ export default {
 				}
 			});
 		},
-		minesweeperDraftPick(row, col) {
+		minesweeperDraftPick(row: number, col: number) {
+			if (!this.minesweeperDraftState) return;
 			const card = this.minesweeperDraftState.grid[row][col].card;
 			this.socket.emit("minesweeperDraftPick", row, col, (response) => {
 				if (response?.error) {
@@ -1605,12 +1635,15 @@ export default {
 				preConfirm() {
 					return new Promise(function (resolve) {
 						resolve({
-							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
-							burnedCardsPerRound: document.getElementById("input-burnedCardsPerRound").valueAsNumber,
+							boostersPerPlayer: (document.getElementById("input-boostersPerPlayer") as HTMLInputElement)
+								.valueAsNumber,
+							burnedCardsPerRound: (
+								document.getElementById("input-burnedCardsPerRound") as HTMLInputElement
+							).valueAsNumber,
 						});
 					});
 				},
-			}).then((r) => {
+			}).then((r: any) => {
 				if (r.isConfirmed) {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
 					this.boostersPerPlayer = r.value.boostersPerPlayer;
@@ -1626,23 +1659,27 @@ export default {
 			});
 		},
 		// Collection management
-		setCollection(json) {
+		setCollection(json: PlainCollection) {
 			if (this.collection == json) return;
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
 		uploadMTGALogs() {
-			document.querySelector("#collection-file-input").click();
+			(document.querySelector("#collection-file-input") as HTMLElement)?.click();
 			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
 			//document.querySelector("#mtga-logs-file-input").click();
 		},
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
-		uploadCardListAsCollection(e) {
-			const file = e.target.files[0];
+		uploadCardListAsCollection(event: Event) {
+			const file = (event.target as HTMLInputElement)?.files?.[0];
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				let contents = e.target.result;
+				let contents = e.target?.result;
+				if (!contents || typeof contents !== "string") {
+					fireToast("error", `Empty file.`);
+					return;
+				}
 
 				// Player.log, with MTGA Pro Tracker running.
 				if (file.name.endsWith(".log")) {
@@ -1669,7 +1706,9 @@ export default {
 							icon: "error",
 							title: "Invalid file",
 							text: `The uploaded file is not a valid MTGGoldFish CSV file (Invalid header).`,
-							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(lines[0])}'.`,
+							footer: `Expected 'Card', 'Set ID' and 'Quantity', got '${escapeHTML(
+								lines[0].join(",")
+							)}'.`,
 							showCancelButton: false,
 						});
 						return;
@@ -1691,7 +1730,7 @@ export default {
 						if (["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(line[cardIndex])) continue;
 
 						// Workaround for some divergent set codes.
-						const setCodeTranslation = {
+						const setCodeTranslation: { [code: SetCode]: string } = {
 							ANA: "OANA",
 						};
 						if (line[setIDIndex] in setCodeTranslation)
@@ -1709,6 +1748,13 @@ export default {
 				this.socket.emit("parseCollection", contents, (response) => {
 					if (response.error) {
 						Alert.fire(response.error);
+						return;
+					}
+					if (!response.collection) {
+						Alert.fire({
+							title: "Error",
+							text: "An error occured while importing the collection: Received an empty response.",
+						});
 						return;
 					}
 					this.setCollection(response.collection); // Unnecessary round trip, consider removing if this ends up being the only way to update the collection
@@ -1737,7 +1783,7 @@ export default {
 			};
 			reader.readAsText(file);
 		},
-		parseMTGAProTrackerLog(content) {
+		parseMTGAProTrackerLog(content: string) {
 			try {
 				const inventoryHeader = "[MTGA.Pro Logger] **InventoryContent** ";
 				const inventoryIndex = content.lastIndexOf(inventoryHeader);
@@ -1778,12 +1824,16 @@ export default {
 			}
 			return false;
 		},
-		parseMTGALog(e) {
-			const file = e.target.files[0];
+		parseMTGALog(event: Event) {
+			const file = (event.target as HTMLInputElement)?.files?.[0];
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				let contents = e.target.result;
+				let contents = e.target?.result;
+				if (!contents || typeof contents !== "string") {
+					fireToast("error", `Empty file.`);
+					return;
+				}
 
 				// Propose to use MTGA user name
 				// FIXME: The username doesn't seem to appear in the log anymore as of 29/08/2021
@@ -1829,7 +1879,7 @@ export default {
 
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
 
-				const parseCollection = function (contents, startIdx = null) {
+				const parseCollection = function (contents: string, startIdx?: number) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
 					try {
 						const callIdx = startIdx
@@ -1861,13 +1911,13 @@ export default {
 							icon: "error",
 							title: "Parsing Error",
 							text: "An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
-							footer: "Full error: " + escapeHTML(e),
+							footer: "Full error: " + escapeHTML(e as string),
 						});
 						return null;
 					}
 				};
 
-				let result = null;
+				let result: { [id: string]: any } | null = null;
 				if (playerIds.size > 1) {
 					const swalResult = await Alert.fire({
 						icon: "question",
@@ -1881,21 +1931,25 @@ export default {
 						cancelButtonText: "Latest Only",
 					});
 					if (swalResult.value) {
-						const collections = [];
+						const collections: ReturnType<typeof parseCollection>[] = [];
 						for (let pid of playerIds) {
 							const startIdx = contents.lastIndexOf(`"payload":{"playerId":"${pid}"`);
 							const coll = parseCollection(contents, startIdx);
 							if (coll) collections.push(coll);
 						}
-						let cardids = Object.keys(collections[0]);
+						let cardids = Object.keys(collections[0]!);
 						// Filter ids
 						for (let i = 1; i < collections.length; ++i)
-							cardids = Object.keys(collections[i]).filter((id) => cardids.includes(id));
+							cardids = Object.keys(collections[i]!).filter((id) => cardids.includes(id));
 						// Find min amount of each card
 						result = {};
-						for (let id of cardids) result[id] = collections[0][id];
+						for (let id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
 						for (let i = 1; i < collections.length; ++i)
-							for (let id of cardids) result[id] = Math.min(result[id], collections[i][id]);
+							for (let id of cardids)
+								result[id] = Math.min(
+									result[id],
+									collections[i]![id as keyof ReturnType<typeof parseCollection>]
+								);
 					} else result = parseCollection(contents);
 				} else result = parseCollection(contents);
 
@@ -1917,8 +1971,8 @@ export default {
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile(e, callback, options) {
-			let file = e.target.files[0];
+		uploadFile(e: Event, callback: (file: File, options?: Options) => void, options?: Options) {
+			let file = (e.target as HTMLInputElement)?.files?.[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
 				return false;
@@ -1926,7 +1980,7 @@ export default {
 			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function (url, callback, options) {
+		fetchFile: async function (url: string, callback: (blob: Blob, options: Options) => void, options: Options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				fireToast("error", `Could not fetch ${url}.`);
@@ -1935,21 +1989,22 @@ export default {
 			const blob = await response.blob();
 			callback(blob, options);
 		},
-		dropCustomList(event) {
+		dropCustomList(event: DragEvent) {
 			event.preventDefault();
-			event.target.classList.remove("dropzone-highlight");
+			(event.target as HTMLElement)?.classList.remove("dropzone-highlight");
 
-			if (event.dataTransfer.items) {
-				for (let item of event.dataTransfer.items)
-					if (item.kind === "file") {
-						const file = item.getAsFile();
-						this.parseCustomCardList(file);
-					}
-			} else {
-				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
-			}
+			if (event.dataTransfer)
+				if (event.dataTransfer.items) {
+					for (let item of event.dataTransfer.items)
+						if (item.kind === "file") {
+							const file = item.getAsFile();
+							if (file) this.parseCustomCardList(file);
+						}
+				} else {
+					for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
+				}
 		},
-		parseCustomCardList: async function (file) {
+		async parseCustomCardList(file: File) {
 			Alert.fire({
 				position: "center",
 				icon: "info",
@@ -1966,9 +2021,10 @@ export default {
 				}
 			});
 		},
-		importCube(service) {
-			const defaultMatchCardVersions = localStorage.getItem("import-match-versions", "false") === "true";
-			const defaultCubeID = localStorage.getItem("import-cubeID", "");
+		// FIXME: Use a stricter type than 'string' for services.
+		importCube(service: string) {
+			const defaultMatchCardVersions = localStorage.getItem("import-match-versions") === "true";
+			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			Alert.fire({
 				title: `Import from ${service}`,
 				html: `<p>Enter a Cube ID or an URL to import a cube directly from ${service}</p>
@@ -1982,8 +2038,9 @@ export default {
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
-				preConfirm(cubeID) {
-					const matchVersions = document.getElementById("input-match-card-versions").checked;
+				preConfirm(cubeID: string): Promise<{ cubeID: string; matchVersions: boolean }> {
+					const matchVersions = (document.getElementById("input-match-card-versions") as HTMLInputElement)
+						?.checked;
 					localStorage.setItem("import-match-versions", matchVersions.toString());
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
@@ -1997,16 +2054,29 @@ export default {
 						resolve({
 							cubeID: cubeID,
 							matchVersions: matchVersions,
-							service: service,
 						});
 					});
 				},
-			}).then((result) => {
-				if (result.value && result.value.cubeID) this.selectCube(result.value);
+			}).then((result: SweetAlertResult<{ cubeID: string; matchVersions: boolean }>) => {
+				if (result.value && result.value.cubeID) {
+					const cube =
+						service === "Cube Cobra"
+							? {
+									name: "Imported Cube",
+									cubeCobraID: result.value.cubeID,
+									description: `Imported from Cube Cobra: '${result.value.cubeID}'`,
+							  }
+							: {
+									name: "Imported Cube",
+									cubeArtisanID: result.value.cubeID,
+									description: `Imported from CubeArtisan: '${result.value.cubeID}'`,
+							  };
+					this.selectCube(cube, result.value.matchVersions);
+				}
 			});
 		},
-		selectCube(cube) {
-			const ack = (r) => {
+		selectCube(cube: CubeDescription, matchVersions: boolean = false) {
+			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
 				} else {
@@ -2014,29 +2084,19 @@ export default {
 				}
 			};
 
-			if (cube.cubeCobraID) {
-				cube.cubeID = cube.cubeCobraID;
-				cube.service = "Cube Cobra";
-			} else if (cube.cubeArtisanID) {
-				cube.cubeID = cube.cubeArtisanID;
-				cube.service = "CubeArtisan";
-			}
-
-			if (cube.cubeID) {
+			if (cube.cubeCobraID || cube.cubeArtisanID) {
+				const cubeID = cube.cubeCobraID ?? cube.cubeArtisanID;
+				const service = cube.cubeCobraID ? "Cube Cobra" : "CubeArtisan";
 				Alert.fire({
 					position: "center",
 					icon: "info",
 					title: `Loading Cube...`,
-					text: `Please wait as we retrieve the latest version from ${cube.service}...`,
-					footer: `CubeID: ${escapeHTML(cube.cubeID)}`,
+					text: `Please wait as we retrieve the latest version from ${service}...`,
+					footer: `CubeID: ${escapeHTML(cubeID!)}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
-				this.socket.emit(
-					"importCube",
-					{ cubeID: cube.cubeID, service: cube.service, matchVersions: cube.matchVersions },
-					ack
-				);
+				this.socket.emit("importCube", { cubeID: cubeID, service: service, matchVersions: matchVersions }, ack);
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
@@ -2052,7 +2112,7 @@ export default {
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
-				body: document.querySelector("#decklist-text").value,
+				body: (document.querySelector("#decklist-text") as HTMLInputElement)?.value,
 			});
 			if (response.status === 200) {
 				let data = await response.json();
@@ -2077,7 +2137,7 @@ export default {
 		},
 		uploadBoosters() {
 			if (this.sessionOwner !== this.userID) return;
-			const text = document.querySelector("#upload-booster-text").value;
+			const text = (document.querySelector("#upload-booster-text") as HTMLInputElement)?.value;
 			this.socket.emit("setBoosters", text, (response) => {
 				if (response?.error) {
 					Alert.fire(response.error);
@@ -2091,13 +2151,13 @@ export default {
 			if (this.sessionOwner !== this.userID) return;
 			this.socket.emit("shuffleBoosters", (response) => {
 				if (response?.error) {
-					fireToast(response.error.type, response.error.title);
+					fireToast(response.error.icon, response.error.title);
 				} else {
 					fireToast("success", "Boosters successfuly shuffled!");
 				}
 			});
 		},
-		toggleSetRestriction(code) {
+		toggleSetRestriction(code: SetCode) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
 					this.setRestriction.findIndex((c) => c === code),
@@ -2105,7 +2165,7 @@ export default {
 				);
 			else this.setRestriction.push(code);
 		},
-		setSessionOwner(newOwnerID) {
+		setSessionOwner(newOwnerID: UserID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if (!user) return;
@@ -2123,7 +2183,7 @@ export default {
 				}
 			});
 		},
-		removePlayer(userID) {
+		removePlayer(userID: UserID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === userID);
 			if (!user) return;
@@ -2141,10 +2201,10 @@ export default {
 				}
 			});
 		},
-		movePlayer(idx, dir) {
+		movePlayer(idx: number, dir: -1 | 1) {
 			if (this.userID != this.sessionOwner) return;
 
-			const negMod = (m, n) => ((m % n) + n) % n;
+			const negMod = (m: number, n: number) => ((m % n) + n) % n;
 			let other = negMod(idx + dir, this.userOrder.length);
 			[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
 
@@ -2161,24 +2221,25 @@ export default {
 			let instance = new DialogClass({
 				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
 				beforeDestroy() {
-					instance.$el.parentNode.removeChild(instance.$el);
+					instance.$el.parentNode?.removeChild(instance.$el);
 				},
 			});
 			instance.$on("cancel", () => {
 				instance.$destroy();
 			});
-			instance.$on("distribute", (boostersPerPlayer, customBoosters, teams) => {
-				this.deckWarning(teamSealed ? this.startTeamSealed : this.distributeSealed, [
+			instance.$on("distribute", (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
+				this.deckWarning(
+					teamSealed ? this.startTeamSealed : this.distributeSealed,
 					boostersPerPlayer,
 					customBoosters,
-					teams,
-				]);
+					teams
+				);
 				instance.$destroy();
 			});
 			instance.$mount();
 			this.$el.appendChild(instance.$el);
 		},
-		deckWarning(call, options = []) {
+		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -2197,29 +2258,19 @@ export default {
 				call(...options);
 			}
 		},
-		distributeSealed(boosterCount, customBoosters) {
+		distributeSealed(boosterCount: number, customBoosters: string[]) {
 			if (this.userID !== this.sessionOwner) return;
-			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
+			this.socket.emit("distributeSealed", boosterCount, customBoosters);
 		},
-		startTeamSealed(boosterCount, customBoosters, teams) {
+		startTeamSealed(boosterCount: number, customBoosters: string[], teams: UserID[][]) {
 			if (this.userID !== this.sessionOwner) return;
-			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-			this.socket.emit(
-				"startTeamSealed",
-				boosterCount,
-				useCustomBoosters ? customBoosters : null,
-				teams,
-				(err) => {
-					if (err.code < 0) {
-						Alert.fire(err.error);
-					}
-				}
-			);
+			this.socket.emit("startTeamSealed", boosterCount, customBoosters, teams, (err) => {
+				if (err.error) Alert.fire(err.error);
+			});
 		},
-		teamSealedPick(uniqueCardID) {
+		teamSealedPick(uniqueCardID: UniqueCardID) {
 			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
-				if (r.code !== 0) Alert.fire(r.error);
+				if (r.error) Alert.fire(r.error);
 			});
 		},
 		distributeJumpstart() {
@@ -2234,7 +2285,7 @@ export default {
 			if (this.userID != this.sessionOwner) return;
 			this.socket.emit("distributeJumpstart", "super");
 		},
-		async displayPackChoice(boosters, currentPack, packCount) {
+		async displayPackChoice(boosters: JHHBooster[], currentPack: number, packCount: number) {
 			let boostersDisplay = "";
 			for (let b of boosters) {
 				let colors = b.colors
@@ -2266,7 +2317,10 @@ export default {
 			});
 			return choice;
 		},
-		selectJumpstartPacks: async function (choices, ack) {
+		async selectJumpstartPacks(
+			choices: [JHHBooster[], JHHBooster[][]],
+			ack: (user: UserID, cards: CardID[]) => void
+		) {
 			this.clearState();
 			this.draftingState = DraftState.Brewing;
 			let choice = await this.displayPackChoice(choices[0], 0, choices.length);
@@ -2304,7 +2358,7 @@ export default {
 
 			for (let u of this.sessionUsers) u.readyState = ReadyState.DontCare;
 		},
-		shareSavedDraftLog(storedDraftLog) {
+		shareSavedDraftLog(storedDraftLog: DraftLog) {
 			if (this.userID != this.sessionOwner) {
 				Alert.fire({
 					title: "You need to be the session owner to share logs.",
@@ -2330,15 +2384,12 @@ export default {
 				fireToast("success", "Shared draft log with session!");
 			}
 		},
-		prepareBracketPlayers(pairingOrder) {
+		prepareBracketPlayers(pairingOrder: number[]) {
 			const playerInfos = this.sessionUsers.map((u) => {
 				return { userID: u.userID, userName: u.userName };
 			});
 			let players = [];
-			for (let i = 0; i < pairingOrder.length; ++i) {
-				if (pairingOrder[i] < playerInfos.length) players[i] = playerInfos[pairingOrder[i]];
-				else players[i] = null;
-			}
+			for (let i = 0; i < pairingOrder.length; ++i) players[i] = playerInfos[pairingOrder[i]];
 			return players;
 		},
 		// Bracket (Server communication)
@@ -2369,34 +2420,34 @@ export default {
 				else if (answer.error) Alert.fire(answer.error);
 			});
 		},
-		updateBracket(matchIndex, index, value) {
-			if (this.userID != this.sessionOwner && this.bracketLocked) return;
+		updateBracket(matchIndex: number, index: number, value: number) {
+			if (!this.bracket || (this.userID != this.sessionOwner && this.bracketLocked)) return;
 			this.bracket.results[matchIndex][index] = value;
 			this.socket.emit("updateBracket", this.bracket.results);
 		},
-		lockBracket(val) {
+		lockBracket(val: boolean) {
 			if (this.userID != this.sessionOwner) return;
 			this.bracketLocked = val;
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck(card, options) {
+		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
 				this.deck.push(card);
-				this.$refs.deckDisplay.addCard(card, options ? options.event : null);
+				this.$refs.deckDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
-		addToSideboard(card, options) {
+		addToSideboard(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
-				this.$refs.sideboardDisplay.addCard(card, options ? options.event : null);
+				this.$refs.sideboardDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
-		deckToSideboard(e, c) {
+		deckToSideboard(e: Event, c: UniqueCard) {
 			// From deck to sideboard
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
@@ -2404,12 +2455,12 @@ export default {
 				this.addToSideboard(c);
 				this.socket.emit("moveCard", c.uniqueID, "side");
 			} else return;
-			this.$refs.deckDisplay.remCard(c);
+			this.$refs.deckDisplay?.remCard(c);
 			// Card DOM element will move without emiting a mouse leave event,
 			// make sure to close the card popup.
 			this.$root.$emit("closecardpopup");
 		},
-		sideboardToDeck(e, c) {
+		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
@@ -2417,7 +2468,7 @@ export default {
 				this.addToDeck(c);
 				this.socket.emit("moveCard", c.uniqueID, "main");
 			} else return;
-			this.$refs.sideboardDisplay.remCard(c);
+			this.$refs.sideboardDisplay?.remCard(c);
 			this.$root.$emit("closecardpopup");
 		},
 		onDeckChange(e) {
@@ -2435,7 +2486,7 @@ export default {
 				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
 			}
 		},
-		onSideChange(e) {
+		onSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
 			if (e.removed)
 				this.sideboard.splice(
 					this.sideboard.findIndex((c) => c === e.removed.element),
@@ -2446,20 +2497,20 @@ export default {
 				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 			}
 		},
-		onCollapsedSideChange(e) {
-			this.$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */
+		onCollapsedSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
+			this.$refs.sideboardDisplay?.sync(); /* Sync sideboard card-pool */
 			if (e.added) this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 		},
 		clearDeck() {
 			this.deck = [];
 			this.$nextTick(() => {
-				this.$refs.deckDisplay.sync();
+				this.$refs.deckDisplay?.sync();
 			});
 		},
 		clearSideboard() {
 			this.sideboard = [];
 			this.$nextTick(() => {
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.sideboardDisplay?.sync();
 			});
 		},
 		updateAutoLands() {
@@ -2476,27 +2527,29 @@ export default {
 
 				const colorCount = this.colorsInDeck;
 				let totalColor = 0;
-				for (let c in colorCount) totalColor += colorCount[c];
+				for (let c in colorCount) totalColor += colorCount[c as CardColor];
 				if (totalColor <= 0) return;
 
-				for (let c in this.lands) this.lands[c] = Math.round(landToAdd * (colorCount[c] / totalColor));
+				for (let c in this.lands)
+					this.lands[c as CardColor] = Math.round(landToAdd * (colorCount[c as CardColor] / totalColor));
 				let addedLands = this.totalLands;
 
 				if (this.deck.length + addedLands > targetDeckSize) {
-					let max = "W";
+					let max: CardColor = CardColor.W;
 					for (let i = 0; i < this.deck.length + addedLands - targetDeckSize; ++i) {
-						for (let c in this.lands) if (this.lands[c] > this.lands[max]) max = c;
+						for (let c in this.lands)
+							if (this.lands[c as CardColor] > this.lands[max]) max = c as CardColor;
 						this.lands[max] = Math.max(0, this.lands[max] - 1);
 					}
 				} else if (this.deck.length + addedLands < targetDeckSize) {
-					let min = "W";
+					let min: CardColor = CardColor.W;
 					for (let i = 0; i < targetDeckSize - (this.deck.length + addedLands); ++i) {
 						for (let c in this.lands)
 							if (
 								this.colorsInDeck[min] == 0 ||
-								(this.colorsInDeck[c] > 0 && this.lands[c] < this.lands[min])
+								(this.colorsInDeck[c as CardColor] > 0 && this.lands[c as CardColor] < this.lands[min])
 							)
-								min = c;
+								min = c as CardColor;
 						this.lands[min] += 1;
 					}
 				}
@@ -2505,10 +2558,10 @@ export default {
 		removeBasicsFromDeck() {
 			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
-			this.$refs.deckDisplay.filterBasics();
-			this.$refs.sideboardDisplay.filterBasics();
+			this.$refs.deckDisplay?.filterBasics();
+			this.$refs.sideboardDisplay?.filterBasics();
 		},
-		colorsInCardPool(pool) {
+		colorsInCardPool(pool: Card[]) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
 			for (let card of pool) {
 				for (let color of card.colors) {
@@ -2521,7 +2574,7 @@ export default {
 		toggleNotifications() {
 			this.enableNotifications = !this.enableNotifications;
 			if (typeof Notification === "undefined") {
-				this.notificationPermission = "unavailable";
+				this.notificationPermission = "denied";
 				return;
 			}
 			if (this.enableNotifications && Notification.permission !== "granted") {
@@ -2531,12 +2584,10 @@ export default {
 				});
 			}
 		},
-		pushNotification(title, data) {
-			if (this.enableNotifications && !document.hasFocus()) {
-				new Notification(title, data);
-			}
+		pushNotification(title: string, data?: NotificationOptions) {
+			if (this.enableNotifications && !document.hasFocus()) new Notification(title, data);
 		},
-		pushTitleNotification(msg) {
+		pushTitleNotification(msg: string) {
 			if (this.titleNotification) {
 				clearTimeout(this.titleNotification.timeout);
 				this.titleNotification = null;
@@ -2561,13 +2612,13 @@ export default {
 		disconnectedReminder() {
 			fireToast("error", "Disconnected from server!");
 		},
-		toClipboard(data, message = "Copied to clipboard!") {
+		toClipboard(data: string, message = "Copied to clipboard!") {
 			copyToClipboard(data);
 			fireToast("success", message);
 		},
-		updateStoredSessionSettings(data) {
-			let previous = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
-			previous = JSON.parse(previous);
+		updateStoredSessionSettings(data: { [key: string]: any }) {
+			const previousStr = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
+			const previous = JSON.parse(previousStr);
 			for (let key in data) previous[key] = data[key];
 			localStorage.setItem(localStorageSessionSettingsKey, JSON.stringify(previous));
 		},
@@ -2585,7 +2636,7 @@ export default {
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			let worker = new LogStoreWorker();
+			let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
 				this.storeDraftLogsTimeout = null;
@@ -2603,31 +2654,31 @@ export default {
 					mythic: 1,
 				};
 		},
-		countMissing(cards) {
+		countMissing(cards: Card[]) {
 			if (!this.hasCollection || !cards) return null;
 			const r = { common: 0, uncommon: 0, rare: 0, mythic: 0 };
-			const counts = {};
+			const counts: { [aid: ArenaID]: { rarity: string; count: number } } = {};
 			for (let card of cards) {
 				if (!("arena_id" in card)) return null;
 				if (card.type.includes("Basic")) continue;
-				if (!(card.arena_id in counts)) counts[card.arena_id] = { rarity: card.rarity, count: 0 };
-				++counts[card.arena_id].count;
+				if (!(card.arena_id! in counts)) counts[card.arena_id!] = { rarity: card.rarity, count: 0 };
+				++counts[card.arena_id!].count;
 			}
 			for (let cid in counts)
-				r[counts[cid].rarity] += Math.max(
+				r[counts[cid]!.rarity as keyof typeof r] += Math.max(
 					0,
 					Math.min(4, counts[cid].count) - (cid in this.collection ? this.collection[cid] : 0)
 				);
 			return r;
 		},
-		wildcardCost(card) {
+		wildcardCost(card: Card) {
 			if (!this.hasCollection || !card.arena_id || card.type.includes("Basic")) return false;
 			if (!(card.arena_id in this.collection)) return true;
 			if (this.collection[card.id] >= 4) return false;
 			const currentCount = card.id in this.deckSummary ? this.deckSummary[card.id] : 0;
 			return currentCount >= this.collection[card.arena_id];
 		},
-		hasEnoughWildcards(card) {
+		hasEnoughWildcards(card: Card) {
 			if (
 				!this.neededWildcards ||
 				!this.neededWildcards.main ||
@@ -2635,18 +2686,16 @@ export default {
 				!this.collectionInfos.wildcards
 			)
 				return true;
-			const needed = this.neededWildcards.main[card.rarity] || 0;
-			return needed < this.collectionInfos.wildcards[card.rarity];
+			const needed = this.neededWildcards.main[card.rarity as keyof typeof this.neededWildcards.main] || 0;
+			return needed < this.collectionInfos.wildcards[card.rarity as keyof typeof this.collectionInfos.wildcards];
 		},
 		storeSettings() {
-			let settings = {};
-			for (let key in defaultSettings) {
-				settings[key] = this[key];
-			}
+			let settings: { [key: string]: any } = {};
+			for (let key in defaultSettings) settings[key] = this[key as keyof typeof defaultSettings];
 			localStorage.setItem(localStorageSettingsKey, JSON.stringify(settings));
 		},
 
-		beforeunload(event) {
+		beforeunload(event: BeforeUnloadEvent) {
 			// Force the call to doStoreDraftLogs and ask the user to wait a bit.
 			if (this.storeDraftLogsTimeout) {
 				clearTimeout(this.storeDraftLogsTimeout);
@@ -2659,16 +2708,15 @@ export default {
 			return false;
 		},
 
-		fixedDeckMouseDown(evt) {
-			this.fixedDeckState.x = evt.screenX;
+		fixedDeckMouseDown(evt: MouseEvent) {
 			this.fixedDeckState.y = evt.screenY;
-			document.body.addEventListener("mousemove", this.resizeDeck);
+			document.body.addEventListener("mousemove", this.resizeFixedDeck);
 			document.body.addEventListener("mouseup", () => {
-				document.body.removeEventListener("mousemove", this.resizeDeck);
+				document.body.removeEventListener("mousemove", this.resizeFixedDeck);
 			});
 			evt.preventDefault();
 		},
-		resizeDeck(evt) {
+		resizeFixedDeck(evt: MouseEvent) {
 			if (!this.$refs.fixedDeckContainer) return;
 			this.fixedDeckState.dy = this.fixedDeckState.y - evt.screenY;
 			this.fixedDeckState.y = evt.screenY;
@@ -2682,10 +2730,10 @@ export default {
 		applyFixedDeckSize() {
 			if (!this.$refs.fixedDeckContainer) return;
 			if (this.displayFixedDeck) {
-				this.$refs.fixedDeckContainer.style.height = this.fixedDeckState.ht + "px";
+				(this.$refs.fixedDeckContainer as HTMLElement).style.height = this.fixedDeckState.ht + "px";
 				this.fixedDeckState.mainHeight = `calc(100vh - ${this.fixedDeckState.ht}px)`;
 			} else {
-				this.$refs.fixedDeckContainer.style.height = "auto";
+				(this.$refs.fixedDeckContainer as HTMLElement).style.height = "auto";
 			}
 		},
 	},
@@ -2705,21 +2753,22 @@ export default {
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
 			return "Draft";
 		},
-		cardsToPick() {
+		cardsToPick(): number {
 			if (this.rochesterDraftState || !this.booster) return 1;
-			let picksThisRound = this.pickedCardsPerRound;
+			let picksThisRound: number = this.pickedCardsPerRound;
 			// Special case for doubleMastersMode. The number of picks could (should?) be send as part of the draftState rather
 			// than duplicating the logic here, but currently this is the only special case and I'm chosing the easier solution.
 			if (this.draftingState === DraftState.Picking && this.doubleMastersMode && this.pickNumber !== 0)
 				picksThisRound = 1;
 			return Math.min(picksThisRound, this.booster.length);
 		},
-		cardsToBurnThisRound() {
+		cardsToBurnThisRound(): number {
 			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
 		winstonCanSkipPile() {
-			const s = this.winstonDraftState;
+			if (!this.winstonDraftState) return false;
+			const s: WinstonDraftSyncData = this.winstonDraftState;
 			return !(
 				!s.remainingCards &&
 				((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
@@ -2727,17 +2776,17 @@ export default {
 					s.currentPile === 2)
 			);
 		},
-		waitingForDisconnectedUsers() {
+		waitingForDisconnectedUsers(): boolean {
 			//                    Disconnected players do not matter for Team Sealed
 			if (!this.drafting || this.teamSealedState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
-		disconnectedUserNames() {
+		disconnectedUserNames(): string {
 			return Object.values(this.disconnectedUsers)
 				.map((u) => u.userName)
 				.join(", ");
 		},
-		virtualPlayers() {
+		virtualPlayers(): UserData[] | typeof this.sessionUsers {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 
@@ -2756,17 +2805,8 @@ export default {
 
 			return r;
 		},
-		displaySets() {
-			let dSets = [];
-			for (let s of this.sets) {
-				if (this.setsInfos && s in this.setsInfos)
-					dSets.push({
-						code: s,
-						fullName: this.setsInfos[s].fullName,
-						icon: this.setsInfos[s].icon,
-					});
-			}
-			return dSets;
+		displaySets(): SetInfo[] {
+			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
 		},
 		hasCollection() {
 			return !isEmpty(this.collection);
@@ -2776,9 +2816,7 @@ export default {
 			return this.colorsInCardPool(this.deck);
 		},
 		totalLands() {
-			let addedLands = 0;
-			for (let c in this.lands) addedLands += this.lands[c];
-			return addedLands;
+			return Object.values(this.lands).reduce((a, b) => a + b, 0);
 		},
 		basicsInDeck() {
 			return (
@@ -2799,7 +2837,7 @@ export default {
 			return { main: main, side: side };
 		},
 		deckSummary() {
-			const r = {};
+			const r: { [id: CardID]: number } = {};
 			for (let c of this.deck) {
 				if (!(c.id in r)) r[c.id] = 0;
 				++r[c.id];
@@ -2825,7 +2863,7 @@ export default {
 		},
 
 		userByID() {
-			let r = {};
+			let r: { [uid: UserID]: any } = {}; // FIXME: any
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
@@ -2844,9 +2882,6 @@ export default {
 	async mounted() {
 		// Load all card informations
 		try {
-			// Load set informations
-			this.setsInfos = Object.freeze(SetsInfos);
-
 			// Now that we have all the essential data, initialize the websocket.
 			this.initializeSocket();
 
@@ -2874,7 +2909,7 @@ export default {
 
 			const storedLogs = localStorage.getItem("draftLogs");
 			if (storedLogs) {
-				let worker = new LogStoreWorker();
+				let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 				worker.onmessage = (e) => {
 					this.draftLogs = e.data;
 					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);
@@ -2910,7 +2945,7 @@ export default {
 						console.error("Error parsing stored session settings: ", e);
 					}
 				}
-				this.socket.io.opts.query.sessionID = this.sessionID;
+				this.socket.io.opts.query!.sessionID = this.sessionID;
 				this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			history.replaceState(
@@ -2922,7 +2957,7 @@ export default {
 		},
 		userName() {
 			if (this.socket) {
-				this.socket.io.opts.query.userName = this.userName;
+				this.socket.io.opts.query!.userName = this.userName;
 				this.socket.emit("setUserName", this.userName);
 			}
 			setCookie("userName", this.userName);
@@ -3043,7 +3078,7 @@ export default {
 		},
 		bots() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("bots", this.bots);
+			this.socket.emit("setBots", this.bots);
 		},
 		maxPlayers() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -3061,7 +3096,7 @@ export default {
 		},
 		boosterContent: {
 			deep: true,
-			handler(val) {
+			handler(val: typeof this.boosterContent) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
 					fireToast("warning", "Your boosters should contain at least one card :)");
@@ -3143,4 +3178,4 @@ export default {
 			}
 		},
 	},
-};
+});

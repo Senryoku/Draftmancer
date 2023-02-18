@@ -128,13 +128,6 @@ describe("Winston Draft", function () {
 		await otherPlayerPage.waitForXPath("//h2[contains(., 'Winston Draft')]", {
 			visible: true,
 		});
-
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]|//div[contains(., 'Your turn!')]", {
-			hidden: true,
-		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]|//div[contains(., 'Your turn!')]", {
-			hidden: true,
-		});
 	});
 
 	it(`Pick until done.`, async function () {

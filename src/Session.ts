@@ -1,7 +1,4 @@
 "use strict";
-
-import { v1 as uuidv1 } from "uuid";
-import constants from "./data/constants.json";
 import { UserID, SessionID } from "./IDTypes.js";
 import { countCards } from "./cardUtils.js";
 import { negMod, shuffleArray, getRandom, arrayIntersect, Options, getNDisctinctRandom, pickRandom } from "./utils.js";
@@ -17,7 +14,7 @@ import {
 	DeckList,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
-import { IBot, Bot, SimpleBot, fallbackToSimpleBots, isBot } from "./Bot.js";
+import { IBot, fallbackToSimpleBots, isBot } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -34,258 +31,25 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
-import { isMessageError, MessageError, SocketAck, SocketError } from "./Message.js";
+import { isMessageError, Message, MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
-import { generateJHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
-import { isBoolean, isObject, isString } from "./TypeChecks.js";
-import { IDraftState, TurnBased } from "./IDraftState.js";
+import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
+import { IDraftState } from "./IDraftState.js";
 import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
-import { PickSummary } from "./PickSummary";
 import { TeamSealedState } from "./TeamSealed.js";
 import { GridDraftState } from "./GridDraft.js";
-
-// Validate session settings types and values.
-export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean } = {
-	ownerIsPlayer: isBoolean,
-	setRestriction(val: any) {
-		if (!Array.isArray(val)) return false;
-		for (const s of val)
-			if (constants.PrimarySets.indexOf(s) === -1) {
-				console.error(`Error: Set ${s} in not marked as primary.`);
-				return false;
-			}
-		return true;
-	},
-	isPublic: isBoolean,
-	description: isString,
-	ignoreCollections: isBoolean,
-	boostersPerPlayer(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	cardsPerBooster(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	teamDraft: isBoolean,
-	randomizeSeatingOrder: isBoolean,
-	disableBotSuggestions: isBoolean,
-	bots(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	maxTimer(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	maxPlayers(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	mythicPromotion: isBoolean,
-	useBoosterContent: isBoolean,
-	boosterContent(val: any) {
-		// Validate input (a value for each rarity and at least one card)
-		if (!isObject(val)) return false;
-		if (!["common", "uncommon", "rare"].every((r) => r in val)) return false;
-		if (Object.values(val).some((i: any) => !Number.isInteger(i) || i < 0)) return false;
-		if (Object.values(val).reduce((acc, val) => acc + val) <= 0) return false;
-		return true;
-	},
-	usePredeterminedBoosters: isBoolean,
-	colorBalance: isBoolean,
-	maxDuplicates(val: any) {
-		if (!isObject(val)) return false;
-		if (Object.values(val).some((i) => !Number.isInteger(i))) return false;
-		return true;
-	},
-	foil: isBoolean,
-	preferredCollation(val: any) {
-		return ["Paper", "MTGA"].includes(val);
-	},
-	useCustomCardList: isBoolean,
-	customCardListWithReplacement: isBoolean,
-	customCardList: isObject,
-	distributionMode(val: any) {
-		return ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"].includes(val);
-	},
-	customBoosters: Array.isArray,
-	doubleMastersMode: isBoolean,
-	pickedCardsPerRound(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 1;
-	},
-	burnedCardsPerRound(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	discardRemainingCardsAt(val: any) {
-		if (!Number.isInteger(val)) return false;
-		return val >= 0;
-	},
-	personalLogs: isBoolean,
-	draftLogRecipients(val: any) {
-		return ["everyone", "delayed", "owner", "none"].includes(val);
-	},
-	bracketLocked: isBoolean,
-	draftPaused: isBoolean,
-};
-
-export type UserData = {
-	userID: UserID;
-	userName: string;
-	isBot: boolean;
-	isDisconnected: boolean;
-	boosterCount: undefined | number;
-};
-
-export type UsersData = {
-	[uid: UserID]: UserData;
-};
-
-export class DraftState extends IDraftState {
-	boosters: Array<Array<UniqueCard>>;
-	boosterNumber = 0;
-	numPicks = 0;
-	players: {
-		[userID: UserID]: {
-			isBot: boolean;
-			botPickInFlight: boolean; // Set to true if a call to doBotPick is already scheduled.
-			botInstance: IBot; // If a human player, this will be used for pick recommendations.
-			boosters: UniqueCard[][];
-			pickNumber: 0;
-			countdownInterval: NodeJS.Timeout | null;
-			timer: number;
-		};
-	} = {};
-
-	constructor(boosters: UniqueCard[][] = [], players: UserID[] = [], options: Options = {}) {
-		super("draft");
-		this.boosters = boosters;
-		let botIndex = 0;
-
-		const playersToCreate = players.map((uid) => {
-			return {
-				isBot: false,
-				userID: uid,
-			};
-		});
-
-		// Distribute bots evenly around the table
-		let idx = 0;
-		for (let i = 0; i < options.botCount; ++i) {
-			// Search next human player
-			while (playersToCreate[idx].isBot) idx = (idx + 1) % playersToCreate.length;
-			++idx;
-			// Insert a bot right after
-			playersToCreate.splice(idx, 0, { isBot: true, userID: uuidv1() });
-		}
-
-		for (const user of playersToCreate) {
-			const userName = user.isBot ? `Bot #${++botIndex}` : Connections[user.userID].userName;
-			const botInstance = options.simpleBots
-				? new SimpleBot(userName, user.userID)
-				: new Bot(userName, user.userID);
-
-			this.players[user.userID] = {
-				isBot: user.isBot,
-				botPickInFlight: false,
-				botInstance: botInstance,
-				boosters: [],
-				pickNumber: 0,
-				countdownInterval: null,
-				timer: 0,
-			};
-		}
-	}
-}
-
-export class WinstonDraftState extends IDraftState implements TurnBased {
-	players: Array<UserID>;
-	round = -1; // Will be immedialty incremented
-	cardPool: Array<UniqueCard> = [];
-	piles: [Array<UniqueCard>, Array<UniqueCard>, Array<UniqueCard>] = [[], [], []];
-	currentPile: number = 0;
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
-		super("winston");
-		this.players = players;
-		if (boosters) {
-			for (const booster of boosters) this.cardPool.push(...booster);
-			shuffleArray(this.cardPool);
-		}
-		if (this.cardPool.length >= 3)
-			this.piles = [
-				[this.cardPool.pop() as UniqueCard],
-				[this.cardPool.pop() as UniqueCard],
-				[this.cardPool.pop() as UniqueCard],
-			];
-	}
-
-	currentPlayer() {
-		return this.players[this.round % 2];
-	}
-
-	syncData() {
-		return {
-			round: this.round,
-			currentPlayer: this.currentPlayer(),
-			piles: this.piles,
-			currentPile: this.currentPile,
-			remainingCards: this.cardPool.length,
-		};
-	}
-}
-
-export class RochesterDraftState extends IDraftState implements TurnBased {
-	players: Array<UserID>;
-	pickNumber = 0;
-	boosterNumber = 0;
-	boosters: Array<Array<UniqueCard>> = [];
-	boosterCount: number;
-	lastPicks: PickSummary[] = [];
-	constructor(players: Array<UserID>, boosters: Array<Array<UniqueCard>>) {
-		super("rochester");
-		this.players = players;
-		this.boosters = boosters;
-		this.boosterCount = this.boosters.length;
-	}
-
-	currentPlayer() {
-		const startingDirection = Math.floor(this.boosterNumber / this.players.length) % 2;
-		const direction = Math.floor(this.pickNumber / this.players.length) % 2;
-		const offset = direction
-			? this.players.length - 1 - (this.pickNumber % this.players.length)
-			: this.pickNumber % this.players.length;
-		return this.players[negMod(this.boosterNumber + (startingDirection ? 1 : -1) * offset, this.players.length)];
-	}
-
-	syncData() {
-		return {
-			pickNumber: this.pickNumber,
-			boosterNumber: this.boosterNumber,
-			currentPlayer: this.currentPlayer(),
-			booster: this.boosters[0],
-			boosterCount: this.boosterCount,
-			lastPicks: this.lastPicks,
-		};
-	}
-}
-
-export type DistributionMode = "regular" | "shufflePlayerBoosters" | "shuffleBoosterPool";
-export type DraftLogRecipients = "none" | "owner" | "delayed" | "everyone";
-
-export interface IIndexable {
-	[key: string]: any;
-}
-
-type DisconnectedUser = {
-	userName: string;
-	pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
-};
+import { DraftState } from "./DraftState.js";
+import { RochesterDraftState } from "./RochesterDraft.js";
+import { WinstonDraftState } from "./WinstonDraft.js";
+import { ServerToClientEvents } from "./SocketType";
+import Constants from "./Constants.js";
+import { SessionsSettingsProps } from "./Session/SessionProps.js";
+import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
+import { IIndexable } from "./Types.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -295,7 +59,7 @@ export class Session implements IIndexable {
 
 	// Options
 	ownerIsPlayer: boolean = true;
-	setRestriction: Array<string> = [constants.MTGASets[constants.MTGASets.length - 1]];
+	setRestriction: Array<string> = [Constants.MTGASets[Constants.MTGASets.length - 1]];
 	isPublic: boolean = false;
 	description: string = "";
 	ignoreCollections: boolean = true;
@@ -312,7 +76,7 @@ export class Session implements IIndexable {
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
 	usePredeterminedBoosters: boolean = false;
 	colorBalance: boolean = true;
-	maxDuplicates?: { [slot: string]: number } = undefined;
+	maxDuplicates: { [rarity: string]: number } | null = null;
 	foil: boolean = false;
 	preferredCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
@@ -374,7 +138,7 @@ export class Session implements IIndexable {
 	}
 
 	broadcastDisconnectedUsers() {
-		const disconnectedUsersData: { [uid: string]: any } = {};
+		const disconnectedUsersData: { [uid: string]: any } = {}; // FIXME
 		for (const uid in this.disconnectedUsers)
 			disconnectedUsersData[uid] = { userName: this.disconnectedUsers[uid].userName };
 		this.forUsers((u) =>
@@ -644,6 +408,7 @@ export class Session implements IIndexable {
 	// Options object properties:
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
+	//  - playerCount: For use with useCustomBoosters: override getVirtualPlayersCount() as the number of players in the session (allow ignoring bots).
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
@@ -787,6 +552,7 @@ export class Session implements IIndexable {
 				// Booster specific rules
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
 				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
+				const playerCount = options?.playerCount ?? this.getVirtualPlayersCount(); // Allow overriding via options
 				const boosterFactories = [];
 				const usedSets: { [set: string]: IBoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
@@ -809,7 +575,7 @@ export class Session implements IIndexable {
 
 				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
 
-				for (let i = 0; i < this.getVirtualPlayersCount(); ++i) {
+				for (let i = 0; i < playerCount; ++i) {
 					const playerBoosterFactories = [];
 					for (let boosterSet of customBoosters) {
 						// No specific rules
@@ -822,7 +588,7 @@ export class Session implements IIndexable {
 								if (randomSetsPool.length === 0)
 									randomSetsPool = [
 										...(this.setRestriction.length === 0
-											? constants.PrimarySets
+											? Constants.PrimarySets
 											: this.setRestriction),
 									];
 								boosterSet = pickRandom(randomSetsPool);
@@ -860,7 +626,7 @@ export class Session implements IIndexable {
 									for (const slot of ["common", "uncommon", "rare"]) {
 										if (
 											countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
-											multiplier * this.getVirtualPlayersCount() * targets[slot]
+											multiplier * playerCount * targets[slot]
 										) {
 											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
 											console.warn(msg);
@@ -882,7 +648,7 @@ export class Session implements IIndexable {
 				// Generate Boosters
 				this.boosters = [];
 				for (let b = 0; b < boostersPerPlayer; ++b) {
-					for (let p = 0; p < this.getVirtualPlayersCount(); ++p) {
+					for (let p = 0; p < playerCount; ++p) {
 						const rule = boosterFactories[p][b];
 						if (!rule) return new MessageError("Internal Error");
 						const booster = rule?.generateBooster(targets);
@@ -912,11 +678,16 @@ export class Session implements IIndexable {
 
 	notifyUserChange() {
 		// Send only necessary data
-		const user_info: Array<any> = [];
+		const userInfo: Array<{
+			userID: UserID;
+			userName: string;
+			collection: boolean;
+			useCollection: boolean;
+		}> = [];
 		for (const userID of this.getSortedHumanPlayersIDs()) {
 			const u = Connections[userID];
 			if (u) {
-				user_info.push({
+				userInfo.push({
 					userID: u.userID,
 					userName: u.userName,
 					collection: u.collection.size > 0,
@@ -933,7 +704,7 @@ export class Session implements IIndexable {
 					this.owner,
 					this.owner in Connections ? Connections[this.owner].userName : null
 				);
-				Connections[user].socket.emit("sessionUsers", user_info);
+				Connections[user].socket.emit("sessionUsers", userInfo);
 			}
 		});
 	}
@@ -966,7 +737,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
-			Connections[user].socket.emit("startWinstonDraft", this.draftState);
+			Connections[user].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData());
 		}
 
 		this.initLogs("Winston Draft");
@@ -1021,7 +792,7 @@ export class Session implements IIndexable {
 			s.piles[s.currentPile].push(s.cardPool.pop() as UniqueCard);
 		// Give a random card from the card pool if this was the last pile
 		if (s.currentPile === 2) {
-			const card = s.cardPool.pop() as Card;
+			const card = s.cardPool.pop() as UniqueCard;
 			Connections[s.currentPlayer()].socket.emit("winstonDraftRandomCard", card);
 			this.draftLog?.users[s.currentPlayer()].picks.push({
 				randomCard: card.id,
@@ -1169,7 +940,11 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
-		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, { useCustomBoosters: true });
+		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
+			useCustomBoosters: true,
+			boostersPerPlayer: this.boostersPerPlayer,
+			playerCount: this.users.size,
+		});
 		if (isMessageError(ret)) {
 			// FIXME: We should propagate to ack.
 			this.emitError(ret.title, ret.text);
@@ -1364,7 +1139,7 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	endMinesweeperDraft(options: Options = {}) {
+	endMinesweeperDraft(options: { immediate?: boolean } = {}) {
 		const s = this.draftState as MinesweeperDraftState;
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
 		logSession("MinesweeperDraft", this);
@@ -1386,9 +1161,7 @@ export class Session implements IIndexable {
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		const ret = this.generateBoosters(boosterQuantity, {
-			useCustomBoosters: true,
-		});
+		const ret = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
 		if (isMessageError(ret)) {
 			// FIXME: We should propagate to ack.
 			this.emitError(ret.title, ret.text);
@@ -1716,13 +1489,7 @@ export class Session implements IIndexable {
 
 	sendDraftState(userID: UserID) {
 		const s = this.draftState as DraftState;
-		if (userID in Connections)
-			Connections[userID].socket.emit("draftState", {
-				booster: s.players[userID].boosters[0],
-				boosterCount: s.players[userID].boosters.length,
-				boosterNumber: s.boosterNumber,
-				pickNumber: s.players[userID].pickNumber,
-			});
+		if (userID in Connections) Connections[userID].socket.emit("draftState", s.syncData(userID));
 	}
 
 	requestBotRecommendation(userID: UserID) {
@@ -1849,11 +1616,7 @@ export class Session implements IIndexable {
 				if (this.draftState.players[uid].isBot) this.startBotPickChain(uid);
 		}
 
-		this.forUsers((u) =>
-			Connections[u]?.socket.emit("resumeOnReconnection", {
-				msg,
-			})
-		);
+		this.forUsers((u) => Connections[u]?.socket.emit("resumeOnReconnection", new Message(msg.title, msg.text)));
 	}
 
 	endDraft() {
@@ -1992,10 +1755,10 @@ export class Session implements IIndexable {
 		switch (this.draftLogRecipients) {
 			case "none":
 				if (this.personalLogs)
-					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog));
+					this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog!));
 				}
 				break;
 			default:
@@ -2005,14 +1768,14 @@ export class Session implements IIndexable {
 			case "owner":
 				Connections[this.owner].socket.emit("draftLog", this.draftLog);
 				if (this.personalLogs)
-					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)));
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", this.getStrippedLog(uid)!));
 				else {
 					const strippedLog = this.getStrippedLog();
-					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog));
+					this.forNonOwners((uid) => Connections[uid]?.socket.emit("draftLog", strippedLog!));
 				}
 				break;
 			case "everyone":
-				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog));
+				this.forUsers((uid) => Connections[uid]?.socket.emit("draftLog", this.draftLog!));
 				break;
 		}
 	}
@@ -2021,9 +1784,16 @@ export class Session implements IIndexable {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer) {
+			// FIXME: We should propagate to ack.
+			this.emitError("Error", "Invalid 'customBoosters' parameter.");
+			this.broadcastPreparationCancelation();
+			return false;
+		}
 		const ret = this.generateBoosters(this.users.size * boostersPerPlayer, {
-			boostersPerPlayer: boostersPerPlayer,
 			useCustomBoosters: useCustomBoosters,
+			boostersPerPlayer: boostersPerPlayer,
+			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
 		if (isMessageError(ret)) {
@@ -2054,10 +1824,9 @@ export class Session implements IIndexable {
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
-			Connections[this.owner].socket.emit("message", {
-				title: "Sealed pools successfly distributed!",
-				showConfirmButton: false,
-			});
+			const msg = new Message("Sealed pools successfly distributed!");
+			msg.showConfirmButton = false;
+			Connections[this.owner].socket.emit("message", msg);
 		}
 
 		logSession("Sealed", this);
@@ -2085,8 +1854,13 @@ export class Session implements IIndexable {
 			}
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+		if (useCustomBoosters && customBoosters.length !== boostersPerTeam) {
+			this.drafting = false;
+			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
+		}
 		const ret = this.generateBoosters(teams.length * boostersPerTeam, {
 			boostersPerPlayer: boostersPerTeam,
+			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
@@ -2126,10 +1900,9 @@ export class Session implements IIndexable {
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
-			Connections[this.owner].socket.emit("message", {
-				title: "Sealed pools successfly distributed!",
-				showConfirmButton: false,
-			});
+			const msg = new Message("Sealed pools successfly distributed!");
+			msg.showConfirmButton = false;
+			Connections[this.owner].socket.emit("message", msg);
 			Connections[this.owner].socket.emit("startTeamSealedSpectator");
 		}
 
@@ -2184,7 +1957,7 @@ export class Session implements IIndexable {
 		return new SocketError("Not playing", "You're not playing in this team sealed?!");
 	}
 
-	distributeJumpstart(set: string | null) {
+	distributeJumpstart(set?: string) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
 		const log = this.initLogs("Jumpstart");
@@ -2194,11 +1967,11 @@ export class Session implements IIndexable {
 		if (set === "j21" || set === "super") {
 			for (const user of this.users) {
 				// Randomly get 2*3 packs and let the user choose among them.
-				const choices: any = [];
+				const choices: [JHHBooster[], JHHBooster[][]] = [[], []];
 				if (set === "j21") {
-					choices.push(getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster));
+					choices[0] = getNDisctinctRandom(JumpstartHHBoosters, 3).map(generateJHHBooster);
 					// The choices are based on the first pick colors (we send all possibilties rather than waiting for user action).
-					const secondchoice = [];
+					const secondchoice: JHHBooster[][] = [];
 					for (let i = 0; i < 3; ++i) {
 						const candidates: JHHBoosterPattern[] = JumpstartHHBoosters.filter((p) => {
 							if (p.name === choices[0][i].name) return false; // Prevent duplicates
@@ -2213,11 +1986,11 @@ export class Session implements IIndexable {
 						});
 						secondchoice.push(getNDisctinctRandom(candidates, 3).map(generateJHHBooster));
 					}
-					choices.push(secondchoice);
+					choices[1] = secondchoice;
 				} else {
-					choices.push(getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster));
+					choices[0] = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					// Second choice does not depend on the first one in this case, but we'll keep the same interface for simplicity.
-					choices.push([]);
+					choices[1] = [];
 					const secondChoice = getNDisctinctRandom(SuperJumpBoosters, 3).map(generateJHHBooster);
 					for (let i = 0; i < 3; ++i) choices[1].push(secondChoice);
 				}
@@ -2252,7 +2025,7 @@ export class Session implements IIndexable {
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
 					showConfirmButton: false,
 					timer: 2000,
-				});
+				} as Message);
 			}
 			this.sendLogs();
 			logSession("Jumpstart", this);
@@ -2260,10 +2033,9 @@ export class Session implements IIndexable {
 
 		// If owner is not playing, let them know everything went ok.
 		if (!this.ownerIsPlayer && this.owner in Connections) {
-			Connections[this.owner].socket.emit("message", {
-				title: "Jumpstart boosters successfully distributed!",
-				showConfirmButton: false,
-			});
+			const msg = new Message("Jumpstart boosters successfully distributed!");
+			msg.showConfirmButton = false;
+			Connections[this.owner].socket.emit("message", msg);
 		}
 	}
 
@@ -2274,26 +2046,27 @@ export class Session implements IIndexable {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
-			let msgData: any = {};
+			let msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
 			switch (this.draftState.type) {
 				case "winston":
-					msgData = { name: "rejoinWinstonDraft", state: this.draftState };
+					msgData.name = "rejoinWinstonDraft";
 					break;
 				case "grid":
-					msgData = { name: "rejoinGridDraft", state: this.draftState };
+					msgData.name = "rejoinGridDraft";
 					break;
 				case "rochester":
-					msgData = { name: "rejoinRochesterDraft", state: this.draftState };
+					msgData.name = "rejoinRochesterDraft";
 					break;
 				case "minesweeper":
-					msgData = { name: "rejoinMinesweeperDraft", state: this.draftState };
+					msgData.name = "rejoinMinesweeperDraft";
 					break;
 				case "teamSealed": {
-					msgData = { name: "startTeamSealed", state: this.draftState };
+					msgData.name = "rejoinTeamSealed";
 					break;
 				}
 			}
-			Connections[userID].socket.emit(msgData.name, {
+			// FIXME: Refactor to get full type checking
+			Connections[userID].socket.emit(msgData.name!, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				state: msgData.state.syncData(userID),
 			});
@@ -2507,7 +2280,7 @@ export class Session implements IIndexable {
 				text: text,
 				showConfirmButton: showConfirmButton,
 				timer: timer,
-			})
+			} as Message)
 		);
 	}
 
@@ -2517,18 +2290,18 @@ export class Session implements IIndexable {
 				icon: "warning",
 				toast: true,
 				title: "Game canceled",
-			})
+			} as Message)
 		);
 	}
 
-	emitError(title = "Error", text = "Unspecified Error", showConfirmButton = true, timer = 0) {
+	emitError(title: string = "Error", text: string | null = "Unspecified Error", showConfirmButton = true, timer = 0) {
 		Connections[this.owner]?.socket.emit("message", {
 			icon: "error",
 			title: title,
 			text: text,
 			showConfirmButton: showConfirmButton,
 			timer: timer,
-		});
+		} as Message);
 	}
 
 	generateBracket(players: Array<{ userID: UserID; userName: string }>) {
@@ -2633,6 +2406,26 @@ export class Session implements IIndexable {
 	forNonOwners(fn: (uid: UserID) => void) {
 		for (const uid of this.users) if (uid !== this.owner) fn(uid);
 	}
+
+	emitToConnectedNonOwners<T extends keyof ServerToClientEvents>(
+		eventKey: T,
+		...args: Parameters<ServerToClientEvents[T]>
+	) {
+		for (const uid of this.users)
+			if (uid in Connections && uid !== this.owner) Connections[uid].socket.emit(eventKey, ...args);
+	}
+}
+
+export function getPublicSessionData(s: Session) {
+	return {
+		id: s.id,
+		isPrivate: false,
+		description: s.description,
+		players: s.users.size,
+		maxPlayers: s.maxPlayers,
+		cube: s.useCustomCardList,
+		sets: s.setRestriction,
+	};
 }
 
 export const Sessions: { [sid: string]: Session } = {};

@@ -25,15 +25,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { CardColor } from "../../../src/CardTypes";
-import { UserData } from "../../../src/Session";
+import { CardColor, UniqueCard } from "../../../src/CardTypes";
+import { UserData } from "../../../src/Session/SessionTypes";
 import { TeamSealedPool, TeamSealedCard } from "../../../src/TeamSealed";
+import { Language } from "../../../src/Types";
 import CardPool from "./CardPool.vue";
 
 export default defineComponent({
 	components: { CardPool },
 	props: {
-		language: { type: String, required: true },
+		language: { type: String as PropType<Language>, required: true },
 		state: { type: Object as PropType<TeamSealedPool>, required: true },
 		users: { type: Array as PropType<UserData[]>, required: true },
 	},
@@ -72,7 +73,7 @@ export default defineComponent({
 		},
 	},
 	methods: {
-		onCardClick(event: Event, card: TeamSealedCard) {
+		onCardClick(event: Event, card: UniqueCard) {
 			this.$emit("pick", card.uniqueID);
 		},
 		cardConditionalClasses(card: TeamSealedCard) {

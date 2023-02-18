@@ -1,7 +1,7 @@
 // https://stackoverflow.com/a/14991797
-export default function parseCSV(str) {
-	var arr = [];
-	var quote = false; // 'true' means we're inside a quoted field
+export default function parseCSV(str: string) {
+	const arr: string[][] = [];
+	let quote = false; // 'true' means we're inside a quoted field
 
 	// Iterate over each character, keep track of current row and column (of the returned array)
 	for (var row = 0, col = 0, c = 0; c < str.length; c++) {
