@@ -1258,6 +1258,13 @@ io.on("connection", async function (socket) {
 		}
 	});
 
+	if (process.env.NODE_ENV === undefined) {
+		socket.use((event, next) => {
+			console.log(event);
+			next();
+		});
+	}
+
 	// Personal events
 	socket.on("setUserName", prepareSocketCallback(setUserName));
 	socket.on("setCollection", prepareSocketCallback(setCollection));
