@@ -17,7 +17,7 @@
 						class="swal2-input"
 						style="display: block; margin: auto"
 						:placeholder="`Boosters per ${teamSealed ? 'team ' : 'player'}`"
-						v-model="boostersPerPlayer"
+						v-model.number="boostersPerPlayer"
 					/>
 				</div>
 				<div class="teams-selector" v-if="teamSealed">

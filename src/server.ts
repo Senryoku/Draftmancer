@@ -552,6 +552,10 @@ function startTeamSealed(
 	teams: UserID[][],
 	ack: (result: SocketAck) => void
 ) {
+	if (!Number.isInteger(boostersPerTeam) || boostersPerTeam <= 0) {
+		ack?.(new SocketError("Error", "Invalid 'boostersPerTeam' parameter."));
+		return;
+	}
 	const r = Sessions[sessionID].startTeamSealed(boostersPerTeam, customBoosters, teams);
 	ack?.(r);
 }
@@ -1129,7 +1133,11 @@ function distributeSealed(
 	boostersPerPlayer: number,
 	customBoosters: Array<string>
 ) {
-	if (isNaN(boostersPerPlayer)) return;
+	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) {
+		// FIXME: Should be an ack callback.
+		Sessions[sessionID].emitError("Error", "Invalid 'boostersPerPlayer' parameter.");
+		return;
+	}
 	Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
 }
 
