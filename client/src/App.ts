@@ -27,7 +27,6 @@ import Vue, { defineComponent } from "vue";
 import draggable, { MoveEvent } from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions } from "sweetalert2";
-import LogStoreWorker from "./logstore.worker";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
@@ -292,7 +291,7 @@ export default defineComponent({
 			selectedCube: Constants.CubeLists.length > 0 ? Constants.CubeLists[0] : null,
 
 			// Used to debounce calls to doStoreDraftLogs
-			storeDraftLogsTimeout: null,
+			storeDraftLogsTimeout: null as ReturnType<typeof setTimeout> | null,
 
 			// Chat
 			currentChatMessage: "",
@@ -2638,7 +2637,7 @@ export default defineComponent({
 			this.storeDraftLogsTimeout = setTimeout(this.doStoreDraftLogs, 5000);
 		},
 		doStoreDraftLogs() {
-			let worker = new LogStoreWorker();
+			let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 			worker.onmessage = (e) => {
 				localStorage.setItem("draftLogs", e.data);
 				this.storeDraftLogsTimeout = null;
@@ -2915,7 +2914,7 @@ export default defineComponent({
 
 			const storedLogs = localStorage.getItem("draftLogs");
 			if (storedLogs) {
-				let worker = new LogStoreWorker();
+				let worker = new Worker(new URL("./logstore.worker.ts", import.meta.url));
 				worker.onmessage = (e) => {
 					this.draftLogs = e.data;
 					console.log(`Loaded ${this.draftLogs.length} saved draft logs.`);

@@ -14,5 +14,3 @@ onmessage = function (e) {
 		}
 	}
 };
-
-export default {};

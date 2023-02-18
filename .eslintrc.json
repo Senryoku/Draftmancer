@@ -28,7 +28,6 @@
 			"files": "client/*",
 			"env": {
 				"browser": true,
-				"worker": true,
 				"es2020": true
 			},
 			"parser": "vue-eslint-parser",
@@ -46,6 +45,13 @@
 			"rules": {
 				"prettier/prettier": "error",
 				"vue/no-multiple-template-root": "off"
+			}
+		},
+		{
+			"files": "client/*.worker.ts",
+			"env": {
+				"worker": true,
+				"es2020": true
 			}
 		}
 	]
