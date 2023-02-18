@@ -1,23 +1,20 @@
-# fly.toml file generated for mtgadraft on 2022-10-02T22:31:20+02:00
-
-app = "mtgadraft"
+app = "mtgadraft-beta"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [build]
   builder = "heroku/buildpacks:20"
+  [build.args]
+    NODE_ENV = "production"
+
+[deploy]
+  strategy = "rolling"
 
 [env]
   PORT = "8080"
   NODE_ENV = "production"
-  NODE_OPTIONS = "--max-old-space-size=400" # 'Tuned' for a 512MB RAM VM
-
-[build.args]
-  NODE_ENV = "production"
-
-[deploy]
-  strategy = "rolling"
+  NODE_OPTIONS = "--max-old-space-size=420"
 
 [experimental]
   allowed_public_ports = []

@@ -15,7 +15,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 } from "./src/common.js";
-import Constants from "../src/data/constants.json";
+import Constants from "../dist/Constants.js";
 
 const checkColorBalance = function (booster) {
 	for (let color of "WUBRG")
@@ -1725,7 +1725,7 @@ describe("Sealed", function () {
 	});
 });
 
-import JumpstartBoosters from "../src/data/JumpstartBoosters.json";
+import JumpstartBoosters from "../src/data/JumpstartBoosters.json" assert { type: "json" };
 
 describe("Jumpstart", function () {
 	let clients = [];

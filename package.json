@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "MTGA Direct Challenge drafting environment",
 	"engines": {
-		"node": "14.x"
+		"node": "18.x"
 	},
 	"main": "dist/server.js",
 	"type": "module",

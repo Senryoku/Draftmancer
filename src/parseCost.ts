@@ -1,4 +1,4 @@
-import ManaSymbolsJSON from "./data/mana_symbols.json";
+import ManaSymbolsJSON from "./data/mana_symbols.json" assert { type: "json" };
 
 type parseCostReturnType = { cmc: number; colors: string[] };
 const ManaSymbols: { [key: string]: { cmc: number | null; colors: string[] } } = ManaSymbolsJSON;

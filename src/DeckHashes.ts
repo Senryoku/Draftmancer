@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { Card, CardID, DeckList } from "./CardTypes.js";
-import constants from "./data/constants.json";
+import Constants from "./Constants.js";
 
-const basicNames: { [color: string]: string } = constants.BasicLandNames["en"];
+const basicNames: { [color: string]: string } = Constants.BasicLandNames["en"];
 
 function decklistToArray(
 	decklist: DeckList,

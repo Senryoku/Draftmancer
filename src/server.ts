@@ -17,7 +17,7 @@ import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
 import { ackError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
-import constants from "./data/constants.json";
+import Constants from "./Constants.js";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
@@ -79,7 +79,7 @@ function startPublicSession(s: Session) {
 
 // Prepare local custom card lists
 const ParsedCubeLists: { [name: string]: any } = {};
-for (const cube of constants.CubeLists) {
+for (const cube of Constants.CubeLists) {
 	if (cube.filename) {
 		ParsedCubeLists[cube.name] = parseCardList(fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
 			name: cube.name,

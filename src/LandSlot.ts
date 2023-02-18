@@ -4,7 +4,7 @@ import { CardID, CardPool } from "./CardTypes";
 import { getUnique, getCard } from "./Cards.js";
 import { getRandomMapKey, getRandom } from "./utils.js";
 import { removeCardFromCardPool } from "./cardUtils.js";
-import BasicLandIDs from "./data/BasicLandIDs.json";
+import BasicLandIDs from "./data/BasicLandIDs.json" assert { type: "json" };
 
 export class BasicLandSlot {
 	basicLandsIds: Array<CardID>;

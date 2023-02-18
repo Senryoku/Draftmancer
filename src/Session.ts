@@ -26,9 +26,9 @@ import {
 	getSetFoilRate,
 	PaperBoosterSizes,
 } from "./BoosterFactory.js";
-import JumpstartBoosters from "./data/JumpstartBoosters.json";
-import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json";
-import SuperJumpBoosters from "./data/SuperJumpBoosters.json";
+import JumpstartBoosters from "./data/JumpstartBoosters.json" assert { type: "json" };
+import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type: "json" };
+import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
 import { isMessageError, Message, MessageError, SocketAck, SocketError } from "./Message.js";

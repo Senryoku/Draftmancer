@@ -5,7 +5,7 @@ import { Cards, getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Card
 import { shuffleArray, randomInt, Options, random, getRandom } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
-import constants from "./data/constants.json";
+import Constants from "./Constants.js";
 
 // Generates booster for regular MtG Sets
 
@@ -1288,7 +1288,7 @@ export const SetSpecificFactories: {
  * Another collation method using data from https://github.com/taw/magic-sealed-data
  */
 
-import PaperBoosterData from "./data/sealed_extended_data.json";
+import PaperBoosterData from "./data/sealed_extended_data.json" assert { type: "json" };
 import { isMessageError, MessageError } from "./Message.js";
 
 class CardInfo {
@@ -1425,7 +1425,7 @@ export const PaperBoosterSizes: {
 } = {};
 for (const s of PaperBoosterData as any[]) {
 	const set: SetInfo = s as SetInfo;
-	if (!constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
+	if (!Constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
 		//console.log( `PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.` );
 		continue;
 	}

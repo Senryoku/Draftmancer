@@ -1,6 +1,6 @@
 import { CardColor } from "./CardTypes";
 import { SetCode } from "./Types";
-import _constants from "./data/constants.json";
+import _constants from "./data/constants.json" assert { type: "json" };
 
 export type CubeDescription = {
 	name: string;
