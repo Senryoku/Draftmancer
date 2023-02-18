@@ -243,7 +243,7 @@ export default defineComponent({
 			}
 			return Math.min(columnIndex, this.rows[0].length - 1);
 		},
-		addCard(card: UniqueCard, event: MouseEvent | undefined) {
+		addCard(card: UniqueCard, event?: MouseEvent) {
 			if (event) {
 				this.insertCard(this.getColumnFromCoordinates(event), card);
 			} else {

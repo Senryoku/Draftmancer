@@ -215,7 +215,7 @@ export interface ClientToServerEvents {
 	shuffleBoosters: (ack: (result: SocketAck) => void) => void;
 	setPersonalLogs: (value: boolean) => void;
 	setDraftLogRecipients: (draftLogRecipients: DraftLogRecipients) => void;
-	setMaxDuplicates: (maxDuplicates: { common: number; uncommon: number; rare: number }) => void;
+	setMaxDuplicates: (maxDuplicates: { [rarity in "common" | "uncommon" | "rare" | "mythic"]: number } | null) => void;
 	setColorBalance: (colorBalance: boolean) => void;
 	setFoil: (foil: boolean) => void;
 	setCollationType: (preferredCollation: string) => void;

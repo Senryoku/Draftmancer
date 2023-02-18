@@ -76,7 +76,7 @@ export class Session implements IIndexable {
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
 	usePredeterminedBoosters: boolean = false;
 	colorBalance: boolean = true;
-	maxDuplicates?: { [slot: string]: number } = undefined;
+	maxDuplicates: { [rarity: string]: number } | null = null;
 	foil: boolean = false;
 	preferredCollation: string = "MTGA"; // Unused! (And thus not exposed client-side)
 	useCustomCardList: boolean = false;
@@ -1780,6 +1780,12 @@ export class Session implements IIndexable {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer) {
+			// FIXME: We should propagate to ack.
+			this.emitError("Error", "Invalid 'customBoosters' parameter.");
+			this.broadcastPreparationCancelation();
+			return false;
+		}
 		const ret = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			boostersPerPlayer: boostersPerPlayer,
 			useCustomBoosters: useCustomBoosters,
@@ -1843,6 +1849,10 @@ export class Session implements IIndexable {
 			}
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
+		if (useCustomBoosters && customBoosters.length !== boostersPerTeam) {
+			this.drafting = false;
+			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
+		}
 		const ret = this.generateBoosters(teams.length * boostersPerTeam, {
 			boostersPerPlayer: boostersPerTeam,
 			useCustomBoosters: useCustomBoosters,

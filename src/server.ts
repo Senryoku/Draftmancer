@@ -942,7 +942,7 @@ function setDraftLogRecipients(userID: UserID, sessionID: SessionID, draftLogRec
 function setMaxDuplicates(
 	userID: UserID,
 	sessionID: SessionID,
-	maxDuplicates: { common: number; uncommon: number; rare: number }
+	maxDuplicates: { common: number; uncommon: number; rare: number; mythic: number } | null
 ) {
 	if (!SessionsSettingsProps.maxDuplicates(maxDuplicates)) return;
 	Sessions[sessionID].maxDuplicates = maxDuplicates;

@@ -206,7 +206,7 @@ export default defineComponent({
 			},
 			usePredeterminedBoosters: false,
 			colorBalance: true,
-			maxDuplicates: null as { common: number; uncommon: number; rare: number } | null,
+			maxDuplicates: null as { common: number; uncommon: number; rare: number; mythic: number } | null,
 			foil: false,
 			bots: 0,
 			setRestriction: [] as SetCode[],
@@ -1174,7 +1174,7 @@ export default defineComponent({
 			this.selectCard(null, c);
 			if (this.pickOnDblclick) this.pickCard();
 		},
-		allowBoosterCardDrop(e) {
+		allowBoosterCardDrop(e: DragEvent) {
 			// Allow dropping only if the dragged object is the selected card
 
 			// A better (?) solution would be something like
@@ -1184,7 +1184,7 @@ export default defineComponent({
 			// but only Firefox allows to check for dataTransfer in this event (and
 			// it's against the standard)
 
-			if (e.dataTransfer.types.includes("isboostercard")) {
+			if (e.dataTransfer?.types.includes("isboostercard")) {
 				e.preventDefault();
 				e.dataTransfer.dropEffect = "move";
 				return false;
@@ -1217,12 +1217,10 @@ export default defineComponent({
 				);
 				return;
 			} else {
-				if (!options) options = {};
-				options.event = e;
-				this.pickCard(options);
+				this.pickCard(Object.assign(options ?? {}, { event: e }));
 			}
 		},
-		pickCard(options: { toSideboard?: boolean } | undefined = undefined) {
+		pickCard(options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined) {
 			if (
 				this.pickInFlight || // We already send a pick request and are waiting for an anwser
 				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
@@ -1879,7 +1877,7 @@ export default defineComponent({
 
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
 
-				const parseCollection = function (contents: string, startIdx?: number = undefined) {
+				const parseCollection = function (contents: string, startIdx?: number) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
 					try {
 						const callIdx = startIdx
@@ -1946,7 +1944,10 @@ export default defineComponent({
 						for (let id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
 						for (let i = 1; i < collections.length; ++i)
 							for (let id of cardids)
-								result[id] = Math.min(result[id], collections[i]![id as keyof (typeof collections)[i]]);
+								result[id] = Math.min(
+									result[id],
+									collections[i]![id as keyof ReturnType<typeof parseCollection>]
+								);
 					} else result = parseCollection(contents);
 				} else result = parseCollection(contents);
 
@@ -2256,21 +2257,13 @@ export default defineComponent({
 		},
 		distributeSealed(boosterCount: number, customBoosters: string[]) {
 			if (this.userID !== this.sessionOwner) return;
-			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-			this.socket.emit("distributeSealed", boosterCount, useCustomBoosters ? customBoosters : null);
+			this.socket.emit("distributeSealed", boosterCount, customBoosters);
 		},
 		startTeamSealed(boosterCount: number, customBoosters: string[], teams: UserID[][]) {
 			if (this.userID !== this.sessionOwner) return;
-			const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-			this.socket.emit(
-				"startTeamSealed",
-				boosterCount,
-				useCustomBoosters ? customBoosters : null,
-				teams,
-				(err) => {
-					if (err.error) Alert.fire(err.error);
-				}
-			);
+			this.socket.emit("startTeamSealed", boosterCount, customBoosters, teams, (err) => {
+				if (err.error) Alert.fire(err.error);
+			});
 		},
 		teamSealedPick(uniqueCardID: UniqueCardID) {
 			this.socket.emit("teamSealedPick", uniqueCardID, (r) => {
@@ -2438,20 +2431,20 @@ export default defineComponent({
 			this.socket.emit("lockBracket", this.bracketLocked);
 		},
 		// Deck/Sideboard management
-		addToDeck(card: UniqueCard | UniqueCard[], options: Options | undefined = undefined) {
+		addToDeck(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToDeck(c, options);
 			else {
 				// Handle column sync.
 				this.deck.push(card);
-				this.$refs.deckDisplay?.addCard(card, options ? options.event : null);
+				this.$refs.deckDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
-		addToSideboard(card: UniqueCard | UniqueCard[], options: Options | undefined = undefined) {
+		addToSideboard(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
 			if (Array.isArray(card)) for (let c of card) this.addToSideboard(c, options);
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
-				this.$refs.sideboardDisplay?.addCard(card, options ? options.event : null);
+				this.$refs.sideboardDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
 		deckToSideboard(e: Event, c: UniqueCard) {
@@ -2952,7 +2945,7 @@ export default defineComponent({
 						console.error("Error parsing stored session settings: ", e);
 					}
 				}
-				this.socket.io.opts.query.sessionID = this.sessionID;
+				this.socket.io.opts.query!.sessionID = this.sessionID;
 				this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
 			history.replaceState(
@@ -2964,7 +2957,7 @@ export default defineComponent({
 		},
 		userName() {
 			if (this.socket) {
-				this.socket.io.opts.query.userName = this.userName;
+				this.socket.io.opts.query!.userName = this.userName;
 				this.socket.emit("setUserName", this.userName);
 			}
 			setCookie("userName", this.userName);
