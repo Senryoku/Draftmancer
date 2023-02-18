@@ -156,7 +156,7 @@ export interface IIndexable {
 	[key: string]: any;
 }
 
-type DisconnectedUser = {
+export type DisconnectedUser = {
 	userName: string;
 	pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 };

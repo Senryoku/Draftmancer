@@ -1,17 +1,26 @@
 "use strict";
-import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
-import { SessionID, UserID } from "../../src/IDTypes.js";
-import { SetCode } from "../../src/Types.js";
-import { DistributionMode, DraftLogRecipients, SessionsSettingsProps, UsersData } from "../../src/Session.js";
-import { PlainCollection, UniqueCard } from "../../src/CardTypes.js";
-import { DraftLog } from "../../src/DraftLog.js";
-import { BotScores } from "../../src/Bot.js";
-import { WinstonDraftState } from "../../src/WinstonDraft.js";
-import { GridDraftSyncData } from "../../src/GridDraft.js";
-import { MinesweeperSyncData } from "../../src/MinesweeperDraft.js";
-import { RochesterDraftSyncData } from "../../src/RochesterDraft.js";
-import { TeamSealedSyncData } from "../../src/TeamSealed.js";
-import { Bracket } from "../../src/Brackets.js";
+import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
+import { SessionID, UserID } from "../../src/IDTypes";
+import { SetCode } from "../../src/Types";
+import {
+	DisconnectedUser,
+	DistributionMode,
+	DraftLogRecipients,
+	SessionsSettingsProps,
+	UserData,
+	UsersData,
+} from "../../src/Session.js";
+import { PlainCollection, UniqueCard } from "../../src/CardTypes";
+import { DraftLog } from "../../src/DraftLog";
+import { BotScores } from "../../src/Bot";
+import { WinstonDraftState } from "../../src/WinstonDraft";
+import { GridDraftSyncData } from "../../src/GridDraft";
+import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
+import { RochesterDraftSyncData } from "../../src/RochesterDraft";
+import { TeamSealedSyncData } from "../../src/TeamSealed";
+import { Bracket } from "../../src/Brackets";
+import { SocketAck } from "../../src/Message";
+import { CubeDescription } from "../../src/Constants";
 
 import io, { Socket } from "socket.io-client";
 import Vue, { defineComponent } from "vue";
@@ -21,7 +30,7 @@ import Swal, { SweetAlertOptions } from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
-import SetsInfos from "./SetInfos";
+import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
 import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
@@ -41,8 +50,6 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
-import { SocketAck } from "../../src/Message.js";
-import { CubeDescription } from "../../src/Constants.js";
 const img = new Image();
 img.src = CardBack;
 
@@ -176,7 +183,7 @@ export default defineComponent({
 			sessionOwner: null as UserID | null,
 			sessionOwnerUsername: null as string | null,
 			sessionUsers: [] as { userID: string; userName: string; collection: boolean; useCollection: boolean }[],
-			disconnectedUsers: {},
+			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
 			// Session settings
 			ownerIsPlayer: true,
 			isPublic: false,
@@ -2794,7 +2801,7 @@ export default defineComponent({
 				.map((u) => u.userName)
 				.join(", ");
 		},
-		virtualPlayers() {
+		virtualPlayers(): UserData[] | typeof this.sessionUsers {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 
@@ -2813,17 +2820,8 @@ export default defineComponent({
 
 			return r;
 		},
-		displaySets() {
-			let dSets = [];
-			for (let s of this.sets) {
-				if (this.setsInfos && s in this.setsInfos)
-					dSets.push({
-						code: s,
-						fullName: this.setsInfos[s].fullName,
-						icon: this.setsInfos[s].icon,
-					});
-			}
-			return dSets;
+		displaySets(): SetInfo[] {
+			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
 		},
 		hasCollection() {
 			return !isEmpty(this.collection);
