@@ -432,15 +432,6 @@ export default defineComponent({
 			this.socket.on("ignoreCollections", (ignoreCollections) => {
 				this.ignoreCollections = ignoreCollections;
 			});
-			this.socket.on("boostersPerPlayer", (data) => {
-				this.boostersPerPlayer = parseInt(data);
-			});
-			this.socket.on("cardsPerBooster", (data) => {
-				this.cardsPerBooster = parseInt(data);
-			});
-			this.socket.on("teamDraft", (data) => {
-				this.teamDraft = data;
-			});
 			this.socket.on("bots", (data) => {
 				this.bots = parseInt(data);
 			});
