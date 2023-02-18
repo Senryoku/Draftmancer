@@ -66,7 +66,7 @@
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
 import { UserID } from "../../../src/IDTypes";
-import { UserData } from "../../../src/Session";
+import { UserData } from "../../../src/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
 

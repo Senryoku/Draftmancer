@@ -180,7 +180,12 @@ function setCollection(
 }
 
 // Parse a card list and uses it as collection
-function parseCollection(userID: UserID, sessionID: SessionID, txtcollection: string, ack: (...rest: any[]) => void) {
+function parseCollection(
+	userID: UserID,
+	sessionID: SessionID,
+	txtcollection: string,
+	ack: (ret: SocketAck & { collection?: PlainCollection }) => void
+) {
 	const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
 	const cardList = parseCardList(txtcollection, options);
 	if (cardList instanceof SocketError) {
@@ -188,7 +193,7 @@ function parseCollection(userID: UserID, sessionID: SessionID, txtcollection: st
 		return;
 	}
 
-	const ret: any = new SocketAck();
+	const ret: SocketAck & { collection?: PlainCollection } = new SocketAck();
 
 	const warningMessages = [];
 

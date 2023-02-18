@@ -13,7 +13,7 @@ import {
 import { PlainCollection, UniqueCard } from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
-import { WinstonDraftState } from "../../src/WinstonDraft";
+import { WinstonDraftState, WinstonDraftSyncData } from "../../src/WinstonDraft";
 import { GridDraftSyncData } from "../../src/GridDraft";
 import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
 import { RochesterDraftSyncData } from "../../src/RochesterDraft";
@@ -26,7 +26,7 @@ import io, { Socket } from "socket.io-client";
 import Vue, { defineComponent } from "vue";
 import draggable, { MoveEvent } from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
-import Swal, { SweetAlertIcon, SweetAlertOptions } from "sweetalert2";
+import Swal, { SweetAlertArrayOptions, SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
@@ -48,6 +48,7 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { Options } from "../../src/utils";
 const img = new Image();
 img.src = CardBack;
 
@@ -230,7 +231,7 @@ export default defineComponent({
 			boosterNumber: 0,
 			pickNumber: 0,
 			botScores: null as BotScores | null,
-			winstonDraftState: null as WinstonDraftState | null,
+			winstonDraftState: null as WinstonDraftSyncData | null,
 			gridDraftState: null as GridDraftSyncData | null,
 			rochesterDraftState: null as RochesterDraftSyncData | null,
 			minesweeperDraftState: null as MinesweeperSyncData | null,
@@ -1351,15 +1352,8 @@ export default defineComponent({
 			}
 			this.pickCard();
 		},
-		setWinstonDraftState(state) {
+		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
-			const piles = [];
-			for (let p of state.piles) {
-				let pile = [];
-				for (let c of p) pile.push(c);
-				piles.push(pile);
-			}
-			this.winstonDraftState.piles = piles;
 		},
 		startWinstonDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -1379,9 +1373,9 @@ export default defineComponent({
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
-					min: 6,
-					max: 12,
-					step: 1,
+					min: "6",
+					max: "12",
+					step: "1",
 				},
 				inputValue: 6,
 				showCancelButton: true,
@@ -1420,7 +1414,7 @@ export default defineComponent({
 			let idx = 0;
 			for (let card of this.gridDraftState.booster) {
 				if (card) {
-					if (prevBooster && prevBooster[idx] && prevBooster[idx].id === card.id)
+					if (prevBooster && prevBooster[idx] && prevBooster[idx]!.id === card.id)
 						booster.push(prevBooster[idx]);
 					else booster.push(card);
 				} else booster.push(null);
@@ -1446,9 +1440,9 @@ export default defineComponent({
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
-					min: 6,
-					max: 32,
-					step: 1,
+					min: "6",
+					max: "32",
+					step: "1",
 				},
 				inputValue: 18,
 				showCancelButton: true,
@@ -1471,7 +1465,7 @@ export default defineComponent({
 				//                     Column           Row
 				let idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 				if (this.gridDraftState.booster[idx]) {
-					cards.push(this.gridDraftState.booster[idx]);
+					cards.push(this.gridDraftState.booster[idx]!);
 				}
 			}
 			if (cards.length === 0) {
@@ -1481,7 +1475,7 @@ export default defineComponent({
 				this.socket.emit("gridDraftPick", choice, (answer: SocketAck) => {
 					if (answer.code === 0) {
 						for (let c of cards) this.addToDeck(c);
-					} else Alert.fire(answer.error);
+					} else if (answer.error) Alert.fire(answer.error);
 				});
 			}
 		},
@@ -1688,7 +1682,7 @@ export default defineComponent({
 			const reader = new FileReader();
 			reader.onload = async (e) => {
 				let contents = e.target?.result;
-				if (!contents) {
+				if (!contents || typeof contents !== "string") {
 					fireToast("error", `Empty file.`);
 					return;
 				}
@@ -1740,7 +1734,7 @@ export default defineComponent({
 						if (["Plains", "Island", "Swamp", "Mountain", "Forest"].includes(line[cardIndex])) continue;
 
 						// Workaround for some divergent set codes.
-						const setCodeTranslation = {
+						const setCodeTranslation: { [code: SetCode]: string } = {
 							ANA: "OANA",
 						};
 						if (line[setIDIndex] in setCodeTranslation)
@@ -1758,6 +1752,13 @@ export default defineComponent({
 				this.socket.emit("parseCollection", contents, (response) => {
 					if (response.error) {
 						Alert.fire(response.error);
+						return;
+					}
+					if (!response.collection) {
+						Alert.fire({
+							title: "Error",
+							text: "An error occured while importing the collection: Received an empty response.",
+						});
 						return;
 					}
 					this.setCollection(response.collection); // Unnecessary round trip, consider removing if this ends up being the only way to update the collection
@@ -1786,7 +1787,7 @@ export default defineComponent({
 			};
 			reader.readAsText(file);
 		},
-		parseMTGAProTrackerLog(content: string | ArrayBuffer) {
+		parseMTGAProTrackerLog(content: string) {
 			try {
 				const inventoryHeader = "[MTGA.Pro Logger] **InventoryContent** ";
 				const inventoryIndex = content.lastIndexOf(inventoryHeader);
@@ -1833,7 +1834,7 @@ export default defineComponent({
 			const reader = new FileReader();
 			reader.onload = async (e) => {
 				let contents = e.target?.result;
-				if (!contents) {
+				if (!contents || typeof contents !== "string") {
 					fireToast("error", `Empty file.`);
 					return;
 				}
@@ -1882,7 +1883,7 @@ export default defineComponent({
 
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
 
-				const parseCollection = function (contents, startIdx = null) {
+				const parseCollection = function (contents: string, startIdx?: number = undefined) {
 					const rpcName = "PlayerInventory.GetPlayerCardsV3";
 					try {
 						const callIdx = startIdx
@@ -1914,13 +1915,13 @@ export default defineComponent({
 							icon: "error",
 							title: "Parsing Error",
 							text: "An error occurred during parsing. Please make sure that you selected the correct file (C:\\Users\\%username%\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log).",
-							footer: "Full error: " + escapeHTML(e),
+							footer: "Full error: " + escapeHTML(e as string),
 						});
 						return null;
 					}
 				};
 
-				let result = null;
+				let result: { [id: string]: any } | null = null;
 				if (playerIds.size > 1) {
 					const swalResult = await Alert.fire({
 						icon: "question",
@@ -1934,21 +1935,22 @@ export default defineComponent({
 						cancelButtonText: "Latest Only",
 					});
 					if (swalResult.value) {
-						const collections = [];
+						const collections: ReturnType<typeof parseCollection>[] = [];
 						for (let pid of playerIds) {
 							const startIdx = contents.lastIndexOf(`"payload":{"playerId":"${pid}"`);
 							const coll = parseCollection(contents, startIdx);
 							if (coll) collections.push(coll);
 						}
-						let cardids = Object.keys(collections[0]);
+						let cardids = Object.keys(collections[0]!);
 						// Filter ids
 						for (let i = 1; i < collections.length; ++i)
-							cardids = Object.keys(collections[i]).filter((id) => cardids.includes(id));
+							cardids = Object.keys(collections[i]!).filter((id) => cardids.includes(id));
 						// Find min amount of each card
 						result = {};
-						for (let id of cardids) result[id] = collections[0][id];
+						for (let id of cardids) result[id] = collections[0]![id as keyof (typeof collections)[0]];
 						for (let i = 1; i < collections.length; ++i)
-							for (let id of cardids) result[id] = Math.min(result[id], collections[i][id]);
+							for (let id of cardids)
+								result[id] = Math.min(result[id], collections[i]![id as keyof (typeof collections)[i]]);
 					} else result = parseCollection(contents);
 				} else result = parseCollection(contents);
 
@@ -1970,8 +1972,8 @@ export default defineComponent({
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile(e: Event, callback, options) {
-			let file = e.target.files[0];
+		uploadFile(e: Event, callback: (file: File, options: Options) => void, options: Options) {
+			let file = (e.target as HTMLInputElement)?.files?.[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
 				return false;
@@ -1979,7 +1981,7 @@ export default defineComponent({
 			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function (url: string, callback, options) {
+		fetchFile: async function (url: string, callback: (blob: Blob, options: Options) => void, options: Options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				fireToast("error", `Could not fetch ${url}.`);
@@ -2037,7 +2039,7 @@ export default defineComponent({
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
-				preConfirm(cubeID) {
+				preConfirm(cubeID: string): Promise<{ cubeID: string; matchVersions: boolean }> {
 					const matchVersions = (document.getElementById("input-match-card-versions") as HTMLInputElement)
 						?.checked;
 					localStorage.setItem("import-match-versions", matchVersions.toString());
@@ -2053,15 +2055,28 @@ export default defineComponent({
 						resolve({
 							cubeID: cubeID,
 							matchVersions: matchVersions,
-							service: service,
 						});
 					});
 				},
-			}).then((result) => {
-				if (result.value && result.value.cubeID) this.selectCube(result.value);
+			}).then((result: SweetAlertResult<{ cubeID: string; matchVersions: boolean }>) => {
+				if (result.value && result.value.cubeID) {
+					const cube =
+						service === "Cube Cobra"
+							? {
+									name: "Imported Cube",
+									cubeCobraID: result.value.cubeID,
+									description: `Imported from Cube Cobra: '${result.value.cubeID}'`,
+							  }
+							: {
+									name: "Imported Cube",
+									cubeArtisanID: result.value.cubeID,
+									description: `Imported from CubeArtisan: '${result.value.cubeID}'`,
+							  };
+					this.selectCube(cube, result.value.matchVersions);
+				}
 			});
 		},
-		selectCube(cube: CubeDescription) {
+		selectCube(cube: CubeDescription, matchVersions: boolean = false) {
 			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
@@ -2070,29 +2085,19 @@ export default defineComponent({
 				}
 			};
 
-			if (cube.cubeCobraID) {
-				cube.cubeID = cube.cubeCobraID;
-				cube.service = "Cube Cobra";
-			} else if (cube.cubeArtisanID) {
-				cube.cubeID = cube.cubeArtisanID;
-				cube.service = "CubeArtisan";
-			}
-
-			if (cube.cubeID) {
+			if (cube.cubeCobraID || cube.cubeArtisanID) {
+				const cubeID = cube.cubeCobraID ?? cube.cubeArtisanID;
+				const service = cube.cubeCobraID ? "Cube Cobra" : "CubeArtisan";
 				Alert.fire({
 					position: "center",
 					icon: "info",
 					title: `Loading Cube...`,
-					text: `Please wait as we retrieve the latest version from ${cube.service}...`,
-					footer: `CubeID: ${escapeHTML(cube.cubeID)}`,
+					text: `Please wait as we retrieve the latest version from ${service}...`,
+					footer: `CubeID: ${escapeHTML(cubeID!)}`,
 					showConfirmButton: false,
 					allowOutsideClick: false,
 				});
-				this.socket.emit(
-					"importCube",
-					{ cubeID: cube.cubeID, service: cube.service, matchVersions: cube.matchVersions },
-					ack
-				);
+				this.socket.emit("importCube", { cubeID: cubeID, service: service, matchVersions: matchVersions }, ack);
 			} else if (cube.name) {
 				this.socket.emit("loadLocalCustomCardList", cube.name, ack);
 			}
@@ -2147,7 +2152,7 @@ export default defineComponent({
 			if (this.sessionOwner !== this.userID) return;
 			this.socket.emit("shuffleBoosters", (response) => {
 				if (response?.error) {
-					fireToast(response.error.type, response.error.title);
+					fireToast(response.error.icon, response.error.title);
 				} else {
 					fireToast("success", "Boosters successfuly shuffled!");
 				}
@@ -2197,10 +2202,10 @@ export default defineComponent({
 				}
 			});
 		},
-		movePlayer(idx, dir) {
+		movePlayer(idx: number, dir: -1 | 1) {
 			if (this.userID != this.sessionOwner) return;
 
-			const negMod = (m, n) => ((m % n) + n) % n;
+			const negMod = (m: number, n: number) => ((m % n) + n) % n;
 			let other = negMod(idx + dir, this.userOrder.length);
 			[this.userOrder[idx], this.userOrder[other]] = [this.userOrder[other], this.userOrder[idx]];
 

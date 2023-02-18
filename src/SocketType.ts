@@ -144,7 +144,7 @@ export interface ClientToServerEvents {
 		collection: PlainCollection,
 		ack?: (response: SocketAck | { collection: CardPool }) => void
 	) => void;
-	parseCollection: (txtcollection: string, ack: (...rest: any[]) => void) => void;
+	parseCollection: (txtcollection: string, ack: (ret: SocketAck & { collection?: PlainCollection }) => void) => void;
 	useCollection: (useCollection: boolean) => void;
 	chatMessage: (message: { author: string; text: string; timestamp: number }) => void;
 	setReady: (readyState: ReadyState) => void;

@@ -7,6 +7,7 @@ export type CubeDescription = {
 	filename?: string;
 	description: string;
 	cubeCobraID?: string;
+	cubeArtisanID?: string;
 };
 
 const Constants = _constants as {
