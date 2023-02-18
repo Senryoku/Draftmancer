@@ -27,9 +27,9 @@ import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
 import Vue, { defineComponent } from "vue";
-import draggable, { MoveEvent } from "vuedraggable";
+import draggable from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
-import Swal, { SweetAlertArrayOptions, SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
+import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
