@@ -1215,10 +1215,8 @@ export default defineComponent({
 				return;
 			}
 			if (!this.selectedCards.some((c) => cardid === c.id)) {
-				console.error(
-					`dropBoosterCard error: cardid (${cardid}) could not be found in this.selectedCards:`,
-					this.selectedCards
-				);
+				console.error("dropBoosterCard error: cardid (%s) could not be found in this.selectedCards:", cardid);
+				console.error(this.selectedCards);
 				return;
 			} else {
 				this.pickCard(Object.assign(options ?? {}, { event: e }));
