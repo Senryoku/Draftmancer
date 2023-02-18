@@ -72,7 +72,7 @@ export interface ServerToClientEvents {
 		botScores: BotScores;
 	}) => void;
 
-	startWinstonDraft: (state: WinstonDraftState) => void;
+	startWinstonDraft: (state: WinstonDraftSyncData) => void;
 	winstonDraftSync: (syncData: WinstonDraftSyncData) => void;
 	winstonDraftNextRound: (currentPlayer: UserID) => void;
 	winstonDraftRandomCard: (card: UniqueCard) => void;

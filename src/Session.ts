@@ -735,7 +735,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
-			Connections[user].socket.emit("startWinstonDraft", this.draftState as WinstonDraftState);
+			Connections[user].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData());
 		}
 
 		this.initLogs("Winston Draft");
