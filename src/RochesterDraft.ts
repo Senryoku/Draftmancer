@@ -39,4 +39,4 @@ export class RochesterDraftState extends IDraftState implements TurnBased {
 	}
 }
 
-export type RochesterDraftSyncDataType = ReturnType<RochesterDraftState["syncData"]>;
+export type RochesterDraftSyncData = ReturnType<RochesterDraftState["syncData"]>;

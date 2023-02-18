@@ -2140,26 +2140,27 @@ export class Session implements IIndexable {
 			Connections[userID].pickedCards = this.disconnectedUsers[userID].pickedCards;
 			this.addUser(userID);
 
-			let msgData: any = {};
+			let msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
 			switch (this.draftState.type) {
 				case "winston":
-					msgData = { name: "rejoinWinstonDraft", state: this.draftState };
+					msgData.name = "rejoinWinstonDraft";
 					break;
 				case "grid":
-					msgData = { name: "rejoinGridDraft", state: this.draftState };
+					msgData.name = "rejoinGridDraft";
 					break;
 				case "rochester":
-					msgData = { name: "rejoinRochesterDraft", state: this.draftState };
+					msgData.name = "rejoinRochesterDraft";
 					break;
 				case "minesweeper":
-					msgData = { name: "rejoinMinesweeperDraft", state: this.draftState };
+					msgData.name = "rejoinMinesweeperDraft";
 					break;
 				case "teamSealed": {
-					msgData = { name: "startTeamSealed", state: this.draftState };
+					msgData.name = "startTeamSealed";
 					break;
 				}
 			}
-			Connections[userID].socket.emit(msgData.name, {
+			// FIXME: Refactor to get full type checking
+			Connections[userID].socket.emit(msgData.name!, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
 				state: msgData.state.syncData(userID),
 			});

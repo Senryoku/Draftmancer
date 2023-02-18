@@ -2,15 +2,15 @@
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
 import { SessionID, UserID } from "../../src/IDTypes.js";
 import { SetCode } from "../../src/Types.js";
-import { DraftLogRecipients, SessionsSettingsProps, UsersData } from "../../src/Session.js";
-import { UniqueCard } from "../../src/CardTypes.js";
+import { DistributionMode, DraftLogRecipients, SessionsSettingsProps, UsersData } from "../../src/Session.js";
+import { PlainCollection, UniqueCard } from "../../src/CardTypes.js";
 import { DraftLog } from "../../src/DraftLog.js";
 import { BotScores } from "../../src/Bot.js";
 import { WinstonDraftState } from "../../src/WinstonDraft.js";
-import { GridDraftState } from "../../src/GridDraft.js";
-import { MinesweeperDraftState } from "../../src/MinesweeperDraft.js";
-import { RochesterDraftState, RochesterDraftSyncDataType } from "../../src/RochesterDraft.js";
-import { TeamSealedState } from "../../src/TeamSealed.js";
+import { GridDraftSyncData } from "../../src/GridDraft.js";
+import { MinesweeperSyncData } from "../../src/MinesweeperDraft.js";
+import { RochesterDraftSyncData } from "../../src/RochesterDraft.js";
+import { TeamSealedSyncData } from "../../src/TeamSealed.js";
 import { Bracket } from "../../src/Brackets.js";
 
 import io, { Socket } from "socket.io-client";
@@ -21,14 +21,14 @@ import Swal, { SweetAlertOptions } from "sweetalert2";
 import LogStoreWorker from "./logstore.worker.js";
 
 import Constant from "../../src/data/constants.json";
-import SetsInfos from "./data/SetsInfos.json";
+import SetsInfos from "./SetInfos";
 import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
 import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV.js";
 
 import BoosterCard from "./components/BoosterCard.vue";
-import Card from "./components/Card.vue";
+import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
 import CardPool from "./components/CardPool.vue";
 import CardPopup from "./components/CardPopup.vue";
@@ -42,12 +42,9 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { SocketAck } from "../../src/Message.js";
+import { CubeDescription } from "../../src/Constants.js";
 const img = new Image();
 img.src = CardBack;
-
-type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
-	? ElementType
-	: never;
 
 const DraftState = {
 	None: "None",
@@ -73,7 +70,7 @@ const ReadyState = {
 	DontCare: "DontCare",
 };
 
-const Sounds = {
+const Sounds: { [name: string]: HTMLAudioElement } = {
 	start: new Audio("sound/drop_003.ogg"),
 	next: new Audio("sound/next.mp3"),
 	countdown: new Audio("sound/click_001.ogg"),
@@ -105,7 +102,7 @@ export default defineComponent({
 	components: {
 		BoosterCard,
 		Bracket: () => import("./components/Bracket.vue"),
-		Card,
+		Card: CardComponent,
 		CardList: () => import("./components/CardList.vue"),
 		CardPlaceholder,
 		CardPool,
@@ -167,7 +164,7 @@ export default defineComponent({
 			userID: userID,
 			userName: userName,
 			useCollection: true,
-			collection: {},
+			collection: {} as PlainCollection,
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
 				vaultProgress: 0,
@@ -190,7 +187,7 @@ export default defineComponent({
 			teamDraft: false,
 			randomizeSeatingOrder: false,
 			disableBotSuggestions: false,
-			distributionMode: "regular",
+			distributionMode: "regular" as DistributionMode,
 			customBoosters: ["", "", ""],
 			maxPlayers: 8,
 			mythicPromotion: true,
@@ -230,10 +227,10 @@ export default defineComponent({
 			pickNumber: 0,
 			botScores: null as BotScores | null,
 			winstonDraftState: null as WinstonDraftState | null,
-			gridDraftState: null as GridDraftState | null,
-			rochesterDraftState: null as RochesterDraftSyncDataType | null,
-			minesweeperDraftState: null as MinesweeperDraftState | null,
-			teamSealedState: null as TeamSealedState | null,
+			gridDraftState: null as GridDraftSyncData | null,
+			rochesterDraftState: null as RochesterDraftSyncData | null,
+			minesweeperDraftState: null as MinesweeperSyncData | null,
+			teamSealedState: null as TeamSealedSyncData | null,
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -246,7 +243,7 @@ export default defineComponent({
 			}[],
 
 			// Front-end options & data
-			displayedModal: "",
+			displayedModal: null as string | null,
 			userOrder: [] as UserID[],
 			hideSessionID: initialSettings.hideSessionID,
 			languages: Constant.Languages,
@@ -256,7 +253,7 @@ export default defineComponent({
 			primarySets: Constant.PrimarySets,
 			cubeLists: Constant.CubeLists,
 			pendingReadyCheck: false,
-			setsInfos: undefined,
+			setsInfos: SetsInfos,
 			draftingState: DraftState.None,
 			displayBotScores: defaultSettings.displayBotScores,
 			fixedDeck: defaultSettings.fixedDeck,
@@ -554,7 +551,7 @@ export default defineComponent({
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const ComponentClass = Vue.extend(Card);
+				const ComponentClass = Vue.extend(CardComponent);
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
 				Alert.fire({
@@ -617,7 +614,7 @@ export default defineComponent({
 				};
 
 				// Next booster, add a slight delay so user can see the last pick.
-				if (this.gridDraftState.currentPlayer === null) {
+				if (this.gridDraftState?.currentPlayer === null) {
 					setTimeout(doNextRound, 2500);
 				} else doNextRound();
 			});
@@ -630,7 +627,7 @@ export default defineComponent({
 						this.draftingState = DraftState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
-					this.gridDraftState.currentPlayer === null ? 2500 : 0
+					this.gridDraftState?.currentPlayer === null ? 2500 : 0
 				);
 			});
 
@@ -639,8 +636,8 @@ export default defineComponent({
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -694,8 +691,8 @@ export default defineComponent({
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -740,8 +737,8 @@ export default defineComponent({
 
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay.sync();
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -768,8 +765,8 @@ export default defineComponent({
 
 				// We'll use the same call in case of reconnection
 				if (data.pickedCards) {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
+					this.$refs.deckDisplay?.sync();
+					this.$refs.sideboardDisplay?.sync();
 					this.$nextTick(() => {
 						for (let c of data.pickedCards.main) this.addToDeck(c);
 						for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -795,9 +792,10 @@ export default defineComponent({
 			});
 
 			this.socket.on("teamSealedUpdateCard", (cardUniqueID, newOwnerID) => {
-				if (!this.drafting || this.draftingState !== DraftState.TeamSealed) return;
+				if (!this.drafting || this.draftingState !== DraftState.TeamSealed || !this.teamSealedState) return;
 
 				const card = this.teamSealedState.cards.find((c) => c.uniqueID === cardUniqueID);
+				if (!card) return;
 				if (card.owner === this.userID) {
 					this.deck = this.deck.filter((c) => c.uniqueID !== cardUniqueID);
 					this.sideboard = this.sideboard.filter((c) => c.uniqueID !== cardUniqueID);
@@ -807,8 +805,8 @@ export default defineComponent({
 				}
 				card.owner = newOwnerID;
 				this.$nextTick(() => {
-					this.$refs.deckDisplay.sync();
-					this.$refs.sideboardDisplay.sync();
+					this.$refs.deckDisplay?.sync();
+					this.$refs.sideboardDisplay?.sync();
 				});
 			});
 
@@ -1024,7 +1022,7 @@ export default defineComponent({
 		},
 		clearState() {
 			this.disconnectedUsers = {};
-			this.virtualPlayersData = undefined;
+			this.virtualPlayersData = null;
 			this.clearSideboard();
 			this.clearDeck();
 			this.deckFilter = "";
@@ -1032,7 +1030,7 @@ export default defineComponent({
 			this.currentDraftLog = null;
 			this.boosterNumber = -1;
 			this.pickNumber = -1;
-			this.booster = null;
+			this.booster = [];
 			this.botScores = null;
 		},
 		resetSessionSettings() {
@@ -1077,7 +1075,7 @@ export default defineComponent({
 
 			fireToast("success", "Session settings reset to default values.");
 		},
-		playSound(key) {
+		playSound(key: keyof typeof Sounds) {
 			if (this.enableSound) Sounds[key].play();
 		},
 		// Chat Methods
@@ -1399,6 +1397,7 @@ export default defineComponent({
 			}
 		},
 		winstonDraftTakePile() {
+			if (!this.winstonDraftState) return;
 			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
 			this.socket.emit("winstonDraftTakePile", (answer) => {
 				if (answer.code === 0) {
@@ -1415,7 +1414,7 @@ export default defineComponent({
 				}
 			});
 		},
-		setGridDraftState(state) {
+		setGridDraftState(state: GridDraftSyncData) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
 			const booster = [];
@@ -1464,8 +1463,10 @@ export default defineComponent({
 				this.socket.emit("startGridDraft", parseInt(boosterCount));
 			}
 		},
-		gridDraftPick(choice) {
-			const cards = [];
+		gridDraftPick(choice: number) {
+			if (!this.gridDraftState) return;
+
+			const cards: UniqueCard[] = [];
 
 			for (let i = 0; i < 3; ++i) {
 				//                     Column           Row
@@ -1478,14 +1479,14 @@ export default defineComponent({
 				console.error("gridDraftPick: Should not reach that.");
 				return;
 			} else {
-				this.socket.emit("gridDraftPick", choice, (answer) => {
+				this.socket.emit("gridDraftPick", choice, (answer: SocketAck) => {
 					if (answer.code === 0) {
 						for (let c of cards) this.addToDeck(c);
 					} else Alert.fire(answer.error);
 				});
 			}
 		},
-		setRochesterDraftState(state) {
+		setRochesterDraftState(state: RochesterDraftSyncData) {
 			this.rochesterDraftState = state;
 		},
 		startRochesterDraft: async function () {
@@ -1501,7 +1502,7 @@ export default defineComponent({
 			}
 			this.socket.emit("startRochesterDraft");
 		},
-		setMinesweeperDraftState(state) {
+		setMinesweeperDraftState(state: MinesweeperSyncData) {
 			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
 
 			const execute = () => {
@@ -1576,15 +1577,17 @@ export default defineComponent({
 				preConfirm() {
 					return new Promise(function (resolve) {
 						resolve({
-							gridCount: document.getElementById("input-gridCount").valueAsNumber,
-							gridWidth: document.getElementById("input-gridWidth").valueAsNumber,
-							gridHeight: document.getElementById("input-gridHeight").valueAsNumber,
-							picksPerPlayerPerGrid: document.getElementById("input-picksPerPlayerPerGrid").valueAsNumber,
-							revealBorders: document.getElementById("input-revealBorders").checked,
+							gridCount: (document.getElementById("input-gridCount") as HTMLInputElement).valueAsNumber,
+							gridWidth: (document.getElementById("input-gridWidth") as HTMLInputElement).valueAsNumber,
+							gridHeight: (document.getElementById("input-gridHeight") as HTMLInputElement).valueAsNumber,
+							picksPerPlayerPerGrid: (
+								document.getElementById("input-picksPerPlayerPerGrid") as HTMLInputElement
+							).valueAsNumber,
+							revealBorders: (document.getElementById("input-revealBorders") as HTMLInputElement).checked,
 						});
 					});
 				},
-			}).then((r) => {
+			}).then((r: any) => {
 				if (r.isConfirmed) {
 					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
@@ -1594,7 +1597,7 @@ export default defineComponent({
 						r.value.gridHeight,
 						this.sessionUsers.length * r.value.picksPerPlayerPerGrid,
 						r.value.revealBorders,
-						(response) => {
+						(response: SocketAck) => {
 							if (response?.error) {
 								Alert.fire(response.error);
 							}
@@ -1603,7 +1606,8 @@ export default defineComponent({
 				}
 			});
 		},
-		minesweeperDraftPick(row, col) {
+		minesweeperDraftPick(row: number, col: number) {
+			if (!this.minesweeperDraftState) return;
 			const card = this.minesweeperDraftState.grid[row][col].card;
 			this.socket.emit("minesweeperDraftPick", row, col, (response) => {
 				if (response?.error) {
@@ -1644,12 +1648,15 @@ export default defineComponent({
 				preConfirm() {
 					return new Promise(function (resolve) {
 						resolve({
-							boostersPerPlayer: document.getElementById("input-boostersPerPlayer").valueAsNumber,
-							burnedCardsPerRound: document.getElementById("input-burnedCardsPerRound").valueAsNumber,
+							boostersPerPlayer: (document.getElementById("input-boostersPerPlayer") as HTMLInputElement)
+								.valueAsNumber,
+							burnedCardsPerRound: (
+								document.getElementById("input-burnedCardsPerRound") as HTMLInputElement
+							).valueAsNumber,
 						});
 					});
 				},
-			}).then((r) => {
+			}).then((r: any) => {
 				if (r.isConfirmed) {
 					const prev = [this.boostersPerPlayer, this.burnedCardsPerRound];
 					this.boostersPerPlayer = r.value.boostersPerPlayer;
@@ -1665,23 +1672,27 @@ export default defineComponent({
 			});
 		},
 		// Collection management
-		setCollection(json) {
+		setCollection(json: PlainCollection) {
 			if (this.collection == json) return;
 			this.collection = Object.freeze(json);
 			this.socket.emit("setCollection", this.collection);
 		},
 		uploadMTGALogs() {
-			document.querySelector("#collection-file-input").click();
+			(document.querySelector("#collection-file-input") as HTMLElement)?.click();
 			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
 			//document.querySelector("#mtga-logs-file-input").click();
 		},
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.
-		uploadCardListAsCollection(e) {
-			const file = e.target.files[0];
+		uploadCardListAsCollection(event: Event) {
+			const file = (event.target as HTMLInputElement)?.files?.[0];
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				let contents = e.target.result;
+				let contents = e.target?.result;
+				if (!contents) {
+					fireToast("error", `Empty file.`);
+					return;
+				}
 
 				// Player.log, with MTGA Pro Tracker running.
 				if (file.name.endsWith(".log")) {
@@ -1776,7 +1787,7 @@ export default defineComponent({
 			};
 			reader.readAsText(file);
 		},
-		parseMTGAProTrackerLog(content) {
+		parseMTGAProTrackerLog(content: string | ArrayBuffer) {
 			try {
 				const inventoryHeader = "[MTGA.Pro Logger] **InventoryContent** ";
 				const inventoryIndex = content.lastIndexOf(inventoryHeader);
@@ -1817,12 +1828,16 @@ export default defineComponent({
 			}
 			return false;
 		},
-		parseMTGALog(e) {
-			const file = e.target.files[0];
+		parseMTGALog(event: Event) {
+			const file = (event.target as HTMLInputElement)?.files?.[0];
 			if (!file) return;
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				let contents = e.target.result;
+				let contents = e.target?.result;
+				if (!contents) {
+					fireToast("error", `Empty file.`);
+					return;
+				}
 
 				// Propose to use MTGA user name
 				// FIXME: The username doesn't seem to appear in the log anymore as of 29/08/2021
@@ -1956,7 +1971,7 @@ export default defineComponent({
 			reader.readAsText(file);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		uploadFile(e, callback, options) {
+		uploadFile(e: Event, callback, options) {
 			let file = e.target.files[0];
 			if (!file) {
 				fireToast("error", "An error occured while uploading the file.");
@@ -1965,7 +1980,7 @@ export default defineComponent({
 			return callback(file, options);
 		},
 		// Returns a Blob to be consumed by a FileReader
-		fetchFile: async function (url, callback, options) {
+		fetchFile: async function (url: string, callback, options) {
 			const response = await fetch(url);
 			if (!response.ok) {
 				fireToast("error", `Could not fetch ${url}.`);
@@ -1974,21 +1989,22 @@ export default defineComponent({
 			const blob = await response.blob();
 			callback(blob, options);
 		},
-		dropCustomList(event) {
+		dropCustomList(event: DragEvent) {
 			event.preventDefault();
-			event.target.classList.remove("dropzone-highlight");
+			(event.target as HTMLElement)?.classList.remove("dropzone-highlight");
 
-			if (event.dataTransfer.items) {
-				for (let item of event.dataTransfer.items)
-					if (item.kind === "file") {
-						const file = item.getAsFile();
-						this.parseCustomCardList(file);
-					}
-			} else {
-				for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
-			}
+			if (event.dataTransfer)
+				if (event.dataTransfer.items) {
+					for (let item of event.dataTransfer.items)
+						if (item.kind === "file") {
+							const file = item.getAsFile();
+							if (file) this.parseCustomCardList(file);
+						}
+				} else {
+					for (let file of event.dataTransfer.files) this.parseCustomCardList(file);
+				}
 		},
-		parseCustomCardList: async function (file) {
+		async parseCustomCardList(file: File) {
 			Alert.fire({
 				position: "center",
 				icon: "info",
@@ -2005,9 +2021,10 @@ export default defineComponent({
 				}
 			});
 		},
-		importCube(service) {
-			const defaultMatchCardVersions = localStorage.getItem("import-match-versions", "false") === "true";
-			const defaultCubeID = localStorage.getItem("import-cubeID", "");
+		// FIXME: Use a stricter type than 'string' for services.
+		importCube(service: string) {
+			const defaultMatchCardVersions = localStorage.getItem("import-match-versions") === "true";
+			const defaultCubeID = localStorage.getItem("import-cubeID") ?? "";
 			Alert.fire({
 				title: `Import from ${service}`,
 				html: `<p>Enter a Cube ID or an URL to import a cube directly from ${service}</p>
@@ -2022,7 +2039,8 @@ export default defineComponent({
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Import",
 				preConfirm(cubeID) {
-					const matchVersions = document.getElementById("input-match-card-versions").checked;
+					const matchVersions = (document.getElementById("input-match-card-versions") as HTMLInputElement)
+						?.checked;
 					localStorage.setItem("import-match-versions", matchVersions.toString());
 					if (cubeID) {
 						// Convert from URL to cubeID if necessary.
@@ -2044,8 +2062,8 @@ export default defineComponent({
 				if (result.value && result.value.cubeID) this.selectCube(result.value);
 			});
 		},
-		selectCube(cube) {
-			const ack = (r) => {
+		selectCube(cube: CubeDescription) {
+			const ack = (r: SocketAck) => {
 				if (r?.error) {
 					Alert.fire(r.error);
 				} else {
@@ -2091,7 +2109,7 @@ export default defineComponent({
 				},
 				redirect: "follow",
 				referrerPolicy: "no-referrer",
-				body: document.querySelector("#decklist-text").value,
+				body: (document.querySelector("#decklist-text") as HTMLInputElement)?.value,
 			});
 			if (response.status === 200) {
 				let data = await response.json();
@@ -2116,7 +2134,7 @@ export default defineComponent({
 		},
 		uploadBoosters() {
 			if (this.sessionOwner !== this.userID) return;
-			const text = document.querySelector("#upload-booster-text").value;
+			const text = (document.querySelector("#upload-booster-text") as HTMLInputElement)?.value;
 			this.socket.emit("setBoosters", text, (response) => {
 				if (response?.error) {
 					Alert.fire(response.error);
@@ -2136,7 +2154,7 @@ export default defineComponent({
 				}
 			});
 		},
-		toggleSetRestriction(code) {
+		toggleSetRestriction(code: SetCode) {
 			if (this.setRestriction.includes(code))
 				this.setRestriction.splice(
 					this.setRestriction.findIndex((c) => c === code),
@@ -2144,7 +2162,7 @@ export default defineComponent({
 				);
 			else this.setRestriction.push(code);
 		},
-		setSessionOwner(newOwnerID) {
+		setSessionOwner(newOwnerID: UserID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === newOwnerID);
 			if (!user) return;
@@ -2162,7 +2180,7 @@ export default defineComponent({
 				}
 			});
 		},
-		removePlayer(userID) {
+		removePlayer(userID: UserID) {
 			if (this.userID != this.sessionOwner) return;
 			let user = this.sessionUsers.find((u) => u.userID === userID);
 			if (!user) return;
@@ -2474,7 +2492,7 @@ export default defineComponent({
 				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
 			}
 		},
-		onSideChange(e) {
+		onSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
 			if (e.removed)
 				this.sideboard.splice(
 					this.sideboard.findIndex((c) => c === e.removed.element),
@@ -2485,20 +2503,20 @@ export default defineComponent({
 				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 			}
 		},
-		onCollapsedSideChange(e) {
-			this.$refs.sideboardDisplay.sync(); /* Sync sideboard card-pool */
+		onCollapsedSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
+			this.$refs.sideboardDisplay?.sync(); /* Sync sideboard card-pool */
 			if (e.added) this.socket.emit("moveCard", e.added.element.uniqueID, "side");
 		},
 		clearDeck() {
 			this.deck = [];
 			this.$nextTick(() => {
-				this.$refs.deckDisplay.sync();
+				this.$refs.deckDisplay?.sync();
 			});
 		},
 		clearSideboard() {
 			this.sideboard = [];
 			this.$nextTick(() => {
-				this.$refs.sideboardDisplay.sync();
+				this.$refs.sideboardDisplay?.sync();
 			});
 		},
 		updateAutoLands() {
@@ -2544,8 +2562,8 @@ export default defineComponent({
 		removeBasicsFromDeck() {
 			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
-			this.$refs.deckDisplay.filterBasics();
-			this.$refs.sideboardDisplay.filterBasics();
+			this.$refs.deckDisplay?.filterBasics();
+			this.$refs.sideboardDisplay?.filterBasics();
 		},
 		colorsInCardPool(pool) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
@@ -2883,9 +2901,6 @@ export default defineComponent({
 	async mounted() {
 		// Load all card informations
 		try {
-			// Load set informations
-			this.setsInfos = Object.freeze(SetsInfos);
-
 			// Now that we have all the essential data, initialize the websocket.
 			this.initializeSocket();
 
@@ -3100,7 +3115,7 @@ export default defineComponent({
 		},
 		boosterContent: {
 			deep: true,
-			handler(val) {
+			handler(val: typeof this.boosterContent) {
 				if (this.userID != this.sessionOwner) return;
 				if (Object.values(val).reduce((acc, val) => acc + val) <= 0) {
 					fireToast("warning", "Your boosters should contain at least one card :)");

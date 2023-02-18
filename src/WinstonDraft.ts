@@ -39,3 +39,5 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 		};
 	}
 }
+
+export type WinstonDraftSyncData = ReturnType<WinstonDraftState["syncData"]>;

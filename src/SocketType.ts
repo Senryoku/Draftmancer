@@ -1,5 +1,5 @@
 import { GridDraftState, GridDraftSyncData } from "./GridDraft";
-import { WinstonDraftState } from "./WinstonDraft";
+import { WinstonDraftState, WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck } from "./Message";
 import { DistributionMode, DraftLogRecipients, getPublicSessionData, UsersData } from "./Session";
@@ -7,8 +7,8 @@ import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
 import { CardID, CardPool, DeckBasicLands, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "./CardTypes";
-import { RochesterDraftState } from "./RochesterDraft";
-import { MinesweeperDraftState } from "./MinesweeperDraft";
+import { RochesterDraftState, RochesterDraftSyncData } from "./RochesterDraft";
+import { MinesweeperDraftState, MinesweeperSyncData } from "./MinesweeperDraft";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
 import { SessionsSettingsProps } from "./Session";
@@ -71,22 +71,38 @@ export interface ServerToClientEvents {
 	}) => void;
 
 	startWinstonDraft: (state: WinstonDraftState) => void;
-	winstonDraftSync: (syncData: ReturnType<WinstonDraftState["syncData"]>) => void;
+	winstonDraftSync: (syncData: WinstonDraftSyncData) => void;
 	winstonDraftNextRound: (currentPlayer: UserID) => void;
 	winstonDraftRandomCard: (card: UniqueCard) => void;
 	winstonDraftEnd: () => void;
+	rejoinWinstonDraft: (data: {
+		state: WinstonDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
 
 	startGridDraft: (syncData: GridDraftSyncData) => void;
 	gridDraftNextRound: (syncData: GridDraftSyncData) => void;
 	gridDraftEnd: () => void;
+	rejoinGridDraft: (data: {
+		state: GridDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
 
 	startRochesterDraft: (syncData: ReturnType<RochesterDraftState["syncData"]>) => void;
 	rochesterDraftNextRound: (syncData: ReturnType<RochesterDraftState["syncData"]>) => void;
 	rochesterDraftEnd: () => void;
+	rejoinRochesterDraft: (data: {
+		state: RochesterDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
 
 	startMinesweeperDraft: (syncData: ReturnType<MinesweeperDraftState["syncData"]>) => void;
 	minesweeperDraftState: (syncData: ReturnType<MinesweeperDraftState["syncData"]>) => void;
 	minesweeperDraftEnd: (options: { immediate?: boolean }) => void;
+	rejoinMinesweeperDraft: (data: {
+		state: MinesweeperSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
 
 	startTeamSealed: (data: {
 		state: {

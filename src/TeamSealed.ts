@@ -20,3 +20,5 @@ export class TeamSealedState extends IDraftState {
 		return null;
 	}
 }
+
+export type TeamSealedSyncData = ReturnType<TeamSealedState["syncData"]>;
