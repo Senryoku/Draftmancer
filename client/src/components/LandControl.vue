@@ -117,7 +117,12 @@ const props = defineProps<{
 }>();
 const { autoland, lands, targetDeckSize, sideboardBasics, preferredBasics, otherbasics } = toRefs(props);
 
-const emit = defineEmits(["update:lands", "update:targetDeckSize", "update:sideboardBasics", "update:preferredBasics"]);
+const emit = defineEmits<{
+	(e: "update:lands", color: CardColor, value: number): void;
+	(e: "update:targetDeckSize", value: number): void;
+	(e: "update:sideboardBasics", value: number): void;
+	(e: "update:preferredBasics", set: string): void;
+}>();
 
 // Methods;
 const add = (c: CardColor) => emit("update:lands", c, Math.max(0, lands.value[c] + 1));
@@ -137,7 +142,7 @@ const checkState = () => {
 	});
 };
 
-const updateLands = (event: Event, color: string) => {
+const updateLands = (event: Event, color: CardColor) => {
 	const target = event.target as HTMLInputElement;
 	emit("update:lands", color, target.value === "" ? 0 : parseInt(target.value));
 };
