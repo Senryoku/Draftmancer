@@ -5,25 +5,24 @@
 	"engines": {
 		"node": "18.x"
 	},
-	"main": "dist/server.js",
+	"main": "dist/src/server.js",
 	"type": "module",
 	"scripts": {
 		"start": "node --experimental-json-modules .",
-		"start-dev": "nodemon --experimental-json-modules --watch dist .",
+		"start-dev": "nodemon --experimental-json-modules --watch dist/src .",
 		"build": "tsc && npx webpack --config client/webpack.config.cjs --mode=production",
 		"build-ts": "tsc",
 		"build-ts-dev": "tsc --watch",
 		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress",
 		"dev-front": "concurrently --kill-others --raw \"npm run start\" \"npm run build-dev\"",
 		"dev": "concurrently --kill-others --raw \"npm run build-ts-dev\" \"npm run start-dev\" \"npm run build-dev\"",
-		"logs": "heroku logs --app mtgadraft -t --source app",
-		"test": "cross-env PORT=3001 mocha test --exit --experimental-json-modules",
-		"test-bail": "cross-env PORT=3001 mocha test --exit --experimental-json-modules -bail",
-		"manualtest": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules",
-		"manualtest-bail": "cross-env PORT=3001 mocha test/manual --exit --experimental-json-modules -bail",
-		"fronttest": "cross-env PORT=3001 mocha test/frontend --exit --experimental-json-modules",
-		"fronttest-bail": "cross-env PORT=3001 mocha test/frontend --exit --experimental-json-modules -bail",
-		"prettier-format": "prettier --config .prettierrc --write src/**/*.ts client/src/**/*[!min].js client/src/**/*.vue",
+		"test": "cross-env PORT=3001 mocha dist/test --exit --experimental-json-modules",
+		"test-bail": "cross-env PORT=3001 mocha dist/test --exit --experimental-json-modules -bail",
+		"manualtest": "cross-env PORT=3001 mocha dist/test/manual --exit --experimental-json-modules",
+		"manualtest-bail": "cross-env PORT=3001 mocha dist/test/manual --exit --experimental-json-modules -bail",
+		"fronttest": "cross-env PORT=3001 mocha dist/test/frontend --exit --experimental-json-modules",
+		"fronttest-bail": "cross-env PORT=3001 mocha dist/test/frontend --exit --experimental-json-modules -bail",
+		"prettier-format": "prettier --config .prettierrc --write src/**/*.ts test/**/*.ts test/**/*.js client/src/**/*[!min].js client/src/**/*[!min].ts client/src/**/*.vue",
 		"prepare": "husky install"
 	},
 	"repository": {
@@ -60,8 +59,10 @@
 		"vuedraggable": "^2.24.3"
 	},
 	"devDependencies": {
+		"@types/chai": "^4.3.4",
 		"@types/compression": "^1.7.2",
 		"@types/cookie-parser": "^1.4.3",
+		"@types/mocha": "^10.0.1",
 		"@types/node": "^18.14.0",
 		"@types/request": "^2.48.8",
 		"@types/uuid": "^9.0.0",

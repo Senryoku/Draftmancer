@@ -3,9 +3,9 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
-import { Cards, getCard } from "./../dist/Cards.js";
-import { Connections } from "../dist/Connection.js";
-import { Sessions } from "../dist/Session.js";
+import { Cards, getCard } from "./../src/Cards.js";
+import { Connections } from "../src/Connection.js";
+import { Sessions } from "../src/Session.js";
 import randomjs from "random-js";
 import {
 	connectClient,
@@ -15,7 +15,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 } from "./src/common.js";
-import Constants from "../dist/Constants.js";
+import Constants from "../src/Constants.js";
 
 const checkColorBalance = function (booster) {
 	for (let color of "WUBRG")

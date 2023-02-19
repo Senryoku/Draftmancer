@@ -2,19 +2,20 @@
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { Sessions } from "../dist/Session.js";
-import { Connections } from "../dist/Connection.js";
+import { Sessions } from "../src/Session.js";
+import { Connections } from "../src/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
+import { WinstonDraftState } from "../src/WinstonDraft.js";
 
 describe("Winston Draft", function () {
-	let clients = [];
+	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
-	var ownerIdx;
-	var nonOwnerIdx;
+	let ownerIdx: number;
+	let nonOwnerIdx: number;
 
 	const getCurrentPlayer = () => {
-		const currentPlayerID = Sessions[sessionID].draftState.currentPlayer();
-		const currentPlayerIdx = clients.findIndex((c) => c.query.userID == currentPlayerID);
+		const currentPlayerID = (Sessions[sessionID].draftState as WinstonDraftState)?.currentPlayer();
+		const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID == currentPlayerID);
 		return clients[currentPlayerIdx];
 	};
 
@@ -24,7 +25,7 @@ describe("Winston Draft", function () {
 	});
 
 	afterEach(function (done) {
-		enableLogs(this.currentTest.state == "failed");
+		enableLogs(this.currentTest?.state === "failed");
 		done();
 	});
 
@@ -59,9 +60,9 @@ describe("Winston Draft", function () {
 		done();
 	});
 
-	let states = [];
+	let states: any[] = [];
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
-		ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 		nonOwnerIdx = 1 - ownerIdx;
 		let connectedClients = 0;
 		let receivedState = 0;
@@ -103,11 +104,11 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
+				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function () {
 				draftEnded += 1;
-				this.removeListener("winstonDraftNextRound");
+				clients[c].removeListener("winstonDraftNextRound");
 				if (draftEnded == clients.length) done();
 			});
 		}
@@ -196,11 +197,11 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === clients[c].query.userID) this.emit("winstonDraftTakePile");
+				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile");
 			});
 			clients[c].once("winstonDraftEnd", function () {
 				draftEnded += 1;
-				this.removeListener("winstonDraftNextRound");
+				clients[c].removeListener("winstonDraftNextRound");
 				if (draftEnded == clients.length) done();
 			});
 		}

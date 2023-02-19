@@ -4,12 +4,12 @@ import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
 import randomjs from "random-js";
-import { Cards, getCard } from "./../../dist/Cards.js";
-import { Session } from "../../dist/Session.js";
-import { SetSpecificFactories } from "../../dist/BoosterFactory.js";
-import parseCardList from "../../dist/parseCardList.js";
-import { getRandomKey, getRandom } from "../../dist/utils.js";
-import { SpecialLandSlots } from "../../dist/LandSlot.js";
+import { Cards, getCard } from "./../../src/Cards.js";
+import { Session } from "../../src/Session.js";
+import { SetSpecificFactories } from "../../src/BoosterFactory.js";
+import parseCardList from "../../src/parseCardList.js";
+import { getRandomKey, getRandom } from "../../src/utils.js";
+import { SpecialLandSlots } from "../../src/LandSlot.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");

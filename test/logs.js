@@ -2,8 +2,8 @@
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { Sessions } from "../dist/Session.js";
-import { Connections } from "../dist/Connection.js";
+import { Sessions } from "../src/Session.js";
+import { Connections } from "../src/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
 describe("Draft Logs", function () {

@@ -3,8 +3,8 @@
 import { describe, it, beforeEach, afterEach, before, after } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getCard } from "./../dist/Cards.js";
-import { Sessions } from "../dist/Session.js";
+import { getCard } from "./../src/Cards.js";
+import { Sessions } from "../src/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
