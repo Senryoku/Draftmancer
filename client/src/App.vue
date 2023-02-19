@@ -253,7 +253,6 @@
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
 							<multiselect
-								v-if="setsInfos"
 								v-model="setRestriction"
 								placeholder="All Cards"
 								:options="sets.slice().reverse()"
