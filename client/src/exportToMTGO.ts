@@ -3,15 +3,16 @@ import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
 import Constants from "../../src/Constants";
 import { Alert, fireToast } from "./alerts";
 import { download, escapeHTML } from "./helper";
-import { Card, CardColor, UniqueCard } from "../../src/CardTypes.js";
+import { Card, CardColor } from "../../src/CardTypes.js";
 
 export async function exportToMTGO(
-	deck: UniqueCard[],
-	sideboard: UniqueCard[],
+	deck: Card[],
+	sideboard: Card[],
 	options: {
 		preferredBasics?: string;
 		lands?: { [color in CardColor]: number };
 		sideboardBasics?: number;
+		filename?: string;
 	} = {}
 ) {
 	fireToast("info", `Preparing MTGO deck list...`);
@@ -125,7 +126,7 @@ export async function exportToMTGO(
 ${cardsLines.join("\n")}
 </Deck>
 `;
-	download(`DraftDeck.dek`, exportStr);
+	download(options?.filename ?? `DraftDeck.dek`, exportStr);
 
 	if (missingCards.length === 0) fireToast("success", `MTGO export ready!`);
 	else

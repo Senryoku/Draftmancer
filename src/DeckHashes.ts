@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Card, CardID, DeckList } from "./CardTypes.js";
+import { Card, CardColor, CardID, DeckList } from "./CardTypes.js";
 import Constants from "./Constants.js";
 
 const basicNames: { [color: string]: string } = Constants.BasicLandNames["en"];
@@ -18,7 +18,8 @@ function decklistToArray(
 
 	const main = [...decklist.main.map((cid: CardID) => filter(options.getCard(cid).name))];
 	if (decklist.lands)
-		for (const c in decklist.lands) for (let i = 0; i < decklist.lands[c]; ++i) main.push(filter(basicNames[c]));
+		for (const c in decklist.lands)
+			for (let i = 0; i < decklist.lands[c as CardColor]; ++i) main.push(filter(basicNames[c]));
 
 	const side = [...decklist.side.map((cid: CardID) => sidePrefix + filter(options.getCard(cid).name))];
 	// Front-end might add some basic lands to the sideboard, but we don't have access to this information.

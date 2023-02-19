@@ -36,9 +36,9 @@
 				<template v-if="draftLog.delayed">
 					<template v-if="shareable(draftLog)">
 						<!-- User (the session owner during the draft) has the full logs ready to be shared -->
-						<span style="pointer-events: none"
-							>(Partial: The complete log is locked until you share it)</span
-						>
+						<span style="pointer-events: none">
+							(Partial: The complete log is locked until you share it)
+						</span>
 						<button @click="$emit('sharelog', draftLog)">
 							<i class="fas fa-share-square"></i> Share with session and unlock
 						</button>
@@ -54,6 +54,24 @@
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
 						<template v-else> <i class="far fa-eye"></i> Review</template>
 					</button>
+					<dropdown v-if="!draftLog.delayed">
+						<span slot="handle">More</span>
+						<div slot="dropdown" class="more-dropdown">
+							<div class="cat-title">Download all decks:</div>
+							<button type="button" @click="downloadAllDecks(draftLog, '.dek', true)">
+								MTGO format (.dek)
+							</button>
+							<button type="button" @click="downloadAllDecks(draftLog, '.dek', false)">
+								MTGO format (.dek)<br />without lands
+							</button>
+							<button type="button" @click="downloadAllDecks(draftLog, 'card names', true)">
+								Card names only
+							</button>
+							<button type="button" @click="downloadAllDecks(draftLog, 'card names', false)">
+								Card names only<br />without lands
+							</button>
+						</div>
+					</dropdown>
 					<button type="button" @click="downloadLog(draftLog)" v-if="!draftLog.delayed">
 						<i class="fas fa-file-download"></i> Download
 					</button>
@@ -81,13 +99,16 @@
 import Vue, { defineComponent, PropType } from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
+import Dropdown from "./Dropdown.vue";
 import DraftLogComponent from "./DraftLog.vue";
 import { DraftLog } from "../../../src/DraftLog";
 import { Language } from "../../../src/Types";
 import { UserID } from "../../../src/IDTypes";
+import exportToMTGO from "../exportToMTGO";
+import { exportToMTGA } from "../exportToMTGA";
 
 export default defineComponent({
-	components: { DraftLog: DraftLogComponent },
+	components: { DraftLog: DraftLogComponent, Dropdown },
 	props: {
 		draftLogs: { type: Array as PropType<DraftLog[]>, required: true },
 		language: { type: String as PropType<Language>, required: true },
@@ -110,7 +131,35 @@ export default defineComponent({
 			return draftlog?.delayed && draftlog.users && Object.values(draftlog.users).every((user) => user.cards);
 		},
 		downloadLog(draftLog: DraftLog) {
-			helper.download(`DraftLog_${draftLog.sessionID}.txt`, JSON.stringify(draftLog, null, "\t"));
+			helper.download(
+				`DraftLog_${draftLog.sessionID.replace(/\W/g, "")}.txt`,
+				JSON.stringify(draftLog, null, "\t")
+			);
+		},
+		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "card names", withLands: boolean) {
+			for (const user of Object.values(draftLog.users)) {
+				if (user.decklist) {
+					const filename = `Session_${draftLog.sessionID.replace(/\W/g, "")}_Deck_${user.userName}`;
+					const main = user.decklist.main.map((cid) => draftLog.carddata[cid]);
+					const side = user.decklist.side.map((cid) => draftLog.carddata[cid]);
+					const lands = withLands ? user.decklist.lands : undefined;
+					if (format === ".dek") {
+						await exportToMTGO(main, side, {
+							lands: lands,
+							filename: `${filename}.dek`,
+						});
+					} else if (format === "card names") {
+						helper.download(
+							`${filename}.txt`,
+							exportToMTGA(main, side, this.language, lands, {
+								preferredBasics: "",
+								sideboardBasics: 0,
+								full: false,
+							})
+						);
+					}
+				}
+			}
 		},
 		deleteLog(draftLog: DraftLog) {
 			Alert.fire({
@@ -214,6 +263,27 @@ export default defineComponent({
 	justify-content: space-between;
 	align-items: baseline;
 	width: 100%;
+}
+
+:deep(.dropdown-container),
+:deep(.dropdown) {
+	background-color: #333;
+}
+
+.more-dropdown {
+	display: flex;
+	flex-direction: column;
+}
+
+.more-dropdown .cat-title {
+	font-variant: small-caps;
+}
+
+#main-container .more-dropdown button {
+	white-space: normal;
+	line-height: normal;
+	height: auto;
+	padding: 0.5em;
 }
 
 .empty-history {

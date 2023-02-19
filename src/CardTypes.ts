@@ -42,7 +42,7 @@ export class Card {
 	back?: CardBack;
 }
 
-export type DeckBasicLands = { [key: string]: number };
+export type DeckBasicLands = { [key in CardColor]: number };
 
 export type CardPool = Map<string, number>;
 export type SlotedCardPool = { [slot: string]: CardPool };
