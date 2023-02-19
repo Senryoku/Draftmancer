@@ -968,7 +968,10 @@
 				<div
 					class="container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-					v-if="draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting"
+					v-if="
+						(draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting) &&
+						winstonDraftState
+					"
 				>
 					<div class="section-title">
 						<h2>Winston Draft</h2>
@@ -1034,7 +1037,10 @@
 				<!-- Grid Draft -->
 				<div
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
-					v-if="draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting"
+					v-if="
+						(draftingState === DraftState.GridPicking || draftingState === DraftState.GridWaiting) &&
+						gridDraftState
+					"
 				>
 					<div class="section-title">
 						<h2>Grid Draft</h2>
@@ -1079,7 +1085,9 @@
 					class="rochester-container"
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					v-if="
-						draftingState === DraftState.RochesterPicking || draftingState === DraftState.RochesterWaiting
+						(draftingState === DraftState.RochesterPicking ||
+							draftingState === DraftState.RochesterWaiting) &&
+						rochesterDraftState
 					"
 				>
 					<div style="flex-grow: 1">
@@ -1173,8 +1181,9 @@
 				<minesweeper-draft
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					v-if="
-						draftingState === DraftState.MinesweeperPicking ||
-						draftingState === DraftState.MinesweeperWaiting
+						(draftingState === DraftState.MinesweeperPicking ||
+							draftingState === DraftState.MinesweeperWaiting) &&
+						minesweeperDraftState
 					"
 					:state="minesweeperDraftState"
 					:currentPlayerUsername="
