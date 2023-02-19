@@ -1,7 +1,7 @@
 {
 	"include": ["**/*", "../src/Types.ts", "../src/Types.ts"],
 	"compilerOptions": {
-		"allowJs": false,
+		"allowJs": true,
 		"baseUrl": ".",
 		"module": "ESNext",
 		"moduleResolution": "node",

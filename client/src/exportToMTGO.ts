@@ -1,9 +1,9 @@
 import axios from "axios";
-import vueCardCache from "./vueCardCache";
+import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
 import Constants from "../../src/Constants";
 import { Alert, fireToast } from "./alerts";
 import { download, escapeHTML } from "./helper";
-import { CardColor, UniqueCard } from "../../src/CardTypes.js";
+import { Card, CardColor, UniqueCard } from "../../src/CardTypes.js";
 
 export async function exportToMTGO(
 	deck: UniqueCard[],
@@ -62,8 +62,15 @@ export async function exportToMTGO(
 	};
 
 	const missingCards: string[] = [];
-	const addMatchingCard = async (card: any, toSideboard: boolean) => {
-		let scryfall_card = vueCardCache.get(card.id);
+	const addMatchingCard = async (card: Card, toSideboard: boolean) => {
+		const cached_card = vueCardCache.get(card.id);
+		// All cards should be available at this point.
+		if (!isReady(cached_card)) {
+			missingCards.push(card.name);
+			return;
+		}
+		let scryfall_card = cached_card as ScryfallCard;
+
 		// Exact match doesn't have an associated MTGO id, check other printings.
 		if (!scryfall_card.mtgo_id) {
 			const allPrintings = await axios.get(
@@ -73,7 +80,7 @@ export async function exportToMTGO(
 			if (allPrintings.status === 200 && allPrintings.data.object === "list") {
 				for (const candidate of allPrintings.data.data)
 					if (candidate.mtgo_id) {
-						scryfall_card = candidate;
+						scryfall_card = candidate as ScryfallCard;
 						break;
 					}
 			} else {

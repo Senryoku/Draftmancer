@@ -6,13 +6,18 @@
 				<h1>
 					Bracket for Session '{{ sessionID }}'
 					<span v-if="bracket" style="font-size: 0.8em; font-weight: 1">
-						(<template v-if="bracket.teamDraft">Team Draft</template>
-						<template v-else-if="bracket.double">Double Elimination</template>
-						<template v-else-if="bracket.swiss">3-Round Swiss</template>
+						(<template v-if="isTeamBracket">Team Draft</template>
+						<template v-else-if="isDoubleBracket">Double Elimination</template>
+						<template v-else-if="isSwissBracket">3-Round Swiss</template>
 						<template v-else>Single Elimination</template>)
 					</span>
 				</h1>
-				<bracket :bracket="bracket" :displayControls="false" :draftlog="draftlog" language="en"></bracket>
+				<bracket
+					:bracket="bracket"
+					:displayControls="false"
+					:draftlog="draftlog"
+					:language="language"
+				></bracket>
 			</div>
 			<div class="error" v-else>
 				<h1>Error</h1>
@@ -30,28 +35,23 @@ import BracketComponent from "./components/Bracket.vue";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 import { SessionID } from "../../src/IDTypes";
-import { Bracket } from "../../src/Brackets";
+import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";
 import { DraftLog } from "../../src/DraftLog";
+import { Language } from "../../src/Types";
 
 Vue.use(FloatingVue);
 
 export default defineComponent({
 	components: { Bracket: BracketComponent },
 	data: () => {
-		const r: {
-			bracket: Bracket | null;
-			sessionID: SessionID | null;
-			response: Response | null;
-			error: string | null;
-			draftlog: DraftLog | null;
-		} = {
-			bracket: null,
-			sessionID: null,
-			response: null,
-			error: null,
-			draftlog: null,
+		return {
+			bracket: null as Bracket | null,
+			sessionID: null as SessionID | null,
+			response: null as Response | null,
+			error: null as string | null,
+			draftlog: undefined as DraftLog | undefined,
+			language: Language.en,
 		};
-		return r;
 	},
 	mounted: async function () {
 		let urlParamSession = getUrlVars()["session"];
@@ -73,6 +73,17 @@ export default defineComponent({
 		} catch (e) {
 			this.error = "Client-side error.";
 		}
+	},
+	computed: {
+		isSwissBracket() {
+			return this.bracket && isSwissBracket(this.bracket);
+		},
+		isTeamBracket() {
+			return this.bracket && isTeamBracket(this.bracket);
+		},
+		isDoubleBracket() {
+			return this.bracket && isDoubleBracket(this.bracket);
+		},
 	},
 });
 </script>
