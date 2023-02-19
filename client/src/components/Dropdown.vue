@@ -68,7 +68,6 @@ export default defineComponent({
 	background-color: #444;
 	width: 100%;
 	box-sizing: border-box;
-	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 	border-radius: 0 0 8px 8px;
 	max-height: 0;
 	overflow: hidden;
@@ -94,6 +93,7 @@ export default defineComponent({
 .forced-open .dropdown,
 .dropdown-container:active .dropdown {
 	max-height: var(--unrolled-height);
+	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 	z-index: 1;
 }
 
@@ -103,6 +103,7 @@ export default defineComponent({
 	}
 	.dropdown-container:hover .dropdown {
 		max-height: var(--unrolled-height);
+		box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 		z-index: 1;
 	}
 }
