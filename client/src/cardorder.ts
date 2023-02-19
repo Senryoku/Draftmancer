@@ -1,6 +1,6 @@
-import { CardColor, CardID, CardRarity } from "../../src/CardTypes";
+import { Card, CardColor, CardID, CardRarity } from "../../src/CardTypes";
 
-const ColorOrder = {
+const ColorOrder: { [color in CardColor]: number } = {
 	W: 0,
 	U: 1,
 	B: 2,
@@ -8,7 +8,7 @@ const ColorOrder = {
 	G: 4,
 };
 
-const RarityOrder = {
+const RarityOrder: { [rarity: string]: number } = {
 	mythic: 0,
 	rare: 1,
 	uncommon: 2,
@@ -16,7 +16,7 @@ const RarityOrder = {
 	other: 4,
 };
 
-const TypeOrder = {
+const TypeOrder: { [type: string]: number } = {
 	Creature: 0,
 	"Legendary Creature": 0,
 	"Enchantment Creature": 0,
@@ -33,28 +33,28 @@ const TypeOrder = {
 	"Basic Land": 7,
 };
 
-function colorOrder(colors) {
+function colorOrder(colors: CardColor[]) {
 	if (colors.length === 1) return ColorOrder[colors[0]];
 	else if (colors.length === 0) return 5;
 	else return 6;
 }
 
-function rarityOrder(rarity) {
+function rarityOrder(rarity: string) {
 	if (!(rarity in RarityOrder)) return RarityOrder["other"];
 	return RarityOrder[rarity];
 }
 
-function getFirstType(type) {
+function getFirstType(type: string) {
 	const idx = type.indexOf(" //");
-	if (idx >= 0) return type.substr(0, idx);
+	if (idx >= 0) return type.substring(0, idx);
 	else return type;
 }
 
-function typeOrder(type) {
+function typeOrder(type: string) {
 	const fullType = getFirstType(type);
 	const simpleType = fullType.split(" ").pop();
 	if (fullType in TypeOrder) return TypeOrder[getFirstType(type)];
-	else if (simpleType in TypeOrder) return TypeOrder[simpleType];
+	else if (simpleType && simpleType in TypeOrder) return TypeOrder[simpleType];
 	else return 1;
 }
 
@@ -118,87 +118,78 @@ const Comparators: { [name: string]: ComparatorType } = {
 	},
 };
 
-export function columnCMC(cards) {
+export function columnCMC(cards: Card[]) {
 	let a = cards.reduce((acc, item) => {
 		if (!acc[item.cmc]) acc[item.cmc] = [];
 		acc[item.cmc].push(item);
 		return acc;
-	}, {});
-	for (let col in a) this.orderByArenaInPlace(a[col]);
+	}, {} as { [cmc: number]: Card[] });
+	for (let col in a) orderByArenaInPlace(a[col]);
 	return a;
 }
 
-export function columnColor(cards) {
+export function columnColor(cards: Card[]) {
 	let a = cards.reduce(
 		(acc, item) => {
 			if (item.colors.length > 1) {
 				if (!acc["multi"]) acc["multi"] = [];
 				acc["multi"].push(item);
+			} else if (item.colors.length === 0) {
+				acc[""].push(item);
 			} else {
-				if (!acc[item.colors]) acc[item.colors] = [];
-				acc[item.colors].push(item);
+				if (!acc[item.colors[0]]) acc[item.colors[0]] = [];
+				acc[item.colors[0]].push(item);
 			}
 			return acc;
 		},
-		{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] }
+		{ "": [], W: [], U: [], B: [], R: [], G: [], multi: [] } as { [key: string]: Card[] }
 	);
-	for (let col in a) this.orderByArenaInPlace(a[col]);
+	for (let col in a) orderByArenaInPlace(a[col]);
 	return a;
 }
 
-export function idColumnCMC(cardids) {
-	let a = cardids.reduce((acc, id) => {
-		const cmc = Math.min(7, this.cards[id].cmc);
-		if (!acc[cmc]) acc[cmc] = [];
-		acc[cmc].push(id);
-		return acc;
-	}, {});
-	for (let col in a) this.orderByArenaInPlace(a[col]);
-	return a;
-}
-
-export function orderByCMCInPlace(cards) {
+export function orderByCMCInPlace(cards: Card[]) {
 	return cards.sort(function (lhs, rhs) {
 		if (lhs.cmc == rhs.cmc) return Comparators.color(lhs, rhs);
 		return lhs.cmc - rhs.cmc;
 	});
 }
 
-export function orderByCMC(cards) {
+export function orderByCMC(cards: Card[]) {
 	return orderByCMCInPlace([...cards]);
 }
 
-export function orderByColorInPlace(cards) {
+export function orderByColorInPlace(cards: Card[]) {
 	return cards.sort(function (lhs, rhs) {
 		if (Comparators.color(lhs, rhs) == 0) return Comparators.arena(lhs, rhs);
 		return Comparators.color(lhs, rhs);
 	});
 }
 
-export function orderByColor(cards) {
-	return this.orderByColorInPlace([...cards]);
+export function orderByColor(cards: Card[]) {
+	return orderByColorInPlace([...cards]);
 }
 
-export function orderByRarityInPlace(cards) {
+export function orderByRarityInPlace(cards: Card[]) {
 	return cards.sort(function (lhs, rhs) {
 		if (RarityOrder[lhs.rarity] == RarityOrder[rhs.rarity]) Comparators.arena(lhs, rhs);
 		return RarityOrder[lhs.rarity] - RarityOrder[rhs.rarity];
 	});
 }
 
-export function orderByRarity(cards) {
+export function orderByRarity(cards: Card[]) {
 	return orderByRarityInPlace([...cards]);
 }
 
-export function orderByArenaInPlace(cards) {
+export function orderByArenaInPlace(cards: Card[]) {
 	return cards.sort(Comparators.arena);
 }
 
-export function orderByArena(cards) {
-	return this.orderByArenaInPlace([...cards]);
+export function orderByArena(cards: Card[]) {
+	return orderByArenaInPlace([...cards]);
 }
 
-export function isOrdered(cards, comparator) {
+export function isOrdered(cards: Card[], comparator: (lhs: Card, rhs: Card) => number) {
 	for (let i = 0; i < cards.length - 1; i++) {
 		if (comparator(cards[i], cards[i + 1]) > 0) {
 			return false;
@@ -211,7 +202,6 @@ export default {
 	Comparators,
 	columnCMC,
 	columnColor,
-	idColumnCMC,
 	orderByCMCInPlace,
 	orderByCMC,
 	orderByColorInPlace,
