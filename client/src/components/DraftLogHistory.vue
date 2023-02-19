@@ -55,20 +55,30 @@
 						<template v-else> <i class="far fa-eye"></i> Review</template>
 					</button>
 					<dropdown v-if="!draftLog.delayed">
-						<span slot="handle">More</span>
+						<span slot="handle">Download all decks</span>
 						<div slot="dropdown" class="more-dropdown">
-							<div class="cat-title">Download all decks:</div>
-							<button type="button" @click="downloadAllDecks(draftLog, '.dek', true)">
-								MTGO format (.dek)
-							</button>
-							<button type="button" @click="downloadAllDecks(draftLog, '.dek', false)">
-								MTGO format (.dek)<br />without lands
-							</button>
-							<button type="button" @click="downloadAllDecks(draftLog, 'card names', true)">
-								Card names only
-							</button>
-							<button type="button" @click="downloadAllDecks(draftLog, 'card names', false)">
-								Card names only<br />without lands
+							<div
+								style="
+									display: grid;
+									grid-template-columns: auto auto;
+									justify-items: center;
+									align-items: center;
+								"
+							>
+								<label for="deck-export-format">Format:</label>
+								<select id="deck-export-format" v-model="deckExportFormat">
+									<option value=".dek">MTGO (.dek)</option>
+									<option value="MTGA">MTGA</option>
+									<option value="card names">Card Names</option>
+								</select>
+								<label for="deck-export-with-lands">Basics:</label>
+								<input type="checkbox" id="deck-export-with-lands" v-model="deckExportWithBasics" />
+							</div>
+							<button
+								type="button"
+								@click="downloadAllDecks(draftLog, deckExportFormat, deckExportWithBasics)"
+							>
+								Download
 							</button>
 						</div>
 					</dropdown>
@@ -118,6 +128,8 @@ export default defineComponent({
 	data: () => {
 		return {
 			expandedLogs: {} as { [idx: number]: boolean },
+			deckExportFormat: ".dek" as ".dek" | "MTGA" | "card names",
+			deckExportWithBasics: false,
 		};
 	},
 	computed: {
@@ -136,25 +148,25 @@ export default defineComponent({
 				JSON.stringify(draftLog, null, "\t")
 			);
 		},
-		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "card names", withLands: boolean) {
+		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "MTGA" | "card names", withBasics: boolean) {
 			for (const user of Object.values(draftLog.users)) {
 				if (user.decklist) {
 					const filename = `Session_${draftLog.sessionID.replace(/\W/g, "")}_Deck_${user.userName}`;
 					const main = user.decklist.main.map((cid) => draftLog.carddata[cid]);
 					const side = user.decklist.side.map((cid) => draftLog.carddata[cid]);
-					const lands = withLands ? user.decklist.lands : undefined;
+					const lands = withBasics ? user.decklist.lands : undefined;
 					if (format === ".dek") {
 						await exportToMTGO(main, side, {
 							lands: lands,
 							filename: `${filename}.dek`,
 						});
-					} else if (format === "card names") {
+					} else if (format === "MTGA" || format === "card names") {
 						helper.download(
 							`${filename}.txt`,
 							exportToMTGA(main, side, this.language, lands, {
 								preferredBasics: "",
 								sideboardBasics: 0,
-								full: false,
+								full: format === "MTGA",
 							})
 						);
 					}
