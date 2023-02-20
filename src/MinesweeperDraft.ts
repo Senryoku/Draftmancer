@@ -1,4 +1,4 @@
-import { Card } from "./CardTypes.js";
+import { UniqueCard } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { PickSummary } from "./PickSummary";
@@ -12,7 +12,7 @@ export enum MinesweeperCellState {
 
 export class MinesweeperCell {
 	state: MinesweeperCellState = MinesweeperCellState.Hidden;
-	card: Card | undefined;
+	card: UniqueCard;
 
 	reveal() {
 		if (this.state === MinesweeperCellState.Hidden) {
@@ -26,7 +26,7 @@ export class MinesweeperCell {
 		}
 	}
 
-	constructor(card: Card) {
+	constructor(card: UniqueCard) {
 		this.card = card;
 	}
 }
@@ -34,11 +34,11 @@ export class MinesweeperCell {
 export class MinesweeperGrid {
 	state: Array<Array<MinesweeperCell>> = []; // Row-Major order
 
-	constructor(cards: Array<Card>, width: number, height: number, options: Options = {}) {
+	constructor(cards: Array<UniqueCard>, width: number, height: number, options: Options = {}) {
 		for (let i = 0; i < height; i++) {
 			this.state.push([]);
 			for (let j = 0; j < width; j++) {
-				this.state[i].push(new MinesweeperCell(cards.pop() as Card));
+				this.state[i].push(new MinesweeperCell(cards.pop()!));
 			}
 		}
 		if (options.revealBorders) {
@@ -84,6 +84,13 @@ export class MinesweeperGrid {
 		if (row < 0 || row >= this.state.length || col < 0 || col >= this.state[row].length) return null;
 		return this.state[row][col];
 	}
+
+	width() {
+		return this.state[0].length;
+	}
+	height() {
+		return this.state.length;
+	}
 }
 
 export type MinesweeperSyncData = {
@@ -109,7 +116,7 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	// Warning: this will empty the packs.
 	constructor(
 		players: Array<UserID>,
-		packs: Array<Array<Card>>,
+		packs: Array<Array<UniqueCard>>,
 		gridWidth: number,
 		gridHeight: number,
 		picksPerGrid: number,
@@ -160,15 +167,15 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 
 	// Remove unnecessary card information from the grid before sharing it with players
 	strippedGrid() {
-		const ret: any = [];
-		let rowIdx = 0;
+		const ret: { state: MinesweeperCellState; card: UniqueCard | undefined }[][] = [];
 		for (const row of this.grid().state) {
 			ret.push([]);
 			for (const cell of row) {
-				ret[rowIdx].push({ ...cell });
-				if (cell.state === MinesweeperCellState.Hidden) ret[rowIdx][ret[rowIdx].length - 1].card = undefined;
+				ret[ret.length - 1].push({
+					state: cell.state,
+					card: cell.state === MinesweeperCellState.Hidden ? undefined : cell.card,
+				});
 			}
-			++rowIdx;
 		}
 		return ret;
 	}

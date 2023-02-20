@@ -1096,15 +1096,24 @@ export class Session implements IIndexable {
 		const s = this.draftState as MinesweeperDraftState;
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState))
 			return new SocketError("Not Playing", "There's no Minesweeper Draft running on this session.");
-		if (s.grid().get(row, col)?.state !== MinesweeperCellState.Revealed)
+		const cell = s.grid().get(row, col);
+		if (!cell)
+			return new SocketError(
+				"Invalid Coordinates",
+				`Coordinates (${row}, ${col}) are invalid for grid of size (${s.grid().height()}, ${s.grid().width()}).`
+			);
+		if (cell.state !== MinesweeperCellState.Revealed)
 			return new SocketError("Invalid Coordinates", "Cards can only be picked after being revealed.");
 
 		const currentUserID = s.currentPlayer();
 		if (currentUserID !== userID) return new SocketError("Not your turn", "It's not your turn to pick.");
+
 		s.pick(row, col);
+		// Note: Sending the whole grid with all revealed cards is pretty slow.
+		// This doesn't really matter for now, but this can certainly be optimised by sending only diffs.
 		const currentGridState = s.syncData();
 
-		const pickedCard = s.grid().get(row, col)?.card as UniqueCard;
+		const pickedCard = cell.card;
 		Connections[userID].pickedCards.main.push(pickedCard);
 
 		s.lastPicks.unshift({
