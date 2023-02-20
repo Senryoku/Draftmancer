@@ -65,7 +65,7 @@ module.exports = {
 		}),
 		new HtmlWebpackPlugin({
 			filename: "bracket.html",
-			template: "./client/template/bracket.html",
+			template: "./client/template/index.html",
 			inject: "body",
 			chunks: ["readOnlyBracket"],
 		}),
