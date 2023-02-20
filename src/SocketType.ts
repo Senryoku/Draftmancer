@@ -14,6 +14,7 @@ import { BotScores } from "./Bot";
 import SessionsSettingsProps from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
+import { RotisserieDraftState, RotisserieDraftSyncData } from "./RotisserieDraft";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -100,16 +101,24 @@ export interface ServerToClientEvents {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
-	startRochesterDraft: (syncData: ReturnType<RochesterDraftState["syncData"]>) => void;
-	rochesterDraftNextRound: (syncData: ReturnType<RochesterDraftState["syncData"]>) => void;
+	startRochesterDraft: (syncData: RochesterDraftSyncData) => void;
+	rochesterDraftNextRound: (syncData: RochesterDraftSyncData) => void;
 	rochesterDraftEnd: () => void;
 	rejoinRochesterDraft: (data: {
 		state: RochesterDraftSyncData;
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
-	startMinesweeperDraft: (syncData: ReturnType<MinesweeperDraftState["syncData"]>) => void;
-	minesweeperDraftState: (syncData: ReturnType<MinesweeperDraftState["syncData"]>) => void;
+	startRotisserieDraft: (syncData: RotisserieDraftSyncData) => void;
+	rotisserieDraftUpdateState: (uniqueCardID: UniqueCardID, newOwnerID: UserID, currentPlayer: UserID) => void;
+	rotisserieDraftEnd: () => void;
+	rejoinRotisserieDraft: (data: {
+		state: RotisserieDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
+
+	startMinesweeperDraft: (syncData: MinesweeperSyncData) => void;
+	minesweeperDraftState: (syncData: MinesweeperSyncData) => void;
 	minesweeperDraftEnd: (options: { immediate?: boolean }) => void;
 	rejoinMinesweeperDraft: (data: {
 		state: MinesweeperSyncData;
@@ -177,6 +186,7 @@ export interface ClientToServerEvents {
 	) => void;
 	gridDraftPick: (choice: number, ack: (result: SocketAck) => void) => void;
 	rochesterDraftPick: (choices: Array<number>, ack: (result: SocketAck) => void) => void;
+	rotisserieDraftPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
 	winstonDraftTakePile: (ack: (result: SocketAck) => void) => void;
 	winstonDraftSkipPile: (ack: (result: SocketAck) => void) => void;
 	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;
@@ -194,6 +204,7 @@ export interface ClientToServerEvents {
 	resumeDraft: () => void;
 	startGridDraft: (boosterCount: number) => void;
 	startRochesterDraft: () => void;
+	startRotisserieDraft: (ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number) => void;
 	startMinesweeperDraft: (
 		gridCount: number,

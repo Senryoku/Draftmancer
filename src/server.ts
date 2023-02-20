@@ -16,7 +16,7 @@ import cookieParser from "cookie-parser";
 import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
-import { ackError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
+import { ackError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
 import Constants from "./Constants.js";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -129,9 +129,11 @@ const checkDraftAction = function (userID: UserID, sess: Session, type: string, 
 		ack?.(new SocketError("Not drafting."));
 		return false;
 	}
-	if (instanceOfTurnBased(sess.draftState) && userID !== (sess.draftState as TurnBased).currentPlayer()) {
-		ack?.(new SocketError("Not your turn."));
-		return false;
+	if (instanceOfTurnBased(sess.draftState)) {
+		if (userID !== sess.draftState.currentPlayer()) {
+			ack?.(new SocketError("Not your turn."));
+			return false;
+		}
 	}
 	return true;
 };
@@ -309,6 +311,17 @@ function rochesterDraftPick(
 	else ack?.(new SocketAck());
 }
 
+function rotisserieDraftPick(
+	userID: UserID,
+	sessionID: SessionID,
+	uniqueCardID: UniqueCardID,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "rotisserie", ack)) return;
+
+	ack(Sessions[sessionID].rotisserieDraftPick(uniqueCardID));
+}
+
 // Winston Draft
 function winstonDraftTakePile(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 	if (!checkDraftAction(userID, Sessions[sessionID], "winston", ack)) return;
@@ -478,6 +491,16 @@ function startRochesterDraft(userID: UserID, sessionID: SessionID) {
 		sess.startRochesterDraft();
 		startPublicSession(sess);
 	}
+}
+
+function startRotisserieDraft(userID: UserID, sessionID: SessionID, ack: (s: SocketAck) => void) {
+	const sess = Sessions[sessionID];
+	if (!sess || sess.owner != userID) return ack(new SocketError("Internal Error."));
+
+	let ret = sess.startRotisserieDraft();
+	if (!isMessageError(ret)) startPublicSession(sess);
+
+	ack(ret);
 }
 
 function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
@@ -1277,6 +1300,7 @@ io.on("connection", async function (socket) {
 	socket.on("pickCard", prepareSocketCallback(pickCard));
 	socket.on("gridDraftPick", prepareSocketCallback(gridDraftPick));
 	socket.on("rochesterDraftPick", prepareSocketCallback(rochesterDraftPick));
+	socket.on("rotisserieDraftPick", prepareSocketCallback(rotisserieDraftPick));
 	socket.on("winstonDraftTakePile", prepareSocketCallback(winstonDraftTakePile));
 	socket.on("winstonDraftSkipPile", prepareSocketCallback(winstonDraftSkipPile));
 	socket.on("minesweeperDraftPick", prepareSocketCallback(minesweeperDraftPick));
@@ -1293,6 +1317,7 @@ io.on("connection", async function (socket) {
 	socket.on("resumeDraft", prepareSocketCallback(resumeDraft, true));
 	socket.on("startGridDraft", prepareSocketCallback(startGridDraft, true));
 	socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
+	socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));
 	socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
 	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
 	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));

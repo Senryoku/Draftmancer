@@ -162,7 +162,6 @@ describe("Rochester Draft", function () {
 				expect(options.useCustomCardList).to.be.true;
 				done();
 			});
-			clients[ownerIdx].emit("setUseCustomCardList", true);
 			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
 		});
 
