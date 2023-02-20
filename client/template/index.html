@@ -2,7 +2,7 @@
 <html lang="en-US">
 	<head>
 		<meta charset="UTF-8" />
-		<title>MTGADraft - Multi-Player Draft Simulator</title>
+		<title><%= htmlWebpackPlugin.options.title %></title>
 		<meta
 			name="description"
 			content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available."
@@ -22,7 +22,7 @@
 			content="Draft any Magic: the Gathering set or even your own cube with other players - or bots! Multiple gamemodes (Winston, Grid...) and many options are available."
 		/>
 		<meta property="og:site_name" content="MTGADraft" />
-		<link rel="canonical" href="https://www.mtgadraft.tk/" />
+		<link rel="canonical" href="https://www.mtgadraft.tk/<%= htmlWebpackPlugin.options.canonical %>" />
 
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=2" />
