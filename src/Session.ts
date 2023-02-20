@@ -1096,13 +1096,17 @@ export class Session implements IIndexable {
 			booster: [card.id],
 		});
 
-		const ended = s.advance();
-
-		for (const user of this.users)
-			Connections[user]?.socket.emit("rotisserieDraftUpdateState", card.uniqueID, card.owner, s.currentPlayer());
-
-		if (ended) this.endRotisserieDraft();
-
+		if (s.advance()) {
+			this.endRotisserieDraft();
+		} else {
+			for (const user of this.users)
+				Connections[user]?.socket.emit(
+					"rotisserieDraftUpdateState",
+					card.uniqueID,
+					card.owner,
+					s.currentPlayer()
+				);
+		}
 		return new SocketAck();
 	}
 	///////////////////// Rotisserie Draft End //////////////////////
