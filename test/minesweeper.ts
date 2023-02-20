@@ -77,7 +77,9 @@ describe("Minesweeper Draft", function () {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
-			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1");
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", (r: SocketAck) => {
+				expect(r.code).to.equal(0);
+			});
 		});
 	};
 

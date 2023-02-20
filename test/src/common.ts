@@ -1,11 +1,14 @@
 import chai from "chai";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 const expect = chai.expect;
 // eslint-disable-next-line no-unused-vars
-import server from "../../src/server.js"; // Launch Server
+/// <amd-dependency path="mega" />
+import "../../src/server.js"; // Launch Server
 import { Connections } from "../../src/Connection.js";
+import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
+import { SocketAck } from "../../src/Message.js";
 
-const NODE_PORT = process.env.PORT | 3000;
+const NODE_PORT = process.env.PORT ?? 3000;
 
 const ioOptions = {
 	transports: ["websocket"],
@@ -15,21 +18,24 @@ const ioOptions = {
 
 let UniqueUserID = 0;
 
-export function connectClient(query) {
+export function connectClient(query: any) {
 	if (!query.userID) query.userID = `UserID${++UniqueUserID}`;
 
-	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions));
-	r.on("alreadyConnected", function (newID) {
-		this.query.userID = newID;
+	let r = io(`http://localhost:${NODE_PORT}`, Object.assign({ query: query }, ioOptions)) as Socket<
+		ServerToClientEvents,
+		ClientToServerEvents
+	>;
+	r.on("alreadyConnected", (newID) => {
+		(r as any).query.userID = newID;
 	});
 	r.on("stillAlive", function (ack) {
 		if (ack) ack();
 	});
-	r.query = query; // Hackish: This property disappeared between socket.io v2 and v3
+	(r as any).query = query; // Hackish: This property disappeared between socket.io v2 and v3
 	return r;
 }
 
-let outputbuffer;
+let outputbuffer: string;
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
@@ -41,7 +47,7 @@ export function disableLogs() {
 	outputbuffer = "";
 	console.log = console.debug = console.warn = logReplacer;
 }
-export function enableLogs(print) {
+export function enableLogs(print: boolean) {
 	console.log = baseConsogleLog;
 	console.debug = baseConsogleDebug;
 	console.warn = baseConsogleWarn;
@@ -52,7 +58,7 @@ export function enableLogs(print) {
 	}
 }
 
-export function makeClients(queries, done) {
+export function makeClients(queries: any[], done: Mocha.Done) {
 	let sockets = [];
 	disableLogs();
 	expect(Object.keys(Connections).length).to.equal(0);
@@ -75,7 +81,7 @@ export function makeClients(queries, done) {
 	return sockets;
 }
 
-export const waitForSocket = (socket, done) => {
+export const waitForSocket = (socket: Socket, done: Mocha.Done) => {
 	if (socket.io.engine.readyState === "closed") done();
 	else
 		setTimeout(() => {
@@ -84,7 +90,7 @@ export const waitForSocket = (socket, done) => {
 };
 
 // Wait for the sockets to be disconnected, I haven't found another way...
-export const waitForClientDisconnects = (done) => {
+export const waitForClientDisconnects = (done: Mocha.Done) => {
 	if (Object.keys(Connections).length === 0) {
 		enableLogs(false);
 		done();
@@ -94,3 +100,8 @@ export const waitForClientDisconnects = (done) => {
 		}, 1);
 	}
 };
+
+export function ackNoError(r: SocketAck) {
+	expect(r.code).to.equal(0);
+	expect(r.error).not.to.exist;
+}

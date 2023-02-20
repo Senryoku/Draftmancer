@@ -4,12 +4,21 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
+import {
+	makeClients,
+	enableLogs,
+	disableLogs,
+	waitForSocket,
+	waitForClientDisconnects,
+	ackNoError,
+} from "./src/common.js";
+import { RochesterDraftSyncData } from "../src/RochesterDraft.js";
+import { SocketAck } from "../src/Message.js";
 
 describe("Rochester Draft", function () {
-	let clients = [];
+	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
-	let ownerIdx;
+	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -17,7 +26,7 @@ describe("Rochester Draft", function () {
 	});
 
 	afterEach(function (done) {
-		enableLogs(this.currentTest.state == "failed");
+		enableLogs(this.currentTest!.state == "failed");
 		done();
 	});
 
@@ -69,13 +78,13 @@ describe("Rochester Draft", function () {
 
 	it(`6 clients with different userID should be connected.`, function (done) {
 		expect(Object.keys(Connections).length).to.equal(6);
-		ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+		ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 		expect(ownerIdx).to.not.be.null;
 		expect(ownerIdx).to.not.be.undefined;
 		done();
 	});
 
-	let rochesterDraftState = null;
+	let rochesterDraftState: RochesterDraftSyncData | null = null;
 
 	const startDraft = () => {
 		it("When session owner launch Rochester draft, everyone should receive a startRochesterDraft event", function (done) {
@@ -99,24 +108,28 @@ describe("Rochester Draft", function () {
 
 			for (let c = 0; c < clients.length; ++c) {
 				// Pick randomly and retry on error
-				const pick = (state) => {
+				const pick = (state: RochesterDraftSyncData) => {
 					const cl = clients[c];
-					cl.emit("rochesterDraftPick", [Math.floor(Math.random() * state.booster.length)], (response) => {
-						if (response.code !== 0) pick(state);
-					});
+					cl.emit(
+						"rochesterDraftPick",
+						[Math.floor(Math.random() * state.booster.length)],
+						(response: SocketAck) => {
+							if (response.code !== 0) pick(state);
+						}
+					);
 				};
 				clients[c].on("rochesterDraftNextRound", function (state) {
-					if (state.currentPlayer === clients[c].query.userID) pick(state);
+					if (state.currentPlayer === (clients[c] as any).query.userID) pick(state);
 				});
 				clients[c].once("rochesterDraftEnd", function () {
 					draftEnded += 1;
-					this.removeListener("rochesterDraftNextRound");
+					clients[c].removeListener("rochesterDraftNextRound");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			// Pick the first card
-			let currPlayer = clients.findIndex((c) => c.query.userID == rochesterDraftState.currentPlayer);
-			clients[currPlayer].emit("rochesterDraftPick", [0]);
+			let currPlayer = clients.findIndex((c) => (c as any).query.userID == rochesterDraftState!.currentPlayer);
+			clients[currPlayer].emit("rochesterDraftPick", [0], ackNoError);
 		});
 	};
 
@@ -145,11 +158,12 @@ describe("Rochester Draft", function () {
 	describe("Using a Cube", function () {
 		it("Emit Settings.", function (done) {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("sessionOptions", function (options) {
-				if (options.useCustomCardList) done();
+			clients[nonOwnerIdx].once("sessionOptions", (options) => {
+				expect(options.useCustomCardList).to.be.true;
+				done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
-			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1");
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
 		});
 
 		startDraft();

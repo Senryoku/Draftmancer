@@ -4,8 +4,16 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
+import {
+	makeClients,
+	enableLogs,
+	disableLogs,
+	waitForSocket,
+	waitForClientDisconnects,
+	ackNoError,
+} from "./src/common.js";
 import { WinstonDraftState } from "../src/WinstonDraft.js";
+import { SocketAck } from "../src/Message.js";
 
 describe("Winston Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -83,7 +91,7 @@ describe("Winston Draft", function () {
 			})();
 			++index;
 		}
-		clients[ownerIdx].emit("startWinstonDraft");
+		clients[ownerIdx].emit("startWinstonDraft", 6);
 	});
 
 	it("Non-owner disconnects, owner receives updated user infos.", function (done) {
@@ -104,7 +112,10 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile");
+				if (userID === (clients[c] as any).query.userID)
+					clients[c].emit("winstonDraftTakePile", (r: SocketAck) => {
+						expect(r.code).to.equal(0);
+					});
 			});
 			clients[c].once("winstonDraftEnd", function () {
 				draftEnded += 1;
@@ -112,7 +123,7 @@ describe("Winston Draft", function () {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		getCurrentPlayer().emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
 	});
 
 	it("When session owner launch Winston draft, everyone should receive a startWinstonDraft event", function (done) {
@@ -136,7 +147,7 @@ describe("Winston Draft", function () {
 			})();
 			++index;
 		}
-		clients[ownerIdx].emit("startWinstonDraft");
+		clients[ownerIdx].emit("startWinstonDraft", 6);
 	});
 
 	it("Taking first pile.", function (done) {
@@ -147,7 +158,7 @@ describe("Winston Draft", function () {
 				if (nextRound == clients.length) done();
 			});
 		}
-		getCurrentPlayer().emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
 	});
 
 	it("Skiping, then taking pile.", function (done) {
@@ -158,8 +169,8 @@ describe("Winston Draft", function () {
 				if (nextRound == clients.length) done();
 			});
 		}
-		getCurrentPlayer().emit("winstonDraftSkipPile");
-		getCurrentPlayer().emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+		getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
 	});
 
 	it("Skiping, skiping, then taking pile.", function (done) {
@@ -170,9 +181,9 @@ describe("Winston Draft", function () {
 				if (nextRound == clients.length) done();
 			});
 		}
-		getCurrentPlayer().emit("winstonDraftSkipPile");
-		getCurrentPlayer().emit("winstonDraftSkipPile");
-		getCurrentPlayer().emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+		getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
 	});
 
 	it("Skiping, skiping and skiping.", function (done) {
@@ -187,9 +198,9 @@ describe("Winston Draft", function () {
 		getCurrentPlayer().on("winstonDraftRandomCard", function (card) {
 			if (card) receivedRandomCard = true;
 		});
-		getCurrentPlayer().emit("winstonDraftSkipPile");
-		getCurrentPlayer().emit("winstonDraftSkipPile");
-		getCurrentPlayer().emit("winstonDraftSkipPile");
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
+		getCurrentPlayer().emit("winstonDraftSkipPile", ackNoError);
 	});
 
 	it("Every player takes the first pile possible and the draft should end.", function (done) {
@@ -197,7 +208,7 @@ describe("Winston Draft", function () {
 		let draftEnded = 0;
 		for (let c = 0; c < clients.length; ++c) {
 			clients[c].on("winstonDraftNextRound", function (userID) {
-				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile");
+				if (userID === (clients[c] as any).query.userID) clients[c].emit("winstonDraftTakePile", ackNoError);
 			});
 			clients[c].once("winstonDraftEnd", function () {
 				draftEnded += 1;
@@ -205,6 +216,6 @@ describe("Winston Draft", function () {
 				if (draftEnded == clients.length) done();
 			});
 		}
-		getCurrentPlayer().emit("winstonDraftTakePile");
+		getCurrentPlayer().emit("winstonDraftTakePile", ackNoError);
 	});
 });
