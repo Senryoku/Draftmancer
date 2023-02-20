@@ -122,11 +122,11 @@
     "7ed": {
         "code": "7ed",
         "fullName": "Seventh Edition",
-        "cardCount": 700,
+        "cardCount": 701,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/7ed.svg",
-        "commonCount": 260,
+        "commonCount": 261,
         "rareCount": 220,
         "uncommonCount": 220
     },
@@ -2379,6 +2379,14 @@
         "rareCount": 113,
         "uncommonCount": 93
     },
+    "mat": {
+        "code": "mat",
+        "fullName": "March of the Machine: The Aftermath",
+        "cardCount": 1,
+        "isPrimary": true,
+        "icon": "img/sets/mat.svg",
+        "rareCount": 1
+    },
     "mb1": {
         "code": "mb1",
         "fullName": "Mystery Booster",
@@ -2506,14 +2514,14 @@
     "mid": {
         "code": "mid",
         "fullName": "Innistrad: Midnight Hunt",
-        "cardCount": 396,
+        "cardCount": 400,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/mid.svg",
-        "commonCount": 125,
+        "commonCount": 126,
         "mythicCount": 43,
-        "rareCount": 131,
-        "uncommonCount": 97
+        "rareCount": 132,
+        "uncommonCount": 99
     },
     "mir": {
         "code": "mir",
@@ -2570,6 +2578,25 @@
         "rareCount": 110,
         "uncommonCount": 110
     },
+    "moc": {
+        "code": "moc",
+        "fullName": "March of the Machine Commander",
+        "cardCount": 9,
+        "isPrimary": false,
+        "icon": "img/sets/moc.svg",
+        "commonCount": 3,
+        "mythicCount": 6
+    },
+    "mom": {
+        "code": "mom",
+        "fullName": "March of the Machine",
+        "cardCount": 33,
+        "isPrimary": true,
+        "icon": "img/sets/mom.svg",
+        "commonCount": 10,
+        "mythicCount": 8,
+        "rareCount": 15
+    },
     "mor": {
         "code": "mor",
         "fullName": "Morningtide",
@@ -2619,6 +2646,14 @@
         "rareCount": 88,
         "uncommonCount": 88
     },
+    "mul": {
+        "code": "mul",
+        "fullName": "Multiverse Legends",
+        "cardCount": 2,
+        "isPrimary": false,
+        "icon": "img/sets/mul.svg",
+        "mythicCount": 2
+    },
     "ncc": {
         "code": "ncc",
         "fullName": "New Capenna Commander",
@@ -2655,13 +2690,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 500,
+        "cardCount": 507,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 145,
+        "commonCount": 150,
         "mythicCount": 62,
-        "rareCount": 186,
-        "uncommonCount": 107
+        "rareCount": 187,
+        "uncommonCount": 108
     },
     "nph": {
         "code": "nph",
@@ -4965,13 +5000,13 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 854,
+        "cardCount": 859,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 46,
-        "mythicCount": 141,
-        "rareCount": 646,
-        "uncommonCount": 21
+        "commonCount": 45,
+        "mythicCount": 143,
+        "rareCount": 651,
+        "uncommonCount": 20
     },
     "slp": {
         "code": "slp",
@@ -5658,14 +5693,14 @@
     "vow": {
         "code": "vow",
         "fullName": "Innistrad: Crimson Vow",
-        "cardCount": 417,
+        "cardCount": 424,
         "isPrimary": true,
         "block": "Innistrad: Double Feature",
         "icon": "img/sets/vow.svg",
-        "commonCount": 128,
+        "commonCount": 130,
         "mythicCount": 46,
-        "rareCount": 140,
-        "uncommonCount": 103
+        "rareCount": 142,
+        "uncommonCount": 106
     },
     "w16": {
         "code": "w16",
