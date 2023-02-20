@@ -1087,6 +1087,7 @@ export class Session implements IIndexable {
 
 		const card = s.cards.find((c) => c.uniqueID === uniqueID);
 		if (!card) return new SocketError("Invalid Card", "Card not found.");
+		if (card.owner !== null) return new SocketError("Invalid Card", "Card already picked.");
 		card.owner = s.currentPlayer();
 		Connections[s.currentPlayer()].pickedCards.main.push(card);
 
