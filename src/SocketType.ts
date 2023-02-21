@@ -204,7 +204,10 @@ export interface ClientToServerEvents {
 	resumeDraft: () => void;
 	startGridDraft: (boosterCount: number) => void;
 	startRochesterDraft: () => void;
-	startRotisserieDraft: (ack: (s: SocketAck) => void) => void;
+	startRotisserieDraft: (
+		options: { singleton?: { cardsPerPlayer: number }; standard?: { boostersPerPlayer: number } },
+		ack: (s: SocketAck) => void
+	) => void;
 	startWinstonDraft: (boosterCount: number) => void;
 	startMinesweeperDraft: (
 		gridCount: number,

@@ -1029,7 +1029,10 @@ export class Session implements IIndexable {
 	///////////////////// Rochester Draft End //////////////////////
 
 	///////////////////// Rotisserie Draft //////////////////////
-	startRotisserieDraft(): SocketAck {
+	startRotisserieDraft(options: {
+		singleton?: { cardsPerPlayer: number };
+		standard?: { boostersPerPlayer: number };
+	}): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size <= 1)
 			return new SocketError(
@@ -1037,18 +1040,42 @@ export class Session implements IIndexable {
 				"At least two players are needed to launch a Rotisserie Draft. Bots are not supported."
 			);
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
-		this.emitMessage("Preparing Rotisserie draft!", "Your draft will start soon...", false, 0);
-		// FIXME: Limit duplicates (1)?
-		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
-			useCustomBoosters: true,
-			boostersPerPlayer: this.boostersPerPlayer,
-			playerCount: this.users.size,
-		});
-		if (isMessageError(ret)) return new SocketAck(ret);
+
+		let cards: UniqueCard[] = [];
+		if (options.singleton) {
+			let cardPool: CardID[] = [];
+			if (this.useCustomCardList) {
+				for (const slot in this.customCardList.slots)
+					cardPool.push(...Object.keys(this.customCardList.slots[slot]));
+				cardPool = [...new Set(cardPool)];
+			} else {
+				cardPool = [...this.cardPool().keys()];
+			}
+			const cardCount = this.users.size * options.singleton.cardsPerPlayer;
+			if (cardPool.length < cardCount)
+				return new SocketError(
+					"Not enough cards",
+					`Not enough cards in card pool: ${cardPool.length}/${cardCount}.`
+				);
+			shuffleArray(cardPool);
+			cards = cardPool
+				.slice(0, cardCount + 1)
+				.map((cid) => getUnique(cid, { getCards: this.getCustomGetCardFunction() }));
+		} else if (options.standard) {
+			const ret = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
+				useCustomBoosters: true,
+				boostersPerPlayer: options.standard.boostersPerPlayer,
+				playerCount: this.users.size,
+			});
+			cards = this.boosters.flat();
+			this.boosters = [];
+			if (isMessageError(ret)) return new SocketAck(ret);
+		} else {
+			return new SocketError("Invalid parameters");
+		}
 
 		this.disconnectedUsers = {};
-		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), this.boosters.flat());
-		this.boosters = [];
+		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), cards);
 		if (!isRotisserieDraftState(this.draftState)) return new SocketError("Internal Error");
 		this.drafting = true;
 		for (const user of this.users) {

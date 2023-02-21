@@ -11,9 +11,12 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	Cubes,
 } from "./src/common.js";
 import { RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
 import { getRandom } from "../src/utils.js";
+import { SocketAck } from "../src/Message.js";
+import { SetCode } from "../src/Types.js";
 
 describe("Rotisserie Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -60,7 +63,46 @@ describe("Rotisserie Draft", function () {
 
 	let RotisserieDraftState: RotisserieDraftSyncData | null = null;
 
-	const startDraft = () => {
+	const setRestriction = (sets: SetCode[]) => {
+		it(`Set restriction: '${sets}'.`, (done) => {
+			clients[ownerIdx].emit("setRestriction", sets);
+			done();
+		});
+	};
+
+	const loadCube = () => {
+		it("Load cube.", (done) => {
+			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
+			clients[nonOwnerIdx].once("sessionOptions", (options) => {
+				expect(options.useCustomCardList).to.be.true;
+				done();
+			});
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
+		});
+	};
+	const loadCubeFile = (cubename: string) => {
+		it(`Load cube '${cubename}'.`, (done) => {
+			clients[ownerIdx].emit("parseCustomCardList", Cubes[cubename], (r) => {
+				expect(r.code).to.equal(0);
+				done();
+			});
+		});
+	};
+	const checkCardCount = (cardCount: number) => {
+		it(`Each player should end up with ${cardCount} cards.`, (done) => {
+			for (const client of clients) {
+				expect(
+					RotisserieDraftState?.cards.filter((card) => card.owner == (client as any).query.userID).length
+				).to.equal(cardCount);
+			}
+			done();
+		});
+	};
+
+	const startDraft = (options: {
+		singleton?: { cardsPerPlayer: number };
+		standard?: { boostersPerPlayer: number };
+	}) => {
 		it("When session owner launch Rotisserie draft, everyone should receive a startRotisserieDraft event", (done) => {
 			let connectedClients = 0;
 			for (let c of clients) {
@@ -72,7 +114,7 @@ describe("Rotisserie Draft", function () {
 					}
 				});
 			}
-			clients[ownerIdx].emit("startRotisserieDraft", ackNoError);
+			clients[ownerIdx].emit("startRotisserieDraft", options, ackNoError);
 		});
 	};
 
@@ -113,12 +155,24 @@ describe("Rotisserie Draft", function () {
 	};
 
 	describe("Default settings", () => {
-		startDraft();
+		setRestriction(["one", "bro"]);
+		startDraft({ singleton: { cardsPerPlayer: 45 } });
 		endDraft();
 	});
 
+	describe("Default settings, single set, not enough cards.", () => {
+		setRestriction(["one"]);
+		it("Stating should error (not enough cards)", (done) => {
+			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 45 } }, (r) => {
+				expect(r.code !== 0);
+				done();
+			});
+		});
+	});
+
 	describe("Default settings with a disconnect", () => {
-		startDraft();
+		setRestriction(["one", "bro"]);
+		startDraft({ singleton: { cardsPerPlayer: 45 } });
 
 		it("Non-owner disconnects, owner receives updated user infos.", (done) => {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
@@ -128,7 +182,7 @@ describe("Rotisserie Draft", function () {
 			clients[nonOwnerIdx].disconnect();
 		});
 
-		it("Non-owner reconnects, draft restarts.", function (done) {
+		it("Non-owner reconnects, draft restarts.", (done) => {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			clients[nonOwnerIdx].once("rejoinRotisserieDraft", () => {
 				done();
@@ -139,17 +193,64 @@ describe("Rotisserie Draft", function () {
 		endDraft();
 	});
 
-	describe("Using a Cube", () => {
-		it("Emit Settings.", (done) => {
-			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
-			clients[nonOwnerIdx].once("sessionOptions", (options) => {
-				expect(options.useCustomCardList).to.be.true;
-				done();
-			});
-			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
-		});
-
-		startDraft();
+	describe("Default setting, using a Cube", () => {
+		loadCube();
+		startDraft({ singleton: { cardsPerPlayer: 45 } });
 		endDraft();
 	});
+
+	for (let i = 30; i <= 60; i += 15) {
+		describe(`Singleton, ${i} cards per player.`, () => {
+			setRestriction(["one", "bro"]);
+			startDraft({ singleton: { cardsPerPlayer: i } });
+			endDraft();
+			checkCardCount(i);
+		});
+	}
+	for (let i = 30; i <= 45; i += 5) {
+		describe(`Singleton, ${i} cards per player, using a cube`, () => {
+			loadCube();
+			startDraft({ singleton: { cardsPerPlayer: i } });
+			endDraft();
+			checkCardCount(i);
+		});
+	}
+	describe(`Singleton, 50 cards per player, using a cube.`, () => {
+		loadCube();
+		it("Stating should error (not enough cards)", (done) => {
+			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 50 } }, (r) => {
+				expect(r.code !== 0);
+				done();
+			});
+		});
+	});
+
+	for (let i = 3; i <= 6; ++i) {
+		describe(`Standard collation, ${i} boosters per player.`, () => {
+			startDraft({ standard: { boostersPerPlayer: i } });
+			endDraft();
+			checkCardCount(15 * i);
+		});
+		describe(`Standard collation, ${i} boosters per player, using a cube`, () => {
+			loadCube();
+			startDraft({ standard: { boostersPerPlayer: i } });
+			endDraft();
+			checkCardCount(15 * i);
+		});
+	}
+
+	for (const key in Cubes) {
+		describe(`Singleton collation, '${key}' cube.`, () => {
+			loadCubeFile(key);
+			startDraft({ singleton: { cardsPerPlayer: 30 } });
+			endDraft();
+			checkCardCount(15 * 30);
+		});
+		describe(`Standard collation, '${key}' cube.`, () => {
+			loadCubeFile(key);
+			startDraft({ standard: { boostersPerPlayer: 3 } });
+			endDraft();
+			checkCardCount(15 * 3);
+		});
+	}
 });

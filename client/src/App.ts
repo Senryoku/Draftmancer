@@ -1554,8 +1554,8 @@ export default defineComponent({
 				});
 				return;
 			}
-			// FIXME: Options.
-			this.socket.emit("startRotisserieDraft", (r) => {
+			// TODO: Dialog with Options.
+			this.socket.emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 45 } }, (r) => {
 				if (r.code !== 0) Alert.fire(r.error!);
 			});
 		},

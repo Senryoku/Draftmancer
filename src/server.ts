@@ -493,11 +493,16 @@ function startRochesterDraft(userID: UserID, sessionID: SessionID) {
 	}
 }
 
-function startRotisserieDraft(userID: UserID, sessionID: SessionID, ack: (s: SocketAck) => void) {
+function startRotisserieDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	options: { singleton?: { cardsPerPlayer: number }; standard?: { boostersPerPlayer: number } },
+	ack: (s: SocketAck) => void
+) {
 	const sess = Sessions[sessionID];
 	if (!sess || sess.owner != userID) return ack(new SocketError("Internal Error."));
 
-	let ret = sess.startRotisserieDraft();
+	let ret = sess.startRotisserieDraft(options);
 	if (!isMessageError(ret)) startPublicSession(sess);
 
 	ack(ret);

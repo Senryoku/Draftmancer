@@ -1,4 +1,5 @@
 import chai from "chai";
+import fs from "fs";
 import io, { Socket } from "socket.io-client";
 const expect = chai.expect;
 // eslint-disable-next-line no-unused-vars
@@ -7,6 +8,24 @@ import "../../src/server.js"; // Launch Server
 import { Connections } from "../../src/Connection.js";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType.js";
 import { SocketAck } from "../../src/Message.js";
+
+export const Cubes: { [name: string]: string } = {
+	CustomSlotsTestFile: fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8"),
+	CustomLayoutsTestFile: fs.readFileSync(`./test/data/CustomLayouts.txt`, "utf8"),
+	CustomLayouts_WrongPackSizeTestFile: fs.readFileSync(`./test/data/CustomLayouts_WrongPackSize.txt`, "utf8"),
+	CustomLayouts_MixedLayoutDefinitionsTestFile: fs.readFileSync(
+		`./test/data/CustomLayouts_MixedLayoutDefinitions.txt`,
+		"utf8"
+	),
+	CustomCards_NoLayout: fs.readFileSync(`./test/data/CustomCards_NoLayout.txt`, "utf8"),
+	CustomCards_SlotSize: fs.readFileSync(`./test/data/CustomCards_SlotSize.txt`, "utf8"),
+	CustomCards_MultipleDefaultSlots_Invalid: fs.readFileSync(
+		`./test/data/CustomCards_MultipleDefaultSlots_Invalid.txt`,
+		"utf8"
+	),
+	WithReplacement: fs.readFileSync(`./test/data/ReplacementTest.txt`, "utf8"),
+	WithReplacementLayouts: fs.readFileSync(`./test/data/ReplacementTest_Layouts.txt`, "utf8"),
+};
 
 const NODE_PORT = process.env.PORT ?? 3000;
 
