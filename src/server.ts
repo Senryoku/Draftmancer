@@ -16,7 +16,7 @@ import cookieParser from "cookie-parser";
 import { v1 as uuidv1 } from "uuid";
 
 import { Options, shuffleArray } from "./utils.js";
-import { ackError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
+import { ackError, isSocketError, isMessageError, Message, MessageWarning, SocketAck, SocketError } from "./Message.js";
 import Constants from "./Constants.js";
 import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPoDSession } from "./Persistence.js";
 import { Connection, Connections } from "./Connection.js";
@@ -114,7 +114,7 @@ const parseCustomCardList = function (
 		return;
 	}
 
-	if (parsedList instanceof SocketError) {
+	if (isSocketError(parsedList)) {
 		ack?.(parsedList);
 		return;
 	}
@@ -190,7 +190,7 @@ function parseCollection(
 ) {
 	const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
 	const cardList = parseCardList(txtcollection, options);
-	if (cardList instanceof SocketError) {
+	if (isSocketError(cardList)) {
 		ack?.(cardList);
 		return;
 	}

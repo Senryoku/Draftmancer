@@ -1,7 +1,7 @@
 import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
 import { Card, CardColor } from "./CardTypes.js";
-import { ackError, SocketError } from "./Message.js";
+import { ackError, isMessageError, SocketAck, SocketError } from "./Message.js";
 
 function checkProperty(card: any, prop: string) {
 	if (!(prop in card))
@@ -103,7 +103,9 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	// Create the final Card object,
 	// Assign default value to missing optional fields
 	card.name = card.id = card.oracle_id = inputCard.name;
-	const { cmc, colors } = parseCost(inputCard.mana_cost);
+	const ret = parseCost(inputCard.mana_cost);
+	if (isMessageError(ret)) return new SocketAck(ret);
+	const { cmc, colors } = ret;
 	card.cmc = cmc;
 	card.colors = inputCard.colors ?? colors;
 	card.set = inputCard.set ?? "custom";

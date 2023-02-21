@@ -3,7 +3,7 @@ import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { escapeHTML, Options } from "./utils.js";
-import { ackError, SocketError } from "./Message.js";
+import { ackError, isSocketError, SocketError } from "./Message.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -169,8 +169,8 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 				cardList.customCards = {};
 				for (const c of customCards) {
 					const cardOrError = validateCustomCard(c);
-					if ((cardOrError as SocketError).error) return cardOrError as SocketError;
-					const customCard = cardOrError as Card;
+					if (isSocketError(cardOrError)) return cardOrError;
+					const customCard = cardOrError;
 					if (customCard.name in cardList.customCards)
 						return ackError({
 							title: `[CustomCards]`,

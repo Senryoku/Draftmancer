@@ -2,6 +2,7 @@ import { escapeHTML } from "./utils.js";
 
 type MessageIcon = "error" | "success" | "warning" | "info" | "question";
 
+// Maps directly to a client side Swal
 export class Message {
 	icon: MessageIcon = "info";
 	title: string = "Title";
@@ -52,6 +53,7 @@ export class SocketAck {
 	warning?: MessageWarning = undefined;
 
 	constructor(error?: MessageError) {
+		// FIXME: This makes no sense :))
 		this.error = error;
 		if (isMessageError(error)) this.code = -1;
 	}
@@ -67,6 +69,10 @@ export class SocketError extends SocketAck {
 		super(new MessageError(title, text, footer, html));
 		this.code = -1;
 	}
+}
+
+export function isSocketError(obj: any): obj is SocketError {
+	return (obj instanceof SocketAck && obj.code !== 0) || obj instanceof SocketError;
 }
 
 export function ackError(props: {
