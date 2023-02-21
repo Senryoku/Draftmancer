@@ -387,10 +387,17 @@
 								</div>
 								<div
 									v-tooltip.left="
-										'Starts a Rochester Draft. Every players picks from a single booster.'
+										'Starts a Rochester Draft. Every players pick from a single booster.'
 									"
 								>
 									<button @click="startRochesterDraft()">Rochester</button>
+								</div>
+								<div
+									v-tooltip.left="
+										'Starts a Rotisserie Draft. Each player picks from a single card pool one after the other.'
+									"
+								>
+									<button @click="startRotisserieDraft()">Rotisserie</button>
 								</div>
 								<div v-tooltip.left="'Starts a Minesweeper Draft.'">
 									<button @click="startMinesweeperDraft()">Minesweeper</button>
@@ -1202,6 +1209,14 @@
 					:users="sessionUsers"
 					@pick="teamSealedPick"
 				></team-sealed>
+				<rotisserie-draft
+					v-if="draftingState === DraftState.RotisserieDraft"
+					:language="language"
+					:state="rotisserieDraftState"
+					:users="sessionUsers"
+					:userID="userID"
+					@pick="rotisserieDraftPick"
+				></rotisserie-draft>
 				<!-- Disconnected User(s) Modal -->
 				<transition name="fade">
 					<div v-if="waitingForDisconnectedUsers" class="disconnected-user-popup-container">

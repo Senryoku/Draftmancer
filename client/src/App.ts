@@ -13,16 +13,18 @@ import {
 import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
-import { WinstonDraftState, WinstonDraftSyncData } from "../../src/WinstonDraft";
+import { WinstonDraftSyncData } from "../../src/WinstonDraft";
 import { GridDraftSyncData } from "../../src/GridDraft";
 import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
 import { RochesterDraftSyncData } from "../../src/RochesterDraft";
+import { RotisserieDraftSyncData } from "../../src/RotisserieDraft";
 import { TeamSealedSyncData } from "../../src/TeamSealed";
 import { Bracket } from "../../src/Brackets";
 import { SocketAck } from "../../src/Message";
 import Constants, { CubeDescription } from "../../src/Constants";
 import { Options } from "../../src/utils";
 import { JHHBooster } from "../../src/JumpstartHistoricHorizons";
+import { CustomCardList } from "../../src/CustomCardList";
 import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
@@ -51,7 +53,6 @@ import ScaleSlider from "./components/ScaleSlider.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
-import { CustomCardList } from "../../src/CustomCardList";
 const img = new Image();
 img.src = CardBack;
 
@@ -67,6 +68,7 @@ const DraftState = {
 	GridWaiting: "GridWaiting",
 	RochesterPicking: "RochesterPicking",
 	RochesterWaiting: "RochesterWaiting",
+	RotisserieDraft: "RotisserieDraft",
 	MinesweeperPicking: "MinesweeperPicking",
 	MinesweeperWaiting: "MinesweeperWaiting",
 	TeamSealed: "TeamSealed",
@@ -120,6 +122,7 @@ export default defineComponent({
 		Dropdown,
 		ExportDropdown,
 		GridDraft: () => import("./components/GridDraft.vue"),
+		RotisserieDraft: () => import("./components/RotisserieDraft.vue"),
 		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
 		TeamSealed: () => import("./components/TeamSealed.vue"),
 		LandControl: () => import("./components/LandControl.vue"),
@@ -237,6 +240,7 @@ export default defineComponent({
 			winstonDraftState: null as WinstonDraftSyncData | null,
 			gridDraftState: null as GridDraftSyncData | null,
 			rochesterDraftState: null as RochesterDraftSyncData | null,
+			rotisserieDraftState: null as RotisserieDraftSyncData | null,
 			minesweeperDraftState: null as MinesweeperSyncData | null,
 			teamSealedState: null as TeamSealedSyncData | null,
 			draftPaused: false,
@@ -690,6 +694,57 @@ export default defineComponent({
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Rochester draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			// Rotisserie Draft
+			this.socket.on("startRotisserieDraft", (state) => {
+				startDraftSetup("Rotisserie draft");
+				this.draftingState = DraftState.RotisserieDraft;
+				this.rotisserieDraftState = state;
+			});
+			this.socket.on("rotisserieDraftUpdateState", (uniqueCardID, newOwnerID, currentPlayer) => {
+				if (!this.rotisserieDraftState) return;
+				this.rotisserieDraftState.currentPlayer = currentPlayer;
+
+				const card = this.rotisserieDraftState.cards.find((c) => c.uniqueID === uniqueCardID);
+				if (!card) return;
+				card.owner = newOwnerID;
+
+				if (this.userID === this.rotisserieDraftState.currentPlayer) {
+					this.playSound("next");
+					fireToast("success", "Your turn!");
+					this.pushNotification("Your turn!", {
+						body: `This is your turn to pick.`,
+					});
+				}
+			});
+			this.socket.on("rotisserieDraftEnd", () => {
+				this.drafting = false;
+				this.rotisserieDraftState = null;
+				this.draftingState = DraftState.Brewing;
+				fireToast("success", "Done drafting!");
+			});
+
+			this.socket.on("rejoinRotisserieDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.draftingState = DraftState.RotisserieDraft;
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+
+					this.rotisserieDraftState = data.state;
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Rotisserie draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1488,6 +1543,28 @@ export default defineComponent({
 				return;
 			}
 			this.socket.emit("startRochesterDraft");
+		},
+		startRotisserieDraft() {
+			if (this.userID != this.sessionOwner || this.drafting) return;
+			if (!this.ownerIsPlayer) {
+				Alert.fire({
+					icon: "error",
+					title: "Owner has to play",
+					text: "Non-playing owner is not supported in Rotisserie Draft for now. The 'Session owner is playing' option needs to be active.",
+				});
+				return;
+			}
+			// FIXME: Options.
+			this.socket.emit("startRotisserieDraft", (r) => {
+				if (r.code !== 0) Alert.fire(r.error!);
+			});
+		},
+		rotisserieDraftPick(uniqueCardID: UniqueCardID) {
+			if (!this.drafting || !this.rotisserieDraftState || this.rotisserieDraftState.currentPlayer !== this.userID)
+				return;
+			this.socket.emit("rotisserieDraftPick", uniqueCardID, (answer: SocketAck) => {
+				if (answer.code !== 0) Alert.fire(answer.error!);
+			});
 		},
 		setMinesweeperDraftState(state: MinesweeperSyncData) {
 			const currentGridNumber = this.minesweeperDraftState?.gridNumber;
@@ -2747,6 +2824,7 @@ export default defineComponent({
 		gameModeName() {
 			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
+			if (this.rotisserieDraftState) return "Rotisserie Draft";
 			if (this.winstonDraftState) return "Winston Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.useCustomCardList) return "Cube Draft";
