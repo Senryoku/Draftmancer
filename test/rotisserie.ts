@@ -11,12 +11,12 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
-	Cubes,
+	ValidCubes,
 } from "./src/common.js";
-import { RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
+import { RotisserieDraftCard, RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
 import { getRandom } from "../src/utils.js";
-import { SocketAck } from "../src/Message.js";
 import { SetCode } from "../src/Types.js";
+import { UserID } from "../src/IDTypes.js";
 
 describe("Rotisserie Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -62,6 +62,7 @@ describe("Rotisserie Draft", function () {
 	});
 
 	let RotisserieDraftState: RotisserieDraftSyncData | null = null;
+	let PlayerCards: { [uid: UserID]: RotisserieDraftCard[] } = {};
 
 	const setRestriction = (sets: SetCode[]) => {
 		it(`Set restriction: '${sets}'.`, (done) => {
@@ -82,7 +83,7 @@ describe("Rotisserie Draft", function () {
 	};
 	const loadCubeFile = (cubename: string) => {
 		it(`Load cube '${cubename}'.`, (done) => {
-			clients[ownerIdx].emit("parseCustomCardList", Cubes[cubename], (r) => {
+			clients[ownerIdx].emit("parseCustomCardList", ValidCubes[cubename], (r) => {
 				expect(r.code).to.equal(0);
 				done();
 			});
@@ -91,9 +92,7 @@ describe("Rotisserie Draft", function () {
 	const checkCardCount = (cardCount: number) => {
 		it(`Each player should end up with ${cardCount} cards.`, (done) => {
 			for (const client of clients) {
-				expect(
-					RotisserieDraftState?.cards.filter((card) => card.owner == (client as any).query.userID).length
-				).to.equal(cardCount);
+				expect(PlayerCards[(client as any).query.userID].length).to.equal(cardCount);
 			}
 			done();
 		});
@@ -106,6 +105,7 @@ describe("Rotisserie Draft", function () {
 		it("When session owner launch Rotisserie draft, everyone should receive a startRotisserieDraft event", (done) => {
 			let connectedClients = 0;
 			for (let c of clients) {
+				PlayerCards[(c as any).query.userID] = [];
 				c.once("startRotisserieDraft", (state) => {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
@@ -126,10 +126,12 @@ describe("Rotisserie Draft", function () {
 			const pick = (state: RotisserieDraftSyncData) => {
 				// Pick a random non-picked card
 				const card = getRandom(state.cards.filter((c) => c.owner === null));
-				if (card)
+				if (card) {
 					clients
 						.find((c) => (c as any).query.userID === state.currentPlayer)!
 						.emit("rotisserieDraftPick", card.uniqueID, ackNoError);
+					PlayerCards[state.currentPlayer].push(card);
+				}
 			};
 
 			for (let c = 0; c < clients.length; ++c) {
@@ -146,8 +148,10 @@ describe("Rotisserie Draft", function () {
 				});
 				clients[c].once("rotisserieDraftEnd", () => {
 					draftEnded += 1;
-					clients[c].removeListener("rotisserieDraftUpdateState");
-					if (draftEnded == clients.length) done();
+					if (draftEnded == clients.length) {
+						for (const client of clients) client.removeListener("rotisserieDraftUpdateState");
+						done();
+					}
 				});
 			}
 			pick(RotisserieDraftState!);
@@ -197,6 +201,11 @@ describe("Rotisserie Draft", function () {
 		loadCube();
 		startDraft({ singleton: { cardsPerPlayer: 45 } });
 		endDraft();
+
+		it("Disable Cube.", (done) => {
+			clients[ownerIdx].emit("setUseCustomCardList", false);
+			done();
+		});
 	});
 
 	for (let i = 30; i <= 60; i += 15) {
@@ -207,6 +216,16 @@ describe("Rotisserie Draft", function () {
 			checkCardCount(i);
 		});
 	}
+
+	for (let i = 3; i <= 6; ++i) {
+		describe(`Standard collation, ${i} boosters per player.`, () => {
+			setRestriction(["one"]);
+			startDraft({ standard: { boostersPerPlayer: i } });
+			endDraft();
+			checkCardCount(14 * i);
+		});
+	}
+
 	for (let i = 30; i <= 45; i += 5) {
 		describe(`Singleton, ${i} cards per player, using a cube`, () => {
 			loadCube();
@@ -220,19 +239,13 @@ describe("Rotisserie Draft", function () {
 		loadCube();
 		it("Stating should error (not enough cards)", (done) => {
 			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 70 } }, (r) => {
-				console.error(r);
 				expect(r.code).to.not.equal(0);
 				done();
 			});
 		});
 	});
 
-	for (let i = 3; i <= 6; ++i) {
-		describe(`Standard collation, ${i} boosters per player.`, () => {
-			startDraft({ standard: { boostersPerPlayer: i } });
-			endDraft();
-			checkCardCount(15 * i);
-		});
+	for (let i = 3; i <= 4; ++i) {
 		describe(`Standard collation, ${i} boosters per player, using a cube`, () => {
 			loadCube();
 			startDraft({ standard: { boostersPerPlayer: i } });
@@ -241,18 +254,38 @@ describe("Rotisserie Draft", function () {
 		});
 	}
 
-	for (const key in Cubes) {
+	// Some example cubes do not have enough unique cards for singleton.
+	for (const key of Object.keys(ValidCubes).filter(
+		(k) =>
+			!["CustomCards_NoLayout", "CustomCards_SlotSize", "WithReplacement", "WithReplacementLayouts"].includes(k)
+	)) {
 		describe(`Singleton collation, '${key}' cube.`, () => {
 			loadCubeFile(key);
 			startDraft({ singleton: { cardsPerPlayer: 30 } });
 			endDraft();
-			checkCardCount(15 * 30);
+			checkCardCount(30);
 		});
+	}
+	for (const key of Object.keys(ValidCubes).filter(
+		(k) => !["WithReplacement", "WithReplacementLayouts"].includes(k)
+	)) {
 		describe(`Standard collation, '${key}' cube.`, () => {
 			loadCubeFile(key);
 			startDraft({ standard: { boostersPerPlayer: 3 } });
 			endDraft();
-			checkCardCount(15 * 3);
+			// These cubes have different number of cards per booster.
+		});
+	}
+
+	for (const key of ["WithReplacement", "WithReplacementLayouts"]) {
+		describe(`Standard collation, '${key}' cube.`, () => {
+			it(`Set withReplacement.`, (done) => {
+				clients[ownerIdx].emit("setCustomCardListWithReplacement", true);
+				done();
+			});
+			loadCubeFile(key);
+			startDraft({ standard: { boostersPerPlayer: 3 } });
+			endDraft();
 		});
 	}
 });

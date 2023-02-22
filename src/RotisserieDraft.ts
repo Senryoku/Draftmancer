@@ -29,11 +29,9 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 	}
 
 	currentPlayer(): UserID {
-		const direction = Math.floor(this.pickNumber / this.players.length) % 2;
-		const offset = direction
-			? this.players.length - 1 - (this.pickNumber % this.players.length)
-			: this.pickNumber % this.players.length;
-		return this.players[negMod(offset, this.players.length)];
+		const idx = this.pickNumber % (2 * this.players.length);
+		if (idx < this.players.length) return this.players[idx];
+		return this.players[this.players.length - 1 - (idx - this.players.length)];
 	}
 
 	// Returns true when the last card has been picked
