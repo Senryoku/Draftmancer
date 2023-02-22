@@ -17,7 +17,7 @@ import { WinstonDraftSyncData } from "../../src/WinstonDraft";
 import { GridDraftSyncData } from "../../src/GridDraft";
 import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
 import { RochesterDraftSyncData } from "../../src/RochesterDraft";
-import { RotisserieDraftSyncData } from "../../src/RotisserieDraft";
+import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "../../src/RotisserieDraft";
 import { TeamSealedSyncData } from "../../src/TeamSealed";
 import { Bracket } from "../../src/Brackets";
 import { SocketAck } from "../../src/Message";
@@ -50,6 +50,8 @@ import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
+import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
+//const RotisserieDraftDialog = import("./components/RotisserieDraftDialog.vue");
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
@@ -1554,10 +1556,26 @@ export default defineComponent({
 				});
 				return;
 			}
-			// TODO: Dialog with Options.
-			this.socket.emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 45 } }, (r) => {
-				if (r.code !== 0) Alert.fire(r.error!);
+			const DialogClass = Vue.extend(RotisserieDraftDialog);
+			let instance = new DialogClass({
+				propsData: { defaultBoostersPerPlayer: this.boostersPerPlayer },
+				beforeDestroy() {
+					instance.$el.parentNode?.removeChild(instance.$el);
+				},
 			});
+			instance.$on("cancel", () => {
+				instance.$destroy();
+			});
+			instance.$on("start", (options: RotisserieDraftStartOptions) => {
+				this.deckWarning((options) => {
+					this.socket.emit("startRotisserieDraft", options, (r) => {
+						if (r.code !== 0) Alert.fire(r.error!);
+					});
+				}, options);
+				instance.$destroy();
+			});
+			instance.$mount();
+			this.$el.appendChild(instance.$el);
 		},
 		rotisserieDraftPick(uniqueCardID: UniqueCardID) {
 			if (!this.drafting || !this.rotisserieDraftState || this.rotisserieDraftState.currentPlayer !== this.userID)

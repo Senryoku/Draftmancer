@@ -14,7 +14,7 @@ import { BotScores } from "./Bot";
 import SessionsSettingsProps from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
-import { RotisserieDraftState, RotisserieDraftSyncData } from "./RotisserieDraft";
+import { RotisserieDraftStartOptions, RotisserieDraftState, RotisserieDraftSyncData } from "./RotisserieDraft";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -204,10 +204,7 @@ export interface ClientToServerEvents {
 	resumeDraft: () => void;
 	startGridDraft: (boosterCount: number) => void;
 	startRochesterDraft: () => void;
-	startRotisserieDraft: (
-		options: { singleton?: { cardsPerPlayer: number }; standard?: { boostersPerPlayer: number } },
-		ack: (s: SocketAck) => void
-	) => void;
+	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number) => void;
 	startMinesweeperDraft: (
 		gridCount: number,

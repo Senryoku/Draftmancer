@@ -13,7 +13,7 @@ import {
 	ackNoError,
 	ValidCubes,
 } from "./src/common.js";
-import { RotisserieDraftCard, RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
+import { RotisserieDraftCard, RotisserieDraftStartOptions, RotisserieDraftSyncData } from "../src/RotisserieDraft.js";
 import { getRandom } from "../src/utils.js";
 import { SetCode } from "../src/Types.js";
 import { UserID } from "../src/IDTypes.js";
@@ -98,10 +98,7 @@ describe("Rotisserie Draft", function () {
 		});
 	};
 
-	const startDraft = (options: {
-		singleton?: { cardsPerPlayer: number };
-		standard?: { boostersPerPlayer: number };
-	}) => {
+	const startDraft = (options: RotisserieDraftStartOptions) => {
 		it("When session owner launch Rotisserie draft, everyone should receive a startRotisserieDraft event", (done) => {
 			let connectedClients = 0;
 			for (let c of clients) {

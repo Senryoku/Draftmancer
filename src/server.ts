@@ -33,6 +33,7 @@ import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
 import SessionsSettingsProps from "./Session/SessionProps.js";
+import { RotisserieDraftStartOptions } from "./RotisserieDraft.js";
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -496,7 +497,7 @@ function startRochesterDraft(userID: UserID, sessionID: SessionID) {
 function startRotisserieDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	options: { singleton?: { cardsPerPlayer: number }; standard?: { boostersPerPlayer: number } },
+	options: RotisserieDraftStartOptions,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];

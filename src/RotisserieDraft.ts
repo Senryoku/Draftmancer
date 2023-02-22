@@ -3,6 +3,11 @@ import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes";
 import { negMod } from "./utils.js";
 
+export type RotisserieDraftStartOptions = {
+	singleton?: { cardsPerPlayer: number };
+	standard?: { boostersPerPlayer: number };
+};
+
 export class RotisserieDraftCard extends UniqueCard {
 	owner: UserID | null = null;
 }
