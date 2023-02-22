@@ -1067,9 +1067,9 @@ export class Session implements IIndexable {
 				boostersPerPlayer: options.standard.boostersPerPlayer,
 				playerCount: this.users.size,
 			});
+			if (isMessageError(ret)) return new SocketAck(ret);
 			cards = this.boosters.flat();
 			this.boosters = [];
-			if (isMessageError(ret)) return new SocketAck(ret);
 		} else {
 			return new SocketError("Invalid parameters");
 		}

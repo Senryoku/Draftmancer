@@ -215,11 +215,13 @@ describe("Rotisserie Draft", function () {
 			checkCardCount(i);
 		});
 	}
-	describe(`Singleton, 50 cards per player, using a cube.`, () => {
+
+	describe(`Singleton, 70 cards per player, using a cube.`, () => {
 		loadCube();
 		it("Stating should error (not enough cards)", (done) => {
-			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 50 } }, (r) => {
-				expect(r.code !== 0);
+			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 70 } }, (r) => {
+				console.error(r);
+				expect(r.code).to.not.equal(0);
 				done();
 			});
 		});
