@@ -645,7 +645,7 @@
 							teamb: teamDraft && idx % 2 === 1,
 							self: userID === user.userID,
 							bot: user.isBot,
-							currentPlayer:
+							'current-player':
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
 								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
 								(rotisserieDraftState && rotisserieDraftState.currentPlayer === user.userID) ||
