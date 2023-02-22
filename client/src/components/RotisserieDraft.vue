@@ -1,5 +1,5 @@
 <template>
-	<div class="rotisserie-draft-container" :style="cssVariables">
+	<div class="rotisserie-draft-container player-colors" :style="cssVariables">
 		<card-pool
 			:language="language"
 			:cards="state.cards"
@@ -75,8 +75,8 @@ export default defineComponent({
 			const classes: string[] = [];
 			if (card.uniqueID === this.selectedCard) classes.push("rotisserie-selected");
 			if (card.owner) {
-				classes.push("rotisserie-draft-picked");
-				classes.push("rotisserie-draft-player-" + this.users.findIndex((u) => u.userID === card.owner));
+				classes.push("card-picked");
+				classes.push("owner-player-" + this.users.findIndex((u) => u.userID === card.owner));
 			}
 			return classes;
 		},
@@ -85,65 +85,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.rotisserie-draft-container {
-	--color-player-0: #8f2323;
-	--color-player-1: #23628f;
-	--color-player-2: #4f8f23;
-	--color-player-3: #8f6a23;
-	--color-player-4: #6b238f;
-	--color-player-5: #737373;
-	--color-player-6: #ffd400;
-	--color-player-7: #00eaff;
-}
-
 .rotisserie-draft-infos {
 	display: flex;
 	justify-content: space-between;
 	margin: 1em;
-}
-
-.team {
-	display: flex;
-	gap: 1em;
-	align-items: baseline;
-}
-
-.player {
-	padding: 0.25em 0.5em;
-	background-color: #222;
-	border-radius: 0.25em;
-	display: inline-flex;
-	align-items: center;
-}
-.player-0 {
-	background-color: var(--color-player-0);
-}
-.player-1 {
-	background-color: var(--color-player-1);
-}
-.player-2 {
-	background-color: var(--color-player-2);
-}
-.player-3 {
-	background-color: var(--color-player-3);
-}
-.player-4 {
-	background-color: var(--color-player-4);
-}
-.player-5 {
-	background-color: var(--color-player-5);
-}
-.player-6 {
-	background-color: var(--color-player-6);
-}
-.player-7 {
-	background-color: var(--color-player-7);
-}
-
-.color-list {
-	display: inline-flex;
-	gap: 0.2em;
-	margin-left: 0.5em;
 }
 
 :deep(.rotisserie-selected) {
@@ -185,88 +130,6 @@ export default defineComponent({
 		transform: translateX(-2px) translateY(-50%);
 	}
 }
-
-:deep(.rotisserie-draft-picked > *) {
-	filter: brightness(0.5);
-}
-
-:deep(.rotisserie-draft-picked):after {
-	content: "[Picked]";
-	position: absolute;
-	top: 50%;
-	right: 1em;
-	transform: translateY(-50%);
-	margin: 0.2em;
-	max-width: 50%;
-	min-width: 20%;
-	max-height: 100%;
-	display: block;
-	filter: brightness(1);
-	border-radius: 0.4em;
-	padding: 0.2em 0.4em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-:deep(.rotisserie-draft-picked img) {
-	box-sizing: border-box;
-	border: 3px solid grey;
-}
-
-:deep(.rotisserie-draft-player-0 img) {
-	border-color: var(--color-player-0);
-}
-:deep(.rotisserie-draft-player-0):after {
-	content: var(--user-name-0);
-	background-color: var(--color-player-0);
-}
-:deep(.rotisserie-draft-player-1 img) {
-	border-color: var(--color-player-1);
-}
-:deep(.rotisserie-draft-player-1):after {
-	content: var(--user-name-1);
-	background-color: var(--color-player-1);
-}
-:deep(.rotisserie-draft-player-2 img) {
-	border-color: var(--color-player-2);
-}
-:deep(.rotisserie-draft-player-2):after {
-	content: var(--user-name-2);
-	background-color: var(--color-player-2);
-}
-:deep(.rotisserie-draft-player-3 img) {
-	border-color: var(--color-player-3);
-}
-:deep(.rotisserie-draft-player-3):after {
-	content: var(--user-name-3);
-	background-color: var(--color-player-3);
-}
-:deep(.rotisserie-draft-player-4 img) {
-	border-color: var(--color-player-4);
-}
-:deep(.rotisserie-draft-player-4):after {
-	content: var(--user-name-4);
-	background-color: var(--color-player-4);
-}
-:deep(.rotisserie-draft-player-5 img) {
-	border-color: var(--color-player-5);
-}
-:deep(.rotisserie-draft-player-5):after {
-	content: var(--user-name-5);
-	background-color: var(--color-player-5);
-}
-:deep(.rotisserie-draft-player-6 img) {
-	border-color: var(--color-player-6);
-}
-:deep(.rotisserie-draft-player-6):after {
-	content: var(--user-name-6);
-	background-color: var(--color-player-6);
-}
-:deep(.rotisserie-draft-player-7 img) {
-	border-color: var(--color-player-7);
-}
-:deep(.rotisserie-draft-player-7):after {
-	content: var(--user-name-7);
-	background-color: var(--color-player-7);
-}
 </style>
+
+<style src="../css/player-colors.css" scoped />
