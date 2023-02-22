@@ -648,49 +648,28 @@
 							currentPlayer:
 								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
 								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
+								(rotisserieDraftState && rotisserieDraftState.currentPlayer === user.userID) ||
 								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
 								(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
 						}"
 						:data-userid="user.userID"
 						:key="user.userID"
 					>
-						<template v-if="!rochesterDraftState">
-							<template v-if="minesweeperDraftState">
-								<i
-									class="fas fa-circle fa-xs passing-order-repeat"
-									v-if="
-										minesweeperDraftState.pickNumber !== 0 &&
-										minesweeperDraftState.pickNumber % sessionUsers.length ==
-											sessionUsers.length - 1
-									"
-									v-tooltip="'Passing order'"
-								></i>
-								<i
-									class="fas fa-angle-double-left passing-order-left"
-									v-else-if="
-										Math.floor(minesweeperDraftState.pickNumber / sessionUsers.length) % 2 == 1
-									"
-									v-tooltip="'Passing order'"
-								></i>
-								<i
-									class="fas fa-angle-double-right passing-order-right"
-									v-else
-									v-tooltip="'Passing order'"
-								></i>
-							</template>
-							<template v-else>
-								<i
-									class="fas fa-angle-double-left passing-order-left"
-									v-show="boosterNumber % 2 == 1"
-									v-tooltip="'Passing order'"
-								></i>
-								<i
-									class="fas fa-angle-double-right passing-order-right"
-									v-show="boosterNumber % 2 == 0"
-									v-tooltip="'Passing order'"
-								></i>
-							</template>
-						</template>
+						<i
+							class="fas fa-circle fa-xs passing-order-repeat"
+							v-if="passingOrder === PassingOrder.Repeat"
+							v-tooltip="'Passing order'"
+						></i>
+						<i
+							class="fas fa-angle-double-left passing-order-left"
+							v-else-if="passingOrder === PassingOrder.Left"
+							v-tooltip="'Passing order'"
+						></i>
+						<i
+							class="fas fa-angle-double-right passing-order-right"
+							v-else-if="passingOrder === PassingOrder.Right"
+							v-tooltip="'Passing order'"
+						></i>
 						<div class="player-name">{{ user.userName }}</div>
 						<div class="status-icons">
 							<template v-if="!user.isBot && !user.isDisconnected">
@@ -719,6 +698,7 @@
 									v-if="
 										winstonDraftState ||
 										gridDraftState ||
+										rotisserieDraftState ||
 										rochesterDraftState ||
 										minesweeperDraftState
 									"
@@ -733,6 +713,8 @@
 										v-show="
 											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
 											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+											(rotisserieDraftState &&
+												user.userID === rotisserieDraftState.currentPlayer) ||
 											(rochesterDraftState &&
 												user.userID === rochesterDraftState.currentPlayer) ||
 											(minesweeperDraftState &&

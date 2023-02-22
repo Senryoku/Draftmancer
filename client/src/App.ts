@@ -76,6 +76,13 @@ const DraftState = {
 	TeamSealed: "TeamSealed",
 };
 
+enum PassingOrder {
+	None,
+	Left,
+	Right,
+	Repeat,
+}
+
 const Sounds: { [name: string]: HTMLAudioElement } = {
 	start: new Audio("sound/drop_003.ogg"),
 	next: new Audio("sound/next.mp3"),
@@ -711,6 +718,7 @@ export default defineComponent({
 			this.socket.on("rotisserieDraftUpdateState", (uniqueCardID, newOwnerID, currentPlayer) => {
 				if (!this.rotisserieDraftState) return;
 				this.rotisserieDraftState.currentPlayer = currentPlayer;
+				++this.rotisserieDraftState.pickNumber;
 
 				const card = this.rotisserieDraftState.cards.find((c) => c.uniqueID === uniqueCardID);
 				if (!card) return;
@@ -2842,6 +2850,9 @@ export default defineComponent({
 		ReadyState() {
 			return ReadyState;
 		},
+		PassingOrder() {
+			return PassingOrder;
+		},
 		gameModeName() {
 			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
@@ -2903,6 +2914,25 @@ export default defineComponent({
 			}
 
 			return r;
+		},
+		passingOrder() {
+			if (this.minesweeperDraftState || this.rotisserieDraftState || this.rochesterDraftState) {
+				const pickNumber = (this.minesweeperDraftState ??
+					this.rotisserieDraftState ??
+					this.rochesterDraftState)!.pickNumber;
+				if (pickNumber !== 0 && pickNumber % this.sessionUsers.length === this.sessionUsers.length - 1) {
+					return PassingOrder.Repeat;
+				} else if (Math.floor(pickNumber / this.sessionUsers.length) % 2 == 1) {
+					return PassingOrder.Left;
+				} else {
+					return PassingOrder.Right;
+				}
+			}
+			return this.boosterNumber
+				? this.boosterNumber % 2 === 1
+					? PassingOrder.Left
+					: PassingOrder.Right
+				: PassingOrder.None;
 		},
 		displaySets(): SetInfo[] {
 			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
