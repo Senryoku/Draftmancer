@@ -1582,6 +1582,9 @@ export default defineComponent({
 				return;
 			this.socket.emit("rotisserieDraftPick", uniqueCardID, (answer: SocketAck) => {
 				if (answer.code !== 0) Alert.fire(answer.error!);
+				else {
+					this.addToDeck(this.rotisserieDraftState?.cards.find((c) => c.uniqueID === uniqueCardID)!);
+				}
 			});
 		},
 		setMinesweeperDraftState(state: MinesweeperSyncData) {
