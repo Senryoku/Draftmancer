@@ -127,16 +127,14 @@ export default defineComponent({
 					str += `- ${layout} (${l.weight})\n`;
 					for (let slot in l.slots) str += `  ${l.slots[slot]} ${slot}\n`;
 				}
-				for (let slot in this.cardlist.slots) {
-					str += `[${slot}]\n`;
-					for (let card in this.cardlist.slots[slot]) {
-						str += `${this.cardlist.slots[slot][card]} ${
-							this.cards[slot].find((c) => c.id === card)!.name
-						}\n`;
-					}
+			}
+			for (let slot in this.cardlist.slots) {
+				str += `[${slot}]\n`;
+				for (let card in this.cardlist.slots[slot]) {
+					str += `${this.cardlist.slots[slot][card]} ${this.cards[slot].find((c) => c.id === card)!.name}\n`;
 				}
 			}
-			download("Cube.txt", str);
+			download(this.cardlist.name ?? "Cube" + ".txt", str);
 		},
 		rowsByColor(cards: CardWithCount[]) {
 			if (!cards) return [];
