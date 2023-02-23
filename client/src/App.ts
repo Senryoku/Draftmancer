@@ -1257,6 +1257,17 @@ export default defineComponent({
 				e.dataTransfer.dropEffect = "move";
 				return false;
 			}
+
+			// Allow dropping picks during Rotisserie draft if it is our turn to pick.
+			if (
+				e.dataTransfer?.types.includes("isrotisseriedraft") &&
+				this.draftingState === DraftState.RotisserieDraft &&
+				this.rotisserieDraftState?.currentPlayer === this.userID
+			) {
+				e.preventDefault();
+				e.dataTransfer.dropEffect = "move";
+				return false;
+			}
 		},
 		dragBoosterCard(e: DragEvent, card: UniqueCard) {
 			if (e.dataTransfer) {
@@ -1269,22 +1280,33 @@ export default defineComponent({
 		dropBoosterCard(e: DragEvent, options?: { toSideboard?: boolean }) {
 			// Filter other events; Disable when we're not picking (probably useless buuuuut...)
 			if (
-				e.dataTransfer?.getData("isboostercard") !== "true" ||
-				(this.draftingState != DraftState.Picking && this.draftingState != DraftState.RochesterPicking)
-			)
-				return;
-			e.preventDefault();
-			let cardid = e.dataTransfer.getData("text");
-			if (this.selectedCards.length === 0) {
-				console.error(`dropBoosterCard error: this.selectedCards === ${this.selectedCards}`);
+				e.dataTransfer?.getData("isboostercard") === "true" &&
+				(this.draftingState === DraftState.Picking || this.draftingState === DraftState.RochesterPicking)
+			) {
+				e.preventDefault();
+				const cardid = e.dataTransfer.getData("text");
+				if (!this.selectedCards.some((c) => cardid === c.id)) {
+					console.error(
+						"dropBoosterCard error: cardid (%s) could not be found in this.selectedCards:",
+						cardid
+					);
+					console.error(this.selectedCards);
+					return;
+				}
+
+				this.pickCard(Object.assign(options ?? {}, { event: e }));
 				return;
 			}
-			if (!this.selectedCards.some((c) => cardid === c.id)) {
-				console.error("dropBoosterCard error: cardid (%s) could not be found in this.selectedCards:", cardid);
-				console.error(this.selectedCards);
+
+			if (
+				e.dataTransfer?.getData("isrotisseriedraft") === "true" &&
+				this.draftingState === DraftState.RotisserieDraft &&
+				this.rotisserieDraftState?.currentPlayer === this.userID
+			) {
+				e.preventDefault();
+				const cardUniqueID = parseInt(e.dataTransfer.getData("uniqueID"));
+				this.rotisserieDraftPick(cardUniqueID, Object.assign(options ?? {}, { event: e }));
 				return;
-			} else {
-				this.pickCard(Object.assign(options ?? {}, { event: e }));
 			}
 		},
 		pickCard(options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined) {
@@ -1585,13 +1607,18 @@ export default defineComponent({
 			instance.$mount();
 			this.$el.appendChild(instance.$el);
 		},
-		rotisserieDraftPick(uniqueCardID: UniqueCardID) {
+		rotisserieDraftPick(
+			uniqueCardID: UniqueCardID,
+			options: { toSideboard?: boolean; event?: MouseEvent } | undefined = undefined // Used to support pick by drag & drop
+		) {
 			if (!this.drafting || !this.rotisserieDraftState || this.rotisserieDraftState.currentPlayer !== this.userID)
 				return;
 			this.socket.emit("rotisserieDraftPick", uniqueCardID, (answer: SocketAck) => {
 				if (answer.code !== 0) Alert.fire(answer.error!);
 				else {
-					this.addToDeck(this.rotisserieDraftState?.cards.find((c) => c.uniqueID === uniqueCardID)!);
+					const card = this.rotisserieDraftState?.cards.find((c) => c.uniqueID === uniqueCardID);
+					if (options?.toSideboard) this.addToSideboard(card!, options);
+					else this.addToDeck(card!, options);
 				}
 			});
 		},

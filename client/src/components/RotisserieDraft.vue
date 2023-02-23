@@ -5,6 +5,7 @@
 			:cards="state.cards"
 			:click="onCardClick"
 			:doubleClick="onCardDoubleClick"
+			:dragStart="dragStart"
 			group="rotisserie-draft"
 			:cardConditionalClasses="cardConditionalClasses"
 			:readOnly="true"
@@ -79,6 +80,13 @@ export default defineComponent({
 				classes.push("owner-player-" + this.users.findIndex((u) => u.userID === card.owner));
 			}
 			return classes;
+		},
+		dragStart(e: DragEvent, card: UniqueCard) {
+			if (e.dataTransfer) {
+				e.dataTransfer.setData("isrotisseriedraft", "true");
+				e.dataTransfer.setData("uniqueID", card.uniqueID.toString());
+				e.dataTransfer.effectAllowed = "move";
+			}
 		},
 	},
 });

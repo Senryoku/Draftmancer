@@ -149,6 +149,7 @@
 						:language="language"
 						@click="click($event, card)"
 						@dblclick="doubleClick($event, card)"
+						@dragstart.native="dragStart($event, card)"
 						:filter="filter"
 						:conditionalClasses="cardConditionalClasses"
 					></card>
@@ -176,6 +177,7 @@ export default defineComponent({
 		language: { type: String as PropType<Language>, required: true },
 		click: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
 		doubleClick: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
+		dragStart: { type: Function as PropType<(e: DragEvent, card: UniqueCard) => void>, default: () => {} },
 		group: { type: String },
 		filter: { type: String },
 		cardConditionalClasses: { type: Function },
