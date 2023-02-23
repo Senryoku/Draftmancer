@@ -67,13 +67,13 @@ async function pickCard(page, random = false) {
 	let text = await page.evaluate((next) => next.innerText, next);
 	if (text === "Team Sealed stopped!") return true;
 
-	const cards = await page.$$(".team-sealed-container .card:not(.team-sealed-picked)");
+	const cards = await page.$$(".team-sealed-container .card:not(.card-picked)");
 	const card = cards[random ? Math.floor(Math.random() * cards.length) : 0];
 	expect(card).to.exist;
 	await card.click();
 	await page.waitForFunction(
 		(el) => {
-			return el.classList.contains("team-sealed-picked");
+			return el.classList.contains("card-picked");
 		},
 		{},
 		card
@@ -106,7 +106,7 @@ describe("Front End - Team Sealed", function () {
 	});
 
 	it(`Launch Draft`, async function () {
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Team Sealed')]");
+		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Team Sealed')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Distribute Boosters')]");
 
@@ -139,7 +139,7 @@ describe("Front End - Team Sealed", function () {
 	});
 
 	it("Player 0 tries to pick an unavailable card, receives an error.", async function () {
-		const cards = await pages[0].$$(".team-sealed-container .card.team-sealed-picked");
+		const cards = await pages[0].$$(".team-sealed-container .card.card-picked");
 		const card = cards[1]; // Should have been picked by the next player
 		expect(card).to.exist;
 		await card.click();
@@ -153,13 +153,13 @@ describe("Front End - Team Sealed", function () {
 	});
 
 	it("Player 0 returns a card.", async function () {
-		const cards = await pages[0].$$(".team-sealed-container .card.team-sealed-picked");
+		const cards = await pages[0].$$(".team-sealed-container .card.card-picked");
 		const card = cards[0]; // Should have been picked by player 0
 		expect(card).to.exist;
 		await card.click();
 		await pages[0].waitForFunction(
 			(el) => {
-				return !el.classList.contains("team-sealed-picked");
+				return !el.classList.contains("card-picked");
 			},
 			{},
 			card
