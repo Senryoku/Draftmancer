@@ -1,14 +1,13 @@
 import { before, after, beforeEach, afterEach } from "mocha";
-import puppeteer from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import { enableLogs, disableLogs } from "../../src/common.js";
-import { disableAnimations } from "./common.js";
+import { disableAnimations, testDebug } from "./common.js";
 
-export let ownerBrowser;
-export let sessionOwnerPage;
-export let otherBrowser;
-export let otherPlayerPage;
+export let ownerBrowser: Browser;
+export let sessionOwnerPage: Page;
+export let otherBrowser: Browser;
+export let otherPlayerPage: Page;
 
-const testDebug = true; // Display tests for debugging
 const debugWindowWidth = 960;
 const debugWindowHeight = 1080;
 
@@ -67,6 +66,6 @@ beforeEach(function (done) {
 });
 
 afterEach(function (done) {
-	enableLogs(this.currentTest.state == "failed");
+	enableLogs(this.currentTest!.state == "failed");
 	done();
 });
