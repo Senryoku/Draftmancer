@@ -43,7 +43,7 @@ describe("Minesweeper Draft", function () {
 	});
 
 	it(`Launch Minesweeper Draft`, async function () {
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Minesweeper')]");
+		await sessionOwnerPage.hover(".handle"); // Hover over "Other Game Modes"
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Minesweeper')]");
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Start Minesweeper Draft')]");
 

@@ -1,5 +1,5 @@
 <template>
-	<div class="team-sealed-container" :style="cssVariables">
+	<div class="team-sealed-container player-colors" :style="cssVariables">
 		<div class="team-sealed-infos">
 			<div class="team">
 				<div>Your Team:</div>
@@ -78,21 +78,13 @@ export default defineComponent({
 		},
 		cardConditionalClasses(card: TeamSealedCard) {
 			if (!card.owner) return [];
-			return ["team-sealed-picked", "team-sealed-player-" + this.state.team.findIndex((t) => t === card.owner)];
+			return ["card-picked", "owner-player-" + this.state.team.findIndex((t) => t === card.owner)];
 		},
 	},
 });
 </script>
 
 <style scoped>
-.team-sealed-container {
-	--color-player-0: #8f2323;
-	--color-player-1: #23628f;
-	--color-player-2: #4f8f23;
-	--color-player-3: #8f6a23;
-	--color-player-4: #6b238f;
-}
-
 .team-sealed-infos {
 	display: flex;
 	justify-content: space-between;
@@ -112,88 +104,12 @@ export default defineComponent({
 	display: inline-flex;
 	align-items: center;
 }
-.player-0 {
-	background-color: var(--color-player-0);
-}
-.player-1 {
-	background-color: var(--color-player-1);
-}
-.player-2 {
-	background-color: var(--color-player-2);
-}
-.player-3 {
-	background-color: var(--color-player-3);
-}
-.player-4 {
-	background-color: var(--color-player-4);
-}
 
 .color-list {
 	display: inline-flex;
 	gap: 0.2em;
 	margin-left: 0.5em;
 }
-
-:deep(.team-sealed-picked > *) {
-	filter: brightness(0.5);
-}
-
-:deep(.team-sealed-picked):after {
-	content: "[Picked]";
-	position: absolute;
-	top: 50%;
-	right: 1em;
-	transform: translateY(-50%);
-	margin: 0.2em;
-	max-width: 50%;
-	min-width: 20%;
-	max-height: 100%;
-	display: block;
-	filter: brightness(1);
-	border-radius: 0.4em;
-	padding: 0.2em 0.4em;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-:deep(.team-sealed-picked img) {
-	box-sizing: border-box;
-	border: 3px solid grey;
-}
-
-:deep(.team-sealed-player-0 img) {
-	border-color: var(--color-player-0);
-}
-:deep(.team-sealed-player-0):after {
-	content: var(--user-name-0);
-	background-color: var(--color-player-0);
-}
-:deep(.team-sealed-player-1 img) {
-	border-color: var(--color-player-1);
-}
-:deep(.team-sealed-player-1):after {
-	content: var(--user-name-1);
-	background-color: var(--color-player-1);
-}
-:deep(.team-sealed-player-2 img) {
-	border-color: var(--color-player-2);
-}
-:deep(.team-sealed-player-2):after {
-	content: var(--user-name-2);
-	background-color: var(--color-player-2);
-}
-:deep(.team-sealed-player-3 img) {
-	border-color: var(--color-player-3);
-}
-:deep(.team-sealed-player-3):after {
-	content: var(--user-name-3);
-	background-color: var(--color-player-3);
-}
-:deep(.team-sealed-player-4 img) {
-	border-color: var(--color-player-4);
-}
-:deep(.team-sealed-player-4):after {
-	content: var(--user-name-4);
-	background-color: var(--color-player-4);
-}
 </style>
+
+<style src="../css/player-colors.css" scoped />

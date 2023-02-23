@@ -51,7 +51,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
 .modal-mask {
 	position: fixed;
 	z-index: 1020;
@@ -90,10 +90,6 @@ export default defineComponent({
 	text-align: center;
 	padding-right: 2em;
 	flex-shrink: 0;
-}
-
-.modal-header h2 {
-	margin-top: 0;
 }
 
 .modal-body {
@@ -144,5 +140,54 @@ export default defineComponent({
 .modal-leave-active .modal-container {
 	-webkit-transform: scale(1.1);
 	transform: scale(1.1);
+}
+</style>
+
+<style>
+.modal-header h2 {
+	margin-top: 0;
+}
+
+/* Overrides for buttons in footer */
+
+.actions {
+	display: flex;
+	z-index: 1;
+	box-sizing: border-box;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	margin: 1.25em auto 0;
+	padding: 0;
+}
+
+/* We have to provide more specialized selectors than the default #main-container button */
+
+.actions button,
+#main-container .actions button {
+	width: auto;
+	height: auto;
+	margin: 0.3125em;
+	padding: 0.625em 1.1em;
+	box-shadow: none;
+	font-weight: 500;
+	border: 0;
+	border-radius: 0.25em;
+	color: #fff;
+	font-size: 1em;
+	font-family: "MS Shell Dlg 2";
+	text-transform: none;
+	letter-spacing: initial;
+}
+
+.actions button.cancel,
+#main-container .actions button.cancel {
+	background-color: rgb(221, 51, 51);
+}
+
+.actions button:hover,
+#main-container .actions button:hover {
+	background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
 }
 </style>

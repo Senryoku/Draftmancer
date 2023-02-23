@@ -50,6 +50,7 @@ import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable } from "./Types.js";
+import { isRotisserieDraftState, RotisserieDraftState } from "./RotisserieDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1027,6 +1028,116 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Rochester Draft End //////////////////////
 
+	///////////////////// Rotisserie Draft //////////////////////
+	startRotisserieDraft(options: {
+		singleton?: { cardsPerPlayer: number };
+		standard?: { boostersPerPlayer: number };
+	}): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size <= 1)
+			return new SocketError(
+				"Not enough players",
+				"At least two players are needed to launch a Rotisserie Draft. Bots are not supported."
+			);
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
+
+		let cards: UniqueCard[] = [];
+		if (options.singleton) {
+			let cardPool: CardID[] = [];
+			if (this.useCustomCardList) {
+				for (const slot in this.customCardList.slots)
+					cardPool.push(...Object.keys(this.customCardList.slots[slot]));
+				cardPool = [...new Set(cardPool)];
+			} else {
+				cardPool = [...this.cardPool().keys()];
+			}
+			const cardCount = this.users.size * options.singleton.cardsPerPlayer;
+			if (cardPool.length < cardCount)
+				return new SocketError(
+					"Not enough cards",
+					`Not enough cards in card pool: ${cardPool.length}/${cardCount}.`
+				);
+			shuffleArray(cardPool);
+			cards = cardPool
+				.slice(0, cardCount)
+				.map((cid) => getUnique(cid, { getCards: this.getCustomGetCardFunction() }));
+		} else if (options.standard) {
+			const ret = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
+				useCustomBoosters: true,
+				boostersPerPlayer: options.standard.boostersPerPlayer,
+				playerCount: this.users.size,
+			});
+			if (isMessageError(ret)) return new SocketAck(ret);
+			cards = this.boosters.flat();
+			this.boosters = [];
+		} else {
+			return new SocketError("Invalid parameters");
+		}
+
+		this.disconnectedUsers = {};
+		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), cards);
+		if (!isRotisserieDraftState(this.draftState)) return new SocketError("Internal Error");
+		this.drafting = true;
+		for (const user of this.users) {
+			Connections[user].pickedCards = { main: [], side: [] };
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: this.getSortedHumanPlayerData(),
+			});
+			Connections[user].socket.emit("startRotisserieDraft", this.draftState.syncData(user));
+		}
+
+		const log = this.initLogs("Rotisserie Draft");
+		for (const userID in log.users) log.users[userID].picks = [];
+
+		return new SocketAck();
+	}
+
+	endRotisserieDraft(): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !isRotisserieDraftState(s))
+			return new SocketError("No active Rotisserie Draft in this session.");
+
+		logSession("RotisserieDraft", this);
+		for (const uid of this.users) {
+			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
+			Connections[uid].socket.emit("rotisserieDraftEnd");
+		}
+		this.sendLogs();
+		this.cleanDraftState();
+		return new SocketAck();
+	}
+
+	rotisserieDraftPick(uniqueID: UniqueCardID): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !isRotisserieDraftState(s))
+			return new SocketError("No Rotisserie Draft in progress in this session.");
+
+		const card = s.cards.find((c) => c.uniqueID === uniqueID);
+		if (!card) return new SocketError("Invalid Card", "Card not found.");
+		if (card.owner !== null) return new SocketError("Invalid Card", "Card already picked.");
+		card.owner = s.currentPlayer();
+		Connections[s.currentPlayer()].pickedCards.main.push(card);
+
+		this.draftLog?.users[card.owner].picks.push({
+			pick: [0],
+			booster: [card.id],
+		});
+
+		if (s.advance()) {
+			this.endRotisserieDraft();
+		} else {
+			for (const user of this.users)
+				Connections[user]?.socket.emit(
+					"rotisserieDraftUpdateState",
+					card.uniqueID,
+					card.owner,
+					s.currentPlayer()
+				);
+		}
+		return new SocketAck();
+	}
+	///////////////////// Rotisserie Draft End //////////////////////
+
 	startMinesweeperDraft(
 		gridCount: number,
 		gridWidth: number,
@@ -1669,6 +1780,9 @@ export class Session implements IIndexable {
 			case "rochester":
 				this.endRochesterDraft();
 				break;
+			case "rotisserie":
+				this.endRotisserieDraft();
+				break;
 			case "minesweeper":
 				this.endMinesweeperDraft({ immediate: true });
 				break;
@@ -2065,6 +2179,9 @@ export class Session implements IIndexable {
 					break;
 				case "rochester":
 					msgData.name = "rejoinRochesterDraft";
+					break;
+				case "rotisserie":
+					msgData.name = "rejoinRotisserieDraft";
 					break;
 				case "minesweeper":
 					msgData.name = "rejoinMinesweeperDraft";

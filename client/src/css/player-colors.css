@@ -1,0 +1,120 @@
+
+.player-colors {
+	--color-player-0: #8f2323;
+	--color-player-1: #23628f;
+	--color-player-2: #4f8f23;
+	--color-player-3: #8f6a23;
+	--color-player-4: #6b238f;
+	--color-player-5: #737373;
+	--color-player-6: #ffd400;
+	--color-player-7: #00eaff;
+}
+
+.player-0 {
+	background-color: var(--color-player-0);
+}
+.player-1 {
+	background-color: var(--color-player-1);
+}
+.player-2 {
+	background-color: var(--color-player-2);
+}
+.player-3 {
+	background-color: var(--color-player-3);
+}
+.player-4 {
+	background-color: var(--color-player-4);
+}
+.player-5 {
+	background-color: var(--color-player-5);
+}
+.player-6 {
+	background-color: var(--color-player-6);
+}
+.player-7 {
+	background-color: var(--color-player-7);
+}
+
+:deep(.card-picked > *) {
+	filter: brightness(0.5);
+}
+
+:deep(.card-picked):after {
+	content: "[Picked]";
+	position: absolute;
+	top: 50%;
+	right: 1em;
+	transform: translateY(-50%);
+	margin: 0.2em;
+	max-width: 50%;
+	min-width: 20%;
+	max-height: 100%;
+	display: block;
+	filter: brightness(1);
+	border-radius: 0.4em;
+	padding: 0.2em 0.4em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+:deep(.card-picked img) {
+	box-sizing: border-box;
+	border: 3px solid grey;
+}
+
+:deep(.owner-player-0 img) {
+	border-color: var(--color-player-0);
+}
+:deep(.owner-player-0):after {
+	content: var(--user-name-0);
+	background-color: var(--color-player-0);
+}
+:deep(.owner-player-1 img) {
+	border-color: var(--color-player-1);
+}
+:deep(.owner-player-1):after {
+	content: var(--user-name-1);
+	background-color: var(--color-player-1);
+}
+:deep(.owner-player-2 img) {
+	border-color: var(--color-player-2);
+}
+:deep(.owner-player-2):after {
+	content: var(--user-name-2);
+	background-color: var(--color-player-2);
+}
+:deep(.owner-player-3 img) {
+	border-color: var(--color-player-3);
+}
+:deep(.owner-player-3):after {
+	content: var(--user-name-3);
+	background-color: var(--color-player-3);
+}
+:deep(.owner-player-4 img) {
+	border-color: var(--color-player-4);
+}
+:deep(.owner-player-4):after {
+	content: var(--user-name-4);
+	background-color: var(--color-player-4);
+}
+:deep(.owner-player-5 img) {
+	border-color: var(--color-player-5);
+}
+:deep(.owner-player-5):after {
+	content: var(--user-name-5);
+	background-color: var(--color-player-5);
+}
+:deep(.owner-player-6 img) {
+	border-color: var(--color-player-6);
+}
+:deep(.owner-player-6):after {
+	content: var(--user-name-6);
+	background-color: var(--color-player-6);
+}
+:deep(.owner-player-7 img) {
+	border-color: var(--color-player-7);
+}
+:deep(.owner-player-7):after {
+	content: var(--user-name-7);
+	background-color: var(--color-player-7);
+}

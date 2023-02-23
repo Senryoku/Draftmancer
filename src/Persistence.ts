@@ -33,6 +33,7 @@ import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
 import { Message } from "./Message.js";
 import { IIndexable } from "./Types.js";
+import { RotisserieDraftState } from "./RotisserieDraft.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -120,6 +121,10 @@ export function restoreSession(s: any, owner: UserID) {
 			}
 			case "rochester": {
 				r.draftState = new RochesterDraftState([], []);
+				break;
+			}
+			case "rotisserie": {
+				r.draftState = new RotisserieDraftState([], []);
 				break;
 			}
 			case "minesweeper": {
