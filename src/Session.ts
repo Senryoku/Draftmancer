@@ -38,7 +38,8 @@ import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCar
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
 import { IDraftState } from "./IDraftState.js";
-import { MinesweeperCellState, MinesweeperDraftState } from "./MinesweeperDraft.js";
+import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
+import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
 import { TeamSealedState } from "./TeamSealed.js";
 import { GridDraftState } from "./GridDraft.js";
@@ -1219,26 +1220,16 @@ export class Session implements IIndexable {
 		const currentUserID = s.currentPlayer();
 		if (currentUserID !== userID) return new SocketError("Not your turn", "It's not your turn to pick.");
 
-		s.pick(row, col);
-		// Note: Sending the whole grid with all revealed cards is pretty slow.
-		// This doesn't really matter for now, but this can certainly be optimised by sending only diffs.
-		const currentGridState = s.syncData();
+		const currentGridState = s.pick(row, col, Connections[userID].userName);
 
 		const pickedCard = cell.card;
 		Connections[userID].pickedCards.main.push(pickedCard);
-
-		s.lastPicks.unshift({
-			userName: Connections[userID].userName,
-			round: s.lastPicks.length === 0 ? 0 : s.lastPicks[0].round + 1,
-			cards: [pickedCard],
-		});
-		if (s.lastPicks.length > 2) s.lastPicks.pop();
 
 		if (s.advance()) {
 			// Send the state without current player for animation purposes.
 			this.forUsers((userID) => {
 				currentGridState.currentPlayer = "";
-				Connections[userID].socket.emit("minesweeperDraftState", currentGridState);
+				Connections[userID].socket.emit("minesweeperDraftUpdateState", currentGridState);
 			});
 
 			if (s.done()) {
@@ -1252,7 +1243,7 @@ export class Session implements IIndexable {
 			}
 		} else {
 			this.forUsers((userID) => {
-				Connections[userID].socket.emit("minesweeperDraftState", currentGridState);
+				Connections[userID].socket.emit("minesweeperDraftUpdateState", currentGridState);
 			});
 		}
 

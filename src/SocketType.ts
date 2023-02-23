@@ -7,14 +7,14 @@ import { Options } from "./utils";
 import { SetCode } from "./Types";
 import { DraftLog, DraftPick } from "./DraftLog";
 import { CardID, CardPool, DeckBasicLands, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "./CardTypes";
-import { RochesterDraftState, RochesterDraftSyncData } from "./RochesterDraft";
-import { MinesweeperDraftState, MinesweeperSyncData } from "./MinesweeperDraft";
+import { RochesterDraftSyncData } from "./RochesterDraft";
+import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
 import { DraftState } from "./DraftState";
 import { BotScores } from "./Bot";
 import SessionsSettingsProps from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
-import { RotisserieDraftStartOptions, RotisserieDraftState, RotisserieDraftSyncData } from "./RotisserieDraft";
+import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -119,6 +119,7 @@ export interface ServerToClientEvents {
 
 	startMinesweeperDraft: (syncData: MinesweeperSyncData) => void;
 	minesweeperDraftState: (syncData: MinesweeperSyncData) => void;
+	minesweeperDraftUpdateState: (syncData: MinesweeperSyncDataDiff) => void;
 	minesweeperDraftEnd: (options: { immediate?: boolean }) => void;
 	rejoinMinesweeperDraft: (data: {
 		state: MinesweeperSyncData;

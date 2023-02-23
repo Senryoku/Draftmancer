@@ -15,7 +15,7 @@ import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
 import { WinstonDraftSyncData } from "../../src/WinstonDraft";
 import { GridDraftSyncData } from "../../src/GridDraft";
-import { MinesweeperSyncData } from "../../src/MinesweeperDraft";
+import { minesweeperApplyDiff, MinesweeperSyncData } from "../../src/MinesweeperDraftTypes";
 import { RochesterDraftSyncData } from "../../src/RochesterDraft";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "../../src/RotisserieDraft";
 import { TeamSealedSyncData } from "../../src/TeamSealed";
@@ -51,7 +51,6 @@ import Modal from "./components/Modal.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
-//const RotisserieDraftDialog = import("./components/RotisserieDraftDialog.vue");
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
@@ -770,6 +769,11 @@ export default defineComponent({
 			});
 			this.socket.on("minesweeperDraftState", (state) => {
 				this.setMinesweeperDraftState(state);
+			});
+			this.socket.on("minesweeperDraftUpdateState", (diff) => {
+				if (!this.minesweeperDraftState) return;
+				minesweeperApplyDiff(this.minesweeperDraftState, diff);
+				this.onMinesweeperStateUpdate();
 			});
 			this.socket.on("minesweeperDraftEnd", (options) => {
 				// Delay to allow the last pick to be displayed.
@@ -1627,20 +1631,24 @@ export default defineComponent({
 
 			const execute = () => {
 				this.minesweeperDraftState = state;
-				if (this.userID === state.currentPlayer) {
-					this.playSound("next");
-					fireToast("info", "Your turn! Pick a card.");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
-				}
+				this.onMinesweeperStateUpdate();
 			};
 
 			if (currentGridNumber !== undefined && currentGridNumber !== state.gridNumber) {
 				// Delay the state update on grid change to allow the animation to finish
 				setTimeout(execute, 1000);
 			} else execute();
-		}, // This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
+		},
+		onMinesweeperStateUpdate() {
+			if (this.userID === this.minesweeperDraftState!.currentPlayer) {
+				this.playSound("next");
+				fireToast("info", "Your turn! Pick a card.");
+				this.pushNotification("Your turn!", {
+					body: `This is your turn to pick.`,
+				});
+			}
+		},
+		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
 		startMinesweeperDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 

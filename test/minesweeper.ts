@@ -5,9 +5,8 @@ const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
 import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
-import { MinesweeperCellState, MinesweeperSyncData } from "../src/MinesweeperDraft.js";
+import { minesweeperApplyDiff, MinesweeperCellState, MinesweeperSyncData } from "../src/MinesweeperDraftTypes.js";
 import { SocketAck } from "../src/Message.js";
-import { Socket } from "socket.io";
 
 describe("Minesweeper Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
@@ -91,6 +90,7 @@ describe("Minesweeper Draft", function () {
 					connectedClients += 1;
 					if (connectedClients == clients.length) {
 						minesweeper = state;
+						validateState(minesweeper);
 						done();
 					}
 				});
@@ -110,57 +110,84 @@ describe("Minesweeper Draft", function () {
 		});
 	};
 
+	const validateState = (state: MinesweeperSyncData) => {
+		let choices = [];
+		for (let i = 0; i < state.grid.length; ++i) {
+			for (let j = 0; j < state.grid[0].length; ++j) {
+				switch (state.grid[i][j].state) {
+					case MinesweeperCellState.Hidden: {
+						expect(state.grid[i][j].card).not.to.exist;
+						break;
+					}
+					case MinesweeperCellState.Revealed: {
+						choices.push([i, j]);
+						expect(state.grid[i][j].card).to.exist;
+						break;
+					}
+					case MinesweeperCellState.Picked: {
+						expect(state.grid[i][j].card).to.exist;
+						// If Picked, neightbors should be revealed.
+						if (i > 0) expect(state.grid[i - 1][j].state).to.not.equal(MinesweeperCellState.Hidden);
+						if (i < state.grid.length - 1)
+							expect(state.grid[i + 1][j].state).to.not.equal(MinesweeperCellState.Hidden);
+						if (j > 0) expect(state.grid[i][j - 1].state).to.not.equal(MinesweeperCellState.Hidden);
+						if (j < state.grid[0].length - 1)
+							expect(state.grid[i][j + 1].state).to.not.equal(MinesweeperCellState.Hidden);
+						break;
+					}
+				}
+			}
+		}
+		return choices;
+	};
+
 	const endDraft = () => {
 		it("Every player randomly chooses a card and the draft should end.", function (done) {
 			this.timeout(4000);
 
 			let draftEnded = 0;
+			let updatesReceived = 0;
+			let newStateReceived = 0;
+
+			const pick = (row: number, col: number) => {
+				if (minesweeper?.currentPlayer === "") return;
+				const cl = clients.find((c) => (c as any).query.userID === minesweeper?.currentPlayer);
+				if (!cl) return;
+				cl.emit("minesweeperDraftPick", row, col, (response: SocketAck) => {
+					if (response?.error) console.error(response?.error);
+					expect(response?.error).to.be.undefined;
+				});
+			};
 
 			for (let c = 0; c < clients.length; ++c) {
-				const pick = (row: number, col: number) => {
-					const cl = clients[c];
-					cl.emit("minesweeperDraftPick", row, col, (response: SocketAck) => {
-						if (response?.error) console.error(response?.error);
-						expect(response?.error).to.be.undefined;
-					});
-				};
 				clients[c].on("minesweeperDraftState", function (state) {
-					let choices = [];
-					for (let i = 0; i < state.grid.length; ++i) {
-						for (let j = 0; j < state.grid[0].length; ++j) {
-							switch (state.grid[i][j].state) {
-								case MinesweeperCellState.Hidden: {
-									expect(state.grid[i][j].card).not.to.exist;
-									break;
-								}
-								case MinesweeperCellState.Revealed: {
-									choices.push([i, j]);
-									expect(state.grid[i][j].card).to.exist;
-									break;
-								}
-								case MinesweeperCellState.Picked: {
-									expect(state.grid[i][j].card).to.exist;
-									// If Picked, neightbors should be revealed.
-									if (i > 0)
-										expect(state.grid[i - 1][j].state).to.not.equal(MinesweeperCellState.Hidden);
-									if (i < state.grid.length - 1)
-										expect(state.grid[i + 1][j].state).to.not.equal(MinesweeperCellState.Hidden);
-									if (j > 0)
-										expect(state.grid[i][j - 1].state).to.not.equal(MinesweeperCellState.Hidden);
-									if (j < state.grid[0].length - 1)
-										expect(state.grid[i][j + 1].state).to.not.equal(MinesweeperCellState.Hidden);
-									break;
-								}
-							}
-						}
+					++newStateReceived;
+					if (newStateReceived === clients.length) {
+						newStateReceived = 0;
+						minesweeper = state;
+						let choices = validateState(minesweeper);
+						expect(choices.length).to.be.above(0);
+						const choice = choices[Math.floor(Math.random() * choices.length)];
+						pick(choice[0], choice[1]);
 					}
-					expect(choices.length).to.be.above(0);
-					const choice = choices[Math.floor(Math.random() * choices.length)];
-					if (state.currentPlayer === (clients[c] as any).query.userID) pick(choice[0], choice[1]);
+				});
+				clients[c].on("minesweeperDraftUpdateState", function (diff) {
+					++updatesReceived;
+					if (updatesReceived === clients.length) {
+						updatesReceived = 0;
+						expect(minesweeper).to.exist;
+						if (!minesweeper) return;
+						minesweeperApplyDiff(minesweeper, diff);
+						let choices = validateState(minesweeper);
+						expect(choices.length).to.be.above(0);
+						const choice = choices[Math.floor(Math.random() * choices.length)];
+						pick(choice[0], choice[1]);
+					}
 				});
 				clients[c].once("minesweeperDraftEnd", function () {
 					draftEnded += 1;
 					clients[c].removeListener("minesweeperDraftState");
+					clients[c].removeListener("minesweeperDraftUpdateState");
 					if (draftEnded == clients.length) done();
 				});
 			}
@@ -169,7 +196,7 @@ describe("Minesweeper Draft", function () {
 
 			for (let i = 0; i < minesweeper!.grid.length; ++i)
 				for (let j = 0; j < minesweeper!.grid[0].length; ++j)
-					if (minesweeper!.grid[i][j].state === 1) {
+					if (minesweeper!.grid[i][j].state === MinesweeperCellState.Revealed) {
 						clients[currPlayer].emit("minesweeperDraftPick", i, j, (response: SocketAck) => {
 							if (response?.error) console.error(response?.error);
 							expect(response?.error).to.be.undefined;

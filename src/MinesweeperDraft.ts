@@ -1,29 +1,24 @@
 import { UniqueCard } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
+import { MinesweeperCellState, MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes.js";
 import { PickSummary } from "./PickSummary";
 import { negMod, Options } from "./utils.js";
-
-export enum MinesweeperCellState {
-	Hidden = 0,
-	Revealed = 1,
-	Picked = 2,
-}
 
 export class MinesweeperCell {
 	state: MinesweeperCellState = MinesweeperCellState.Hidden;
 	card: UniqueCard;
 
-	reveal() {
+	reveal(): boolean {
 		if (this.state === MinesweeperCellState.Hidden) {
 			this.state = MinesweeperCellState.Revealed;
+			return true;
 		}
+		return false;
 	}
 
 	pick() {
-		if (this.state === MinesweeperCellState.Revealed) {
-			this.state = MinesweeperCellState.Picked;
-		}
+		if (this.state === MinesweeperCellState.Revealed) this.state = MinesweeperCellState.Picked;
 	}
 
 	constructor(card: UniqueCard) {
@@ -73,11 +68,24 @@ export class MinesweeperGrid {
 	}
 
 	pick(row: number, col: number) {
+		const cellUpdates: { coords: [number, number]; state: MinesweeperCellState; card?: UniqueCard }[] = [
+			{ coords: [row, col], state: MinesweeperCellState.Picked },
+		];
 		this.get(row, col)?.pick();
-		this.get(row - 1, col)?.reveal();
-		this.get(row + 1, col)?.reveal();
-		this.get(row, col - 1)?.reveal();
-		this.get(row, col + 1)?.reveal();
+		for (let [r, c] of [
+			[row - 1, col],
+			[row + 1, col],
+			[row, col - 1],
+			[row, col + 1],
+		]) {
+			if (this.get(r, c)?.reveal())
+				cellUpdates.push({
+					coords: [r, c],
+					state: this.get(r, c)!.state,
+					card: this.get(r, c)!.card,
+				});
+		}
+		return cellUpdates;
 	}
 
 	get(row: number, col: number) {
@@ -92,16 +100,6 @@ export class MinesweeperGrid {
 		return this.state.length;
 	}
 }
-
-export type MinesweeperSyncData = {
-	gridCount: number;
-	gridNumber: number;
-	picksPerGrid: number;
-	pickNumber: number;
-	currentPlayer: string;
-	grid: any;
-	lastPicks: PickSummary[];
-};
 
 export class MinesweeperDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
@@ -143,9 +141,23 @@ export class MinesweeperDraftState extends IDraftState implements TurnBased {
 		return this.players[negMod(this.gridNumber + (startingDirection ? -1 : 1) * offset, this.players.length)];
 	}
 
-	pick(row: number, col: number) {
-		this.grid().pick(row, col);
+	pick(row: number, col: number, userName: string): MinesweeperSyncDataDiff {
+		const gridUpdated = this.grid().pick(row, col);
 		++this.pickNumber;
+
+		this.lastPicks.unshift({
+			userName: userName,
+			round: this.lastPicks.length === 0 ? 0 : this.lastPicks[0].round + 1,
+			cards: [this.grid().get(row, col)!.card],
+		});
+		if (this.lastPicks.length > 2) this.lastPicks.pop();
+
+		return {
+			pickNumber: this.pickNumber,
+			currentPlayer: this.currentPlayer(),
+			lastPicks: this.lastPicks,
+			gridUpdates: gridUpdated,
+		};
 	}
 
 	// Should be called after every pick
