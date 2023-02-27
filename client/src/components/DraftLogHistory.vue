@@ -54,7 +54,7 @@
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
 						<template v-else> <i class="far fa-eye"></i> Review</template>
 					</button>
-					<dropdown v-if="!draftLog.delayed">
+					<dropdown v-if="!draftLog.delayed" :class="{ disabled: !hasDecks(draftLog) }">
 						<span slot="handle">Download all decks</span>
 						<div slot="dropdown" class="more-dropdown">
 							<div
@@ -146,6 +146,12 @@ export default defineComponent({
 			helper.download(
 				`DraftLog_${draftLog.sessionID.replace(/\W/g, "")}.txt`,
 				JSON.stringify(draftLog, null, "\t")
+			);
+		},
+		hasDecks(draftLog: DraftLog) {
+			return Object.values(draftLog.users).some(
+				(user) =>
+					user.decklist !== undefined && (user.decklist.main.length > 0 || user.decklist.side.length > 0)
 			);
 		},
 		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "MTGA" | "card names", withBasics: boolean) {
