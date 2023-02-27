@@ -19,7 +19,7 @@ export default defineComponent({
 	props: {
 		minwidth: { type: String, default: "12em" },
 	},
-	mounted: function () {
+	mounted() {
 		this.updateHeight();
 	},
 	methods: {
@@ -32,8 +32,25 @@ export default defineComponent({
 			);
 		},
 		toggleKeepOpen() {
-			this.forcedOpen = !this.forcedOpen;
+			this.setKeepOpen(!this.forcedOpen);
+		},
+		setKeepOpen(open: boolean) {
+			if (this.forcedOpen === open) return;
+			this.forcedOpen = open;
+			if (this.forcedOpen) {
+				this.$el.addEventListener("touchstart", this.stopPropagation);
+				document.addEventListener("touchstart", this.onOutsideClick, { once: true });
+			} else {
+				this.$el.removeEventListener("touchstart", this.stopPropagation);
+				document.removeEventListener("touchstart", this.onOutsideClick);
+			}
 			this.updateHeight();
+		},
+		onOutsideClick() {
+			this.setKeepOpen(false);
+		},
+		stopPropagation(e: Event) {
+			e.stopPropagation();
 		},
 	},
 });
