@@ -122,11 +122,11 @@
     "7ed": {
         "code": "7ed",
         "fullName": "Seventh Edition",
-        "cardCount": 701,
+        "cardCount": 700,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/7ed.svg",
-        "commonCount": 261,
+        "commonCount": 260,
         "rareCount": 220,
         "uncommonCount": 220
     },
@@ -693,6 +693,15 @@
         "mythicCount": 14,
         "rareCount": 92,
         "uncommonCount": 115
+    },
+    "cmm": {
+        "code": "cmm",
+        "fullName": "Commander Masters",
+        "cardCount": 8,
+        "isPrimary": true,
+        "icon": "img/sets/cmm.svg",
+        "mythicCount": 6,
+        "rareCount": 2
     },
     "cmr": {
         "code": "cmr",
@@ -2526,13 +2535,13 @@
     "mir": {
         "code": "mir",
         "fullName": "Mirage",
-        "cardCount": 350,
+        "cardCount": 351,
         "isPrimary": true,
         "block": "Mirage",
         "icon": "img/sets/mir.svg",
         "commonCount": 130,
         "rareCount": 110,
-        "uncommonCount": 110
+        "uncommonCount": 111
     },
     "mm2": {
         "code": "mm2",
@@ -2593,8 +2602,8 @@
         "cardCount": 33,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
-        "commonCount": 10,
-        "mythicCount": 8,
+        "commonCount": 11,
+        "mythicCount": 7,
         "rareCount": 15
     },
     "mor": {
@@ -4980,6 +4989,15 @@
         "rareCount": 81,
         "uncommonCount": 80
     },
+    "sir": {
+        "code": "sir",
+        "fullName": "Shadows Over Innistrad Remastered",
+        "cardCount": 3,
+        "isPrimary": true,
+        "icon": "img/sets/sir.svg",
+        "mythicCount": 1,
+        "rareCount": 2
+    },
     "skhm": {
         "code": "skhm",
         "fullName": "Kaldheim Substitute Cards",
@@ -5000,12 +5018,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 859,
+        "cardCount": 865,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
-        "mythicCount": 143,
-        "rareCount": 651,
+        "mythicCount": 146,
+        "rareCount": 654,
         "uncommonCount": 20
     },
     "slp": {
@@ -5912,6 +5930,17 @@
         "mythicCount": 5,
         "rareCount": 20,
         "uncommonCount": 5
+    },
+    "yone": {
+        "code": "yone",
+        "fullName": "Alchemy: Phyrexia",
+        "cardCount": 4,
+        "isPrimary": false,
+        "block": "Alchemy 2023",
+        "icon": "img/sets/yone.svg",
+        "mythicCount": 2,
+        "rareCount": 1,
+        "uncommonCount": 1
     },
     "ysnc": {
         "code": "ysnc",
