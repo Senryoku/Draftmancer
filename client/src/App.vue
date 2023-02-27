@@ -1512,6 +1512,14 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>February 27, 2023</em>
+								<p>
+									New game mode: <strong>Rotisserie Draft</strong>!<br />Players picks cards one after
+									the other from a common pool, typically consisting of singletons from a couple of
+									sets.
+								</p>
+							</div>
+							<div class="news">
 								<em>February 15, 2023</em>
 								<p>
 									New game mode: <strong>Team Sealed</strong>!<br />Each team must build one deck for
@@ -1545,17 +1553,6 @@
 									/>
 									Dominaria Remastered is now available in the 'More sets
 									<i class="fas fa-ellipsis-h"></i>' menu!
-								</p>
-							</div>
-							<div class="news">
-								<em>November 5, 2022</em>
-								<p>
-									<img
-										src="img/sets/bro.svg"
-										class="set-icon"
-										style="--invertedness: 100%; width: 2em"
-									/>
-									The Brothers' War is now available!
 								</p>
 							</div>
 						</div>

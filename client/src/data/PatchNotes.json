@@ -1,5 +1,9 @@
 [
 	{
+		"date": "27/02/2023",
+		"notes": ["Rotisserie Draft game mode.", "Bug fixes and card data base update."]
+	},
+	{
 		"date": "15/02/2023",
 		"notes": ["Fixed Deck setting."]
 	},
