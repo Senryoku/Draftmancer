@@ -32,27 +32,32 @@
 					</div>
 				</div>
 				<div>
-					<h3>(Optional) Customize the set of each booster:</h3>
-					<div class="input-customBoosters">
-						<select
-							class="standard-input custom-booster"
-							v-for="(val, idx) in customBoosters"
-							:key="idx"
-							:id="'custom-booster-select-' + idx"
-							v-model="customBoosters[idx]"
-						>
-							<option value="">(Default)</option>
-							<option value="random">Random set from Card Pool</option>
-							<option value="" class="option-separator" disabled>————————————————</option>
-							<option v-for="s in MTGASets" :key="s.code" :value="s.code">
-								{{ s.fullName }}
-							</option>
-							<option value="" class="option-separator" disabled>————————————————</option>
-							<option v-for="s in PrimarySets" :key="s.code" :value="s.code">
-								{{ s.fullName }}
-							</option>
-						</select>
-					</div>
+					<h3>
+						<input id="input-useCustomizedBoosters" type="checkbox" v-model="useCustomizedBoosters" />
+						<label for="input-useCustomizedBoosters">Customize the set of each booster</label>
+					</h3>
+					<transition name="expand">
+						<div class="input-customBoosters" v-show="useCustomizedBoosters">
+							<select
+								class="standard-input custom-booster"
+								v-for="(val, idx) in customBoosters"
+								:key="idx"
+								:id="'custom-booster-select-' + idx"
+								v-model="customBoosters[idx]"
+							>
+								<option value="">(Default)</option>
+								<option value="random">Random set from Card Pool</option>
+								<option value="" class="option-separator" disabled>————————————————</option>
+								<option v-for="s in MTGASets" :key="s.code" :value="s.code">
+									{{ s.fullName }}
+								</option>
+								<option value="" class="option-separator" disabled>————————————————</option>
+								<option v-for="s in PrimarySets" :key="s.code" :value="s.code">
+									{{ s.fullName }}
+								</option>
+							</select>
+						</div>
+					</transition>
 				</div>
 			</div>
 		</div>
@@ -84,7 +89,9 @@ const { users, teamSealed } = toRefs(props);
 
 const teams = ref([[], [], [], []] as UserID[][]);
 const boostersPerPlayer = ref(teamSealed.value ? 12 : 6);
-const customBoosters = ref(Array(boostersPerPlayer.value).fill(""));
+const useCustomizedBoosters = ref(false);
+const customBoostersDefaultValue = Array(boostersPerPlayer.value).fill("");
+const customBoosters = ref([...customBoostersDefaultValue]);
 
 // Defaults to two teams, distribute players among them.
 for (let i = 0; i < users.value.length; i++) teams.value[i % 2].push(users.value[i].userID);
@@ -106,7 +113,13 @@ const emit = defineEmits<{
 // Methods
 const userById = (uid: UserID) => users.value.find((user) => user.userID === uid);
 const cancel = () => emit("cancel");
-const distribute = () => emit("distribute", boostersPerPlayer.value, customBoosters.value, teams.value);
+const distribute = () =>
+	emit(
+		"distribute",
+		boostersPerPlayer.value,
+		useCustomizedBoosters.value ? customBoosters.value : customBoostersDefaultValue,
+		teams.value
+	);
 
 // Watch
 watch(boostersPerPlayer, () => {
@@ -118,6 +131,10 @@ watch(boostersPerPlayer, () => {
 <style scoped>
 .sealed-dialog {
 	text-align: center;
+}
+
+.sealed-dialog-settings {
+	min-width: 60em;
 }
 
 .option-separator {
@@ -175,5 +192,17 @@ watch(boostersPerPlayer, () => {
 	max-width: 9em;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.expand-enter-active,
+.expand-leave-active {
+	transition: all 0.5s ease-in-out;
+	overflow: hidden;
+}
+
+.expand-enter,
+.expand-leave-to {
+	height: 0;
+	padding: 0;
 }
 </style>
