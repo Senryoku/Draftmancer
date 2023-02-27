@@ -1514,7 +1514,7 @@
 							<div class="news">
 								<em>February 27, 2023</em>
 								<p>
-									New game mode: <strong>Rotisserie Draft</strong>!<br />Players picks cards one after
+									New game mode: <strong>Rotisserie Draft</strong>!<br />Players pick cards one after
 									the other from a common pool, typically consisting of singletons from a couple of
 									sets.
 								</p>
