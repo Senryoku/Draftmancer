@@ -105,6 +105,11 @@ describe("Rotisserie Draft", function () {
 				PlayerCards[(c as any).query.userID] = [];
 				c.once("startRotisserieDraft", (state) => {
 					connectedClients += 1;
+					if (options.singleton) {
+						if (options.singleton.exactCardCount) {
+							expect(state.cards.length).to.equal(clients.length * options.singleton.cardsPerPlayer);
+						}
+					}
 					if (connectedClients == clients.length) {
 						RotisserieDraftState = state;
 						done();
@@ -157,23 +162,27 @@ describe("Rotisserie Draft", function () {
 
 	describe("Default settings", () => {
 		setRestriction(["one", "bro"]);
-		startDraft({ singleton: { cardsPerPlayer: 45 } });
+		startDraft({ singleton: { cardsPerPlayer: 45, exactCardCount: false } });
 		endDraft();
 	});
 
 	describe("Default settings, single set, not enough cards.", () => {
 		setRestriction(["one"]);
 		it("Stating should error (not enough cards)", (done) => {
-			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 45 } }, (r) => {
-				expect(r.code !== 0);
-				done();
-			});
+			clients[ownerIdx].emit(
+				"startRotisserieDraft",
+				{ singleton: { cardsPerPlayer: 45, exactCardCount: false } },
+				(r) => {
+					expect(r.code !== 0);
+					done();
+				}
+			);
 		});
 	});
 
 	describe("Default settings with a disconnect", () => {
 		setRestriction(["one", "bro"]);
-		startDraft({ singleton: { cardsPerPlayer: 45 } });
+		startDraft({ singleton: { cardsPerPlayer: 45, exactCardCount: false } });
 
 		it("Non-owner disconnects, owner receives updated user infos.", (done) => {
 			let nonOwnerIdx = (ownerIdx + 1) % clients.length;
@@ -196,7 +205,7 @@ describe("Rotisserie Draft", function () {
 
 	describe("Default setting, using a Cube", () => {
 		loadCube();
-		startDraft({ singleton: { cardsPerPlayer: 45 } });
+		startDraft({ singleton: { cardsPerPlayer: 45, exactCardCount: false } });
 		endDraft();
 
 		it("Disable Cube.", (done) => {
@@ -205,12 +214,44 @@ describe("Rotisserie Draft", function () {
 		});
 	});
 
-	for (let i = 30; i <= 60; i += 15) {
-		describe(`Singleton, ${i} cards per player.`, () => {
-			setRestriction(["one", "bro"]);
-			startDraft({ singleton: { cardsPerPlayer: i } });
-			endDraft();
-			checkCardCount(i);
+	for (const exactCardCount of [false, true]) {
+		for (let i = 30; i <= 60; i += 15) {
+			describe(`Singleton, ${i} cards per player, exactCardCount: ${exactCardCount}.`, () => {
+				setRestriction(["one", "bro"]);
+				startDraft({ singleton: { cardsPerPlayer: i, exactCardCount: exactCardCount } });
+				endDraft();
+				checkCardCount(i);
+			});
+		}
+
+		for (let i = 30; i <= 45; i += 5) {
+			describe(`Singleton, ${i} cards per player, exactCardCount: ${exactCardCount}, using a cube`, () => {
+				loadCube();
+				startDraft({ singleton: { cardsPerPlayer: i, exactCardCount: exactCardCount } });
+				endDraft();
+				checkCardCount(i);
+			});
+		}
+
+		describe(`Singleton, 70 cards per player, using a cube, exactCardCount: ${exactCardCount}.`, () => {
+			loadCube();
+			it("Starting should error (not enough cards)", (done) => {
+				clients[ownerIdx].emit(
+					"startRotisserieDraft",
+					{ singleton: { cardsPerPlayer: 70, exactCardCount: exactCardCount } },
+					(r) => {
+						expect(r.code).to.not.equal(0);
+						done();
+					}
+				);
+			});
+		});
+
+		describe("Reset Session settings", () => {
+			it("Disable Cube.", (done) => {
+				clients[ownerIdx].emit("setUseCustomCardList", false);
+				done();
+			});
 		});
 	}
 
@@ -222,25 +263,6 @@ describe("Rotisserie Draft", function () {
 			checkCardCount(14 * i);
 		});
 	}
-
-	for (let i = 30; i <= 45; i += 5) {
-		describe(`Singleton, ${i} cards per player, using a cube`, () => {
-			loadCube();
-			startDraft({ singleton: { cardsPerPlayer: i } });
-			endDraft();
-			checkCardCount(i);
-		});
-	}
-
-	describe(`Singleton, 70 cards per player, using a cube.`, () => {
-		loadCube();
-		it("Stating should error (not enough cards)", (done) => {
-			clients[ownerIdx].emit("startRotisserieDraft", { singleton: { cardsPerPlayer: 70 } }, (r) => {
-				expect(r.code).to.not.equal(0);
-				done();
-			});
-		});
-	});
 
 	for (let i = 3; i <= 4; ++i) {
 		describe(`Standard collation, ${i} boosters per player, using a cube`, () => {
@@ -258,7 +280,7 @@ describe("Rotisserie Draft", function () {
 	)) {
 		describe(`Singleton collation, '${key}' cube.`, () => {
 			loadCubeFile(key);
-			startDraft({ singleton: { cardsPerPlayer: 30 } });
+			startDraft({ singleton: { cardsPerPlayer: 30, exactCardCount: true } });
 			endDraft();
 			checkCardCount(30);
 		});

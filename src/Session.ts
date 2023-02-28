@@ -51,7 +51,7 @@ import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable } from "./Types.js";
-import { isRotisserieDraftState, RotisserieDraftState } from "./RotisserieDraft.js";
+import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1030,10 +1030,7 @@ export class Session implements IIndexable {
 	///////////////////// Rochester Draft End //////////////////////
 
 	///////////////////// Rotisserie Draft //////////////////////
-	startRotisserieDraft(options: {
-		singleton?: { cardsPerPlayer: number };
-		standard?: { boostersPerPlayer: number };
-	}): SocketAck {
+	startRotisserieDraft(options: RotisserieDraftStartOptions): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size <= 1)
 			return new SocketError(
@@ -1043,6 +1040,7 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		let cards: UniqueCard[] = [];
+		let cardsPerPlayer: number;
 		if (options.singleton) {
 			let cardPool: CardID[] = [];
 			if (this.useCustomCardList) {
@@ -1058,10 +1056,12 @@ export class Session implements IIndexable {
 					"Not enough cards",
 					`Not enough cards in card pool: ${cardPool.length}/${cardCount}.`
 				);
-			shuffleArray(cardPool);
-			cards = cardPool
-				.slice(0, cardCount)
-				.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
+			if (options.singleton.exactCardCount) {
+				shuffleArray(cardPool);
+				cardPool = cardPool.slice(0, cardCount);
+			}
+			cards = cardPool.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
+			cardsPerPlayer = options.singleton.cardsPerPlayer;
 		} else if (options.standard) {
 			const ret = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
 				useCustomBoosters: true,
@@ -1071,12 +1071,13 @@ export class Session implements IIndexable {
 			if (isMessageError(ret)) return new SocketAck(ret);
 			cards = this.boosters.flat();
 			this.boosters = [];
+			cardsPerPlayer = cards.length / this.users.size;
 		} else {
 			return new SocketError("Invalid parameters");
 		}
 
 		this.disconnectedUsers = {};
-		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), cards);
+		this.draftState = new RotisserieDraftState(this.getSortedHumanPlayersIDs(), cards, cardsPerPlayer);
 		if (!isRotisserieDraftState(this.draftState)) return new SocketError("Internal Error");
 		this.drafting = true;
 		for (const user of this.users) {

@@ -31,6 +31,13 @@
 						v-model.number="cardsPerPlayer"
 					/>
 				</div>
+				<div v-if="collationType === 'singleton'">
+					<label for="exact-card-count">
+						Distribute only the necessary number of cards<br />
+						<small> ({{ cardsPerPlayer }} cards per player, as opposed to the whole card pool) </small>
+					</label>
+					<input type="checkbox" id="exact-card-count" class="swal2-input" v-model.number="exactCardCount" />
+				</div>
 				<div v-if="collationType === 'standard'">
 					<label for="boosters-per-player">Boosters per Player</label>
 					<input
@@ -72,6 +79,7 @@ enum CollationType {
 
 const collationType = ref(CollationType.singleton);
 const cardsPerPlayer = ref(45);
+const exactCardCount = ref(false);
 const boostersPerPlayer = ref(defaultBoostersPerPlayer.value ?? 3);
 
 const emit = defineEmits<{
@@ -85,7 +93,7 @@ const start = () => {
 	let options;
 	switch (collationType.value) {
 		case CollationType.singleton:
-			options = { singleton: { cardsPerPlayer: cardsPerPlayer.value } };
+			options = { singleton: { cardsPerPlayer: cardsPerPlayer.value, exactCardCount: exactCardCount.value } };
 			break;
 		case CollationType.standard:
 			options = { standard: { boostersPerPlayer: boostersPerPlayer.value } };
@@ -111,9 +119,10 @@ const start = () => {
 .dialog-settings > div > * {
 	display: table-cell;
 	text-align: left;
+	vertical-align: middle;
 }
 .dialog-settings > div > *:nth-child(1) {
-	width: 10em;
+	width: 15em;
 	max-width: inherit;
 }
 .dialog-settings > div > *:nth-child(2) {

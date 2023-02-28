@@ -124,7 +124,7 @@ export function restoreSession(s: any, owner: UserID) {
 				break;
 			}
 			case "rotisserie": {
-				r.draftState = new RotisserieDraftState([], []);
+				r.draftState = new RotisserieDraftState([], [], 0);
 				break;
 			}
 			case "minesweeper": {

@@ -1,10 +1,9 @@
 import { UniqueCard } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes";
-import { negMod } from "./utils.js";
 
 export type RotisserieDraftStartOptions = {
-	singleton?: { cardsPerPlayer: number };
+	singleton?: { cardsPerPlayer: number; exactCardCount: boolean };
 	standard?: { boostersPerPlayer: number };
 };
 
@@ -17,12 +16,15 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 	cards: RotisserieDraftCard[];
 	pickNumber = 0;
 
-	constructor(players: UserID[], cards: UniqueCard[]) {
+	cardsPerPlayer: number;
+
+	constructor(players: UserID[], cards: UniqueCard[], cardsPerPlayer: number) {
 		super("rotisserie");
 		this.players = players;
 		this.cards = cards.map((card) => {
 			return { ...card, owner: null };
 		});
+		this.cardsPerPlayer = cardsPerPlayer;
 	}
 
 	syncData(userID: UserID) {
@@ -42,7 +44,7 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 	// Returns true when the last card has been picked
 	advance(): boolean {
 		++this.pickNumber;
-		return this.pickNumber === this.cards.length;
+		return this.pickNumber >= Math.min(this.players.length * this.cardsPerPlayer, this.cards.length);
 	}
 }
 
