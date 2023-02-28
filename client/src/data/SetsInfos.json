@@ -3751,7 +3751,7 @@
     },
     "pidw": {
         "code": "pidw",
-        "fullName": "IDW Comics 2012",
+        "fullName": "IDW Comics Inserts",
         "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/pidw.svg",
@@ -5934,13 +5934,13 @@
     "yone": {
         "code": "yone",
         "fullName": "Alchemy: Phyrexia",
-        "cardCount": 4,
+        "cardCount": 30,
         "isPrimary": false,
         "block": "Alchemy 2023",
         "icon": "img/sets/yone.svg",
-        "mythicCount": 2,
-        "rareCount": 1,
-        "uncommonCount": 1
+        "mythicCount": 5,
+        "rareCount": 15,
+        "uncommonCount": 10
     },
     "ysnc": {
         "code": "ysnc",
