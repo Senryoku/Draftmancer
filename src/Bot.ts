@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== "production") {
 import { shuffleArray } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
 
-const mtgdraftbotsAPITimeout = 3500;
+const mtgdraftbotsAPITimeout = 10000;
 const MTGDraftbotsAuthToken = process.env.MTGDRAFTBOTS_AUTHTOKEN;
 const mtgdraftbotsAPIURL = `https://mtgml.cubeartisan.net/draft?auth_token=${MTGDraftbotsAuthToken}`;
 
