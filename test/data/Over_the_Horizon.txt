@@ -1,0 +1,3607 @@
+[CustomCards]
+	[    {
+	        "name": "Avatar of Innovations",
+	        "rarity": "common",
+	        "mana_cost": "{8}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/1.jpg"
+	        }
+	    },
+	    {
+	        "name": "All-Blossom Memorial",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/295.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dragonglass Harp",
+	        "rarity": "common",
+	        "mana_cost": "{1}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/297.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rampart Ballista",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Wall ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/302.jpg"
+	        }
+	    },
+	    {
+	        "name": "Recon Drone",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Construct Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/303.jpg"
+	        }
+	    },
+	    {
+	        "name": "Robocamel",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Artifact Creature — Camel ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/304.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sandstone Archivist",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}",
+	        "type": "Artifact Creature — Golem Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/305.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scrap Buggy",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact — Vehicle ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/307.jpg"
+	        }
+	    },
+	    {
+	        "name": "Steamquiver Condor",
+	        "rarity": "common",
+	        "mana_cost": "{6}",
+	        "type": "Artifact Creature — Bird Construct ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/311.jpg"
+	        }
+	    },
+	    {
+	        "name": "Wayfarer's Adornments",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/315.jpg"
+	        }
+	    },
+	    {
+	        "name": "Flourishing Lowlands",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/328.jpg"
+	        }
+	    },
+	    {
+	        "name": "Forgotten Monument",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/329.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pathway of Lost Sultans",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/332.jpg"
+	        }
+	    },
+	    {
+	        "name": "Raintouched Basin",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/333.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scoured Mesa",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/336.jpg"
+	        }
+	    },
+	    {
+	        "name": "Silent Ridge",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/338.jpg"
+	        }
+	    },
+	    {
+	        "name": "Windworn Spires",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/340.jpg"
+	        }
+	    },
+	    {
+	        "name": "Mechanomind Researcher",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Scientist ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/300.jpg"
+	        }
+	    },
+	    {
+	        "name": "Memorial of Forgotten Heroes",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/301.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sandstorm Sentinel",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}",
+	        "type": "Artifact Creature — Golem ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/306.jpg"
+	        }
+	    },
+	    {
+	        "name": "Slicing Steer",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}",
+	        "type": "Artifact Creature — Ox Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/309.jpg"
+	        }
+	    },
+	    {
+	        "name": "Steelscribed Katana",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}",
+	        "type": "Artifact — Equipment Inscription ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/312.jpg"
+	        }
+	    },
+	    {
+	        "name": "Towering Wickerman",
+	        "rarity": "uncommon",
+	        "mana_cost": "{6}",
+	        "type": "Artifact Creature — Construct ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/314.jpg"
+	        }
+	    },
+	    {
+	        "name": "Arcane Oasis",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/316.jpg"
+	        }
+	    },
+	    {
+	        "name": "Arid Causeway",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/317.jpg"
+	        }
+	    },
+	    {
+	        "name": "Bloodsand Gulch",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/319.jpg"
+	        }
+	    },
+	    {
+	        "name": "Blooming Needles",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/320.jpg"
+	        }
+	    },
+	    {
+	        "name": "Crumbling Aqueduct",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/322.jpg"
+	        }
+	    },
+	    {
+	        "name": "Desiccated Trail",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/323.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dunesea Expanse",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/325.jpg"
+	        }
+	    },
+	    {
+	        "name": "Resurgent Oasis",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/334.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rot-Sand Ruins",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/335.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sundappled Scrub",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/339.jpg"
+	        }
+	    },
+	    {
+	        "name": "Luminal Lifethreader",
+	        "rarity": "rare",
+	        "mana_cost": "{2}",
+	        "type": "Creature — Shapeshifter ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/2.jpg"
+	        }
+	    },
+	    {
+	        "name": "Alchemos, Efficiency Engine",
+	        "rarity": "mythic",
+	        "mana_cost": "{3}",
+	        "type": "Legendary Artifact ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/294.jpg"
+	        }
+	    },
+	    {
+	        "name": "Astrina, Tempered by Glory",
+	        "rarity": "rare",
+	        "mana_cost": "{1}",
+	        "type": "Legendary Artifact — Equipment Project ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/296.jpg"
+	        }
+	    },
+	    {
+	        "name": "The Shadowstaff",
+	        "rarity": "rare",
+	        "mana_cost": "{3}",
+	        "type": "Legendary Artifact — Vehicle ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/308.jpg"
+	        }
+	    },
+	    {
+	        "name": "Chigau Market Outskirts",
+	        "rarity": "rare",
+	        "mana_cost": "",
+	        "type": "Legendary Land",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/321.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dha-Bukan, Jewel of the Dunes",
+	        "rarity": "mythic",
+	        "mana_cost": "",
+	        "type": "Legendary Land - Desert",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/324.jpg"
+	        }
+	    },
+	    {
+	        "name": "Eroded Sanctuary",
+	        "rarity": "rare",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/326.jpg"
+	        }
+	    },
+	    {
+	        "name": "Clan Maldoon Healer",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Dwarf Cleric ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/9.jpg"
+	        }
+	    },
+	    {
+	        "name": "Shellback Storyteller",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Turtle Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/41.jpg"
+	        }
+	    },
+	    {
+	        "name": "Telarine Zenitheer",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/45.jpg"
+	        }
+	    },
+	    {
+	        "name": "Worldwise Ascetic",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Cleric Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/48.jpg"
+	        }
+	    },
+	    {
+	        "name": "Graceful Yuroda",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Angel ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/19.jpg"
+	        }
+	    },
+	    {
+	        "name": "Kalro Gritbrawler",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/28.jpg"
+	        }
+	    },
+	    {
+	        "name": "Prized Holsteins",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Ox ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/35.jpg"
+	        }
+	    },
+	    {
+	        "name": "Seek Far and Wide",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Enchantment — Quest ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/40.jpg"
+	        }
+	    },
+	    {
+	        "name": "Boundary Hallowblade",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}",
+	        "type": "Creature — Human Knight Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/7.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ontarachie Envoy",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}",
+	        "type": "Creature — Fungus Advisor ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/33.jpg"
+	        }
+	    },
+	    {
+	        "name": "Gold Pelt Responders",
+	        "rarity": "common",
+	        "mana_cost": "{4}{W}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/18.jpg"
+	        }
+	    },
+	    {
+	        "name": "K-83 Sunshine Walker",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Artifact Creature — Construct ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/27.jpg"
+	        }
+	    },
+	    {
+	        "name": "Telenian Adornments",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/46.jpg"
+	        }
+	    },
+	    {
+	        "name": "Journey of Self-Discovery",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/25.jpg"
+	        }
+	    },
+	    {
+	        "name": "Prophecy of Peace",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Enchantment — Aura ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/36.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tale of the Wayward Titan",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/44.jpg"
+	        }
+	    },
+	    {
+	        "name": "Uprising of the Unremarkable",
+	        "rarity": "common",
+	        "mana_cost": "{4}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/47.jpg"
+	        }
+	    },
+	    {
+	        "name": "Irreguleopard",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Cat ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/23.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scriptures of Urshad",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}",
+	        "type": "Enchantment — Saga ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/39.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rally the Railguard",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/38.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dunehaze Revolutionary",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{W}",
+	        "type": "Creature — Human Rebel Nomad ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/13.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fakadeh's Anointed",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Creature — Bird Noble ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/15.jpg"
+	        }
+	    },
+	    {
+	        "name": "Captured Paletusk",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{W}{W}",
+	        "type": "Creature — Dinosaur Beast ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/8.jpg"
+	        }
+	    },
+	    {
+	        "name": "Herd's Bounty",
+	        "rarity": "uncommon",
+	        "mana_cost": "{W}",
+	        "type": "Enchantment — Deity ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/20.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hisashi's Repose",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/21.jpg"
+	        }
+	    },
+	    {
+	        "name": "Darutu's Plow",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}",
+	        "type": "Enchantment Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/12.jpg"
+	        }
+	    },
+	    {
+	        "name": "Losing My Religion",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/30.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ayala's Blessing",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/5.jpg"
+	        }
+	    },
+	    {
+	        "name": "A Glimmering Crown",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{W}",
+	        "type": "Legendary Planeswalker — Okus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/17.jpg"
+	        }
+	    },
+	    {
+	        "name": "Archon of the Accord",
+	        "rarity": "rare",
+	        "mana_cost": "{4}{W}{W}{W}",
+	        "type": "Creature — Archon ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/3.jpg"
+	        }
+	    },
+	    {
+	        "name": "Asabeth of the Intrepid",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Legendary Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/4.jpg"
+	        }
+	    },
+	    {
+	        "name": "Daisite Pioneer",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/11.jpg"
+	        }
+	    },
+	    {
+	        "name": "General's Masterstroke",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}",
+	        "type": "Riddle Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/16.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hyctaleon's Vanguard",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/22.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ivenge's Evangel",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Cleric ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/24.jpg"
+	        }
+	    },
+	   {	
+		"name": "Mystery of the Dying Herds",
+		"rarity": "rare",
+		"mana_cost": "{W}",
+		"type": "Enchantment - Mystery",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/31a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/31a.jpg"
+		},
+		"printed_names": {
+			"en": "Mystery of the Dying Herds",
+			"fr": "Mystery of the Dying Herds"
+		},
+		"back": {
+			"name": "Eta, Experimental Doctor",
+			"printed_names": {
+				"en": "Eta, Experimental Doctor",
+				"fr": "Eta, Experimental Doctor"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/31b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/31b.jpg"
+			},
+			"type": "Legendary Creature",
+			"subtypes": [
+				"Alien Scientist"
+			]
+		}
+	    },  
+	    {
+	        "name": "Slaffield Work-Hauler",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Creature — Ox ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/42.jpg"
+	        }
+	    },
+	    {
+	        "name": "Starscribe Oracle",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/43.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lijing, God Amongst Foxes",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Legendary Creature - Fox Spirit God ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/29.jpg"
+	        }
+	    },
+	    {
+	        "name": "Oshiruko Whisperwalker",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/71.jpg"
+	        }
+	    },
+	    {
+	        "name": "Patent Thief",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/72.jpg"
+	        }
+	    },
+	    {
+	        "name": "Surviving Scavengers",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/89.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tempest Stormcaster",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Human Pirate Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/90.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ward-Lost Hermit",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Dwarf Crab ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/93.jpg"
+	        }
+	    },
+	    {
+	        "name": "Alrathan Courier",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/49.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tutorial Boss",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}",
+	        "type": "Creature — Human Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/92.jpg"
+	        }
+	    },
+	    {
+	        "name": "Frostclaw Shinobi",
+	        "rarity": "common",
+	        "mana_cost": "{4}{U}",
+	        "type": "Creature — Human Elemental Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/61.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sky-Torrent Navigator",
+	        "rarity": "common",
+	        "mana_cost": "{4}{U}",
+	        "type": "Creature — Crab Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/85.jpg"
+	        }
+	    },
+	    {
+	        "name": "Kellythross's Collector",
+	        "rarity": "common",
+	        "mana_cost": "{6}{U}",
+	        "type": "Artifact Creature — Golem ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/67.jpg"
+	        }
+	    },
+	    {
+	        "name": "Brume Trench-Thrasher",
+	        "rarity": "common",
+	        "mana_cost": "{4}{U}{U}",
+	        "type": "Creature — Leviathan ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/52.jpg"
+	        }
+	    },
+	    {
+	        "name": "Clutch of the Void",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Sorcery — Revelation ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/54.jpg"
+	        }
+	    },
+	    {
+	        "name": "Initiation of the Lafterii",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Enchantment — Aura Persona ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/65.jpg"
+	        }
+	    },
+	    {
+	        "name": "Glimpse the Stars",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/62.jpg"
+	        }
+	    },
+	    {
+	        "name": "One Person's Trash",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/70.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rune-Scribe's Revealing",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/81.jpg"
+	        }
+	    },
+	    {
+	        "name": "Kofe Isolation",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/68.jpg"
+	        }
+	    },
+	    {
+	        "name": "Shinrei's Ruse",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/84.jpg"
+	        }
+	    },
+	    {
+	        "name": "Refraction Diver",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Merfolk Reflection ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/78.jpg"
+	        }
+	    },
+	    {
+	        "name": "Reliya's Scraphawk",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{U}",
+	        "type": "Artifact Creature — Bird Construct ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/79.jpg"
+	        }
+	    },
+	    {
+	        "name": "Watcher of the Polyps",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Shapeshifter ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/94.jpg"
+	        }
+	    },
+	    {
+	        "name": "Recruiter of Irregulars",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Human Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/77.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dark Seas of Shiryen",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{U}",
+	        "type": "Enchantment — Saga ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/56.jpg"
+	        }
+	    },
+	    {
+	        "name": "Titou Louoe, Bayou Shaman",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{U}{U}",
+	        "type": "Legendary Creature — Human Shaman Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/91.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ideals Eternally Endure",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/63.jpg"
+	        }
+	    },
+	    {
+	        "name": "A Mysterious Cowl",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{U}",
+	        "type": "Legendary Planeswalker — Okus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/69.jpg"
+	        }
+	    },
+	    {
+	        "name": "Into the Flood Realm",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/66.jpg"
+	        }
+	    },
+	   {	
+		"name": "Ethersketch Blueprints",
+		"rarity": "rare",
+		"mana_cost": "{1}{U}",
+		"type": "Artifact - Clue",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/60a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/60a.jpg"
+		},
+		"printed_names": {
+			"en": "Ethersketch Blueprints",
+			"fr": "Ethersketch Blueprints"
+		},
+		"back": {
+			"name": "Etherwrought Figurehead",
+			"printed_names": {
+				"en": "Etherwrought Figurehead",
+				"fr": "Etherwrought Figurehead"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/60b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/60b.jpg"
+			},
+			"type": "Artifact Creature",
+			"subtypes": [
+				"Angel Monument"
+			]
+		}
+	    },  
+	    {
+	        "name": "Dr. Telsi of the Ark",
+	        "rarity": "rare",
+	        "mana_cost": "{U}{U}",
+	        "type": "Legendary Creature — Human Scientist ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/58.jpg"
+	        }
+	    },
+	    {
+	        "name": "Infamous Bilgecaptain",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Human Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/64.jpg"
+	        }
+	    },
+	    {
+	        "name": "Qililia's Scavenger",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Merfolk Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/75.jpg"
+	        }
+	    },
+	    {
+	        "name": "Plane-Traversal Guide",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/74.jpg"
+	        }
+	    },
+	    {
+	        "name": "Bundi, Prodigious Steed",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Legendary Creature — Bird ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/53.jpg"
+	        }
+	    },
+	    {
+	        "name": "Studies in Scientific Theory",
+	        "rarity": "rare",
+	        "mana_cost": "{U}",
+	        "type": "Enchantment — Discovery ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/88.jpg"
+	        }
+	    },
+	    {
+	        "name": "Encore of the Drowned",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/59.jpg"
+	        }
+	    },
+	    {
+	        "name": "Paths Untaken",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}",
+	        "type": "Legendary Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/73.jpg"
+	        }
+	    },
+	    {
+	        "name": "Specimen Suit",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{U}",
+	        "type": "Riddle Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/87.jpg"
+	        }
+	    },
+	    {
+	        "name": "Consumed by Fashion",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Enchantment — Aura ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/55.jpg"
+	        }
+	    },
+	    {
+	        "name": "The Song of the Universe",
+	        "rarity": "mythic",
+	        "mana_cost": "{4}{U}{U}{U}",
+	        "type": "Legendary Creature - Whale Avatar ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/86.jpg"
+	        }
+	    },
+	    {
+	        "name": "Nestled Delta",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/331.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scaleblight Bokor",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Crocodile Cleric ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/129.jpg"
+	        }
+	    },
+	    {
+	        "name": "Kai'Shi's Spellgorgers",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Devil Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/115.jpg"
+	        }
+	    },
+	    {
+	        "name": "Nimunotian Shadow",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Shade Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/120.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pilgrim of Bal",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Mutant Cleric ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/124.jpg"
+	        }
+	    },
+	    {
+	        "name": "Undermurk Scavenger",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Enchantment Creature — Shark ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/139.jpg"
+	        }
+	    },
+	    {
+	        "name": "Achet-Aton's Vizier",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Antelope Advisor ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/95.jpg"
+	        }
+	    },
+	    {
+	        "name": "Harpooned Bubbledomer",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}",
+	        "type": "Creature — Zombie Merfolk ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/109.jpg"
+	        }
+	    },
+	    {
+	        "name": "Unshackled Revolutionary",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Artifact Creature — Spirit Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/140.jpg"
+	        }
+	    },
+	    {
+	        "name": "Helicos-Drowned Captain",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}",
+	        "type": "Creature — Spirit Pirate Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/111.jpg"
+	        }
+	    },
+	    {
+	        "name": "Kabuto-no-Oni",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}{B}",
+	        "type": "Creature — Demon Insect ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/114.jpg"
+	        }
+	    },
+	    {
+	        "name": "A Villain Revealed",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/141.jpg"
+	        }
+	    },
+	    {
+	        "name": "Curse of Grasping Air",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Enchantment — Aura Curse ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/99.jpg"
+	        }
+	    },
+	    {
+	        "name": "Enduring Plague",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Enchantment — Aura ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/105.jpg"
+	        }
+	    },
+	    {
+	        "name": "Gifts of the Abyss",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/107.jpg"
+	        }
+	    },
+	    {
+	        "name": "On Eli's Orders",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/121.jpg"
+	        }
+	    },
+	    {
+	        "name": "The Show Must Go On",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/131.jpg"
+	        }
+	    },
+	    {
+	        "name": "Curse of Life's Cycles",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Enchantment — Aura Curse ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/100.jpg"
+	        }
+	    },
+	    {
+	        "name": "Jolt Awake",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/113.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rotrider Renegade",
+	        "rarity": "uncommon",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Zombie Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/126.jpg"
+	        }
+	    },
+	    {
+	        "name": "Arrogant Entrant",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/97.jpg"
+	        }
+	    },
+	    {
+	        "name": "Harvest Blighter",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Creature — Human Warlock Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/110.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tempting Prey",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Fungus Frog ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/136.jpg"
+	        }
+	    },
+	    {
+	        "name": "Speaker of Ancient Gods",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{B}",
+	        "type": "Creature — Human Shaman Nomad ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/135.jpg"
+	        }
+	    },
+	    {
+	        "name": "Grinning Torturer",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Creature — Zombie Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/108.jpg"
+	        }
+	    },
+	    {
+	        "name": "Saffrisa's Darkcaster",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Creature — Zombie Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/127.jpg"
+	        }
+	    },
+	    {
+	        "name": "Seep Forth from the Beyond",
+	        "rarity": "uncommon",
+	        "mana_cost": "{5}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/130.jpg"
+	        }
+	    },
+	   {	
+		"name": "Maaru's Hoard",
+		"rarity": "uncommon",
+		"mana_cost": "{B}",
+		"type": "Sorcery",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/117a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/117a.jpg"
+		},
+		"printed_names": {
+			"en": "Maaru's Hoard",
+			"fr": "Maaru's Hoard"
+		},
+		"back": {
+			"name": "Kallian, the Lost Artificer",
+			"printed_names": {
+				"en": "Kallian, the Lost Artificer",
+				"fr": "Kallian, the Lost Artificer"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/117b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/117b.jpg"
+			},
+			"type": "Legendary Creature",
+			"subtypes": [
+				"Spirit Artificer"
+			]
+		}
+	    },
+	   {	
+		"name": "Cutting Content",
+		"rarity": "uncommon",
+		"mana_cost": "{2}{B}",
+		"type": "Sorcery",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/101a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/101a.jpg"
+		},
+		"printed_names": {
+			"en": "Cutting Content",
+			"fr": "Cutting Content"
+		},
+		"back": {
+			"name": "Curse of Rebalancing",
+			"printed_names": {
+				"en": "Curse of Rebalancing",
+				"fr": "Curse of Rebalancing"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/101b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/101b.jpg"
+			},
+			"type": "Enchantment",
+			"subtypes": [
+				"Aura Curse"
+			]
+		}
+	    },  
+	    {
+	        "name": "Deals with Devils",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/103.jpg"
+	        }
+	    },
+	    {
+	        "name": "An Imposing Stetson",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{B}",
+	        "type": "Legendary Planeswalker — Okus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/112.jpg"
+	        }
+	    },
+	    {
+	        "name": "Treacherous Informant",
+	        "rarity": "rare",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Vampire Advisor ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/138.jpg"
+	        }
+	    },
+	    {
+	        "name": "Soulshifter",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Skeleton Shapeshifter ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/134.jpg"
+	        }
+	    },
+	    {
+	        "name": "Aldrane's Masterpiece",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Zombie Warlock ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/96.jpg"
+	        }
+	    },
+	    {
+	        "name": "Deathbed Confessor",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}",
+	        "type": "Riddle Enchantment Creature — Zombie ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/104.jpg"
+	        }
+	    },
+	   {	
+		"name": "A Slave's Vengeance",
+		"rarity": "rare",
+		"mana_cost": "{1}{B}",
+		"type": "Enchantment - Quest",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/133a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/133a.jpg"
+		},
+		"printed_names": {
+			"en": "A Slave's Vengeance",
+			"fr": "A Slave's Vengeance"
+		},
+		"back": {
+			"name": "Crown of the Urchin King",
+			"printed_names": {
+				"en": "Crown of the Urchin King",
+				"fr": "Crown of the Urchin King"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/133b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/133b.jpg"
+			},
+			"type": "Legendary Artifact",
+			"subtypes": [
+				"Equipment Monument"
+			]
+		}
+	    },  
+	    {
+	        "name": "Manifest Corruption",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/118.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tinbeard of the Brine",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Legendary Creature — Human Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/137.jpg"
+	        }
+	    },
+	    {
+	        "name": "Eradicated Education",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/106.jpg"
+	        }
+	    },
+	    {
+	        "name": "Orodu's Consumption",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/122.jpg"
+	        }
+	    },
+	    {
+	        "name": "Stormvolt Apprentice",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Scientist ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/187.jpg"
+	        }
+	    },
+	    {
+	        "name": "Aspect of An'yama",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Cat Spirit ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/146.jpg"
+	        }
+	    },
+	    {
+	        "name": "Exultant Oni",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Demon Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/158.jpg"
+	        }
+	    },
+	    {
+	        "name": "Beragnian Blacksmith",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Human Warrior Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/149.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fellor War-Skald",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Human Warrior Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/160.jpg"
+	        }
+	    },
+	    {
+	        "name": "Coral Plunderers",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Merfolk Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/152.jpg"
+	        }
+	    },
+	    {
+	        "name": "Avalanche Drummer",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Giant Warrior Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/147.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fissure Bull",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Ox ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/161.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pan's Lieutenant",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/178.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sihari's Groundblazer",
+	        "rarity": "common",
+	        "mana_cost": "{5}{R}",
+	        "type": "Creature — Human Shaman Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/184.jpg"
+	        }
+	    },
+	    {
+	        "name": "Enter the Mosh Pit",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/157.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ire of Ancient Tomes",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/170.jpg"
+	        }
+	    },
+	    {
+	        "name": "Marianne's Mercies",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/176.jpg"
+	        }
+	    },
+	    {
+	        "name": "Marianne, the Heartstopper",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{R}",
+	        "type": "Legendary Planeswalker - Marianne",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/175.jpg"
+	        }
+	    },
+	    {
+	        "name": "Roggar's Mastery",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/183.jpg"
+	        }
+	    },
+	    {
+	        "name": "Profane Flames",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/179.jpg"
+	        }
+	    },
+	    {
+	        "name": "Start the Fire",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/186.jpg"
+	        }
+	    },
+	    {
+	        "name": "Crackle Across Kahembo",
+	        "rarity": "common",
+	        "mana_cost": "{X}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/153.jpg"
+	        }
+	    },
+	    {
+	        "name": "Harvesters Gone Haywire",
+	        "rarity": "common",
+	        "mana_cost": "{6}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/166.jpg"
+	        }
+	    },
+	    {
+	        "name": "Goblin Boombuddy",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Goblin Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/165.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hatsuo's Maneuver",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/167.jpg"
+	        }
+	    },
+	    {
+	        "name": "Borsuppa Roughrider",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Human Nomad ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/150.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hookhand Freebooter",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}{R}",
+	        "type": "Creature — Goblin Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/168.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lonesome Trio",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}{R}{R}",
+	        "type": "Creature — Devil Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/173.jpg"
+	        }
+	    },
+	    {
+	        "name": "Aleud Warcaller",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Elf Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/143.jpg"
+	        }
+	    },
+	    {
+	        "name": "Flameform Amalgam",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Creature — Human Elemental Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/162.jpg"
+	        }
+	    },
+	    {
+	        "name": "Vitin Slagshaper",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Aetherborn Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/191.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ironsmash Drill-Delver",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Creature — Dwarf Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/171.jpg"
+	        }
+	    },
+	    {
+	        "name": "Wasteland Rabblerousers",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Creature — Orc Nomad Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/192.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fortunous Flames",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/163.jpg"
+	        }
+	    },
+	    {
+	        "name": "Discoveries of Akieva",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Enchantment — Saga ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/155.jpg"
+	        }
+	    },
+	    {
+	        "name": "An Intimidating Helm",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{R}",
+	        "type": "Legendary Planeswalker — Okus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/169.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dragon's Breath Throatsinger",
+	        "rarity": "rare",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Bard Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/156.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fretport Market Smuggler",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Human Pirate Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/164.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ashe of the Winged Steed",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Legendary Creature — Human Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/145.jpg"
+	        }
+	    },
+	    {
+	        "name": "Creed's Desperado",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Spirit Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/154.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sisters Suzakazi",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Legendary Riddle Enchantment Creature — Samurai ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/185.jpg"
+	        }
+	    },
+	    {
+	        "name": "Livia's Advocate",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Human Advisor ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/172.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rallios's Champion",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/181.jpg"
+	        }
+	    },
+	    {
+	        "name": "Vidal's Conjurant",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Elemental Dragon ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/190.jpg"
+	        }
+	    },
+	    {
+	        "name": "Thermal Ventcaller",
+	        "rarity": "rare",
+	        "mana_cost": "{6}{R}",
+	        "type": "Enchantment Creature — Trilobite Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/189.jpg"
+	        }
+	    },
+	    {
+	        "name": "Surviving Ndengo",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}",
+	        "type": "Legendary Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/188.jpg"
+	        }
+	    },
+	    {
+	        "name": "Roggar the Furious",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Legendary Creature - Human Wizard",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/182.jpg"
+	        }
+	    },
+	    {
+	        "name": "Siamang Tale-Singer",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Monkey Warrior Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/231.jpg"
+	        }
+	    },
+	    {
+	        "name": "Am'atambi's Fangs",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Spider Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/195.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dunecrest Pariah",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Elf Druid Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/206.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ophorio Scavenger",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Elf Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/223.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rei's Cultivator",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Squirrel Druid Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/228.jpg"
+	        }
+	    },
+	    {
+	        "name": "Wildborn Marauder",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Human Mutant Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/240.jpg"
+	        }
+	    },
+	    {
+	        "name": "Octopus Shiny-Grabber",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}",
+	        "type": "Creature — Octopus Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/221.jpg"
+	        }
+	    },
+	    {
+	        "name": "Trumpeting Pathmaker",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}",
+	        "type": "Creature — Elephant ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/238.jpg"
+	        }
+	    },
+	    {
+	        "name": "Children of Aelani",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/198.jpg"
+	        }
+	    },
+	    {
+	        "name": "Silverhorn Battlemaster",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}",
+	        "type": "Creature — Ox Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/232.jpg"
+	        }
+	    },
+	    {
+	        "name": "Da'Lang's Preyscenter",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Creature — Wolf ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/202.jpg"
+	        }
+	    },
+	    {
+	        "name": "Out of Fashion",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/224.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scaleblight's Quarry",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Enchantment — Aura Curse ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/229.jpg"
+	        }
+	    },
+	    {
+	        "name": "Myrmidon's Plunder",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/219.jpg"
+	        }
+	    },
+	    {
+	        "name": "Curse of Ceaseless Pursuit",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}",
+	        "type": "Enchantment — Aura Curse ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/201.jpg"
+	        }
+	    },
+	    {
+	        "name": "Abominable Mongrel",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Hound Dog Horror ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/193.jpg"
+	        }
+	    },
+	    {
+	        "name": "Territorial Camaar",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Antelope Camel ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/237.jpg"
+	        }
+	    },
+	    {
+	        "name": "Young Forager",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/242.jpg"
+	        }
+	    },
+	    {
+	        "name": "Judge of Clans",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Elf Shaman Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/212.jpg"
+	        }
+	    },
+	    {
+	        "name": "Wildheart Chorister",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Elf Warrior Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/241.jpg"
+	        }
+	    },
+	    {
+	        "name": "Bellow of the Highlands",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/196.jpg"
+	        }
+	    },
+	    {
+	        "name": "Death Pits Gladiator",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Human Nomad Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/203.jpg"
+	        }
+	    },
+	    {
+	        "name": "Descent from the Highlands",
+	        "rarity": "uncommon",
+	        "mana_cost": "{5}{G}",
+	        "type": "Enchantment — Saga ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/204.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tantalizing Glutton",
+	        "rarity": "uncommon",
+	        "mana_cost": "{5}{G}{G}",
+	        "type": "Creature — Giant Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/235.jpg"
+	        }
+	    },
+	    {
+	        "name": "Croakfolk Marsh-Baron",
+	        "rarity": "uncommon",
+	        "mana_cost": "{X}{G}",
+	        "type": "Creature — Frog Noble ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/200.jpg"
+	        }
+	    },
+	    {
+	        "name": "Journey to Elrayin",
+	        "rarity": "rare",
+	        "mana_cost": "{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/211.jpg"
+	        }
+	    },
+	    {
+	        "name": "Chaos of the Conflux",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/197.jpg"
+	        }
+	    },
+	    {
+	        "name": "A Modest Cap",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{G}",
+	        "type": "Legendary Planeswalker — Okus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/218.jpg"
+	        }
+	    },
+	    {
+	        "name": "Convoy's Companion",
+	        "rarity": "rare",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Antelope ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/199.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pronouncer of Preserves",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/227.jpg"
+	        }
+	    },
+	    {
+	        "name": "Steward of Empire's Cradle",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/234.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dovon's Masterwork",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Plant ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/205.jpg"
+	        }
+	    },
+	    {
+	        "name": "Mawdryk's Harrier",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Creature — Elf Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/216.jpg"
+	        }
+	    },
+	    {
+	        "name": "Mystical Echo",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Cat Reflection ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/220.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lilia of the Soul",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Legendary Creature — Human Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/214.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hegemony Monarch",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Elf Warrior Druid ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/209.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pineblight Caribou",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Elk Caribou Horror ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/225.jpg"
+	        }
+	    },
+	    {
+	        "name": "Living Archipelago",
+	        "rarity": "rare",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Creature — Elder Turtle ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/215.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lie in Ambush",
+	        "rarity": "rare",
+	        "mana_cost": "{G}{G}",
+	        "type": "Riddle Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/213.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ontarachie Curio",
+	        "rarity": "rare",
+	        "mana_cost": "{G}{G}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/222.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sower of Sabne's Harvest",
+	        "rarity": "mythic",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature - Treefolk Avatar",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/233.jpg"
+	        }
+	    },
+	    {
+	        "name": "Aethermancer's Companion",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{W}{U}",
+	        "type": "Creature — Cat ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/244.jpg"
+	        }
+	    },
+	    {
+	        "name": "Disciple of Destruction",
+	        "rarity": "uncommon",
+	        "mana_cost": "{B}{G}",
+	        "type": "Creature — Elf Cleric ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/256.jpg"
+	        }
+	    },
+	    {
+	        "name": "Chainbreaker Behemoth",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{G}{W}",
+	        "type": "Creature — Dinosaur Beast ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/251.jpg"
+	        }
+	    },
+	    {
+	        "name": "Horn Run Huntcaller",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}{G}",
+	        "type": "Creature — Satyr Warrior Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/264.jpg"
+	        }
+	    },
+	    {
+	        "name": "Press-Gang Recruiter",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Creature — Orc Pirate ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/272.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scribe of the Buried Glade",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}{U}",
+	        "type": "Creature — Human Druid ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/276.jpg"
+	        }
+	    },
+	    {
+	        "name": "Script Spirit",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}{B}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/277.jpg"
+	        }
+	    },
+	    {
+	        "name": "Shaman of Burning Ashes",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{B}{R}",
+	        "type": "Creature — Orc Shaman ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/278.jpg"
+	        }
+	    },
+	    {
+	        "name": "Terrors of Cuxuri Trench",
+	        "rarity": "uncommon",
+	        "mana_cost": "{U}{B}",
+	        "type": "Instant — Revelation ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/283.jpg"
+	        }
+	    },
+	    {
+	        "name": "Twisted-Heart Duelist",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}{W}",
+	        "type": "Creature — Spirit Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/284.jpg"
+	        }
+	    },
+	    {
+	        "name": "Coiling Spiritscale",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{W}{B/G}",
+	        "type": "Creature — Spirit Snake ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/289.jpg"
+	        }
+	    },
+	    {
+	        "name": "Exhilarating Vista",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{G}{R/W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/290.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lizaveth's Surveyor",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{R}{G/U}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/291.jpg"
+	        }
+	    },
+	    {
+	        "name": "Spellbone Screecher",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{U}{B/R}",
+	        "type": "Creature — Skeleton Drake ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/292.jpg"
+	        }
+	    },
+	    {
+	        "name": "Step into the Beyond",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{B}{W/U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/293.jpg"
+	        }
+	    },
+	    {
+	        "name": "Amira, Grand Inventor",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}{U}{R}",
+	        "type": "Legendary Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/247.jpg"
+	        }
+	    },
+	    {
+	        "name": "Efinag, Weaver of Flesh",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{W}{U}{B}",
+	        "type": "Legendary Creature — Horror ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/258.jpg"
+	        }
+	    },
+	    {
+	        "name": "Erduk, Settled Nomad",
+	        "rarity": "rare",
+	        "mana_cost": "{W}{B}{G}",
+	        "type": "Legendary Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/260.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ormh, Discordant Envoy",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{U}{B}{R}",
+	        "type": "Legendary Creature — Human Warlock ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/269.jpg"
+	        }
+	    },
+	    {
+	        "name": "Realms of the Goliaths",
+	        "rarity": "rare",
+	        "mana_cost": "{W}{U}{B}{R}{G}",
+	        "type": "Legendary Enchantment — Realm ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/273.jpg"
+	        }
+	    },
+	    {
+	        "name": "Buzzard Barrens",
+	        "rarity": "rare",
+	        "mana_cost": "{R}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/250.jpg"
+	        }
+	    },
+	    {
+	        "name": "Condemned Cavalier",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{W}{B}",
+	        "type": "Creature — Zombie Knight Aurashaper ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/252.jpg"
+	        }
+	    },
+	    {
+	        "name": "Encylopetia",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Enchantment Creature — Elemental Study ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/259.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hell or High Water",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}{G}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/263.jpg"
+	        }
+	    },
+	    {
+	        "name": "Livia, Legion Commander",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}{W}",
+	        "type": "Legendary Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/267.jpg"
+	        }
+	    },
+	    {
+	        "name": "Playful Scalchopper",
+	        "rarity": "rare",
+	        "mana_cost": "{G}{U}",
+	        "type": "Creature — Otter ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/271.jpg"
+	        }
+	    },
+	    {
+	        "name": "Relitian Renegade",
+	        "rarity": "rare",
+	        "mana_cost": "{W}{U}",
+	        "type": "Artifact Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/274.jpg"
+	        }
+	    },
+	    {
+	        "name": "Dawson's Negotiations",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{B}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/255.jpg"
+	        }
+	    },
+	    {
+	        "name": "Abital, Hesediel's Fawn",
+	        "rarity": "mythic",
+	        "mana_cost": "{3}{G}{W}",
+	        "type": "Legendary Creature - Elk Spirit",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/243.jpg"
+	        }
+	    },
+	    {
+	        "name": "Alin and Meva, Warqueens",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{R}{W}",
+	        "type": "Legendary Creature - Human Angel Noble",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/245.jpg"
+	        }
+	    },
+	    {
+	        "name": "Beneath the Horizon",
+	        "rarity": "mythic",
+	        "mana_cost": "{3}{G}{W}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/248.jpg"
+	        }
+	    },
+	    {
+	        "name": "Brunig, the Dreamroot",
+	        "rarity": "mythic",
+	        "mana_cost": "{G}{G}{U}{U}",
+	        "type": "Legendary Creature - Plant Elemental",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/249.jpg"
+	        }
+	    },
+	    {
+	        "name": "Darutu, God of Bounty",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{G}{W}",
+	        "type": "Legendary Enchantment Creature - Ox God",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/254.jpg"
+	        }
+	    },
+	    {
+	        "name": "Glitch, Cosmic Dreamer",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{U}{R}{W}",
+	        "type": "Legendary Planeswalker - Glitch",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/261.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ms. Moxie, Aetherite Proprietor",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{B}",
+	        "type": "Legendary Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/268.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sihari, Fury of the Dunes",
+	        "rarity": "mythic",
+	        "mana_cost": "{1}{R}{G}",
+	        "type": "Legendary Planeswalker - Sihari",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/279.jpg"
+	        }
+	    },
+	    {
+	        "name": "Vir of the Starskipper",
+	        "rarity": "mythic",
+	        "mana_cost": "{W}{U}{B}{R}{G}",
+	        "type": "Legendary Creature - Human Pilot",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/285.jpg"
+	        }
+	    },
+	    {
+	        "name": "Brothers of Batiga Pass",
+	        "rarity": "mythic",
+	        "mana_cost": "{R/W}{U}{G}",
+	        "type": "Legendary Creature - Elephant Ox Giraffe",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/288.jpg"
+	        }
+	    },
+	    {
+	        "name": "Arbiter of Shal'Iv",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/50.jpg"
+	        }
+	    },
+	    {
+	        "name": "Blistering Boneyard",
+	        "rarity": "uncommon",
+	        "mana_cost": "",
+	        "type": "Land — Desert ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/318.jpg"
+	        }
+	    },
+	    {
+	        "name": "Shrine of the World-Shepherd",
+	        "rarity": "rare",
+	        "mana_cost": "",
+	        "type": "Land — Animus ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/337.jpg"
+	        }
+	    },
+	    {
+	        "name": "Stormforged Guardian",
+	        "rarity": "rare",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Construct ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/313.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rival Troupe",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{B}",
+	        "type": "Creature — Human Actor ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/125.jpg"
+	        }
+	    },
+	    {
+	        "name": "Poacher's Bounty",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Enchantment — Aura ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/226.jpg"
+	        }
+	    },
+	    {
+	        "name": "Bahum's Absolution",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/6.jpg"
+	        }
+	    },
+	    {
+	        "name": "Warchief of the Goriana",
+	        "rarity": "common",
+	        "mana_cost": "{6}{G}",
+	        "type": "Creature — Ox Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/239.jpg"
+	        }
+	    },
+	    {
+	        "name": "Seeker of Conto Sika",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/230.jpg"
+	        }
+	    },
+	    {
+	        "name": "Raloran Insurgent",
+	        "rarity": "uncommon",
+	        "mana_cost": "{4}{U}",
+	        "type": "Creature — Merfolk Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/76.jpg"
+	        }
+	    },
+	    {
+	        "name": "Fang of Anaz",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Lizard Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/159.jpg"
+	        }
+	    },
+	    {
+	        "name": "Hitana's Implements",
+	        "rarity": "rare",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/299.jpg"
+	        }
+	    },
+	    {
+	        "name": "Leyran-Pack Outcast",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Creature — Wolf ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/116.jpg"
+	        }
+	    },
+	    {
+	        "name": "Scorn the Ordinary",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/82.jpg"
+	        }
+	    },
+	    {
+	        "name": "Eighth-Life Companion",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Cat ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/14.jpg"
+	        }
+	    },
+	    {
+	        "name": "Secrets of Coralight Court",
+	        "rarity": "uncommon",
+	        "mana_cost": "{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/83.jpg"
+	        }
+	    },
+	    {
+	        "name": "Incubated Energy",
+	        "rarity": "uncommon",
+	        "mana_cost": "{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/210.jpg"
+	        }
+	    },
+	    {
+	        "name": "Consortium Astrolabe",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/10.jpg"
+	        }
+	    },
+	    {
+	        "name": "Justiciar Overseer",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Angel Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/26.jpg"
+	        }
+	    },
+	    {
+	        "name": "Balloon Voyager",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/51.jpg"
+	        }
+	    },
+	    {
+	        "name": "Phantom Walker",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{B}",
+	        "type": "Artifact — Vehicle ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/123.jpg"
+	        }
+	    },
+	    {
+	        "name": "Bar-Room Brawler",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Dwarf Berserker ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/148.jpg"
+	        }
+	    },
+	    {
+	        "name": "Merciless Shieldbreaker",
+	        "rarity": "mythic",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Creature — Orc Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/177.jpg"
+	        }
+	    },
+	    {
+	        "name": "Tarmovore",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Lhurgoyf ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/236.jpg"
+	        }
+	    },
+	    {
+	        "name": "Ameret, Hope of Night",
+	        "rarity": "mythic",
+	        "mana_cost": "{2}{R}{W}",
+	        "type": "Legendary Planeswalker - Ameret ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/246.jpg"
+	        }
+	    },
+	    {
+	        "name": "Drelum, Deepheart Seer",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{G}{W}",
+	        "type": "Legendary Creature — Elf Nomad ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/257.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pensive Songwriter",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Creature — Human Bard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/270.jpg"
+	        }
+	    },
+	    {
+	        "name": "Siv Katari, Rebel Technician",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Legendary Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/280.jpg"
+	        }
+	    },
+	    {
+	        "name": "Spellmaw Crocodile",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Creature — Crocodile ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/281.jpg"
+	        }
+	    },
+	    {
+	        "name": "Streets of Mustasheen",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{W}{B}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/282.jpg"
+	        }
+	    },
+	    {
+	        "name": "Soul of Muetar",
+	        "rarity": "mythic",
+	        "mana_cost": "{4}{C}{C}",
+	        "type": "Artifact Creature - Avatar",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/310.jpg"
+	        }
+	    },
+	    {
+	        "name": "Farmyard",
+	        "rarity": "rare",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/327.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pompous Explorer",
+	        "rarity": "uncommon",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/34.jpg"
+	        }
+	    },
+	    {
+	        "name": "Deadly Harpoon",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/102.jpg"
+	        }
+	    },
+	    {
+	        "name": "Amateur Munitionist",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/144.jpg"
+	        }
+	    },
+	    {
+	        "name": "Sinslither",
+	        "rarity": "mythic",
+	        "mana_cost": "{6}{B}{B}",
+	        "type": "Creature — Snake Beast ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/132.jpg"
+	        }
+	    },
+	    {
+	        "name": "Maddened Inferno",
+	        "rarity": "uncommon",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Spirit Warrior ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/174.jpg"
+	        }
+	    },
+	    {
+	        "name": "Pupil of Lightning",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Monk ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/180.jpg"
+	        }
+	    },
+	    {
+	        "name": "Alpha Scout",
+	        "rarity": "rare",
+	        "mana_cost": "{G}{G}",
+	        "type": "Creature — Human Scout Druid ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/194.jpg"
+	        }
+	    },
+	    {
+	        "name": "Mirror Mirage",
+	        "rarity": "uncommon",
+	        "mana_cost": "{1}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/217.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rhysta of the Roses",
+	        "rarity": "rare",
+	        "mana_cost": "{W}{W}{B}{B}",
+	        "type": "Legendary Creature — Spirit Knight ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/275.jpg"
+	        }
+	    },
+	    {
+	        "name": "Witch-Queen Yarag",
+	        "rarity": "rare",
+	        "mana_cost": "{W}{U}{B}",
+	        "type": "Legendary Creature — Hag Noble Wizard ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/286.jpg"
+	        }
+	    },
+	    {
+	        "name": "Avalia, Cyber Stalker",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U/B}{U/B}",
+	        "type": "Legendary Creature — Vampire ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/287.jpg"
+	        }
+	    },
+	    {
+	        "name": "Gate of Realms",
+	        "rarity": "rare",
+	        "mana_cost": "{3}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/298.jpg"
+	        }
+	    },
+	    {
+	        "name": "Nobility",
+	        "rarity": "rare",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Enchantment Creature — Incarnation ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/32.jpg"
+	        }
+	    },
+	    {
+	        "name": "Delve into Karsus",
+	        "rarity": "uncommon",
+	        "mana_cost": "{3}{U}",
+	        "type": "Enchantment — Saga ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/57.jpg"
+	        }
+	    },
+	    {
+	        "name": "Company Cannibalization",
+	        "rarity": "uncommon",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/98.jpg"
+	        }
+	    },
+	    {
+	        "name": "Voidtouched Nightblade",
+	        "rarity": "uncommon",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Elf Rogue ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/142.jpg"
+	        }
+	    },
+	    {
+	        "name": "Brightflame Phoenix",
+	        "rarity": "uncommon",
+	        "mana_cost": "{R}{R}",
+	        "type": "Creature — Phoenix ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/151.jpg"
+	        }
+	    },
+	    {
+	        "name": "Green Elemental Circle",
+	        "rarity": "rare",
+	        "mana_cost": "{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/208.jpg"
+	        }
+	    },
+	    {
+	        "name": "Krikam, the Wanderer",
+	        "rarity": "mythic",
+	        "mana_cost": "{G}{W}{U}",
+	        "type": "Legendary Enchantment Creature - Spirit",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/265.jpg"
+	        }
+	    },
+	   {	
+		"name": "The Masque, Archvillain",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}{B}{B}",
+		"type": "Legendary Creature - Human Actor",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/119a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/119a.jpg"
+		},
+		"printed_names": {
+			"en": "The Masque, Archvillain",
+			"fr": "The Masque, Archvillain"
+		},
+		"back": {
+			"name": "The Masque’s Machinations",
+			"printed_names": {
+				"en": "The Masque’s Machinations",
+				"fr": "The Masque’s Machinations"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/119b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/119b.jpg"
+			},
+			"type": "Legendary Sorcery",
+			"subtypes": [
+			]
+		}
+	    },
+	   {	
+		"name": "El, Humble Apprentice",
+		"rarity": "mythic",
+		"mana_cost": "{1}{G}",
+		"type": "Legendary Creature - Elemental Monk",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/207a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/207a.jpg"
+		},
+		"printed_names": {
+			"en": "El, Humble Apprentice",
+			"fr": "El, Humble Apprentice"
+		},
+		"back": {
+			"name": "Velir, End of All Worlds",
+			"printed_names": {
+				"en": "Velir, End of All Worlds",
+				"fr": "Velir, End of All Worlds"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/207b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/207b.jpg"
+			},
+			"type": "Legendary Planeswalker",
+			"subtypes": [
+				"Velir"
+			]
+		   }
+		},
+	   {	
+		"name": "Copperhide Calf",
+		"rarity": "rare",
+		"mana_cost": "{G}{W}",
+		"type": "Artifact Creature - Elephant Construct",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/253a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/253a.jpg"
+		},
+		"printed_names": {
+			"en": "Copperhide Calf",
+			"fr": "Copperhide Calf"
+		},
+		"back": {
+			"name": "Verdigris Behemoth",
+			"printed_names": {
+				"en": "Verdigris Behemoth",
+				"fr": "Verdigris Behemoth"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/253b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/253b.jpg"
+			},
+			"type": "Artifact Creature",
+			"subtypes": [
+				"Elephant Construct"
+			]
+		   }
+		},
+	   {	
+		"name": "Graide, Voice of Autumn",
+		"rarity": "rare",
+		"mana_cost": "{X}{R}{G}{W}",
+		"type": "Legendary Creature - Human Druid",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/262a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/262a.jpg"
+		},
+		"printed_names": {
+			"en": "Graide, Voice of Autumn",
+			"fr": "Graide, Voice of Autumn"
+		},
+		"back": {
+			"name": "Ashela, the Russet Grove",
+			"printed_names": {
+				"en": "Ashela, the Russet Grove",
+				"fr": "Ashela, the Russet Grove"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/262b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/262b.jpg"
+			},
+			"type": "Legendary Land",
+			"subtypes": [
+				""
+			]
+		   }
+		},
+	   {	
+		"name": "Humble Hamlet",
+		"rarity": "uncommon",
+		"mana_cost": "",
+		"type": "Land",
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/OTH/330a.jpg",
+			"fr": "http://mse-modern.com/msem2/images/OTH/330a.jpg"
+		},
+		"printed_names": {
+			"en": "Humble Hamlet",
+			"fr": "Humble Hamlet"
+		},
+		"back": {
+			"name": "Naxila, the Blessed City",
+			"printed_names": {
+				"en": "Naxila, the Blessed City",
+				"fr": "Naxila, the Blessed City"
+			},
+			"image_uris": {
+				"en": "http://mse-modern.com/msem2/images/OTH/330b.jpg",
+				"fr": "http://mse-modern.com/msem2/images/OTH/330b.jpg"
+			},
+			"type": "Legendary Land",
+			"subtypes": [
+				""
+			]
+		   }
+		},
+	    {
+	        "name": "Sakaki, Rocket Gang Boss",
+	        "rarity": "mythic",
+	        "mana_cost": "{B}{B}",
+	        "type": "Legendary Creature - Human Rogue",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/128.jpg"
+	        }
+	    },
+	    {
+	        "name": "Lady Ilyrana Jhalach",
+	        "rarity": "mythic",
+	        "mana_cost": "{2}{B}{G}",
+	        "type": "Legendary Creature - Elf Noble",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/266.jpg"
+	        }
+	    },
+	    {
+	        "name": "Purging Watchwarden",
+	        "rarity": "rare",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/37.jpg"
+	        }
+	    },
+	    {
+	        "name": "Rokai's Gambit",
+	        "rarity": "rare",
+	        "mana_cost": "{1}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "http://mse-modern.com/msem2/images/OTH/80.jpg"
+	        }
+	    }
+	]	
+	[RareSlot(1)]
+		3 Luminal Lifethreader
+		3 Astrina, Tempered by Glory
+		3 The Shadowstaff
+		3 Chigau Market Outskirts
+		3 Eroded Sanctuary
+		3 Archon of the Accord
+		3 Asabeth of the Intrepid
+		3 Daisite Pioneer
+		3 General's Masterstroke
+		3 Hyctaleon's Vanguard
+		3 Ivenge's Evangel
+		3 Mystery of the Dying Herds
+		3 Slaffield Work-Hauler
+		3 Starscribe Oracle
+		3 Ethersketch Blueprints
+		3 Dr. Telsi of the Ark
+		3 Infamous Bilgecaptain
+		3 Qililia's Scavenger
+		3 Plane-Traversal Guide
+		3 Bundi, Prodigious Steed
+		3 Studies in Scientific Theory
+		3 Encore of the Drowned
+		3 Paths Untaken
+		3 Specimen Suit
+		3 Consumed by Fashion
+		3 Treacherous Informant
+		3 Soulshifter
+		3 Aldrane's Masterpiece
+		3 Deathbed Confessor
+		3 A Slave's Vengeance
+		3 Manifest Corruption
+		3 Tinbeard of the Brine
+		3 Eradicated Education
+		3 Orodu's Consumption
+		3 Dragon's Breath Throatsinger
+		3 Fretport Market Smuggler
+		3 Ashe of the Winged Steed
+		3 Creed's Desperado
+		3 Sisters Suzakazi
+		3 Livia's Advocate
+		3 Rallios's Champion
+		3 Vidal's Conjurant
+		3 Thermal Ventcaller
+		3 Surviving Ndengo
+		3 Journey to Elrayin
+		3 Convoy's Companion
+		3 Pronouncer of Preserves
+		3 Steward of Empire's Cradle
+		3 Dovon's Masterwork
+		3 Mawdryk's Harrier
+		3 Mystical Echo
+		3 Lilia of the Soul
+		3 Pineblight Caribou
+		3 Living Archipelago
+		3 Lie in Ambush
+		3 Ontarachie Curio
+		3 Script Spirit
+		3 Amira, Grand Inventor
+		3 Efinag, Weaver of Flesh
+		3 Erduk, Settled Nomad
+		3 Ormh, Discordant Envoy
+		3 Realms of the Goliaths
+		3 Buzzard Barrens
+		3 Encylopetia
+		3 Hell or High Water
+		3 Livia, Legion Commander
+		3 Playful Scalchopper
+		3 Relitian Renegade
+		3 Dawson's Negotiations
+		3 Ms. Moxie, Aetherite Proprietor
+		3 Shrine of the World-Shepherd
+		3 Stormforged Guardian
+		3 Fang of Anaz
+		3 Hitana's Implements
+		3 Leyran-Pack Outcast
+		3 Purging Watchwarden
+		3 Rokai's Gambit
+		3 Graide, Voice of Autumn
+		3 Copperhide Calf
+		1 Alchemos, Efficiency Engine
+		1 Dha-Bukan, Jewel of the Dunes
+		1 Lijing, God Amongst Foxes
+		1 The Song of the Universe
+		1 Marianne, the Heartstopper
+		1 Roggar the Furious
+		1 Sower of Sabne's Harvest
+		1 Abital, Hesediel's Fawn
+		1 Alin and Meva, Warqueens
+		1 Beneath the Horizon
+		1 Brunig, the Dreamroot
+		1 Darutu, God of Bounty
+		1 Glitch, Cosmic Dreamer
+		1 Sihari, Fury of the Dunes
+		1 Vir of the Starskipper
+		1 Brothers of Batiga Pass
+		1 The Masque, Archvillain
+		1 Sakaki, Rocket Gang Boss
+		1 El, Humble Apprentice
+	[GuestSlot(1)]
+		3 Balloon Voyager
+		3 Brightflame Phoenix
+		3 Company Cannibalization
+		3 Amateur Munitionist
+		3 Deadly Harpoon
+		3 Delve into Karsus
+		3 Maddened Inferno
+		3 Mirror Mirage
+		3 Pompous Explorer
+		3 Pupil of Lightning
+		3 Voidtouched Nightblade
+		3 Hegemony Monarch
+		3 Alpha Scout
+		3 Avalia, Cyber Stalker
+		3 Bar-Room Brawler
+		3 Consortium Astrolabe
+		3 Drelum, Deepheart Seer
+		3 Gate of Realms
+		3 Farmyard
+		3 Green Elemental Circle
+		3 Justiciar Overseer
+		3 Nobility
+		3 Pensive Songwriter
+		3 Phantom Walker
+		3 Rhysta of the Roses
+		3 Siv Katari, Rebel Technician
+		3 Spellmaw Crocodile
+		3 Streets of Mustasheen
+		3 Tarmovore
+		3 Witch-Queen Yarag
+		1 Ameret, Hope of Night
+		1 Krikam, the Wanderer
+		1 Lady Ilyrana Jhalach
+		1 Merciless Shieldbreaker
+		1 Sinslither
+		1 Soul of Muetar
+	[UncommonSlot(3)]
+		9 Rampart Ballista
+		9 Sandstone Archivist
+		9 Mechanomind Researcher
+		9 Memorial of Forgotten Heroes
+		9 Sandstorm Sentinel
+		9 Slicing Steer
+		9 Steelscribed Katana
+		9 Towering Wickerman
+		9 Resurgent Oasis
+		9 Irreguleopard
+		9 Scriptures of Urshad
+		9 Rally the Railguard
+		9 Dunehaze Revolutionary
+		9 Fakadeh's Anointed
+		9 Captured Paletusk
+		9 Herd's Bounty
+		9 Hisashi's Repose
+		9 Darutu's Plow
+		9 Losing My Religion
+		9 Ayala's Blessing
+		9 A Glimmering Crown
+		9 Refraction Diver
+		9 Reliya's Scraphawk
+		9 Watcher of the Polyps
+		9 Recruiter of Irregulars
+		9 Dark Seas of Shiryen
+		9 Titou Louoe, Bayou Shaman
+		9 Ideals Eternally Endure
+		9 A Mysterious Cowl
+		9 Into the Flood Realm
+		9 Rotrider Renegade
+		9 Arrogant Entrant
+		9 Harvest Blighter
+		9 Tempting Prey
+		9 Speaker of Ancient Gods
+		9 Grinning Torturer
+		9 Saffrisa's Darkcaster
+		9 Seep Forth from the Beyond
+		9 Maaru's Hoard
+		9 Cutting Content
+		9 Deals with Devils
+		9 An Imposing Stetson
+		9 Goblin Boombuddy
+		9 Hatsuo's Maneuver
+		9 Borsuppa Roughrider
+		9 Hookhand Freebooter
+		9 Lonesome Trio
+		9 Aleud Warcaller
+		9 Flameform Amalgam
+		9 Vitin Slagshaper
+		9 Ironsmash Drill-Delver
+		9 Wasteland Rabblerousers
+		9 Fortunous Flames
+		9 Discoveries of Akieva
+		9 An Intimidating Helm
+		9 Abominable Mongrel
+		9 Territorial Camaar
+		9 Young Forager
+		9 Judge of Clans
+		9 Wildheart Chorister
+		9 Bellow of the Highlands
+		9 Death Pits Gladiator
+		9 Descent from the Highlands
+		9 Tantalizing Glutton
+		9 Croakfolk Marsh-Baron
+		9 Chaos of the Conflux
+		9 A Modest Cap
+		9 Aethermancer's Companion
+		9 Disciple of Destruction
+		9 Chainbreaker Behemoth
+		9 Horn Run Huntcaller
+		9 Press-Gang Recruiter
+		9 Scribe of the Buried Glade
+		9 Shaman of Burning Ashes
+		9 Terrors of Cuxuri Trench
+		9 Twisted-Heart Duelist
+		9 Coiling Spiritscale
+		9 Exhilarating Vista
+		9 Lizaveth's Surveyor
+		9 Spellbone Screecher
+		9 Step into the Beyond
+		9 Condemned Cavalier
+		9 Arbiter of Shal'Iv
+		9 Rival Troupe
+		9 Raloran Insurgent
+		9 Scorn the Ordinary
+		9 Eighth-Life Companion
+		9 Secrets of Coralight Court
+		9 Incubated Energy
+		9 Humble Hamlet
+		9 Blistering Boneyard
+	[CommonSlot(9)]
+		30 Avatar of Innovations
+		30 All-Blossom Memorial
+		30 Dragonglass Harp
+		30 Recon Drone
+		30 Robocamel
+		30 Scrap Buggy
+		30 Steamquiver Condor
+		30 Wayfarer's Adornments
+		30 Pathway of Lost Sultans
+		30 Clan Maldoon Healer
+		30 Shellback Storyteller
+		30 Telarine Zenitheer
+		30 Worldwise Ascetic
+		30 Graceful Yuroda
+		30 Kalro Gritbrawler
+		30 Prized Holsteins
+		30 Seek Far and Wide
+		30 Boundary Hallowblade
+		30 Ontarachie Envoy
+		30 Gold Pelt Responders
+		30 K-83 Sunshine Walker
+		30 Telenian Adornments
+		30 Journey of Self-Discovery
+		30 Prophecy of Peace
+		30 Tale of the Wayward Titan
+		30 Uprising of the Unremarkable
+		30 Oshiruko Whisperwalker
+		30 Patent Thief
+		30 Surviving Scavengers
+		30 Tempest Stormcaster
+		30 Ward-Lost Hermit
+		30 Alrathan Courier
+		30 Tutorial Boss
+		30 Frostclaw Shinobi
+		30 Sky-Torrent Navigator
+		30 Kellythross's Collector
+		30 Brume Trench-Thrasher
+		30 Clutch of the Void
+		30 Initiation of the Lafterii
+		30 Glimpse the Stars
+		30 One Person's Trash
+		30 Rune-Scribe's Revealing
+		30 Kofe Isolation
+		30 Shinrei's Ruse
+		30 Scaleblight Bokor
+		30 Kai'Shi's Spellgorgers
+		30 Nimunotian Shadow
+		30 Pilgrim of Bal
+		30 Undermurk Scavenger
+		30 Achet-Aton's Vizier
+		30 Harpooned Bubbledomer
+		30 Unshackled Revolutionary
+		30 Helicos-Drowned Captain
+		30 Kabuto-no-Oni
+		30 A Villain Revealed
+		30 Curse of Grasping Air
+		30 Enduring Plague
+		30 Gifts of the Abyss
+		30 On Eli's Orders
+		30 The Show Must Go On
+		30 Curse of Life's Cycles
+		30 Jolt Awake
+		30 Stormvolt Apprentice
+		30 Aspect of An'yama
+		30 Exultant Oni
+		30 Beragnian Blacksmith
+		30 Fellor War-Skald
+		30 Coral Plunderers
+		30 Avalanche Drummer
+		30 Fissure Bull
+		30 Pan's Lieutenant
+		30 Sihari's Groundblazer
+		30 Enter the Mosh Pit
+		30 Ire of Ancient Tomes
+		30 Marianne's Mercies
+		30 Roggar's Mastery
+		30 Profane Flames
+		30 Start the Fire
+		30 Crackle Across Kahembo
+		30 Harvesters Gone Haywire
+		30 Siamang Tale-Singer
+		30 Am'atambi's Fangs
+		30 Dunecrest Pariah
+		30 Ophorio Scavenger
+		30 Rei's Cultivator
+		30 Wildborn Marauder
+		30 Octopus Shiny-Grabber
+		30 Trumpeting Pathmaker
+		30 Children of Aelani
+		30 Silverhorn Battlemaster
+		30 Da'Lang's Preyscenter
+		30 Out of Fashion
+		30 Scaleblight's Quarry
+		30 Myrmidon's Plunder
+		30 Curse of Ceaseless Pursuit
+		30 Poacher's Bounty
+		30 Bahum's Absolution
+		30 Warchief of the Goriana
+		30 Seeker of Conto Sika
+		30 Forgotten Monument
+	[LandSlot(1)]
+		30 Arcane Oasis
+		30 Arid Causeway
+		30 Bloodsand Gulch
+		30 Blooming Needles
+		30 Crumbling Aqueduct
+		30 Desiccated Trail
+		30 Dunesea Expanse
+		30 Rot-Sand Ruins
+		30 Sundappled Scrub
+		30 Nestled Delta
+		9 Flourishing Lowlands
+		9 Raintouched Basin
+		9 Scoured Mesa
+		9 Silent Ridge
+		9 Windworn Spires
+		

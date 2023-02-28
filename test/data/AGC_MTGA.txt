@@ -1,0 +1,4634 @@
+[CustomCards]
+	[    {
+	        "name": "Forbidden Tutor",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/VMh0p7R/Forbidden-Tutor.png"
+	        }
+	    },
+	    {
+	        "name": "Backwoods-Heart Ancient",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/C6Z8nXj/Backwoods-Heart-Ancient.png"
+	        }
+	    },
+	    {
+	        "name": "Wrap in Darkness",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wSr0hjp/Wrap-in-Darkness.png"
+	        }
+	    },
+	    {
+	        "name": "Nexus Gate",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/KyyP2JR/Nexus-Gate.png"
+	        }
+	    },
+	    {
+	        "name": "Unlocking Time's Mystery",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1sB4Wj1/Unlocking-Times-Mystery.png"
+	        }
+	    },
+	    {
+	        "name": "Caller of Crypts",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Creature — Elf Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8M3fqpk/Caller-of-Crypts.png"
+	        }
+	    },
+	    {
+	        "name": "Bargain with Ryukami",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/C08kWXB/Bargain-with-Ryukami.png"
+	        }
+	    },
+	    {
+	        "name": "Paramnesia",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mGk3j0h/Paramnesia.png"
+	        }
+	    },
+	    {
+	        "name": "Sesilius, Hand of Atrocity",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Legendary Planeswalker — Sesilius ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/x1BFtCt/Sesilius-Hand-of-Atrocity.png"
+	        }
+	    },
+	    {
+	        "name": "Explore Paradise",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/F4nQ69j/Explore-Paradise.png"
+	        }
+	    },
+	    {
+	        "name": "Blood-Harvest Ancient",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gFcpVWm/Blood-Harvest-Ancient.png"
+	        }
+	    },
+	    {
+	        "name": "Ceaseless Lich",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Elf Zombie Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/FYjt0jQ/Ceaseless-Lich.png"
+	        }
+	    },
+	    {
+	        "name": "Heretic Hunter",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wyzpScQ/Heretic-Hunter.png"
+	        }
+	    },
+	    {
+	        "name": "Manifold Machinations",
+	        "rarity": "common",
+	        "mana_cost": "{B}{B}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4S0y2Zf/Manifold-Machinations.png"
+	        }
+	    },
+	    {
+	        "name": "Vikalden, Rogue Agent",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Legendary Planeswalker — Vikalden ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qmPQVCf/Vikalden-Rogue-Agent.png"
+	        }
+	    },
+	    {
+	        "name": "Beyond Death",
+	        "rarity": "common",
+	        "mana_cost": "{W/B}{W/B}{W/B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vY9tZ4w/Beyond-Death.png"
+	        }
+	    },
+	    {
+	        "name": "Bleak-Hole Ancient",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}{B}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/N1mdHxN/Bleak-Hole-Ancient.png"
+	        }
+	    },
+	    {
+	        "name": "Leyline Sculptor",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nCwMLZJ/Leyline-Sculptor.png"
+	        }
+	    },
+	    {
+	        "name": "Blade of Banishing",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Enchantment Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gyt5X2x/Blade-of-Banishing.png"
+	        }
+	    },
+	    {
+	        "name": "Temporal Gamble",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/h8XD3Zw/Temporal-Gamble.png"
+	        }
+	    },
+	    {
+	        "name": "Jack, Emissary of The Court",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{G}",
+	        "type": "Legendary Planeswalker — Jack ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XLS6GzD/Jack-Emissary-of-The-Court.png"
+	        }
+	    },
+	    {
+	        "name": "Koi Pond Meditations",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/DLVG99m/Koi-Pond-Meditations.png"
+	        }
+	    },
+	    {
+	        "name": "Spellslinger Adept",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Wk3FjBB/Spellslinger-Adept.png"
+	        }
+	    },
+	    {
+	        "name": "Inspiring Prince",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/KzTXKNk/Inspiring-Prince.png"
+	        }
+	    },
+	    {
+	        "name": "Yaruna, High Priestess",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Legendary Planeswalker — Yaruna ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RcPm22t/Yaruna-High-Priestess.png"
+	        }
+	    },
+	    {
+	        "name": "Infernal Recall",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WtXnPmr/Infernal-Recall.png"
+	        }
+	    },
+	    {
+	        "name": "Refracting Pattern",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Shapeshifter ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/y89Ns17/Refracting-Pattern.png"
+	        }
+	    },
+	    {
+	        "name": "Wrenn and Ten",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{G}",
+	        "type": "Legendary Planeswalker — Wrenn ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XbtKLZj/Wrenn-and-Ten.png"
+	        }
+	    },
+	    {
+	        "name": "Cosmic Collision",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/R2ZWQC3/Cosmic-Collision.png"
+	        }
+	    },
+	    {
+	        "name": "Massive Impact",
+	        "rarity": "common",
+	        "mana_cost": "{X}{G}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0qwbPWX/Massive-Impact.png"
+	        }
+	    },
+	    {
+	        "name": "Censor of Possibilities",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Dwhj0Pd/Censor-of-Possibilities.png"
+	        }
+	    },
+	    {
+	        "name": "Ryukami's Rage",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XFhcR2b/Ryukamis-Rage.png"
+	        }
+	    },
+	    {
+	        "name": "Ryukami's Wake",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/bgMw0DB/Ryukamis-Wake.png"
+	        }
+	    },
+	    {
+	        "name": "Elsewhere Gate",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Jzxb30g/Elsewhere-Gate.png"
+	        }
+	    },
+	    {
+	        "name": "Draconic Mastery",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Legendary Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XZVft7g/Draconic-Mastery.png"
+	        }
+	    },
+	    {
+	        "name": "Haunted Screechwing",
+	        "rarity": "common",
+	        "mana_cost": "{B}{B}",
+	        "type": "Creature — Bird Horror ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/P9WVQfm/Haunted-Screechwing.png"
+	        }
+	    },
+	    {
+	        "name": "Beckon Monsters",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tp0sZ8G/Beckon-Monsters.png"
+	        }
+	    },
+	    {
+	        "name": "Behold Divinity",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/2jnYL5q/Behold-Divinity.png"
+	        }
+	    },
+	    {
+	        "name": "Remake In My Image",
+	        "rarity": "common",
+	        "mana_cost": "{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GtRjHqs/Remake-In-My-Image.png"
+	        }
+	    },
+	    {
+	        "name": "Forgotten Insanity",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WDj4PT7/Forgotten-Insanity.png"
+	        }
+	    },
+	    {
+	        "name": "Deepwoods Prowler",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Cat Beast ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/n0f4d1N/Deepwoods-Prowler.png"
+	        }
+	    },
+	    {
+	        "name": "Shieldmage's Charm",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/TcjqMqF/Shieldmages-Charm.png"
+	        }
+	    },
+	    {
+	        "name": "Endless Possibilities",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/f0Pqmq4/Endless-Possibilities.png"
+	        }
+	    },
+	    {
+	        "name": "Find Answers",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ThrcBmJ/Find-Answers.png"
+	        }
+	    },
+	    {
+	        "name": "Plot",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/86bxqG8/Plot.png"
+	        }
+	    },
+	    {
+	        "name": "Tree of Life",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mGp9SzR/Tree-of-Life.png"
+	        }
+	    },
+	    {
+	        "name": "Out-of-Body Experience",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/X3fwwMr/Out-of-Body-Experience.png"
+	        }
+	    },
+	    {
+	        "name": "Evolving Grove",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4ZF5Mt9/Evolving-Grove.png"
+	        }
+	    },
+	    {
+	        "name": "Corrupted Teachings",
+	        "rarity": "common",
+	        "mana_cost": "{X}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mBp9t49/Corrupted-Teachings.png"
+	        }
+	    },
+	    {
+	        "name": "Devour Reality",
+	        "rarity": "common",
+	        "mana_cost": "{B}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7VdSKrc/Devour-Reality.png"
+	        }
+	    },
+	    {
+	        "name": "Aeterna, Venerated Vigilante",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}{W}",
+	        "type": "Legendary Planeswalker — Aeterna ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/M683JHH/Aeterna-Venerated-Vigilante.png"
+	        }
+	    },
+	    {
+	        "name": "Prismatic Beacon",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/72j7NKh/Prismatic-Beacon.png"
+	        }
+	    },
+	    {
+	        "name": "Profane Bargain",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5LV59Wp/Profane-Bargain.png"
+	        }
+	    },
+	    {
+	        "name": "All In Bloom",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mNyTDHK/All-In-Bloom.png"
+	        }
+	    },
+	    {
+	        "name": "Crypt Terror",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Creature — Zombie ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gvbFHmV/Crypt-Terror.png"
+	        }
+	    },
+	    {
+	        "name": "Mental Predators",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/bmZxfk9/Mental-Predators.png"
+	        }
+	    },
+	    {
+	        "name": "Lost in the Light",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/pZy9GQW/Lost-in-the-Light.png"
+	        }
+	    },
+	    {
+	        "name": "Welcome to Gildyn",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xfzfFYb/Welcome-to-Gildyn.png"
+	        }
+	    },
+	    {
+	        "name": "Evolutionary Admiration",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hR4qQkV/Evolutionary-Admiration.png"
+	        }
+	    },
+	    {
+	        "name": "Murderous Reflection",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jgpgts9/Murderous-Reflection.png"
+	        }
+	    },
+	    {
+	        "name": "Noble Unicorn",
+	        "rarity": "common",
+	        "mana_cost": "{W}{W}",
+	        "type": "Creature — Unicorn ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5GKZdMr/Noble-Unicorn.png"
+	        }
+	    },
+	    {
+	        "name": "Bright-Hollow Ancient",
+	        "rarity": "common",
+	        "mana_cost": "{4}{W}{W}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5swxjKZ/Bright-Hollow-Ancient.png"
+	        }
+	    },
+	    {
+	        "name": "Brewing-Hurricane Ancient",
+	        "rarity": "common",
+	        "mana_cost": "{4}{U}{U}",
+	        "type": "Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QMqMZ8d/Brewing-Hurricane-Ancient.png"
+	        }
+	    },
+	    {
+	        "name": "Quell the Storm",
+	        "rarity": "common",
+	        "mana_cost": "{X}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xXThm1v/Quell-the-Storm.png"
+	        }
+	    },
+	    {
+	        "name": "Champion of Redgrove",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/F541Kt5/Champion-of-Redgrove.png"
+	        }
+	    },
+	    {
+	        "name": "Gloryhunter Dragon",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Creature — Dragon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Vjhg1n6/Gloryhunter-Dragon.png"
+	        }
+	    },
+	    {
+	        "name": "Surfacewalker Lookout",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Elf Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JKjfWht/Surfacewalker-Lookout.png"
+	        }
+	    },
+	    {
+	        "name": "Vengeant Champion",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Berserker ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8XNvBzf/Vengeant-Champion.png"
+	        }
+	    },
+	    {
+	        "name": "Veteran Combatant",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/rwvJQWH/Veteran-Combatant.png"
+	        }
+	    },
+	    {
+	        "name": "Valiant Vanguard",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/SwPDFhP/Valiant-Vanguard.png"
+	        }
+	    },
+	    {
+	        "name": "Resolute Bodyguard",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6XK0z1W/Resolute-Bodyguard.png"
+	        }
+	    },
+	    {
+	        "name": "Repentant Conqueror",
+	        "rarity": "common",
+	        "mana_cost": "{W}{B}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/W3dWWGH/Repentant-Conqueror.png"
+	        }
+	    },
+	    {
+	        "name": "Wrath of the Tides",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QrFZ62Q/Wrath-of-the-Tides.png"
+	        }
+	    },
+	    {
+	        "name": "Disrupting Songstress",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/By0QW28/Disrupting-Songstress.png"
+	        }
+	    },
+	    {
+	        "name": "Overbearing Sentinel",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Lnn0s8K/Overbearing-Sentinel.png"
+	        }
+	    },
+	    {
+	        "name": "Reaper's Visit",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Lnd8tqT/Reapers-Visit.png"
+	        }
+	    },
+	    {
+	        "name": "Lava Contract",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/D8S6D7K/Lava-Contract.png"
+	        }
+	    },
+	    {
+	        "name": "Enchroaching Darkness",
+	        "rarity": "common",
+	        "mana_cost": "{B}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gyzDWQ2/Enchroaching-Darkness.png"
+	        }
+	    },
+	    {
+	        "name": "Meletis Phalanx",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cYSqRtw/Meletis-Phalanx.png"
+	        }
+	    },
+	    {
+	        "name": "The Gilded King",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}{W}",
+	        "type": "Legendary Enchantment Creature — God ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NjbxPs9/The-Gilded-King.png"
+	        }
+	    },
+	    {
+	        "name": "Wielder of New Growth",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Elf Shaman ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5sCSJcj/Wielder-of-New-Growth.png"
+	        }
+	    },
+	    {
+	        "name": "Aetherite Mine",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Q6zBKMV/Aetherite-Mine.png"
+	        }
+	    },
+	    {
+	        "name": "Deepwoods Whisperer",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Human Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5xZnVmm/Deepwoods-Whisperer.png"
+	        }
+	    },
+	    {
+	        "name": "Destabilize",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qd6pH9g/Destabilize.png"
+	        }
+	    },
+	    {
+	        "name": "Unstoppable Butcher",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Zombie Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xG41L3f/Unstoppable-Butcher.png"
+	        }
+	    },
+	    {
+	        "name": "Death's Judgement",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/y4HJ7Wh/Deaths-Judgement.png"
+	        }
+	    },
+	    {
+	        "name": "The Lone Soldier",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{R}",
+	        "type": "Legendary Creature — Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mJqH7fJ/The-Lone-Soldier.png"
+	        }
+	    },
+	    {
+	        "name": "Blazewolf",
+	        "rarity": "common",
+	        "mana_cost": "{R}{R}",
+	        "type": "Creature — Elemental Werewolf ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vJrjrF7/Blazewolf.png"
+	        }
+	    },
+	    {
+	        "name": "Rob Blind",
+	        "rarity": "common",
+	        "mana_cost": "{X}{U}{U}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/HgCddvf/Rob-Blind.png"
+	        }
+	    },
+	    {
+	        "name": "Burning Breath",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Wcch8Fj/Burning-Breath.png"
+	        }
+	    },
+	    {
+	        "name": "Paladin of Light's Grace",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RYf4DfP/Paladin-of-Lights-Grace.png"
+	        }
+	    },
+	    {
+	        "name": "Draconic Crusader",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qd5wcsP/Draconic-Crusader.png"
+	        }
+	    },
+	    {
+	        "name": "Isabelle, Crowned in Glory",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Legendary Creature — Human Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Tvsvs48/Isabelle-Crowned-in-Glory.png"
+	        }
+	    },
+	    {
+	        "name": "Kati, Seasoned Instructor",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Legendary Planeswalker — Kati ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mJh2Zry/Kati-Seasoned-Instructor.png"
+	        }
+	    },
+	    {
+	        "name": "Order the Troops",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JHkZn4D/Order-the-Troops.png"
+	        }
+	    },
+	    {
+	        "name": "Undeath's Crown",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JmkZVGx/Undeaths-Crown.png"
+	        }
+	    },
+	    {
+	        "name": "Reclaimed by Nature",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/W3FpGht/Reclaimed-by-Nature.png"
+	        }
+	    },
+	    {
+	        "name": "Elthen Forcemage",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/VVyqDxm/Elthen-Forcemage.png"
+	        }
+	    },
+	    {
+	        "name": "Preeminent Lieutenant",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vPrSmWP/Preeminent-Lieutenant.png"
+	        }
+	    },
+	    {
+	        "name": "Octavia, Golden Heir",
+	        "rarity": "common",
+	        "mana_cost": "{W}{W}",
+	        "type": "Legendary Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cFKhyBB/Octavia-Golden-Heir.png"
+	        }
+	    },
+	    {
+	        "name": "Mother of Light",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Cleric ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/yfwS5qR/Mother-of-Light.png"
+	        }
+	    },
+	    {
+	        "name": "Chartivore",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Creature — Lhurgoyf ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9qk0t5x/Chartivore.png"
+	        }
+	    },
+	    {
+	        "name": "Order the Earth",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GPQnfwj/Order-the-Earth.png"
+	        }
+	    },
+	    {
+	        "name": "Running with Dragons",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jGcnhWP/Running-with-Dragons.png"
+	        }
+	    },
+	    {
+	        "name": "No More",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/V3VD8vk/No-More.png"
+	        }
+	    },
+	    {
+	        "name": "Galvanized Genius",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qJjZxY8/Galvanized-Genius.png"
+	        }
+	    },
+	    {
+	        "name": "Fracture",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0MWsFpR/Fracture.png"
+	        }
+	    },
+	    {
+	        "name": "Galaxy's Will",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/v18gTj0/Galaxys-Will.png"
+	        }
+	    },
+	    {
+	        "name": "Burn the World",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Yp3f28s/Burn-the-World.png"
+	        }
+	    },
+	    {
+	        "name": "Anathema",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/t32KNr8/Anathema.png"
+	        }
+	    },
+	    {
+	        "name": "Fiendish Advocacy",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/rsdp28h/Fiendish-Advocacy.png"
+	        }
+	    },
+	    {
+	        "name": "Order the Dead",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wgRV4Ry/Order-the-Dead.png"
+	        }
+	    },
+	    {
+	        "name": "Preacher of Spring",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xj6BW3q/Preacher-of-Spring.png"
+	        }
+	    },
+	    {
+	        "name": "Order the Seas",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/YZZ6Lgz/Order-the-Seas.png"
+	        }
+	    },
+	    {
+	        "name": "Imagine",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nnD7zM0/Imagine.png"
+	        }
+	    },
+	    {
+	        "name": "Molten Stampede Leader",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Elemental Horse ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/zQGYS7x/Molten-Stampede-Leader.png"
+	        }
+	    },
+	    {
+	        "name": "One of the Crowd",
+	        "rarity": "common",
+	        "mana_cost": "{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/r6GM8Lp/One-of-the-Crowd.png"
+	        }
+	    },
+	    {
+	        "name": "Acclaimed Duelist",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QNBBybP/Acclaimed-Duelist.png"
+	        }
+	    },
+	    {
+	        "name": "Pigstrider Cavalier",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/crjTXrp/Pigstrider-Cavalier.png"
+	        }
+	    },
+	    {
+	        "name": "Forget Me Lots",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8sny50N/Forget-Me-Lots.png"
+	        }
+	    },
+	    {
+	        "name": "Tennen General",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PxVwr87/Tennen-General.png"
+	        }
+	    },
+	    {
+	        "name": "Aeonic Conduit",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sVJ5XyV/Aeonic-Conduit.png"
+	        }
+	    },
+	    {
+	        "name": "Ardent Bloodcaster",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/z5SzgM6/Ardent-Bloodcaster.png"
+	        }
+	    },
+	    {
+	        "name": "Everspark",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0tM4xF7/Everspark.png"
+	        }
+	    },
+	    {
+	        "name": "Memory's Ruse",
+	        "rarity": "common",
+	        "mana_cost": "{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/HVwNb7h/Memorys-Ruse.png"
+	        }
+	    },
+	    {
+	        "name": "Farrealm Huntsman",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Human Archer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tJnTs5K/Farrealm-Huntsman.png"
+	        }
+	    },
+	    {
+	        "name": "Lotus Dryad",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Dryad Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZNmvhYT/Lotus-Dryad.png"
+	        }
+	    },
+	    {
+	        "name": "Unstable Entity",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cLDgPnY/Unstable-Entity.png"
+	        }
+	    },
+	    {
+	        "name": "Tolarian Renegade",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Elf Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/N3wyX2t/Tolarian-Renegade.png"
+	        }
+	    },
+	    {
+	        "name": "Iko, the Lost",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{B}",
+	        "type": "Legendary Planeswalker — Iko ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xj0PfdQ/Iko-the-Lost.png"
+	        }
+	    },
+	    {
+	        "name": "Shadow Dancing",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Tqscd6T/Shadow-Dancing.png"
+	        }
+	    },
+	    {
+	        "name": "Unrivaled Slayer",
+	        "rarity": "common",
+	        "mana_cost": "{R}{R}",
+	        "type": "Creature — Werewolf ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RT7qVgW/Unrivaled-Slayer.png"
+	        }
+	    },
+	    {
+	        "name": "Snapback Arcanist",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/2jX5jwJ/Snapback-Arcanist.png"
+	        }
+	    },
+	    {
+	        "name": "Giant of Greatwoods",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Giant ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/g69ng9z/Giant-of-Greatwoods.png"
+	        }
+	    },
+	    {
+	        "name": "The Planar Wanderer",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{U}",
+	        "type": "Legendary Planeswalker — Emeria ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qBWHkd9/The-Planar-Wanderer.png"
+	        }
+	    },
+	    {
+	        "name": "Dormant Guardian",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/x5Qv0f8/Dormant-Guardian.png"
+	        }
+	    },
+	    {
+	        "name": "Forgotten Cube",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1byBHKD/Forgotten-Cube.png"
+	        }
+	    },
+	    {
+	        "name": "Unstable Powercell",
+	        "rarity": "common",
+	        "mana_cost": "{1}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/HHSNqPY/Unstable-Powercell.png"
+	        }
+	    },
+	    {
+	        "name": "Golden Meadows",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9y7mPhs/Golden-Meadows.png"
+	        }
+	    },
+	    {
+	        "name": "Out of Order",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/zxFvFVC/Out-of-Order.png"
+	        }
+	    },
+	    {
+	        "name": "Vylinia, Curator of Wonders",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Legendary Creature — Angel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wYWxqX9/Vylinia-Curator-of-Wonders.png"
+	        }
+	    },
+	    {
+	        "name": "Phantasmal Stalker",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Spirit Assassin ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/fCC2jPj/Phantasmal-Stalker.png"
+	        }
+	    },
+	    {
+	        "name": "Worldfire Sphere",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/F5pCNR0/Worldfire-Sphere.png"
+	        }
+	    },
+	    {
+	        "name": "Unleash the Monstrosity",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8K83gdd/Unleash-the-Monstrosity.png"
+	        }
+	    },
+	    {
+	        "name": "Avela, Rebellious Thief",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Legendary Planeswalker — Avela ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0QbmVc3/Avela-Rebellious-Thief.png"
+	        }
+	    },
+	    {
+	        "name": "Unlife Vial",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Fg18Yww/Unlife-Vial.png"
+	        }
+	    },
+	    {
+	        "name": "Peace In Our Time",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Legendary Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5TzppjK/Peace-In-Our-Time.png"
+	        }
+	    },
+	    {
+	        "name": "Command Whimsical Dreams",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Instant — Revelation ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cJS657G/Command-Whimsical-Dreams.png"
+	        }
+	    },
+	    {
+	        "name": "Grand Conservator",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gtSYcP0/Grand-Conservator.png"
+	        }
+	    },
+	    {
+	        "name": "Tender of the Dark Grove",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Human Shaman ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hRDk4P0/Tender-of-the-Dark-Grove.png"
+	        }
+	    },
+	    {
+	        "name": "Broken Temple",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5BVdfJd/Broken-Temple.png"
+	        }
+	    },
+	    {
+	        "name": "Into the Woods",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Ytx5W6L/Into-the-Woods.png"
+	        }
+	    },
+	    {
+	        "name": "Unidentified Relic",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/TKBFs8p/Unidentified-Relic.png"
+	        }
+	    },
+	    {
+	        "name": "Orb of Insight",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GW3h08v/Orb-of-Insight.png"
+	        }
+	    },
+	    {
+	        "name": "The Sphere",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Legendary Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1YVYvbr/The-Sphere.png"
+	        }
+	    },
+	    {
+	        "name": "Harvest Aligner",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0DyWNZs/Harvest-Aligner.png"
+	        }
+	    },
+	    {
+	        "name": "Prophetic Sculpture",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/zP7JHZg/Prophetic-Sculpture.png"
+	        }
+	    },
+	    {
+	        "name": "Fragment of Emptiness",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6X46Z5c/Fragment-of-Emptiness.png"
+	        }
+	    },
+	    {
+	        "name": "Fragment of Rage",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Jcybpxh/Fragment-of-Rage.png"
+	        }
+	    },
+	    {
+	        "name": "Fragment of Hope",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/64jrHQS/Fragment-of-Hope.png"
+	        }
+	    },
+	    {
+	        "name": "Fragment of Growth",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gVcQPrS/Fragment-of-Growth.png"
+	        }
+	    },
+	    {
+	        "name": "Fragment of Curiosity",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XWsXHL4/Fragment-of-Curiosity.png"
+	        }
+	    },
+	    {
+	        "name": "Forbidden Scroll",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sQpTd9p/Forbidden-Scroll.png"
+	        }
+	    },
+	    {
+	        "name": "Unaltered Fragment",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Xzb1PdF/Unaltered-Fragment.png"
+	        }
+	    },
+	    {
+	        "name": "Misty Rainforest",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/bW2H6VG/Misty-Rainforest.png"
+	        }
+	    },
+	    {
+	        "name": "Arid Mesa",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/30vz0F2/Arid-Mesa.png"
+	        }
+	    },
+	    {
+	        "name": "Bloodstained Mire",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BG9y8Vt/Bloodstained-Mire.png"
+	        }
+	    },
+	    {
+	        "name": "Marsh Flats",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mDR0mNK/Marsh-Flats.png"
+	        }
+	    },
+	    {
+	        "name": "Polluted Delta",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Xk7R13t/Polluted-Delta.png"
+	        }
+	    },
+	    {
+	        "name": "Verdant Catacombs",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NrVLKkX/Verdant-Catacombs.png"
+	        }
+	    },
+	    {
+	        "name": "Scalding Tarn",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/KrjkyGh/Scalding-Tarn.png"
+	        }
+	    },
+	    {
+	        "name": "Windswept Heath",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sswntFs/Windswept-Heath.png"
+	        }
+	    },
+	    {
+	        "name": "Wooded Foothills",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wLJ2Vk5/Wooded-Foothills.png"
+	        }
+	    },
+	    {
+	        "name": "Flooded Strand",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GVtTdv4/Flooded-Strand.png"
+	        }
+	    },
+	    {
+	        "name": "Volcanic Island",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Island Mountain ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gMGFvsN/Volcanic-Island.png"
+	        }
+	    },
+	    {
+	        "name": "Underground Sea",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Island Swamp ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6BZRxrV/Underground-Sea.png"
+	        }
+	    },
+	    {
+	        "name": "Tundra",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Plains Island ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jrm0ZH0/Tundra.png"
+	        }
+	    },
+	    {
+	        "name": "Tropical Island",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Forest Island ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/C5tkSX6/Tropical-Island.png"
+	        }
+	    },
+	    {
+	        "name": "Bayou",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp Forest ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gD3PZjf/Bayou.png"
+	        }
+	    },
+	    {
+	        "name": "Taiga",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Mountain Forest ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PZXBg0t/Taiga.png"
+	        }
+	    },
+	    {
+	        "name": "Savannah",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Forest Plains ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1sZJCTV/Savannah.png"
+	        }
+	    },
+	    {
+	        "name": "Scrubland",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Plains Swamp ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nL9cNgY/Scrubland.png"
+	        }
+	    },
+	    {
+	        "name": "Badlands",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp Mountain ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/2yBPpsb/Badlands.png"
+	        }
+	    },
+	    {
+	        "name": "Plateau",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Mountain Plains ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gJTN5Y9/Plateau.png"
+	        }
+	    },
+	    {
+	        "name": "Chosen by Death",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Y2HKx3r/Chosen-by-Death.png"
+	        }
+	    },
+	    {
+	        "name": "Dreambubble Witch",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wJDRKJg/Dreambubble-Witch.png"
+	        }
+	    },
+	    {
+	        "name": "Commanding Empress",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}{U}",
+	        "type": "Creature — Human Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nsnPBxy/Commanding-Empress.png"
+	        }
+	    },
+	    {
+	        "name": "One with Flames",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/kHJ77wS/One-with-Flames.png"
+	        }
+	    },
+	    {
+	        "name": "Forsake the Past",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/L9F57s0/Forsake-the-Past.png"
+	        }
+	    },
+	    {
+	        "name": "Raze Reality",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/k5wpWnV/Raze-Reality.png"
+	        }
+	    },
+	    {
+	        "name": "Scrapworks",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Y35CBqK/Scrapworks.png"
+	        }
+	    },
+	    {
+	        "name": "Chapel of the Wylds",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Legendary Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qmzPPsT/Chapel-of-the-Wylds.png"
+	        }
+	    },
+	    {
+	        "name": "Eroded Tower",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wWLSfY9/Eroded-Tower.png"
+	        }
+	    },
+	    {
+	        "name": "Dragonbone Valley",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/LPPGP05/Dragonbone-Valley.png"
+	        }
+	    },
+	    {
+	        "name": "The Omnivorous Engine",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Legendary Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/CQ2SFpV/The-Omnivorous-Engine.png"
+	        }
+	    },
+	    {
+	        "name": "Starfield Lotuses",
+	        "rarity": "common",
+	        "mana_cost": "{0}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/85MkgxV/Starfield-Lotuses.png"
+	        }
+	    },
+	    {
+	        "name": "Cursed Woods",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp Forest ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/dbTT3mh/Cursed-Woods.png"
+	        }
+	    },
+	    {
+	        "name": "Titanic Terrain",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Mountain Forest ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/99m11gH/Titanic-Terrain.png"
+	        }
+	    },
+	    {
+	        "name": "Tranquil Spring",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Forest Island ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/t8xLzbq/Tranquil-Spring.png"
+	        }
+	    },
+	    {
+	        "name": "Forbidden Shrine",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp Mountain ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/CJ07z47/Forbidden-Shrine.png"
+	        }
+	    },
+	    {
+	        "name": "Scorched Upland",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Mountain Plains ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6npQqcv/Scorched-Upland.png"
+	        }
+	    },
+	    {
+	        "name": "Hazy Bog",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Plains Swamp ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/HdtvbmN/Hazy-Bog.png"
+	        }
+	    },
+	    {
+	        "name": "Wandering River",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Plains Island ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gVXMjB5/Wandering-River.png"
+	        }
+	    },
+	    {
+	        "name": "Serene Grove",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Forest Plains ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/5Tjp1rS/Serene-Grove.png"
+	        }
+	    },
+	    {
+	        "name": "Magmatic Coral",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Island Mountain ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/z2h7fbw/Magmatic-Coral.png"
+	        }
+	    },
+	    {
+	        "name": "Desolate Altar",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Island Swamp ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/q5J0vv7/Desolate-Altar.png"
+	        }
+	    },
+	    {
+	        "name": "Runic Reflections",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/z6P0VVF/Runic-Reflections.png"
+	        }
+	    },
+	    {
+	        "name": "Twisting Way",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qBSMq6Q/Twisting-Way.png"
+	        }
+	    },
+	    {
+	        "name": "Creative Construction",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XLsLh6c/Creative-Construction.png"
+	        }
+	    },
+	    {
+	        "name": "By the Sea",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/yNnp3Dg/By-the-Sea.png"
+	        }
+	    },
+	    {
+	        "name": "Otterslide",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/92hLLBt/Otterslide.png"
+	        }
+	    },
+	    {
+	        "name": "The Lost City",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Legendary Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NNP6Qxk/The-Lost-City.png"
+	        }
+	    },
+	    {
+	        "name": "Hundred Years of Glory",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/f1vNKBS/Hundred-Years-of-Glory.png"
+	        }
+	    },
+	    {
+	        "name": "Stand Against Evil",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/3BmnSWP/Stand-Against-Evil.png"
+	        }
+	    },
+	    {
+	        "name": "Violent Offering",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XjVT07M/Violent-Offering.png"
+	        }
+	    },
+	    {
+	        "name": "Increasing Dedication",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/3vbZgWp/Increasing-Dedication.png"
+	        }
+	    },
+	    {
+	        "name": "Thus The Heroes Fall",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jfd1tR5/Thus-The-Heroes-Fall.png"
+	        }
+	    },
+	    {
+	        "name": "Lost in Dream",
+	        "rarity": "common",
+	        "mana_cost": "{U}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Jc7QWzR/Lost-in-Dream.png"
+	        }
+	    },
+	    {
+	        "name": "Spirit of Secrets",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WgzvrR5/Spirit-of-Secrets.png"
+	        }
+	    },
+	    {
+	        "name": "Rhystic Haunting",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JCRPtgb/Rhystic-Haunting.png"
+	        }
+	    },
+	    {
+	        "name": "Ambush Raider",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Elf Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hdBFSZq/Ambush-Raider.png"
+	        }
+	    },
+	    {
+	        "name": "Banish",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/SwDdHpb/Banish.png"
+	        }
+	    },
+	    {
+	        "name": "Magmatic Entity",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PDm6YFF/Magmatic-Entity.png"
+	        }
+	    },
+	    {
+	        "name": "Temporal Jaunter",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{U}",
+	        "type": "Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/LvDHNVW/Temporal-Jaunter.png"
+	        }
+	    },
+	    {
+	        "name": "Mayhem's Will",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gFZ4NF3/Mayhems-Will.png"
+	        }
+	    },
+	    {
+	        "name": "Serenity Beckons",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/YfKChj6/Serenity-Beckons.png"
+	        }
+	    },
+	    {
+	        "name": "Crumble to Ashes",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1zbxypM/Crumble-to-Ashes.png"
+	        }
+	    },
+	    {
+	        "name": "Prismatic Vista",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/DfdSVQ7/Prismatic-Vista.png"
+	        }
+	    },
+	    {
+	        "name": "Conjuration",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6mgdpvB/Conjuration.png"
+	        }
+	    },
+	    {
+	        "name": "Tranquil Mystic",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Human Shaman ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/dfK4jrV/Tranquil-Mystic.png"
+	        }
+	    },
+	    {
+	        "name": "Archvillain's Ploy",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7yjDtkB/Archvillains-Ploy.png"
+	        }
+	    },
+	    {
+	        "name": "Break Reality",
+	        "rarity": "common",
+	        "mana_cost": "{5}{U}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Ry3S4Hk/Break-Reality.png"
+	        }
+	    },
+	    {
+	        "name": "Seal Beyond the Veil",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/pjCY0r5/Seal-Beyond-the-Veil.png"
+	        }
+	    },
+	    {
+	        "name": "Hellraiser",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Devil ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/SN4YmKD/Hellraiser.png"
+	        }
+	    },
+	    {
+	        "name": "Tyrant Wurm",
+	        "rarity": "common",
+	        "mana_cost": "{6}{G}{G}",
+	        "type": "Creature — Wurm ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NNrdY0p/Tyrant-Wurm.png"
+	        }
+	    },
+	    {
+	        "name": "Heaven's Decree",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xJMhY5m/Heavens-Decree.png"
+	        }
+	    },
+	    {
+	        "name": "Fifth Layer Prince",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Creature — Demon Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Nsf835f/Fifth-Layer-Prince.png"
+	        }
+	    },
+	    {
+	        "name": "Capture the Glow",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/zhfHkft/Capture-the-Glow.png"
+	        }
+	    },
+	    {
+	        "name": "Uyen of the Burning Way",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Legendary Creature — Elf Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/TvxTm1p/Uyen-of-the-Burning-Way.png"
+	        }
+	    },
+	    {
+	        "name": "Greenwielder Druid",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Elf Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BT1sBpF/Greenwielder-Druid.png"
+	        }
+	    },
+	    {
+	        "name": "Pale-Court Provocateur",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Creature — Vampire ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/FgBJMr2/Pale-Court-Provocateur.png"
+	        }
+	    },
+	    {
+	        "name": "Artisan of Blades",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WgXM9Fv/Artisan-of-Blades.png"
+	        }
+	    },
+	    {
+	        "name": "Order the Wilds",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wwzyB2q/Order-the-Wilds.png"
+	        }
+	    },
+	    {
+	        "name": "Nylea's Favored",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature — Hydra ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BnmV8MM/Nyleas-Favored.png"
+	        }
+	    },
+	    {
+	        "name": "Emissary of Undoing",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Z1Lb8CK/Emissary-of-Undoing.png"
+	        }
+	    },
+	    {
+	        "name": "Kheru Proudborn",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Creature — Naga Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/v1ShFLv/Kheru-Proudborn.png"
+	        }
+	    },
+	    {
+	        "name": "Crumbling Capital",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/W3tQgqH/Crumbling-Capital.png"
+	        }
+	    },
+	    {
+	        "name": "Revengevine",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature — Plant ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/DWvxRwj/Revengevine.png"
+	        }
+	    },
+	    {
+	        "name": "Musician of the Glade",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Creature — Human Shaman ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mHSg8Bd/Musician-of-the-Glade.png"
+	        }
+	    },
+	    {
+	        "name": "Impulsive Adventurer",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Human Berserker ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/MPv365M/Impulsive-Adventurer.png"
+	        }
+	    },
+	    {
+	        "name": "Old God's Presence",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/VMyXJNn/Old-Gods-Presence.png"
+	        }
+	    },
+	    {
+	        "name": "Call the Apex",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/M9rw4hq/Call-the-Apex.png"
+	        }
+	    },
+	    {
+	        "name": "Unending Evolution",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qpmCh0w/Unending-Evolution.png"
+	        }
+	    },
+	    {
+	        "name": "Dragon Hoardkeeper",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Creature — Dragon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZSFwV3T/Dragon-Hoardkeeper.png"
+	        }
+	    },
+	    {
+	        "name": "Seraph of Astronomy",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Creature — Angel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/DQmLnWV/Seraph-of-Astronomy.png"
+	        }
+	    },
+	    {
+	        "name": "Changing Grove",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NC9sB7j/Changing-Grove.png"
+	        }
+	    },
+	    {
+	        "name": "Farrealm Explorer",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/D5gVfdL/Farrealm-Explorer.png"
+	        }
+	    },
+	    {
+	        "name": "Poisoner of Dreams",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BjLYTmL/Poisoner-of-Dreams.png"
+	        }
+	    },
+	    {
+	        "name": "Daydreaming",
+	        "rarity": "common",
+	        "mana_cost": "{X}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9W7gGG6/Daydreaming.png"
+	        }
+	    },
+	    {
+	        "name": "Caller of Souls",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Zombie Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tpk5ytb/Caller-of-Souls.png"
+	        }
+	    },
+	    {
+	        "name": "Rose Court Oathkeeper",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Vampire Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/N2NDfGV/Rose-Court-Oathkeeper.png"
+	        }
+	    },
+	    {
+	        "name": "Spark Servant",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Svg7V6m/Spark-Servant.png"
+	        }
+	    },
+	    {
+	        "name": "Consulate Censor",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact Creature — Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/r5RvMnL/Consulate-Censor.png"
+	        }
+	    },
+	    {
+	        "name": "Neuropath Psiweaver",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Artifact Creature — Vedalken ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6wJTKc0/Neuropath-Psiweaver.png"
+	        }
+	    },
+	    {
+	        "name": "Replicant Formsculptor",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Artifact Creature — Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8zJkNdD/Replicant-Formsculptor.png"
+	        }
+	    },
+	    {
+	        "name": "Clickbug Hunter",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Artifact Creature — Construct ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sqCrcQJ/Clickbug-Hunter.png"
+	        }
+	    },
+	    {
+	        "name": "Vorpal Titan",
+	        "rarity": "common",
+	        "mana_cost": "{8}",
+	        "type": "Artifact Creature — Golem ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/y4tLDjf/Vorpal-Titan.png"
+	        }
+	    },
+	    {
+	        "name": "Titanic Crasher",
+	        "rarity": "common",
+	        "mana_cost": "{9}",
+	        "type": "Artifact Creature — Golem ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/x3Lgk8c/Titanic-Crasher.png"
+	        }
+	    },
+	    {
+	        "name": "Avenge",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mz8R2gf/Avenge.png"
+	        }
+	    },
+	    {
+	        "name": "Chromatic Torch",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WBTW9v0/Chromatic-Torch.png"
+	        }
+	    },
+	    {
+	        "name": "Spiteful Wargear",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/W2XJ0Pw/Spiteful-Wargear.png"
+	        }
+	    },
+	    {
+	        "name": "Demand Unity",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Sd3qtvB/Demand-Unity.png"
+	        }
+	    },
+	    {
+	        "name": "Rishadan Amulet",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7bWZHZp/Rishadan-Amulet.png"
+	        }
+	    },
+	    {
+	        "name": "Astrarium",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/N7wM5cy/Astrarium.png"
+	        }
+	    },
+	    {
+	        "name": "Veteran's Gear",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/zmWHFPx/Veterans-Gear.png"
+	        }
+	    },
+	    {
+	        "name": "Regalia of Speed and Focus",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QD1HvKr/Regalia-of-Speed-and-Focus.png"
+	        }
+	    },
+	    {
+	        "name": "Lightseeker",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Lr7J5W3/Lightseeker.png"
+	        }
+	    },
+	    {
+	        "name": "Tender of Souls",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Angel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WGPQvzQ/Tender-of-Souls.png"
+	        }
+	    },
+	    {
+	        "name": "Geist of Unbecoming",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}{W}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/M2t8FSH/Geist-of-Unbecoming.png"
+	        }
+	    },
+	    {
+	        "name": "Conquering Commander",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0KPrhbs/Conquering-Commander.png"
+	        }
+	    },
+	    {
+	        "name": "Hesperian of Spring",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Dryad ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/G9gqpKp/Hesperian-of-Spring.png"
+	        }
+	    },
+	    {
+	        "name": "Golgari Rotmage",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Creature — Zombie Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/k6gTPMd/Golgari-Rotmage.png"
+	        }
+	    },
+	    {
+	        "name": "Scavenger Queen",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Elf Wizard Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/prktGdf/Scavenger-Queen.png"
+	        }
+	    },
+	    {
+	        "name": "Wurm Caller",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Bz7KqvJ/Wurm-Caller.png"
+	        }
+	    },
+	    {
+	        "name": "Champion of the Fens",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/b1bR6qK/Champion-of-the-Fens.png"
+	        }
+	    },
+	    {
+	        "name": "Vengeful Reaper",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{B}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tZZKDPh/Vengeful-Reaper.png"
+	        }
+	    },
+	    {
+	        "name": "Fourth Layer General",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Creature — Devil ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Ns99z3k/Fourth-Layer-General.png"
+	        }
+	    },
+	    {
+	        "name": "Tutor of the Dead",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Creature — Zombie Advisor ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tP8639F/Tutor-of-the-Dead.png"
+	        }
+	    },
+	    {
+	        "name": "Blighted Survivor",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Creature — Zombie ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/phC7887/Blighted-Survivor.png"
+	        }
+	    },
+	    {
+	        "name": "Grafcaster Mage",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JzpSRxG/Grafcaster-Mage.png"
+	        }
+	    },
+	    {
+	        "name": "Custodians of Dead Planes",
+	        "rarity": "common",
+	        "mana_cost": "{5}{B}{B}{B}",
+	        "type": "Legendary Creature — Avatar ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/kSsXrn8/Custodians-of-Dead-Planes.png"
+	        }
+	    },
+	    {
+	        "name": "Ley Tracer",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4f3PZ1p/Ley-Tracer.png"
+	        }
+	    },
+	    {
+	        "name": "Linden's Valiant",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/MnGBR97/Lindens-Valiant.png"
+	        }
+	    },
+	    {
+	        "name": "Basel, Bloody Baron",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Legendary Creature — Human Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/C85rZxv/Basel-Bloody-Baron.png"
+	        }
+	    },
+	    {
+	        "name": "Valkyrie Groundbreaker",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Angel Berserker ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/px7FLLc/Valkyrie-Groundbreaker.png"
+	        }
+	    },
+	    {
+	        "name": "Speaker of the Trees",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9rCdk1n/Speaker-of-the-Trees.png"
+	        }
+	    },
+	    {
+	        "name": "Farrealm Cultivator",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PhQT4jf/Farrealm-Cultivator.png"
+	        }
+	    },
+	    {
+	        "name": "Painter of Reality",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Human Artist ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/q9DgCpf/Painter-of-Reality.png"
+	        }
+	    },
+	    {
+	        "name": "Frond Guardian",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RSQP6fj/Frond-Guardian.png"
+	        }
+	    },
+	    {
+	        "name": "Pureheart Mystic",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Cleric ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/V2hpTdR/Pureheart-Mystic.png"
+	        }
+	    },
+	    {
+	        "name": "Spindle Dancer",
+	        "rarity": "common",
+	        "mana_cost": "{W}",
+	        "type": "Creature — Human Advisor ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RCgT2X1/Spindle-Dancer.png"
+	        }
+	    },
+	    {
+	        "name": "Archon of Hope's Defiance",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Creature — Archon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/pdtrgRL/Archon-of-Hopes-Defiance.png"
+	        }
+	    },
+	    {
+	        "name": "Cyclone Archmage",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/LhcbX59/Cyclone-Archmage.png"
+	        }
+	    },
+	    {
+	        "name": "Hexwing Meditant",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Human Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xjVtDHz/Hexwing-Meditant.png"
+	        }
+	    },
+	    {
+	        "name": "Oracle of Winter",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Creature — Dragon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZWbmHsf/Oracle-of-Winter.png"
+	        }
+	    },
+	    {
+	        "name": "Curious Happenings",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/m46sdc9/Curious-Happenings.png"
+	        }
+	    },
+	    {
+	        "name": "Tabula Rasa",
+	        "rarity": "common",
+	        "mana_cost": "{X}{W}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/yS6RL23/Tabula-Rasa.png"
+	        }
+	    },
+	    {
+	        "name": "Push Back the Siege",
+	        "rarity": "common",
+	        "mana_cost": "{X}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0t1g0PR/Push-Back-the-Siege.png"
+	        }
+	    },
+	    {
+	        "name": "Consult the Dracosages",
+	        "rarity": "common",
+	        "mana_cost": "{X}{U}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vQQ124S/Consult-the-Dracosages.png"
+	        }
+	    },
+	    {
+	        "name": "Send Back",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/G5Ck6zk/Send-Back.png"
+	        }
+	    },
+	    {
+	        "name": "Astral Manipulation",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Enchantment — Aura ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/T1mRC5r/Astral-Manipulation.png"
+	        }
+	    },
+	    {
+	        "name": "Xepa, Artisan of Fury",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Legendary Planeswalker — Xepa ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/H2m9krQ/Xepa-Artisan-of-Fury.png"
+	        }
+	    },
+	    {
+	        "name": "Chandra's Retribution",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QDk7KXL/Chandras-Retribution.png"
+	        }
+	    },
+	    {
+	        "name": "The Academy of Innovation",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Legendary Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZdrjNXR/The-Academy-of-Innovation.png"
+	        }
+	    },
+	    {
+	        "name": "All In",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/rZfrP0Y/All-In.png"
+	        }
+	    },
+	    {
+	        "name": "Dream Big",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7WQ23Vz/Dream-Big.png"
+	        }
+	    },
+	    {
+	        "name": "Flamecloak Armor",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JdWBWFJ/Flamecloak-Armor.png"
+	        }
+	    },
+	    {
+	        "name": "Anya, Caller of Flames",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}{R}",
+	        "type": "Legendary Planeswalker — Anya ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/x2qRPvS/Anya-Caller-of-Flames.png"
+	        }
+	    },
+	    {
+	        "name": "Titan's Passing",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Sorcery — Revelation ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Bncsgcp/Titans-Passing.png"
+	        }
+	    },
+	    {
+	        "name": "The Great Migration",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8x8TpKL/The-Great-Migration.png"
+	        }
+	    },
+	    {
+	        "name": "Contemplate the Woods",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XFRLSkp/Contemplate-the-Woods.png"
+	        }
+	    },
+	    {
+	        "name": "Idyllia",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BgTWqBF/Idyllia.png"
+	        }
+	    },
+	    {
+	        "name": "Evergrowth",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/74NDfBT/Evergrowth.png"
+	        }
+	    },
+	    {
+	        "name": "Embodiment of Resilience",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}{G}",
+	        "type": "Creature — Elemental ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wwTJdjs/Embodiment-of-Resilience.png"
+	        }
+	    },
+	    {
+	        "name": "Alignment Array",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RQP5YYY/Alignment-Array.png"
+	        }
+	    },
+	    {
+	        "name": "Corrupter of Forms",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Artifact Creature — Horror ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PhnsjMf/Corrupter-of-Forms.png"
+	        }
+	    },
+	    {
+	        "name": "Cosmic Edge",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/pfM4dc7/Cosmic-Edge.png"
+	        }
+	    },
+	    {
+	        "name": "Assault Rhino",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}{B}",
+	        "type": "Creature — Zombie Rhino ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hVSR8kX/Assault-Rhino.png"
+	        }
+	    },
+	    {
+	        "name": "Fulbert, Rogue Spymaster",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Legendary Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9WGpNKK/Fulbert-Rogue-Spymaster.png"
+	        }
+	    },
+	    {
+	        "name": "Abyssal Oracle",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Creature — Merfolk Spellshaper ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tmWJ0bB/Abyssal-Oracle.png"
+	        }
+	    },
+	    {
+	        "name": "Agent of Nyx",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Enchantment Creature — Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/R2sqSjj/Agent-of-Nyx.png"
+	        }
+	    },
+	    {
+	        "name": "Deification",
+	        "rarity": "common",
+	        "mana_cost": "{W}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/99zG56Z/Deification.png"
+	        }
+	    },
+	    {
+	        "name": "Selfless Healer",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Creature — Human Cleric ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/MMBpPmS/Selfless-Healer.png"
+	        }
+	    },
+	    {
+	        "name": "Paliano Spellweaver",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZmT2VFp/Paliano-Spellweaver.png"
+	        }
+	    },
+	    {
+	        "name": "Curious Axolotl",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Creature — Axolotl ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4FzRfM9/Curious-Axolotl.png"
+	        }
+	    },
+	    {
+	        "name": "Rutslag, World's Vengeance",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Legendary Planeswalker — Rütslag ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jgP0HcN/R-tslag-Worlds-Vengeance.png"
+	        }
+	    },
+	    {
+	        "name": "Thicket Keeper",
+	        "rarity": "common",
+	        "mana_cost": "{G}",
+	        "type": "Creature — Elemental Werewolf ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Z6yJZYN/Thicket-Keeper.png"
+	        }
+	    },
+	    {
+	        "name": "Okalae, Blood Blossom",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Legendary Planeswalker — Okalae ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8PqDdQB/Okalae-Blood-Blossom.png"
+	        }
+	    },
+	    {
+	        "name": "Reclaimed by Dreams",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nMTgkVC/Reclaimed-by-Dreams.png"
+	        }
+	    },
+	    {
+	        "name": "The Frost Gate",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xDQWk6H/The-Frost-Gate.png"
+	        }
+	    },
+	    {
+	        "name": "Tiger Shadow Dojo",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QCsKch7/Tiger-Shadow-Dojo.png"
+	        }
+	    },
+	    {
+	        "name": "Walking Wasteland",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Mountain Forest ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vwJp3c8/Walking-Wasteland.png"
+	        }
+	    },
+	    {
+	        "name": "Brutal Wastes",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp Mountain ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sRdNX73/Brutal-Wastes.png"
+	        }
+	    },
+	    {
+	        "name": "Meadows of Moag",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Forest Plains ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/3cQ4XmM/Meadows-of-Moag.png"
+	        }
+	    },
+	    {
+	        "name": "Verdant Stream",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XZXM1K7/Verdant-Stream.png"
+	        }
+	    },
+	    {
+	        "name": "Field of Training",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/j3f1CmW/Field-of-Training.png"
+	        }
+	    },
+	    {
+	        "name": "Marble Bazaar",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cJYzdLr/Marble-Bazaar.png"
+	        }
+	    },
+	    {
+	        "name": "Storm's Conduit",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/S7SRrtL/Storms-Conduit.png"
+	        }
+	    },
+	    {
+	        "name": "Decay Reclaimed Swale",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/sPm6Hfb/Decay-Reclaimed-Swale.png"
+	        }
+	    },
+	    {
+	        "name": "Leaking Memories",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/S3xv1jC/Leaking-Memories.png"
+	        }
+	    },
+	    {
+	        "name": "Iterate",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{B}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hYXBRKw/Iterate.png"
+	        }
+	    },
+	    {
+	        "name": "Geometric Musings",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{R}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/yg8rtHy/Geometric-Musings.png"
+	        }
+	    },
+	    {
+	        "name": "Marvelous Plagiarist",
+	        "rarity": "common",
+	        "mana_cost": "{U/B}{U/B}{U/B}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/VgQ1HF6/Marvelous-Plagiarist.png"
+	        }
+	    },
+	    {
+	        "name": "Aetherflash Expert",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/M90nQxH/Aetherflash-Expert.png"
+	        }
+	    },
+	    {
+	        "name": "Ri-Ga, Praenn Health Dealer",
+	        "rarity": "common",
+	        "mana_cost": "{3}{U}{U}",
+	        "type": "Legendary Planeswalker — Ri-Ga ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/hB4x2kX/Ri-Ga-Praenn-Health-Dealer.png"
+	        }
+	    },
+	    {
+	        "name": "Cracking Caldera",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mBsZn21/Cracking-Caldera.png"
+	        }
+	    },
+	    {
+	        "name": "Coiling Caves",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/f4vBwZ5/Coiling-Caves.png"
+	        }
+	    },
+	    {
+	        "name": "Orobi, Who Outsmarts Time",
+	        "rarity": "common",
+	        "mana_cost": "{6}{U}{U}",
+	        "type": "Legendary Creature — Dragon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/pPbGbPc/Orobi-Who-Outsmarts-Time.png"
+	        }
+	    },
+	    {
+	        "name": "Feel the Beat",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/9cxMdD9/Feel-the-Beat.png"
+	        }
+	    },
+	    {
+	        "name": "Collector of Cogs",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact Creature — Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/23Gp590/Collector-of-Cogs.png"
+	        }
+	    },
+	    {
+	        "name": "Cosmic Curator",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Advisor ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Wvf6dtZ/Cosmic-Curator.png"
+	        }
+	    },
+	    {
+	        "name": "Thran Battle Titan",
+	        "rarity": "common",
+	        "mana_cost": "{7}",
+	        "type": "Artifact Creature — Giant ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/FH5CcQb/Thran-Battle-Titan.png"
+	        }
+	    },
+	    {
+	        "name": "Elanor, Our Lady of Mist",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{U}",
+	        "type": "Legendary Planeswalker — Elanor ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cxfvSbw/Elanor-Our-Lady-of-Mist.png"
+	        }
+	    },
+	    {
+	        "name": "Brand New Day",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wCDXKyv/Brand-New-Day.png"
+	        }
+	    },
+	    {
+	        "name": "Blighted Hollow",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land — Swamp ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jkVtg1m/Blighted-Hollow.png"
+	        }
+	    },
+	    {
+	        "name": "Azamir, Pantheon Usurper",
+	        "rarity": "common",
+	        "mana_cost": "{8}",
+	        "type": "Legendary Planeswalker — Azamir ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/bQ28krz/Azamir-Pantheon-Usurper.png"
+	        }
+	    },
+	    {
+	        "name": "Rumbleroot Colossus",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}",
+	        "type": "Creature — Giant ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/vq1SPgX/Rumbleroot-Colossus.png"
+	        }
+	    },
+	    {
+	        "name": "Reaper of the Old Roads",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Creature — Zombie Pilot ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7ytR6G6/Reaper-of-the-Old-Roads.png"
+	        }
+	    },
+	    {
+	        "name": "Tyrant of the Blind Eternities",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Legendary Planeswalker — Tyrant ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/SRfq0hf/Tyrant-of-the-Blind-Eternities.png"
+	        }
+	    },
+	    {
+	        "name": "The Inexorable Vengeant",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}{B}{B}",
+	        "type": "Legendary Creature — Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0XqCvg8/The-Inexorable-Vengeant.png"
+	        }
+	    },
+	    {
+	        "name": "Unbound Creativity",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/882TCMp/Unbound-Creativity.png"
+	        }
+	    },
+	    {
+	        "name": "Only Bones Remain",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZLK53Cb/Only-Bones-Remain.png"
+	        }
+	    },
+	    {
+	        "name": "Dedicated Forgemaster",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Creature — Human Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4Y5PvD8/Dedicated-Forgemaster.png"
+	        }
+	    },
+	    {
+	        "name": "Divine Wisdom",
+	        "rarity": "common",
+	        "mana_cost": "{1}{W}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7Cm8Sbb/Divine-Wisdom.png"
+	        }
+	    },
+	    {
+	        "name": "So Dies Hope",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/k2QsKbP/So-Dies-Hope.png"
+	        }
+	    },
+	    {
+	        "name": "Turning of the Clock",
+	        "rarity": "common",
+	        "mana_cost": "{6}{W}{W}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/dfqhvzb/Turning-of-the-Clock.png"
+	        }
+	    },
+	    {
+	        "name": "Keeper of Tranquility",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Enchantment Creature — Spirit Monk ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WpY7pLP/Keeper-of-Tranquility.png"
+	        }
+	    },
+	    {
+	        "name": "Azra Thrill-Blade",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}",
+	        "type": "Creature — Azra Assassin ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GVTdXtd/Azra-Thrill-Blade.png"
+	        }
+	    },
+	    {
+	        "name": "Playing with Fire",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/K0Y2ftX/Playing-with-Fire.png"
+	        }
+	    },
+	    {
+	        "name": "Clockwork Plaguebearer",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Artifact Creature — Construct ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0qvGGF7/Clockwork-Plaguebearer.png"
+	        }
+	    },
+	    {
+	        "name": "Knight of Subversion",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}{B}{B}",
+	        "type": "Creature — Horror Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/n7nTZbr/Knight-of-Subversion.png"
+	        }
+	    },
+	    {
+	        "name": "Flayer of the Living",
+	        "rarity": "common",
+	        "mana_cost": "{5}{R}{R}",
+	        "type": "Creature — Devil ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RC4hGJY/Flayer-of-the-Living.png"
+	        }
+	    },
+	    {
+	        "name": "Secrets of the Deep",
+	        "rarity": "common",
+	        "mana_cost": "{U}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/phH00Fn/Secrets-of-the-Deep.png"
+	        }
+	    },
+	    {
+	        "name": "Ceaseless Soldier",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact Creature — Construct Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xf5KsNL/Ceaseless-Soldier.png"
+	        }
+	    },
+	    {
+	        "name": "King Florence of Caulder",
+	        "rarity": "common",
+	        "mana_cost": "{R}{W}",
+	        "type": "Legendary Creature — Human Noble ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7CqkvSF/King-Florence-of-Caulder.png"
+	        }
+	    },
+	    {
+	        "name": "Duchess of Steel",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}",
+	        "type": "Creature — Human Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/MGYNjTh/Duchess-of-Steel.png"
+	        }
+	    },
+	    {
+	        "name": "Underdark Matriarch",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{G}",
+	        "type": "Creature — Elf Warrior ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wprTPf6/Underdark-Matriarch.png"
+	        }
+	    },
+	    {
+	        "name": "The Changing Queen",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{U}",
+	        "type": "Legendary Enchantment Creature — God ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/GtwkXNM/The-Changing-Queen.png"
+	        }
+	    },
+	    {
+	        "name": "Regalia of Might and Lore",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/6DkVYYw/Regalia-of-Might-and-Lore.png"
+	        }
+	    },
+	    {
+	        "name": "Regalia of Sword and Sorcery",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BtdDWPg/Regalia-of-Sword-and-Sorcery.png"
+	        }
+	    },
+	    {
+	        "name": "Lys Alana Patrol",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{G}",
+	        "type": "Creature — Elf Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/YfnSsbj/Lys-Alana-Patrol.png"
+	        }
+	    },
+	    {
+	        "name": "Wildsland Packleader",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}{G}",
+	        "type": "Creature — Elf Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/82qyTnV/Wildsland-Packleader.png"
+	        }
+	    },
+	    {
+	        "name": "Redfang Tracker",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Creature — Werewolf Ranger ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/YhHsjB9/Redfang-Tracker.png"
+	        }
+	    },
+	    {
+	        "name": "Bellowing Miststrider",
+	        "rarity": "common",
+	        "mana_cost": "{5}{G}{G}",
+	        "type": "Creature — Yeti ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/N3L0Ljg/Bellowing-Miststrider.png"
+	        }
+	    },
+	    {
+	        "name": "Hunting Alpha",
+	        "rarity": "common",
+	        "mana_cost": "{4}{G}{G}{G}",
+	        "type": "Creature — Dinosaur ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NKNQTm5/Hunting-Alpha.png"
+	        }
+	    },
+	    {
+	        "name": "Elsewhere",
+	        "rarity": "common",
+	        "mana_cost": "{W/U}{W/U}{W/U}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/09ZVYzZ/Elsewhere.png"
+	        }
+	    },
+	    {
+	        "name": "Sea Gate Hedronsmith",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{U}",
+	        "type": "Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/By1F0qK/Sea-Gate-Hedronsmith.png"
+	        }
+	    },
+	    {
+	        "name": "The Lord Below",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}{B}",
+	        "type": "Legendary Enchantment Creature — God ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/PrJ1Dnt/The-Lord-Below.png"
+	        }
+	    },
+	    {
+	        "name": "Nurture with Ashes",
+	        "rarity": "common",
+	        "mana_cost": "{R}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/3h48H2w/Nurture-with-Ashes.png"
+	        }
+	    },
+	    {
+	        "name": "Mishae the Blossoming",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}{W}",
+	        "type": "Legendary Creature — Nymph ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/TRgjqRH/Mishae-the-Blossoming.png"
+	        }
+	    },
+	    {
+	        "name": "Morphic Maelstrom",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{R}",
+	        "type": "Creature — Elemental Shapeshifter ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tm8tVV5/Morphic-Maelstrom.png"
+	        }
+	    },
+	    {
+	        "name": "Fallen to the Ages",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{G}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mN0y6tv/Fallen-to-the-Ages.png"
+	        }
+	    },
+	    {
+	        "name": "Artificial Recruiter",
+	        "rarity": "common",
+	        "mana_cost": "{6}",
+	        "type": "Artifact Creature — Soldier ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ryLvwXc/Artificial-Recruiter.png"
+	        }
+	    },
+	    {
+	        "name": "Itirin's Archive",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZGLN699/Itirins-Archive.png"
+	        }
+	    },
+	    {
+	        "name": "Adept's Spellblade",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact — Equipment ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/0QJX77g/Adepts-Spellblade.png"
+	        }
+	    },
+	    {
+	        "name": "Faraway Cube",
+	        "rarity": "common",
+	        "mana_cost": "{2}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/nbyfQrr/Faraway-Cube.png"
+	        }
+	    },
+	    {
+	        "name": "The Knowledge Hub",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Legendary Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/ZxJTmB3/The-Knowledge-Hub.png"
+	        }
+	    },
+	    {
+	        "name": "Worldclock",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/tzRFQxZ/Worldclock.png"
+	        }
+	    },
+	    {
+	        "name": "Aetherium Gears",
+	        "rarity": "common",
+	        "mana_cost": "{5}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/J7xbwH5/Aetherium-Gears.png"
+	        }
+	    },
+	    {
+	        "name": "Riddling Maze",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/48GTZnW/Riddling-Maze.png"
+	        }
+	    },
+	    {
+	        "name": "Ancestral Mountain",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/dc9t53B/Ancestral-Mountain.png"
+	        }
+	    },
+	    {
+	        "name": "Martyr of the Empire",
+	        "rarity": "common",
+	        "mana_cost": "{5}{W}{W}",
+	        "type": "Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JKHQdww/Martyr-of-the-Empire.png"
+	        }
+	    },
+	    {
+	        "name": "Glitch, Drinker of Seas",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{W}{U}",
+	        "type": "Legendary Planeswalker — Glitch ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/b7pgx09/Glitch-Drinker-of-Seas.png"
+	        }
+	    },
+	    {
+	        "name": "Lady Mari of Morning",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W}{W}",
+	        "type": "Legendary Planeswalker — Mari ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/4F8Ysq0/Lady-Mari-of-Morning.png"
+	        }
+	    },
+	    {
+	        "name": "Jake Gordon, Ready to Go",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Legendary Planeswalker — Nova ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/q0LV3Bw/Jake-Gordon-Ready-to-Go.png"
+	        }
+	    },
+	    {
+	        "name": "The Queen of Scales",
+	        "rarity": "common",
+	        "mana_cost": "{5}{U}{R}",
+	        "type": "Legendary Planeswalker — Iviana ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/BGPWXs2/The-Queen-of-Scales.png"
+	        }
+	    },
+	    {
+	        "name": "Calamity, Interplanar Man of Mystery",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}",
+	        "type": "Legendary Planeswalker — Calamity ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/D7G50qY/Calamity-Interplanar-Man-of-Mystery.png"
+	        }
+	    },
+	    {
+	        "name": "Scratch, Eltensia's Warden",
+	        "rarity": "common",
+	        "mana_cost": "{3}{B}{R}{G}",
+	        "type": "Legendary Planeswalker — Scratch ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cJzmzfQ/Scratch-Eltensias-Warden.png"
+	        }
+	    },
+	    {
+	        "name": "Jay Volkan, Arms Dealer",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{R}",
+	        "type": "Legendary Planeswalker — Jay ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/XyttgRZ/Jay-Volkan-Arms-Dealer.png"
+	        }
+	    },
+	    {
+	        "name": "Dawson, Cruel Captain",
+	        "rarity": "common",
+	        "mana_cost": "{R}{W}{B}",
+	        "type": "Legendary Planeswalker — Dawson ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/R9mKqHp/Dawson-Cruel-Captain.png"
+	        }
+	    },
+	    {
+	        "name": "Xanigan, Bearer of Blood",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}{B}",
+	        "type": "Legendary Planeswalker — Xanigan ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wLCD9Vs/Xanigan-Bearer-of-Blood.png"
+	        }
+	    },
+	    {
+	        "name": "Jessica Turin, Archmagus",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{R}",
+	        "type": "Legendary Planeswalker — Turin ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JkchRzt/Jessica-Turin-Archmagus.png"
+	        }
+	    },
+	    {
+	        "name": "Quxfin, Empyrial Divinity",
+	        "rarity": "common",
+	        "mana_cost": "{4}",
+	        "type": "Legendary Planeswalker — Quxfin ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xqpyJnB/Quxfin-Empyrial-Divinity.png"
+	        }
+	    },
+	    {
+	        "name": "Kel, Tempest's Will",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Legendary Planeswalker — Kel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/kgs6pjs/Kel-Tempests-Will.png"
+	        }
+	    },
+	    {
+	        "name": "Meredith, Primeval Force",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}",
+	        "type": "Legendary Planeswalker — Meredith ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7prN3Zq/Meredith-Primeval-Force.png"
+	        }
+	    },
+	    {
+	        "name": "Novarose Bloom",
+	        "rarity": "common",
+	        "mana_cost": "{1}{R}",
+	        "type": "Sorcery",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/wS2wsM5/Novarose-Bloom.png"
+	        }
+	    },
+	    {
+	        "name": "Murder Plot",
+	        "rarity": "common",
+	        "mana_cost": "{B}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/TPG1d3R/Murder-Plot.png"
+	        }
+	    },
+	    {
+	        "name": "Mishae's Garden",
+	        "rarity": "common",
+	        "mana_cost": "",
+	        "type": "Land",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/qp2yw57/Mishaes-Garden.png"
+	        }
+	    },
+	    {
+	        "name": "Find Reality's Edge",
+	        "rarity": "common",
+	        "mana_cost": "{U}{R}{W}",
+	        "type": "Sorcery — Revelation ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Bqw4xC5/Find-Realitys-Edge.png"
+	        }
+	    },
+	    {
+	        "name": "Kajuro, Ever-Blessing",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{G}{W}",
+	        "type": "Legendary Creature — Kirin Beast ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/HhVGK8H/Kajuro-Ever-Blessing.png"
+	        }
+	    },
+	    {
+	        "name": "Perplexing Sphinx",
+	        "rarity": "common",
+	        "mana_cost": "{4}{W}{U}{B}",
+	        "type": "Creature — Sphinx ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/FJYDLZS/Perplexing-Sphinx.png"
+	        }
+	    },
+	    {
+	        "name": "Odqora, Deranged Witch",
+	        "rarity": "common",
+	        "mana_cost": "{B}{G}{U}",
+	        "type": "Legendary Creature — Human Wizard ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/rpK28pv/Odqora-Deranged-Witch.png"
+	        }
+	    },
+	    {
+	        "name": "Slickskin Managorger",
+	        "rarity": "common",
+	        "mana_cost": "{G}{U}{R}",
+	        "type": "Creature — Ooze Hydra ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/G0kJW1t/Slickskin-Managorger.png"
+	        }
+	    },
+	    {
+	        "name": "Evaldi, Geneshifter Prophet",
+	        "rarity": "common",
+	        "mana_cost": "{W}{B}{G}",
+	        "type": "Legendary Creature — Elf Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/7nhVDz0/Evaldi-Geneshifter-Prophet.png"
+	        }
+	    },
+	    {
+	        "name": "Will Beyond Reason",
+	        "rarity": "common",
+	        "mana_cost": "{U}{B}{R}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Y2pf22m/Will-Beyond-Reason.png"
+	        }
+	    },
+	    {
+	        "name": "ENMA, Will of Ephemera",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U/B}{U/B}",
+	        "type": "Legendary Artifact Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NZHNQSs/ENMA-Will-of-Ephemera.png"
+	        }
+	    },
+	    {
+	        "name": "MAAT, Will of Justice",
+	        "rarity": "common",
+	        "mana_cost": "{4}{W/B}{W/B}",
+	        "type": "Legendary Artifact Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Jm4DFcc/MAAT-Will-of-Justice.png"
+	        }
+	    },
+	    {
+	        "name": "HESTIA, Will of Community",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G/W}{G/W}",
+	        "type": "Legendary Artifact Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/FnzQ5BJ/HESTIA-Will-of-Community.png"
+	        }
+	    },
+	    {
+	        "name": "LUGH, Will of Iteration",
+	        "rarity": "common",
+	        "mana_cost": "{3}{W/U}{W/U}",
+	        "type": "Legendary Artifact Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/DM6tybB/LUGH-Will-of-Iteration.png"
+	        }
+	    },
+	    {
+	        "name": "SIF, Will of Growth",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R/G}{R/G}",
+	        "type": "Legendary Artifact Creature — Spirit ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/RTr4CbR/SIF-Will-of-Growth.png"
+	        }
+	    },
+	    {
+	        "name": "Pro Populo et Gloria",
+	        "rarity": "common",
+	        "mana_cost": "{2}{W}{W}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/gV0bP88/Pro-Populo-et-Gloria.png"
+	        }
+	    },
+	    {
+	        "name": "Tyrean Memory Core",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/3v9KYMb/Tyrean-Memory-Core.png"
+	        }
+	    },
+	    {
+	        "name": "Best In Class",
+	        "rarity": "common",
+	        "mana_cost": "{1}{U}",
+	        "type": "Creature — Elf Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/G2MXt5t/Best-In-Class.png"
+	        }
+	    },
+	    {
+	        "name": "Syndicate Infiltrator",
+	        "rarity": "common",
+	        "mana_cost": "{2}{U}{U}",
+	        "type": "Creature — Human Rogue ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/8KyB5CJ/Syndicate-Infiltrator.png"
+	        }
+	    },
+	    {
+	        "name": "Sesilius' Chosen",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}{B}",
+	        "type": "Creature — Horror ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/NZC489r/Sesilius-Chosen.png"
+	        }
+	    },
+	    {
+	        "name": "Archlich Ascension",
+	        "rarity": "common",
+	        "mana_cost": "{1}{B}{B}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/VNmqBjd/Archlich-Ascension.png"
+	        }
+	    },
+	    {
+	        "name": "Shadow of Chivalry",
+	        "rarity": "common",
+	        "mana_cost": "{4}{B}",
+	        "type": "Creature — Nightmare Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/cJXT87q/Shadow-of-Chivalry.png"
+	        }
+	    },
+	    {
+	        "name": "Surtland Executioner",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Giant Horror ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/mqS8hrv/Surtland-Executioner.png"
+	        }
+	    },
+	    {
+	        "name": "Splinter Commander",
+	        "rarity": "common",
+	        "mana_cost": "{2}{B}",
+	        "type": "Creature — Human Rebel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/y0P6DnZ/Splinter-Commander.png"
+	        }
+	    },
+	    {
+	        "name": "Eltensian Hart",
+	        "rarity": "common",
+	        "mana_cost": "{5}{R}{R}",
+	        "type": "Creature — Elemental Elk ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/WPb8XXM/Eltensian-Hart.png"
+	        }
+	    },
+	    {
+	        "name": "Marshal, Badlands Scourge",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}",
+	        "type": "Legendary Creature — Zombie Knight ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/KDmQW9C/Marshal-Badlands-Scourge.png"
+	        }
+	    },
+	    {
+	        "name": "Ryukami's Call",
+	        "rarity": "common",
+	        "mana_cost": "{R}",
+	        "type": "Instant",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/QX4sSgb/Ryukamis-Call.png"
+	        }
+	    },
+	    {
+	        "name": "Dragon-Style Mentor",
+	        "rarity": "common",
+	        "mana_cost": "{3}{R}{R}",
+	        "type": "Creature — Human Monk ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/fG8FH2Y/Dragon-Style-Mentor.png"
+	        }
+	    },
+	    {
+	        "name": "Attendant of Ashtongue",
+	        "rarity": "common",
+	        "mana_cost": "{4}{R}{R}",
+	        "type": "Creature — Dragon ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/T06030X/Attendant-of-Ashtongue.png"
+	        }
+	    },
+	    {
+	        "name": "Advancements in Animation",
+	        "rarity": "common",
+	        "mana_cost": "{2}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Wk1c1wd/Advancements-in-Animation.png"
+	        }
+	    },
+	    {
+	        "name": "Flourishing Idol",
+	        "rarity": "common",
+	        "mana_cost": "{5}{G}{G}",
+	        "type": "Enchantment Creature — Elk ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/KLnyf59/Flourishing-Idol.png"
+	        }
+	    },
+	    {
+	        "name": "Waking Dreams",
+	        "rarity": "common",
+	        "mana_cost": "{1}{G}",
+	        "type": "Enchantment",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/Hr0NRkv/Waking-Dreams.png"
+	        }
+	    },
+	    {
+	        "name": "Warden's Weaver",
+	        "rarity": "common",
+	        "mana_cost": "{3}{G}{G}",
+	        "type": "Creature — Spider ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/jhZKcLb/Wardens-Weaver.png"
+	        }
+	    },
+	    {
+	        "name": "Veilborn Harness",
+	        "rarity": "common",
+	        "mana_cost": "{3}",
+	        "type": "Artifact",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/f0M24yp/Veilborn-Harness.png"
+	        }
+	    },
+	    {
+	        "name": "Awoken Fleshcrafter",
+	        "rarity": "common",
+	        "mana_cost": "{B}{G}",
+	        "type": "Creature — Horror Artificer ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/1TPbZ22/Awoken-Fleshcrafter.png"
+	        }
+	    },
+	    {
+	        "name": "Keeper of Mementos",
+	        "rarity": "common",
+	        "mana_cost": "{W}{W}{B}{B}",
+	        "type": "Enchantment Creature — Angel ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/JB2y6hY/Keeper-of-Mementos.png"
+	        }
+	    },
+	    {
+	        "name": "Shiftstorm Champion",
+	        "rarity": "common",
+	        "mana_cost": "{2}{R}{G}",
+	        "type": "Creature — Elf Warrior Druid ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/xHb0hm3/Shiftstorm-Champion.png"
+	        }
+	    },
+	    {
+	        "name": "Wormhole Navigator",
+	        "rarity": "common",
+	        "mana_cost": "{U}",
+	        "type": "Creature — Human Scout ",
+	        "image_uris": {
+	            "en": "https://i.ibb.co/t8wHpMp/Wormhole-Navigator.png"
+	        }
+	    }
+	]
+	[CubeSlot(15)]
+	1 Forbidden Tutor
+		1 Backwoods-Heart Ancient
+		1 Wrap in Darkness
+		1 Nexus Gate
+		1 Unlocking Time's Mystery
+		1 Caller of Crypts
+		1 Bargain with Ryukami
+		1 Paramnesia
+		1 Sesilius, Hand of Atrocity
+		1 Explore Paradise
+		1 Blood-Harvest Ancient
+		1 Ceaseless Lich
+		1 Heretic Hunter
+		1 Manifold Machinations
+		1 Vikalden, Rogue Agent
+		1 Beyond Death
+		1 Bleak-Hole Ancient
+		1 Leyline Sculptor
+		1 Blade of Banishing
+		1 Temporal Gamble
+		1 Jack, Emissary of The Court
+		1 Koi Pond Meditations
+		1 Spellslinger Adept
+		1 Inspiring Prince
+		1 Yaruna, High Priestess
+		1 Infernal Recall
+		1 Refracting Pattern
+		1 Wrenn and Ten
+		1 Cosmic Collision
+		1 Massive Impact
+		1 Censor of Possibilities
+		1 Ryukami's Rage
+		1 Ryukami's Wake
+		1 Elsewhere Gate
+		1 Draconic Mastery
+		1 Haunted Screechwing
+		1 Beckon Monsters
+		1 Behold Divinity
+		1 Remake In My Image
+		1 Forgotten Insanity
+		1 Deepwoods Prowler
+		1 Shieldmage's Charm
+		1 Endless Possibilities
+		1 Find Answers
+		1 Plot
+		1 Tree of Life
+		1 Out-of-Body Experience
+		1 Evolving Grove
+		1 Corrupted Teachings
+		1 Devour Reality
+		1 Aeterna, Venerated Vigilante
+		1 Prismatic Beacon
+		1 Profane Bargain
+		1 All In Bloom
+		1 Crypt Terror
+		1 Mental Predators
+		1 Lost in the Light
+		1 Welcome to Gildyn
+		1 Evolutionary Admiration
+		1 Murderous Reflection
+		1 Noble Unicorn
+		1 Bright-Hollow Ancient
+		1 Brewing-Hurricane Ancient
+		1 Quell the Storm
+		1 Champion of Redgrove
+		1 Gloryhunter Dragon
+		1 Surfacewalker Lookout
+		1 Vengeant Champion
+		1 Veteran Combatant
+		1 Valiant Vanguard
+		1 Resolute Bodyguard
+		1 Repentant Conqueror
+		1 Wrath of the Tides
+		1 Disrupting Songstress
+		1 Overbearing Sentinel
+		1 Reaper's Visit
+		1 Lava Contract
+		1 Enchroaching Darkness
+		1 Meletis Phalanx
+		1 The Gilded King
+		1 Wielder of New Growth
+		1 Aetherite Mine
+		1 Deepwoods Whisperer
+		1 Destabilize
+		1 Unstoppable Butcher
+		1 Death's Judgement
+		1 The Lone Soldier
+		1 Blazewolf
+		1 Rob Blind
+		1 Burning Breath
+		1 Paladin of Light's Grace
+		1 Draconic Crusader
+		1 Isabelle, Crowned in Glory
+		1 Kati, Seasoned Instructor
+		1 Order the Troops
+		1 Undeath's Crown
+		1 Reclaimed by Nature
+		1 Elthen Forcemage
+		1 Preeminent Lieutenant
+		1 Octavia, Golden Heir
+		1 Mother of Light
+		1 Chartivore
+		1 Order the Earth
+		1 Running with Dragons
+		1 No More
+		1 Galvanized Genius
+		1 Fracture
+		1 Galaxy's Will
+		1 Burn the World
+		1 Anathema
+		1 Fiendish Advocacy
+		1 Order the Dead
+		1 Preacher of Spring
+		1 Order the Seas
+		1 Imagine
+		1 Molten Stampede Leader
+		1 One of the Crowd
+		1 Acclaimed Duelist
+		1 Pigstrider Cavalier
+		1 Forget Me Lots
+		1 Tennen General
+		1 Aeonic Conduit
+		1 Ardent Bloodcaster
+		1 Everspark
+		1 Memory's Ruse
+		1 Farrealm Huntsman
+		1 Lotus Dryad
+		1 Unstable Entity
+		1 Tolarian Renegade
+		1 Iko, the Lost
+		1 Shadow Dancing
+		1 Unrivaled Slayer
+		1 Snapback Arcanist
+		1 Giant of Greatwoods
+		1 The Planar Wanderer
+		1 Dormant Guardian
+		1 Forgotten Cube
+		1 Unstable Powercell
+		1 Golden Meadows
+		1 Out of Order
+		1 Vylinia, Curator of Wonders
+		1 Phantasmal Stalker
+		1 Worldfire Sphere
+		1 Unleash the Monstrosity
+		1 Avela, Rebellious Thief
+		1 Unlife Vial
+		1 Peace In Our Time
+		1 Command Whimsical Dreams
+		1 Grand Conservator
+		1 Tender of the Dark Grove
+		1 Broken Temple
+		1 Into the Woods
+		1 Unidentified Relic
+		1 Orb of Insight
+		1 The Sphere
+		1 Harvest Aligner
+		1 Prophetic Sculpture
+		1 Fragment of Emptiness
+		1 Fragment of Rage
+		1 Fragment of Hope
+		1 Fragment of Growth
+		1 Fragment of Curiosity
+		1 Forbidden Scroll
+		1 Unaltered Fragment
+		1 Misty Rainforest
+		1 Arid Mesa
+		1 Bloodstained Mire
+		1 Marsh Flats
+		1 Polluted Delta
+		1 Verdant Catacombs
+		1 Scalding Tarn
+		1 Windswept Heath
+		1 Wooded Foothills
+		1 Flooded Strand
+		1 Volcanic Island
+		1 Underground Sea
+		1 Tundra
+		1 Tropical Island
+		1 Bayou
+		1 Taiga
+		1 Savannah
+		1 Scrubland
+		1 Badlands
+		1 Plateau
+		1 Chosen by Death
+		1 Dreambubble Witch
+		1 Commanding Empress
+		1 One with Flames
+		1 Forsake the Past
+		1 Raze Reality
+		1 Scrapworks
+		1 Chapel of the Wylds
+		1 Eroded Tower
+		1 Dragonbone Valley
+		1 The Omnivorous Engine
+		1 Starfield Lotuses
+		1 Cursed Woods
+		1 Titanic Terrain
+		1 Tranquil Spring
+		1 Forbidden Shrine
+		1 Scorched Upland
+		1 Hazy Bog
+		1 Wandering River
+		1 Serene Grove
+		1 Magmatic Coral
+		1 Desolate Altar
+		1 Runic Reflections
+		1 Twisting Way
+		1 Creative Construction
+		1 By the Sea
+		1 Otterslide
+		1 The Lost City
+		1 Hundred Years of Glory
+		1 Stand Against Evil
+		1 Violent Offering
+		1 Increasing Dedication
+		1 Thus The Heroes Fall
+		1 Lost in Dream
+		1 Spirit of Secrets
+		1 Rhystic Haunting
+		1 Ambush Raider
+		1 Banish
+		1 Magmatic Entity
+		1 Temporal Jaunter
+		1 Mayhem's Will
+		1 Serenity Beckons
+		1 Crumble to Ashes
+		1 Prismatic Vista
+		1 Conjuration
+		1 Tranquil Mystic
+		1 Archvillain's Ploy
+		1 Break Reality
+		1 Seal Beyond the Veil
+		1 Hellraiser
+		1 Tyrant Wurm
+		1 Heaven's Decree
+		1 Fifth Layer Prince
+		1 Capture the Glow
+		1 Uyen of the Burning Way
+		1 Greenwielder Druid
+		1 Pale-Court Provocateur
+		1 Artisan of Blades
+		1 Order the Wilds
+		1 Nylea's Favored
+		1 Emissary of Undoing
+		1 Kheru Proudborn
+		1 Crumbling Capital
+		1 Revengevine
+		1 Musician of the Glade
+		1 Impulsive Adventurer
+		1 Old God's Presence
+		1 Call the Apex
+		1 Unending Evolution
+		1 Dragon Hoardkeeper
+		1 Seraph of Astronomy
+		1 Changing Grove
+		1 Farrealm Explorer
+		1 Poisoner of Dreams
+		1 Daydreaming
+		1 Caller of Souls
+		1 Rose Court Oathkeeper
+		1 Spark Servant
+		1 Consulate Censor
+		1 Neuropath Psiweaver
+		1 Replicant Formsculptor
+		1 Clickbug Hunter
+		1 Vorpal Titan
+		1 Titanic Crasher
+		1 Avenge
+		1 Chromatic Torch
+		1 Spiteful Wargear
+		1 Demand Unity
+		1 Rishadan Amulet
+		1 Astrarium
+		1 Veteran's Gear
+		1 Regalia of Speed and Focus
+		1 Lightseeker
+		1 Tender of Souls
+		1 Geist of Unbecoming
+		1 Conquering Commander
+		1 Hesperian of Spring
+		1 Golgari Rotmage
+		1 Scavenger Queen
+		1 Wurm Caller
+		1 Champion of the Fens
+		1 Vengeful Reaper
+		1 Fourth Layer General
+		1 Tutor of the Dead
+		1 Blighted Survivor
+		1 Grafcaster Mage
+		1 Custodians of Dead Planes
+		1 Ley Tracer
+		1 Linden's Valiant
+		1 Basel, Bloody Baron
+		1 Valkyrie Groundbreaker
+		1 Speaker of the Trees
+		1 Farrealm Cultivator
+		1 Painter of Reality
+		1 Frond Guardian
+		1 Pureheart Mystic
+		1 Spindle Dancer
+		1 Archon of Hope's Defiance
+		1 Cyclone Archmage
+		1 Hexwing Meditant
+		1 Oracle of Winter
+		1 Curious Happenings
+		1 Tabula Rasa
+		1 Push Back the Siege
+		1 Consult the Dracosages
+		1 Send Back
+		1 Astral Manipulation
+		1 Xepa, Artisan of Fury
+		1 Chandra's Retribution
+		1 The Academy of Innovation
+		1 All In
+		1 Dream Big
+		1 Flamecloak Armor
+		1 Anya, Caller of Flames
+		1 Titan's Passing
+		1 The Great Migration
+		1 Contemplate the Woods
+		1 Idyllia
+		1 Evergrowth
+		1 Embodiment of Resilience
+		1 Alignment Array
+		1 Corrupter of Forms
+		1 Cosmic Edge
+		1 Assault Rhino
+		1 Fulbert, Rogue Spymaster
+		1 Abyssal Oracle
+		1 Agent of Nyx
+		1 Deification
+		1 Selfless Healer
+		1 Paliano Spellweaver
+		1 Curious Axolotl
+		1 Rutslag, World's Vengeance
+		1 Thicket Keeper
+		1 Okalae, Blood Blossom
+		1 Reclaimed by Dreams
+		1 The Frost Gate
+		1 Tiger Shadow Dojo
+		1 Walking Wasteland
+		1 Brutal Wastes
+		1 Meadows of Moag
+		1 Verdant Stream
+		1 Field of Training
+		1 Marble Bazaar
+		1 Storm's Conduit
+		1 Decay Reclaimed Swale
+		1 Leaking Memories
+		1 Iterate
+		1 Geometric Musings
+		1 Marvelous Plagiarist
+		1 Aetherflash Expert
+		1 Ri-Ga, Praenn Health Dealer
+		1 Cracking Caldera
+		1 Coiling Caves
+		1 Orobi, Who Outsmarts Time
+		1 Feel the Beat
+		1 Collector of Cogs
+		1 Cosmic Curator
+		1 Thran Battle Titan
+		1 Elanor, Our Lady of Mist
+		1 Brand New Day
+		1 Blighted Hollow
+		1 Azamir, Pantheon Usurper
+		1 Rumbleroot Colossus
+		1 Reaper of the Old Roads
+		1 Tyrant of the Blind Eternities
+		1 The Inexorable Vengeant
+		1 Unbound Creativity
+		1 Only Bones Remain
+		1 Dedicated Forgemaster
+		1 Divine Wisdom
+		1 So Dies Hope
+		1 Turning of the Clock
+		1 Keeper of Tranquility
+		1 Azra Thrill-Blade
+		1 Playing with Fire
+		1 Clockwork Plaguebearer
+		1 Knight of Subversion
+		1 Flayer of the Living
+		1 Secrets of the Deep
+		1 Ceaseless Soldier
+		1 King Florence of Caulder
+		1 Duchess of Steel
+		1 Underdark Matriarch
+		1 The Changing Queen
+		1 Regalia of Might and Lore
+		1 Regalia of Sword and Sorcery
+		1 Lys Alana Patrol
+		1 Wildsland Packleader
+		1 Redfang Tracker
+		1 Bellowing Miststrider
+		1 Hunting Alpha
+		1 Elsewhere
+		1 Sea Gate Hedronsmith
+		1 The Lord Below
+		1 Nurture with Ashes
+		1 Mishae the Blossoming
+		1 Morphic Maelstrom
+		1 Fallen to the Ages
+		1 Artificial Recruiter
+		1 Itirin's Archive
+		1 Adept's Spellblade
+		1 Faraway Cube
+		1 The Knowledge Hub
+		1 Worldclock
+		1 Aetherium Gears
+		1 Riddling Maze
+		1 Ancestral Mountain
+		1 Martyr of the Empire
+		1 Glitch, Drinker of Seas
+		1 Lady Mari of Morning
+		1 Jake Gordon, Ready to Go
+		1 The Queen of Scales
+		1 Calamity, Interplanar Man of Mystery
+		1 Scratch, Eltensia's Warden
+		1 Jay Volkan, Arms Dealer
+		1 Dawson, Cruel Captain
+		1 Xanigan, Bearer of Blood
+		1 Jessica Turin, Archmagus
+		1 Quxfin, Empyrial Divinity
+		1 Kel, Tempest's Will
+		1 Meredith, Primeval Force
+		1 Novarose Bloom
+		1 Murder Plot
+		1 Mishae's Garden
+		1 Find Reality's Edge
+		1 Kajuro, Ever-Blessing
+		1 Perplexing Sphinx
+		1 Odqora, Deranged Witch
+		1 Slickskin Managorger
+		1 Evaldi, Geneshifter Prophet
+		1 Will Beyond Reason
+		1 ENMA, Will of Ephemera
+		1 MAAT, Will of Justice
+		1 HESTIA, Will of Community
+		1 LUGH, Will of Iteration
+		1 SIF, Will of Growth
+		1 Pro Populo et Gloria
+		1 Tyrean Memory Core
+		1 Best In Class
+		1 Syndicate Infiltrator
+		1 Sesilius' Chosen
+		1 Archlich Ascension
+		1 Shadow of Chivalry
+		1 Surtland Executioner
+		1 Splinter Commander
+		1 Eltensian Hart
+		1 Marshal, Badlands Scourge
+		1 Ryukami's Call
+		1 Dragon-Style Mentor
+		1 Attendant of Ashtongue
+		1 Advancements in Animation
+		1 Flourishing Idol
+		1 Waking Dreams
+		1 Warden's Weaver
+		1 Veilborn Harness
+		1 Awoken Fleshcrafter
+		1 Keeper of Mementos
+		1 Shiftstorm Champion
+		1 Wormhole Navigator
+	
