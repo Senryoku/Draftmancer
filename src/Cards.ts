@@ -21,9 +21,11 @@ export function getCard(cid: CardID): Card {
 	return card;
 }
 
-export function getUnique(cid: CardID, options: Options = {}) {
-	const uc: UniqueCard = Object.assign({}, options.getCard ? options.getCard(cid) : getCard(cid));
-	uc.uniqueID = getNextCardID();
+export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid: CardID) => Card } = {}) {
+	const uc: UniqueCard = Object.assign(
+		{ uniqueID: getNextCardID() },
+		options.getCard ? options.getCard(cid) : getCard(cid)
+	);
 	if (options.foil) uc.foil = options.foil;
 	return uc;
 }

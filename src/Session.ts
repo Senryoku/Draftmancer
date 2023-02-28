@@ -1061,7 +1061,7 @@ export class Session implements IIndexable {
 			shuffleArray(cardPool);
 			cards = cardPool
 				.slice(0, cardCount)
-				.map((cid) => getUnique(cid, { getCards: this.getCustomGetCardFunction() }));
+				.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
 		} else if (options.standard) {
 			const ret = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
 				useCustomBoosters: true,
