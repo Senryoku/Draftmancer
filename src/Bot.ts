@@ -6,17 +6,48 @@ if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
 }
 
-import { shuffleArray } from "./utils.js";
+import { shuffleArray, weightedRandomIdx } from "./utils.js";
 import { Card, OracleID } from "./CardTypes.js";
 
-const mtgdraftbotsAPITimeout = 10000;
-const MTGDraftbotsAuthToken = process.env.MTGDRAFTBOTS_AUTHTOKEN;
-const mtgdraftbotsAPIURL = `https://mtgml.cubeartisan.net/draft?auth_token=${MTGDraftbotsAuthToken}`;
+const MTGDraftBotsAPITimeout = 10000;
+const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
+async function addMTGDraftBotsInstance(domain: string, authToken: string, weight: number) {
+	// Make sure the instance is accessible
+	const response = await axios.get(`${domain}/version`, { timeout: 1000 });
+	if (response.status === 200)
+		MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
+	else console.error(`MTGDraftBots instance '${domain}' could not be reached: ${response.statusText}.`);
+}
+// Official Instance
+if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
+	await addMTGDraftBotsInstance(
+		"https://mtgml.cubeartisan.net/",
+		process.env.MTGDRAFTBOTS_AUTHTOKEN,
+		process.env.NODE_ENV === "production" ? 1 : 0 //Do not use in development, unless it's the only instance available
+	);
+// Allow an alternative instance of the mtgdraftbots server
+if (process.env.MTGDRAFTBOTS_ALT_INSTANCE)
+	await addMTGDraftBotsInstance(
+		process.env.MTGDRAFTBOTS_ALT_INSTANCE,
+		process.env.MTGDRAFTBOTS_ALT_INSTANCE_AUTHTOKEN ?? "testing",
+		1
+	);
+
+// Returns a random instance of the mtgdraftbots server for each request (load balancing the stupid way :D).
+const MTGDraftBotsAPIURLsTotalWeight = MTGDraftBotsAPIURLs.reduce((acc, curr) => acc + curr.weight, 0);
+function getMTGDraftBotsURL(): string {
+	return MTGDraftBotsAPIURLs[weightedRandomIdx(MTGDraftBotsAPIURLs, MTGDraftBotsAPIURLsTotalWeight)].url;
+}
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
-	if (!MTGDraftbotsAuthToken) return true;
+	// No mtgdraftbots servers available
+	if (MTGDraftBotsAPIURLs.length === 0) return true;
 
-	// Send a dummy request to make sure the API is up and running that most of the cards are recognized.
+	// Querying the mtgdraftbots API is too slow for the test suite, always fallback to simple bots while testing. FIXME: This feels hackish.
+	// FORCE_MTGDRAFTBOTS will force them on for specific tests.
+	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
+
+	// Send a dummy request to make sure the API is up and running that most cards in oracleIds are recognized.
 
 	// The API will only return a maximum of 16 non-zero scores, so instead of sending oracleIds.length / 16 requests to check all cards,
 	// we'll just take a random sample (of 15 cards, just because) and test these.
@@ -24,9 +55,6 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 	shuffleArray(chosenOracleIds);
 	chosenOracleIds = oracleIds.slice(0, 15);
 
-	// Querying the mtgdraftbots API is too slow for the test suite. FORCE_MTGDRAFTBOTS will force them on for specific tests.
-	// FIXME: This feels hackish.
-	if (typeof (global as any).it === "function" && !(global as any).FORCE_MTGDRAFTBOTS) return true;
 	const drafterState = {
 		basics: [], // FIXME: Should not be necessary anymore.
 		cardsInPack: chosenOracleIds,
@@ -39,7 +67,7 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
-		const response = await axios.post(mtgdraftbotsAPIURL, { drafterState }, { timeout: mtgdraftbotsAPITimeout });
+		const response = await axios.post(getMTGDraftBotsURL(), { drafterState }, { timeout: MTGDraftBotsAPITimeout });
 		if (
 			response.status !== 200 ||
 			!response.data.success ||
@@ -178,9 +206,9 @@ export class Bot implements IBot {
 		};
 		try {
 			const response = await axios.post(
-				mtgdraftbotsAPIURL,
+				getMTGDraftBotsURL(),
 				{ drafterState },
-				{ timeout: mtgdraftbotsAPITimeout }
+				{ timeout: MTGDraftBotsAPITimeout }
 			);
 			if (response.status == 200 && response.data.success) {
 				let chosenOption = 0;

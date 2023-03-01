@@ -45,6 +45,17 @@ export function getRandomKey(obj: Object) {
 	return keys[random.integer(0, keys.length - 1)];
 }
 
+export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
+	const pick = randomInt(1, totalWeight);
+	let idx = 0;
+	let acc = arr[idx].weight;
+	while (acc < pick) {
+		++idx;
+		acc += arr[idx].weight;
+	}
+	return idx;
+}
+
 // Returns [start, start + step, ..., end]
 export function range(start: number, end: number, step: number = 1) {
 	const len = Math.floor((end - start) / step) + 1;

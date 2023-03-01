@@ -2,7 +2,7 @@
 
 import { CardID, Card, CardPool, SlotedCardPool, UniqueCard } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, getCard } from "./Cards.js";
-import { shuffleArray, randomInt, Options, random, getRandom } from "./utils.js";
+import { shuffleArray, randomInt, Options, random, getRandom, weightedRandomIdx } from "./utils.js";
 import { removeCardFromCardPool, pickCard, countCards } from "./cardUtils.js";
 import { BasicLandSlot } from "./LandSlot.js";
 import Constants from "./Constants.js";
@@ -1318,17 +1318,6 @@ interface SetInfo {
 	sheets: { [slot: string]: SheetInfo };
 	// computed
 	colorBalancedSheets?: { [sheet: string]: { [subsheet: string]: { cards: CardInfo[]; total_weight: number } } };
-}
-
-export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
-	const pick = randomInt(1, totalWeight);
-	let idx = 0;
-	let acc = arr[idx].weight;
-	while (acc < pick) {
-		++idx;
-		acc += arr[idx].weight;
-	}
-	return idx;
 }
 
 function weightedRandomPick(

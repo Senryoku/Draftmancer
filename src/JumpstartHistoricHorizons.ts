@@ -1,4 +1,4 @@
-import { weightedRandomIdx } from "./BoosterFactory.js";
+import { weightedRandomIdx } from "./utils.js";
 import { CardID, UniqueCard } from "./CardTypes.js";
 import { getUnique } from "./Cards.js";
 
