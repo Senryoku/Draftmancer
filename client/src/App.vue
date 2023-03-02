@@ -1210,7 +1210,11 @@
 
 							<div
 								v-if="
-									winstonDraftState || gridDraftState || rochesterDraftState || minesweeperDraftState
+									winstonDraftState ||
+									gridDraftState ||
+									rochesterDraftState ||
+									rotisserieDraftState ||
+									minesweeperDraftState
 								"
 							>
 								{{ `Wait for ${disconnectedUserNames} to come back...` }}
