@@ -33,7 +33,7 @@ Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
 import { isMessageError, Message, MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
-import { Bracket, TeamBracket, SwissBracket, DoubleBracket } from "./Brackets.js";
+import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
 import { DraftLog, DraftPick, GridDraftPick } from "./DraftLog.js";
 import { generateJHHBooster, JHHBooster, JHHBoosterPattern } from "./JumpstartHistoricHorizons.js";
@@ -2422,7 +2422,7 @@ export class Session implements IIndexable {
 		} as Message);
 	}
 
-	generateBracket(players: Array<{ userID: UserID; userName: string }>) {
+	generateBracket(players: BracketPlayer[]) {
 		if (this.teamDraft) {
 			this.bracket = new TeamBracket(players);
 		} else {
@@ -2431,12 +2431,12 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateSwissBracket(players: Array<{ userID: UserID; userName: string }>) {
+	generateSwissBracket(players: BracketPlayer[]) {
 		this.bracket = new SwissBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	generateDoubleBracket(players: Array<{ userID: UserID; userName: string }>) {
+	generateDoubleBracket(players: BracketPlayer[]) {
 		this.bracket = new DoubleBracket(players);
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}

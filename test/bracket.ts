@@ -2,12 +2,12 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
-import { makeClients, waitForClientDisconnects, enableLogs, disableLogs } from "./src/common.js";
+import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
 
 describe("Brackets", function () {
-	let clients = [];
+	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "SessionID";
-	let ownerIdx = null;
+	let ownerIdx: number = 0;
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -15,7 +15,7 @@ describe("Brackets", function () {
 	});
 
 	afterEach(function (done) {
-		enableLogs(this.currentTest.state == "failed");
+		enableLogs(this.currentTest!.state == "failed");
 		done();
 	});
 
@@ -27,7 +27,7 @@ describe("Brackets", function () {
 				userName: "DontCare",
 			});
 		clients = makeClients(queries, () => {
-			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			done();
 		});
 	});
@@ -48,7 +48,10 @@ describe("Brackets", function () {
 		});
 		clients[ownerIdx].emit(
 			"generateBracket",
-			clients.map((c) => c.query.userName)
+			clients.map((c) => {
+				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
+			}),
+			ackNoError
 		);
 	});
 
@@ -59,7 +62,10 @@ describe("Brackets", function () {
 		});
 		clients[ownerIdx].emit(
 			"generateSwissBracket",
-			clients.map((c) => c.query.userName)
+			clients.map((c) => {
+				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
+			}),
+			ackNoError
 		);
 	});
 
@@ -70,7 +76,10 @@ describe("Brackets", function () {
 		});
 		clients[ownerIdx].emit(
 			"generateDoubleBracket",
-			clients.map((c) => c.query.userName)
+			clients.map((c) => {
+				return { userID: (c as any).query.userID, userName: (c as any).query.userName };
+			}),
+			ackNoError
 		);
 	});
 });

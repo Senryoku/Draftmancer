@@ -34,6 +34,7 @@ import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketDa
 import { IIndexable, SetCode } from "./Types.js";
 import SessionsSettingsProps from "./Session/SessionProps.js";
 import { RotisserieDraftStartOptions } from "./RotisserieDraft.js";
+import { BracketPlayer } from "./Brackets.js";
 
 const app = express();
 const httpServer = new http.Server(app);
@@ -1080,19 +1081,39 @@ function distributeJumpstart(userID: UserID, sessionID: SessionID, set?: string)
 	Sessions[sessionID].distributeJumpstart(set);
 }
 
+function validateBracketPlayersType(players: unknown, ack: (result: SocketAck) => void) {
+	if (!Array.isArray(players)) {
+		ack?.(new SocketError("Invalid parameter 'players'", "'players' must be an array."));
+		return false;
+	}
+	if (players.some((obj) => obj !== null && (!isString(obj.userID) || !isString(obj.userName)))) {
+		ack?.(
+			new SocketError(
+				"Invalid parameter 'players'",
+				"'players' type must be Array<{ userID: UserID; userName: string } | null>."
+			)
+		);
+		return false;
+	}
+	return true;
+}
+
 function generateBracket(
 	userID: UserID,
 	sessionID: SessionID,
-	players: Array<{ userID: UserID; userName: string }>,
+	players: BracketPlayer[],
 	ack: (result: SocketAck) => void
 ) {
+	if (!validateBracketPlayersType(players, ack)) return;
 	if (
 		!(
 			(players.length === 8 && !Sessions[sessionID].teamDraft) ||
 			(players.length === 6 && Sessions[sessionID].teamDraft)
 		)
-	)
+	) {
+		ack?.(new SocketError("Invalid number of players"));
 		return;
+	}
 	Sessions[sessionID].generateBracket(players);
 	ack?.(new SocketAck());
 }
@@ -1100,9 +1121,10 @@ function generateBracket(
 function generateSwissBracket(
 	userID: UserID,
 	sessionID: SessionID,
-	players: Array<{ userID: UserID; userName: string }>,
+	players: BracketPlayer[],
 	ack: (result: SocketAck) => void
 ) {
+	if (!validateBracketPlayersType(players, ack)) return;
 	const realPlayerCount = players.filter((u) => u).length;
 	if (realPlayerCount !== 8 && realPlayerCount !== 6) {
 		ack?.(
@@ -1120,10 +1142,14 @@ function generateSwissBracket(
 function generateDoubleBracket(
 	userID: UserID,
 	sessionID: SessionID,
-	players: Array<{ userID: UserID; userName: string }>,
+	players: BracketPlayer[],
 	ack: (result: SocketAck) => void
 ) {
-	if (players.length !== 8) return;
+	if (!validateBracketPlayersType(players, ack)) return;
+	if (players.length !== 8) {
+		ack?.(new SocketError("Invalid number of players", "Expected exactly 8 players."));
+		return;
+	}
 	Sessions[sessionID].generateDoubleBracket(players);
 	ack?.(new SocketAck());
 }
