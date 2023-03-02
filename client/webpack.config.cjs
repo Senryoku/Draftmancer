@@ -64,6 +64,7 @@ module.exports = {
 			chunks: ["index"],
 			title: "MTGADraft - Multi-Player Draft Simulator",
 			canonical: "",
+			hash: true,
 		}),
 		new HtmlWebpackPlugin({
 			filename: "bracket.html",
@@ -72,6 +73,7 @@ module.exports = {
 			chunks: ["readOnlyBracket"],
 			title: "MTGADraft - Bracket",
 			canonical: "bracket",
+			hash: true,
 		}),
 		new VueLoaderPlugin(),
 	],
