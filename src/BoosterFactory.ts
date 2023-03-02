@@ -801,7 +801,6 @@ class NEOBoosterFactory extends BoosterFactory {
  * 1 Traditional foil card of any rarity
  */
 class CLBBoosterFactory extends BoosterFactory {
-	static regex = /Legendary.*(Creature|Planeswalker).*/;
 	completeCardPool: SlotedCardPool; // Will be used for foils
 	legendaryCreaturesAndPlaneswalkers: SlotedCardPool;
 	legendaryBackgrounds: SlotedCardPool;
@@ -810,7 +809,8 @@ class CLBBoosterFactory extends BoosterFactory {
 		const [legendaryCreaturesAndPlaneswalkers, intermediaryFilteredCardPool] = filterCardPool(
 			cardPool,
 			(cid: CardID) =>
-				getCard(cid).type.match(CMRBoosterFactory.regex) !== null &&
+				getCard(cid).type.includes("Legendary") &&
+				(getCard(cid).type.includes("Creature") || getCard(cid).type.includes("Planeswalker")) &&
 				!["Vivien, Champion of the Wilds", "Xenagos, the Reveler", "Faceless One"].includes(getCard(cid).name) // These two cannot be your commander
 		);
 		const [legendaryBackgrounds, filteredCardPool] = filterCardPool(

@@ -108,19 +108,30 @@ describe("Set Specific Booster Rules", function () {
 				acc +
 				(!val.foil &&
 				(val.rarity === "rare" || val.rarity === "mythic") &&
-				(val.type === "Legendary Creature" ||
-					(val.type === "Legendary Planeswalker" &&
+				val.type.includes("Legendary") &&
+				(val.type.includes("Creature") ||
+					(val.type.includes("Planeswalker") &&
 						!["Vivien, Champion of the Wilds", "Xenagos, the Reveler", "Faceless One"].includes(val.name)))
 					? 1
 					: 0)
 			);
 		}, 0);
 		const UncommonLegend = booster.reduce((acc, val) => {
-			return acc + (!val.foil && val.rarity === "uncommon" && val.type === "Legendary Creature" ? 1 : 0);
+			return (
+				acc +
+				(!val.foil &&
+				val.rarity === "uncommon" &&
+				val.type.includes("Legendary") &&
+				val.type.includes("Creature")
+					? 1
+					: 0)
+			);
 		}, 0);
-		expect(UncommonLegend).to.be.oneOf([0, 1, 2]);
-		expect(RareLegend).to.be.oneOf([0, 1]);
-		expect(UncommonLegend + RareLegend).to.be.oneOf([1, 2]);
+		expect(UncommonLegend, "0, 1 or 2 uncommon legendary creature(s).").to.be.oneOf([0, 1, 2]);
+		expect(RareLegend, "0 or 1 rare or mythic legendary creature or planeswalker.").to.be.oneOf([0, 1]);
+		expect(UncommonLegend + RareLegend, "1 or 2 legendaries of any rarity (other than the background)").to.be.oneOf(
+			[1, 2]
+		);
 		const LegendBG = booster.reduce((acc, val) => {
 			return (
 				acc + (val.type === "Legendary Enchantment" && val.subtypes.includes("Background") && !val.foil ? 1 : 0)
