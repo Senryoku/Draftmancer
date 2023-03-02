@@ -150,7 +150,6 @@
 						@click="click($event, card)"
 						@dblclick="doubleClick($event, card)"
 						@dragstart.native="dragStart($event, card)"
-						:filter="filter"
 						:conditionalClasses="cardConditionalClasses"
 					></card>
 				</draggable>
@@ -179,7 +178,6 @@ export default defineComponent({
 		doubleClick: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
 		dragStart: { type: Function as PropType<(e: DragEvent, card: UniqueCard) => void>, default: () => {} },
 		group: { type: String },
-		filter: { type: String },
 		cardConditionalClasses: { type: Function },
 		readOnly: {
 			type: Boolean,

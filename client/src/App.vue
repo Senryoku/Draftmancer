@@ -1277,7 +1277,7 @@
 								group="deck"
 								@dragover.native="allowBoosterCardDrop($event)"
 								@drop.native="dropBoosterCard($event)"
-								:filter="deckFilter"
+								:cardConditionalClasses="cardConditionalClasses"
 							>
 								<template v-slot:title>
 									Deck ({{ deck.length
@@ -1458,7 +1458,7 @@
 										:card="card"
 										:language="language"
 										@click="sideboardToDeck($event, card)"
-										:filter="deckFilter"
+										:cardConditionalClasses="cardConditionalClasses"
 									></card>
 								</draggable>
 							</div>
@@ -1484,7 +1484,7 @@
 							group="deck"
 							@dragover.native="allowBoosterCardDrop($event)"
 							@drop.native="dropBoosterCard($event, { toSideboard: true })"
-							:filter="deckFilter"
+							:cardConditionalClasses="cardConditionalClasses"
 						>
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
 							<template v-slot:controls>

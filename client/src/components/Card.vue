@@ -35,7 +35,6 @@ export default defineComponent({
 		card: { type: Object as PropType<UniqueCard>, required: true },
 		language: { type: String as PropType<Language>, default: "en" },
 		lazyLoad: { type: Boolean, default: false },
-		filter: { type: String },
 		conditionalClasses: { type: Function },
 	},
 	data() {
@@ -45,16 +44,10 @@ export default defineComponent({
 		};
 	},
 	computed: {
-		isFiltered() {
-			if (!this.filter || this.filter === "") return false;
-			const filter = this.filter.toLowerCase();
-			return !this.passFilter(this.card, filter) && (!this.card.back || !this.passFilter(this.card.back, filter));
-		},
 		classes() {
 			let classes = this.conditionalClasses ? this.conditionalClasses(this.card) : [];
 			classes.push("card");
 			if (this.card.foil) classes.push("foil");
-			if (this.isFiltered) classes.push("faded");
 			return classes;
 		},
 		additionalData() {
@@ -114,17 +107,6 @@ export default defineComponent({
 			el.style.setProperty("--foil-initial-top", `${ratio * (-(160 * factorY) + 70)}%`);
 			el.style.setProperty("--foil-initial-left", `${-(160 * factor) + 70}%`);
 		},
-		passFilter(
-			card: { name: string; printed_names: { [lang: string]: string }; type: string; subtypes: string[] },
-			filter: string
-		) {
-			return (
-				card.name.toLowerCase().includes(filter) ||
-				(this.language != "en" && card.printed_names[this.language]?.toLowerCase().includes(filter)) ||
-				card.type.toLowerCase().includes(filter) ||
-				card.subtypes.join(" ").toLowerCase().includes(filter)
-			);
-		},
 		keyDown(event: KeyboardEvent) {
 			switch (event.key) {
 				case "Alt":
@@ -156,21 +138,6 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style>
-/*
-Can't be applied to .faded directly as it creates a bug with the rotation handle position.
-See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning
-*/
-.faded .card-image i,
-.faded .card-image img {
-	filter: brightness(50%) /*blur(2px)*/;
-}
-
-.card-image img {
-	transition: filter 0.2s;
-}
-</style>
 
 <style scoped>
 .card {

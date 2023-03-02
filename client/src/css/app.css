@@ -1558,6 +1558,19 @@ ul.player-list {
     white-space: pre-wrap;
 }
 
+/*
+Can't be applied to .card-filtered directly as it creates a bug with the rotation handle position.
+See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning
+*/
+.card-filtered .card-image i,
+.card-filtered .card-image img {
+	filter: brightness(35%) saturate(50%);
+}
+
+.card-image img {
+	transition: filter 0.2s;
+}
+
 .fixed-deck-and-sideboard-container {
 	box-sizing: border-box;
 	position: fixed;

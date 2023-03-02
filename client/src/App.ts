@@ -2711,6 +2711,31 @@ export default defineComponent({
 			}
 			return r;
 		},
+		cardConditionalClasses(card: Card) {
+			if (this.cardFilter(card)) return ["card-filtered"];
+			return [];
+		},
+		cardFilter(card: Card) {
+			if (!this.deckFilter || this.deckFilter === "") return false;
+			const filter = this.deckFilter.toLowerCase();
+			return !this.cardFaceFilter(card, filter) && (!card.back || !this.cardFaceFilter(card.back, filter));
+		},
+		cardFaceFilter(
+			card: {
+				name: string;
+				printed_names: { [lang: string]: string };
+				type: string;
+				subtypes: string[];
+			},
+			filter: string
+		) {
+			return (
+				card.name.toLowerCase().includes(filter) ||
+				(this.language != "en" && card.printed_names[this.language]?.toLowerCase().includes(filter)) ||
+				card.type.toLowerCase().includes(filter) ||
+				card.subtypes.join(" ").toLowerCase().includes(filter)
+			);
+		},
 		// Misc.
 		toggleNotifications() {
 			this.enableNotifications = !this.enableNotifications;
