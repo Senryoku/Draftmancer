@@ -78,6 +78,7 @@ export interface ServerToClientEvents {
 	rejoinDraft: (data: {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 		booster: UniqueCard[] | null;
+		boosterCount: number;
 		boosterNumber: number;
 		pickNumber: number;
 		botScores: BotScores;

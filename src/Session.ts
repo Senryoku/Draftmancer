@@ -2201,6 +2201,7 @@ export class Session implements IIndexable {
 						? this.draftState.players[userID].boosters[0]
 						: null,
 				boosterNumber: this.draftState.boosterNumber,
+				boosterCount: this.draftState.players[userID].boosters.length,
 				pickNumber: this.draftState.players[userID].pickNumber,
 				botScores: this.draftState.players[userID].botInstance.lastScores,
 			});

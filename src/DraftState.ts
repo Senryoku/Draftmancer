@@ -16,7 +16,7 @@ export class DraftState extends IDraftState {
 			botPickInFlight: boolean; // Set to true if a call to doBotPick is already scheduled.
 			botInstance: IBot; // If a human player, this will be used for pick recommendations.
 			boosters: UniqueCard[][];
-			pickNumber: 0;
+			pickNumber: number;
 			countdownInterval: NodeJS.Timeout | null;
 			timer: number;
 		};
