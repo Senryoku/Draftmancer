@@ -1,5 +1,5 @@
 module.exports = {
 	// override vscode settings part
 	settings: {},
-	projects: [{ root: "./client", tsconfig: "./tsconfig.json" }],
+	projects: [{ root: "./client", tsconfig: "./client/tsconfig.json" }],
 };
