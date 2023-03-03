@@ -2612,7 +2612,7 @@ export default defineComponent({
 			this.$refs.sideboardDisplay?.remCard(c);
 			this.$root.$emit("closecardpopup");
 		},
-		onDeckChange(e) {
+		onDeckChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
 			// For movements between to columns of the pool, two events are emitted:
 			// One for removal from the source column and one for addition into the destination.
 			// We're emiting the event for server sync. only on addition, if this a movement within the pool,
