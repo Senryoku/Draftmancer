@@ -3,17 +3,18 @@
 import { describe, it, beforeEach, afterEach, before, after } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getCard } from "./../src/Cards.js";
+import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
+import { ArenaID, UniqueCard } from "../src/CardTypes.js";
 
 describe("Collection Restriction", function () {
-	let clients = [];
+	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
-	let collections;
-	let ownerIdx;
+	let collections: { [cid: ArenaID]: number }[] = [];
+	let ownerIdx = 0;
 
 	const MTGAIDs = Object.keys(MTGACards);
 
@@ -23,7 +24,7 @@ describe("Collection Restriction", function () {
 	});
 
 	afterEach(function (done) {
-		enableLogs(this.currentTest.state == "failed");
+		enableLogs(this.currentTest!.state == "failed");
 		done();
 	});
 
@@ -75,10 +76,10 @@ describe("Collection Restriction", function () {
 	it(`All cards in Session collection should be in all user collections.`, function (done) {
 		const sessColl = Sessions[sessionID].collection();
 		for (let cid in sessColl) {
-			const arena_id = getCard(cid).arena_id;
+			const arena_id = getCard(cid).arena_id!;
 			for (let col of collections) {
 				expect(col).to.have.own.property(arena_id);
-				expect(col[arena_id]).gte(sessColl[cid]);
+				expect(col[arena_id]).gte(sessColl.get(cid)!);
 			}
 		}
 		done();
@@ -87,10 +88,10 @@ describe("Collection Restriction", function () {
 	it(`All cards in Session Card Pool (e.g. Session collection with applied set restrictions) should be in all user collections.`, function (done) {
 		const sessCardPool = Sessions[sessionID].cardPool();
 		for (let cid in sessCardPool) {
-			const arena_id = getCard(cid).arena_id;
+			const arena_id = getCard(cid).arena_id!;
 			for (let col of collections) {
 				expect(col).to.have.own.property(arena_id);
-				expect(col[arena_id]).gte(sessCardPool[cid]);
+				expect(col[arena_id]).gte(sessCardPool.get(cid)!);
 			}
 		}
 		done();
@@ -98,7 +99,7 @@ describe("Collection Restriction", function () {
 
 	for (let set of ["znr", "stx"]) {
 		it(`Select ${set} as a known MTGA set.`, function (done) {
-			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 
 			clients[(ownerIdx + 1) % clients.length].once("setRestriction", () => {
 				done();
@@ -117,10 +118,16 @@ describe("Collection Restriction", function () {
 
 				(() => {
 					clients[c].once("draftState", function (state) {
-						expect(state.boosterCount).to.equal(1);
-						expect(state.booster).to.exist;
+						const s = state as {
+							booster: UniqueCard[];
+							boosterCount: number;
+							boosterNumber: number;
+							pickNumber: 0;
+						};
+						expect(s.boosterCount).to.equal(1);
+						expect(s.booster).to.exist;
 						receivedBoosters += 1;
-						clients[c].state = state;
+						(clients[c] as any).state = state;
 						if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 					});
 				})();
@@ -131,10 +138,8 @@ describe("Collection Restriction", function () {
 		it(`All cards in generated boosters (default settings) should be in all user collections.`, function (done) {
 			for (let booster of Sessions[sessionID].boosters) {
 				for (let card of booster) {
-					const arena_id = card.arena_id;
-					for (let col of collections) {
-						expect(col).to.have.own.property(arena_id);
-					}
+					const arena_id = card.arena_id!;
+					for (let col of collections) expect(col).to.have.own.property(arena_id);
 				}
 			}
 			done();
@@ -145,19 +150,25 @@ describe("Collection Restriction", function () {
 			let draftEnded = 0;
 			for (let c = 0; c < clients.length; ++c) {
 				clients[c].on("draftState", function (state) {
-					if (state.pickNumber !== clients[c].state.pickNumber && state.boosterCount > 0) {
-						this.emit("pickCard", { pickedCards: [0] }, () => {});
-						clients[c].state = state;
+					const s = state as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: 0;
+					};
+					if (s.pickNumber !== (clients[c] as any).state.pickNumber && s.boosterCount > 0) {
+						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
+						(clients[c] as any).state = s;
 					}
 				});
 				clients[c].once("endDraft", function () {
 					draftEnded += 1;
-					this.removeListener("draftState");
+					clients[c].removeListener("draftState");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			for (let c = 0; c < clients.length; ++c) {
-				clients[c].emit("pickCard", { pickedCards: [0] }, () => {});
+				clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 			}
 		});
 	}
