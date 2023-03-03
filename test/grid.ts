@@ -4,13 +4,21 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { Connections } from "../src/Connection.js";
-import { makeClients, enableLogs, disableLogs, waitForSocket, waitForClientDisconnects } from "./src/common.js";
+import {
+	makeClients,
+	enableLogs,
+	disableLogs,
+	waitForSocket,
+	waitForClientDisconnects,
+	ackNoError,
+} from "./src/common.js";
+import { TurnBased } from "../src/IDraftState.js";
 
 describe("Grid Draft", function () {
-	let clients = [];
+	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
-	var ownerIdx;
-	var nonOwnerIdx;
+	let ownerIdx = 0;
+	let nonOwnerIdx = 0;
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -18,7 +26,7 @@ describe("Grid Draft", function () {
 	});
 
 	afterEach(function (done) {
-		enableLogs(this.currentTest.state == "failed");
+		enableLogs(this.currentTest!.state == "failed");
 		done();
 	});
 
@@ -53,9 +61,9 @@ describe("Grid Draft", function () {
 		done();
 	});
 
-	const startDraft = () => {
+	const startDraft = (boosterCount: number = 18) => {
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
-			ownerIdx = clients.findIndex((c) => c.query.userID == Sessions[sessionID].owner);
+			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
 			let connectedClients = 0;
 			for (let c of clients) {
@@ -64,7 +72,7 @@ describe("Grid Draft", function () {
 					if (connectedClients == clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startGridDraft");
+			clients[ownerIdx].emit("startGridDraft", boosterCount);
 		});
 	};
 
@@ -82,17 +90,17 @@ describe("Grid Draft", function () {
 				};
 				clients[c].on("gridDraftNextRound", function (state) {
 					if (state.booster) expect(state.booster.length).to.equal(9);
-					if (state.currentPlayer === clients[c].query.userID) pick();
+					if (state.currentPlayer === (clients[c] as any).query.userID) pick();
 				});
 				clients[c].once("gridDraftEnd", function () {
 					draftEnded += 1;
-					this.removeListener("gridDraftNextRound");
+					clients[c].removeListener("gridDraftNextRound");
 					if (draftEnded == clients.length) done();
 				});
 			}
-			let currentPlayerID = Sessions[sessionID].draftState.currentPlayer();
-			let currentPlayerIdx = clients.findIndex((c) => c.query.userID == currentPlayerID);
-			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6));
+			let currentPlayerID = (Sessions[sessionID].draftState as TurnBased).currentPlayer();
+			let currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID == currentPlayerID);
+			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6), ackNoError);
 		});
 	};
 
@@ -120,7 +128,7 @@ describe("Grid Draft", function () {
 				if (options.useCustomCardList) done();
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
-			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1");
+			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
 		});
 
 		startDraft();
