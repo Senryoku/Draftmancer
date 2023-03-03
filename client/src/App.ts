@@ -1388,7 +1388,7 @@ export default defineComponent({
 				let orderedPicks = [];
 				for (let i = 0; i < this.botScores.scores.length; ++i) orderedPicks.push(i);
 				orderedPicks.sort((lhs, rhs) => {
-					return this.botScores!.scores[lhs] - this.botScores!.scores[rhs];
+					return this.botScores!.scores[rhs] - this.botScores!.scores[lhs];
 				});
 				let currIdx = 0;
 				while (currIdx < orderedPicks.length && this.selectedCards.length < this.cardsToPick) {
