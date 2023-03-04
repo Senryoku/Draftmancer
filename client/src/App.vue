@@ -492,7 +492,9 @@
 			<div
 				v-if="!ownerIsPlayer"
 				class="generic-container"
-				v-tooltip="'Non-playing session owner.'"
+				v-tooltip="
+					`Non-playing session owner: ${sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}`
+				"
 				style="flex: 0 3 auto; text-align: center"
 			>
 				<i
@@ -503,8 +505,9 @@
 							: 'Session owner is disconnected.'
 					"
 				></i>
-				<br />
-				{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
+				<div class="non-playing-session-owner-name">
+					{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
+				</div>
 				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 			</div>
 			<div
@@ -537,7 +540,7 @@
 					@change="changePlayerOrder"
 					:disabled="userID != sessionOwner || drafting"
 					:animation="200"
-					style="flex-grow: 2"
+					style="flex-grow: 2; padding-left: 0.5em; padding-right: 0.5em"
 				>
 					<transition-group type="transition" tag="ul" class="player-list">
 						<li
@@ -552,7 +555,7 @@
 							}"
 							:data-userid="id"
 						>
-							<div class="player-name">{{ userByID[id].userName }}</div>
+							<div class="player-name" v-tooltip="userByID[id].userName">{{ userByID[id].userName }}</div>
 							<template v-if="userID == sessionOwner">
 								<i
 									class="fas fa-chevron-left clickable move-player move-player-left"
@@ -670,7 +673,7 @@
 							v-else-if="passingOrder === PassingOrder.Right"
 							v-tooltip="'Passing order'"
 						></i>
-						<div class="player-name">{{ user.userName }}</div>
+						<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
 						<div class="status-icons">
 							<template v-if="!user.isBot && !user.isDisconnected">
 								<i

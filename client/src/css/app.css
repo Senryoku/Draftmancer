@@ -701,6 +701,13 @@ select.swal2-input option {
 
 /**** Session Players ****/
 
+.non-playing-session-owner-name {
+	max-width: 4em;
+	overflow: hidden;
+	white-space: nowrap;
+	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, transparent);
+}
+
 .session-players {
 	background: #181818;
 	padding: 0.25em 0.5em;
@@ -709,6 +716,7 @@ select.swal2-input option {
 	align-items: center;
 	margin: 0 0.5em;
 	border-radius: 0.5em;
+	gap: 0.2em;
 }
 
 ul.player-list {
@@ -718,6 +726,7 @@ ul.player-list {
 	padding-left: 0;
 	margin: 0;
 	flex-wrap: wrap;
+	gap: 0.2em 0.8em;
 }
 
 .player-list li {
@@ -728,11 +737,9 @@ ul.player-list {
 	padding: 0.5em;
 	min-width: 6em;
 	max-width: 12em;
-	margin-right: 0.5em;
-	margin-left: 0.5em;
 	background: #282828;
 	border-radius: 5px;
-	flex: 1 1 9.5em;
+	flex: 1 1 6em;
 }
 
 /* Applying a transition to draggable item break SortableJS animations, here it's only applied for other player to get feedback when owner changes the order */
@@ -773,11 +780,11 @@ ul.player-list {
 }
 
 .player-name {
-	min-width: 5em;
-	flex: 1 1 auto;
+	min-width: 3em;
+	flex: 1 1 3em;
 	overflow: hidden;
 	white-space: nowrap;
-	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 5em, transparent);
+	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, transparent);
 }
 
 .move-player {

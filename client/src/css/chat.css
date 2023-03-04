@@ -1,7 +1,13 @@
 .chat {
-	display: inline-block;
+	display: inline-flex;
 	position: relative;
 	white-space: nowrap;
+	justify-content: right;
+	align-items: center;
+	overflow: visible;
+	width: 7.2em;
+	flex: 0 0 7.2em;
+	gap: 0.2em;
 }
 
 .chat > * {
@@ -9,6 +15,24 @@
 }
 
 .chat input {
+	position: relative;
+	z-index: 5;
+	width: 6em;
+	transition: width 0.2s ease-in-out;
+}
+
+@media (min-width: 1600px) {
+	.chat {
+		width: fit-content;
+		flex: 0 0 auto;
+	}
+	.chat input {
+		width: 14.5em;
+	}
+}
+
+  
+.chat input:focus {
 	width: 14.5em;
 }
 
@@ -29,6 +53,7 @@
 	max-width: 50vw;
 	max-height: 60vh;
 	z-index: 2;
+	word-wrap: break-word;
 
 	transition: opacity 0.2s;
 }
