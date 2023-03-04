@@ -21,6 +21,21 @@ export function fireToast(type: SweetAlertIcon, title: string, text: string = ""
 	});
 }
 
+export function loadingToast(title: string, text: string = "") {
+	Alert.fire({
+		toast: true,
+		position: "top-end",
+		icon: "info",
+		title: escapeHTML(title),
+		text: escapeHTML(text),
+		customClass: SwalCustomClasses,
+		showConfirmButton: false,
+		willOpen: () => {
+			Alert.showLoading();
+		},
+	});
+}
+
 export const ButtonColor = {
 	Safe: "#3085d6",
 	Critical: "#d33",

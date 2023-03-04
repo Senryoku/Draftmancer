@@ -1,7 +1,7 @@
 import axios from "axios";
 import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
 import Constants from "../../src/Constants";
-import { Alert, fireToast } from "./alerts";
+import { Alert, fireToast, loadingToast, SwalCustomClasses } from "./alerts";
 import { download, escapeHTML } from "./helper";
 import { Card, CardColor } from "../../src/CardTypes.js";
 
@@ -15,7 +15,7 @@ export async function exportToMTGO(
 		filename?: string;
 	} = {}
 ) {
-	fireToast("info", `Preparing MTGO deck list...`);
+	loadingToast(`Preparing MTGO deck list...`);
 	const basics: { [color in CardColor]: { mtgo_id: number; name: string } } = {
 		W: { mtgo_id: 104600, name: "Plains" },
 		U: { mtgo_id: 104604, name: "Island" },
