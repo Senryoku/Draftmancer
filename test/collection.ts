@@ -106,6 +106,13 @@ describe("Collection Restriction", function () {
 			});
 			clients[ownerIdx].emit("setRestriction", [set]);
 		});
+		it(`Set Ignore Collections to false.`, function (done) {
+			clients[(ownerIdx + 1) % clients.length].once("ignoreCollections", (value) => {
+				expect(value).to.be.false;
+				done();
+			});
+			clients[ownerIdx].emit("ignoreCollections", false);
+		});
 
 		it(`Start a draft with default settings (May fail randomly if there's not enough cards in random collections, but seems unlikely).`, function (done) {
 			let connectedClients = 0;
@@ -145,7 +152,7 @@ describe("Collection Restriction", function () {
 			done();
 		});
 
-		it("End draft.", function (done) {
+		it("End draft. All cards in generated boosters (default settings) should be in all user collections.", function (done) {
 			this.timeout(20000);
 			let draftEnded = 0;
 			for (let c = 0; c < clients.length; ++c) {
@@ -157,6 +164,13 @@ describe("Collection Restriction", function () {
 						pickNumber: 0;
 					};
 					if (s.pickNumber !== (clients[c] as any).state.pickNumber && s.boosterCount > 0) {
+						for (let card of s.booster)
+							for (let col of collections) {
+								expect(
+									col,
+									"All cards should be in the intersection of player collections."
+								).to.have.own.property(card.arena_id!);
+							}
 						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 						(clients[c] as any).state = s;
 					}
