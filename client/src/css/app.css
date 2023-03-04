@@ -851,7 +851,6 @@ ul.player-list {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	z-index: 3;
 	font-weight: 900;
 	color: black;
 	font-family: "Brush Script MT" ;

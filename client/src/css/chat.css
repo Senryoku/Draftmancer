@@ -15,8 +15,6 @@
 }
 
 .chat input {
-	position: relative;
-	z-index: 5;
 	width: 6em;
 	transition: width 0.2s ease-in-out;
 }

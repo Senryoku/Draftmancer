@@ -747,23 +747,23 @@
 									<template v-else-if="user.boosterCount === 2">
 										<img
 											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+											style="transform: translate(-50%, -50%) rotate(10deg)"
 										/>
 										<img
 											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+											style="transform: translate(-50%, -50%) rotate(-10deg)"
 										/>
 									</template>
 									<template v-else-if="user.boosterCount > 2">
 										<img
 											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(10deg); z-index: 0"
+											style="transform: translate(-50%, -50%) rotate(10deg)"
 										/>
 										<img
 											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(-10deg); z-index: 1"
+											style="transform: translate(-50%, -50%) rotate(-10deg)"
 										/>
-										<img src="./assets/img/booster.svg" style="z-index: 2" />
+										<img src="./assets/img/booster.svg" />
 										<div>
 											{{ user.boosterCount }}
 										</div>
