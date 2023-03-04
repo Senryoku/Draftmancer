@@ -60,6 +60,16 @@ select.swal2-input option {
 	background-color: #282828;
 }
 
+.swal2-timer-progress-bar {
+	background: #ddd;
+}
+
+.swal2-content pre {
+	text-align: left;
+	font-size: 0.8em;
+    white-space: pre-wrap;
+}
+
 .disconnected-user-popup-container {
 	position: absolute;
 	user-select: none;
@@ -1550,12 +1560,6 @@ ul.player-list {
 
 .multiselect__tag-icon {
 	color: #bf5d5d;
-}
-
-.swal2-content pre {
-	text-align: left;
-	font-size: 0.8em;
-    white-space: pre-wrap;
 }
 
 /*

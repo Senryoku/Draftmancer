@@ -17,6 +17,7 @@ export function fireToast(type: SweetAlertIcon, title: string, text: string = ""
 		customClass: SwalCustomClasses,
 		showConfirmButton: false,
 		timer: 3000,
+		timerProgressBar: true,
 	});
 }
 
