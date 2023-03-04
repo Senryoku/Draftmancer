@@ -1,52 +1,15 @@
 import { beforeEach, afterEach } from "mocha";
-import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
+import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, disableAnimations, testDebug } from "./src/common.js";
-
-const debugWindowWidth = 2560 / 4;
-const debugWindowHeight = 1440 / 2;
+import { waitAndClickSelector, startBrowsers } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
 
-async function startBrowsers() {
-	let promises = [];
-	for (let i = 0; i < 8; i++) {
-		promises.push(
-			puppeteer.launch({
-				headless: !testDebug,
-				args: testDebug
-					? [
-							`--window-size=${debugWindowWidth},${debugWindowHeight}`,
-							`--window-position=${(i % 4) * debugWindowWidth},${Math.floor(i / 4) * debugWindowHeight}`,
-							"--mute-audio",
-					  ]
-					: [],
-			})
-		);
-	}
-	await Promise.all(promises);
-	for (let i = 0; i < 8; i++) {
-		browsers.push(await promises[i]);
-		let [page] = await browsers[i].pages();
-		disableAnimations(page);
-		pages.push(page);
-	}
-	const context = browsers[0].defaultBrowserContext();
-	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
-	if (testDebug) {
-		for (let i = 0; i < 8; i++) {
-			pages[i].setViewport({ width: debugWindowWidth, height: debugWindowHeight });
-		}
-	}
-}
-
 async function closeBrowsers() {
-	for (let i = 0; i < 8; i++) {
-		browsers[i].close();
-	}
+	for (const browser of browsers) browser.close();
 }
 
 beforeEach(function (done) {
@@ -73,10 +36,10 @@ async function pickCard(page: Page) {
 	return false;
 }
 
-describe.only("Front End - 8 Players Draft", function () {
+describe("Front End - 8 Players Draft", function () {
 	this.timeout(100000);
 	it("Starts Browsers", async function () {
-		await startBrowsers();
+		[browsers, pages] = await startBrowsers(8);
 	});
 
 	it("Owner joins", async function () {
