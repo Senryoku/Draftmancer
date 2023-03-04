@@ -4,16 +4,23 @@ import fs from "fs";
 import chai from "chai";
 const expect = chai.expect;
 import randomjs from "random-js";
-import { Cards, getCard } from "./../../src/Cards.js";
+import { Cards, getCard } from "../../src/Cards.js";
 import { Session } from "../../src/Session.js";
 import { SetSpecificFactories } from "../../src/BoosterFactory.js";
 import parseCardList from "../../src/parseCardList.js";
 import { getRandomKey, getRandom } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
+import { isMessageError, isSocketError } from "../../src/Message.js";
 
-const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"));
+const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"), {});
+if (isSocketError(ArenaCube)) {
+	process.exit(1);
+}
+
 const CustomSheetsTestFile = fs.readFileSync(`./test/data/CustomSheets.txt`, "utf8");
 import constants from "../../src/data/constants.json" assert { type: "json" };
+import { CardID } from "../../src/CardTypes.js";
+import { isNumber } from "../../src/TypeChecks.js";
 
 describe("Statistical color balancing tests", function () {
 	it(`Boosters have <=20% difference in a common artifact's count vs colored common's count while color balancing`, function (done) {
@@ -25,14 +32,14 @@ describe("Statistical color balancing tests", function () {
 			colorBalance: true,
 		};
 		const cardPoolByRarity = {
-			common: new Map(),
-			uncommon: new Map(),
-			rare: new Map(),
-			mythic: new Map(),
+			common: new Map<CardID, number>(),
+			uncommon: new Map<CardID, number>(),
+			rare: new Map<CardID, number>(),
+			mythic: new Map<CardID, number>(),
 		};
 		for (let [cid, card] of Cards) {
 			if (card.in_booster && card.set === "znr") {
-				cardPoolByRarity[card.rarity].set(cid, trials);
+				cardPoolByRarity[card.rarity as keyof typeof cardPoolByRarity].set(cid, trials);
 			}
 		}
 		const factory = new SetSpecificFactories["znr"](cardPoolByRarity, landSlot, BoosterFactoryOptions);
@@ -40,6 +47,10 @@ describe("Statistical color balancing tests", function () {
 		let brutes = 0;
 		for (let i = 0; i < trials; i++) {
 			let booster = factory.generateBooster({ common: 10, uncommon: 3, rare: 1 });
+			if (isMessageError(booster)) {
+				expect(false, "Error generating booster").to.be.true;
+				return;
+			}
 			booster.forEach((card) => {
 				if (card.name === "Cliffhaven Kitesail") {
 					kitesails += 1;
@@ -55,22 +66,22 @@ describe("Statistical color balancing tests", function () {
 		done();
 	});
 
-	function runTrials(SessionInst, trials, trackedCards) {
+	function runTrials(SessionInst: Session, trials: number, trackedCards: { [cid: CardID]: number } | null) {
 		const all = trackedCards === null;
-		if (trackedCards === null) trackedCards = {};
+		if (trackedCards === null) trackedCards = {} as { [cid: CardID]: number };
 		for (let i = 0; i < trials; i++) {
 			SessionInst.generateBoosters(3 * 8);
 			SessionInst.boosters.forEach((booster) =>
 				booster.forEach((card) => {
-					if (card.id in trackedCards) ++trackedCards[card.id];
-					else if (all) trackedCards[card.id] = 1;
+					if (card.id in trackedCards!) ++trackedCards![card.id];
+					else if (all) trackedCards![card.id] = 1;
 				})
 			);
 		}
 		return trackedCards;
 	}
 
-	function compareRandomCards(trackedCards) {
+	function compareRandomCards(trackedCards: { [cid: CardID]: number }) {
 		// Select 10 pairs of cards and compare their rates
 		const logTable = [];
 		let maxRelativeDifference = 0;
@@ -100,7 +111,7 @@ describe("Statistical color balancing tests", function () {
 			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function (done) {
 				this.timeout(500);
 				const trials = 500;
-				const SessionInst = new Session("UniqueID");
+				const SessionInst = new Session("UniqueID", "ownerID");
 				SessionInst.colorBalance = true;
 				SessionInst.useCustomCardList = false;
 				SessionInst.setRestriction = [s];
@@ -117,7 +128,7 @@ describe("Statistical color balancing tests", function () {
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate WITHOUT color balancing`, function (done) {
 		this.timeout(2000);
 		const trials = 500;
-		const SessionInst = new Session("UniqueID");
+		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = false;
 		SessionInst.customCardList = ArenaCube;
@@ -129,7 +140,7 @@ describe("Statistical color balancing tests", function () {
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate while color balancing`, function (done) {
 		this.timeout(8000);
 		const trials = 500;
-		const SessionInst = new Session("UniqueID");
+		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
 		SessionInst.customCardList = ArenaCube;
@@ -141,10 +152,15 @@ describe("Statistical color balancing tests", function () {
 	it(`Every card in the color balanced slot of a Cube using custom sheets should have similar (<=20% relative difference) apparition rate`, function (done) {
 		this.timeout(8000);
 		const trials = 200;
-		const SessionInst = new Session("UniqueID");
+		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.useCustomCardList = true;
 		SessionInst.colorBalance = true;
-		SessionInst.setCustomCardList(parseCardList(CustomSheetsTestFile));
+		const list = parseCardList(CustomSheetsTestFile, {});
+		if (isSocketError(list)) {
+			expect(false, "Couldn't load cube.");
+			return;
+		}
+		SessionInst.setCustomCardList(list);
 		const trackedCards = Object.keys(SessionInst.customCardList.slots.Common).reduce(
 			(o, key) => ({ ...o, [key]: 0 }),
 			{}
@@ -158,10 +174,10 @@ describe("Statistical color balancing tests", function () {
 		it(`Modal Double Faced ${rarity}s of Zendikar Rising should have an apparition rate similar to Single Faced ${rarity}s' (<= 20% relative difference)`, function (done) {
 			this.timeout(8000);
 			const trials = 10000;
-			const SessionInst = new Session("UniqueID");
+			const SessionInst = new Session("UniqueID", "ownerID");
 			SessionInst.colorBalance = true;
 			SessionInst.setRestriction = ["znr"];
-			const trackedCards = [...SessionInst.cardPoolByRarity()[rarity].keys()].reduce(
+			const trackedCards: { [cid: CardID]: number } = [...SessionInst.cardPoolByRarity()[rarity].keys()].reduce(
 				(o, key) => ({ ...o, [key]: 0 }),
 				{}
 			);
@@ -193,7 +209,7 @@ describe("Statistical color balancing tests", function () {
 	it(`Lessons of STX should have an apparition rate similar to other cards of the same rarity (<= 20% relative difference)`, function (done) {
 		this.timeout(8000);
 		const trials = 5000;
-		const SessionInst = new Session("UniqueID");
+		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["stx"];
 		const trackedCards = Object.fromEntries(SessionInst.cardPool());
@@ -225,11 +241,11 @@ describe("Statistical color balancing tests", function () {
 		done();
 	});
 
-	function mean(arr) {
+	function mean(arr: number[]): number {
 		return arr.reduce((a, b) => a + b) / arr.length;
 	}
 
-	function chiSquare(observed, expected) {
+	function chiSquare(observed: number[], expected: number[]) {
 		while (observed.length < expected.length) observed.push(0);
 		while (expected.length < observed.length) expected.push(0);
 		let x2 = 0;
@@ -240,7 +256,7 @@ describe("Statistical color balancing tests", function () {
 		return x2;
 	}
 
-	function chiSquareUniformTest(observed) {
+	function chiSquareUniformTest(observed: number[]) {
 		let x2 = 0;
 		const total = observed.reduce((a, b) => a + b);
 		const expected = total / observed.length;
@@ -253,15 +269,15 @@ describe("Statistical color balancing tests", function () {
 
 	describe("Uniformity of rares tests", function () {
 		const trials = 10000;
-		const SessionInst = new Session("UniqueID");
+		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.colorBalance = true;
 		SessionInst.setRestriction = ["m21"];
 		const rares = [...SessionInst.cardPoolByRarity().rare.keys()]; // 53
 		expect(rares.length).equal(53);
 		const chiSquareCriticalValue52 = 69.832; // For 52 Degrees of Freedom and Significance Level 0.05
 
-		function checkUniformity(done, func) {
-			const results = rares.reduce((o, key) => ({ ...o, [key]: 0 }), {});
+		function checkUniformity(done: Mocha.Done, func: Function) {
+			const results: { [cid: CardID]: number } = rares.reduce((o, key) => ({ ...o, [key]: 0 }), {});
 			for (let r of rares) results[r] = 0;
 			func(results);
 			//console.table(results)
@@ -281,14 +297,14 @@ describe("Statistical color balancing tests", function () {
 		}
 
 		it(`Basic uniform distribution using Math.random()`, function (done) {
-			checkUniformity(done, (results) => {
+			checkUniformity(done, (results: { [cid: CardID]: number }) => {
 				for (let i = 0; i < trials; ++i) {
 					results[rares[Math.floor(Math.random() * rares.length)]] += 1;
 				}
 			});
 		});
 		it(`Basic uniform distribution using randomjs(nodeCrypto) integer`, function (done) {
-			checkUniformity(done, (results) => {
+			checkUniformity(done, (results: { [cid: CardID]: number }) => {
 				const random = new randomjs.Random(randomjs.nodeCrypto);
 				for (let i = 0; i < trials; ++i) {
 					results[rares[random.integer(0, rares.length - 1)]] += 1;
@@ -296,7 +312,7 @@ describe("Statistical color balancing tests", function () {
 			});
 		});
 		it(`Basic uniform distribution using randomjs(MersenneTwister19937) integer`, function (done) {
-			checkUniformity(done, (results) => {
+			checkUniformity(done, (results: { [cid: CardID]: number }) => {
 				const engine = randomjs.MersenneTwister19937.autoSeed();
 				const distribution = randomjs.integer(0, rares.length - 1);
 				for (let i = 0; i < trials; ++i) {
@@ -306,7 +322,7 @@ describe("Statistical color balancing tests", function () {
 		});
 		it(`Uniform distribution test using generateBooster`, function (done) {
 			this.timeout(8000);
-			checkUniformity(done, (results) => {
+			checkUniformity(done, (results: { [cid: CardID]: number }) => {
 				runTrials(SessionInst, trials, results);
 			});
 		});
@@ -316,7 +332,7 @@ describe("Statistical color balancing tests", function () {
 		const trials = 4000;
 		const random = new randomjs.Random(randomjs.nodeCrypto);
 
-		function countTotalDupes(data, res) {
+		function countTotalDupes<T>(data: T[], res: number[]) {
 			let duplicates = 0;
 			for (let i = 0; i < data.length - 1; ++i) if (data[i] === data[i + 1]) ++duplicates;
 			while (res.length <= duplicates) res.push(0);
@@ -324,7 +340,7 @@ describe("Statistical color balancing tests", function () {
 			return duplicates;
 		}
 
-		function countMaxDupes(data, res) {
+		function countMaxDupes<T>(data: T[], res: number[]) {
 			let maxDuplicates = 0;
 			let maxDuplicatesValues = [];
 			for (let i = 0; i < data.length - 1; ++i)
@@ -339,7 +355,9 @@ describe("Statistical color balancing tests", function () {
 			return maxDuplicates;
 		}
 
-		function countDuplicates(populate, distinctResults) {
+		const isArrayOfNumber = (arr: any[]): arr is number[] => arr.every((v) => isNumber(v));
+
+		function countDuplicates<T>(populate: () => T[], distinctResults?: number) {
 			const results = [0];
 			const controlResults = [0];
 			const maxResults = [0];
@@ -350,13 +368,13 @@ describe("Statistical color balancing tests", function () {
 			let controlTotalMaxDupes = 0;
 			for (let i = 0; i < trials; i++) {
 				let cards = populate();
-				if (typeof cards[0] === "number") cards = cards.sort((a, b) => a - b);
+				if (isArrayOfNumber(cards)) cards = cards.sort((a: number, b: number) => a - b);
 				else cards = cards.sort();
 				totalDupes += countTotalDupes(cards, results);
 				totalMaxDupes += countMaxDupes(cards, maxResults);
 
 				if (distinctResults) {
-					let control = [];
+					let control: number[] = [];
 					for (let i = 0; i < cards.length; i++) control.push(random.integer(0, distinctResults - 1));
 					control.sort((a, b) => a - b);
 					controlTotalDupes += countTotalDupes(control, controlResults);
@@ -397,7 +415,7 @@ describe("Statistical color balancing tests", function () {
 
 		describe("Without mythic.", function () {
 			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
-				const SessionInst = new Session("UniqueID");
+				const SessionInst = new Session("UniqueID", "ownerID");
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
 				SessionInst.mythicPromotion = false; // Disable promotion to mythic for easier analysis
@@ -422,9 +440,9 @@ describe("Statistical color balancing tests", function () {
 
 		describe("Accounting for mythics.", function () {
 			for (let set of ["znr", "eld", "thb", "iko", "m21", "neo"]) {
-				let Expected;
-				let Observed;
-				const SessionInst = new Session("UniqueID");
+				let Expected: number[];
+				let Observed: number[];
+				const SessionInst = new Session("UniqueID", "ownerID");
 				SessionInst.colorBalance = true;
 				SessionInst.setRestriction = [set];
 				const rares = [...SessionInst.cardPoolByRarity().rare.keys()];
