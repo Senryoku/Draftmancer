@@ -3,18 +3,19 @@ import chai from "chai";
 const expect = chai.expect;
 import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
 import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { ElementHandle, Page } from "puppeteer";
 
 async function clickDraft() {
 	// Click 'Start' button
-	const [button] = await sessionOwnerPage.$x("//button[contains(., 'Start')]");
+	const [button] = (await sessionOwnerPage.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 	expect(button).to.exist;
 	await button.click();
 }
 
 // Returns true if the draft ended
-async function pickCard(page) {
+async function pickCard(page: Page) {
 	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')]");
-	let text = await page.evaluate((next) => next.innerText, next);
+	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 
 	const waiting = await page.$(".booster-waiting");
@@ -39,7 +40,9 @@ describe("Front End - Solo", function () {
 		await clickDraft();
 
 		// On popup, choose 'Draft alone with bots'
-		const [button2] = await sessionOwnerPage.$x("//button[contains(., 'Draft alone with 7 bots')]");
+		const [button2] = (await sessionOwnerPage.$x(
+			"//button[contains(., 'Draft alone with 7 bots')]"
+		)) as ElementHandle<Element>[];
 		expect(button2).to.exist;
 		await button2.click();
 
@@ -170,7 +173,8 @@ describe("Front End - Multi, with Spectator", function () {
 		await sessionOwnerPage.keyboard.press("Escape");
 
 		let input = await sessionOwnerPage.waitForSelector("#bots");
-		await input.click({ clickCount: 3 }); // Focus and select all text
+		expect(input, "Could not find bots input").to.exist;
+		await input!.click({ clickCount: 3 }); // Focus and select all text
 		await sessionOwnerPage.keyboard.type("1");
 		await sessionOwnerPage.keyboard.press("Enter");
 	});
@@ -195,7 +199,7 @@ describe("Front End - Multi, with Spectator", function () {
 });
 
 describe("Front End - Multi, with disconnects", function () {
-	let sessionLink;
+	let sessionLink: string;
 
 	this.timeout(100000);
 	it("Owner joins and set the bot count to 6", async function () {
