@@ -3,6 +3,17 @@
 		<h2 slot="header">Start {{ teamSealed ? "Team " : "" }}Sealed</h2>
 		<div slot="body" class="sealed-dialog">
 			<div class="sealed-dialog-settings">
+				<div class="teams-selector" v-if="teamSealed">
+					<h3>Assign players to a team:</h3>
+					<div class="teams">
+						<div v-for="(team, idx) in teams" :key="idx" class="team">
+							<div>Team #{{ idx + 1 }}</div>
+							<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
+								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid)?.userName }}</div>
+							</draggable>
+						</div>
+					</div>
+				</div>
 				<div>
 					<h3>
 						How many boosters for each {{ teamSealed ? "team " : "player" }} (default is
@@ -19,17 +30,6 @@
 						:placeholder="`Boosters per ${teamSealed ? 'team ' : 'player'}`"
 						v-model.number="boostersPerPlayer"
 					/>
-				</div>
-				<div class="teams-selector" v-if="teamSealed">
-					<h3>Assign players to a team:</h3>
-					<div class="teams">
-						<div v-for="(team, idx) in teams" :key="idx" class="team">
-							<div>Team #{{ idx + 1 }}</div>
-							<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
-								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid)?.userName }}</div>
-							</draggable>
-						</div>
-					</div>
 				</div>
 				<div>
 					<h3>
