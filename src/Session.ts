@@ -743,7 +743,6 @@ export class Session implements IIndexable {
 		}
 
 		this.initLogs("Winston Draft");
-		if (this.draftLog) for (const userID in this.draftLog.users) this.draftLog.users[userID].picks = [];
 
 		this.boosters = [];
 		this.winstonNextRound();
@@ -866,8 +865,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
 
-		const log = this.initLogs("Grid Draft");
-		for (const userID in log.users) log.users[userID].picks = [];
+		this.initLogs("Grid Draft");
 
 		this.boosters = [];
 		return true;
@@ -965,8 +963,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startRochesterDraft", (this.draftState as RochesterDraftState).syncData());
 		}
 
-		const log = this.initLogs("Rochester Draft");
-		for (const userID in log.users) log.users[userID].picks = [];
+		this.initLogs("Rochester Draft");
 
 		this.boosters = [];
 		return true;
@@ -1088,8 +1085,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startRotisserieDraft", this.draftState.syncData(user));
 		}
 
-		const log = this.initLogs("Rotisserie Draft");
-		for (const userID in log.users) log.users[userID].picks = [];
+		this.initLogs("Rotisserie Draft");
 
 		return new SocketAck();
 	}
@@ -1300,9 +1296,7 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		// Draft Log initialization
 		const log = this.initLogs("Draft");
-		for (const userID in log.users) log.users[userID].picks = [];
 
 		const virtualPlayerData = this.getSortedVirtualPlayerData();
 		for (const uid of this.users) {
