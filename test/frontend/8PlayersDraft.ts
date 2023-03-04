@@ -1,16 +1,15 @@
 import { beforeEach, afterEach } from "mocha";
-import puppeteer from "puppeteer";
+import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, disableAnimations } from "./src/common.js";
+import { waitAndClickSelector, disableAnimations, testDebug } from "./src/common.js";
 
-const testDebug = true; // Display tests for debugging
 const debugWindowWidth = 2560 / 4;
 const debugWindowHeight = 1440 / 2;
 
-let browsers = [];
-let pages = [];
+let browsers: Browser[] = [];
+let pages: Page[] = [];
 
 async function startBrowsers() {
 	let promises = [];
@@ -56,13 +55,13 @@ beforeEach(function (done) {
 });
 
 afterEach(function (done) {
-	enableLogs(this.currentTest.state == "failed");
+	enableLogs(this.currentTest!.state == "failed");
 	done();
 });
 
-async function pickCard(page) {
+async function pickCard(page: Page) {
 	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')]");
-	let text = await page.evaluate((next) => next.innerText, next);
+	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 
 	await page.waitForSelector(".booster:not(.booster-waiting) .booster-card");
@@ -74,7 +73,7 @@ async function pickCard(page) {
 	return false;
 }
 
-describe("Front End - 8 Players Draft", function () {
+describe.only("Front End - 8 Players Draft", function () {
 	this.timeout(100000);
 	it("Starts Browsers", async function () {
 		await startBrowsers();
@@ -99,9 +98,9 @@ describe("Front End - 8 Players Draft", function () {
 	});
 
 	it(`Launch Draft`, async function () {
-		const [button] = await pages[0].$x("//button[contains(., 'Start')]");
+		const [button] = (await pages[0].$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 		expect(button).to.exist;
-		await button.click();
+		await button!.click();
 
 		let promises = [];
 		for (let i = 0; i < 8; i++) {
