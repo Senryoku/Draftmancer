@@ -2,13 +2,13 @@ import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
-import { makeClients, waitForClientDisconnects, enableLogs, disableLogs } from "./src/common.js";
-import { Card, CardColor, UniqueCard } from "../src/CardTypes.js";
-import { DraftState } from "../src/DraftState.js";
+import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
+import { CardColor, UniqueCard } from "../src/CardTypes.js";
 import { SetCode } from "../src/Types.js";
 
 describe("Set Specific Booster Rules", function () {
 	let clients: ReturnType<typeof makeClients> = [];
+	let pickNumber: { [id: string]: number } = {};
 	let sessionID = "SessionID";
 
 	const validateColorBalance = (booster: UniqueCard[]) => {
@@ -30,7 +30,10 @@ describe("Set Specific Booster Rules", function () {
 	};
 
 	const validateWARBooster = function (booster: UniqueCard[]) {
-		expect(booster.map((c) => c.set).every((s) => s === "war")).to.be.true;
+		expect(
+			booster.map((c) => c.set).every((s) => s === "war"),
+			"All cards should be from the set 'war'"
+		).to.be.true;
 		let PLCount = booster.reduce((acc, val) => {
 			return acc + (val.type.includes("Planeswalker") ? 1 : 0);
 		}, 0);
@@ -193,35 +196,55 @@ describe("Set Specific Booster Rules", function () {
 		waitForClientDisconnects(done);
 	});
 
+	const collectBoosters = () => {
+		return new Promise<UniqueCard[][]>((resolve) => {
+			let endDraftReceived = 0;
+			const boosters: UniqueCard[][] = [];
+			for (const client of clients) {
+				pickNumber[client.id] = -1;
+				client.on("draftState", (data) => {
+					const state = data as {
+						booster: UniqueCard[];
+						boosterCount: number;
+						boosterNumber: number;
+						pickNumber: number;
+					};
+					if (state.boosterCount > 0 && state.pickNumber != pickNumber[client.id]) {
+						if (state.pickNumber === 0) boosters.push(state.booster);
+						pickNumber[client.id] = state.pickNumber;
+						client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+					}
+				});
+				client.once("endDraft", () => {
+					++endDraftReceived;
+					if (endDraftReceived === clients.length) {
+						for (const c of clients) c.removeListener("draftState");
+						resolve(boosters);
+					}
+				});
+			}
+		});
+	};
+
 	const testSet = function (set: SetCode, validationFunc: (booster: UniqueCard[]) => void, desc: string) {
-		it(`${set} boosters should have ${desc} (Single set restriction).`, function (done) {
+		it(`${set} boosters should have ${desc} (Single set restriction).`, async () => {
 			let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-			clients[ownerIdx].once("draftState", function () {
-				for (let b of (Sessions[sessionID].draftState as DraftState).boosters) validationFunc(b);
-				clients[ownerIdx].once("endDraft", function () {
-					done();
-				});
-				clients[ownerIdx].emit("stopDraft");
-			});
 			clients[ownerIdx].emit("startDraft");
+			const boosters = await collectBoosters();
+			for (let b of boosters) validationFunc(b);
 		});
 
-		it(`${set} boosters should have ${desc} (Custom boosters).`, function (done) {
+		it(`${set} boosters should have ${desc} (Custom boosters).`, async () => {
 			let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
-			clients[ownerIdx].once("draftState", function () {
-				for (let b of (Sessions[sessionID].draftState as DraftState).boosters) validationFunc(b);
-				clients[ownerIdx].once("endDraft", function () {
-					done();
-				});
-				clients[ownerIdx].emit("stopDraft");
-			});
 			clients[ownerIdx].emit("startDraft");
+			const boosters = await collectBoosters();
+			for (let b of boosters) validationFunc(b);
 		});
 	};
 
@@ -235,55 +258,40 @@ describe("Set Specific Booster Rules", function () {
 	testSet("clb", validateCLBBooster, "one legendary creature or planeswalker, one legendary background");
 	testSet("2x2", validate2X2Booster, "two foils and one Cryptic Spires");
 	testSet("dmr", validateDMRBooster, "one retro frame card");
-
 	testSet("vow", validateColorBalance, "at least one common of each color.");
-	it(`VOW boosters should have at least one common of each color, even with foil on.`, function (done) {
+
+	it(`VOW boosters should have at least one common of each color, even with foil on.`, async function () {
 		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["vow"]);
 		clients[ownerIdx].emit("setFoil", true);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-		clients[ownerIdx].once("draftState", function () {
-			for (let b of (Sessions[sessionID].draftState as DraftState).boosters) validateColorBalance(b);
-			clients[ownerIdx].once("endDraft", function () {
-				done();
-			});
-			clients[ownerIdx].emit("stopDraft");
-		});
 		clients[ownerIdx].emit("startDraft");
+		const boosters = await collectBoosters();
+		for (let b of boosters) validateColorBalance(b);
 	});
 
-	it(`Validate mixed Custom boosters.`, function (done) {
+	it(`Validate mixed Custom boosters.`, async () => {
 		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", []);
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
-		clients[ownerIdx].once("draftState", function () {
-			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
-				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
-				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
-			clients[ownerIdx].once("endDraft", function () {
-				done();
-			});
-			clients[ownerIdx].emit("stopDraft");
-		});
 		clients[ownerIdx].emit("startDraft");
+		const boosters = await collectBoosters();
+		for (let idx = 0; idx < boosters.length; ++idx)
+			if (Math.floor(idx / clients.length) === 1) validateWARBooster(boosters[idx]);
+			else validateDOMBooster(boosters[idx]);
 	});
 
-	it(`Validate mixed Custom boosters with regular set restriction.`, function (done) {
+	it(`Validate mixed Custom boosters with regular set restriction.`, async () => {
 		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["dom"]);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
-		clients[ownerIdx].once("draftState", function () {
-			for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
-				if (Math.floor(idx / 8) === 1) validateWARBooster(Sessions[sessionID].boosters[idx]);
-				else validateDOMBooster(Sessions[sessionID].boosters[idx]);
-			clients[ownerIdx].once("endDraft", function () {
-				done();
-			});
-			clients[ownerIdx].emit("stopDraft");
-		});
 		clients[ownerIdx].emit("startDraft");
+		const boosters = await collectBoosters();
+		for (let idx = 0; idx < boosters.length; ++idx)
+			if (Math.floor(idx / clients.length) === 1) validateWARBooster(boosters[idx]);
+			else validateDOMBooster(boosters[idx]);
 	});
 });
