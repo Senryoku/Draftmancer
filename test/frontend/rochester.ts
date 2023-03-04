@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { waitAndClickXpath, waitAndClickSelector, getSessionLink } from "./src/common.js";
 import { Page } from "puppeteer";
 
 async function pickRochester(page: Page) {
@@ -29,12 +29,7 @@ describe("Rochester", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(sessionOwnerPage);
 		await otherPlayerPage.goto(clipboard);
 	});
 

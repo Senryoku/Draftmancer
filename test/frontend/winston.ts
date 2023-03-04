@@ -2,9 +2,8 @@ import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { waitAndClickXpath } from "./src/common.js";
+import { getSessionLink, waitAndClickXpath } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
-import exp from "constants";
 
 async function pickWinston(page: Page) {
 	let next = await page.waitForXPath(
@@ -45,12 +44,7 @@ describe("Winston Draft", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(sessionOwnerPage);
 		await otherPlayerPage.goto(clipboard);
 	});
 

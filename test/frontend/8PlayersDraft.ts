@@ -3,7 +3,7 @@ import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, startBrowsers } from "./src/common.js";
+import { waitAndClickSelector, startBrowsers, getSessionLink } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
@@ -47,11 +47,7 @@ describe("Front End - 8 Players Draft", function () {
 	});
 
 	it(`Other Players joins the session`, async function () {
-		// Get session link
-		await pages[0].$$(".fa-share-square");
-		await pages[0].click(".fa-share-square");
-		let clipboard = await pages[0].evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
+		const clipboard = await getSessionLink(pages[0]);
 
 		let promises = [];
 		for (let i = 1; i < 8; i++) {

@@ -3,11 +3,7 @@ import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, startBrowsers, waitAndClickXpath } from "./src/common.js";
-
-const testDebug = true; // Display tests for debugging
-const debugWindowWidth = 2560 / 4;
-const debugWindowHeight = 1440 / 2;
+import { waitAndClickSelector, startBrowsers, waitAndClickXpath, getSessionLink } from "./src/common.js";
 
 let browsers: Browser[];
 let pages: Page[];
@@ -52,12 +48,7 @@ describe("Rotisserie Draft - Singleton", function () {
 	});
 
 	it(`Other Players joins the session`, async function () {
-		// Get session link
-		await pages[0].$$(".fa-share-square");
-		await pages[0].click(".fa-share-square");
-		let clipboard = await pages[0].evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(pages[0]);
 		let promises = [];
 		for (const page of pages) promises.push(page.goto(clipboard));
 		await Promise.all(promises);
@@ -113,12 +104,7 @@ describe("Rotisserie Draft - Standard", function () {
 	});
 
 	it(`Other Players joins the session`, async function () {
-		// Get session link
-		await pages[0].$$(".fa-share-square");
-		await pages[0].click(".fa-share-square");
-		let clipboard = await pages[0].evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(pages[0]);
 		let promises = [];
 		for (const page of pages) promises.push(page.goto(clipboard));
 		await Promise.all(promises);

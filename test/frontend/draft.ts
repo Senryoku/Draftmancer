@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { waitAndClickXpath, waitAndClickSelector, getSessionLink } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 
 async function clickDraft() {
@@ -70,12 +70,7 @@ describe("Front End - Multi", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(sessionOwnerPage);
 		await otherPlayerPage.goto(clipboard);
 	});
 
@@ -115,12 +110,7 @@ describe("Front End - Multi, with bots", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(sessionOwnerPage);
 		await otherPlayerPage.goto(clipboard);
 	});
 
@@ -158,12 +148,7 @@ describe("Front End - Multi, with Spectator", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		let clipboard = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
+		const clipboard = await getSessionLink(sessionOwnerPage);
 		await otherPlayerPage.goto(clipboard);
 	});
 

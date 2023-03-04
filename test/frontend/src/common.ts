@@ -76,5 +76,23 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	const context = browsers[0].defaultBrowserContext();
 	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
 	if (testDebug) for (const page of pages) page.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
+	for (const page of pages) {
+		// Skip the confirmation dialog when exiting/refreshing while there's a pending call to storeDraftLogs
+		page.on("dialog", async (dialog) => {
+			await dialog.accept();
+		});
+	}
 	return [browsers, pages];
+}
+
+export async function getSessionLink(page: Page): Promise<string> {
+	await page.$$(".fa-share-square");
+	await page.click(".fa-share-square");
+	const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+	expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
+	// Wait for the toast notification to disapear.
+	await page.waitForXPath("//div[contains(., 'Session link copied to clipboard!')]", {
+		hidden: true,
+	});
+	return clipboard;
 }
