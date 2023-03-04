@@ -646,12 +646,7 @@
 								teamb: teamDraft && idx % 2 === 1,
 								self: userID === user.userID,
 								bot: user.isBot,
-								'current-player':
-									(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
-									(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
-									(rotisserieDraftState && rotisserieDraftState.currentPlayer === user.userID) ||
-									(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
-									(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
+								'current-player': currentPlayer === user.userID,
 							}"
 							:data-userid="user.userID"
 							:key="user.userID"
@@ -711,17 +706,7 @@
 										></i>
 										<i
 											v-else
-											v-show="
-												(winstonDraftState &&
-													user.userID === winstonDraftState.currentPlayer) ||
-												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-												(rotisserieDraftState &&
-													user.userID === rotisserieDraftState.currentPlayer) ||
-												(rochesterDraftState &&
-													user.userID === rochesterDraftState.currentPlayer) ||
-												(minesweeperDraftState &&
-													user.userID === minesweeperDraftState.currentPlayer)
-											"
+											v-show="user.userID === currentPlayer"
 											class="fas fa-spinner fa-spin"
 											v-tooltip="user.userName + ' is thinking...'"
 										></i>

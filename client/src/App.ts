@@ -2994,6 +2994,14 @@ export default defineComponent({
 					: PassingOrder.Right
 				: PassingOrder.None;
 		},
+		currentPlayer() {
+			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
+			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
+			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
+			if (this.rochesterDraftState) return this.rochesterDraftState.currentPlayer;
+			if (this.minesweeperDraftState) return this.minesweeperDraftState.currentPlayer;
+			return null;
+		},
 		displaySets(): SetInfo[] {
 			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
 		},
