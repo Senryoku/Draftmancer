@@ -402,7 +402,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	function singlePick() {
+	function singlePick(boosterValidation?: (booster: UniqueCard[]) => void) {
 		it("Once everyone in a session has picked a card, receive next boosters.", (done) => {
 			let receivedBoosters = 0;
 			for (let client of clients) {
@@ -410,6 +410,7 @@ describe("Single Draft (Two Players)", function () {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					const clientState = clientStates[getUID(client)];
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
+						if (s.pickNumber === 0) boosterValidation?.(s.booster);
 						++receivedBoosters;
 						expect(s.booster.length).to.equal(clientState.state.booster.length - 1);
 						clientState.state = s;
@@ -427,7 +428,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	function endDraft() {
+	function endDraft(boosterValidation?: (booster: UniqueCard[]) => void) {
 		it("Pick enough times, and the draft should end.", function (done) {
 			let draftEnded = 0;
 			for (const client of clients) {
@@ -435,6 +436,7 @@ describe("Single Draft (Two Players)", function () {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					const clientState = clientStates[getUID(client)];
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
+						if (s.pickNumber === 0) boosterValidation?.(s.booster);
 						const choice = Math.floor(Math.random() * s.booster.length);
 						clientState.pickedCards.push(s.booster[choice]);
 						clientState.state = s;
@@ -501,15 +503,12 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].emit("setRestriction", ["thb"]);
 		});
 		startDraft();
-		it("Boosters are color balanced and contain no duplicate.", function (done) {
-			for (let b of Sessions[sessionID].boosters) {
-				checkColorBalance(b);
-				checkDuplicates(b);
-			}
-			done();
-		});
-		singlePick();
-		endDraft();
+		const boosterValidation = (booster: UniqueCard[]) => {
+			checkColorBalance(booster);
+			checkDuplicates(booster);
+		};
+		singlePick(boosterValidation);
+		endDraft(boosterValidation);
 		expectCardCount(3 * 15);
 		disconnect();
 	});
@@ -529,24 +528,34 @@ describe("Single Draft (Two Players)", function () {
 				clients[ownerIdx].emit("setRestriction", [set]);
 			});
 			startDraft();
-			it("All cards in booster should be of the desired set.", function (done) {
-				for (let b of Sessions[sessionID].boosters) {
-					checkDuplicates(b);
-					expect(
-						b.every(
-							(c) =>
-								c.set === set ||
-								(set === "mb1" && c.set === "fmb1") ||
-								(set === "tsp" && c.set === "tsb") ||
-								(set === "frf" && c.set === "ktk") ||
-								(set === "dgm" && (c.set === "gtc" || c.set === "rtr")) ||
-								(set === "stx" && c.set === "sta")
-						)
-					).to.be.true;
-				}
-				done();
+			endDraft((b) => {
+				checkDuplicates(b);
+				expect(
+					b.every(
+						(c) =>
+							c.set === set ||
+							(set === "planeshifted_snc" && c.set === "snc") ||
+							(set === "unf" && c.set === "sunf") ||
+							(set === "con" && c.set === "ala") ||
+							(set === "arb" && c.set === "ala") ||
+							(set === "wwk" && c.set === "zen") ||
+							(set === "dka" && c.set === "isd") ||
+							(set === "gtc" && c.set === "rtr") ||
+							(set === "bng" && c.set === "ths") ||
+							(set === "jou" && c.set === "ths") ||
+							(set === "ogw" && c.set === "bfz") ||
+							(set === "emn" && c.set === "soi") ||
+							(set === "aer" && c.set === "kld") ||
+							(set === "mb1" && c.set === "fmb1") ||
+							(set === "tsp" && c.set === "tsb") ||
+							(set === "frf" && c.set === "ktk") ||
+							(set === "dgm" && (c.set === "gtc" || c.set === "rtr")) ||
+							(set === "stx" && c.set === "sta") ||
+							(set === "bro" && c.set === "brr")
+					),
+					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
+				).to.be.true;
 			});
-			endDraft();
 			disconnect();
 		});
 	}
@@ -950,18 +959,16 @@ describe("Single Draft (Two Players)", function () {
 			});
 
 			startDraft();
-			if (distributionMode === "regular") {
-				it("Boosters should be in specified order.", function (done) {
-					for (let idx = 0; idx < Sessions[sessionID].boosters.length; ++idx)
-						expect(
-							Sessions[sessionID].boosters[idx].every(
-								(c) => CustomBoosters[idx] === "" || c.set === CustomBoosters[idx]
-							)
-						);
-					done();
-				});
-			}
-			endDraft();
+			let idx = 0;
+			endDraft((b) => {
+				if (distributionMode === "regular") {
+					expect(
+						b.every((c) => CustomBoosters[idx] === "" || c.set === CustomBoosters[idx]),
+						"Boosters should be in specified order."
+					);
+					++idx;
+				}
+			});
 		}
 		expectCardCount(3 * 15);
 		disconnect();
@@ -1598,6 +1605,7 @@ describe("Multiple Drafts", function () {
 					c.socket.on("startDraft", function () {
 						connectedClients += 1;
 						if (connectedClients == sessionClients.length) {
+							// FIXME: Don't use .boosters
 							for (let b of Sessions[sessionIDs[sessionIdx]].boosters) checkColorBalance(b);
 							sessionsCorrectlyStartedDrafting += 1;
 						}
@@ -1612,6 +1620,7 @@ describe("Multiple Drafts", function () {
 							boostersReceived == playersPerSession * sessionCount
 						) {
 							it("Boosters are color balanced and contain no duplicate.", function (done) {
+								// FIXME: Don't use .boosters
 								for (let b of Sessions[sessionIDs[sessionIdx]].boosters) {
 									checkColorBalance(b);
 									checkDuplicates(b);

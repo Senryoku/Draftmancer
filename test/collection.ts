@@ -142,16 +142,6 @@ describe("Collection Restriction", function () {
 			clients[ownerIdx].emit("startDraft");
 		});
 
-		it(`All cards in generated boosters (default settings) should be in all user collections.`, function (done) {
-			for (let booster of Sessions[sessionID].boosters) {
-				for (let card of booster) {
-					const arena_id = card.arena_id!;
-					for (let col of collections) expect(col).to.have.own.property(arena_id);
-				}
-			}
-			done();
-		});
-
 		it("End draft. All cards in generated boosters (default settings) should be in all user collections.", function (done) {
 			this.timeout(20000);
 			let draftEnded = 0;

@@ -35,9 +35,16 @@ describe("Set Specific Booster Rules", function () {
 			"All cards should be from the set 'war'"
 		).to.be.true;
 		let PLCount = booster.reduce((acc, val) => {
-			return acc + (val.type.includes("Planeswalker") ? 1 : 0);
+			return acc + (val.type.includes("Planeswalker") && !val.foil ? 1 : 0);
 		}, 0);
-		expect(PLCount).to.equal(1);
+		expect(
+			PLCount,
+			`A WAR pack should contain exactly one Planeswalker, got: ${booster
+				.map((c) => {
+					return `${c.name} - ${c.type}`;
+				})
+				.join(", ")}`
+		).to.equal(1);
 	};
 
 	const validateZNRBooster = function (booster: UniqueCard[]) {
