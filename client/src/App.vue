@@ -489,58 +489,55 @@
 
 		<!-- Session Players -->
 		<div class="main-controls session-players">
-			<div
-				v-if="!ownerIsPlayer"
-				class="generic-container"
-				v-tooltip="
-					`Non-playing session owner: ${sessionOwnerUsername ? sessionOwnerUsername : '(Disconnected)'}`
-				"
-				style="flex: 0 3 auto; text-align: center"
-			>
-				<i
-					class="fas fa-crown subtle-gold"
+			<div class="session-players-header">
+				<div
+					v-if="!ownerIsPlayer"
+					class="generic-container"
 					v-tooltip="
 						sessionOwnerUsername
 							? `${sessionOwnerUsername} is the session owner.`
 							: 'Session owner is disconnected.'
 					"
-				></i>
-				<div class="non-playing-session-owner-name">
-					{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
+					style="flex: 0 3 auto; text-align: center"
+				>
+					<i class="fas fa-crown subtle-gold"></i>
+					<div class="non-playing-session-owner-name">
+						{{ sessionOwnerUsername ? sessionOwnerUsername : "(Disconnected)" }}
+					</div>
+					<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
 				</div>
-				<div class="chat-bubble" :id="'chat-bubble-' + sessionOwner"></div>
+				<div
+					v-tooltip="'Maximum players can be adjusted in session settings.'"
+					style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
+				>
+					Players
+					<br />
+					({{ sessionUsers.length }}/{{ maxPlayers }})
+				</div>
+				<i
+					v-if="!drafting"
+					class="fas fa-random"
+					:class="{
+						crossed: !randomizeSeatingOrder,
+						faded: !randomizeSeatingOrder,
+						clickable: userID === sessionOwner,
+					}"
+					@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
+					v-tooltip="{
+						content: `Randomize Seating Order on draft start: <strong>${
+							randomizeSeatingOrder ? 'Enabled' : 'Disabled'
+						}</strong>`,
+						html: true,
+					}"
+				></i>
 			</div>
-			<div
-				v-tooltip="'Maximum players can be adjusted in session settings.'"
-				style="flex: 0 3 auto; text-align: center; font-size: 0.8em; margin-right: 0.5em"
-			>
-				Players
-				<br />
-				({{ sessionUsers.length }}/{{ maxPlayers }})
-			</div>
-			<i
-				v-if="!drafting"
-				class="fas fa-random"
-				:class="{
-					crossed: !randomizeSeatingOrder,
-					faded: !randomizeSeatingOrder,
-					clickable: userID === sessionOwner,
-				}"
-				@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
-				v-tooltip="{
-					content: `Randomize Seating Order on draft start: <strong>${
-						randomizeSeatingOrder ? 'Enabled' : 'Disabled'
-					}</strong>`,
-					html: true,
-				}"
-			></i>
 			<template v-if="!drafting">
 				<draggable
 					v-model="userOrder"
 					@change="changePlayerOrder"
 					:disabled="userID != sessionOwner || drafting"
 					:animation="200"
-					style="flex-grow: 2; padding-left: 0.5em; padding-right: 0.5em"
+					class="player-list-container"
 				>
 					<transition-group type="transition" tag="ul" class="player-list">
 						<li
@@ -640,146 +637,149 @@
 				</draggable>
 			</template>
 			<template v-else>
-				<ul class="player-list">
-					<li
-						v-for="(user, idx) in virtualPlayers"
-						:class="{
-							teama: teamDraft && idx % 2 === 0,
-							teamb: teamDraft && idx % 2 === 1,
-							self: userID === user.userID,
-							bot: user.isBot,
-							'current-player':
-								(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
-								(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
-								(rotisserieDraftState && rotisserieDraftState.currentPlayer === user.userID) ||
-								(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
-								(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
-						}"
-						:data-userid="user.userID"
-						:key="user.userID"
-					>
-						<i
-							class="fas fa-circle fa-xs passing-order-repeat"
-							v-if="passingOrder === PassingOrder.Repeat"
-							v-tooltip="'Passing order'"
-						></i>
-						<i
-							class="fas fa-angle-double-left passing-order-left"
-							v-else-if="passingOrder === PassingOrder.Left"
-							v-tooltip="'Passing order'"
-						></i>
-						<i
-							class="fas fa-angle-double-right passing-order-right"
-							v-else-if="passingOrder === PassingOrder.Right"
-							v-tooltip="'Passing order'"
-						></i>
-						<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
-						<div class="status-icons">
-							<template v-if="!user.isBot && !user.isDisconnected">
-								<i
-									v-if="user.userID === sessionOwner"
-									class="fas fa-crown subtle-gold"
-									v-tooltip="`${user.userName} is the session's owner.`"
-								></i>
-								<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
-									<img
-										src="./assets/img/pass_ownership.svg"
-										class="clickable"
-										:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
-										style="height: 18px; margin-top: -4px"
-										v-tooltip="`Give session ownership to ${user.userName}`"
-										@click="setSessionOwner(user.userID)"
-									/>
+				<div class="player-list-container">
+					<ul class="player-list">
+						<li
+							v-for="(user, idx) in virtualPlayers"
+							:class="{
+								teama: teamDraft && idx % 2 === 0,
+								teamb: teamDraft && idx % 2 === 1,
+								self: userID === user.userID,
+								bot: user.isBot,
+								'current-player':
+									(winstonDraftState && winstonDraftState.currentPlayer === user.userID) ||
+									(gridDraftState && gridDraftState.currentPlayer === user.userID) ||
+									(rotisserieDraftState && rotisserieDraftState.currentPlayer === user.userID) ||
+									(rochesterDraftState && rochesterDraftState.currentPlayer === user.userID) ||
+									(minesweeperDraftState && minesweeperDraftState.currentPlayer === user.userID),
+							}"
+							:data-userid="user.userID"
+							:key="user.userID"
+						>
+							<i
+								class="fas fa-circle fa-xs passing-order-repeat"
+								v-if="passingOrder === PassingOrder.Repeat"
+								v-tooltip="'Passing order'"
+							></i>
+							<i
+								class="fas fa-angle-double-left passing-order-left"
+								v-else-if="passingOrder === PassingOrder.Left"
+								v-tooltip="'Passing order'"
+							></i>
+							<i
+								class="fas fa-angle-double-right passing-order-right"
+								v-else-if="passingOrder === PassingOrder.Right"
+								v-tooltip="'Passing order'"
+							></i>
+							<div class="player-name" v-tooltip="user.userName">{{ user.userName }}</div>
+							<div class="status-icons">
+								<template v-if="!user.isBot && !user.isDisconnected">
 									<i
-										class="fas fa-user-slash clickable red"
-										:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
-										v-tooltip="`Remove ${user.userName} from the session`"
-										@click="removePlayer(user.userID)"
+										v-if="user.userID === sessionOwner"
+										class="fas fa-crown subtle-gold"
+										v-tooltip="`${user.userName} is the session's owner.`"
 									></i>
-								</template>
-								<template
-									v-if="
-										winstonDraftState ||
-										gridDraftState ||
-										rotisserieDraftState ||
-										rochesterDraftState ||
-										minesweeperDraftState
-									"
-								>
-									<i
-										v-if="user.userID in disconnectedUsers"
-										class="fas fa-times red"
-										v-tooltip="user.userName + ' is disconnected.'"
-									></i>
-									<i
-										v-else
-										v-show="
-											(winstonDraftState && user.userID === winstonDraftState.currentPlayer) ||
-											(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
-											(rotisserieDraftState &&
-												user.userID === rotisserieDraftState.currentPlayer) ||
-											(rochesterDraftState &&
-												user.userID === rochesterDraftState.currentPlayer) ||
-											(minesweeperDraftState &&
-												user.userID === minesweeperDraftState.currentPlayer)
+									<template v-if="userID === sessionOwner && user.userID !== sessionOwner">
+										<img
+											src="./assets/img/pass_ownership.svg"
+											class="clickable"
+											:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
+											style="height: 18px; margin-top: -4px"
+											v-tooltip="`Give session ownership to ${user.userName}`"
+											@click="setSessionOwner(user.userID)"
+										/>
+										<i
+											class="fas fa-user-slash clickable red"
+											:class="{ 'opaque-disabled': user.userID in disconnectedUsers }"
+											v-tooltip="`Remove ${user.userName} from the session`"
+											@click="removePlayer(user.userID)"
+										></i>
+									</template>
+									<template
+										v-if="
+											winstonDraftState ||
+											gridDraftState ||
+											rotisserieDraftState ||
+											rochesterDraftState ||
+											minesweeperDraftState
 										"
-										class="fas fa-spinner fa-spin"
-										v-tooltip="user.userName + ' is thinking...'"
-									></i>
+									>
+										<i
+											v-if="user.userID in disconnectedUsers"
+											class="fas fa-times red"
+											v-tooltip="user.userName + ' is disconnected.'"
+										></i>
+										<i
+											v-else
+											v-show="
+												(winstonDraftState &&
+													user.userID === winstonDraftState.currentPlayer) ||
+												(gridDraftState && user.userID === gridDraftState.currentPlayer) ||
+												(rotisserieDraftState &&
+													user.userID === rotisserieDraftState.currentPlayer) ||
+												(rochesterDraftState &&
+													user.userID === rochesterDraftState.currentPlayer) ||
+												(minesweeperDraftState &&
+													user.userID === minesweeperDraftState.currentPlayer)
+											"
+											class="fas fa-spinner fa-spin"
+											v-tooltip="user.userName + ' is thinking...'"
+										></i>
+									</template>
+									<template v-else>
+										<i
+											v-if="user.isDisconnected"
+											class="fas fa-times red"
+											v-tooltip="user.userName + ' is disconnected.'"
+										></i>
+									</template>
 								</template>
-								<template v-else>
-									<i
-										v-if="user.isDisconnected"
-										class="fas fa-times red"
-										v-tooltip="user.userName + ' is disconnected.'"
-									></i>
-								</template>
-							</template>
-							<template v-if="user.boosterCount !== undefined">
-								<div
-									v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
-									v-if="user.boosterCount > 0"
-									class="booster-count"
-								>
-									<template v-if="user.boosterCount === 1">
-										<img src="./assets/img/booster.svg" />
-									</template>
-									<template v-else-if="user.boosterCount === 2">
-										<img
-											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(10deg)"
-										/>
-										<img
-											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(-10deg)"
-										/>
-									</template>
-									<template v-else-if="user.boosterCount > 2">
-										<img
-											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(10deg)"
-										/>
-										<img
-											src="./assets/img/booster.svg"
-											style="transform: translate(-50%, -50%) rotate(-10deg)"
-										/>
-										<img src="./assets/img/booster.svg" />
-										<div>
-											{{ user.boosterCount }}
-										</div>
-									</template>
-								</div>
+								<template v-if="user.boosterCount !== undefined">
+									<div
+										v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
+										v-if="user.boosterCount > 0"
+										class="booster-count"
+									>
+										<template v-if="user.boosterCount === 1">
+											<img src="./assets/img/booster.svg" />
+										</template>
+										<template v-else-if="user.boosterCount === 2">
+											<img
+												src="./assets/img/booster.svg"
+												style="transform: translate(-50%, -50%) rotate(10deg)"
+											/>
+											<img
+												src="./assets/img/booster.svg"
+												style="transform: translate(-50%, -50%) rotate(-10deg)"
+											/>
+										</template>
+										<template v-else-if="user.boosterCount > 2">
+											<img
+												src="./assets/img/booster.svg"
+												style="transform: translate(-50%, -50%) rotate(10deg)"
+											/>
+											<img
+												src="./assets/img/booster.svg"
+												style="transform: translate(-50%, -50%) rotate(-10deg)"
+											/>
+											<img src="./assets/img/booster.svg" />
+											<div>
+												{{ user.boosterCount }}
+											</div>
+										</template>
+									</div>
 
-								<i
-									class="fas fa-spinner fa-spin"
-									v-tooltip="user.userName + ' is waiting...'"
-									v-else
-								></i>
-							</template>
-						</div>
-						<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
-					</li>
-				</ul>
+									<i
+										class="fas fa-spinner fa-spin"
+										v-tooltip="user.userName + ' is waiting...'"
+										v-else
+									></i>
+								</template>
+							</div>
+							<div class="chat-bubble" :id="'chat-bubble-' + user.userID"></div>
+						</li>
+					</ul>
+				</div>
 			</template>
 			<div class="chat">
 				<form @submit.prevent="sendChatMessage">

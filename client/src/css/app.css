@@ -21,8 +21,8 @@ body {
 
 #main-container .main-content {
 	flex-grow: 1;
-	padding-left: 1em;
-	padding-right: 1em;
+	padding-left: min(1em, 2vw);
+	padding-right: min(1em, 2vw);
 }
 
 footer {
@@ -439,7 +439,7 @@ select.swal2-input option {
 
 .welcome {
 	font-size: 1.1rem;
-	padding: 1.5em;
+	padding: min(1.5em, 2vw);
 	padding-top: 0;
 }
 
@@ -474,6 +474,7 @@ select.swal2-input option {
 	.welcome-sections {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 	}
 }
 
@@ -719,6 +720,21 @@ select.swal2-input option {
 	gap: 0.2em;
 }
 
+.session-players-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.2em;
+	grid-area: session-players-header;
+}
+
+.player-list-container {
+	flex-grow: 2; 
+	padding-left: 0.5em; 
+	padding-right: 0.5em;
+	grid-area: player-list;
+}
+
 ul.player-list {
 	display: inline-flex;
 	list-style: none;
@@ -785,6 +801,19 @@ ul.player-list {
 	overflow: hidden;
 	white-space: nowrap;
 	mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 90%, transparent);
+}
+
+@media (max-width: 900px) {
+	.session-players {
+		display: grid;
+		grid-template-areas: "session-players-header chat"
+		"player-list player-list";
+		grid-template-columns: fit-content(30%);
+	}
+	.player-list li {
+		flex: 1 1 20vw;
+		max-width: none;
+	}
 }
 
 .move-player {

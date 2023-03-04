@@ -1,12 +1,12 @@
 .chat {
+	grid-area: chat;
 	display: inline-flex;
 	position: relative;
 	white-space: nowrap;
 	justify-content: right;
 	align-items: center;
 	overflow: visible;
-	width: 7.2em;
-	flex: 0 0 7.2em;
+	flex: 0 0 auto;
 	gap: 0.2em;
 }
 
@@ -14,9 +14,26 @@
 	display: inline-block;
 }
 
-.chat input {
-	width: 6em;
-	transition: width 0.2s ease-in-out;
+@media (max-width: 900px) {
+	.chat input {
+		width: 14.5em;
+	}
+}
+
+@media (min-width: 900px) {
+	.chat {
+		width: 7.2em;
+		flex: 0 0 7.2em;
+	}
+
+	.chat input {
+		width: 6em;
+		transition: width 0.2s ease-in-out;
+	}
+
+	.chat input:focus {
+		width: 14.5em;
+	}
 }
 
 @media (min-width: 1600px) {
@@ -27,11 +44,6 @@
 	.chat input {
 		width: 14.5em;
 	}
-}
-
-  
-.chat input:focus {
-	width: 14.5em;
 }
 
 .chat-bubble {
