@@ -49,10 +49,8 @@ describe("Front End - 8 Players Draft", function () {
 	it(`Other Players joins the session`, async function () {
 		const clipboard = await getSessionLink(pages[0]);
 
-		let promises = [];
-		for (let i = 1; i < 8; i++) {
-			promises.push(pages[i].goto(clipboard));
-		}
+		const promises = [];
+		for (let i = 1; i < pages.length; i++) promises.push(pages[i].goto(clipboard));
 		await Promise.all(promises);
 	});
 
@@ -62,16 +60,12 @@ describe("Front End - 8 Players Draft", function () {
 		await button!.click();
 
 		let promises = [];
-		for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < pages.length; i++) {
 			promises.push(
 				pages[i].waitForXPath("//h2[contains(., 'Your Booster')]", {
 					visible: true,
 				})
 			);
-		}
-		await Promise.all(promises);
-		promises = [];
-		for (let i = 0; i < 8; i++) {
 			promises.push(
 				pages[i].waitForXPath("//div[contains(., 'Draft Started!')]", {
 					hidden: true,
@@ -83,17 +77,17 @@ describe("Front End - 8 Players Draft", function () {
 
 	it("Each player picks a card", async function () {
 		let done = [];
-		for (let i = 0; i < 8; i++) {
+		for (let i = 0; i < pages.length; i++) {
 			done.push(false);
 		}
 		while (done.some((d) => !d)) {
 			let promises = [];
-			for (let i = 0; i < 8; i++) {
+			for (let i = 0; i < pages.length; i++) {
 				if (done[i]) promises.push(true);
 				else promises.push(pickCard(pages[i]));
 			}
 			await Promise.all(promises);
-			for (let i = 0; i < 8; i++) {
+			for (let i = 0; i < pages.length; i++) {
 				done[i] = await promises[i];
 			}
 		}
