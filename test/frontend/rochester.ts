@@ -3,12 +3,13 @@ import chai from "chai";
 const expect = chai.expect;
 import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
 import { waitAndClickXpath, waitAndClickSelector } from "./src/common.js";
+import { Page } from "puppeteer";
 
-async function pickRochester(page) {
+async function pickRochester(page: Page) {
 	let next = await page.waitForXPath(
 		"//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')] | //span[contains(., 'Waiting for')]"
 	);
-	let text = await page.evaluate((next) => next.innerText, next);
+	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
 	if (text.includes("Waiting for")) return false;
 
