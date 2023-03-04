@@ -2,9 +2,9 @@ import chai from "chai";
 const expect = chai.expect;
 import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
 
-export const testDebug = true; // Display tests for debugging
-const debugScreenWidth = 2560;
-const debugScreenHeight = 1440;
+export const Headless = process.env.HEADLESS === "TRUE" ? true : false;
+const DebugScreenWidth = 2560;
+const DebugScreenHeight = 1440;
 
 export async function waitAndClickXpath(page: Page, xpath: string) {
 	const element = await page.waitForXPath(xpath, {
@@ -44,15 +44,15 @@ export function disableAnimations(page: Page) {
 export async function startBrowsers(count: number): Promise<[Browser[], Page[]]> {
 	const rows = count > 2 ? 2 : 1;
 	const cols = Math.ceil(count / rows);
-	const debugWindowWidth = Math.floor(debugScreenWidth / cols);
-	const debugWindowHeight = Math.floor(debugScreenHeight / rows);
+	const debugWindowWidth = Math.floor(DebugScreenWidth / cols);
+	const debugWindowHeight = Math.floor(DebugScreenHeight / rows);
 
 	let promises = [];
 	for (let i = 0; i < count; i++) {
 		promises.push(
 			puppeteer.launch({
-				headless: !testDebug,
-				args: testDebug
+				headless: Headless,
+				args: !Headless
 					? [
 							`--window-size=${debugWindowWidth},${debugWindowHeight}`,
 							`--window-position=${(i % cols) * debugWindowWidth},${
@@ -75,7 +75,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	}
 	const context = browsers[0].defaultBrowserContext();
 	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
-	if (testDebug) for (const page of pages) page.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
+	if (!Headless) for (const page of pages) page.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
 	for (const page of pages) {
 		// Skip the confirmation dialog when exiting/refreshing while there's a pending call to storeDraftLogs
 		page.on("dialog", async (dialog) => {
