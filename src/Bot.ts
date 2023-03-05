@@ -1,6 +1,6 @@
 "use strict";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
@@ -13,10 +13,17 @@ const MTGDraftBotsAPITimeout = 10000;
 const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
 async function addMTGDraftBotsInstance(domain: string, authToken: string, weight: number) {
 	// Make sure the instance is accessible
-	const response = await axios.get(`${domain}/version`, { timeout: 1000 });
-	if (response.status === 200)
-		MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
-	else console.error(`MTGDraftBots instance '${domain}' could not be reached: ${response.statusText}.`);
+	try {
+		const response = await axios.get(`${domain}/version`, { timeout: 1000 });
+		if (response.status === 200)
+			MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
+		else console.error(`MTGDraftBots instance '${domain}' returned an error: ${response.statusText}.`);
+	} catch (error: any) {
+		if (error.isAxiosError) {
+			const e = error as AxiosError;
+			console.error(`MTGDraftBots instance '${domain}' could not be reached: ${e.message}.`);
+		} else console.error(`MTGDraftBots instance '${domain}' could not be reached: ${error}.`);
+	}
 }
 // Official Instance
 if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
@@ -226,8 +233,9 @@ export class Bot implements IBot {
 				return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 			}
 		} catch (e: any) {
-			if (e.code == "ECONNABORTED") console.warn("ECONNABORTED requesting mtgdraftbots scores: ", e.message);
-			else console.error("Error requesting mtgdraftbots scores: ", e.message);
+			if (e.code == "ECONNABORTED")
+				console.warn(`ECONNABORTED requesting mtgdraftbots scores (${e.url}): `, e.message);
+			else console.error(`Error requesting mtgdraftbots scores: (${e.url})`, e.message);
 			return await this.getScoresFallback(booster, boosterNum, numBoosters, pickNum, numPicks);
 		}
 	}
