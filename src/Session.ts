@@ -50,7 +50,7 @@ import { ServerToClientEvents } from "./SocketType";
 import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
-import { IIndexable } from "./Types.js";
+import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 
 export class Session implements IIndexable {
@@ -410,10 +410,22 @@ export class Session implements IIndexable {
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
 	//  - playerCount: For use with useCustomBoosters: override getVirtualPlayersCount() as the number of players in the session (allow ignoring bots).
+	//  - boostersPerPlayer: For use with useCustomBoosters
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
-	generateBoosters(boosterQuantity: number, options: Options = {}): UniqueCard[][] | MessageError {
+	generateBoosters(
+		boosterQuantity: number,
+		options: {
+			useCustomBoosters?: boolean;
+			playerCount?: number;
+			boostersPerPlayer?: number;
+			targets?: { [rarity: string]: number };
+			cardsPerBooster?: number;
+			customBoosters?: SetCode[];
+			cardsPerPlayer?: number;
+		} = {}
+	): UniqueCard[][] | MessageError {
 		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
 
 		// Use pre-determined boosters; Make sure supplied booster are correct.
@@ -1898,7 +1910,7 @@ export class Session implements IIndexable {
 			useCustomBoosters: useCustomBoosters,
 			boostersPerPlayer: boostersPerPlayer,
 			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
-			customBoosters: useCustomBoosters ? customBoosters : null,
+			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
 		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
@@ -1964,7 +1976,7 @@ export class Session implements IIndexable {
 			boostersPerPlayer: boostersPerTeam,
 			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
-			customBoosters: useCustomBoosters ? customBoosters : null,
+			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
 		if (isMessageError(boosters)) {
 			this.drafting = false;
