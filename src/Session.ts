@@ -77,6 +77,7 @@ export class Session implements IIndexable {
 	useBoosterContent: boolean = false; // Use the specified booster content if true, DefaultBoosterTargets otherwise
 	boosterContent: { [slot: string]: number } = DefaultBoosterTargets;
 	usePredeterminedBoosters: boolean = false;
+	predeterminedBoosters: Array<Array<UniqueCard>> = [];
 	colorBalance: boolean = true;
 	maxDuplicates: { [rarity: string]: number } | null = null;
 	foil: boolean = false;
@@ -98,8 +99,6 @@ export class Session implements IIndexable {
 	draftLogRecipients: DraftLogRecipients = "everyone";
 	bracketLocked: boolean = false; // If set, only the owner can edit the results.
 	bracket?: Bracket = undefined;
-
-	boosters: Array<Array<UniqueCard>> = [];
 
 	// Draft state
 	drafting: boolean = false;
@@ -406,7 +405,7 @@ export class Session implements IIndexable {
 		return local;
 	}
 
-	// Populates this.boosters following session options
+	// @return Boosters generated following the session options, or MessageError on error.
 	// Options object properties:
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
@@ -414,27 +413,27 @@ export class Session implements IIndexable {
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
-	generateBoosters(boosterQuantity: number, options: Options = {}): true | MessageError {
+	generateBoosters(boosterQuantity: number, options: Options = {}): UniqueCard[][] | MessageError {
 		if (!options.cardsPerBooster) options.cardsPerBooster = this.cardsPerBooster;
 
 		// Use pre-determined boosters; Make sure supplied booster are correct.
 		if (this.usePredeterminedBoosters) {
-			if (!this.boosters) {
+			if (!this.predeterminedBoosters) {
 				return new MessageError(
 					"No Provided Boosters",
 					`Please upload your boosters in the session settings to use Pre-determined boosters.`
 				);
 			}
-			if (this.boosters.length !== boosterQuantity) {
+			if (this.predeterminedBoosters.length !== boosterQuantity) {
 				return new MessageError(
 					"Incorrect Provided Boosters",
-					`Incorrect number of booster: Expected ${boosterQuantity}, got ${this.boosters.length}.`
+					`Incorrect number of booster: Expected ${boosterQuantity}, got ${this.predeterminedBoosters.length}.`
 				);
 			}
-			if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
+			if (this.predeterminedBoosters.some((b) => b.length !== this.predeterminedBoosters[0].length)) {
 				return new MessageError("Incorrect Provided Boosters", `Inconsistent booster sizes.`);
 			}
-			return true;
+			return this.predeterminedBoosters;
 		}
 
 		if (this.useCustomCardList) {
@@ -442,10 +441,7 @@ export class Session implements IIndexable {
 				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement },
 				options
 			);
-			const ret = generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
-			if (isMessageError(ret)) return new MessageError(ret.title, ret.text);
-			this.boosters = ret;
-			return true;
+			return generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
 		} else {
 			// Standard draft boosters
 			const targets = options?.targets ?? this.getBoosterContent();
@@ -541,15 +537,17 @@ export class Session implements IIndexable {
 				}
 			}
 
+			const boosters: UniqueCard[][] = [];
+
 			// Simple case, generate all boosters using the default rule
 			if (!boosterSpecificRules) {
 				if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
-				this.boosters = [];
 				for (let i = 0; i < boosterQuantity; ++i) {
 					const booster = defaultFactory.generateBooster(targets);
 					if (isMessageError(booster)) return booster;
-					this.boosters.push(booster);
+					boosters.push(booster);
 				}
+				return boosters;
 			} else {
 				// Booster specific rules
 				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
@@ -648,34 +646,34 @@ export class Session implements IIndexable {
 					for (const rules of boosterFactories) shuffleArray(rules);
 
 				// Generate Boosters
-				this.boosters = [];
 				for (let b = 0; b < boostersPerPlayer; ++b) {
 					for (let p = 0; p < playerCount; ++p) {
 						const rule = boosterFactories[p][b];
 						if (!rule) return new MessageError("Internal Error");
 						const booster = rule?.generateBooster(targets);
 						if (isMessageError(booster)) return booster;
-						this.boosters.push(booster);
+						boosters.push(booster);
 					}
 				}
 
-				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(this.boosters);
+				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(boosters);
 
 				// Boosters within a round much be of the same length.
 				// For example CMR packs have a default length of 20 cards and may cause problems if boosters are shuffled.
 				if (this.distributionMode !== "regular" || customBoosters.some((v: string) => v === "random")) {
-					if (this.boosters.some((b) => b.length !== this.boosters[0].length)) {
+					if (boosters.some((b) => b.length !== boosters[0].length)) {
 						const msg = `Inconsistent booster sizes`;
 						console.error(msg);
 						console.error(
-							this.boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`)
+							boosters.map((b) => `Length: ${b.length}, First Card: (${b[0].set}) ${b[0].name}`)
 						);
 						return new MessageError("Error generating boosters", msg);
 					}
 				}
+				return boosters;
 			}
 		}
-		return true;
+		return new MessageError("Internal Error");
 	}
 
 	notifyUserChange() {
@@ -724,16 +722,16 @@ export class Session implements IIndexable {
 		if (this.users.size !== 2) return false;
 		this.drafting = true;
 		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
-		const ret = this.generateBoosters(boosterCount);
-		if (isMessageError(ret)) {
+		const boosters = this.generateBoosters(boosterCount);
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return false;
 		}
 		this.disconnectedUsers = {};
-		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
 			Connections[user].socket.emit("sessionOptions", {
@@ -742,9 +740,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData());
 		}
 
-		this.initLogs("Winston Draft");
-
-		this.boosters = [];
+		this.initLogs("Winston Draft", boosters);
 		this.winstonNextRound();
 		return true;
 	}
@@ -835,20 +831,20 @@ export class Session implements IIndexable {
 		// Use boosterContent setting only if it is valid (adds up to 9 cards)
 		const cardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
 
-		const ret = this.generateBoosters(boosterCount, {
+		const boosters = this.generateBoosters(boosterCount, {
 			targets: cardsPerBooster === 9 ? this.getBoosterContent() : { rare: 1, uncommon: 3, common: 5 },
 			cardsPerBooster: 9,
 		});
-		if (isMessageError(ret)) {
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return false;
 		}
 
 		this.disconnectedUsers = {};
-		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		const s = this.draftState as GridDraftState;
 		if (s.error) {
 			this.emitError(s.error.title, s.error.text);
@@ -865,9 +861,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startGridDraft", s.syncData());
 		}
 
-		this.initLogs("Grid Draft");
-
-		this.boosters = [];
+		this.initLogs("Grid Draft", boosters);
 		return true;
 	}
 
@@ -940,21 +934,21 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
 		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
-		const ret = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
+		const boosters = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
 			useCustomBoosters: true,
 			boostersPerPlayer: this.boostersPerPlayer,
 			playerCount: this.users.size,
 		});
-		if (isMessageError(ret)) {
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return false;
 		}
 
 		this.disconnectedUsers = {};
-		this.draftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), this.boosters);
+		this.draftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		for (const user of this.users) {
 			Connections[user].pickedCards = { main: [], side: [] };
 			Connections[user].socket.emit("sessionOptions", {
@@ -963,9 +957,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startRochesterDraft", (this.draftState as RochesterDraftState).syncData());
 		}
 
-		this.initLogs("Rochester Draft");
-
-		this.boosters = [];
+		this.initLogs("Rochester Draft", boosters);
 		return true;
 	}
 
@@ -1060,14 +1052,13 @@ export class Session implements IIndexable {
 			cards = cardPool.map((cid) => getUnique(cid, { getCard: this.getCustomGetCardFunction() }));
 			cardsPerPlayer = options.singleton.cardsPerPlayer;
 		} else if (options.standard) {
-			const ret = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
+			const boosters = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
 				useCustomBoosters: true,
 				boostersPerPlayer: options.standard.boostersPerPlayer,
 				playerCount: this.users.size,
 			});
-			if (isMessageError(ret)) return new SocketAck(ret);
-			cards = this.boosters.flat();
-			this.boosters = [];
+			if (isMessageError(boosters)) return new SocketAck(boosters);
+			cards = boosters.flat();
 			cardsPerPlayer = cards.length / this.users.size;
 		} else {
 			return new SocketError("Invalid parameters");
@@ -1085,7 +1076,7 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startRotisserieDraft", this.draftState.syncData(user));
 		}
 
-		this.initLogs("Rotisserie Draft");
+		this.initLogs("Rotisserie Draft", []);
 
 		return new SocketAck();
 	}
@@ -1157,16 +1148,16 @@ export class Session implements IIndexable {
 		}
 		this.drafting = true;
 		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
-		const ret = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
-		if (isMessageError(ret)) {
+		const boosters = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return new SocketAck(); // Error already emitted above.
 		}
 
-		if (this.boosters.some((b) => b.length !== gridWidth * gridHeight)) {
+		if (boosters.some((b) => b.length !== gridWidth * gridHeight)) {
 			this.drafting = false;
 			this.broadcastPreparationCancelation();
 			return new SocketError(
@@ -1175,12 +1166,12 @@ export class Session implements IIndexable {
 			);
 		}
 
-		this.initLogs("Minesweeper Draft");
+		this.initLogs("Minesweeper Draft", boosters);
 
 		this.disconnectedUsers = {};
 		this.draftState = new MinesweeperDraftState(
 			this.getSortedHumanPlayersIDs(),
-			this.boosters,
+			boosters,
 			gridWidth,
 			gridHeight,
 			picksPerGrid,
@@ -1197,7 +1188,6 @@ export class Session implements IIndexable {
 			);
 		}
 
-		this.boosters = [];
 		return new SocketAck();
 	}
 
@@ -1269,22 +1259,22 @@ export class Session implements IIndexable {
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		const ret = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
-		if (isMessageError(ret)) {
+		const boosters = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.broadcastPreparationCancelation();
 			return;
 		}
 
 		// Determine bot type
-		const oracleIds = this.boosters.flat().map((card) => card.oracle_id);
+		const oracleIds = boosters.flat().map((card) => card.oracle_id);
 		const simpleBots = await fallbackToSimpleBots([...new Set(oracleIds)]);
 
 		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
 		// raising an exception and leaving the session in an invalid state. I hope this will catch all possible failure cases.
 		try {
-			this.draftState = new DraftState(this.boosters, this.getSortedHumanPlayersIDs(), {
+			this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
 				simpleBots: simpleBots,
 				botCount: this.bots,
 			});
@@ -1296,7 +1286,7 @@ export class Session implements IIndexable {
 			return;
 		}
 
-		const log = this.initLogs("Draft");
+		const log = this.initLogs("Draft", boosters);
 
 		const virtualPlayerData = this.getSortedVirtualPlayerData();
 		for (const uid of this.users) {
@@ -1313,7 +1303,6 @@ export class Session implements IIndexable {
 				});
 		}
 
-		this.boosters = [];
 		this.distributeBoosters();
 	}
 
@@ -1801,11 +1790,17 @@ export class Session implements IIndexable {
 
 	///////////////////// Traditional Draft End  //////////////////////
 
-	initLogs(type: string = "Draft"): DraftLog {
+	initLogs(type: string = "Draft", boosters: UniqueCard[][]): DraftLog {
 		const carddata: { [cid: string]: Card } = {};
 		const customGetCard = this.getCustomGetCardFunction();
-		if (this.boosters) for (const c of this.boosters.flat()) carddata[c.id] = customGetCard(c.id);
-		this.draftLog = new DraftLog(type, this, carddata, this.getSortedVirtualPlayerData());
+		for (const c of boosters.flat()) carddata[c.id] = customGetCard(c.id);
+		this.draftLog = new DraftLog(
+			type,
+			this,
+			carddata,
+			boosters.map((booster) => booster.map((card) => card.id)),
+			this.getSortedVirtualPlayerData()
+		);
 		return this.draftLog;
 	}
 
@@ -1899,27 +1894,27 @@ export class Session implements IIndexable {
 			this.broadcastPreparationCancelation();
 			return false;
 		}
-		const ret = this.generateBoosters(this.users.size * boostersPerPlayer, {
+		const boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			useCustomBoosters: useCustomBoosters,
 			boostersPerPlayer: boostersPerPlayer,
 			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
-		if (isMessageError(ret)) {
+		if (isMessageError(boosters)) {
 			// FIXME: We should propagate to ack.
-			this.emitError(ret.title, ret.text);
+			this.emitError(boosters.title, boosters.text);
 			this.broadcastPreparationCancelation();
 			return false;
 		}
-		const log = this.initLogs("Sealed");
+		const log = this.initLogs("Sealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
 		let idx = 0;
 		for (const userID of this.users) {
 			const playersBoosters = [];
 			let currIdx = idx;
-			while (currIdx < this.boosters.length) {
-				playersBoosters.push(this.boosters[currIdx]);
+			while (currIdx < boosters.length) {
+				playersBoosters.push(boosters[currIdx]);
 				currIdx += this.users.size;
 			}
 			Connections[userID].socket.emit("setCardSelection", playersBoosters);
@@ -1939,8 +1934,6 @@ export class Session implements IIndexable {
 		}
 
 		logSession("Sealed", this);
-
-		this.boosters = [];
 	}
 
 	startTeamSealed(boostersPerTeam: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
@@ -1967,18 +1960,18 @@ export class Session implements IIndexable {
 			this.drafting = false;
 			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
 		}
-		const ret = this.generateBoosters(teams.length * boostersPerTeam, {
+		const boosters = this.generateBoosters(teams.length * boostersPerTeam, {
 			boostersPerPlayer: boostersPerTeam,
 			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : null,
 		});
-		if (isMessageError(ret)) {
+		if (isMessageError(boosters)) {
 			this.drafting = false;
-			return new SocketAck(ret);
+			return new SocketAck(boosters);
 		}
 
-		const log = this.initLogs("TeamSealed");
+		const log = this.initLogs("TeamSealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
 		let idx = 0;
@@ -1986,8 +1979,8 @@ export class Session implements IIndexable {
 		for (const team of teams) {
 			const teamBoosters = [];
 			let currIdx = idx;
-			while (currIdx < this.boosters.length) {
-				teamBoosters.push(this.boosters[currIdx]);
+			while (currIdx < boosters.length) {
+				teamBoosters.push(boosters[currIdx]);
 				currIdx += teams.length;
 			}
 			const teamPool = {
@@ -2016,9 +2009,6 @@ export class Session implements IIndexable {
 		}
 
 		logSession("TeamSealed", this);
-
-		this.boosters = [];
-
 		return new SocketAck();
 	}
 
@@ -2069,7 +2059,7 @@ export class Session implements IIndexable {
 	distributeJumpstart(set?: string) {
 		this.emitMessage("Distributing jumpstart boosters...", "", false, 0);
 
-		const log = this.initLogs("Jumpstart");
+		const log = this.initLogs("Jumpstart", []);
 		log.carddata = {};
 
 		// Jumpstart: Historic Horizons

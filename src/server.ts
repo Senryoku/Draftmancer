@@ -29,7 +29,7 @@ import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
 import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
-import { instanceOfTurnBased, TurnBased } from "./IDraftState.js";
+import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
 import SessionsSettingsProps from "./Session/SessionProps.js";
@@ -934,7 +934,7 @@ function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (r
 			}
 		}
 
-		Sessions[sessionID].boosters = boosters;
+		Sessions[sessionID].predeterminedBoosters = boosters;
 		Sessions[sessionID].usePredeterminedBoosters = true;
 		Sessions[sessionID].forUsers((uid) =>
 			Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
@@ -947,10 +947,10 @@ function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (r
 }
 
 function shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
-	if (!Sessions[sessionID].boosters || Sessions[sessionID].boosters.length === 0) {
+	if (!Sessions[sessionID].predeterminedBoosters || Sessions[sessionID].predeterminedBoosters.length === 0) {
 		ack?.(new SocketError("No boosters to shuffle."));
 	} else {
-		shuffleArray(Sessions[sessionID].boosters);
+		shuffleArray(Sessions[sessionID].predeterminedBoosters);
 		ack?.(new SocketAck());
 	}
 }

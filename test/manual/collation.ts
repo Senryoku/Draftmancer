@@ -10,7 +10,7 @@ import { SetSpecificFactories } from "../../src/BoosterFactory.js";
 import parseCardList from "../../src/parseCardList.js";
 import { getRandomKey, getRandom } from "../../src/utils.js";
 import { SpecialLandSlots } from "../../src/LandSlot.js";
-import { isMessageError, isSocketError } from "../../src/Message.js";
+import { isMessageError, isSocketError, MessageError } from "../../src/Message.js";
 
 const ArenaCube = parseCardList(fs.readFileSync(`data/cubes/ArenaHistoricCube1.txt`, "utf8"), {});
 if (isSocketError(ArenaCube)) {
@@ -70,8 +70,12 @@ describe("Statistical color balancing tests", function () {
 		const all = trackedCards === null;
 		if (trackedCards === null) trackedCards = {} as { [cid: CardID]: number };
 		for (let i = 0; i < trials; i++) {
-			SessionInst.generateBoosters(3 * 8);
-			SessionInst.boosters.forEach((booster) =>
+			const boosters = SessionInst.generateBoosters(3 * 8);
+			if (isMessageError(boosters)) {
+				expect(false, "Error generating boosters").to.be.true;
+				return trackedCards;
+			}
+			boosters.forEach((booster) =>
 				booster.forEach((card) => {
 					if (card.id in trackedCards!) ++trackedCards![card.id];
 					else if (all) trackedCards![card.id] = 1;
@@ -424,8 +428,12 @@ describe("Statistical color balancing tests", function () {
 					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function (done) {
 						this.timeout(8000);
 						countDuplicates(() => {
-							SessionInst.generateBoosters(3 * 8);
-							const cards = SessionInst.boosters
+							const boosters = SessionInst.generateBoosters(3 * 8);
+							if (isMessageError(boosters)) {
+								expect(boosters).to.not.be.instanceOf(MessageError);
+								return [];
+							}
+							const cards = boosters
 								.flat()
 								.filter((c) => c.rarity === "rare")
 								.map((c) => c.name);
@@ -462,8 +470,12 @@ describe("Statistical color balancing tests", function () {
 					it(`Count duplicate rares in 24 boosters (${set}, ${rares.length} rares).`, function (done) {
 						this.timeout(8000);
 						Observed = countDuplicates(() => {
-							SessionInst.generateBoosters(3 * 8);
-							return SessionInst.boosters
+							const boosters = SessionInst.generateBoosters(3 * 8);
+							if (isMessageError(boosters)) {
+								expect(boosters).to.not.be.instanceOf(MessageError);
+								return [];
+							}
+							return boosters
 								.flat()
 								.filter((c) => c.rarity === "rare")
 								.map((c) => c.name);
