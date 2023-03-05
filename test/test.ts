@@ -1597,7 +1597,7 @@ describe("Multiple Drafts", function () {
 
 	it("When session owner launch draft, everyone in session should receive a startDraft event, and a unique booster", function (done) {
 		let sessionsCorrectlyStartedDrafting = 0;
-		let boostersReceived = 0;
+		let boosters: UniqueCard[][] = [];
 		for (let [sessionIdx, sessionClients] of clients.entries()) {
 			(() => {
 				let connectedClients = 0;
@@ -1605,8 +1605,6 @@ describe("Multiple Drafts", function () {
 					c.socket.on("startDraft", function () {
 						connectedClients += 1;
 						if (connectedClients == sessionClients.length) {
-							// FIXME: Don't use .boosters
-							for (let b of Sessions[sessionIDs[sessionIdx]].boosters) checkColorBalance(b);
 							sessionsCorrectlyStartedDrafting += 1;
 						}
 					});
@@ -1614,19 +1612,16 @@ describe("Multiple Drafts", function () {
 					c.socket.once("draftState", function (state) {
 						const s = state as ReturnType<DraftState["syncData"]>;
 						(c as any).state = s;
-						++boostersReceived;
+						boosters.push(s.booster);
 						if (
-							sessionsCorrectlyStartedDrafting == sessionCount &&
-							boostersReceived == playersPerSession * sessionCount
+							sessionsCorrectlyStartedDrafting === sessionCount &&
+							boosters.length === playersPerSession * sessionCount
 						) {
-							it("Boosters are color balanced and contain no duplicate.", function (done) {
-								// FIXME: Don't use .boosters
-								for (let b of Sessions[sessionIDs[sessionIdx]].boosters) {
-									checkColorBalance(b);
-									checkDuplicates(b);
-								}
-								done();
-							});
+							expect(boosters.length).to.equal(playersPerSession * sessionCount);
+							for (let b of boosters) {
+								checkColorBalance(b);
+								checkDuplicates(b);
+							}
 							done();
 						}
 					});
