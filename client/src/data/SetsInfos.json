@@ -3220,11 +3220,11 @@
     "pbro": {
         "code": "pbro",
         "fullName": "The Brothers' War Promos",
-        "cardCount": 178,
+        "cardCount": 169,
         "isPrimary": false,
         "icon": "img/sets/pbro.svg",
-        "mythicCount": 52,
-        "rareCount": 126
+        "mythicCount": 46,
+        "rareCount": 123
     },
     "pc2": {
         "code": "pc2",
@@ -3342,6 +3342,16 @@
         "mythicCount": 1,
         "rareCount": 7,
         "uncommonCount": 11
+    },
+    "pdci": {
+        "code": "pdci",
+        "fullName": "DCI Promos",
+        "cardCount": 69,
+        "isPrimary": false,
+        "icon": "img/sets/pdci.svg",
+        "commonCount": 1,
+        "rareCount": 64,
+        "uncommonCount": 4
     },
     "pdgm": {
         "code": "pdgm",
@@ -3540,14 +3550,6 @@
         "icon": "img/sets/pf20.svg",
         "rareCount": 6
     },
-    "pf21": {
-        "code": "pf21",
-        "fullName": "MagicFest 2021",
-        "cardCount": 1,
-        "isPrimary": false,
-        "icon": "img/sets/pf21.svg",
-        "rareCount": 1
-    },
     "pfrf": {
         "code": "pfrf",
         "fullName": "Fate Reforged Promos",
@@ -3567,22 +3569,6 @@
         "block": "Time Spiral",
         "icon": "img/sets/pfut.svg",
         "rareCount": 2
-    },
-    "pg07": {
-        "code": "pg07",
-        "fullName": "Gateway 2007",
-        "cardCount": 9,
-        "isPrimary": false,
-        "icon": "img/sets/pg07.svg",
-        "rareCount": 9
-    },
-    "pg08": {
-        "code": "pg08",
-        "fullName": "Gateway 2008",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/pg08.svg",
-        "rareCount": 8
     },
     "pgpt": {
         "code": "pgpt",
@@ -3630,14 +3616,6 @@
         "icon": "img/sets/pgtc.svg",
         "rareCount": 8,
         "uncommonCount": 1
-    },
-    "pgtw": {
-        "code": "pgtw",
-        "fullName": "Gateway 2006",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pgtw.svg",
-        "rareCount": 3
     },
     "ph17": {
         "code": "ph17",
@@ -3733,29 +3711,13 @@
         "rareCount": 5,
         "uncommonCount": 13
     },
-    "pi13": {
-        "code": "pi13",
-        "fullName": "IDW Comics 2013",
-        "cardCount": 5,
-        "isPrimary": false,
-        "icon": "img/sets/pi13.svg",
-        "rareCount": 5
-    },
-    "pi14": {
-        "code": "pi14",
-        "fullName": "IDW Comics 2014",
-        "cardCount": 3,
-        "isPrimary": false,
-        "icon": "img/sets/pi14.svg",
-        "rareCount": 3
-    },
     "pidw": {
         "code": "pidw",
         "fullName": "IDW Comics Inserts",
-        "cardCount": 9,
+        "cardCount": 17,
         "isPrimary": false,
         "icon": "img/sets/pidw.svg",
-        "rareCount": 9
+        "rareCount": 17
     },
     "piko": {
         "code": "piko",
@@ -3890,10 +3852,10 @@
     "plg21": {
         "code": "plg21",
         "fullName": "Love Your LGS 2021",
-        "cardCount": 5,
+        "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/plg21.svg",
-        "rareCount": 5
+        "rareCount": 6
     },
     "plg22": {
         "code": "plg22",
@@ -3955,31 +3917,29 @@
     "pm10": {
         "code": "pm10",
         "fullName": "Magic 2010 Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/pm10.svg",
         "mythicCount": 1,
-        "rareCount": 4
+        "rareCount": 2
     },
     "pm11": {
         "code": "pm11",
         "fullName": "Magic 2011 Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/pm11.svg",
-        "commonCount": 1,
         "mythicCount": 1,
-        "rareCount": 3
+        "rareCount": 2
     },
     "pm12": {
         "code": "pm12",
         "fullName": "Magic 2012 Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/pm12.svg",
         "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "rareCount": 2
     },
     "pm13": {
         "code": "pm13",
@@ -4043,13 +4003,12 @@
     "pmbs": {
         "code": "pmbs",
         "fullName": "Mirrodin Besieged Promos",
-        "cardCount": 6,
+        "cardCount": 4,
         "isPrimary": false,
         "block": "Scars of Mirrodin",
         "icon": "img/sets/pmbs.svg",
         "mythicCount": 2,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "rareCount": 2
     },
     "pmei": {
         "code": "pmei",
@@ -4134,10 +4093,9 @@
     "pncc": {
         "code": "pncc",
         "fullName": "New Capenna Commander Promos",
-        "cardCount": 76,
+        "cardCount": 75,
         "isPrimary": false,
         "icon": "img/sets/pncc.svg",
-        "mythicCount": 1,
         "rareCount": 75
     },
     "pnem": {
@@ -4161,14 +4119,13 @@
     "pnph": {
         "code": "pnph",
         "fullName": "New Phyrexia Promos",
-        "cardCount": 6,
+        "cardCount": 4,
         "isPrimary": false,
         "block": "Scars of Mirrodin",
         "icon": "img/sets/pnph.svg",
         "commonCount": 1,
         "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "rareCount": 2
     },
     "pogw": {
         "code": "pogw",
@@ -4337,12 +4294,12 @@
     "proe": {
         "code": "proe",
         "fullName": "Rise of the Eldrazi Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Zendikar",
         "icon": "img/sets/proe.svg",
         "mythicCount": 1,
-        "rareCount": 4
+        "rareCount": 2
     },
     "prtr": {
         "code": "prtr",
@@ -4479,13 +4436,12 @@
     "psom": {
         "code": "psom",
         "fullName": "Scars of Mirrodin Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Scars of Mirrodin",
         "icon": "img/sets/psom.svg",
         "mythicCount": 1,
-        "rareCount": 3,
-        "uncommonCount": 1
+        "rareCount": 2
     },
     "pss1": {
         "code": "pss1",
@@ -4692,29 +4648,13 @@
         "mythicCount": 26,
         "rareCount": 82
     },
-    "pw09": {
-        "code": "pw09",
-        "fullName": "Wizards Play Network 2009",
-        "cardCount": 8,
-        "isPrimary": false,
-        "icon": "img/sets/pw09.svg",
-        "rareCount": 8
-    },
-    "pw10": {
-        "code": "pw10",
-        "fullName": "Wizards Play Network 2010",
-        "cardCount": 10,
-        "isPrimary": false,
-        "icon": "img/sets/pw10.svg",
-        "rareCount": 10
-    },
     "pw11": {
         "code": "pw11",
         "fullName": "Wizards Play Network 2011",
-        "cardCount": 14,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/pw11.svg",
-        "rareCount": 14
+        "rareCount": 3
     },
     "pw12": {
         "code": "pw12",
@@ -4769,23 +4709,15 @@
         "icon": "img/sets/pwos.svg",
         "rareCount": 1
     },
-    "pwpn": {
-        "code": "pwpn",
-        "fullName": "Wizards Play Network 2008",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/pwpn.svg",
-        "rareCount": 2
-    },
     "pwwk": {
         "code": "pwwk",
         "fullName": "Worldwake Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Zendikar",
         "icon": "img/sets/pwwk.svg",
         "mythicCount": 1,
-        "rareCount": 4
+        "rareCount": 2
     },
     "pxln": {
         "code": "pxln",
@@ -4831,12 +4763,12 @@
     "pzen": {
         "code": "pzen",
         "fullName": "Zendikar Promos",
-        "cardCount": 5,
+        "cardCount": 3,
         "isPrimary": false,
         "block": "Zendikar",
         "icon": "img/sets/pzen.svg",
         "mythicCount": 1,
-        "rareCount": 4
+        "rareCount": 2
     },
     "pznr": {
         "code": "pznr",
