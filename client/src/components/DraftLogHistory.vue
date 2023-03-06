@@ -151,7 +151,7 @@ export default defineComponent({
 		hasDecks(draftLog: DraftLog) {
 			return Object.values(draftLog.users).some(
 				(user) =>
-					user.decklist !== undefined && (user.decklist.main.length > 0 || user.decklist.side.length > 0)
+					user.decklist !== undefined && (user.decklist.main?.length > 0 || user.decklist.side?.length > 0)
 			);
 		},
 		async downloadAllDecks(draftLog: DraftLog, format: ".dek" | "MTGA" | "card names", withBasics: boolean) {
