@@ -33,7 +33,7 @@ import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
 import SessionsSettingsProps from "./Session/SessionProps.js";
-import { RotisserieDraftStartOptions } from "./RotisserieDraft.js";
+import { isRotisserieDraftState, RotisserieDraftStartOptions } from "./RotisserieDraft.js";
 import { BracketPlayer } from "./Brackets.js";
 
 const app = express();
@@ -1536,11 +1536,13 @@ function removeUserFromSession(userID: UserID) {
 				// (mostly useful in case of disconnection during a single player game)
 				if (sess.drafting) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
-					InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
-						process.nextTick(() => {
-							if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
-						});
-					}, 10 * 60 * 1000); // 10min should be plenty enough.
+					// Keep Rotisserie Draft around since they're typically played over long period of time.
+					if (!isRotisserieDraftState(sess.draftState))
+						InactiveSessions[sessionID].deleteTimeout = setTimeout(() => {
+							process.nextTick(() => {
+								if (InactiveSessions[sessionID]) delete InactiveSessions[sessionID];
+							});
+						}, 10 * 60 * 1000); // 10min should be plenty enough.
 				}
 				deleteSession(sessionID);
 			} else sess.notifyUserChange();
