@@ -2947,8 +2947,8 @@ export default defineComponent({
 			);
 		},
 		waitingForDisconnectedUsers(): boolean {
-			//                    Disconnected players do not matter for Team Sealed
-			if (!this.drafting || this.teamSealedState) return false;
+			//                    Disconnected players do not matter for Team Sealed or Rotisserie Draft.
+			if (!this.drafting || this.teamSealedState || this.rotisserieDraftState) return false;
 			return Object.keys(this.disconnectedUsers).length > 0;
 		},
 		disconnectedUserNames(): string {
