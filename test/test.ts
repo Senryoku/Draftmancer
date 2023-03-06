@@ -551,7 +551,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "frf" && c.set === "ktk") ||
 							(set === "dgm" && (c.set === "gtc" || c.set === "rtr")) ||
 							(set === "stx" && c.set === "sta") ||
-							(set === "bro" && c.set === "brr")
+							(set === "bro" && c.set === "brr") ||
+							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) // Praetors
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
