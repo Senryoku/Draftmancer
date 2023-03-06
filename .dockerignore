@@ -1,0 +1,7 @@
+fly.toml
+Dockerfile
+.dockerignore
+node_modules
+.git
+
+data/scryfall-all-cards.json

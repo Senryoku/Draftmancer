@@ -4,7 +4,6 @@ kill_timeout = 5
 processes = []
 
 [build]
-  builder = "heroku/buildpacks:20"
   [build.args]
     NODE_ENV = "production"
 
@@ -12,9 +11,9 @@ processes = []
   strategy = "rolling"
 
 [env]
-  PORT = "8080"
   NODE_ENV = "production"
   NODE_OPTIONS = "--max-old-space-size=420"
+  PORT = "8080"
 
 [experimental]
   allowed_public_ports = []
