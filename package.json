@@ -81,7 +81,7 @@
 		"file-loader": "^6.2.0",
 		"html-webpack-plugin": "^5.5.0",
 		"husky": "^8.0.3",
-		"lint-staged": "^11.2.6",
+		"lint-staged": "^13.1.2",
 		"mocha": "^10.2.0",
 		"puppeteer": "^19.7.1",
 		"source-map-support": "^0.5.21",
