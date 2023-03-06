@@ -42,6 +42,9 @@ const MTGDraftbotsLogEndpoint =
 	process.env.MTGDRAFTBOTS_ENDPOINT ?? "https://staging.cubeartisan.net/integrations/draftlog";
 const MTGDraftbotsAPIKey = process.env.MTGDRAFTBOTS_APIKEY;
 
+export let InactiveSessions: { [sid: string]: any } = {};
+export let InactiveConnections: { [sid: string]: any } = {};
+
 function copyProps(obj: any, target: any) {
 	for (const prop of Object.getOwnPropertyNames(obj)) if (!(obj[prop] instanceof Function)) target[prop] = obj[prop];
 	return target;
@@ -259,6 +262,16 @@ async function tempDump(exitOnCompletion = false) {
 	}
 
 	const PoDSessions = [];
+	for (const sessionID in InactiveSessions) {
+		try {
+			// Keep inactive Rotisserie Draft sessions across runs.
+			if (InactiveSessions[sessionID].draftState?.type === "rotisserie")
+				PoDSessions.push(InactiveSessions[sessionID]);
+		} catch (e) {
+			console.error(`Error while saving inactive session '${sessionID}'.`);
+		}
+	}
+
 	for (const sessionID in Sessions) {
 		try {
 			PoDSessions.push(getPoDSession(Sessions[sessionID]));
@@ -436,8 +449,6 @@ export function logSession(type: string, session: Session) {
 	MixInstance.track(type === "" ? "DefaultEvent" : type, mixdata);
 }
 
-export let InactiveSessions: { [sid: string]: any } = {};
-export let InactiveConnections: { [sid: string]: any } = {};
 if (!DisablePersistence) {
 	// Can make asynchronous calls, is not called on process.exit() or uncaught
 	// exceptions.
