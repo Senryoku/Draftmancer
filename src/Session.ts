@@ -1649,7 +1649,7 @@ export class Session implements IIndexable {
 		const boosters = s.boosters.splice(0, totalVirtualPlayers);
 		s.numPicks = boosters[0].length;
 
-		const staggerDelay = 200; // Will delay successive calls to the mtgdraftbots API
+		const staggerDelay = 100; // Will delay successive calls to the mtgdraftbots API
 		let inFlightBots = 0;
 		const delayRequest = (botType: string) => {
 			if (botType !== "mtgdraftbots") return Promise.resolve();
