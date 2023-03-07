@@ -1,4 +1,4 @@
-<template functional>
+<template>
 	<div class="card-placeholder">
 		<div class="card-name" v-if="card && card.name">{{ card.name }}</div>
 		<div class="card-type" v-if="card && typeLine">
