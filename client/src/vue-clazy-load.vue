@@ -45,7 +45,7 @@ export default {
 		 */
 		threshold: {
 			type: [Array, Number],
-			default: function _default() {
+			default() {
 				return [0, 0.5, 1];
 			},
 		},
@@ -57,7 +57,7 @@ export default {
 		ratio: {
 			type: Number,
 			default: 0.4,
-			validator: function validator(value) {
+			validator(value) {
 				// can't be less than 0 and greater than 1
 				return value >= 0 && value <= 1;
 			},
@@ -103,11 +103,11 @@ export default {
 		 */
 		errorClass: { type: String, default: null },
 	},
-	data: function data() {
+	data() {
 		return { loaded: false, img: new Image(), observer: null, errored: false };
 	},
 	methods: {
-		isVisible: function() {
+		isVisible() {
 			const rect = this.$el.getBoundingClientRect();
 
 			return (
@@ -120,7 +120,7 @@ export default {
 		/**
 		 * Start loading image
 		 */
-		load: function load() {
+		load() {
 			this.$emit("loading");
 
 			// disconnect observer so it doesn't load more than once
@@ -139,7 +139,7 @@ export default {
 					this.$emit("load"); // emits 'load' event upwards
 					clear();
 				});
-				this.img.addEventListener("error", event => {
+				this.img.addEventListener("error", (event) => {
 					this.errored = true;
 					// emits 'error' event upwards adds the original event as argument
 					this.$emit("error", event);
@@ -156,13 +156,13 @@ export default {
 		/**
 		 * Creates IntersectionObserver instance and observe current element
 		 */
-		observe: function observe() {
+		observe() {
 			const options = {
 				threshold: this.threshold,
 				root: this.element ? document.querySelector(this.element) : null,
 				rootMargin: this.margin, // creates IO instance
 			};
-			this.observer = new IntersectionObserver(entries => {
+			this.observer = new IntersectionObserver((entries) => {
 				// as we instantiated one for each component we can directly access the first index
 				if (
 					(this.ratio === 0 && entries[0].isIntersecting) ||
@@ -174,7 +174,7 @@ export default {
 			this.observer.observe(this.$el);
 		},
 	},
-	render: function render(h) {
+	render(h) {
 		// class to be added to element indicating load state
 		const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
 		return h(
@@ -190,7 +190,7 @@ export default {
 			]
 		);
 	},
-	mounted: function mounted() {
+	mounted() {
 		// Immediatly load if visible
 		if (this.isVisible() || this.forceLoad) {
 			this.img.src = this.src;
