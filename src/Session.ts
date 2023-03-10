@@ -42,7 +42,7 @@ import { MinesweeperCellState } from "./MinesweeperDraftTypes.js";
 import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
 import { TeamSealedState } from "./TeamSealed.js";
-import { GridDraftState } from "./GridDraft.js";
+import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
@@ -835,34 +835,35 @@ export class Session implements IIndexable {
 	///////////////////// Winston Draft End //////////////////////
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount: number) {
-		if (this.users.size != 2) return false;
+	startGridDraft(boosterCount: number): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size !== 2 && this.users.size !== 3)
+			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 or 3 players.");
 		this.drafting = true;
-		this.emitMessage("Preparing Grid draft!", "Your draft will start soon...", false, 0);
 		// When using a custom card list with custom slots, boosters will be truncated to 9 cards by GridDraftState
 		// Use boosterContent setting only if it is valid (adds up to 9 cards)
-		const cardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
+		const targetCardsPerBooster = Object.values(this.getBoosterContent()).reduce((val, acc) => val + acc, 0);
+
+		// Add 3 cards to each boosters when there are 3 players: Booster will be refilled to 9 cards after the first pick.
+		const cardsPerBooster = this.users.size === 3 ? 12 : 9;
+		const defaultTargets =
+			this.users.size === 3 ? { rare: 1, uncommon: 3, common: 8 } : { rare: 1, uncommon: 3, common: 5 };
 
 		const boosters = this.generateBoosters(boosterCount, {
-			targets: cardsPerBooster === 9 ? this.getBoosterContent() : { rare: 1, uncommon: 3, common: 5 },
-			cardsPerBooster: 9,
+			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
+			cardsPerBooster: cardsPerBooster,
 		});
 		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
-			this.broadcastPreparationCancelation();
-			return false;
+			return new SocketAck(boosters);
 		}
 
 		this.disconnectedUsers = {};
 		this.draftState = new GridDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		const s = this.draftState as GridDraftState;
-		if (s.error) {
-			this.emitError(s.error.title, s.error.text);
-			this.broadcastPreparationCancelation();
+		if (isMessageError(s.error)) {
 			this.cleanDraftState();
-			return false;
+			return new SocketAck(s.error);
 		}
 
 		for (const user of this.users) {
@@ -874,7 +875,7 @@ export class Session implements IIndexable {
 		}
 
 		this.initLogs("Grid Draft", boosters);
-		return true;
+		return new SocketAck();
 	}
 
 	endGridDraft() {
@@ -893,7 +894,14 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !(s instanceof GridDraftState)) return;
 
 		++s.round;
-		if (s.round % 2 === 0) {
+		// Refill Booster after the first pick at 3 players
+		if (s.players.length === 3 && s.round === 1) {
+			const additionalCards = s.boosters[0].slice(9);
+			s.boosters[0] = s.boosters[0].slice(0, 9);
+			for (let idx = 0; idx < s.boosters[0].length; ++idx)
+				if (s.boosters[0][idx] === null) s.boosters[0][idx] = additionalCards.pop()!;
+		}
+		if (s.round % s.players.length === 0) {
 			// Share the last pick before advancing to the next booster.
 			const syncData: any = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
@@ -907,15 +915,15 @@ export class Session implements IIndexable {
 		for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", s.syncData());
 	}
 
-	gridDraftPick(choice: number) {
-		const s = this.draftState as GridDraftState;
-		if (!this.drafting || !s || !(s instanceof GridDraftState)) return false;
+	gridDraftPick(choice: number): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !isGridDraftState(s)) return new SocketError("Not drafting");
 
 		const log: GridDraftPick = { pick: [], booster: s.boosters[0].map((c) => (c ? c.id : null)) };
 
 		const pickedCards: UniqueCard[] = [];
 		for (let i = 0; i < 3; ++i) {
-			//                     Column           Row
+			//                       Column           Row
 			const idx = choice < 3 ? 3 * i + choice : 3 * (choice - 3) + i;
 			if (s.boosters[0][idx] !== null) {
 				Connections[s.currentPlayer()].pickedCards.main.push(s.boosters[0][idx] as UniqueCard);
@@ -925,6 +933,8 @@ export class Session implements IIndexable {
 			}
 		}
 
+		if (pickedCards.length === 0) return new SocketError("Invalid choice");
+
 		this.draftLog?.users[s.currentPlayer()].picks.push(log);
 		s.lastPicks.unshift({
 			userName: Connections[s.currentPlayer()].userName,
@@ -933,10 +943,8 @@ export class Session implements IIndexable {
 		});
 		if (s.lastPicks.length > 2) s.lastPicks.pop();
 
-		if (pickedCards.length === 0) return false;
-
 		this.gridDraftNextRound();
-		return true;
+		return new SocketAck();
 	}
 	///////////////////// Grid Draft End //////////////////////
 

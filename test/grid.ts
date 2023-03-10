@@ -72,7 +72,7 @@ describe("Grid Draft", function () {
 					if (connectedClients == clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startGridDraft", boosterCount);
+			clients[ownerIdx].emit("startGridDraft", boosterCount, ackNoError);
 		});
 	};
 
@@ -129,6 +129,26 @@ describe("Grid Draft", function () {
 			});
 			clients[ownerIdx].emit("setUseCustomCardList", true);
 			clients[ownerIdx].emit("loadLocalCustomCardList", "Arena Historic Cube #1", ackNoError);
+		});
+
+		startDraft();
+		endDraft();
+	});
+
+	describe("3 Players", function () {
+		it("Third player connects.", function (done) {
+			clients.push(
+				makeClients(
+					[
+						{
+							userID: "id1",
+							sessionID: sessionID,
+							userName: "Client1",
+						},
+					],
+					done
+				)[0]
+			);
 		});
 
 		startDraft();
