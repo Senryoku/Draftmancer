@@ -376,7 +376,7 @@
 										'Starts a Grid Draft. This is a draft variant for only two players.'
 									"
 								>
-									<button @click="startGridDraft()">Grid (2p.)</button>
+									<button @click="startGridDraft()">Grid (2/3p.)</button>
 								</div>
 								<div
 									v-tooltip.left="

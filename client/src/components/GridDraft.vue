@@ -82,11 +82,11 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		cardTransition: function () {
+		cardTransition() {
 			// Use special card transition on pick and a simple fading between boosters.
 			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "card-select" : "fade";
 		},
-		arrowTransition: function () {
+		arrowTransition() {
 			return this.state.booster.some((c: UniqueCard | null) => c === null) ? "fade-delayed" : "fade";
 		},
 	},
