@@ -840,13 +840,14 @@ ul.player-list {
 
 .passing-order-left {
 	position: absolute;
-	left: -0.9em;
+	left: -0.85em;
 	top: 0.6em;
 }
 
 .passing-order-right {
 	position: absolute;
-	right: -0.97em;
+	right: -0.85em;
+	z-index: 1;
 	top: 0.6em;
 }
 
