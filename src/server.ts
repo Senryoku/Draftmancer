@@ -496,45 +496,42 @@ function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: n
 function startMinesweeperDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	gridCount: number,
-	gridWidth: number,
-	gridHeight: number,
-	picksPerGrid: number,
+	gridCount: unknown,
+	gridWidth: unknown,
+	gridHeight: unknown,
+	picksPerGrid: unknown,
 	revealBorders: boolean,
 	ack: (result: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	if (typeof gridCount !== "number") gridCount = parseInt(gridCount);
-	if (typeof gridWidth !== "number") gridWidth = parseInt(gridWidth);
-	if (typeof gridHeight !== "number") gridHeight = parseInt(gridHeight);
-	if (typeof picksPerGrid !== "number") picksPerGrid = parseInt(picksPerGrid);
+	if (!isNumber(gridCount)) gridCount = parseInt(gridCount as string);
+	if (!isNumber(gridWidth)) gridWidth = parseInt(gridWidth as string);
+	if (!isNumber(gridHeight)) gridHeight = parseInt(gridHeight as string);
+	if (!isNumber(picksPerGrid)) picksPerGrid = parseInt(picksPerGrid as string);
 	if (
-		typeof gridCount !== "number" ||
+		!isNumber(gridCount) ||
 		gridCount <= 0 ||
-		typeof gridWidth !== "number" ||
+		!isNumber(gridWidth) ||
 		gridWidth <= 0 ||
-		typeof gridHeight !== "number" ||
+		!isNumber(gridHeight) ||
 		gridHeight <= 0 ||
-		typeof picksPerGrid !== "number" ||
+		!isNumber(picksPerGrid) ||
 		picksPerGrid <= 0 ||
 		picksPerGrid > gridWidth * gridHeight
 	) {
-		ack?.(
+		return ack?.(
 			new SocketError(
 				`Invalid parameters`,
 				`Grid parameters are invalid. Please check your settings.`,
 				`Values: gridCount: ${gridCount}, gridWidth: ${gridWidth}, gridHeight: ${gridHeight}, picksPerGrid: ${picksPerGrid}`
 			)
 		);
-		return;
 	}
 	const ret = sess.startMinesweeperDraft(gridCount, gridWidth, gridHeight, picksPerGrid, {
 		revealBorders: revealBorders,
 	});
-	if (ret?.error) {
-		ack?.(ret);
-		return;
-	}
+	if (isSocketError(ret)) return ack?.(ret);
+
 	startPublicSession(sess);
 	ack?.(new SocketAck());
 }
