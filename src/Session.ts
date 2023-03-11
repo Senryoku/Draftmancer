@@ -896,6 +896,11 @@ export class Session implements IIndexable {
 		++s.round;
 		// Refill Booster after the first pick at 3 players
 		if (s.players.length === 3 && s.round % 3 === 1) {
+			// Send the current state before re-filling for animation purposes.
+			const syncData: any = s.syncData();
+			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
+			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
+
 			const additionalCards = s.boosters[0].slice(9);
 			s.boosters[0] = s.boosters[0].slice(0, 9);
 			for (let idx = 0; idx < s.boosters[0].length; ++idx)
@@ -906,6 +911,7 @@ export class Session implements IIndexable {
 			const syncData: any = s.syncData();
 			syncData.currentPlayer = null; // Set current player to null as a flag to delay the display update
 			for (const user of this.users) Connections[user].socket.emit("gridDraftNextRound", syncData);
+
 			s.boosters.shift();
 			if (s.boosters.length === 0) {
 				this.endGridDraft();
