@@ -2988,7 +2988,7 @@ export default defineComponent({
 					return PassingOrder.Right;
 				}
 			}
-			return this.boosterNumber
+			return this.boosterNumber !== undefined
 				? this.boosterNumber % 2 === 1
 					? PassingOrder.Left
 					: PassingOrder.Right
