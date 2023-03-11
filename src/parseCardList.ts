@@ -7,9 +7,9 @@ import { ackError, isSocketError, SocketError } from "./Message.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
-// Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
+//  - customCards: Dictionary of additional custom cards to try to match first.
 export function parseLine(
 	line: string,
 	options: {
@@ -17,29 +17,27 @@ export function parseLine(
 		customCards?: {
 			[cardID: string]: Card;
 		} | null;
-	} = { fallbackToCardName: false }
-) {
+	} = { fallbackToCardName: false, customCards: null }
+): SocketError | { count: number; cardID: CardID; foil: boolean } {
 	const trimedLine = line.trim();
 	const match = trimedLine.match(lineRegex);
-	if (!match) {
-		return [
-			ackError({
-				title: `Syntax Error`,
-				text: `The line '${trimedLine}' doesn't match the card syntax.`,
-				footer: `Full line: '${trimedLine}'`,
-			}),
-			undefined,
-		];
-	}
+	if (!match)
+		return ackError({
+			title: `Syntax Error`,
+			text: `The line '${trimedLine}' doesn't match the card syntax.`,
+			footer: `Full line: '${trimedLine}'`,
+		});
 
-	const [, countStr, name, , number, foil] = match;
+	const [, countStr, name, , number, foilStr] = match;
 	let [, , , set, ,] = match;
+	const foil: boolean = !!foilStr;
 	let count = parseInt(countStr);
 	if (!Number.isInteger(count)) count = 1;
 
 	// Override with custom cards if available
-	if (options.customCards && name in options.customCards) {
-		return [count, name, !!foil];
+	if (options?.customCards) {
+		// FIXME: This assumes cardID and name are the same.
+		if (name in options.customCards) return { count, cardID: name, foil };
 	}
 
 	if (set) {
@@ -57,7 +55,7 @@ export function parseLine(
 	}
 
 	// Only the name is supplied, get the preferred version of the card
-	if (!set && !number && name in CardsByName) return [count, CardsByName[name], !!foil];
+	if (!set && !number && name in CardsByName) return { count, cardID: CardsByName[name], foil };
 
 	// Search for the correct set and collector number
 	let candidates: CardID[] = [];
@@ -65,7 +63,7 @@ export function parseLine(
 	if (name in CardVersionsByName) {
 		candidates = CardVersionsByName[name];
 	} else if (name.split(" //")[0] in CardVersionsByName) {
-		// If not found, try doubled faced cards before giving up!
+		// If not found, try double faced cards before giving up!
 		candidates = CardVersionsByName[name.split(" //")[0]];
 	}
 
@@ -74,15 +72,15 @@ export function parseLine(
 	);
 
 	if (cardIDs.length > 0) {
-		return [
+		return {
 			count,
-			cardIDs.reduce((best, cid) => {
+			cardID: cardIDs.reduce((best, cid) => {
 				if (parseInt(getCard(cid).collector_number) < parseInt(getCard(best).collector_number)) return cid;
 				return best;
 			}, cardIDs[0]),
-			!!foil,
-		];
-	} else if (options && options.fallbackToCardName && name in CardsByName) return [count, CardsByName[name], !!foil];
+			foil: !!foil,
+		};
+	} else if (options?.fallbackToCardName && name in CardsByName) return { count, cardID: CardsByName[name], foil };
 
 	const message =
 		(name in CardsByName
@@ -90,15 +88,11 @@ export function parseLine(
 			: `Could not find '${name}' in our database.`) +
 		` If you think it should be there, please contact us via email or our Discord server.`;
 
-	return [
-		ackError({
-			title: `Card not found`,
-			text: message,
-			footer: `Full line: '${trimedLine}'`,
-		}),
-		undefined,
-		undefined,
-	];
+	return ackError({
+		title: `Card not found`,
+		text: message,
+		footer: `Full line: '${trimedLine}'`,
+	});
 }
 
 // options:
@@ -255,18 +249,19 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
-							const [countOrError, cardID] = parseLine(lines[lineIdx], parseLineOptions);
-							if (typeof cardID !== "undefined") {
-								// Merge duplicate declarations
-								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
-									cardList.slots[slotName][cardID] += countOrError;
-								else cardList.slots[slotName][cardID] = countOrError;
-							} else {
+							const result = parseLine(lines[lineIdx], parseLineOptions);
+							if (isSocketError(result)) {
 								// Just ignore the missing card and add it to the list of errors
 								if (options?.ignoreUnknownCards) {
 									if (!options.unknownCards) options.unknownCards = [];
 									options.unknownCards.push(lines[lineIdx]);
-								} else return countOrError; // Return error from parseLine
+								} else return result;
+							} else {
+								const { count, cardID, foil } = result;
+								// Merge duplicate declarations
+								if (Object.prototype.hasOwnProperty.call(cardList.slots[slotName], cardID))
+									cardList.slots[slotName][cardID] += count;
+								else cardList.slots[slotName][cardID] = count;
 							}
 						}
 						++lineIdx;
@@ -312,18 +307,19 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 			cardList.slots["default"] = {};
 			for (const line of lines) {
 				if (line) {
-					const [countOrError, cardID] = parseLine(line, options);
-					if (typeof cardID !== "undefined") {
-						// Merge duplicate declarations
-						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
-							cardList.slots["default"][cardID] += countOrError;
-						else cardList.slots["default"][cardID] = countOrError;
-					} else {
+					const result = parseLine(line, options);
+					if (isSocketError(result)) {
 						// Just ignore the missing card and add it to the list of errors
 						if (options?.ignoreUnknownCards) {
 							if (!options.unknownCards) options.unknownCards = [];
 							options.unknownCards.push(line);
-						} else return countOrError; // Return error from parseLine
+						} else return result; // Return error from parseLine
+					} else {
+						const { count, cardID, foil } = result;
+						// Merge duplicate declarations
+						if (Object.prototype.hasOwnProperty.call(cardList.slots["default"], cardID))
+							cardList.slots["default"][cardID] += count;
+						else cardList.slots["default"][cardID] = count;
 					}
 				}
 			}

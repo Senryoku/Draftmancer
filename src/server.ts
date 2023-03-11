@@ -883,6 +883,7 @@ function setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value
 
 function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
 	try {
+		const getCardFunc = Sessions[sessionID].getCustomGetCardFunction();
 		const boosters: UniqueCard[][] = [];
 		let booster: UniqueCard[] = [];
 		for (let line of text.split("\n")) {
@@ -894,21 +895,21 @@ function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (r
 					booster = [];
 				}
 			} else {
-				const [count, cardID, foil] = parseLine(line, {
+				const result = parseLine(line, {
 					fallbackToCardName: false,
 					customCards: Sessions[sessionID].customCardList?.customCards,
 				});
-				if (typeof cardID !== "undefined") {
-					for (let i = 0; i < count; ++i) {
-						const card = getUnique(cardID, {
-							foil,
-							getCard: Sessions[sessionID].getCustomGetCardFunction(),
-						});
-						booster.push(card);
-					}
-				} else {
-					ack?.(count);
+				if (isSocketError(result)) {
+					ack?.(result);
 					return;
+				}
+				const { count, cardID, foil } = result;
+				for (let i = 0; i < count; ++i) {
+					const card = getUnique(cardID, {
+						foil,
+						getCard: getCardFunc,
+					});
+					booster.push(card);
 				}
 			}
 		}
@@ -1656,13 +1657,13 @@ app.post("/getDeck", (req, res) => {
 				if (line === "Deck") target = r.deck;
 				if (line === "Sideboard" || (line === "" && r.deck.length > 0)) target = r.sideboard;
 				if (["", "Deck", "Sideboard"].includes(line)) continue;
-				const [count, cardID] = parseLine(line);
-				if (typeof cardID !== "undefined") {
-					for (let i = 0; i < count; ++i) target.push(getUnique(cardID));
-				} else {
+				const result = parseLine(line);
+				if (isSocketError(result)) {
 					res.status(400).send({ error: { message: `Error on line '${line}'` } });
 					return;
 				}
+				const { count, cardID, foil } = result;
+				for (let i = 0; i < count; ++i) target.push(getUnique(cardID, { foil }));
 			}
 			res.json(r);
 		} catch (e) {
