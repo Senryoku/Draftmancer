@@ -885,11 +885,14 @@ function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (r
 	try {
 		const boosters: UniqueCard[][] = [];
 		let booster: UniqueCard[] = [];
-		for (const line of text.split("\n")) {
+		for (let line of text.split("\n")) {
+			line = line.trim();
 			if (!line || line === "") {
-				if (booster.length === 0) continue;
-				boosters.push(booster);
-				booster = [];
+				// Booster boundary, or just an empty line.
+				if (booster.length > 0) {
+					boosters.push(booster);
+					booster = [];
+				}
 			} else {
 				const [count, cardID, foil] = parseLine(line, {
 					fallbackToCardName: false,
