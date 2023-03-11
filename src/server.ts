@@ -876,73 +876,14 @@ function setBoosterContent(
 
 function setUsePredeterminedBoosters(userID: UserID, sessionID: SessionID, value: boolean) {
 	if (!SessionsSettingsProps.usePredeterminedBoosters(value)) return;
-
-	Sessions[sessionID].usePredeterminedBoosters = value;
-	Sessions[sessionID].emitToConnectedNonOwners("sessionOptions", { usePredeterminedBoosters: value });
+	Sessions[sessionID].setUsePredeterminedBoosters(value);
 }
 
 function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (result: SocketAck) => void) {
-	try {
-		const getCardFunc = Sessions[sessionID].getCustomGetCardFunction();
-		const boosters: UniqueCard[][] = [];
-		let booster: UniqueCard[] = [];
-		for (let line of text.split("\n")) {
-			line = line.trim();
-			if (!line || line === "") {
-				// Booster boundary, or just an empty line.
-				if (booster.length > 0) {
-					boosters.push(booster);
-					booster = [];
-				}
-			} else {
-				const result = parseLine(line, {
-					fallbackToCardName: false,
-					customCards: Sessions[sessionID].customCardList?.customCards,
-				});
-				if (isSocketError(result)) {
-					ack?.(result);
-					return;
-				}
-				const { count, cardID, foil } = result;
-				for (let i = 0; i < count; ++i) {
-					const card = getUnique(cardID, {
-						foil,
-						getCard: getCardFunc,
-					});
-					booster.push(card);
-				}
-			}
-		}
-		if (booster.length > 0) boosters.push(booster);
+	if (!isString(text)) return ack?.(new SocketError("Invalid Parameter 'text'."));
 
-		if (boosters.length === 0) {
-			ack?.(new SocketError("Empty list"));
-			return;
-		}
-		for (let i = 1; i < boosters.length; ++i) {
-			if (boosters[i].length !== boosters[0].length) {
-				ack?.(
-					new SocketError(
-						"Inconsistent booster sizes",
-						`All boosters must be of the same size. Booster #${i + 1} has ${
-							boosters[i].length
-						} cards, expected ${boosters[0].length}.`
-					)
-				);
-				return;
-			}
-		}
-
-		Sessions[sessionID].predeterminedBoosters = boosters;
-		Sessions[sessionID].usePredeterminedBoosters = true;
-		Sessions[sessionID].forUsers((uid) =>
-			Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: true })
-		);
-		ack?.(new SocketAck());
-	} catch (e) {
-		ack?.(new SocketError("Internal error."));
-		console.error("Error in setBoosters:", e);
-	}
+	const r = Sessions[sessionID].setPredeterminedBoosters(text);
+	ack?.(r);
 }
 
 function shuffleBoosters(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {

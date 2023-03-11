@@ -31,7 +31,7 @@ import JumpstartHHBoosters from "./data/JumpstartHHBoosters.json" assert { type:
 import SuperJumpBoosters from "./data/SuperJumpBoosters.json" assert { type: "json" };
 Object.freeze(JumpstartBoosters);
 Object.freeze(SuperJumpBoosters);
-import { isMessageError, Message, MessageError, SocketAck, SocketError } from "./Message.js";
+import { isMessageError, isSocketError, Message, MessageError, SocketAck, SocketError } from "./Message.js";
 import { logSession } from "./Persistence.js";
 import { Bracket, TeamBracket, SwissBracket, DoubleBracket, BracketPlayer } from "./Brackets.js";
 import { CustomCardList, generateBoosterFromCustomCardList, generateCustomGetCardFunction } from "./CustomCardList.js";
@@ -52,6 +52,7 @@ import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
+import { parseLine } from "./parseCardList.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -265,6 +266,58 @@ export class Session implements IIndexable {
 		this.userOrder = seating;
 		this.notifyUserChange();
 		return true;
+	}
+
+	setUsePredeterminedBoosters(value: boolean) {
+		if (this.usePredeterminedBoosters === value) return;
+		this.usePredeterminedBoosters = value;
+		this.forUsers((uid) => Connections[uid]?.socket.emit("sessionOptions", { usePredeterminedBoosters: value }));
+	}
+
+	setPredeterminedBoosters(text: string): SocketAck {
+		const getCardFunc = this.getCustomGetCardFunction();
+		const boosters: UniqueCard[][] = [];
+		let booster: UniqueCard[] = [];
+		for (let line of text.split("\n")) {
+			line = line.trim();
+			if (!line || line === "") {
+				// Booster boundary, or just an empty line.
+				if (booster.length > 0) {
+					boosters.push(booster);
+					booster = [];
+				}
+			} else {
+				const result = parseLine(line, {
+					fallbackToCardName: false,
+					customCards: this.customCardList?.customCards,
+				});
+				if (isSocketError(result)) return result;
+				for (let i = 0; i < result.count; ++i) {
+					const card = getUnique(result.cardID, {
+						foil: result.foil,
+						getCard: getCardFunc,
+					});
+					booster.push(card);
+				}
+			}
+		}
+		if (booster.length > 0) boosters.push(booster);
+
+		if (boosters.length === 0) return new SocketError("Empty list");
+
+		// Check booster size consistency.
+		for (let i = 1; i < boosters.length; ++i)
+			if (boosters[i].length !== boosters[0].length)
+				return new SocketError(
+					"Inconsistent booster sizes",
+					`All boosters must be of the same size. Booster #${i + 1} has ${
+						boosters[i].length
+					} cards, expected ${boosters[0].length}.`
+				);
+
+		this.predeterminedBoosters = boosters;
+		this.setUsePredeterminedBoosters(true);
+		return new SocketAck();
 	}
 
 	getBoosterContent() {
