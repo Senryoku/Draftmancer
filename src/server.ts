@@ -457,9 +457,9 @@ function resumeDraft(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].resumeDraft();
 }
 
-function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number, ack: (result: SocketAck) => void) {
+function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: unknown, ack: (result: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const r = sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
 	if (isSocketError(r)) return ack(r);
 	startPublicSession(sess);
@@ -485,9 +485,9 @@ function startRotisserieDraft(
 	ack(ret);
 }
 
-function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number, ack: (s: SocketAck) => void) {
+function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: unknown, ack: (s: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const r = sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
