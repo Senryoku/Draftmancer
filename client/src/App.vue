@@ -1510,6 +1510,18 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>March 13, 2023</em>
+								<p>
+									Grid Draft now supports a 3 player variant, as described on the
+									<a
+										href="https://luckypaper.co/resources/formats/grid-draft/"
+										target="_blank"
+										rel="noopener nofollow"
+										>Lucky Paper website</a
+									>.
+								</p>
+							</div>
+							<div class="news">
 								<em>February 27, 2023</em>
 								<p>
 									New game mode: <strong>Rotisserie Draft</strong>!<br />Players pick cards one after
@@ -1539,18 +1551,6 @@
 										style="--invertedness: 100%; width: 2em"
 									/>
 									Phyrexia: All Will Be One is now available!
-								</p>
-							</div>
-							<div class="news">
-								<em>December 13, 2022</em>
-								<p>
-									<img
-										src="img/sets/dmr.svg"
-										class="set-icon"
-										style="--invertedness: 100%; width: 2em"
-									/>
-									Dominaria Remastered is now available in the 'More sets
-									<i class="fas fa-ellipsis-h"></i>' menu!
 								</p>
 							</div>
 						</div>
