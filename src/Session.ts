@@ -890,12 +890,12 @@ export class Session implements IIndexable {
 	}
 
 	gridDraftNextRound() {
-		const s = this.draftState as GridDraftState;
-		if (!this.drafting || !s || !(s instanceof GridDraftState)) return;
+		const s = this.draftState;
+		if (!this.drafting || !s || !isGridDraftState(s)) return;
 
 		++s.round;
 		// Refill Booster after the first pick at 3 players
-		if (s.players.length === 3 && s.round === 1) {
+		if (s.players.length === 3 && s.round % 3 === 1) {
 			const additionalCards = s.boosters[0].slice(9);
 			s.boosters[0] = s.boosters[0].slice(0, 9);
 			for (let idx = 0; idx < s.boosters[0].length; ++idx)

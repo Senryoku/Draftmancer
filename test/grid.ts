@@ -11,10 +11,11 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	connectClient,
 } from "./src/common.js";
 import { TurnBased } from "../src/IDraftState.js";
 
-describe("Grid Draft", function () {
+describe.only("Grid Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
 	let ownerIdx = 0;
@@ -68,8 +69,8 @@ describe("Grid Draft", function () {
 			let connectedClients = 0;
 			for (let c of clients) {
 				c.once("startGridDraft", function () {
-					connectedClients += 1;
-					if (connectedClients == clients.length) done();
+					++connectedClients;
+					if (connectedClients === clients.length) done();
 				});
 			}
 			clients[ownerIdx].emit("startGridDraft", boosterCount, ackNoError);
@@ -81,25 +82,27 @@ describe("Grid Draft", function () {
 			let draftEnded = 0;
 
 			for (let c = 0; c < clients.length; ++c) {
-				// Pick randomly and retry on error (empty col/row)
-				const pick = () => {
-					const cl = clients[c];
-					cl.emit("gridDraftPick", Math.floor(Math.random() * 6), (response) => {
-						if (response.code !== 0) pick();
-					});
-				};
-				clients[c].on("gridDraftNextRound", function (state) {
+				const cl = clients[c];
+				cl.on("gridDraftNextRound", function (state) {
 					if (state.booster) expect(state.booster.length).to.equal(9);
-					if (state.currentPlayer === (clients[c] as any).query.userID) pick();
+					if (state.currentPlayer === (cl as any).query.userID) {
+						// Pick randomly and retry on error (empty col/row)
+						const pick = () => {
+							cl.emit("gridDraftPick", Math.floor(Math.random() * 6), (response) => {
+								if (response.code !== 0) pick();
+							});
+						};
+						pick();
+					}
 				});
-				clients[c].once("gridDraftEnd", function () {
+				cl.once("gridDraftEnd", function () {
 					draftEnded += 1;
-					clients[c].removeListener("gridDraftNextRound");
+					cl.removeListener("gridDraftNextRound");
 					if (draftEnded == clients.length) done();
 				});
 			}
 			let currentPlayerID = (Sessions[sessionID].draftState as TurnBased).currentPlayer();
-			let currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID == currentPlayerID);
+			let currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
 			clients[currentPlayerIdx].emit("gridDraftPick", Math.floor(Math.random() * 6), ackNoError);
 		});
 	};
@@ -138,17 +141,13 @@ describe("Grid Draft", function () {
 	describe("3 Players", function () {
 		it("Third player connects.", function (done) {
 			clients.push(
-				makeClients(
-					[
-						{
-							userID: "id1",
-							sessionID: sessionID,
-							userName: "Client1",
-						},
-					],
-					done
-				)[0]
+				connectClient({
+					userID: "id3",
+					sessionID: sessionID,
+					userName: "Client3",
+				})
 			);
+			done();
 		});
 
 		startDraft();

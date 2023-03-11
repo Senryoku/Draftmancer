@@ -294,9 +294,7 @@ function gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack
 	if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
 	const r = Sessions[sessionID].gridDraftPick(choice);
-
-	if (!r) ack?.(new SocketError("Internal error."));
-	else ack?.(new SocketAck());
+	ack?.(r);
 }
 
 function rochesterDraftPick(

@@ -47,7 +47,7 @@ export class GridDraftState extends IDraftState implements TurnBased {
 		return {
 			round: this.round,
 			currentPlayer: this.currentPlayer(),
-			booster: this.boosters[0],
+			booster: this.boosters[0].length > 0 ? this.boosters[0].slice(0, 9) : this.boosters[0],
 			boosterCount: this.boosterCount,
 			lastPicks: this.lastPicks,
 		};
