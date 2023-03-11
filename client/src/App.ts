@@ -2980,7 +2980,7 @@ export default defineComponent({
 		passingOrder() {
 			if (this.gridDraftState) {
 				if (this.sessionUsers.length === 3)
-					return (this.gridDraftState.round / 3) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
+					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
 				return [PassingOrder.Right, PassingOrder.Repeat, PassingOrder.Left, PassingOrder.Repeat][
 					this.gridDraftState.round % 4
 				];

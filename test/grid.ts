@@ -15,7 +15,7 @@ import {
 } from "./src/common.js";
 import { TurnBased } from "../src/IDraftState.js";
 
-describe.only("Grid Draft", function () {
+describe("Grid Draft", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
 	let ownerIdx = 0;

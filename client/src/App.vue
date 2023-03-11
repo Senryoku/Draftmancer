@@ -1023,7 +1023,10 @@
 						<div class="controls">
 							<span>
 								Pack #{{
-									Math.min(Math.floor(gridDraftState.round / 2) + 1, gridDraftState.boosterCount)
+									Math.min(
+										Math.floor(gridDraftState.round / sessionUsers.length) + 1,
+										gridDraftState.boosterCount
+									)
 								}}/{{ gridDraftState.boosterCount }}
 							</span>
 							<span>
@@ -1032,7 +1035,10 @@
 								</template>
 								<template v-else-if="gridDraftState.currentPlayer === null">
 									<template
-										v-if="Math.floor(gridDraftState.round / 2) + 1 > gridDraftState.boosterCount"
+										v-if="
+											Math.floor(gridDraftState.round / sessionUsers.length) + 1 >
+											gridDraftState.boosterCount
+										"
 									>
 										This was the last booster! Let me push these booster wrappers off the table...
 									</template>
