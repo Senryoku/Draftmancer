@@ -84,7 +84,7 @@ import Modal from "./Modal.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
 import { defineComponent, PropType } from "vue";
-import { Card, CardID, DeckList } from "../../../src/CardTypes";
+import { Card, CardID, DeckBasicLands, DeckList } from "../../../src/CardTypes";
 import { Language } from "../../../src/Types";
 
 let deckUIDs = 0;
@@ -126,9 +126,11 @@ export default defineComponent({
 		},
 		lands() {
 			if (!this.list?.lands) return {};
-			const r: typeof this.list.lands = {};
-			for (const c of Object.keys(this.list.lands).filter((c) => this.list!.lands![c] > 0))
-				r[c] = this.list.lands![c];
+			const r: { [key: string]: number } = {};
+			for (const c of Object.keys(this.list.lands).filter(
+				(c) => this.list!.lands![c as keyof DeckBasicLands] > 0
+			))
+				r[c] = this.list.lands![c as keyof DeckBasicLands];
 			return r;
 		},
 	},
