@@ -466,22 +466,11 @@ function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: numb
 	ack?.(new SocketAck());
 }
 
-function startRochesterDraft(userID: UserID, sessionID: SessionID) {
+function startRochesterDraft(userID: UserID, sessionID: SessionID, ack: (s: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	if (!sess || sess.owner != userID || sess.drafting) return;
-
-	if (sess.users.size < 2) {
-		Connections[userID].socket.emit(
-			"message",
-			new Message(
-				`Not enough players`,
-				`Rochester Draft can only be played with at least 2 players. Bots are not supported!`
-			)
-		);
-	} else {
-		sess.startRochesterDraft();
-		startPublicSession(sess);
-	}
+	const r = sess.startRochesterDraft();
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack(r);
 }
 
 function startRotisserieDraft(
@@ -491,30 +480,17 @@ function startRotisserieDraft(
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	if (!sess || sess.owner != userID) return ack(new SocketError("Internal Error."));
-
 	let ret = sess.startRotisserieDraft(options);
 	if (!isMessageError(ret)) startPublicSession(sess);
-
 	ack(ret);
 }
 
-function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
+function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: number, ack: (s: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	if (!sess || sess.owner != userID || sess.drafting) return;
-	if (sess.users.size == 2) {
-		const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
-		sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
-		startPublicSession(sess);
-	} else {
-		Connections[userID].socket.emit(
-			"message",
-			new Message(
-				`2 Players Only`,
-				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
-			)
-		);
-	}
+	const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+	const r = sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack(r);
 }
 
 function startMinesweeperDraft(

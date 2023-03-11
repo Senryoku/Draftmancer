@@ -1471,7 +1471,9 @@ export default defineComponent({
 
 			if (boosterCount) {
 				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startWinstonDraft", boosterCount);
+				this.socket.emit("startWinstonDraft", boosterCount, (answer: SocketAck) => {
+					if (answer.code !== 0) Alert.fire(answer.error!);
+				});
 			}
 		},
 		winstonDraftTakePile() {
@@ -1580,7 +1582,9 @@ export default defineComponent({
 				});
 				return;
 			}
-			this.socket.emit("startRochesterDraft");
+			this.socket.emit("startRochesterDraft", (answer: SocketAck) => {
+				if (answer.code !== 0) Alert.fire(answer.error!);
+			});
 		},
 		startRotisserieDraft() {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -1739,6 +1743,11 @@ export default defineComponent({
 		minesweeperDraftPick(row: number, col: number) {
 			if (!this.minesweeperDraftState) return;
 			const card = this.minesweeperDraftState.grid[row][col].card;
+			if (!card) {
+				fireToast("error", "Invalid Pick");
+				return;
+			}
+
 			this.socket.emit("minesweeperDraftPick", row, col, (response) => {
 				if (response?.error) {
 					// These errors are not always prevented by the front-end because of latency, rather than adding a waiting state or something similar between

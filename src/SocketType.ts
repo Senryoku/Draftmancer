@@ -205,9 +205,9 @@ export interface ClientToServerEvents {
 	pauseDraft: () => void;
 	resumeDraft: () => void;
 	startGridDraft: (boosterCount: number, ack: (result: SocketAck) => void) => void;
-	startRochesterDraft: () => void;
+	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
-	startWinstonDraft: (boosterCount: number) => void;
+	startWinstonDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
 	startMinesweeperDraft: (
 		gridCount: number,
 		gridWidth: number,

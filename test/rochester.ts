@@ -98,7 +98,7 @@ describe("Rochester Draft", function () {
 					}
 				});
 			}
-			clients[ownerIdx].emit("startRochesterDraft");
+			clients[ownerIdx].emit("startRochesterDraft", ackNoError);
 		});
 	};
 

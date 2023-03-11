@@ -249,7 +249,7 @@ describe("Draft Logs", function () {
 					}
 				});
 			}
-			clients[ownerIdx].emit("startRochesterDraft");
+			clients[ownerIdx].emit("startRochesterDraft", ackNoError);
 		});
 	};
 	const endRochesterDraft = (validate: (clientIdx: number, draftLog: DraftLog) => void) => (done: Mocha.Done) => {

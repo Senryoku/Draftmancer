@@ -783,18 +783,18 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Winston Draft //////////////////////
-	startWinstonDraft(boosterCount: number) {
-		if (this.users.size !== 2) return false;
-		this.drafting = true;
-		this.emitMessage("Preparing Winston draft!", "Your draft will start soon...", false, 0);
+	startWinstonDraft(boosterCount: number): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size !== 2)
+			return new SocketError(
+				"Invalid number of players",
+				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
+			);
+
 		const boosters = this.generateBoosters(boosterCount);
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.drafting = false;
-			this.broadcastPreparationCancelation();
-			return false;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+
+		this.drafting = true;
 		this.disconnectedUsers = {};
 		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		for (const user of this.users) {
@@ -807,7 +807,7 @@ export class Session implements IIndexable {
 
 		this.initLogs("Winston Draft", boosters);
 		this.winstonNextRound();
-		return true;
+		return new SocketAck();
 	}
 
 	endWinstonDraft() {
@@ -1008,24 +1008,23 @@ export class Session implements IIndexable {
 	///////////////////// Grid Draft End //////////////////////
 
 	///////////////////// Rochester Draft //////////////////////
-	startRochesterDraft() {
-		if (this.users.size <= 1) return false;
+	startRochesterDraft(): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size <= 1)
+			return new SocketError(
+				"Not Enough Players",
+				`Rochester Draft can only be played with at least 2 players. Bots are not supported!`
+			);
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
-		this.drafting = true;
-		this.emitMessage("Preparing Rochester draft!", "Your draft will start soon...", false, 0);
+
 		const boosters = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
 			useCustomBoosters: true,
 			boostersPerPlayer: this.boostersPerPlayer,
 			playerCount: this.users.size,
 		});
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.drafting = false;
-			this.broadcastPreparationCancelation();
-			return false;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
 
+		this.drafting = true;
 		this.disconnectedUsers = {};
 		this.draftState = new RochesterDraftState(this.getSortedHumanPlayersIDs(), boosters);
 		for (const user of this.users) {
@@ -1037,7 +1036,7 @@ export class Session implements IIndexable {
 		}
 
 		this.initLogs("Rochester Draft", boosters);
-		return true;
+		return new SocketAck();
 	}
 
 	endRochesterDraft() {
