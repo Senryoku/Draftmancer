@@ -1,0 +1,3603 @@
+[CustomCards]
+		[	{
+			"name": "Abate",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/8cW399n/Abate.png"
+			}
+		},
+		{
+			"name": "Absolute Zero",
+			"rarity": "rare",
+			"mana_cost": "{4}{U}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/Y0v5bjD/Absolute-Zero.png"
+			}
+		},
+		{
+			"name": "Accomplished Simian",
+			"rarity": "mythic",
+			"mana_cost": "{R}",
+			"type": "Creature — Monkey Pirate",
+			"image_uris": {
+				"en": "https://i.ibb.co/cQzbDgD/Accomplished-Simian.png"
+			}
+		},
+		{
+			"name": "Acolyte of Kruphix",
+			"rarity": "rare",
+			"mana_cost": "{3}{G}{G}",
+			"type": "Creature — Human Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/H45zW4s/Acolyte-of-Kruphix.png"
+			}
+		},
+		{
+			"name": "Amateur Plagiarist",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}{B}",
+			"type": "Creature — Human Warlock",
+			"image_uris": {
+				"en": "https://i.ibb.co/jTtvHzN/Amateur-Plagiarist.png"
+			}
+		},
+		{
+			"name": "Angrath, Pirate Raider",
+			"rarity": "mythic",
+			"mana_cost": "{1}{B}{R}",
+			"type": "Planeswalker — Angrath",
+			"image_uris": {
+				"en": "https://i.ibb.co/TrYT9Ls/Angrath-Pirate-Raider.png"
+			}
+		},
+		{
+			"name": "Arcbound Reprocessor",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{W}",
+			"type": "Artifact Creature — Construct",
+			"image_uris": {
+				"en": "https://i.ibb.co/JR8pKF3/Arcbound-Reprocessor.png"
+			}
+		},
+		{
+			"name": "Archfiend of Hysteria",
+			"rarity": "mythic",
+			"mana_cost": "{3}{B}{R}",
+			"type": "Creature — Demon",
+			"image_uris": {
+				"en": "https://i.ibb.co/Pr4h3yZ/Archfiend-of-Hysteria.png"
+			}
+		},
+		{
+			"name": "Archon of the Holy Deed",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Creature — Archon",
+			"image_uris": {
+				"en": "https://i.ibb.co/C6rg87J/Archon-of-the-Holy-Deed.png"
+			}
+		},
+		{
+			"name": "Arid Mesa",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/g78yg6G/Arid-Mesa.png"
+			}
+		},
+		{
+			"name": "Armament Angel",
+			"rarity": "rare",
+			"mana_cost": "{3}{W}{W}",
+			"type": "Creature — Angel",
+			"image_uris": {
+				"en": "https://i.ibb.co/qBDfP1R/Armament-Angel.png"
+			}
+		},
+		{
+			"name": "Bazaar Swindler",
+			"rarity": "common",
+			"mana_cost": "{R}",
+			"type": "Creature — Human Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/KNXVpJg/Bazaar-Swindler.png"
+			}
+		},
+		{
+			"name": "Belligerent Primal",
+			"rarity": "rare",
+			"mana_cost": "{13}{G}{G}",
+			"type": "Creature — Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/tYFP1tq/Belligerent-Primal.png"
+			}
+		},
+		{
+			"name": "Benalish Assessor",
+			"rarity": "rare",
+			"mana_cost": "{4}{W}",
+			"type": "Creature — Human Knight",
+			"image_uris": {
+				"en": "https://i.ibb.co/KxSN9pS/Benalish-Assessor.png"
+			}
+		},
+		{
+			"name": "Bewitcher Clique",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}{U}",
+			"type": "Creature — Faerie Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/vHYJ31D/Bewitcher-Clique.png"
+			}
+		},
+		{
+			"name": "Bite",
+			"rarity": "rare",
+			"mana_cost": "{G}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/7V0x8zT/Bite.png"
+			}
+		},
+		{
+			"name": "Blasphemous Hex",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/bN88Mdq/Blasphemous-Hex.png"
+			}
+		},
+		{
+			"name": "Bloodletter Shaman",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Creature — Vampire Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/MhkYYfw/Bloodletter-Shaman.png"
+			}
+		},
+		{
+			"name": "Bloodrite Confidant",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}",
+			"type": "Creature — Human Advisor",
+			"image_uris": {
+				"en": "https://i.ibb.co/mvtXx6m/Bloodrite-Confidant.png"
+			}
+		},
+		{
+			"name": "Bloodstained Mire",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/tYDQcbS/Bloodstained-Mire.png"
+			}
+		},
+		{
+			"name": "Bolas' Jellyfish",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{U}",
+			"type": "Creature — Jellyfish",
+			"image_uris": {
+				"en": "https://i.ibb.co/9cy6vD3/Bolas-Jellyfish.png"
+			}
+		},
+		{
+			"name": "Breathstealer Shinobi",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{U}",
+			"type": "Creature — Human Ninja",
+			"image_uris": {
+				"en": "https://i.ibb.co/r0f1Xfj/Breathstealer-Shinobi.png"
+			}
+		},
+		{
+			"name": "Bretagard Champion",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Creature — Dwarf Warrior",
+			"image_uris": {
+				"en": "https://i.ibb.co/N22TSd2/Bretagard-Champion.png"
+			}
+		},
+		{
+			"name": "Bretaguard Poet",
+			"rarity": "uncommon",
+			"mana_cost": "{G}",
+			"type": "Creature — Human Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/jGgvj5h/Bretaguard-Poet.png"
+			}
+		},
+		{
+			"name": "Breya's Recruiter",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Artifact Creature — Human Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/1ZdgB1t/Breyas-Recruiter.png"
+			}
+		},
+		{
+			"name": "Brownfield",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/MnrrNR7/Brownfield.png"
+			}
+		},
+		{
+			"name": "Burgeoning Thallid",
+			"rarity": "rare",
+			"mana_cost": "{2}{G}",
+			"type": "Creature — Fungus",
+			"image_uris": {
+				"en": "https://i.ibb.co/YpMHgtq/Burgeoning-Thallid.png"
+			}
+		},
+		{
+			"name": "Burning-Tree Warband",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{R}{G}",
+			"type": "Creature — Goblin Berserker",
+			"image_uris": {
+				"en": "https://i.ibb.co/PgwB9NV/Burning-Tree-Warband.png"
+			}
+		},
+		{
+			"name": "Cabal Recruit",
+			"rarity": "common",
+			"mana_cost": "{1}{B}",
+			"type": "Creature — Elf Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/6njfMSt/Cabal-Recruit.png"
+			}
+		},
+		{
+			"name": "Calamity",
+			"rarity": "rare",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/F0PR7H4/Calamity.png"
+			}
+		},
+		{
+			"name": "Call of the Sea",
+			"rarity": "common",
+			"mana_cost": "{3}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/hRjpPgR/Call-of-the-Sea.png"
+			}
+		},
+		{
+			"name": "Call Symposium",
+			"rarity": "rare",
+			"mana_cost": "{X}{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/pXKnfJ4/Call-Symposium.png"
+			}
+		},
+		{
+			"name": "Caretaker of the First Tree",
+			"rarity": "mythic",
+			"mana_cost": "{3}{W}",
+			"type": "Legendary Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/V9g93Kr/Caretaker-of-the-First-Tree.png"
+			}
+		},
+		{
+			"name": "Carth, Heir to Corondor",
+			"rarity": "mythic",
+			"mana_cost": "{4}{W}{W}",
+			"type": "Planeswalker — Carth",
+			"image_uris": {
+				"en": "https://i.ibb.co/3r9pBj4/Carth-Heir-to-Corondor.png"
+			}
+		},
+		{
+			"name": "Cath Palug",
+			"rarity": "mythic",
+			"mana_cost": "{2}{R/G}{R/G}",
+			"type": "Legendary Creature — Cat Beast",
+			"image_uris": {
+				"en": "https://i.ibb.co/k5kRH1c/Cath-Palug.png"
+			}
+		},
+		{
+			"name": "Chamber of the Guildpact",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/JmYtFxX/Chamber-of-the-Guildpact.png"
+			}
+		},
+		{
+			"name": "Champion of Bladehold",
+			"rarity": "rare",
+			"mana_cost": "{2}{W}{W}",
+			"type": "Creature — Human Knight",
+			"image_uris": {
+				"en": "https://i.ibb.co/MNG5Ts7/Champion-of-Bladehold.png"
+			}
+		},
+		{
+			"name": "Chance Fortune",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/LN23xFn/Chance-Fortune.png"
+			}
+		},
+		{
+			"name": "Chiyo of the Silver Crescent",
+			"rarity": "rare",
+			"mana_cost": "{4}{U}",
+			"type": "Legendary Creature — Moonfolk Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/NN7bvx8/Chiyo-of-the-Silver-Crescent.png"
+			}
+		},
+		{
+			"name": "Collective Intellect",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/Vm9LsSm/Collective-Intellect.png"
+			}
+		},
+		{
+			"name": "Commerce Officer",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{G}",
+			"type": "Creature — Human Advisor",
+			"image_uris": {
+				"en": "https://i.ibb.co/hsmJD4g/Commerce-Officer.png"
+			}
+		},
+		{
+			"name": "Compulsive Fiddling",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}{U}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/jJkVbd5/Compulsive-Fiddling.png"
+			}
+		},
+		{
+			"name": "Conclave Resurgance",
+			"rarity": "rare",
+			"mana_cost": "{G}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/xmC78m0/Conclave-Resurgance.png"
+			}
+		},
+		{
+			"name": "Consulate Arrester",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{W}{W}",
+			"type": "Creature — Human Soldier",
+			"image_uris": {
+				"en": "https://i.ibb.co/DMqgCX9/Consulate-Arrester.png"
+			}
+		},
+		{
+			"name": "Consulate Cell Block",
+			"rarity": "common",
+			"mana_cost": "{2}{W}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/1nB6Vvb/Consulate-Cell-Block.png"
+			}
+		},
+		{
+			"name": "Contagious Stupor",
+			"rarity": "uncommon",
+			"mana_cost": "{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/yqk406G/Contagious-Stupor.png"
+			}
+		},
+		{
+			"name": "Cruel Ghast",
+			"rarity": "uncommon",
+			"mana_cost": "{3}{B}",
+			"type": "Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/d0yNbzD/Cruel-Ghast.png"
+			}
+		},
+		{
+			"name": "Cryptic Spellthief",
+			"rarity": "rare",
+			"mana_cost": "{2}{U}{U}{B}",
+			"type": "Creature — Spirit Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/LppXpNz/Cryptic-Spellthief.png"
+			}
+		},
+		{
+			"name": "Cull",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/By7vc52/Cull.png"
+			}
+		},
+		{
+			"name": "Dakra Archmage",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Merfolk Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/XXkwHTX/Dakra-Archmage.png"
+			}
+		},
+		{
+			"name": "Darkthicket Fleshripper",
+			"rarity": "uncommon",
+			"mana_cost": "{G}{G}",
+			"type": "Creature — Wolf",
+			"image_uris": {
+				"en": "https://i.ibb.co/N2Qqfhp/Darkthicket-Fleshripper.png"
+			}
+		},
+		{
+			"name": "Dead",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/wYMBHPz/Dead.png"
+			}
+		},
+		{
+			"name": "Deathcap Horticulturist",
+			"rarity": "uncommon",
+			"mana_cost": "{G}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/37WGgHQ/Deathcap-Horticulturist.png"
+			}
+		},
+		{
+			"name": "Debris Rummager",
+			"rarity": "uncommon",
+			"mana_cost": "{3}",
+			"type": "Artifact Creature — Construct",
+			"image_uris": {
+				"en": "https://i.ibb.co/XYwjFXK/Debris-Rummager.png"
+			}
+		},
+		{
+			"name": "Debris Titan",
+			"rarity": "mythic",
+			"mana_cost": "{4}{R}{R}",
+			"type": "Creature — Giant",
+			"image_uris": {
+				"en": "https://i.ibb.co/JQLFK8x/Debris-Titan.png"
+			}
+		},
+		{
+			"name": "Decaying Rootwalla",
+			"rarity": "uncommon",
+			"mana_cost": "{B}",
+			"type": "Creature — Zombie Lizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/1n2zwmH/Decaying-Rootwalla.png"
+			}
+		},
+		{
+			"name": "Decree of Authority",
+			"rarity": "mythic",
+			"mana_cost": "{X}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/pbLJJmh/Decree-of-Authority.png"
+			}
+		},
+		{
+			"name": "Deeproot Caryatid",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}",
+			"type": "Creature — Plant",
+			"image_uris": {
+				"en": "https://i.ibb.co/f9bVcRy/Deeproot-Caryatid.png"
+			}
+		},
+		{
+			"name": "Defiance",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/CvRC2pH/Defiance.png"
+			}
+		},
+		{
+			"name": "Dehumidify",
+			"rarity": "common",
+			"mana_cost": "{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/M8Y3BMy/Dehumidify.png"
+			}
+		},
+		{
+			"name": "Delia, Crack Detective",
+			"rarity": "rare",
+			"mana_cost": "{G}{W}",
+			"type": "Legendary Creature — Human Citizen",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZNGvrJc/Delia-Crack-Detective.png"
+			}
+		},
+		{
+			"name": "Dementia Outburst",
+			"rarity": "rare",
+			"mana_cost": "{B}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/CtpK3x8/Dementia-Outburst.png"
+			}
+		},
+		{
+			"name": "Depose the Mighty",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/PGqdPsw/Depose-the-Mighty.png"
+			}
+		},
+		{
+			"name": "Descendant Sword",
+			"rarity": "rare",
+			"mana_cost": "{R}{W}",
+			"type": "Artifact — Equipment",
+			"image_uris": {
+				"en": "https://i.ibb.co/3MY9MnB/Descendant-Sword.png"
+			}
+		},
+		{
+			"name": "Dessication Wave",
+			"rarity": "rare",
+			"mana_cost": "{X}{W/B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/TbTCYhH/Dessication-Wave.png"
+			}
+		},
+		{
+			"name": "Detention Ring",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{U}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/3c5mMvH/Detention-Ring.png"
+			}
+		},
+		{
+			"name": "Devilish Armorer",
+			"rarity": "rare",
+			"mana_cost": "{5}{R}",
+			"type": "Artifact Creature — Devil Warrior",
+			"image_uris": {
+				"en": "https://i.ibb.co/vq6jTmL/Devilish-Armorer.png"
+			}
+		},
+		{
+			"name": "Devouring Whispers",
+			"rarity": "common",
+			"mana_cost": "{1}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/9VVcBZ5/Devouring-Whispers.png"
+			}
+		},
+		{
+			"name": "Diffuse",
+			"rarity": "common",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/syZQq4y/Diffuse.png"
+			}
+		},
+		{
+			"name": "Disrupt the Gateless",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/58k2MKJ/Disrupt-the-Gateless.png"
+			}
+		},
+		{
+			"name": "Dissipation Matrix",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/yfVJbLd/Dissipation-Matrix.png"
+			}
+		},
+		{
+			"name": "Drafna, Lat-Nam Dean",
+			"rarity": "rare",
+			"mana_cost": "{1}{W/U}{W/U}",
+			"type": "Legendary Creature — Human Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/GWdt4bR/Drafna-Lat-Nam-Dean.png"
+			}
+		},
+		{
+			"name": "Drown",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/JndmffS/Drown.png"
+			}
+		},
+		{
+			"name": "Dryad of Firm Roots",
+			"rarity": "rare",
+			"mana_cost": "{4}{G}",
+			"type": "Creature — Dryad",
+			"image_uris": {
+				"en": "https://i.ibb.co/TMfTLXB/Dryad-of-Firm-Roots.png"
+			}
+		},
+		{
+			"name": "Eccentric Advisor",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}",
+			"type": "Creature — Human Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/JCfGLyg/Eccentric-Advisor.png"
+			}
+		},
+		{
+			"name": "Ecclesiastic Conservator",
+			"rarity": "mythic",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Creature — Human Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/VMNgLy9/Ecclesiastic-Conservator.png"
+			}
+		},
+		{
+			"name": "Echoing Thunder",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/236FqgQ/Echoing-Thunder.png"
+			}
+		},
+		{
+			"name": "Eidolon of Envy",
+			"rarity": "common",
+			"mana_cost": "{1}{B}",
+			"type": "Enchantment Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/jy9z7Rk/Eidolon-of-Envy.png"
+			}
+		},
+		{
+			"name": "Eidolon of Harvests",
+			"rarity": "common",
+			"mana_cost": "{1}{G}",
+			"type": "Enchantment Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/6PF59gb/Eidolon-of-Harvests.png"
+			}
+		},
+		{
+			"name": "Eidolon of Return",
+			"rarity": "rare",
+			"mana_cost": "{4}{B}",
+			"type": "Enchantment Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/PTybSzM/Eidolon-of-Return.png"
+			}
+		},
+		{
+			"name": "Eiganjo Hangar",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Artifact Land — Vehicle",
+			"image_uris": {
+				"en": "https://i.ibb.co/DbNGdjJ/Eiganjo-Hangar.png"
+			}
+		},
+		{
+			"name": "Elspeth, Sigiled Knight of Bant",
+			"rarity": "mythic",
+			"mana_cost": "{2}{W}{W}",
+			"type": "Planeswalker — Elspeth",
+			"image_uris": {
+				"en": "https://i.ibb.co/wgYXSD7/Elspeth-Sigiled-Knight-of-Bant.png"
+			}
+		},
+		{
+			"name": "Embittered Traditionalist",
+			"rarity": "uncommon",
+			"mana_cost": "{W}{B}",
+			"type": "Creature — Vampire Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/7vb3xZT/Embittered-Traditionalist.png"
+			}
+		},
+		{
+			"name": "Enhanced Interrogation",
+			"rarity": "uncommon",
+			"mana_cost": "{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/h8m5hp9/Enhanced-Interrogation.png"
+			}
+		},
+		{
+			"name": "Eon Acceleration",
+			"rarity": "mythic",
+			"mana_cost": "{4}{G}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/drfM1z5/Eon-Acceleration.png"
+			}
+		},
+		{
+			"name": "Eroding Temple",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/BVSPWpy/Eroding-Temple.png"
+			}
+		},
+		{
+			"name": "Esix, Flowering Fractal",
+			"rarity": "mythic",
+			"mana_cost": "{5}{G}{U}",
+			"type": "Legendary Creature — Fractal",
+			"image_uris": {
+				"en": "https://i.ibb.co/pXG0TbQ/Esix-Flowering-Fractal.png"
+			}
+		},
+		{
+			"name": "Esper Warden",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Artifact Creature — Human Soldier",
+			"image_uris": {
+				"en": "https://i.ibb.co/KqzP3Hz/Esper-Warden.png"
+			}
+		},
+		{
+			"name": "Essence Fragmenter",
+			"rarity": "rare",
+			"mana_cost": "{3}",
+			"type": "Artifact Creature — Construct",
+			"image_uris": {
+				"en": "https://i.ibb.co/7KsbvRd/Essence-Fragmenter.png"
+			}
+		},
+		{
+			"name": "Essence of the Faultless",
+			"rarity": "uncommon",
+			"mana_cost": "{W}{W/B}{B}",
+			"type": "Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/CMTHmJs/Essence-of-the-Faultless.png"
+			}
+		},
+		{
+			"name": "Essence Splicer",
+			"rarity": "rare",
+			"mana_cost": "{2}{W}",
+			"type": "Creature — Phyrexian Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/Z163JgB/Essence-Splicer.png"
+			}
+		},
+		{
+			"name": "Eternity Relic",
+			"rarity": "common",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/LvWty3L/Eternity-Relic.png"
+			}
+		},
+		{
+			"name": "Etherium Recycler",
+			"rarity": "rare",
+			"mana_cost": "{5}{W}",
+			"type": "Artifact Creature — Human Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/yF6ChDt/Etherium-Recycler.png"
+			}
+		},
+		{
+			"name": "Etherium Siphoner",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Artifact Creature — Human Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/59fRtfL/Etherium-Siphoner.png"
+			}
+		},
+		{
+			"name": "Eulogy Elemental",
+			"rarity": "mythic",
+			"mana_cost": "{4}{G}{G}",
+			"type": "Creature — Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/dj4kp5c/Eulogy-Elemental.png"
+			}
+		},
+		{
+			"name": "Evolutionary Contour",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/ns4WhXm/Evolutionary-Contour.png"
+			}
+		},
+		{
+			"name": "Expand Horizons",
+			"rarity": "uncommon",
+			"mana_cost": "{3}{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/vLhcbVS/Expand-Horizons.png"
+			}
+		},
+		{
+			"name": "Expatriate",
+			"rarity": "common",
+			"mana_cost": "{4}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/HKm98Vw/Expatriate.png"
+			}
+		},
+		{
+			"name": "Expiatory Ritual",
+			"rarity": "rare",
+			"mana_cost": "{3}{W}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/vH1gkz7/Expiatory-Ritual.png"
+			}
+		},
+		{
+			"name": "Exploit",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/hCn1fbp/Exploit.png"
+			}
+		},
+		{
+			"name": "Eyes of the Woods",
+			"rarity": "rare",
+			"mana_cost": "{5}{G}{G}",
+			"type": "Creature — Elf Werewolf Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/t3G2j8W/Eyes-of-the-Woods.png"
+			}
+		},
+		{
+			"name": "Faerûn Displacer",
+			"rarity": "rare",
+			"mana_cost": "{2}{U}",
+			"type": "Creature — Cat Beast",
+			"image_uris": {
+				"en": "https://i.ibb.co/F4M0cdH/Faer-n-Displacer.png"
+			}
+		},
+		{
+			"name": "Fang Strike",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/x15jjbf/Fang-Strike.png"
+			}
+		},
+		{
+			"name": "Fatal Animosity",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/MVF02j0/Fatal-Animosity.png"
+			}
+		},
+		{
+			"name": "Fickle Fabricator",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Creature — Human Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/LJmxGWV/Fickle-Fabricator.png"
+			}
+		},
+		{
+			"name": "Fiery Backlash",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/RyYqHSC/Fiery-Backlash.png"
+			}
+		},
+		{
+			"name": "Fiery Cathar",
+			"rarity": "uncommon",
+			"mana_cost": "{R}{R}",
+			"type": "Creature — Human Soldier",
+			"image_uris": {
+				"en": "https://i.ibb.co/Yhk2MGk/Fiery-Cathar.png"
+			}
+		},
+		{
+			"name": "Filigree Engineering",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/KqkhmYm/Filigree-Engineering.png"
+			}
+		},
+		{
+			"name": "Flash of Genius",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/QvF8C80/Flash-of-Genius.png"
+			}
+		},
+		{
+			"name": "Fleeting Prankster",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Faerie Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/G9RsLx8/Fleeting-Prankster.png"
+			}
+		},
+		{
+			"name": "Flooded Strand",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/XVhVLR3/Flooded-Strand.png"
+			}
+		},
+		{
+			"name": "Flourishing Spiral",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/7nDFh25/Flourishing-Spiral.png"
+			}
+		},
+		{
+			"name": "Forced Tithing",
+			"rarity": "uncommon",
+			"mana_cost": "{3}{B}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/M2sCKWs/Forced-Tithing.png"
+			}
+		},
+		{
+			"name": "Fractalize",
+			"rarity": "rare",
+			"mana_cost": "{U}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/hdj9HXW/Fractalize.png"
+			}
+		},
+		{
+			"name": "Frenzied Groodion",
+			"rarity": "mythic",
+			"mana_cost": "{2}{G}{G}",
+			"type": "Creature — Beast Horror",
+			"image_uris": {
+				"en": "https://i.ibb.co/9gsYvdB/Frenzied-Groodion.png"
+			}
+		},
+		{
+			"name": "Frenzied Warbrute",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{R}",
+			"type": "Creature — Orc Berserker",
+			"image_uris": {
+				"en": "https://i.ibb.co/kgcvqVm/Frenzied-Warbrute.png"
+			}
+		},
+		{
+			"name": "Frontier Supplier",
+			"rarity": "mythic",
+			"mana_cost": "{1}{G}",
+			"type": "Creature — Elf Ranger",
+			"image_uris": {
+				"en": "https://i.ibb.co/SxQ2z1R/Frontier-Supplier.png"
+			}
+		},
+		{
+			"name": "Fungal Genesis",
+			"rarity": "rare",
+			"mana_cost": "{3}{G}{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/d6QRW1b/Fungal-Genesis.png"
+			}
+		},
+		{
+			"name": "Funnel Vitae",
+			"rarity": "uncommon",
+			"mana_cost": "{U}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/k8zMqVQ/Funnel-Vitae.png"
+			}
+		},
+		{
+			"name": "Furnace Bolt",
+			"rarity": "uncommon",
+			"mana_cost": "H{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/GdV34p0/Furnace-Bolt.png"
+			}
+		},
+		{
+			"name": "Gaea's Cache",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/QjT0rYD/Gaeas-Cache.png"
+			}
+		},
+		{
+			"name": "Geier Reach Pass",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/pzzCDqQ/Geier-Reach-Pass.png"
+			}
+		},
+		{
+			"name": "Ghirapur Spyglass",
+			"rarity": "uncommon",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/6FH8b9d/Ghirapur-Spyglass.png"
+			}
+		},
+		{
+			"name": "Ghirapur Supplier",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{R}",
+			"type": "Creature — Dwarf Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/dBh305N/Ghirapur-Supplier.png"
+			}
+		},
+		{
+			"name": "Ghirapur, City of Wonders",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Legendary Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/MGpTGdS/Ghirapur-City-of-Wonders.png"
+			}
+		},
+		{
+			"name": "Goldspan Hellkite",
+			"rarity": "mythic",
+			"mana_cost": "{3}{R}{R}",
+			"type": "Creature — Dragon",
+			"image_uris": {
+				"en": "https://i.ibb.co/K0gpxzy/Goldspan-Hellkite.png"
+			}
+		},
+		{
+			"name": "Grave Danger",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/6XL2HJ7/Grave-Danger.png"
+			}
+		},
+		{
+			"name": "Grim Manamancer",
+			"rarity": "rare",
+			"mana_cost": "{R}",
+			"type": "Creature — Human Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZKKB8vc/Grim-Manamancer.png"
+			}
+		},
+		{
+			"name": "Groupcaster Mage",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Human Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/DzQJMyg/Groupcaster-Mage.png"
+			}
+		},
+		{
+			"name": "Groupthink",
+			"rarity": "rare",
+			"mana_cost": "{4}{U}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/BKkXxRN/Groupthink.png"
+			}
+		},
+		{
+			"name": "Groves of Serenity",
+			"rarity": "rare",
+			"mana_cost": "{2}{G}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/k8FWPg1/Groves-of-Serenity.png"
+			}
+		},
+		{
+			"name": "Grow Over",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/h7TbnJh/Grow-Over.png"
+			}
+		},
+		{
+			"name": "Hanna Preserves the Weatherlight",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Enchantment — Saga",
+			"image_uris": {
+				"en": "https://i.ibb.co/6Bmr2LW/Hanna-Preserves-the-Weatherlight.png"
+			}
+		},
+		{
+			"name": "Harmonious Tutor",
+			"rarity": "rare",
+			"mana_cost": "{2}{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/HqBtqLR/Harmonious-Tutor.png"
+			}
+		},
+		{
+			"name": "Hazoret's Sweeping Strike",
+			"rarity": "rare",
+			"mana_cost": "{X}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/2g5dVNq/Hazorets-Sweeping-Strike.png"
+			}
+		},
+		{
+			"name": "Herald of Torture",
+			"rarity": "mythic",
+			"mana_cost": "{B}{B}",
+			"type": "Creature — Demon",
+			"image_uris": {
+				"en": "https://i.ibb.co/j5xCscx/Herald-of-Torture.png"
+			}
+		},
+		{
+			"name": "Higure of a Thousand Winds",
+			"rarity": "rare",
+			"mana_cost": "{3}{U}{U}",
+			"type": "Legendary Creature — Illusion Ninja",
+			"image_uris": {
+				"en": "https://i.ibb.co/85sJ8T3/Higure-of-a-Thousand-Winds.png"
+			}
+		},
+		{
+			"name": "Huatagoyf",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}",
+			"type": "Creature — Lhurgoyf",
+			"image_uris": {
+				"en": "https://i.ibb.co/bW1RqZ9/Huatagoyf.png"
+			}
+		},
+		{
+			"name": "Hymn to Phenax",
+			"rarity": "uncommon",
+			"mana_cost": "{B}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/hfcKQCj/Hymn-to-Phenax.png"
+			}
+		},
+		{
+			"name": "Hyperactive Imagination",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/TWQX4SN/Hyperactive-Imagination.png"
+			}
+		},
+		{
+			"name": "Hysteria Phoenix",
+			"rarity": "rare",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Creature — Phoenix",
+			"image_uris": {
+				"en": "https://i.ibb.co/2dzvZHf/Hysteria-Phoenix.png"
+			}
+		},
+		{
+			"name": "Ichor Fountainhead",
+			"rarity": "common",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/j8DV3pd/Ichor-Fountainhead.png"
+			}
+		},
+		{
+			"name": "Illuna, Wishgranter",
+			"rarity": "mythic",
+			"mana_cost": "{2}{G}{U}{R}",
+			"type": "Legendary Creature — Beast Elemental Dinosaur",
+			"image_uris": {
+				"en": "https://i.ibb.co/Bt4Rd6N/Illuna-Wishgranter.png"
+			}
+		},
+		{
+			"name": "Improved Mailbot",
+			"rarity": "rare",
+			"mana_cost": "{1}",
+			"type": "Artifact Creature — Construct",
+			"image_uris": {
+				"en": "https://i.ibb.co/X4H0Ycq/Improved-Mailbot.png"
+			}
+		},
+		{
+			"name": "Improvised Explosives",
+			"rarity": "rare",
+			"mana_cost": "{X}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/jbLnYGn/Improvised-Explosives.png"
+			}
+		},
+		{
+			"name": "Incarnation of Justice",
+			"rarity": "mythic",
+			"mana_cost": "{4}{W}{W}",
+			"type": "Creature — Spirit Giant",
+			"image_uris": {
+				"en": "https://i.ibb.co/MRPwGTF/Incarnation-of-Justice.png"
+			}
+		},
+		{
+			"name": "Inertia Orb",
+			"rarity": "rare",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/bbzStJB/Inertia-Orb.png"
+			}
+		},
+		{
+			"name": "Intermediate Succession",
+			"rarity": "common",
+			"mana_cost": "{1}{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/Ch0g14D/Intermediate-Succession.png"
+			}
+		},
+		{
+			"name": "Interplanar Myr",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Artifact Creature — Myr",
+			"image_uris": {
+				"en": "https://i.ibb.co/S7tKxHX/Interplanar-Myr.png"
+			}
+		},
+		{
+			"name": "Invoke Doves",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/QX2KFHk/Invoke-Doves.png"
+			}
+		},
+		{
+			"name": "Ire Dart",
+			"rarity": "common",
+			"mana_cost": "{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/z2DvXvM/Ire-Dart.png"
+			}
+		},
+		{
+			"name": "Irritable Colossus",
+			"rarity": "rare",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Creature — Giant Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/rxKMjpg/Irritable-Colossus.png"
+			}
+		},
+		{
+			"name": "Iterative Blaze",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZXnLbwW/Iterative-Blaze.png"
+			}
+		},
+		{
+			"name": "Jayemdae Zine",
+			"rarity": "rare",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/HVBqqm3/Jayemdae-Zine.png"
+			}
+		},
+		{
+			"name": "Jerome Powell's Printer",
+			"rarity": "mythic",
+			"mana_cost": "{3}",
+			"type": "Legendary Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/6FN4Wdk/Jerome-Powells-Printer.png"
+			}
+		},
+		{
+			"name": "Jhessian Manipulator",
+			"rarity": "rare",
+			"mana_cost": "{2}{U}{U}",
+			"type": "Creature — Human Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/hV2bw78/Jhessian-Manipulator.png"
+			}
+		},
+		{
+			"name": "Jiangshi Devourer",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Vampire",
+			"image_uris": {
+				"en": "https://i.ibb.co/grDjw1J/Jiangshi-Devourer.png"
+			}
+		},
+		{
+			"name": "Jin-Gitaxias, Gene Despot",
+			"rarity": "mythic",
+			"mana_cost": "{3}{U}{U}",
+			"type": "Legendary Creature — Phyrexian Praetor",
+			"image_uris": {
+				"en": "https://i.ibb.co/QrxrNSR/Jin-Gitaxias-Gene-Despot.png"
+			}
+		},
+		{
+			"name": "Joint Denial",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{W}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/JzMMZ62/Joint-Denial.png"
+			}
+		},
+		{
+			"name": "Kami of Revival",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}",
+			"type": "Creature — Plant Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/7YSvCW1/Kami-of-Revival.png"
+			}
+		},
+		{
+			"name": "Karn, Animator",
+			"rarity": "mythic",
+			"mana_cost": "{4}",
+			"type": "Planeswalker — Karn",
+			"image_uris": {
+				"en": "https://i.ibb.co/9Hyk43R/Karn-Animator.png"
+			}
+		},
+		{
+			"name": "Kor Welder",
+			"rarity": "rare",
+			"mana_cost": "{R/W}",
+			"type": "Creature — Kor Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/wz2DL8F/Kor-Welder.png"
+			}
+		},
+		{
+			"name": "Kristina of the Woods",
+			"rarity": "mythic",
+			"mana_cost": "{1}{G}{G}",
+			"type": "Planeswalker — Kristina",
+			"image_uris": {
+				"en": "https://i.ibb.co/pbBmGTh/Kristina-of-the-Woods.png"
+			}
+		},
+		{
+			"name": "Krosan Beastcaller",
+			"rarity": "rare",
+			"mana_cost": "{4}{G}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/Lhsn3Sh/Krosan-Beastcaller.png"
+			}
+		},
+		{
+			"name": "Krosan Dire-Swine",
+			"rarity": "mythic",
+			"mana_cost": "{7}{G}{G}{G}",
+			"type": "Creature — Boar",
+			"image_uris": {
+				"en": "https://i.ibb.co/p4xR7s7/Krosan-Dire-Swine.png"
+			}
+		},
+		{
+			"name": "Lazotep Researcher",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{U}",
+			"type": "Creature — Naga Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/S5X6DGZ/Lazotep-Researcher.png"
+			}
+		},
+		{
+			"name": "Legion Duplicator",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Creature — Human Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/DLycXx8/Legion-Duplicator.png"
+			}
+		},
+		{
+			"name": "Legion's Helix",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/B38w4fx/Legions-Helix.png"
+			}
+		},
+		{
+			"name": "Libation Poisoner",
+			"rarity": "rare",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Vampire Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/LYdM5rz/Libation-Poisoner.png"
+			}
+		},
+		{
+			"name": "Liliana, Veil-Cursed",
+			"rarity": "mythic",
+			"mana_cost": "{2}{B}{B}",
+			"type": "Planeswalker — Liliana",
+			"image_uris": {
+				"en": "https://i.ibb.co/KFmX2vn/Liliana-Veil-Cursed.png"
+			}
+		},
+		{
+			"name": "Liquimetal Blade",
+			"rarity": "uncommon",
+			"mana_cost": "{2}",
+			"type": "Artifact — Equipment",
+			"image_uris": {
+				"en": "https://i.ibb.co/nCmyd95/Liquimetal-Blade.png"
+			}
+		},
+		{
+			"name": "Llanowar Astrologer",
+			"rarity": "uncommon",
+			"mana_cost": "{G}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/vcc2Mrs/Llanowar-Astrologer.png"
+			}
+		},
+		{
+			"name": "Lupine Fate",
+			"rarity": "uncommon",
+			"mana_cost": "{3}{G}{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/7YM9D7p/Lupine-Fate.png"
+			}
+		},
+		{
+			"name": "Luti of Keral Keep",
+			"rarity": "mythic",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Planeswalker — Luti",
+			"image_uris": {
+				"en": "https://i.ibb.co/M7yNmnD/Luti-of-Keral-Keep.png"
+			}
+		},
+		{
+			"name": "Magma Entity",
+			"rarity": "mythic",
+			"mana_cost": "{3}{R}{R}",
+			"type": "Creature — Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/k8HQ4yB/Magma-Entity.png"
+			}
+		},
+		{
+			"name": "Magnet Fiend",
+			"rarity": "rare",
+			"mana_cost": "{3}",
+			"type": "Artifact Creature — Phyrexian Horror",
+			"image_uris": {
+				"en": "https://i.ibb.co/8xK6SHV/Magnet-Fiend.png"
+			}
+		},
+		{
+			"name": "Malakir Aspirant",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}",
+			"type": "Creature — Vampire Knight",
+			"image_uris": {
+				"en": "https://i.ibb.co/qBShkdj/Malakir-Aspirant.png"
+			}
+		},
+		{
+			"name": "Malicious Tutor",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/CzJyJRm/Malicious-Tutor.png"
+			}
+		},
+		{
+			"name": "Mana Blip",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/M6Q4PDR/Mana-Blip.png"
+			}
+		},
+		{
+			"name": "Mana Confluence",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/vD5bxn5/Mana-Confluence.png"
+			}
+		},
+		{
+			"name": "Mangle",
+			"rarity": "uncommon",
+			"mana_cost": "{X}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/2tQbnVX/Mangle.png"
+			}
+		},
+		{
+			"name": "Markov Bloodletter",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Creature — Vampire Warrior",
+			"image_uris": {
+				"en": "https://i.ibb.co/Jr1PqvB/Markov-Bloodletter.png"
+			}
+		},
+		{
+			"name": "Marsh Flats",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/qnWQHH7/Marsh-Flats.png"
+			}
+		},
+		{
+			"name": "Mausoleum Titan",
+			"rarity": "mythic",
+			"mana_cost": "{4}{B}{B}",
+			"type": "Creature — Zombie Giant",
+			"image_uris": {
+				"en": "https://i.ibb.co/XtkNxQ9/Mausoleum-Titan.png"
+			}
+		},
+		{
+			"name": "Merrow Aerialist",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Merfolk Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/LSSJ7zY/Merrow-Aerialist.png"
+			}
+		},
+		{
+			"name": "Merrow Arcanist",
+			"rarity": "common",
+			"mana_cost": "{U}",
+			"type": "Creature — Merfolk Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/V9ynr2Z/Merrow-Arcanist.png"
+			}
+		},
+		{
+			"name": "Meteor Caller",
+			"rarity": "mythic",
+			"mana_cost": "{8}",
+			"type": "Artifact Creature — Golem",
+			"image_uris": {
+				"en": "https://i.ibb.co/6Yh24WH/Meteor-Caller.png"
+			}
+		},
+		{
+			"name": "Metropolis Intruder",
+			"rarity": "uncommon",
+			"mana_cost": "{U}",
+			"type": "Creature — Faerie Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/fq1XWGY/Metropolis-Intruder.png"
+			}
+		},
+		{
+			"name": "Middle-Aged Gargaroth",
+			"rarity": "rare",
+			"mana_cost": "{3}{G}{G}",
+			"type": "Creature — Elk Beast",
+			"image_uris": {
+				"en": "https://i.ibb.co/N6r2D9b/Middle-Aged-Gargaroth.png"
+			}
+		},
+		{
+			"name": "Mind's Shadow",
+			"rarity": "rare",
+			"mana_cost": "{B}",
+			"type": "Creature — Nightmare Avatar",
+			"image_uris": {
+				"en": "https://i.ibb.co/GkjLsRs/Minds-Shadow.png"
+			}
+		},
+		{
+			"name": "Misty Rainforest",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/1Qs0Hvk/Misty-Rainforest.png"
+			}
+		},
+		{
+			"name": "Mitul, Rashmi's Assistant",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Legendary Creature — Vedalken Artificer",
+			"image_uris": {
+				"en": "https://i.ibb.co/0BysC7m/Mitul-Rashmis-Assistant.png"
+			}
+		},
+		{
+			"name": "Monastery Acolyte",
+			"rarity": "uncommon",
+			"mana_cost": "{R}",
+			"type": "Creature — Human Monk",
+			"image_uris": {
+				"en": "https://i.ibb.co/CBVW8Wn/Monastery-Acolyte.png"
+			}
+		},
+		{
+			"name": "Monastery Tutor",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{W}",
+			"type": "Creature — Human Monk",
+			"image_uris": {
+				"en": "https://i.ibb.co/RjPdK6Y/Monastery-Tutor.png"
+			}
+		},
+		{
+			"name": "Mox Topaz",
+			"rarity": "mythic",
+			"mana_cost": "{1}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/r3JbHLC/Mox-Topaz.png"
+			}
+		},
+		{
+			"name": "Mul Daya Sage",
+			"rarity": "rare",
+			"mana_cost": "{3}{G}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/Wx4CjLG/Mul-Daya-Sage.png"
+			}
+		},
+		{
+			"name": "Mystic Caldera",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Swamp Mountain",
+			"image_uris": {
+				"en": "https://i.ibb.co/3M9Rfmj/Mystic-Caldera.png"
+			}
+		},
+		{
+			"name": "Mystic Dale",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Mountain Forest",
+			"image_uris": {
+				"en": "https://i.ibb.co/nfBHVhh/Mystic-Dale.png"
+			}
+		},
+		{
+			"name": "Mystic Esker",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Plains Swamp",
+			"image_uris": {
+				"en": "https://i.ibb.co/bs7GCdX/Mystic-Esker.png"
+			}
+		},
+		{
+			"name": "Mystic Expanse",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Forest Plains",
+			"image_uris": {
+				"en": "https://i.ibb.co/SN09HQp/Mystic-Expanse.png"
+			}
+		},
+		{
+			"name": "Mystic Isthmus",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Forest Island",
+			"image_uris": {
+				"en": "https://i.ibb.co/x2xch1N/Mystic-Isthmus.png"
+			}
+		},
+		{
+			"name": "Mystic Lagoon",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Island Swamp",
+			"image_uris": {
+				"en": "https://i.ibb.co/NpF9JYt/Mystic-Lagoon.png"
+			}
+		},
+		{
+			"name": "Mystic Mire",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Swamp Forest",
+			"image_uris": {
+				"en": "https://i.ibb.co/RCTzdsJ/Mystic-Mire.png"
+			}
+		},
+		{
+			"name": "Mystic Plateau",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Mountain Plains",
+			"image_uris": {
+				"en": "https://i.ibb.co/xzG5CHr/Mystic-Plateau.png"
+			}
+		},
+		{
+			"name": "Mystic Strandflat",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Plains Island",
+			"image_uris": {
+				"en": "https://i.ibb.co/p4CLrWH/Mystic-Strandflat.png"
+			}
+		},
+		{
+			"name": "Mystic Volcano",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Island Mountain",
+			"image_uris": {
+				"en": "https://i.ibb.co/QMg3wys/Mystic-Volcano.png"
+			}
+		},
+		{
+			"name": "Natural Tutor",
+			"rarity": "rare",
+			"mana_cost": "{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/cDYJxKg/Natural-Tutor.png"
+			}
+		},
+		{
+			"name": "Negotiated Arson",
+			"rarity": "common",
+			"mana_cost": "{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/jgdq242/Negotiated-Arson.png"
+			}
+		},
+		{
+			"name": "Nephalia Altar",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/L8fnzSZ/Nephalia-Altar.png"
+			}
+		},
+		{
+			"name": "Nightblade Silencer",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Human Assassin",
+			"image_uris": {
+				"en": "https://i.ibb.co/P55W0dm/Nightblade-Silencer.png"
+			}
+		},
+		{
+			"name": "Nostalgic Caryatid",
+			"rarity": "mythic",
+			"mana_cost": "{2}{B}{G}",
+			"type": "Creature — Dryad Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/V9k6c0n/Nostalgic-Caryatid.png"
+			}
+		},
+		{
+			"name": "Oblivion Colossus",
+			"rarity": "mythic",
+			"mana_cost": "{7}",
+			"type": "Artifact Creature — Golem",
+			"image_uris": {
+				"en": "https://i.ibb.co/bF8k2WD/Oblivion-Colossus.png"
+			}
+		},
+		{
+			"name": "Obstruct",
+			"rarity": "uncommon",
+			"mana_cost": "{X}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/Vtdhms8/Obstruct.png"
+			}
+		},
+		{
+			"name": "Ominous Deerstalker",
+			"rarity": "mythic",
+			"mana_cost": "{B}{G}",
+			"type": "Creature — Human Warrior",
+			"image_uris": {
+				"en": "https://i.ibb.co/GRwcHBk/Ominous-Deerstalker.png"
+			}
+		},
+		{
+			"name": "Ona, Enigmatic Sovereign",
+			"rarity": "rare",
+			"mana_cost": "{3}{U}",
+			"type": "Legendary Creature — Leviathan",
+			"image_uris": {
+				"en": "https://i.ibb.co/SySmzk5/Ona-Enigmatic-Sovereign.png"
+			}
+		},
+		{
+			"name": "Orazca Gale",
+			"rarity": "rare",
+			"mana_cost": "{2}{W}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/CVcGfCK/Orazca-Gale.png"
+			}
+		},
+		{
+			"name": "Ormendahl's Rite",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/DpRyDJY/Ormendahls-Rite.png"
+			}
+		},
+		{
+			"name": "Orrery Prototype",
+			"rarity": "rare",
+			"mana_cost": "{6}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/BLbqq5R/Orrery-Prototype.png"
+			}
+		},
+		{
+			"name": "Orthodoxy Enforcer",
+			"rarity": "rare",
+			"mana_cost": "{W}{W}",
+			"type": "Artifact Creature — Phyrexian Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/R2nKnqp/Orthodoxy-Enforcer.png"
+			}
+		},
+		{
+			"name": "Orzhova Prelate",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Creature — Human Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/0CpS6nf/Orzhova-Prelate.png"
+			}
+		},
+		{
+			"name": "Outlands Investigator",
+			"rarity": "rare",
+			"mana_cost": "{G}",
+			"type": "Creature — Elf Ranger",
+			"image_uris": {
+				"en": "https://i.ibb.co/BKxGhgz/Outlands-Investigator.png"
+			}
+		},
+		{
+			"name": "Outlands Ranger",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}",
+			"type": "Creature — Elf Scout",
+			"image_uris": {
+				"en": "https://i.ibb.co/wQb3GgZ/Outlands-Ranger.png"
+			}
+		},
+		{
+			"name": "Parity",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/4YQ2Wc7/Parity.png"
+			}
+		},
+		{
+			"name": "Park Heights Avenger",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Creature — Human Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/L5B2mX5/Park-Heights-Avenger.png"
+			}
+		},
+		{
+			"name": "Parting Gift",
+			"rarity": "common",
+			"mana_cost": "{1}{B}",
+			"type": "Enchantment — Aura",
+			"image_uris": {
+				"en": "https://i.ibb.co/cQ1ZMb6/Parting-Gift.png"
+			}
+		},
+		{
+			"name": "Pernicious Ecology",
+			"rarity": "rare",
+			"mana_cost": "{B}{G}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/x6yNDk5/Pernicious-Ecology.png"
+			}
+		},
+		{
+			"name": "Perplexing Devil",
+			"rarity": "rare",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Creature — Devil",
+			"image_uris": {
+				"en": "https://i.ibb.co/THSW26c/Perplexing-Devil.png"
+			}
+		},
+		{
+			"name": "Petnapper Finks",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}{G/W}{W}",
+			"type": "Creature — Ouphe",
+			"image_uris": {
+				"en": "https://i.ibb.co/yFwMC0Y/Petnapper-Finks.png"
+			}
+		},
+		{
+			"name": "Pious Epiphany",
+			"rarity": "rare",
+			"mana_cost": "{3}{W}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/cvmw3bG/Pious-Epiphany.png"
+			}
+		},
+		{
+			"name": "Pixie's Mischief",
+			"rarity": "uncommon",
+			"mana_cost": "{U/R}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/LhFxmGh/Pixies-Mischief.png"
+			}
+		},
+		{
+			"name": "Polluted Delta",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/hRmY4xL/Polluted-Delta.png"
+			}
+		},
+		{
+			"name": "Polytheistic Courser",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}{G}",
+			"type": "Enchantment Creature — Centaur",
+			"image_uris": {
+				"en": "https://i.ibb.co/3hx8bZx/Polytheistic-Courser.png"
+			}
+		},
+		{
+			"name": "Powerstone Mine",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/FJ7sdwC/Powerstone-Mine.png"
+			}
+		},
+		{
+			"name": "Preempt",
+			"rarity": "rare",
+			"mana_cost": "{3}{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/rky3WPv/Preempt.png"
+			}
+		},
+		{
+			"name": "Presage",
+			"rarity": "common",
+			"mana_cost": "{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/tBVwn7Y/Presage.png"
+			}
+		},
+		{
+			"name": "Price of Novelty",
+			"rarity": "uncommon",
+			"mana_cost": "{3}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/4M2rJVv/Price-of-Novelty.png"
+			}
+		},
+		{
+			"name": "Prismari Daredevil",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}{R}",
+			"type": "Creature — Human Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/cvH6kT7/Prismari-Daredevil.png"
+			}
+		},
+		{
+			"name": "Prognosticate",
+			"rarity": "common",
+			"mana_cost": "{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/x25ZNn7/Prognosticate.png"
+			}
+		},
+		{
+			"name": "Psychic Plunge",
+			"rarity": "rare",
+			"mana_cost": "{X}{U/B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/94FS8ZJ/Psychic-Plunge.png"
+			}
+		},
+		{
+			"name": "Qal Sisma Outpost",
+			"rarity": "rare",
+			"mana_cost": "{R}{W}{B}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/HXkthyj/Qal-Sisma-Outpost.png"
+			}
+		},
+		{
+			"name": "Rancorous Apparition",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{G}{G}",
+			"type": "Enchantment Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/VgKLcXb/Rancorous-Apparition.png"
+			}
+		},
+		{
+			"name": "Raven's Scandal",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/zfSr27L/Ravens-Scandal.png"
+			}
+		},
+		{
+			"name": "Rayne, Academy Protector",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}",
+			"type": "Legendary Creature — Human Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/6mgnm1J/Rayne-Academy-Protector.png"
+			}
+		},
+		{
+			"name": "Realm Pocketer",
+			"rarity": "mythic",
+			"mana_cost": "{4}{U}{U}",
+			"type": "Creature — Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/DQjCTkb/Realm-Pocketer.png"
+			}
+		},
+		{
+			"name": "Reawaken",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/NVmKZd8/Reawaken.png"
+			}
+		},
+		{
+			"name": "Recruitment Drive",
+			"rarity": "common",
+			"mana_cost": "{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/NmhxSc2/Recruitment-Drive.png"
+			}
+		},
+		{
+			"name": "Recurrant Shambler",
+			"rarity": "uncommon",
+			"mana_cost": "{B}",
+			"type": "Creature — Skeleton Knight",
+			"image_uris": {
+				"en": "https://i.ibb.co/gFDhwf4/Recurrant-Shambler.png"
+			}
+		},
+		{
+			"name": "Reimagined Dreams",
+			"rarity": "rare",
+			"mana_cost": "{3}{G}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/wd42rSd/Reimagined-Dreams.png"
+			}
+		},
+		{
+			"name": "Rejunivating Herbs",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/8PRQ2b9/Rejunivating-Herbs.png"
+			}
+		},
+		{
+			"name": "Repulse the Wicked",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/C7w0XBy/Repulse-the-Wicked.png"
+			}
+		},
+		{
+			"name": "Rishadan Dock",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/Jxgb4Hc/Rishadan-Dock.png"
+			}
+		},
+		{
+			"name": "Rites of Mourning",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{B}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/hd4ksS3/Rites-of-Mourning.png"
+			}
+		},
+		{
+			"name": "River Herald Heretic",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}{G}",
+			"type": "Creature — Merfolk Scout",
+			"image_uris": {
+				"en": "https://i.ibb.co/ykjBtmD/River-Herald-Heretic.png"
+			}
+		},
+		{
+			"name": "Rix Maadi Abyss",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/c8Kg32w/Rix-Maadi-Abyss.png"
+			}
+		},
+		{
+			"name": "Roil Snarl",
+			"rarity": "common",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/s5f12Hs/Roil-Snarl.png"
+			}
+		},
+		{
+			"name": "Rouse the Kami",
+			"rarity": "rare",
+			"mana_cost": "{1}{G}{G}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/d4Ffsv8/Rouse-the-Kami.png"
+			}
+		},
+		{
+			"name": "Sanctuary Ritual",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{W}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/RNng9Xm/Sanctuary-Ritual.png"
+			}
+		},
+		{
+			"name": "Sanity Diver",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{B}",
+			"type": "Creature — Zombie Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/qRfgMx6/Sanity-Diver.png"
+			}
+		},
+		{
+			"name": "Sanityblazer",
+			"rarity": "rare",
+			"mana_cost": "{B/R}",
+			"type": "Creature — Horror",
+			"image_uris": {
+				"en": "https://i.ibb.co/12YCL6d/Sanityblazer.png"
+			}
+		},
+		{
+			"name": "Sap Vitality",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/KrQ1Qq6/Sap-Vitality.png"
+			}
+		},
+		{
+			"name": "Scalding Tarn",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/tPJD3pr/Scalding-Tarn.png"
+			}
+		},
+		{
+			"name": "Scorched Earth",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/dWfxBRn/Scorched-Earth.png"
+			}
+		},
+		{
+			"name": "Scouring Slime",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{G}",
+			"type": "Creature — Ooze",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZTzYD1y/Scouring-Slime.png"
+			}
+		},
+		{
+			"name": "Scrap Combuster",
+			"rarity": "rare",
+			"mana_cost": "{X}{X}",
+			"type": "Artifact Creature — Construct",
+			"image_uris": {
+				"en": "https://i.ibb.co/WFxF2np/Scrap-Combuster.png"
+			}
+		},
+		{
+			"name": "Screen",
+			"rarity": "uncommon",
+			"mana_cost": "{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/XjfDjWh/Screen.png"
+			}
+		},
+		{
+			"name": "Seabed Treasure",
+			"rarity": "uncommon",
+			"mana_cost": "{8}{U}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/Gc2j6YZ/Seabed-Treasure.png"
+			}
+		},
+		{
+			"name": "Seal of Dissolution",
+			"rarity": "common",
+			"mana_cost": "{1}{W}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/hYzDBbb/Seal-of-Dissolution.png"
+			}
+		},
+		{
+			"name": "Searing Flames",
+			"rarity": "common",
+			"mana_cost": "{R}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/VNctkQ1/Searing-Flames.png"
+			}
+		},
+		{
+			"name": "Seasoned Hieromancer",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Creature — Human Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/MkFB3jp/Seasoned-Hieromancer.png"
+			}
+		},
+		{
+			"name": "Seasoned Realtor",
+			"rarity": "mythic",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Creature — Human Rogue",
+			"image_uris": {
+				"en": "https://i.ibb.co/DMNrLMP/Seasoned-Realtor.png"
+			}
+		},
+		{
+			"name": "Secluded Library",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/sPpSdJ1/Secluded-Library.png"
+			}
+		},
+		{
+			"name": "Seelie Court Patrition",
+			"rarity": "rare",
+			"mana_cost": "{2}{U}{U}",
+			"type": "Creature — Faerie Noble",
+			"image_uris": {
+				"en": "https://i.ibb.co/1Qp310C/Seelie-Court-Patrition.png"
+			}
+		},
+		{
+			"name": "Selesnya Command",
+			"rarity": "rare",
+			"mana_cost": "{1}{G/W}{G/W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/DGqpBxn/Selesnya-Command.png"
+			}
+		},
+		{
+			"name": "Selfish Savior",
+			"rarity": "rare",
+			"mana_cost": "{W}",
+			"type": "Creature — Spirit Soldier",
+			"image_uris": {
+				"en": "https://i.ibb.co/gJJGdd8/Selfish-Savior.png"
+			}
+		},
+		{
+			"name": "Sewersnipe",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Creature — Goblin Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/GnXH6sp/Sewersnipe.png"
+			}
+		},
+		{
+			"name": "Shared Hallucinations",
+			"rarity": "common",
+			"mana_cost": "{B}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/pWZJ4G8/Shared-Hallucinations.png"
+			}
+		},
+		{
+			"name": "Shinobi of Sanity",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}{B}",
+			"type": "Creature — Specter Ninja",
+			"image_uris": {
+				"en": "https://i.ibb.co/nQjY7pv/Shinobi-of-Sanity.png"
+			}
+		},
+		{
+			"name": "Shivan Cutpurse",
+			"rarity": "uncommon",
+			"mana_cost": "{R}",
+			"type": "Creature — Human Pirate",
+			"image_uris": {
+				"en": "https://i.ibb.co/1KnCvLM/Shivan-Cutpurse.png"
+			}
+		},
+		{
+			"name": "Sifting Ghoul",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Zombie",
+			"image_uris": {
+				"en": "https://i.ibb.co/6PrRH4D/Sifting-Ghoul.png"
+			}
+		},
+		{
+			"name": "Simulacrum Foundry",
+			"rarity": "rare",
+			"mana_cost": "{3}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/p4vC1KY/Simulacrum-Foundry.png"
+			}
+		},
+		{
+			"name": "Skirk Ridge Charger",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Creature — Goblin Berserker",
+			"image_uris": {
+				"en": "https://i.ibb.co/HKcZBqL/Skirk-Ridge-Charger.png"
+			}
+		},
+		{
+			"name": "Smogdrifter",
+			"rarity": "common",
+			"mana_cost": "{4}{B}",
+			"type": "Creature — Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/qFyL115/Smogdrifter.png"
+			}
+		},
+		{
+			"name": "Smuggler's Thopter",
+			"rarity": "uncommon",
+			"mana_cost": "{1}",
+			"type": "Artifact — Vehicle",
+			"image_uris": {
+				"en": "https://i.ibb.co/CmbmBRW/Smugglers-Thopter.png"
+			}
+		},
+		{
+			"name": "Snake Charmer",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{B}{B}",
+			"type": "Creature — Human Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/0J6hKZM/Snake-Charmer.png"
+			}
+		},
+		{
+			"name": "Snap Decision",
+			"rarity": "rare",
+			"mana_cost": "{0}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/gDngkm0/Snap-Decision.png"
+			}
+		},
+		{
+			"name": "Snooping Socialite",
+			"rarity": "uncommon",
+			"mana_cost": "{G}",
+			"type": "Creature — Human Citizen",
+			"image_uris": {
+				"en": "https://i.ibb.co/5ByvJZp/Snooping-Socialite.png"
+			}
+		},
+		{
+			"name": "Solemn Scout",
+			"rarity": "rare",
+			"mana_cost": "{3}",
+			"type": "Artifact Creature — Scout",
+			"image_uris": {
+				"en": "https://i.ibb.co/5Ftn8Gp/Solemn-Scout.png"
+			}
+		},
+		{
+			"name": "Soylent Extractor",
+			"rarity": "uncommon",
+			"mana_cost": "{1}",
+			"type": "Artifact — Equipment",
+			"image_uris": {
+				"en": "https://i.ibb.co/GVkxMWv/Soylent-Extractor.png"
+			}
+		},
+		{
+			"name": "Spawn of Hogaak",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{B}{G}",
+			"type": "Legendary Creature — Avatar",
+			"image_uris": {
+				"en": "https://i.ibb.co/cNzSYqv/Spawn-of-Hogaak.png"
+			}
+		},
+		{
+			"name": "Spiral of Fortune",
+			"rarity": "rare",
+			"mana_cost": "{3}{R}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/JHxWr6C/Spiral-of-Fortune.png"
+			}
+		},
+		{
+			"name": "Spiteful Goryo",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{B}",
+			"type": "Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/1f0Py02/Spiteful-Goryo.png"
+			}
+		},
+		{
+			"name": "Spurn",
+			"rarity": "common",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/t4Jsrsh/Spurn.png"
+			}
+		},
+		{
+			"name": "Starnheim Valkyrie",
+			"rarity": "rare",
+			"mana_cost": "{3}{W}{W}",
+			"type": "Creature — Angel",
+			"image_uris": {
+				"en": "https://i.ibb.co/Pxcr3Nz/Starnheim-Valkyrie.png"
+			}
+		},
+		{
+			"name": "Static Release",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/whpbRHS/Static-Release.png"
+			}
+		},
+		{
+			"name": "Study the Mural",
+			"rarity": "common",
+			"mana_cost": "{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/CWxrFc9/Study-the-Mural.png"
+			}
+		},
+		{
+			"name": "Sublime Seraph",
+			"rarity": "mythic",
+			"mana_cost": "{2}{W}{W}",
+			"type": "Creature — Angel",
+			"image_uris": {
+				"en": "https://i.ibb.co/vH4RS5F/Sublime-Seraph.png"
+			}
+		},
+		{
+			"name": "Subvert",
+			"rarity": "rare",
+			"mana_cost": "{2}{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/mSgVKvr/Subvert.png"
+			}
+		},
+		{
+			"name": "Sun Empire Animator",
+			"rarity": "uncommon",
+			"mana_cost": "{R}{G}",
+			"type": "Creature — Human Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/JtXPHxB/Sun-Empire-Animator.png"
+			}
+		},
+		{
+			"name": "Sun's Glare",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{W}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/4N6RLds/Suns-Glare.png"
+			}
+		},
+		{
+			"name": "Sword of Void and Substance",
+			"rarity": "mythic",
+			"mana_cost": "{3}",
+			"type": "Artifact — Equipment",
+			"image_uris": {
+				"en": "https://i.ibb.co/RSDykZT/Sword-of-Void-and-Substance.png"
+			}
+		},
+		{
+			"name": "Tabula Rasa",
+			"rarity": "rare",
+			"mana_cost": "{1}{B}{B}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/8XSsNFP/Tabula-Rasa.png"
+			}
+		},
+		{
+			"name": "Talrand's Invocation",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/BLfX13Z/Talrands-Invocation.png"
+			}
+		},
+		{
+			"name": "Tamiyo, Interplanar Scholar",
+			"rarity": "mythic",
+			"mana_cost": "{2}{U}{U}",
+			"type": "Planeswalker — Tamiyo",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZH0d1TN/Tamiyo-Interplanar-Scholar.png"
+			}
+		},
+		{
+			"name": "Tendo Sewerworks",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/tcD8vNm/Tendo-Sewerworks.png"
+			}
+		},
+		{
+			"name": "Thoughtful Tidemage",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Merfolk Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/xj1CvdM/Thoughtful-Tidemage.png"
+			}
+		},
+		{
+			"name": "Thoughtsift",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/BTQMsQk/Thoughtsift.png"
+			}
+		},
+		{
+			"name": "Thoughtwrack Demon",
+			"rarity": "mythic",
+			"mana_cost": "{5}{B}{B}",
+			"type": "Creature — Demon",
+			"image_uris": {
+				"en": "https://i.ibb.co/gP1P9CG/Thoughtwrack-Demon.png"
+			}
+		},
+		{
+			"name": "Thran Engine",
+			"rarity": "common",
+			"mana_cost": "{4}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/L6gqtYB/Thran-Engine.png"
+			}
+		},
+		{
+			"name": "Thriving Bayou",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Island Swamp",
+			"image_uris": {
+				"en": "https://i.ibb.co/djQJPP3/Thriving-Bayou.png"
+			}
+		},
+		{
+			"name": "Thriving Dell",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Forest Plains",
+			"image_uris": {
+				"en": "https://i.ibb.co/gWg9XPV/Thriving-Dell.png"
+			}
+		},
+		{
+			"name": "Thriving Gulch",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Mountain Plains",
+			"image_uris": {
+				"en": "https://i.ibb.co/6NJZ3Zg/Thriving-Gulch.png"
+			}
+		},
+		{
+			"name": "Thriving Maar",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Swamp Mountain",
+			"image_uris": {
+				"en": "https://i.ibb.co/5WKNWVh/Thriving-Maar.png"
+			}
+		},
+		{
+			"name": "Thriving Machair",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Plains Island",
+			"image_uris": {
+				"en": "https://i.ibb.co/m0y5FrC/Thriving-Machair.png"
+			}
+		},
+		{
+			"name": "Thriving Mangrove",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Swamp Forest",
+			"image_uris": {
+				"en": "https://i.ibb.co/9sRb7J3/Thriving-Mangrove.png"
+			}
+		},
+		{
+			"name": "Thriving Marsh",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Plains Swamp",
+			"image_uris": {
+				"en": "https://i.ibb.co/wyMFFk3/Thriving-Marsh.png"
+			}
+		},
+		{
+			"name": "Thriving Reef",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Forest Island",
+			"image_uris": {
+				"en": "https://i.ibb.co/ZfdLbBJ/Thriving-Reef.png"
+			}
+		},
+		{
+			"name": "Thriving Tor",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Mountain Forest",
+			"image_uris": {
+				"en": "https://i.ibb.co/dWR9Smq/Thriving-Tor.png"
+			}
+		},
+		{
+			"name": "Thriving Vale",
+			"rarity": "rare",
+			"mana_cost": "",
+			"type": "Land — Island Mountain",
+			"image_uris": {
+				"en": "https://i.ibb.co/RShhJx1/Thriving-Vale.png"
+			}
+		},
+		{
+			"name": "Throw of the Dice",
+			"rarity": "rare",
+			"mana_cost": "{R}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/jDgmj3s/Throw-of-the-Dice.png"
+			}
+		},
+		{
+			"name": "Till the Land",
+			"rarity": "uncommon",
+			"mana_cost": "{G}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/dDyyd1H/Till-the-Land.png"
+			}
+		},
+		{
+			"name": "Timeline Discontinuity",
+			"rarity": "rare",
+			"mana_cost": "{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/D1ptys4/Timeline-Discontinuity.png"
+			}
+		},
+		{
+			"name": "Timestream Regent",
+			"rarity": "rare",
+			"mana_cost": "{9}{R}",
+			"type": "Creature — Dragon",
+			"image_uris": {
+				"en": "https://i.ibb.co/YXyFMWC/Timestream-Regent.png"
+			}
+		},
+		{
+			"name": "Torrezon Evangel",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{W}",
+			"type": "Creature — Vampire Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/JmmdQS4/Torrezon-Evangel.png"
+			}
+		},
+		{
+			"name": "Touch of Tizerus",
+			"rarity": "uncommon",
+			"mana_cost": "{B}",
+			"type": "Enchantment — Aura",
+			"image_uris": {
+				"en": "https://i.ibb.co/6wvSTYN/Touch-of-Tizerus.png"
+			}
+		},
+		{
+			"name": "Trial of Zeal Speedrunner",
+			"rarity": "mythic",
+			"mana_cost": "{2}{R}",
+			"type": "Creature — Minotaur Berserker Gamer",
+			"image_uris": {
+				"en": "https://i.ibb.co/j3LJ7xb/Trial-of-Zeal-Speedrunner.png"
+			}
+		},
+		{
+			"name": "Tumultuous Weird",
+			"rarity": "rare",
+			"mana_cost": "{7}{U}{R}",
+			"type": "Creature — Weird",
+			"image_uris": {
+				"en": "https://i.ibb.co/cr9nthJ/Tumultuous-Weird.png"
+			}
+		},
+		{
+			"name": "Unfolding Frontier",
+			"rarity": "uncommon",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/ByrHz1w/Unfolding-Frontier.png"
+			}
+		},
+		{
+			"name": "Unreliable Witness",
+			"rarity": "uncommon",
+			"mana_cost": "{1}{G}{G}",
+			"type": "Creature — Human Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/RYKwF96/Unreliable-Witness.png"
+			}
+		},
+		{
+			"name": "Unstable Image",
+			"rarity": "rare",
+			"mana_cost": "{1}{U}",
+			"type": "Creature — Illusion",
+			"image_uris": {
+				"en": "https://i.ibb.co/1z7qzRT/Unstable-Image.png"
+			}
+		},
+		{
+			"name": "Unstable Regisaur",
+			"rarity": "mythic",
+			"mana_cost": "{5}{G}{G}",
+			"type": "Creature — Dinosaur Beast",
+			"image_uris": {
+				"en": "https://i.ibb.co/tP2PNgv/Unstable-Regisaur.png"
+			}
+		},
+		{
+			"name": "Unweave",
+			"rarity": "uncommon",
+			"mana_cost": "{U}{U}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/tqXK1YW/Unweave.png"
+			}
+		},
+		{
+			"name": "Urabrask the Unrestrained",
+			"rarity": "mythic",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Legendary Creature — Phyrexian Praetor",
+			"image_uris": {
+				"en": "https://i.ibb.co/wwFfznL/Urabrask-the-Unrestrained.png"
+			}
+		},
+		{
+			"name": "Vacuum Lurker",
+			"rarity": "rare",
+			"mana_cost": "{B}",
+			"type": "Creature — Horror",
+			"image_uris": {
+				"en": "https://i.ibb.co/f0pRDrq/Vacuum-Lurker.png"
+			}
+		},
+		{
+			"name": "Veil Geist",
+			"rarity": "rare",
+			"mana_cost": "{3}{U}",
+			"type": "Creature — Spirit",
+			"image_uris": {
+				"en": "https://i.ibb.co/KwNgHt8/Veil-Geist.png"
+			}
+		},
+		{
+			"name": "Vengeant Woodwraith",
+			"rarity": "mythic",
+			"mana_cost": "{2}{B/G}{B/G}",
+			"type": "Creature — Plant Zombie",
+			"image_uris": {
+				"en": "https://i.ibb.co/Wt5DM33/Vengeant-Woodwraith.png"
+			}
+		},
+		{
+			"name": "Verdant Catacombs",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/fSW4qKt/Verdant-Catacombs.png"
+			}
+		},
+		{
+			"name": "Vigilante Reprisal",
+			"rarity": "common",
+			"mana_cost": "{1}{W}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/fYRTrJh/Vigilante-Reprisal.png"
+			}
+		},
+		{
+			"name": "Violent Command",
+			"rarity": "rare",
+			"mana_cost": "{2}{R}{R}",
+			"type": "Instant",
+			"image_uris": {
+				"en": "https://i.ibb.co/b7Gzbhn/Violent-Command.png"
+			}
+		},
+		{
+			"name": "Vitae Pool",
+			"rarity": "rare",
+			"mana_cost": "{2}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/P9XdD1r/Vitae-Pool.png"
+			}
+		},
+		{
+			"name": "Vitu Ghazi, Heart of the Conclave",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Legendary Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/9G4QF0L/Vitu-Ghazi-Heart-of-the-Conclave.png"
+			}
+		},
+		{
+			"name": "Vitu-Ghazi Sower",
+			"rarity": "common",
+			"mana_cost": "{W}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/BB2RxLb/Vitu-Ghazi-Sower.png"
+			}
+		},
+		{
+			"name": "Vivien, Speaker for the Wilds",
+			"rarity": "mythic",
+			"mana_cost": "{3}{G}{G}",
+			"type": "Planeswalker — Vivien",
+			"image_uris": {
+				"en": "https://i.ibb.co/7vWrxrz/Vivien-Speaker-for-the-Wilds.png"
+			}
+		},
+		{
+			"name": "Vizier of Dogma",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{W}",
+			"type": "Creature — Human Cleric",
+			"image_uris": {
+				"en": "https://i.ibb.co/SVWbwLR/Vizier-of-Dogma.png"
+			}
+		},
+		{
+			"name": "Voidwalk Entity",
+			"rarity": "mythic",
+			"mana_cost": "{2}{B}{B}",
+			"type": "Creature — Horror",
+			"image_uris": {
+				"en": "https://i.ibb.co/pQ7SKMX/Voidwalk-Entity.png"
+			}
+		},
+		{
+			"name": "Vorinclex, Ravenous Maw",
+			"rarity": "mythic",
+			"mana_cost": "{4}{G}{G}",
+			"type": "Legendary Creature — Phyrexian Praetor",
+			"image_uris": {
+				"en": "https://i.ibb.co/5v2vd6L/Vorinclex-Ravenous-Maw.png"
+			}
+		},
+		{
+			"name": "Voyage Chart",
+			"rarity": "common",
+			"mana_cost": "{1}",
+			"type": "Artifact",
+			"image_uris": {
+				"en": "https://i.ibb.co/bFtFSYt/Voyage-Chart.png"
+			}
+		},
+		{
+			"name": "War Furor",
+			"rarity": "rare",
+			"mana_cost": "{3}{R}{R}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/8MXQkDC/War-Furor.png"
+			}
+		},
+		{
+			"name": "Wartime Mobilizer",
+			"rarity": "rare",
+			"mana_cost": "{1}{W}{W}",
+			"type": "Creature — Human Soldier",
+			"image_uris": {
+				"en": "https://i.ibb.co/nrDnWxg/Wartime-Mobilizer.png"
+			}
+		},
+		{
+			"name": "Wheel of Tide and Shore",
+			"rarity": "rare",
+			"mana_cost": "{G/U}{G/U}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/3RdFgcP/Wheel-of-Tide-and-Shore.png"
+			}
+		},
+		{
+			"name": "Wicked Accuser",
+			"rarity": "rare",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Human Citizen",
+			"image_uris": {
+				"en": "https://i.ibb.co/8c5df60/Wicked-Accuser.png"
+			}
+		},
+		{
+			"name": "Wild Conflagration",
+			"rarity": "rare",
+			"mana_cost": "{1}{R}{R}",
+			"type": "Enchantment",
+			"image_uris": {
+				"en": "https://i.ibb.co/0B1czkq/Wild-Conflagration.png"
+			}
+		},
+		{
+			"name": "Windswept Heath",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/9gJfhHd/Windswept-Heath.png"
+			}
+		},
+		{
+			"name": "Winterthorn Ambusher",
+			"rarity": "rare",
+			"mana_cost": "{2}{G}{G}",
+			"type": "Creature — Elf Shaman",
+			"image_uris": {
+				"en": "https://i.ibb.co/XX7vh3q/Winterthorn-Ambusher.png"
+			}
+		},
+		{
+			"name": "Witherbloom Rotmage",
+			"rarity": "rare",
+			"mana_cost": "{3}{B}{B}",
+			"type": "Creature — Vampire Warlock",
+			"image_uris": {
+				"en": "https://i.ibb.co/WDPVs8x/Witherbloom-Rotmage.png"
+			}
+		},
+		{
+			"name": "Woeful Gwyllion",
+			"rarity": "rare",
+			"mana_cost": "{2}{W}{B}",
+			"type": "Creature — Hag Wizard",
+			"image_uris": {
+				"en": "https://i.ibb.co/WpWBHPK/Woeful-Gwyllion.png"
+			}
+		},
+		{
+			"name": "Wooded Foothills",
+			"rarity": "mythic",
+			"mana_cost": "",
+			"type": "Land",
+			"image_uris": {
+				"en": "https://i.ibb.co/X8TSG26/Wooded-Foothills.png"
+			}
+		},
+		{
+			"name": "Writhing Swarm",
+			"rarity": "rare",
+			"mana_cost": "{2}{B}",
+			"type": "Creature — Rat",
+			"image_uris": {
+				"en": "https://i.ibb.co/3fzVWFV/Writhing-Swarm.png"
+			}
+		},
+		{
+			"name": "Yatrax, Zagoth Corrupter",
+			"rarity": "mythic",
+			"mana_cost": "{B}{G}{U}",
+			"type": "Legendary Creature — Nightmare Elemental",
+			"image_uris": {
+				"en": "https://i.ibb.co/Yjy2z52/Yatrax-Zagoth-Corrupter.png"
+			}
+		},
+		{
+			"name": "Yavimaya Rune Reader",
+			"rarity": "uncommon",
+			"mana_cost": "{2}{G}",
+			"type": "Creature — Elf Druid",
+			"image_uris": {
+				"en": "https://i.ibb.co/pzgkzdd/Yavimaya-Rune-Reader.png"
+			}
+		},
+		{
+			"name": "Zenith Casting",
+			"rarity": "rare",
+			"mana_cost": "{X}{U}",
+			"type": "Sorcery",
+			"image_uris": {
+				"en": "https://i.ibb.co/fN7Qpd4/Zenith-Casting.png"
+			}
+		}
+	]
+	[NormalSlot(15)]
+		1	Abate
+		1	Absolute Zero
+		1	Accomplished Simian
+		1	Acolyte of Kruphix
+		1	Amateur Plagiarist
+		1	Angrath, Pirate Raider
+		1	Arcbound Reprocessor
+		1	Archfiend of Hysteria
+		1	Archon of the Holy Deed
+		1	Arid Mesa
+		1	Armament Angel
+		1	Bazaar Swindler
+		1	Belligerent Primal
+		1	Benalish Assessor
+		1	Bewitcher Clique
+		1	Bite
+		1	Blasphemous Hex
+		1	Bloodletter Shaman
+		1	Bloodrite Confidant
+		1	Bloodstained Mire
+		1	Bolas' Jellyfish
+		1	Breathstealer Shinobi
+		1	Bretagard Champion
+		1	Bretaguard Poet
+		1	Breya's Recruiter
+		1	Brownfield
+		1	Burgeoning Thallid
+		1	Burning-Tree Warband
+		1	Cabal Recruit
+		1	Calamity
+		1	Call of the Sea
+		1	Call Symposium
+		1	Caretaker of the First Tree
+		1	Carth, Heir to Corondor
+		1	Cath Palug
+		1	Chamber of the Guildpact
+		1	Champion of Bladehold
+		1	Chance Fortune
+		1	Chiyo of the Silver Crescent
+		1	Collective Intellect
+		1	Commerce Officer
+		1	Compulsive Fiddling
+		1	Conclave Resurgance
+		1	Consulate Arrester
+		1	Consulate Cell Block
+		1	Contagious Stupor
+		1	Cruel Ghast
+		1	Cryptic Spellthief
+		1	Cull
+		1	Dakra Archmage
+		1	Darkthicket Fleshripper
+		1	Dead
+		1	Deathcap Horticulturist
+		1	Debris Rummager
+		1	Debris Titan
+		1	Decaying Rootwalla
+		1	Decree of Authority
+		1	Deeproot Caryatid
+		1	Defiance
+		1	Dehumidify
+		1	Delia, Crack Detective
+		1	Dementia Outburst
+		1	Depose the Mighty
+		1	Descendant Sword
+		1	Dessication Wave
+		1	Detention Ring
+		1	Devilish Armorer
+		1	Devouring Whispers
+		1	Diffuse
+		1	Disrupt the Gateless
+		1	Dissipation Matrix
+		1	Drafna, Lat-Nam Dean
+		1	Drown
+		1	Dryad of Firm Roots
+		1	Eccentric Advisor
+		1	Ecclesiastic Conservator
+		1	Echoing Thunder
+		1	Eidolon of Envy
+		1	Eidolon of Harvests
+		1	Eidolon of Return
+		1	Eiganjo Hangar
+		1	Elspeth, Sigiled Knight of Bant
+		1	Embittered Traditionalist
+		1	Enhanced Interrogation
+		1	Eon Acceleration
+		1	Eroding Temple
+		1	Esix, Flowering Fractal
+		1	Esper Warden
+		1	Essence Fragmenter
+		1	Essence of the Faultless
+		1	Essence Splicer
+		1	Eternity Relic
+		1	Etherium Recycler
+		1	Etherium Siphoner
+		1	Eulogy Elemental
+		1	Evolutionary Contour
+		1	Expand Horizons
+		1	Expatriate
+		1	Expiatory Ritual
+		1	Exploit
+		1	Eyes of the Woods
+		1	Faerûn Displacer
+		1	Fang Strike
+		1	Fatal Animosity
+		1	Fickle Fabricator
+		1	Fiery Backlash
+		1	Fiery Cathar
+		1	Filigree Engineering
+		1	Flash of Genius
+		1	Fleeting Prankster
+		1	Flooded Strand
+		1	Flourishing Spiral
+		1	Forced Tithing
+		1	Fractalize
+		1	Frenzied Groodion
+		1	Frenzied Warbrute
+		1	Frontier Supplier
+		1	Fungal Genesis
+		1	Funnel Vitae
+		1	Furnace Bolt
+		1	Gaea's Cache
+		1	Geier Reach Pass
+		1	Ghirapur Spyglass
+		1	Ghirapur Supplier
+		1	Ghirapur, City of Wonders
+		1	Goldspan Hellkite
+		1	Grave Danger
+		1	Grim Manamancer
+		1	Groupcaster Mage
+		1	Groupthink
+		1	Groves of Serenity
+		1	Grow Over
+		1	Hanna Preserves the Weatherlight
+		1	Harmonious Tutor
+		1	Hazoret's Sweeping Strike
+		1	Herald of Torture
+		1	Higure of a Thousand Winds
+		1	Huatagoyf
+		1	Hymn to Phenax
+		1	Hyperactive Imagination
+		1	Hysteria Phoenix
+		1	Ichor Fountainhead
+		1	Illuna, Wishgranter
+		1	Improved Mailbot
+		1	Improvised Explosives
+		1	Incarnation of Justice
+		1	Inertia Orb
+		1	Intermediate Succession
+		1	Interplanar Myr
+		1	Invoke Doves
+		1	Ire Dart
+		1	Irritable Colossus
+		1	Iterative Blaze
+		1	Jayemdae Zine
+		1	Jerome Powell's Printer
+		1	Jhessian Manipulator
+		1	Jiangshi Devourer
+		1	Jin-Gitaxias, Gene Despot
+		1	Joint Denial
+		1	Kami of Revival
+		1	Karn, Animator
+		1	Kor Welder
+		1	Kristina of the Woods
+		1	Krosan Beastcaller
+		1	Krosan Dire-Swine
+		1	Lazotep Researcher
+		1	Legion Duplicator
+		1	Legion's Helix
+		1	Libation Poisoner
+		1	Liliana, Veil-Cursed
+		1	Liquimetal Blade
+		1	Llanowar Astrologer
+		1	Lupine Fate
+		1	Luti of Keral Keep
+		1	Magma Entity
+		1	Magnet Fiend
+		1	Malakir Aspirant
+		1	Malicious Tutor
+		1	Mana Blip
+		1	Mana Confluence
+		1	Mangle
+		1	Markov Bloodletter
+		1	Marsh Flats
+		1	Mausoleum Titan
+		1	Merrow Aerialist
+		1	Merrow Arcanist
+		1	Meteor Caller
+		1	Metropolis Intruder
+		1	Middle-Aged Gargaroth
+		1	Mind's Shadow
+		1	Misty Rainforest
+		1	Mitul, Rashmi's Assistant
+		1	Monastery Acolyte
+		1	Monastery Tutor
+		1	Mox Topaz
+		1	Mul Daya Sage
+		1	Mystic Caldera
+		1	Mystic Dale
+		1	Mystic Esker
+		1	Mystic Expanse
+		1	Mystic Isthmus
+		1	Mystic Lagoon
+		1	Mystic Mire
+		1	Mystic Plateau
+		1	Mystic Strandflat
+		1	Mystic Volcano
+		1	Natural Tutor
+		1	Negotiated Arson
+		1	Nephalia Altar
+		1	Nightblade Silencer
+		1	Nostalgic Caryatid
+		1	Oblivion Colossus
+		1	Obstruct
+		1	Ominous Deerstalker
+		1	Ona, Enigmatic Sovereign
+		1	Orazca Gale
+		1	Ormendahl's Rite
+		1	Orrery Prototype
+		1	Orthodoxy Enforcer
+		1	Orzhova Prelate
+		1	Outlands Investigator
+		1	Outlands Ranger
+		1	Parity
+		1	Park Heights Avenger
+		1	Parting Gift
+		1	Pernicious Ecology
+		1	Perplexing Devil
+		1	Petnapper Finks
+		1	Pious Epiphany
+		1	Pixie's Mischief
+		1	Polluted Delta
+		1	Polytheistic Courser
+		1	Powerstone Mine
+		1	Preempt
+		1	Presage
+		1	Price of Novelty
+		1	Prismari Daredevil
+		1	Prognosticate
+		1	Psychic Plunge
+		1	Qal Sisma Outpost
+		1	Rancorous Apparition
+		1	Raven's Scandal
+		1	Rayne, Academy Protector
+		1	Realm Pocketer
+		1	Reawaken
+		1	Recruitment Drive
+		1	Recurrant Shambler
+		1	Reimagined Dreams
+		1	Rejunivating Herbs
+		1	Repulse the Wicked
+		1	Rishadan Dock
+		1	Rites of Mourning
+		1	River Herald Heretic
+		1	Rix Maadi Abyss
+		1	Roil Snarl
+		1	Rouse the Kami
+		1	Sanctuary Ritual
+		1	Sanity Diver
+		1	Sanityblazer
+		1	Sap Vitality
+		1	Scalding Tarn
+		1	Scorched Earth
+		1	Scouring Slime
+		1	Scrap Combuster
+		1	Screen
+		1	Seabed Treasure
+		1	Seal of Dissolution
+		1	Searing Flames
+		1	Seasoned Hieromancer
+		1	Seasoned Realtor
+		1	Secluded Library
+		1	Seelie Court Patrition
+		1	Selesnya Command
+		1	Selfish Savior
+		1	Sewersnipe
+		1	Shared Hallucinations
+		1	Shinobi of Sanity
+		1	Shivan Cutpurse
+		1	Sifting Ghoul
+		1	Simulacrum Foundry
+		1	Skirk Ridge Charger
+		1	Smogdrifter
+		1	Smuggler's Thopter
+		1	Snake Charmer
+		1	Snap Decision
+		1	Snooping Socialite
+		1	Solemn Scout
+		1	Soylent Extractor
+		1	Spawn of Hogaak
+		1	Spiral of Fortune
+		1	Spiteful Goryo
+		1	Spurn
+		1	Starnheim Valkyrie
+		1	Static Release
+		1	Study the Mural
+		1	Sublime Seraph
+		1	Subvert
+		1	Sun Empire Animator
+		1	Sun's Glare
+		1	Sword of Void and Substance
+		1	Tabula Rasa
+		1	Talrand's Invocation
+		1	Tamiyo, Interplanar Scholar
+		1	Tendo Sewerworks
+		1	Thoughtful Tidemage
+		1	Thoughtsift
+		1	Thoughtwrack Demon
+		1	Thran Engine
+		1	Thriving Bayou
+		1	Thriving Dell
+		1	Thriving Gulch
+		1	Thriving Maar
+		1	Thriving Machair
+		1	Thriving Mangrove
+		1	Thriving Marsh
+		1	Thriving Reef
+		1	Thriving Tor
+		1	Thriving Vale
+		1	Throw of the Dice
+		1	Till the Land
+		1	Timeline Discontinuity
+		1	Timestream Regent
+		1	Torrezon Evangel
+		1	Touch of Tizerus
+		1	Trial of Zeal Speedrunner
+		1	Tumultuous Weird
+		1	Unfolding Frontier
+		1	Unreliable Witness
+		1	Unstable Image
+		1	Unstable Regisaur
+		1	Unweave
+		1	Urabrask the Unrestrained
+		1	Vacuum Lurker
+		1	Veil Geist
+		1	Vengeant Woodwraith
+		1	Verdant Catacombs
+		1	Vigilante Reprisal
+		1	Violent Command
+		1	Vitae Pool
+		1	Vitu Ghazi, Heart of the Conclave
+		1	Vitu-Ghazi Sower
+		1	Vivien, Speaker for the Wilds
+		1	Vizier of Dogma
+		1	Voidwalk Entity
+		1	Vorinclex, Ravenous Maw
+		1	Voyage Chart
+		1	War Furor
+		1	Wartime Mobilizer
+		1	Wheel of Tide and Shore
+		1	Wicked Accuser
+		1	Wild Conflagration
+		1	Windswept Heath
+		1	Winterthorn Ambusher
+		1	Witherbloom Rotmage
+		1	Woeful Gwyllion
+		1	Wooded Foothills
+		1	Writhing Swarm
+		1	Yatrax, Zagoth Corrupter
+		1	Yavimaya Rune Reader
+		1	Zenith Casting

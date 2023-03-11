@@ -15,6 +15,7 @@ import {
 	waitForSocket,
 	waitForClientDisconnects,
 	ackNoError,
+	ValidCubes,
 } from "./src/common.js";
 import Constants from "../src/Constants.js";
 import { DistributionMode } from "../src/Session/SessionTypes";
@@ -1473,6 +1474,29 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].emit(
 				"setBoosters",
 				"15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest\n\n15 Forest",
+				(r) => {
+					expect(r.code === 0);
+					expect(!r.error);
+					expect(Sessions[sessionID].usePredeterminedBoosters);
+					done();
+				}
+			);
+		});
+
+		startDraft();
+		endDraft();
+
+		it(`Load cube with custom cards.`, (done) => {
+			clients[ownerIdx].emit("parseCustomCardList", ValidCubes["Real_CustomCards_4"], (r) => {
+				expect(r.code).to.equal(0);
+				done();
+			});
+		});
+
+		it("Submit valid booster list using cube's custom cards.", function (done) {
+			clients[ownerIdx].emit(
+				"setBoosters",
+				fs.readFileSync(`./test/data/mtga_eggs_export_1_3_1_upload_packs.txt`, "utf8"),
 				(r) => {
 					expect(r.code === 0);
 					expect(!r.error);
