@@ -373,7 +373,7 @@
 								</div>
 								<div
 									v-tooltip.left="
-										'Starts a Grid Draft. This is a draft variant for only two players.'
+										'Starts a Grid Draft. This is a draft variant for two or three players.'
 									"
 								>
 									<button @click="startGridDraft()">Grid (2/3p.)</button>
@@ -1512,7 +1512,7 @@
 							<div class="news">
 								<em>March 13, 2023</em>
 								<p>
-									Grid Draft now supports a 3 player variant, as described on the
+									Grid Draft now supports a 3 players variant, as described on the
 									<a
 										href="https://luckypaper.co/resources/formats/grid-draft/"
 										target="_blank"
