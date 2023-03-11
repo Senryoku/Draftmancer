@@ -204,7 +204,7 @@ export interface ClientToServerEvents {
 	stopDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;
-	startGridDraft: (boosterCount: number) => void;
+	startGridDraft: (boosterCount: number, ack: (result: SocketAck) => void) => void;
 	startRochesterDraft: () => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number) => void;

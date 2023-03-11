@@ -294,9 +294,7 @@ function gridDraftPick(userID: UserID, sessionID: SessionID, choice: number, ack
 	if (!checkDraftAction(userID, Sessions[sessionID], "grid", ack)) return;
 
 	const r = Sessions[sessionID].gridDraftPick(choice);
-
-	if (!r) ack?.(new SocketError("Internal error."));
-	else ack?.(new SocketAck());
+	ack?.(r);
 }
 
 function rochesterDraftPick(
@@ -459,22 +457,13 @@ function resumeDraft(userID: UserID, sessionID: SessionID) {
 	Sessions[sessionID].resumeDraft();
 }
 
-function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number) {
+function startGridDraft(userID: UserID, sessionID: SessionID, boosterCount: number, ack: (result: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	if (sess.drafting) return;
-	if (sess.users.size == 2) {
-		const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
-		sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
-		startPublicSession(sess);
-	} else {
-		Connections[userID].socket.emit(
-			"message",
-			new Message(
-				`2 Players Only`,
-				`Grid Draft can only be played with exactly 2 players. Bots are not supported!`
-			)
-		);
-	}
+	const localBoosterCount = typeof boosterCount !== "number" ? parseInt(boosterCount) : boosterCount;
+	const r = sess.startGridDraft(localBoosterCount && !isNaN(localBoosterCount) ? localBoosterCount : 18);
+	if (isSocketError(r)) return ack(r);
+	startPublicSession(sess);
+	ack?.(new SocketAck());
 }
 
 function startRochesterDraft(userID: UserID, sessionID: SessionID) {

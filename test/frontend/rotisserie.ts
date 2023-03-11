@@ -1,5 +1,5 @@
 import { beforeEach, afterEach } from "mocha";
-import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";

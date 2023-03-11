@@ -614,9 +614,9 @@ export default defineComponent({
 					}
 				};
 
-				// Next booster, add a slight delay so user can see the last pick.
+				// Next booster, add a slight delay so user can see the last pick (Unless we're in testing).
 				if (this.gridDraftState?.currentPlayer === null) {
-					setTimeout(doNextRound, 2500);
+					setTimeout(doNextRound, navigator.webdriver ? 10 : 2500);
 				} else doNextRound();
 			});
 			this.socket.on("gridDraftEnd", () => {
@@ -628,7 +628,7 @@ export default defineComponent({
 						this.draftingState = DraftState.Brewing;
 						fireToast("success", "Done drafting!");
 					},
-					this.gridDraftState?.currentPlayer === null ? 2500 : 0
+					this.gridDraftState?.currentPlayer === null ? (navigator.webdriver ? 10 : 2500) : 0
 				);
 			});
 
@@ -1521,7 +1521,7 @@ export default defineComponent({
 
 			let { value: boosterCount } = await Alert.fire({
 				title: "Grid Draft",
-				html: `<p>Grid Draft is a draft variant for two players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
+				html: `<p>Grid Draft is a draft variant for two or three players mostly used for drafting cubes. 9-cards boosters are presented one by one in a 3x3 grid and players alternatively chooses a row or a column of each booster, resulting in 2 or 3 cards being picked from each booster. The remaining cards are discarded.</p>How many boosters (default is 18)?`,
 				inputPlaceholder: "Booster count",
 				input: "number",
 				inputAttributes: {
@@ -1538,7 +1538,9 @@ export default defineComponent({
 
 			if (boosterCount) {
 				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startGridDraft", parseInt(boosterCount));
+				this.socket.emit("startGridDraft", parseInt(boosterCount), (answer) => {
+					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
+				});
 			}
 		},
 		gridDraftPick(choice: number) {
@@ -2976,6 +2978,13 @@ export default defineComponent({
 			return r;
 		},
 		passingOrder() {
+			if (this.gridDraftState) {
+				if (this.sessionUsers.length === 3)
+					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
+				return [PassingOrder.Right, PassingOrder.Repeat, PassingOrder.Left, PassingOrder.Repeat][
+					this.gridDraftState.round % 4
+				];
+			}
 			if (this.minesweeperDraftState || this.rotisserieDraftState || this.rochesterDraftState) {
 				const pickNumber = (this.minesweeperDraftState ??
 					this.rotisserieDraftState ??
