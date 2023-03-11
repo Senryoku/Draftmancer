@@ -10,7 +10,15 @@ const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(
 // Returns an array with either an error as the first element or [count(int), cardID(str), foilModifier(bool)]
 // Possible options:
 //  - fallbackToCardName: Allow fallback to only a matching card name if exact set and/or collector number cannot be found.
-export function parseLine(line: string, options: Options = { fallbackToCardName: false }) {
+export function parseLine(
+	line: string,
+	options: {
+		fallbackToCardName?: boolean;
+		customCards?: {
+			[cardID: string]: Card;
+		} | null;
+	} = { fallbackToCardName: false }
+) {
 	const trimedLine = line.trim();
 	const match = trimedLine.match(lineRegex);
 	if (!match) {

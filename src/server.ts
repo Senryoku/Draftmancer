@@ -891,10 +891,16 @@ function setBoosters(userID: UserID, sessionID: SessionID, text: string, ack: (r
 				boosters.push(booster);
 				booster = [];
 			} else {
-				const [count, cardID, foil] = parseLine(line);
+				const [count, cardID, foil] = parseLine(line, {
+					fallbackToCardName: false,
+					customCards: Sessions[sessionID].customCardList?.customCards,
+				});
 				if (typeof cardID !== "undefined") {
 					for (let i = 0; i < count; ++i) {
-						const card = getUnique(cardID, { foil });
+						const card = getUnique(cardID, {
+							foil,
+							getCard: Sessions[sessionID].getCustomGetCardFunction(),
+						});
 						booster.push(card);
 					}
 				} else {
