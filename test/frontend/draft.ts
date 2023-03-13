@@ -1,13 +1,12 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { waitAndClickXpath, waitAndClickSelector, getSessionLink } from "./src/common.js";
-import { ElementHandle, Page } from "puppeteer";
+import { waitAndClickXpath, waitAndClickSelector, getSessionLink, join } from "./src/common.js";
+import { Browser, ElementHandle, Page } from "puppeteer";
 
-async function clickDraft() {
+async function clickDraft(page: Page) {
 	// Click 'Start' button
-	const [button] = (await sessionOwnerPage.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
+	const [button] = (await page.$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
 	expect(button).to.exist;
 	await button.click();
 }
@@ -32,60 +31,62 @@ async function pickCard(page: Page) {
 
 describe("Front End - Solo", function () {
 	this.timeout(100000);
+	let browsers: Browser[];
+	let pages: Page[];
 	it("Owner joins", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+		[browsers, pages] = await join(1);
 	});
 
 	it(`Launch Draft with Bots`, async function () {
-		await clickDraft();
+		await clickDraft(pages[0]);
 
 		// On popup, choose 'Draft alone with bots'
-		const [button2] = (await sessionOwnerPage.$x(
+		const [button2] = (await pages[0].$x(
 			"//button[contains(., 'Draft alone with 7 bots')]"
 		)) as ElementHandle<Element>[];
 		expect(button2).to.exist;
 		await button2.click();
 
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
 
 	it(`Owner picks a card`, async function () {
-		await pickCard(sessionOwnerPage);
+		await pickCard(pages[0]);
 	});
 
 	it(`...Until draft if done.`, async function () {
-		while (!(await pickCard(sessionOwnerPage)));
+		while (!(await pickCard(pages[0])));
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });
 
 describe("Front End - Multi", function () {
 	this.timeout(100000);
-	it("Owner joins", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
-	});
 
-	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+	let browsers: Browser[];
+	let pages: Page[];
+	it("Launch and Join", async function () {
+		[browsers, pages] = await join(2);
 	});
 
 	it(`Launch Draft`, async function () {
-		await clickDraft();
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await clickDraft(pages[0]);
+		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
@@ -93,210 +94,217 @@ describe("Front End - Multi", function () {
 	it("Each player picks a card", async function () {
 		let done = false;
 		while (!done) {
-			let ownerPromise = pickCard(sessionOwnerPage);
-			let otherPromise = pickCard(otherPlayerPage);
+			let ownerPromise = pickCard(pages[0]);
+			let otherPromise = pickCard(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });
 
 describe("Front End - Multi, with bots", function () {
 	this.timeout(100000);
-	it("Owner joins and set the bot count to 6", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
-		await sessionOwnerPage.focus("#bots");
-		await sessionOwnerPage.keyboard.type("6");
-		await sessionOwnerPage.keyboard.press("Enter");
+	let browsers: Browser[];
+	let pages: Page[];
+	it("Launch and Join", async function () {
+		[browsers, pages] = await join(2);
 	});
 
-	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+	it("Owner sets the bot count to 6", async function () {
+		await pages[0].focus("#bots");
+		await pages[0].keyboard.type("6");
+		await pages[0].keyboard.press("Enter");
 	});
 
 	it(`Launch Draft`, async function () {
-		await clickDraft();
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await clickDraft(pages[0]);
+		await pages[0].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[0].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
 
-	it("Each player picks a card", async function () {
+	it("Each player picks cards until the end.", async function () {
 		let done = false;
 		while (!done) {
-			const ownerPromise = pickCard(sessionOwnerPage);
-			const otherPromise = pickCard(otherPlayerPage);
+			const ownerPromise = pickCard(pages[0]);
+			const otherPromise = pickCard(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });
 
 describe("Front End - Multi, with Spectator", function () {
 	this.timeout(100000);
-	it("Owner joins", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+	let browsers: Browser[];
+	let pages: Page[];
+	it("Launch and Join", async function () {
+		[browsers, pages] = await join(2);
 	});
 
 	it(`Select Spectator mode and adds a bot`, async function () {
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Settings')]");
-		await waitAndClickSelector(sessionOwnerPage, "#is-owner-player");
-		await sessionOwnerPage.keyboard.press("Escape");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
+		await waitAndClickSelector(pages[0], "#is-owner-player");
+		await pages[0].keyboard.press("Escape");
 
-		let input = await sessionOwnerPage.waitForSelector("#bots");
+		let input = await pages[0].waitForSelector("#bots");
 		expect(input, "Could not find bots input").to.exist;
 		await input!.click({ clickCount: 3 }); // Focus and select all text
-		await sessionOwnerPage.keyboard.type("1");
-		await sessionOwnerPage.keyboard.press("Enter");
+		await pages[0].keyboard.type("1");
+		await pages[0].keyboard.press("Enter");
 	});
 
 	it(`Launch Draft`, async function () {
-		await clickDraft();
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
+		await clickDraft(pages[0]);
+		await pages[1].waitForXPath("//h2[contains(., 'Your Booster')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
+		await pages[1].waitForXPath("//div[contains(., 'Draft Started!')]", {
 			hidden: true,
 		});
 	});
 
 	it(`Spectator clicks on a player`, async function () {
-		await waitAndClickSelector(sessionOwnerPage, ".player-name");
+		await waitAndClickSelector(pages[0], ".player-name");
 	});
 
 	it("Active player picks cards until the end of the draft.", async function () {
-		while (!(await pickCard(otherPlayerPage)));
+		while (!(await pickCard(pages[1])));
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });
 
 describe("Front End - Multi, with disconnects", function () {
-	let sessionLink: string;
-
 	this.timeout(100000);
-	it("Owner joins and set the bot count to 6", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}?session=MultiWithDisconnects`);
-		await sessionOwnerPage.focus("#bots");
-		await sessionOwnerPage.keyboard.type("6");
-		await sessionOwnerPage.keyboard.press("Enter");
+	let sessionLink: string;
+	let browsers: Browser[];
+	let pages: Page[];
+	it("Launch and Join", async function () {
+		[browsers, pages] = await join(2);
+		sessionLink = await getSessionLink(pages[0]);
 	});
 
-	it(`Another Player joins the session`, async function () {
-		sessionLink = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(sessionLink);
+	it("Owner joins and set the bot count to 6", async function () {
+		await pages[0].focus("#bots");
+		await pages[0].keyboard.type("6");
+		await pages[0].keyboard.press("Enter");
 	});
 
 	it(`Launch Draft`, async function () {
-		await clickDraft();
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
-			visible: true,
-		});
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Your Booster')]", {
-			visible: true,
-		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
-			hidden: true,
-		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
-			hidden: true,
-		});
+		await clickDraft(pages[0]);
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//h2[contains(., 'Your Booster')]", {
+					visible: true,
+				})
+			)
+		);
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+					hidden: true,
+				})
+			)
+		);
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(otherPlayerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[1]);
 	});
 
 	it("Owner refreshes the page", async function () {
-		await sessionOwnerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(otherPlayerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[1]);
 	});
 
 	it("Player refreshes the page", async function () {
-		await otherPlayerPage.reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].reload({ waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(otherPlayerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[1]);
 	});
 
 	it("Both players disconnect", async function () {
-		await sessionOwnerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await otherPlayerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[0].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 
 		await new Promise((r) => setTimeout(r, 250));
 
-		await sessionOwnerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await otherPlayerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[0].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(otherPlayerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[1]);
 	});
 
 	it("Other player disconnects, and owner replaces them with a bot.", async function () {
-		await otherPlayerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await new Promise((r) => setTimeout(r, 100));
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Replace')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Replace')]");
 	});
 
 	it("Owner picks a couple of cards", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(sessionOwnerPage);
-		await pickCard(sessionOwnerPage);
-		await pickCard(sessionOwnerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[0]);
+		await pickCard(pages[0]);
+		await pickCard(pages[0]);
 	});
 
 	it("Player reconnects", async function () {
-		await otherPlayerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Reconnected')]", {
+		await pages[1].goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
 			hidden: true,
 		});
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(sessionOwnerPage);
-		await pickCard(otherPlayerPage);
+		await pickCard(pages[0]);
+		await pickCard(pages[1]);
 	});
 
 	it("Owner disconnects, new owner replaces them with a bot.", async function () {
-		await sessionOwnerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
+		await pages[0].goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await new Promise((r) => setTimeout(r, 100));
-		await waitAndClickXpath(otherPlayerPage, "//button[contains(., 'Replace')]");
+		await waitAndClickXpath(pages[1], "//button[contains(., 'Replace')]");
 	});
 
 	it("New owner finished the draft alone.", async function () {
-		while (!(await pickCard(otherPlayerPage)));
+		while (!(await pickCard(pages[1])));
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });

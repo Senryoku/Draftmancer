@@ -3,7 +3,7 @@ import { Browser, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, startBrowsers, waitAndClickXpath, getSessionLink } from "./src/common.js";
+import { waitAndClickSelector, startBrowsers, waitAndClickXpath, getSessionLink, join } from "./src/common.js";
 
 let browsers: Browser[];
 let pages: Page[];
@@ -40,18 +40,7 @@ async function pickCard(page: Page) {
 describe("Rotisserie Draft - Singleton", function () {
 	this.timeout(10000);
 	it("Starts Browsers", async function () {
-		[browsers, pages] = await startBrowsers(4);
-	});
-
-	it("Owner joins", async function () {
-		await pages[0].goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Other Players joins the session`, async function () {
-		const clipboard = await getSessionLink(pages[0]);
-		let promises = [];
-		for (const page of pages) promises.push(page.goto(clipboard));
-		await Promise.all(promises);
+		[browsers, pages] = await join(4);
 	});
 
 	it(`Launch Draft`, async function () {
@@ -59,14 +48,13 @@ describe("Rotisserie Draft - Singleton", function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Rotisserie')]");
 		await waitAndClickSelector(pages[0], "button.confirm");
 
-		let promises = [];
-		for (const page of pages)
-			promises.push(
+		await Promise.all(
+			pages.map((page) =>
 				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
-			);
-		await Promise.all(promises);
+			)
+		);
 	});
 
 	it("Each player picks a card", async function () {
@@ -96,18 +84,7 @@ describe("Rotisserie Draft - Singleton", function () {
 describe("Rotisserie Draft - Standard", function () {
 	this.timeout(10000);
 	it("Starts Browsers", async function () {
-		[browsers, pages] = await startBrowsers(6);
-	});
-
-	it("Owner joins", async function () {
-		await pages[0].goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Other Players joins the session`, async function () {
-		const clipboard = await getSessionLink(pages[0]);
-		let promises = [];
-		for (const page of pages) promises.push(page.goto(clipboard));
-		await Promise.all(promises);
+		[browsers, pages] = await join(6);
 	});
 
 	it(`Launch Draft`, async function () {
@@ -116,14 +93,13 @@ describe("Rotisserie Draft - Standard", function () {
 		await pages[0].select("select.swal2-input", "standard");
 		await waitAndClickSelector(pages[0], "button.confirm");
 
-		let promises = [];
-		for (const page of pages)
-			promises.push(
+		await Promise.all(
+			pages.map((page) =>
 				page.waitForXPath("//div[contains(., 'Draft Started!')]", {
 					hidden: true,
 				})
-			);
-		await Promise.all(promises);
+			)
+		);
 	});
 
 	it("Each player picks a card", async function () {

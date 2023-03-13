@@ -8,10 +8,6 @@ import { waitAndClickSelector, startBrowsers, getSessionLink } from "./src/commo
 let browsers: Browser[] = [];
 let pages: Page[] = [];
 
-async function closeBrowsers() {
-	for (const browser of browsers) browser.close();
-}
-
 beforeEach(function (done) {
 	disableLogs();
 	done();
@@ -20,6 +16,10 @@ beforeEach(function (done) {
 afterEach(function (done) {
 	enableLogs(this.currentTest!.state == "failed");
 	done();
+});
+
+after(async () => {
+	await Promise.all(browsers.map((b) => b.close()));
 });
 
 async function pickCard(page: Page) {
@@ -91,9 +91,5 @@ describe("Front End - 8 Players Draft", function () {
 				done[i] = await promises[i];
 			}
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await closeBrowsers();
 	});
 });

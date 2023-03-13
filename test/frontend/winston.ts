@@ -1,9 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { getSessionLink, waitAndClickXpath } from "./src/common.js";
-import { ElementHandle, Page } from "puppeteer";
+import { getSessionLink, join, waitAndClickXpath } from "./src/common.js";
+import { Browser, ElementHandle, Page } from "puppeteer";
 
 async function pickWinston(page: Page) {
 	let next = await page.waitForXPath(
@@ -38,25 +37,28 @@ async function pickWinston(page: Page) {
 }
 
 describe("Winston Draft", function () {
+	let browsers: Browser[] = [];
+	let pages: Page[] = [];
 	this.timeout(100000);
-	it("Owner joins", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
+
+	it("Launch And Join", async function () {
+		[browsers, pages] = await join(2);
 	});
 
 	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+		const clipboard = await getSessionLink(pages[0]);
+		await pages[1].goto(clipboard);
 	});
 
 	it(`Launch Winston Draft`, async function () {
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Winston')]");
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Winston')]");
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Start Winston Draft')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
 
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+		await pages[0].waitForXPath("//h2[contains(., 'Winston Draft')]", {
 			visible: true,
 		});
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+		await pages[1].waitForXPath("//h2[contains(., 'Winston Draft')]", {
 			visible: true,
 		});
 	});
@@ -64,9 +66,11 @@ describe("Winston Draft", function () {
 	it(`Pick until done.`, async function () {
 		let done = false;
 		while (!done) {
-			let ownerPromise = pickWinston(sessionOwnerPage);
-			let otherPromise = pickWinston(otherPlayerPage);
+			let ownerPromise = pickWinston(pages[0]);
+			let otherPromise = pickWinston(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+
+		browsers.map((b) => b.close());
 	});
 });

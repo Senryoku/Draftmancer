@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { dismissToast, getSessionLink, join, waitAndClickXpath } from "./src/common.js";
+import { dismissToast, join, waitAndClickXpath } from "./src/common.js";
 import { Browser, Page } from "puppeteer";
 
 let pages: Page[];
@@ -59,5 +59,7 @@ describe("Minesweeper Draft", function () {
 			let otherPromise = pickMinesweeper(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });

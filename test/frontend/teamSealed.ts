@@ -3,15 +3,13 @@ import puppeteer, { Browser, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { getSessionLink, startBrowsers, waitAndClickXpath } from "./src/common.js";
+import { getSessionLink, join, startBrowsers, waitAndClickXpath } from "./src/common.js";
 
-let Browsers: Browser[] = [];
-let Pages: Page[] = [];
+let browsers: Browser[] = [];
+let pages: Page[] = [];
 
 async function closeBrowsers() {
-	for (let i = 0; i < Browsers.length; i++) {
-		Browsers[i].close();
-	}
+	for (let i = 0; i < browsers.length; i++) browsers[i].close();
 }
 
 beforeEach(function (done) {
@@ -46,75 +44,58 @@ async function pickCard(page: Page, random = false) {
 describe("Front End - Team Sealed", function () {
 	this.timeout(100000);
 	it("Starts Browsers", async function () {
-		[Browsers, Pages] = await startBrowsers(6);
-	});
-
-	it("Owner joins", async function () {
-		await Pages[0].goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Other Players joins the session`, async function () {
-		const clipboard = await getSessionLink(Pages[0]);
-		let promises = [];
-		for (let i = 1; i < Pages.length; i++) {
-			promises.push(Pages[i].goto(clipboard));
-		}
-		await Promise.all(promises);
+		[browsers, pages] = await join(6);
 	});
 
 	it(`Launch Draft`, async function () {
-		await Pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(Pages[0], "//button[contains(., 'Team Sealed')]");
-		await waitAndClickXpath(Pages[0], "//button[contains(., 'Distribute Boosters')]");
+		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Team Sealed')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Distribute Boosters')]");
 
-		let promises = [];
-		for (let i = 0; i < Pages.length; i++) {
-			promises.push(
-				Pages[i].waitForXPath("//h2[contains(., 'Card Pool')]", {
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//h2[contains(., 'Card Pool')]", {
 					visible: true,
 				})
-			);
-		}
-		await Promise.all(promises);
-		promises = [];
-		for (let i = 0; i < Pages.length; i++) {
-			promises.push(
-				Pages[i].waitForXPath("//div[contains(., 'Team Sealed started!')]", {
+			)
+		);
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//div[contains(., 'Team Sealed started!')]", {
 					hidden: true,
 				})
-			);
-		}
-		await Promise.all(promises);
+			)
+		);
 	});
 
 	it("Each player picks the first card available", async function () {
-		for (const page of Pages) await pickCard(page);
+		for (const page of pages) await pickCard(page);
 	});
 
 	it("Each player picks 9 more cards randomly", async function () {
-		for (let c = 0; c < 9; c++) for (const page of Pages) await pickCard(page, true);
+		for (let c = 0; c < 9; c++) for (const page of pages) await pickCard(page, true);
 	});
 
 	it("Player 0 tries to pick an unavailable card, receives an error.", async function () {
-		const cards = await Pages[0].$$(".team-sealed-container .card.card-picked");
+		const cards = await pages[0].$$(".team-sealed-container .card.card-picked");
 		const card = cards[1]; // Should have been picked by the next player
 		expect(card).to.exist;
 		await card.click();
-		await Pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
+		await pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
 			visible: true,
 		});
-		await waitAndClickXpath(Pages[0], "//button[contains(., 'OK')]");
-		await Pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
+		await waitAndClickXpath(pages[0], "//button[contains(., 'OK')]");
+		await pages[0].waitForXPath("//h2[contains(., 'Card Unavailable')]", {
 			hidden: true,
 		});
 	});
 
 	it("Player 0 returns a card.", async function () {
-		const cards = await Pages[0].$$(".team-sealed-container .card.card-picked");
+		const cards = await pages[0].$$(".team-sealed-container .card.card-picked");
 		const card = cards[0]; // Should have been picked by player 0
 		expect(card).to.exist;
 		await card.click();
-		await Pages[0].waitForFunction(
+		await pages[0].waitForFunction(
 			(el) => {
 				return !el.classList.contains("card-picked");
 			},
@@ -124,12 +105,12 @@ describe("Front End - Team Sealed", function () {
 	});
 
 	it("Owner stops the event", async function () {
-		await waitAndClickXpath(Pages[0], "//button[contains(., 'Stop')]");
-		await waitAndClickXpath(Pages[0], "//button[contains(., 'Stop the game!')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Stop the game!')]");
 		let promises = [];
-		for (let i = 0; i < Pages.length; i++) {
+		for (let i = 0; i < pages.length; i++) {
 			promises.push(
-				Pages[i].waitForXPath("//div[contains(., 'Team Sealed stopped!')]", {
+				pages[i].waitForXPath("//div[contains(., 'Team Sealed stopped!')]", {
 					visible: true,
 				})
 			);
