@@ -11,19 +11,18 @@
 						<div class="teams">
 							<div v-for="(team, idx) in teams" :key="idx" class="team">
 								<div>Team #{{ idx + 1 }}</div>
-								<draggable
+								<Sortable
 									class="team-drag-target"
-									group="teams"
-									:v-model="team"
+									:list="team"
 									:item-key="(uid: UserID) => uid"
-									:animation="200"
+									:options="{ group: 'teams', animation: '200' }"
 								>
 									<template #item="{ element }">
 										<div class="player">
 											{{ userById(element)?.userName }}
 										</div>
 									</template>
-								</draggable>
+								</Sortable>
 							</div>
 						</div>
 					</div>
@@ -87,7 +86,7 @@
 <script setup lang="ts">
 import { ref, watch, toRefs } from "vue";
 import Modal from "./Modal.vue";
-import Draggable from "vuedraggable";
+import { Sortable } from "sortablejs-vue3";
 import { UserID } from "../../../src/IDTypes";
 import { UserData } from "../../../src/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";

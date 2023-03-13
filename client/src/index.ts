@@ -3,13 +3,13 @@ import App from "./App.vue";
 import cardCachePlugin from "./vueCardCache";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
-import mitt from "mitt";
+import Emitter from "pico-emitter";
 
-const emitter = mitt();
+const emitter = new Emitter();
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;
-app.config.globalProperties.$cardCache = cardCachePlugin;
+app.use(cardCachePlugin);
 app.use(FloatingVue, {
 	placement: "bottom-start",
 	boundariesElement: "window",

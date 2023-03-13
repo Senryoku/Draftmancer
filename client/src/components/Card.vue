@@ -3,8 +3,6 @@
 		:class="classes"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
-		@click="$emit('click')"
-		@dblclick="$emit('dblclick')"
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
 		@mouseleave="mouseLeave"

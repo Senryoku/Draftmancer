@@ -540,9 +540,9 @@
 			</div>
 			<template v-if="!drafting">
 				<transition-group type="transition">
-					<draggable
+					<Sortable
 						key="draggable"
-						v-model="userOrder"
+						:list="userOrder"
 						:item-key="(uid: UserID) => uid"
 						@change="changePlayerOrder"
 						:disabled="userID !== sessionOwner || drafting"
@@ -651,7 +651,7 @@
 								<div class="chat-bubble" :id="'chat-bubble-' + element"></div>
 							</li>
 						</template>
-					</draggable>
+					</Sortable>
 				</transition-group>
 			</template>
 			<template v-else>
@@ -1285,7 +1285,7 @@
 							<card-pool
 								:cards="deck"
 								:language="language"
-								:click="deckToSideboard"
+								@cardClick="deckToSideboard"
 								:readOnly="false"
 								@cardPoolChange="onDeckChange"
 								ref="deckDisplay"
@@ -1329,10 +1329,10 @@
 									<land-control
 										v-if="draftingState === DraftState.Brewing"
 										:lands="lands"
-										:v-model:autoland="autoLand"
-										:v-model:targetDeckSize="targetDeckSize"
-										:v-model:sideboardBasics="sideboardBasics"
-										:v-model:preferredBasics="preferredBasics"
+										v-model:autoland="autoLand"
+										v-model:targetDeckSize="targetDeckSize"
+										v-model:sideboardBasics="sideboardBasics"
+										v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
 										@update:lands="(c, n) => (lands[c] = n)"
@@ -1459,14 +1459,16 @@
 								@dragover="allowBoosterCardDrop($event)"
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
-								<draggable
+								<Sortable
 									key="collapsed-sideboard-col"
 									class="card-column drag-column"
-									v-model="sideboard"
+									:list="sideboard"
 									item-key="uniqueID"
-									group="deck"
+									:options="{
+										group: 'deck',
+										animation: '200',
+									}"
 									@change="onCollapsedSideChange"
-									:animation="200"
 								>
 									<template #item="{ element }">
 										<card
@@ -1476,7 +1478,7 @@
 											:cardConditionalClasses="cardConditionalClasses"
 										></card>
 									</template>
-								</draggable>
+								</Sortable>
 							</div>
 						</div>
 					</div>
@@ -1493,7 +1495,7 @@
 						<card-pool
 							:cards="sideboard"
 							:language="language"
-							:click="sideboardToDeck"
+							@cardClick="sideboardToDeck"
 							:readOnly="false"
 							@cardPoolChange="onSideChange"
 							ref="sideboardDisplay"

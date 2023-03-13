@@ -9,7 +9,16 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
+import {
+	ArenaID,
+	Card,
+	CardColor,
+	CardID,
+	DeckList,
+	PlainCollection,
+	UniqueCard,
+	UniqueCardID,
+} from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
 import { WinstonDraftSyncData } from "../../src/WinstonDraft";
@@ -28,7 +37,7 @@ import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
-import draggable from "vuedraggable";
+import { Sortable } from "sortablejs-vue3";
 import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
@@ -140,7 +149,7 @@ export default defineComponent({
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		ScaleSlider,
 		SetRestriction: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
-		draggable,
+		Sortable,
 	},
 	data: () => {
 		let userID: UserID = guid();
@@ -1022,7 +1031,7 @@ export default defineComponent({
 			this.socket.on("shareDecklist", (data) => {
 				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
 				if (idx && this.draftLogs[idx] && data.userID in this.draftLogs[idx].users) {
-					this.$set(this.draftLogs[idx].users[data.userID], "decklist", data.decklist);
+					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
 					this.storeDraftLogs();
 				}
 			});
@@ -1033,7 +1042,7 @@ export default defineComponent({
 				if (!this.draftLogLive) return;
 
 				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
-				if (data.decklist) this.$set(this.draftLogLive.users[data.userID!], "decklist", data.decklist);
+				if (data.decklist) this.draftLogLive.users[data.userID!].decklist = data.decklist;
 			});
 
 			this.socket.on("pickAlert", (data) => {

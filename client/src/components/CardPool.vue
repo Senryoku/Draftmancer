@@ -125,27 +125,26 @@
 					<span class="row-count">{{ rowHeaders[index].count }}</span>
 					<span class="row-name">{{ rowHeaders[index].name }}</span>
 				</div>
-				<draggable
+				<Sortable
 					v-for="(column, colIdx) in row"
 					:key="`col_${colIdx}`"
 					class="card-column drag-column"
-					:v-model="column"
+					:list="column"
 					item-key="uniqueID"
-					:group="group"
+					:options="{ group: group, animation: 200 }"
 					@change="change"
-					:animation="200"
 				>
 					<template #item="{ element }">
 						<card
 							:card="element"
 							:language="language"
-							@click="click($event, element)"
-							@dblclick="doubleClick($event, element)"
-							@dragstart="dragStart($event, element)"
+							@click="$emit('cardClick', $event, element)"
+							@dblclick="$emit('cardDoubleClick', $event, element)"
+							@dragstart="$emit('cardDragStart', $event, element)"
 							:conditionalClasses="cardConditionalClasses"
 						></card>
 					</template>
-				</draggable>
+				</Sortable>
 			</div>
 		</div>
 	</div>
@@ -153,7 +152,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import draggable, { MoveEvent } from "vuedraggable";
+import { Sortable } from "sortablejs-vue3";
 import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
@@ -163,13 +162,10 @@ import { UniqueCard } from "../../../src/CardTypes";
 
 export default defineComponent({
 	name: "CardPool",
-	components: { draggable, Card, Dropdown, Checkbox },
+	components: { Sortable, Card, Dropdown, Checkbox },
 	props: {
 		cards: { type: Array as PropType<UniqueCard[]>, required: true },
 		language: { type: String as PropType<Language>, required: true },
-		click: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
-		doubleClick: { type: Function as PropType<(e: Event, card: UniqueCard) => void>, default: () => {} },
-		dragStart: { type: Function as PropType<(e: DragEvent, card: UniqueCard) => void>, default: () => {} },
 		group: { type: String },
 		cardConditionalClasses: { type: Function },
 		readOnly: {

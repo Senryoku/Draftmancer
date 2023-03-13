@@ -68,13 +68,15 @@
 									<h2>Sideboard ({{ selectedPlayerCards.side.length }})</h2>
 								</div>
 								<div class="card-container">
-									<draggable
+									<Sortable
 										:key="`side_col`"
 										class="card-column drag-column"
-										v-model="selectedPlayerCards.side"
+										:list="selectedPlayerCards.side"
 										item-key="uniqueID"
-										:group="`side-${player}`"
-										:animation="200"
+										:options="{
+											group: `side-${player}`,
+											animation: '200',
+										}"
 									>
 										<template #item="{ element }">
 											<card
@@ -83,7 +85,7 @@
 												:language="language"
 											></card>
 										</template>
-									</draggable>
+									</Sortable>
 								</div>
 							</div>
 						</div>
@@ -105,7 +107,7 @@ import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import Card from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
-import draggable from "vuedraggable";
+import { Sortable } from "sortablejs-vue3";
 import { PropType } from "vue";
 import { Language } from "../../../src/Types";
 import { DraftLog, DraftPick } from "../../../src/DraftLog";
@@ -115,7 +117,7 @@ import { UserID } from "../../../src/IDTypes";
 
 export default {
 	name: "DraftLogLive",
-	components: { DraftLogPick, draggable, Card, CardPool, ScaleSlider },
+	components: { DraftLogPick, Card, CardPool, ScaleSlider, Sortable },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object as PropType<DraftLog>, required: true },

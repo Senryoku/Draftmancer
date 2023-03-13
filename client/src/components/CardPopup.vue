@@ -119,7 +119,7 @@ export default defineComponent({
 							.get(url)
 							.then((response) => {
 								if (response.status === 200 && response.data?.data?.length > 0) {
-									this.$set(this.spellbooks, cardData.name, new Set());
+									this.spellbooks[cardData.name] = new Set();
 									for (const card of response.data.data) {
 										card.status = "ready";
 										this.$cardCache.add(card);
