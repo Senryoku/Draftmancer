@@ -1,9 +1,11 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { sessionOwnerPage, otherPlayerPage } from "./src/twoPages.js";
-import { getSessionLink, waitAndClickXpath } from "./src/common.js";
-import { Page } from "puppeteer";
+import { dismissToast, getSessionLink, join, waitAndClickXpath } from "./src/common.js";
+import { Browser, Page } from "puppeteer";
+
+let pages: Page[];
+let browsers: Browser[];
 
 async function pickMinesweeper(page: Page) {
 	let next = await page.waitForXPath(
@@ -22,46 +24,39 @@ async function pickMinesweeper(page: Page) {
 }
 
 describe("Minesweeper Draft", function () {
-	this.timeout(100000);
-	it("Owner joins", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+	this.timeout(5000);
+	it("Launch and Join", async function () {
+		[browsers, pages] = await join(2);
 	});
 
 	it(`Select Cube`, async function () {
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Settings')]");
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Load Cube')]");
-		await sessionOwnerPage.keyboard.press("Escape");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Load Cube')]");
+		await pages[0].keyboard.press("Escape");
+		await dismissToast(pages[0]);
 	});
 
 	it(`Launch Minesweeper Draft`, async function () {
-		await sessionOwnerPage.hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Minesweeper')]");
-		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Start Minesweeper Draft')]");
+		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Minesweeper')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Minesweeper Draft')]");
 
-		await sessionOwnerPage.waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
-			visible: true,
-		});
-		await otherPlayerPage.waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
-			visible: true,
-		});
-		await sessionOwnerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
-			hidden: true,
-		});
-		await otherPlayerPage.waitForXPath("//div[contains(., 'Draft Started!')]", {
-			hidden: true,
-		});
+		for (let i = 0; i < pages.length; ++i)
+			await pages[i].waitForXPath("//h2[contains(., 'Minesweeper Draft')]", {
+				visible: true,
+			});
+		for (let i = 0; i < pages.length; ++i)
+			await pages[i].waitForXPath("//div[contains(., 'Draft Started!')]", {
+				hidden: true,
+			});
 	});
 
 	it(`Pick until done.`, async function () {
+		this.timeout(100000);
 		let done = false;
 		while (!done) {
-			let ownerPromise = pickMinesweeper(sessionOwnerPage);
-			let otherPromise = pickMinesweeper(otherPlayerPage);
+			let ownerPromise = pickMinesweeper(pages[0]);
+			let otherPromise = pickMinesweeper(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
 	});

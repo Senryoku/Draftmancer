@@ -133,10 +133,9 @@ describe("Front End - Multi, with bots", function () {
 	it("Each player picks a card", async function () {
 		let done = false;
 		while (!done) {
-			let ownerPromise = pickCard(sessionOwnerPage);
-			let otherPromise = pickCard(otherPlayerPage);
+			const ownerPromise = pickCard(sessionOwnerPage);
+			const otherPromise = pickCard(otherPlayerPage);
 			done = (await ownerPromise) && (await otherPromise);
-			await sessionOwnerPage.waitForTimeout(150);
 		}
 	});
 });
@@ -188,15 +187,15 @@ describe("Front End - Multi, with disconnects", function () {
 
 	this.timeout(100000);
 	it("Owner joins and set the bot count to 6", async function () {
-		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}?session=${Math.random()}`);
+		await sessionOwnerPage.goto(`http://localhost:${process.env.PORT}?session=MultiWithDisconnects`);
 		await sessionOwnerPage.focus("#bots");
 		await sessionOwnerPage.keyboard.type("6");
 		await sessionOwnerPage.keyboard.press("Enter");
 	});
 
 	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(sessionOwnerPage);
-		await otherPlayerPage.goto(clipboard);
+		sessionLink = await getSessionLink(sessionOwnerPage);
+		await otherPlayerPage.goto(sessionLink);
 	});
 
 	it(`Launch Draft`, async function () {
@@ -248,7 +247,8 @@ describe("Front End - Multi, with disconnects", function () {
 		await sessionOwnerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await otherPlayerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
 
-		sessionOwnerPage.waitForTimeout(250);
+		await new Promise((r) => setTimeout(r, 250));
+
 		await sessionOwnerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 		await otherPlayerPage.goto(sessionLink, { waitUntil: ["networkidle0", "domcontentloaded"] });
 
@@ -267,7 +267,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("Other player disconnects, and owner replaces them with a bot.", async function () {
 		await otherPlayerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await sessionOwnerPage.waitForTimeout(100);
+		await new Promise((r) => setTimeout(r, 100));
 		await waitAndClickXpath(sessionOwnerPage, "//button[contains(., 'Replace')]");
 	});
 
@@ -292,7 +292,7 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("Owner disconnects, new owner replaces them with a bot.", async function () {
 		await sessionOwnerPage.goto("about:blank", { waitUntil: ["networkidle0", "domcontentloaded"] });
-		await otherPlayerPage.waitForTimeout(100);
+		await new Promise((r) => setTimeout(r, 100));
 		await waitAndClickXpath(otherPlayerPage, "//button[contains(., 'Replace')]");
 	});
 

@@ -21,8 +21,9 @@
 		"manualtest": "cross-env PORT=3001 mocha dist/test/manual --exit --experimental-json-modules",
 		"manualtest-bail": "cross-env PORT=3001 mocha dist/test/manual --exit --experimental-json-modules -bail",
 		"fronttest": "cross-env PORT=3001 mocha dist/test/frontend --exit --experimental-json-modules",
-		"fronttest-headless": "cross-env PORT=3001 HEADLESS=TRUE mocha dist/test/frontend --exit --experimental-json-modules",
 		"fronttest-bail": "cross-env PORT=3001 mocha dist/test/frontend --exit --experimental-json-modules -bail",
+		"fronttest-headless": "cross-env PORT=3001 HEADLESS=TRUE mocha dist/test/frontend --exit --experimental-json-modules",
+		"fronttest-headless-bail": "cross-env PORT=3001 HEADLESS=TRUE mocha dist/test/frontend --exit --experimental-json-modules -bail",
 		"prettier-format": "prettier --config .prettierrc --write src/**/*.ts test/**/*.ts test/**/*.js client/src/**/*[!min].js client/src/**/*[!min].ts client/src/**/*.vue",
 		"prepare": "husky install"
 	},

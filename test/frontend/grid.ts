@@ -41,7 +41,7 @@ async function pickCard(page: Page) {
 		choices = await page.$$(`.pick-col i:not([style*="display: none"])`);
 		choices.push(...(await page.$$(`.pick-row i:not([style*="display: none"])`)));
 	} while (choices.length === 0);
-	const choice = getRandom(choices);
+	const choice = await getRandom(choices);
 	expect(choice).to.exist;
 	await choice.click();
 	return false;
@@ -133,7 +133,7 @@ describe("Grid Draft", () => {
 
 		it("Each player picks a card", async function () {
 			this.timeout(100000);
-			const done = Array(pages.length).fill(false);
+			const done: boolean[] = Array(pages.length).fill(false);
 			while (done.some((d) => !d)) {
 				let promises = [];
 				for (let i = 0; i < pages.length; i++) {

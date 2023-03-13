@@ -1,4 +1,5 @@
 import chai from "chai";
+import fs from "fs";
 const expect = chai.expect;
 import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
 
@@ -41,6 +42,8 @@ export function disableAnimations(page: Page) {
 	});
 }
 
+const cardbackImage = fs.readFileSync("./client/src/assets/img/cardback.webp");
+
 export async function startBrowsers(count: number): Promise<[Browser[], Page[]]> {
 	const rows = count > 2 ? 2 : 1;
 	const cols = Math.ceil(count / rows);
@@ -48,19 +51,22 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	const debugWindowHeight = Math.floor(DebugScreenHeight / rows);
 
 	let promises = [];
+	const puppeteerArgs = ["--mute-audio"];
+	if (Headless) puppeteerArgs.push(`--window-size=1366,768`);
+	else puppeteerArgs.push(`--window-size=${debugWindowWidth},${debugWindowHeight}`);
+
 	for (let i = 0; i < count; i++) {
 		promises.push(
 			puppeteer.launch({
 				headless: Headless,
-				args: !Headless
-					? [
-							`--window-size=${debugWindowWidth},${debugWindowHeight}`,
+				args: Headless
+					? puppeteerArgs
+					: [
+							...puppeteerArgs,
 							`--window-position=${(i % cols) * debugWindowWidth},${
 								Math.floor(i / cols) * debugWindowHeight
 							}`,
-							"--mute-audio",
-					  ]
-					: [],
+					  ],
 			})
 		);
 	}
@@ -75,14 +81,37 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 	}
 	const context = browsers[0].defaultBrowserContext();
 	context.overridePermissions(`http://localhost:${process.env.PORT}`, ["clipboard-read"]);
+
 	if (!Headless) for (const page of pages) page.setViewport({ width: debugWindowWidth, height: debugWindowHeight });
+	else for (const page of pages) page.setViewport({ width: 1366, height: 768 });
+
 	for (const page of pages) {
 		// Skip the confirmation dialog when exiting/refreshing while there's a pending call to storeDraftLogs
 		page.on("dialog", async (dialog) => {
 			await dialog.accept();
 		});
+
+		// Avoid requests to scryfall in headless mode by proxying all card images to the local cardback image
+		if (Headless) {
+			await page.setRequestInterception(true);
+			page.on("request", (request) => {
+				if (["image"].indexOf(request.resourceType()) !== -1 && request.url().indexOf("scryfall.io") !== -1) {
+					request.respond({
+						status: 200,
+						body: cardbackImage,
+					});
+					return;
+				}
+				request.continue();
+			});
+		}
 	}
 	return [browsers, pages];
+}
+
+export async function dismissToast(page: Page) {
+	// Dismiss toast notification by clicking on it.
+	await waitAndClickSelector(page, ".swal2-toast");
 }
 
 export async function getSessionLink(page: Page): Promise<string> {
@@ -90,10 +119,19 @@ export async function getSessionLink(page: Page): Promise<string> {
 	await page.click(".fa-share-square");
 	const clipboard = await page.evaluate(() => navigator.clipboard.readText());
 	expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
-	// Dismiss toast notification by clicking on it.
-	await waitAndClickSelector(page, ".swal2-toast");
+	await dismissToast(page);
 	await page.waitForXPath("//div[contains(., 'Session link copied to clipboard!')]", {
 		hidden: true,
 	});
 	return clipboard;
+}
+
+export async function join(players: number): Promise<[Browser[], Page[]]> {
+	const [browsers, pages] = await startBrowsers(players);
+	await pages[0].goto(`http://localhost:${process.env.PORT}`);
+	const clipboard = await getSessionLink(pages[0]);
+	let promises = [];
+	for (let idx = 1; idx < pages.length; ++idx) promises.push(pages[idx].goto(clipboard));
+	await Promise.all(promises);
+	return [browsers, pages];
 }
