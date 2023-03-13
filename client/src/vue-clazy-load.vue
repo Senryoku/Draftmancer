@@ -1,4 +1,5 @@
 <script>
+import { h } from "vue";
 /**
  * Modified to test visibility on creation and avoid flickering when the image is already in cache.
  **/
@@ -174,7 +175,7 @@ export default {
 			this.observer.observe(this.$el);
 		},
 	},
-	render(h) {
+	render() {
 		// class to be added to element indicating load state
 		const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
 		return h(

@@ -922,7 +922,7 @@
 								@dblclick="doubleClickCard($event, card)"
 								@burn="burnCard($event, card)"
 								@restore="restoreCard($event, card)"
-								draggable
+								:draggable="true"
 								@dragstart="dragBoosterCard($event, card)"
 								:hasenoughwildcards="hasEnoughWildcards(card)"
 								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
@@ -2753,7 +2753,7 @@
 				</div>
 			</template>
 		</modal>
-		<CardPopup :language="language" />
+		<CardPopup :language="language" ref="cardPopup" />
 		<footer>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<a>About</a>

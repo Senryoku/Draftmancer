@@ -1,4 +1,4 @@
-"use strict";
+import { toRaw } from "vue";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
 import { SessionID, UserID } from "../../src/IDTypes";
 import { SetCode, IIndexable } from "../../src/Types";
@@ -2819,7 +2819,7 @@ export default defineComponent({
 				this.storeDraftLogsTimeout = null;
 				console.log("Stored Draft Logs.");
 			};
-			worker.postMessage(["compress", this.draftLogs]);
+			worker.postMessage(["compress", toRaw(this.draftLogs)]);
 		},
 		toggleLimitDuplicates() {
 			if (this.maxDuplicates !== null) this.maxDuplicates = null;

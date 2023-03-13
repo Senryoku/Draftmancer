@@ -230,7 +230,7 @@ const cardCachePlugin = new Vue({
 	},
 });
 
-declare module "vue/types/vue" {
+declare module "vue" {
 	interface Vue {
 		$cardCache: {
 			get: (cardID: CardID) => CardCacheEntry;
@@ -239,13 +239,5 @@ declare module "vue/types/vue" {
 		};
 	}
 }
-
-cardCachePlugin.install = function () {
-	Object.defineProperty(Vue.prototype, "$cardCache", {
-		get() {
-			return cardCachePlugin;
-		},
-	});
-};
 
 export default cardCachePlugin;
