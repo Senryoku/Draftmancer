@@ -55,32 +55,36 @@
 						<template v-else> <i class="far fa-eye"></i> Review</template>
 					</button>
 					<dropdown v-if="!draftLog.delayed" :class="{ disabled: !hasDecks(draftLog) }">
-						<span slot="handle">Download all decks</span>
-						<div slot="dropdown" class="more-dropdown">
-							<div
-								style="
-									display: grid;
-									grid-template-columns: auto auto;
-									justify-items: center;
-									align-items: center;
-								"
-							>
-								<label for="deck-export-format">Format:</label>
-								<select id="deck-export-format" v-model="deckExportFormat">
-									<option value=".dek">MTGO (.dek)</option>
-									<option value="MTGA">MTGA</option>
-									<option value="card names">Card Names</option>
-								</select>
-								<label for="deck-export-with-lands">Basics:</label>
-								<input type="checkbox" id="deck-export-with-lands" v-model="deckExportWithBasics" />
+						<template v-slot:handle>
+							<span>Download all decks</span>
+						</template>
+						<template v-slot:dropdown>
+							<div class="more-dropdown">
+								<div
+									style="
+										display: grid;
+										grid-template-columns: auto auto;
+										justify-items: center;
+										align-items: center;
+									"
+								>
+									<label for="deck-export-format">Format:</label>
+									<select id="deck-export-format" v-model="deckExportFormat">
+										<option value=".dek">MTGO (.dek)</option>
+										<option value="MTGA">MTGA</option>
+										<option value="card names">Card Names</option>
+									</select>
+									<label for="deck-export-with-lands">Basics:</label>
+									<input type="checkbox" id="deck-export-with-lands" v-model="deckExportWithBasics" />
+								</div>
+								<button
+									type="button"
+									@click="downloadAllDecks(draftLog, deckExportFormat, deckExportWithBasics)"
+								>
+									Download
+								</button>
 							</div>
-							<button
-								type="button"
-								@click="downloadAllDecks(draftLog, deckExportFormat, deckExportWithBasics)"
-							>
-								Download
-							</button>
-						</div>
+						</template>
 					</dropdown>
 					<button type="button" @click="downloadLog(draftLog)" v-if="!draftLog.delayed">
 						<i class="fas fa-file-download"></i> Download

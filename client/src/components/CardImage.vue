@@ -22,7 +22,9 @@
 				:class="{ 'flip-front': hasBack }"
 			>
 				<img class="front-image" :src="imageURI" />
-				<card-placeholder slot="placeholder" :card="card"></card-placeholder>
+				<template v-slot:placeholder>
+					<card-placeholder :card="card"></card-placeholder>
+				</template>
 			</clazy-load>
 			<clazy-load
 				:ratio="0"
@@ -34,7 +36,9 @@
 				v-if="hasBack"
 			>
 				<img class="back-image" :src="backImageURI" />
-				<card-placeholder slot="placeholder" :card="card.back"></card-placeholder>
+				<template v-slot:placeholder>
+					<card-placeholder :card="card.back"></card-placeholder>
+				</template>
 			</clazy-load>
 
 			<template v-if="cardAdditionalData && displayCardText">

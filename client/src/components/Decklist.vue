@@ -53,8 +53,12 @@
 			<template v-slot:title>Sideboard ({{ list.side.length }})</template>
 		</card-pool>
 		<modal v-if="displayStats" @close="displayStats = false">
-			<h2 slot="header">{{ username }}'s Deck Statistics</h2>
-			<card-stats slot="body" :cards="mainboard" :addedbasics="landcount"></card-stats>
+			<template v-slot:header>
+				<h2>{{ username }}'s Deck Statistics</h2>
+			</template>
+			<template v-slot:body>
+				<card-stats :cards="mainboard" :addedbasics="landcount"></card-stats>
+			</template>
 		</modal>
 	</div>
 	<div class="message" v-else-if="list && list.hashes">

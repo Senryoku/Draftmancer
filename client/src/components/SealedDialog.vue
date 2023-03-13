@@ -1,70 +1,78 @@
 <template>
 	<modal @close="cancel">
-		<h2 slot="header">Start {{ teamSealed ? "Team " : "" }}Sealed</h2>
-		<div slot="body" class="sealed-dialog">
-			<div class="sealed-dialog-settings">
-				<div class="teams-selector" v-if="teamSealed">
-					<h3>Assign players to a team:</h3>
-					<div class="teams">
-						<div v-for="(team, idx) in teams" :key="idx" class="team">
-							<div>Team #{{ idx + 1 }}</div>
-							<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
-								<div v-for="uid in team" :key="uid" class="player">{{ userById(uid)?.userName }}</div>
-							</draggable>
+		<template v-slot:header>
+			<h2>Start {{ teamSealed ? "Team " : "" }}Sealed</h2>
+		</template>
+		<template v-slot:body>
+			<div class="sealed-dialog">
+				<div class="sealed-dialog-settings">
+					<div class="teams-selector" v-if="teamSealed">
+						<h3>Assign players to a team:</h3>
+						<div class="teams">
+							<div v-for="(team, idx) in teams" :key="idx" class="team">
+								<div>Team #{{ idx + 1 }}</div>
+								<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
+									<div v-for="uid in team" :key="uid" class="player">
+										{{ userById(uid)?.userName }}
+									</div>
+								</draggable>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div>
-					<h3>
-						How many boosters for each {{ teamSealed ? "team " : "player" }} (default is
-						{{ teamSealed ? "12" : "6" }})?
-					</h3>
-					<input
-						type="number"
-						min="4"
-						max="24"
-						step="1"
-						id="input-boostersPerPlayer"
-						class="swal2-input"
-						style="display: block; margin: auto"
-						:placeholder="`Boosters per ${teamSealed ? 'team ' : 'player'}`"
-						v-model.number="boostersPerPlayer"
-					/>
-				</div>
-				<div>
-					<h3>
-						<input id="input-useCustomizedBoosters" type="checkbox" v-model="useCustomizedBoosters" />
-						<label for="input-useCustomizedBoosters">Customize the set of each booster</label>
-					</h3>
-					<transition name="expand">
-						<div class="input-customBoosters" v-show="useCustomizedBoosters">
-							<select
-								class="standard-input custom-booster"
-								v-for="(val, idx) in customBoosters"
-								:key="idx"
-								:id="'custom-booster-select-' + idx"
-								v-model="customBoosters[idx]"
-							>
-								<option value="">(Default)</option>
-								<option value="random">Random set from Card Pool</option>
-								<option value="" class="option-separator" disabled>————————————————</option>
-								<option v-for="s in MTGASets" :key="s.code" :value="s.code">
-									{{ s.fullName }}
-								</option>
-								<option value="" class="option-separator" disabled>————————————————</option>
-								<option v-for="s in PrimarySets" :key="s.code" :value="s.code">
-									{{ s.fullName }}
-								</option>
-							</select>
-						</div>
-					</transition>
+					<div>
+						<h3>
+							How many boosters for each {{ teamSealed ? "team " : "player" }} (default is
+							{{ teamSealed ? "12" : "6" }})?
+						</h3>
+						<input
+							type="number"
+							min="4"
+							max="24"
+							step="1"
+							id="input-boostersPerPlayer"
+							class="swal2-input"
+							style="display: block; margin: auto"
+							:placeholder="`Boosters per ${teamSealed ? 'team ' : 'player'}`"
+							v-model.number="boostersPerPlayer"
+						/>
+					</div>
+					<div>
+						<h3>
+							<input id="input-useCustomizedBoosters" type="checkbox" v-model="useCustomizedBoosters" />
+							<label for="input-useCustomizedBoosters">Customize the set of each booster</label>
+						</h3>
+						<transition name="expand">
+							<div class="input-customBoosters" v-show="useCustomizedBoosters">
+								<select
+									class="standard-input custom-booster"
+									v-for="(val, idx) in customBoosters"
+									:key="idx"
+									:id="'custom-booster-select-' + idx"
+									v-model="customBoosters[idx]"
+								>
+									<option value="">(Default)</option>
+									<option value="random">Random set from Card Pool</option>
+									<option value="" class="option-separator" disabled>————————————————</option>
+									<option v-for="s in MTGASets" :key="s.code" :value="s.code">
+										{{ s.fullName }}
+									</option>
+									<option value="" class="option-separator" disabled>————————————————</option>
+									<option v-for="s in PrimarySets" :key="s.code" :value="s.code">
+										{{ s.fullName }}
+									</option>
+								</select>
+							</div>
+						</transition>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="actions" slot="footer">
-			<button class="cancel" @click="cancel">Cancel</button>
-			<button class="confirm" @click="distribute">Distribute Boosters</button>
-		</div>
+		</template>
+		<template v-slot:footer>
+			<div class="actions">
+				<button class="cancel" @click="cancel">Cancel</button>
+				<button class="confirm" @click="distribute">Distribute Boosters</button>
+			</div>
+		</template>
 	</modal>
 </template>
 

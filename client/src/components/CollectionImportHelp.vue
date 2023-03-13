@@ -1,5 +1,5 @@
 <template>
-	<div slot="body" style="font-size: 1.1em" class="collection-import-help">
+	<div style="font-size: 1.1em" class="collection-import-help">
 		<p>
 			Each player can import their MTGA collection to restrict the card pool to cards they own. (Session owners
 			can bypass this feature by enabling "Ignore Collections").

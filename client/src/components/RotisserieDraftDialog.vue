@@ -1,61 +1,72 @@
 <template>
 	<modal @close="cancel">
-		<h2 slot="header">Start Rotisserie Draft</h2>
-		<div slot="body" class="dialog">
-			<p style="max-width: max(400px, 40vw)">
-				Rotisserie is a draft variant where each player chooses cards from a common pool.
-			</p>
-			<p style="max-width: max(400px, 40vw)">
-				Traditionally the card pool is composed of a single copy of each card from one or multiple sets
-				('singleton' mode), but a 'standard' collation it also available where the final card pool is gathered
-				from regular packs.<br />
-				In both cases most session settings still apply.
-			</p>
-			<div class="dialog-settings">
-				<div>
-					<label for="collation-type">Collation Type</label>
-					<select class="swal2-input" v-model="collationType">
-						<option value="singleton">Singleton</option>
-						<option value="standard">Standard</option>
-					</select>
-				</div>
-				<div v-if="collationType === 'singleton'">
-					<label for="cards-per-player">Cards per Player</label>
-					<input
-						type="number"
-						min="1"
-						step="1"
-						id="cards-per-player"
-						class="swal2-input"
-						placeholder="Cards per Player"
-						v-model.number="cardsPerPlayer"
-					/>
-				</div>
-				<div v-if="collationType === 'singleton'">
-					<label for="exact-card-count">
-						Distribute only the necessary number of cards<br />
-						<small> ({{ cardsPerPlayer }} cards per player, as opposed to the whole card pool) </small>
-					</label>
-					<input type="checkbox" id="exact-card-count" class="swal2-input" v-model.number="exactCardCount" />
-				</div>
-				<div v-if="collationType === 'standard'">
-					<label for="boosters-per-player">Boosters per Player</label>
-					<input
-						type="number"
-						min="1"
-						step="1"
-						id="boosters-per-player"
-						class="swal2-input"
-						placeholder="Boosters per Player"
-						v-model.number="boostersPerPlayer"
-					/>
+		<template v-slot:header>
+			<h2>Start Rotisserie Draft</h2>
+		</template>
+		<template v-slot:body>
+			<div class="dialog">
+				<p style="max-width: max(400px, 40vw)">
+					Rotisserie is a draft variant where each player chooses cards from a common pool.
+				</p>
+				<p style="max-width: max(400px, 40vw)">
+					Traditionally the card pool is composed of a single copy of each card from one or multiple sets
+					('singleton' mode), but a 'standard' collation it also available where the final card pool is
+					gathered from regular packs.<br />
+					In both cases most session settings still apply.
+				</p>
+				<div class="dialog-settings">
+					<div>
+						<label for="collation-type">Collation Type</label>
+						<select class="swal2-input" v-model="collationType">
+							<option value="singleton">Singleton</option>
+							<option value="standard">Standard</option>
+						</select>
+					</div>
+					<div v-if="collationType === 'singleton'">
+						<label for="cards-per-player">Cards per Player</label>
+						<input
+							type="number"
+							min="1"
+							step="1"
+							id="cards-per-player"
+							class="swal2-input"
+							placeholder="Cards per Player"
+							v-model.number="cardsPerPlayer"
+						/>
+					</div>
+					<div v-if="collationType === 'singleton'">
+						<label for="exact-card-count">
+							Distribute only the necessary number of cards<br />
+							<small> ({{ cardsPerPlayer }} cards per player, as opposed to the whole card pool) </small>
+						</label>
+						<input
+							type="checkbox"
+							id="exact-card-count"
+							class="swal2-input"
+							v-model.number="exactCardCount"
+						/>
+					</div>
+					<div v-if="collationType === 'standard'">
+						<label for="boosters-per-player">Boosters per Player</label>
+						<input
+							type="number"
+							min="1"
+							step="1"
+							id="boosters-per-player"
+							class="swal2-input"
+							placeholder="Boosters per Player"
+							v-model.number="boostersPerPlayer"
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="actions" slot="footer">
-			<button class="cancel" @click="cancel">Cancel</button>
-			<button class="confirm" @click="start">Start</button>
-		</div>
+		</template>
+		<template v-slot:footer>
+			<div class="actions">
+				<button class="cancel" @click="cancel">Cancel</button>
+				<button class="confirm" @click="start">Start</button>
+			</div>
+		</template>
 	</modal>
 </template>
 

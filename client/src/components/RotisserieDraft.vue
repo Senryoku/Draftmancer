@@ -10,7 +10,7 @@
 			:cardConditionalClasses="cardConditionalClasses"
 			:readOnly="true"
 		>
-			<template slot="controls">
+			<template v-slot:controls>
 				<div v-if="userID === state.currentPlayer">Your turn! Pick a card:</div>
 				<div v-else>Waiting for {{ currentPlayerName }} to pick a card...</div>
 				<button v-if="userID === state.currentPlayer" @click="onConfirmPick" :disabled="selectedCard === null">
