@@ -3,9 +3,9 @@
 		<card-pool
 			:language="language"
 			:cards="state.cards"
-			:@cardClick="onCardClick"
-			:@cardDoubleClick="onCardDoubleClick"
-			:@cardDragStart="dragStart"
+			@cardClick="onCardClick"
+			@cardDoubleClick="onCardDoubleClick"
+			@cardDragStart="dragStart"
 			group="rotisserie-draft"
 			:cardConditionalClasses="cardConditionalClasses"
 			:readOnly="true"
