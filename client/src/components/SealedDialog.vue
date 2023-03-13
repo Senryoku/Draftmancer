@@ -11,7 +11,13 @@
 						<div class="teams">
 							<div v-for="(team, idx) in teams" :key="idx" class="team">
 								<div>Team #{{ idx + 1 }}</div>
-								<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
+								<draggable
+									class="team-drag-target"
+									group="teams"
+									:v-model="team"
+									:item-key="(uid: UserID) => uid"
+									:animation="200"
+								>
 									<template #item="{ element }">
 										<div class="player">
 											{{ userById(element)?.userName }}

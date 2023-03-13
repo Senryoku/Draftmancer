@@ -1,3 +1,10 @@
+<template>
+	<component is="tag" :class="classes">
+		<slot v-if="loaded || (img && img.src && img.complete)"><img :src="src" /></slot>
+		<slot name="placeholder" v-else></slot>
+	</component>
+</template>
+
 <script>
 import { h } from "vue";
 /**
@@ -175,22 +182,6 @@ export default {
 			this.observer.observe(this.$el);
 		},
 	},
-	render() {
-		// class to be added to element indicating load state
-		const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
-		return h(
-			this.tag,
-			{
-				// if loading failed adds error class if exists, otherwhise adds elementClass defined above
-				class: this.errored && this.errorClass ? this.errorClass : elementClass,
-			},
-			[
-				this.loaded || (this.img && this.img.src && this.img.complete)
-					? this.$slots.default || this.$slots.image // allows for "default" slot
-					: this.$slots.placeholder,
-			]
-		);
-	},
 	mounted() {
 		// Immediatly load if visible
 		if (this.isVisible() || this.forceLoad) {
@@ -202,6 +193,12 @@ export default {
 			// start observing the element visibility
 			this.$nextTick(this.observe);
 		}
+	},
+	computed: {
+		classes() {
+			const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
+			return this.errored && this.errorClass ? this.errorClass : elementClass;
+		},
 	},
 };
 </script>

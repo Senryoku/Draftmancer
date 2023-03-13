@@ -106,16 +106,7 @@
 			</div>
 		</div>
 		<!-- Dummy draggable component to handle dropping card between columns -->
-		<draggable
-			:group="group"
-			:v-model="tempColumn"
-			item-key="uniqueID"
-			@add="dropCard"
-			@change="change"
-			ghostClass="no-ghost"
-			draggable=".card"
-			class="card-pool"
-		>
+		<div class="card-pool">
 			<div class="empty-warning" v-if="cards.length == 0">
 				<slot name="empty">
 					<h3>This card pool is currently empty!</h3>
@@ -146,7 +137,6 @@
 				>
 					<template #item="{ element }">
 						<card
-							v-for="(element, index) in column"
 							:card="element"
 							:language="language"
 							@click="click($event, element)"
@@ -157,7 +147,7 @@
 					</template>
 				</draggable>
 			</div>
-		</draggable>
+		</div>
 	</div>
 </template>
 

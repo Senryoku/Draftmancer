@@ -90,6 +90,7 @@ import CardPool from "./CardPool.vue";
 import { defineComponent, PropType } from "vue";
 import { Card, CardID, DeckBasicLands, DeckList } from "../../../src/CardTypes";
 import { Language } from "../../../src/Types";
+import { defineAsyncComponent } from "vue";
 
 let deckUIDs = 0;
 
@@ -97,7 +98,7 @@ export default defineComponent({
 	components: {
 		Modal,
 		CardPool,
-		CardStats: () => import("./CardStats.vue"),
+		CardStats: defineAsyncComponent(() => import("./CardStats.vue")),
 		ExportDropdown,
 	},
 	props: {

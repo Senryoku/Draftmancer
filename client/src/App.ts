@@ -27,7 +27,7 @@ import { CustomCardList } from "../../src/CustomCardList";
 import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
-import { toRaw, defineComponent } from "vue";
+import { toRaw, defineComponent, defineAsyncComponent } from "vue";
 import draggable from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
@@ -113,33 +113,33 @@ const initialSettings = Object.assign(defaultSettings, storedSettings);
 export default defineComponent({
 	components: {
 		BoosterCard,
-		Bracket: () => import("./components/Bracket.vue"),
+		Bracket: defineAsyncComponent(() => import("./components/Bracket.vue")),
 		Card: CardComponent,
-		CardList: () => import("./components/CardList.vue"),
+		CardList: defineAsyncComponent(() => import("./components/CardList.vue")),
 		CardPlaceholder,
 		CardPool,
 		CardPopup,
-		CardStats: () => import("./components/CardStats.vue"),
-		Collection: () => import("./components/Collection.vue"),
-		CollectionImportHelp: () => import("./components/CollectionImportHelp.vue"),
+		CardStats: defineAsyncComponent(() => import("./components/CardStats.vue")),
+		Collection: defineAsyncComponent(() => import("./components/Collection.vue")),
+		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
-		DraftLog: () => import("./components/DraftLog.vue"),
-		DraftLogHistory: () => import("./components/DraftLogHistory.vue"),
-		DraftLogLive: () => import("./components/DraftLogLive.vue"),
-		DraftLogPick: () => import("./components/DraftLogPick.vue"),
+		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
+		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
+		DraftLogLive: defineAsyncComponent(() => import("./components/DraftLogLive.vue")),
+		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
-		GridDraft: () => import("./components/GridDraft.vue"),
-		RotisserieDraft: () => import("./components/RotisserieDraft.vue"),
-		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
-		TeamSealed: () => import("./components/TeamSealed.vue"),
-		LandControl: () => import("./components/LandControl.vue"),
+		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
+		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
+		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
+		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
+		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		Modal,
 		Multiselect,
-		PatchNotes: () => import("./components/PatchNotes.vue"),
-		PickSummary: () => import("./components/PickSummary.vue"),
+		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
+		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		ScaleSlider,
-		SetRestriction: () => import("./components/SetRestriction.vue"),
+		SetRestriction: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
 		draggable,
 	},
 	data: () => {
