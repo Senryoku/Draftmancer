@@ -232,29 +232,29 @@
 						accept=".txt"
 					/>
 
-					<strong>Card Pool:</strong>
+					<strong>Card Pool: </strong>
 					<span v-if="useCustomCardList">
 						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						(
-						<template v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
-							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
-								<i class="fas fa-file-alt"></i>
-							</a>
-						</template>
-						<template v-else>No list loaded</template>
-						<i
-							class="fas fa-file-upload clickable"
-							onclick="document.querySelector('#card-list-input-main').click()"
-							v-tooltip="'Upload a Custom Card List'"
-							v-if="sessionOwner === userID"
-						></i>
-						<i
-							class="fas fa-times clickable brightred"
-							@click="useCustomCardList = false"
-							v-tooltip="'Return to official sets.'"
-							v-if="sessionOwner === userID"
-						></i>
-						)
+						(<span style="display: inline-flex; gap: 0.3em; align-items: baseline"
+							><template v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
+								<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
+									<i class="fas fa-file-alt"></i>
+								</a>
+							</template>
+							<template v-else>No list loaded</template>
+							<i
+								class="fas fa-file-upload clickable"
+								onclick="document.querySelector('#card-list-input-main').click()"
+								v-tooltip="'Upload a Custom Card List'"
+								v-if="sessionOwner === userID"
+							></i>
+							<i
+								class="fas fa-times clickable brightred"
+								@click="useCustomCardList = false"
+								v-tooltip="'Return to official sets.'"
+								v-if="sessionOwner === userID"
+							></i></span
+						>)
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
