@@ -719,6 +719,7 @@
 										></i>
 									</template>
 								</template>
+								<i v-if="user.isBot" class="fas fa-robot"></i>
 								<template v-if="user.boosterCount !== undefined">
 									<div
 										v-tooltip="`${user.userName} has ${user.boosterCount} boosters.`"
