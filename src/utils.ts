@@ -46,6 +46,7 @@ export function getRandomKey(obj: Object) {
 }
 
 export function weightedRandomIdx<T extends { weight: number }>(arr: Array<T>, totalWeight: number) {
+	if (arr.length < 2) return 0;
 	const pick = randomInt(1, totalWeight);
 	let idx = 0;
 	let acc = arr[idx].weight;
