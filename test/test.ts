@@ -535,6 +535,7 @@ describe("Single Draft (Two Players)", function () {
 					b.every(
 						(c) =>
 							c.set === set ||
+							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
 							(set === "unf" && c.set === "sunf") ||
 							(set === "con" && c.set === "ala") ||
