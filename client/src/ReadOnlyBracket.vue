@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent } from "vue";
+import { defineComponent } from "vue";
 import { getUrlVars } from "./helper";
 import BracketComponent from "./components/Bracket.vue";
 import FloatingVue from "floating-vue";
@@ -38,8 +38,6 @@ import { SessionID } from "../../src/IDTypes";
 import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";
 import { DraftLog } from "../../src/DraftLog";
 import { Language } from "../../src/Types";
-
-Vue.use(FloatingVue);
 
 export default defineComponent({
 	components: { Bracket: BracketComponent },

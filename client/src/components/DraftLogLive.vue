@@ -71,16 +71,18 @@
 									<draggable
 										:key="`side_col`"
 										class="card-column drag-column"
-										:list="selectedPlayerCards.side"
+										v-model="selectedPlayerCards.side"
+										item-key="uniqueID"
 										:group="`side-${player}`"
 										:animation="200"
 									>
-										<card
-											v-for="card in selectedPlayerCards.side"
-											:key="`side_card_${card.uniqueID}`"
-											:card="card"
-											:language="language"
-										></card>
+										<template #item="{ card }">
+											<card
+												:key="`side_card_${card.uniqueID}`"
+												:card="card"
+												:language="language"
+											></card>
+										</template>
 									</draggable>
 								</div>
 							</div>

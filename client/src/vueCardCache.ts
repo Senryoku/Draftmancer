@@ -1,4 +1,4 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import axios, { AxiosResponse } from "axios";
 import { CardID, CardColor, OracleID } from "../../src/CardTypes";
 
@@ -155,7 +155,7 @@ export function isReady(entry: CardCacheEntry): entry is ScryfallCard & { status
 	return entry?.status === "ready";
 }
 
-const cardCachePlugin = new Vue({
+const cardCachePlugin = createApp({
 	data() {
 		const r: {
 			cardCache: { [cardID: CardID]: CardCacheEntry };

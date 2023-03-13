@@ -108,7 +108,8 @@
 		<!-- Dummy draggable component to handle dropping card between columns -->
 		<draggable
 			:group="group"
-			:list="tempColumn"
+			:v-model="tempColumn"
+			item-key="uniqueID"
 			@add="dropCard"
 			@change="change"
 			ghostClass="no-ghost"
@@ -137,21 +138,23 @@
 					v-for="(column, colIdx) in row"
 					:key="`col_${colIdx}`"
 					class="card-column drag-column"
-					:list="column"
+					:v-model="column"
+					item-key="uniqueID"
 					:group="group"
 					@change="change"
 					:animation="200"
 				>
-					<card
-						v-for="(card, index) in column"
-						:key="`card_${card.uniqueID ? card.uniqueID : index}`"
-						:card="card"
-						:language="language"
-						@click="click($event, card)"
-						@dblclick="doubleClick($event, card)"
-						@dragstart="dragStart($event, card)"
-						:conditionalClasses="cardConditionalClasses"
-					></card>
+					<template #item="{ card, index }">
+						<card
+							v-for="(card, index) in column"
+							:card="card"
+							:language="language"
+							@click="click($event, card)"
+							@dblclick="doubleClick($event, card)"
+							@dragstart="dragStart($event, card)"
+							:conditionalClasses="cardConditionalClasses"
+						></card>
+					</template>
 				</draggable>
 			</div>
 		</draggable>
@@ -159,7 +162,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import draggable, { MoveEvent } from "vuedraggable";
 import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
@@ -323,16 +326,8 @@ export default defineComponent({
 		addColumn() {
 			for (let row of this.rows) {
 				row.push([]);
-				Vue.set(
-					row,
-					row.length - 1,
-					row[row.length - 2].filter((c) => c.cmc > row.length - 2)
-				);
-				Vue.set(
-					row,
-					row.length - 2,
-					row[row.length - 2].filter((c) => c.cmc <= row.length - 2)
-				);
+				row[row.length - 1] = row[row.length - 2].filter((c) => c.cmc > row.length - 2);
+				row[row.length - 2] = row[row.length - 2].filter((c) => c.cmc <= row.length - 2);
 			}
 			this.saveOptions();
 		},
@@ -341,7 +336,7 @@ export default defineComponent({
 			if (index === undefined || index < 0 || index >= this.rows[0].length) index = this.rows[0].length - 1;
 			const other = index < this.rows[0].length - 1 ? index + 1 : index - 1;
 			for (let row of this.rows) {
-				Vue.set(row, other, ([] as UniqueCard[]).concat(row[other], row[index]));
+				row[other] = ([] as UniqueCard[]).concat(row[other], row[index]);
 				CardOrder.orderByArenaInPlace(row[other]);
 				row.splice(index, 1);
 			}

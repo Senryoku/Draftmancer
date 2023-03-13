@@ -1,4 +1,3 @@
-import { toRaw } from "vue";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
 import { SessionID, UserID } from "../../src/IDTypes";
 import { SetCode, IIndexable } from "../../src/Types";
@@ -28,7 +27,7 @@ import { CustomCardList } from "../../src/CustomCardList";
 import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
-import Vue, { defineComponent } from "vue";
+import { toRaw, defineComponent } from "vue";
 import draggable from "vuedraggable";
 import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
@@ -54,6 +53,7 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { createApp } from "vue";
 const img = new Image();
 img.src = CardBack;
 
@@ -555,7 +555,7 @@ export default defineComponent({
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const ComponentClass = Vue.extend(CardComponent);
+				const ComponentClass = CardComponent;
 				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
 				cardView.$mount();
 				Alert.fire({
@@ -1596,26 +1596,28 @@ export default defineComponent({
 				});
 				return;
 			}
-			const DialogClass = Vue.extend(RotisserieDraftDialog);
-			let instance = new DialogClass({
-				propsData: { defaultBoostersPerPlayer: this.boostersPerPlayer },
-				beforeUnmount() {
-					instance.$el.parentNode?.removeChild(instance.$el);
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "rotisserie-draft-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(RotisserieDraftDialog, {
+				defaultBoostersPerPlayer: this.boostersPerPlayer,
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart(options: RotisserieDraftStartOptions) {
+					self.deckWarning((options) => {
+						self.socket.emit("startRotisserieDraft", options, (r) => {
+							if (r.code !== 0) Alert.fire(r.error!);
+						});
+					}, options);
+					instance.unmount();
 				},
 			});
-			instance.$on("cancel", () => {
-				instance.$destroy();
-			});
-			instance.$on("start", (options: RotisserieDraftStartOptions) => {
-				this.deckWarning((options) => {
-					this.socket.emit("startRotisserieDraft", options, (r) => {
-						if (r.code !== 0) Alert.fire(r.error!);
-					});
-				}, options);
-				instance.$destroy();
-			});
-			instance.$mount();
-			this.$el.appendChild(instance.$el);
+			instance.mount("#rotisserie-draft-dialog");
 		},
 		rotisserieDraftPick(
 			uniqueCardID: UniqueCardID,
@@ -2369,27 +2371,30 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const DialogClass = Vue.extend(SealedDialog);
-			let instance = new DialogClass({
-				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
-				beforeUnmount() {
-					instance.$el.parentNode?.removeChild(instance.$el);
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "sealed-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(SealedDialog, {
+				users: this.sessionUsers,
+				teamSealed: teamSealed,
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onDistribute(boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) {
+					self.deckWarning(
+						teamSealed ? self.startTeamSealed : self.distributeSealed,
+						boostersPerPlayer,
+						customBoosters,
+						teams
+					);
+					instance.unmount();
 				},
 			});
-			instance.$on("cancel", () => {
-				instance.$destroy();
-			});
-			instance.$on("distribute", (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
-				this.deckWarning(
-					teamSealed ? this.startTeamSealed : this.distributeSealed,
-					boostersPerPlayer,
-					customBoosters,
-					teams
-				);
-				instance.$destroy();
-			});
-			instance.$mount();
-			this.$el.appendChild(instance.$el);
+			instance.mount("#sealed-dialog");
 		},
 		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {

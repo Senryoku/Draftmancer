@@ -14,9 +14,6 @@ module.exports = {
 	},
 	resolve: {
 		extensions: [".ts", ".tsx", ".js"],
-		alias: {
-			vue: "@vue/compat",
-		},
 	},
 	module: {
 		rules: [
@@ -24,13 +21,6 @@ module.exports = {
 			{
 				test: /\.vue$/,
 				loader: "vue-loader",
-				options: {
-					compilerOptions: {
-						compatConfig: {
-							MODE: 2,
-						},
-					},
-				},
 			},
 			{
 				test: /\.js$/,

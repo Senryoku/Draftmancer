@@ -536,14 +536,42 @@
 			<template v-if="!drafting">
 				<draggable
 					v-model="userOrder"
+					:item-key="(uid) => uid"
 					@change="changePlayerOrder"
-					:disabled="userID != sessionOwner || drafting"
+					:disabled="userID !== sessionOwner || drafting"
 					:animation="200"
 					class="player-list-container"
+					tag="transition-group"
+					:component-data="{ type: 'transition', tag: 'ul', class: 'player-list' }"
 				>
-					<transition-group type="transition" tag="ul" class="player-list">
+					<template #item="{ id, idx }">
 						<li
-							v-for="(id, idx) in userOrder"
+							:class="{
+								teama: teamDraft && idx % 2 === 0,
+								teamb: teamDraft && idx % 2 === 1,
+								draggable: userID === sessionOwner && !drafting,
+								self: userID === id,
+								bot: userByID[id].isBot,
+							}"
+							:data-userid="id"
+						>
+							{{ id }}
+						</li>
+					</template>
+				</draggable>
+				<!--
+				<draggable
+					v-model="userOrder"
+					:item-key="(uid: UserID) => uid"
+					@change="changePlayerOrder"
+					:disabled="userID !== sessionOwner || drafting"
+					:animation="200"
+					class="player-list-container"
+					tag="transition-group"
+					:component-data="{ type: 'transition', tag: 'ul', class: 'player-list' }"
+				>
+					<template #item="{ id, idx }">
+						<li
 							:key="id"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
@@ -635,8 +663,9 @@
 							</div>
 							<div class="chat-bubble" :id="'chat-bubble-' + id"></div>
 						</li>
-					</transition-group>
+					</template>
 				</draggable>
+			-->
 			</template>
 			<template v-else>
 				<div class="player-list-container">
@@ -1446,19 +1475,20 @@
 								<draggable
 									key="collapsed-sideboard-col"
 									class="card-column drag-column"
-									:list="sideboard"
+									v-model="sideboard"
+									item-key="uniqueID"
 									group="deck"
 									@change="onCollapsedSideChange"
 									:animation="200"
 								>
-									<card
-										v-for="card in sideboard"
-										:key="`collapsed-sideboard-card-${card.uniqueID}`"
-										:card="card"
-										:language="language"
-										@click="sideboardToDeck($event, card)"
-										:cardConditionalClasses="cardConditionalClasses"
-									></card>
+									<template #item="{ card }">
+										<card
+											:card="card"
+											:language="language"
+											@click="sideboardToDeck($event, card)"
+											:cardConditionalClasses="cardConditionalClasses"
+										></card>
+									</template>
 								</draggable>
 							</div>
 						</div>
