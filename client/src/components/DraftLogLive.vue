@@ -76,10 +76,10 @@
 										:group="`side-${player}`"
 										:animation="200"
 									>
-										<template #item="{ card }">
+										<template #item="{ element }">
 											<card
-												:key="`side_card_${card.uniqueID}`"
-												:card="card"
+												:key="`side_card_${element.uniqueID}`"
+												:card="element"
 												:language="language"
 											></card>
 										</template>

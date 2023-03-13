@@ -536,32 +536,6 @@
 			<template v-if="!drafting">
 				<draggable
 					v-model="userOrder"
-					:item-key="(uid) => uid"
-					@change="changePlayerOrder"
-					:disabled="userID !== sessionOwner || drafting"
-					:animation="200"
-					class="player-list-container"
-					tag="transition-group"
-					:component-data="{ type: 'transition', tag: 'ul', class: 'player-list' }"
-				>
-					<template #item="{ id, idx }">
-						<li
-							:class="{
-								teama: teamDraft && idx % 2 === 0,
-								teamb: teamDraft && idx % 2 === 1,
-								draggable: userID === sessionOwner && !drafting,
-								self: userID === id,
-								bot: userByID[id].isBot,
-							}"
-							:data-userid="id"
-						>
-							{{ id }}
-						</li>
-					</template>
-				</draggable>
-				<!--
-				<draggable
-					v-model="userOrder"
 					:item-key="(uid: UserID) => uid"
 					@change="changePlayerOrder"
 					:disabled="userID !== sessionOwner || drafting"
@@ -570,65 +544,68 @@
 					tag="transition-group"
 					:component-data="{ type: 'transition', tag: 'ul', class: 'player-list' }"
 				>
-					<template #item="{ id, idx }">
+					<template #item="{ element, index }">
 						<li
-							:key="id"
 							:class="{
-								teama: teamDraft && idx % 2 === 0,
-								teamb: teamDraft && idx % 2 === 1,
+								teama: teamDraft && index % 2 === 0,
+								teamb: teamDraft && index % 2 === 1,
 								draggable: userID === sessionOwner && !drafting,
-								self: userID === id,
-								bot: userByID[id].isBot,
+								self: userID === index,
+								bot: userByID[element].isBot,
 							}"
-							:data-userid="id"
+							:data-userid="element"
 						>
-							<div class="player-name" v-tooltip="userByID[id].userName">{{ userByID[id].userName }}</div>
+							<div class="player-name" v-tooltip="userByID[element].userName">
+								{{ userByID[element].userName }}
+							</div>
 							<template v-if="userID == sessionOwner">
 								<i
 									class="fas fa-chevron-left clickable move-player move-player-left"
-									v-tooltip="`Move ${userByID[id].userName} to the left`"
-									@click="movePlayer(idx, -1)"
+									v-tooltip="`Move ${userByID[element].userName} to the left`"
+									@click="movePlayer(index, -1)"
 								></i>
 								<i
 									class="fas fa-chevron-right clickable move-player move-player-right"
-									v-tooltip="`Move ${userByID[id].userName} to the right`"
-									@click="movePlayer(idx, 1)"
+									v-tooltip="`Move ${userByID[element].userName} to the right`"
+									@click="movePlayer(index, 1)"
 								></i>
 							</template>
 							<div class="status-icons">
 								<i
-									v-if="id === sessionOwner"
+									v-if="element === sessionOwner"
 									class="fas fa-crown subtle-gold"
-									v-tooltip="`${userByID[id].userName} is the session owner.`"
+									v-tooltip="`${userByID[element].userName} is the session owner.`"
 								></i>
-								<template v-if="userID === sessionOwner && id != sessionOwner">
+								<template v-if="userID === sessionOwner && element != sessionOwner">
 									<img
 										src="./assets/img/pass_ownership.svg"
 										class="clickable"
 										style="height: 18px; margin-top: -4px"
-										v-tooltip="`Give session ownership to ${userByID[id].userName}`"
-										@click="setSessionOwner(id)"
+										v-tooltip="`Give session ownership to ${userByID[element].userName}`"
+										@click="setSessionOwner(element)"
 									/>
 									<i
 										class="fas fa-user-slash clickable red"
-										v-tooltip="`Remove ${userByID[id].userName} from the session`"
-										@click="removePlayer(id)"
+										v-tooltip="`Remove ${userByID[element].userName} from the session`"
+										@click="removePlayer(element)"
 									></i>
 								</template>
 								<template v-if="!useCustomCardList && !ignoreCollections">
-									<template v-if="!userByID[id].collection">
+									<template v-if="!userByID[element].collection">
 										<i
 											class="fas fa-book red"
 											v-tooltip="
-												userByID[id].userName + ' has not uploaded their collection yet.'
+												userByID[element].userName + ' has not uploaded their collection yet.'
 											"
 										></i>
 									</template>
-									<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
+									<template
+										v-else-if="userByID[element].collection && !userByID[element].useCollection"
+									>
 										<i
 											class="fas fa-book yellow"
 											v-tooltip="
-												userByID[id].userName +
+												userByID[element].userName +
 												' has uploaded their collection, but is not using it.'
 											"
 										></i>
@@ -636,36 +613,35 @@
 									<template v-else>
 										<i
 											class="fas fa-book green"
-											v-tooltip="userByID[id].userName + ' has uploaded their collection.'"
+											v-tooltip="userByID[element].userName + ' has uploaded their collection.'"
 										></i>
 									</template>
 								</template>
 								<template v-if="pendingReadyCheck">
-									<template v-if="userByID[id].readyState == ReadyState.Ready">
+									<template v-if="userByID[element].readyState == ReadyState.Ready">
 										<i
 											class="fas fa-check green"
-											v-tooltip="`${userByID[id].userName} is ready!`"
+											v-tooltip="`${userByID[element].userName} is ready!`"
 										></i>
 									</template>
-									<template v-else-if="userByID[id].readyState == ReadyState.NotReady">
+									<template v-else-if="userByID[element].readyState == ReadyState.NotReady">
 										<i
 											class="fas fa-times red"
-											v-tooltip="`${userByID[id].userName} is NOT ready!`"
+											v-tooltip="`${userByID[element].userName} is NOT ready!`"
 										></i>
 									</template>
-									<template v-else-if="userByID[id].readyState == ReadyState.Unknown">
+									<template v-else-if="userByID[element].readyState == ReadyState.Unknown">
 										<i
 											class="fas fa-spinner fa-spin"
-											v-tooltip="`Waiting for ${userByID[id].userName} to respond...`"
+											v-tooltip="`Waiting for ${userByID[element].userName} to respond...`"
 										></i>
 									</template>
 								</template>
 							</div>
-							<div class="chat-bubble" :id="'chat-bubble-' + id"></div>
+							<div class="chat-bubble" :id="'chat-bubble-' + element"></div>
 						</li>
 					</template>
 				</draggable>
-			-->
 			</template>
 			<template v-else>
 				<div class="player-list-container">
@@ -1481,11 +1457,11 @@
 									@change="onCollapsedSideChange"
 									:animation="200"
 								>
-									<template #item="{ card }">
+									<template #item="{ element }">
 										<card
-											:card="card"
+											:card="element"
 											:language="language"
-											@click="sideboardToDeck($event, card)"
+											@click="sideboardToDeck($event, element)"
 											:cardConditionalClasses="cardConditionalClasses"
 										></card>
 									</template>

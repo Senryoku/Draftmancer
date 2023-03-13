@@ -144,14 +144,14 @@
 					@change="change"
 					:animation="200"
 				>
-					<template #item="{ card, index }">
+					<template #item="{ element }">
 						<card
-							v-for="(card, index) in column"
-							:card="card"
+							v-for="(element, index) in column"
+							:card="element"
 							:language="language"
-							@click="click($event, card)"
-							@dblclick="doubleClick($event, card)"
-							@dragstart="dragStart($event, card)"
+							@click="click($event, element)"
+							@dblclick="doubleClick($event, element)"
+							@dragstart="dragStart($event, element)"
 							:conditionalClasses="cardConditionalClasses"
 						></card>
 					</template>
