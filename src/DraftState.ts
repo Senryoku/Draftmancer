@@ -1,6 +1,6 @@
 import { v1 as uuidv1 } from "uuid";
 import { Options } from "./utils.js";
-import { IBot, SimpleBot, Bot } from "./Bot.js";
+import { IBot, SimpleBot, Bot, MTGDraftBotParameters } from "./Bot.js";
 import { UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";
 import { IDraftState } from "./IDraftState.js";
@@ -22,7 +22,11 @@ export class DraftState extends IDraftState {
 		};
 	} = {};
 
-	constructor(boosters: UniqueCard[][] = [], players: UserID[] = [], options: Options = {}) {
+	constructor(
+		boosters: UniqueCard[][],
+		players: UserID[],
+		options: { botCount: number; simpleBots: boolean; botParameters?: MTGDraftBotParameters }
+	) {
 		super("draft");
 		this.boosters = boosters;
 		let botIndex = 0;
@@ -48,7 +52,7 @@ export class DraftState extends IDraftState {
 			const userName = user.isBot ? `Bot #${++botIndex}` : Connections[user.userID].userName;
 			const botInstance = options.simpleBots
 				? new SimpleBot(userName, user.userID)
-				: new Bot(userName, user.userID);
+				: new Bot(userName, user.userID, options.botParameters);
 
 			this.players[user.userID] = {
 				isBot: user.isBot,

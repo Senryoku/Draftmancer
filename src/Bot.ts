@@ -30,8 +30,9 @@ if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
 	await addMTGDraftBotsInstance(
 		"https://mtgml.cubeartisan.net/",
 		process.env.MTGDRAFTBOTS_AUTHTOKEN,
-		process.env.NODE_ENV === "production" ? 1 : 0 //Do not use in development, unless it's the only instance available
+		process.env.NODE_ENV === "production" ? 1 : 0 // Do not use in development, unless it's the only instance available
 	);
+/* Temporarily disabled while we get the update working on ARM.
 // Allow an alternative instance of the mtgdraftbots server
 if (process.env.MTGDRAFTBOTS_ALT_INSTANCE)
 	await addMTGDraftBotsInstance(
@@ -39,11 +40,27 @@ if (process.env.MTGDRAFTBOTS_ALT_INSTANCE)
 		process.env.MTGDRAFTBOTS_ALT_INSTANCE_AUTHTOKEN ?? "testing",
 		1
 	);
+*/
+
+export enum MTGDraftBotsSetSpecializedModels {
+	neo = "neo",
+	snc = "snc",
+	dmu = "dmu",
+	bro = "bro",
+	one = "one",
+}
+
+export type MTGDraftBotParameters = {
+	model_type: "prod" | MTGDraftBotsSetSpecializedModels;
+};
 
 // Returns a random instance of the mtgdraftbots server for each request (load balancing the stupid way :D).
 const MTGDraftBotsAPIURLsTotalWeight = MTGDraftBotsAPIURLs.reduce((acc, curr) => acc + curr.weight, 0);
-function getMTGDraftBotsURL(): string {
-	return MTGDraftBotsAPIURLs[weightedRandomIdx(MTGDraftBotsAPIURLs, MTGDraftBotsAPIURLsTotalWeight)].url;
+function getMTGDraftBotsURL(parameters: MTGDraftBotParameters): string {
+	return (
+		MTGDraftBotsAPIURLs[weightedRandomIdx(MTGDraftBotsAPIURLs, MTGDraftBotsAPIURLsTotalWeight)].url +
+		`&model_type=${parameters.model_type}`
+	);
 }
 
 export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<boolean> {
@@ -74,7 +91,11 @@ export async function fallbackToSimpleBots(oracleIds: Array<OracleID>): Promise<
 		seed: Math.floor(Math.random() * 65536),
 	};
 	try {
-		const response = await axios.post(getMTGDraftBotsURL(), { drafterState }, { timeout: MTGDraftBotsAPITimeout });
+		const response = await axios.post(
+			getMTGDraftBotsURL({ model_type: "prod" }),
+			{ drafterState },
+			{ timeout: MTGDraftBotsAPITimeout }
+		);
 		if (
 			response.status !== 200 ||
 			!response.data.success ||
@@ -184,6 +205,7 @@ export class Bot implements IBot {
 	name: string;
 	id: string;
 	type: string = "mtgdraftbots";
+	parameters: MTGDraftBotParameters;
 	cards: Card[] = [];
 	lastScores: BotScores = { chosenOption: 0, scores: [] };
 
@@ -192,9 +214,10 @@ export class Bot implements IBot {
 
 	fallbackBot: SimpleBot | null = null;
 
-	constructor(name: string, id: string) {
+	constructor(name: string, id: string, parameters: MTGDraftBotParameters = { model_type: "prod" }) {
 		this.name = name;
 		this.id = id;
+		this.parameters = parameters;
 	}
 
 	async getScores(booster: Card[], boosterNum: number, numBoosters: number, pickNum: number, numPicks: number) {
@@ -213,7 +236,7 @@ export class Bot implements IBot {
 		};
 		try {
 			const response = await axios.post(
-				getMTGDraftBotsURL(),
+				getMTGDraftBotsURL(this.parameters),
 				{ drafterState },
 				{ timeout: MTGDraftBotsAPITimeout }
 			);

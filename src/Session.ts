@@ -14,7 +14,7 @@ import {
 	DeckList,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
-import { IBot, fallbackToSimpleBots, isBot } from "./Bot.js";
+import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
 import { computeHashes } from "./DeckHashes.js";
 import { BasicLandSlot, BasicLandSlots, SpecialLandSlots } from "./LandSlot.js";
 import {
@@ -1348,6 +1348,24 @@ export class Session implements IIndexable {
 		// Determine bot type
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
 		const simpleBots = await fallbackToSimpleBots([...new Set(oracleIds)]);
+		const botParameters: MTGDraftBotParameters = {
+			model_type: "prod",
+		};
+		// If we're only drafting an official set, check if we have a available specialized bot model of it.
+		if (
+			!simpleBots &&
+			!this.usePredeterminedBoosters &&
+			!this.useCustomCardList &&
+			this.setRestriction.length === 1 &&
+			this.customBoosters.every((s) => s === "" || s === this.setRestriction[0])
+		) {
+			if (
+				Object.values(MTGDraftBotsSetSpecializedModels).includes(
+					this.setRestriction[0] as unknown as MTGDraftBotsSetSpecializedModels
+				)
+			)
+				botParameters.model_type = this.setRestriction[0] as MTGDraftBotsSetSpecializedModels;
+		}
 
 		// There is a very slim possibility that everyone disconnects during the asynchronous call to fallbackToSimpleBots,
 		// raising an exception and leaving the session in an invalid state. I hope this will catch all possible failure cases.
@@ -1355,6 +1373,7 @@ export class Session implements IIndexable {
 			this.draftState = new DraftState(boosters, this.getSortedHumanPlayersIDs(), {
 				simpleBots: simpleBots,
 				botCount: this.bots,
+				botParameters,
 			});
 			this.disconnectedUsers = {};
 			this.drafting = true;

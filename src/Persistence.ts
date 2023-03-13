@@ -111,7 +111,7 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				r.draftState = new DraftState();
+				r.draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
 				break;
 			}
 			case "winston": {
