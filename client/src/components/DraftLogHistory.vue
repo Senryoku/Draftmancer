@@ -17,7 +17,7 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls" @click.self="toggle(idx)">
-				<span @click="toggle(idx)" class="clickable">
+				<span @click="toggle(idx)" class="clickable flex-row">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
@@ -49,7 +49,7 @@
 						></template
 					>
 				</template>
-				<span>
+				<span class="flex-row">
 					<button class="flat" @click="toggle(idx)">
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
 						<template v-else> <i class="far fa-eye"></i> Review</template>
@@ -263,6 +263,12 @@ export default defineComponent({
 	margin-bottom: 0.5em;
 }
 
+.flex-row {
+	display: flex;
+	gap: 0.3em;
+	align-items: center;
+}
+
 .log {
 	width: 90vw;
 	margin-bottom: 0.5em;
@@ -281,6 +287,7 @@ export default defineComponent({
 	justify-content: space-between;
 	align-items: baseline;
 	width: 100%;
+	gap: 0.2em;
 }
 
 :deep(.dropdown-container),

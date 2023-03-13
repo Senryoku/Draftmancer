@@ -187,40 +187,41 @@
 							:delay="2"
 						/>
 					</div>
+					<div style="display: inline-flex; gap: 0.3em; align-items: center; margin-left: 0.25em">
+						<i
+							class="far fa-fw clickable"
+							:class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'"
+							@click="hideSessionID = !hideSessionID"
+							v-tooltip="'Show/Hide your session ID.'"
+						></i>
 
-					<i
-						class="far fa-fw clickable"
-						:class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'"
-						@click="hideSessionID = !hideSessionID"
-						v-tooltip="'Show/Hide your session ID.'"
-					></i>
+						<i
+							class="fas fa-fw fa-share-square clickable"
+							v-tooltip="'Copy session link for sharing.'"
+							@click="sessionURLToClipboard"
+						></i>
 
-					<i
-						class="fas fa-fw fa-share-square clickable"
-						v-tooltip="'Copy session link for sharing.'"
-						@click="sessionURLToClipboard"
-					></i>
+						<i
+							class="fas fa-sitemap clickable"
+							v-if="sessionOwner === userID && !bracket"
+							@click="generateBracket"
+							v-tooltip="'Generate Bracket.'"
+						></i>
 
-					<i
-						class="fas fa-sitemap clickable"
-						v-if="sessionOwner === userID && !bracket"
-						@click="generateBracket"
-						v-tooltip="'Generate Bracket.'"
-					></i>
+						<i
+							class="fas fa-sitemap clickable"
+							v-if="bracket"
+							@click="displayedModal = 'bracket'"
+							v-tooltip="'Display Bracket.'"
+						></i>
 
-					<i
-						class="fas fa-sitemap clickable"
-						v-if="bracket"
-						@click="displayedModal = 'bracket'"
-						v-tooltip="'Display Bracket.'"
-					></i>
-
-					<i
-						class="fas fa-user-check clickable"
-						v-if="sessionOwner === userID"
-						@click="readyCheck"
-						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
-					></i>
+						<i
+							class="fas fa-user-check clickable"
+							v-if="sessionOwner === userID"
+							@click="readyCheck"
+							v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
+						></i>
+					</div>
 				</span>
 				<span class="generic-container card-pool-controls">
 					<input
@@ -313,7 +314,8 @@
 								</template>
 							</multiselect>
 							<i
-								class="fas fa-ellipsis-h clickable"
+								class="fas fa-ellipsis-v clickable"
+								style="padding: 0.2em"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
 							></i>

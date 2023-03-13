@@ -37,6 +37,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@babel/core": "^7.20.12",
+		"@types/sortablejs": "^1.15.0",
 		"axios": "^0.21.2",
 		"chart.js": "^4.2.1",
 		"compression": "^1.7.4",

@@ -8,15 +8,19 @@
 				<i class="fas fa-minus-square" style="margin-right: 0.5em"></i>Deselect All
 			</button>
 			Current Selection:
-			<span v-if="value.length === 0">No set restriction (All cards)</span>
-			<span v-else-if="value.length === 1">
-				<img class="set-icon" :src="SetsInfos[value[0]].icon" v-tooltip="SetsInfos[value[0]].fullName" />
-				{{ SetsInfos[value[0]].fullName }}
+			<span v-if="modelValue.length === 0">No set restriction (All cards)</span>
+			<span v-else-if="modelValue.length === 1">
+				<img
+					class="set-icon"
+					:src="SetsInfos[modelValue[0]].icon"
+					v-tooltip="SetsInfos[modelValue[0]].fullName"
+				/>
+				{{ SetsInfos[modelValue[0]].fullName }}
 			</span>
 			<span v-else>
-				{{ value.length }} Sets
+				{{ modelValue.length }} Sets
 				<img
-					v-for="s in value"
+					v-for="s in modelValue"
 					class="set-icon"
 					:src="SetsInfos[s].icon"
 					:key="s"
@@ -113,7 +117,7 @@ export default defineComponent({
 		};
 	},
 	props: {
-		value: { type: Array as PropType<SetCode[]>, required: true },
+		modelValue: { type: Array as PropType<SetCode[]>, required: true },
 	},
 	mounted() {
 		const assigned = this.blocks.map((b) => b.sets).flat();
@@ -138,7 +142,7 @@ export default defineComponent({
 			this.update([]);
 		},
 		remove(arr: SetCode[]) {
-			const newVal = [...this.value];
+			const newVal = [...this.modelValue];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
 				if (index !== -1) newVal.splice(index, 1);
@@ -146,7 +150,7 @@ export default defineComponent({
 			this.update(newVal);
 		},
 		add(arr: SetCode[]) {
-			const newVal = [...this.value];
+			const newVal = [...this.modelValue];
 			for (let s of arr) {
 				const index = newVal.indexOf(s);
 				if (index === -1) newVal.push(s);
@@ -154,7 +158,7 @@ export default defineComponent({
 			this.update(newVal);
 		},
 		toggle(s: SetCode) {
-			const newVal = [...this.value];
+			const newVal = [...this.modelValue];
 			const index = newVal.indexOf(s);
 			if (index !== -1) {
 				newVal.splice(index, 1);
@@ -164,7 +168,7 @@ export default defineComponent({
 			this.update(newVal);
 		},
 		selected(s: SetCode) {
-			return this.value.includes(s);
+			return this.modelValue.includes(s);
 		},
 	},
 });

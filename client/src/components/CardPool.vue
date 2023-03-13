@@ -153,6 +153,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Sortable } from "sortablejs-vue3";
+import { SortableEvent } from "sortablejs";
 import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
@@ -298,8 +299,8 @@ export default defineComponent({
 					}
 				}
 		},
-		change(e: Event) {
-			if (!this.readOnly && !("cardPoolChange" in this.$listeners)) {
+		change(e: SortableEvent) {
+			if (!this.readOnly && !("onCardPoolChange" in this.$attrs)) {
 				console.warn(
 					"CardPool: Card not declared as readOnly, but has no 'cardPoolChange' event handler. Make sure to bind the cardPoolChange event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
 				);
@@ -348,32 +349,6 @@ export default defineComponent({
 				for (let row of this.rows) row.splice(colIdx, 0, []);
 				this.saveOptions(); // Update cached columnCount
 				return this.rows[rowIdx][colIdx];
-			}
-		},
-		dropCard(event: MoveEvent<HTMLElement>) {
-			// Triggered when the last valid position of a card after a drop event is within the dummy draggable element surrounding the columns.
-			// This is either:
-			//   An invalid drop (outside of the card pool bounds): Revert the operation.
-			//   Between two existing columns: Create a new one and insert the card.
-			if (this.tempColumn.length > 0) {
-				// Revert all events that ended outside of the card pool bounds.
-				const bounds = this.$el.getBoundingClientRect();
-				if (
-					event.originalEvent.clientX < bounds.left ||
-					event.originalEvent.clientX > bounds.right ||
-					event.originalEvent.clientY < bounds.top ||
-					event.originalEvent.clientY > bounds.bottom ||
-					event.originalEvent.type === "dragend" // (a valid final drop location will trigger an event of type 'drop')
-				) {
-					// Insert the card in its original column, at its original index (oldDraggableIndex)
-					this.getColumnFromCoordinates({
-						clientX: event.from.getBoundingClientRect().left + 1,
-						clientY: event.from.getBoundingClientRect().top + 1,
-					}).splice(event.oldDraggableIndex, 0, ...this.tempColumn);
-				} else {
-					this.getColumnFromCoordinates(event.originalEvent).push(...this.tempColumn);
-				}
-				this.tempColumn = [];
 			}
 		},
 		toggleTwoRowsLayout() {
