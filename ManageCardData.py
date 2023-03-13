@@ -743,7 +743,7 @@ for mtgset, group in groups:
         print("\nWarning: Set '{}' not found in SetsInfos.\n".format(mtgset))
         continue
     setdata = candidates[0]
-    if ("parent_set_code" in setdata):
+    if ("parent_set_code" in setdata and mtgset != "ydmu"):
         subsets.append(mtgset)
     setinfos[mtgset] = {"code": mtgset,
                         "fullName": setdata['name'],
