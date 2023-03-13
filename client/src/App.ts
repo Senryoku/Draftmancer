@@ -2610,7 +2610,7 @@ export default defineComponent({
 			this.$refs.deckDisplay?.remCard(c);
 			// Card DOM element will move without emiting a mouse leave event,
 			// make sure to close the card popup.
-			this.$root.$emit("closecardpopup");
+			this.emitter.emit("closecardpopup");
 		},
 		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
@@ -2621,7 +2621,7 @@ export default defineComponent({
 				this.socket.emit("moveCard", c.uniqueID, "main");
 			} else return;
 			this.$refs.sideboardDisplay?.remCard(c);
-			this.$root.$emit("closecardpopup");
+			this.emitter.emit("closecardpopup");
 		},
 		onDeckChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
 			// For movements between to columns of the pool, two events are emitted:

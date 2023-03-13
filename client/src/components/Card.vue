@@ -57,7 +57,7 @@ export default defineComponent({
 	methods: {
 		toggleZoom(e: Event) {
 			e.preventDefault();
-			this.$root.$emit("togglecardpopup", e, this.card);
+			this.emitter.emit("togglecardpopup", e, this.card);
 		},
 		mouseLeave(e: Event) {
 			e.preventDefault();
@@ -66,7 +66,7 @@ export default defineComponent({
 			document.removeEventListener("keydown", this.keyDown, { capture: true });
 			document.removeEventListener("keyup", this.keyUp, { capture: true });
 
-			this.$root.$emit("closecardpopup");
+			this.emitter.emit("closecardpopup");
 
 			if (this.card.foil) {
 				document.removeEventListener("mousemove", this.foilEffect);

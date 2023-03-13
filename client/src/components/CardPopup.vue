@@ -102,7 +102,7 @@ export default defineComponent({
 		};
 	},
 	created() {
-		this.$root.$on("togglecardpopup", (event: MouseEvent, card: Card) => {
+		this.emitter.on("togglecardpopup", (event: MouseEvent, card: Card) => {
 			if (!this.display) {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
@@ -142,7 +142,7 @@ export default defineComponent({
 				this.display = true;
 			} else this.close();
 		});
-		this.$root.$on("closecardpopup", () => {
+		this.emitter.on("closecardpopup", () => {
 			this.close();
 		});
 	},
