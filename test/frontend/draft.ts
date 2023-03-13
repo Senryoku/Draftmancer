@@ -195,13 +195,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it(`Another Player joins the session`, async function () {
-		// Get session link
-		await sessionOwnerPage.$$(".fa-share-square");
-		await sessionOwnerPage.click(".fa-share-square");
-		sessionLink = await sessionOwnerPage.evaluate(() => navigator.clipboard.readText());
-		expect(sessionLink).to.match(/^http:\/\/localhost:3001\/\?session=/);
-
-		await otherPlayerPage.goto(sessionLink);
+		const clipboard = await getSessionLink(sessionOwnerPage);
+		await otherPlayerPage.goto(clipboard);
 	});
 
 	it(`Launch Draft`, async function () {

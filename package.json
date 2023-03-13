@@ -37,7 +37,6 @@
 	"license": "MIT",
 	"dependencies": {
 		"@babel/core": "^7.20.12",
-		"@types/sortablejs": "^1.15.0",
 		"axios": "^0.21.2",
 		"chart.js": "^4.2.1",
 		"compression": "^1.7.4",
@@ -58,7 +57,7 @@
 		"sweetalert2": "^11.7.3",
 		"threads": "^1.7",
 		"uuid": "^9.0.0",
-		"vue": "^3.1.0",
+		"vue": "^3.2.47",
 		"vue-chartjs": "^5.2.0",
 		"vue-multiselect": "^3.0.0-beta.1"
 	},
@@ -69,6 +68,7 @@
 		"@types/mocha": "^10.0.1",
 		"@types/node": "^18.14.0",
 		"@types/request": "^2.48.8",
+		"@types/sortablejs": "^1.15.0",
 		"@types/uuid": "^9.0.0",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
