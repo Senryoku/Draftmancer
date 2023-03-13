@@ -3215,8 +3215,11 @@ export default defineComponent({
 		boosterCardScale() {
 			this.storeSettings();
 		},
-		deck() {
-			this.updateAutoLands();
+		deck: {
+			deep: true,
+			handler() {
+				this.updateAutoLands();
+			},
 		},
 		autoLand() {
 			this.updateAutoLands();
@@ -3244,10 +3247,13 @@ export default defineComponent({
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
-		setRestriction() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+		setRestriction: {
+			deep: true,
+			handler() {
+				if (this.userID != this.sessionOwner || !this.socket) return;
 
-			this.socket.emit("setRestriction", this.setRestriction);
+				this.socket.emit("setRestriction", this.setRestriction);
+			},
 		},
 		isPublic() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -3287,9 +3293,12 @@ export default defineComponent({
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
-		customBoosters() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("setCustomBoosters", this.customBoosters);
+		customBoosters: {
+			deep: true,
+			handler() {
+				if (this.userID != this.sessionOwner || !this.socket) return;
+				this.socket.emit("setCustomBoosters", this.customBoosters);
+			},
 		},
 		bots() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -3382,15 +3391,18 @@ export default defineComponent({
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
 		},
-		sessionUsers(newV, oldV) {
-			document.title = this.pageTitle;
-			if (oldV.length > 0) {
-				if (oldV.length < newV.length) {
-					if (newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
-					else this.pushTitleNotification("😀➕");
+		sessionUsers: {
+			deep: true,
+			handler(newV, oldV) {
+				document.title = this.pageTitle;
+				if (oldV.length > 0) {
+					if (oldV.length < newV.length) {
+						if (newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
+						else this.pushTitleNotification("😀➕");
+					}
+					if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
 				}
-				if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
-			}
+			},
 		},
 	},
 });

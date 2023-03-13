@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue, { createApp } from "vue";
 import App from "./App.vue";
 import cardCachePlugin from "./vueCardCache";
 import FloatingVue from "floating-vue";
@@ -14,7 +14,5 @@ Vue.use(FloatingVue, {
 	distance: 8,
 });
 
-const app = new Vue({
-	render: (h) => h(App),
-});
-app.$mount("#main-vue");
+const app = createApp(App);
+app.mount("#main-vue");
