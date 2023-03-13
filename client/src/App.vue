@@ -839,7 +839,9 @@
 						</div>
 					</div>
 					<div
-						v-if="(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster"
+						v-else-if="
+							(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster
+						"
 						:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 						class="container"
 						:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
@@ -916,12 +918,12 @@
 								:canbeburned="burnedCardsPerRound > 0"
 								:burned="burningCards.includes(card)"
 								:class="{ selected: selectedCards.includes(card) }"
-								@click.native="selectCard($event, card)"
-								@dblclick.native="doubleClickCard($event, card)"
+								@click="selectCard($event, card)"
+								@dblclick="doubleClickCard($event, card)"
 								@burn="burnCard($event, card)"
 								@restore="restoreCard($event, card)"
 								draggable
-								@dragstart.native="dragBoosterCard($event, card)"
+								@dragstart="dragBoosterCard($event, card)"
 								:hasenoughwildcards="hasEnoughWildcards(card)"
 								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 								:botscore="
@@ -1117,10 +1119,10 @@
 									:language="language"
 									:canbeburned="false"
 									:class="{ selected: selectedCards.includes(card) }"
-									@click.native="selectCard($event, card)"
-									@dblclick.native="doubleClickCard($event, card)"
+									@click="selectCard($event, card)"
+									@dblclick="doubleClickCard($event, card)"
 									draggable
-									@dragstart.native="dragBoosterCard($event, card)"
+									@dragstart="dragBoosterCard($event, card)"
 									:hasenoughwildcards="hasEnoughWildcards(card)"
 									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 								></booster-card>
@@ -1272,8 +1274,8 @@
 								@cardPoolChange="onDeckChange"
 								ref="deckDisplay"
 								group="deck"
-								@dragover.native="allowBoosterCardDrop($event)"
-								@drop.native="dropBoosterCard($event)"
+								@dragover="allowBoosterCardDrop($event)"
+								@drop="dropBoosterCard($event)"
 								:cardConditionalClasses="cardConditionalClasses"
 							>
 								<template v-slot:title>
@@ -1311,10 +1313,10 @@
 									<land-control
 										v-if="draftingState === DraftState.Brewing"
 										:lands="lands"
-										:autoland.sync="autoLand"
-										:targetDeckSize.sync="targetDeckSize"
-										:sideboardBasics.sync="sideboardBasics"
-										:preferredBasics.sync="preferredBasics"
+										:v-model:autoland="autoLand"
+										:v-model:targetDeckSize="targetDeckSize"
+										:v-model:sideboardBasics="sideboardBasics"
+										:v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
 										@update:lands="(c, n) => (lands[c] = n)"
@@ -1479,8 +1481,8 @@
 							@cardPoolChange="onSideChange"
 							ref="sideboardDisplay"
 							group="deck"
-							@dragover.native="allowBoosterCardDrop($event)"
-							@drop.native="dropBoosterCard($event, { toSideboard: true })"
+							@dragover="allowBoosterCardDrop($event)"
+							@drop="dropBoosterCard($event, { toSideboard: true })"
 							:cardConditionalClasses="cardConditionalClasses"
 						>
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>

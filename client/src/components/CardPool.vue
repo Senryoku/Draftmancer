@@ -149,7 +149,7 @@
 						:language="language"
 						@click="click($event, card)"
 						@dblclick="doubleClick($event, card)"
-						@dragstart.native="dragStart($event, card)"
+						@dragstart="dragStart($event, card)"
 						:conditionalClasses="cardConditionalClasses"
 					></card>
 				</draggable>
