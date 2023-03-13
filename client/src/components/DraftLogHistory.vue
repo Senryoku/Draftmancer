@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
 import Dropdown from "./Dropdown.vue";
@@ -233,11 +233,7 @@ export default defineComponent({
 					if (json.users) {
 						this.draftLogs.push(json);
 						this.expandedLogs = {};
-						Vue.set(
-							this.expandedLogs,
-							this.orderedLogs.findIndex((e) => e === json),
-							!this.expandedLogs[json]
-						);
+						this.expandedLogs[this.orderedLogs.findIndex((e) => e === json)] = !this.expandedLogs[json];
 						this.$emit("storelogs");
 					} else displayError("Missing required data.");
 				} catch (e) {
@@ -247,7 +243,7 @@ export default defineComponent({
 			reader.readAsText(file);
 		},
 		toggle(idx: number) {
-			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
+			this.expandedLogs[idx] = !this.expandedLogs[idx];
 		},
 		printableType(draftLog: DraftLog) {
 			let r = draftLog.type ? draftLog.type : "Draft";
