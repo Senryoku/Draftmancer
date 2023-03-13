@@ -71,6 +71,6 @@ describe("Winston Draft", function () {
 			done = (await ownerPromise) && (await otherPromise);
 		}
 
-		browsers.map((b) => b.close());
+		await Promise.all(browsers.map((b) => b.close()));
 	});
 });

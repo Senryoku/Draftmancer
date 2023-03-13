@@ -133,7 +133,7 @@ export default defineComponent({
 	},
 	methods: {
 		update(newVal: SetCode[]) {
-			this.$emit("input", newVal);
+			this.$emit("update:modelValue", newVal);
 		},
 		addAll() {
 			this.update([...constants.PrimarySets]);
