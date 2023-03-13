@@ -8,9 +8,17 @@
 	>
 		<template v-slot:handle>
 			<span v-if="Object.values(lands).every((n) => n === 0)"> No basic land added. </span>
-			<span v-for="c in displayedColors" :key="c" @click="add(c)" @contextmenu.prevent="rem(c)" class="clickable">
-				<img :src="`img/mana/${c}.svg`" class="mana-icon" />
-				{{ lands[c] }}
+			<span v-else style="display: flex; gap: 0.5em; justify-content: center">
+				<span
+					v-for="c in displayedColors"
+					:key="c"
+					@click="add(c)"
+					@contextmenu.prevent="rem(c)"
+					class="clickable"
+				>
+					<img :src="`img/mana/${c}.svg`" class="mana-icon" />
+					{{ lands[c] }}
+				</span>
 			</span>
 		</template>
 		<template v-slot:dropdown>
