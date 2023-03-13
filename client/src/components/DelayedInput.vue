@@ -3,7 +3,7 @@
 		<input
 			@change="update"
 			@input="modified"
-			:value="value"
+			:value="modelValue"
 			:type="$attrs.type"
 			:placeholder="$attrs.placeholder"
 			:maxlength="$attrs.maxlength"
@@ -18,8 +18,9 @@ import { defineComponent, PropType } from "vue";
 
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 export default defineComponent({
+	compatConfig: { COMPONENT_V_MODEL: false }, // FIXME: Remove when we're out of compatibility mode.
 	props: {
-		value: { required: true },
+		modelValue: { required: true },
 		inputstyle: { type: String },
 		delay: { type: Number, default: 0 },
 		validate: { type: Function as PropType<(val: string) => string> },
