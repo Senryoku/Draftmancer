@@ -45,7 +45,7 @@ export default defineComponent({
 		(document.activeElement as HTMLElement).blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		document.removeEventListener("keydown", this.shortcuts);
 	},
 });

@@ -135,7 +135,7 @@ export default {
 
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		this.clearPlayerSelectEvents();
 
 		document.removeEventListener("keydown", this.shortcuts);

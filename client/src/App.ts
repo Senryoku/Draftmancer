@@ -1599,7 +1599,7 @@ export default defineComponent({
 			const DialogClass = Vue.extend(RotisserieDraftDialog);
 			let instance = new DialogClass({
 				propsData: { defaultBoostersPerPlayer: this.boostersPerPlayer },
-				beforeDestroy() {
+				beforeUnmount() {
 					instance.$el.parentNode?.removeChild(instance.$el);
 				},
 			});
@@ -2372,7 +2372,7 @@ export default defineComponent({
 			const DialogClass = Vue.extend(SealedDialog);
 			let instance = new DialogClass({
 				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
-				beforeDestroy() {
+				beforeUnmount() {
 					instance.$el.parentNode?.removeChild(instance.$el);
 				},
 			});
