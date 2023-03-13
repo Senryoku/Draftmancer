@@ -2099,10 +2099,10 @@
         "cardCount": 389,
         "isPrimary": true,
         "icon": "img/sets/j21.svg",
-        "commonCount": 192,
+        "commonCount": 191,
         "mythicCount": 13,
         "rareCount": 59,
-        "uncommonCount": 125
+        "uncommonCount": 126
     },
     "j22": {
         "code": "j22",
@@ -4875,8 +4875,8 @@
         "cardCount": 173,
         "isPrimary": false,
         "icon": "img/sets/s99.svg",
-        "commonCount": 83,
-        "rareCount": 35,
+        "commonCount": 82,
+        "rareCount": 36,
         "uncommonCount": 55
     },
     "scd": {
@@ -4950,12 +4950,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 865,
+        "cardCount": 869,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
-        "mythicCount": 146,
-        "rareCount": 654,
+        "mythicCount": 149,
+        "rareCount": 655,
         "uncommonCount": 20
     },
     "slp": {
