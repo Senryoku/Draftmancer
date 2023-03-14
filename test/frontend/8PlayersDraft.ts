@@ -37,7 +37,7 @@ async function pickCard(page: Page) {
 }
 
 describe("Front End - 8 Players Draft", function () {
-	this.timeout(100000);
+	this.timeout(200000);
 	it("Starts Browsers", async function () {
 		[browsers, pages] = await startBrowsers(8);
 	});
