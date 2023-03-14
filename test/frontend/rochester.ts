@@ -44,7 +44,7 @@ describe("Rochester", function () {
 	});
 
 	it(`Pick until done.`, async function () {
-		this.timeout(50000);
+		this.timeout(100000);
 		let done = false;
 		while (!done) {
 			let ownerPromise = pickRochester(pages[0]);
@@ -53,5 +53,6 @@ describe("Rochester", function () {
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });

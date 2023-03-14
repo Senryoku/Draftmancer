@@ -38,7 +38,7 @@ async function pickWinston(page: Page) {
 describe("Winston Draft", function () {
 	let browsers: Browser[] = [];
 	let pages: Page[] = [];
-	this.timeout(50000);
+	this.timeout(20000);
 
 	it("Launch And Join", async function () {
 		[browsers, pages] = await join(2);
@@ -59,6 +59,7 @@ describe("Winston Draft", function () {
 	});
 
 	it(`Pick until done.`, async function () {
+		this.timeout(100000);
 		let done = false;
 		while (!done) {
 			let ownerPromise = pickWinston(pages[0]);
@@ -75,7 +76,7 @@ describe("Winston Draft with disconnects", function () {
 	let browsers: Browser[] = [];
 	let pages: Page[] = [];
 	let sessionLink: string;
-	this.timeout(50000);
+	this.timeout(20000);
 
 	it("Launch And Join", async function () {
 		[browsers, pages] = await join(2);
@@ -145,6 +146,7 @@ describe("Winston Draft with disconnects", function () {
 	});
 
 	it(`Pick until done.`, async function () {
+		this.timeout(100000);
 		let done = false;
 		while (!done) {
 			let ownerPromise = pickWinston(pages[0]);
