@@ -564,15 +564,15 @@ export default defineComponent({
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const ComponentClass = CardComponent;
-				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
-				cardView.$mount();
+				const cardView = createApp(CardComponent, { card: c });
+				const el = document.createElement("div");
+				cardView.mount(el);
 				Alert.fire({
 					position: "center",
 					title: `You drew ${
 						this.language in c.printed_names ? c.printed_names[this.language] : c.name
 					} from the card pool!`,
-					html: cardView.$el,
+					html: el,
 					showConfirmButton: true,
 				});
 			});
