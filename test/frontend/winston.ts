@@ -12,10 +12,9 @@ async function pickWinston(page: Page) {
 	if (text === "Done drafting!") return true;
 	if (text.includes("Waiting for")) return false;
 
-	const pickXPath = "//button[contains(., 'Take Pile')]";
-	const skipXPath = "//button[contains(., 'Skip Pile')]";
-
 	const pickOrSkip = async (depth = 0) => {
+		const pickXPath = "//button[contains(., 'Take Pile')]";
+		const skipXPath = "//button[contains(., 'Skip Pile')]";
 		let pick = await page.waitForXPath(pickXPath);
 		expect(pick).to.be.not.null;
 		let skip = await page.$x(skipXPath);
@@ -39,15 +38,10 @@ async function pickWinston(page: Page) {
 describe("Winston Draft", function () {
 	let browsers: Browser[] = [];
 	let pages: Page[] = [];
-	this.timeout(100000);
+	this.timeout(50000);
 
 	it("Launch And Join", async function () {
 		[browsers, pages] = await join(2);
-	});
-
-	it(`Another Player joins the session`, async function () {
-		const clipboard = await getSessionLink(pages[0]);
-		await pages[1].goto(clipboard);
 	});
 
 	it(`Launch Winston Draft`, async function () {
@@ -55,11 +49,98 @@ describe("Winston Draft", function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
 
-		await pages[0].waitForXPath("//h2[contains(., 'Winston Draft')]", {
-			visible: true,
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+					visible: true,
+				})
+			)
+		);
+	});
+
+	it(`Pick until done.`, async function () {
+		let done = false;
+		while (!done) {
+			let ownerPromise = pickWinston(pages[0]);
+			let otherPromise = pickWinston(pages[1]);
+			done = (await ownerPromise) && (await otherPromise);
+		}
+
+		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
+	});
+});
+
+describe("Winston Draft with disconnects", function () {
+	let browsers: Browser[] = [];
+	let pages: Page[] = [];
+	let sessionLink: string;
+	this.timeout(50000);
+
+	it("Launch And Join", async function () {
+		[browsers, pages] = await join(2);
+		sessionLink = await getSessionLink(pages[0]);
+	});
+
+	it(`Launch Winston Draft`, async function () {
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
+
+		await Promise.all(
+			pages.map((page) =>
+				page.waitForXPath("//h2[contains(., 'Winston Draft')]", {
+					visible: true,
+				})
+			)
+		);
+	});
+
+	it(`Couple of picks.`, async function () {
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+	});
+
+	it("Player 0 refreshes the page", async function () {
+		await pages[0].goto("about:blank", { waitUntil: ["domcontentloaded"] });
+		await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
+		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
 		});
-		await pages[1].waitForXPath("//h2[contains(., 'Winston Draft')]", {
-			visible: true,
+	});
+
+	it(`Couple of picks.`, async function () {
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+	});
+
+	it("Player 1 refreshes the page", async function () {
+		await pages[1].reload({ waitUntil: ["domcontentloaded"] });
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
+		});
+	});
+
+	it(`Couple of picks.`, async function () {
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+		await Promise.all(pages.map((page) => pickWinston(page)));
+	});
+
+	it("Both player disconnect at the same time", async function () {
+		await pages[0].goto("about:blank", { waitUntil: ["domcontentloaded"] });
+		await pages[1].goto("about:blank", { waitUntil: ["domcontentloaded"] });
+		await new Promise((r) => setTimeout(r, 100));
+
+		await pages[0].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
+		await pages[0].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
+		});
+		await pages[1].goto(sessionLink, { waitUntil: ["domcontentloaded"] });
+		await pages[1].waitForXPath("//div[contains(., 'Reconnected')]", {
+			hidden: true,
 		});
 	});
 
@@ -72,5 +153,6 @@ describe("Winston Draft", function () {
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });

@@ -9,7 +9,8 @@ let browsers: Browser[] = [];
 let pages: Page[] = [];
 
 async function closeBrowsers() {
-	for (let i = 0; i < browsers.length; i++) browsers[i].close();
+	await Promise.all(browsers.map((b) => b.close()));
+	browsers = pages = [];
 }
 
 beforeEach(function (done) {

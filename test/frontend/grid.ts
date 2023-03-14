@@ -10,9 +10,8 @@ let browsers: Browser[];
 let pages: Page[];
 
 async function closeBrowsers() {
-	for (const browser of browsers) browser.close();
-	browsers = [];
-	pages = [];
+	await Promise.all(browsers.map((b) => b.close()));
+	browsers = pages = [];
 }
 
 beforeEach(function (done) {
@@ -31,15 +30,20 @@ async function pickCard(page: Page) {
 	);
 	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	if (text === "Done drafting!") return true;
-	if (text.includes("Advancing")) {
+	while (text.includes("Advancing")) {
 		await new Promise((r) => setTimeout(r, 10));
-		return false; // Waiting for the next pack
+		next = await page.waitForXPath(
+			"//div[contains(., 'Done drafting!')] | //span[contains(., 'your turn')] | //span[contains(., 'Advancing')]"
+		);
+		text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
 	}
+	if (text === "Done drafting!") return true;
 	let choices = [];
 	// Yuk.
 	do {
 		choices = await page.$$(`.pick-col i:not([style*="display: none"])`);
 		choices.push(...(await page.$$(`.pick-row i:not([style*="display: none"])`)));
+		await new Promise((r) => setTimeout(r, 20));
 	} while (choices.length === 0);
 	const choice = await getRandom(choices);
 	expect(choice).to.exist;
@@ -70,7 +74,7 @@ describe("Grid Draft", () => {
 		});
 
 		it("Each player picks a card", async function () {
-			this.timeout(100000);
+			this.timeout(50000);
 			const done = Array(pages.length).fill(false);
 			while (done.some((d) => !d)) {
 				let promises = [];

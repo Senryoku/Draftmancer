@@ -1027,7 +1027,8 @@
 									</div>
 								</div>
 								<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
-									{{ userByID[winstonDraftState.currentPlayer].userName }} is looking at this pile...
+									{{ userByID[winstonDraftState.currentPlayer]?.userName ?? "(Disconnected)" }} is
+									looking at this pile...
 								</div>
 							</template>
 						</div>

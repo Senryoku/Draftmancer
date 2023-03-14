@@ -91,5 +91,8 @@ describe("Front End - 8 Players Draft", function () {
 				done[i] = await promises[i];
 			}
 		}
+
+		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
