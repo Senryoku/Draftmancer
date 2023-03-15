@@ -61,5 +61,6 @@ describe("Minesweeper Draft", function () {
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });

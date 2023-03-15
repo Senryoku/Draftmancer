@@ -119,6 +119,14 @@ const defaultSettings = {
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
+type SessionUser = {
+	userID: string;
+	userName: string;
+	collection: boolean;
+	useCollection: boolean;
+	readyState: ReadyState;
+};
+
 export default defineComponent({
 	components: {
 		BoosterCard,
@@ -180,6 +188,11 @@ export default defineComponent({
 		});
 
 		return {
+			// Make these enums available in the template
+			DraftState,
+			ReadyState,
+			PassingOrder,
+
 			ready: false, // Wait for initial loading
 
 			// User Data
@@ -197,13 +210,7 @@ export default defineComponent({
 			sessionID: sessionID,
 			sessionOwner: userID as UserID,
 			sessionOwnerUsername: userName as string,
-			sessionUsers: [] as {
-				userID: string;
-				userName: string;
-				collection: boolean;
-				useCollection: boolean;
-				readyState: ReadyState;
-			}[],
+			sessionUsers: [] as SessionUser[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
 			// Session settings
 			ownerIsPlayer: true,
@@ -2929,16 +2936,7 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		DraftState() {
-			return DraftState;
-		},
-		ReadyState() {
-			return ReadyState;
-		},
-		PassingOrder() {
-			return PassingOrder;
-		},
-		gameModeName() {
+		gameModeName(): string {
 			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.rotisserieDraftState) return "Rotisserie Draft";
@@ -2961,7 +2959,7 @@ export default defineComponent({
 			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
-		winstonCanSkipPile() {
+		winstonCanSkipPile(): boolean {
 			if (!this.winstonDraftState) return false;
 			const s: WinstonDraftSyncData = this.winstonDraftState;
 			return !(
@@ -2981,7 +2979,7 @@ export default defineComponent({
 				.map((u) => u.userName)
 				.join(", ");
 		},
-		virtualPlayers(): UserData[] | typeof this.sessionUsers {
+		virtualPlayers(): UserData[] | SessionUser[] {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 
@@ -3000,7 +2998,7 @@ export default defineComponent({
 
 			return r;
 		},
-		passingOrder() {
+		passingOrder(): PassingOrder {
 			if (this.gridDraftState) {
 				if (this.sessionUsers.length === 3)
 					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
@@ -3026,7 +3024,7 @@ export default defineComponent({
 					: PassingOrder.Right
 				: PassingOrder.None;
 		},
-		currentPlayer() {
+		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
@@ -3037,35 +3035,48 @@ export default defineComponent({
 		displaySets(): SetInfo[] {
 			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
 		},
-		hasCollection() {
+		hasCollection(): boolean {
 			return !isEmpty(this.collection);
 		},
 
-		colorsInDeck() {
+		colorsInDeck(): ReturnType<typeof this.colorsInCardPool> {
 			return this.colorsInCardPool(this.deck);
 		},
-		totalLands() {
+		totalLands(): number {
 			return Object.values(this.lands).reduce((a, b) => a + b, 0);
 		},
-		basicsInDeck() {
+		basicsInDeck(): boolean {
 			return (
 				this.deck.some((c) => c.type === "Basic Land") || this.sideboard.some((c) => c.type === "Basic Land")
 			);
 		},
-		deckCreatureCount() {
+		deckCreatureCount(): number {
 			return this.deck?.filter((c) => c.type.includes("Creature")).length ?? 0;
 		},
-		deckLandCount() {
+		deckLandCount(): number {
 			return this.deck?.filter((c) => c.type.includes("Land")).length ?? 0;
 		},
-		neededWildcards() {
+		neededWildcards(): {
+			main: {
+				common: number;
+				uncommon: number;
+				rare: number;
+				mythic: number;
+			} | null;
+			side: {
+				common: number;
+				uncommon: number;
+				rare: number;
+				mythic: number;
+			} | null;
+		} | null {
 			if (!this.hasCollection) return null;
 			const main = this.countMissing(this.deck);
 			const side = this.countMissing(this.sideboard);
 			if (!main && !side) return null;
 			return { main: main, side: side };
 		},
-		deckSummary() {
+		deckSummary(): { [id: CardID]: number } {
 			const r: { [id: CardID]: number } = {};
 			for (let c of this.deck) {
 				if (!(c.id in r)) r[c.id] = 0;
@@ -3073,7 +3084,7 @@ export default defineComponent({
 			}
 			return r;
 		},
-		displayWildcardInfo() {
+		displayWildcardInfo(): boolean {
 			return (
 				this.displayCollectionStatus &&
 				this.neededWildcards &&
@@ -3081,23 +3092,23 @@ export default defineComponent({
 					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
-		displayDeckAndSideboard() {
+		displayDeckAndSideboard(): boolean {
 			return (
 				(this.drafting && this.draftingState !== DraftState.Watching) ||
 				this.draftingState === DraftState.Brewing
 			);
 		},
-		displayFixedDeck() {
+		displayFixedDeck(): boolean {
 			return this.displayDeckAndSideboard && this.fixedDeck && this.draftingState !== DraftState.Brewing;
 		},
 
-		userByID() {
-			let r: { [uid: UserID]: any } = {}; // FIXME: any
+		userByID(): { [uid: UserID]: SessionUser } {
+			let r: { [uid: UserID]: SessionUser } = {};
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
 
-		pageTitle() {
+		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
 				return `MTGADraft ${
 					this.titleNotification ? this.titleNotification.message : "- Multi-Player Draft Simulator"

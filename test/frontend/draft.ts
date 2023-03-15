@@ -306,5 +306,6 @@ describe("Front End - Multi, with disconnects", function () {
 		while (!(await pickCard(pages[1])));
 
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
