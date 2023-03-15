@@ -239,7 +239,6 @@ export async function pickCard(page: Page) {
 	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
 	await card.click();
-	while (await (await card.toElement("div")).evaluate((el) => !el.classList.contains("selected"))) await card.click();
 	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
 	return false;
 }

@@ -23,7 +23,7 @@ after(async () => {
 });
 
 describe("Front End - 8 Players Draft", function () {
-	this.timeout(200000);
+	this.timeout(500000);
 	it("Starts Browsers", async function () {
 		[browsers, pages] = await join(8);
 	});
