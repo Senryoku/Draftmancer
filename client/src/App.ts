@@ -232,7 +232,7 @@ export default defineComponent({
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
-			customCardList: {} as CustomCardList,
+			customCardList: null as CustomCardList | null,
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
@@ -1136,7 +1136,7 @@ export default defineComponent({
 			this.setRestriction = [];
 			this.drafting = false;
 			this.useCustomCardList = false;
-			this.customCardList = {};
+			this.customCardList = null;
 			this.pickedCardsPerRound = 1;
 			this.burnedCardsPerRound = 0;
 			this.discardRemainingCardsAt = 0;

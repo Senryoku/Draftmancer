@@ -233,10 +233,10 @@
 					/>
 
 					<strong>Card Pool: </strong>
-					<span v-if="useCustomCardList">
-						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
+					<span v-if="useCustomCardList && customCardList">
+						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
 						(<span style="display: inline-flex; gap: 0.3em; align-items: baseline"
-							><template v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
+							><template v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
 								<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
 									<i class="fas fa-file-alt"></i>
 								</a>
@@ -2173,8 +2173,11 @@
 											min="0"
 											max="30"
 											step="1"
-											v-model.number="boosterContent[r]"
-											@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
+											v-model.number="boosterContent[r as keyof typeof boosterContent]"
+											@change="
+												if (boosterContent[r as keyof typeof boosterContent] < 0)
+													boosterContent[r as keyof typeof boosterContent] = 0;
+											"
 										/>
 									</div>
 								</div>
@@ -2303,7 +2306,7 @@
 									step="1"
 									:delay="0.1"
 									v-model.number="boostersPerPlayer"
-									:validate="(v) => Math.max(1, Math.min(v, 25))"
+									:validate="(v:number) => Math.max(1, Math.min(v, 25))"
 								/>
 							</div>
 						</div>
@@ -2503,7 +2506,7 @@
 									<label for="custom-card-list-with-replacement">With Replacement</label>
 								</div>
 							</div>
-							<div v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
+							<div v-if="customCardList?.slots && Object.keys(customCardList?.slots).length > 0">
 								<i
 									class="fas fa-check green"
 									v-if="useCustomCardList"
@@ -2543,7 +2546,7 @@
 								onclick="document.querySelector('#card-list-input').click()"
 								@dragover="
 									$event.preventDefault();
-									$event.target.classList.add('dropzone-highlight');
+									($event.target as HTMLElement)?.classList.add('dropzone-highlight');
 								"
 								style="flex-grow: 1; height: 100%"
 							>
