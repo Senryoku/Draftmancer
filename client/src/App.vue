@@ -1290,7 +1290,8 @@
 								:language="language"
 								@cardClick="deckToSideboard"
 								:readOnly="false"
-								@cardPoolChange="onDeckChange"
+								@cardDragAdd="onDeckDragAdd"
+								@cardDragRemove="onDeckDragRemove"
 								ref="deckDisplay"
 								group="deck"
 								@dragover="allowBoosterCardDrop($event)"
@@ -1471,7 +1472,8 @@
 										group: 'deck',
 										animation: '200',
 									}"
-									@change="onCollapsedSideChange"
+									@add="onCollapsedSideDragAdd"
+									@remove="onCollapsedSideDragRemove"
 								>
 									<template #item="{ element }">
 										<card
@@ -1500,7 +1502,8 @@
 							:language="language"
 							@cardClick="sideboardToDeck"
 							:readOnly="false"
-							@cardPoolChange="onSideChange"
+							@cardDragAdd="onSideDragAdd"
+							@cardDragRemove="onSideDragRemove"
 							ref="sideboardDisplay"
 							group="deck"
 							@dragover="allowBoosterCardDrop($event)"

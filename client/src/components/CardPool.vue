@@ -105,8 +105,7 @@
 				</dropdown>
 			</div>
 		</div>
-		<!-- Dummy draggable component to handle dropping card between columns -->
-		<div class="card-pool">
+		<div class="card-pool" ref="cardcolumns">
 			<div class="empty-warning" v-if="cards.length == 0">
 				<slot name="empty">
 					<h3>This card pool is currently empty!</h3>
@@ -131,8 +130,9 @@
 					class="card-column drag-column"
 					:list="column"
 					item-key="uniqueID"
-					:options="{ group: group, animation: 200 }"
-					@change="change"
+					:options="{ group: group, animation: 200, ghostClass: 'ghost' }"
+					@add="(evt) => addToColumn(evt, column)"
+					@remove="(evt) => removeFromColumn(evt, column)"
 				>
 					<template #item="{ element }">
 						<card
@@ -169,10 +169,12 @@ export default defineComponent({
 		language: { type: String as PropType<Language>, required: true },
 		group: { type: String },
 		cardConditionalClasses: { type: Function },
+		/* This only serves as a mean to declare intentions and make sure the drag events are correctly bound when necessary. 
+		   By design this will not prevent the user to move cards within the pool. */
 		readOnly: {
 			type: Boolean,
 			default: false,
-		} /* This only serves as a mean to declare intentions and make sure the cardPoolChange event is correctly bound when necessary. By design this will not prevent the user to move cards within the pool. */,
+		},
 	},
 	data() {
 		return {
@@ -299,16 +301,60 @@ export default defineComponent({
 					}
 				}
 		},
-		change(e: SortableEvent) {
-			if (!this.readOnly && !("onCardPoolChange" in this.$attrs)) {
+		addToColumn(e: SortableEvent, column: UniqueCard[]) {
+			// Remove the previous DOM element: rendering will be handled by vue once the state is correctly updated.
+			e.item.remove();
+
+			if (!e.item.dataset.uniqueid) return console.error("Error in CardPool::addToColumn: Invalid item.", e);
+			const cardUniqueID = parseInt(e.item.dataset.uniqueid);
+
+			// Event is just a movement within the card pool.
+			if (
+				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
+				(this.$refs.cardcolumns as HTMLElement).contains(e.to)
+			) {
+				const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+				if (idx >= 0) column.splice(e.newIndex!, 0, this.cards[idx]);
+				return;
+			}
+
+			if (!this.readOnly && !("onCardDragAdd" in this.$attrs)) {
 				console.warn(
-					"CardPool: Card not declared as readOnly, but has no 'cardPoolChange' event handler. Make sure to bind the cardPoolChange event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
+					"CardPool: Not declared as readOnly, but has no 'cardDragAdd' event handler.",
+					"Make sure to bind the cardDragAdd event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
 				);
 				console.warn(e);
 			}
 
-			// Sync. source array when adding/removing cards by drag & drop
-			this.$emit("cardPoolChange", e);
+			// Parent is responsible for updating this.cards prop by reacting to this event.
+			this.$emit("cardDragAdd", cardUniqueID);
+
+			this.$nextTick(() => {
+				const idx = this.cards.findIndex((c) => c.uniqueID === cardUniqueID);
+				if (idx >= 0) column.splice(e.newIndex!, 0, this.cards[idx]);
+			});
+		},
+		removeFromColumn(e: SortableEvent, column: UniqueCard[]) {
+			column.splice(e.oldIndex!, 1);
+
+			// Event is just a movement within the card pool, don't broadcast it.
+			if (
+				(this.$refs.cardcolumns as HTMLElement).contains(e.from) &&
+				(this.$refs.cardcolumns as HTMLElement).contains(e.to)
+			)
+				return;
+
+			if (!this.readOnly && !("onCardDragRemove" in this.$attrs)) {
+				console.warn(
+					"CardPool: Not declared as readOnly, but has no 'cardDragRemove' event handler.",
+					"Make sure to bind the cardDragRemove event to handle these modifications or this will cause a desync between the prop and the displayed content, or mark the card pool as readOnly if it does not share its group with any other draggables."
+				);
+				console.warn(e);
+			}
+
+			if (!e.item.dataset.uniqueid) return console.error("Error in CardPool::removeFromColumn: Invalid item.", e);
+			const cardUniqueID = parseInt(e.item.dataset.uniqueid);
+			this.$emit("cardDragRemove", cardUniqueID);
 		},
 		addColumn() {
 			for (let row of this.rows) {
@@ -633,8 +679,8 @@ export default defineComponent({
 	box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
 }
 
-/* Hides card when dragged to the controls area */
-.no-ghost {
-	display: none;
+/* Little hack to override width of cards coming from the collapsed sideboard */
+:deep(.ghost) {
+	width: 100%;
 }
 </style>

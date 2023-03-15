@@ -3,6 +3,7 @@
 		:class="classes"
 		:data-arena-id="card.id"
 		:data-cmc="card.cmc"
+		:data-uniqueid="card.uniqueID"
 		:key="`card-${card.uniqueID}`"
 		@contextmenu="toggleZoom"
 		@mouseleave="mouseLeave"

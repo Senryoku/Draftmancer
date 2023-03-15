@@ -54,6 +54,7 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { createApp } from "vue";
+import { SortableEvent } from "sortablejs";
 const img = new Image();
 img.src = CardBack;
 
@@ -2616,54 +2617,67 @@ export default defineComponent({
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
 				this.deck.splice(idx, 1);
+				this.$refs.deckDisplay?.remCard(c);
 				this.addToSideboard(c);
+				// Card DOM element will move without emiting a mouse leave event,
+				// make sure to close the card popup.
+				this.emitter.emit("closecardpopup");
 				this.socket.emit("moveCard", c.uniqueID, "side");
-			} else return;
-			this.$refs.deckDisplay?.remCard(c);
-			// Card DOM element will move without emiting a mouse leave event,
-			// make sure to close the card popup.
-			this.emitter.emit("closecardpopup");
+			}
 		},
 		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
 				this.sideboard.splice(idx, 1);
+				this.$refs.sideboardDisplay?.remCard(c);
 				this.addToDeck(c);
+				this.emitter.emit("closecardpopup");
 				this.socket.emit("moveCard", c.uniqueID, "main");
-			} else return;
-			this.$refs.sideboardDisplay?.remCard(c);
-			this.emitter.emit("closecardpopup");
-		},
-		onDeckChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			// For movements between to columns of the pool, two events are emitted:
-			// One for removal from the source column and one for addition into the destination.
-			// We're emiting the event for server sync. only on addition, if this a movement within the pool,
-			// the card won't be found on the other pool and nothing will happen.
-			if (e.removed)
-				this.deck.splice(
-					this.deck.findIndex((c) => c === e.removed.element),
-					1
-				);
-			if (e.added) {
-				this.deck.push(e.added.element);
-				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
 			}
 		},
-		onSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			if (e.removed)
-				this.sideboard.splice(
-					this.sideboard.findIndex((c) => c === e.removed.element),
-					1
-				);
-			if (e.added) {
-				this.sideboard.push(e.added.element);
-				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
+		// Drag & Drop movements between deck and sideboard
+		onDeckDragAdd(uniqueID: UniqueCardID) {
+			const idx = this.sideboard.findIndex((c) => c.uniqueID === uniqueID);
+			if (idx >= 0) {
+				const card = this.sideboard[idx];
+				this.deck.push(card);
+				this.socket.emit("moveCard", card.uniqueID, "main");
 			}
 		},
-		onCollapsedSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			this.$refs.sideboardDisplay?.sync(); /* Sync sideboard card-pool */
-			if (e.added) this.socket.emit("moveCard", e.added.element.uniqueID, "side");
+		onDeckDragRemove(uniqueID: UniqueCardID) {
+			this.deck.splice(
+				this.deck.findIndex((c) => c.uniqueID === uniqueID),
+				1
+			);
+		},
+		onSideDragAdd(uniqueID: UniqueCardID) {
+			const idx = this.deck.findIndex((c) => c.uniqueID === uniqueID);
+			if (idx >= 0) {
+				const card = this.deck[idx];
+				this.sideboard.push(card);
+				this.socket.emit("moveCard", card.uniqueID, "side");
+			}
+		},
+		onSideDragRemove(uniqueID: UniqueCardID) {
+			this.sideboard.splice(
+				this.sideboard.findIndex((c) => c.uniqueID === uniqueID),
+				1
+			);
+		},
+		onCollapsedSideDragAdd(e: SortableEvent) {
+			e.item.remove();
+			const idx = this.deck.findIndex((c) => c.uniqueID === parseInt(e.item.dataset["uniqueid"]!));
+			if (idx >= 0) {
+				const card = this.deck[idx];
+				this.sideboard.splice(e.newIndex!, 0, card);
+				this.socket.emit("moveCard", card.uniqueID, "side");
+				this.$refs.sideboardDisplay?.sync();
+			}
+		},
+		onCollapsedSideDragRemove(e: SortableEvent) {
+			this.sideboard.splice(e.oldIndex!, 1);
+			this.$refs.sideboardDisplay?.sync();
 		},
 		clearDeck() {
 			this.deck = [];
