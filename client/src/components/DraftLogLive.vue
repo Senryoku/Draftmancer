@@ -103,19 +103,19 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType } from "vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import Card from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 import { Sortable } from "sortablejs-vue3";
-import { PropType } from "vue";
 import { Language } from "../../../src/Types";
 import { DraftLog, DraftPick } from "../../../src/DraftLog";
 import { pick } from "random-js";
 import { CardID, UniqueCard } from "../../../src/CardTypes";
 import { UserID } from "../../../src/IDTypes";
 
-export default {
+export default defineComponent({
 	name: "DraftLogLive",
 	components: { DraftLogPick, Card, CardPool, ScaleSlider, Sortable },
 	props: {
@@ -298,7 +298,7 @@ export default {
 			this.pick = Math.min(this.pick, this.picksPerPack[newVal].length - 1); // Make sure pick is still valid.
 		},
 	},
-};
+});
 </script>
 
 <style scoped>
