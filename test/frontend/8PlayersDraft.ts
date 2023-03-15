@@ -3,7 +3,7 @@ import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, join } from "./src/common.js";
+import { join, pickCard } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
@@ -21,20 +21,6 @@ afterEach(function (done) {
 after(async () => {
 	await Promise.all(browsers.map((b) => b.close()));
 });
-
-async function pickCard(page: Page) {
-	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')]");
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
-	if (text === "Done drafting!") return true;
-
-	await page.waitForSelector(".booster:not(.booster-waiting) .booster-card");
-	const cards = await page.$$(".booster-card");
-	const card = cards[Math.floor(Math.random() * cards.length)];
-	expect(card).to.exist;
-	await card.click();
-	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
-	return false;
-}
 
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(200000);
@@ -61,7 +47,6 @@ describe("Front End - 8 Players Draft", function () {
 			);
 		}
 		await Promise.all(promises);
-		await new Promise((r) => setTimeout(r, 10000));
 	});
 
 	it("Each player picks a card", async function () {

@@ -226,3 +226,19 @@ export async function dragAndDrop(
 		waitTime
 	);
 }
+
+// Returns true if the draft ended
+export async function pickCard(page: Page) {
+	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
+	if (done.length > 0) return true;
+	const waiting = await page.$$(".booster-waiting");
+	if (waiting.length > 0) return false;
+	const cards = await page.$$(".booster:not(.booster-waiting) .booster-card");
+	if (cards.length === 0) return false;
+
+	const card = cards[Math.floor(Math.random() * cards.length)];
+	expect(card).to.exist;
+	await card.click();
+	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
+	return false;
+}
