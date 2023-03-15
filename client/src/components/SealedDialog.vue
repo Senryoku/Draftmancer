@@ -15,10 +15,12 @@
 									class="team-drag-target"
 									:list="team"
 									:item-key="(uid: UserID) => uid"
+									@add="(evt) => teamAdd(evt, team)"
+									@remove="(evt) => teamRemove(evt, team)"
 									:options="{ group: 'teams', animation: '200' }"
 								>
 									<template #item="{ element }">
-										<div class="player">
+										<div class="player" :data-userid="element">
 											{{ userById(element)?.userName }}
 										</div>
 									</template>
@@ -92,6 +94,7 @@ import { UserData } from "../../../src/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
 import { SetCode } from "../../../src/Types";
+import { SortableEvent } from "sortablejs";
 
 const props = withDefaults(
 	defineProps<{
@@ -127,6 +130,13 @@ const emit = defineEmits<{
 
 // Methods
 const userById = (uid: UserID) => users.value.find((user) => user.userID === uid);
+const teamAdd = (evt: SortableEvent, team: UserID[]) => {
+	evt.item.remove();
+	team.splice(evt.newIndex!, 0, evt.item.dataset.userid!);
+};
+const teamRemove = (evt: any, team: UserID[]) => {
+	team.splice(evt.oldIndex, 1);
+};
 const cancel = () => emit("cancel");
 const distribute = () =>
 	emit(
