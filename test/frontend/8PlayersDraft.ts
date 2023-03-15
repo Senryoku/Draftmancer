@@ -61,6 +61,7 @@ describe("Front End - 8 Players Draft", function () {
 			);
 		}
 		await Promise.all(promises);
+		await new Promise((r) => setTimeout(r, 10000));
 	});
 
 	it("Each player picks a card", async function () {
