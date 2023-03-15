@@ -146,7 +146,7 @@ export async function dragAndDrop(
 	page: Page,
 	sourceSelector: string,
 	destinationSelector: string,
-	waitTime: number = 0
+	waitTime: number = 10
 ) {
 	const sourceElement = (await page.waitForSelector(sourceSelector))!;
 	const destinationElement = (await page.waitForSelector(destinationSelector))!;
