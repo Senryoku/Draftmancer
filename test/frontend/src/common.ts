@@ -1,11 +1,13 @@
 import chai from "chai";
 import fs from "fs";
 const expect = chai.expect;
-import puppeteer, { Browser, ElementHandle, Page } from "puppeteer";
+import puppeteer, { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
 
 export const Headless = process.env.HEADLESS === "TRUE" ? true : false;
 const DebugScreenWidth = 2560;
 const DebugScreenHeight = 1440;
+
+import installMouseHelper from "./mouse-helper.js";
 
 export async function waitAndClickXpath(page: Page, xpath: string) {
 	const element = await page.waitForXPath(xpath, {
@@ -104,6 +106,9 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 				}
 				request.continue();
 			});
+		} else {
+			// Display mouse position for debugging.
+			await installMouseHelper(page);
 		}
 	}
 	return [browsers, pages];
@@ -134,4 +139,90 @@ export async function join(players: number): Promise<[Browser[], Page[]]> {
 	for (let idx = 1; idx < pages.length; ++idx) promises.push(pages[idx].goto(clipboard));
 	await Promise.all(promises);
 	return [browsers, pages];
+}
+
+// Built-in drag & drop function of puppeteer do not fire all necessary events. So, yeah.
+export async function dragAndDrop(
+	page: Page,
+	sourceSelector: string,
+	destinationSelector: string,
+	waitTime: number = 0
+) {
+	const sourceElement = (await page.waitForSelector(sourceSelector))!;
+	const destinationElement = (await page.waitForSelector(destinationSelector))!;
+
+	const sourceBox = (await sourceElement.boundingBox())!;
+	const destinationBox = (await destinationElement.boundingBox())!;
+
+	await page.evaluate(
+		async (ss: string, ds: string, sb: BoundingBox, db: BoundingBox, waitTime: number) => {
+			const sleep = (milliseconds: number) => {
+				return new Promise((resolve) => setTimeout(resolve, milliseconds));
+			};
+			const source = document.querySelector(ss)!;
+			const destination = document.querySelector(ds)!;
+
+			const sourceX = sb.x + sb.width / 2;
+			const sourceY = sb.y + sb.height / 2;
+			const destinationX = db.x + db.width / 2;
+			const destinationY = db.y + db.height / 2;
+
+			const srcEvt = {
+				bubbles: true,
+				cancelable: true,
+				screenX: sourceX,
+				screenY: sourceY,
+				clientX: sourceX,
+				clientY: sourceY,
+			};
+
+			source.dispatchEvent(new MouseEvent("mousemove", srcEvt));
+			await sleep(waitTime);
+			source.dispatchEvent(new MouseEvent("mousedown", srcEvt));
+			await sleep(waitTime);
+			const dataTransfer = new DataTransfer();
+			dataTransfer.effectAllowed = "all";
+			dataTransfer.dropEffect = "none";
+			(dataTransfer.files as any) = [];
+			source.dispatchEvent(
+				new DragEvent("dragstart", {
+					dataTransfer,
+					...srcEvt,
+				})
+			);
+
+			await sleep(waitTime);
+
+			const dstEvt = {
+				bubbles: true,
+				cancelable: true,
+				screenX: destinationX,
+				screenY: destinationY,
+				clientX: destinationX,
+				clientY: destinationY,
+			};
+
+			await sleep(waitTime);
+			destination.dispatchEvent(
+				new DragEvent("dragover", {
+					...dstEvt,
+					dataTransfer,
+				})
+			);
+			await sleep(waitTime);
+			destination.dispatchEvent(
+				new DragEvent("drop", {
+					...dstEvt,
+					dataTransfer,
+				})
+			);
+			await sleep(waitTime);
+			source.dispatchEvent(new DragEvent("dragend", dstEvt));
+		},
+		sourceSelector,
+		destinationSelector,
+		sourceBox,
+		destinationBox,
+		waitTime
+	);
 }

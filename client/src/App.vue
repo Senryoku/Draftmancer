@@ -1495,7 +1495,7 @@
 								(drafting && draftingState !== DraftState.Watching) ||
 								draftingState == DraftState.Brewing)
 						"
-						class="container"
+						class="container sideboard"
 					>
 						<card-pool
 							:cards="sideboard"

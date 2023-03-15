@@ -1,8 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickXpath, waitAndClickSelector, getSessionLink, join } from "./src/common.js";
-import { Browser, ElementHandle, Page } from "puppeteer";
+import { waitAndClickXpath, waitAndClickSelector, getSessionLink, join, dragAndDrop } from "./src/common.js";
+import { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
 
 async function clickDraft(page: Page) {
 	// Click 'Start' button
@@ -27,6 +27,14 @@ async function pickCard(page: Page) {
 	await card.click();
 	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
 	return false;
+}
+
+async function deckHasNCard(page: Page | ElementHandle<Element>, n: number) {
+	await page.waitForXPath(`//h2[contains(., 'Deck (${n}')]`, { timeout: 1000 });
+}
+
+async function sideHasNCard(page: Page | ElementHandle<Element>, n: number) {
+	await page.waitForXPath(`//h2[contains(., 'Sideboard (${n})')]`, { timeout: 1000 });
 }
 
 describe("Front End - Solo", function () {
@@ -55,13 +63,120 @@ describe("Front End - Solo", function () {
 		});
 	});
 
+	let expectedCardsInDeck = 0;
+	let expectedCardsInSideboard = 0;
+
 	it(`Owner picks a card`, async function () {
 		await pickCard(pages[0]);
+		++expectedCardsInDeck;
+	});
+
+	it(`Owner picks cards by drag drop`, async function () {
+		const deckColumns = await pages[0].$$(".deck .card-column.drag-column");
+		await deckHasNCard(pages[0], expectedCardsInDeck);
+		for (let i = 0; i < deckColumns.length; ++i) {
+			await pages[0].waitForSelector(".booster:not(.booster-waiting) .booster-card");
+			const cards = await pages[0].$$(".booster-card");
+			const card = cards[Math.floor(Math.random() * cards.length)];
+			expect(card).to.exist;
+			await dragAndDrop(pages[0], `.booster-card`, `.deck .card-column.drag-column:nth-child(${i + 1})`);
+			++expectedCardsInDeck;
+			await deckHasNCard(pages[0], expectedCardsInDeck);
+		}
+	});
+
+	it(`Owner picks cards by drag drop into collapsed sideboard`, async function () {
+		await pages[0].waitForSelector(".booster:not(.booster-waiting) .booster-card");
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+		await dragAndDrop(pages[0], `.booster-card`, `.collapsed-sideboard .card-column.drag-column`);
+		++expectedCardsInSideboard;
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+	});
+
+	it(`Owner picks cards by drag drop into sideboard`, async function () {
+		const maximize = await pages[0].waitForSelector(".collapsed-sideboard .controls .fa-window-maximize");
+		expect(maximize).to.exist;
+		await maximize!.click();
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+		await dragAndDrop(pages[0], `.booster-card`, `.sideboard .card-column.drag-column:nth-child(1)`);
+		++expectedCardsInSideboard;
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+		await dragAndDrop(pages[0], `.booster-card`, `.sideboard .card-column.drag-column:nth-child(2)`);
+		++expectedCardsInSideboard;
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+		const minimize = await pages[0].waitForSelector(".sideboard .controls .fa-columns");
+		expect(minimize).to.exist;
+		await minimize!.click();
+	});
+
+	it(`Owner moves cards from sideboard to deck by click`, async function () {
+		const card = await pages[0].waitForSelector(`.collapsed-sideboard .card`);
+		expect(card).to.exist;
+		card!.click();
+		++expectedCardsInDeck;
+		--expectedCardsInSideboard;
+		await deckHasNCard(pages[0], expectedCardsInDeck);
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+	});
+
+	it(`Owner moves cards from deck to sideboard by click`, async function () {
+		const card = await pages[0].waitForSelector(`.deck .card-column.drag-column:nth-child(1) .card`);
+		expect(card).to.exist;
+		card!.click();
+		--expectedCardsInDeck;
+		++expectedCardsInSideboard;
+		await deckHasNCard(pages[0], expectedCardsInDeck);
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+	});
+
+	// FIXME: I don't know why the drag & drop doesn't work there.
+	it.skip(`Owner moves cards from sideboard to deck by drag & drop`, async function () {
+		await dragAndDrop(pages[0], `.collapsed-sideboard .card`, `.deck .card-column.drag-column:nth-child(1)`, 500);
+		++expectedCardsInDeck;
+		--expectedCardsInSideboard;
+		await deckHasNCard(pages[0], expectedCardsInDeck);
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
+	});
+	// FIXME: I don't know why the drag & drop doesn't work there.
+	it.skip(`Owner moves cards from deck to sideboard by drag & drop`, async function () {
+		await dragAndDrop(
+			pages[0],
+			`.deck .card-column.drag-column:nth-child(2) .card`,
+			`.collapsed-sideboard .card-column.drag-column`
+		);
+		--expectedCardsInDeck;
+		++expectedCardsInSideboard;
+		await deckHasNCard(pages[0], expectedCardsInDeck);
+		await sideHasNCard(pages[0], expectedCardsInSideboard);
 	});
 
 	it(`...Until draft if done.`, async function () {
-		while (!(await pickCard(pages[0])));
+		while (!(await pickCard(pages[0]))) {
+			++expectedCardsInDeck;
+			await deckHasNCard(pages[0], expectedCardsInDeck);
+		}
+	});
 
+	it(`Should have received a game log.`, async function () {
+		const gameLogs = (await pages[0].waitForXPath(`//button[contains(., 'Game Logs')]`)) as ElementHandle<Element>;
+		await gameLogs!.click();
+
+		const log = await pages[0].waitForSelector(".log");
+		expect(log).to.exist;
+		const logControls = await log!.waitForSelector(".log-controls");
+		expect(logControls).to.exist;
+		logControls!.click();
+		await sideHasNCard(log!, expectedCardsInSideboard);
+	});
+
+	// FIXME: For some reason the last pick isn't there while testing, but I can't replicate
+	//        this problem outside of puppeteer.
+	it.skip(`Check number of cards in deck in draft log.`, async function () {
+		const log = await pages[0].waitForSelector(".log");
+		await deckHasNCard(log!, expectedCardsInDeck);
+	});
+
+	it("Close browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 	});
 });
