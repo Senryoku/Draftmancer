@@ -32,7 +32,6 @@
 import { defineComponent } from "vue";
 import { getUrlVars } from "./helper";
 import BracketComponent from "./components/Bracket.vue";
-import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 import { SessionID } from "../../src/IDTypes";
 import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";

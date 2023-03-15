@@ -1,4 +1,4 @@
-import LZString from "./lz-string.min.js";
+import LZString from "lz-string";
 
 onmessage = function (e) {
 	switch (e.data[0]) {
