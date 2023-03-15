@@ -9,16 +9,7 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import {
-	ArenaID,
-	Card,
-	CardColor,
-	CardID,
-	DeckList,
-	PlainCollection,
-	UniqueCard,
-	UniqueCardID,
-} from "../../src/CardTypes";
+import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
 import { DraftLog } from "../../src/DraftLog";
 import { BotScores } from "../../src/Bot";
 import { WinstonDraftSyncData } from "../../src/WinstonDraft";

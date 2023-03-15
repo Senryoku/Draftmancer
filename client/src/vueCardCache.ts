@@ -1,5 +1,4 @@
-import { createApp } from "vue";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { CardID, CardColor, OracleID } from "../../src/CardTypes";
 import { ref, App } from "vue";
 
@@ -150,7 +149,7 @@ export function isScryfallCard(obj: any): obj is ScryfallCard {
 	return obj?.object === "card";
 }
 
-export type CardCacheEntry = { id: CardID; status: string } | (ScryfallCard & { status: "ready" });
+export type CardCacheEntry = { id: CardID; status: "pending" } | (ScryfallCard & { status: "ready" });
 
 export function isReady(entry: CardCacheEntry): entry is ScryfallCard & { status: "ready" } {
 	return entry?.status === "ready";
@@ -228,12 +227,8 @@ const cardCachePlugin = {
 };
 
 declare module "vue" {
-	interface Vue {
-		$cardCache: {
-			get: (cardID: CardID) => CardCacheEntry;
-			add: (card: ScryfallCard) => void;
-			request: (cardID: CardID) => Promise<AxiosResponse> | null;
-		};
+	interface ComponentCustomProperties {
+		$cardCache: typeof cardCachePlugin;
 	}
 }
 

@@ -2209,8 +2209,11 @@
 											min="1"
 											max="16"
 											step="1"
-											v-model.number="maxDuplicates[r]"
-											@change="if (maxDuplicates[r] < 1) maxDuplicates[r] = 1;"
+											v-model.number="maxDuplicates[r as keyof typeof maxDuplicates]"
+											@change="
+												if (maxDuplicates![r as keyof typeof maxDuplicates] < 1)
+													maxDuplicates![r as keyof typeof maxDuplicates] = 1;
+											"
 										/>
 									</div>
 								</div>
@@ -2815,7 +2818,7 @@
 	</div>
 </template>
 
-<script src="./App.ts" lang="ts"></script>
+<script src="./App.ts" lang="ts" />
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
