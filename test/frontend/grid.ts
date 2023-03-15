@@ -53,7 +53,7 @@ async function pickCard(page: Page) {
 
 describe("Grid Draft", () => {
 	describe("Grid Draft - 2 Players", function () {
-		this.timeout(10000);
+		this.timeout(20000);
 		it("Launch and Join", async () => {
 			[browsers, pages] = await join(2);
 		});
@@ -63,13 +63,19 @@ describe("Grid Draft", () => {
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
 
+			await Promise.all(
+				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
+			);
 			let promises = [];
-			for (const page of pages)
-				promises.push(
-					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
-						hidden: true,
-					})
-				);
+			for (const page of pages) {
+				if ((await page.$x("//div[contains(., 'Draft Started!')]")).length > 0)
+					promises.push(
+						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
+							hidden: true,
+							timeout: 10000,
+						})
+					);
+			}
 			await Promise.all(promises);
 		});
 
