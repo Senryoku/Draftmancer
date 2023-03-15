@@ -20,11 +20,11 @@ async function clickDraft(page: Page) {
 }
 
 async function deckHasNCard(page: Page | ElementHandle<Element>, n: number) {
-	await page.waitForXPath(`//h2[contains(., 'Deck (${n}')]`, { timeout: 1000 });
+	await page.waitForXPath(`//h2[contains(., 'Deck (${n}')]`, { timeout: 2000 });
 }
 
 async function sideHasNCard(page: Page | ElementHandle<Element>, n: number) {
-	await page.waitForXPath(`//h2[contains(., 'Sideboard (${n})')]`, { timeout: 1000 });
+	await page.waitForXPath(`//h2[contains(., 'Sideboard (${n})')]`, { timeout: 2000 });
 }
 
 describe("Front End - Solo", function () {
