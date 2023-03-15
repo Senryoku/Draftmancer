@@ -60,8 +60,11 @@ describe("Grid Draft", () => {
 
 		it(`Launch Draft`, async () => {
 			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
+			console.error("Hovered");
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
+			console.error("Clicked");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
+			console.error("Confirmed");
 
 			await Promise.all(
 				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
@@ -72,7 +75,7 @@ describe("Grid Draft", () => {
 					promises.push(
 						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
 							hidden: true,
-							timeout: 10000,
+							timeout: 1000,
 						})
 					);
 			}
