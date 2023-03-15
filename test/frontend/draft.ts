@@ -1,7 +1,14 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickXpath, waitAndClickSelector, getSessionLink, join, dragAndDrop } from "./src/common.js";
+import {
+	waitAndClickXpath,
+	waitAndClickSelector,
+	getSessionLink,
+	join,
+	dragAndDrop,
+	dismissToast,
+} from "./src/common.js";
 import { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
 
 async function clickDraft(page: Page) {
@@ -155,11 +162,13 @@ describe("Front End - Solo", function () {
 			++expectedCardsInDeck;
 			await deckHasNCard(pages[0], expectedCardsInDeck);
 		}
+		await dismissToast(pages[0]);
 	});
 
 	it(`Should have received a game log.`, async function () {
 		const gameLogs = (await pages[0].waitForXPath(`//button[contains(., 'Game Logs')]`)) as ElementHandle<Element>;
-		await gameLogs!.click();
+		expect(gameLogs).to.exist;
+		await gameLogs.click();
 
 		const log = await pages[0].waitForSelector(".log");
 		expect(log).to.exist;
