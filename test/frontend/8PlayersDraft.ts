@@ -3,7 +3,7 @@ import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { waitAndClickSelector, startBrowsers, getSessionLink } from "./src/common.js";
+import { waitAndClickSelector, join } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
@@ -39,19 +39,7 @@ async function pickCard(page: Page) {
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(200000);
 	it("Starts Browsers", async function () {
-		[browsers, pages] = await startBrowsers(8);
-	});
-
-	it("Owner joins", async function () {
-		await pages[0].goto(`http://localhost:${process.env.PORT}`);
-	});
-
-	it(`Other Players joins the session`, async function () {
-		const clipboard = await getSessionLink(pages[0]);
-
-		const promises = [];
-		for (let i = 1; i < pages.length; i++) promises.push(pages[i].goto(clipboard));
-		await Promise.all(promises);
+		[browsers, pages] = await join(8);
 	});
 
 	it(`Launch Draft`, async function () {
@@ -77,9 +65,7 @@ describe("Front End - 8 Players Draft", function () {
 
 	it("Each player picks a card", async function () {
 		let done = [];
-		for (let i = 0; i < pages.length; i++) {
-			done.push(false);
-		}
+		for (let i = 0; i < pages.length; i++) done.push(false);
 		while (done.some((d) => !d)) {
 			let promises = [];
 			for (let i = 0; i < pages.length; i++) {
@@ -87,9 +73,7 @@ describe("Front End - 8 Players Draft", function () {
 				else promises.push(pickCard(pages[i]));
 			}
 			await Promise.all(promises);
-			for (let i = 0; i < pages.length; i++) {
-				done[i] = await promises[i];
-			}
+			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
