@@ -29,7 +29,7 @@
 			<clazy-load
 				:ratio="0"
 				margin="200px"
-				:src="backImageURI"
+				:src="backImageURI!"
 				loadingClass="card-loading"
 				class="flip-back"
 				:forceLoad="!lazyLoad"
