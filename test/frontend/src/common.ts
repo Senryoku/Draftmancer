@@ -1,4 +1,5 @@
 import chai from "chai";
+import exp from "constants";
 import fs from "fs";
 const expect = chai.expect;
 import puppeteer, { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
@@ -61,6 +62,7 @@ export async function startBrowsers(count: number): Promise<[Browser[], Page[]]>
 		promises.push(
 			puppeteer.launch({
 				headless: Headless,
+				defaultViewport: { width: 1366, height: 768 },
 				args: Headless
 					? puppeteerArgs
 					: [
@@ -148,11 +150,13 @@ export async function dragAndDrop(
 	destinationSelector: string,
 	waitTime: number = 10
 ) {
-	const sourceElement = (await page.waitForSelector(sourceSelector))!;
-	const destinationElement = (await page.waitForSelector(destinationSelector))!;
+	const sourceElement = (await page.waitForSelector(sourceSelector, { visible: true }))!;
+	const destinationElement = (await page.waitForSelector(destinationSelector, { visible: true }))!;
 
-	const sourceBox = (await sourceElement.boundingBox())!;
-	const destinationBox = (await destinationElement.boundingBox())!;
+	const sourceBox = await sourceElement.boundingBox();
+	expect(sourceBox).to.exist;
+	const destinationBox = await destinationElement.boundingBox();
+	expect(destinationBox).to.exist;
 
 	await page.evaluate(
 		async (ss: string, ds: string, sb: BoundingBox, db: BoundingBox, waitTime: number) => {
@@ -221,8 +225,8 @@ export async function dragAndDrop(
 		},
 		sourceSelector,
 		destinationSelector,
-		sourceBox,
-		destinationBox,
+		sourceBox!,
+		destinationBox!,
 		waitTime
 	);
 }
