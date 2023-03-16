@@ -10,6 +10,8 @@ import {
 	dismissToast,
 	pickCard,
 	PickResult,
+	setupBrowsers,
+	pages,
 } from "./src/common.js";
 import { Browser, ElementHandle, Page } from "puppeteer";
 
@@ -30,11 +32,7 @@ async function sideHasNCard(page: Page | ElementHandle<Element>, n: number) {
 
 describe("Front End - Solo", function () {
 	this.timeout(100000);
-	let browsers: Browser[];
-	let pages: Page[];
-	it("Owner joins", async function () {
-		[browsers, pages] = await join(1);
-	});
+	setupBrowsers(1);
 
 	it(`Launch Draft with Bots`, async function () {
 		await clickDraft(pages[0]);
@@ -172,21 +170,11 @@ describe("Front End - Solo", function () {
 		const log = await pages[0].waitForSelector(".log");
 		await deckHasNCard(log!, expectedCardsInDeck);
 	});
-
-	it("Close browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
-	});
 });
 
 describe("Front End - Multi", function () {
 	this.timeout(100000);
-
-	let browsers: Browser[];
-	let pages: Page[];
-	it("Launch and Join", async function () {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it(`Launch Draft`, async function () {
 		await clickDraft(pages[0]);
@@ -212,20 +200,11 @@ describe("Front End - Multi", function () {
 			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
 	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
-	});
 });
 
 describe("Front End - Multi, with bots", function () {
 	this.timeout(100000);
-	let browsers: Browser[];
-	let pages: Page[];
-	it("Launch and Join", async function () {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it("Owner sets the bot count to 6", async function () {
 		await pages[0].focus("#bots");
@@ -257,20 +236,11 @@ describe("Front End - Multi, with bots", function () {
 			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
 	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
-	});
 });
 
 describe("Front End - Multi, with Spectator", function () {
 	this.timeout(100000);
-	let browsers: Browser[];
-	let pages: Page[];
-	it("Launch and Join", async function () {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it(`Select Spectator mode and adds a bot`, async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
@@ -301,24 +271,15 @@ describe("Front End - Multi, with Spectator", function () {
 	it("Active player picks cards until the end of the draft.", async function () {
 		while ((await pickCard(pages[1])) !== PickResult.Done);
 	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
-	});
 });
 
 describe("Front End - Multi, with disconnects", function () {
 	this.timeout(100000);
 	let sessionLink: string;
-	let browsers: Browser[];
-	let pages: Page[];
-	it("Launch and Join", async function () {
-		[browsers, pages] = await join(2);
-		sessionLink = await getSessionLink(pages[0]);
-	});
+	setupBrowsers(2);
 
 	it("Owner joins and set the bot count to 6", async function () {
+		sessionLink = await getSessionLink(pages[0]);
 		await pages[0].focus("#bots");
 		await pages[0].keyboard.type("6");
 		await pages[0].keyboard.press("Enter");
@@ -426,10 +387,5 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("New owner finished the draft alone.", async function () {
 		while ((await pickCard(pages[1])) !== PickResult.Done);
-	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
 	});
 });

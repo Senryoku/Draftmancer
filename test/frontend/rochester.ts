@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickXpath, waitAndClickSelector, join } from "./src/common.js";
+import { waitAndClickXpath, waitAndClickSelector, pages, setupBrowsers } from "./src/common.js";
 import { Browser, Page } from "puppeteer";
 
 async function pickRochester(page: Page) {
@@ -22,12 +22,8 @@ async function pickRochester(page: Page) {
 }
 
 describe("Rochester", function () {
-	let browsers: Browser[];
-	let pages: Page[];
 	this.timeout(5000);
-	it("Launch and Join", async () => {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it(`Launch Draft`, async function () {
 		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -51,10 +47,5 @@ describe("Rochester", function () {
 			let otherPromise = pickRochester(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
 	});
 });

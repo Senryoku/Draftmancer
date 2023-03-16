@@ -244,6 +244,24 @@ export async function dragAndDrop(
 	);
 }
 
+export let browsers: Browser[] = [];
+export let pages: Page[] = [];
+
+export function setupBrowsers(playerCount: number) {
+	before("Owner joins", async function () {
+		if (browsers.length > 0 || pages.length > 0) throw new Error("Already setup");
+		disableLogs();
+		[browsers, pages] = await join(playerCount);
+		enableLogs(false);
+	});
+	after("Close browsers", async function () {
+		disableLogs();
+		await Promise.all(browsers.map((b) => b.close()));
+		enableLogs(false);
+		browsers = pages = [];
+	});
+}
+
 export enum PickResult {
 	Picked = "picked",
 	Waiting = "waiting",

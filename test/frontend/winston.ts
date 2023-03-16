@@ -1,8 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getSessionLink, join, waitAndClickXpath } from "./src/common.js";
-import { Browser, ElementHandle, Page } from "puppeteer";
+import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { ElementHandle, Page } from "puppeteer";
 
 async function pickWinston(page: Page) {
 	let next = await page.waitForXPath(
@@ -36,13 +36,8 @@ async function pickWinston(page: Page) {
 }
 
 describe("Winston Draft", function () {
-	let browsers: Browser[] = [];
-	let pages: Page[] = [];
 	this.timeout(20000);
-
-	it("Launch And Join", async function () {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it(`Launch Winston Draft`, async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
@@ -67,25 +62,15 @@ describe("Winston Draft", function () {
 			done = (await ownerPromise) && (await otherPromise);
 		}
 	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
-	});
 });
 
 describe("Winston Draft with disconnects", function () {
-	let browsers: Browser[] = [];
-	let pages: Page[] = [];
 	let sessionLink: string;
 	this.timeout(20000);
-
-	it("Launch And Join", async function () {
-		[browsers, pages] = await join(2);
-		sessionLink = await getSessionLink(pages[0]);
-	});
+	setupBrowsers(2);
 
 	it(`Launch Winston Draft`, async function () {
+		sessionLink = await getSessionLink(pages[0]);
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
@@ -155,10 +140,5 @@ describe("Winston Draft with disconnects", function () {
 			let otherPromise = pickWinston(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
 	});
 });

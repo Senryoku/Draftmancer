@@ -1,16 +1,11 @@
-import { Browser, ElementHandle, Page } from "puppeteer";
+import { ElementHandle } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { join, pickCard, PickResult } from "./src/common.js";
-
-let browsers: Browser[] = [];
-let pages: Page[] = [];
+import { pickCard, PickResult, setupBrowsers, pages } from "./src/common.js";
 
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(200000);
-	it("Starts Browsers", async function () {
-		[browsers, pages] = await join(8);
-	});
+	setupBrowsers(8);
 
 	it(`Launch Draft`, async function () {
 		const [button] = (await pages[0].$x("//button[contains(., 'Start')]")) as ElementHandle<Element>[];
@@ -34,6 +29,16 @@ describe("Front End - 8 Players Draft", function () {
 	});
 
 	it("Each player picks a card", async function () {
+		await Promise.all(
+			pages.map((page) =>
+				(async () => {
+					while ((await pickCard(page)) !== PickResult.Picked);
+				})()
+			)
+		);
+	});
+
+	it("...and continues until the draft is done.", async function () {
 		let done = [];
 		for (let i = 0; i < pages.length; i++) done.push(false);
 		while (done.some((d) => !d)) {
@@ -51,10 +56,5 @@ describe("Front End - 8 Players Draft", function () {
 			await Promise.all(promises);
 			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
 	});
 });

@@ -1,11 +1,8 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { dismissToast, join, waitAndClickXpath } from "./src/common.js";
-import { Browser, Page } from "puppeteer";
-
-let pages: Page[];
-let browsers: Browser[];
+import { dismissToast, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { Page } from "puppeteer";
 
 async function pickMinesweeper(page: Page) {
 	let next = await page.waitForXPath(
@@ -25,9 +22,7 @@ async function pickMinesweeper(page: Page) {
 
 describe("Minesweeper Draft", function () {
 	this.timeout(5000);
-	it("Launch and Join", async function () {
-		[browsers, pages] = await join(2);
-	});
+	setupBrowsers(2);
 
 	it(`Select Cube`, async function () {
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Settings')]");
@@ -59,10 +54,5 @@ describe("Minesweeper Draft", function () {
 			let otherPromise = pickMinesweeper(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await Promise.all(browsers.map((b) => b.close()));
-		browsers = pages = [];
 	});
 });

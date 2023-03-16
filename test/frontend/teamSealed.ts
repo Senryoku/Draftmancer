@@ -1,15 +1,7 @@
-import { Browser, Page } from "puppeteer";
+import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { join, waitAndClickXpath } from "./src/common.js";
-
-let browsers: Browser[] = [];
-let pages: Page[] = [];
-
-async function closeBrowsers() {
-	await Promise.all(browsers.map((b) => b.close()));
-	browsers = pages = [];
-}
+import { pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 
 async function pickCard(page: Page, random = false) {
 	let next = await page.waitForXPath("//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]");
@@ -32,9 +24,7 @@ async function pickCard(page: Page, random = false) {
 
 describe("Front End - Team Sealed", function () {
 	this.timeout(100000);
-	it("Starts Browsers", async function () {
-		[browsers, pages] = await join(6);
-	});
+	setupBrowsers(6);
 
 	it(`Launch Draft`, async function () {
 		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -105,9 +95,5 @@ describe("Front End - Team Sealed", function () {
 			);
 		}
 		await Promise.all(promises);
-	});
-
-	it("Close Browsers", async function () {
-		await closeBrowsers();
 	});
 });

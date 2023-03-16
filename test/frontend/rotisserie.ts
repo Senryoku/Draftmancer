@@ -1,15 +1,7 @@
-import { Browser, Page } from "puppeteer";
+import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickSelector, waitAndClickXpath, join } from "./src/common.js";
-
-let browsers: Browser[];
-let pages: Page[];
-
-async function closeBrowsers() {
-	await Promise.all(browsers.map((b) => b.close()));
-	browsers = pages = [];
-}
+import { waitAndClickSelector, waitAndClickXpath, join, setupBrowsers, pages } from "./src/common.js";
 
 async function pickCard(page: Page) {
 	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");
@@ -26,9 +18,7 @@ async function pickCard(page: Page) {
 
 describe("Rotisserie Draft - Singleton", function () {
 	this.timeout(10000);
-	it("Starts Browsers", async function () {
-		[browsers, pages] = await join(4);
-	});
+	setupBrowsers(4);
 
 	it(`Launch Draft`, async function () {
 		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -62,17 +52,11 @@ describe("Rotisserie Draft - Singleton", function () {
 			}
 		}
 	});
-
-	it("Close Browsers", async function () {
-		await closeBrowsers();
-	});
 });
 
 describe("Rotisserie Draft - Standard", function () {
 	this.timeout(10000);
-	it("Starts Browsers", async function () {
-		[browsers, pages] = await join(6);
-	});
+	setupBrowsers(6);
 
 	it(`Launch Draft`, async function () {
 		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -106,9 +90,5 @@ describe("Rotisserie Draft - Standard", function () {
 				done[i] = await promises[i];
 			}
 		}
-	});
-
-	it("Close Browsers", async function () {
-		await closeBrowsers();
 	});
 });

@@ -1,16 +1,16 @@
 import { Browser, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickSelector, startBrowsers, waitAndClickXpath, getSessionLink, join } from "./src/common.js";
+import {
+	waitAndClickSelector,
+	startBrowsers,
+	waitAndClickXpath,
+	getSessionLink,
+	join,
+	setupBrowsers,
+	pages,
+} from "./src/common.js";
 import { getRandom } from "../../src/utils.js";
-
-let browsers: Browser[];
-let pages: Page[];
-
-async function closeBrowsers() {
-	await Promise.all(browsers.map((b) => b.close()));
-	browsers = pages = [];
-}
 
 async function pickCard(page: Page) {
 	let next = await page.waitForXPath(
@@ -42,9 +42,7 @@ async function pickCard(page: Page) {
 describe("Grid Draft", () => {
 	describe("Grid Draft - 2 Players", function () {
 		this.timeout(20000);
-		it("Launch and Join", async () => {
-			[browsers, pages] = await join(2);
-		});
+		setupBrowsers(2);
 
 		it(`Launch Draft`, async () => {
 			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -83,17 +81,11 @@ describe("Grid Draft", () => {
 				for (let i = 0; i < pages.length; i++) done[i] = done[i] || (await promises[i]);
 			}
 		});
-
-		it("Close Browsers", async () => {
-			await closeBrowsers();
-		});
 	});
 
 	describe("Grid Draft - 3 Players", function () {
 		this.timeout(10000);
-		it("Launch and Join", async () => {
-			[browsers, pages] = await join(3);
-		});
+		setupBrowsers(2);
 
 		it(`Launch Draft`, async () => {
 			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
@@ -123,10 +115,6 @@ describe("Grid Draft", () => {
 				await Promise.all(promises);
 				for (let i = 0; i < pages.length; i++) done[i] = done[i] || (await promises[i]);
 			}
-		});
-
-		it("Close Browsers", async () => {
-			await closeBrowsers();
 		});
 	});
 });
