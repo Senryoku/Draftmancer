@@ -80,8 +80,9 @@ export function enableLogs(print: boolean) {
 	console.warn = baseConsogleWarn;
 	if (print && outputbuffer.length > 0) {
 		console.log("--- Delayed Output ---------------------------------------------------------");
-		console.log(outputbuffer.slice(Math.min(0, outputbuffer.length - 20), outputbuffer.length).join("\n"));
+		console.log(outputbuffer.slice(Math.max(0, outputbuffer.length - 20), outputbuffer.length).join("\n"));
 		console.log("----------------------------------------------------- Delayed Output End ---");
+		outputbuffer = [];
 	}
 }
 
