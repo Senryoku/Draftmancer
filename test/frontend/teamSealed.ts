@@ -1,9 +1,7 @@
-import { beforeEach, afterEach } from "mocha";
-import puppeteer, { Browser, Page } from "puppeteer";
+import { Browser, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { enableLogs, disableLogs } from "../src/common.js";
-import { getSessionLink, join, startBrowsers, waitAndClickXpath } from "./src/common.js";
+import { join, waitAndClickXpath } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
@@ -12,16 +10,6 @@ async function closeBrowsers() {
 	await Promise.all(browsers.map((b) => b.close()));
 	browsers = pages = [];
 }
-
-beforeEach(function (done) {
-	disableLogs();
-	done();
-});
-
-afterEach(function (done) {
-	enableLogs(this.currentTest!.state == "failed");
-	done();
-});
 
 async function pickCard(page: Page, random = false) {
 	let next = await page.waitForXPath("//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]");

@@ -1,22 +1,10 @@
-import { beforeEach, afterEach } from "mocha";
 import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { enableLogs, disableLogs } from "../src/common.js";
 import { join, pickCard, PickResult } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
-
-beforeEach(function (done) {
-	disableLogs();
-	done();
-});
-
-afterEach(function (done) {
-	enableLogs(this.currentTest!.state == "failed");
-	done();
-});
 
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(200000);

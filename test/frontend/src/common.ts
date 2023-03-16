@@ -10,6 +10,19 @@ const DebugScreenHeight = 1440;
 
 import installMouseHelper from "./mouse-helper.js";
 
+import { beforeEach, afterEach } from "mocha";
+import { enableLogs, disableLogs } from "../../src/common.js";
+
+beforeEach(function (done) {
+	disableLogs();
+	done();
+});
+
+afterEach(function (done) {
+	enableLogs(this.currentTest!.state == "failed");
+	done();
+});
+
 export async function waitAndClickXpath(page: Page, xpath: string) {
 	const element = await page.waitForXPath(xpath, {
 		visible: true,
