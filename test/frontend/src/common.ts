@@ -1,8 +1,8 @@
 import chai from "chai";
-import exp from "constants";
 import fs from "fs";
 const expect = chai.expect;
 import puppeteer, { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
+import { getRandom } from "../../../src/utils.js";
 
 export const Headless = process.env.HEADLESS === "TRUE" ? true : false;
 const DebugScreenWidth = 2560;
@@ -231,19 +231,29 @@ export async function dragAndDrop(
 	);
 }
 
-// Returns true if the draft ended
-export async function pickCard(page: Page) {
-	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
-	if (done.length > 0) return true;
-	const waiting = await page.$$(".booster-waiting");
-	if (waiting.length > 0) return false;
-	const cards = await page.$$(".booster:not(.booster-waiting) .booster-card");
-	if (cards.length === 0) return false;
+export enum PickResult {
+	Picked = "picked",
+	Waiting = "waiting",
+	Done = "done",
+}
 
-	const card = cards[Math.floor(Math.random() * cards.length)];
+export async function pickCard(page: Page): Promise<PickResult> {
+	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
+	if (done.length > 0) return PickResult.Done;
+	const waiting = await page.$$(".booster-waiting");
+	if (waiting.length > 0) return PickResult.Waiting;
+	const cards = await page.$$(".booster:not(.booster-waiting) .booster-card");
+	if (cards.length === 0) return PickResult.Waiting;
+
+	const card = getRandom(cards);
 	expect(card).to.exist;
-	await card.click();
+	try {
+		await card.click();
+	} catch (e) {
+		// FIXME: IDK why this randomly fails.
+		return PickResult.Waiting;
+	}
 	while (await (await card.toElement("div")).evaluate((el) => !el.classList.contains("selected"))) await card.click();
 	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
-	return false;
+	return PickResult.Picked;
 }

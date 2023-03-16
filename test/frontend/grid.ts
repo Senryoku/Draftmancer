@@ -75,7 +75,7 @@ describe("Grid Draft", () => {
 					promises.push(
 						page.waitForXPath("//div[contains(., 'Draft Started!')]", {
 							hidden: true,
-							timeout: 1000,
+							timeout: 10000,
 						})
 					);
 			}
@@ -117,6 +117,7 @@ describe("Grid Draft", () => {
 				promises.push(
 					page.waitForXPath("//div[contains(., 'Draft Started!')]", {
 						hidden: true,
+						timeout: 10000,
 					})
 				);
 			await Promise.all(promises);

@@ -9,6 +9,7 @@ import {
 	dragAndDrop,
 	dismissToast,
 	pickCard,
+	PickResult,
 } from "./src/common.js";
 import { Browser, ElementHandle, Page, BoundingBox } from "puppeteer";
 
@@ -57,7 +58,7 @@ describe("Front End - Solo", function () {
 	let expectedCardsInSideboard = 0;
 
 	it(`Owner picks a card`, async function () {
-		await pickCard(pages[0]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
 		++expectedCardsInDeck;
 	});
 
@@ -141,9 +142,13 @@ describe("Front End - Solo", function () {
 	});
 
 	it(`...Until draft if done.`, async function () {
-		while (!(await pickCard(pages[0]))) {
-			++expectedCardsInDeck;
-			await deckHasNCard(pages[0], expectedCardsInDeck);
+		let r: PickResult = PickResult.Waiting;
+		while (r !== PickResult.Done) {
+			r = await pickCard(pages[0]);
+			if (r === PickResult.Picked) {
+				++expectedCardsInDeck;
+				await deckHasNCard(pages[0], expectedCardsInDeck);
+			}
 		}
 		await dismissToast(pages[0]);
 	});
@@ -203,7 +208,7 @@ describe("Front End - Multi", function () {
 		while (!done) {
 			let ownerPromise = pickCard(pages[0]);
 			let otherPromise = pickCard(pages[1]);
-			done = (await ownerPromise) && (await otherPromise);
+			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
@@ -245,7 +250,7 @@ describe("Front End - Multi, with bots", function () {
 		while (!done) {
 			const ownerPromise = pickCard(pages[0]);
 			const otherPromise = pickCard(pages[1]);
-			done = (await ownerPromise) && (await otherPromise);
+			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
 
 		await Promise.all(browsers.map((b) => b.close()));
@@ -287,7 +292,7 @@ describe("Front End - Multi, with Spectator", function () {
 	});
 
 	it("Active player picks cards until the end of the draft.", async function () {
-		while (!(await pickCard(pages[1])));
+		while ((await pickCard(pages[1])) !== PickResult.Done);
 
 		await Promise.all(browsers.map((b) => b.close()));
 	});
@@ -328,8 +333,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[1]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[1])) !== PickResult.Picked);
 	});
 
 	it("Owner refreshes the page", async function () {
@@ -340,8 +345,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[1]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[1])) !== PickResult.Picked);
 	});
 
 	it("Player refreshes the page", async function () {
@@ -352,8 +357,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[1]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[1])) !== PickResult.Picked);
 	});
 
 	it("Both players disconnect", async function () {
@@ -374,8 +379,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[1]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[1])) !== PickResult.Picked);
 	});
 
 	it("Other player disconnects, and owner replaces them with a bot.", async function () {
@@ -385,10 +390,10 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Owner picks a couple of cards", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[0]);
-		await pickCard(pages[0]);
-		await pickCard(pages[0]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
 	});
 
 	it("Player reconnects", async function () {
@@ -399,8 +404,8 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("Each player picks a card", async function () {
-		await pickCard(pages[0]);
-		await pickCard(pages[1]);
+		while ((await pickCard(pages[0])) !== PickResult.Picked);
+		while ((await pickCard(pages[1])) !== PickResult.Picked);
 	});
 
 	it("Owner disconnects, new owner replaces them with a bot.", async function () {
@@ -410,7 +415,7 @@ describe("Front End - Multi, with disconnects", function () {
 	});
 
 	it("New owner finished the draft alone.", async function () {
-		while (!(await pickCard(pages[1])));
+		while ((await pickCard(pages[1])) !== PickResult.Done);
 
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];

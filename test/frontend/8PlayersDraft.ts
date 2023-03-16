@@ -3,7 +3,7 @@ import { Browser, ElementHandle, Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
 import { enableLogs, disableLogs } from "../src/common.js";
-import { join, pickCard } from "./src/common.js";
+import { join, pickCard, PickResult } from "./src/common.js";
 
 let browsers: Browser[] = [];
 let pages: Page[] = [];
@@ -23,7 +23,7 @@ after(async () => {
 });
 
 describe("Front End - 8 Players Draft", function () {
-	this.timeout(500000);
+	this.timeout(200000);
 	it("Starts Browsers", async function () {
 		[browsers, pages] = await join(8);
 	});
@@ -55,8 +55,14 @@ describe("Front End - 8 Players Draft", function () {
 		while (done.some((d) => !d)) {
 			let promises = [];
 			for (let i = 0; i < pages.length; i++) {
-				if (done[i]) promises.push(true);
-				else promises.push(pickCard(pages[i]));
+				if (!done[i])
+					promises.push(
+						(async () => {
+							let r: PickResult = PickResult.Waiting;
+							while ((r = await pickCard(pages[i])) === PickResult.Waiting);
+							return r === PickResult.Done;
+						})()
+					);
 			}
 			await Promise.all(promises);
 			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
