@@ -18,10 +18,6 @@ afterEach(function (done) {
 	done();
 });
 
-after(async () => {
-	await Promise.all(browsers.map((b) => b.close()));
-});
-
 describe("Front End - 8 Players Draft", function () {
 	this.timeout(200000);
 	it("Starts Browsers", async function () {
@@ -67,7 +63,9 @@ describe("Front End - 8 Players Draft", function () {
 			await Promise.all(promises);
 			for (let i = 0; i < pages.length; i++) done[i] = await promises[i];
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];
 	});

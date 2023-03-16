@@ -66,7 +66,9 @@ describe("Winston Draft", function () {
 			let otherPromise = pickWinston(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];
 	});
@@ -153,7 +155,9 @@ describe("Winston Draft with disconnects", function () {
 			let otherPromise = pickWinston(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];
 	});

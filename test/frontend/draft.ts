@@ -175,6 +175,7 @@ describe("Front End - Solo", function () {
 
 	it("Close browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
 
@@ -210,8 +211,11 @@ describe("Front End - Multi", function () {
 			let otherPromise = pickCard(pages[1]);
 			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
 
@@ -252,8 +256,11 @@ describe("Front End - Multi, with bots", function () {
 			const otherPromise = pickCard(pages[1]);
 			done = (await ownerPromise) === PickResult.Done && (await otherPromise) === PickResult.Done;
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
 
@@ -293,8 +300,11 @@ describe("Front End - Multi, with Spectator", function () {
 
 	it("Active player picks cards until the end of the draft.", async function () {
 		while ((await pickCard(pages[1])) !== PickResult.Done);
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = pages = [];
 	});
 });
 
@@ -416,7 +426,9 @@ describe("Front End - Multi, with disconnects", function () {
 
 	it("New owner finished the draft alone.", async function () {
 		while ((await pickCard(pages[1])) !== PickResult.Done);
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];
 	});

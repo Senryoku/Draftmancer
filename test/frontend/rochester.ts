@@ -51,7 +51,9 @@ describe("Rochester", function () {
 			let otherPromise = pickRochester(pages[1]);
 			done = (await ownerPromise) && (await otherPromise);
 		}
+	});
 
+	it("Close Browsers", async function () {
 		await Promise.all(browsers.map((b) => b.close()));
 		browsers = pages = [];
 	});
