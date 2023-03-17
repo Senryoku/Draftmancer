@@ -30,7 +30,7 @@ export function getSetFoilRate(set: string | null) {
 
 type Targets = { [slot: string]: number };
 
-export const DefaultBoosterTargets = {
+export const DefaultBoosterTargets: { [rarity: string]: number } = {
 	common: 10,
 	uncommon: 3,
 	rare: 1,
