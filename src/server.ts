@@ -80,16 +80,16 @@ function startPublicSession(s: Session) {
 }
 
 // Prepare local custom card lists
-const ParsedCubeLists: { [name: string]: any } = {};
+const ParsedCubeLists: { [name: string]: CustomCardList } = {};
 for (const cube of Constants.CubeLists) {
 	if (cube.filename) {
-		ParsedCubeLists[cube.name] = parseCardList(fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
+		const r = parseCardList(fs.readFileSync(`./data/cubes/${cube.filename}`, "utf8"), {
 			name: cube.name,
 		});
-		if (ParsedCubeLists[cube.name].error) {
+		if (isSocketError(r)) {
 			console.error("An error occured while parsing local cube ", cube);
-			console.error(ParsedCubeLists[cube.name].error);
-		}
+			console.error(r.error);
+		} else ParsedCubeLists[cube.name] = r;
 	}
 }
 

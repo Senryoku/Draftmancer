@@ -1494,7 +1494,7 @@ for (const s of PaperBoosterData as any[]) {
 		let possibleContent = set.boosters;
 		if (!options.foil) {
 			// (Attempt to) Filter out sheets with foils if option is disabled.
-			const nonFoil = set.boosters.filter((e: any) => !Object.keys(e.sheets).some((s) => s.includes("foil")));
+			const nonFoil = set.boosters.filter((e) => !Object.keys(e.sheets).some((s) => s.includes("foil")));
 			if (nonFoil.length > 0) possibleContent = nonFoil;
 		}
 		return new PaperBoosterFactory(set, options, possibleContent);

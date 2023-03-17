@@ -13,6 +13,6 @@ export interface TurnBased extends IDraftState {
 	currentPlayer(): UserID;
 }
 
-export function instanceOfTurnBased(object: any): object is TurnBased {
+export function instanceOfTurnBased(object: IDraftState): object is TurnBased {
 	return "currentPlayer" in object;
 }
