@@ -17,7 +17,7 @@
 					id="user-name"
 					v-model="userName"
 					type="text"
-					maxlength="50"
+					:maxlength="50"
 					:delay="2"
 					style="margin-right: 0.25em"
 				/>
@@ -183,7 +183,7 @@
 							autocomplete="off"
 							id="session-id"
 							:type="hideSessionID ? 'password' : 'text'"
-							maxlength="50"
+							:maxlength="50"
 							:delay="2"
 						/>
 					</div>
@@ -1668,7 +1668,7 @@
 									v-model="description"
 									type="text"
 									placeholder="Enter a description for your session"
-									maxlength="70"
+									:maxlength="70"
 								/>
 							</div>
 
@@ -2056,7 +2056,7 @@
 									v-model="description"
 									type="text"
 									placeholder="Session public description"
-									maxlength="70"
+									:maxlength="70"
 									style="width: 90%"
 								/>
 							</div>
@@ -2304,9 +2304,9 @@
 									type="number"
 									id="boosters-per-player"
 									class="small-number-input"
-									min="1"
-									max="25"
-									step="1"
+									:min="1"
+									:max="25"
+									:step="1"
 									:delay="0.1"
 									v-model.number="boostersPerPlayer"
 									:validate="(v:number) => Math.max(1, Math.min(v, 25))"

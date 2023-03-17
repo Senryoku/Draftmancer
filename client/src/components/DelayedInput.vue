@@ -9,6 +9,7 @@
 			:maxlength="maxlength"
 			:min="min"
 			:max="max"
+			:step="step"
 		/>
 	</form>
 </template>
@@ -30,6 +31,7 @@ export default defineComponent({
 		maxlength: { type: Number },
 		min: { type: Number },
 		max: { type: Number },
+		step: { type: Number },
 	},
 	data() {
 		return {
