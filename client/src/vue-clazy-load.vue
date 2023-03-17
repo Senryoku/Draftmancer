@@ -1,6 +1,15 @@
-<script>
+<template>
+	<component is="tag" :class="classes">
+		<slot v-if="loaded || (img && img.src && img.complete)"><img :src="src" /></slot>
+		<slot name="placeholder" v-else></slot>
+	</component>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
 /**
  * Modified to test visibility on creation and avoid flickering when the image is already in cache.
+ * 15/03/2023: Translated to Typescript
  **/
 
 /*!
@@ -9,7 +18,7 @@
  * @author Matheus Grieger
  * @version 0.4.2
  */
-export default {
+export default defineComponent({
 	name: "ClazyLoad",
 	props: {
 		/**
@@ -44,7 +53,7 @@ export default {
 		 * @type {Array, Number}
 		 */
 		threshold: {
-			type: [Array, Number],
+			type: [Array, Number] as PropType<number | number[]>,
 			default() {
 				return [0, 0.5, 1];
 			},
@@ -57,7 +66,7 @@ export default {
 		ratio: {
 			type: Number,
 			default: 0.4,
-			validator(value) {
+			validator(value: number) {
 				// can't be less than 0 and greater than 1
 				return value >= 0 && value <= 1;
 			},
@@ -104,7 +113,12 @@ export default {
 		errorClass: { type: String, default: null },
 	},
 	data() {
-		return { loaded: false, img: new Image(), observer: null, errored: false };
+		return {
+			loaded: false,
+			img: new Image() as HTMLImageElement | null,
+			observer: null as IntersectionObserver | null,
+			errored: false,
+		};
 	},
 	methods: {
 		isVisible() {
@@ -133,13 +147,13 @@ export default {
 					this.observer = null; // remove observer from memory
 				};
 
-				this.img.addEventListener("load", () => {
+				this.img!.addEventListener("load", () => {
 					this.loaded = true;
 					//this.$forceUpdate();
 					this.$emit("load"); // emits 'load' event upwards
 					clear();
 				});
-				this.img.addEventListener("error", (event) => {
+				this.img!.addEventListener("error", (event) => {
 					this.errored = true;
 					// emits 'error' event upwards adds the original event as argument
 					this.$emit("error", event);
@@ -147,9 +161,9 @@ export default {
 				});
 
 				// CORS mode configuration
-				if (this.crossorigin !== null) this.img.crossOrigin = this.crossorigin;
+				if (this.crossorigin !== null) this.img!.crossOrigin = this.crossorigin;
 
-				this.img.src = this.src;
+				this.img!.src = this.src;
 			}
 		},
 
@@ -174,27 +188,11 @@ export default {
 			this.observer.observe(this.$el);
 		},
 	},
-	render(h) {
-		// class to be added to element indicating load state
-		const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
-		return h(
-			this.tag,
-			{
-				// if loading failed adds error class if exists, otherwhise adds elementClass defined above
-				class: this.errored && this.errorClass ? this.errorClass : elementClass,
-			},
-			[
-				this.loaded || (this.img && this.img.src && this.img.complete)
-					? this.$slots.default || this.$slots.image // allows for "default" slot
-					: this.$slots.placeholder,
-			]
-		);
-	},
 	mounted() {
 		// Immediatly load if visible
 		if (this.isVisible() || this.forceLoad) {
-			this.img.src = this.src;
-			this.loaded = this.img.complete; // The image may already be in cache
+			this.img!.src = this.src;
+			this.loaded = this.img!.complete; // The image may already be in cache
 			if (!this.loaded) this.load();
 			this.$forceUpdate();
 		} else {
@@ -202,5 +200,11 @@ export default {
 			this.$nextTick(this.observe);
 		}
 	},
-};
+	computed: {
+		classes() {
+			const elementClass = this.loaded ? this.loadedClass : this.loadingClass;
+			return this.errored && this.errorClass ? this.errorClass : elementClass;
+		},
+	},
+});
 </script>

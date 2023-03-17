@@ -68,20 +68,24 @@
 									<h2>Sideboard ({{ selectedPlayerCards.side.length }})</h2>
 								</div>
 								<div class="card-container">
-									<draggable
+									<Sortable
 										:key="`side_col`"
 										class="card-column drag-column"
 										:list="selectedPlayerCards.side"
-										:group="`side-${player}`"
-										:animation="200"
+										item-key="uniqueID"
+										:options="{
+											group: `side-${player}`,
+											animation: '200',
+										}"
 									>
-										<card
-											v-for="card in selectedPlayerCards.side"
-											:key="`side_card_${card.uniqueID}`"
-											:card="card"
-											:language="language"
-										></card>
-									</draggable>
+										<template #item="{ element }">
+											<card
+												:key="`side_card_${element.uniqueID}`"
+												:card="element"
+												:language="language"
+											></card>
+										</template>
+									</Sortable>
 								</div>
 							</div>
 						</div>
@@ -99,21 +103,21 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, PropType } from "vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import CardPool from "./CardPool.vue";
 import Card from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
-import draggable from "vuedraggable";
-import { PropType } from "vue";
+import { Sortable } from "sortablejs-vue3";
 import { Language } from "../../../src/Types";
 import { DraftLog, DraftPick } from "../../../src/DraftLog";
 import { pick } from "random-js";
 import { CardID, UniqueCard } from "../../../src/CardTypes";
 import { UserID } from "../../../src/IDTypes";
 
-export default {
+export default defineComponent({
 	name: "DraftLogLive",
-	components: { DraftLogPick, draggable, Card, CardPool, ScaleSlider },
+	components: { DraftLogPick, Card, CardPool, ScaleSlider, Sortable },
 	props: {
 		show: { type: Boolean, default: true },
 		draftlog: { type: Object as PropType<DraftLog>, required: true },
@@ -135,7 +139,7 @@ export default {
 
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		this.clearPlayerSelectEvents();
 
 		document.removeEventListener("keydown", this.shortcuts);
@@ -294,7 +298,7 @@ export default {
 			this.pick = Math.min(this.pick, this.picksPerPack[newVal].length - 1); // Make sure pick is still valid.
 		},
 	},
-};
+});
 </script>
 
 <style scoped>

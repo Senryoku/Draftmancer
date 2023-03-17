@@ -61,26 +61,28 @@ export function connectClient(query: any) {
 	return r;
 }
 
-let outputbuffer: string;
+let outputbuffer: string[];
 const baseConsogleLog = console.log;
 const baseConsogleDebug = console.debug;
 const baseConsogleWarn = console.warn;
 export const logReplacer = function () {
-	for (var i = 0; i < arguments.length; i++) outputbuffer += arguments[i];
-	outputbuffer += "\n";
+	let line = "";
+	for (var i = 0; i < arguments.length; i++) line += JSON.stringify(arguments[i]);
+	outputbuffer.push(line);
 };
 export function disableLogs() {
-	outputbuffer = "";
+	outputbuffer = [];
 	console.log = console.debug = console.warn = logReplacer;
 }
 export function enableLogs(print: boolean) {
 	console.log = baseConsogleLog;
 	console.debug = baseConsogleDebug;
 	console.warn = baseConsogleWarn;
-	if (print && outputbuffer != "") {
+	if (print && outputbuffer.length > 0) {
 		console.log("--- Delayed Output ---------------------------------------------------------");
-		console.log(outputbuffer);
+		console.log(outputbuffer.slice(Math.max(0, outputbuffer.length - 20), outputbuffer.length).join("\n"));
 		console.log("----------------------------------------------------- Delayed Output End ---");
+		outputbuffer = [];
 	}
 }
 

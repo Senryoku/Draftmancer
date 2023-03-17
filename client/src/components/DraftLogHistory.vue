@@ -17,7 +17,7 @@
 		</div>
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls" @click.self="toggle(idx)">
-				<span @click="toggle(idx)" class="clickable">
+				<span @click="toggle(idx)" class="clickable flex-row">
 					<i
 						v-if="!draftLog.delayed"
 						class="fa"
@@ -49,7 +49,7 @@
 						></template
 					>
 				</template>
-				<span>
+				<span class="flex-row">
 					<button class="flat" @click="toggle(idx)">
 						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
 						<template v-else> <i class="far fa-eye"></i> Review</template>
@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
 import Dropdown from "./Dropdown.vue";
@@ -233,11 +233,7 @@ export default defineComponent({
 					if (json.users) {
 						this.draftLogs.push(json);
 						this.expandedLogs = {};
-						Vue.set(
-							this.expandedLogs,
-							this.orderedLogs.findIndex((e) => e === json),
-							!this.expandedLogs[json]
-						);
+						this.expandedLogs[this.orderedLogs.findIndex((e) => e === json)] = !this.expandedLogs[json];
 						this.$emit("storelogs");
 					} else displayError("Missing required data.");
 				} catch (e) {
@@ -247,7 +243,7 @@ export default defineComponent({
 			reader.readAsText(file);
 		},
 		toggle(idx: number) {
-			Vue.set(this.expandedLogs, idx, !this.expandedLogs[idx]);
+			this.expandedLogs[idx] = !this.expandedLogs[idx];
 		},
 		printableType(draftLog: DraftLog) {
 			let r = draftLog.type ? draftLog.type : "Draft";
@@ -265,6 +261,12 @@ export default defineComponent({
 
 .draft-log-history .controls {
 	margin-bottom: 0.5em;
+}
+
+.flex-row {
+	display: flex;
+	gap: 0.3em;
+	align-items: center;
 }
 
 .log {
@@ -285,6 +287,7 @@ export default defineComponent({
 	justify-content: space-between;
 	align-items: baseline;
 	width: 100%;
+	gap: 0.2em;
 }
 
 :deep(.dropdown-container),
@@ -318,7 +321,7 @@ export default defineComponent({
 	transition: all 0.2s ease-out;
 }
 
-.scale-enter,
+.scale-enter-from,
 .scale-leave-to {
 	transform: scale(1, 0);
 	opacity: 0;

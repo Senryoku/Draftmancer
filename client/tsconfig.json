@@ -1,7 +1,7 @@
 {
 	"include": ["**/*", "../src/Types.ts", "../src/Types.ts"],
 	"compilerOptions": {
-		"allowJs": true,
+		"allowJs": false,
 		"baseUrl": ".",
 		"module": "ESNext",
 		"moduleResolution": "node",
@@ -16,6 +16,6 @@
 		"esModuleInterop": true
 	},
 	"vueCompilerOptions": {
-		"target": 2.7
+		"target": 3
 	}
 }

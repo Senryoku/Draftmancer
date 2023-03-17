@@ -11,11 +11,20 @@
 						<div class="teams">
 							<div v-for="(team, idx) in teams" :key="idx" class="team">
 								<div>Team #{{ idx + 1 }}</div>
-								<draggable class="team-drag-target" group="teams" :list="team" :animation="200">
-									<div v-for="uid in team" :key="uid" class="player">
-										{{ userById(uid)?.userName }}
-									</div>
-								</draggable>
+								<Sortable
+									class="team-drag-target"
+									:list="team"
+									:item-key="(uid: UserID) => uid"
+									@add="(evt) => teamAdd(evt, team)"
+									@remove="(evt) => teamRemove(evt, team)"
+									:options="{ group: 'teams', animation: '200' }"
+								>
+									<template #item="{ element }">
+										<div class="player" :data-userid="element">
+											{{ userById(element)?.userName }}
+										</div>
+									</template>
+								</Sortable>
 							</div>
 						</div>
 					</div>
@@ -79,12 +88,13 @@
 <script setup lang="ts">
 import { ref, watch, toRefs } from "vue";
 import Modal from "./Modal.vue";
-import Draggable from "vuedraggable";
+import { Sortable } from "sortablejs-vue3";
 import { UserID } from "../../../src/IDTypes";
 import { UserData } from "../../../src/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
 import { SetCode } from "../../../src/Types";
+import { SortableEvent } from "sortablejs";
 
 const props = withDefaults(
 	defineProps<{
@@ -120,6 +130,13 @@ const emit = defineEmits<{
 
 // Methods
 const userById = (uid: UserID) => users.value.find((user) => user.userID === uid);
+const teamAdd = (evt: SortableEvent, team: UserID[]) => {
+	evt.item.remove();
+	team.splice(evt.newIndex!, 0, evt.item.dataset.userid!);
+};
+const teamRemove = (evt: any, team: UserID[]) => {
+	team.splice(evt.oldIndex, 1);
+};
 const cancel = () => emit("cancel");
 const distribute = () =>
 	emit(
@@ -208,7 +225,7 @@ watch(boostersPerPlayer, () => {
 	overflow: hidden;
 }
 
-.expand-enter,
+.expand-enter-from,
 .expand-leave-to {
 	height: 0;
 	padding: 0;

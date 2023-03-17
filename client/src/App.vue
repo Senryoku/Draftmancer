@@ -17,7 +17,7 @@
 					id="user-name"
 					v-model="userName"
 					type="text"
-					maxlength="50"
+					:maxlength="50"
 					:delay="2"
 					style="margin-right: 0.25em"
 				/>
@@ -183,39 +183,45 @@
 							autocomplete="off"
 							id="session-id"
 							:type="hideSessionID ? 'password' : 'text'"
-							maxlength="50"
+							:maxlength="50"
 							:delay="2"
 						/>
 					</div>
-					<i
-						class="far fa-fw clickable"
-						:class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'"
-						@click="hideSessionID = !hideSessionID"
-						v-tooltip="'Show/Hide your session ID.'"
-					></i>
-					<i
-						class="fas fa-fw fa-share-square clickable"
-						v-tooltip="'Copy session link for sharing.'"
-						@click="sessionURLToClipboard"
-					></i>
-					<i
-						class="fas fa-sitemap clickable"
-						v-if="sessionOwner === userID && !bracket"
-						@click="generateBracket"
-						v-tooltip="'Generate Bracket.'"
-					></i>
-					<i
-						class="fas fa-sitemap clickable"
-						v-if="bracket"
-						@click="displayedModal = 'bracket'"
-						v-tooltip="'Display Bracket.'"
-					></i>
-					<i
-						class="fas fa-user-check clickable"
-						v-if="sessionOwner === userID"
-						@click="readyCheck"
-						v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
-					></i>
+					<div style="display: inline-flex; gap: 0.3em; align-items: center; margin-left: 0.25em">
+						<i
+							class="far fa-fw clickable"
+							:class="hideSessionID ? 'fa-eye' : 'fa-eye-slash'"
+							@click="hideSessionID = !hideSessionID"
+							v-tooltip="'Show/Hide your session ID.'"
+						></i>
+
+						<i
+							class="fas fa-fw fa-share-square clickable"
+							v-tooltip="'Copy session link for sharing.'"
+							@click="sessionURLToClipboard"
+						></i>
+
+						<i
+							class="fas fa-sitemap clickable"
+							v-if="sessionOwner === userID && !bracket"
+							@click="generateBracket"
+							v-tooltip="'Generate Bracket.'"
+						></i>
+
+						<i
+							class="fas fa-sitemap clickable"
+							v-if="bracket"
+							@click="displayedModal = 'bracket'"
+							v-tooltip="'Display Bracket.'"
+						></i>
+
+						<i
+							class="fas fa-user-check clickable"
+							v-if="sessionOwner === userID"
+							@click="readyCheck"
+							v-tooltip="'Ready Check: Ask everyone in your session if they\'re ready to play.'"
+						></i>
+					</div>
 				</span>
 				<span class="generic-container card-pool-controls">
 					<input
@@ -226,29 +232,29 @@
 						accept=".txt"
 					/>
 
-					<strong>Card Pool:</strong>
-					<span v-if="useCustomCardList">
-						{{ customCardList.name ? customCardList.name : "Custom Card List" }}
-						(
-						<template v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
-							<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
-								<i class="fas fa-file-alt"></i>
-							</a>
-						</template>
-						<template v-else>No list loaded</template>
-						<i
-							class="fas fa-file-upload clickable"
-							onclick="document.querySelector('#card-list-input-main').click()"
-							v-tooltip="'Upload a Custom Card List'"
-							v-if="sessionOwner === userID"
-						></i>
-						<i
-							class="fas fa-times clickable brightred"
-							@click="useCustomCardList = false"
-							v-tooltip="'Return to official sets.'"
-							v-if="sessionOwner === userID"
-						></i>
-						)
+					<strong>Card Pool: </strong>
+					<span v-if="useCustomCardList && customCardList">
+						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
+						(<span style="display: inline-flex; gap: 0.3em; align-items: baseline"
+							><template v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
+								<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
+									<i class="fas fa-file-alt"></i>
+								</a>
+							</template>
+							<template v-else>No list loaded</template>
+							<i
+								class="fas fa-file-upload clickable"
+								onclick="document.querySelector('#card-list-input-main').click()"
+								v-tooltip="'Upload a Custom Card List'"
+								v-if="sessionOwner === userID"
+							></i>
+							<i
+								class="fas fa-times clickable brightred"
+								@click="useCustomCardList = false"
+								v-tooltip="'Return to official sets.'"
+								v-if="sessionOwner === userID"
+							></i></span
+						>)
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
@@ -308,7 +314,8 @@
 								</template>
 							</multiselect>
 							<i
-								class="fas fa-ellipsis-h clickable"
+								class="fas fa-ellipsis-v clickable"
+								style="padding: 0.2em"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
 							></i>
@@ -534,109 +541,120 @@
 				></i>
 			</div>
 			<template v-if="!drafting">
-				<draggable
-					v-model="userOrder"
-					@change="changePlayerOrder"
-					:disabled="userID != sessionOwner || drafting"
-					:animation="200"
-					class="player-list-container"
-				>
-					<transition-group type="transition" tag="ul" class="player-list">
-						<li
-							v-for="(id, idx) in userOrder"
-							:key="id"
-							:class="{
-								teama: teamDraft && idx % 2 === 0,
-								teamb: teamDraft && idx % 2 === 1,
-								draggable: userID === sessionOwner && !drafting,
-								self: userID === id,
-								bot: userByID[id].isBot,
-							}"
-							:data-userid="id"
-						>
-							<div class="player-name" v-tooltip="userByID[id].userName">{{ userByID[id].userName }}</div>
-							<template v-if="userID == sessionOwner">
-								<i
-									class="fas fa-chevron-left clickable move-player move-player-left"
-									v-tooltip="`Move ${userByID[id].userName} to the left`"
-									@click="movePlayer(idx, -1)"
-								></i>
-								<i
-									class="fas fa-chevron-right clickable move-player move-player-right"
-									v-tooltip="`Move ${userByID[id].userName} to the right`"
-									@click="movePlayer(idx, 1)"
-								></i>
-							</template>
-							<div class="status-icons">
-								<i
-									v-if="id === sessionOwner"
-									class="fas fa-crown subtle-gold"
-									v-tooltip="`${userByID[id].userName} is the session owner.`"
-								></i>
-								<template v-if="userID === sessionOwner && id != sessionOwner">
-									<img
-										src="./assets/img/pass_ownership.svg"
-										class="clickable"
-										style="height: 18px; margin-top: -4px"
-										v-tooltip="`Give session ownership to ${userByID[id].userName}`"
-										@click="setSessionOwner(id)"
-									/>
+				<transition-group type="transition">
+					<Sortable
+						key="draggable"
+						:list="userOrder"
+						:item-key="(uid: UserID) => uid"
+						@change="changePlayerOrder"
+						:disabled="userID !== sessionOwner || drafting"
+						:animation="200"
+						class="player-list-container player-list"
+						tag="ul"
+					>
+						<template #item="{ element, index }">
+							<li
+								:key="element"
+								:class="{
+									teama: teamDraft && index % 2 === 0,
+									teamb: teamDraft && index % 2 === 1,
+									draggable: userID === sessionOwner && !drafting,
+									self: userID === index,
+									bot: userByID[element].isBot,
+								}"
+								:data-userid="element"
+							>
+								<div class="player-name" v-tooltip="userByID[element].userName">
+									{{ userByID[element].userName }}
+								</div>
+								<template v-if="userID == sessionOwner">
 									<i
-										class="fas fa-user-slash clickable red"
-										v-tooltip="`Remove ${userByID[id].userName} from the session`"
-										@click="removePlayer(id)"
+										class="fas fa-chevron-left clickable move-player move-player-left"
+										v-tooltip="`Move ${userByID[element].userName} to the left`"
+										@click="movePlayer(index, -1)"
+									></i>
+									<i
+										class="fas fa-chevron-right clickable move-player move-player-right"
+										v-tooltip="`Move ${userByID[element].userName} to the right`"
+										@click="movePlayer(index, 1)"
 									></i>
 								</template>
-								<template v-if="!useCustomCardList && !ignoreCollections">
-									<template v-if="!userByID[id].collection">
+								<div class="status-icons">
+									<i
+										v-if="element === sessionOwner"
+										class="fas fa-crown subtle-gold"
+										v-tooltip="`${userByID[element].userName} is the session owner.`"
+									></i>
+									<template v-if="userID === sessionOwner && element != sessionOwner">
+										<img
+											src="./assets/img/pass_ownership.svg"
+											class="clickable"
+											style="height: 18px; margin-top: -4px"
+											v-tooltip="`Give session ownership to ${userByID[element].userName}`"
+											@click="setSessionOwner(element)"
+										/>
 										<i
-											class="fas fa-book red"
-											v-tooltip="
-												userByID[id].userName + ' has not uploaded their collection yet.'
-											"
+											class="fas fa-user-slash clickable red"
+											v-tooltip="`Remove ${userByID[element].userName} from the session`"
+											@click="removePlayer(element)"
 										></i>
 									</template>
-									<template v-else-if="userByID[id].collection && !userByID[id].useCollection">
-										<i
-											class="fas fa-book yellow"
-											v-tooltip="
-												userByID[id].userName +
-												' has uploaded their collection, but is not using it.'
-											"
-										></i>
+									<template v-if="!useCustomCardList && !ignoreCollections">
+										<template v-if="!userByID[element].collection">
+											<i
+												class="fas fa-book red"
+												v-tooltip="
+													userByID[element].userName +
+													' has not uploaded their collection yet.'
+												"
+											></i>
+										</template>
+										<template
+											v-else-if="userByID[element].collection && !userByID[element].useCollection"
+										>
+											<i
+												class="fas fa-book yellow"
+												v-tooltip="
+													userByID[element].userName +
+													' has uploaded their collection, but is not using it.'
+												"
+											></i>
+										</template>
+										<template v-else>
+											<i
+												class="fas fa-book green"
+												v-tooltip="
+													userByID[element].userName + ' has uploaded their collection.'
+												"
+											></i>
+										</template>
 									</template>
-									<template v-else>
-										<i
-											class="fas fa-book green"
-											v-tooltip="userByID[id].userName + ' has uploaded their collection.'"
-										></i>
+									<template v-if="pendingReadyCheck">
+										<template v-if="userByID[element].readyState == ReadyState.Ready">
+											<i
+												class="fas fa-check green"
+												v-tooltip="`${userByID[element].userName} is ready!`"
+											></i>
+										</template>
+										<template v-else-if="userByID[element].readyState == ReadyState.NotReady">
+											<i
+												class="fas fa-times red"
+												v-tooltip="`${userByID[element].userName} is NOT ready!`"
+											></i>
+										</template>
+										<template v-else-if="userByID[element].readyState == ReadyState.Unknown">
+											<i
+												class="fas fa-spinner fa-spin"
+												v-tooltip="`Waiting for ${userByID[element].userName} to respond...`"
+											></i>
+										</template>
 									</template>
-								</template>
-								<template v-if="pendingReadyCheck">
-									<template v-if="userByID[id].readyState == ReadyState.Ready">
-										<i
-											class="fas fa-check green"
-											v-tooltip="`${userByID[id].userName} is ready!`"
-										></i>
-									</template>
-									<template v-else-if="userByID[id].readyState == ReadyState.NotReady">
-										<i
-											class="fas fa-times red"
-											v-tooltip="`${userByID[id].userName} is NOT ready!`"
-										></i>
-									</template>
-									<template v-else-if="userByID[id].readyState == ReadyState.Unknown">
-										<i
-											class="fas fa-spinner fa-spin"
-											v-tooltip="`Waiting for ${userByID[id].userName} to respond...`"
-										></i>
-									</template>
-								</template>
-							</div>
-							<div class="chat-bubble" :id="'chat-bubble-' + id"></div>
-						</li>
-					</transition-group>
-				</draggable>
+								</div>
+								<div class="chat-bubble" :id="'chat-bubble-' + element"></div>
+							</li>
+						</template>
+					</Sortable>
+				</transition-group>
 			</template>
 			<template v-else>
 				<div class="player-list-container">
@@ -816,7 +834,7 @@
 		<div class="main-content">
 			<!-- Draft Controls -->
 			<div v-show="drafting || draftingState === DraftState.Watching" class="generic-container">
-				<transition :name="'slide-fade-' + (boosterNumber % 2 ? 'left' : 'right')" mode="out-in">
+				<transition :name="`slide-fade-${boosterNumber % 2 ? 'left' : 'right'}`" mode="out-in">
 					<div v-if="draftingState === DraftState.Watching" key="draft-watching" class="draft-watching">
 						<div class="draft-watching-state">
 							<h1 v-if="!drafting">Draft Completed</h1>
@@ -839,7 +857,9 @@
 						</div>
 					</div>
 					<div
-						v-if="(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster"
+						v-else-if="
+							(draftingState === DraftState.Waiting || draftingState === DraftState.Picking) && booster
+						"
 						:key="`draft-picking-${boosterNumber}-${pickNumber}`"
 						class="container"
 						:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
@@ -916,12 +936,12 @@
 								:canbeburned="burnedCardsPerRound > 0"
 								:burned="burningCards.includes(card)"
 								:class="{ selected: selectedCards.includes(card) }"
-								@click.native="selectCard($event, card)"
-								@dblclick.native="doubleClickCard($event, card)"
+								@click="selectCard($event, card)"
+								@dblclick="doubleClickCard($event, card)"
 								@burn="burnCard($event, card)"
 								@restore="restoreCard($event, card)"
-								draggable
-								@dragstart.native="dragBoosterCard($event, card)"
+								:draggable="true"
+								@dragstart="dragBoosterCard($event, card)"
 								:hasenoughwildcards="hasEnoughWildcards(card)"
 								:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 								:botscore="
@@ -1007,7 +1027,8 @@
 									</div>
 								</div>
 								<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
-									{{ userByID[winstonDraftState.currentPlayer].userName }} is looking at this pile...
+									{{ userByID[winstonDraftState.currentPlayer]?.userName ?? "(Disconnected)" }} is
+									looking at this pile...
 								</div>
 							</template>
 						</div>
@@ -1117,10 +1138,10 @@
 									:language="language"
 									:canbeburned="false"
 									:class="{ selected: selectedCards.includes(card) }"
-									@click.native="selectCard($event, card)"
-									@dblclick.native="doubleClickCard($event, card)"
+									@click="selectCard($event, card)"
+									@dblclick="doubleClickCard($event, card)"
 									draggable
-									@dragstart.native="dragBoosterCard($event, card)"
+									@dragstart="dragBoosterCard($event, card)"
 									:hasenoughwildcards="hasEnoughWildcards(card)"
 									:wildcardneeded="displayCollectionStatus && wildcardCost(card)"
 								></booster-card>
@@ -1267,13 +1288,14 @@
 							<card-pool
 								:cards="deck"
 								:language="language"
-								:click="deckToSideboard"
+								@cardClick="deckToSideboard"
 								:readOnly="false"
-								@cardPoolChange="onDeckChange"
+								@cardDragAdd="onDeckDragAdd"
+								@cardDragRemove="onDeckDragRemove"
 								ref="deckDisplay"
 								group="deck"
-								@dragover.native="allowBoosterCardDrop($event)"
-								@drop.native="dropBoosterCard($event)"
+								@dragover="allowBoosterCardDrop($event)"
+								@drop="dropBoosterCard($event)"
 								:cardConditionalClasses="cardConditionalClasses"
 							>
 								<template v-slot:title>
@@ -1311,10 +1333,10 @@
 									<land-control
 										v-if="draftingState === DraftState.Brewing"
 										:lands="lands"
-										:autoland.sync="autoLand"
-										:targetDeckSize.sync="targetDeckSize"
-										:sideboardBasics.sync="sideboardBasics"
-										:preferredBasics.sync="preferredBasics"
+										v-model:autoland="autoLand"
+										v-model:targetDeckSize="targetDeckSize"
+										v-model:sideboardBasics="sideboardBasics"
+										v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
 										@update:lands="(c, n) => (lands[c] = n)"
@@ -1441,23 +1463,27 @@
 								@dragover="allowBoosterCardDrop($event)"
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
-								<draggable
+								<Sortable
 									key="collapsed-sideboard-col"
 									class="card-column drag-column"
 									:list="sideboard"
-									group="deck"
-									@change="onCollapsedSideChange"
-									:animation="200"
+									item-key="uniqueID"
+									:options="{
+										group: 'deck',
+										animation: '200',
+									}"
+									@add="onCollapsedSideDragAdd"
+									@remove="onCollapsedSideDragRemove"
 								>
-									<card
-										v-for="card in sideboard"
-										:key="`collapsed-sideboard-card-${card.uniqueID}`"
-										:card="card"
-										:language="language"
-										@click="sideboardToDeck($event, card)"
-										:cardConditionalClasses="cardConditionalClasses"
-									></card>
-								</draggable>
+									<template #item="{ element }">
+										<card
+											:card="element"
+											:language="language"
+											@click="sideboardToDeck($event, element)"
+											:cardConditionalClasses="cardConditionalClasses"
+										></card>
+									</template>
+								</Sortable>
 							</div>
 						</div>
 					</div>
@@ -1469,18 +1495,19 @@
 								(drafting && draftingState !== DraftState.Watching) ||
 								draftingState == DraftState.Brewing)
 						"
-						class="container"
+						class="container sideboard"
 					>
 						<card-pool
 							:cards="sideboard"
 							:language="language"
-							:click="sideboardToDeck"
+							@cardClick="sideboardToDeck"
 							:readOnly="false"
-							@cardPoolChange="onSideChange"
+							@cardDragAdd="onSideDragAdd"
+							@cardDragRemove="onSideDragRemove"
 							ref="sideboardDisplay"
 							group="deck"
-							@dragover.native="allowBoosterCardDrop($event)"
-							@drop.native="dropBoosterCard($event, { toSideboard: true })"
+							@dragover="allowBoosterCardDrop($event)"
+							@drop="dropBoosterCard($event, { toSideboard: true })"
 							:cardConditionalClasses="cardConditionalClasses"
 						>
 							<template v-slot:title> Sideboard ({{ sideboard.length }}) </template>
@@ -1641,7 +1668,7 @@
 									v-model="description"
 									type="text"
 									placeholder="Enter a description for your session"
-									maxlength="70"
+									:maxlength="70"
 								/>
 							</div>
 
@@ -2029,7 +2056,7 @@
 									v-model="description"
 									type="text"
 									placeholder="Session public description"
-									maxlength="70"
+									:maxlength="70"
 									style="width: 90%"
 								/>
 							</div>
@@ -2149,8 +2176,11 @@
 											min="0"
 											max="30"
 											step="1"
-											v-model.number="boosterContent[r]"
-											@change="if (boosterContent[r] < 0) boosterContent[r] = 0;"
+											v-model.number="boosterContent[r as keyof typeof boosterContent]"
+											@change="
+												if (boosterContent[r as keyof typeof boosterContent] < 0)
+													boosterContent[r as keyof typeof boosterContent] = 0;
+											"
 										/>
 									</div>
 								</div>
@@ -2185,8 +2215,11 @@
 											min="1"
 											max="16"
 											step="1"
-											v-model.number="maxDuplicates[r]"
-											@change="if (maxDuplicates[r] < 1) maxDuplicates[r] = 1;"
+											v-model.number="maxDuplicates[r as keyof typeof maxDuplicates]"
+											@change="
+												if (maxDuplicates![r as keyof typeof maxDuplicates] < 1)
+													maxDuplicates![r as keyof typeof maxDuplicates] = 1;
+											"
 										/>
 									</div>
 								</div>
@@ -2271,12 +2304,12 @@
 									type="number"
 									id="boosters-per-player"
 									class="small-number-input"
-									min="1"
-									max="25"
-									step="1"
+									:min="1"
+									:max="25"
+									:step="1"
 									:delay="0.1"
 									v-model.number="boostersPerPlayer"
-									:validate="(v) => Math.max(1, Math.min(v, 25))"
+									:validate="(v:number) => Math.max(1, Math.min(v, 25))"
 								/>
 							</div>
 						</div>
@@ -2476,7 +2509,7 @@
 									<label for="custom-card-list-with-replacement">With Replacement</label>
 								</div>
 							</div>
-							<div v-if="customCardList.slots && Object.keys(customCardList.slots).length > 0">
+							<div v-if="customCardList?.slots && Object.keys(customCardList?.slots).length > 0">
 								<i
 									class="fas fa-check green"
 									v-if="useCustomCardList"
@@ -2516,7 +2549,7 @@
 								onclick="document.querySelector('#card-list-input').click()"
 								@dragover="
 									$event.preventDefault();
-									$event.target.classList.add('dropzone-highlight');
+									($event.target as HTMLElement)?.classList.add('dropzone-highlight');
 								"
 								style="flex-grow: 1; height: 100%"
 							>
@@ -2751,7 +2784,7 @@
 				</div>
 			</template>
 		</modal>
-		<CardPopup :language="language" />
+		<CardPopup :language="language" ref="cardPopup" />
 		<footer>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<a>About</a>
@@ -2791,11 +2824,11 @@
 	</div>
 </template>
 
-<script src="./App.ts" lang="ts"></script>
+<script src="./App.ts" lang="ts" />
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
-<style src="./css/vue-multiselect.min.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style src="./css/app.css"></style>
 <style src="./css/chat.css"></style>
 

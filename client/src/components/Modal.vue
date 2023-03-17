@@ -45,7 +45,7 @@ export default defineComponent({
 		(document.activeElement as HTMLElement).blur();
 		document.addEventListener("keydown", this.shortcuts);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		document.removeEventListener("keydown", this.shortcuts);
 	},
 });
@@ -128,7 +128,7 @@ export default defineComponent({
  * these styles.
  */
 
-.modal-enter {
+.modal-enter-from {
 	opacity: 0;
 }
 
@@ -136,7 +136,7 @@ export default defineComponent({
 	opacity: 0;
 }
 
-.modal-enter .modal-container,
+.modal-enter-from .modal-container,
 .modal-leave-active .modal-container {
 	-webkit-transform: scale(1.1);
 	transform: scale(1.1);

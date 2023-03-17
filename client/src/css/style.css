@@ -77,14 +77,14 @@ label {
 .crossed:after {
 	position: absolute;
 	content: "";
-	background-color: white;
-	top: 50%;
+	background-color: #DDD;
+	top: 40%;
 	left: calc(-14px + 50%);
-	height: 3px;
+	height: 2.8px;
 	width: 28px;
-	transform: rotate(42deg);
-	box-shadow: 2px 2px #00000060;
-	border-radius: 1.5px;
+	transform: rotate(36deg);
+	box-shadow: 0 2px #333;
+	border-radius: 0.5px;
 }
 
 .draggable {

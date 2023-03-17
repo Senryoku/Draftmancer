@@ -1,20 +1,24 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import cardCachePlugin from "./vueCardCache";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
+import Emitter from "pico-emitter";
 
-Vue.config.productionTip = false;
+const emitter = new Emitter();
+declare module "vue" {
+	interface ComponentCustomProperties {
+		emitter: Emitter;
+	}
+}
 
-Vue.use(cardCachePlugin);
-Vue.use(FloatingVue, {
+const app = createApp(App);
+app.config.globalProperties.emitter = emitter;
+app.use(cardCachePlugin);
+app.use(FloatingVue, {
 	placement: "bottom-start",
 	boundariesElement: "window",
 	delay: 250,
 	distance: 8,
 });
-
-const app = new Vue({
-	render: (h) => h(App),
-});
-app.$mount("#main-vue");
+app.mount("#main-vue");

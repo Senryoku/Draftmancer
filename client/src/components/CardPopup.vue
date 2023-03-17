@@ -102,7 +102,7 @@ export default defineComponent({
 		};
 	},
 	created() {
-		this.$root.$on("togglecardpopup", (event: MouseEvent, card: Card) => {
+		this.emitter.on("togglecardpopup", (event: MouseEvent, card: Card) => {
 			if (!this.display) {
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
@@ -119,7 +119,7 @@ export default defineComponent({
 							.get(url)
 							.then((response) => {
 								if (response.status === 200 && response.data?.data?.length > 0) {
-									this.$set(this.spellbooks, cardData.name, new Set());
+									this.spellbooks[cardData.name] = new Set();
 									for (const card of response.data.data) {
 										card.status = "ready";
 										this.$cardCache.add(card);
@@ -142,7 +142,7 @@ export default defineComponent({
 				this.display = true;
 			} else this.close();
 		});
-		this.$root.$on("closecardpopup", () => {
+		this.emitter.on("closecardpopup", () => {
 			this.close();
 		});
 	},
@@ -282,16 +282,16 @@ export default defineComponent({
 	transition: all 0.15s ease;
 }
 
-.zoom-enter,
+.zoom-enter-from,
 .zoom-leave-to {
 	opacity: 0;
 }
-.zoom-enter.left,
+.zoom-enter-from.left,
 .zoom-leave-to.left {
 	left: -5vw;
 }
 
-.zoom-enter.right,
+.zoom-enter-from.right,
 .zoom-leave-to.right {
 	right: -5vw;
 }

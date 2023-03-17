@@ -1,4 +1,3 @@
-"use strict";
 import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
 import { SessionID, UserID } from "../../src/IDTypes";
 import { SetCode, IIndexable } from "../../src/Types";
@@ -28,8 +27,8 @@ import { CustomCardList } from "../../src/CustomCardList";
 import SessionsSettingsProps from "../../src/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
-import Vue, { defineComponent } from "vue";
-import draggable from "vuedraggable";
+import { toRaw, defineComponent, defineAsyncComponent } from "vue";
+import { Sortable } from "sortablejs-vue3";
 import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
@@ -54,6 +53,8 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { createApp } from "vue";
+import { SortableEvent } from "sortablejs";
 const img = new Image();
 img.src = CardBack;
 
@@ -110,37 +111,45 @@ const defaultSettings = {
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
 const initialSettings = Object.assign(defaultSettings, storedSettings);
 
+type SessionUser = {
+	userID: string;
+	userName: string;
+	collection: boolean;
+	useCollection: boolean;
+	readyState: ReadyState;
+};
+
 export default defineComponent({
 	components: {
 		BoosterCard,
-		Bracket: () => import("./components/Bracket.vue"),
+		Bracket: defineAsyncComponent(() => import("./components/Bracket.vue")),
 		Card: CardComponent,
-		CardList: () => import("./components/CardList.vue"),
+		CardList: defineAsyncComponent(() => import("./components/CardList.vue")),
 		CardPlaceholder,
 		CardPool,
 		CardPopup,
-		CardStats: () => import("./components/CardStats.vue"),
-		Collection: () => import("./components/Collection.vue"),
-		CollectionImportHelp: () => import("./components/CollectionImportHelp.vue"),
+		CardStats: defineAsyncComponent(() => import("./components/CardStats.vue")),
+		Collection: defineAsyncComponent(() => import("./components/Collection.vue")),
+		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
-		DraftLog: () => import("./components/DraftLog.vue"),
-		DraftLogHistory: () => import("./components/DraftLogHistory.vue"),
-		DraftLogLive: () => import("./components/DraftLogLive.vue"),
-		DraftLogPick: () => import("./components/DraftLogPick.vue"),
+		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
+		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
+		DraftLogLive: defineAsyncComponent(() => import("./components/DraftLogLive.vue")),
+		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
-		GridDraft: () => import("./components/GridDraft.vue"),
-		RotisserieDraft: () => import("./components/RotisserieDraft.vue"),
-		MinesweeperDraft: () => import("./components/MinesweeperDraft.vue"),
-		TeamSealed: () => import("./components/TeamSealed.vue"),
-		LandControl: () => import("./components/LandControl.vue"),
+		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
+		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
+		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
+		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
+		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		Modal,
 		Multiselect,
-		PatchNotes: () => import("./components/PatchNotes.vue"),
-		PickSummary: () => import("./components/PickSummary.vue"),
+		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
+		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		ScaleSlider,
-		SetRestriction: () => import("./components/SetRestriction.vue"),
-		draggable,
+		SetRestriction: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
+		Sortable,
 	},
 	data: () => {
 		let userID: UserID = guid();
@@ -171,6 +180,11 @@ export default defineComponent({
 		});
 
 		return {
+			// Make these enums available in the template
+			DraftState,
+			ReadyState,
+			PassingOrder,
+
 			ready: false, // Wait for initial loading
 
 			// User Data
@@ -188,13 +202,7 @@ export default defineComponent({
 			sessionID: sessionID,
 			sessionOwner: userID as UserID,
 			sessionOwnerUsername: userName as string,
-			sessionUsers: [] as {
-				userID: string;
-				userName: string;
-				collection: boolean;
-				useCollection: boolean;
-				readyState: ReadyState;
-			}[],
+			sessionUsers: [] as SessionUser[],
 			disconnectedUsers: {} as { [uid: UserID]: DisconnectedUser },
 			// Session settings
 			ownerIsPlayer: true,
@@ -225,7 +233,7 @@ export default defineComponent({
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
-			customCardList: {} as CustomCardList,
+			customCardList: null as CustomCardList | null,
 			doubleMastersMode: false,
 			pickedCardsPerRound: 1,
 			burnedCardsPerRound: 0,
@@ -555,15 +563,15 @@ export default defineComponent({
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const ComponentClass = Vue.extend(CardComponent);
-				const cardView = new ComponentClass({ parent: this, propsData: { card: c } });
-				cardView.$mount();
+				const cardView = createApp(CardComponent, { card: c });
+				const el = document.createElement("div");
+				cardView.mount(el);
 				Alert.fire({
 					position: "center",
 					title: `You drew ${
 						this.language in c.printed_names ? c.printed_names[this.language] : c.name
 					} from the card pool!`,
-					html: cardView.$el,
+					html: el,
 					showConfirmButton: true,
 				});
 			});
@@ -1022,7 +1030,7 @@ export default defineComponent({
 			this.socket.on("shareDecklist", (data) => {
 				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
 				if (idx && this.draftLogs[idx] && data.userID in this.draftLogs[idx].users) {
-					this.$set(this.draftLogs[idx].users[data.userID], "decklist", data.decklist);
+					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
 					this.storeDraftLogs();
 				}
 			});
@@ -1033,7 +1041,7 @@ export default defineComponent({
 				if (!this.draftLogLive) return;
 
 				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
-				if (data.decklist) this.$set(this.draftLogLive.users[data.userID!], "decklist", data.decklist);
+				if (data.decklist) this.draftLogLive.users[data.userID!].decklist = data.decklist;
 			});
 
 			this.socket.on("pickAlert", (data) => {
@@ -1129,7 +1137,7 @@ export default defineComponent({
 			this.setRestriction = [];
 			this.drafting = false;
 			this.useCustomCardList = false;
-			this.customCardList = {};
+			this.customCardList = null;
 			this.pickedCardsPerRound = 1;
 			this.burnedCardsPerRound = 0;
 			this.discardRemainingCardsAt = 0;
@@ -1596,26 +1604,28 @@ export default defineComponent({
 				});
 				return;
 			}
-			const DialogClass = Vue.extend(RotisserieDraftDialog);
-			let instance = new DialogClass({
-				propsData: { defaultBoostersPerPlayer: this.boostersPerPlayer },
-				beforeDestroy() {
-					instance.$el.parentNode?.removeChild(instance.$el);
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "rotisserie-draft-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(RotisserieDraftDialog, {
+				defaultBoostersPerPlayer: this.boostersPerPlayer,
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart(options: RotisserieDraftStartOptions) {
+					self.deckWarning((options) => {
+						self.socket.emit("startRotisserieDraft", options, (r) => {
+							if (r.code !== 0) Alert.fire(r.error!);
+						});
+					}, options);
+					instance.unmount();
 				},
 			});
-			instance.$on("cancel", () => {
-				instance.$destroy();
-			});
-			instance.$on("start", (options: RotisserieDraftStartOptions) => {
-				this.deckWarning((options) => {
-					this.socket.emit("startRotisserieDraft", options, (r) => {
-						if (r.code !== 0) Alert.fire(r.error!);
-					});
-				}, options);
-				instance.$destroy();
-			});
-			instance.$mount();
-			this.$el.appendChild(instance.$el);
+			instance.mount("#rotisserie-draft-dialog");
 		},
 		rotisserieDraftPick(
 			uniqueCardID: UniqueCardID,
@@ -2369,27 +2379,30 @@ export default defineComponent({
 		async sealedDialog(teamSealed = false) {
 			if (this.userID != this.sessionOwner) return;
 
-			const DialogClass = Vue.extend(SealedDialog);
-			let instance = new DialogClass({
-				propsData: { users: this.sessionUsers, teamSealed: teamSealed },
-				beforeDestroy() {
-					instance.$el.parentNode?.removeChild(instance.$el);
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "sealed-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(SealedDialog, {
+				users: this.sessionUsers,
+				teamSealed: teamSealed,
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onDistribute(boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) {
+					self.deckWarning(
+						teamSealed ? self.startTeamSealed : self.distributeSealed,
+						boostersPerPlayer,
+						customBoosters,
+						teams
+					);
+					instance.unmount();
 				},
 			});
-			instance.$on("cancel", () => {
-				instance.$destroy();
-			});
-			instance.$on("distribute", (boostersPerPlayer: number, customBoosters: SetCode[], teams: UserID[][]) => {
-				this.deckWarning(
-					teamSealed ? this.startTeamSealed : this.distributeSealed,
-					boostersPerPlayer,
-					customBoosters,
-					teams
-				);
-				instance.$destroy();
-			});
-			instance.$mount();
-			this.$el.appendChild(instance.$el);
+			instance.mount("#sealed-dialog");
 		},
 		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
 			if (this.deck.length > 0) {
@@ -2604,54 +2617,67 @@ export default defineComponent({
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
 				this.deck.splice(idx, 1);
+				this.$refs.deckDisplay?.remCard(c);
 				this.addToSideboard(c);
+				// Card DOM element will move without emiting a mouse leave event,
+				// make sure to close the card popup.
+				this.emitter.emit("closecardpopup");
 				this.socket.emit("moveCard", c.uniqueID, "side");
-			} else return;
-			this.$refs.deckDisplay?.remCard(c);
-			// Card DOM element will move without emiting a mouse leave event,
-			// make sure to close the card popup.
-			this.$root.$emit("closecardpopup");
+			}
 		},
 		sideboardToDeck(e: Event, c: UniqueCard) {
 			// From sideboard to deck
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
 				this.sideboard.splice(idx, 1);
+				this.$refs.sideboardDisplay?.remCard(c);
 				this.addToDeck(c);
+				this.emitter.emit("closecardpopup");
 				this.socket.emit("moveCard", c.uniqueID, "main");
-			} else return;
-			this.$refs.sideboardDisplay?.remCard(c);
-			this.$root.$emit("closecardpopup");
-		},
-		onDeckChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			// For movements between to columns of the pool, two events are emitted:
-			// One for removal from the source column and one for addition into the destination.
-			// We're emiting the event for server sync. only on addition, if this a movement within the pool,
-			// the card won't be found on the other pool and nothing will happen.
-			if (e.removed)
-				this.deck.splice(
-					this.deck.findIndex((c) => c === e.removed.element),
-					1
-				);
-			if (e.added) {
-				this.deck.push(e.added.element);
-				this.socket.emit("moveCard", e.added.element.uniqueID, "main");
 			}
 		},
-		onSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			if (e.removed)
-				this.sideboard.splice(
-					this.sideboard.findIndex((c) => c === e.removed.element),
-					1
-				);
-			if (e.added) {
-				this.sideboard.push(e.added.element);
-				this.socket.emit("moveCard", e.added.element.uniqueID, "side");
+		// Drag & Drop movements between deck and sideboard
+		onDeckDragAdd(uniqueID: UniqueCardID) {
+			const idx = this.sideboard.findIndex((c) => c.uniqueID === uniqueID);
+			if (idx >= 0) {
+				const card = this.sideboard[idx];
+				this.deck.push(card);
+				this.socket.emit("moveCard", card.uniqueID, "main");
 			}
 		},
-		onCollapsedSideChange(e: any /* I don't think vuedraggable exposes a 'ChangeEvent'? */) {
-			this.$refs.sideboardDisplay?.sync(); /* Sync sideboard card-pool */
-			if (e.added) this.socket.emit("moveCard", e.added.element.uniqueID, "side");
+		onDeckDragRemove(uniqueID: UniqueCardID) {
+			this.deck.splice(
+				this.deck.findIndex((c) => c.uniqueID === uniqueID),
+				1
+			);
+		},
+		onSideDragAdd(uniqueID: UniqueCardID) {
+			const idx = this.deck.findIndex((c) => c.uniqueID === uniqueID);
+			if (idx >= 0) {
+				const card = this.deck[idx];
+				this.sideboard.push(card);
+				this.socket.emit("moveCard", card.uniqueID, "side");
+			}
+		},
+		onSideDragRemove(uniqueID: UniqueCardID) {
+			this.sideboard.splice(
+				this.sideboard.findIndex((c) => c.uniqueID === uniqueID),
+				1
+			);
+		},
+		onCollapsedSideDragAdd(e: SortableEvent) {
+			e.item.remove();
+			const idx = this.deck.findIndex((c) => c.uniqueID === parseInt(e.item.dataset["uniqueid"]!));
+			if (idx >= 0) {
+				const card = this.deck[idx];
+				this.sideboard.splice(e.newIndex!, 0, card);
+				this.socket.emit("moveCard", card.uniqueID, "side");
+				this.$refs.sideboardDisplay?.sync();
+			}
+		},
+		onCollapsedSideDragRemove(e: SortableEvent) {
+			this.sideboard.splice(e.oldIndex!, 1);
+			this.$refs.sideboardDisplay?.sync();
 		},
 		clearDeck() {
 			this.deck = [];
@@ -2819,7 +2845,7 @@ export default defineComponent({
 				this.storeDraftLogsTimeout = null;
 				console.log("Stored Draft Logs.");
 			};
-			worker.postMessage(["compress", this.draftLogs]);
+			worker.postMessage(["compress", toRaw(this.draftLogs)]);
 		},
 		toggleLimitDuplicates() {
 			if (this.maxDuplicates !== null) this.maxDuplicates = null;
@@ -2915,16 +2941,7 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		DraftState() {
-			return DraftState;
-		},
-		ReadyState() {
-			return ReadyState;
-		},
-		PassingOrder() {
-			return PassingOrder;
-		},
-		gameModeName() {
+		gameModeName(): string {
 			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.rotisserieDraftState) return "Rotisserie Draft";
@@ -2947,7 +2964,7 @@ export default defineComponent({
 			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
 		},
-		winstonCanSkipPile() {
+		winstonCanSkipPile(): boolean {
 			if (!this.winstonDraftState) return false;
 			const s: WinstonDraftSyncData = this.winstonDraftState;
 			return !(
@@ -2967,7 +2984,7 @@ export default defineComponent({
 				.map((u) => u.userName)
 				.join(", ");
 		},
-		virtualPlayers(): UserData[] | typeof this.sessionUsers {
+		virtualPlayers(): UserData[] | SessionUser[] {
 			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
 				return this.sessionUsers;
 
@@ -2986,7 +3003,7 @@ export default defineComponent({
 
 			return r;
 		},
-		passingOrder() {
+		passingOrder(): PassingOrder {
 			if (this.gridDraftState) {
 				if (this.sessionUsers.length === 3)
 					return Math.floor(this.gridDraftState.round / 9) % 2 === 0 ? PassingOrder.Right : PassingOrder.Left;
@@ -3012,7 +3029,7 @@ export default defineComponent({
 					: PassingOrder.Right
 				: PassingOrder.None;
 		},
-		currentPlayer() {
+		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
@@ -3023,35 +3040,48 @@ export default defineComponent({
 		displaySets(): SetInfo[] {
 			return Object.values(this.setsInfos).filter((set) => this.sets.includes(set.code));
 		},
-		hasCollection() {
+		hasCollection(): boolean {
 			return !isEmpty(this.collection);
 		},
 
-		colorsInDeck() {
+		colorsInDeck(): ReturnType<typeof this.colorsInCardPool> {
 			return this.colorsInCardPool(this.deck);
 		},
-		totalLands() {
+		totalLands(): number {
 			return Object.values(this.lands).reduce((a, b) => a + b, 0);
 		},
-		basicsInDeck() {
+		basicsInDeck(): boolean {
 			return (
 				this.deck.some((c) => c.type === "Basic Land") || this.sideboard.some((c) => c.type === "Basic Land")
 			);
 		},
-		deckCreatureCount() {
+		deckCreatureCount(): number {
 			return this.deck?.filter((c) => c.type.includes("Creature")).length ?? 0;
 		},
-		deckLandCount() {
+		deckLandCount(): number {
 			return this.deck?.filter((c) => c.type.includes("Land")).length ?? 0;
 		},
-		neededWildcards() {
+		neededWildcards(): {
+			main: {
+				common: number;
+				uncommon: number;
+				rare: number;
+				mythic: number;
+			} | null;
+			side: {
+				common: number;
+				uncommon: number;
+				rare: number;
+				mythic: number;
+			} | null;
+		} | null {
 			if (!this.hasCollection) return null;
 			const main = this.countMissing(this.deck);
 			const side = this.countMissing(this.sideboard);
 			if (!main && !side) return null;
 			return { main: main, side: side };
 		},
-		deckSummary() {
+		deckSummary(): { [id: CardID]: number } {
 			const r: { [id: CardID]: number } = {};
 			for (let c of this.deck) {
 				if (!(c.id in r)) r[c.id] = 0;
@@ -3059,7 +3089,7 @@ export default defineComponent({
 			}
 			return r;
 		},
-		displayWildcardInfo() {
+		displayWildcardInfo(): boolean {
 			return (
 				this.displayCollectionStatus &&
 				this.neededWildcards &&
@@ -3067,23 +3097,23 @@ export default defineComponent({
 					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
-		displayDeckAndSideboard() {
+		displayDeckAndSideboard(): boolean {
 			return (
 				(this.drafting && this.draftingState !== DraftState.Watching) ||
 				this.draftingState === DraftState.Brewing
 			);
 		},
-		displayFixedDeck() {
+		displayFixedDeck(): boolean {
 			return this.displayDeckAndSideboard && this.fixedDeck && this.draftingState !== DraftState.Brewing;
 		},
 
-		userByID() {
-			let r: { [uid: UserID]: any } = {}; // FIXME: any
+		userByID(): { [uid: UserID]: SessionUser } {
+			let r: { [uid: UserID]: SessionUser } = {};
 			for (let u of this.sessionUsers) r[u.userID] = u;
 			return r;
 		},
 
-		pageTitle() {
+		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
 				return `MTGADraft ${
 					this.titleNotification ? this.titleNotification.message : "- Multi-Player Draft Simulator"
@@ -3215,8 +3245,11 @@ export default defineComponent({
 		boosterCardScale() {
 			this.storeSettings();
 		},
-		deck() {
-			this.updateAutoLands();
+		deck: {
+			deep: true,
+			handler() {
+				this.updateAutoLands();
+			},
 		},
 		autoLand() {
 			this.updateAutoLands();
@@ -3244,10 +3277,13 @@ export default defineComponent({
 			setCookie("userID", this.userID); // Used for reconnection
 			this.socket.emit("setOwnerIsPlayer", this.ownerIsPlayer);
 		},
-		setRestriction() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
+		setRestriction: {
+			deep: true,
+			handler() {
+				if (this.userID != this.sessionOwner || !this.socket) return;
 
-			this.socket.emit("setRestriction", this.setRestriction);
+				this.socket.emit("setRestriction", this.setRestriction);
+			},
 		},
 		isPublic() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -3287,9 +3323,12 @@ export default defineComponent({
 			if (this.userID != this.sessionOwner || !this.socket) return;
 			this.socket.emit("setDistributionMode", this.distributionMode);
 		},
-		customBoosters() {
-			if (this.userID != this.sessionOwner || !this.socket) return;
-			this.socket.emit("setCustomBoosters", this.customBoosters);
+		customBoosters: {
+			deep: true,
+			handler() {
+				if (this.userID != this.sessionOwner || !this.socket) return;
+				this.socket.emit("setCustomBoosters", this.customBoosters);
+			},
 		},
 		bots() {
 			if (this.userID != this.sessionOwner || !this.socket) return;
@@ -3382,15 +3421,18 @@ export default defineComponent({
 			this.socket.emit("setDraftLogRecipients", this.draftLogRecipients);
 			this.updateStoredSessionSettings({ draftLogRecipients: this.draftLogRecipients });
 		},
-		sessionUsers(newV, oldV) {
-			document.title = this.pageTitle;
-			if (oldV.length > 0) {
-				if (oldV.length < newV.length) {
-					if (newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
-					else this.pushTitleNotification("😀➕");
+		sessionUsers: {
+			deep: true,
+			handler(newV, oldV) {
+				document.title = this.pageTitle;
+				if (oldV.length > 0) {
+					if (oldV.length < newV.length) {
+						if (newV.length === this.maxPlayers) this.pushTitleNotification("😀👍");
+						else this.pushTitleNotification("😀➕");
+					}
+					if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
 				}
-				if (oldV.length > newV.length) this.pushTitleNotification("🙁➖");
-			}
+			},
 		},
 	},
 });

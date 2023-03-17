@@ -15,7 +15,7 @@
 		<card-pool
 			:language="language"
 			:cards="state.cards"
-			:click="onCardClick"
+			@cardClick="onCardClick"
 			group="team-sealed"
 			:cardConditionalClasses="cardConditionalClasses"
 			:readOnly="true"

@@ -3,12 +3,13 @@
 		<input
 			@change="update"
 			@input="modified"
-			:value="value"
-			:type="$attrs.type"
-			:placeholder="$attrs.placeholder"
-			:maxlength="$attrs.maxlength"
-			:min="$attrs.min"
-			:max="$attrs.max"
+			:value="modelValue"
+			:type="type"
+			:placeholder="placeholder"
+			:maxlength="maxlength"
+			:min="min"
+			:max="max"
+			:step="step"
 		/>
 	</form>
 </template>
@@ -19,17 +20,24 @@ import { defineComponent, PropType } from "vue";
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
 export default defineComponent({
 	props: {
-		value: { required: true },
+		modelValue: { required: true },
 		inputstyle: { type: String },
 		delay: { type: Number, default: 0 },
 		validate: { type: Function as PropType<(val: string) => string> },
 		waitOnEmpty: { type: Boolean, default: true },
+
+		type: { type: String, default: "text" },
+		placeholder: { type: String },
+		maxlength: { type: Number },
+		min: { type: Number },
+		max: { type: Number },
+		step: { type: Number },
 	},
 	data() {
 		return {
-			timeout: null,
-			inputEl: null,
-		} as { timeout: ReturnType<typeof setTimeout> | null; inputEl: HTMLInputElement | null };
+			timeout: null as ReturnType<typeof setTimeout> | null,
+			inputEl: null as HTMLInputElement | null,
+		};
 	},
 	mounted() {
 		this.inputEl = this.$el.querySelector("input");

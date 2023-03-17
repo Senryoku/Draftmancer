@@ -29,7 +29,7 @@
 			<clazy-load
 				:ratio="0"
 				margin="200px"
-				:src="backImageURI"
+				:src="backImageURI!"
 				loadingClass="card-loading"
 				class="flip-back"
 				:forceLoad="!lazyLoad"
@@ -203,6 +203,7 @@ img {
 .flip-front,
 .flip-back {
 	position: absolute;
+	left: 0;
 	width: 100%;
 	height: 100%;
 	-webkit-backface-visibility: hidden; /* Safari */

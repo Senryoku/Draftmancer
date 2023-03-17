@@ -1,8 +1,7 @@
-import Vue from "vue";
+import { createApp } from "vue";
+import FloatingVue from "floating-vue";
 import ReadOnlyBracket from "./ReadOnlyBracket.vue";
 
-Vue.config.productionTip = false;
-
-new Vue({
-	render: (h) => h(ReadOnlyBracket),
-}).$mount("#main-vue");
+const app = createApp(ReadOnlyBracket);
+app.use(FloatingVue);
+app.mount("#main-vue");
