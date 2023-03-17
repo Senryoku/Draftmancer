@@ -1,23 +1,26 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { dismissToast, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { dismissToast, pages, PickResult, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { Page } from "puppeteer";
 
-async function pickMinesweeper(page: Page) {
-	let next = await page.waitForXPath(
-		"//div[contains(., 'Done drafting!')] | //span[contains(., 'Pick a card')] | //span[contains(., 'Waiting for')]"
-	);
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
-	if (text === "Done drafting!") return true;
-	if (text.includes("Waiting for")) return false;
-
+async function pickMinesweeper(page: Page): Promise<PickResult> {
+	const done = await page.$$("xpath///h2[contains(., 'Done drafting!')]");
+	if (done.length > 0) return PickResult.Done;
+	const waiting = await page.$$("xpath///div[contains(., 'Waiting for')]");
+	if (waiting.length > 0) return PickResult.Waiting;
 	const cards = await page.$$(".minesweeper-grid .card:not(.picked)");
-	if (cards.length === 0) return false;
+	if (cards.length === 0) return PickResult.Waiting;
+
 	const card = cards[Math.floor(Math.random() * cards.length)];
 	expect(card).to.exist;
-	await card.click();
-	return false;
+	try {
+		await card.click();
+	} catch (e) {
+		// FIXME: IDK why this randomly fails.
+		return PickResult.Waiting;
+	}
+	return PickResult.Picked;
 }
 
 describe("Minesweeper Draft", function () {
@@ -48,11 +51,9 @@ describe("Minesweeper Draft", function () {
 
 	it(`Pick until done.`, async function () {
 		this.timeout(100000);
-		let done = false;
-		while (!done) {
-			let ownerPromise = pickMinesweeper(pages[0]);
-			let otherPromise = pickMinesweeper(pages[1]);
-			done = (await ownerPromise) && (await otherPromise);
-		}
+		let done = [false, false];
+		while (done.some((d) => !d))
+			for (let i = 0; i < pages.length; i++)
+				if (!done[i]) done[i] = (await pickMinesweeper(pages[i])) === PickResult.Done;
 	});
 });
