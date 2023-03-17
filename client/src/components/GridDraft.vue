@@ -75,7 +75,7 @@ export default defineComponent({
 			return validCards > 0;
 		},
 		highlight(event: Event, type: string, index: number) {
-			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el) => {
+			this.$el.querySelectorAll(`.${type}-${index}`).forEach((el: Element) => {
 				if (event.type === "mouseenter") el.classList.add("highlight");
 				else if (event.type === "mouseleave") el.classList.remove("highlight");
 			});
@@ -151,7 +151,7 @@ export default defineComponent({
 .fade-delayed-leave-active {
 	transition: opacity 0.5s;
 }
-.fade-delayed-enter,
+.fade-delayed-enter-from,
 .fade-delayed-leave-to {
 	opacity: 0;
 }

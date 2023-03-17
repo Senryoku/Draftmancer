@@ -511,7 +511,7 @@ export default defineComponent({
 			while (r.length < this.rows[0].length) r.push("");
 			return r;
 		},
-		cardsPerColumn() {
+		cardsPerColumn(): number[] {
 			let r = [];
 			for (let i = 0; i < this.rows[0].length; ++i) {
 				r.push(0);

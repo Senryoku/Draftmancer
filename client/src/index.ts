@@ -6,6 +6,11 @@ import "floating-vue/dist/style.css";
 import Emitter from "pico-emitter";
 
 const emitter = new Emitter();
+declare module "vue" {
+	interface ComponentCustomProperties {
+		emitter: Emitter;
+	}
+}
 
 const app = createApp(App);
 app.config.globalProperties.emitter = emitter;

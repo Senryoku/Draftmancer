@@ -223,6 +223,7 @@ watch(preferredBasics, () => {
 #main-container .land-input input[type="number"] {
 	-moz-appearance: textfield;
 	-webkit-appearance: textfield;
+	appearance: textfield;
 	widows: 2em;
 	text-align: center;
 }

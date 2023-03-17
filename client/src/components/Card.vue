@@ -97,7 +97,7 @@ export default defineComponent({
 				document.removeEventListener("mousemove", this.foilEffect);
 				return;
 			}
-			const imageBounds = ((this.$refs.image as Vue).$el as HTMLElement).getBoundingClientRect(); // Different from bounds when inside a card column
+			const imageBounds = (this.$refs.image.$el as HTMLElement).getBoundingClientRect(); // Different from bounds when inside a card column
 			const ratio = imageBounds.width / imageBounds.height;
 			const rotScale = (v: number) => -20 + 40 * v;
 			el.style.setProperty("--brightness", `${100 - 50 * (factor - 0.5)}%`);

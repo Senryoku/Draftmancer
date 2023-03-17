@@ -321,7 +321,7 @@ export default defineComponent({
 	transition: all 0.2s ease-out;
 }
 
-.scale-enter,
+.scale-enter-from,
 .scale-leave-to {
 	transform: scale(1, 0);
 	opacity: 0;

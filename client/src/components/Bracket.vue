@@ -186,7 +186,9 @@ export default defineComponent({
 			else return match.players[0];
 		},
 		getPlayer(idx: number): MatchPlayerData {
-			return this.bracket.players[idx] ? this.bracket.players[idx] : { empty: true };
+			return this.bracket.players[idx]
+				? { userID: this.bracket.players[idx]!.userID, userName: this.bracket.players[idx]!.userName }
+				: { empty: true };
 		},
 		regenerate() {
 			if (this.teamDraft || this.typeToGenerate === "single") {
@@ -278,8 +280,8 @@ export default defineComponent({
 							for (let pair of bestPermutation) {
 								m[round + 1].push(
 									new Match(m[0].length + m[1].length + m[2].length, [
-										this.bracket.players.find((p) => p.userID == players[pair[0]])!,
-										this.bracket.players.find((p) => p.userID == players[pair[1]])!,
+										this.bracket.players.find((p) => p?.userID === players[pair[0]])!,
+										this.bracket.players.find((p) => p?.userID === players[pair[1]])!,
 									])
 								);
 							}
@@ -288,8 +290,8 @@ export default defineComponent({
 							sortedPlayers.splice(index, 1);
 							m[round + 1].push(
 								new Match(m[0].length + m[1].length + m[2].length, [
-									this.bracket.players.find((p) => p.userID == firstPlayer)!,
-									this.bracket.players.find((p) => p.userID == secondPlayer)!,
+									this.bracket.players.find((p) => p?.userID === firstPlayer)!,
+									this.bracket.players.find((p) => p?.userID === secondPlayer)!,
 								])
 							);
 							alreadyPaired.push([firstPlayer, secondPlayer]);

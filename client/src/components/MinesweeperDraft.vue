@@ -43,7 +43,7 @@
 								/>
 								<Card
 									v-else
-									:card="cell.card"
+									:card="cell.card!"
 									:class="{ clickable: picking && cell.state === 1, picked: cell.state === 2 }"
 									@click="pick(rowIdx, colIdx)"
 									:key="rowIdx * state.grid[0].length + colIdx + '_card'"
@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { MinesweeperSyncData } from "../../../src/MinesweeperDraft";
+import { MinesweeperSyncData } from "../../../src/MinesweeperDraftTypes";
 
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
