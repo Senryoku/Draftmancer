@@ -2828,7 +2828,7 @@
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
-<style src="./css/vue-multiselect.min.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style src="./css/app.css"></style>
 <style src="./css/chat.css"></style>
 
