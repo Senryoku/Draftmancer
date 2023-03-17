@@ -1258,6 +1258,40 @@ class ONEBoosterFactory extends BoosterFactory {
 	}
 }
 
+// Shadow over Innistrad Remastered (SIR)
+// One card from a rotating bonus sheet in each booster
+import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type: "json" };
+
+class SIRBoosterFactory extends BoosterFactory {
+	bonusSheet: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, options);
+		const currentSheet = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
+		for (const cid of ShadowOfThePastLists[currentSheet].card_ids) {
+			const card = getCard(cid);
+			this.bonusSheet[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+		}
+	}
+
+	generateBooster(targets: Targets) {
+		const updatedTargets = Object.assign({}, targets);
+
+		// FIXME: No idea if the bonus sheet card actually replaces a common or not, but it's simpler for now (keeps the cards count to 14 without land slot).
+		updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+
+		const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.bonusSheet), updatedTargets, this.options);
+
+		const booster = super.generateBooster(updatedTargets);
+		if (isMessageError(booster)) return booster;
+
+		const bonusCard = pickCard(this.bonusSheet[bonusCardRarity]);
+		booster.unshift(bonusCard);
+
+		return booster;
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1282,6 +1316,7 @@ export const SetSpecificFactories: {
 	bro: BROBoosterFactory,
 	dmr: DMRBoosterFactory,
 	one: ONEBoosterFactory,
+	sir: SIRBoosterFactory,
 };
 
 /*

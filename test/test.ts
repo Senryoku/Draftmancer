@@ -255,6 +255,7 @@ describe("Sets content", function () {
 		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 		dmr: { common: 101 + 24, uncommon: 80 + 36, rare: 60 + 60, mythic: 20 + 20 }, // Includes retro frame cards
 		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
+		sir: { common: 94, uncommon: 93, rare: 66, mythic: 23 }, // FIXME: Check values
 	};
 
 	beforeEach(function (done) {
@@ -302,18 +303,17 @@ describe("Sets content", function () {
 			let nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", () => {
 				const localCollection = Sessions[sessionID].cardPoolByRarity();
-				let noError = true; // Log all errors before exiting.
+				let errors: string[] = []; // Log all errors before exiting.
 				for (let r in sets[set]) {
 					const cardIDs = [...localCollection[r].keys()];
 					if (cardIDs.length !== sets[set][r]) {
-						console.error(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
-						noError = false;
+						errors.push(`Incorrect card count for set ${set}, ${r}: ${cardIDs.length}/${sets[set][r]}`);
 					}
 					if (set !== "one")
 						expect(cardIDs.map((cid) => getCard(cid).set).every((s) => s === set)).to.be.true;
 					// expect(cardIDs).to.have.lengthOf(sets[set][r]); // FIXME: For some reason, this times out on error, instead of correctly reporting the error
 				}
-				expect(noError).to.be.true;
+				expect(errors, errors.join("\n")).to.be.lengthOf(0);
 				done();
 			});
 			clients[ownerIdx].emit("ignoreCollections", true);
@@ -535,6 +535,7 @@ describe("Single Draft (Two Players)", function () {
 					b.every(
 						(c) =>
 							c.set === set ||
+							(set === "sir" && c.set === "sis") ||
 							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
 							(set === "unf" && c.set === "sunf") ||

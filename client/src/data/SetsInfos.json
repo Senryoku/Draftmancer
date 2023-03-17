@@ -2280,6 +2280,27 @@
         "rareCount": 80,
         "uncommonCount": 80
     },
+    "ltc": {
+        "code": "ltc",
+        "fullName": "Tales of Middle Earth Commander",
+        "cardCount": 14,
+        "isPrimary": false,
+        "icon": "img/sets/ltc.svg",
+        "mythicCount": 11,
+        "rareCount": 2,
+        "uncommonCount": 1
+    },
+    "ltr": {
+        "code": "ltr",
+        "fullName": "Lord of the Rings: Tales of Middle-Earth",
+        "cardCount": 38,
+        "isPrimary": true,
+        "icon": "img/sets/ltr.svg",
+        "commonCount": 10,
+        "mythicCount": 12,
+        "rareCount": 8,
+        "uncommonCount": 8
+    },
     "m10": {
         "code": "m10",
         "fullName": "Magic 2010",
@@ -4924,11 +4945,24 @@
     "sir": {
         "code": "sir",
         "fullName": "Shadows Over Innistrad Remastered",
-        "cardCount": 3,
+        "cardCount": 291,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "mythicCount": 1,
-        "rareCount": 2
+        "commonCount": 109,
+        "mythicCount": 23,
+        "rareCount": 66,
+        "uncommonCount": 93
+    },
+    "sis": {
+        "code": "sis",
+        "fullName": "Shadows of the Past",
+        "cardCount": 76,
+        "isPrimary": true,
+        "icon": "img/sets/sis.svg",
+        "commonCount": 28,
+        "mythicCount": 12,
+        "rareCount": 12,
+        "uncommonCount": 24
     },
     "skhm": {
         "code": "skhm",

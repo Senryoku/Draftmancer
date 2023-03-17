@@ -174,6 +174,14 @@ describe("Set Specific Booster Rules", function () {
 		expect(retro).to.equal(1);
 	};
 
+	const validateSIRBooster = function (booster: UniqueCard[]) {
+		expect(booster.map((c) => c.set).every((s) => s === "sir" || s === "sis")).to.be.true;
+		const sis = booster.reduce((acc, val) => {
+			return acc + (val.set === "sis" ? 1 : 0);
+		}, 0);
+		expect(sis, "Exactly one 'Shadow of the Past' card").to.equal(1);
+	};
+
 	beforeEach(function (done) {
 		disableLogs();
 		done();
@@ -266,6 +274,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("2x2", validate2X2Booster, "two foils and one Cryptic Spires");
 	testSet("dmr", validateDMRBooster, "one retro frame card");
 	testSet("vow", validateColorBalance, "at least one common of each color.");
+	testSet("sir", validateSIRBooster, "exactly one 'sis' (Shadow of the Past) card.");
 
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, async function () {
 		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);

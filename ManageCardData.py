@@ -422,6 +422,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
             if c['set'] == "dmr" and (int(c['collector_number']) >= 262 and int(c['collector_number']) <= 401):
                 selection['in_booster'] = True
 
+            # Cards from SIR are not marked as in_booster for some reason
+            if c['set'] == "sir" and not c['type_line'].startswith("Basic"):
+                selection['in_booster'] = True
+
             # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
             if c['id'] == "0826e210-2002-43fe-942d-41922dfd7bc2":
                 selection['in_booster'] = False
@@ -778,6 +782,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "mom", "mat", "cmm", "sir"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "mom", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

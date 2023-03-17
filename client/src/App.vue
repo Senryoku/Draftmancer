@@ -1513,6 +1513,17 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>March 17, 2023</em>
+								<p>
+									<img
+										src="img/sets/sir.svg"
+										class="set-icon"
+										style="--invertedness: 100%; width: 2em"
+									/>
+									Shadow over Innistrad preliminary support.
+								</p>
+							</div>
+							<div class="news">
 								<em>March 13, 2023</em>
 								<p>
 									Grid Draft now supports a 3 players variant, as described on the
@@ -1543,17 +1554,6 @@
 									Should be pretty handy in Team Sealed! Toggle it using the
 									<i class="fas fa-thumbtack"></i>
 									thumbtack in your personal settings, at the top right of the screen.
-								</p>
-							</div>
-							<div class="news">
-								<em>January 27, 2023</em>
-								<p>
-									<img
-										src="img/sets/one.svg"
-										class="set-icon"
-										style="--invertedness: 100%; width: 2em"
-									/>
-									Phyrexia: All Will Be One is now available!
 								</p>
 							</div>
 						</div>
