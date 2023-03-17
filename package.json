@@ -10,7 +10,7 @@
 	"scripts": {
 		"start": "node --experimental-json-modules .",
 		"start-dev": "nodemon --experimental-json-modules --watch dist/src .",
-		"build": "tsc && npx webpack --config client/webpack.config.cjs --mode=production",
+		"build": "concurrently \"tsc\" \"npx webpack --config client/webpack.config.cjs --mode=production\"",
 		"build-ts": "tsc",
 		"build-ts-dev": "tsc --watch",
 		"build-dev": "npx webpack --config client/webpack.config.cjs --mode=development --watch --progress",
