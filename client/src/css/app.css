@@ -913,7 +913,7 @@ ul.player-list {
 	transition: all 0.5s;
 }
 
-.booster-cards-enter.wait {
+.booster-cards-enter-from.wait {
 	opacity: 0;
 }
 

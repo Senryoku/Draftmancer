@@ -1,7 +1,7 @@
 <template>
 	<div class="last-picks" v-if="picks && picks.length > 0">
 		<span class="last-picks-title">Last Picks</span>
-		<transition-group tag="div" name="vertical-queue" style="display: flex; flex-direction: column">
+		<transition-group tag="div" name="vertical-queue" class="vertical-queue" mode="">
 			<div v-for="p in picks" class="pick-remainder vertical-queue-item" :key="p.round">
 				{{ p.userName }}
 				<div class="card-column">
@@ -56,6 +56,12 @@ export default defineComponent({
 	margin: 0;
 }
 
+.vertical-queue {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
 .vertical-queue-item {
 	transition: transform 1s;
 }
@@ -65,13 +71,13 @@ export default defineComponent({
 	display: inline-block;
 }
 
-.vertical-queue-enter,
+.vertical-queue-enter-from,
 .vertical-queue-leave-to {
 	opacity: 0;
 	z-index: -1;
 }
 
-.vertical-queue-enter {
+.vertical-queue-enter-from {
 	transform: translateY(-400px);
 }
 

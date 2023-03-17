@@ -282,16 +282,16 @@ export default defineComponent({
 	transition: all 0.15s ease;
 }
 
-.zoom-enter,
+.zoom-enter-from,
 .zoom-leave-to {
 	opacity: 0;
 }
-.zoom-enter.left,
+.zoom-enter-from.left,
 .zoom-leave-to.left {
 	left: -5vw;
 }
 
-.zoom-enter.right,
+.zoom-enter-from.right,
 .zoom-leave-to.right {
 	right: -5vw;
 }
