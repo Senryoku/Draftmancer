@@ -1258,7 +1258,7 @@ class ONEBoosterFactory extends BoosterFactory {
 	}
 }
 
-// Shadow over Innistrad Remastered (SIR)
+// Shadows over Innistrad Remastered (SIR)
 // One card from a rotating bonus sheet in each booster
 import ShadowOfThePastLists from "./data/shadow_of_the_past.json" assert { type: "json" };
 

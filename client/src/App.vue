@@ -1520,7 +1520,7 @@
 										class="set-icon"
 										style="--invertedness: 100%; width: 2em"
 									/>
-									Shadow over Innistrad preliminary support.
+									Shadows over Innistrad preliminary support.
 								</p>
 							</div>
 							<div class="news">
