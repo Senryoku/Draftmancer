@@ -895,13 +895,13 @@ ul.player-list {
 	pointer-events: none; /* Avoid picking cards during transition */
 	transition: all 0.3s ease-in;
 }
-.slide-fade-left-enter,
+.slide-fade-left-enter-from,
 .slide-fade-right-leave-to {
 	transform: translateX(50px);
 	opacity: 0;
 }
 
-.slide-fade-right-enter,
+.slide-fade-right-enter-from,
 .slide-fade-left-leave-to {
 	transform: translateX(-50px);
 	opacity: 0;

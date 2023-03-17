@@ -225,7 +225,7 @@ watch(boostersPerPlayer, () => {
 	overflow: hidden;
 }
 
-.expand-enter,
+.expand-enter-from,
 .expand-leave-to {
 	height: 0;
 	padding: 0;

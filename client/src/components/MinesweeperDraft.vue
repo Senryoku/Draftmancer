@@ -201,12 +201,12 @@ export default /*#__PURE__*/ defineComponent({
 	transition: transform 0.3s ease-in, scale 0.3s ease-in-out !important;
 }
 
-.turnover-enter,
+.turnover-enter-from,
 .turnover-leave-to {
 	scale: 1.15;
 }
 
-.turnover-enter {
+.turnover-enter-from {
 	transform: perspective(1000px) rotateY(-90deg);
 }
 
