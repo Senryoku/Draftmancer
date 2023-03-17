@@ -1,4 +1,6 @@
-export default async function installMouseHelper(page) {
+import { Page } from "puppeteer";
+
+export default async function installMouseHelper(page: Page) {
 	await page.evaluateOnNewDocument(() => {
 		// Install mouse helper only for top-level frame.
 		if (window !== window.parent) return;
@@ -71,8 +73,8 @@ export default async function installMouseHelper(page) {
 					},
 					true
 				);
-				function updateButtons(buttons) {
-					for (let i = 0; i < 5; i++) box.classList.toggle("button-" + i, buttons & (1 << i));
+				function updateButtons(buttons: number) {
+					for (let i = 0; i < 5; i++) box.classList.toggle("button-" + i, (buttons & (1 << i)) !== 0);
 				}
 			},
 			false
