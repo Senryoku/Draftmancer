@@ -1267,7 +1267,7 @@ class SIRBoosterFactory extends BoosterFactory {
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
 		super(cardPool, landSlot, options);
-		const currentSheet = (new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
+		const currentSheet = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
 		for (const cid of ShadowOfThePastLists[currentSheet].card_ids) {
 			const card = getCard(cid);
 			this.bonusSheet[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
