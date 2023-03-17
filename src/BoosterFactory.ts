@@ -1277,6 +1277,9 @@ class SIRBoosterFactory extends BoosterFactory {
 	generateBooster(targets: Targets) {
 		const updatedTargets = Object.assign({}, targets);
 
+		// FIXME: No idea if the bonus sheet card actually replaces a common or not, but it's simpler for now (keeps the cards count to 14 without land slot).
+		updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+
 		const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.bonusSheet), updatedTargets, this.options);
 
 		const booster = super.generateBooster(updatedTargets);
