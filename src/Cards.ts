@@ -1,13 +1,10 @@
 "use strict";
 
 import fs from "fs";
-import parseCost from "./parseCost.js";
-
 import JSONStream from "JSONStream";
-import { memoryReport, Options } from "./utils.js";
+import { memoryReport } from "./utils.js";
 
 import { Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
-import { isMessageError } from "./Message.js";
 
 export let Cards = new Map<CardID, Card>();
 
@@ -60,16 +57,6 @@ export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by th
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
 for (const [cid, card] of Cards) {
-	const ret = parseCost(card.mana_cost);
-	if (isMessageError(ret)) {
-		console.error(ret);
-		process.exit(1);
-	}
-
-	const { cmc, colors } = ret;
-	card.cmc = cmc;
-	card.colors = colors;
-
 	const aid = card.arena_id;
 	if (aid !== undefined) MTGACards[aid] = card;
 

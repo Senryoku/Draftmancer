@@ -148,6 +148,21 @@ if not os.path.isfile(ManaSymbolsFile) or ForceSymbology:
     with open(ManaSymbolsFile, 'w', encoding="utf8") as outfile:
         json.dump(mana_symbols, outfile)
 
+ManaSymbols = json.load(open(ManaSymbolsFile, 'r'))
+
+
+def parseCost(mana_cost):
+    if "//" in mana_cost:
+        mana_cost = mana_cost.split("//")[0].strip()
+    matches = re.findall(r'({[^}]+})', mana_cost)
+    cmc = 0
+    colors = set()
+    for symbol in matches:
+        if symbol in ManaSymbols:
+            cmc += ManaSymbols[symbol]["cmc"]
+            colors = colors.union(set(ManaSymbols[symbol]["colors"]))
+    return [int(cmc), list(colors)]
+
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
     MTGADataDebugToJSON = {}
@@ -400,9 +415,13 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
                 selection['rating'] = CardRatings[selection['name'].split(
                     " //")[0]]
             else:
-
                 selection['rating'] = 0.5
             selection['in_booster'] = (c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")))  # Exclude melded cards from boosters
+
+            cmc, colors = parseCost(selection["mana_cost"])
+            selection["cmc"] = cmc
+            selection["colors"] = colors
+
             if c['set'] == 'akr' or c['set'] == 'klr':
                 selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
             elif not c['booster'] or c['type_line'].startswith("Basic"):
