@@ -1039,9 +1039,9 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	endRochesterDraft() {
+	endRochesterDraft(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return false;
+		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
 		logSession("RochesterDraft", this);
 		for (const uid of this.users) {
 			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
@@ -1051,9 +1051,9 @@ export class Session implements IIndexable {
 		this.cleanDraftState();
 	}
 
-	rochesterDraftNextRound() {
+	rochesterDraftNextRound(): void {
 		const s = this.draftState;
-		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return false;
+		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
 		// Empty booster, open the next one
 		if (s.boosters[0].length === 0) {
 			s.boosters.shift();
@@ -1315,9 +1315,9 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	endMinesweeperDraft(options: { immediate?: boolean } = {}) {
+	endMinesweeperDraft(options: { immediate?: boolean } = {}): void {
 		const s = this.draftState as MinesweeperDraftState;
-		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return false;
+		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return;
 		logSession("MinesweeperDraft", this);
 		for (const uid of this.users) {
 			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
@@ -1328,8 +1328,8 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	async startDraft() {
-		if (this.drafting) return new MessageError("Game is already in progress.");
+	async startDraft(): Promise<void> {
+		if (this.drafting) return;
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
@@ -1981,7 +1981,7 @@ export class Session implements IIndexable {
 		}
 	}
 
-	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>) {
+	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): void {
 		this.emitMessage("Distributing sealed boosters...", "", false, 0);
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
@@ -1989,7 +1989,7 @@ export class Session implements IIndexable {
 			// FIXME: We should propagate to ack.
 			this.emitError("Error", "Invalid 'customBoosters' parameter.");
 			this.broadcastPreparationCancelation();
-			return false;
+			return;
 		}
 		const boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			useCustomBoosters: useCustomBoosters,
@@ -2001,7 +2001,7 @@ export class Session implements IIndexable {
 			// FIXME: We should propagate to ack.
 			this.emitError(boosters.title, boosters.text);
 			this.broadcastPreparationCancelation();
-			return false;
+			return;
 		}
 		const log = this.initLogs("Sealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
@@ -2523,8 +2523,8 @@ export class Session implements IIndexable {
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
 
-	updateBracket(results: Array<[number, number]>) {
-		if (!this.bracket) return false;
+	updateBracket(results: Array<[number, number]>): void {
+		if (!this.bracket) return;
 		this.bracket.results = results;
 		this.forUsers((u) => Connections[u]?.socket.emit("sessionOptions", { bracket: this.bracket }));
 	}
