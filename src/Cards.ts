@@ -4,7 +4,7 @@ import fs from "fs";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 
-import { Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
+import { ArenaID, Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
 console.group("Cards.ts::Loading Cards...");
 console.time("Total");
@@ -53,7 +53,7 @@ export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid
 
 console.time("Preparing Cards and caches");
 
-export const MTGACards: { [arena_id: string]: Card } = {}; // Cards sorted by their arena id
+export const MTGACards: { [arena_id: ArenaID]: Card } = {}; // Cards sorted by their arena id
 export const CardVersionsByName: { [name: string]: Array<CardID> } = {}; // Every card version sorted by their name (first face)
 
 for (const [cid, card] of Cards) {

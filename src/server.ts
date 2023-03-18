@@ -22,7 +22,16 @@ import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPo
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
-import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, UniqueCard, PlainCollection } from "./CardTypes.js";
+import {
+	CardPool,
+	CardID,
+	Card,
+	UniqueCardID,
+	DeckBasicLands,
+	UniqueCard,
+	PlainCollection,
+	ArenaID,
+} from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
@@ -164,7 +173,7 @@ function setCollection(
 	// Remove unknown cards immediatly.
 	for (const aid in collection) {
 		if (aid in MTGACards) {
-			processedCollection.set(MTGACards[aid].id, collection[aid]);
+			processedCollection.set(MTGACards[parseInt(aid)].id, collection[aid]);
 		}
 	}
 
@@ -208,7 +217,7 @@ function parseCollection(
 
 	const ignoredCards = [];
 
-	const collection: CardPool = new Map();
+	const collection = new Map<ArenaID, number>();
 	for (const cardID in cardList.slots["default"]) {
 		const aid = getCard(cardID).arena_id;
 		if (!aid) {

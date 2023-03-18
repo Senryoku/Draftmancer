@@ -1,5 +1,5 @@
 export type CardID = string;
-export type ArenaID = string;
+export type ArenaID = number;
 export type OracleID = string;
 export type UniqueCardID = number;
 
@@ -68,4 +68,5 @@ export class UniqueCard extends Card {
 	foil?: boolean = false;
 }
 
-export type PlainCollection = { [aid: ArenaID]: number };
+// JSON can't use numbers as keys, we have to use a string and not ArenaID here.
+export type PlainCollection = { [aid: string]: number };

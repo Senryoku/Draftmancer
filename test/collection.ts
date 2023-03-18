@@ -8,15 +8,15 @@ import { Sessions } from "../src/Session.js";
 import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
-import { ArenaID, UniqueCard } from "../src/CardTypes.js";
+import { ArenaID, PlainCollection, UniqueCard } from "../src/CardTypes.js";
 
 describe("Collection Restriction", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
-	let collections: { [cid: ArenaID]: number }[] = [];
+	let collections: PlainCollection[] = [];
 	let ownerIdx = 0;
 
-	const MTGAIDs = Object.keys(MTGACards);
+	const MTGAIDs = Object.keys(MTGACards).map((str) => parseInt(str));
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -78,7 +78,7 @@ describe("Collection Restriction", function () {
 		for (let cid in sessColl) {
 			const arena_id = getCard(cid).arena_id!;
 			for (let col of collections) {
-				expect(col).to.have.own.property(arena_id);
+				expect(col).to.have.own.property(arena_id.toString());
 				expect(col[arena_id]).gte(sessColl.get(cid)!);
 			}
 		}
@@ -90,7 +90,7 @@ describe("Collection Restriction", function () {
 		for (let cid in sessCardPool) {
 			const arena_id = getCard(cid).arena_id!;
 			for (let col of collections) {
-				expect(col).to.have.own.property(arena_id);
+				expect(col).to.have.own.property(arena_id.toString());
 				expect(col[arena_id]).gte(sessCardPool.get(cid)!);
 			}
 		}
@@ -159,7 +159,7 @@ describe("Collection Restriction", function () {
 								expect(
 									col,
 									"All cards should be in the intersection of player collections."
-								).to.have.own.property(card.arena_id!);
+								).to.have.own.property(card.arena_id!.toString());
 							}
 						clients[c].emit("pickCard", { pickedCards: [0], burnedCards: [] }, () => {});
 						(clients[c] as any).state = s;
