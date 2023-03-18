@@ -66,6 +66,7 @@ typings/
 data/LimitedRatings/*
 data/scryfall-all-cards.json
 data/BulkArena.json
+data/MTGCards.json
 Makefile
 client/dist/*
 
