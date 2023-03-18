@@ -21,14 +21,14 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { UniqueCard } from "../../../src/CardTypes";
+import { UniqueCard } from "@/CardTypes";
 
 import { exportToMTGA } from "../exportToMTGA";
 import { exportToMTGO } from "../exportToMTGO";
 import { fireToast } from "../alerts";
 import { copyToClipboard } from "../helper";
 import Dropdown from "./Dropdown.vue";
-import { Language } from "../../../src/Types";
+import { Language } from "@/Types";
 
 export default defineComponent({
 	components: { Dropdown },

@@ -1,4 +1,4 @@
-import { Card, CardColor, CardID, CardRarity } from "../../src/CardTypes";
+import { Card, CardColor, CardID, CardRarity } from "@/CardTypes";
 
 const ColorOrder: { [color in CardColor]: number } = {
 	W: 0,

@@ -109,11 +109,11 @@ import CardPool from "./CardPool.vue";
 import Card from "./Card.vue";
 import ScaleSlider from "./ScaleSlider.vue";
 import { Sortable } from "sortablejs-vue3";
-import { Language } from "../../../src/Types";
-import { DraftLog, DraftPick } from "../../../src/DraftLog";
+import { Language } from "@/Types";
+import { DraftLog, DraftPick } from "@/DraftLog";
 import { pick } from "random-js";
-import { CardID, UniqueCard } from "../../../src/CardTypes";
-import { UserID } from "../../../src/IDTypes";
+import { CardID, UniqueCard } from "@/CardTypes";
+import { UserID } from "@/IDTypes";
 
 export default defineComponent({
 	name: "DraftLogLive",

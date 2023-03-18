@@ -80,9 +80,9 @@
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
 
-import constants from "../../../src/data/constants.json";
+import constants from "../../../src/Constants";
 import { SetInfo, SetsInfos } from "../SetInfos";
-import { SetCode } from "../../../src/Types";
+import { SetCode } from "@/Types";
 
 export default defineComponent({
 	data() {

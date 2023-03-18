@@ -100,15 +100,17 @@
 </template>
 
 <script lang="ts">
+import { Bracket } from "@/Brackets";
+import { DraftLog } from "@/DraftLog";
+import { Language } from "@/Types";
+import { UserID } from "@/IDTypes";
+
 import { defineComponent, PropType } from "vue";
 import { copyToClipboard } from "../helper";
 import { fireToast } from "../alerts";
 import Decklist from "./Decklist.vue";
 import BracketMatch, { Match, MatchPlayerData } from "./BracketMatch.vue";
-import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
-import { DraftLog } from "../../../src/DraftLog";
-import { Language } from "../../../src/Types";
-import { UserID } from "../../../src/IDTypes";
+import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../../src/Brackets";
 
 function* generate_pairs<T>(arr: T[]): Generator<[T, T][]> {
 	if (arr.length < 2) return [];

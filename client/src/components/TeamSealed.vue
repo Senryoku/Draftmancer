@@ -24,11 +24,12 @@
 </template>
 
 <script lang="ts">
+import { UserData } from "@/Session/SessionTypes";
+import { TeamSealedPool, TeamSealedCard } from "@/TeamSealed";
+import { Language } from "@/Types";
+
 import { defineComponent, PropType } from "vue";
 import { CardColor, UniqueCard } from "../../../src/CardTypes";
-import { UserData } from "../../../src/Session/SessionTypes";
-import { TeamSealedPool, TeamSealedCard } from "../../../src/TeamSealed";
-import { Language } from "../../../src/Types";
 import CardPool from "./CardPool.vue";
 
 export default defineComponent({

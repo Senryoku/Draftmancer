@@ -106,9 +106,9 @@
 </template>
 
 <script lang="ts">
-import { Language, SetCode } from "../../../src/Types";
+import { Language, SetCode } from "@/Types";
 import { defineComponent, PropType } from "vue";
-import { Card, PlainCollection } from "../../../src/CardTypes";
+import { Card, PlainCollection } from "@/CardTypes";
 import MTGACards from "../MTGACards";
 import Constants from "../../../src/Constants";
 import SetsInfos from "../SetInfos";

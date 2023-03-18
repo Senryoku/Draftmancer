@@ -28,13 +28,15 @@
 </template>
 
 <script lang="ts">
+import { DraftPick } from "@/DraftLog";
+import { Card, CardID, UniqueCard } from "@/CardTypes";
+import { Language } from "@/Types";
+
 import { PropType, defineComponent } from "vue";
-import { DraftPick } from "../../../src/DraftLog";
 
 import CardComponent from "./Card.vue";
 import BoosterCard from "./BoosterCard.vue";
-import { Card, CardID, UniqueCard, toUnique } from "../../../src/CardTypes";
-import { Language } from "../../../src/Types";
+import { toUnique } from "../../../src/CardTypes";
 
 export default defineComponent({
 	name: "DraftLogPick",

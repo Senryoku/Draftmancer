@@ -1,4 +1,4 @@
-import { SetCode } from "../../src/Types";
+import { SetCode } from "@/Types";
 import _setsInfos from "./data/SetsInfos.json";
 
 export type SetInfo = {

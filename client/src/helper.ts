@@ -1,5 +1,5 @@
-import { DraftLog, DraftPick } from "../../src/DraftLog";
-import { UserID } from "../../src/IDTypes";
+import { DraftLog, DraftPick } from "@/DraftLog";
+import { UserID } from "@/IDTypes";
 
 export function clone(obj: Object) {
 	return JSON.parse(JSON.stringify(obj));

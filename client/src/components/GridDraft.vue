@@ -52,8 +52,8 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { GridDraftSyncData } from "../../../src/GridDraft";
-import { UniqueCard } from "../../../src/CardTypes";
+import { GridDraftSyncData } from "@/GridDraft";
+import { UniqueCard } from "@/CardTypes";
 
 import Card from "./Card.vue";
 import PickSummary from "./PickSummary.vue";

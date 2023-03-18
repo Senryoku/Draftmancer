@@ -89,8 +89,8 @@
 import { ref, watch, toRefs } from "vue";
 import Modal from "./Modal.vue";
 import { Sortable } from "sortablejs-vue3";
-import { UserID } from "../../../src/IDTypes";
-import { UserData } from "../../../src/Session/SessionTypes";
+import { UserID } from "@/IDTypes";
+import { UserData } from "@/Session/SessionTypes";
 import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
 import { SetCode } from "../../../src/Types";

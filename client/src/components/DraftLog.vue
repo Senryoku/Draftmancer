@@ -203,8 +203,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { DraftLog, DraftLogUserData, DraftPick, GenericDraftPick } from "../../../src/DraftLog";
-import { UserID } from "../../../src/IDTypes";
+import { DraftLog, DraftLogUserData, DraftPick, GenericDraftPick } from "@/DraftLog";
+import { UserID } from "@/IDTypes";
 
 import * as helper from "../helper";
 import { fireToast } from "../alerts";
@@ -214,8 +214,8 @@ import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
-import { CardColor, CardID } from "../../../src/CardTypes";
-import { Language } from "../../../src/Types";
+import { CardColor, CardID } from "@/CardTypes";
+import { Language } from "@/Types";
 
 export type PickDetails = {
 	key: number;

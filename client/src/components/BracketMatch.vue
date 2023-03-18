@@ -50,10 +50,12 @@
 </template>
 
 <script lang="ts">
+import { Bracket } from "@/Brackets";
+import { DraftLog } from "@/DraftLog";
+import { UserID } from "@/IDTypes";
+
 import { defineComponent, PropType } from "vue";
-import { Bracket, isDoubleBracket, isTeamBracket } from "../../../src/Brackets";
-import { DraftLog } from "../../../src/DraftLog";
-import { UserID } from "../../../src/IDTypes";
+import { isDoubleBracket, isTeamBracket } from "../../../src/Brackets";
 
 export type MatchPlayerData = {
 	userID?: UserID;

@@ -72,7 +72,7 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
-import { RotisserieDraftStartOptions } from "../../../src/RotisserieDraft";
+import { RotisserieDraftStartOptions } from "@/RotisserieDraft";
 import Modal from "./Modal.vue";
 
 const props = withDefaults(

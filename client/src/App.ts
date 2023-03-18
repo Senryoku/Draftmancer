@@ -1,6 +1,6 @@
-import { ClientToServerEvents, ServerToClientEvents } from "../../src/SocketType";
-import { SessionID, UserID } from "../../src/IDTypes";
-import { SetCode, IIndexable } from "../../src/Types";
+import type { ClientToServerEvents, ServerToClientEvents } from "@/SocketType";
+import type { SessionID, UserID } from "@/IDTypes";
+import type { SetCode, IIndexable } from "@/Types";
 import {
 	DisconnectedUser,
 	DistributionMode,
@@ -9,22 +9,22 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "../../src/CardTypes";
-import { DraftLog } from "../../src/DraftLog";
-import { BotScores } from "../../src/Bot";
-import { WinstonDraftSyncData } from "../../src/WinstonDraft";
-import { GridDraftSyncData } from "../../src/GridDraft";
+import type { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
+import type { DraftLog } from "@/DraftLog";
+import type { BotScores } from "@/Bot";
+import type { WinstonDraftSyncData } from "@/WinstonDraft";
+import type { GridDraftSyncData } from "@/GridDraft";
 import { minesweeperApplyDiff, MinesweeperSyncData } from "../../src/MinesweeperDraftTypes";
-import { RochesterDraftSyncData } from "../../src/RochesterDraft";
-import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "../../src/RotisserieDraft";
-import { TeamSealedSyncData } from "../../src/TeamSealed";
-import { Bracket } from "../../src/Brackets";
-import { SocketAck } from "../../src/Message";
+import type { RochesterDraftSyncData } from "@/RochesterDraft";
+import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/RotisserieDraft";
+import type { TeamSealedSyncData } from "@/TeamSealed";
+import type { Bracket } from "@/Brackets";
+import type { SocketAck } from "@/Message";
 import Constants, { CubeDescription } from "../../src/Constants";
-import { Options } from "../../src/utils";
-import { JHHBooster } from "../../src/JumpstartHistoricHorizons";
-import { CustomCardList } from "../../src/CustomCardList";
-import SessionsSettingsProps from "../../src/Session/SessionProps";
+import type { Options } from "@/utils";
+import type { JHHBooster } from "@/JumpstartHistoricHorizons";
+import type { CustomCardList } from "@/CustomCardList";
+import type SessionsSettingsProps from "@/Session/SessionProps";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";

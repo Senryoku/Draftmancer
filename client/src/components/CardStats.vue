@@ -71,7 +71,7 @@
 import { defineComponent, PropType } from "vue";
 import { Bar, Pie } from "vue-chartjs";
 import { Chart, ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors } from "chart.js";
-import { Card } from "../../../src/CardTypes";
+import { Card } from "@/CardTypes";
 
 Chart.defaults.color = "#ddd";
 Chart.register(ArcElement, BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, Colors);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CardID, CardColor, OracleID } from "../../src/CardTypes";
+import { CardID, CardColor, OracleID } from "@/CardTypes";
 import { ref, App } from "vue";
 
 export type ScryfallRelatedCard = {

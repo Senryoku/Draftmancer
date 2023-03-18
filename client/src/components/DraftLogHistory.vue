@@ -115,9 +115,9 @@ import { ButtonColor, Alert } from "../alerts";
 import * as helper from "../helper";
 import Dropdown from "./Dropdown.vue";
 import DraftLogComponent from "./DraftLog.vue";
-import { DraftLog } from "../../../src/DraftLog";
-import { Language } from "../../../src/Types";
-import { UserID } from "../../../src/IDTypes";
+import { DraftLog } from "@/DraftLog";
+import { Language } from "@/Types";
+import { UserID } from "@/IDTypes";
 import exportToMTGO from "../exportToMTGO";
 import { exportToMTGA } from "../exportToMTGA";
 

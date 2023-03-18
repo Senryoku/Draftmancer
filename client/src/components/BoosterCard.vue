@@ -31,9 +31,9 @@
 </template>
 
 <script lang="ts">
-import { Language } from "../../../src/Types";
+import { Language } from "@/Types";
 import { defineComponent, PropType } from "vue";
-import { UniqueCard } from "../../../src/CardTypes";
+import { UniqueCard } from "@/CardTypes";
 import CardComponent from "./Card.vue";
 
 export default defineComponent({

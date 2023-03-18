@@ -1,4 +1,4 @@
-import { ArenaID } from "../../src/CardTypes";
+import { ArenaID } from "@/CardTypes";
 import MTGACards from "./MTGACards";
 
 // List of arena_ids for a given card name

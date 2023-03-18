@@ -29,14 +29,16 @@
 </template>
 
 <script lang="ts">
+import type { SessionID } from "@/IDTypes";
+import type { DraftLog } from "@/DraftLog";
+import { Bracket } from "@/Brackets";
+
 import { defineComponent } from "vue";
 import { getUrlVars } from "./helper";
 import BracketComponent from "./components/Bracket.vue";
 import "floating-vue/dist/style.css";
-import { SessionID } from "../../src/IDTypes";
-import { Bracket, isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";
-import { DraftLog } from "../../src/DraftLog";
 import { Language } from "../../src/Types";
+import { isDoubleBracket, isSwissBracket, isTeamBracket } from "../../src/Brackets";
 
 export default defineComponent({
 	components: { Bracket: BracketComponent },

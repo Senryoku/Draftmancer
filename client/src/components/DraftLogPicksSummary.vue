@@ -26,8 +26,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { Card, CardID } from "../../../src/CardTypes";
-import { DraftPick } from "../../../src/DraftLog";
+import { Card, CardID } from "@/CardTypes";
+import { DraftPick } from "@/DraftLog";
 import { replaceManaSymbols } from "../ManaSymbols";
 import { PickDetails } from "./DraftLog.vue";
 

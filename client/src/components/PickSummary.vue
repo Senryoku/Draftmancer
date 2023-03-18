@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { PickSummary } from "../../../src/PickSummary";
+import { PickSummary } from "@/PickSummary";
 import Card from "./Card.vue";
 
 export default defineComponent({

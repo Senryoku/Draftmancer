@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { MinesweeperSyncData } from "../../../src/MinesweeperDraftTypes";
+import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";

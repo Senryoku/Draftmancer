@@ -6,7 +6,7 @@
 		"module": "ESNext",
 		"moduleResolution": "node",
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["src/*", "../dist/types/src/*"]
 		},
 		"skipLibCheck": false,
 		"sourceMap": true,

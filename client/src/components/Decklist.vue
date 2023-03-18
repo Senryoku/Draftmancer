@@ -88,8 +88,8 @@ import Modal from "./Modal.vue";
 import ExportDropdown from "./ExportDropdown.vue";
 import CardPool from "./CardPool.vue";
 import { defineComponent, PropType } from "vue";
-import { Card, CardID, DeckBasicLands, DeckList } from "../../../src/CardTypes";
-import { Language } from "../../../src/Types";
+import { Card, CardID, DeckBasicLands, DeckList } from "@/CardTypes";
+import { Language } from "@/Types";
 import { defineAsyncComponent } from "vue";
 
 let deckUIDs = 0;

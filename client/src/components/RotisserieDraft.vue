@@ -23,12 +23,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { UniqueCard, UniqueCardID } from "../../../src/CardTypes";
-import { UserData } from "../../../src/Session/SessionTypes";
-import { RotisserieDraftSyncData, RotisserieDraftCard } from "../../../src/RotisserieDraft";
-import { Language } from "../../../src/Types";
+import { UniqueCard, UniqueCardID } from "@/CardTypes";
+import { UserData } from "@/Session/SessionTypes";
+import { RotisserieDraftSyncData, RotisserieDraftCard } from "@/RotisserieDraft";
+import { Language } from "@/Types";
 import CardPool from "./CardPool.vue";
-import { UserID } from "../../../src/IDTypes";
+import { UserID } from "@/IDTypes";
 
 export default defineComponent({
 	components: { CardPool },

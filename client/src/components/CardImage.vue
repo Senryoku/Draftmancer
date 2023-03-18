@@ -88,8 +88,8 @@ import CardText from "./CardText.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
 import { defineComponent, PropType } from "vue";
-import { Language } from "../../../src/Types";
-import { Card } from "../../../src/CardTypes";
+import { Language } from "@/Types";
+import { Card } from "@/CardTypes";
 import { ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
 export default defineComponent({

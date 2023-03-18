@@ -158,8 +158,8 @@ import CardOrder, { ComparatorType } from "../cardorder";
 import Card from "./Card.vue";
 import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
-import { Language } from "../../../src/Types";
-import { UniqueCard } from "../../../src/CardTypes";
+import { Language } from "@/Types";
+import { UniqueCard } from "@/CardTypes";
 
 export default defineComponent({
 	name: "CardPool",

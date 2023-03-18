@@ -1,8 +1,8 @@
 import Constants from "../../src/Constants";
 
 import J21MTGACollectorNumber from "../../data/J21MTGACollectorNumbers.json";
-import { Card, CardColor } from "../../src/CardTypes";
-import { Language, SetCode } from "../../src/Types";
+import { Card, CardColor } from "@/CardTypes";
+import { Language, SetCode } from "@/Types";
 
 const MTGASetConversions: { [key: string]: string } = {
 	DOM: "DAR", // DOM is called DAR in MTGA

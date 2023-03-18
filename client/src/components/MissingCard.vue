@@ -7,8 +7,9 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
-import { Card, toUnique } from "../../../src/CardTypes";
-import { Language } from "../../../src/Types";
+import type { Card } from "@/CardTypes";
+import { toUnique } from "../../../src/CardTypes";
+import { Language } from "@/Types";
 import CardComponent from "./Card.vue";
 
 export default defineComponent({

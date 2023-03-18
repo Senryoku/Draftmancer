@@ -3,7 +3,7 @@ import vueCardCache, { isReady, ScryfallCard } from "./vueCardCache";
 import Constants from "../../src/Constants";
 import { Alert, fireToast, loadingToast, SwalCustomClasses } from "./alerts";
 import { download, escapeHTML } from "./helper";
-import { Card, CardColor } from "../../src/CardTypes.js";
+import { Card, CardColor } from "@/CardTypes.js";
 
 export async function exportToMTGO(
 	deck: Card[],

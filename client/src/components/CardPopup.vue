@@ -75,12 +75,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { Language } from "../../../src/Types";
+import { Language } from "@/Types";
 import axios from "axios";
 
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
-import { Card, CardID } from "../../../src/CardTypes";
+import { Card, CardID } from "@/CardTypes";
 import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 
 const scrollCooldown = 100; // ms

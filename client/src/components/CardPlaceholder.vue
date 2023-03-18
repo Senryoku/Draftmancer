@@ -10,7 +10,7 @@
 <script lang="ts">
 import { isScryfallCard, ScryfallCard, ScryfallCardFace, isScryfallCardFace } from "../vueCardCache";
 import { defineComponent, PropType } from "vue";
-import { Card, CardBack } from "../../../src/CardTypes";
+import { Card, CardBack } from "@/CardTypes";
 
 export default defineComponent({
 	name: "CardPlaceholder",
