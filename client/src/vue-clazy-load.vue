@@ -54,9 +54,7 @@ export default defineComponent({
 		 */
 		threshold: {
 			type: [Array, Number] as PropType<number | number[]>,
-			default() {
-				return [0, 0.5, 1];
-			},
+			default: [0, 0.5, 1],
 		},
 
 		/**
@@ -66,10 +64,8 @@ export default defineComponent({
 		ratio: {
 			type: Number,
 			default: 0.4,
-			validator(value: number) {
-				// can't be less than 0 and greater than 1
-				return value >= 0 && value <= 1;
-			},
+			// can't be less than 0 and greater than 1
+			validator: (value: number) => value >= 0 && value <= 1,
 		},
 
 		/**
@@ -86,11 +82,9 @@ export default defineComponent({
 		 * @type {String}
 		 */
 		crossorigin: {
-			type: String,
+			type: String as PropType<"anonymous" | "use-credentials">,
 			default: null,
-			validator: function validator(value) {
-				return value === "anonymous" || value === "use-credentials";
-			},
+			validator: (value: string) => value === "anonymous" || value === "use-credentials",
 		},
 
 		/**
@@ -112,7 +106,7 @@ export default defineComponent({
 		 */
 		errorClass: { type: String, default: null },
 	},
-	data() {
+	data: () => {
 		return {
 			loaded: false,
 			img: new Image() as HTMLImageElement | null,
