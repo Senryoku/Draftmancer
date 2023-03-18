@@ -13,7 +13,8 @@
 		"strict": true,
 		"target": "esnext",
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"noImplicitReturns": true
 	},
 	"vueCompilerOptions": {
 		"target": 3
