@@ -6,7 +6,31 @@ import { memoryReport } from "./utils.js";
 
 import { Card, CardID, getNextCardID, UniqueCard } from "./CardTypes.js";
 
-export let Cards = new Map<CardID, Card>();
+console.group("Cards.ts::Loading Cards...");
+console.time("Total");
+
+//memoryReport();
+let tmpCards: Map<CardID, Card>;
+console.time("Parsing Cards");
+if (process.env.NODE_ENV !== "production") {
+	tmpCards = new Map<CardID, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
+} else {
+	tmpCards = new Map<CardID, Card>();
+	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
+	const cardsPromise = new Promise((resolve, reject) => {
+		const stream = JSONStream.parse("$*");
+		stream.on("data", function (entry: any) {
+			tmpCards.set(entry.key, entry.value as Card);
+		});
+		stream.on("end", resolve);
+		fs.createReadStream("./data/MTGCards.json").pipe(stream);
+	});
+	await cardsPromise;
+}
+console.timeEnd("Parsing Cards");
+//memoryReport();
+
+export const Cards: ReadonlyMap<CardID, Card> = tmpCards;
 
 export function getCard(cid: CardID): Card {
 	const card = Cards.get(cid);
@@ -26,30 +50,6 @@ export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid
 	if (options.foil) uc.foil = options.foil;
 	return uc;
 }
-
-console.group("Cards.ts::Loading Cards...");
-console.time("Total");
-
-//memoryReport();
-
-console.time("Parsing Cards");
-if (process.env.NODE_ENV !== "production") {
-	Cards = new Map<CardID, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
-} else {
-	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
-	const cardsPromise = new Promise((resolve, reject) => {
-		const stream = JSONStream.parse("$*");
-		stream.on("data", function (entry: any) {
-			Cards.set(entry.key, entry.value as Card);
-		});
-		stream.on("end", resolve);
-		fs.createReadStream("./data/MTGCards.json").pipe(stream);
-	});
-	await cardsPromise;
-}
-console.timeEnd("Parsing Cards");
-
-//memoryReport();
 
 console.time("Preparing Cards and caches");
 
