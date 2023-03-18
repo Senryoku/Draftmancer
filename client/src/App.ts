@@ -58,23 +58,23 @@ import { SortableEvent } from "sortablejs";
 const img = new Image();
 img.src = CardBack;
 
-const DraftState = {
-	None: "None",
-	Waiting: "Waiting",
-	Picking: "Picking",
-	Brewing: "Brewing",
-	Watching: "Watching",
-	WinstonPicking: "WinstonPicking",
-	WinstonWaiting: "WinstonWaiting",
-	GridPicking: "GridPicking",
-	GridWaiting: "GridWaiting",
-	RochesterPicking: "RochesterPicking",
-	RochesterWaiting: "RochesterWaiting",
-	RotisserieDraft: "RotisserieDraft",
-	MinesweeperPicking: "MinesweeperPicking",
-	MinesweeperWaiting: "MinesweeperWaiting",
-	TeamSealed: "TeamSealed",
-};
+enum DraftState {
+	None = "None",
+	Waiting = "Waiting",
+	Picking = "Picking",
+	Brewing = "Brewing",
+	Watching = "Watching",
+	WinstonPicking = "WinstonPicking",
+	WinstonWaiting = "WinstonWaiting",
+	GridPicking = "GridPicking",
+	GridWaiting = "GridWaiting",
+	RochesterPicking = "RochesterPicking",
+	RochesterWaiting = "RochesterWaiting",
+	RotisserieDraft = "RotisserieDraft",
+	MinesweeperPicking = "MinesweeperPicking",
+	MinesweeperWaiting = "MinesweeperWaiting",
+	TeamSealed = "TeamSealed",
+}
 
 enum PassingOrder {
 	None,
