@@ -9,22 +9,24 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import type { ArenaID, Card, CardColor, CardID, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
+import type { ArenaID, Card, CardID, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
 import type { GridDraftSyncData } from "@/GridDraft";
-import { minesweeperApplyDiff, MinesweeperSyncData } from "../../src/MinesweeperDraftTypes";
 import type { RochesterDraftSyncData } from "@/RochesterDraft";
 import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/RotisserieDraft";
 import type { TeamSealedSyncData } from "@/TeamSealed";
 import type { Bracket } from "@/Brackets";
 import type { SocketAck } from "@/Message";
-import Constants, { CubeDescription } from "../../src/Constants";
 import type { Options } from "@/utils";
 import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
 import type SessionsSettingsProps from "@/Session/SessionProps";
+import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
+import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
+import Constants, { CubeDescription } from "../../src/Constants";
+import { CardColor } from "../../src/CardTypes";
 
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
