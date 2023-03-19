@@ -1,0 +1,2 @@
+data/MTGCards.json filter=lfs diff=lfs merge=lfs -text
+client/src/data/MTGACards.json filter=lfs diff=lfs merge=lfs -text
