@@ -823,13 +823,13 @@
 							v-if="draftLogLive && draftLogLive.sessionID === sessionID"
 							class="draft-watching-live-log"
 						>
-							<draft-log-live
+							<draft-log-live-component
 								:draftlog="draftLogLive"
 								:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
 								:language="language"
 								:key="draftLogLive.time"
 								ref="draftloglive"
-							></draft-log-live>
+							></draft-log-live-component>
 						</div>
 					</div>
 					<div
@@ -850,7 +850,7 @@
 								<template v-if="draftingState == DraftState.Picking">
 									<input
 										type="button"
-										@click="pickCard"
+										@click="pickCard()"
 										value="Confirm Pick"
 										v-if="
 											selectedCards.length === cardsToPick &&
@@ -1086,7 +1086,7 @@
 									<span>
 										<input
 											type="button"
-											@click="pickCard"
+											@click="pickCard()"
 											value="Confirm Pick"
 											v-if="selectedCards.length === cardsToPick"
 										/>
@@ -1315,7 +1315,7 @@
 										v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
-										@update:lands="(c, n) => (lands[c] = n)"
+										@update:lands="(c: CardColor, n: number) => (lands[c] = n)"
 									>
 									</land-control>
 									<dropdown
@@ -1333,22 +1333,22 @@
 														yellow:
 															collectionInfos.wildcards &&
 															collectionInfos.wildcards['rare'] <
-																neededWildcards.main.rare,
+																(neededWildcards!.main?.rare ?? 0),
 													}"
 												>
 													<img class="wildcard-icon" :src="`img/wc_rare.webp`" />
-													{{ neededWildcards.main.rare }}
+													{{ neededWildcards!.main?.rare ?? 0 }}
 												</span>
 												<span
 													:class="{
 														yellow:
 															collectionInfos.wildcards &&
 															collectionInfos.wildcards['mythic'] <
-																neededWildcards.main.mythic,
+																(neededWildcards!.main?.mythic ?? 0),
 													}"
 												>
 													<img class="wildcard-icon" :src="`img/wc_mythic.webp`" />
-													{{ neededWildcards.main.mythic }}
+													{{ neededWildcards!.main?.mythic ?? 0 }}
 												</span>
 											</span>
 										</template>
@@ -1367,7 +1367,7 @@
 														<img class="wildcard-icon" :src="`img/wc_${rarity}.webp`" />
 													</td>
 													<td>{{ value }}</td>
-													<td>({{ neededWildcards.side[rarity] }})</td>
+													<td>({{ neededWildcards!.side?.[rarity] ?? 0 }})</td>
 													<template v-if="collectionInfos && collectionInfos.wildcards">
 														<td style="font-size: 0.75em; color: #bbb">/</td>
 														<td style="font-size: 0.75em; color: #bbb">
@@ -1954,7 +1954,7 @@
 				<h2>Card Pool</h2>
 			</template>
 			<template v-slot:body>
-				<set-restriction v-model="setRestriction"></set-restriction>
+				<set-restriction-component v-model="setRestriction"></set-restriction-component>
 			</template>
 		</modal>
 		<modal v-if="displayedModal === 'draftLogs' && draftLogs" @close="displayedModal = ''">
@@ -1977,13 +1977,13 @@
 				<h2>Collection Statistics</h2>
 			</template>
 			<template v-slot:body>
-				<collection
+				<collection-component
 					:collection="collection"
 					:collectionInfos="collectionInfos"
 					:language="language"
 					:displaycollectionstatus="displayCollectionStatus"
 					@display-collection-status="displayCollectionStatus = $event"
-				></collection>
+				></collection-component>
 			</template>
 		</modal>
 		<modal v-if="displayedModal === 'sessionOptions'" @close="displayedModal = ''">
@@ -2619,7 +2619,7 @@
 				<h2>Bracket</h2>
 			</template>
 			<template v-slot:body>
-				<bracket
+				<bracket-component
 					:bracket="bracket"
 					:teamDraft="teamDraft"
 					:editable="userID === sessionOwner || !bracketLocked"
@@ -2633,7 +2633,7 @@
 					@generate-swiss="generateSwissBracket"
 					@generate-double="generateDoubleBracket"
 					@lock="lockBracket"
-				></bracket>
+				></bracket-component>
 			</template>
 		</modal>
 		<modal v-if="displayedModal === 'deckStats'" @close="displayedModal = ''">

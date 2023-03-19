@@ -9,7 +9,7 @@ import {
 	UserData,
 	UsersData,
 } from "../../src/Session/SessionTypes";
-import type { ArenaID, Card, CardID, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
+import type { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, UniqueCardID } from "@/CardTypes";
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
@@ -124,19 +124,19 @@ type SessionUser = {
 export default defineComponent({
 	components: {
 		BoosterCard,
-		Bracket: defineAsyncComponent(() => import("./components/Bracket.vue")),
+		BracketComponent: defineAsyncComponent(() => import("./components/Bracket.vue")),
 		Card: CardComponent,
 		CardList: defineAsyncComponent(() => import("./components/CardList.vue")),
 		CardPlaceholder,
 		CardPool,
 		CardPopup,
 		CardStats: defineAsyncComponent(() => import("./components/CardStats.vue")),
-		Collection: defineAsyncComponent(() => import("./components/Collection.vue")),
+		CollectionComponent: defineAsyncComponent(() => import("./components/Collection.vue")),
 		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
 		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
 		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
-		DraftLogLive: defineAsyncComponent(() => import("./components/DraftLogLive.vue")),
+		DraftLogLiveComponent: defineAsyncComponent(() => import("./components/DraftLogLive.vue")),
 		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
@@ -150,7 +150,7 @@ export default defineComponent({
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		ScaleSlider,
-		SetRestriction: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
+		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
 		Sortable,
 	},
 	data: () => {
@@ -435,7 +435,7 @@ export default defineComponent({
 				}
 
 				for (let prop in data.updatedProperties) {
-					user[prop] = data.updatedProperties[prop];
+					(user as IIndexable)[prop] = data.updatedProperties[prop];
 				}
 			});
 
@@ -1032,7 +1032,12 @@ export default defineComponent({
 			this.socket.on("shareDecklist", (data) => {
 				const idx = this.draftLogs.findIndex((l) => l.sessionID === data.sessionID && l.time === data.time);
 				if (idx && this.draftLogs[idx] && data.userID in this.draftLogs[idx].users) {
-					this.draftLogs[idx].users[data.userID].decklist = data.decklist;
+					if (data.decklist) {
+						const decklist: Partial<DeckList> = data.decklist;
+						if (!decklist.main) decklist.main = [];
+						if (!decklist.side) decklist.side = [];
+						this.draftLogs[idx].users[data.userID!].decklist = decklist as DeckList;
+					} else this.draftLogs[idx].users[data.userID].decklist = data.decklist;
 					this.storeDraftLogs();
 				}
 			});
@@ -1043,7 +1048,12 @@ export default defineComponent({
 				if (!this.draftLogLive) return;
 
 				if (data.pick) this.draftLogLive.users[data.userID!].picks.push(data.pick);
-				if (data.decklist) this.draftLogLive.users[data.userID!].decklist = data.decklist;
+				if (data.decklist) {
+					const decklist: Partial<DeckList> = data.decklist;
+					if (!decklist.main) decklist.main = [];
+					if (!decklist.side) decklist.side = [];
+					this.draftLogLive.users[data.userID!].decklist = decklist as DeckList;
+				}
 			});
 
 			this.socket.on("pickAlert", (data) => {
@@ -1064,8 +1074,8 @@ export default defineComponent({
 				if (cards.length === 0) return;
 				this.clearState();
 				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				if (typeof this.$refs.deckDisplay !== "undefined") this.$refs.deckDisplay.sync();
-				if (typeof this.$refs.sideboardDisplay !== "undefined") this.$refs.sideboardDisplay.sync();
+				this.$refs.deckDisplay?.sync();
+				this.$refs.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of cards) this.addToDeck(c);
@@ -1194,10 +1204,7 @@ export default defineComponent({
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
 				}).then((result) => {
-					if (result.value) {
-						this.socket.emit("startDraft");
-						return true;
-					}
+					if (result.value) this.socket.emit("startDraft");
 				});
 			} else {
 				this.socket.emit("startDraft");
@@ -1269,7 +1276,7 @@ export default defineComponent({
 			if (e.dataTransfer?.types.includes("isboostercard")) {
 				e.preventDefault();
 				e.dataTransfer.dropEffect = "move";
-				return false;
+				return;
 			}
 
 			// Allow dropping picks during Rotisserie draft if it is our turn to pick.
@@ -1280,7 +1287,7 @@ export default defineComponent({
 			) {
 				e.preventDefault();
 				e.dataTransfer.dropEffect = "move";
-				return false;
+				return;
 			}
 		},
 		dragBoosterCard(e: DragEvent, card: UniqueCard) {
@@ -2038,7 +2045,7 @@ export default defineComponent({
 						title: "Detailed logs disabled",
 						text: "Looks like a valid Player.log file but Detailed Logs have to be manually enabled in MTGA. Enable it in Options > View Account > Detailed Logs (Plugin Support) and restart MTGA.",
 					});
-					return null;
+					return;
 				}
 
 				let playerIds = new Set(Array.from(contents.matchAll(/"playerId":"([^"]+)"/g)).map((e) => e[1]));
@@ -3093,10 +3100,10 @@ export default defineComponent({
 		},
 		displayWildcardInfo(): boolean {
 			return (
-				this.displayCollectionStatus &&
-				this.neededWildcards &&
-				((this.neededWildcards.main && Object.values(this.neededWildcards.main).some((v) => v > 0)) ||
-					(this.neededWildcards.side && Object.values(this.neededWildcards.side).some((v) => v > 0)))
+				this.displayCollectionStatus !== null &&
+				this.neededWildcards !== null &&
+				((this.neededWildcards.main !== null && Object.values(this.neededWildcards.main).some((v) => v > 0)) ||
+					(this.neededWildcards.side !== null && Object.values(this.neededWildcards.side).some((v) => v > 0)))
 			);
 		},
 		displayDeckAndSideboard(): boolean {

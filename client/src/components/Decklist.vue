@@ -148,8 +148,8 @@ export default defineComponent({
 	watch: {
 		list() {
 			this.$nextTick(() => {
-				this.$refs.mainboardComponent?.sync();
-				this.$refs.sideboardComponent?.sync();
+				(this.$refs.mainboardComponent as typeof CardPool)?.sync();
+				(this.$refs.sideboardComponent as typeof CardPool)?.sync();
 			});
 		},
 	},
