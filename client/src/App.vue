@@ -506,6 +506,7 @@
 						faded: !randomizeSeatingOrder,
 						clickable: userID === sessionOwner,
 					}"
+					style="margin-right: 0.5em"
 					@click="if (userID === sessionOwner) randomizeSeatingOrder = !randomizeSeatingOrder;"
 					v-tooltip="{
 						content: `Randomize Seating Order on draft start: <strong>${

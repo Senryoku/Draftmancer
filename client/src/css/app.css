@@ -836,6 +836,7 @@ ul.player-list {
 	right: -1.15em;
 	top: 50%;
 	transform: translateY(-50%);
+	font-size: 10px;
 }
 
 .passing-order-left {
@@ -847,7 +848,6 @@ ul.player-list {
 .passing-order-right {
 	position: absolute;
 	right: -0.85em;
-	z-index: 1;
 	top: 0.6em;
 }
 
