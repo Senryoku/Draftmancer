@@ -1502,63 +1502,6 @@ ul.player-list {
 	align-items: flex-start;
 }
 
-/**** Set Multiselect ****/
-
-
-.multiselect__tags,
-.multiselect__single,
-.multiselect__element,
-.multiselect__content-wrapper {
-	color: #ddd;
-	background: #555;
-}
-
-.multiselect-option {
-	font-size: 14px;
-	min-height: auto;
-	line-height: inherit;
-	padding: 5px;
-	padding-left: 0;
-}
-
-.multiselect-selected {
-	--invertedness: 0%;
-}
-
-
-.multiselect__single {
-	margin-bottom: 0;
-	line-height: inherit;
-	min-height: auto;
-	width: auto;
-	font-size: inherit;
-	max-width: 16em;
-	text-overflow: ellipsis;
-	display: inline-block;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
-.multiselect__single .set-icon {
-	vertical-align: middle;
-	margin-right: 0.2em;
-}
-
-.multiselect__select {
-	top: 40%;
-	bottom: 60%;
-	right: 0;
-	height: auto;
-}
-
-.multiselect__select::before {
-	top: 2.5px;
-}
-
-.multiselect__tag-icon {
-	color: #bf5d5d;
-}
-
 /*
 Can't be applied to .card-filtered directly as it creates a bug with the rotation handle position.
 See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter-on-the-parent-break-the-child-positioning

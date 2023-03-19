@@ -34,7 +34,7 @@
 				}"
 			>
 				<slot name="option" :option="option">
-					<span class="multiselect-option set-option">
+					<span class="set-option">
 						<img class="set-icon padded-icon" :src="SetsInfos[option].icon" />
 						<span class="set-option-name">
 							{{ SetsInfos[option].fullName }}
@@ -232,6 +232,7 @@ onUnmounted(() => {
 .multiselect-selected.option {
 	background: #eee;
 	color: #222;
+	--invertedness: 0%;
 }
 
 .option::before {
@@ -310,5 +311,8 @@ onUnmounted(() => {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	font-size: 14px;
+	padding: 5px;
+	padding-left: 0;
 }
 </style>
