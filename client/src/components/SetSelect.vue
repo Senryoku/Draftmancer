@@ -1,8 +1,8 @@
 <template>
-	<div class="set-select" :class="{ expanded: expanded }">
+	<div class="set-select" :class="{ expanded: expanded }" @pointerdown.stop>
 		<div class="select" @click.stop="toggle">
 			<slot name="selection" :values="modelValue">
-				<span class="selected-sets" v-if="modelValue.length == 1">
+				<span class="selected-sets" v-if="modelValue.length == 1" :key="modelValue[0]">
 					<img
 						class="set-icon"
 						style="padding-left: 4px; padding-right: 4px"
@@ -10,15 +10,16 @@
 					/>
 					<span class="selected-set-name">{{ SetsInfos[modelValue[0]].fullName }}</span>
 				</span>
-				<span class="selected-sets multiple" v-else-if="modelValue.length > 1">
+				<span class="selected-sets multiple" v-else-if="modelValue.length > 1" key="multiple">
 					<span>({{ modelValue.length }})</span>
-					<img v-for="v in modelValue" class="set-icon" :src="SetsInfos[v].icon" :key="v" />
+					<TransitionGroup name="fade">
+						<img v-for="v in modelValue" class="set-icon" :src="SetsInfos[v].icon" :key="v" />
+					</TransitionGroup>
 				</span>
-				<span class="selected-sets placeholder" v-else>All Cards</span>
+				<span class="selected-sets placeholder" v-else key="placeholder">All Cards</span>
 			</slot>
 		</div>
 		<div class="options">
-			<div class="spacer"></div>
 			<slot name="beforeList"></slot>
 			<div
 				v-for="option in options"
@@ -124,11 +125,6 @@ onUnmounted(() => {
 	box-sizing: border-box;
 }
 
-.spacer {
-	height: 4px;
-	flex: 4px 0 0;
-}
-
 .set-select {
 	display: inline-block;
 	position: relative;
@@ -149,6 +145,10 @@ onUnmounted(() => {
 	padding-right: 20px;
 	background-color: #555;
 	cursor: pointer;
+}
+
+.expanded .select {
+	border-radius: 4px 4px 0 0;
 }
 
 .select::after {
@@ -189,7 +189,7 @@ onUnmounted(() => {
 
 .options {
 	position: absolute;
-	top: calc(100% - 4px);
+	top: 100%;
 	left: 0;
 	right: 0;
 	z-index: 10;
