@@ -535,7 +535,7 @@
 									teama: teamDraft && index % 2 === 0,
 									teamb: teamDraft && index % 2 === 1,
 									draggable: userID === sessionOwner && !drafting,
-									self: userID === index,
+									self: userID === element,
 									bot: userByID[element].isBot,
 								}"
 								:data-userid="element"
