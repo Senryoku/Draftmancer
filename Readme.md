@@ -8,7 +8,6 @@ Join the discord for development related discussions: https://discord.gg/XscXXNw
 
 -   Clone repository (`git clone https://github.com/Senryoku/MTGADraft.git`)
 -   Open repository (`cd MTGADraft`)
--   Generate card data by running `py ManageCardData.py dl` (this will download the latest bulk data from scryfall, run `py ManageCardData.py cache` to re-generate cached card files from an existing scryfall bulk data file)
 -   Execute `npm install` to install dependencies.
 -   Execute `npm run build` to build the server using typescript and the client using webpack (for production).
 -   Execute `npm start` to start the server (which also serves the webapp).
