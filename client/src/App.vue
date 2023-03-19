@@ -258,46 +258,16 @@
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
-							<multiselect
-								v-model="setRestriction"
-								placeholder="All Cards"
-								:options="sets.slice().reverse()"
-								:searchable="false"
-								:allow-empty="true"
-								:close-on-select="false"
-								:multiple="true"
-								select-label
-								selected-label=""
-								deselect-label=""
-							>
-								<template v-slot:selection="{ values }">
-									<span class="multiselect__single" v-if="values.length == 1">
-										<img class="set-icon" :src="setsInfos[values[0]].icon" />
-										{{ setsInfos[values[0]].fullName }}
-									</span>
-									<span class="multiselect__single" v-if="values.length > 1">
-										({{ values.length }})
-										<img v-for="v in values" class="set-icon" :src="setsInfos[v].icon" :key="v" />
-									</span>
-								</template>
-								<template v-slot:option="{ option }">
-									<span class="multiselect__option set-option">
-										<img class="set-icon padded-icon" :src="setsInfos[option].icon" />
-										<span
-											style="
-												display: inline-block;
-												max-width: 12em;
-												overflow: hidden;
-												text-overflow: ellipsis;
-											"
-											>{{ setsInfos[option].fullName }}</span
-										>
-									</span>
-								</template>
+							<set-select v-model="setRestriction" :options="sets.slice().reverse()">
 								<template v-slot:beforeList>
 									<div
 										class="clickable"
-										style="text-align: center; padding: 0.5em; font-size: 0.75em"
+										style="
+											text-align: center;
+											padding: 0.5em;
+											font-size: 0.75em;
+											background-color: #444;
+										"
 										onclick="document.querySelector('#card-list-input-main').click()"
 									>
 										Upload a Custom Card List...
@@ -306,13 +276,18 @@
 								<template v-slot:afterList>
 									<div
 										class="clickable"
-										style="text-align: center; padding: 0.5em; font-size: 0.75em"
+										style="
+											text-align: center;
+											padding: 0.5em;
+											font-size: 0.75em;
+											background-color: #444;
+										"
 										@click="displayedModal = 'setRestriction'"
 									>
 										More sets...
 									</div>
 								</template>
-							</multiselect>
+							</set-select>
 							<i
 								class="fas fa-ellipsis-v clickable"
 								style="padding: 0.2em"
@@ -2828,7 +2803,6 @@
 
 <style src="./css/style.css"></style>
 <style src="./css/tooltip.css"></style>
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
 <style src="./css/app.css"></style>
 <style src="./css/chat.css"></style>
 

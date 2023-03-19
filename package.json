@@ -58,8 +58,7 @@
 		"threads": "^1.7",
 		"uuid": "^9.0.0",
 		"vue": "^3.2.47",
-		"vue-chartjs": "^5.2.0",
-		"vue-multiselect": "^3.0.0-beta.1"
+		"vue-chartjs": "^5.2.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.21.3",
