@@ -3,7 +3,11 @@
 		<div class="select" @click.stop="toggle">
 			<slot name="selection" :values="modelValue">
 				<span class="selected-sets" v-if="modelValue.length == 1">
-					<img class="set-icon" :src="SetsInfos[modelValue[0]].icon" />
+					<img
+						class="set-icon"
+						style="padding-left: 4px; padding-right: 4px"
+						:src="SetsInfos[modelValue[0]].icon"
+					/>
 					<span class="selected-set-name">{{ SetsInfos[modelValue[0]].fullName }}</span>
 				</span>
 				<span class="selected-sets multiple" v-else-if="modelValue.length > 1">
@@ -14,6 +18,7 @@
 			</slot>
 		</div>
 		<div class="options">
+			<div class="spacer"></div>
 			<slot name="beforeList"></slot>
 			<div
 				v-for="option in options"
@@ -85,6 +90,11 @@ onUnmounted(() => {
 	box-sizing: border-box;
 }
 
+.spacer {
+	height: 4px;
+	flex: 4px 0 0;
+}
+
 .set-select {
 	display: inline-block;
 	position: relative;
@@ -115,6 +125,11 @@ onUnmounted(() => {
 	font-family: "Font Awesome 5 Free";
 	font-weight: 900;
 	content: "";
+	transition: transform 0.12s ease-in-out;
+}
+
+.expanded .select::after {
+	transform: translateY(-50%) rotate(180deg);
 }
 
 .selected-sets {
@@ -142,6 +157,7 @@ onUnmounted(() => {
 	top: calc(100% - 4px);
 	left: 0;
 	right: 0;
+	z-index: 10;
 
 	display: flex;
 	flex-direction: column;
@@ -181,7 +197,7 @@ onUnmounted(() => {
 	color: #222;
 }
 
-.multiselect-selected.option::before {
+.option::before {
 	position: absolute;
 	bottom: 0;
 	left: 0;

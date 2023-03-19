@@ -258,7 +258,7 @@
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
-							<set-select v-model="setRestriction" :options="sets.slice().reverse()" class="multiselect">
+							<set-select v-model="setRestriction" :options="sets.slice().reverse()">
 								<template v-slot:beforeList>
 									<div
 										class="clickable"
