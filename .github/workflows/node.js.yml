@@ -25,7 +25,6 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
             - run: npm ci
-            - run: python3 ManageCardData.py dl
             - run: npm run build --if-present
             - run: npm test
             - run: npm run fronttest-headless
