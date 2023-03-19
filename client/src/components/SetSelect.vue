@@ -208,7 +208,7 @@ onUnmounted(() => {
 	filter: drop-shadow(2px 4px 2px rgba(0, 0, 0, 0.5));
 
 	padding: 0;
-	transition: max-height 0.2s ease-in-out;
+	transition: max-height 0.14s ease-in-out;
 }
 
 .expanded .options {

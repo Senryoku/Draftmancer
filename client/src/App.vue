@@ -262,7 +262,12 @@
 								<template v-slot:beforeList>
 									<div
 										class="clickable"
-										style="text-align: center; padding: 0.5em; font-size: 0.75em"
+										style="
+											text-align: center;
+											padding: 0.5em;
+											font-size: 0.75em;
+											background-color: #444;
+										"
 										onclick="document.querySelector('#card-list-input-main').click()"
 									>
 										Upload a Custom Card List...
@@ -271,7 +276,12 @@
 								<template v-slot:afterList>
 									<div
 										class="clickable"
-										style="text-align: center; padding: 0.5em; font-size: 0.75em"
+										style="
+											text-align: center;
+											padding: 0.5em;
+											font-size: 0.75em;
+											background-color: #444;
+										"
 										@click="displayedModal = 'setRestriction'"
 									>
 										More sets...
