@@ -31,7 +31,6 @@ import { CardColor } from "../../src/CardTypes";
 import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
 import { Sortable } from "sortablejs-vue3";
-import { Multiselect } from "vue-multiselect";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
@@ -49,6 +48,7 @@ import DelayedInput from "./components/DelayedInput.vue";
 import Dropdown from "./components/Dropdown.vue";
 import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
+import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
@@ -146,7 +146,7 @@ export default defineComponent({
 		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
 		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		Modal,
-		Multiselect,
+		SetSelect,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		ScaleSlider,

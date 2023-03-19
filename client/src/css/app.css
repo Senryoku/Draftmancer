@@ -1504,13 +1504,6 @@ ul.player-list {
 
 /**** Set Multiselect ****/
 
-.multiselect {
-	display: inline-block;
-	vertical-align: baseline;
-	width: 16em;
-	min-height: auto;
-	--invertedness: 100%;
-}
 
 .multiselect__tags,
 .multiselect__single,
@@ -1520,15 +1513,7 @@ ul.player-list {
 	background: #555;
 }
 
-.multiselect__tags {
-	border-radius: 4px;
-	border: 1px solid #888;
-	height: 28px;
-	min-height: auto;
-	padding: 5px 5px;
-}
-
-.multiselect__option {
+.multiselect-option {
 	font-size: 14px;
 	min-height: auto;
 	line-height: inherit;
@@ -1536,34 +1521,10 @@ ul.player-list {
 	padding-left: 0;
 }
 
-.multiselect__option--selected {
+.multiselect-selected {
 	--invertedness: 0%;
 }
 
-.set-option {
-	font-weight: initial;
-}
-
-.multiselect__option::after {
-	line-height: 36px;
-	font-size: 10px;
-	padding-left: inherit;
-	font-family: "Font Awesome 5 Free";
-}
-
-.multiselect__tag {
-	background: #333;
-}
-
-.multiselect__placeholder {
-	padding-top: 0;
-	padding-bottom: 0;
-	margin-bottom: 0;
-}
-
-.multiselect--active .multiselect__placeholder {
-	display: inline-block;
-}
 
 .multiselect__single {
 	margin-bottom: 0;
