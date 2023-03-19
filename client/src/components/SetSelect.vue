@@ -22,10 +22,16 @@
 			<slot name="beforeList"></slot>
 			<div
 				v-for="option in options"
-				@click.exact.stop="set(option)"
-				@click.ctrl.exact.stop="add(option)"
+				@pointerup.exact.stop="pointerup(option)"
+				@pointerup.ctrl.exact.stop="ctrlpointerup(option)"
+				@pointerdown="pointerdown($event, option)"
+				@pointerout="pointerout(option)"
 				class="option"
-				:class="{ 'multiselect-selected': modelValue.includes(option), ctrl: ctrlPressed }"
+				:class="{
+					'multiselect-selected': modelValue.includes(option),
+					ctrl: ctrlPressed,
+					'long-press': longPressingSet === option,
+				}"
 			>
 				<slot name="option" :option="option">
 					<span class="multiselect-option set-option">
@@ -53,6 +59,13 @@ const props = defineProps<{
 
 const expanded = ref(false);
 const ctrlPressed = ref(false);
+const longPressTimeout = ref(null as ReturnType<typeof setTimeout> | null);
+const longPressingSet = ref(null as SetCode | null);
+
+const clearLongPress = () => {
+	if (longPressTimeout.value) clearTimeout(longPressTimeout.value);
+	longPressingSet.value = null;
+};
 
 const emit = defineEmits<{
 	(e: "update:modelValue", value: SetCode[]): void;
@@ -67,21 +80,42 @@ const add = (c: SetCode) => {
 		);
 };
 const set = (c: SetCode) => emit("update:modelValue", [c]);
-
 const toggle = () => (expanded.value = !expanded.value);
 const close = () => (expanded.value = false);
 const checkctrl = (e: KeyboardEvent) => (ctrlPressed.value = e.ctrlKey);
 
+const pointerdown = (e: PointerEvent, c: SetCode) => {
+	clearLongPress();
+	longPressTimeout.value = setTimeout(() => {
+		add(c);
+		clearLongPress();
+	}, 500);
+	longPressingSet.value = c;
+	e.preventDefault();
+	e.stopPropagation();
+};
+const pointerup = (c: SetCode) => {
+	if (c === longPressingSet.value) set(c);
+	clearLongPress();
+};
+const ctrlpointerup = (c: SetCode) => {
+	if (c === longPressingSet.value) add(c);
+	clearLongPress();
+};
+const pointerout = (c: SetCode) => {
+	if (c === longPressingSet.value) clearLongPress();
+};
+
 onMounted(() => {
 	document.addEventListener("keydown", checkctrl);
 	document.addEventListener("keyup", checkctrl);
-	document.addEventListener("click", close);
+	document.addEventListener("pointerdown", close);
 });
 
 onUnmounted(() => {
 	document.removeEventListener("keydown", checkctrl);
 	document.removeEventListener("keyup", checkctrl);
-	document.removeEventListener("click", close);
+	document.removeEventListener("pointerdown", close);
 });
 </script>
 
@@ -101,6 +135,7 @@ onUnmounted(() => {
 	--invertedness: 100%;
 	vertical-align: middle;
 	width: 16em;
+	user-select: none;
 }
 
 .select {
@@ -186,6 +221,8 @@ onUnmounted(() => {
 	padding-left: 0;
 
 	cursor: pointer;
+
+	transition: all 100ms ease-in-out;
 }
 
 .option:hover {
@@ -205,13 +242,24 @@ onUnmounted(() => {
 	max-width: 0;
 	height: 2px;
 	background-color: #41b883;
-	transition: 250ms ease-in-out;
+	transition: max-width 250ms ease-in-out;
 	z-index: 1;
 	content: "";
 }
 
 .multiselect-selected.option:hover::before {
 	max-width: 100%;
+}
+
+.option.long-press::before {
+	transition: max-width 500ms linear;
+	max-width: 100%;
+	background-color: white;
+}
+
+.multiselect-selected.option.long-press::before {
+	background-color: #ff6a6a;
+	max-width: 0;
 }
 
 .multiselect-selected.option.ctrl:hover {
@@ -240,6 +288,10 @@ onUnmounted(() => {
 }
 
 .multiselect-selected.option.ctrl:hover::after {
+	content: "";
+}
+
+.multiselect-selected.option.long-press:hover::after {
 	content: "";
 }
 
