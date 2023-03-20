@@ -583,8 +583,8 @@ export default defineComponent({
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -647,8 +647,8 @@ export default defineComponent({
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -699,8 +699,8 @@ export default defineComponent({
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -752,8 +752,8 @@ export default defineComponent({
 				this.clearState();
 				this.drafting = true;
 				this.draftingState = DraftState.RotisserieDraft;
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -802,8 +802,8 @@ export default defineComponent({
 
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -836,8 +836,8 @@ export default defineComponent({
 				this.teamSealedState = data.state;
 				this.draftingState = DraftState.TeamSealed;
 
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -875,8 +875,8 @@ export default defineComponent({
 				}
 				card.owner = newOwnerID;
 				this.$nextTick(() => {
-					this.$refs.deckDisplay?.sync();
-					this.$refs.sideboardDisplay?.sync();
+					this.deckDisplay?.sync();
+					this.sideboardDisplay?.sync();
 				});
 			});
 
@@ -918,8 +918,8 @@ export default defineComponent({
 				this.drafting = true;
 				this.clearState();
 				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
@@ -947,8 +947,8 @@ export default defineComponent({
 						timer: 1500,
 					});
 
-					this.$refs.deckDisplay?.sync();
-					this.$refs.sideboardDisplay?.sync();
+					this.deckDisplay?.sync();
+					this.sideboardDisplay?.sync();
 				});
 			});
 
@@ -1074,8 +1074,8 @@ export default defineComponent({
 				if (cards.length === 0) return;
 				this.clearState();
 				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.$refs.deckDisplay?.sync();
-				this.$refs.sideboardDisplay?.sync();
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of cards) this.addToDeck(c);
@@ -2610,7 +2610,7 @@ export default defineComponent({
 			else {
 				// Handle column sync.
 				this.deck.push(card);
-				this.$refs.deckDisplay?.addCard(card, options?.event ?? undefined);
+				this.deckDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
 		addToSideboard(card: UniqueCard | UniqueCard[], options: { event?: MouseEvent } | undefined = undefined) {
@@ -2618,7 +2618,7 @@ export default defineComponent({
 			else {
 				// Handle column sync.
 				this.sideboard.push(card);
-				this.$refs.sideboardDisplay?.addCard(card, options?.event ?? undefined);
+				this.sideboardDisplay?.addCard(card, options?.event ?? undefined);
 			}
 		},
 		deckToSideboard(e: Event, c: UniqueCard) {
@@ -2626,7 +2626,7 @@ export default defineComponent({
 			let idx = this.deck.indexOf(c);
 			if (idx >= 0) {
 				this.deck.splice(idx, 1);
-				this.$refs.deckDisplay?.remCard(c);
+				this.deckDisplay?.remCard(c);
 				this.addToSideboard(c);
 				// Card DOM element will move without emiting a mouse leave event,
 				// make sure to close the card popup.
@@ -2639,7 +2639,7 @@ export default defineComponent({
 			let idx = this.sideboard.indexOf(c);
 			if (idx >= 0) {
 				this.sideboard.splice(idx, 1);
-				this.$refs.sideboardDisplay?.remCard(c);
+				this.sideboardDisplay?.remCard(c);
 				this.addToDeck(c);
 				this.emitter.emit("closecardpopup");
 				this.socket.emit("moveCard", c.uniqueID, "main");
@@ -2681,23 +2681,23 @@ export default defineComponent({
 				const card = this.deck[idx];
 				this.sideboard.splice(e.newIndex!, 0, card);
 				this.socket.emit("moveCard", card.uniqueID, "side");
-				this.$refs.sideboardDisplay?.sync();
+				this.sideboardDisplay?.sync();
 			}
 		},
 		onCollapsedSideDragRemove(e: SortableEvent) {
 			this.sideboard.splice(e.oldIndex!, 1);
-			this.$refs.sideboardDisplay?.sync();
+			this.sideboardDisplay?.sync();
 		},
 		clearDeck() {
 			this.deck = [];
 			this.$nextTick(() => {
-				this.$refs.deckDisplay?.sync();
+				this.deckDisplay?.sync();
 			});
 		},
 		clearSideboard() {
 			this.sideboard = [];
 			this.$nextTick(() => {
-				this.$refs.sideboardDisplay?.sync();
+				this.sideboardDisplay?.sync();
 			});
 		},
 		updateAutoLands() {
@@ -2745,8 +2745,8 @@ export default defineComponent({
 		removeBasicsFromDeck() {
 			this.deck = this.deck.filter((c) => c.type !== "Basic Land");
 			this.sideboard = this.sideboard.filter((c) => c.type !== "Basic Land");
-			this.$refs.deckDisplay?.filterBasics();
-			this.$refs.sideboardDisplay?.filterBasics();
+			this.deckDisplay?.filterBasics();
+			this.sideboardDisplay?.filterBasics();
 		},
 		colorsInCardPool(pool: Card[]) {
 			let r = { W: 0, U: 0, B: 0, R: 0, G: 0 };
@@ -2950,6 +2950,12 @@ export default defineComponent({
 		},
 	},
 	computed: {
+		deckDisplay(): typeof CardPool | null {
+			return this.$refs.deckDisplay as typeof CardPool | null;
+		},
+		sideboardDisplay(): typeof CardPool | null {
+			return this.$refs.sideboardDisplay as typeof CardPool | null;
+		},
 		gameModeName(): string {
 			if (this.teamSealedState) return "Team Sealed";
 			if (this.rochesterDraftState) return "Rochester Draft";
