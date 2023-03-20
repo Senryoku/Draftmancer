@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 if (process.env.NODE_ENV !== "production") {
 	dotenv.config();
 }
-
+import crypto from "crypto";
 import { Connections } from "./Connection.js";
 import { Session, Sessions } from "./Session.js";
 import { TeamSealedState } from "./TeamSealed.js";
@@ -22,7 +22,6 @@ const MixInstance = MixPanelToken
 const InTesting = typeof (global as any).it === "function"; // Testing in mocha
 //                                      Explicitly disabled
 const DisablePersistence = InTesting || process.env.DISABLE_PERSISTENCE === "TRUE";
-const SaveLogs = false; // Disabled for now.
 
 import axios from "axios";
 import { UserID } from "./IDTypes.js";
@@ -34,6 +33,7 @@ import { WinstonDraftState } from "./WinstonDraft.js";
 import { Message } from "./Message.js";
 import { IIndexable } from "./Types.js";
 import { RotisserieDraftState } from "./RotisserieDraft.js";
+import { DraftLog, DraftPick } from "./DraftLog";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -319,26 +319,28 @@ type MTGDraftbotsLog = {
 	apiKey: string;
 };
 
+function anonymizeDraftLog(log: DraftLog): DraftLog {
+	const localLog = JSON.parse(JSON.stringify(log)) as DraftLog;
+	const sha1 = crypto.createHash("sha1");
+	const hash = sha1
+		.update(
+			Object.keys(localLog.users)
+				.filter((uid) => !localLog.users[uid].isBot)
+				.join("_")
+				.toString()
+		)
+		.digest("hex");
+	localLog.sessionID = parseInt(hash.slice(0, 10), 16).toString(32);
+	let idx = 0;
+	if (localLog.users)
+		for (const uid in localLog.users)
+			if (!localLog.users[uid].isBot) localLog.users[uid].userName = `Anonymous Player #${++idx}`;
+	return localLog;
+}
+
 function saveLog(type: string, session: Session) {
 	if (session.draftLog) {
-		const localLog = JSON.parse(JSON.stringify(session.draftLog));
-		// Anonymize Draft Log
-		localLog.sessionID = new Date().toISOString();
-		let idx = 0;
-		if (localLog.users)
-			for (const uid in localLog.users)
-				if (!localLog.users[uid].userName.startsWith("Bot #"))
-					localLog.users[uid].userName = `Anonymous Player #${++idx}`;
-
-		if (type === "Draft" && !DisablePersistence && SaveLogs) {
-			axios
-				.post(`${PersistenceStoreURL}/store/${localLog.sessionID}`, localLog, {
-					headers: {
-						"access-key": PersistenceKey,
-					},
-				})
-				.catch((err) => console.error("Error storing logs: ", err.message));
-		}
+		const localLog = anonymizeDraftLog(session.draftLog);
 
 		// Send log to MTGDraftbots endpoint
 		if (MTGDraftbotsAPIKey && type === "Draft" && !session.customCardList?.customCards) {
@@ -352,9 +354,10 @@ function saveLog(type: string, session: Session) {
 					const player: MTGDraftbotsLogEntry[] = [];
 					let packNum = 0;
 					let pickNum = 0;
-					let lastPackSize = u.picks[0].booster.length + 1;
+					let lastPackSize = (u.picks[0] as DraftPick).booster.length + 1;
 					let lastPackPicks = 0;
-					for (const p of u.picks) {
+					for (const pick of u.picks) {
+						const p = pick as DraftPick;
 						if (p.booster.length >= lastPackSize) {
 							// Patch last pack picks with the correct numPicks
 							for (let i = player.length - lastPackPicks; i < player.length; ++i)
@@ -367,7 +370,7 @@ function saveLog(type: string, session: Session) {
 						player.push({
 							pack: p.booster.map((cid: string) => getCard(cid).oracle_id),
 							picks: p.pick,
-							trash: p.burn,
+							trash: p.burn ?? [],
 							packNum: packNum,
 							numPacks: -1,
 							pickNum: pickNum,
