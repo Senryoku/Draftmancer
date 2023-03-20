@@ -29,8 +29,8 @@ async function pickCard(page: Page) {
 	let choices = [];
 	// Yuk.
 	do {
-		choices = await page.$$(`.pick-col i:not([style*="display: none"])`);
-		choices.push(...(await page.$$(`.pick-row i:not([style*="display: none"])`)));
+		choices = await page.$$(`.pick-col svg:not([style*="display: none"])`);
+		choices.push(...(await page.$$(`.pick-row svg:not([style*="display: none"])`)));
 		await new Promise((r) => setTimeout(r, 20));
 	} while (choices.length === 0);
 	const choice = await getRandom(choices);

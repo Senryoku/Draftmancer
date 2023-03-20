@@ -135,8 +135,8 @@ export async function dismissToast(page: Page) {
 }
 
 export async function getSessionLink(page: Page): Promise<string> {
-	await page.$$(".fa-share-square");
-	await page.click(".fa-share-square");
+	await page.$$(".fa-share-from-square");
+	await page.click(".fa-share-from-square");
 	const clipboard = await page.evaluate(() => navigator.clipboard.readText());
 	expect(clipboard).to.match(/^http:\/\/localhost:3001\/\?session=/);
 	await dismissToast(page);

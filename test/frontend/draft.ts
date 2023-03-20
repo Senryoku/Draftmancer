@@ -93,7 +93,7 @@ describe("Front End - Solo", function () {
 		await dragAndDrop(pages[0], `.booster-card`, `.sideboard .card-column.drag-column:nth-child(2)`);
 		++expectedCardsInSideboard;
 		await sideHasNCard(pages[0], expectedCardsInSideboard);
-		const minimize = await pages[0].waitForSelector(".sideboard .controls .fa-columns");
+		const minimize = await pages[0].waitForSelector(".sideboard .controls .fa-table-columns");
 		expect(minimize).to.exist;
 		await minimize!.click();
 	});
