@@ -55,21 +55,21 @@
 					></font-awesome-icon>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
-							><i
+							><font-awesome-icon
 								icon="fa-solid fa-square"
 								size="sm"
 								:key="part.id"
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
-							></i
+							></font-awesome-icon
 						></template>
-						<template v-else
-							><i
+						<template v-else>
+							<font-awesome-icon
 								icon="fa-solid fa-spinner"
 								spin
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 								:key="part.id"
-							></i
-						></template>
+							></font-awesome-icon>
+						</template>
 					</template>
 					<font-awesome-icon icon="fa-solid fa-angle-down" v-if="relatedCards.length > 0"></font-awesome-icon>
 					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>

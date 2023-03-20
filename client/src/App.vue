@@ -1955,10 +1955,9 @@
 									>)
 								</li>
 								<li>
-									Ready check is performed to make sure everybody is set (<i
-										icon="fa-solid fa-user-check"
-									></i
-									>).
+									Ready check is performed to make sure everybody is set (
+									<font-awesome-icon icon="fa-solid fa-user-check"></font-awesome-icon>
+									).
 								</li>
 								<li>Once all confirmed, the session owner launches the desired game mode.</li>
 							</ol>

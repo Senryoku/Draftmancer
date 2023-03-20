@@ -1,16 +1,53 @@
 <template>
 	<div class="card-image" v-if="!fixedLayout">
 		<div v-if="hasBack" class="flip-button">
-			<font-awesome-icon icon="fa-solid fa-sync" class="flip-icon"></font-awesome-icon>
+			<font-awesome-layers>
+				<font-awesome-icon
+					icon="fa-solid fa-sync"
+					class="flip-icon"
+					transform="grow-2"
+					size="lg"
+					style="color: black"
+				></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-sync" class="flip-icon" size="lg"></font-awesome-icon>
+			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'flip'" class="vertical-flip-button">
-			<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon"></font-awesome-icon>
+			<font-awesome-layers>
+				<font-awesome-icon
+					icon="fa-solid fa-sync"
+					class="vertical-flip-icon"
+					transform="grow-2"
+					size="lg"
+					style="color: black"
+				></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon" size="lg"></font-awesome-icon>
+			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'split'" class="split-button">
-			<font-awesome-icon icon="fa-solid fa-sync" class="split-icon"></font-awesome-icon>
+			<font-awesome-layers>
+				<font-awesome-icon
+					icon="fa-solid fa-sync"
+					class="split-icon"
+					transform="grow-2"
+					size="lg"
+					style="color: black"
+				></font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-sync" class="split-icon" size="lg"></font-awesome-icon>
+			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
-			<font-awesome-icon icon="fa-solid fa-sync" class="split-left-icon"> </font-awesome-icon>
+			<font-awesome-layers>
+				<font-awesome-icon
+					icon="fa-solid fa-sync"
+					class="split-left-icon"
+					transform="grow-2"
+					size="lg"
+					style="color: black"
+				>
+				</font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-sync" class="split-left-icon" size="lg"> </font-awesome-icon>
+			</font-awesome-layers>
 		</div>
 		<div :class="{ 'flip-container': hasBack }">
 			<clazy-load
@@ -162,7 +199,7 @@ img {
 .split-left-button {
 	position: absolute;
 	top: -0.25em;
-	right: -0.4em;
+	right: -0.2em;
 	z-index: 1;
 	pointer-events: auto;
 
@@ -174,7 +211,7 @@ img {
 .booster .flip-button,
 .booster .vertical-flip-button {
 	top: -0.75em;
-	right: -0.9em;
+	right: -0.7em;
 	padding: 0.5em;
 }
 
@@ -221,12 +258,10 @@ img {
 .vertical-flip-icon {
 	transition: transform 0.2s, text-shadow 0.2s;
 	color: white;
-	text-shadow: 0 0 4px black, 0 4px 0 black;
 }
 
 .vertical-flip-button:hover .vertical-flip-icon {
 	transform: rotateZ(180deg);
-	text-shadow: 0 0 4px black, 0 -4px 0 black;
 }
 
 .vertical-flip-button ~ div .front-image {
@@ -242,7 +277,6 @@ img {
 .split-left-icon {
 	transition: transform 0.2s, text-shadow 0.2s;
 	color: white;
-	text-shadow: 0 0 4px black, 0 4px 0 black;
 }
 
 .split-left-icon {
@@ -251,12 +285,10 @@ img {
 
 .split-button:hover .split-icon {
 	transform: rotateZ(90deg);
-	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
 .split-left-button:hover .split-left-icon {
 	transform: rotateZ(-89.999deg) scaleX(-1);
-	text-shadow: 0 0 4px black, 4px 0 0 black;
 }
 
 .split-button ~ div .front-image,
