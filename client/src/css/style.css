@@ -211,3 +211,12 @@ ul.player-table > li.teamb {
 .fade-enter-active,.fade-leave-active {
 	transition: opacity 0.1s ease-in-out;
 }
+
+@font-face {
+  font-family: 'Mini Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src:  url("../assets/fonts/mini-icons.woff2") format("woff2"); 
+}
+  

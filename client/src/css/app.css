@@ -238,8 +238,8 @@ select.swal2-input option {
 	box-shadow: 0 0 2px 1px green;
 }
 
-.check-button:checked:after {
-	font-family: "Font Awesome 5 Free";
+.check-button:checked::after {
+	font-family: "Mini Font Awesome 5 Free";
 	content: "\f00c";
 	z-index: 3;
 	font-weight: 900;

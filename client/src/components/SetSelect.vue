@@ -157,9 +157,9 @@ onUnmounted(() => {
 	top: 50%;
 	transform: translateY(-50%);
 	color: #999;
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
-	content: "";
+	content: "\f0d7";
 	transition: transform 0.12s ease-in-out;
 }
 
@@ -275,12 +275,12 @@ onUnmounted(() => {
 	line-height: 20px;
 	font-size: 10px;
 	padding-left: inherit;
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 }
 
 .multiselect-selected.option::after {
-	content: "";
+	content: "\f00c";
 }
 
 .option.ctrl:not(.multiselect-selected):hover::after {
@@ -289,11 +289,11 @@ onUnmounted(() => {
 }
 
 .multiselect-selected.option.ctrl:hover::after {
-	content: "";
+	content: "\f00d";
 }
 
 .multiselect-selected.option.long-press:hover::after {
-	content: "";
+	content: "\f00d";
 }
 
 .placeholder {

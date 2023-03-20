@@ -597,7 +597,7 @@ ul.player-table.six li:nth-child(6):after {
 	position: absolute;
 	top: 0;
 	right: calc(-2rem + 1px);
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
 	content: "\f100"; /* << */
@@ -611,7 +611,7 @@ ul.player-table.six li:nth-child(3):after {
 	position: absolute;
 	top: 0;
 	left: calc(-2rem + 1px);
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
 	content: "\f101"; /* >> */
@@ -622,7 +622,7 @@ ul.player-table.six li:nth-child(4):before {
 	position: absolute;
 	top: calc(-2rem - 2px);
 	left: calc(50%);
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
 	content: "\f100";
@@ -634,7 +634,7 @@ ul.player-table.six li:nth-child(1):before {
 	position: absolute;
 	bottom: calc(-2rem - 2px);
 	left: calc(50%);
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 	font-size: 2rem;
 	content: "\f100";

@@ -91,10 +91,6 @@ export default defineComponent({
 <style src="./css/app.css"></style>
 <style src="./css/tooltip.css"></style>
 
-<style src="./assets/fontawesome-free-5.15.4-web/css/fontawesome.min.css" />
-<style src="./assets/fontawesome-free-5.15.4-web/css/brands.min.css" />
-<style src="./assets/fontawesome-free-5.15.4-web/css/solid.min.css" />
-
 <style>
 body {
 	margin: 0.5em;

@@ -92,9 +92,9 @@ export default defineComponent({
 	text-align: center;
 }
 
-.handle:after {
+.handle::after {
 	position: absolute;
-	font-family: "Font Awesome 5 Free";
+	font-family: "Mini Font Awesome 5 Free";
 	font-weight: 900;
 	content: "\f0d7";
 	right: 5px;
@@ -102,8 +102,8 @@ export default defineComponent({
 	transition: transform 0.2s ease;
 }
 
-.forced-open .handle:after,
-.dropdown-container:active .handle:after {
+.forced-open .handle::after,
+.dropdown-container:active .handle::after {
 	transform: rotate(180deg);
 }
 
@@ -115,7 +115,7 @@ export default defineComponent({
 }
 
 @media (hover: hover) {
-	.dropdown-container:hover .handle:after {
+	.dropdown-container:hover .handle::after {
 		transform: rotate(180deg);
 	}
 	.dropdown-container:hover .dropdown {

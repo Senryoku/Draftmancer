@@ -2901,9 +2901,6 @@
 <style src="./css/app.css"></style>
 <style src="./css/chat.css"></style>
 
-<style src="./assets/fontawesome-free-5.15.4-web/css/fontawesome.min.css" />
-<style src="./assets/fontawesome-free-5.15.4-web/css/solid.min.css" />
-
 <style scoped>
 .collection-import-help ol li,
 .collection-import-help ul li {
