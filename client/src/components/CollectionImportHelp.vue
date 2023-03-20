@@ -12,8 +12,9 @@
 				target="_blank"
 				rel="noopener nofollow"
 			>
-				this issue on Wizards' bug tracker <i class="fas fa-external-link-alt"></i
-			></a>
+				this issue on Wizards' bug tracker
+				<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
+			</a>
 			if you want this to change.
 		</p>
 		<h3>Supported File Formats</h3>
@@ -59,7 +60,7 @@
 					target="_blank"
 					rel="noopener nofollow"
 				>
-					Windows <i class="fas fa-external-link-alt"></i>
+					Windows <font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
 				</a>
 				and
 				<a
@@ -67,12 +68,12 @@
 					target="_blank"
 					rel="noopener nofollow"
 				>
-					macOS <i class="fas fa-external-link-alt"></i>
+					macOS <font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon>
 				</a>
 				)
 				<ul>
 					<li>
-						<i class="fab fa-windows"></i>
+						<font-awesome-icon icon="fa-brands fa-windows"></font-awesome-icon>
 						<tt
 							class="clickable"
 							@click="
@@ -83,11 +84,12 @@
 								)
 							"
 							v-tooltip="'Copy Windows path to clipboard'"
-							>C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
+						>
+							C:\Users\%username%\AppData\LocalLow\Wizards Of The Coast\MTGA\</tt
 						>
 					</li>
 					<li>
-						<i class="fab fa-apple"></i>
+						<font-awesome-icon icon="fa-brands fa-apple"></font-awesome-icon>
 						<tt
 							class="clickable"
 							@click="
@@ -103,10 +105,10 @@
 						</tt>
 					</li>
 				</ul>
-				Copy the path and paste it in the file selection pop up with the help of a shortcut! (<i
-					class="fab fa-windows"
-				></i>
-				<kbd>CTRL+L</kbd> / <i class="fab fa-apple"></i> <kbd>⇧⌘G</kbd>)
+				Copy the path and paste it in the file selection pop up with the help of a shortcut! (<font-awesome-icon
+					icon="fa-brands fa-windows"
+				></font-awesome-icon>
+				<kbd> CTRL+L</kbd> / <font-awesome-icon icon="fa-brands fa-apple"></font-awesome-icon> <kbd>⇧⌘G</kbd>)
 			</li>
 		</ol>
 	</div>

@@ -1,9 +1,21 @@
 <template>
 	<span class="scale-slider">
-		<i class="fas fa-search-minus clickable" @click="update(Math.max(modelValue - 0.1, min))"></i>
+		<font-awesome-icon
+			icon="fa-solid fa-search-minus"
+			class="clickable"
+			@click="update(Math.max(modelValue - 0.1, min))"
+		></font-awesome-icon>
 		<input type="range" :min="min" :max="max" step="0.01" :value="modelValue" @input="handleEvent" />
-		<i class="fas fa-search-plus clickable" @click="update(Math.min(modelValue + 0.1, max))"></i>
-		<i class="fas fa-undo-alt clickable reset-button" @click="update(1.0)"></i>
+		<font-awesome-icon
+			icon="fa-solid fa-search-plus"
+			class="clickable"
+			@click="update(Math.min(modelValue + 0.1, max))"
+		></font-awesome-icon>
+		<font-awesome-icon
+			icon="fa-solid fa-undo-alt"
+			class="clickable reset-button"
+			@click="update(1.0)"
+		></font-awesome-icon>
 	</span>
 </template>
 
@@ -30,6 +42,8 @@ export default defineComponent({
 <style scoped>
 .scale-slider {
 	white-space: nowrap;
+	display: flex;
+	align-items: center;
 }
 
 input {

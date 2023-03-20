@@ -8,11 +8,13 @@
 						<div class="modal-controls">
 							<slot name="controls"></slot>
 						</div>
-						<i
+						<font-awesome-icon
 							@click="$emit('close')"
-							class="fa fa-times fa-lg modal-default-button clickable"
+							class="modal-default-button clickable"
+							icon="fa-solid fa-times"
+							size="lg"
 							aria-hidden="true"
-						></i>
+						></font-awesome-icon>
 					</div>
 
 					<div class="modal-body">

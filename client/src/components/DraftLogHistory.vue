@@ -7,8 +7,8 @@
 			</button>
 			<span>({{ draftLogs.length }} / 25 logs)</span>
 			<span v-if="draftLogs.length >= 25"
-				><i class="fas fa-exclamation-triangle yellow"></i> Your history is full, new logs will overwrite the
-				oldest ones.</span
+				><font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow"></font-awesome-icon> Your
+				history is full, new logs will overwrite the oldest ones.</span
 			>
 		</div>
 		<div v-if="!draftLogs || draftLogs.length === 0" class="log empty-history">
@@ -18,15 +18,11 @@
 		<div v-for="(draftLog, idx) in orderedLogs" :key="idx" class="log">
 			<div class="log-controls" @click.self="toggle(idx)">
 				<span @click="toggle(idx)" class="clickable flex-row">
-					<i
+					<font-awesome-icon
 						v-if="!draftLog.delayed"
-						class="fa"
-						:class="{
-							'fa-chevron-down': expandedLogs[idx],
-							'fa-chevron-up': !expandedLogs[idx],
-						}"
-					></i>
-					<i class="fas fa-lock" v-else></i>
+						:icon="`fa-solid ${expandedLogs[idx] ? 'fa-chevron-down' : 'fa-chevron-up'}`"
+					></font-awesome-icon>
+					<font-awesome-icon icon="fa-solid fa-lock" v-else></font-awesome-icon>
 					<span>
 						{{ printableType(draftLog) }}
 						- Session '{{ draftLog.sessionID }}'
@@ -40,7 +36,8 @@
 							(Partial: The complete log is locked until you share it)
 						</span>
 						<button @click="$emit('sharelog', draftLog)">
-							<i class="fas fa-share-square"></i> Share with session and unlock
+							<font-awesome-icon icon="fa-solid fa-share-square"></font-awesome-icon> Share with session
+							and unlock
 						</button>
 					</template>
 					<template v-else
@@ -51,8 +48,12 @@
 				</template>
 				<span class="flex-row">
 					<button class="flat" @click="toggle(idx)">
-						<template v-if="expandedLogs[idx]"> <i class="far fa-eye-slash"></i> Close</template>
-						<template v-else> <i class="far fa-eye"></i> Review</template>
+						<template v-if="expandedLogs[idx]">
+							<font-awesome-icon icon="fa-regular fa-eye-slash"></font-awesome-icon> Close
+						</template>
+						<template v-else>
+							<font-awesome-icon icon="fa-regular fa-eye"></font-awesome-icon> Review
+						</template>
 					</button>
 					<dropdown v-if="!draftLog.delayed" :class="{ disabled: !hasDecks(draftLog) }">
 						<template v-slot:handle>
@@ -87,11 +88,13 @@
 						</template>
 					</dropdown>
 					<button type="button" @click="downloadLog(draftLog)" v-if="!draftLog.delayed">
-						<i class="fas fa-file-download"></i> Download
+						<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon> Download
 					</button>
-					<button type="button" class="disabled" v-else><i class="fas fa-file-download"></i> Download</button>
+					<button type="button" class="disabled" v-else>
+						<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon> Download
+					</button>
 					<button type="button" class="stop" @click="deleteLog(draftLog)">
-						<i class="fas fa-trash"></i> Delete
+						<font-awesome-icon icon="fa-solid fa-trash"></font-awesome-icon> Delete
 					</button>
 				</span>
 			</div>

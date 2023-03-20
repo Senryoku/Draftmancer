@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container">
-		<a href="/"><i class="fas fa-chevron-left"></i> Go back to MTGADraft </a>
+		<a href="/"><font-awesome-icon icon="fa-solid fa-chevron-left"></font-awesome-icon> Go back to MTGADraft </a>
 		<div class="main">
 			<div v-if="bracket">
 				<h1>
@@ -93,7 +93,6 @@ export default defineComponent({
 
 <style src="./assets/fontawesome-free-5.15.4-web/css/fontawesome.min.css" />
 <style src="./assets/fontawesome-free-5.15.4-web/css/brands.min.css" />
-<style src="./assets/fontawesome-free-5.15.4-web/css/regular.min.css" />
 <style src="./assets/fontawesome-free-5.15.4-web/css/solid.min.css" />
 
 <style>

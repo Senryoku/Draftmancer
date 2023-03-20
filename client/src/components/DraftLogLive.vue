@@ -5,11 +5,12 @@
 				<div class="draft-log-live-title">
 					<h2>Live Review: {{ draftlog.users[player].userName }}</h2>
 					<span v-if="player in draftlog.users && draftlog.users[player].picks.length > 0">
-						<i
+						<font-awesome-icon
 							:class="{ disabled: pack <= 0 && pick <= 0 }"
-							class="fas fa-chevron-left clickable"
+							icon="fa-solid fa-chevron-left"
+							class="clickable"
 							@click="prevPick"
-						></i>
+						></font-awesome-icon>
 						<label>Pack #</label>
 						<select v-model="pack" style="width: 4em">
 							<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
@@ -23,13 +24,14 @@
 								{{ index }}
 							</option>
 						</select>
-						<i
+						<font-awesome-icon
 							:class="{
 								disabled: pack >= picksPerPack.length - 1 && pick >= picksPerPack[pack].length - 1,
 							}"
-							class="fas fa-chevron-right clickable"
+							icon="fa-solid fa-chevron-right"
+							class="clickable"
 							@click="nextPick"
-						></i>
+						></font-awesome-icon>
 						<h2>{{ pickNames }}</h2>
 						<scale-slider v-model.number="cardScale" style="float: right" />
 					</span>

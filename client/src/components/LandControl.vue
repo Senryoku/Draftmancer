@@ -26,7 +26,13 @@
 				<checkbox :value="autoland" @toggle="$emit('update:autoland', !autoland)" label="Auto. Land" />
 			</span>
 			<div class="land-input" v-for="c in CardColor" :key="c">
-				<i class="fas fa-minus fa-lg clickable" @click="rem(c)" :class="{ disabled: lands[c] <= 0 }"></i>
+				<font-awesome-icon
+					icon="fa-solid fa-minus"
+					size="lg"
+					class="clickable"
+					@click="rem(c)"
+					:class="{ disabled: lands[c] <= 0 }"
+				></font-awesome-icon>
 				<img
 					:src="`img/mana/${c}.svg`"
 					class="mana-icon clickable"
@@ -44,7 +50,12 @@
 					max="999"
 					onclick="this.select();"
 				/>
-				<i class="fas fa-plus fa-lg clickable" @click="add(c)"></i>
+				<font-awesome-icon
+					icon="fa-solid fa-plus"
+					size="lg"
+					class="clickable"
+					@click="add(c)"
+				></font-awesome-icon>
 			</div>
 			<div class="v-separator" style="height: 0.5em"></div>
 			<button

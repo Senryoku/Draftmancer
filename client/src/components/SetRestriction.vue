@@ -2,10 +2,12 @@
 	<div>
 		<div class="state">
 			<button @click="addAll()" class="clickable">
-				<i class="fas fa-plus-square" style="margin-right: 0.5em"></i>Select All
+				<font-awesome-icon icon="fa-solid fa-plus-square" style="margin-right: 0.5em"></font-awesome-icon>Select
+				All
 			</button>
 			<button @click="clear()" class="clickable">
-				<i class="fas fa-minus-square" style="margin-right: 0.5em"></i>Deselect All
+				<font-awesome-icon icon="fa-solid fa-minus-square" style="margin-right: 0.5em"></font-awesome-icon
+				>Deselect All
 			</button>
 			Current Selection:
 			<span v-if="modelValue.length === 0">No set restriction (All cards)</span>
@@ -42,14 +44,16 @@
 							@click="add(block.sets.map((s) => s.code))"
 							class="clickable"
 							v-tooltip="'Add all sets from this block'"
-							><i class="fas fa-plus-square"></i
-						></span>
+						>
+							<font-awesome-icon icon="fa-solid fa-plus-square"></font-awesome-icon>
+						</span>
 						<span
 							@click="remove(block.sets.map((s) => s.code))"
 							class="clickable"
 							v-tooltip="'Remove all sets from this block'"
-							><i class="fas fa-minus-square"></i
-						></span>
+						>
+							<font-awesome-icon icon="fa-solid fa-minus-square"></font-awesome-icon>
+						</span>
 					</div>
 				</div>
 				<div class="set-selection">
@@ -68,7 +72,7 @@
 							class="irregular yellow"
 							v-tooltip="'Boosters of this set aren\'t regular 15 cards packs.'"
 						>
-							<i class="fas fa-exclamation-triangle"></i>
+							<font-awesome-icon icon="fa-solid fa-exclamation-triangle"></font-awesome-icon>
 						</div>
 					</div>
 				</div>

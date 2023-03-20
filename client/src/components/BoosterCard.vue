@@ -15,16 +15,20 @@
 				}`
 			"
 		>
-			<i class="fas fa-exclamation-triangle yellow missing-warning" v-if="!hasenoughwildcards"></i>
+			<font-awesome-icon
+				icon="fa-solid fa-exclamation-triangle"
+				class="yellow missing-warning"
+				v-if="!hasenoughwildcards"
+			></font-awesome-icon>
 			<img class="wildcard-icon" :src="`img/wc_${card.rarity}.webp`" />
 		</div>
 		<div class="bot-score" v-if="botscore && displayBotScore">{{ displayBotScore }}</div>
 		<template v-if="canbeburned && !selected">
 			<div v-if="burned" class="restore-card blue clickable" @click="restoreCard($event)">
-				<i class="fas fa-undo-alt fa-2x"></i>
+				<font-awesome-icon icon="fa-solid fa-undo-alt" size="2x"></font-awesome-icon>
 			</div>
 			<div v-else class="burn-card red clickable" @click="burnCard($event)">
-				<i class="fas fa-ban fa-2x"></i>
+				<font-awesome-icon icon="fa-solid fa-ban" size="2x"></font-awesome-icon>
 			</div>
 		</template>
 	</card>

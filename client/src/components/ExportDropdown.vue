@@ -10,7 +10,7 @@
 				<img class="set-icon" src="../assets/img/mtga-icon.png" /> MTGA
 			</button>
 			<button type="button" @click="exportDeck($event, false)" v-tooltip.right="'Export without set information'">
-				<i class="fas fa-clipboard"></i> Card Names
+				<font-awesome-icon icon="fa-solid fa-clipboard"></font-awesome-icon> Card Names
 			</button>
 			<button type="button" @click="exportDeckMTGO()" v-tooltip.right="'Export for MTGO (.dek)'">
 				<img class="set-icon" src="../assets/img/mtgo-icon.webp" /> MTGO .dek

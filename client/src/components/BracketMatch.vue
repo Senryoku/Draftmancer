@@ -15,8 +15,16 @@
 					v-else
 				>
 					<template v-if="final">
-						<i v-if="isGold(p, index)" class="trophy gold fas fa-trophy"></i>
-						<i v-else-if="isSilver(p, index)" class="trophy silver fas fa-trophy"></i>
+						<font-awesome-icon
+							icon="fa-solid fa-trophy"
+							v-if="isGold(p, index)"
+							class="trophy gold"
+						></font-awesome-icon>
+						<font-awesome-icon
+							icon="fa-solid fa-trophy"
+							v-else-if="isSilver(p, index)"
+							class="trophy silver"
+						></font-awesome-icon>
 						<div v-else class="trophy"></div>
 					</template>
 					<div
@@ -26,11 +34,12 @@
 						@click="if (draftlog) $emit('selectuser', p);"
 					>
 						{{ p.userName }}
-						<i
-							class="fas fa-clipboard-check green"
+						<font-awesome-icon
+							icon="fa-solid fa-clipboard-check"
+							class="green"
 							v-if="hasDeckList(p.userID)"
 							v-tooltip.top="`${p.userName} submitted their deck. Click to review it.`"
-						></i>
+						></font-awesome-icon>
 					</div>
 					<template v-if="match.isValid()">
 						<input

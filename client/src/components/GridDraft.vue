@@ -10,13 +10,14 @@
 				:style="'grid-area: pick-col-' + idx"
 			>
 				<transition :name="arrowTransition" mode="out-in">
-					<i
-						class="fas fa-chevron-circle-down fa-3x"
+					<font-awesome-icon
+						icon="fa-solid fa-chevron-circle-down"
+						size="3x"
 						v-show="picking && isValidChoice(idx)"
 						@click="$emit('pick', idx)"
 						@mouseenter="highlight($event, 'col', idx)"
 						@mouseleave="highlight($event, 'col', idx)"
-					></i>
+					></font-awesome-icon>
 				</transition>
 			</div>
 			<div
@@ -26,13 +27,14 @@
 				:style="'grid-area: pick-row-' + idx"
 			>
 				<transition :name="arrowTransition" mode="out-in">
-					<i
-						class="fas fa-chevron-circle-right fa-3x"
+					<font-awesome-icon
+						icon="fa-solid fa-chevron-circle-right"
+						size="3x"
 						v-show="picking && isValidChoice(3 + idx)"
 						@click="$emit('pick', 3 + idx)"
 						@mouseenter="highlight($event, 'row', idx)"
 						@mouseleave="highlight($event, 'row', idx)"
-					></i>
+					></font-awesome-icon>
 				</transition>
 			</div>
 			<div v-for="(c, idx) in state.booster" :key="idx" class="card-slot" :style="'grid-area: card-slot-' + idx">
@@ -41,7 +43,11 @@
 						<card :card="c" :class="`row-${Math.floor(idx / 3)} col-${idx % 3}`"></card>
 					</div>
 					<div v-else :key="'empty-' + idx">
-						<i class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
+						<font-awesome-icon
+							icon="fa-solid fa-times-circle"
+							size="4x"
+							style="color: rgba(255, 255, 255, 0.1)"
+						></font-awesome-icon>
 					</div>
 				</transition>
 			</div>

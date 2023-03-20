@@ -8,11 +8,12 @@
 				<slot name="controls"></slot>
 				<dropdown>
 					<template v-slot:handle>
-						<i
-							class="fas fa-sort-amount-up handle-icon clickable"
+						<font-awesome-icon
+							icon="fa-solid fa-sort-amount-up"
+							class="handle-icon clickable"
 							@click="sortByCMC"
 							v-if="options.sort === 'cmc'"
-						></i>
+						></font-awesome-icon>
 						<img
 							src="../assets/img/sort-color.svg"
 							class="handle-icon clickable"
@@ -37,18 +38,22 @@
 						<div class="section">
 							<div class="header">Columns</div>
 							<div style="display: flex; justify-content: space-evenly">
-								<i
-									class="fas fa-minus fa-lg clickable"
+								<font-awesome-icon
+									icon="fa-solid fa-minus"
+									size="lg"
+									class="clickable"
 									@click="remColumn(undefined)"
 									v-tooltip="'Remove the last column'"
 									:class="{ disabled: rows[0].length <= 1 }"
-								></i>
+								></font-awesome-icon>
 								{{ rows[0].length }}
-								<i
-									class="fas fa-plus fa-lg clickable"
+								<font-awesome-icon
+									icon="fa-solid fa-plus"
+									size="lg"
+									class="clickable"
 									@click="addColumn"
 									v-tooltip="'Add a column'"
-								></i>
+								></font-awesome-icon>
 							</div>
 						</div>
 						<div class="section section-left-align">
@@ -73,7 +78,7 @@
 									:class="{ 'selected-sort': options.sort === 'cmc' }"
 									v-tooltip.left="'Sort cards by CMC'"
 								>
-									<i class="fas fa-sort-amount-up fa-2x"></i>
+									<font-awesome-icon icon="fa-solid fa-sort-amount-up" size="2x"></font-awesome-icon>
 								</div>
 								<div
 									@click="sortByColor"
@@ -116,7 +121,11 @@
 				<div class="column-header" v-for="index in rows[0].length" :key="index">
 					<span class="column-header-count">{{ cardsPerColumn[index - 1] }}</span>
 					<span class="column-header-name" v-html="columnNames[index - 1]"></span>
-					<i class="fas fa-times clickable" @click="remColumn(index - 1)"></i>
+					<font-awesome-icon
+						icon="fa-solid fa-times"
+						class="clickable"
+						@click="remColumn(index - 1)"
+					></font-awesome-icon>
 				</div>
 			</div>
 			<div class="card-columns" v-for="(row, index) in rows" :key="index">

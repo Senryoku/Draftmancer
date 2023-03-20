@@ -2,7 +2,7 @@
 	<div v-if="isValid" class="card-list">
 		Loaded {{ cardlist.name ? cardlist.name : "list" }}.
 		<span v-if="missing && missing.total > 0">
-			<i class="fas fa-exclamation-triangle yellow"></i>
+			<font-awesome-icon icon="fa-solid fa-exclamation-triangle" class="yellow"></font-awesome-icon>
 			{{ missing.total }} are missing from your collection ({{ missingText }})
 		</span>
 		<button @click="download">Download List</button>
@@ -42,7 +42,9 @@
 							:language="language"
 						></card-list-column></div
 				></template>
-				<template v-else>(<i class="fas fa-spinner fa-spin"></i> Loading...)</template>
+				<template v-else
+					>(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)</template
+				>
 			</div>
 		</template>
 	</div>

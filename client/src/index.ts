@@ -4,6 +4,7 @@ import cardCachePlugin from "./vueCardCache";
 import FloatingVue from "floating-vue";
 import "floating-vue/dist/style.css";
 import Emitter from "pico-emitter";
+import { installFontAwesome } from "./install-fontawesome";
 
 const emitter = new Emitter();
 declare module "vue" {
@@ -21,4 +22,5 @@ app.use(FloatingVue, {
 	delay: 250,
 	distance: 8,
 });
+installFontAwesome(app);
 app.mount("#main-vue");

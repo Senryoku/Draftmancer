@@ -20,7 +20,13 @@
 				:class="{ 'selected-high': pick.pick.includes(index) }"
 				:lazyLoad="true"
 			></card>
-			<i v-else :key="index" class="fas fa-times-circle fa-4x" style="color: rgba(255, 255, 255, 0.1)"></i>
+			<font-awesome-icon
+				v-else
+				:key="index"
+				icon="fa-solid fa-times-circle"
+				size="4x"
+				style="color: rgba(255, 255, 255, 0.1)"
+			></font-awesome-icon>
 		</template>
 	</div>
 	<!-- Winston Draft; Fail safe -->

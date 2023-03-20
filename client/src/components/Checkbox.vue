@@ -1,12 +1,6 @@
 <template>
 	<span class="clickable" @click="$emit('toggle')">
-		<i
-			class="fas"
-			:class="{
-				'fa-check-square': value,
-				'fa-square': !value,
-			}"
-		></i>
+		<font-awesome-icon :icon="`fa-solid ${value ? 'fa-check-square' : 'fa-square'}`"></font-awesome-icon>
 		{{ label }}
 	</span>
 </template>

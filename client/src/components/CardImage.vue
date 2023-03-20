@@ -1,16 +1,16 @@
 <template>
 	<div class="card-image" v-if="!fixedLayout">
 		<div v-if="hasBack" class="flip-button">
-			<i class="fas fa-sync flip-icon"></i>
+			<font-awesome-icon icon="fa-solid fa-sync" class="flip-icon"></font-awesome-icon>
 		</div>
 		<div v-if="card.layout === 'flip'" class="vertical-flip-button">
-			<i class="fas fa-sync vertical-flip-icon"> </i>
+			<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon"></font-awesome-icon>
 		</div>
 		<div v-if="card.layout === 'split'" class="split-button">
-			<i class="fas fa-sync split-icon"> </i>
+			<font-awesome-icon icon="fa-solid fa-sync" class="split-icon"></font-awesome-icon>
 		</div>
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
-			<i class="fas fa-sync split-left-icon"> </i>
+			<font-awesome-icon icon="fa-solid fa-sync" class="split-left-icon"> </font-awesome-icon>
 		</div>
 		<div :class="{ 'flip-container': hasBack }">
 			<clazy-load
@@ -52,7 +52,7 @@
 				</template>
 				<template v-else>
 					<div class="alt-card-text pending-alt-card-text">
-						<i class="fas fa-spinner fa-spin"></i>
+						<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
 					</div>
 				</template>
 			</template>

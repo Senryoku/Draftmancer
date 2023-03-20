@@ -26,13 +26,14 @@
 				>
 					<div>
 						{{ log.userName }}
-						<i
-							class="fas fa-clipboard-check green"
+						<font-awesome-icon
+							icon="fa-solid fa-clipboard-check"
+							class="green"
 							v-if="log.hasDeck"
 							@click="displayOptions.category = 'Deck'"
 							v-tooltip="`${log.userName} submitted their deck.`"
 							style="margin: 0 0.5em"
-						></i>
+						></font-awesome-icon>
 					</div>
 					<!-- Color Summary of the picks, explicitly hidden for other players if the details are supposed to be delayed (Don't leak it to the owner) -->
 					<span class="color-list" v-if="(!draftlog.delayed || log.userID === userID) && log.colors">
@@ -73,7 +74,8 @@
 							v-tooltip="`Download ${selectedUser.userName} picks in MTGO draft log format.`"
 							v-if="type === 'Draft'"
 						>
-							<i class="fas fa-file-download"></i> Download log in MTGO format
+							<font-awesome-icon icon="fa-solid fa-file-download"></font-awesome-icon> Download log in
+							MTGO format
 						</button>
 						<button
 							@click="submitToMPT(selectedUser.userID)"
@@ -82,7 +84,8 @@
 							"
 							v-if="type === 'Draft'"
 						>
-							<i class="fas fa-external-link-alt"></i> Submit log to MagicProTools
+							<font-awesome-icon icon="fa-solid fa-external-link-alt"></font-awesome-icon> Submit log to
+							MagicProTools
 						</button>
 					</div>
 				</div>
@@ -96,11 +99,12 @@
 					>
 						<div style="display: flex; align-items: center; gap: 1em; margin-left: 1em">
 							<div>
-								<i
+								<font-awesome-icon
 									:class="{ disabled: displayOptions.pack <= 0 && displayOptions.pick <= 0 }"
-									class="fas fa-chevron-left clickable"
+									icon="fa-solid fa-chevron-left"
+									class="clickable"
 									@click="prevPick"
-								></i>
+								></font-awesome-icon>
 								<label>Pack #</label>
 								<select v-model="displayOptions.pack" style="width: 4em">
 									<option v-for="index in picksPerPack.length" :key="index" :value="index - 1">
@@ -118,15 +122,16 @@
 										{{ index }}
 									</option>
 								</select>
-								<i
+								<font-awesome-icon
 									:class="{
 										disabled:
 											displayOptions.pack >= picksPerPack.length - 1 &&
 											displayOptions.pick >= picksPerPack[displayOptions.pack].length - 1,
 									}"
-									class="fas fa-chevron-right clickable"
+									icon="fa-solid fa-chevron-right"
+									class="clickable"
 									@click="nextPick"
-								></i>
+								></font-awesome-icon>
 							</div>
 							<h2>
 								{{ pickTitle }}

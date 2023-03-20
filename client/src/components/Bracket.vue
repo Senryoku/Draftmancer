@@ -2,12 +2,12 @@
 	<div v-if="bracket">
 		<div v-if="displayControls" class="controls">
 			<button @click="copyLink" v-tooltip="'Copy link to a read-only version of this bracket to the clipboard.'">
-				<i class="fas fa-clipboard"></i> Copy Link to Clipboard
+				<font-awesome-icon icon="fa-solid fa-clipboard"></font-awesome-icon> Copy Link to Clipboard
 			</button>
 			<template v-if="fullcontrol">
 				<span v-tooltip="'If set, only the owner will be able to enter results.'">
 					<input type="checkbox" id="lock" :checked="locked" @change="lock($event)" />
-					<label for="lock"> <i class="fas fa-lock"></i> Lock </label>
+					<label for="lock"> <font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Lock </label>
 				</span>
 				<span>
 					Type:
@@ -31,7 +31,8 @@
 				</span>
 			</template>
 			<span v-if="!fullcontrol && locked">
-				<i class="fas fa-lock"></i> Bracket is locked. Only the Session Owner can enter results.
+				<font-awesome-icon icon="fa-solid fa-lock"></font-awesome-icon> Bracket is locked. Only the Session
+				Owner can enter results.
 			</span>
 		</div>
 		<h2 v-if="isDoubleBracket">Upper Bracket</h2>

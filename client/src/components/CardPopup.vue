@@ -44,30 +44,39 @@
 				</div>
 				<div class="all-parts">
 					<div class="mouse-hint" v-if="relatedCards.length > 0">
-						<i class="fas fa-arrows-alt-v"></i> <i class="fas fa-mouse"></i>
+						<font-awesome-icon icon="fa-solid fa-arrows-alt-v"></font-awesome-icon>
+						<font-awesome-icon icon="fa-solid fa-mouse"></font-awesome-icon>
 					</div>
-					<i class="fas fa-angle-up" v-if="relatedCards.length > 0"></i>
-					<i class="fas fa-square fa-sm" :class="{ 'carousel-selected': currentPart === 0 }"></i>
+					<font-awesome-icon icon="fa-solid fa-angle-up" v-if="relatedCards.length > 0"></font-awesome-icon>
+					<font-awesome-icon
+						icon="fa-solid fa-square"
+						size="sm"
+						:class="{ 'carousel-selected': currentPart === 0 }"
+					></font-awesome-icon>
 					<template v-for="(part, idx) in relatedCards">
 						<template v-if="part.status === 'ready'"
 							><i
-								class="fas fa-square fa-sm"
+								icon="fa-solid fa-square"
+								size="sm"
 								:key="part.id"
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 							></i
 						></template>
 						<template v-else
 							><i
-								class="fas fa-spinner fa-spin"
+								icon="fa-solid fa-spinner"
+								spin
 								:class="{ 'carousel-selected': currentPart === idx + 1 }"
 								:key="part.id"
 							></i
 						></template>
 					</template>
-					<i class="fas fa-angle-down" v-if="relatedCards.length > 0"></i>
+					<font-awesome-icon icon="fa-solid fa-angle-down" v-if="relatedCards.length > 0"></font-awesome-icon>
 					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>
 				</div>
-				<div v-if="hasPendingData(card.id)" class="all-parts"><i class="fas fa-spinner fa-spin" /></div>
+				<div v-if="hasPendingData(card.id)" class="all-parts">
+					<font-awesome-icon icon="fas fa-spinner" spin></font-awesome-icon>
+				</div>
 			</div>
 		</div>
 	</transition>

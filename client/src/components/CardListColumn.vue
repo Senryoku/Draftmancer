@@ -8,21 +8,24 @@
 			:lazyLoad="true"
 		>
 			<div v-if="checkcollection && missingCard[card.id] !== 'Present'" class="collection-warning">
-				<i
-					class="fas fa-exclamation-triangle green"
+				<font-awesome-icon
+					icon="fa-solid fa-exclamation-triangle"
+					class="green"
 					v-if="missingCard[card.id] === 'Equivalent'"
 					v-tooltip="'Exact card is missing from your collection, but you own a copy from another set.'"
-				></i>
-				<i
-					class="fas fa-exclamation-triangle yellow"
+				></font-awesome-icon>
+				<font-awesome-icon
+					icon="fa-solid fa-exclamation-triangle"
+					class="yellow"
 					v-else-if="missingCard[card.id] === 'Missing'"
 					v-tooltip="'You do not own this card in MTGA.'"
-				></i>
-				<i
-					class="fas fa-exclamation-triangle red"
+				></font-awesome-icon>
+				<font-awesome-icon
+					icon="fa-solid fa-exclamation-triangle"
+					class="red"
 					v-else-if="missingCard[card.id] === 'NonExistent'"
 					v-tooltip="'This card is not available on MTGA.'"
-				></i>
+				></font-awesome-icon>
 			</div>
 			<div v-if="card.count && card.count > 1" class="card-count">{{ card.count }} x</div>
 		</card>

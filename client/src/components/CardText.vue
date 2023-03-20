@@ -2,7 +2,7 @@
 	<div class="card-text-container">
 		<template v-if="faces.length === 0">
 			<div>
-				<i class="fas fa-spinner fa-spin"></i>
+				<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
 			</div>
 		</template>
 		<template v-else>

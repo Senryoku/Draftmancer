@@ -15,11 +15,13 @@
 					<img :src="`img/mana/${color}.svg`" class="mana-icon" style="vertical-align: text-bottom" />
 					{{ value }}
 				</span>
-				<i
-					class="fas fa-chart-pie fa-lg clickable"
+				<font-awesome-icon
+					icon="fa-solid fa-chart-pie"
+					size="lg"
+					class="clickable"
 					@click="displayStats = true"
 					v-tooltip="'Deck Statistics'"
-				></i>
+				></font-awesome-icon>
 				<ExportDropdown
 					:language="language"
 					:deck="mainboard"
