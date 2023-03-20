@@ -523,9 +523,8 @@
 					<br />
 					({{ sessionUsers.length }}/{{ maxPlayers }})
 				</div>
-				<font-awesome-icon
+				<div
 					v-if="!drafting"
-					icon="fa-solid fa-random"
 					:class="{
 						crossed: !randomizeSeatingOrder,
 						faded: !randomizeSeatingOrder,
@@ -539,7 +538,9 @@
 						}</strong>`,
 						html: true,
 					}"
-				></font-awesome-icon>
+				>
+					<font-awesome-icon icon="fa-solid fa-random"></font-awesome-icon>
+				</div>
 			</div>
 			<template v-if="!drafting">
 				<transition-group type="transition">
