@@ -311,7 +311,7 @@
 							</set-select>
 							<div
 								class="inline clickable"
-								style="padding: 0.2em"
+								style="padding: 0.4em"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
 							>
