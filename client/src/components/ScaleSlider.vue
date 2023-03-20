@@ -18,10 +18,10 @@ export default defineComponent({
 	},
 	methods: {
 		handleEvent(e: Event) {
-			this.$emit("input", (e.target as HTMLInputElement).value);
+			this.$emit("update:modelValue", (e.target as HTMLInputElement).value);
 		},
 		update(value: number) {
-			this.$emit("input", value);
+			this.$emit("update:modelValue", value);
 		},
 	},
 });
