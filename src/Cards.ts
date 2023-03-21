@@ -1,6 +1,7 @@
 "use strict";
 
 import fs from "fs";
+import glob from "glob";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 
@@ -10,22 +11,29 @@ console.group("Cards.ts::Loading Cards...");
 console.time("Total");
 
 //memoryReport();
-let tmpCards: Map<CardID, Card>;
+let tmpCards: Map<CardID, Card> = new Map<CardID, Card>();
 console.time("Parsing Cards");
+const DBFiles = await glob("data/MTGCards.*.json");
 if (process.env.NODE_ENV !== "production") {
-	tmpCards = new Map<CardID, Card>(Object.entries(JSON.parse(fs.readFileSync("./data/MTGCards.json", "utf-8"))));
+	for (const file of DBFiles) {
+		tmpCards = new Map<CardID, Card>([
+			...tmpCards,
+			...new Map<CardID, Card>(Object.entries(JSON.parse(fs.readFileSync(file, "utf-8")))),
+		]);
+	}
 } else {
-	tmpCards = new Map<CardID, Card>();
-	// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
-	const cardsPromise = new Promise((resolve, reject) => {
-		const stream = JSONStream.parse("$*");
-		stream.on("data", function (entry: any) {
-			tmpCards.set(entry.key, entry.value as Card);
+	for (const file of DBFiles) {
+		// Stream the JSON file on production to reduce memory usage (to the detriment of runtime)
+		const cardsPromise = new Promise((resolve, reject) => {
+			const stream = JSONStream.parse("$*");
+			stream.on("data", function (entry: any) {
+				tmpCards.set(entry.key, entry.value as Card);
+			});
+			stream.on("end", resolve);
+			fs.createReadStream(file).pipe(stream);
 		});
-		stream.on("end", resolve);
-		fs.createReadStream("./data/MTGCards.json").pipe(stream);
-	});
-	await cardsPromise;
+		await cardsPromise;
+	}
 }
 console.timeEnd("Parsing Cards");
 //memoryReport();

@@ -27,7 +27,7 @@ class Rarity(OrderedEnum):
 ScryfallSets = 'data/scryfall-sets.json'
 BulkDataPath = 'data/scryfall-all-cards.json'
 BulkDataArenaPath = 'data/BulkArena.json'
-FinalDataPath = 'data/MTGCards.json'
+FirstFinalDataPath = 'data/MTGCards.0.json'
 SetsInfosPath = 'client/src/data/SetsInfos.json'
 BasicLandIDsPath = 'src/data/BasicLandIDs.json'
 RatingSourceFolder = 'data/LimitedRatings/'
@@ -257,7 +257,7 @@ else:
     with open(RatingsDest, 'r', encoding="utf8") as file:
         CardRatings = dict(CardRatings, **json.loads(file.read()))
 
-if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
+if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     all_cards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         # objects = ijson.items(file, 'item')
@@ -504,8 +504,18 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
         if " // " in name and name.split(" //")[0] not in cardsByName:
             cardsByName[name.split(" //")[0]] = cardsByName[name]
 
-    with open(FinalDataPath, 'w', encoding="utf8") as outfile:
-        json.dump(cards, outfile, ensure_ascii=False, indent=4)
+    cards_items = list(cards.items())
+    print(f"Split DB, starting with {len(cards)} cards")
+    total = 0
+    for i in range(4):
+        part = dict(cards_items[i*len(cards)//4:(i+1)*len(cards)//4])
+        print(f"  Adding {len(part)} cards")
+        total += len(part)
+        with open(f"data/MTGCards.{i}.json", 'w', encoding="utf8") as outfile:
+            json.dump(part, outfile, ensure_ascii=False, indent=4)
+    print(f" => Ending with {total} cards")
+    if total != len(cards):
+        print("Error: Some cards were not written to the split DB")
 
     with open("data/CardsByName.json", 'w', encoding="utf8") as outfile:
         json.dump(cardsByName, outfile, ensure_ascii=False, indent=4)
@@ -514,8 +524,10 @@ if not os.path.isfile(FinalDataPath) or ForceCache or FetchSet:
         json.dump(MTGACards, outfile, ensure_ascii=False, indent=4)
 
 cards = {}
-with open(FinalDataPath, 'r', encoding="utf8") as file:
-    cards = json.loads(file.read())
+DBFiles = glob.glob("data/MTGCards.*.json")
+for f in DBFiles:
+    with open(f, 'r', encoding="utf8") as file:
+        cards.update(json.loads(file.read()))
 
 # Retrieve basic land ids for each set
 BasicLandIDs = {}
