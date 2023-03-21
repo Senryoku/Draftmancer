@@ -161,7 +161,9 @@ def parseCost(mana_cost):
         if symbol in ManaSymbols:
             cmc += ManaSymbols[symbol]["cmc"]
             colors = colors.union(set(ManaSymbols[symbol]["colors"]))
-    return [int(cmc), list(colors)]
+    lcolors = list(colors)
+    lcolors.sort(key=lambda val: {"W": 0, "U": 1, "B": 2, "R": 3, "G": 4}[val])
+    return [int(cmc), lcolors]
 
 
 with open('data/MTGADataDebug.json', 'w') as outfile:
@@ -509,11 +511,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     total = 0
     for i in range(4):
         part = dict(cards_items[i*len(cards)//4:(i+1)*len(cards)//4])
-        print(f"  Adding {len(part)} cards")
+        print(f"  Adding {len(part)} cards to MTGCards.{i}.json")
         total += len(part)
         with open(f"data/MTGCards.{i}.json", 'w', encoding="utf8") as outfile:
             json.dump(part, outfile, ensure_ascii=False, indent=4)
-    print(f" => Ending with {total} cards")
     if total != len(cards):
         print("Error: Some cards were not written to the split DB")
 
