@@ -4,6 +4,7 @@
 			@change="update"
 			@input="modified"
 			:value="modelValue"
+			:id="id"
 			:type="type"
 			:placeholder="placeholder"
 			:maxlength="maxlength"
@@ -26,6 +27,7 @@ export default defineComponent({
 		validate: { type: Function as PropType<(val: string) => string> },
 		waitOnEmpty: { type: Boolean, default: true },
 
+		id: { type: String },
 		type: { type: String, default: "text" },
 		placeholder: { type: String },
 		maxlength: { type: Number },

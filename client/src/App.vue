@@ -22,8 +22,8 @@
 					style="margin-right: 0.25em"
 				/>
 				<div class="inline" v-tooltip="'Controls the display language of cards.'">
-					<label for="language">Card Language</label>
-					<select v-model="language" name="language" id="select-language">
+					<label for="select-language">Card Language</label>
+					<select v-model="language" id="select-language">
 						<option
 							v-for="lang in languages"
 							v-bind:value="lang.code"
