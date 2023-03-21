@@ -2769,13 +2769,13 @@
     "ody": {
         "code": "ody",
         "fullName": "Odyssey",
-        "cardCount": 352,
+        "cardCount": 353,
         "isPrimary": true,
         "block": "Odyssey",
         "icon": "img/sets/ody.svg",
         "commonCount": 132,
         "rareCount": 110,
-        "uncommonCount": 110
+        "uncommonCount": 111
     },
     "ogw": {
         "code": "ogw",
@@ -4944,7 +4944,7 @@
     },
     "sir": {
         "code": "sir",
-        "fullName": "Shadows Over Innistrad Remastered",
+        "fullName": "Shadows over Innistrad Remastered",
         "cardCount": 291,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
@@ -4984,12 +4984,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 869,
+        "cardCount": 870,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
         "mythicCount": 149,
-        "rareCount": 655,
+        "rareCount": 656,
         "uncommonCount": 20
     },
     "slp": {
