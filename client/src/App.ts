@@ -229,7 +229,7 @@ export default defineComponent({
 			maxDuplicates: null as { common: number; uncommon: number; rare: number; mythic: number } | null,
 			foil: false,
 			bots: 0,
-			setRestriction: [] as SetCode[],
+			setRestriction: [Constants.MTGASets[Constants.MTGASets.length - 1]] as SetCode[],
 			drafting: false,
 			useCustomCardList: false,
 			customCardListWithReplacement: false,
