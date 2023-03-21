@@ -187,8 +187,6 @@ export default defineComponent({
 			ReadyState,
 			PassingOrder,
 
-			ready: false, // Wait for initial loading
-
 			// User Data
 			userID: userID,
 			userName: userName,
@@ -3140,9 +3138,7 @@ export default defineComponent({
 		},
 	},
 	async mounted() {
-		// Load all card informations
 		try {
-			// Now that we have all the essential data, initialize the websocket.
 			this.initializeSocket();
 
 			this.useCollection = getCookie("useCollection", "true") === "true";
@@ -3185,7 +3181,6 @@ export default defineComponent({
 			this.$nextTick(() => {
 				this.applyFixedDeckSize();
 			});
-			this.ready = true;
 		} catch (e) {
 			alert(e);
 		}
