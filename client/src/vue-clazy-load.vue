@@ -1,5 +1,5 @@
 <template>
-	<component is="tag" :class="classes">
+	<component :is="tag" :class="classes">
 		<slot v-if="loaded || (img && img.src && img.complete)"><img :src="src" /></slot>
 		<slot name="placeholder" v-else></slot>
 	</component>
