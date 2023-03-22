@@ -74,29 +74,34 @@ const pick = (index: number) => {
 
 <style scoped>
 .winchester-piles {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	display: flex;
+	justify-content: space-around;
 	position: relative;
 	padding: 0.75em;
-	min-height: 500px;
+	min-height: 400px;
+}
+
+.winchester-pick {
+	display: block !important;
+	margin: auto !important;
 }
 
 .winchester-pile {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	margin: 0 1em 0 1em;
 	padding: 0.5em;
-	width: 300px;
+	width: 100%;
+	max-width: 300px;
 }
 
 .winchester-pile-options {
 	height: 40px;
 }
 
-.winchester-card-column {
-	display: flex;
-	flex-direction: column;
+.winchester-card-column .card {
+	width: 100%;
+	max-width: 300px;
 }
 
 .pile-enter-active,
