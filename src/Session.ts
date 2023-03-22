@@ -1911,7 +1911,7 @@ export class Session implements IIndexable {
 			case "winston":
 				this.endWinstonDraft();
 				break;
-			case "winston":
+			case "winchester":
 				this.endWinchesterDraft();
 				break;
 			case "grid":

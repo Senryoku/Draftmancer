@@ -375,6 +375,13 @@
 								</div>
 								<div
 									v-tooltip.left="
+										'Starts a Winchester Draft. This is a draft variant for only two players.'
+									"
+								>
+									<button @click="startWinchesterDraft()">Winchester (2p.)</button>
+								</div>
+								<div
+									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for two or three players.'
 									"
 								>
@@ -1055,6 +1062,20 @@
 						</div>
 					</div>
 				</div>
+				<winchester-draft
+					v-if="
+						(draftingState === DraftState.WinchesterPicking ||
+							draftingState === DraftState.WinchesterWaiting) &&
+						winchesterDraftState
+					"
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					:winchesterDraftState="winchesterDraftState"
+					@pick="winchesterDraftPick"
+				/>
 				<!-- Grid Draft -->
 				<div
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"

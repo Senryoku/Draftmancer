@@ -13,6 +13,7 @@ import type { ArenaID, Card, CardID, DeckList, PlainCollection, UniqueCard, Uniq
 import type { DraftLog } from "@/DraftLog";
 import type { BotScores } from "@/Bot";
 import type { WinstonDraftSyncData } from "@/WinstonDraft";
+import type { WinchesterDraftSyncData } from "@/WinchesterDraft";
 import type { GridDraftSyncData } from "@/GridDraft";
 import type { RochesterDraftSyncData } from "@/RochesterDraft";
 import type { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "@/RotisserieDraft";
@@ -68,6 +69,8 @@ enum DraftState {
 	Watching = "Watching",
 	WinstonPicking = "WinstonPicking",
 	WinstonWaiting = "WinstonWaiting",
+	WinchesterPicking = "WinchesterPicking",
+	WinchesterWaiting = "WinchesterWaiting",
 	GridPicking = "GridPicking",
 	GridWaiting = "GridWaiting",
 	RochesterPicking = "RochesterPicking",
@@ -141,17 +144,18 @@ export default defineComponent({
 		Dropdown,
 		ExportDropdown,
 		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
-		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
-		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
-		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
 		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
+		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
 		Modal,
-		SetSelect,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
+		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
 		ScaleSlider,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
+		SetSelect,
 		Sortable,
+		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
+		WinchesterDraft: defineAsyncComponent(() => import("./components/WinchesterDraft.vue")),
 	},
 	data: () => {
 		let userID: UserID = guid();
@@ -259,6 +263,7 @@ export default defineComponent({
 			rotisserieDraftState: null as RotisserieDraftSyncData | null,
 			minesweeperDraftState: null as MinesweeperSyncData | null,
 			teamSealedState: null as TeamSealedSyncData | null,
+			winchesterDraftState: null as WinchesterDraftSyncData | null,
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -594,6 +599,51 @@ export default defineComponent({
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Winston draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			// Winchester Draft
+
+			this.socket.on("startWinchesterDraft", (state) => {
+				startDraftSetup("Winchester draft");
+				this.winchesterDraftState = state;
+				this.draftingState =
+					state.currentPlayer === this.userID ? DraftState.WinchesterPicking : DraftState.WinchesterWaiting;
+			});
+			this.socket.on("winchesterDraftSync", (state) => {
+				this.winchesterDraftState = state;
+				this.draftingState =
+					state.currentPlayer === this.userID ? DraftState.WinchesterPicking : DraftState.WinchesterWaiting;
+			});
+			this.socket.on("winchesterDraftEnd", () => {
+				this.drafting = false;
+				this.winchesterDraftState = null;
+				this.draftingState = DraftState.Brewing;
+				fireToast("success", "Done drafting!");
+			});
+
+			this.socket.on("rejoinWinchesterDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.winchesterDraftState = data.state;
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+
+					this.draftingState =
+						data.state.currentPlayer === this.userID
+							? DraftState.WinchesterPicking
+							: DraftState.WinchesterWaiting;
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Winchester draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1507,6 +1557,50 @@ export default defineComponent({
 				if (answer.code !== 0) {
 					console.error(answer);
 				}
+			});
+		},
+		startWinchesterDraft: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			if (!this.ownerIsPlayer) {
+				Alert.fire({
+					icon: "error",
+					title: "Owner has to play",
+					text: "Non-playing owner is not supported in Winchester Draft for now. The 'Session owner is playing' option needs to be active.",
+				});
+				return;
+			}
+
+			let { value: boosterCount } = await Alert.fire({
+				title: "Winchester Draft",
+				html: `<p>Winchester Draft is a draft variant for two players similar to Winston draft where players choose from 4 face-up piles of cards.</p>How many boosters for the main stack (default is 6)?`,
+				inputPlaceholder: "Booster count",
+				input: "number",
+				inputAttributes: {
+					min: "6",
+					max: "12",
+					step: "1",
+				},
+				inputValue: 6,
+				showCancelButton: true,
+				confirmButtonColor: ButtonColor.Safe,
+				cancelButtonColor: ButtonColor.Critical,
+				confirmButtonText: "Start Winchester Draft",
+			});
+
+			if (boosterCount) {
+				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
+				this.socket.emit("startWinchesterDraft", boosterCount, (answer: SocketAck) => {
+					if (answer.code !== 0) Alert.fire(answer.error!);
+				});
+			}
+		},
+		winchesterDraftPick(index: number) {
+			if (!this.winchesterDraftState) return;
+			const cards = this.winchesterDraftState.piles[index];
+			this.socket.emit("winchesterDraftPick", index, (answer) => {
+				if (answer.code === 0) for (let c of cards) this.addToDeck(c);
+				else console.error(answer);
 			});
 		},
 		setGridDraftState(state: GridDraftSyncData) {
