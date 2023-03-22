@@ -90,7 +90,7 @@ describe("Winchester Draft", function () {
 
 	function randomPick(socket: ReturnType<typeof makeClients>[0], state: WinchesterDraftSyncData) {
 		let randomIdx = random.integer(0, state.piles.length - 1);
-		if (state.piles[randomIdx].length === 0) randomIdx = state.piles.findIndex((pile) => pile.length === 0);
+		if (state.piles[randomIdx].length === 0) randomIdx = state.piles.findIndex((pile) => pile.length > 0);
 		socket.emit("winchesterDraftPick", randomIdx, ackNoError);
 	}
 
