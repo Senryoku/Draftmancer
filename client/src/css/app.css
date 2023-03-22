@@ -1452,50 +1452,6 @@ ul.player-list {
 	}
 }
 
-/** Winston Draft **/
-
-.winston-piles {
-	display: flex;
-	justify-content: space-around;
-	position: relative;
-	padding: 0.75em;
-	min-height: 354.2px;
-}
-
-.winston-pile {
-	margin: 0 1em 0 1em;
-	padding: 0.5em;
-	width: 250px;
-}
-
-.winston-pile .card-image,
-.winston-pile .card-image img {
-	width: 250px;
-}
-
-.winston-current-pile {
-	background-color: #555;
-	-webkit-box-shadow: 0px 0px 5px 5px #555;
-	-moz-box-shadow: 0px 0px 5px 5px #555;
-	box-shadow: 0px 0px 5px 5px #555;
-}
-
-.winston-current-pile-options {
-	display: flex;
-	flex-direction: column;
-}
-
-.winstom-card-column {
-	display: flex;
-	flex-direction: column;
-}
-
-.winston-pile-status {
-	box-sizing: border-box;
-	width: 100%;
-	padding: 0.5em;
-	text-align: center;
-}
 
 .rochester-container {
 	display: flex;

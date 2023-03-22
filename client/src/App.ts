@@ -156,6 +156,7 @@ export default defineComponent({
 		Sortable,
 		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
 		WinchesterDraft: defineAsyncComponent(() => import("./components/WinchesterDraft.vue")),
+		WinstonDraft: defineAsyncComponent(() => import("./components/WinstonDraft.vue")),
 	},
 	data: () => {
 		let userID: UserID = guid();
@@ -3070,16 +3071,6 @@ export default defineComponent({
 		cardsToBurnThisRound(): number {
 			if (this.rochesterDraftState || !this.booster) return 0;
 			return Math.max(0, Math.min(this.burnedCardsPerRound, this.booster.length - this.cardsToPick));
-		},
-		winstonCanSkipPile(): boolean {
-			if (!this.winstonDraftState) return false;
-			const s: WinstonDraftSyncData = this.winstonDraftState;
-			return !(
-				!s.remainingCards &&
-				((s.currentPile === 0 && !s.piles[1].length && !s.piles[2].length) ||
-					(s.currentPile === 1 && !s.piles[2].length) ||
-					s.currentPile === 2)
-			);
 		},
 		waitingForDisconnectedUsers(): boolean {
 			//                    Disconnected players do not matter for Team Sealed or Rotisserie Draft.

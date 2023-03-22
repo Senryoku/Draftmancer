@@ -992,77 +992,20 @@
 						</transition-group>
 					</div>
 				</transition>
-				<!-- Winston Draft -->
-				<div
-					class="container"
-					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+				<winston-draft
 					v-if="
 						(draftingState === DraftState.WinstonPicking || draftingState === DraftState.WinstonWaiting) &&
 						winstonDraftState
 					"
-				>
-					<div class="section-title">
-						<h2>Winston Draft</h2>
-						<div class="controls">
-							<span>
-								<template v-if="userID === winstonDraftState.currentPlayer"
-									>Your turn to pick a pile of cards!</template
-								>
-								<template v-else>
-									Waiting for
-									{{
-										winstonDraftState.currentPlayer in userByID
-											? userByID[winstonDraftState.currentPlayer].userName
-											: "(Disconnected)"
-									}}...
-								</template>
-								There are {{ winstonDraftState.remainingCards }} cards left in the main stack.
-							</span>
-						</div>
-					</div>
-					<div class="winston-piles">
-						<div
-							v-for="(pile, index) in winstonDraftState.piles"
-							:key="`winston-pile-${index}`"
-							class="winston-pile"
-							:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
-						>
-							<template
-								v-if="
-									userID === winstonDraftState.currentPlayer &&
-									index === winstonDraftState.currentPile
-								"
-							>
-								<div class="card-column winstom-card-column">
-									<card
-										v-for="card in pile"
-										:key="card.uniqueID"
-										:card="card"
-										:language="language"
-									></card>
-								</div>
-								<div class="winston-current-pile-options">
-									<button class="confirm" @click="winstonDraftTakePile">Take Pile</button>
-									<button class="stop" @click="winstonDraftSkipPile" v-if="winstonCanSkipPile">
-										Skip Pile
-										<span v-show="index === 2">and Draw</span>
-									</button>
-								</div>
-							</template>
-							<template v-else>
-								<div class="card-column winstom-card-column">
-									<div v-for="card in pile" :key="card.uniqueID" class="card">
-										<card-placeholder></card-placeholder>
-									</div>
-								</div>
-								<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
-									{{ userByID[winstonDraftState.currentPlayer]?.userName ?? "(Disconnected)" }} is
-									looking at this pile...
-								</div>
-							</template>
-						</div>
-					</div>
-				</div>
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					:winstonDraftState="winstonDraftState"
+					@take="winstonDraftTakePile"
+					@skip="winstonDraftSkipPile"
+				/>
 				<winchester-draft
 					v-if="
 						(draftingState === DraftState.WinchesterPicking ||
