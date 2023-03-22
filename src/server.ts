@@ -348,6 +348,18 @@ function winstonDraftSkipPile(userID: UserID, sessionID: SessionID, ack: (result
 	ack?.(r);
 }
 
+function winchesterDraftPick(
+	userID: UserID,
+	sessionID: SessionID,
+	pickedColumn: number,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "winchester", ack)) return;
+
+	const r = Sessions[sessionID].winchesterDraftPick(pickedColumn);
+	ack?.(r);
+}
+
 function minesweeperDraftPick(
 	userID: UserID,
 	sessionID: SessionID,
@@ -498,6 +510,19 @@ function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: u
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
 	const r = sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack(r);
+}
+
+function startWinchesterDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	boosterCount: unknown,
+	ack: (s: SocketAck) => void
+) {
+	const sess = Sessions[sessionID];
+	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
+	const r = sess.startWinchesterDraft(localBoosterCount ? localBoosterCount : 6);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -1257,6 +1282,7 @@ io.on("connection", async function (socket) {
 	socket.on("rotisserieDraftPick", prepareSocketCallback(rotisserieDraftPick));
 	socket.on("winstonDraftTakePile", prepareSocketCallback(winstonDraftTakePile));
 	socket.on("winstonDraftSkipPile", prepareSocketCallback(winstonDraftSkipPile));
+	socket.on("winchesterDraftPick", prepareSocketCallback(winchesterDraftPick));
 	socket.on("minesweeperDraftPick", prepareSocketCallback(minesweeperDraftPick));
 	socket.on("teamSealedPick", prepareSocketCallback(teamSealedPick));
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
@@ -1273,6 +1299,7 @@ io.on("connection", async function (socket) {
 	socket.on("startRochesterDraft", prepareSocketCallback(startRochesterDraft, true));
 	socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));
 	socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
+	socket.on("startWinchesterDraft", prepareSocketCallback(startWinchesterDraft, true));
 	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
 	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
 	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));

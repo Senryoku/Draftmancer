@@ -53,6 +53,7 @@ import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } fro
 import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 import { parseLine } from "./parseCardList.js";
+import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -886,6 +887,70 @@ export class Session implements IIndexable {
 		return true;
 	}
 	///////////////////// Winston Draft End //////////////////////
+
+	startWinchesterDraft(boosterCount: number): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size !== 2)
+			return new SocketError(
+				"Invalid number of players",
+				`Winchester Draft can only be played with exactly 2 players. Bots are not supported!`
+			);
+
+		const boosters = this.generateBoosters(boosterCount);
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+
+		this.drafting = true;
+		this.disconnectedUsers = {};
+		this.draftState = new WinchesterDraftState(this.getSortedHumanPlayersIDs(), boosters);
+		const syncData = (this.draftState as WinchesterDraftState).syncData();
+		const playerData = this.getSortedHumanPlayerData();
+		for (const user of this.users) {
+			Connections[user].pickedCards = { main: [], side: [] };
+			Connections[user].socket.emit("sessionOptions", {
+				virtualPlayersData: playerData,
+			});
+			Connections[user].socket.emit("startWinchesterDraft", syncData);
+		}
+
+		this.initLogs("Winchester Draft", boosters);
+		return new SocketAck();
+	}
+
+	endWinchesterDraft() {
+		logSession("WinchesterDraft", this);
+		if (this.draftLog)
+			for (const uid of this.users)
+				this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
+		this.sendLogs();
+		for (const user of this.users) Connections[user].socket.emit("winchesterDraftEnd");
+		this.cleanDraftState();
+	}
+
+	winchesterDraftPick(pickedColumn: number): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !isWinchesterDraftState(s)) return new SocketError("Not drafting.");
+		if (pickedColumn < 0 || pickedColumn >= s.piles.length || s.piles[pickedColumn].length === 0)
+			return new SocketError("Invalid column.");
+
+		this.draftLog?.users[s.currentPlayer()].picks.push({
+			pickedPile: pickedColumn,
+			piles: [...s.piles],
+		});
+		Connections[s.currentPlayer()].pickedCards.main = Connections[s.currentPlayer()].pickedCards.main.concat(
+			s.piles[pickedColumn]
+		);
+		s.piles[pickedColumn] = [];
+		s.refill();
+		++s.round;
+
+		if (s.done()) this.endWinchesterDraft();
+		else {
+			const syncData = s.syncData();
+			for (const uid of this.users) Connections[uid]?.socket.emit("winchesterDraftSync", syncData);
+		}
+
+		return new SocketAck();
+	}
 
 	///////////////////// Grid Draft //////////////////////
 	startGridDraft(boosterCount: number): SocketAck {
@@ -1846,6 +1911,9 @@ export class Session implements IIndexable {
 			case "winston":
 				this.endWinstonDraft();
 				break;
+			case "winchester":
+				this.endWinchesterDraft();
+				break;
 			case "grid":
 				this.endGridDraft();
 				break;
@@ -2246,6 +2314,9 @@ export class Session implements IIndexable {
 			switch (this.draftState.type) {
 				case "winston":
 					msgData.name = "rejoinWinstonDraft";
+					break;
+				case "winchester":
+					msgData.name = "rejoinWinchesterDraft";
 					break;
 				case "grid":
 					msgData.name = "rejoinGridDraft";
