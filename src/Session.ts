@@ -798,12 +798,12 @@ export class Session implements IIndexable {
 		this.drafting = true;
 		this.disconnectedUsers = {};
 		this.draftState = new WinstonDraftState(this.getSortedHumanPlayersIDs(), boosters);
-		for (const user of this.users) {
-			Connections[user].pickedCards = { main: [], side: [] };
-			Connections[user].socket.emit("sessionOptions", {
+		for (const uid of this.users) {
+			Connections[uid].pickedCards = { main: [], side: [] };
+			Connections[uid].socket.emit("sessionOptions", {
 				virtualPlayersData: this.getSortedHumanPlayerData(),
 			});
-			Connections[user].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData());
+			Connections[uid].socket.emit("startWinstonDraft", (this.draftState as WinstonDraftState).syncData(uid));
 		}
 
 		this.initLogs("Winston Draft", boosters);
@@ -829,9 +829,9 @@ export class Session implements IIndexable {
 		if (s.currentPile >= 3) {
 			this.endWinstonDraft();
 		} else {
-			for (const user of this.users) {
-				Connections[user].socket.emit("winstonDraftSync", s.syncData());
-				Connections[user].socket.emit("winstonDraftNextRound", s.currentPlayer());
+			for (const uid of this.users) {
+				Connections[uid].socket.emit("winstonDraftSync", s.syncData(uid));
+				Connections[uid].socket.emit("winstonDraftNextRound", s.currentPlayer());
 			}
 		}
 	}
@@ -865,7 +865,7 @@ export class Session implements IIndexable {
 		} else {
 			++s.currentPile;
 			if (s.piles[s.currentPile].length === 0) this.winstonSkipPile();
-			else for (const user of this.users) Connections[user].socket.emit("winstonDraftSync", s.syncData());
+			else for (const uid of this.users) Connections[uid].socket.emit("winstonDraftSync", s.syncData(uid));
 		}
 
 		return new SocketAck();

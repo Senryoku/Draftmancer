@@ -1,4 +1,4 @@
-import { UniqueCard } from "./CardTypes.js";
+import { UniqueCard, UniqueCardID } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes.js";
 import { shuffleArray } from "./utils.js";
@@ -29,11 +29,22 @@ export class WinstonDraftState extends IDraftState implements TurnBased {
 		return this.players[this.round % 2];
 	}
 
-	syncData() {
+	syncData(uid: UserID) {
+		const currentPlayer = this.currentPlayer();
+		// Strip useless card information
+		const piles: ({ uniqueID: UniqueCardID } | UniqueCard)[][] = this.piles.map((p) =>
+			p.map((c) => {
+				return {
+					uniqueID: c.uniqueID,
+				};
+			})
+		);
+		// Only send full information of the current pile if we're the current player
+		if (uid === currentPlayer) piles[this.currentPile] = this.piles[this.currentPile];
 		return {
 			round: this.round,
-			currentPlayer: this.currentPlayer(),
-			piles: this.piles,
+			currentPlayer,
+			piles,
 			currentPile: this.currentPile,
 			remainingCards: this.cardPool.length,
 		};

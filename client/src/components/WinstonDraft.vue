@@ -50,7 +50,7 @@
 											index === winstonDraftState.currentPile
 										"
 									>
-										<card :card="card" :language="language"></card>
+										<card :card="card as UniqueCard" :language="language"></card>
 									</template>
 									<template v-else>
 										<div class="card">
@@ -88,6 +88,7 @@ import { WinstonDraftSyncData } from "@/WinstonDraft";
 import { Language } from "../../../src/Types";
 import Card from "./Card.vue";
 import CardPlaceholder from "./CardPlaceholder.vue";
+import { UniqueCard } from "@/CardTypes";
 
 const props = defineProps<{
 	userID: UserID;
