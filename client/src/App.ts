@@ -3138,6 +3138,7 @@ export default defineComponent({
 		},
 		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
+			if (this.winchesterDraftState) return this.winchesterDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
 			if (this.rochesterDraftState) return this.rochesterDraftState.currentPlayer;

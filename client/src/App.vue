@@ -733,6 +733,7 @@
 									<template
 										v-if="
 											winstonDraftState ||
+											winchesterDraftState ||
 											gridDraftState ||
 											rotisserieDraftState ||
 											rochesterDraftState ||
