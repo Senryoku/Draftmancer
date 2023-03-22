@@ -15,6 +15,7 @@ import SessionsSettingsProps from "./Session/SessionProps";
 import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
+import { WinchesterDraftSyncData } from "./WinchesterDraft";
 
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
@@ -91,6 +92,14 @@ export interface ServerToClientEvents {
 	winstonDraftEnd: () => void;
 	rejoinWinstonDraft: (data: {
 		state: WinstonDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
+
+	startWinchesterDraft: (state: WinchesterDraftSyncData) => void;
+	winchesterDraftSync: (syncData: WinchesterDraftSyncData) => void;
+	winchesterDraftEnd: () => void;
+	rejoinWinchesterDraft: (data: {
+		state: WinchesterDraftSyncData;
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
@@ -191,6 +200,7 @@ export interface ClientToServerEvents {
 	rotisserieDraftPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
 	winstonDraftTakePile: (ack: (result: SocketAck) => void) => void;
 	winstonDraftSkipPile: (ack: (result: SocketAck) => void) => void;
+	winchesterDraftPick: (pickedColumn: number, ack: (result: SocketAck) => void) => void;
 	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;
 	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
 	updateBracket: (results: Array<[number, number]>) => void;
@@ -208,6 +218,7 @@ export interface ClientToServerEvents {
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
+	startWinchesterDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
 	startMinesweeperDraft: (
 		gridCount: number,
 		gridWidth: number,

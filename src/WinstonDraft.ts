@@ -5,7 +5,7 @@ import { shuffleArray } from "./utils.js";
 
 export class WinstonDraftState extends IDraftState implements TurnBased {
 	players: Array<UserID>;
-	round = -1; // Will be immedialty incremented
+	round = -1; // Will be immediately incremented
 	cardPool: Array<UniqueCard> = [];
 	piles: [Array<UniqueCard>, Array<UniqueCard>, Array<UniqueCard>] = [[], [], []];
 	currentPile: number = 0;
