@@ -32,8 +32,18 @@
 						:key="pile.length > 0 ? pile[0].uniqueID : `column-${index}`"
 					>
 						<TransitionGroup name="card">
-							<div v-for="card in pile" :key="card.uniqueID" class="column-card-container">
-								<transition name="flip-card" mode="out-in">
+							<div
+								v-for="(card, cardIndex) in pile"
+								:key="card.uniqueID"
+								class="column-card-container"
+								:style="{ '--anim-index': cardIndex }"
+							>
+								<transition
+									name="flip-card"
+									mode="out-in"
+									:duration-enter="0.25"
+									:duration-leave="0.25 + 0.1 * cardIndex"
+								>
 									<template
 										v-if="
 											userID === winstonDraftState.currentPlayer &&
@@ -176,16 +186,20 @@ const winstonCanSkipPile = computed(() => {
 	opacity: 0;
 }
 
-.flip-card-enter-active,
-.flip-card-leave-active {
-	perspective-origin: center center;
-}
-
 .flip-card-enter-active {
 	transition: all 0.25s ease-out;
 }
 .flip-card-leave-active {
 	transition: all 0.25s ease-in;
+}
+
+.flip-card-enter-active,
+.flip-card-leave-active {
+	perspective-origin: center center;
+}
+
+.flip-card-leave-active {
+	transition-delay: calc(0.1s * var(--anim-index));
 }
 
 .flip-card-enter-from {
