@@ -1166,6 +1166,7 @@ ul.player-list {
 	min-height: 300px;
 }
 
+.card-column .column-card-container,
 .card-column .card {
 	height: 0;
 	padding-bottom: 13.5%; /* As a percentage of the container width, used to display card name (instead of setting a height), makes its 'responsive' */
@@ -1178,6 +1179,7 @@ ul.player-list {
 	z-index: 800;
 }
 
+.card-column .column-card-container:last-child,
 .card-column .card:last-child {
 	margin-bottom: 142.5%;
 }

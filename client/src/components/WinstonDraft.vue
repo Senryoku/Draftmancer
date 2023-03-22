@@ -26,25 +26,41 @@
 				class="winston-pile"
 				:class="{ 'winston-current-pile': index === winstonDraftState.currentPile }"
 			>
-				<template v-if="userID === winstonDraftState.currentPlayer && index === winstonDraftState.currentPile">
-					<div class="card-column winstom-card-column">
-						<card v-for="card in pile" :key="card.uniqueID" :card="card" :language="language"></card>
+				<transition name="pile" mode="out-in">
+					<div
+						class="card-column winstom-card-column"
+						:key="pile.length > 0 ? pile[0].uniqueID : `column-${index}`"
+					>
+						<TransitionGroup name="card">
+							<div v-for="card in pile" :key="card.uniqueID" class="column-card-container">
+								<transition name="flip-card" mode="out-in">
+									<template
+										v-if="
+											userID === winstonDraftState.currentPlayer &&
+											index === winstonDraftState.currentPile
+										"
+									>
+										<card :card="card" :language="language"></card>
+									</template>
+									<template v-else>
+										<div class="card">
+											<card-placeholder></card-placeholder>
+										</div>
+									</template>
+								</transition>
+							</div>
+						</TransitionGroup>
 					</div>
-					<div class="winston-current-pile-options">
+				</transition>
+				<template v-if="index === winstonDraftState.currentPile">
+					<div class="winston-current-pile-options" v-if="userID === winstonDraftState.currentPlayer">
 						<button class="confirm" @click="take">Take Pile</button>
 						<button class="stop" @click="skip" v-if="winstonCanSkipPile">
 							Skip Pile
 							<span v-show="index === 2">and Draw</span>
 						</button>
 					</div>
-				</template>
-				<template v-else>
-					<div class="card-column winstom-card-column">
-						<div v-for="card in pile" :key="card.uniqueID" class="card">
-							<card-placeholder></card-placeholder>
-						</div>
-					</div>
-					<div class="winston-pile-status" v-show="index === winstonDraftState.currentPile">
+					<div class="winston-pile-status" v-else>
 						{{ sessionUsers[winstonDraftState.currentPlayer]?.userName ?? "(Disconnected)" }} is looking at
 						this pile...
 					</div>
@@ -134,5 +150,49 @@ const winstonCanSkipPile = computed(() => {
 	width: 100%;
 	padding: 0.5em;
 	text-align: center;
+}
+
+.column-card-container {
+	will-change: transform;
+}
+
+.pile-enter-active,
+.pile-leave-active {
+	transition: all 0.5s ease;
+}
+
+.card-enter-active {
+	transition: all 0.5s ease 0.5s;
+}
+
+.pile-leave-to {
+	transform: translateY(-300px);
+	opacity: 0;
+}
+
+.pile-enter-from,
+.card-enter-from {
+	transform: translateY(300px);
+	opacity: 0;
+}
+
+.flip-card-enter-active,
+.flip-card-leave-active {
+	perspective-origin: center center;
+}
+
+.flip-card-enter-active {
+	transition: all 0.25s ease-out;
+}
+.flip-card-leave-active {
+	transition: all 0.25s ease-in;
+}
+
+.flip-card-enter-from {
+	transform: perspective(1000px) rotateY(90deg);
+}
+
+.flip-card-leave-to {
+	transform: perspective(1000px) rotateY(-90deg);
 }
 </style>
