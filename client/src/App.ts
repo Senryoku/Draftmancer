@@ -1572,26 +1572,26 @@ export default defineComponent({
 				return;
 			}
 
-			let { value: boosterCount } = await Alert.fire({
+			let { value: boosterPerPlayer } = await Alert.fire({
 				title: "Winchester Draft",
-				html: `<p>Winchester Draft is a draft variant for two players similar to Winston draft where players choose from 4 face-up piles of cards.</p>How many boosters for the main stack (default is 6)?`,
-				inputPlaceholder: "Booster count",
+				html: `<p>Winchester Draft is a draft variant for two players similar to Winston draft where players choose from 4 face-up piles of cards.</p>How many boosters per player for the main stack (default is 3)?`,
+				inputPlaceholder: "Booster per Player",
 				input: "number",
 				inputAttributes: {
-					min: "6",
+					min: "1",
 					max: "12",
 					step: "1",
 				},
-				inputValue: 6,
+				inputValue: 3,
 				showCancelButton: true,
 				confirmButtonColor: ButtonColor.Safe,
 				cancelButtonColor: ButtonColor.Critical,
 				confirmButtonText: "Start Winchester Draft",
 			});
 
-			if (boosterCount) {
-				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startWinchesterDraft", boosterCount, (answer: SocketAck) => {
+			if (boosterPerPlayer) {
+				if (typeof boosterPerPlayer !== "number") boosterPerPlayer = parseInt(boosterPerPlayer);
+				this.socket.emit("startWinchesterDraft", boosterPerPlayer, (answer: SocketAck) => {
 					if (answer.code !== 0) Alert.fire(answer.error!);
 				});
 			}

@@ -218,7 +218,7 @@ export interface ClientToServerEvents {
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
-	startWinchesterDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
+	startWinchesterDraft: (boosterPerPlayer: number, ack: (s: SocketAck) => void) => void;
 	startMinesweeperDraft: (
 		gridCount: number,
 		gridWidth: number,

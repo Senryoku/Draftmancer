@@ -517,12 +517,12 @@ function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: u
 function startWinchesterDraft(
 	userID: UserID,
 	sessionID: SessionID,
-	boosterCount: unknown,
+	boosterPerPlayer: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
-	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
-	const r = sess.startWinchesterDraft(localBoosterCount ? localBoosterCount : 6);
+	const localBoosterPerPlayer = !isNumber(boosterPerPlayer) ? parseInt(boosterPerPlayer as string) : boosterPerPlayer;
+	const r = sess.startWinchesterDraft(localBoosterPerPlayer ? localBoosterPerPlayer : 6);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }

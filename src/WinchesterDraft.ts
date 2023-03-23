@@ -27,7 +27,7 @@ export class WinchesterDraftState extends IDraftState implements TurnBased {
 	}
 
 	currentPlayer() {
-		return this.players[this.round % 2];
+		return this.players[this.round % this.players.length];
 	}
 
 	syncData() {

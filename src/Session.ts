@@ -888,15 +888,15 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Winston Draft End //////////////////////
 
-	startWinchesterDraft(boosterCount: number): SocketAck {
+	startWinchesterDraft(boosterPerPlayer: number): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
-		if (this.users.size !== 2)
+		if (this.users.size < 2)
 			return new SocketError(
 				"Invalid number of players",
-				`Winchester Draft can only be played with exactly 2 players. Bots are not supported!`
+				`Winchester Draft can only be played with at least 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterCount);
+		const boosters = this.generateBoosters(boosterPerPlayer * this.users.size);
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		this.drafting = true;
