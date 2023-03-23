@@ -124,11 +124,14 @@ export default defineComponent({
 		modelValue: { type: Array as PropType<SetCode[]>, required: true },
 	},
 	mounted() {
-		const assigned = this.blocks.map((b) => b.sets).flat();
+		const assigned = this.blocks
+			.map((b) => b.sets)
+			.flat()
+			.map((s) => s.code);
 		let blocks: { [code: SetCode]: SetInfo[] } = {};
 		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 			let b = s.block;
-			if (!b && assigned.includes(s)) continue;
+			if (!b && assigned.includes(s.code)) continue;
 			if (!b) b = "Others";
 			if (!(b in blocks)) blocks[b] = [];
 			blocks[b].push(s);
