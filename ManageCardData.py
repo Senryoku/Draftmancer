@@ -807,6 +807,22 @@ setinfos["planeshifted_snc"].update({"code": "planeshifted_snc",
                                      "isPrimary": True,
                                      })
 
+# Create fake primary sets for each version of the Shadows over Innistrad Remastered bonus sheet, so users can choose rather than rely on the auto rotation.
+with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
+    bonusSheets = json.loads(bonusSheetsFile.read())
+    bonusSheetsIndex = 0
+    for bonusSheet in bonusSheets:
+        code = f"sir{bonusSheetsIndex}"
+        PrimarySets.append(code)
+        setinfos[code] = {}
+        setinfos[code].update(setinfos["sir"])
+        setinfos[code].update({"code": code,
+                               "block": "Shadows over Innistrad Remastered",
+                               "fullName": f"SIR: {bonusSheet['name']}",
+                               "isPrimary": True,
+                               })
+        bonusSheetsIndex += 1
+
 with open(SetsInfosPath, 'w+', encoding="utf8") as setinfosfile:
     json.dump(setinfos, setinfosfile, ensure_ascii=False, indent=4)
 

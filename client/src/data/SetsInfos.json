@@ -5972,5 +5972,53 @@
         "mythicCount": 55,
         "rareCount": 152,
         "uncommonCount": 126
+    },
+    "sir0": {
+        "code": "sir0",
+        "fullName": "SIR: Creature Type Terror!",
+        "cardCount": 291,
+        "isPrimary": true,
+        "icon": "img/sets/sir.svg",
+        "commonCount": 109,
+        "mythicCount": 23,
+        "rareCount": 66,
+        "uncommonCount": 93,
+        "block": "Shadows over Innistrad Remastered"
+    },
+    "sir1": {
+        "code": "sir1",
+        "fullName": "SIR: Fatal Flashback!",
+        "cardCount": 291,
+        "isPrimary": true,
+        "icon": "img/sets/sir.svg",
+        "commonCount": 109,
+        "mythicCount": 23,
+        "rareCount": 66,
+        "uncommonCount": 93,
+        "block": "Shadows over Innistrad Remastered"
+    },
+    "sir2": {
+        "code": "sir2",
+        "fullName": "SIR: Morbid and Macabre!",
+        "cardCount": 291,
+        "isPrimary": true,
+        "icon": "img/sets/sir.svg",
+        "commonCount": 109,
+        "mythicCount": 23,
+        "rareCount": 66,
+        "uncommonCount": 93,
+        "block": "Shadows over Innistrad Remastered"
+    },
+    "sir3": {
+        "code": "sir3",
+        "fullName": "SIR: Abominable All Stars!",
+        "cardCount": 291,
+        "isPrimary": true,
+        "icon": "img/sets/sir.svg",
+        "commonCount": 109,
+        "mythicCount": 23,
+        "rareCount": 66,
+        "uncommonCount": 93,
+        "block": "Shadows over Innistrad Remastered"
     }
 }

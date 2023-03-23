@@ -536,6 +536,14 @@ describe("Single Draft (Two Players)", function () {
 						(c) =>
 							c.set === set ||
 							(set === "sir" && c.set === "sis") ||
+							(set === "sir0" && c.set === "sir") ||
+							c.set === "sis" ||
+							(set === "sir1" && c.set === "sir") ||
+							c.set === "sis" ||
+							(set === "sir2" && c.set === "sir") ||
+							c.set === "sis" ||
+							(set === "sir3" && c.set === "sir") ||
+							c.set === "sis" ||
 							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
 							(set === "unf" && c.set === "sunf") ||

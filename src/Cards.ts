@@ -111,6 +111,11 @@ for (const [cid, card] of Cards.entries()) {
 }
 BoosterCardsBySet["dbl"] = BoosterCardsBySet["mid"].concat(BoosterCardsBySet["vow"]); // Innistrad: Double Feature (All cards from Midnight Hunt and Crimson Vow)
 BoosterCardsBySet["ydmu"] = BoosterCardsBySet["dmu"]; // Dominaria United Alchemy
+// Shadows over Innistrad with specific Bonus Sheet
+BoosterCardsBySet["sir0"] = BoosterCardsBySet["sir"];
+BoosterCardsBySet["sir1"] = BoosterCardsBySet["sir"];
+BoosterCardsBySet["sir2"] = BoosterCardsBySet["sir"];
+BoosterCardsBySet["sir3"] = BoosterCardsBySet["sir"];
 
 export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 

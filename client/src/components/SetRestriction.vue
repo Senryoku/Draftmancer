@@ -128,7 +128,9 @@ export default defineComponent({
 			.map((b) => b.sets)
 			.flat()
 			.map((s) => s.code);
-		let blocks: { [code: SetCode]: SetInfo[] } = {};
+		let blocks: { [code: SetCode]: SetInfo[] } = {
+			"Shadows over Innistrad Remastered": [], // Manually added to hoist it
+		};
 		for (let s of constants.PrimarySets.map((s) => SetsInfos[s])) {
 			let b = s.block;
 			if (!b && assigned.includes(s.code)) continue;

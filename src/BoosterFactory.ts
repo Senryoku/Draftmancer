@@ -1267,7 +1267,9 @@ class SIRBoosterFactory extends BoosterFactory {
 
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
 		super(cardPool, landSlot, options);
-		const currentSheet = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
+		const currentSheet =
+			options.bonusSheet ??
+			Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24 * 7)) % ShadowOfThePastLists.length;
 		for (const cid of ShadowOfThePastLists[currentSheet].card_ids) {
 			const card = getCard(cid);
 			this.bonusSheet[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
@@ -1289,6 +1291,28 @@ class SIRBoosterFactory extends BoosterFactory {
 		booster.unshift(bonusCard);
 
 		return booster;
+	}
+}
+
+// Allow users to specify the bonus sheet
+class SIRBoosterFactoryBonusSheet0 extends SIRBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 0 }, options));
+	}
+}
+class SIRBoosterFactoryBonusSheet1 extends SIRBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 1 }, options));
+	}
+}
+class SIRBoosterFactoryBonusSheet2 extends SIRBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 2 }, options));
+	}
+}
+class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		super(cardPool, landSlot, Object.assign({ bonusSheet: 3 }, options));
 	}
 }
 
@@ -1317,6 +1341,10 @@ export const SetSpecificFactories: {
 	dmr: DMRBoosterFactory,
 	one: ONEBoosterFactory,
 	sir: SIRBoosterFactory,
+	sir0: SIRBoosterFactoryBonusSheet0,
+	sir1: SIRBoosterFactoryBonusSheet1,
+	sir2: SIRBoosterFactoryBonusSheet2,
+	sir3: SIRBoosterFactoryBonusSheet3,
 };
 
 /*
