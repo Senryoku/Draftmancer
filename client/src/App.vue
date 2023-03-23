@@ -375,10 +375,10 @@
 								</div>
 								<div
 									v-tooltip.left="
-										'Starts a Winchester Draft. This is a draft variant for only two players.'
+										'Starts a Winchester Draft. This is a draft variant similar to Winston and Rochester draft.'
 									"
 								>
-									<button @click="startWinchesterDraft()">Winchester (2p.)</button>
+									<button @click="startWinchesterDraft()">Winchester</button>
 								</div>
 								<div
 									v-tooltip.left="

@@ -1574,8 +1574,8 @@ export default defineComponent({
 
 			let { value: boosterPerPlayer } = await Alert.fire({
 				title: "Winchester Draft",
-				html: `<p>Winchester Draft is a draft variant for two players similar to Winston draft where players choose from 4 face-up piles of cards.</p>How many boosters per player for the main stack (default is 3)?`,
-				inputPlaceholder: "Booster per Player",
+				html: `<p>Winchester Draft is a draft variant for two players (extensible to more players) similar to Winston and Rochester draft where players alternatively pick one of 4 face-up piles of cards, then add one card to each pile.</p>How many boosters per player for the main stack (default is 3)?`,
+				inputPlaceholder: "Boosters per Player",
 				input: "number",
 				inputAttributes: {
 					min: "1",
