@@ -1538,6 +1538,37 @@
 						</div>
 						<div class="welcome-section">
 							<div class="news">
+								<em>March 27, 2023</em>
+								<ul>
+									<li>
+										A lot of work behind the scene to update the tech stack. <br />Hopefully you
+										won't see many differences, but I may have missed some regression: As always
+										please report those in the
+										<a href="https://discord.gg/XscXXNw" target="_blank"
+											><font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> discord
+											server</a
+										>!
+									</li>
+									<li>
+										New game mode: <strong>Winchester Draft</strong>! A draft variant with elements
+										from Winston and Rochester drafts.
+									</li>
+									<li>
+										The set selector has been updated: Select multiple sets using Ctrl+Click or a
+										longpress.
+									</li>
+									<li>
+										You can now select a specific bonus sheet for
+										<img
+											src="img/sets/sir.svg"
+											class="set-icon"
+											style="--invertedness: 100%; width: 2em"
+										/>
+										Shadows over Innistrad Remastered drafts (see in the 'More Sets...' menu).
+									</li>
+								</ul>
+							</div>
+							<div class="news">
 								<em>March 17, 2023</em>
 								<p>
 									<img
@@ -1545,7 +1576,7 @@
 										class="set-icon"
 										style="--invertedness: 100%; width: 2em"
 									/>
-									Shadows over Innistrad preliminary support.
+									Shadows over Innistrad Remastered preliminary support.
 								</p>
 							</div>
 							<div class="news">
@@ -1558,27 +1589,6 @@
 										rel="noopener nofollow"
 										>Lucky Paper website</a
 									>.
-								</p>
-							</div>
-							<div class="news">
-								<em>February 27, 2023</em>
-								<p>
-									New game mode: <strong>Rotisserie Draft</strong>!<br />Players pick cards one after
-									the other from a common pool, typically consisting of singletons from a couple of
-									sets.
-								</p>
-							</div>
-							<div class="news">
-								<em>February 15, 2023</em>
-								<p>
-									New game mode: <strong>Team Sealed</strong>!<br />Each team must build one deck for
-									each teammate from a common card pool (typically 12 packs for teams of 3).
-								</p>
-								<p>
-									Added a setting to pin your deck to the bottom of the screen so it's always visible.
-									Should be pretty handy in Team Sealed! Toggle it using the
-									<font-awesome-icon icon="fa-solid fa-thumbtack"></font-awesome-icon>
-									thumbtack in your personal settings, at the top right of the screen.
 								</p>
 							</div>
 						</div>
