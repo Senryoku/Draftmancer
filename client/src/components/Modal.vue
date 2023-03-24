@@ -1,6 +1,6 @@
 <template>
 	<transition name="modal">
-		<div class="modal-mask">
+		<div class="modal-mask" v-if="displayed">
 			<div class="modal-wrapper" @click="close($event)">
 				<div class="modal-container">
 					<div class="modal-header">
@@ -35,6 +35,7 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
 	name: "Modal",
+	props: { displayed: { type: Boolean, default: true } },
 	methods: {
 		close(e: Event) {
 			if (e.target == e.currentTarget) this.$emit("close");
@@ -116,19 +117,15 @@ export default defineComponent({
 	right: 3em;
 }
 
+.modal-enter-active,
+.modal-leave-active {
+	transition: all 0.2s ease;
+}
+
 .modal-footer {
 	text-align: right;
 	flex-shrink: 0;
 }
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
 
 .modal-enter-from {
 	opacity: 0;
