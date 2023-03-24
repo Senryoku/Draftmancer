@@ -567,7 +567,6 @@
 									teamb: teamDraft && index % 2 === 1,
 									draggable: userID === sessionOwner && !drafting,
 									self: userID === element,
-									bot: userByID[element].isBot,
 								}"
 								:data-userid="element"
 							>
@@ -677,7 +676,7 @@
 				<div class="player-list-container">
 					<ul class="player-list">
 						<li
-							v-for="(user, idx) in virtualPlayers"
+							v-for="(user, idx) in virtualPlayers as UserData[]"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
 								teamb: teamDraft && idx % 2 === 1,
