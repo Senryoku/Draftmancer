@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickSelector, waitAndClickXpath, join, setupBrowsers, pages } from "./src/common.js";
+import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages } from "./src/common.js";
 
 async function pickCard(page: Page) {
 	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");

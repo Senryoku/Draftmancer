@@ -256,9 +256,11 @@ export function setupBrowsers(playerCount: number) {
 	});
 	after("Close browsers", async function () {
 		disableLogs();
+		await Promise.all(pages.map((p) => p.close()));
+		pages = [];
 		await Promise.all(browsers.map((b) => b.close()));
+		browsers = [];
 		enableLogs(false);
-		browsers = pages = [];
 	});
 }
 
