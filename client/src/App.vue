@@ -249,11 +249,14 @@
 					<strong>Card Pool: </strong>
 					<span v-if="useCustomCardList && customCardList">
 						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
-						(<span style="display: inline-flex; gap: 0.3em; align-items: baseline"
-							><template v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
-								<a @click="displayedModal = 'cardList'" v-tooltip="'Review the card list'">
-									<font-awesome-icon icon="fa-solid fa-file-alt"></font-awesome-icon>
-								</a>
+						(<span style="display: inline-flex; gap: 0.3em; vertical-align: middle">
+							<template v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
+								<font-awesome-icon
+									icon="fa-solid fa-file-alt"
+									class="clickable blue"
+									@click="displayedModal = 'cardList'"
+									v-tooltip="'Review the card list'"
+								></font-awesome-icon>
 							</template>
 							<template v-else>No list loaded</template>
 							<font-awesome-icon
