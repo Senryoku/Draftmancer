@@ -3085,24 +3085,22 @@ export default defineComponent({
 				.map((u) => u.userName)
 				.join(", ");
 		},
-		virtualPlayers(): UserData[] | SessionUser[] {
-			if (!this.drafting || !this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0)
-				return this.sessionUsers;
-
-			let r = [];
-			for (let id in this.virtualPlayersData) {
-				if (this.virtualPlayersData[id].isBot) {
-					r.push(this.virtualPlayersData[id]);
-				} else if (this.virtualPlayersData[id].isDisconnected) {
-					r.push(this.virtualPlayersData[id]);
-				} else {
-					const p = this.sessionUsers.find((u) => u.userID === id);
-					let concat = Object.assign(this.virtualPlayersData[id], p);
-					r.push(concat);
+		virtualPlayers(): UserData[] {
+			// Only the standard draft mode uses virtualPlayersData (it's the only one that supports bots), derive it from sessionUsers for the other game modes.
+			if (!this.virtualPlayersData || Object.keys(this.virtualPlayersData).length == 0) {
+				const r: UserData[] = [];
+				for (let i = 0; i < this.sessionUsers.length; i++) {
+					r.push({
+						userName: this.sessionUsers[i].userName,
+						userID: this.sessionUsers[i].userID,
+						isBot: false,
+						isDisconnected: this.sessionUsers[i].userID in this.disconnectedUsers,
+					});
 				}
+				return r;
 			}
-
-			return r;
+			// Standard Draft mode with possible bots.
+			return Object.values(this.virtualPlayersData);
 		},
 		passingOrder(): PassingOrder {
 			if (this.gridDraftState) {

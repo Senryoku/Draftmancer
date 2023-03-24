@@ -676,7 +676,7 @@
 				<div class="player-list-container">
 					<ul class="player-list">
 						<li
-							v-for="(user, idx) in virtualPlayers as UserData[]"
+							v-for="(user, idx) in virtualPlayers"
 							:class="{
 								teama: teamDraft && idx % 2 === 0,
 								teamb: teamDraft && idx % 2 === 1,
@@ -1337,7 +1337,7 @@
 										v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
-										@update:lands="(c: CardColor, n: number) => (lands[c] = n)"
+										@update:lands="(c: CardColor, n: number) => (lands[c as keyof typeof lands] = n)"
 									>
 									</land-control>
 									<dropdown
