@@ -40,6 +40,7 @@ import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
+import News from "./components/News.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
 import CardPlaceholder from "./components/CardPlaceholder.vue";
@@ -149,6 +150,7 @@ export default defineComponent({
 		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
 		Modal,
+		News,
 		PatchNotes: defineAsyncComponent(() => import("./components/PatchNotes.vue")),
 		PickSummary: defineAsyncComponent(() => import("./components/PickSummary.vue")),
 		RotisserieDraft: defineAsyncComponent(() => import("./components/RotisserieDraft.vue")),
