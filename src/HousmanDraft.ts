@@ -29,6 +29,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 		this.players = players;
 		this.cardPool = cardPool;
 		shuffleArray(this.cardPool);
+		this.cardPool.length = roundCount * (handSize * this.players.length + revealedCardsCount);
 		this.handSize = handSize;
 		this.revealedCardsCount = revealedCardsCount;
 		this.exchangeCount = exchangeCount;
@@ -38,10 +39,9 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 
 	// Returns true if this was the last exchange of this round
 	exchange(handIndex: number, revealedCardsIndex: number): boolean {
-		[this.revealedCards[revealedCardsIndex], this.playerHands[this.currentPlayer()][handIndex]] = [
-			this.playerHands[this.currentPlayer()][handIndex],
-			this.revealedCards[revealedCardsIndex],
-		];
+		const card = this.revealedCards[revealedCardsIndex];
+		this.revealedCards[revealedCardsIndex] = this.playerHands[this.currentPlayer()][handIndex];
+		this.playerHands[this.currentPlayer()][handIndex] = card;
 		++this.exchangeNum;
 		return this.exchangeNum >= this.exchangeCount * this.players.length;
 	}
@@ -51,8 +51,13 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 		++this.roundNum;
 		if (this.roundNum >= this.roundCount) return true;
 		this.exchangeNum = 0;
-		for (const uid of this.players) this.playerHands[uid] = this.cardPool.splice(0, this.handSize);
-		this.revealedCards = this.cardPool.splice(0, this.revealedCardsCount);
+		const drawnCards = this.cardPool.splice(0, this.players.length * this.handSize + this.revealedCardsCount);
+		let index = 0;
+		for (const uid of this.players) {
+			this.playerHands[uid] = drawnCards.slice(index * this.handSize, (index + 1) * this.handSize);
+			++index;
+		}
+		this.revealedCards = drawnCards.slice(-this.revealedCardsCount);
 		return false;
 	}
 

@@ -1048,7 +1048,8 @@ export class Session implements IIndexable {
 			Connections[uid].socket.emit(
 				"housmanDraftExchange",
 				revealedCardsIndex,
-				s.revealedCards[revealedCardsIndex]
+				s.revealedCards[revealedCardsIndex],
+				s.currentPlayer()
 			)
 		);
 
@@ -2036,6 +2037,9 @@ export class Session implements IIndexable {
 			case "winchester":
 				this.endWinchesterDraft();
 				break;
+			case "housman":
+				this.endHousmanDraft();
+				break;
 			case "grid":
 				this.endGridDraft();
 				break;
@@ -2420,30 +2424,21 @@ export class Session implements IIndexable {
 			this.addUser(userID);
 
 			let msgData: { name?: keyof ServerToClientEvents; state: IDraftState } = { state: this.draftState };
-			switch (this.draftState.type) {
-				case "winston":
-					msgData.name = "rejoinWinstonDraft";
-					break;
-				case "winchester":
-					msgData.name = "rejoinWinchesterDraft";
-					break;
-				case "grid":
-					msgData.name = "rejoinGridDraft";
-					break;
-				case "rochester":
-					msgData.name = "rejoinRochesterDraft";
-					break;
-				case "rotisserie":
-					msgData.name = "rejoinRotisserieDraft";
-					break;
-				case "minesweeper":
-					msgData.name = "rejoinMinesweeperDraft";
-					break;
-				case "teamSealed": {
-					msgData.name = "rejoinTeamSealed";
-					break;
-				}
+			const EventNames: Record<string, keyof ServerToClientEvents> = {
+				winston: "rejoinWinstonDraft",
+				winchester: "rejoinWinchesterDraft",
+				housman: "rejoinHousmanDraft",
+				grid: "rejoinGridDraft",
+				rochester: "rejoinRochesterDraft",
+				rotisserie: "rejoinRotisserieDraft",
+				minesweeper: "rejoinMinesweeperDraft",
+				teamSealed: "rejoinTeamSealed",
+			};
+			if (!(this.draftState.type in EventNames)) {
+				console.error(`Unknown draft state type: ${this.draftState.type}`);
+				return;
 			}
+			msgData.name = EventNames[this.draftState.type];
 			// FIXME: Refactor to get full type checking
 			Connections[userID].socket.emit(msgData.name!, {
 				pickedCards: this.disconnectedUsers[userID].pickedCards,
