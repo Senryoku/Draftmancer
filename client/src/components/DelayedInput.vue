@@ -11,65 +11,69 @@
 			:min="min"
 			:max="max"
 			:step="step"
+			ref="inputEl"
 		/>
 	</form>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 
 // Input emiting a input event when unfocus, hiting return or optionally on a timeout (time without further change)
-export default defineComponent({
-	props: {
-		modelValue: { required: true },
-		inputstyle: { type: String },
-		delay: { type: Number, default: 0 },
-		validate: { type: Function as PropType<(val: string) => string> },
-		waitOnEmpty: { type: Boolean, default: true },
+const props = withDefaults(
+	defineProps<{
+		modelValue: any;
+		inputstyle?: string;
+		delay?: number;
+		validate?: (val: string) => string;
+		waitOnEmpty?: boolean;
 
-		id: { type: String },
-		type: { type: String, default: "text" },
-		placeholder: { type: String },
-		maxlength: { type: Number },
-		min: { type: Number },
-		max: { type: Number },
-		step: { type: Number },
-	},
-	data() {
-		return {
-			timeout: null as ReturnType<typeof setTimeout> | null,
-			inputEl: null as HTMLInputElement | null,
-		};
-	},
-	mounted() {
-		this.inputEl = this.$el.querySelector("input");
-	},
-	methods: {
-		update() {
-			if (!this.inputEl) return;
+		id?: string;
+		type: string;
+		placeholder?: string;
+		maxlength?: number;
+		min?: number;
+		max?: number;
+		step?: number;
+	}>(),
+	{
+		delay: 0,
+		waitOnEmpty: true,
+		type: "text",
+	}
+);
 
-			if (this.validate) this.inputEl.value = this.validate(this.inputEl.value);
+const timeout = ref(null as ReturnType<typeof setTimeout> | null);
+const inputEl = ref(null as HTMLInputElement | null);
 
-			this.$emit("update:modelValue", this.inputEl.value);
-			this.inputEl.classList.remove("dirty");
-			this.inputEl.classList.add("updated");
-			clearTimeout(this.timeout!);
-		},
-		modified() {
-			if (!this.inputEl) return;
+const emit = defineEmits<{
+	(e: "update:modelValue", value: string): void;
+}>();
 
-			this.inputEl.classList.add("dirty");
-			this.inputEl.classList.remove("updated");
-			//                    Avoid automatically validating & propagating changes when the input is empty
-			if (this.delay > 0 && !(this.waitOnEmpty && this.inputEl.value === "")) {
-				clearTimeout(this.timeout!);
-				this.timeout = setTimeout(() => {
-					this.update();
-				}, 1000 * this.delay);
-			}
-		},
-	},
-});
+const update = () => {
+	if (!inputEl.value) return;
+
+	if (props.validate) inputEl.value.value = props.validate(inputEl.value.value);
+
+	emit("update:modelValue", inputEl.value.value);
+	inputEl.value.classList.remove("dirty");
+	inputEl.value.classList.add("updated");
+	clearTimeout(timeout.value!);
+};
+
+const modified = () => {
+	if (!inputEl.value) return;
+
+	inputEl.value.classList.add("dirty");
+	inputEl.value.classList.remove("updated");
+	//                    Avoid automatically validating & propagating changes when the input is empty
+	if (props.delay > 0 && !(props.waitOnEmpty && inputEl.value.value === "")) {
+		clearTimeout(timeout.value!);
+		timeout.value = setTimeout(() => {
+			update();
+		}, 1000 * props.delay);
+	}
+};
 </script>
 
 <style scoped>
