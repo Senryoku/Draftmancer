@@ -54,6 +54,7 @@ import { IIndexable, SetCode } from "./Types.js";
 import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftState } from "./RotisserieDraft.js";
 import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
+import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -955,6 +956,111 @@ export class Session implements IIndexable {
 		else {
 			const syncData = s.syncData();
 			for (const uid of this.users) Connections[uid]?.socket.emit("winchesterDraftSync", syncData);
+		}
+
+		return new SocketAck();
+	}
+
+	startHousmanDraft(
+		handSize: number = 5,
+		revealedCardsCount: number = 9,
+		exchangeCount: number = 3,
+		roundCount: number = 9
+	): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size < 2)
+			return new SocketError(
+				"Invalid number of players",
+				`Housman Draft can only be played with at least 2 players. Bots are not supported!`
+			);
+
+		const cardsPerRound = handSize * this.users.size + revealedCardsCount;
+		const wantedCards = cardsPerRound * roundCount;
+		const cardsPerBooster = this.useCustomCardList ? this.cardsPerBooster : 14; // FIXME: This is only an approximation...
+		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
+			useCustomBoosters: true,
+			playerCount: this.users.size,
+			boostersPerPlayer: Math.ceil(wantedCards / cardsPerBooster / this.users.size),
+		});
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+
+		const cardPool = boosters.flat();
+
+		while (cardPool.length < wantedCards) {
+			const booster = this.generateBoosters(1);
+			if (isMessageError(booster)) return new SocketAck(booster);
+			if (!booster[0] || booster[0].length === 0)
+				return new SocketError("Internal Error: Couldn't generate enough boosters.");
+			boosters.push(booster[0]);
+			cardPool.push(...booster[0]);
+		}
+
+		this.drafting = true;
+		this.disconnectedUsers = {};
+		this.draftState = new HousmanDraftState(
+			this.getSortedHumanPlayersIDs(),
+			cardPool,
+			handSize,
+			revealedCardsCount,
+			exchangeCount,
+			roundCount
+		);
+		const playerData = this.getSortedHumanPlayerData();
+		for (const uid of this.users) {
+			Connections[uid].pickedCards = { main: [], side: [] };
+			Connections[uid].socket.emit("sessionOptions", {
+				virtualPlayersData: playerData,
+			});
+			const syncData = (this.draftState as HousmanDraftState).syncData(uid);
+			Connections[uid].socket.emit("startHousmanDraft", syncData);
+		}
+
+		this.initLogs("Housman Draft", boosters);
+		return new SocketAck();
+	}
+
+	endHousmanDraft() {
+		logSession("HousmanDraft", this);
+		this.sendLogs();
+		this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftEnd"));
+		this.cleanDraftState();
+	}
+
+	housmanDraftPick(handIndex: number, revealedCardsIndex: number): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !isHousmanDraftState(s)) return new SocketError("Not drafting.");
+		if (
+			handIndex < 0 ||
+			handIndex >= s.handSize ||
+			revealedCardsIndex < 0 ||
+			revealedCardsIndex >= s.revealedCardsCount
+		)
+			return new SocketError("Invalid parameters.");
+
+		/*
+		// TODO: Update draft log picks.
+		const currentPlayer = s.currentPlayer();
+		this.draftLog?.users[currentPlayer].picks = ...
+		*/
+		const nextRound = s.exchange(handIndex, revealedCardsIndex);
+
+		this.forUsers((uid) =>
+			Connections[uid].socket.emit(
+				"housmanDraftExchange",
+				revealedCardsIndex,
+				s.revealedCards[revealedCardsIndex]
+			)
+		);
+
+		if (nextRound) {
+			for (const uid of s.players) {
+				this.draftLog?.users[uid].cards.push(...s.playerHands[uid].map((c) => c.id));
+				Connections[uid].pickedCards.main = Connections[uid].pickedCards.main.concat(s.playerHands[uid]);
+				Connections[uid].socket.emit("housmanDraftRoundEnd", s.playerHands[uid]);
+			}
+
+			if (s.nextRound()) this.endHousmanDraft();
+			else this.forUsers((uid) => Connections[uid].socket.emit("housmanDraftSync", s.syncData(uid)));
 		}
 
 		return new SocketAck();

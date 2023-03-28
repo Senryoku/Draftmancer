@@ -16,6 +16,7 @@ import { getPublicSessionData } from "./Session";
 import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
+import { HousmanDraftSyncData } from "./HousmanDraft";
 
 export type LoaderOptions = { title: string };
 
@@ -102,6 +103,16 @@ export interface ServerToClientEvents {
 	winchesterDraftEnd: () => void;
 	rejoinWinchesterDraft: (data: {
 		state: WinchesterDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
+
+	startHousmanDraft: (state: HousmanDraftSyncData) => void;
+	housmanDraftSync: (syncData: HousmanDraftSyncData) => void;
+	housmanDraftExchange: (index: number, card: UniqueCard) => void;
+	housmanDraftRoundEnd: (finalHand: UniqueCard[]) => void;
+	housmanDraftEnd: () => void;
+	rejoinHousmanDraft: (data: {
+		state: HousmanDraftSyncData;
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
@@ -203,6 +214,7 @@ export interface ClientToServerEvents {
 	winstonDraftTakePile: (ack: (result: SocketAck) => void) => void;
 	winstonDraftSkipPile: (ack: (result: SocketAck) => void) => void;
 	winchesterDraftPick: (pickedColumn: number, ack: (result: SocketAck) => void) => void;
+	housmanDraftPick: (handIndex: number, revealedCardsIndex: number, ack: (result: SocketAck) => void) => void;
 	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;
 	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
 	updateBracket: (results: Array<[number, number]>) => void;
@@ -221,6 +233,13 @@ export interface ClientToServerEvents {
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
 	startWinchesterDraft: (boosterPerPlayer: number, ack: (s: SocketAck) => void) => void;
+	startHousmanDraft: (
+		handSize: number,
+		revealedCardsCount: number,
+		exchangeCount: number,
+		roundCount: number,
+		ack: (s: SocketAck) => void
+	) => void;
 	startMinesweeperDraft: (
 		gridCount: number,
 		gridWidth: number,
