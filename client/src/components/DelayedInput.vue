@@ -50,7 +50,7 @@ export default defineComponent({
 
 			if (this.validate) this.inputEl.value = this.validate(this.inputEl.value);
 
-			this.$emit("input", this.inputEl.value);
+			this.$emit("update:modelValue", this.inputEl.value);
 			this.inputEl.classList.remove("dirty");
 			this.inputEl.classList.add("updated");
 			clearTimeout(this.timeout!);
