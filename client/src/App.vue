@@ -414,6 +414,9 @@
 								>
 									<button @click="startWinchesterDraft()">Winchester</button>
 								</div>
+								<div v-tooltip.left="'Starts a Housman Draft.'">
+									<button @click="startHousmanDraft()">Housman</button>
+								</div>
 								<div
 									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for two or three players.'
@@ -1052,6 +1055,16 @@
 					:winchesterDraftState="winchesterDraftState"
 					@pick="winchesterDraftPick"
 				/>
+				<housman-draft
+					v-if="draftingState === DraftState.HousmanDraft && housmanDraftState"
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:socket="socket"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					v-model:state="housmanDraftState"
+				/>
 				<!-- Grid Draft -->
 				<div
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
@@ -1251,6 +1264,8 @@
 							<div
 								v-if="
 									winstonDraftState ||
+									winchesterDraftState ||
+									housmanDraftState ||
 									gridDraftState ||
 									rochesterDraftState ||
 									rotisserieDraftState ||

@@ -973,6 +973,11 @@ export class Session implements IIndexable {
 				"Invalid number of players",
 				`Housman Draft can only be played with at least 2 players. Bots are not supported!`
 			);
+		if (!this.ownerIsPlayer)
+			return new SocketError(
+				"Spectator mode isn't supported",
+				`Spectator mode is not support for Housman Draft. 'Spectate as Session Owner' must be disabled.`
+			);
 
 		const cardsPerRound = handSize * this.users.size + revealedCardsCount;
 		const wantedCards = cardsPerRound * roundCount;
@@ -1035,7 +1040,12 @@ export class Session implements IIndexable {
 			revealedCardsIndex < 0 ||
 			revealedCardsIndex >= s.revealedCardsCount
 		)
-			return new SocketError("Invalid parameters.");
+			return new SocketError(
+				"Invalid parameters.",
+				`handIndex (${handIndex}) should be between 0 and ${
+					s.handSize - 1
+				}, revealedCardsIndex (${revealedCardsIndex}) should be between 0 and ${s.revealedCardsCount - 1}`
+			);
 
 		/*
 		// TODO: Update draft log picks.

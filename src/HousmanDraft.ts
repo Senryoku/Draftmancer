@@ -71,6 +71,8 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 
 	syncData(uid: UserID) {
 		return {
+			exchangeCount: this.exchangeCount,
+			roundCount: this.roundCount,
 			exchangeNum: this.exchangeNum,
 			roundNum: this.roundNum,
 			hand: this.playerHands[uid],

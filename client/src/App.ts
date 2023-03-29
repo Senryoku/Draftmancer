@@ -25,6 +25,7 @@ import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
 import type SessionsSettingsProps from "@/Session/SessionProps";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
+import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
 import { CardColor } from "../../src/CardTypes";
@@ -82,6 +83,7 @@ enum DraftState {
 	WinstonWaiting = "WinstonWaiting",
 	WinchesterPicking = "WinchesterPicking",
 	WinchesterWaiting = "WinchesterWaiting",
+	HousmanDraft = "HousmanDraft",
 	GridPicking = "GridPicking",
 	GridWaiting = "GridWaiting",
 	RochesterPicking = "RochesterPicking",
@@ -168,6 +170,7 @@ export default defineComponent({
 		GettingStarted: defineAsyncComponent(() => import("./components/GettingStarted.vue")),
 		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
 		HelpModal: defineAsyncComponent(() => import("./components/HelpModal.vue")),
+		HousmanDraft: defineAsyncComponent(() => import("./components/HousmanDraft.vue")),
 		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
 		Modal,
@@ -294,6 +297,7 @@ export default defineComponent({
 			minesweeperDraftState: null as MinesweeperSyncData | null,
 			teamSealedState: null as TeamSealedSyncData | null,
 			winchesterDraftState: null as WinchesterDraftSyncData | null,
+			housmanDraftState: null as HousmanDraftSyncData | null,
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -674,6 +678,32 @@ export default defineComponent({
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Winchester draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			this.socket.on("startHousmanDraft", (state) => {
+				startDraftSetup("Housman draft");
+				this.housmanDraftState = state;
+				this.draftingState = DraftState.HousmanDraft;
+			});
+			this.socket.on("rejoinHousmanDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.deckDisplay?.sync();
+				this.sideboardDisplay?.sync();
+				this.draftingState = DraftState.HousmanDraft;
+				this.housmanDraftState = data.state;
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Housman draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1670,6 +1700,15 @@ export default defineComponent({
 				++idx;
 			}
 			this.gridDraftState.booster = booster;
+		},
+		startHousmanDraft: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			// TODO: Modal with settings.
+
+			this.socket.emit("startHousmanDraft", 5, 9, 3, 9, (answer: SocketAck) => {
+				if (answer.code !== 0) Alert.fire(answer.error!);
+			});
 		},
 		startGridDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -3119,6 +3158,8 @@ export default defineComponent({
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.rotisserieDraftState) return "Rotisserie Draft";
 			if (this.winstonDraftState) return "Winston Draft";
+			if (this.winchesterDraftState) return "Winchester Draft";
+			if (this.housmanDraftState) return "Housman Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.useCustomCardList) return "Cube Draft";
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
