@@ -12,7 +12,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 	readonly roundCount: number;
 	// State
 	exchangeNum = 0; // Number of current exchange this round ([0, exchangeCount*players.length[)
-	roundNum = 0; // [0, roundCount[
+	roundNum = -1; // [0, roundCount[ Will be immediately incremented.
 	cardPool: UniqueCard[] = [];
 	revealedCards: UniqueCard[] = [];
 	playerHands: Record<UserID, UniqueCard[]> = {};
@@ -78,7 +78,6 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 			hand: this.playerHands[uid],
 			currentPlayer: this.currentPlayer(),
 			revealedCards: this.revealedCards,
-			remainingCards: this.cardPool.length,
 		};
 	}
 }

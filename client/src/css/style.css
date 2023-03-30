@@ -112,6 +112,11 @@ label {
 	color: #3666b3;
 }
 
+
+button.blue:disabled {
+	color: #3666b3;
+}
+
 .gold {
 	color: gold;
 }

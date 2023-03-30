@@ -108,7 +108,7 @@ export interface ServerToClientEvents {
 
 	startHousmanDraft: (state: HousmanDraftSyncData) => void;
 	housmanDraftSync: (syncData: HousmanDraftSyncData) => void;
-	housmanDraftExchange: (index: number, card: UniqueCard, currentPlayer: UserID) => void;
+	housmanDraftExchange: (index: number, card: UniqueCard, currentPlayer: UserID, exchangeNum: number) => void;
 	housmanDraftRoundEnd: (finalHand: UniqueCard[]) => void;
 	housmanDraftEnd: () => void;
 	rejoinHousmanDraft: (data: {

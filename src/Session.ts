@@ -1059,7 +1059,8 @@ export class Session implements IIndexable {
 				"housmanDraftExchange",
 				revealedCardsIndex,
 				s.revealedCards[revealedCardsIndex],
-				s.currentPlayer()
+				s.currentPlayer(),
+				s.exchangeNum
 			)
 		);
 

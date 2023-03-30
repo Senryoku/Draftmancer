@@ -1686,6 +1686,12 @@ export default defineComponent({
 				else console.error(answer);
 			});
 		},
+		housmanDraftEnd() {
+			this.drafting = false;
+			this.housmanDraftState = null;
+			this.draftingState = DraftState.Brewing;
+			fireToast("success", "Done drafting!");
+		},
 		setGridDraftState(state: GridDraftSyncData) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
@@ -3234,6 +3240,7 @@ export default defineComponent({
 		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
 			if (this.winchesterDraftState) return this.winchesterDraftState.currentPlayer;
+			if (this.housmanDraftState) return this.housmanDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
 			if (this.rochesterDraftState) return this.rochesterDraftState.currentPlayer;

@@ -137,6 +137,12 @@ select.swal2-input option {
 
 #main-container button.blue {
 	background-color: rgb(0, 62, 145);
+	transition: all 0.1s ease;
+}
+
+#main-container button.blue:disabled {
+	color:rgb(139, 139, 139);
+	background-color: rgb(0, 36, 83);
 }
 
 #main-container .button,

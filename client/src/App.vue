@@ -765,36 +765,18 @@
 											@click="removePlayer(user.userID)"
 										></font-awesome-icon>
 									</template>
-									<template
-										v-if="
-											winstonDraftState ||
-											winchesterDraftState ||
-											gridDraftState ||
-											rotisserieDraftState ||
-											rochesterDraftState ||
-											minesweeperDraftState
-										"
-									>
+									<font-awesome-icon
+										v-if="user.isDisconnected"
+										icon="fa-solid fa-times"
+										class="red"
+										v-tooltip="user.userName + ' is disconnected.'"
+									></font-awesome-icon>
+									<template v-if="!user.isDisconnected && currentPlayer !== null">
 										<font-awesome-icon
-											v-if="user.userID in disconnectedUsers"
-											icon="fa-solid fa-times"
-											class="red"
-											v-tooltip="user.userName + ' is disconnected.'"
-										></font-awesome-icon>
-										<font-awesome-icon
-											v-else
 											v-show="user.userID === currentPlayer"
 											icon="fa-solid fa-spinner"
 											spin
 											v-tooltip="user.userName + ' is thinking...'"
-										></font-awesome-icon>
-									</template>
-									<template v-else>
-										<font-awesome-icon
-											v-if="user.isDisconnected"
-											icon="fa-solid fa-times"
-											class="red"
-											v-tooltip="user.userName + ' is disconnected.'"
 										></font-awesome-icon>
 									</template>
 								</template>
@@ -1064,6 +1046,8 @@
 					:userID="userID"
 					:sessionUsers="userByID"
 					v-model:state="housmanDraftState"
+					@addToDeck="addToDeck"
+					@end="housmanDraftEnd"
 				/>
 				<!-- Grid Draft -->
 				<div
