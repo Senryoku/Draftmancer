@@ -16,6 +16,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 	cardPool: UniqueCard[] = [];
 	revealedCards: UniqueCard[] = [];
 	playerHands: Record<UserID, UniqueCard[]> = {};
+	lastPicks: { userID: UserID; round: number; exchange: number; cards: [UniqueCard, UniqueCard] }[] = [];
 
 	constructor(
 		players: UserID[],
@@ -40,8 +41,16 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 	// Returns true if this was the last exchange of this round
 	exchange(handIndex: number, revealedCardsIndex: number): boolean {
 		const card = this.revealedCards[revealedCardsIndex];
-		this.revealedCards[revealedCardsIndex] = this.playerHands[this.currentPlayer()][handIndex];
-		this.playerHands[this.currentPlayer()][handIndex] = card;
+		const currentPlayer = this.currentPlayer();
+		this.lastPicks.unshift({
+			userID: currentPlayer,
+			round: this.roundNum,
+			exchange: this.exchangeNum,
+			cards: [this.playerHands[currentPlayer][handIndex], card],
+		});
+		if (this.lastPicks.length > 2) this.lastPicks.length = 2;
+		this.revealedCards[revealedCardsIndex] = this.playerHands[currentPlayer][handIndex];
+		this.playerHands[currentPlayer][handIndex] = card;
 		++this.exchangeNum;
 		return this.exchangeNum >= this.exchangeCount * this.players.length;
 	}
@@ -78,6 +87,7 @@ export class HousmanDraftState extends IDraftState implements TurnBased {
 			hand: this.playerHands[uid],
 			currentPlayer: this.currentPlayer(),
 			revealedCards: this.revealedCards,
+			lastPicks: this.lastPicks,
 		};
 	}
 }

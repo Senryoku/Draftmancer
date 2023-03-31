@@ -53,7 +53,7 @@
 				</div>
 			</transition>
 		</div>
-		<div class="container">
+		<div class="container" style="display: flex; gap: 1em">
 			<transition name="hand-cards" mode="out-in">
 				<div class="housman-hand card-container" :key="`hand-cards-${state.roundNum}`">
 					<div class="zone-name">Your Hand</div>
@@ -70,6 +70,22 @@
 					</div>
 				</div>
 			</transition>
+			<div class="last-picks-container card-container">
+				<span class="last-picks-title">Last Exchanges</span>
+				<transition-group tag="div" name="vertical-queue" class="vertical-queue last-picks">
+					<div
+						v-for="p in state.lastPicks"
+						class="vertical-queue-item pick-remainder"
+						:key="`${p.round}-${p.exchange}`"
+					>
+						<div class="name">{{ sessionUsers[p.userID]?.userName ?? "(Disconnected)" }}</div>
+						<div class="cards">
+							<card v-for="c in p.cards" :card="c" :key="c.uniqueID"></card>
+							<font-awesome-icon icon="fa-solid fa-sync" size="lg" class="swap-icon"></font-awesome-icon>
+						</div>
+					</div>
+				</transition-group>
+			</div>
 		</div>
 	</div>
 </template>
@@ -126,6 +142,13 @@ onMounted(() => {
 	});
 	props.socket.on("housmanDraftExchange", (index, card, currentPlayer, exchangeNum) => {
 		console.log("housmanDraftExchange", index, card, currentPlayer, exchangeNum);
+		props.state.lastPicks.unshift({
+			userID: props.state.currentPlayer,
+			round: props.state.roundNum,
+			exchange: props.state.exchangeNum,
+			cards: [props.state.revealedCards[index], card],
+		});
+		if (props.state.lastPicks.length > 2) props.state.lastPicks.pop();
 		props.state.revealedCards[index] = card;
 		inTransition.value = true;
 		// Let the animation run before updating current player
@@ -206,6 +229,15 @@ const selectionIsValid = computed(() => {
 	height: 2em;
 }
 
+.housman-draft-controls span:nth-child(3) {
+	justify-self: center;
+}
+
+.housman-draft-controls span:nth-child(4),
+.housman-draft-controls span:nth-child(5) {
+	justify-self: end;
+}
+
 .housman-revealed-cards,
 .housman-hand {
 	display: flex;
@@ -214,6 +246,7 @@ const selectionIsValid = computed(() => {
 	justify-content: center;
 	gap: 8px;
 	position: relative;
+	flex-grow: 1;
 }
 
 .zone-name {
@@ -222,9 +255,11 @@ const selectionIsValid = computed(() => {
 	top: 50%;
 	transform: translateY(-50%);
 	font-size: 2em;
+	height: 100%;
 	writing-mode: sideways-lr;
 	color: #666;
 	text-align: center;
+	font-variant-caps: small-caps;
 }
 
 .revealed-card-container,
@@ -292,4 +327,65 @@ const selectionIsValid = computed(() => {
 	transform: translateY(150px);
 	opacity: 0;
 }
+
+.last-picks-container {
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+.last-picks {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+	gap: 0.4em;
+
+	min-width: calc(2em + 2 * 200px * 0.45 * var(--card-scale));
+}
+
+.last-picks .card {
+	width: calc(200px * 0.45 * var(--card-scale));
+	height: calc(282px * 0.45 * var(--card-scale));
+}
+
+.last-picks-title {
+	font-variant: small-caps;
+	font-size: 1.5em;
+	margin-left: 0.2em;
+	writing-mode: sideways-lr;
+	color: #666;
+	text-align: center;
+	font-variant-caps: small-caps;
+}
+
+.pick-remainder {
+	display: flex !important;
+	align-items: center;
+}
+
+.pick-remainder .name {
+	text-align: center;
+	writing-mode: sideways-lr;
+
+	max-height: calc(0.8 * 282px * 0.45 * var(--card-scale));
+	width: 1em;
+	overflow-y: hidden;
+}
+
+.pick-remainder .cards {
+	position: relative;
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+.swap-icon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	filter: drop-shadow(0 0 1px black);
+}
 </style>
+
+<style src="../css/vertical-queue.css" scoped />

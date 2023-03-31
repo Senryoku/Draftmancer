@@ -55,38 +55,6 @@ export default defineComponent({
 	min-height: initial;
 	margin: 0;
 }
-
-.vertical-queue {
-	display: flex;
-	flex-direction: column;
-	position: relative;
-}
-
-.vertical-queue-item {
-	transition: transform 1s;
-}
-
-.vertical-queue-item {
-	transition: all 1s;
-	display: inline-block;
-}
-
-.vertical-queue-enter-from,
-.vertical-queue-leave-to {
-	opacity: 0;
-	z-index: -1;
-}
-
-.vertical-queue-enter-from {
-	transform: translateY(-400px);
-}
-
-.vertical-queue-leave-to {
-	transform: translateY(400px);
-}
-
-.vertical-queue-leave-active {
-	position: absolute;
-	bottom: 0;
-}
 </style>
+
+<style src="../css/vertical-queue.css" scoped />

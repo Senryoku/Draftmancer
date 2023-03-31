@@ -124,8 +124,8 @@ select.swal2-input option {
 	box-shadow: inset 2px 2px 8px -3px #888, inset -2px -2px 8px -3px #000;
 }
 
-#main-container input[type="button"]:active,
-#main-container button:active {
+#main-container input[type="button"]:active:not(:disabled),
+#main-container button:active:not(:disabled) {
 	box-shadow: inset 2px 2px 8px -3px #000, inset -2px -2px 8px -3px #888;
 	transform: translateY(1px);
 }
