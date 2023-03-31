@@ -12,11 +12,13 @@
 							<div v-for="(team, idx) in teams" :key="idx" class="team">
 								<div>Team #{{ idx + 1 }}</div>
 								<Sortable
+									:key="`team-${idx}-${team.length}`"
 									class="team-drag-target"
 									:list="team"
 									:item-key="(uid: UserID) => uid"
 									@add="(evt) => teamAdd(evt, team)"
 									@remove="(evt) => teamRemove(evt, team)"
+									@update="sortableUpdate($event, team)"
 									:options="{ group: 'teams', animation: '200' }"
 								>
 									<template #item="{ element }">
@@ -95,6 +97,7 @@ import Constant from "../../../src/data/constants.json";
 import SetsInfos from "../SetInfos";
 import { SetCode } from "../../../src/Types";
 import { SortableEvent } from "sortablejs";
+import { sortableUpdate } from "../helper";
 
 const props = withDefaults(
 	defineProps<{

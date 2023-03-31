@@ -135,13 +135,14 @@
 				</div>
 				<Sortable
 					v-for="(column, colIdx) in row"
-					:key="`col_${colIdx}`"
+					:key="`col_${colIdx}_${column.length}`"
 					class="card-column drag-column"
 					:list="column"
 					item-key="uniqueID"
 					:options="{ group: group, animation: 200, ghostClass: 'ghost' }"
 					@add="(evt) => addToColumn(evt, column)"
 					@remove="(evt) => removeFromColumn(evt, column)"
+					@update="sortableUpdate($event, column)"
 				>
 					<template #item="{ element }">
 						<card
@@ -169,6 +170,7 @@ import Dropdown from "./Dropdown.vue";
 import Checkbox from "./Checkbox.vue";
 import { Language } from "@/Types";
 import { UniqueCard } from "@/CardTypes";
+import { sortableUpdate } from "../helper";
 
 export default defineComponent({
 	name: "CardPool",
@@ -187,6 +189,7 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			sortableUpdate,
 			options: {
 				layout: "default",
 				columnCount: 7,

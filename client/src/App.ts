@@ -35,7 +35,16 @@ import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
-import { isEmpty, randomStr4, guid, shortguid, getUrlVars, copyToClipboard, escapeHTML } from "./helper";
+import {
+	isEmpty,
+	randomStr4,
+	guid,
+	shortguid,
+	getUrlVars,
+	copyToClipboard,
+	escapeHTML,
+	sortableUpdate,
+} from "./helper";
 import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
@@ -197,6 +206,8 @@ export default defineComponent({
 			DraftState,
 			ReadyState,
 			PassingOrder,
+
+			sortableUpdate,
 
 			// User Data
 			userID: userID,

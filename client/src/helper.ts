@@ -1,5 +1,6 @@
 import { DraftLog, DraftPick } from "@/DraftLog";
 import { UserID } from "@/IDTypes";
+import { SortableEvent } from "sortablejs";
 
 export function clone(obj: Object) {
 	return JSON.parse(JSON.stringify(obj));
@@ -117,4 +118,9 @@ export function escapeHTML(str: string) {
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#39;");
+}
+
+export function sortableUpdate<T>(e: SortableEvent, arr: T[]) {
+	const el = arr.splice(e.oldIndex!, 1)[0];
+	arr.splice(Math.min(e.newIndex!, arr.length), 0, el);
 }

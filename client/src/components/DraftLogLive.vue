@@ -71,10 +71,11 @@
 								</div>
 								<div class="card-container">
 									<Sortable
-										:key="`side_col`"
+										:key="`side_col_${selectedPlayerCards.side.length}`"
 										class="card-column drag-column"
 										:list="selectedPlayerCards.side"
 										item-key="uniqueID"
+										@update="sortableUpdate($event, selectedPlayerCards.side)"
 										:options="{
 											group: `side-${player}`,
 											animation: '200',
@@ -116,6 +117,7 @@ import { DraftLog, DraftPick } from "@/DraftLog";
 import { pick } from "random-js";
 import { CardID, UniqueCard } from "@/CardTypes";
 import { UserID } from "@/IDTypes";
+import { sortableUpdate } from "../helper";
 
 export default defineComponent({
 	name: "DraftLogLive",
@@ -127,6 +129,7 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			sortableUpdate,
 			player: undefined as UserID | undefined,
 			pack: 0,
 			pick: 0,

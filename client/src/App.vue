@@ -550,7 +550,7 @@
 			<template v-if="!drafting">
 				<transition-group type="transition">
 					<Sortable
-						key="draggable"
+						:key="`draggable-${userOrder.length}`"
 						:list="userOrder"
 						:item-key="(uid: UserID) => uid"
 						@change="changePlayerOrder"
@@ -1464,7 +1464,7 @@
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
 								<Sortable
-									key="collapsed-sideboard-col"
+									:key="`collapsed-sideboard-col-${sideboard.length}`"
 									class="card-column drag-column"
 									:list="sideboard"
 									item-key="uniqueID"
@@ -1474,6 +1474,7 @@
 									}"
 									@add="onCollapsedSideDragAdd"
 									@remove="onCollapsedSideDragRemove"
+									@update="sortableUpdate($event, sideboard)"
 								>
 									<template #item="{ element }">
 										<card
