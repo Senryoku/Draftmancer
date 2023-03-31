@@ -59,6 +59,7 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { createApp } from "vue";
 import { SortableEvent } from "sortablejs";
+import { installFontAwesome } from "./install-fontawesome";
 const img = new Image();
 img.src = CardBack;
 
@@ -576,6 +577,7 @@ export default defineComponent({
 				// Instantiate a card component to display in Swal (yep, I know.)
 				const cardView = createApp(CardComponent, { card: c });
 				const el = document.createElement("div");
+				installFontAwesome(cardView);
 				cardView.mount(el);
 				Alert.fire({
 					position: "center",
@@ -1732,6 +1734,7 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
+			installFontAwesome(instance);
 			instance.mount("#rotisserie-draft-dialog");
 		},
 		rotisserieDraftPick(
@@ -2509,6 +2512,7 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
+			installFontAwesome(instance);
 			instance.mount("#sealed-dialog");
 		},
 		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
