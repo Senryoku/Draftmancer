@@ -352,7 +352,6 @@ const selectionIsValid = computed(() => {
 .last-picks-title {
 	font-variant: small-caps;
 	font-size: 1.5em;
-	margin-left: 0.2em;
 	writing-mode: sideways-lr;
 	color: #666;
 	text-align: center;
@@ -362,6 +361,7 @@ const selectionIsValid = computed(() => {
 .pick-remainder {
 	display: flex !important;
 	align-items: center;
+	gap: 0.2em;
 }
 
 .pick-remainder .name {
@@ -377,6 +377,7 @@ const selectionIsValid = computed(() => {
 	position: relative;
 	display: flex;
 	flex-wrap: nowrap;
+	gap: 0.2em;
 }
 
 .swap-icon {
@@ -385,6 +386,10 @@ const selectionIsValid = computed(() => {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	filter: drop-shadow(0 0 1px black);
+}
+
+.vertical-queue-leave-to {
+	z-index: inherit !important; /* Allow leaving picks to stay in front of the container background */
 }
 </style>
 
