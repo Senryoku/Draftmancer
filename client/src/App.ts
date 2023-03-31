@@ -1562,13 +1562,10 @@ export default defineComponent({
 		},
 		winstonDraftTakePile() {
 			if (!this.winstonDraftState) return;
-			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile];
+			const cards = this.winstonDraftState.piles[this.winstonDraftState.currentPile] as UniqueCard[];
 			this.socket.emit("winstonDraftTakePile", (answer) => {
-				if (answer.code === 0) {
-					for (let c of cards) this.addToDeck(c);
-				} else {
-					console.error(answer);
-				}
+				if (answer.code === 0) for (let c of cards) this.addToDeck(c);
+				else console.error(answer);
 			});
 		},
 		winstonDraftSkipPile() {
