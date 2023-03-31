@@ -10,7 +10,9 @@
 				<template v-if="userID === state.currentPlayer">
 					<span>Your turn to exchange a card!</span>
 					<span>
-						<button @click="confirmExchange" class="blue" :disabled="!selectionIsValid">Confirm</button>
+						<button @click="confirmExchange" class="blue housman-confirm" :disabled="!selectionIsValid">
+							Confirm
+						</button>
 					</span>
 				</template>
 				<template v-else>
