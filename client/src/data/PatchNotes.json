@@ -1,5 +1,18 @@
 [
 	{
+		"date": "31/03/2023",
+		"notes": ["Bug fixes, most notably regarding cards drag & drop."]
+	},
+	{
+		"date": "27/03/2023",
+		"notes": [
+			"New game mode: Winchester Draft! A draft variant with elements from Winston and Rochester drafts.",
+			"The set selector has been updated: To select multiple sets, use Ctrl+Click or a longpress.",
+			"You can now select a specific bonus sheet for Shadows over Innistrad Remastered drafts",
+			"Tech stack major updates."
+		]
+	},
+	{
 		"date": "17/03/2023",
 		"notes": ["Shadows over Innistrad preliminary support."]
 	},
