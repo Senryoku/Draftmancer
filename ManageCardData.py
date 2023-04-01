@@ -388,7 +388,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                                             ] = c['card_faces'][0]['image_uris']['border_crop']
 
         # Handle back side of double sided cards
-        if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
+        if c['layout'] == 'transform' or c['layout'] == 'modal_dfc' or c['layout'] == 'battle':
             if 'back' not in Translations[key]:
                 Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}}
                 Translations[key]['back']['type'], Translations[key]['back']['subtypes'] = handleTypeLine(c['card_faces'][1]['type_line'])
@@ -460,8 +460,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                     selection['layout'] = 'split-left'
                 elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
                     selection['layout'] = 'split'
-            if c['layout'] == "flip":
+            elif c['layout'] == "flip":
                 selection['layout'] = 'flip'
+            elif c['layout'] == "battle":
+                selection['layout'] = 'battle'
 
             cards[c['id']].update(selection)
 
