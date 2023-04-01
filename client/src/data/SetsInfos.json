@@ -435,12 +435,12 @@
     "brr": {
         "code": "brr",
         "fullName": "The Brothers' War Retro Artifacts",
-        "cardCount": 126,
+        "cardCount": 189,
         "isPrimary": false,
         "icon": "img/sets/brr.svg",
-        "mythicCount": 30,
-        "rareCount": 60,
-        "uncommonCount": 36
+        "mythicCount": 45,
+        "rareCount": 90,
+        "uncommonCount": 54
     },
     "btd": {
         "code": "btd",
@@ -2282,7 +2282,7 @@
     },
     "ltc": {
         "code": "ltc",
-        "fullName": "Tales of Middle Earth Commander",
+        "fullName": "Tales of Middle-earth Commander",
         "cardCount": 14,
         "isPrimary": false,
         "icon": "img/sets/ltc.svg",
@@ -2292,7 +2292,7 @@
     },
     "ltr": {
         "code": "ltr",
-        "fullName": "Lord of the Rings: Tales of Middle-Earth",
+        "fullName": "The Lord of the Rings: Tales of Middle-earth",
         "cardCount": 38,
         "isPrimary": true,
         "icon": "img/sets/ltr.svg",
@@ -2611,21 +2611,22 @@
     "moc": {
         "code": "moc",
         "fullName": "March of the Machine Commander",
-        "cardCount": 9,
+        "cardCount": 28,
         "isPrimary": false,
         "icon": "img/sets/moc.svg",
-        "commonCount": 3,
-        "mythicCount": 6
+        "commonCount": 7,
+        "mythicCount": 21
     },
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 33,
+        "cardCount": 213,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
-        "commonCount": 11,
-        "mythicCount": 7,
-        "rareCount": 15
+        "commonCount": 37,
+        "mythicCount": 27,
+        "rareCount": 89,
+        "uncommonCount": 60
     },
     "mor": {
         "code": "mor",
@@ -2679,10 +2680,12 @@
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 2,
+        "cardCount": 31,
         "isPrimary": false,
         "icon": "img/sets/mul.svg",
-        "mythicCount": 2
+        "mythicCount": 18,
+        "rareCount": 7,
+        "uncommonCount": 6
     },
     "ncc": {
         "code": "ncc",
@@ -4180,12 +4183,12 @@
     "por": {
         "code": "por",
         "fullName": "Portal",
-        "cardCount": 228,
+        "cardCount": 229,
         "isPrimary": false,
         "icon": "img/sets/por.svg",
         "commonCount": 115,
         "rareCount": 55,
-        "uncommonCount": 58
+        "uncommonCount": 59
     },
     "pori": {
         "code": "pori",
@@ -4297,8 +4300,8 @@
         "bonusCount": 1,
         "commonCount": 396,
         "mythicCount": 370,
-        "rareCount": 1753,
-        "uncommonCount": 497
+        "rareCount": 1747,
+        "uncommonCount": 503
     },
     "prna": {
         "code": "prna",
@@ -4984,12 +4987,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 870,
+        "cardCount": 876,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
         "mythicCount": 149,
-        "rareCount": 656,
+        "rareCount": 662,
         "uncommonCount": 20
     },
     "slp": {
