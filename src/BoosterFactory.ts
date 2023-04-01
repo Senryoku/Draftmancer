@@ -1333,7 +1333,7 @@ class MOMBoosterFactory extends BoosterFactory {
 	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
 		const [battleCards, filteredCardPool] = filterCardPool(
 			cardPool,
-			(cid: CardID) => getCard(cid).layout === "battle"
+			(cid: CardID) => getCard(cid).type.includes("Battle") // Note: We could use the layout, but it's not always correctly set on scryfall yet
 		);
 		// TODO: Check if this is correct
 		const [doubleFacedCards, refilteredCardPool] = filterCardPool(

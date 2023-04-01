@@ -563,7 +563,8 @@ describe("Single Draft (Two Players)", function () {
 							(set === "dgm" && (c.set === "gtc" || c.set === "rtr")) ||
 							(set === "stx" && c.set === "sta") ||
 							(set === "bro" && c.set === "brr") ||
-							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) // Praetors
+							(set === "one" && ["neo", "dmu", "snc", "khm"].includes(c.set)) || // Praetors
+							(set === "mom" && c.set === "mul")
 					),
 					`All cards in booster should be of the desired set, got [${[...new Set(b.map((c) => c.set))]}].`
 				).to.be.true;
@@ -572,7 +573,7 @@ describe("Single Draft (Two Players)", function () {
 		});
 	}
 
-	const latestSetCardPerBooster = 14;
+	const latestSetCardPerBooster: number = 15;
 
 	describe(`Drafting without set restriction`, function () {
 		connect();
