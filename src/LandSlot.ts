@@ -199,6 +199,23 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 	"2x2": new SpecialLandSlot("2x2", ["309a6684-ecb3-491c-899a-3aa15a51130b"], 1, [
 		"309a6684-ecb3-491c-899a-3aa15a51130b",
 	]),
+	mom: new SpecialLandSlot(
+		"mom",
+		[
+			// Dual Taplands
+			"85930f68-6f53-4921-9556-2887ac3abfd2", // Bloodfell Caves
+			"e34684d6-2935-4776-9a86-b603ad8cf624", // Blossoming Sands
+			"33cd4f63-3484-4cee-8603-1f89cabee6c3", // Dismal Backwater
+			"b6ed20a4-bc8a-44b1-b9b7-c82518c287b8", // Jungle Hollow
+			"3aeef1b1-a351-47ce-a686-a0eb0a35a894", // Rugged Highlands
+			"66aefbfc-3f67-443d-8ec4-cc9beafb64ee", // Scoured Barrens
+			"957efc4e-c2a9-46a2-b9e3-20dc419ffd05", // Swiftwater Cliffs
+			"3799dcb2-7cd7-4d28-b9af-249e3ebe3d3b", // Tranquil Cove
+			"7f2642cd-e3cc-4aab-8c00-4987284509b3", // Wind-Scarred Crag
+			"f1b753e2-6e53-4ed1-9be4-66f8eb005a11", // Thornwood Falls
+		],
+		5 / 12 // FIXME: This is arbitrary, we don't know the actual rate for now.
+	),
 };
 
 export const BasicLandSlots: { [set: string]: BasicLandSlot } = {};
