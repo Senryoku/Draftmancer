@@ -71,7 +71,8 @@
         "dmu",
         "bro",
         "one",
-        "sir"
+        "sir",
+        "mom"
     ],
     "AlchemySets": [
         "hbg",
@@ -85,7 +86,8 @@
         "snc",
         "dmu",
         "bro",
-        "one"
+        "one",
+        "mom"
     ],
     "BasicLandNames": {
         "en": {
@@ -279,6 +281,7 @@
         }
     ],
     "PrimarySets": [
+        "mom",
         "sir",
         "one",
         "dmr",
