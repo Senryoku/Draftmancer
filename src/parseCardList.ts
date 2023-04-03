@@ -1,9 +1,10 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
-import { CustomCardList } from "./CustomCardList.js";
-import { escapeHTML, Options } from "./utils.js";
+import { CustomCardList, PackLayout } from "./CustomCardList.js";
+import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
+import { start } from "repl";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -93,6 +94,43 @@ export function parseLine(
 		text: message,
 		footer: `Full line: '${trimedLine}'`,
 	});
+}
+
+function parsePackLayoutsDeprecated(
+	lines: string[],
+	startIdx: number
+): { advance: number; layouts: Record<string, PackLayout> } | SocketError {
+	const layouts: Record<string, PackLayout> = {};
+	let lineIdx = startIdx;
+	while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
+		const match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
+		if (!match) {
+			return ackError({
+				title: `Parsing Error`,
+				text: `Expected layout declaration (' - LayoutName (Weight)'), got '${lines[lineIdx]}' (line ${
+					lineIdx + 1
+				}).`,
+			});
+		}
+		const layoutName = match[1];
+		const layoutWeight = parseInt(match[2]);
+		layouts[layoutName] = { weight: layoutWeight, slots: {} };
+		++lineIdx;
+		while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
+			const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
+			if (!slotMatch) {
+				return ackError({
+					title: `Parsing Error`,
+					text: `Expected slot specification (' CardCount SlotName'), got '${lines[lineIdx]}' (line ${
+						lineIdx + 1
+					}).`,
+				});
+			}
+			layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
+			++lineIdx;
+		}
+	}
+	return { advance: lineIdx - startIdx, layouts };
 }
 
 // options:
@@ -196,43 +234,18 @@ export function parseCardList(
 					});
 				}
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
+				++lineIdx;
 				if (header === "Layouts") {
 					if (cardList.layouts) {
 						return ackError({
 							title: `Parsing Error`,
-							text: `Layouts already defined, redefined on line ${lineIdx + 1}.`,
+							text: `Layouts already defined, redefined on line ${lineIdx}.`,
 						});
 					}
-					cardList.layouts = {};
-					++lineIdx;
-					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
-						const match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
-						if (!match) {
-							return ackError({
-								title: `Parsing Error`,
-								text: `Expected layout declaration (' - LayoutName (Weight)'), got '${
-									lines[lineIdx]
-								}' (line ${lineIdx + 1}).`,
-							});
-						}
-						const layoutName = match[1];
-						const layoutWeight = parseInt(match[2]);
-						cardList.layouts[layoutName] = { weight: layoutWeight, slots: {} };
-						++lineIdx;
-						while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
-							const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
-							if (!slotMatch) {
-								return ackError({
-									title: `Parsing Error`,
-									text: `Expected slot specification (' CardCount SlotName'), got '${
-										lines[lineIdx]
-									}' (line ${lineIdx + 1}).`,
-								});
-							}
-							cardList.layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
-							++lineIdx;
-						}
-					}
+					const layoutsOrError = parsePackLayoutsDeprecated(lines, lineIdx);
+					if (isSocketError(layoutsOrError)) return layoutsOrError;
+					lineIdx += layoutsOrError.advance;
+					cardList.layouts = layoutsOrError.layouts;
 				} else {
 					let slotName = header;
 					// Header with card count: Default layout.
@@ -250,7 +263,6 @@ export function parseCardList(
 						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
 					}
 					cardList.slots[slotName] = {};
-					++lineIdx;
 					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {
