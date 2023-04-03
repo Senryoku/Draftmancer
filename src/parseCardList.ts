@@ -105,6 +105,20 @@ function findNthLine(str: string, n: number): number {
 	return index + 1;
 }
 
+function jsonParsingErrorMessage(e: any, jsonStr: string): string {
+	let msg = `Error parsing json: ${e.message}.`;
+	let position = e.message.match(/at position (\d+)/);
+	if (position) {
+		position = parseInt(position[1]);
+		msg += `<pre>${escapeHTML(
+			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+		)}<span style="color: red; text-decoration: underline red;">${escapeHTML(jsonStr[position])}</span>${escapeHTML(
+			jsonStr.slice(Math.min(position + 1, jsonStr.length), Math.min(position + 50, jsonStr.length))
+		)}</pre>`;
+	}
+	return msg;
+}
+
 function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
 	let lineIdx = startIdx;
 	if (lines.length - lineIdx < 2)
@@ -143,24 +157,9 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	try {
 		parsedCustomCards = JSON.parse(customCardsStr);
 	} catch (e: any) {
-		let msg = `Error parsing custom cards: ${e.message}.`;
-		let position = e.message.match(/at position (\d+)/);
-		if (position) {
-			position = parseInt(position[1]);
-			msg += `<pre>${escapeHTML(
-				customCardsStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
-			)}<span style="color: red; text-decoration: underline red;">${escapeHTML(
-				customCardsStr[position]
-			)}</span>${escapeHTML(
-				customCardsStr.slice(
-					Math.min(position + 1, customCardsStr.length),
-					Math.min(position + 50, customCardsStr.length)
-				)
-			)}</pre>`;
-		}
 		return ackError({
 			title: `[CustomCards]`,
-			html: msg,
+			html: jsonParsingErrorMessage(e, customCardsStr),
 		});
 	}
 
