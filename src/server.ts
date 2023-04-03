@@ -199,8 +199,8 @@ function parseCollection(
 	txtcollection: string,
 	ack: (ret: SocketAck & { collection?: PlainCollection }) => void
 ) {
-	const options: Options = { fallbackToCardName: true, ignoreUnknownCards: true };
-	const cardList = parseCardList(txtcollection, options);
+	const unknownCards: string[] = [];
+	const cardList = parseCardList(txtcollection, { fallbackToCardName: true, ignoreUnknownCards: true }, unknownCards);
 	if (isSocketError(cardList)) {
 		ack?.(cardList);
 		return;
@@ -210,9 +210,9 @@ function parseCollection(
 
 	const warningMessages = [];
 
-	if (options.unknownCards)
+	if (unknownCards.length > 0)
 		warningMessages.push(
-			`The following cards could not be found and were ignored:<br />${options.unknownCards.join("<br />")}`
+			`The following cards could not be found and were ignored:<br />${unknownCards.join("<br />")}`
 		);
 
 	const ignoredCards = [];
