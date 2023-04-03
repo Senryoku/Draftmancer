@@ -105,6 +105,22 @@ function findNthLine(str: string, n: number): number {
 	return index + 1;
 }
 
+// Find 'closing' (e.g. ')', ']', '}'...) character in str matching the 'opening' character (e.g. '(', '[', '{'...) found at str[start] and returns its index.
+// Returns -1 if not found or if the string doesn't start with the opening character.
+function findMatching(str: string, opening: string, closing: string, start: number = 0): number {
+	let index = start;
+	if (str[index] !== opening) return -1;
+	let opened = 1;
+	++index;
+	while (index < str.length && opened > 0) {
+		if (str[index] === opening) ++opened;
+		else if (str[index] === closing) --opened;
+		++index;
+	}
+	if (opened !== 0) return -1;
+	return index;
+}
+
 function jsonParsingErrorMessage(e: any, jsonStr: string): string {
 	let msg = `Error parsing json: ${e.message}.`;
 	let position = e.message.match(/at position (\d+)/);
@@ -136,24 +152,17 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 		});
 	}
 	// Search for the section (matching closing bracket)
-	let opened = 1;
 	let index = findNthLine(txtcardlist, lineIdx);
 	while (txtcardlist[index] !== "[") ++index;
 	const start = index;
-	++index;
-	while (index < txtcardlist.length && opened > 0) {
-		if (txtcardlist[index] === "[") ++opened;
-		else if (txtcardlist[index] === "]") --opened;
-		++index;
-	}
-	if (opened !== 0) {
+	const end = findMatching(txtcardlist, "[", "]", start);
+	if (end === -1)
 		return ackError({
 			title: `[CustomCards]`,
-			text: `Line ${index}: Expected ']', got end-of-file.`,
+			text: `Expected ']', got end-of-file.`,
 		});
-	}
 	let parsedCustomCards = [];
-	const customCardsStr = txtcardlist.substring(start, index);
+	const customCardsStr = txtcardlist.substring(start, end + 1);
 	try {
 		parsedCustomCards = JSON.parse(customCardsStr);
 	} catch (e: any) {
