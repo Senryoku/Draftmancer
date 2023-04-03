@@ -21,6 +21,7 @@ export const ValidCubes: { [name: string]: string } = {
 	Real_CustomCards_3: fs.readFileSync(`./test/data/AGC_MTGA.txt`, "utf8"),
 	Real_CustomCards_4: fs.readFileSync(`./test/data/mtga_eggs_export_1_3_1_upload.txt`, "utf8"),
 	WithSettings: fs.readFileSync(`./test/data/WithSettings.txt`, "utf8"),
+	DOMLayoutExample: fs.readFileSync(`./test/data/DOMLayoutExample.txt`, "utf8"),
 };
 
 export const InvalidCubes: { [name: string]: string } = {
