@@ -10,11 +10,20 @@ export type PackLayout = {
 	slots: { [slot: string]: number };
 };
 
+export type LayoutName = string;
+
+export type CCLSettings = {
+	withReplacement?: boolean;
+	packLayouts?: LayoutName[];
+	layoutWithReplacement?: boolean;
+};
+
 export type CustomCardList = {
 	name?: string;
-	slots: { [slot: string]: { [cid: CardID]: number } };
-	layouts: { [name: string]: PackLayout } | false;
-	customCards: { [cardID: string]: Card } | null;
+	slots: Record<string, Record<CardID, number>>;
+	layouts: Record<LayoutName, PackLayout> | false;
+	customCards: Record<string, Card> | null;
+	settings?: CCLSettings;
 };
 
 export function generateCustomGetCardFunction(customCardList: CustomCardList): (cid: CardID) => Card {

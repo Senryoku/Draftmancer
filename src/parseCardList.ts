@@ -1,10 +1,10 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
-import { CustomCardList, PackLayout } from "./CustomCardList.js";
+import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { start } from "repl";
+import { isAny, isArrayOfStrings, isBoolean, isNumber, isRecord, isString } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -135,9 +135,141 @@ function jsonParsingErrorMessage(e: any, jsonStr: string): string {
 	return msg;
 }
 
+function parseSettings(
+	lines: string[],
+	startIdx: number,
+	txtcardlist: string,
+	customCardList: CustomCardList
+): SocketError | { advance: number; settings: CCLSettings } {
+	let lineIdx = startIdx;
+	if (lines.length <= lineIdx)
+		return ackError({
+			title: `[Settings]`,
+			text: `Expected a settings object, got end-of-file.`,
+		});
+	if (lines[lineIdx][0] !== "{") {
+		return ackError({
+			title: `[Settings]`,
+			text: `Settings section must be a JSON Object. Line ${lineIdx + 1}: Expected '{', got '${
+				lines[lineIdx + 1]
+			}'.`,
+		});
+	}
+
+	let index = findNthLine(txtcardlist, lineIdx);
+	while (txtcardlist[index] !== "{") ++index;
+	const start = index;
+	const end = findMatching(txtcardlist, "{", "}", start);
+	if (end === -1)
+		return ackError({
+			title: `[Settings]`,
+			text: `Expected '}', got end-of-file.`,
+		});
+	let parsedSettings = {};
+	const settingsStr = txtcardlist.substring(start, end + 1);
+	try {
+		parsedSettings = JSON.parse(settingsStr);
+	} catch (e: any) {
+		return ackError({
+			title: `[Settings]`,
+			html: jsonParsingErrorMessage(e, settingsStr),
+		});
+	}
+	const settings: CCLSettings = {};
+
+	if ("layouts" in parsedSettings) {
+		const layouts: Record<string, PackLayout> = {};
+
+		if (!isRecord(isString, isAny)(parsedSettings.layouts)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'layouts' must be an object.`,
+			});
+		}
+		for (const [key, value] of Object.entries(parsedSettings.layouts)) {
+			if (!("weight" in value)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `Layout '${key}'  must have a 'weight' property.`,
+				});
+			}
+			if (!("slots" in value)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `Layout '${key}' must have a 'slots' property.`,
+				});
+			}
+			if (!isRecord(isString, isNumber)(value["slots"])) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'slots' must be a Record<string, number>.`,
+				});
+			}
+			layouts[key] = {
+				weight: value.weight,
+				slots: value.slots,
+			};
+		}
+
+		customCardList.layouts = layouts;
+	}
+
+	if ("withReplacement" in parsedSettings) {
+		if (!isBoolean(parsedSettings.withReplacement)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'withReplacement' must be a boolean.`,
+			});
+		}
+		settings.withReplacement = parsedSettings.withReplacement;
+	}
+
+	if ("predeterminedLayouts" in parsedSettings) {
+		if (!isArrayOfStrings(parsedSettings.predeterminedLayouts)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'predeterminedLayouts' must be an array of strings.`,
+			});
+		}
+		settings.predeterminedLayouts = parsedSettings.predeterminedLayouts;
+	}
+
+	if ("layoutWithReplacement" in parsedSettings) {
+		if (!isBoolean(parsedSettings.layoutWithReplacement)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'layoutWithReplacement' must be a boolean.`,
+			});
+		}
+		settings.layoutWithReplacement = parsedSettings.layoutWithReplacement;
+	}
+
+	if (settings.predeterminedLayouts) {
+		if (!customCardList.layouts) {
+			return ackError({
+				title: `[Settings]`,
+				text: `Layouts must be declared before setting 'predeterminedLayouts'.`,
+			});
+		}
+		for (const name of settings.predeterminedLayouts) {
+			if (!(name in customCardList.layouts)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `Layout '${name}' in 'predeterminedLayouts' has not been declared.`,
+				});
+			}
+		}
+	}
+
+	return {
+		advance: (settingsStr.match(/\r\n|\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		settings: settings,
+	};
+}
+
 function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
 	let lineIdx = startIdx;
-	if (lines.length - lineIdx < 2)
+	if (lines.length <= lineIdx)
 		return ackError({
 			title: `[CustomCards]`,
 			text: `Expected a list of custom cards, got end-of-file.`,
@@ -252,7 +384,12 @@ export function parseCardList(
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
 				const lowerCaseHeader = header.toLowerCase();
 				++lineIdx;
-				if (lowerCaseHeader === "customcards") {
+				if (lowerCaseHeader === "settings") {
+					const settingsOrError = parseSettings(lines, lineIdx, txtcardlist, cardList);
+					if (isSocketError(settingsOrError)) return settingsOrError;
+					cardList.settings = settingsOrError.settings;
+					lineIdx += settingsOrError.advance;
+				} else if (lowerCaseHeader === "customcards") {
 					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
