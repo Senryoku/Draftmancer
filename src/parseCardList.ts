@@ -262,7 +262,7 @@ function parseSettings(
 	}
 
 	return {
-		advance: (settingsStr.match(/\r\n|\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		advance: (settingsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
 		settings: settings,
 	};
 }
@@ -311,7 +311,7 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 		customCards.push(cardOrError);
 	}
 	return {
-		advance: (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		advance: (customCardsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
 		customCards: customCards,
 	};
 }
