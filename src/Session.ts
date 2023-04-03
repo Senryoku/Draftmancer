@@ -206,10 +206,14 @@ export class Session implements IIndexable {
 	setCustomCardList(cardList: CustomCardList) {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
+
+		if (cardList.settings?.withReplacement) this.customCardListWithReplacement = true;
+
 		this.forUsers((uid: UserID) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
+				customCardListWithReplacement: this.customCardListWithReplacement,
 			})
 		);
 	}
