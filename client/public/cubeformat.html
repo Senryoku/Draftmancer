@@ -49,6 +49,7 @@
 			pre {
 				background-color: #333;
 				padding: 0.5em;
+				tab-size: 4;
 			}
 
 			.content {
@@ -77,6 +78,7 @@
 				<li><a href="#cube">Cube</a></li>
 				<li><a href="#card-spec">Advanced Card Specification</a></li>
 				<li><a href="#slots">Slots</a></li>
+				<li><a href="#settings">Settings</a></li>
 				<li><a href="#layouts">Pack Layouts</a></li>
 				<li><a href="#custom-cards">Custom Cards</a></li>
 			</ol>
@@ -174,6 +176,32 @@ Card Name 6
 				previous examples, the 'Common' slot will be color balanced if the option is enabled (which is the default value).
 			</section>
 			<section>
+				<h2 id="settings">Settings</h2>
+				<p>
+					Before slots, you can declare a
+					<code>Settings</code>
+					block followed by a JSON object to control some global behaviors of your list.
+				</p>
+				<pre>
+[Settings]
+{
+	"settingName": "value",
+	"anotherSetting": 125
+}
+				</pre
+				>
+				<p>Here are the possible settings with their description:</p>
+				<pre>
+{
+	withReplacement: boolean,           // Specify the default value of the "withReplacement" session setting (can still be overridden). 
+	layouts: Record&lt;string, PackLayout&gt; // See below
+	predeterminedLayouts: string[],     // Specify the exact order of the pack layouts rather than picking them randomly. Array of layout names.
+	layoutWithReplacement: boolean,     // Specify if the layouts are randomly picked with or without replacement (default: true). Ignored if predeterminedLayouts is specified.
+}
+				</pre
+				>
+			</section>
+			<section>
 				<h2 id="layouts">Pack Layouts</h2>
 				<p>
 					For even more control, you can specify multiple
@@ -185,14 +213,20 @@ Card Name 6
 					parameter. Every layouts should contain the same total number of cards.
 				</p>
 				<p>
-					After the
-					<code>[Layouts]</code>
+					As part of the
+					<code>[Settings]</code>
 					header, the syntax of a layout is as follow:
 				</p>
 				<pre>
-- LayoutName (Weight)
-  7 SlotName1
-  3 SlotName2</pre
+"layouts": {
+	"LayoutName" : {
+		"weight": 1,
+		"slots": {
+  			"SlotName1": 7,
+ 			"SlotName2": 3
+		}
+	}
+}</pre
 				>
 				<p>
 					Where
@@ -209,15 +243,27 @@ Card Name 6
 				</p>
 				<p>Example implementing a mythic rarity:</p>
 				<pre>
-[Layouts]
-- Rare (7)
-  10 Common
-  3 Uncommon
-  1 Rare
-- Mythic (1)
-  10 Common
-  3 Uncommon
-  1 Mythic
+[Settings]
+{
+	"layouts": {
+		"Rare" {
+			"weight": 7,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+  				"Rare": 1
+			}
+		},
+		"Mythic": {
+			"weight": 1,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+  				"Mythic": 1
+			}
+		}
+	}
+}
 [Common]
 ..Card List..
 [Uncommon]
@@ -229,25 +275,46 @@ Card Name 6
 				>
 				<p>More complex example mimicking the collation of Dominaria United (Exactly one legendary creature of varying rarity in each pack):</p>
 				<pre>
-[Layouts]
-- Rare (21)
-  10 Common
-  2 Uncommon
-  1 UncommonLegendary
-  1 Rare
-- Mythic (3)
-  10 Common
-  2 Uncommon
-  1 UncommonLegendary
-  1 Mythic
-- RareLegendary (7)
-  10 Common
-  3 Uncommon
-  1 RareLegendary
-- MythicLegendary (1)
-  10 Common
-  3 Uncommon
-  1 MythicLegendary
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"Rare": {
+			"weight": 21,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 2,
+				"UncommonLegendary": 1,
+  				"Rare": 1
+			}
+		},
+		"Mythic": {
+			"weight": 3,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 2,
+				"UncommonLegendary": 1,
+  				"Mythic": 1
+			}
+		},
+		"RareLegendary": {
+			"weight": 7,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+				"RareLegendary": 1
+			}
+		},
+		"MythicLegendary": {
+			"weight": 1,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+				"MythicLegendary": 1
+			}
+		}
+	}
+}
 [Common]
 ..List of all non-Legendary Creature Commons..
 [Uncommon]

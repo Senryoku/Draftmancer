@@ -68,6 +68,7 @@ select.swal2-input option {
 	text-align: left;
 	font-size: 0.8em;
     white-space: pre-wrap;
+	tab-size: 4;
 }
 
 .disconnected-user-popup-container {
