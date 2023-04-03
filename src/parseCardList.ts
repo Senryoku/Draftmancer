@@ -241,8 +241,9 @@ export function parseCardList(
 					});
 				}
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
+				const lowerCaseHeader = header.toLowerCase();
 				++lineIdx;
-				if (header === "CustomCards") {
+				if (lowerCaseHeader === "customcards") {
 					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
 					if (isSocketError(cardsOrError)) return cardsOrError;
 					if (!cardList.customCards) cardList.customCards = {};
@@ -255,7 +256,7 @@ export function parseCardList(
 						cardList.customCards[customCard.name] = customCard;
 					}
 					lineIdx += cardsOrError.advance;
-				} else if (header === "Layouts") {
+				} else if (lowerCaseHeader === "layouts") {
 					if (cardList.layouts) {
 						return ackError({
 							title: `Parsing Error`,
