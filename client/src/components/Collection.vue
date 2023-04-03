@@ -91,9 +91,7 @@
 				</h3>
 				<div class="card-container">
 					<missing-card
-						v-for="card in selectedSet.cards[missingCardsRarity].filter(
-							(c) => (showNonBooster || c.in_booster) && c.count < 4
-						)"
+						v-for="card in missingCards"
 						:key="card.arena_id"
 						:card="card"
 						:language="language"
@@ -225,6 +223,13 @@ export default defineComponent({
 		},
 		sets() {
 			return Constants.MTGASets.slice().reverse();
+		},
+		missingCards() {
+			return (
+				this.selectedSet?.cards?.[this.missingCardsRarity]?.filter(
+					(c) => (this.showNonBooster || c.in_booster) && c.count < 4
+				) ?? []
+			);
 		},
 	},
 	methods: {
