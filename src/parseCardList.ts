@@ -111,11 +111,10 @@ function findMatching(str: string, opening: string, closing: string, start: numb
 	let index = start;
 	if (str[index] !== opening) return -1;
 	let opened = 1;
-	++index;
 	while (index < str.length && opened > 0) {
+		++index;
 		if (str[index] === opening) ++opened;
 		else if (str[index] === closing) --opened;
-		++index;
 	}
 	if (opened !== 0) return -1;
 	return index;
