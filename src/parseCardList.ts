@@ -96,6 +96,86 @@ export function parseLine(
 	});
 }
 
+function findNthLine(str: string, n: number): number {
+	let index = 0;
+	for (let i = 0; i < n - 1; i++) {
+		index = str.indexOf("\n", index + 1);
+		if (index === -1) return -1;
+	}
+	return index + 1;
+}
+
+function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
+	let lineIdx = startIdx;
+	if (lines.length - lineIdx < 2)
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Expected a list of custom cards, got end-of-file.`,
+		});
+	// Custom cards must be a JSON array
+	if (lines[lineIdx][0] !== "[") {
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
+				lines[lineIdx + 1]
+			}'.`,
+		});
+	}
+	// Search for the section (matching closing bracket)
+	let opened = 1;
+	let index = findNthLine(txtcardlist, lineIdx);
+	while (txtcardlist[index] !== "[") ++index;
+	const start = index;
+	++index;
+	while (index < txtcardlist.length && opened > 0) {
+		if (txtcardlist[index] === "[") ++opened;
+		else if (txtcardlist[index] === "]") --opened;
+		++index;
+	}
+	if (opened !== 0) {
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Line ${index}: Expected ']', got end-of-file.`,
+		});
+	}
+	let parsedCustomCards = [];
+	const customCardsStr = txtcardlist.substring(start, index);
+	try {
+		parsedCustomCards = JSON.parse(customCardsStr);
+	} catch (e: any) {
+		let msg = `Error parsing custom cards: ${e.message}.`;
+		let position = e.message.match(/at position (\d+)/);
+		if (position) {
+			position = parseInt(position[1]);
+			msg += `<pre>${escapeHTML(
+				customCardsStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+			)}<span style="color: red; text-decoration: underline red;">${escapeHTML(
+				customCardsStr[position]
+			)}</span>${escapeHTML(
+				customCardsStr.slice(
+					Math.min(position + 1, customCardsStr.length),
+					Math.min(position + 50, customCardsStr.length)
+				)
+			)}</pre>`;
+		}
+		return ackError({
+			title: `[CustomCards]`,
+			html: msg,
+		});
+	}
+
+	const customCards: Card[] = [];
+	for (const c of parsedCustomCards) {
+		const cardOrError = validateCustomCard(c);
+		if (isSocketError(cardOrError)) return cardOrError;
+		customCards.push(cardOrError);
+	}
+	return {
+		advance: (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		customCards: customCards,
+	};
+}
+
 function parsePackLayoutsDeprecated(
 	lines: string[],
 	startIdx: number
@@ -149,83 +229,10 @@ export function parseCardList(
 			layouts: false,
 			slots: {},
 		};
-		// Custom slots
 		let lineIdx = 0;
 		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
+		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
-			// Detect Custom Card section (must be the first section of the file.)
-			if (lines[lineIdx] === "[CustomCards]") {
-				if (lines.length - lineIdx < 2)
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Expected a list of custom cards, got end-of-file.`,
-					});
-				// Custom cards must be a JSON array
-				if (lines[lineIdx + 1][0] !== "[") {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
-							lines[lineIdx + 1]
-						}'.`,
-					});
-				}
-				// Search for the section (matching closing bracket)
-				let opened = 1;
-				let index = "[CustomCards]".length + 1;
-				while (txtcardlist[index] !== "[") ++index;
-				const start = index;
-				++index;
-				while (index < txtcardlist.length && opened > 0) {
-					if (txtcardlist[index] === "[") ++opened;
-					else if (txtcardlist[index] === "]") --opened;
-					++index;
-				}
-				if (opened !== 0) {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Line ${index}: Expected ']', got end-of-file.`,
-					});
-				}
-				let customCards = [];
-				const customCardsStr = txtcardlist.substring(start, index);
-				try {
-					customCards = JSON.parse(customCardsStr);
-				} catch (e: any) {
-					let msg = `Error parsing custom cards: ${e.message}.`;
-					let position = e.message.match(/at position (\d+)/);
-					if (position) {
-						position = parseInt(position[1]);
-						msg += `<pre>${escapeHTML(
-							customCardsStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
-						)}<span style="color: red; text-decoration: underline red;">${escapeHTML(
-							customCardsStr[position]
-						)}</span>${escapeHTML(
-							customCardsStr.slice(
-								Math.min(position + 1, customCardsStr.length),
-								Math.min(position + 50, customCardsStr.length)
-							)
-						)}</pre>`;
-					}
-					return ackError({
-						title: `[CustomCards]`,
-						html: msg,
-					});
-				}
-				cardList.customCards = {};
-				for (const c of customCards) {
-					const cardOrError = validateCustomCard(c);
-					if (isSocketError(cardOrError)) return cardOrError;
-					const customCard = cardOrError;
-					if (customCard.name in cardList.customCards)
-						return ackError({
-							title: `[CustomCards]`,
-							text: `Duplicate card '${customCard.name}'.`,
-						});
-					cardList.customCards[customCard.name] = customCard;
-				}
-				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
-			}
-			// List has to start with a header if it has custom slots
 			while (lineIdx < lines.length) {
 				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
 					return ackError({
@@ -235,7 +242,20 @@ export function parseCardList(
 				}
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
 				++lineIdx;
-				if (header === "Layouts") {
+				if (header === "CustomCards") {
+					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
+					if (isSocketError(cardsOrError)) return cardsOrError;
+					if (!cardList.customCards) cardList.customCards = {};
+					for (const customCard of cardsOrError.customCards) {
+						if (customCard.name in cardList.customCards)
+							return ackError({
+								title: `[CustomCards]`,
+								text: `Duplicate card '${customCard.name}'.`,
+							});
+						cardList.customCards[customCard.name] = customCard;
+					}
+					lineIdx += cardsOrError.advance;
+				} else if (header === "Layouts") {
 					if (cardList.layouts) {
 						return ackError({
 							title: `Parsing Error`,
