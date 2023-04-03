@@ -4,6 +4,7 @@ import { getCard } from "./Cards.js";
 import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
 import { isEmpty, Options, random } from "./utils.js";
+import { shuffleArray } from "./utils.js";
 
 export type PackLayout = {
 	weight: number;
@@ -14,7 +15,7 @@ export type LayoutName = string;
 
 export type CCLSettings = {
 	withReplacement?: boolean;
-	packLayouts?: LayoutName[];
+	predeterminedLayouts?: LayoutName[];
 	layoutWithReplacement?: boolean;
 };
 
@@ -38,7 +39,12 @@ export function generateCustomGetCardFunction(customCardList: CustomCardList): (
 export function generateBoosterFromCustomCardList(
 	customCardList: CustomCardList,
 	boosterQuantity: number,
-	options: { colorBalance?: boolean; cardsPerBooster?: number; withReplacement?: boolean }
+	options: {
+		colorBalance?: boolean;
+		cardsPerBooster?: number;
+		withReplacement?: boolean;
+		playerCount?: number; // Allow correct ordering of boosters when using predetermined layouts
+	}
 ): MessageError | Array<UniqueCard>[] {
 	if (
 		!customCardList.slots ||
@@ -76,21 +82,48 @@ export function generateBoosterFromCustomCardList(
 			}
 		}
 
+		const nextLayout = customCardList.settings?.predeterminedLayouts
+			? // Predetermined layouts
+			  (index: number): string =>
+					customCardList.settings?.predeterminedLayouts![
+						index % customCardList.settings?.predeterminedLayouts!.length
+					]!
+			: customCardList.settings?.layoutWithReplacement === false
+			? // Random layouts without replacement (until we have no other choice)
+			  (() => {
+					let bag: string[] = [];
+					const refill = () => {
+						bag = [];
+						for (const layoutName in layouts) {
+							for (let i = 0; i < layouts[layoutName].weight; ++i) bag.push(layoutName);
+						}
+						shuffleArray(bag);
+					};
+					return (index: number): string => {
+						if (bag.length === 0) refill();
+						return bag.pop()!;
+					};
+			  })()
+			: // Random layouts
+			  (index: number): string => {
+					let randomLayout = random.real(0, layoutsTotalWeights);
+					for (const layoutName in layouts) {
+						randomLayout -= layouts[layoutName].weight;
+						if (randomLayout <= 0) return layoutName;
+					}
+					return Object.keys(layouts)[0]!;
+			  };
+
 		// Generate Boosters
 		const boosters: Array<UniqueCard>[] = [];
 		for (let i = 0; i < boosterQuantity; ++i) {
 			let booster: Array<UniqueCard> = [];
 
 			// Pick a layout
-			let randomLayout = random.real(0, layoutsTotalWeights);
-			let pickedLayoutName = Object.keys(layouts)[0];
-			for (const layoutName in layouts) {
-				randomLayout -= layouts[layoutName].weight;
-				if (randomLayout <= 0) {
-					pickedLayoutName = layoutName;
-					break;
-				}
-			}
+			const pickedLayoutName = nextLayout(options.playerCount ? Math.floor(i / options.playerCount) : i);
+			// Should be caught earlier, but just in case, check again.
+			if (!(pickedLayoutName in layouts))
+				return new MessageError("Error generating boosters", `Invalid layout '${pickedLayoutName}'.`);
 			const pickedLayout = layouts[pickedLayoutName];
 
 			for (const slotName in pickedLayout.slots) {
