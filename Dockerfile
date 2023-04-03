@@ -3,6 +3,7 @@ FROM node:18-alpine as builder
 RUN mkdir /app
 WORKDIR /app
 
+ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV NODE_ENV production
 
 COPY . .
