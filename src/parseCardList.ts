@@ -222,6 +222,7 @@ export function parseCardList(
 	outIgnoredCards?: string[]
 ): CustomCardList | SocketError {
 	try {
+		// FIXME: Doesn't handle MacOS line endings (\r). Note that we can't remove empty lines at this stage as other functions rely on the line index matching the original text.
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		const cardList: CustomCardList = {
 			customCards: null,
