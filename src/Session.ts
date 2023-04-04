@@ -46,7 +46,7 @@ import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
-import { ServerToClientEvents } from "./SocketType";
+import { LoaderOptions, ServerToClientEvents } from "./SocketType";
 import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
@@ -2049,28 +2049,19 @@ export class Session implements IIndexable {
 		}
 	}
 
-	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): void {
-		this.emitMessage("Distributing sealed boosters...", "", false, 0);
+	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): SocketAck {
+		this.emitLoader({ title: "Distributing sealed boosters..." });
 
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer) {
-			// FIXME: We should propagate to ack.
-			this.emitError("Error", "Invalid 'customBoosters' parameter.");
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer)
+			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
 		const boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			useCustomBoosters: useCustomBoosters,
 			boostersPerPlayer: boostersPerPlayer,
 			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
 			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
 		const log = this.initLogs("Sealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
@@ -2099,6 +2090,7 @@ export class Session implements IIndexable {
 		}
 
 		logSession("Sealed", this);
+		return new SocketAck();
 	}
 
 	startTeamSealed(boostersPerTeam: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
@@ -2287,8 +2279,7 @@ export class Session implements IIndexable {
 					imageUrl: "/img/2JumpstartBoosters.webp",
 					title: "Here are your Jumpstart boosters!",
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
-					showConfirmButton: false,
-					timer: 2000,
+					showConfirmButton: true,
 				} as Message);
 			}
 			this.sendLogs();
@@ -2542,6 +2533,10 @@ export class Session implements IIndexable {
 			return this.getSortedHumanPlayerData();
 		}
 		return r;
+	}
+
+	emitLoader(options: LoaderOptions) {
+		this.forUsers((uid) => Connections[uid]?.socket.emit("showLoader", options));
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {

@@ -17,6 +17,8 @@ import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 
+export type LoaderOptions = { title: string };
+
 export interface ServerToClientEvents {
 	updatePublicSession: (data: { id: SessionID; isPrivate: true } | ReturnType<typeof getPublicSessionData>) => void;
 	publicSessions: (publicSessions: ReturnType<typeof getPublicSessionData>[]) => void;
@@ -24,6 +26,7 @@ export interface ServerToClientEvents {
 	stillAlive: (callback: () => void) => void;
 	setSession: (sid: SessionID) => void;
 	message: (msg: Message) => void;
+	showLoader: (options: LoaderOptions) => void;
 	chatMessage: (msg: { author: string; text: string; timestamp: number }) => void;
 	readyCheck: () => void;
 	setReady: (userID: UserID, readyState: ReadyState) => void;
@@ -284,7 +287,11 @@ export interface ClientToServerEvents {
 	) => void;
 	lockBracket: (bracketLocked: boolean) => void;
 	shareDraftLog: (draftLog: DraftLog) => void;
-	distributeSealed: (boostersPerPlayer: number, customBoosters: Array<string>) => void;
+	distributeSealed: (
+		boostersPerPlayer: number,
+		customBoosters: Array<string>,
+		ack: (result: SocketAck) => void
+	) => void;
 }
 
 export interface InterServerEvents {}

@@ -1127,14 +1127,14 @@ function distributeSealed(
 	userID: UserID,
 	sessionID: SessionID,
 	boostersPerPlayer: number,
-	customBoosters: Array<string>
+	customBoosters: Array<string>,
+	ack: (result: SocketAck) => void
 ) {
-	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) {
-		// FIXME: Should be an ack callback.
-		Sessions[sessionID].emitError("Error", "Invalid 'boostersPerPlayer' parameter.");
-		return;
-	}
-	Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0)
+		return ack?.(new SocketError("Error", "Invalid 'boostersPerPlayer' parameter."));
+
+	const r = Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+	ack?.(r);
 }
 
 const prepareSocketCallback = <T extends Array<any>>(

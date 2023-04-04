@@ -1755,7 +1755,7 @@ describe("Sealed", function () {
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});
-		clients[ownerIdx].emit("distributeSealed", boosterCount, Array(boosterCount).fill(""));
+		clients[ownerIdx].emit("distributeSealed", boosterCount, Array(boosterCount).fill(""), ackNoError);
 	});
 
 	const CustomBoosters = ["m19", "m20", "m21"];
@@ -1780,7 +1780,7 @@ describe("Sealed", function () {
 				++receivedPools;
 				if (receivedPools === clients.length) done();
 			});
-		clients[ownerIdx].emit("distributeSealed", boosterCount, Array(boosterCount).fill(""));
+		clients[ownerIdx].emit("distributeSealed", boosterCount, Array(boosterCount).fill(""), ackNoError);
 	});
 });
 
