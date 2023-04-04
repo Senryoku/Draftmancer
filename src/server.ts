@@ -442,28 +442,11 @@ function readyCheck(userID: UserID, sessionID: SessionID, ack: (result: SocketAc
 	ack?.(new SocketAck());
 }
 
-async function startDraft(userID: UserID, sessionID: SessionID) {
+async function startDraft(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
 	const sess = Sessions[sessionID];
-	if (sess.drafting) return;
-
-	if (sess.teamDraft && sess.users.size !== 6) {
-		const verb = sess.users.size < 6 ? "add" : "remove";
-		Connections[userID].socket.emit(
-			"message",
-			new Message(
-				`Wrong player count`,
-				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
-			)
-		);
-	} else if (sess.users.size === 0 || sess.users.size + sess.bots < 2) {
-		Connections[userID].socket.emit(
-			"message",
-			new Message(`Not enough players`, `Can't start draft: Not enough players (min. 2 including bots).`)
-		);
-	} else {
-		await sess.startDraft();
-		startPublicSession(sess);
-	}
+	const r = await Sessions[sessionID].startDraft();
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack?.(r);
 }
 
 function stopDraft(userID: UserID, sessionID: SessionID) {
@@ -1127,14 +1110,14 @@ function distributeSealed(
 	userID: UserID,
 	sessionID: SessionID,
 	boostersPerPlayer: number,
-	customBoosters: Array<string>
+	customBoosters: Array<string>,
+	ack: (result: SocketAck) => void
 ) {
-	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0) {
-		// FIXME: Should be an ack callback.
-		Sessions[sessionID].emitError("Error", "Invalid 'boostersPerPlayer' parameter.");
-		return;
-	}
-	Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+	if (!Number.isInteger(boostersPerPlayer) || boostersPerPlayer <= 0)
+		return ack?.(new SocketError("Error", "Invalid 'boostersPerPlayer' parameter."));
+
+	const r = Sessions[sessionID].distributeSealed(boostersPerPlayer, customBoosters);
+	ack?.(r);
 }
 
 const prepareSocketCallback = <T extends Array<any>>(
