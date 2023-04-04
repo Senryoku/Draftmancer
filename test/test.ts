@@ -340,8 +340,9 @@ describe("Single Draft (Two Players)", function () {
 		done();
 	});
 
-	function connect() {
+	function connect(sid = "sessionID") {
 		it("2 clients with different userIDs should be connected.", function (done) {
+			sessionID = sid;
 			clients = makeClients(
 				[
 					{
@@ -516,7 +517,7 @@ describe("Single Draft (Two Players)", function () {
 
 	for (let set of Constants.PrimarySets) {
 		describe(`Drafting ${set}`, function () {
-			connect();
+			connect(set);
 			it("Clients should receive the updated setRestriction status.", function (done) {
 				let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 				let nonOwnerIdx = 1 - ownerIdx;
