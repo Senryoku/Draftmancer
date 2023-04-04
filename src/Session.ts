@@ -1388,22 +1388,28 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	async startDraft(): Promise<void> {
-		if (this.drafting) return;
-		if (this.randomizeSeatingOrder) this.randomizeSeating();
+	async startDraft(): Promise<SocketAck> {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.teamDraft && this.users.size !== 6) {
+			const verb = this.users.size < 6 ? "add" : "remove";
+			return new SocketError(
+				`Wrong player count`,
+				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
+			);
+		}
+		if (this.users.size === 0 || this.users.size + this.bots < 2)
+			return new SocketError(
+				`Not enough players`,
+				`Can't start draft: Not enough players (min. 2 including bots).`
+			);
 
-		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
 		const boosters = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		// Determine bot type
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
@@ -1440,7 +1446,7 @@ export class Session implements IIndexable {
 		} catch (e) {
 			console.error("Exception raised while constructing the DraftState: ", e);
 			this.cleanDraftState();
-			return;
+			return new SocketError("Internal server error");
 		}
 
 		const log = this.initLogs("Draft", boosters);
@@ -1461,6 +1467,7 @@ export class Session implements IIndexable {
 		}
 
 		this.distributeBoosters();
+		return new SocketAck();
 	}
 
 	// Pass a booster to the next player at the table

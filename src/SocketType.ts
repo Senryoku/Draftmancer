@@ -212,7 +212,7 @@ export interface ClientToServerEvents {
 	// Owner Only
 	setOwnerIsPlayer: (val: boolean) => void;
 	readyCheck: (ack: (result: SocketAck) => void) => void;
-	startDraft: () => void;
+	startDraft: (ack: (result: SocketAck) => void) => void;
 	stopDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;

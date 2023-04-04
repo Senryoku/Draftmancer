@@ -400,7 +400,7 @@ describe("Single Draft (Two Players)", function () {
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 	}
 
@@ -779,22 +779,20 @@ describe("Single Draft (Two Players)", function () {
 			for (let c in clients) {
 				clients[c].once("startDraft", function () {
 					connectedClients += 1;
-					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
+					if (connectedClients === clients.length && receivedBoosters === 1) done();
 				});
 			}
 
 			// Only the players will receive a draftState event
 			clients[nonOwnerIdx].once("draftState", function (state) {
-				const clientState = clientStates[(clients[nonOwnerIdx] as any).query.userID];
 				const s = state as ReturnType<DraftState["syncData"]>;
 				expect(s.booster).to.exist;
-				clientState.state = s;
-				clientState.pickedCards = [];
+				clientStates[getUID(clients[nonOwnerIdx])] = { state: s, pickedCards: [] };
 				receivedBoosters += 1;
-				if (connectedClients == clients.length && receivedBoosters == 1) done();
+				if (connectedClients === clients.length && receivedBoosters === 1) done();
 			});
 
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 
 		let lastPickedCardUID: number;
@@ -1219,7 +1217,7 @@ describe("Single Draft (Two Players)", function () {
 					if (connectedClients == clients.length - 1 && receivedBoosters == clients.length - 1) done();
 				});
 			}
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 
 		it("Pick until the draft ends.", function (done) {
@@ -1302,7 +1300,7 @@ describe("Single Draft (Two Players)", function () {
 					if (connectedClients == clients.length && receivedBoosters == clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 
 		it("Pick enough times, and the draft should end.", function (done) {
@@ -1399,7 +1397,7 @@ describe("Single Draft (Two Players)", function () {
 						});
 						++index;
 					}
-					clients[ownerIdx].emit("startDraft");
+					clients[ownerIdx].emit("startDraft", ackNoError);
 				});
 
 				it("Pick enough times, and the draft should end.", function (done) {
@@ -1459,14 +1457,11 @@ describe("Single Draft (Two Players)", function () {
 			clients[ownerIdx].emit("setBoosters", "15 Forest\n\n15 Forest", (r) => {
 				expect(r.code === 0);
 				expect(!r.error);
-				clients[ownerIdx].on("message", (r) => {
-					if (r.icon === "error") {
-						clients[ownerIdx].removeListener("message");
-						expect(!Sessions[sessionID].drafting);
-						done();
-					}
+				clients[ownerIdx].emit("startDraft", (response) => {
+					expect(response.code !== 0);
+					expect(response.error).to.exist;
+					done();
 				});
-				clients[ownerIdx].emit("startDraft");
 			});
 		});
 
@@ -1666,7 +1661,7 @@ describe("Multiple Drafts", function () {
 					(c) => getUID(c.socket) === Sessions[sessionIDs[sessionIdx]].owner
 				);
 				sessionClients[ownerIdx].socket.emit("setColorBalance", true);
-				sessionClients[ownerIdx].socket.emit("startDraft");
+				sessionClients[ownerIdx].socket.emit("startDraft", ackNoError);
 			})();
 		}
 	});

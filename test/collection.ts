@@ -5,7 +5,7 @@ import chai from "chai";
 const expect = chai.expect;
 import { getCard } from "../src/Cards.js";
 import { Sessions } from "../src/Session.js";
-import { makeClients, enableLogs, disableLogs, waitForClientDisconnects } from "./src/common.js";
+import { makeClients, enableLogs, disableLogs, waitForClientDisconnects, ackNoError } from "./src/common.js";
 
 import MTGACards from "../client/src/data/MTGACards.json" assert { type: "json" };
 import { ArenaID, PlainCollection, UniqueCard } from "../src/CardTypes.js";
@@ -139,7 +139,7 @@ describe("Collection Restriction", function () {
 					});
 				})();
 			}
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 
 		it("End draft. All cards in generated boosters (default settings) should be in all user collections.", function (done) {

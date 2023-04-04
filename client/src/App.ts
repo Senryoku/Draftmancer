@@ -1281,6 +1281,10 @@ export default defineComponent({
 				} else return false;
 			}
 
+			const ack = (response: SocketAck) => {
+				if (response.error) Alert.fire(response.error);
+			};
+
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -1291,10 +1295,10 @@ export default defineComponent({
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
 				}).then((result) => {
-					if (result.value) this.socket.emit("startDraft");
+					if (result.value) this.socket.emit("startDraft", ack);
 				});
 			} else {
-				this.socket.emit("startDraft");
+				this.socket.emit("startDraft", ack);
 				return true;
 			}
 			return false;
