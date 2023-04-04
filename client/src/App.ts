@@ -516,10 +516,6 @@ export default defineComponent({
 				});
 			});
 
-			this.socket.on("showLoader", (options) => {
-				this.showLoader(options);
-			});
-
 			this.socket.on("readyCheck", () => {
 				if (this.drafting) return;
 
@@ -1234,12 +1230,14 @@ export default defineComponent({
 		playSound(key: keyof typeof Sounds) {
 			if (this.enableSound) Sounds[key].play();
 		},
-		showLoader({ title }: LoaderOptions) {
+		showLoader(options: LoaderOptions) {
+			let { title } = options;
+			title = escapeHTML(title);
 			Alert.fire({
 				toast: true,
 				position: "top-end",
 				icon: "info",
-				title: escapeHTML(title),
+				title: title,
 				showConfirmButton: false,
 				didOpen: (toast) => {
 					// If another swal is fired right after this one, the callback may be called on the wrong one...
@@ -2566,7 +2564,7 @@ export default defineComponent({
 		},
 		distributeSealed(boosterCount: number, customBoosters: string[]) {
 			if (this.userID !== this.sessionOwner) return;
-			this.showLoader("Distributing sealed boosters...");
+			this.showLoader({ title: "Distributing sealed boosters..." });
 			this.socket.timeout(10000).emit("distributeSealed", boosterCount, customBoosters, (err, response) => {
 				if (err) {
 					Alert.fire({ icon: "error", title: "Error contacting the server" });

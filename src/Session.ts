@@ -2045,8 +2045,6 @@ export class Session implements IIndexable {
 	}
 
 	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): SocketAck {
-		this.emitLoader({ title: "Distributing sealed boosters..." });
-
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
 		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer)
 			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
@@ -2528,10 +2526,6 @@ export class Session implements IIndexable {
 			return this.getSortedHumanPlayerData();
 		}
 		return r;
-	}
-
-	emitLoader(options: LoaderOptions) {
-		this.forUsers((uid) => Connections[uid]?.socket.emit("showLoader", options));
 	}
 
 	emitMessage(title: string, text: string = "", showConfirmButton = true, timer = 1500) {
