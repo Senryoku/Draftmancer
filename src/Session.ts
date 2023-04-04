@@ -1282,27 +1282,22 @@ export class Session implements IIndexable {
 				"Unsufficient number of players",
 				"Minesweeper draft necessitates at least two players. Bots are not supported."
 			);
-		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		if (!this.useCustomCardList) {
 			return new SocketError(
 				"Error",
 				"Minesweeper draft is only available for cube drafting. Please select a custom card list."
 			);
 		}
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
-		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		const boosters = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
 		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
-			this.broadcastPreparationCancelation();
-			return new SocketAck(); // Error already emitted above.
+			return new SocketAck(boosters);
 		}
 
 		if (boosters.some((b) => b.length !== gridWidth * gridHeight)) {
 			this.drafting = false;
-			this.broadcastPreparationCancelation();
 			return new SocketError(
 				"Erroneous Pack Size",
 				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
