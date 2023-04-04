@@ -4,7 +4,7 @@ import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isAny, isArrayOfStrings, isBoolean, isNumber, isRecord, isString } from "./TypeChecks.js";
+import { isAny, isArrayOf, isBoolean, isInteger, isNumber, isRecord, isString } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -224,13 +224,43 @@ function parseSettings(
 	}
 
 	if ("predeterminedLayouts" in parsedSettings) {
-		if (!isArrayOfStrings(parsedSettings.predeterminedLayouts)) {
+		if (isArrayOf(isString)(parsedSettings.predeterminedLayouts)) {
+			settings.predeterminedLayouts = parsedSettings.predeterminedLayouts.map((name) => {
+				return [{ name: name, weight: 1 }];
+			});
+		} else if (isArrayOf(isArrayOf(isString))(parsedSettings.predeterminedLayouts)) {
+			if (!customCardList.layouts) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'layouts' must be declared before being referenced in 'predeterminedLayouts'.`,
+				});
+			}
+			settings.predeterminedLayouts = [];
+			for (const list of parsedSettings.predeterminedLayouts) {
+				let layouts = [];
+				for (const name of list) {
+					if (!(name in customCardList.layouts))
+						return ackError({
+							title: `[Settings]`,
+							text: `Layout '${name}' must be declared before being referenced in 'predeterminedLayouts'.`,
+						});
+					layouts.push({ name: name, weight: customCardList.layouts[name].weight });
+				}
+				settings.predeterminedLayouts.push(layouts);
+			}
+		} else if (isArrayOf(isRecord(isString, isInteger))(parsedSettings.predeterminedLayouts)) {
+			settings.predeterminedLayouts = [];
+			for (const list of parsedSettings.predeterminedLayouts) {
+				let layouts = [];
+				for (const [name, weight] of Object.entries(list)) layouts.push({ name: name, weight: weight });
+				settings.predeterminedLayouts.push(layouts);
+			}
+		} else {
 			return ackError({
 				title: `[Settings]`,
-				text: `'predeterminedLayouts' must be an array of strings.`,
+				text: `'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`,
 			});
 		}
-		settings.predeterminedLayouts = parsedSettings.predeterminedLayouts;
 	}
 
 	if ("layoutWithReplacement" in parsedSettings) {
@@ -250,12 +280,14 @@ function parseSettings(
 				text: `Layouts must be declared before setting 'predeterminedLayouts'.`,
 			});
 		}
-		for (const name of settings.predeterminedLayouts) {
-			if (!(name in customCardList.layouts)) {
-				return ackError({
-					title: `[Settings]`,
-					text: `Layout '${name}' in 'predeterminedLayouts' has not been declared.`,
-				});
+		for (const list of settings.predeterminedLayouts) {
+			for (const layout of list) {
+				if (!(layout.name in customCardList.layouts)) {
+					return ackError({
+						title: `[Settings]`,
+						text: `Layout '${layout.name}' in 'predeterminedLayouts' has not been declared.`,
+					});
+				}
 			}
 		}
 	}

@@ -3,7 +3,7 @@ import { CardID, Card, SlotedCardPool, UniqueCard, CardPool } from "./CardTypes.
 import { getCard } from "./Cards.js";
 import { pickCard } from "./cardUtils.js";
 import { MessageError } from "./Message.js";
-import { isEmpty, Options, random } from "./utils.js";
+import { isEmpty, Options, random, weightedRandomIdx } from "./utils.js";
 import { shuffleArray } from "./utils.js";
 
 export type PackLayout = {
@@ -15,7 +15,7 @@ export type LayoutName = string;
 
 export type CCLSettings = {
 	withReplacement?: boolean;
-	predeterminedLayouts?: LayoutName[];
+	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;
 };
 
@@ -84,10 +84,19 @@ export function generateBoosterFromCustomCardList(
 
 		const nextLayout = customCardList.settings?.predeterminedLayouts
 			? // Predetermined layouts
-			  (index: number): string =>
-					customCardList.settings?.predeterminedLayouts![
-						index % customCardList.settings?.predeterminedLayouts!.length
-					]!
+			  (index: number): string => {
+					const choices =
+						customCardList.settings?.predeterminedLayouts![
+							index % customCardList.settings?.predeterminedLayouts!.length
+						]!;
+					if (choices.length === 1) return choices[0].name;
+					return choices[
+						weightedRandomIdx(
+							choices,
+							choices.reduce((acc, curr) => acc + curr.weight, 0)
+						)
+					].name;
+			  }
 			: customCardList.settings?.layoutWithReplacement === false
 			? // Random layouts without replacement (until we have no other choice)
 			  (() => {

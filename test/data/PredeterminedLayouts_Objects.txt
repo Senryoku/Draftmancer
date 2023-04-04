@@ -1,0 +1,54 @@
+[Settings]
+{
+	"predeterminedLayouts": [{"SheetA": 1, "SheetA2": 1, "SheetC": 0}, {"SheetB": 1, "SheetB2": 1, "SheetA" :0}, {"SheetC": 1, "SheetC2": 1}],
+	"layouts": {
+		"SheetA" : {
+			"weight": 0,
+			"slots": {
+				"SheetA"   : 1
+			}
+		},
+		"SheetB": {
+			"weight": 0,
+			"slots": {
+				"SheetB"   : 1
+			}
+		},
+		"SheetC": {
+			"weight": 0,
+			"slots": {
+				"SheetC"   : 1
+			}
+		},
+		"SheetA2" : {
+			"weight": 0,
+			"slots": {
+				"SheetA2"   : 1
+			}
+		},
+		"SheetB2": {
+			"weight": 0,
+			"slots": {
+				"SheetB2"   : 1
+			}
+		},
+		"SheetC2": {
+			"weight": 0,
+			"slots": {
+				"SheetC2"   : 1
+			}
+		}
+	}
+}
+[SheetA]
+999 Adventure Awaits
+[SheetB]
+999 Akoum Hellhound
+[SheetC]
+999 Angelheart Protector
+[SheetA2]
+999 Stomping Ground
+[SheetB2]
+999 Sulfur Falls
+[SheetC2]
+999 Sulfurous Springs
