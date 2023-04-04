@@ -189,13 +189,13 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 422,
+        "cardCount": 423,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
         "commonCount": 145,
         "mythicCount": 43,
         "rareCount": 119,
-        "uncommonCount": 115
+        "uncommonCount": 116
     },
     "ajmp": {
         "code": "ajmp",
@@ -424,13 +424,13 @@
     "bro": {
         "code": "bro",
         "fullName": "The Brothers' War",
-        "cardCount": 387,
+        "cardCount": 388,
         "isPrimary": true,
         "icon": "img/sets/bro.svg",
         "commonCount": 121,
         "mythicCount": 47,
         "rareCount": 134,
-        "uncommonCount": 85
+        "uncommonCount": 86
     },
     "brr": {
         "code": "brr",
@@ -1892,11 +1892,11 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 436,
+        "cardCount": 437,
         "isPrimary": true,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
-        "commonCount": 142,
+        "commonCount": 143,
         "mythicCount": 36,
         "rareCount": 108,
         "uncommonCount": 150
@@ -2620,13 +2620,13 @@
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 213,
+        "cardCount": 270,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
         "commonCount": 37,
-        "mythicCount": 27,
-        "rareCount": 89,
-        "uncommonCount": 60
+        "mythicCount": 34,
+        "rareCount": 116,
+        "uncommonCount": 83
     },
     "mor": {
         "code": "mor",
@@ -2723,13 +2723,13 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 507,
+        "cardCount": 517,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 150,
-        "mythicCount": 62,
-        "rareCount": 187,
-        "uncommonCount": 108
+        "commonCount": 151,
+        "mythicCount": 63,
+        "rareCount": 189,
+        "uncommonCount": 114
     },
     "nph": {
         "code": "nph",
@@ -4948,12 +4948,12 @@
     "sir": {
         "code": "sir",
         "fullName": "Shadows over Innistrad Remastered",
-        "cardCount": 291,
+        "cardCount": 294,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "commonCount": 109,
-        "mythicCount": 23,
-        "rareCount": 66,
+        "commonCount": 110,
+        "mythicCount": 24,
+        "rareCount": 67,
         "uncommonCount": 93
     },
     "sis": {
@@ -4991,8 +4991,8 @@
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
-        "mythicCount": 149,
-        "rareCount": 662,
+        "mythicCount": 148,
+        "rareCount": 663,
         "uncommonCount": 20
     },
     "slp": {
@@ -5033,13 +5033,13 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 501,
+        "cardCount": 502,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
         "mythicCount": 55,
         "rareCount": 152,
-        "uncommonCount": 126
+        "uncommonCount": 127
     },
     "sneo": {
         "code": "sneo",
@@ -5968,59 +5968,59 @@
     "planeshifted_snc": {
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
-        "cardCount": 501,
+        "cardCount": 502,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
         "mythicCount": 55,
         "rareCount": 152,
-        "uncommonCount": 126
+        "uncommonCount": 127
     },
     "sir0": {
         "code": "sir0",
         "fullName": "SIR: Creature Type Terror!",
-        "cardCount": 291,
+        "cardCount": 294,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "commonCount": 109,
-        "mythicCount": 23,
-        "rareCount": 66,
+        "commonCount": 110,
+        "mythicCount": 24,
+        "rareCount": 67,
         "uncommonCount": 93,
         "block": "Shadows over Innistrad Remastered"
     },
     "sir1": {
         "code": "sir1",
         "fullName": "SIR: Fatal Flashback!",
-        "cardCount": 291,
+        "cardCount": 294,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "commonCount": 109,
-        "mythicCount": 23,
-        "rareCount": 66,
+        "commonCount": 110,
+        "mythicCount": 24,
+        "rareCount": 67,
         "uncommonCount": 93,
         "block": "Shadows over Innistrad Remastered"
     },
     "sir2": {
         "code": "sir2",
         "fullName": "SIR: Morbid and Macabre!",
-        "cardCount": 291,
+        "cardCount": 294,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "commonCount": 109,
-        "mythicCount": 23,
-        "rareCount": 66,
+        "commonCount": 110,
+        "mythicCount": 24,
+        "rareCount": 67,
         "uncommonCount": 93,
         "block": "Shadows over Innistrad Remastered"
     },
     "sir3": {
         "code": "sir3",
         "fullName": "SIR: Abominable All Stars!",
-        "cardCount": 291,
+        "cardCount": 294,
         "isPrimary": true,
         "icon": "img/sets/sir.svg",
-        "commonCount": 109,
-        "mythicCount": 23,
-        "rareCount": 66,
+        "commonCount": 110,
+        "mythicCount": 24,
+        "rareCount": 67,
         "uncommonCount": 93,
         "block": "Shadows over Innistrad Remastered"
     }
