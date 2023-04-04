@@ -1,4 +1,5 @@
 export const isAny = (x: any): x is any => true;
+export const isUnknown = (x: unknown): x is unknown => true;
 
 export const isBoolean = (x: unknown): x is boolean => typeof x === "boolean";
 export const isNumber = (x: unknown): x is number => typeof x === "number";

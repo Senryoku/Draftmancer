@@ -4,7 +4,7 @@ import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
-import { isAny, isArrayOf, isBoolean, isInteger, isNumber, isRecord, isString } from "./TypeChecks.js";
+import { isAny, isArrayOf, isBoolean, isInteger, isNumber, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -179,7 +179,7 @@ function parseSettings(
 	if ("layouts" in parsedSettings) {
 		const layouts: Record<string, PackLayout> = {};
 
-		if (!isRecord(isString, isAny)(parsedSettings.layouts)) {
+		if (!isRecord(isString, isRecord(isString, isUnknown))(parsedSettings.layouts)) {
 			return ackError({
 				title: `[Settings]`,
 				text: `'layouts' must be an object.`,
@@ -192,13 +192,19 @@ function parseSettings(
 					text: `Layout '${key}'  must have a 'weight' property.`,
 				});
 			}
+			if (!isInteger(value.weight)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'weight' must be an integer.`,
+				});
+			}
 			if (!("slots" in value)) {
 				return ackError({
 					title: `[Settings]`,
 					text: `Layout '${key}' must have a 'slots' property.`,
 				});
 			}
-			if (!isRecord(isString, isNumber)(value["slots"])) {
+			if (!isRecord(isString, isInteger)(value["slots"])) {
 				return ackError({
 					title: `[Settings]`,
 					text: `'slots' must be a Record<string, number>.`,
