@@ -553,9 +553,8 @@
 						:key="`draggable-${userOrder.length}`"
 						:list="userOrder"
 						:item-key="(uid: UserID) => uid"
-						@change="changePlayerOrder"
-						:disabled="userID !== sessionOwner || drafting"
-						:animation="200"
+						:options="{ animation: 200, disabled: userID !== sessionOwner }"
+						@update="changePlayerOrder"
 						class="player-list-container player-list"
 						tag="ul"
 					>

@@ -67,7 +67,7 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { createApp } from "vue";
-import { SortableEvent } from "sortablejs";
+import { MoveEvent, SortableEvent } from "sortablejs";
 import { installFontAwesome } from "./install-fontawesome";
 const img = new Image();
 img.src = CardBack;
@@ -2514,8 +2514,9 @@ export default defineComponent({
 
 			this.socket.emit("setSeating", this.userOrder);
 		},
-		changePlayerOrder() {
-			if (this.userID != this.sessionOwner) return;
+		changePlayerOrder(e: SortableEvent) {
+			if (this.userID !== this.sessionOwner) return;
+			sortableUpdate(e, this.userOrder);
 			this.socket.emit("setSeating", this.userOrder);
 		},
 		async sealedDialog(teamSealed = false) {
