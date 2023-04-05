@@ -388,7 +388,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                                             ] = c['card_faces'][0]['image_uris']['border_crop']
 
         # Handle back side of double sided cards
-        if c['layout'] == 'transform' or c['layout'] == 'modal_dfc' or c['layout'] == 'battle':
+        if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
             if 'back' not in Translations[key]:
                 Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}}
                 Translations[key]['back']['type'], Translations[key]['back']['subtypes'] = handleTypeLine(c['card_faces'][1]['type_line'])
@@ -462,8 +462,6 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                     selection['layout'] = 'split'
             elif c['layout'] == "flip":
                 selection['layout'] = 'flip'
-            elif c['layout'] == "battle":
-                selection['layout'] = 'battle'
 
             cards[c['id']].update(selection)
 

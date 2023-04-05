@@ -25,9 +25,9 @@
 			</font-awesome-layers>
 		</div>
 		<div
-			v-if="card.layout === 'split' || card.layout === 'battle'"
+			v-if="card.layout === 'split' || card.type.includes('Battle')"
 			class="split-button"
-			:class="{ 'battle-button': card.layout === 'battle' }"
+			:class="{ 'battle-button': card.type.includes('Battle') }"
 		>
 			<font-awesome-layers>
 				<font-awesome-icon
