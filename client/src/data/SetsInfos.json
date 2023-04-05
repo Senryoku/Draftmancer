@@ -189,10 +189,10 @@
     "afr": {
         "code": "afr",
         "fullName": "Adventures in the Forgotten Realms",
-        "cardCount": 423,
+        "cardCount": 424,
         "isPrimary": true,
         "icon": "img/sets/afr.svg",
-        "commonCount": 145,
+        "commonCount": 146,
         "mythicCount": 43,
         "rareCount": 119,
         "uncommonCount": 116
@@ -1892,14 +1892,14 @@
     "hbg": {
         "code": "hbg",
         "fullName": "Alchemy Horizons: Baldur's Gate",
-        "cardCount": 437,
+        "cardCount": 438,
         "isPrimary": true,
         "block": "Alchemy 2022",
         "icon": "img/sets/hbg.svg",
         "commonCount": 143,
         "mythicCount": 36,
         "rareCount": 108,
-        "uncommonCount": 150
+        "uncommonCount": 151
     },
     "hho": {
         "code": "hho",
@@ -2621,13 +2621,13 @@
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 320,
+        "cardCount": 378,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
-        "commonCount": 79,
+        "commonCount": 135,
         "mythicCount": 35,
         "rareCount": 120,
-        "uncommonCount": 86
+        "uncommonCount": 88
     },
     "mor": {
         "code": "mor",
@@ -4988,12 +4988,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 876,
+        "cardCount": 877,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
         "mythicCount": 148,
-        "rareCount": 663,
+        "rareCount": 664,
         "uncommonCount": 20
     },
     "slp": {
