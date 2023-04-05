@@ -272,6 +272,12 @@ function rollSpecialCardRarity(
 	return pickedRarity;
 }
 
+function countMap<T>(map: Map<T, number>): number {
+	let acc = 0;
+	for (const v of map.values()) acc += v;
+	return acc;
+}
+
 function countBySlot(cardPool: SlotedCardPool) {
 	const counts: { [slot: string]: number } = {};
 	for (const slot in cardPool)
@@ -1323,6 +1329,9 @@ class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
 // 1 Non-battle double-faced card
 // 3–5 Uncommons (including double-faced cards, battle cards, and Multiverse Legends cards noted above)
 // 8–9 Commons
+//
+// "1–2 cards of rarity Rare or higher in every pack"
+// My intuition is that the possible additional rare is the multiverse legends card, and the battle/non-battle double-faced card/single face card share the garanteed rare slot.
 class MOMBoosterFactory extends BoosterFactory {
 	static readonly RareBattleChance = 0.25; // TODO: Check this rate
 
@@ -1375,20 +1384,40 @@ class MOMBoosterFactory extends BoosterFactory {
 			);
 			insertedCards.push(pickCard(this.multiverseLegend[mulRarity]));
 
-			const battleCardsCounts = countBySlot(this.battleCards);
-			const battleRarityRoll = random.real(0, 1);
-			let pickedRarity = "uncommon";
-			if (battleCardsCounts["mythic"] > 0 && battleRarityRoll < (1.0 / 8.0) * MOMBoosterFactory.RareBattleChance)
-				pickedRarity = "mythic";
-			else if (battleCardsCounts["rare"] > 0 && battleRarityRoll < MOMBoosterFactory.RareBattleChance)
-				pickedRarity = "rare";
-			insertedCards.push(pickCard(this.battleCards[pickedRarity], []));
+			let battleRarity = "uncommon";
+			let dfcRarity =
+				this.doubleFacedCards.common.size === 0 ||
+				(targets.uncommon > 0 && random.real(0, 1) <= targets.uncommon / (targets.common + targets.uncommon))
+					? "uncommon"
+					: "common";
 
-			const dfcRarity = rollSpecialCardRarity(
-				countBySlot(this.doubleFacedCards),
-				targets,
-				Object.assign({ minRarity: "common" }, this.options)
-			);
+			if (targets.rare > 0) {
+				const raresCount = countMap(this.cardPool.rare);
+				const battleRaresCount = countMap(this.battleCards.rare);
+				const dfcRaresCount = countMap(this.doubleFacedCards.rare);
+
+				const rareTypeRoll = random.real(0, raresCount + battleRaresCount + dfcRaresCount);
+
+				if (rareTypeRoll > raresCount) {
+					updatedTargets.rare = Math.max(0, updatedTargets.rare - 1);
+					if (rareTypeRoll <= raresCount + battleRaresCount) {
+						battleRarity =
+							this.options?.mythicPromotion &&
+							random.real(0, 1) < mythicRate &&
+							this.battleCards.mythic.size > 0
+								? "mythic"
+								: "rare";
+					} else {
+						dfcRarity =
+							this.options?.mythicPromotion &&
+							random.real(0, 1) < mythicRate &&
+							this.doubleFacedCards.mythic.size > 0
+								? "mythic"
+								: "rare";
+					}
+				}
+			}
+			insertedCards.push(pickCard(this.battleCards[battleRarity]));
 			insertedCards.push(pickCard(this.doubleFacedCards[dfcRarity]));
 
 			const booster = super.generateBooster(updatedTargets);
