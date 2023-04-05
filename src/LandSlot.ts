@@ -214,7 +214,7 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 			"7f2642cd-e3cc-4aab-8c00-4987284509b3", // Wind-Scarred Crag
 			"f1b753e2-6e53-4ed1-9be4-66f8eb005a11", // Thornwood Falls
 		],
-		5 / 12 // FIXME: This is arbitrary, we don't know the actual rate for now.
+		1 / 2
 	),
 };
 
