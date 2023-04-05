@@ -46,7 +46,7 @@ import { GridDraftState, isGridDraftState } from "./GridDraft.js";
 import { DraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
-import { ServerToClientEvents } from "./SocketType";
+import { LoaderOptions, ServerToClientEvents } from "./SocketType";
 import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
@@ -1282,27 +1282,22 @@ export class Session implements IIndexable {
 				"Unsufficient number of players",
 				"Minesweeper draft necessitates at least two players. Bots are not supported."
 			);
-		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		if (!this.useCustomCardList) {
 			return new SocketError(
 				"Error",
 				"Minesweeper draft is only available for cube drafting. Please select a custom card list."
 			);
 		}
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
-		this.emitMessage("Preparing Minesweeper draft!", "Your draft will start soon...", false, 0);
 		const boosters = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
 		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
 			this.drafting = false;
-			this.broadcastPreparationCancelation();
-			return new SocketAck(); // Error already emitted above.
+			return new SocketAck(boosters);
 		}
 
 		if (boosters.some((b) => b.length !== gridWidth * gridHeight)) {
 			this.drafting = false;
-			this.broadcastPreparationCancelation();
 			return new SocketError(
 				"Erroneous Pack Size",
 				"An error occured while generating the packs for your Minesweeper draft, please check your settings."
@@ -1393,22 +1388,28 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Traditional Draft Methods //////////////////////
-	async startDraft(): Promise<void> {
-		if (this.drafting) return;
-		if (this.randomizeSeatingOrder) this.randomizeSeating();
+	async startDraft(): Promise<SocketAck> {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.teamDraft && this.users.size !== 6) {
+			const verb = this.users.size < 6 ? "add" : "remove";
+			return new SocketError(
+				`Wrong player count`,
+				`Team draft requires exactly 6 players. Please ${verb} players or disable Team Draft under Settings. Bots are not supported!`
+			);
+		}
+		if (this.users.size === 0 || this.users.size + this.bots < 2)
+			return new SocketError(
+				`Not enough players`,
+				`Can't start draft: Not enough players (min. 2 including bots).`
+			);
 
-		this.emitMessage("Preparing draft!", "Your draft will start soon...", false, 0);
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
 		const boosters = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		// Determine bot type
 		const oracleIds = boosters.flat().map((card) => card.oracle_id);
@@ -1445,7 +1446,7 @@ export class Session implements IIndexable {
 		} catch (e) {
 			console.error("Exception raised while constructing the DraftState: ", e);
 			this.cleanDraftState();
-			return;
+			return new SocketError("Internal server error");
 		}
 
 		const log = this.initLogs("Draft", boosters);
@@ -1466,6 +1467,7 @@ export class Session implements IIndexable {
 		}
 
 		this.distributeBoosters();
+		return new SocketAck();
 	}
 
 	// Pass a booster to the next player at the table
@@ -2049,28 +2051,17 @@ export class Session implements IIndexable {
 		}
 	}
 
-	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): void {
-		this.emitMessage("Distributing sealed boosters...", "", false, 0);
-
+	distributeSealed(boostersPerPlayer: number, customBoosters: Array<string>): SocketAck {
 		const useCustomBoosters = customBoosters && customBoosters.some((s) => s !== "");
-		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer) {
-			// FIXME: We should propagate to ack.
-			this.emitError("Error", "Invalid 'customBoosters' parameter.");
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (useCustomBoosters && customBoosters.length !== boostersPerPlayer)
+			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
 		const boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			useCustomBoosters: useCustomBoosters,
 			boostersPerPlayer: boostersPerPlayer,
 			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
 			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
-		if (isMessageError(boosters)) {
-			// FIXME: We should propagate to ack.
-			this.emitError(boosters.title, boosters.text);
-			this.broadcastPreparationCancelation();
-			return;
-		}
+		if (isMessageError(boosters)) return new SocketAck(boosters);
 		const log = this.initLogs("Sealed", boosters);
 		log.customBoosters = customBoosters; // Override the session setting by the boosters provided to this function.
 
@@ -2099,6 +2090,7 @@ export class Session implements IIndexable {
 		}
 
 		logSession("Sealed", this);
+		return new SocketAck();
 	}
 
 	startTeamSealed(boostersPerTeam: number, customBoosters: Array<string>, rawTeams: UserID[][]): SocketAck {
@@ -2287,8 +2279,7 @@ export class Session implements IIndexable {
 					imageUrl: "/img/2JumpstartBoosters.webp",
 					title: "Here are your Jumpstart boosters!",
 					text: `You got '${boosters[0].name}' and '${boosters[1].name}'.`,
-					showConfirmButton: false,
-					timer: 2000,
+					showConfirmButton: true,
 				} as Message);
 			}
 			this.sendLogs();

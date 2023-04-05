@@ -38,10 +38,21 @@ export function pickCard(cardPool: CardPool, booster: Array<Card> = [], options:
 	const randomFunc = options.uniformAll ? getRandomCardFromCardPool : getRandomMapKey;
 	let cid = randomFunc(cardPool);
 	if (booster) {
-		let prevention_attempts = 0; // Fail safe-ish
-		while (booster.findIndex((card) => cid === card.id) !== -1 && prevention_attempts < cardPool.size) {
+		let prevention_attempts = 0;
+		while (booster.findIndex((card) => cid === card.id) !== -1 && prevention_attempts < 3) {
 			cid = randomFunc(cardPool);
 			++prevention_attempts;
+		}
+		// Still duplicated, don't rely on random chance anymore. Slow, but should be extremely rare (expect for pathological cases, like a cube with a single card.).
+		if (booster.findIndex((card) => cid === card.id) !== -1) {
+			const candidates = [...cardPool.keys()].filter(
+				(cid) => booster.findIndex((card) => cid === card.id) === -1
+			);
+			if (candidates.length > 0) {
+				const tmpMap = new Map();
+				for (const cid of candidates) tmpMap.set(cid, cardPool.get(cid) as number);
+				cid = randomFunc(tmpMap);
+			}
 		}
 	}
 	if (options?.withReplacement !== true) removeCardFromCardPool(cid, cardPool);

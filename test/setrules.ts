@@ -267,7 +267,7 @@ describe("Set Specific Booster Rules", function () {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", [set]);
 			clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 			const boosters = await collectBoosters();
 			for (let b of boosters) validationFunc(b);
 		});
@@ -277,7 +277,7 @@ describe("Set Specific Booster Rules", function () {
 			clients[ownerIdx].emit("ignoreCollections", true);
 			clients[ownerIdx].emit("setRestriction", []);
 			clients[ownerIdx].emit("setCustomBoosters", [set, set, set]);
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 			const boosters = await collectBoosters();
 			for (let b of boosters) validationFunc(b);
 		});
@@ -303,7 +303,7 @@ describe("Set Specific Booster Rules", function () {
 		clients[ownerIdx].emit("setRestriction", ["vow"]);
 		clients[ownerIdx].emit("setFoil", true);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
-		clients[ownerIdx].emit("startDraft");
+		clients[ownerIdx].emit("startDraft", ackNoError);
 		const boosters = await collectBoosters();
 		for (let b of boosters) validateColorBalance(b);
 	});
@@ -313,7 +313,7 @@ describe("Set Specific Booster Rules", function () {
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", []);
 		clients[ownerIdx].emit("setCustomBoosters", ["dom", "war", "dom"]);
-		clients[ownerIdx].emit("startDraft");
+		clients[ownerIdx].emit("startDraft", ackNoError);
 		const boosters = await collectBoosters();
 		for (let idx = 0; idx < boosters.length; ++idx)
 			if (Math.floor(idx / clients.length) === 1) validateWARBooster(boosters[idx]);
@@ -325,7 +325,7 @@ describe("Set Specific Booster Rules", function () {
 		clients[ownerIdx].emit("ignoreCollections", true);
 		clients[ownerIdx].emit("setRestriction", ["dom"]);
 		clients[ownerIdx].emit("setCustomBoosters", ["", "war", "dom"]);
-		clients[ownerIdx].emit("startDraft");
+		clients[ownerIdx].emit("startDraft", ackNoError);
 		const boosters = await collectBoosters();
 		for (let idx = 0; idx < boosters.length; ++idx)
 			if (Math.floor(idx / clients.length) === 1) validateWARBooster(boosters[idx]);

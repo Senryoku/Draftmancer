@@ -1,4 +1,4 @@
-import type { ClientToServerEvents, ServerToClientEvents } from "@/SocketType";
+import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { SessionID, UserID } from "@/IDTypes";
 import type { SetCode, IIndexable } from "@/Types";
 import {
@@ -1145,10 +1145,9 @@ export default defineComponent({
 				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
-					for (let c of cards) this.addToDeck(c);
+					this.addToDeck(cards);
 					this.draftingState = DraftState.Brewing;
-					// Hide waiting popup for sealed
-					if (Swal.isVisible()) Swal.close();
+					fireToast("success", "Cards received!");
 					this.pushNotification("Cards received!");
 				});
 			});
@@ -1231,6 +1230,27 @@ export default defineComponent({
 		playSound(key: keyof typeof Sounds) {
 			if (this.enableSound) Sounds[key].play();
 		},
+		showLoader(options: LoaderOptions) {
+			let { title } = options;
+			title = escapeHTML(title);
+			Alert.fire({
+				toast: true,
+				position: "top-end",
+				icon: "info",
+				title: title,
+				showConfirmButton: false,
+				didOpen: (toast) => {
+					// If another swal is fired right after this one, the callback may be called on the wrong one...
+					if (toast.innerText.includes(title)) {
+						Alert.showLoading();
+						toast.addEventListener("click", (e: Event) => {
+							e.preventDefault();
+							Swal.close();
+						});
+					}
+				},
+			});
+		},
 		// Chat Methods
 		sendChatMessage() {
 			if (!this.currentChatMessage || this.currentChatMessage == "") return;
@@ -1261,6 +1281,10 @@ export default defineComponent({
 				} else return false;
 			}
 
+			const ack = (response: SocketAck) => {
+				if (response.error) Alert.fire(response.error);
+			};
+
 			if (this.deck.length > 0) {
 				Alert.fire({
 					title: "Are you sure?",
@@ -1271,10 +1295,10 @@ export default defineComponent({
 					cancelButtonColor: ButtonColor.Safe,
 					confirmButtonText: "Launch draft!",
 				}).then((result) => {
-					if (result.value) this.socket.emit("startDraft");
+					if (result.value) this.socket.emit("startDraft", ack);
 				});
 			} else {
-				this.socket.emit("startDraft");
+				this.socket.emit("startDraft", ack);
 				return true;
 			}
 			return false;
@@ -2544,7 +2568,14 @@ export default defineComponent({
 		},
 		distributeSealed(boosterCount: number, customBoosters: string[]) {
 			if (this.userID !== this.sessionOwner) return;
-			this.socket.emit("distributeSealed", boosterCount, customBoosters);
+			this.showLoader({ title: "Distributing sealed boosters..." });
+			this.socket.timeout(10000).emit("distributeSealed", boosterCount, customBoosters, (err, response) => {
+				if (err) {
+					Alert.fire({ icon: "error", title: "Error contacting the server" });
+				} else {
+					if (response.error) Alert.fire(response.error);
+				}
+			});
 		},
 		startTeamSealed(boosterCount: number, customBoosters: string[], teams: UserID[][]) {
 			if (this.userID !== this.sessionOwner) return;

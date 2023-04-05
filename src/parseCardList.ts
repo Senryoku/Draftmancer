@@ -96,9 +96,14 @@ export function parseLine(
 }
 
 // options:
+//   - name: string, specify name of returned card list.
 //   - fallbackToCardName: boolean
-//   - ignoreUnknownCards: boolean, this wil return the list of unknown cards by mutating the options object, adding a 'unknownCards' property.
-export function parseCardList(txtcardlist: string, options: Options): CustomCardList | SocketError {
+//   - ignoreUnknownCards: boolean, If true, don't error on unknown cards, report the unknown card by mutating the 'outIgnoredCards' parameter and continue.
+export function parseCardList(
+	txtcardlist: string,
+	options: { name?: string; fallbackToCardName?: boolean; ignoreUnknownCards?: boolean },
+	outIgnoredCards?: string[]
+): CustomCardList | SocketError {
 	try {
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		const cardList: CustomCardList = {
@@ -252,10 +257,8 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 							const result = parseLine(lines[lineIdx], parseLineOptions);
 							if (isSocketError(result)) {
 								// Just ignore the missing card and add it to the list of errors
-								if (options?.ignoreUnknownCards) {
-									if (!options.unknownCards) options.unknownCards = [];
-									options.unknownCards.push(lines[lineIdx]);
-								} else return result;
+								if (options?.ignoreUnknownCards) outIgnoredCards?.push(lines[lineIdx]);
+								else return result;
 							} else {
 								const { count, cardID, foil } = result;
 								// Merge duplicate declarations
@@ -310,10 +313,8 @@ export function parseCardList(txtcardlist: string, options: Options): CustomCard
 					const result = parseLine(line, options);
 					if (isSocketError(result)) {
 						// Just ignore the missing card and add it to the list of errors
-						if (options?.ignoreUnknownCards) {
-							if (!options.unknownCards) options.unknownCards = [];
-							options.unknownCards.push(line);
-						} else return result; // Return error from parseLine
+						if (options?.ignoreUnknownCards) outIgnoredCards?.push(line);
+						else return result; // Return error from parseLine
 					} else {
 						const { count, cardID, foil } = result;
 						// Merge duplicate declarations

@@ -205,7 +205,7 @@ describe("Draft Logs", function () {
 					});
 				})();
 			}
-			clients[ownerIdx].emit("startDraft");
+			clients[ownerIdx].emit("startDraft", ackNoError);
 		});
 	}
 	const endDraft = (validate: (clientIdx: number, draftLog: DraftLog) => void) => (done: Mocha.Done) => {

@@ -193,7 +193,7 @@ export const SpecialLandSlots: { [set: string]: SpecialLandSlot } = {
 			"cf9b1d47-11ef-4f06-94b2-94b6727de3bd", // Wind-Scarred Crag
 			"d5af3569-3e66-4a50-aca0-c17c799dca28", // Thornwood Falls
 		],
-		5 / 12 // FIXME: This is arbitrary, we don't know the actual rate for now.
+		1 / 2
 	),
 	// Double Masters 2022: Always a Cryptic Spires
 	"2x2": new SpecialLandSlot("2x2", ["309a6684-ecb3-491c-899a-3aa15a51130b"], 1, [
