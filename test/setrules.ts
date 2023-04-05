@@ -182,6 +182,26 @@ describe("Set Specific Booster Rules", function () {
 		expect(sis, "Exactly one 'Shadow of the Past' card").to.equal(1);
 	};
 
+	const validateMOMBooster = function (booster: UniqueCard[]) {
+		expect(booster.map((c) => c.set).every((s) => s === "mom" || s === "mul")).to.be.true;
+		const mul = booster.reduce((acc, val) => {
+			return acc + (val.set === "mul" ? 1 : 0);
+		}, 0);
+		expect(mul, "Exactly one 'Multiverse Legend' card").to.equal(1);
+		expect(
+			booster.reduce((acc, val) => {
+				return acc + (val.type.includes("Battle") ? 1 : 0);
+			}, 0),
+			"Exactly one 'Battle' card"
+		).to.equal(1);
+		expect(
+			booster.reduce((acc, val) => {
+				return acc + (!!val.back && !val.type.includes("Battle") ? 1 : 0);
+			}, 0),
+			"Exactly one non-Battle transform card"
+		).to.equal(1);
+	};
+
 	beforeEach(function (done) {
 		disableLogs();
 		done();
@@ -275,6 +295,7 @@ describe("Set Specific Booster Rules", function () {
 	testSet("dmr", validateDMRBooster, "one retro frame card");
 	testSet("vow", validateColorBalance, "at least one common of each color.");
 	testSet("sir", validateSIRBooster, "exactly one 'sis' (Shadow of the Past) card.");
+	testSet("mom", validateMOMBooster, "the correct MOM collation.");
 
 	it(`VOW boosters should have at least one common of each color, even with foil on.`, async function () {
 		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);

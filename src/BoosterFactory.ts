@@ -272,6 +272,12 @@ function rollSpecialCardRarity(
 	return pickedRarity;
 }
 
+function countMap<T>(map: Map<T, number>): number {
+	let acc = 0;
+	for (const v of map.values()) acc += v;
+	return acc;
+}
+
 function countBySlot(cardPool: SlotedCardPool) {
 	const counts: { [slot: string]: number } = {};
 	for (const slot in cardPool)
@@ -1316,6 +1322,114 @@ class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
 	}
 }
 
+// March of the Machine
+// 1 Rare or mythic rare
+// 1 Multiverse Legends card
+// 1 Battle card
+// 1 Non-battle double-faced card
+// 3–5 Uncommons (including double-faced cards, battle cards, and Multiverse Legends cards noted above)
+// 8–9 Commons
+//
+// "1–2 cards of rarity Rare or higher in every pack"
+// My intuition is that the possible additional rare is the multiverse legends card, and the battle/non-battle double-faced card/single face card share the garanteed rare slot.
+class MOMBoosterFactory extends BoosterFactory {
+	static readonly RareBattleChance = 0.25; // TODO: Check this rate
+
+	multiverseLegend: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	battleCards: SlotedCardPool = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
+	doubleFacedCards: SlotedCardPool = { common: new Map(), uncommon: new Map(), rare: new Map(), mythic: new Map() };
+
+	constructor(cardPool: SlotedCardPool, landSlot: BasicLandSlot | null, options: Options) {
+		const [battleCards, filteredCardPool] = filterCardPool(
+			cardPool,
+			(cid: CardID) => getCard(cid).type.includes("Battle") // Note: We could use the layout, but it's not always correctly set on scryfall yet
+		);
+		// TODO: Check if this is correct
+		const [doubleFacedCards, refilteredCardPool] = filterCardPool(
+			filteredCardPool,
+			(cid: CardID) => !!getCard(cid).back
+		);
+		super(refilteredCardPool, landSlot, options);
+
+		if (options.session && !options.session.unrestrictedCardPool()) {
+			const MULCards: CardPool = options.session.restrictedCollection(["mul"]);
+			for (const cid of MULCards.keys())
+				this.multiverseLegend[getCard(cid).rarity].set(
+					cid,
+					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, MULCards.get(cid) as number)
+				);
+		} else {
+			for (const cid of CardsBySet["mul"])
+				this.multiverseLegend[getCard(cid).rarity].set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+		}
+
+		this.battleCards = battleCards;
+		this.doubleFacedCards = doubleFacedCards;
+	}
+
+	generateBooster(targets: Targets) {
+		if (isEmpty(this.multiverseLegend) || isEmpty(this.battleCards) || isEmpty(this.doubleFacedCards)) {
+			return super.generateBooster(targets);
+		} else {
+			const updatedTargets = Object.assign({}, targets);
+			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
+
+			const insertedCards: UniqueCard[] = [];
+
+			const mulRarity = rollSpecialCardRarity(
+				countBySlot(this.multiverseLegend),
+				targets,
+				Object.assign({ minRarity: "uncommon" }, this.options)
+			);
+			insertedCards.push(pickCard(this.multiverseLegend[mulRarity]));
+
+			let battleRarity = "uncommon";
+			let dfcRarity =
+				this.doubleFacedCards.common.size === 0 ||
+				(targets.uncommon > 0 && random.real(0, 1) <= targets.uncommon / (targets.common + targets.uncommon))
+					? "uncommon"
+					: "common";
+
+			if (targets.rare > 0) {
+				const raresCount = countMap(this.cardPool.rare);
+				const battleRaresCount = countMap(this.battleCards.rare);
+				const dfcRaresCount = countMap(this.doubleFacedCards.rare);
+
+				const rareTypeRoll = random.real(0, raresCount + battleRaresCount + dfcRaresCount);
+
+				if (rareTypeRoll > raresCount) {
+					updatedTargets.rare = Math.max(0, updatedTargets.rare - 1);
+					if (rareTypeRoll <= raresCount + battleRaresCount) {
+						battleRarity =
+							this.options?.mythicPromotion &&
+							random.real(0, 1) < mythicRate &&
+							this.battleCards.mythic.size > 0
+								? "mythic"
+								: "rare";
+					} else {
+						dfcRarity =
+							this.options?.mythicPromotion &&
+							random.real(0, 1) < mythicRate &&
+							this.doubleFacedCards.mythic.size > 0
+								? "mythic"
+								: "rare";
+					}
+				} else {
+					updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
+				}
+			}
+			insertedCards.push(pickCard(this.battleCards[battleRarity]));
+			insertedCards.push(pickCard(this.doubleFacedCards[dfcRarity]));
+
+			const booster = super.generateBooster(updatedTargets);
+			if (isMessageError(booster)) return booster;
+			// Insert the Retro card right after the rare.
+			booster.splice(updatedTargets["rare"], 0, ...insertedCards);
+			return booster;
+		}
+	}
+}
+
 // Set specific rules.
 // Neither DOM, WAR or ZNR have specific rules for commons, so we don't have to worry about color balancing (colorBalancedSlot)
 export const SetSpecificFactories: {
@@ -1345,6 +1459,7 @@ export const SetSpecificFactories: {
 	sir1: SIRBoosterFactoryBonusSheet1,
 	sir2: SIRBoosterFactoryBonusSheet2,
 	sir3: SIRBoosterFactoryBonusSheet3,
+	mom: MOMBoosterFactory,
 };
 
 /*

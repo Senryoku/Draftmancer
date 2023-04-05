@@ -1,6 +1,28 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 5, 2023</em>
+			<p>
+				<img src="img/sets/mom.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
+				<strong>March of the Machine</strong> preliminary support.
+			</p>
+			<p>
+				As with all new sets, card data and collation will be refined in the coming days as new information is
+				revealed.
+			</p>
+			<p>
+				Quick reminder that maintaining this application and keeping up with WotC release schedule requires
+				time. If you use MTGADraft regularly, please consider donating a few bucks via
+				<a href="https://github.com/sponsors/Senryoku" target="_blank"
+					><font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> Github Sponsor</a
+				>
+				or
+				<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank"
+					><font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal</a
+				>.<br />Thank you! — Sen
+			</p>
+		</div>
+		<div class="news">
 			<em>March 27, 2023</em>
 			<ul>
 				<li>
@@ -22,22 +44,6 @@
 					>!
 				</li>
 			</ul>
-		</div>
-		<div class="news">
-			<em>March 17, 2023</em>
-			<p>
-				<img src="img/sets/sir.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
-				Shadows over Innistrad Remastered preliminary support.
-			</p>
-		</div>
-		<div class="news">
-			<em>March 13, 2023</em>
-			<p>
-				Grid Draft now supports a 3 players variant, as described on the
-				<a href="https://luckypaper.co/resources/formats/grid-draft/" target="_blank" rel="noopener nofollow"
-					>Lucky Paper website</a
-				>.
-			</p>
 		</div>
 	</div>
 </template>

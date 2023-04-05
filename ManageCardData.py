@@ -199,16 +199,16 @@ def append_set_cards(allcards, results):
         try:
             idx = next(i for i, card in enumerate(allcards) if c["id"] == card["id"])
             allcards[idx] = c
-            print("Updated: {}".format(c["name"]))
+            print(f"Updated: {c['name']}")
         except StopIteration:
             allcards.append(c)
-            print("Added: {}".format(c["name"]))
+            print(f"Added: {c['name']}")
 
 
 # Manually fetch up-to-date data for a specific set (really unoptimized)
 if FetchSet:
     print("Fetching cards from {}...".format(SetToFetch))
-    setcards = requests.get(json.loads(requests.get("https://api.scryfall.com/sets/{}".format(SetToFetch)).content)["search_uri"]).json()
+    setcards = requests.get(json.loads(requests.get(f"https://api.scryfall.com/sets/{SetToFetch}").content)["search_uri"]).json()
     allcards = []
     with open(BulkDataPath, 'r', encoding="utf8") as file:
         allcards = json.load(file)
@@ -389,16 +389,22 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         # Handle back side of double sided cards
         if c['layout'] == 'transform' or c['layout'] == 'modal_dfc':
-            if 'back' not in Translations[key]:
-                Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}}
-                Translations[key]['back']['type'], Translations[key]['back']['subtypes'] = handleTypeLine(c['card_faces'][1]['type_line'])
-            Translations[key]['back']['printed_names'][c['lang']
-                                                       ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
-            if 'image_uris' not in c['card_faces'][1]:  # Temp workaround while STX data is still incomplete
-                print(f"/!\ {c['name']}: Missing back side image.")
+            if 'card_faces' not in c:
+                print(f"/!\ {c['name']}: Missing card faces with layout {c['layout']}.")
             else:
-                Translations[key]['back']['image_uris'][c['lang']
-                                                        ] = c['card_faces'][1]['image_uris']['border_crop']
+                if 'back' not in Translations[key]:
+                    Translations[key]['back'] = {'name': c['card_faces'][1]['name'], 'printed_names': {}, 'image_uris': {}}
+                    if ('type_line' not in c['card_faces'][1]):
+                        print(f"/!\ {c['name']}: Missing back side type line.")
+                    else:
+                        Translations[key]['back']['type'], Translations[key]['back']['subtypes'] = handleTypeLine(c['card_faces'][1]['type_line'])
+                Translations[key]['back']['printed_names'][c['lang']
+                                                           ] = c['card_faces'][1]['printed_name'] if 'printed_name' in c['card_faces'][1] else c['card_faces'][1]['name']
+                if 'image_uris' not in c['card_faces'][1]:  # Temp workaround while STX data is still incomplete
+                    print(f"/!\ {c['name']}: Missing back side image.")
+                else:
+                    Translations[key]['back']['image_uris'][c['lang']
+                                                            ] = c['card_faces'][1]['image_uris']['border_crop']
 
         if c['lang'] == 'en':
             if c['name'] in cardsByName:
@@ -410,6 +416,9 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
             if 'mana_cost' not in selection and "card_faces" in c:
                 selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
+            if 'mana_cost' not in selection:
+                print(f"/!\ {c['name']}: Missing mana cost.")
+                selection['mana_cost'] = "{0}"
             selection['type'], selection['subtypes'] = handleTypeLine(c['type_line'].split(" //")[0])
             if selection['name'] in CardRatings:
                 selection['rating'] = CardRatings[selection['name']]
@@ -460,7 +469,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                     selection['layout'] = 'split-left'
                 elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
                     selection['layout'] = 'split'
-            if c['layout'] == "flip":
+            elif c['layout'] == "flip":
                 selection['layout'] = 'flip'
 
             cards[c['id']].update(selection)
@@ -830,6 +839,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "mom", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

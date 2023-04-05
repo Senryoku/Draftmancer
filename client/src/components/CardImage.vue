@@ -24,7 +24,11 @@
 				<font-awesome-icon icon="fa-solid fa-sync" class="vertical-flip-icon" size="lg"></font-awesome-icon>
 			</font-awesome-layers>
 		</div>
-		<div v-if="card.layout === 'split'" class="split-button">
+		<div
+			v-if="card.layout === 'split' || card.type.includes('Battle')"
+			class="split-button"
+			:class="{ 'battle-button': card.type.includes('Battle') }"
+		>
 			<font-awesome-layers>
 				<font-awesome-icon
 					icon="fa-solid fa-sync"
@@ -206,6 +210,10 @@ img {
 	-ms-transform: translateZ(0); /* IE 9 */
 	-webkit-transform: translateZ(0); /* Chrome, Safari, Opera */
 	transform: translateZ(0);
+}
+
+.battle-button {
+	right: 1.8em;
 }
 
 .booster .flip-button,
