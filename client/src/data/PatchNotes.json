@@ -1,5 +1,9 @@
 [
 	{
+		"date": "05/04/2023",
+		"notes": ["March of the Machine preliminary support"]
+	},
+	{
 		"date": "31/03/2023",
 		"notes": ["Bug fixes, most notably regarding cards drag & drop."]
 	},

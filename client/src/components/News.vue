@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>April, 2023</em>
+			<em>April 5, 2023</em>
 			<p>
 				<img src="img/sets/mom.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
 				<strong>March of the Machine</strong> preliminary support.
