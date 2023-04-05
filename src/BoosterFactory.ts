@@ -1372,7 +1372,6 @@ class MOMBoosterFactory extends BoosterFactory {
 			return super.generateBooster(targets);
 		} else {
 			const updatedTargets = Object.assign({}, targets);
-			updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
 			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
 
 			const insertedCards: UniqueCard[] = [];
@@ -1415,6 +1414,8 @@ class MOMBoosterFactory extends BoosterFactory {
 								? "mythic"
 								: "rare";
 					}
+				} else {
+					updatedTargets.uncommon = Math.max(0, updatedTargets.uncommon - 1);
 				}
 			}
 			insertedCards.push(pickCard(this.battleCards[battleRarity]));

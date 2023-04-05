@@ -1,4 +1,5 @@
 "use strict";
+import { v1 as uuidv1 } from "uuid";
 import { before, after, beforeEach, afterEach, describe, it } from "mocha";
 import fs from "fs";
 import chai from "chai";
@@ -255,7 +256,7 @@ describe("Sets content", function () {
 		bro: { common: 101, uncommon: 80, rare: 63, mythic: 23 },
 		dmr: { common: 101 + 24, uncommon: 80 + 36, rare: 60 + 60, mythic: 20 + 20 }, // Includes retro frame cards
 		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
-		sir: { common: 94, uncommon: 93, rare: 66, mythic: 23 }, // FIXME: Check values
+		sir: { common: 95, uncommon: 93, rare: 67, mythic: 24 },
 	};
 
 	beforeEach(function (done) {
@@ -340,9 +341,9 @@ describe("Single Draft (Two Players)", function () {
 		done();
 	});
 
-	function connect(sid = "sessionID") {
+	function connect(sid?: string) {
 		it("2 clients with different userIDs should be connected.", function (done) {
-			sessionID = sid;
+			sessionID = sid ?? uuidv1();
 			clients = makeClients(
 				[
 					{
