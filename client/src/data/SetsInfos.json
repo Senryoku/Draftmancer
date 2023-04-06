@@ -2611,23 +2611,24 @@
     "moc": {
         "code": "moc",
         "fullName": "March of the Machine Commander",
-        "cardCount": 86,
+        "cardCount": 324,
         "isPrimary": false,
         "icon": "img/sets/moc.svg",
-        "commonCount": 15,
-        "mythicCount": 28,
-        "rareCount": 43
+        "commonCount": 44,
+        "mythicCount": 45,
+        "rareCount": 166,
+        "uncommonCount": 69
     },
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 378,
+        "cardCount": 383,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
-        "commonCount": 135,
-        "mythicCount": 35,
-        "rareCount": 120,
-        "uncommonCount": 88
+        "commonCount": 136,
+        "mythicCount": 36,
+        "rareCount": 121,
+        "uncommonCount": 90
     },
     "mor": {
         "code": "mor",
@@ -2681,12 +2682,12 @@
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 69,
+        "cardCount": 158,
         "isPrimary": false,
         "icon": "img/sets/mul.svg",
-        "mythicCount": 22,
-        "rareCount": 35,
-        "uncommonCount": 12
+        "mythicCount": 40,
+        "rareCount": 73,
+        "uncommonCount": 45
     },
     "ncc": {
         "code": "ncc",
