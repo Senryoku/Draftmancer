@@ -1353,14 +1353,20 @@ class MOMBoosterFactory extends BoosterFactory {
 
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const MULCards: CardPool = options.session.restrictedCollection(["mul"]);
-			for (const cid of MULCards.keys())
-				this.multiverseLegend[getCard(cid).rarity].set(
-					cid,
-					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, MULCards.get(cid) as number)
-				);
+			for (const cid of MULCards.keys()) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= 65)
+					this.multiverseLegend[card.rarity].set(
+						cid,
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, MULCards.get(cid) as number)
+					);
+			}
 		} else {
-			for (const cid of CardsBySet["mul"])
-				this.multiverseLegend[getCard(cid).rarity].set(cid, options.maxDuplicates?.[getCard(cid).rarity] ?? 99);
+			for (const cid of CardsBySet["mul"]) {
+				const card = getCard(cid);
+				if (parseInt(card.collector_number) <= 65)
+					this.multiverseLegend[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+			}
 		}
 
 		this.battleCards = battleCards;
