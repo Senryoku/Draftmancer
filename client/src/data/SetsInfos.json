@@ -2611,13 +2611,13 @@
     "moc": {
         "code": "moc",
         "fullName": "March of the Machine Commander",
-        "cardCount": 324,
+        "cardCount": 450,
         "isPrimary": false,
         "icon": "img/sets/moc.svg",
-        "commonCount": 44,
-        "mythicCount": 45,
-        "rareCount": 166,
-        "uncommonCount": 69
+        "commonCount": 94,
+        "mythicCount": 49,
+        "rareCount": 217,
+        "uncommonCount": 90
     },
     "mom": {
         "code": "mom",
@@ -2682,11 +2682,11 @@
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 158,
+        "cardCount": 159,
         "isPrimary": false,
         "icon": "img/sets/mul.svg",
         "mythicCount": 40,
-        "rareCount": 73,
+        "rareCount": 74,
         "uncommonCount": 45
     },
     "ncc": {
@@ -3911,14 +3911,14 @@
     "plist": {
         "code": "plist",
         "fullName": "The List",
-        "cardCount": 1014,
+        "cardCount": 1089,
         "isPrimary": true,
         "icon": "img/sets/plist.svg",
-        "commonCount": 131,
-        "mythicCount": 134,
-        "rareCount": 452,
+        "commonCount": 139,
+        "mythicCount": 144,
+        "rareCount": 498,
         "specialCount": 4,
-        "uncommonCount": 293
+        "uncommonCount": 304
     },
     "plrw": {
         "code": "plrw",
