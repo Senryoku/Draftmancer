@@ -1,9 +1,10 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
 import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
-import { CustomCardList } from "./CustomCardList.js";
-import { escapeHTML, Options } from "./utils.js";
+import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
+import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
+import { isAny, isArrayOf, isBoolean, isInteger, isNumber, isRecord, isString, isUnknown } from "./TypeChecks.js";
 
 const lineRegex = /^(?:(\d+)\s+)?([^(\v\n]+)??(?:\s\((\w+)\)(?:\s+([^+\s]+))?)?(?:\s+\+?(F))?$/;
 
@@ -95,6 +96,300 @@ export function parseLine(
 	});
 }
 
+function findNthLine(str: string, n: number): number {
+	let index = 0;
+	for (let i = 0; i < n - 1; i++) {
+		index = str.indexOf("\n", index + 1);
+		if (index === -1) return -1;
+	}
+	return index + 1;
+}
+
+// Find 'closing' (e.g. ')', ']', '}'...) character in str matching the 'opening' character (e.g. '(', '[', '{'...) found at str[start] and returns its index.
+// Returns -1 if not found or if the string doesn't start with the opening character.
+function findMatching(str: string, opening: string, closing: string, start: number = 0): number {
+	let index = start;
+	if (str[index] !== opening) return -1;
+	let opened = 1;
+	while (index < str.length && opened > 0) {
+		++index;
+		if (str[index] === opening) ++opened;
+		else if (str[index] === closing) --opened;
+	}
+	if (opened !== 0) return -1;
+	return index;
+}
+
+function jsonParsingErrorMessage(e: any, jsonStr: string): string {
+	let msg = `Error parsing json: ${e.message}.`;
+	let position = e.message.match(/at position (\d+)/);
+	if (position) {
+		position = parseInt(position[1]);
+		msg += `<pre>${escapeHTML(
+			jsonStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
+		)}<span style="color: red; text-decoration: underline red;">${escapeHTML(jsonStr[position])}</span>${escapeHTML(
+			jsonStr.slice(Math.min(position + 1, jsonStr.length), Math.min(position + 50, jsonStr.length))
+		)}</pre>`;
+	}
+	return msg;
+}
+
+function parseSettings(
+	lines: string[],
+	startIdx: number,
+	txtcardlist: string,
+	customCardList: CustomCardList
+): SocketError | { advance: number; settings: CCLSettings } {
+	let lineIdx = startIdx;
+	if (lines.length <= lineIdx)
+		return ackError({
+			title: `[Settings]`,
+			text: `Expected a settings object, got end-of-file.`,
+		});
+	if (lines[lineIdx][0] !== "{") {
+		return ackError({
+			title: `[Settings]`,
+			text: `Settings section must be a JSON Object. Line ${lineIdx + 1}: Expected '{', got '${
+				lines[lineIdx + 1]
+			}'.`,
+		});
+	}
+
+	let index = findNthLine(txtcardlist, lineIdx);
+	while (txtcardlist[index] !== "{") ++index;
+	const start = index;
+	const end = findMatching(txtcardlist, "{", "}", start);
+	if (end === -1)
+		return ackError({
+			title: `[Settings]`,
+			text: `Expected '}', got end-of-file.`,
+		});
+	let parsedSettings = {};
+	const settingsStr = txtcardlist.substring(start, end + 1);
+	try {
+		parsedSettings = JSON.parse(settingsStr);
+	} catch (e: any) {
+		return ackError({
+			title: `[Settings]`,
+			html: jsonParsingErrorMessage(e, settingsStr),
+		});
+	}
+	const settings: CCLSettings = {};
+
+	if ("layouts" in parsedSettings) {
+		const layouts: Record<string, PackLayout> = {};
+
+		if (!isRecord(isString, isRecord(isString, isUnknown))(parsedSettings.layouts)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'layouts' must be an object.`,
+			});
+		}
+		for (const [key, value] of Object.entries(parsedSettings.layouts)) {
+			if (!("weight" in value)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `Layout '${key}'  must have a 'weight' property.`,
+				});
+			}
+			if (!isInteger(value.weight)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'weight' must be an integer.`,
+				});
+			}
+			if (!("slots" in value)) {
+				return ackError({
+					title: `[Settings]`,
+					text: `Layout '${key}' must have a 'slots' property.`,
+				});
+			}
+			if (!isRecord(isString, isInteger)(value["slots"])) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'slots' must be a Record<string, number>.`,
+				});
+			}
+			layouts[key] = {
+				weight: value.weight,
+				slots: value.slots,
+			};
+		}
+
+		customCardList.layouts = layouts;
+	}
+
+	if ("withReplacement" in parsedSettings) {
+		if (!isBoolean(parsedSettings.withReplacement)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'withReplacement' must be a boolean.`,
+			});
+		}
+		settings.withReplacement = parsedSettings.withReplacement;
+	}
+
+	if ("predeterminedLayouts" in parsedSettings) {
+		if (isArrayOf(isString)(parsedSettings.predeterminedLayouts)) {
+			settings.predeterminedLayouts = parsedSettings.predeterminedLayouts.map((name) => {
+				return [{ name: name, weight: 1 }];
+			});
+		} else if (isArrayOf(isArrayOf(isString))(parsedSettings.predeterminedLayouts)) {
+			if (!customCardList.layouts) {
+				return ackError({
+					title: `[Settings]`,
+					text: `'layouts' must be declared before being referenced in 'predeterminedLayouts'.`,
+				});
+			}
+			settings.predeterminedLayouts = [];
+			for (const list of parsedSettings.predeterminedLayouts) {
+				let layouts = [];
+				for (const name of list) {
+					if (!(name in customCardList.layouts))
+						return ackError({
+							title: `[Settings]`,
+							text: `Layout '${name}' must be declared before being referenced in 'predeterminedLayouts'.`,
+						});
+					layouts.push({ name: name, weight: customCardList.layouts[name].weight });
+				}
+				settings.predeterminedLayouts.push(layouts);
+			}
+		} else if (isArrayOf(isRecord(isString, isInteger))(parsedSettings.predeterminedLayouts)) {
+			settings.predeterminedLayouts = [];
+			for (const list of parsedSettings.predeterminedLayouts) {
+				let layouts = [];
+				for (const [name, weight] of Object.entries(list)) layouts.push({ name: name, weight: weight });
+				settings.predeterminedLayouts.push(layouts);
+			}
+		} else {
+			return ackError({
+				title: `[Settings]`,
+				text: `'predeterminedLayouts' must be an string[] | string[][] | Record<string, number>[], .`,
+			});
+		}
+	}
+
+	if ("layoutWithReplacement" in parsedSettings) {
+		if (!isBoolean(parsedSettings.layoutWithReplacement)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'layoutWithReplacement' must be a boolean.`,
+			});
+		}
+		settings.layoutWithReplacement = parsedSettings.layoutWithReplacement;
+	}
+
+	if (settings.predeterminedLayouts) {
+		if (!customCardList.layouts) {
+			return ackError({
+				title: `[Settings]`,
+				text: `Layouts must be declared before setting 'predeterminedLayouts'.`,
+			});
+		}
+		for (const list of settings.predeterminedLayouts) {
+			for (const layout of list) {
+				if (!(layout.name in customCardList.layouts)) {
+					return ackError({
+						title: `[Settings]`,
+						text: `Layout '${layout.name}' in 'predeterminedLayouts' has not been declared.`,
+					});
+				}
+			}
+		}
+	}
+
+	return {
+		advance: (settingsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		settings: settings,
+	};
+}
+
+function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string) {
+	let lineIdx = startIdx;
+	if (lines.length <= lineIdx)
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Expected a list of custom cards, got end-of-file.`,
+		});
+	// Custom cards must be a JSON array
+	if (lines[lineIdx][0] !== "[") {
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
+				lines[lineIdx + 1]
+			}'.`,
+		});
+	}
+	// Search for the section (matching closing bracket)
+	let index = findNthLine(txtcardlist, lineIdx);
+	while (txtcardlist[index] !== "[") ++index;
+	const start = index;
+	const end = findMatching(txtcardlist, "[", "]", start);
+	if (end === -1)
+		return ackError({
+			title: `[CustomCards]`,
+			text: `Expected ']', got end-of-file.`,
+		});
+	let parsedCustomCards = [];
+	const customCardsStr = txtcardlist.substring(start, end + 1);
+	try {
+		parsedCustomCards = JSON.parse(customCardsStr);
+	} catch (e: any) {
+		return ackError({
+			title: `[CustomCards]`,
+			html: jsonParsingErrorMessage(e, customCardsStr),
+		});
+	}
+
+	const customCards: Card[] = [];
+	for (const c of parsedCustomCards) {
+		const cardOrError = validateCustomCard(c);
+		if (isSocketError(cardOrError)) return cardOrError;
+		customCards.push(cardOrError);
+	}
+	return {
+		advance: (customCardsStr.match(/\r?\n/g)?.length ?? 0) + 1, // Skip this section's lines
+		customCards: customCards,
+	};
+}
+
+function parsePackLayoutsDeprecated(
+	lines: string[],
+	startIdx: number
+): { advance: number; layouts: Record<string, PackLayout> } | SocketError {
+	const layouts: Record<string, PackLayout> = {};
+	let lineIdx = startIdx;
+	while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
+		const match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
+		if (!match) {
+			return ackError({
+				title: `Parsing Error`,
+				text: `Expected layout declaration (' - LayoutName (Weight)'), got '${lines[lineIdx]}' (line ${
+					lineIdx + 1
+				}).`,
+			});
+		}
+		const layoutName = match[1];
+		const layoutWeight = parseInt(match[2]);
+		layouts[layoutName] = { weight: layoutWeight, slots: {} };
+		++lineIdx;
+		while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
+			const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
+			if (!slotMatch) {
+				return ackError({
+					title: `Parsing Error`,
+					text: `Expected slot specification (' CardCount SlotName'), got '${lines[lineIdx]}' (line ${
+						lineIdx + 1
+					}).`,
+				});
+			}
+			layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
+			++lineIdx;
+		}
+	}
+	return { advance: lineIdx - startIdx, layouts };
+}
+
 // options:
 //   - name: string, specify name of returned card list.
 //   - fallbackToCardName: boolean
@@ -105,89 +400,17 @@ export function parseCardList(
 	outIgnoredCards?: string[]
 ): CustomCardList | SocketError {
 	try {
+		// FIXME: Doesn't handle MacOS line endings (\r). Note that we can't remove empty lines at this stage as other functions rely on the line index matching the original text.
 		const lines = txtcardlist.split(/\r?\n/).map((s) => s.trim());
 		const cardList: CustomCardList = {
 			customCards: null,
 			layouts: false,
 			slots: {},
 		};
-		// Custom slots
 		let lineIdx = 0;
 		while (lines[lineIdx] === "") ++lineIdx; // Skip heading empty lines
+		// List has to start with a header if it has custom slots
 		if (lines[lineIdx][0] === "[") {
-			// Detect Custom Card section (must be the first section of the file.)
-			if (lines[lineIdx] === "[CustomCards]") {
-				if (lines.length - lineIdx < 2)
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Expected a list of custom cards, got end-of-file.`,
-					});
-				// Custom cards must be a JSON array
-				if (lines[lineIdx + 1][0] !== "[") {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Custom cards section must be a JSON Array. Line ${lineIdx + 1}: Expected '[', got '${
-							lines[lineIdx + 1]
-						}'.`,
-					});
-				}
-				// Search for the section (matching closing bracket)
-				let opened = 1;
-				let index = "[CustomCards]".length + 1;
-				while (txtcardlist[index] !== "[") ++index;
-				const start = index;
-				++index;
-				while (index < txtcardlist.length && opened > 0) {
-					if (txtcardlist[index] === "[") ++opened;
-					else if (txtcardlist[index] === "]") --opened;
-					++index;
-				}
-				if (opened !== 0) {
-					return ackError({
-						title: `[CustomCards]`,
-						text: `Line ${index}: Expected ']', got end-of-file.`,
-					});
-				}
-				let customCards = [];
-				const customCardsStr = txtcardlist.substring(start, index);
-				try {
-					customCards = JSON.parse(customCardsStr);
-				} catch (e: any) {
-					let msg = `Error parsing custom cards: ${e.message}.`;
-					let position = e.message.match(/at position (\d+)/);
-					if (position) {
-						position = parseInt(position[1]);
-						msg += `<pre>${escapeHTML(
-							customCardsStr.slice(Math.max(0, position - 50), Math.max(0, position - 1))
-						)}<span style="color: red; text-decoration: underline red;">${escapeHTML(
-							customCardsStr[position]
-						)}</span>${escapeHTML(
-							customCardsStr.slice(
-								Math.min(position + 1, customCardsStr.length),
-								Math.min(position + 50, customCardsStr.length)
-							)
-						)}</pre>`;
-					}
-					return ackError({
-						title: `[CustomCards]`,
-						html: msg,
-					});
-				}
-				cardList.customCards = {};
-				for (const c of customCards) {
-					const cardOrError = validateCustomCard(c);
-					if (isSocketError(cardOrError)) return cardOrError;
-					const customCard = cardOrError;
-					if (customCard.name in cardList.customCards)
-						return ackError({
-							title: `[CustomCards]`,
-							text: `Duplicate card '${customCard.name}'.`,
-						});
-					cardList.customCards[customCard.name] = customCard;
-				}
-				lineIdx += (customCardsStr.match(/\r\n|\n/g)?.length ?? 0) + 2; // Skip this section's lines
-			}
-			// List has to start with a header if it has custom slots
 			while (lineIdx < lines.length) {
 				if (!lines[lineIdx].startsWith("[") || !lines[lineIdx].endsWith("]")) {
 					return ackError({
@@ -196,43 +419,37 @@ export function parseCardList(
 					});
 				}
 				const header = lines[lineIdx].substring(1, lines[lineIdx].length - 1).trim();
-				if (header === "Layouts") {
+				const lowerCaseHeader = header.toLowerCase();
+				++lineIdx;
+				if (lowerCaseHeader === "settings") {
+					const settingsOrError = parseSettings(lines, lineIdx, txtcardlist, cardList);
+					if (isSocketError(settingsOrError)) return settingsOrError;
+					cardList.settings = settingsOrError.settings;
+					lineIdx += settingsOrError.advance;
+				} else if (lowerCaseHeader === "customcards") {
+					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);
+					if (isSocketError(cardsOrError)) return cardsOrError;
+					if (!cardList.customCards) cardList.customCards = {};
+					for (const customCard of cardsOrError.customCards) {
+						if (customCard.name in cardList.customCards)
+							return ackError({
+								title: `[CustomCards]`,
+								text: `Duplicate card '${customCard.name}'.`,
+							});
+						cardList.customCards[customCard.name] = customCard;
+					}
+					lineIdx += cardsOrError.advance;
+				} else if (lowerCaseHeader === "layouts") {
 					if (cardList.layouts) {
 						return ackError({
 							title: `Parsing Error`,
-							text: `Layouts already defined, redefined on line ${lineIdx + 1}.`,
+							text: `Layouts already defined, redefined on line ${lineIdx}.`,
 						});
 					}
-					cardList.layouts = {};
-					++lineIdx;
-					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
-						const match = lines[lineIdx].match(/-\s*([a-zA-Z]+)\s*\((\d+)\)/);
-						if (!match) {
-							return ackError({
-								title: `Parsing Error`,
-								text: `Expected layout declaration (' - LayoutName (Weight)'), got '${
-									lines[lineIdx]
-								}' (line ${lineIdx + 1}).`,
-							});
-						}
-						const layoutName = match[1];
-						const layoutWeight = parseInt(match[2]);
-						cardList.layouts[layoutName] = { weight: layoutWeight, slots: {} };
-						++lineIdx;
-						while (lineIdx < lines.length && lines[lineIdx][0] !== "-" && lines[lineIdx][0] !== "[") {
-							const slotMatch = lines[lineIdx].match(/(\d+)\s+([a-zA-Z]+)/);
-							if (!slotMatch) {
-								return ackError({
-									title: `Parsing Error`,
-									text: `Expected slot specification (' CardCount SlotName'), got '${
-										lines[lineIdx]
-									}' (line ${lineIdx + 1}).`,
-								});
-							}
-							cardList.layouts[layoutName].slots[slotMatch[2]] = parseInt(slotMatch[1]);
-							++lineIdx;
-						}
-					}
+					const layoutsOrError = parsePackLayoutsDeprecated(lines, lineIdx);
+					if (isSocketError(layoutsOrError)) return layoutsOrError;
+					lineIdx += layoutsOrError.advance;
+					cardList.layouts = layoutsOrError.layouts;
 				} else {
 					let slotName = header;
 					// Header with card count: Default layout.
@@ -250,7 +467,6 @@ export function parseCardList(
 						cardList.layouts["default"].slots[slotName] = parseInt(match[2]);
 					}
 					cardList.slots[slotName] = {};
-					++lineIdx;
 					const parseLineOptions = Object.assign({ customCards: cardList.customCards }, options);
 					while (lineIdx < lines.length && lines[lineIdx][0] !== "[") {
 						if (lines[lineIdx]) {

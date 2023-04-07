@@ -206,10 +206,14 @@ export class Session implements IIndexable {
 	setCustomCardList(cardList: CustomCardList) {
 		this.useCustomCardList = true;
 		this.customCardList = cardList;
+
+		if (cardList.settings?.withReplacement) this.customCardListWithReplacement = true;
+
 		this.forUsers((uid: UserID) =>
 			Connections[uid]?.socket.emit("sessionOptions", {
 				useCustomCardList: this.useCustomCardList,
 				customCardList: this.customCardList,
+				customCardListWithReplacement: this.customCardListWithReplacement,
 			})
 		);
 	}
@@ -463,8 +467,7 @@ export class Session implements IIndexable {
 	// Options object properties:
 	//  - useCustomBoosters: Explicitly enables the use of the CustomBooster option (ignored otherwise)
 	//      WARNING (FIXME?): boosterQuantity will be ignored if useCustomBoosters is set and we're not using a customCardList
-	//  - playerCount: For use with useCustomBoosters: override getVirtualPlayersCount() as the number of players in the session (allow ignoring bots).
-	//  - boostersPerPlayer: For use with useCustomBoosters
+	//  - playerCount: For use with useCustomBoosters or custom card list with predetermined layouts: Used to properly order boosters when they can be generated from different factories or layouts.
 	//  - targets: Overrides session boosterContent setting
 	//  - cardsPerBooster: Overrides session setting for cards per booster using custom card lists without custom slots
 	//  - customBoosters & cardsPerPlayer: Overrides corresponding session settings (used for sealed)
@@ -473,7 +476,6 @@ export class Session implements IIndexable {
 		options: {
 			useCustomBoosters?: boolean;
 			playerCount?: number;
-			boostersPerPlayer?: number;
 			targets?: { [rarity: string]: number };
 			cardsPerBooster?: number;
 			customBoosters?: SetCode[];
@@ -501,10 +503,11 @@ export class Session implements IIndexable {
 			}
 			return this.predeterminedBoosters;
 		}
+		const playerCount = options?.playerCount ?? 1; // This is only used for booster ordering, using 1 when it doesn't matter should be fine.
 
 		if (this.useCustomCardList) {
 			const cclOptions = Object.assign(
-				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement },
+				{ colorBalance: this.colorBalance, withReplacement: this.customCardListWithReplacement, playerCount },
 				options
 			);
 			return generateBoosterFromCustomCardList(this.customCardList, boosterQuantity, cclOptions);
@@ -616,9 +619,6 @@ export class Session implements IIndexable {
 				return boosters;
 			} else {
 				// Booster specific rules
-				// (boosterQuantity is ignored in this case and boostersPerPlayer * this.getVirtualPlayersCount() is used directly instead)
-				const boostersPerPlayer = options?.boostersPerPlayer ?? this.boostersPerPlayer; // Allow overriding via options
-				const playerCount = options?.playerCount ?? this.getVirtualPlayersCount(); // Allow overriding via options
 				const boosterFactories = [];
 				const usedSets: { [set: string]: IBoosterFactory } = {};
 				const defaultBasics = BasicLandSlots["znr"]; // Arbitrary set of default basic lands if a specific set doesn't have them.
@@ -641,85 +641,82 @@ export class Session implements IIndexable {
 
 				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
 
-				for (let i = 0; i < playerCount; ++i) {
-					const playerBoosterFactories = [];
-					for (let boosterSet of customBoosters) {
-						// No specific rules
-						if (boosterSet === "") {
-							playerBoosterFactories.push(defaultFactory);
-						} else {
-							// "Random Set from Card Pool" in Chaos Draft
-							if (boosterSet === "random") {
-								// Refill the bag with all possible sets
-								if (randomSetsPool.length === 0)
-									randomSetsPool = [
-										...(this.setRestriction.length === 0
-											? Constants.PrimarySets
-											: this.setRestriction),
-									];
-								boosterSet = pickRandom(randomSetsPool);
-							}
-							// Compile necessary data for this set (Multiple boosters of the same set will share it)
-							if (!usedSets[boosterSet]) {
-								// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
-								if (
-									acceptPaperBoosterFactories &&
-									isPaperBoosterFactoryAvailable(boosterSet) &&
-									(!addLandSlot || PaperBoosterSizes[boosterSet] === 15)
-								) {
-									usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
-								} else {
-									// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
-									const landSlot =
-										boosterSet in SpecialLandSlots
-											? SpecialLandSlots[boosterSet]
-											: addLandSlot && !irregularSets.includes(boosterSet)
+				for (let i = 0; i < boosterQuantity; ++i) {
+					let boosterSet = customBoosters[i % customBoosters.length];
+					// No specific rules
+					if (boosterSet === "") {
+						boosterFactories.push(defaultFactory);
+					} else {
+						// "Random Set from Card Pool" in Chaos Draft
+						if (boosterSet === "random") {
+							// Refill the bag with all possible sets
+							if (randomSetsPool.length === 0)
+								randomSetsPool = [
+									...(this.setRestriction.length === 0 ? Constants.PrimarySets : this.setRestriction),
+								];
+							boosterSet = pickRandom(randomSetsPool);
+						}
+						// Compile necessary data for this set (Multiple boosters of the same set will share it)
+						if (!usedSets[boosterSet]) {
+							// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
+							if (
+								acceptPaperBoosterFactories &&
+								isPaperBoosterFactoryAvailable(boosterSet) &&
+								(!addLandSlot || PaperBoosterSizes[boosterSet] === 15)
+							) {
+								usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
+							} else {
+								// As booster distribution and sets can be randomized, we have to make sure that every booster are of the same size: We'll use basic land slot if we have to.
+								const landSlot =
+									boosterSet in SpecialLandSlots
+										? SpecialLandSlots[boosterSet]
+										: addLandSlot && !irregularSets.includes(boosterSet)
+										? BasicLandSlots[boosterSet]
 											? BasicLandSlots[boosterSet]
-												? BasicLandSlots[boosterSet]
-												: defaultBasics
-											: null;
-									usedSets[boosterSet] = getBoosterFactory(
-										boosterSet,
-										this.setByRarity(boosterSet),
-										landSlot,
-										BoosterFactoryOptions
-									);
-									// Check if we have enough card, considering maxDuplicate is a limiting factor
-									const multiplier = customBoosters.reduce(
-										(a: number, v: string) => (v == boosterSet ? a + 1 : a),
-										0
-									);
-									for (const slot of ["common", "uncommon", "rare"]) {
-										if (
-											countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
-											multiplier * playerCount * targets[slot]
-										) {
-											const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
-											console.warn(msg);
-											return new MessageError("Error generating boosters", msg);
-										}
+											: defaultBasics
+										: null;
+								usedSets[boosterSet] = getBoosterFactory(
+									boosterSet,
+									this.setByRarity(boosterSet),
+									landSlot,
+									BoosterFactoryOptions
+								);
+								// Check if we have enough card, considering maxDuplicate is a limiting factor
+								const multiplier = customBoosters.reduce(
+									(a: number, v: string) => (v == boosterSet ? a + 1 : a),
+									0
+								);
+								for (const slot of ["common", "uncommon", "rare"]) {
+									if (
+										countCards((usedSets[boosterSet] as BoosterFactory).cardPool[slot]) <
+										multiplier * playerCount * targets[slot]
+									) {
+										const msg = `Not enough (${slot}) cards in card pool for individual booster restriction '${boosterSet}'. Please check the Max. Duplicates setting.`;
+										console.warn(msg);
+										return new MessageError("Error generating boosters", msg);
 									}
 								}
 							}
-							playerBoosterFactories.push(usedSets[boosterSet]);
 						}
+						boosterFactories.push(usedSets[boosterSet]);
 					}
-					boosterFactories.push(playerBoosterFactories);
 				}
 
 				// Implements distribution mode 'shufflePlayerBoosters'
-				if (this.distributionMode === "shufflePlayerBoosters")
-					for (const rules of boosterFactories) shuffleArray(rules);
+				if (this.distributionMode === "shufflePlayerBoosters") {
+					const chunkSize = Math.floor(boosterFactories.length / playerCount);
+					for (let i = 0; i < boosterFactories.length; i += chunkSize) {
+						shuffleArray(boosterFactories, i, i + chunkSize);
+					}
+				}
 
 				// Generate Boosters
-				for (let b = 0; b < boostersPerPlayer; ++b) {
-					for (let p = 0; p < playerCount; ++p) {
-						const rule = boosterFactories[p][b];
-						if (!rule) return new MessageError("Internal Error");
-						const booster = rule?.generateBooster(targets);
-						if (isMessageError(booster)) return booster;
-						boosters.push(booster);
-					}
+				for (let b = 0; b < boosterQuantity; ++b) {
+					const rule = boosterFactories[Math.floor(b / playerCount)];
+					if (!rule) return new MessageError("Internal Error");
+					const booster = rule?.generateBooster(targets);
+					if (isMessageError(booster)) return booster;
+					boosters.push(booster);
 				}
 
 				if (this.distributionMode === "shuffleBoosterPool") shuffleArray(boosters);
@@ -792,7 +789,7 @@ export class Session implements IIndexable {
 				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterCount);
+		const boosters = this.generateBoosters(boosterCount, { useCustomBoosters: true, playerCount: this.users.size });
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		this.drafting = true;
@@ -896,7 +893,10 @@ export class Session implements IIndexable {
 				`Winchester Draft can only be played with at least 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterPerPlayer * this.users.size);
+		const boosters = this.generateBoosters(boosterPerPlayer * this.users.size, {
+			useCustomBoosters: true,
+			playerCount: this.users.size,
+		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		this.drafting = true;
@@ -970,6 +970,8 @@ export class Session implements IIndexable {
 		const boosters = this.generateBoosters(boosterCount, {
 			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
 			cardsPerBooster: cardsPerBooster,
+			useCustomBoosters: true,
+			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) {
 			this.drafting = false;
@@ -1084,7 +1086,6 @@ export class Session implements IIndexable {
 
 		const boosters = this.generateBoosters(this.boostersPerPlayer * this.users.size, {
 			useCustomBoosters: true,
-			boostersPerPlayer: this.boostersPerPlayer,
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
@@ -1197,7 +1198,6 @@ export class Session implements IIndexable {
 		} else if (options.standard) {
 			const boosters = this.generateBoosters(options.standard.boostersPerPlayer * this.users.size, {
 				useCustomBoosters: true,
-				boostersPerPlayer: options.standard.boostersPerPlayer,
 				playerCount: this.users.size,
 			});
 			if (isMessageError(boosters)) return new SocketAck(boosters);
@@ -1290,7 +1290,10 @@ export class Session implements IIndexable {
 		}
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
-		const boosters = this.generateBoosters(gridCount, { cardsPerBooster: gridWidth * gridHeight });
+		const boosters = this.generateBoosters(gridCount, { 
+      cardsPerBooster: gridWidth * gridHeight,
+			playerCount: this.users.size, 
+    });
 		if (isMessageError(boosters)) {
 			this.drafting = false;
 			return new SocketAck(boosters);
@@ -1408,7 +1411,10 @@ export class Session implements IIndexable {
 		const boosterQuantity = (this.users.size + this.bots) * this.boostersPerPlayer;
 		console.log(`Session ${this.id}: Starting draft! (${this.users.size} players)`);
 
-		const boosters = this.generateBoosters(boosterQuantity, { useCustomBoosters: true });
+		const boosters = this.generateBoosters(boosterQuantity, {
+			useCustomBoosters: true,
+			playerCount: this.getVirtualPlayersCount(),
+		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		// Determine bot type
@@ -2057,8 +2063,7 @@ export class Session implements IIndexable {
 			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
 		const boosters = this.generateBoosters(this.users.size * boostersPerPlayer, {
 			useCustomBoosters: useCustomBoosters,
-			boostersPerPlayer: boostersPerPlayer,
-			playerCount: this.users.size, // Ignore bots when using customBoosters (FIXME: It's janky...)
+			playerCount: this.users.size,
 			customBoosters: useCustomBoosters ? customBoosters : undefined,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
@@ -2118,7 +2123,6 @@ export class Session implements IIndexable {
 			return new SocketError("Error", "Invalid 'customBoosters' parameter.");
 		}
 		const boosters = this.generateBoosters(teams.length * boostersPerTeam, {
-			boostersPerPlayer: boostersPerTeam,
 			playerCount: teams.length, // Ignore bots when using customBoosters (FIXME)
 			useCustomBoosters: useCustomBoosters,
 			customBoosters: useCustomBoosters ? customBoosters : undefined,

@@ -276,7 +276,13 @@ describe("Rotisserie Draft", function () {
 	// Some example cubes do not have enough unique cards for singleton.
 	for (const key of Object.keys(ValidCubes).filter(
 		(k) =>
-			!["CustomCards_NoLayout", "CustomCards_SlotSize", "WithReplacement", "WithReplacementLayouts"].includes(k)
+			![
+				"CustomCards_NoLayout",
+				"CustomCards_SlotSize",
+				"WithReplacement",
+				"WithReplacementLayouts",
+				"DOMLayoutExample",
+			].includes(k)
 	)) {
 		describe(`Singleton collation, '${key}' cube.`, () => {
 			loadCubeFile(key);

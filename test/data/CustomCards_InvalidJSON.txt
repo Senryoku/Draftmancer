@@ -1,0 +1,14 @@
+[CustomCards]	
+[
+	{	
+		"name": "A Card",
+		"rarity": "mythic",
+		"mana_cost": "{1}{B}",
+		"type": "Creature",qsd
+		"image_uris": {
+			"en": "http://fake.dmn/img.jpg"
+		}
+	}
+]
+[Common]
+999 A Card

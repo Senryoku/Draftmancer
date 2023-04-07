@@ -1,0 +1,54 @@
+[Settings]
+{
+	"withReplacement": true,
+	"layouts": {
+		"Rare": {
+			"weight": 21,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 2,
+				"UncommonLegendary": 1,
+  				"Rare": 1
+			}
+		},
+		"Mythic": {
+			"weight": 3,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 2,
+				"UncommonLegendary": 1,
+  				"Mythic": 1
+			}
+		},
+		"RareLegendary": {
+			"weight": 7,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+				"RareLegendary": 1
+			}
+		},
+		"MythicLegendary": {
+			"weight": 1,
+			"slots": {
+  				"Common": 10,
+  				"Uncommon": 3,
+				"MythicLegendary": 1
+			}
+		}
+	}
+}
+[Common]
+Adamant Will
+[Uncommon]
+Diligent Excavator
+[Rare]
+Benalish Marshal
+[Mythic]
+Karn, Scion of Urza
+[UncommonLegendary]
+Baird, Steward of Argive
+[RareLegendary]
+Josu Vess, Lich Knight
+[MythicLegendary]
+Evra, Halcyon Witness
