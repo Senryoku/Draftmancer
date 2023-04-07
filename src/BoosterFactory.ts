@@ -1323,6 +1323,7 @@ class SIRBoosterFactoryBonusSheet3 extends SIRBoosterFactory {
 }
 
 // March of the Machine
+// https://magic.wizards.com/en/news/feature/collecting-march-of-the-machine
 // 1 Rare or mythic rare
 // 1 Multiverse Legends card
 // 1 Battle card
@@ -1380,14 +1381,16 @@ class MOMBoosterFactory extends BoosterFactory {
 			const updatedTargets = Object.assign({}, targets);
 			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
 
-			const insertedCards: UniqueCard[] = [];
-
-			const mulRarity = rollSpecialCardRarity(
-				countBySlot(this.multiverseLegend),
-				targets,
-				Object.assign({ minRarity: "uncommon" }, this.options)
-			);
-			insertedCards.push(pickCard(this.multiverseLegend[mulRarity]));
+			const mulCounts = countBySlot(this.multiverseLegend);
+			if (mulCounts.uncommon === 0 && mulCounts.rare === 0 && mulCounts.mythic === 0)
+				return new MessageError("Not enough Multiverse Legends cards.");
+			// "Roughly one third of the time you receive a non-foil Multiverse Legends card, it will be a rare or mythic rare."
+			const mullRarityRoll = random.real(0, 1);
+			let mulRarity = "uncommon";
+			if (mullRarityRoll <= (1.0 / 3.0) * mythicRate && this.options?.mythicPromotion && mulCounts.mythic > 0)
+				mulRarity = "mythic";
+			else if (mullRarityRoll <= 1.0 / 3.0 && mulCounts.rare > 0) mulRarity = "rare";
+			const mulCard = pickCard(this.multiverseLegend[mulRarity]);
 
 			let battleRarity = "uncommon";
 			let dfcRarity =
@@ -1396,6 +1399,7 @@ class MOMBoosterFactory extends BoosterFactory {
 					? "uncommon"
 					: "common";
 
+			const insertedCards: UniqueCard[] = [];
 			if (targets.rare > 0) {
 				const raresCount = countMap(this.cardPool.rare);
 				const battleRaresCount = countMap(this.battleCards.rare);
@@ -1429,8 +1433,10 @@ class MOMBoosterFactory extends BoosterFactory {
 
 			const booster = super.generateBooster(updatedTargets);
 			if (isMessageError(booster)) return booster;
-			// Insert the Retro card right after the rare.
+			// Insert special slots right after the rare(s).
 			booster.splice(updatedTargets["rare"], 0, ...insertedCards);
+			// We'll always have the mul card in first for clarity.
+			booster.unshift(mulCard);
 			return booster;
 		}
 	}
