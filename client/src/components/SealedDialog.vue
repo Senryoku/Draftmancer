@@ -151,8 +151,10 @@ const distribute = () =>
 
 // Watch
 watch(boostersPerPlayer, () => {
-	while (customBoosters.value.length < boostersPerPlayer.value) customBoosters.value.push("");
-	while (customBoosters.value.length > boostersPerPlayer.value) customBoosters.value.pop();
+	if (boostersPerPlayer.value > 0) {
+		while (customBoosters.value.length < boostersPerPlayer.value) customBoosters.value.push("");
+		while (customBoosters.value.length > boostersPerPlayer.value) customBoosters.value.pop();
+	}
 });
 </script>
 
