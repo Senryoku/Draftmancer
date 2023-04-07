@@ -257,6 +257,7 @@ describe("Sets content", function () {
 		dmr: { common: 101 + 24, uncommon: 80 + 36, rare: 60 + 60, mythic: 20 + 20 }, // Includes retro frame cards
 		one: { common: 101, uncommon: 80, rare: 60, mythic: 20 },
 		sir: { common: 95, uncommon: 93, rare: 67, mythic: 24 },
+		mom: { common: 116, uncommon: 80, rare: 60, mythic: 20 },
 	};
 
 	beforeEach(function (done) {
