@@ -1561,7 +1561,7 @@
 							</div>
 							<br />
 							For any question/bug report/feature request you can email to
-							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+							<a href="mailto:dev@draftmancer.com">dev@draftmancer.com</a>
 							or join the
 							<a href="https://discord.gg/XscXXNw">
 								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Draftmancer Discord </a
@@ -2474,7 +2474,7 @@
 						Developped by
 						<a href="https://senryoku.github.io/" target="_blank" rel="noopener nofollow">Senryoku</a>
 						(contact in French or English:
-						<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
+						<a href="mailto:dev@draftmancer.com">dev@draftmancer.com</a>
 						) using
 						<a href="https://scryfall.com/">Scryfall</a>
 						card data and images and loads of open source software.
@@ -2534,7 +2534,7 @@
 				</a>
 			</span>
 			<span>
-				<a href="mailto:mtgadraft@gmail.com" title="Email">
+				<a href="mailto:dev@draftmancer.com" title="Email">
 					<font-awesome-icon
 						icon="fa-solid fa-envelope"
 						size="lg"

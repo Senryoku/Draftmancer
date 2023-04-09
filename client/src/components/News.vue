@@ -1,6 +1,18 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 10, 2023</em>
+			<p>MTGADraft.tk becomes <strong>Draftmancer.com</strong>!</p>
+			<p>
+				Nothing else changes, I'll keep the previous domain around for as long as possible, but
+				<a href="https://draftmancer.com">Draftmancer.com</a> is now the official URL.
+			</p>
+			<p>
+				Settings and, more importantly, Game Logs are tied to the domain. If you want to keep them,
+				<strong>Backup your Game Logs</strong> before switching to the new domain name.
+			</p>
+		</div>
+		<div class="news">
 			<em>April 5, 2023</em>
 			<p>
 				<img src="img/sets/mom.svg" class="set-icon" style="--invertedness: 100%; width: 2em" />
