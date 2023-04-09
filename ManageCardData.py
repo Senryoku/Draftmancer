@@ -453,7 +453,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 selection['in_booster'] = True
 
             # Cards from SIR are not marked as in_booster for some reason
-            if c['set'] == "sir" and not c['type_line'].startswith("Basic"):
+            if c['set'] == "sir" and not c['type_line'].startswith("Basic") and not c['collector_number'].endswith("b"):
                 selection['in_booster'] = True
 
             # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
