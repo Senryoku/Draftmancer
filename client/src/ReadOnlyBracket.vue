@@ -1,6 +1,6 @@
 <template>
 	<div id="main-container">
-		<a href="/"><font-awesome-icon icon="fa-solid fa-chevron-left"></font-awesome-icon> Go back to MTGADraft </a>
+		<a href="/"><font-awesome-icon icon="fa-solid fa-chevron-left"></font-awesome-icon> Go back to Draftmancer</a>
 		<div class="main">
 			<div v-if="bracket">
 				<h1>

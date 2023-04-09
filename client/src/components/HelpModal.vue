@@ -14,7 +14,7 @@
 			</p>
 			Your question isn't answered here? Head to the
 			<a href="https://discord.gg/ZkMyKpPYSz" target="_blank" rel="noopener nofollow"
-				>Help section of the MTGADraft Discord</a
+				>Help section of the Draftmancer Discord</a
 			>!
 		</div>
 		<br />

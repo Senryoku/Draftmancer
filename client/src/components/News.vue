@@ -12,7 +12,7 @@
 			</p>
 			<p>
 				Quick reminder that maintaining this application and keeping up with WotC release schedule requires
-				time. If you use MTGADraft regularly, please consider donating a few bucks via
+				time. If you use Draftmancer regularly, please consider donating a few bucks via
 				<a href="https://github.com/sponsors/Senryoku" target="_blank"
 					><font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> Github Sponsor</a
 				>

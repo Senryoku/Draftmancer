@@ -470,7 +470,7 @@
 				</button>
 			</div>
 			<template v-if="drafting">
-				<div id="url-remainder">MTGADraft.tk</div>
+				<div id="url-remainder">Draftmancer.com</div>
 				<div id="draft-in-progress">
 					{{ gameModeName }}
 				</div>
@@ -1528,7 +1528,7 @@
 			</div>
 
 			<div class="welcome" v-if="draftingState === DraftState.None">
-				<h1>Welcome to MTGADraft.tk!</h1>
+				<h1>Welcome to Draftmancer.com!</h1>
 				<p class="important">
 					Draft with other players and export your resulting deck to Magic: The Gathering Arena to play with
 					them, in pod!
@@ -1564,7 +1564,7 @@
 							<a href="mailto:mtgadraft@gmail.com">mtgadraft@gmail.com</a>
 							or join the
 							<a href="https://discord.gg/XscXXNw">
-								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> MTGADraft Discord </a
+								<font-awesome-icon icon="fa-brands fa-discord"></font-awesome-icon> Draftmancer Discord </a
 							>.
 						</div>
 					</div>
@@ -1581,7 +1581,7 @@
 								style="border: 0; margin: 0.25em"
 							></iframe>
 							<div>
-								Support MTGADraft on
+								Support Draftmancer on
 								<a href="https://github.com/sponsors/Senryoku" target="_blank">
 									<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub Sponsor
 								</a>
@@ -2480,7 +2480,7 @@
 						card data and images and loads of open source software.
 					</p>
 					<p>
-						MTGADraft Discord:
+						Draftmancer Discord:
 						<a href="https://discord.gg/XscXXNw">https://discord.gg/XscXXNw</a>
 					</p>
 					<h3>Patch Notes</h3>
@@ -2503,7 +2503,7 @@
 					</span>
 					<h3>Notice</h3>
 					<p>
-						MTGADraft is unofficial Fan Content permitted under the Fan Content Policy. Not
+						Draftmancer is unofficial Fan Content permitted under the Fan Content Policy. Not
 						approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the
 						Coast. ©Wizards of the Coast LLC.
 					</p>
@@ -2512,7 +2512,7 @@
 		</modal>
 		<modal :displayed="displayedModal === 'donation'" @close="displayedModal = ''">
 			<template v-slot:header>
-				<h2>Support MTGADraft</h2>
+				<h2>Support Draftmancer</h2>
 			</template>
 			<template v-slot:body>
 				<sponsor-modal />

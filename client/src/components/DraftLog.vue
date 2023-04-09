@@ -296,7 +296,7 @@ export default defineComponent({
 					Accept: "application/json, text/plain, */*",
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				referrer: "https://www.mtgadraft.tk",
+				referrer: "https://www.draftmancer.com",
 				body: `draft=${encodeURI(
 					helper.exportToMagicProTools(this.draftlog, id)
 				)}&apiKey=yitaOuTvlngqlKutnKKfNA&platform=mtgadraft`,

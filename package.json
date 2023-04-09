@@ -1,7 +1,7 @@
 {
-	"name": "mtgadraft",
+	"name": "draftmancer",
 	"version": "1.0.0",
-	"description": "MTGA Direct Challenge drafting environment",
+	"description": "Multiplayer MTG Limited Simulator",
 	"engines": {
 		"node": "18.x"
 	},
@@ -29,7 +29,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Senryoku/MTGADraft.git"
+		"url": "https://github.com/Senryoku/Draftmancer.git"
 	},
 	"lint-staged": {
 		"*.{ts,js,vue}": "prettier --config .prettierrc --write"

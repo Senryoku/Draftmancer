@@ -43,7 +43,7 @@
 				</form>
 			</div>
 			<p>
-				ruler101, developper of mtgdraftbots (which MTGADraft uses when possible) and
+				ruler101, developper of mtgdraftbots (which Draftmancer uses when possible) and
 				<a href="https://cubeartisan.net" target="_blank" rel="noopener nofollow">cubeartisan</a>, also has a
 				<a href="https://www.patreon.com/cubeartisan" target="_blank" rel="noopener nofollow">Patreon</a>
 				were you can support her and help cover the cost of bot training:
