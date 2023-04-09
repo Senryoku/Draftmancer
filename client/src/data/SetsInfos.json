@@ -264,12 +264,12 @@
     "anb": {
         "code": "anb",
         "fullName": "Arena Beginner Set",
-        "cardCount": 118,
+        "cardCount": 120,
         "isPrimary": false,
         "icon": "img/sets/anb.svg",
-        "commonCount": 75,
+        "commonCount": 76,
         "rareCount": 20,
-        "uncommonCount": 23
+        "uncommonCount": 24
     },
     "apc": {
         "code": "apc",
@@ -2615,8 +2615,8 @@
         "isPrimary": false,
         "icon": "img/sets/moc.svg",
         "commonCount": 94,
-        "mythicCount": 49,
-        "rareCount": 217,
+        "mythicCount": 50,
+        "rareCount": 216,
         "uncommonCount": 90
     },
     "mom": {
@@ -4296,13 +4296,13 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3017,
+        "cardCount": 3018,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 396,
         "mythicCount": 370,
-        "rareCount": 1747,
+        "rareCount": 1748,
         "uncommonCount": 503
     },
     "prna": {
@@ -5338,6 +5338,14 @@
         "icon": "img/sets/tmbs.svg",
         "commonCount": 1
     },
+    "tmoc": {
+        "code": "tmoc",
+        "fullName": "March of the Machine Commander Tokens",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/tmoc.svg",
+        "commonCount": 1
+    },
     "tmp": {
         "code": "tmp",
         "fullName": "Tempest",
@@ -5838,10 +5846,10 @@
     "xana": {
         "code": "xana",
         "fullName": "Arena New Player Experience Extras",
-        "cardCount": 30,
+        "cardCount": 29,
         "isPrimary": false,
         "icon": "img/sets/xana.svg",
-        "commonCount": 16,
+        "commonCount": 15,
         "mythicCount": 1,
         "rareCount": 3,
         "uncommonCount": 10
