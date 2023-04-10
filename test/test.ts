@@ -988,6 +988,53 @@ describe("Single Draft (Two Players)", function () {
 		disconnect();
 	});
 
+	describe("With random custom boosters and bots", function () {
+		const CustomBoosters = ["random", "random", "random"];
+		const Sets = ["afr", "mid", "one", "vow", "dmu", "snc", "iko", "thb", "eld", "m20", "war", "rna"];
+		connect();
+		it("Clients should receive the updated bot count.", function (done) {
+			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			nonOwnerIdx = 1 - ownerIdx;
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.bots).to.equal(2);
+				done();
+			});
+			clients[ownerIdx].emit("setBots", 2);
+		});
+
+		it("Clients should receive the updated booster spec.", function (done) {
+			clients[nonOwnerIdx].once("sessionOptions", function (data) {
+				expect(data.customBoosters).to.eql(CustomBoosters);
+				done();
+			});
+			clients[ownerIdx].emit("setCustomBoosters", CustomBoosters);
+			clients[ownerIdx].emit("setRestriction", Sets);
+		});
+
+		for (let distributionMode of ["regular", "shufflePlayerBoosters", "shuffleBoosterPool"] as DistributionMode[]) {
+			const counts: Record<string, number> = {};
+			it(`Setting distributionMode to ${distributionMode}.`, function (done) {
+				clients[nonOwnerIdx].once("sessionOptions", function (data) {
+					expect(data.distributionMode).to.eql(distributionMode);
+					done();
+				});
+				clients[ownerIdx].emit("setDistributionMode", distributionMode);
+			});
+
+			startDraft();
+			endDraft((b) => {
+				if (!(b[0].set in counts)) counts[b[0].set] = 0;
+				++counts[b[0].set];
+			});
+			it("should have one pack of each set.", function () {
+				for (const [k, v] of Object.entries(counts)) {
+					expect(v, `${k}: ${v}`).to.equal(1);
+				}
+			});
+		}
+		disconnect();
+	});
+
 	describe("Using Arena Cube", function () {
 		connect();
 		it("Clients should receive the updated useCustomCardList.", function (done) {
