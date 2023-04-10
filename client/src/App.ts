@@ -106,8 +106,8 @@ const Sounds: { [name: string]: HTMLAudioElement } = {
 	readyCheck: new Audio("sound/drop_003.ogg"),
 };
 
-const localStorageSettingsKey = "mtgadraft-settings";
-const localStorageSessionSettingsKey = "mtgadraft-session-settings";
+const localStorageSettingsKey = "draftmancer-settings";
+const localStorageSessionSettingsKey = "draftmancer-session-settings";
 
 // Personal front-end settings
 const defaultSettings = {
@@ -1816,7 +1816,7 @@ export default defineComponent({
 			let picksPerPlayerPerGrid = 9;
 			let revealBorders = true;
 
-			const savedValues = localStorage.getItem("mtgadraft-minesweeper");
+			const savedValues = localStorage.getItem("draftmancer-minesweeper");
 			if (savedValues) {
 				try {
 					const values = JSON.parse(savedValues);
@@ -1875,7 +1875,7 @@ export default defineComponent({
 				},
 			}).then((r: any) => {
 				if (r.isConfirmed) {
-					localStorage.setItem("mtgadraft-minesweeper", JSON.stringify(r.value));
+					localStorage.setItem("draftmancer-minesweeper", JSON.stringify(r.value));
 					this.socket.emit(
 						"startMinesweeperDraft",
 						r.value.gridCount,
@@ -3261,11 +3261,11 @@ export default defineComponent({
 
 		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
-				return `MTGADraft ${
+				return `Draftmancer ${
 					this.titleNotification ? this.titleNotification.message : "- Multi-Player Draft Simulator"
 				}`;
 			else
-				return `MTGADraft (${this.sessionUsers.length}/${this.maxPlayers}) ${
+				return `Draftmancer (${this.sessionUsers.length}/${this.maxPlayers}) ${
 					this.titleNotification ? this.titleNotification.message : ""
 				}`;
 		},
@@ -3338,7 +3338,7 @@ export default defineComponent({
 			}
 			history.replaceState(
 				{ sessionID: this.sessionID },
-				`MTGADraft Session ${this.sessionID}`,
+				`Draftmancer Session ${this.sessionID}`,
 				`?session=${encodeURIComponent(this.sessionID)}`
 			);
 			if (this.sessionID) setCookie("sessionID", this.sessionID);
