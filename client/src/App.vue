@@ -2488,7 +2488,7 @@
 					<span style="font-size: 0.8em">
 						(detailed changes can be found on
 						<a
-							href="https://github.com/Senryoku/MTGADraft"
+							href="https://github.com/Senryoku/Draftmancer"
 							title="GitHub"
 							target="_blank"
 							rel="noopener nofollow"
@@ -2548,7 +2548,12 @@
 						style="vertical-align: baseline; padding: 0 0.25em"
 					></font-awesome-icon>
 				</a>
-				<a href="https://github.com/Senryoku/MTGADraft" title="GitHub" target="_blank" rel="noopener nofollow">
+				<a
+					href="https://github.com/Senryoku/Draftmancer"
+					title="GitHub"
+					target="_blank"
+					rel="noopener nofollow"
+				>
 					<font-awesome-icon
 						icon="fa-brands fa-github"
 						size="lg"
