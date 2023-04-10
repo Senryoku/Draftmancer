@@ -642,7 +642,7 @@ export class Session implements IIndexable {
 				let randomSetsPool: string[] = []; // 'Bag' to pick a random set from, avoiding duplicates until necessary
 
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let boosterSet = customBoosters[i % customBoosters.length];
+					let boosterSet = customBoosters[Math.floor(i / playerCount) % customBoosters.length];
 					// No specific rules
 					if (boosterSet === "") {
 						boosterFactories.push(defaultFactory);
@@ -712,7 +712,7 @@ export class Session implements IIndexable {
 
 				// Generate Boosters
 				for (let b = 0; b < boosterQuantity; ++b) {
-					const rule = boosterFactories[Math.floor(b / playerCount)];
+					const rule = boosterFactories[b];
 					if (!rule) return new MessageError("Internal Error");
 					const booster = rule?.generateBooster(targets);
 					if (isMessageError(booster)) return booster;
@@ -1290,10 +1290,10 @@ export class Session implements IIndexable {
 		}
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 		this.drafting = true;
-		const boosters = this.generateBoosters(gridCount, { 
-      cardsPerBooster: gridWidth * gridHeight,
-			playerCount: this.users.size, 
-    });
+		const boosters = this.generateBoosters(gridCount, {
+			cardsPerBooster: gridWidth * gridHeight,
+			playerCount: this.users.size,
+		});
 		if (isMessageError(boosters)) {
 			this.drafting = false;
 			return new SocketAck(boosters);
