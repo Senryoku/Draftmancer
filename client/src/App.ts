@@ -1970,7 +1970,7 @@ export default defineComponent({
 		},
 		uploadMTGALogs() {
 			(document.querySelector("#collection-file-input") as HTMLElement)?.click();
-			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update
+			// Disabled for now as logs are broken since  the 26/08/2021 MTGA update. Note: #mtga-logs-file-input doesn't exist anymore.
 			//document.querySelector("#mtga-logs-file-input").click();
 		},
 		// Workaround for collection import: Collections are not available in logs anymore, accept standard card lists as collections.

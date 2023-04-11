@@ -1,8 +1,9 @@
 <template>
 	<div style="font-size: 1.1em" class="collection-import-help">
 		<p>
-			Each player can import their MTGA collection to restrict the card pool to cards they own. (Session owners
-			can bypass this feature by enabling "Ignore Collections").
+			Each player can import their MTGA collection to restrict the card pool to cards they own.
+			<strong>Note</strong>: the session setting 'Restrict card pool to Player Collections' must be enabled, or
+			player collections will be ignored by default.
 		</p>
 		<p>
 			With the August 2021 update, WotC disabled native collection export via their logs, requiring the use of an

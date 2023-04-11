@@ -31,56 +31,82 @@
 				</div>
 			</span>
 			<span>
-				<label :for="hasCollection ? 'collection-stats' : 'mtga-logs-file-input'">MTGA Collection</label>
-				<font-awesome-icon
-					icon="fa-solid fa-question-circle"
-					class="clickable"
-					@click="displayedModal = 'collectionHelp'"
-					v-tooltip="'Collection Import Help'"
-				></font-awesome-icon>
-				<input
-					type="file"
-					id="mtga-logs-file-input"
-					@change="parseMTGALog"
-					style="display: none"
-					accept=".log"
-				/>
-				<input
-					type="file"
-					id="collection-file-input"
-					@change="uploadCardListAsCollection"
-					style="display: none"
-					accept=".txt,.csv,.log"
-				/>
-				<span v-tooltip="'Import your collection by uploading your Player.log file.'">
-					<button @click="uploadMTGALogs">
-						Upload
+				<label class="clickable" @click="displayedModal = hasCollection ? 'collection' : 'collectionHelp'">
+					<font-awesome-layers
+						v-tooltip="
+							hasCollection
+								? useCollection
+									? 'Collection uploaded.'
+									: 'Collection uploaded, but not used.'
+								: 'No collection uploaded.'
+						"
+					>
 						<font-awesome-icon
-							v-if="hasCollection"
-							icon="fa-solid fa-check"
-							class="green"
-							v-tooltip="'Collection uploaded.'"
-						></font-awesome-icon></button
-				></span>
-				<button
-					v-if="hasCollection"
-					v-tooltip="'Display some statistics about your collection.'"
-					@click="displayedModal = 'collection'"
-					class="flat"
-					id="collection-stats"
-				>
-					<font-awesome-icon icon="fa-solid fa-chart-bar"></font-awesome-icon> Stats
-				</button>
-				<div
-					v-show="hasCollection"
-					class="inline"
-					v-tooltip="
-						'Only a limited pool of cards you own is used, uncheck to utilize all set(s). (Ignored when using a Custom Card List)'
+							icon="fa-solid fa-book"
+							:class="{
+								faded: !hasCollection,
+								green: hasCollection && useCollection,
+								yellow: hasCollection && !useCollection,
+							}"
+						></font-awesome-icon>
+					</font-awesome-layers>
+					MTGA Collection
+				</label>
+				<span
+					style="
+						display: inline-flex;
+						gap: 0.75em;
+						align-items: center;
+						margin-right: 0.25em;
+						vertical-align: middle;
 					"
 				>
-					<input type="checkbox" v-model="useCollection" id="useCollection" />
-					<label for="useCollection">Restrict to Collection</label>
-				</div>
+					<font-awesome-icon
+						icon="fa-solid fa-question-circle"
+						class="clickable"
+						@click="displayedModal = 'collectionHelp'"
+						v-tooltip="'Collection Import Help'"
+					></font-awesome-icon>
+					<input
+						type="file"
+						id="collection-file-input"
+						@change="uploadCardListAsCollection"
+						style="display: none"
+						accept=".txt,.csv,.log"
+					/>
+					<span v-tooltip="'Import your collection by uploading your Player.log file.'">
+						<font-awesome-icon
+							@click="uploadMTGALogs"
+							icon="fa-solid fa-file-upload"
+							class="clickable"
+						></font-awesome-icon>
+					</span>
+					<font-awesome-icon
+						icon="fa-solid fa-chart-bar"
+						class="clickable"
+						v-if="hasCollection"
+						v-tooltip="'Collection Statistics'"
+						@click="displayedModal = 'collection'"
+					></font-awesome-icon>
+					<div
+						v-show="hasCollection"
+						class="inline"
+						v-tooltip="{
+							html: true,
+							content: `Restrict to Collection: <strong>${
+								useCollection ? 'Enabled' : 'Disabled'
+							}</strong><br />
+							If enabled, your collection will be used to restrict the card pool, making sure you'll only draft with cards you already own. (Ignored when using a Custom Card List)${
+								ignoreCollections
+									? '<p><strong>Warning:</strong> The session setting \'Restrict card pool to Player Collections\' is disabled, your collection is currently ignored.</p>'
+									: ''
+							}`,
+						}"
+					>
+						<input type="checkbox" v-model="useCollection" id="useCollection" />
+						<label for="useCollection">Restrict to Collection</label>
+					</div>
+				</span>
 			</span>
 			<div>
 				<button
@@ -309,20 +335,25 @@
 							</set-select>
 							<div
 								class="inline clickable"
-								style="padding: 0.4em"
+								style="padding: 0.4em 0.6em"
 								@click="displayedModal = 'setRestriction'"
 								v-tooltip="'More sets'"
 							>
 								<font-awesome-icon icon="fa-solid fa-ellipsis-v"></font-awesome-icon>
 							</div>
 							<div
-								class="inline"
-								v-tooltip="
-									'Draft with all cards within set restriction disregarding players collections.'
-								"
+								class="inline clickable"
+								v-tooltip="{
+									html: true,
+									content: `Restrict card pool to Player Collections: <strong>${
+										ignoreCollections ? 'Disabled' : 'Enabled'
+									}</strong>
+									<br/>If enabled, card pool will be limited to cards present in all player collections.`,
+								}"
+								@click="ignoreCollections = !ignoreCollections"
+								:class="{ faded: ignoreCollections, crossed: ignoreCollections }"
 							>
-								<input type="checkbox" v-model="ignoreCollections" id="ignore-collections" />
-								<label for="ignore-collections">Ignore Collections</label>
+								<font-awesome-icon icon="fa-solid fa-book"></font-awesome-icon>
 							</div>
 						</div>
 					</span>
@@ -1933,6 +1964,27 @@
 								>
 									Shuffle
 								</button>
+							</div>
+						</div>
+						<div
+							class="line"
+							v-tooltip.left="{
+								popperClass: 'option-tooltip',
+								content: `Restrict card pool to Player Collections: <strong>${
+									ignoreCollections ? 'Disabled' : 'Enabled'
+								}</strong>
+									<p>If enabled, card pool will be limited to cards present in all player collections.</p>`,
+								html: true,
+							}"
+						>
+							<label for="restrict-to-collections">Restrict card pool to Collections</label>
+							<div class="right">
+								<input
+									type="checkbox"
+									:checked="!ignoreCollections"
+									id="restrict-to-collections"
+									@change="ignoreCollections = !($event.target! as HTMLInputElement).checked"
+								/>
 							</div>
 						</div>
 						<div
