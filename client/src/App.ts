@@ -109,8 +109,17 @@ const Sounds: { [name: string]: HTMLAudioElement } = {
 const localStorageSettingsKey = "draftmancer-settings";
 const localStorageSessionSettingsKey = "draftmancer-session-settings";
 
+const defaultUserName = `Player_${randomStr4()}`;
+// Backwards compatility: these used to be stored in cookies.
+const cookieUserName = getCookie("userName", defaultUserName);
+const cookieUseCollection = getCookie("useCollection", "true") === "true";
+const cookieLanguage = getCookie("language", "en");
+
 // Personal front-end settings
 const defaultSettings = {
+	userName: cookieUserName,
+	useCollection: cookieUseCollection,
+	language: cookieLanguage,
 	targetDeckSize: 40,
 	hideSessionID: false,
 	displayCollectionStatus: true,
@@ -125,7 +134,7 @@ const defaultSettings = {
 	boosterCardScale: 1,
 };
 const storedSettings = JSON.parse(localStorage.getItem(localStorageSettingsKey) ?? "{}");
-const initialSettings = Object.assign(defaultSettings, storedSettings);
+const initialSettings: typeof defaultSettings = Object.assign({ ...defaultSettings }, storedSettings);
 
 type SessionUser = {
 	userID: string;
@@ -187,7 +196,7 @@ export default defineComponent({
 			? decodeURIComponent(urlParamSession)
 			: getCookie("sessionID", shortguid());
 
-		const userName = getCookie("userName", `Player_${randomStr4()}`);
+		const userName = initialSettings.userName;
 
 		const storedSessionSettings = localStorage.getItem(localStorageSessionSettingsKey) ?? "{}";
 
@@ -212,7 +221,7 @@ export default defineComponent({
 			// User Data
 			userID: userID,
 			userName: userName,
-			useCollection: true,
+			useCollection: true, // Note: True value will be set later so it's automatically sync with the server.
 			collection: {} as PlainCollection,
 			collectionInfos: {
 				wildcards: { common: 0, uncommon: 0, rare: 0, mythic: 0 },
@@ -298,16 +307,16 @@ export default defineComponent({
 			userOrder: [] as UserID[],
 			hideSessionID: initialSettings.hideSessionID,
 			languages: Constants.Languages,
-			language: getCookie("language", "en"),
-			displayCollectionStatus: defaultSettings.displayCollectionStatus,
+			language: initialSettings.language,
+			displayCollectionStatus: initialSettings.displayCollectionStatus,
 			sets: Constants.MTGASets,
 			primarySets: Constants.PrimarySets,
 			cubeLists: Constants.CubeLists,
 			pendingReadyCheck: false,
 			setsInfos: SetsInfos,
 			draftingState: DraftState.None,
-			displayBotScores: defaultSettings.displayBotScores,
-			fixedDeck: defaultSettings.fixedDeck,
+			displayBotScores: initialSettings.displayBotScores,
+			fixedDeck: initialSettings.fixedDeck,
 
 			fixedDeckState: {
 				ht: 400,
@@ -315,14 +324,14 @@ export default defineComponent({
 				y: 0,
 				dy: 0,
 			},
-			pickOnDblclick: defaultSettings.pickOnDblclick,
-			boosterCardScale: defaultSettings.boosterCardScale,
-			enableSound: defaultSettings.enableSound,
+			pickOnDblclick: initialSettings.pickOnDblclick,
+			boosterCardScale: initialSettings.boosterCardScale,
+			enableSound: initialSettings.enableSound,
 			enableNotifications:
 				typeof Notification !== "undefined" &&
 				Notification &&
 				Notification.permission == "granted" &&
-				defaultSettings.enableNotifications,
+				initialSettings.enableNotifications,
 			notificationPermission: typeof Notification !== "undefined" && Notification && Notification.permission,
 			titleNotification: null as { timeout: ReturnType<typeof setTimeout>; message: string } | null,
 			// Draft Booster
@@ -334,7 +343,7 @@ export default defineComponent({
 			deck: [] as UniqueCard[],
 			sideboard: [] as UniqueCard[],
 			deckFilter: "",
-			collapseSideboard: defaultSettings.collapseSideboard,
+			collapseSideboard: initialSettings.collapseSideboard,
 			autoLand: true,
 			lands: { W: 0, U: 0, B: 0, R: 0, G: 0 } as { [c in CardColor]: number },
 			targetDeckSize: initialSettings.targetDeckSize,
@@ -373,7 +382,6 @@ export default defineComponent({
 				console.log(`Reconnected to server (attempt ${attemptNumber}).`);
 				// Re-sync collection on reconnect.
 				if (this.hasCollection) this.socket.emit("setCollection", this.collection);
-				setCookie("useCollection", this.useCollection.toString());
 
 				Alert.fire({
 					icon: "warning",
@@ -3275,7 +3283,8 @@ export default defineComponent({
 		try {
 			this.initializeSocket();
 
-			this.useCollection = getCookie("useCollection", "true") === "true";
+			// Initialized only now so it's correctly sync with the server.
+			this.useCollection = initialSettings.useCollection;
 
 			// Look for a locally stored collection
 			const localStorageCollection = localStorage.getItem("Collection");
@@ -3349,15 +3358,15 @@ export default defineComponent({
 				this.socket.io.opts.query!.userName = this.userName;
 				this.socket.emit("setUserName", this.userName);
 			}
-			setCookie("userName", this.userName);
+			this.storeSettings();
 		},
 		useCollection() {
-			if (this.socket) this.socket.emit("useCollection", this.useCollection);
-			setCookie("useCollection", this.useCollection.toString());
+			this.socket?.emit("useCollection", this.useCollection);
+			this.storeSettings();
 		},
 		// Front-end options
 		language() {
-			setCookie("language", this.language);
+			this.storeSettings();
 		},
 		displayBotScores() {
 			this.storeSettings();
