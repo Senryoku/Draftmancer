@@ -434,6 +434,51 @@ select.swal2-input option {
 .file-drop:hover {
 	color: white;
 	border: 4px dashed rgba(255, 255, 255, 1);
+}q
+
+.option-cube-settings {
+	display: flex; 
+	justify-content: space-between; 
+	align-items: center;
+}
+.option-cube-settings-1 {
+	display: flex; 
+	align-items: center; 
+	gap: 1.5em;
+}
+
+.option-cube-import {
+	display: flex; 
+	gap: 0.5em;
+}
+
+@media only screen and (max-width: 1000px) {
+	.session-options-container {
+		grid-template-columns: 1fr;
+	
+		grid-template-areas:
+			"option-column-left"
+			"option-column-right"
+			"option-custom-card-list";
+	}
+
+	.option-column .line > label {
+		width: min(15rem, 45vw);
+		text-align: right;
+	}
+	
+	.option-column .line .right {
+		width: min(15rem, 45vw);
+	}
+
+	.option-cube-settings,
+	.option-cube-settings-1,
+	.option-cube-import {
+		flex-direction: column;
+	}
+	.option-cube-settings-1 {
+		gap: 0;
+	}
 }
 
 /* ** Welcome ** */

@@ -2299,9 +2299,9 @@
 							<input type="checkbox" v-model="useCustomCardList" id="use-custom-card-list" /> Custom Card
 							List
 						</div>
-						<div style="display: flex; justify-content: space-between; align-items: center">
+						<div class="option-cube-settings">
 							<div
-								style="display: flex; align-items: center; gap: 1.5em"
+								class="option-cube-settings-1"
 								:class="{
 									'disabled-simple': !useCustomCardList,
 								}"
@@ -2367,7 +2367,7 @@
 							</div>
 							<div v-else>(No Custom Card List loaded)</div>
 						</div>
-						<div style="display: flex; gap: 0.5em">
+						<div class="option-cube-import">
 							<input
 								type="file"
 								id="card-list-input"
