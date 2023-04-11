@@ -16,20 +16,20 @@
 					:delay="2"
 					style="margin-right: 0.25em"
 				/>
-				<div class="inline" v-tooltip="'Controls the display language of cards.'">
-					<label for="select-language">Card Language</label>
-					<select v-model="language" id="select-language">
-						<option
-							v-for="lang in languages"
-							v-bind:value="lang.code"
-							:selected="lang.code === language"
-							:key="lang.code"
-						>
-							{{ lang.name }}
-						</option>
-					</select>
-				</div>
 			</span>
+			<div class="inline" v-tooltip="'Controls the display language of cards.'">
+				<label for="select-language" id="select-language-label">Card Language</label>
+				<select v-model="language" id="select-language">
+					<option
+						v-for="lang in languages"
+						v-bind:value="lang.code"
+						:selected="lang.code === language"
+						:key="lang.code"
+					>
+						{{ lang.name }}
+					</option>
+				</select>
+			</div>
 			<span>
 				<label class="clickable" @click="displayedModal = hasCollection ? 'collection' : 'collectionHelp'">
 					<font-awesome-layers
@@ -272,7 +272,7 @@
 						accept=".txt"
 					/>
 
-					<strong>Card Pool: </strong>
+					<strong id="card-pool-label">Card Pool: </strong>
 					<span v-if="useCustomCardList && customCardList">
 						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
 						(<span style="display: inline-flex; gap: 0.3em; vertical-align: middle">

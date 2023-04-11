@@ -667,6 +667,29 @@ select.swal2-input option {
 	width: 12em;
 }
 
+@media (max-device-width: 1400px)  {
+	#user-name,
+	#session-id {
+		width: 10em;
+	}
+
+	#card-pool-label {
+		display: none;
+	}
+}
+
+@media (orientation: portrait) and (max-device-width: 500px)  {
+	#limited-controls,
+	#view-controls {
+		justify-content: space-around;
+	}
+
+	#select-language-label {
+		display: none;
+	}
+}
+
+
 .game-modes-cat {
 	margin-bottom: 0.5em;
 	display: flex;
