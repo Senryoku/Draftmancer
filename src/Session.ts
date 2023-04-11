@@ -121,9 +121,7 @@ export class Session implements IIndexable {
 	}
 
 	addUser(userID: UserID) {
-		if (this.users.has(userID)) {
-			console.error(`Session::addUser: this.users.has(${userID})`);
-		}
+		if (this.users.has(userID)) console.error(`Session::addUser: this.users.has(${userID})`);
 
 		Connections[userID].sessionID = this.id;
 		this.users.add(userID);

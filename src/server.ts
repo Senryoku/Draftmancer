@@ -1439,7 +1439,10 @@ function addUserToSession(userID: UserID, sessionID: SessionID, defaultSessionSe
 		Sessions[sessionID] = new Session(sessionID, userID, defaultSessionSettings);
 	}
 
-	Sessions[sessionID].addUser(userID);
+	if (userID === Sessions[sessionID].owner && !Sessions[sessionID].ownerIsPlayer) {
+		Connections[userID].sessionID = sessionID;
+		Sessions[sessionID].syncSessionOptions(userID);
+	} else Sessions[sessionID].addUser(userID);
 	if (Sessions[sessionID].isPublic) updatePublicSession(sessionID);
 }
 
