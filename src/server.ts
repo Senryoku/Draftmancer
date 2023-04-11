@@ -1124,10 +1124,17 @@ const prepareSocketCallback = <T extends Array<any>>(
 	callback: (userID: UserID, sessionID: SessionID, ...args: T) => void,
 	ownerOnly = false
 ) => {
-	return async function (this: Socket, ...args: T): Promise<void> {
+	return async function (
+		this: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
+		...args: T
+	): Promise<void> {
 		// Last argument is assumed to be an acknowledgement function if it is a function.
 		const ack = args.length > 0 && args[args.length - 1] instanceof Function ? args[args.length - 1] : null;
-		const userID = (this.handshake.query as any).userID;
+		const userID = this.data.userID;
+		if (!userID) {
+			ack?.({ code: 1, error: "Internal error. UserID is undefined." });
+			return;
+		}
 		if (!(userID in Connections)) {
 			ack?.({ code: 1, error: "Internal error. User does not exist." });
 			return;
@@ -1177,6 +1184,9 @@ io.on("connection", async function (socket) {
 					targetSocket.disconnect();
 					// Wait for the socket to be properly disconnected and the previous Connection deleted.
 					process.nextTick(() => {
+						const toast = new Message("Connected");
+						toast.toast = true;
+						socket.emit("message", toast);
 						resolve();
 					});
 				}, 3000);
@@ -1192,6 +1202,7 @@ io.on("connection", async function (socket) {
 	}
 
 	const userID = query.userID as string;
+	socket.data.userID = userID;
 
 	if (userID in InactiveConnections) {
 		// Restore previously saved connection
@@ -1209,12 +1220,16 @@ io.on("connection", async function (socket) {
 
 	// Messages
 
-	socket.on("disconnect", function (this: Socket) {
-		const userID = this.handshake.query.userID as string;
+	socket.on("disconnect", function (this: typeof socket, reason: string) {
+		const userID = this.data.userID;
+		if (!userID) {
+			console.error("disconnect Error: Missing userID on socket.");
+			return;
+		}
 		if (userID in Connections && Connections[userID].socket === this) {
 			if (process.env.NODE_ENV !== "production")
 				console.log(
-					`${Connections[userID].userName} [${userID}] disconnected. (${
+					`${Connections[userID].userName} [${userID}] disconnected (${reason}). (${
 						Object.keys(Connections).length - 1
 					} players online)`
 				);
@@ -1230,9 +1245,13 @@ io.on("connection", async function (socket) {
 		console.error(err);
 	});
 
-	socket.on("setSession", function (this: Socket, sessionID: SessionID, sessionSettings: Options) {
+	socket.on("setSession", function (this: typeof socket, sessionID: SessionID, sessionSettings: Options) {
 		try {
-			const userID = this.handshake.query.userID as string;
+			const userID = this.data.userID;
+			if (!userID) {
+				console.error("setSession Error: Missing userID on socket.");
+				return;
+			}
 			if (sessionID === Connections[userID].sessionID) return;
 
 			const filteredSettings: Options = {};

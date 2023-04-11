@@ -295,7 +295,6 @@ export interface ClientToServerEvents {
 
 export interface InterServerEvents {}
 
-// TODO: We can now use socket.data to store some user info.
 export interface SocketData {
 	userID: UserID;
 }
