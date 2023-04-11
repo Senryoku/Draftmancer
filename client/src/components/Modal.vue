@@ -70,6 +70,7 @@ export default defineComponent({
 .modal-wrapper {
 	display: table-cell;
 	vertical-align: middle;
+	max-width: 100vw;
 }
 
 .modal-container {
@@ -77,7 +78,7 @@ export default defineComponent({
 	width: -moz-fit-content;
 	width: fit-content;
 	max-width: 95%;
-	margin: 0px auto;
+	margin: 0 auto;
 	padding: 1em;
 	background-color: rgba(32, 32, 32, 1);
 	border-radius: 1em;
@@ -86,6 +87,13 @@ export default defineComponent({
 	display: flex;
 	flex-direction: column;
 	max-height: 90vh;
+}
+
+@media (orientation: portrait) and (max-device-width: 500px) {
+	.modal-container {
+		max-width: 100%;
+		padding: 1em 0;
+	}
 }
 
 .modal-header {
