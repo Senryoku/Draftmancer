@@ -950,6 +950,7 @@ export default defineComponent({
 			const startDraftSetup = (name = "draft", msg = "Draft Started!") => {
 				// Save user ID in case of disconnect
 				setCookie("userID", this.userID);
+				setCookie("sessionID", this.sessionID);
 
 				this.drafting = true;
 				this.stopReadyCheck();
