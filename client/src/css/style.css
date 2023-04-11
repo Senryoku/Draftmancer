@@ -78,7 +78,7 @@ label {
 .crossed:after {
 	position: absolute;
 	content: "";
-	background-color: #DDD;
+	background-color: #ddd;
 	top: 40%;
 	left: calc(-14px + 50%);
 	height: 2.8px;
@@ -209,15 +209,15 @@ ul.player-table > li.teamb {
 	opacity: 0;
 }
 
-.fade-enter-active,.fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
 	transition: opacity 0.1s ease-in-out;
 }
 
 @font-face {
-  font-family: 'Mini Font Awesome 5 Free';
-  font-style: normal;
-  font-weight: 900;
-  font-display: block;
-  src:  url("../assets/fonts/mini-icons.woff2") format("woff2"); 
+	font-family: "Mini Font Awesome 5 Free";
+	font-style: normal;
+	font-weight: 900;
+	font-display: block;
+	src: url("../assets/fonts/mini-icons.woff2") format("woff2");
 }
-  

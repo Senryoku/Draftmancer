@@ -1,5 +1,6 @@
 @media only screen and (min-width: 800px) {
-	body, #main-container {
+	body,
+	#main-container {
 		overflow-x: hidden;
 	}
 }
@@ -67,7 +68,7 @@ select.swal2-input option {
 .swal2-content pre {
 	text-align: left;
 	font-size: 0.8em;
-    white-space: pre-wrap;
+	white-space: pre-wrap;
 	tab-size: 4;
 }
 
@@ -434,28 +435,28 @@ select.swal2-input option {
 .file-drop:hover {
 	color: white;
 	border: 4px dashed rgba(255, 255, 255, 1);
-}q
+}
 
 .option-cube-settings {
-	display: flex; 
-	justify-content: space-between; 
+	display: flex;
+	justify-content: space-between;
 	align-items: center;
 }
 .option-cube-settings-1 {
-	display: flex; 
-	align-items: center; 
+	display: flex;
+	align-items: center;
 	gap: 1.5em;
 }
 
 .option-cube-import {
-	display: flex; 
+	display: flex;
 	gap: 0.5em;
 }
 
 @media only screen and (max-width: 1000px) {
 	.session-options-container {
 		grid-template-columns: 1fr;
-	
+
 		grid-template-areas:
 			"option-column-left"
 			"option-column-right"
@@ -466,7 +467,7 @@ select.swal2-input option {
 		width: min(15rem, 45vw);
 		text-align: right;
 	}
-	
+
 	.option-column .line .right {
 		width: min(15rem, 45vw);
 	}
@@ -509,11 +510,10 @@ select.swal2-input option {
 
 .welcome-sections .section-title {
 	--outline-size: 1px;
-	text-shadow:
-   calc(-1 * var(--outline-size)) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
-    var(--outline-size)           calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
-   calc(-1 * var(--outline-size))  var(--outline-size)           10px rgb(32, 32, 32),
-	var(--outline-size)            var(--outline-size)           10px rgb(32, 32, 32);
+	text-shadow: calc(-1 * var(--outline-size)) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
+		var(--outline-size) calc(-1 * var(--outline-size)) 10px rgb(32, 32, 32),
+		calc(-1 * var(--outline-size)) var(--outline-size) 10px rgb(32, 32, 32),
+		var(--outline-size) var(--outline-size) 10px rgb(32, 32, 32);
 }
 
 @media (orientation: portrait) {
@@ -550,7 +550,6 @@ select.swal2-input option {
 	padding: 0;
 	list-style-type: none;
 }
-
 
 .welcome-alt {
 	background-color: #202020e0;
@@ -712,7 +711,7 @@ select.swal2-input option {
 	width: 12em;
 }
 
-@media (max-device-width: 1400px)  {
+@media (max-device-width: 1400px) {
 	#user-name,
 	#session-id {
 		width: 10em;
@@ -723,7 +722,7 @@ select.swal2-input option {
 	}
 }
 
-@media (orientation: portrait) and (max-device-width: 500px)  {
+@media (orientation: portrait) and (max-device-width: 500px) {
 	#limited-controls,
 	#view-controls {
 		justify-content: space-around;
@@ -734,7 +733,6 @@ select.swal2-input option {
 	}
 }
 
-
 .game-modes-cat {
 	margin-bottom: 0.5em;
 	display: flex;
@@ -742,7 +740,7 @@ select.swal2-input option {
 }
 
 .game-modes-cat button {
-    display: block;
+	display: block;
 	width: calc(100% - 0.5em);
 	box-sizing: border-box;
 }
@@ -786,8 +784,8 @@ select.swal2-input option {
 }
 
 .player-list-container {
-	flex-grow: 2; 
-	padding-left: 0.5em; 
+	flex-grow: 2;
+	padding-left: 0.5em;
 	padding-right: 0.5em;
 	grid-area: player-list;
 }
@@ -863,8 +861,9 @@ ul.player-list {
 @media (max-width: 900px) {
 	.session-players {
 		display: grid;
-		grid-template-areas: "session-players-header chat"
-		"player-list player-list";
+		grid-template-areas:
+			"session-players-header chat"
+			"player-list player-list";
 		grid-template-columns: fit-content(30%);
 	}
 	.player-list li {
@@ -911,7 +910,6 @@ ul.player-list {
 .status-icons {
 	display: inline-flex;
 	align-items: center;
-
 }
 
 .status-icons > * {
@@ -920,7 +918,8 @@ ul.player-list {
 }
 
 .booster-count {
-	position: relative; min-width: 14px
+	position: relative;
+	min-width: 14px;
 }
 
 .booster-count img {
@@ -940,7 +939,7 @@ ul.player-list {
 	transform: translate(-50%, -50%);
 	font-weight: 900;
 	color: black;
-	font-family: "Brush Script MT" ;
+	font-family: "Brush Script MT";
 }
 
 /* Booster passing animation */
@@ -1122,7 +1121,7 @@ ul.player-list {
 	align-items: center;
 	margin-left: 1em;
 	margin-right: 1em;
-	min-height: 35px;  
+	min-height: 35px;
 }
 
 .section-title h2 {
@@ -1516,7 +1515,6 @@ ul.player-list {
 	}
 }
 
-
 .rochester-container {
 	display: flex;
 	align-items: flex-start;
@@ -1546,7 +1544,6 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	background-color: rgb(32, 32, 32);
 	z-index: 800;
 	box-shadow: 0 -4px 5px #000;
-
 }
 
 .deck-and-sideboard-container-resize-bar {
@@ -1556,7 +1553,7 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	right: 0;
 	height: 2px;
 	background-color: #888;
-	border-top: 1px solid #BBB;
+	border-top: 1px solid #bbb;
 	border-bottom: 1px solid #222;
 	cursor: ns-resize;
 	z-index: 801;
@@ -1566,7 +1563,6 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 	position: absolute;
 	top: 6px;
 	right: 6px;
-
 }
 
 .fixed-deck-and-sideboard-container .deck-and-sideboard {
