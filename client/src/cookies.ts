@@ -15,9 +15,9 @@ export function getCookie(cname: string, def = "") {
 }
 
 export function setCookie(name: string, value: string) {
-	document.cookie = name + "=" + (value || "") + ";max-age=31536000;path=/;samesite=strict";
+	document.cookie = name + "=" + (value || "") + ";max-age=31536000;path=/";
 }
 
 export function eraseCookie(name: string) {
-	document.cookie = name + "=;max-age=-99999999;path=/;samesite=strict";
+	document.cookie = name + "=;max-age=-99999999;path=/";
 }
