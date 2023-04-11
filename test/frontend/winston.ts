@@ -4,7 +4,7 @@ const expect = chai.expect;
 import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 
-async function pickWinston(page: Page) {
+async function pickWinston(page: Page, forceDepth?: number) {
 	let next = await page.waitForXPath(
 		"//div[contains(., 'Done drafting!')] | //span[contains(., 'Your turn to pick a pile of cards!')] | //span[contains(., 'Waiting for')]"
 	);
@@ -18,7 +18,11 @@ async function pickWinston(page: Page) {
 		let pick = await page.waitForXPath(pickXPath);
 		expect(pick).to.be.not.null;
 		let skip = await page.$x(skipXPath);
-		if (skip.length === 0 || Math.random() < 0.33) {
+		if (
+			skip.length === 0 ||
+			(forceDepth !== undefined && forceDepth === depth) ||
+			(forceDepth === undefined && Math.random() < 0.33)
+		) {
 			await (pick as ElementHandle<HTMLElement>).click();
 		} else {
 			expect(skip[0]).to.be.not.null;
@@ -26,7 +30,8 @@ async function pickWinston(page: Page) {
 			if (depth < 2) {
 				await pickOrSkip(++depth);
 			} else {
-				await waitAndClickXpath(page, "//button[contains(., 'OK')]"); // Dismiss card
+				const swalOK = await page.$x("//button[contains(., 'OK')]");
+				if (swalOK.length > 0) (swalOK[0] as ElementHandle<HTMLElement>).click(); // Dismiss card popup
 			}
 		}
 	};
@@ -51,6 +56,30 @@ describe("Winston Draft", function () {
 				})
 			)
 		);
+	});
+
+	it(`should be able to pick the first pile.`, async function () {
+		let ownerPromise = pickWinston(pages[0], 0);
+		let otherPromise = pickWinston(pages[1], 0);
+		await Promise.all([ownerPromise, otherPromise]);
+	});
+
+	it(`should be able to pick the second pile.`, async function () {
+		let ownerPromise = pickWinston(pages[0], 1);
+		let otherPromise = pickWinston(pages[1], 1);
+		await Promise.all([ownerPromise, otherPromise]);
+	});
+
+	it(`should be able to pick the third pile.`, async function () {
+		let ownerPromise = pickWinston(pages[0], 2);
+		let otherPromise = pickWinston(pages[1], 2);
+		await Promise.all([ownerPromise, otherPromise]);
+	});
+
+	it(`should be able to skip all piles and draw.`, async function () {
+		let ownerPromise = pickWinston(pages[0], -1);
+		let otherPromise = pickWinston(pages[1], -1);
+		await Promise.all([ownerPromise, otherPromise]);
 	});
 
 	it(`Pick until done.`, async function () {
