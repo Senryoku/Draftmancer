@@ -1,7 +1,7 @@
 "use strict";
 
 import fs from "fs";
-import glob from "glob";
+import { glob } from "glob";
 import JSONStream from "JSONStream";
 import { memoryReport } from "./utils.js";
 
