@@ -112,7 +112,7 @@ export default defineComponent({
 	z-index: 1;
 }
 
-@media (hover: hover) {
+@media (any-hover: hover) {
 	.dropdown-container:hover .handle::after {
 		transform: rotate(180deg);
 	}
