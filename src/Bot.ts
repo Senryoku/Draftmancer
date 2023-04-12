@@ -14,10 +14,11 @@ const MTGDraftBotsAPIURLs: { url: string; weight: number }[] = [];
 async function addMTGDraftBotsInstance(domain: string, authToken: string, weight: number) {
 	// Make sure the instance is accessible
 	try {
-		const response = await axios.get(`${domain}/version`, { timeout: 1000 });
-		if (response.status === 200)
+		const response = await axios.get(`${domain}/version`, { timeout: 5000 });
+		if (response.status === 200) {
 			MTGDraftBotsAPIURLs.push({ url: `${domain}/draft?auth_token=${authToken}`, weight: weight });
-		else console.error(`MTGDraftBots instance '${domain}' returned an error: ${response.statusText}.`);
+			console.log(`[+] MTGDraftBots instance '${domain}' added.`);
+		} else console.error(`MTGDraftBots instance '${domain}' returned an error: ${response.statusText}.`);
 	} catch (error: any) {
 		if (error.isAxiosError) {
 			const e = error as AxiosError;
@@ -27,7 +28,7 @@ async function addMTGDraftBotsInstance(domain: string, authToken: string, weight
 }
 // Official Instance
 if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
-	await addMTGDraftBotsInstance(
+	addMTGDraftBotsInstance(
 		"https://mtgml.cubeartisan.net/",
 		process.env.MTGDRAFTBOTS_AUTHTOKEN,
 		process.env.NODE_ENV === "production" ? 1 : 0 // Do not use in development, unless it's the only instance available
@@ -35,7 +36,7 @@ if (process.env.MTGDRAFTBOTS_AUTHTOKEN)
 /* Temporarily disabled while we get the update working on ARM.
 // Allow an alternative instance of the mtgdraftbots server
 if (process.env.MTGDRAFTBOTS_ALT_INSTANCE)
-	await addMTGDraftBotsInstance(
+	addMTGDraftBotsInstance(
 		process.env.MTGDRAFTBOTS_ALT_INSTANCE,
 		process.env.MTGDRAFTBOTS_ALT_INSTANCE_AUTHTOKEN ?? "testing",
 		1
