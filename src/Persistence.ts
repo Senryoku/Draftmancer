@@ -425,9 +425,13 @@ export function logSession(type: string, session: Session) {
 	}
 
 	if (!MixInstance) return;
-	const mixdata: any = {
+	const mixdata: Record<string, any> = {
 		distinct_id: process.env.NODE_ENV || "development",
 		playerCount: session.users.size,
+		playersWithCollection: [...session.users].filter((uid) => Connections[uid]?.collection.size > 0).length,
+		playersUsingCollection: [...session.users].filter(
+			(uid) => Connections[uid]?.useCollection && Connections[uid]?.collection.size > 0
+		).length,
 	};
 	for (const prop of [
 		"boostersPerPlayer",
