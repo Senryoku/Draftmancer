@@ -1,6 +1,6 @@
 import type { ClientToServerEvents, LoaderOptions, ServerToClientEvents } from "@/SocketType";
 import type { SessionID, UserID } from "@/IDTypes";
-import type { SetCode, IIndexable } from "@/Types";
+import type { SetCode, IIndexable, Language } from "@/Types";
 import {
 	DisconnectedUser,
 	DistributionMode,
@@ -113,7 +113,7 @@ const defaultUserName = `Player_${randomStr4()}`;
 // Backwards compatility: these used to be stored in cookies.
 const cookieUserName = getCookie("userName", defaultUserName);
 const cookieUseCollection = getCookie("useCollection", "true") === "true";
-const cookieLanguage = getCookie("language", "en");
+const cookieLanguage = getCookie("language", "en") as Language;
 
 // Personal front-end settings
 const defaultSettings = {
