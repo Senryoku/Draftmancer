@@ -583,7 +583,7 @@
 					<Sortable
 						:key="`draggable-${userOrder.length}`"
 						:list="userOrder"
-						:item-key="(uid: UserID) => uid"
+						:item-key="(uid: string) => uid"
 						:options="{ animation: 200, disabled: userID !== sessionOwner }"
 						@update="changePlayerOrder"
 						class="player-list-container player-list"
@@ -1367,7 +1367,7 @@
 										v-model:preferredBasics="preferredBasics"
 										:otherbasics="basicsInDeck"
 										@removebasics="removeBasicsFromDeck"
-										@update:lands="(c: CardColor, n: number) => (lands[c as keyof typeof lands] = n)"
+										@update:lands="(c: keyof typeof lands, n: number) => (lands[c] = n)"
 									>
 									</land-control>
 									<dropdown
