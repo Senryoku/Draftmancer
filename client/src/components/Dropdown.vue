@@ -1,6 +1,6 @@
 <template>
 	<span class="dropdown-container" @mouseenter="updateHeight" :class="{ 'forced-open': forcedOpen }">
-		<div class="handle" @touchstart="toggleKeepOpen"><slot name="handle"></slot></div>
+		<div class="handle" @pointerdown="toggleKeepOpen"><slot name="handle"></slot></div>
 		<div class="dropdown">
 			<div class="content" ref="content">
 				<slot name="dropdown"></slot>
@@ -38,11 +38,11 @@ export default defineComponent({
 			if (this.forcedOpen === open) return;
 			this.forcedOpen = open;
 			if (this.forcedOpen) {
-				this.$el.addEventListener("touchstart", this.stopPropagation);
-				document.addEventListener("touchstart", this.onOutsideClick, { once: true });
+				this.$el.addEventListener("pointerdown", this.stopPropagation);
+				document.addEventListener("pointerdown", this.onOutsideClick, { once: true });
 			} else {
-				this.$el.removeEventListener("touchstart", this.stopPropagation);
-				document.removeEventListener("touchstart", this.onOutsideClick);
+				this.$el.removeEventListener("pointerdown", this.stopPropagation);
+				document.removeEventListener("pointerdown", this.onOutsideClick);
 			}
 			this.updateHeight();
 		},
