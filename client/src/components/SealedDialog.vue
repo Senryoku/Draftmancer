@@ -164,7 +164,8 @@ watch(boostersPerPlayer, () => {
 }
 
 .sealed-dialog-settings {
-	min-width: 60em;
+	min-width: min(60em, 100vw);
+	max-width: 100vw;
 }
 
 .option-separator {
