@@ -144,6 +144,8 @@ type SessionUser = {
 	readyState: ReadyState;
 };
 
+const DraftLogLiveComponent = defineAsyncComponent(() => import("./components/DraftLogLive.vue"));
+
 export default defineComponent({
 	components: {
 		BoosterCard,
@@ -159,7 +161,7 @@ export default defineComponent({
 		DelayedInput,
 		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
 		DraftLogHistory: defineAsyncComponent(() => import("./components/DraftLogHistory.vue")),
-		DraftLogLiveComponent: defineAsyncComponent(() => import("./components/DraftLogLive.vue")),
+		DraftLogLiveComponent,
 		DraftLogPick: defineAsyncComponent(() => import("./components/DraftLogPick.vue")),
 		Dropdown,
 		ExportDropdown,
@@ -931,7 +933,7 @@ export default defineComponent({
 				if (this.draftingState === DraftState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
-						this.$refs.draftloglive?.registerPlayerSelectEvents();
+						this.draftLogLiveComponent?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
 			});
@@ -1075,7 +1077,7 @@ export default defineComponent({
 				if (this.draftingState === DraftState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
-						this.$refs.draftloglive?.registerPlayerSelectEvents();
+						this.draftLogLiveComponent?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
 			});
@@ -1139,7 +1141,7 @@ export default defineComponent({
 						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
-				this.$refs.draftloglive?.newPick(data);
+				this.draftLogLiveComponent?.newPick(data);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
@@ -3106,6 +3108,9 @@ export default defineComponent({
 		},
 		sideboardDisplay(): typeof CardPool | null {
 			return this.$refs.sideboardDisplay as typeof CardPool | null;
+		},
+		draftLogLiveComponent(): typeof DraftLogLiveComponent | null {
+			return this.$refs.draftloglive as typeof DraftLogLiveComponent | null;
 		},
 		gameModeName(): string {
 			if (this.teamSealedState) return "Team Sealed";
