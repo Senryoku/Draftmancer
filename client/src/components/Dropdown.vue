@@ -102,13 +102,11 @@ export default defineComponent({
 	transition: transform 0.2s ease;
 }
 
-.forced-open .handle::after,
-.dropdown-container:active .handle::after {
+.forced-open .handle::after {
 	transform: rotate(180deg);
 }
 
-.forced-open .dropdown,
-.dropdown-container:active .dropdown {
+.forced-open .dropdown {
 	max-height: var(--unrolled-height);
 	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 	z-index: 1;
