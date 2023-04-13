@@ -399,6 +399,13 @@ export default defineComponent({
 			const columns = rows[rowIdx].querySelectorAll(".card-column");
 			let colIdx = 0;
 			while (colIdx < columns.length && columns[colIdx].getBoundingClientRect().left < x) ++colIdx;
+			// Returns the column bellow the mouse, or directly to the left (or the first if we're completely to the left).
+			const finalColumnIndex = Math.max(0, Math.min(this.rows[rowIdx].length - 1, colIdx - 1));
+			return this.rows[rowIdx][finalColumnIndex];
+
+			// This was creating new column if cards were dropped outside of existing columns,
+			// but I'm not sure this is good idea. Disabled for now.
+
 			// Returns it if we're within its horizontal boundaries
 			if (colIdx > 0 && x < columns[colIdx - 1].getBoundingClientRect().right) {
 				return this.rows[rowIdx][colIdx - 1];
