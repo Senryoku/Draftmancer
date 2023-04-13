@@ -2616,8 +2616,8 @@
         "icon": "img/sets/moc.svg",
         "commonCount": 94,
         "mythicCount": 50,
-        "rareCount": 216,
-        "uncommonCount": 90
+        "rareCount": 217,
+        "uncommonCount": 89
     },
     "mom": {
         "code": "mom",
@@ -4276,10 +4276,10 @@
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 34,
+        "cardCount": 35,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 34
+        "rareCount": 35
     },
     "prix": {
         "code": "prix",
@@ -4296,13 +4296,13 @@
     "prm": {
         "code": "prm",
         "fullName": "Magic Online Promos",
-        "cardCount": 3018,
+        "cardCount": 3054,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
         "bonusCount": 1,
         "commonCount": 396,
         "mythicCount": 370,
-        "rareCount": 1748,
+        "rareCount": 1784,
         "uncommonCount": 503
     },
     "prna": {
