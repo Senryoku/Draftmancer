@@ -348,7 +348,77 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
     cards = {}
     cardsByName = {}
     Translations = {}
+    NonProcessedCards = {} # Keep track of cards that were not added to the database (by (name, set, collector number))). After the first pass this will contain cards never printed in English. 
     print("Generating card data cache...")
+
+    def addCard(c):
+        if c['name'] in cardsByName:
+            cardsByName[c['name']].append(c)
+        else:
+            cardsByName[c['name']] = [c]
+
+        selection = {key: value for key, value in c.items() if key in {
+            'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
+        if 'mana_cost' not in selection and "card_faces" in c:
+            selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
+        if 'mana_cost' not in selection:
+            print(f"/!\ {c['name']}: Missing mana cost.")
+            selection['mana_cost'] = "{0}"
+        selection['type'], selection['subtypes'] = handleTypeLine(c['type_line'].split(" //")[0])
+        if selection['name'] in CardRatings:
+            selection['rating'] = CardRatings[selection['name']]
+        elif selection['name'].split(" //")[0] in CardRatings:
+            selection['rating'] = CardRatings[selection['name'].split(
+                " //")[0]]
+        else:
+            selection['rating'] = 0.5
+        selection['in_booster'] = (c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")))  # Exclude melded cards from boosters
+
+        cmc, colors = parseCost(selection["mana_cost"])
+        selection["cmc"] = cmc
+        selection["colors"] = colors
+
+        if c['set'] == 'akr' or c['set'] == 'klr':
+            selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
+        elif not c['booster'] or c['type_line'].startswith("Basic"):
+            selection['in_booster'] = False
+            selection['rating'] = 0
+        if c['set'] in ['sta']:  # Force STA in booster
+            selection['in_booster'] = not selection['collector_number'].endswith("e")
+
+        # Commanders from CLB commanders deck are incorrectly marked as in_booster by scryfall
+        if c['set'] == "clb" and int(c['collector_number']) >= 646 and int(c["collector_number"]) <= 649:
+            selection['in_booster'] = False
+        # Manually remove special printing from Double Masters 2022 packs
+        if c['set'] == "2x2" and int(c['collector_number']) >= 332:
+            selection['in_booster'] = False
+
+        # Make sure retro cards from DMR are marked as in_booster
+        if c['set'] == "dmr" and (int(c['collector_number']) >= 262 and int(c['collector_number']) <= 401):
+            selection['in_booster'] = True
+
+        # Cards from SIR are not marked as in_booster for some reason
+        if c['set'] == "sir" and not c['type_line'].startswith("Basic") and not c['collector_number'].endswith("b"):
+            selection['in_booster'] = True
+
+        # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
+        if c['id'] == "0826e210-2002-43fe-942d-41922dfd7bc2":
+            selection['in_booster'] = False
+
+        # Workaround: Remove cards from HBG that received a rebalanced version from packs
+        if c['id'] in ["057c66a8-9424-4c88-9707-5d8ef9170119", "e07d5fd5-d513-46d4-8812-6e6e55a6dfda", "a5cbda07-53a0-4526-9955-36f902073cf1", "ea4f1d5d-7991-4a2d-b907-3522e951ad4c", "884565bb-ed33-4372-8c81-487c2ee2f73c"]:
+            selection['in_booster'] = False
+
+        if c['layout'] == "split":
+            if 'Aftermath' in c['keywords']:
+                selection['layout'] = 'split-left'
+            elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
+                selection['layout'] = 'split'
+        elif c['layout'] == "flip":
+            selection['layout'] = 'flip'
+
+        cards[c['id']].update(selection)
+        
     for c in all_cards:
         # Some dual faced Secret Lair cards have some key information hidden in the card_faces array. Extract it.
         def copyFromFaces(prop):
@@ -370,6 +440,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
         key = (c['name'], c['set'], c['collector_number'])
         if key not in Translations:
+            NonProcessedCards[key] = c
             Translations[key] = {
                 'printed_names': {}, 'image_uris': {}}
 
@@ -407,72 +478,13 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                                                             ] = c['card_faces'][1]['image_uris']['border_crop']
 
         if c['lang'] == 'en':
-            if c['name'] in cardsByName:
-                cardsByName[c['name']].append(c)
-            else:
-                cardsByName[c['name']] = [c]
+            if key in NonProcessedCards:
+                del NonProcessedCards[key]
+            addCard(c)
 
-            selection = {key: value for key, value in c.items() if key in {
-                'arena_id', 'name', 'set', 'mana_cost', 'rarity', 'collector_number'}}
-            if 'mana_cost' not in selection and "card_faces" in c:
-                selection["mana_cost"] = c["card_faces"][0]["mana_cost"]
-            if 'mana_cost' not in selection:
-                print(f"/!\ {c['name']}: Missing mana cost.")
-                selection['mana_cost'] = "{0}"
-            selection['type'], selection['subtypes'] = handleTypeLine(c['type_line'].split(" //")[0])
-            if selection['name'] in CardRatings:
-                selection['rating'] = CardRatings[selection['name']]
-            elif selection['name'].split(" //")[0] in CardRatings:
-                selection['rating'] = CardRatings[selection['name'].split(
-                    " //")[0]]
-            else:
-                selection['rating'] = 0.5
-            selection['in_booster'] = (c['booster'] and (c['layout'] != 'meld' or not selection['collector_number'].endswith("b")))  # Exclude melded cards from boosters
-
-            cmc, colors = parseCost(selection["mana_cost"])
-            selection["cmc"] = cmc
-            selection["colors"] = colors
-
-            if c['set'] == 'akr' or c['set'] == 'klr':
-                selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
-            elif not c['booster'] or c['type_line'].startswith("Basic"):
-                selection['in_booster'] = False
-                selection['rating'] = 0
-            if c['set'] in ['sta']:  # Force STA in booster
-                selection['in_booster'] = not selection['collector_number'].endswith("e")
-
-            # Commanders from CLB commanders deck are incorrectly marked as in_booster by scryfall
-            if c['set'] == "clb" and int(c['collector_number']) >= 646 and int(c["collector_number"]) <= 649:
-                selection['in_booster'] = False
-            # Manually remove special printing from Double Masters 2022 packs
-            if c['set'] == "2x2" and int(c['collector_number']) >= 332:
-                selection['in_booster'] = False
-
-            # Make sure retro cards from DMR are marked as in_booster
-            if c['set'] == "dmr" and (int(c['collector_number']) >= 262 and int(c['collector_number']) <= 401):
-                selection['in_booster'] = True
-
-            # Cards from SIR are not marked as in_booster for some reason
-            if c['set'] == "sir" and not c['type_line'].startswith("Basic") and not c['collector_number'].endswith("b"):
-                selection['in_booster'] = True
-
-            # Workaround: Not sure why this printing is marked as in booster, but it causes a doubled entry in stx rares
-            if c['id'] == "0826e210-2002-43fe-942d-41922dfd7bc2":
-                selection['in_booster'] = False
-
-            # Workaround: Remove cards from HBG that received a rebalanced version from packs
-            if c['id'] in ["057c66a8-9424-4c88-9707-5d8ef9170119", "e07d5fd5-d513-46d4-8812-6e6e55a6dfda", "a5cbda07-53a0-4526-9955-36f902073cf1", "ea4f1d5d-7991-4a2d-b907-3522e951ad4c", "884565bb-ed33-4372-8c81-487c2ee2f73c"]:
-                selection['in_booster'] = False
-
-            if c['layout'] == "split":
-                if 'Aftermath' in c['keywords']:
-                    selection['layout'] = 'split-left'
-                elif not (c['layout'] == 'split' and c['set'] == 'cmb1'):  # Mystery booster play-test split cards use the 'normal' layout
-                    selection['layout'] = 'split'
-            elif c['layout'] == "flip":
-                selection['layout'] = 'flip'
-
-            cards[c['id']].update(selection)
+    # Add cards with no English translation
+    for c in NonProcessedCards.values():
+        addCard(c)
 
     MTGACards = {}
     for cid in list(cards):
@@ -839,6 +851,6 @@ constants = {}
 with open("src/data/constants.json", 'r', encoding="utf8") as constantsFile:
     constants = json.loads(constantsFile.read())
 constants['PrimarySets'] = [
-    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
+    s for s in PrimarySets if s in setinfos and s not in subsets and s not in ["ren", "rin", "a22", "y22", "j22", "mat", "cmm", "sis", "ltr", "ltc"]]  # Exclude some codes that are actually part of larger sets (tsb, fmb1, h1r... see subsets), or aren't out yet
 with open("src/data/constants.json", 'w', encoding="utf8") as constantsFile:
     json.dump(constants, constantsFile, ensure_ascii=False, indent=4)

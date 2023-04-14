@@ -75,15 +75,25 @@
         "rareCount": 341,
         "uncommonCount": 146
     },
+    "4bb": {
+        "code": "4bb",
+        "fullName": "Fourth Edition Foreign Black Border",
+        "cardCount": 378,
+        "isPrimary": true,
+        "icon": "img/sets/4bb.svg",
+        "commonCount": 136,
+        "rareCount": 121,
+        "uncommonCount": 121
+    },
     "4ed": {
         "code": "4ed",
         "fullName": "Fourth Edition",
-        "cardCount": 378,
+        "cardCount": 379,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/4ed.svg",
         "commonCount": 136,
-        "rareCount": 121,
+        "rareCount": 122,
         "uncommonCount": 121
     },
     "5dn": {
@@ -100,46 +110,46 @@
     "5ed": {
         "code": "5ed",
         "fullName": "Fifth Edition",
-        "cardCount": 454,
+        "cardCount": 460,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/5ed.svg",
-        "commonCount": 185,
+        "commonCount": 189,
         "rareCount": 137,
-        "uncommonCount": 132
+        "uncommonCount": 134
     },
     "6ed": {
         "code": "6ed",
         "fullName": "Classic Sixth Edition",
-        "cardCount": 350,
+        "cardCount": 351,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/6ed.svg",
-        "commonCount": 130,
+        "commonCount": 131,
         "rareCount": 110,
         "uncommonCount": 110
     },
     "7ed": {
         "code": "7ed",
         "fullName": "Seventh Edition",
-        "cardCount": 700,
+        "cardCount": 708,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/7ed.svg",
-        "commonCount": 260,
+        "commonCount": 266,
         "rareCount": 220,
-        "uncommonCount": 220
+        "uncommonCount": 222
     },
     "8ed": {
         "code": "8ed",
         "fullName": "Eighth Edition",
-        "cardCount": 707,
+        "cardCount": 710,
         "isPrimary": true,
         "block": "Core Set",
         "icon": "img/sets/8ed.svg",
-        "commonCount": 263,
-        "rareCount": 221,
-        "uncommonCount": 223
+        "commonCount": 264,
+        "rareCount": 222,
+        "uncommonCount": 224
     },
     "9ed": {
         "code": "9ed",
@@ -356,6 +366,16 @@
         "mythicCount": 17,
         "rareCount": 53,
         "uncommonCount": 80
+    },
+    "bchr": {
+        "code": "bchr",
+        "fullName": "Chronicles Foreign Black Border",
+        "cardCount": 125,
+        "isPrimary": true,
+        "icon": "img/sets/bchr.svg",
+        "commonCount": 37,
+        "rareCount": 45,
+        "uncommonCount": 43
     },
     "bfz": {
         "code": "bfz",
@@ -823,11 +843,11 @@
     "dd2": {
         "code": "dd2",
         "fullName": "Duel Decks: Jace vs. Chandra",
-        "cardCount": 62,
+        "cardCount": 64,
         "isPrimary": false,
         "icon": "img/sets/dd2.svg",
         "commonCount": 33,
-        "mythicCount": 2,
+        "mythicCount": 4,
         "rareCount": 6,
         "uncommonCount": 21
     },
@@ -1110,11 +1130,11 @@
     "dmu": {
         "code": "dmu",
         "fullName": "Dominaria United",
-        "cardCount": 434,
+        "cardCount": 436,
         "isPrimary": true,
         "icon": "img/sets/dmu.svg",
         "commonCount": 122,
-        "mythicCount": 47,
+        "mythicCount": 49,
         "rareCount": 141,
         "uncommonCount": 124
     },
@@ -1462,6 +1482,17 @@
         "block": "Friday Night Magic",
         "icon": "img/sets/f17.svg",
         "rareCount": 9
+    },
+    "fbb": {
+        "code": "fbb",
+        "fullName": "Foreign Black Border",
+        "cardCount": 307,
+        "isPrimary": true,
+        "block": "Core Set",
+        "icon": "img/sets/fbb.svg",
+        "commonCount": 91,
+        "rareCount": 121,
+        "uncommonCount": 95
     },
     "fem": {
         "code": "fem",
@@ -1956,12 +1987,12 @@
     "iko": {
         "code": "iko",
         "fullName": "Ikoria: Lair of Behemoths",
-        "cardCount": 387,
+        "cardCount": 390,
         "isPrimary": true,
         "icon": "img/sets/iko.svg",
-        "commonCount": 132,
+        "commonCount": 133,
         "mythicCount": 39,
-        "rareCount": 111,
+        "rareCount": 113,
         "uncommonCount": 105
     },
     "ima": {
@@ -1978,11 +2009,11 @@
     "inv": {
         "code": "inv",
         "fullName": "Invasion",
-        "cardCount": 350,
+        "cardCount": 352,
         "isPrimary": true,
         "block": "Invasion",
         "icon": "img/sets/inv.svg",
-        "commonCount": 130,
+        "commonCount": 132,
         "rareCount": 110,
         "uncommonCount": 110
     },
@@ -2029,12 +2060,12 @@
     "j14": {
         "code": "j14",
         "fullName": "Judge Gift Cards 2014",
-        "cardCount": 13,
+        "cardCount": 14,
         "isPrimary": false,
         "block": "Judge Gift Cards",
         "icon": "img/sets/j14.svg",
         "mythicCount": 1,
-        "rareCount": 12
+        "rareCount": 13
     },
     "j15": {
         "code": "j15",
@@ -2127,10 +2158,10 @@
     "jmp": {
         "code": "jmp",
         "fullName": "Jumpstart",
-        "cardCount": 496,
+        "cardCount": 497,
         "isPrimary": true,
         "icon": "img/sets/jmp.svg",
-        "commonCount": 235,
+        "commonCount": 236,
         "mythicCount": 17,
         "rareCount": 88,
         "uncommonCount": 156
@@ -2183,11 +2214,11 @@
     "khm": {
         "code": "khm",
         "fullName": "Kaldheim",
-        "cardCount": 425,
+        "cardCount": 426,
         "isPrimary": true,
         "icon": "img/sets/khm.svg",
         "commonCount": 130,
-        "mythicCount": 46,
+        "mythicCount": 47,
         "rareCount": 130,
         "uncommonCount": 119
     },
@@ -2556,11 +2587,11 @@
     "mir": {
         "code": "mir",
         "fullName": "Mirage",
-        "cardCount": 351,
+        "cardCount": 352,
         "isPrimary": true,
         "block": "Mirage",
         "icon": "img/sets/mir.svg",
-        "commonCount": 130,
+        "commonCount": 131,
         "rareCount": 110,
         "uncommonCount": 111
     },
@@ -2725,11 +2756,11 @@
     "neo": {
         "code": "neo",
         "fullName": "Kamigawa: Neon Dynasty",
-        "cardCount": 517,
+        "cardCount": 531,
         "isPrimary": true,
         "icon": "img/sets/neo.svg",
-        "commonCount": 151,
-        "mythicCount": 63,
+        "commonCount": 161,
+        "mythicCount": 67,
         "rareCount": 189,
         "uncommonCount": 114
     },
@@ -2817,12 +2848,12 @@
     "one": {
         "code": "one",
         "fullName": "Phyrexia: All Will Be One",
-        "cardCount": 456,
+        "cardCount": 479,
         "isPrimary": true,
         "icon": "img/sets/one.svg",
-        "commonCount": 123,
-        "mythicCount": 76,
-        "rareCount": 158,
+        "commonCount": 133,
+        "mythicCount": 88,
+        "rareCount": 159,
         "uncommonCount": 99
     },
     "ons": {
@@ -2994,11 +3025,19 @@
     "p30a": {
         "code": "p30a",
         "fullName": "30th Anniversary Play Promos",
-        "cardCount": 26,
+        "cardCount": 33,
         "isPrimary": false,
         "icon": "img/sets/p30a.svg",
-        "mythicCount": 1,
-        "rareCount": 25
+        "mythicCount": 2,
+        "rareCount": 31
+    },
+    "p30h": {
+        "code": "p30h",
+        "fullName": "30th Anniversary History Promos",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/p30h.svg",
+        "rareCount": 10
     },
     "p5dn": {
         "code": "p5dn",
@@ -3021,11 +3060,11 @@
     "p9ed": {
         "code": "p9ed",
         "fullName": "Ninth Edition Promos",
-        "cardCount": 1,
+        "cardCount": 2,
         "isPrimary": false,
         "block": "Core Set",
         "icon": "img/sets/p9ed.svg",
-        "rareCount": 1
+        "rareCount": 2
     },
     "paer": {
         "code": "paer",
@@ -3156,6 +3195,15 @@
         "commonCount": 58,
         "mythicCount": 4,
         "rareCount": 16
+    },
+    "papc": {
+        "code": "papc",
+        "fullName": "Apocalypse Promos",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Invasion",
+        "icon": "img/sets/papc.svg",
+        "rareCount": 1
     },
     "parb": {
         "code": "parb",
@@ -3340,12 +3388,12 @@
     "pcy": {
         "code": "pcy",
         "fullName": "Prophecy",
-        "cardCount": 143,
+        "cardCount": 144,
         "isPrimary": true,
         "block": "Masques",
         "icon": "img/sets/pcy.svg",
         "commonCount": 55,
-        "rareCount": 44,
+        "rareCount": 45,
         "uncommonCount": 44
     },
     "pd2": {
@@ -3372,11 +3420,11 @@
     "pdci": {
         "code": "pdci",
         "fullName": "DCI Promos",
-        "cardCount": 69,
+        "cardCount": 70,
         "isPrimary": false,
         "icon": "img/sets/pdci.svg",
         "commonCount": 1,
-        "rareCount": 64,
+        "rareCount": 65,
         "uncommonCount": 4
     },
     "pdgm": {
@@ -3422,13 +3470,13 @@
     "pdom": {
         "code": "pdom",
         "fullName": "Dominaria Promos",
-        "cardCount": 117,
+        "cardCount": 118,
         "isPrimary": false,
         "icon": "img/sets/pdom.svg",
         "commonCount": 2,
         "mythicCount": 18,
         "rareCount": 74,
-        "uncommonCount": 23
+        "uncommonCount": 24
     },
     "pdp10": {
         "code": "pdp10",
@@ -3699,6 +3747,14 @@
         "rareCount": 38,
         "uncommonCount": 24
     },
+    "phj": {
+        "code": "phj",
+        "fullName": "Hobby Japan Promos",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/phj.svg",
+        "rareCount": 5
+    },
     "phou": {
         "code": "phou",
         "fullName": "Hour of Devastation Promos",
@@ -3754,6 +3810,15 @@
         "mythicCount": 30,
         "rareCount": 106
     },
+    "pinv": {
+        "code": "pinv",
+        "fullName": "Invasion Promos",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Invasion",
+        "icon": "img/sets/pinv.svg",
+        "rareCount": 1
+    },
     "pisd": {
         "code": "pisd",
         "fullName": "Innistrad Promos",
@@ -3782,6 +3847,14 @@
         "icon": "img/sets/pjas.svg",
         "rareCount": 6
     },
+    "pjjt": {
+        "code": "pjjt",
+        "fullName": "Japan Junior Tournament",
+        "cardCount": 12,
+        "isPrimary": false,
+        "icon": "img/sets/pjjt.svg",
+        "rareCount": 12
+    },
     "pjou": {
         "code": "pjou",
         "fullName": "Journey into Nyx Promos",
@@ -3800,13 +3873,22 @@
         "icon": "img/sets/pjse.svg",
         "rareCount": 8
     },
+    "pjud": {
+        "code": "pjud",
+        "fullName": "Judgment Promos",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Odyssey",
+        "icon": "img/sets/pjud.svg",
+        "rareCount": 1
+    },
     "pkhm": {
         "code": "pkhm",
         "fullName": "Kaldheim Promos",
-        "cardCount": 152,
+        "cardCount": 153,
         "isPrimary": false,
         "icon": "img/sets/pkhm.svg",
-        "mythicCount": 35,
+        "mythicCount": 36,
         "rareCount": 117
     },
     "pkld": {
@@ -3878,10 +3960,10 @@
     "plg21": {
         "code": "plg21",
         "fullName": "Love Your LGS 2021",
-        "cardCount": 6,
+        "cardCount": 11,
         "isPrimary": false,
         "icon": "img/sets/plg21.svg",
-        "rareCount": 6
+        "rareCount": 11
     },
     "plg22": {
         "code": "plg22",
@@ -4039,11 +4121,12 @@
     "pmei": {
         "code": "pmei",
         "fullName": "Media Inserts",
-        "cardCount": 8,
+        "cardCount": 46,
         "isPrimary": false,
         "icon": "img/sets/pmei.svg",
-        "commonCount": 7,
-        "uncommonCount": 1
+        "commonCount": 14,
+        "rareCount": 24,
+        "uncommonCount": 8
     },
     "pmh1": {
         "code": "pmh1",
@@ -4099,6 +4182,63 @@
         "icon": "img/sets/pmor.svg",
         "rareCount": 2
     },
+    "pmps": {
+        "code": "pmps",
+        "fullName": "Magic Premiere Shop 2005",
+        "cardCount": 20,
+        "isPrimary": false,
+        "icon": "img/sets/pmps.svg",
+        "commonCount": 20
+    },
+    "pmps06": {
+        "code": "pmps06",
+        "fullName": "Magic Premiere Shop 2006",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pmps06.svg",
+        "rareCount": 5
+    },
+    "pmps07": {
+        "code": "pmps07",
+        "fullName": "Magic Premiere Shop 2007",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pmps07.svg",
+        "commonCount": 5
+    },
+    "pmps08": {
+        "code": "pmps08",
+        "fullName": "Magic Premiere Shop 2008",
+        "cardCount": 6,
+        "isPrimary": false,
+        "icon": "img/sets/pmps08.svg",
+        "commonCount": 5,
+        "rareCount": 1
+    },
+    "pmps09": {
+        "code": "pmps09",
+        "fullName": "Magic Premiere Shop 2009",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pmps09.svg",
+        "commonCount": 5
+    },
+    "pmps10": {
+        "code": "pmps10",
+        "fullName": "Magic Premiere Shop 2010",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pmps10.svg",
+        "commonCount": 5
+    },
+    "pmps11": {
+        "code": "pmps11",
+        "fullName": "Magic Premiere Shop 2011",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/pmps11.svg",
+        "commonCount": 5
+    },
     "pmrd": {
         "code": "pmrd",
         "fullName": "Mirrodin Promos",
@@ -4153,6 +4293,15 @@
         "mythicCount": 1,
         "rareCount": 2
     },
+    "pody": {
+        "code": "pody",
+        "fullName": "Odyssey Promos",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Odyssey",
+        "icon": "img/sets/pody.svg",
+        "rareCount": 1
+    },
     "pogw": {
         "code": "pogw",
         "fullName": "Oath of the Gatewatch Promos",
@@ -4185,12 +4334,12 @@
     "por": {
         "code": "por",
         "fullName": "Portal",
-        "cardCount": 229,
+        "cardCount": 257,
         "isPrimary": false,
         "icon": "img/sets/por.svg",
-        "commonCount": 115,
-        "rareCount": 55,
-        "uncommonCount": 59
+        "commonCount": 135,
+        "rareCount": 58,
+        "uncommonCount": 64
     },
     "pori": {
         "code": "pori",
@@ -4219,6 +4368,15 @@
         "block": "Time Spiral",
         "icon": "img/sets/pplc.svg",
         "rareCount": 2
+    },
+    "ppls": {
+        "code": "ppls",
+        "fullName": "Planeshift Promos",
+        "cardCount": 1,
+        "isPrimary": false,
+        "block": "Invasion",
+        "icon": "img/sets/ppls.svg",
+        "rareCount": 1
     },
     "ppp1": {
         "code": "ppp1",
@@ -4273,13 +4431,22 @@
         "mythicCount": 1,
         "rareCount": 2
     },
+    "pred": {
+        "code": "pred",
+        "fullName": "Redemption Program",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/pred.svg",
+        "rareCount": 1
+    },
     "pres": {
         "code": "pres",
         "fullName": "Resale Promos",
-        "cardCount": 35,
+        "cardCount": 38,
         "isPrimary": false,
         "icon": "img/sets/pres.svg",
-        "rareCount": 35
+        "rareCount": 37,
+        "uncommonCount": 1
     },
     "prix": {
         "code": "prix",
@@ -4320,12 +4487,12 @@
     "proe": {
         "code": "proe",
         "fullName": "Rise of the Eldrazi Promos",
-        "cardCount": 3,
+        "cardCount": 4,
         "isPrimary": false,
         "block": "Zendikar",
         "icon": "img/sets/proe.svg",
         "mythicCount": 1,
-        "rareCount": 2
+        "rareCount": 3
     },
     "prtr": {
         "code": "prtr",
@@ -4354,6 +4521,16 @@
         "block": "Guilds of Ravnica",
         "icon": "img/sets/prwk.svg",
         "commonCount": 10
+    },
+    "ps11": {
+        "code": "ps11",
+        "fullName": "Salvat 2011",
+        "cardCount": 224,
+        "isPrimary": false,
+        "icon": "img/sets/ps11.svg",
+        "commonCount": 106,
+        "rareCount": 59,
+        "uncommonCount": 59
     },
     "ps14": {
         "code": "ps14",
@@ -4403,6 +4580,16 @@
         "icon": "img/sets/ps19.svg",
         "mythicCount": 5
     },
+    "psal": {
+        "code": "psal",
+        "fullName": "Salvat 2005",
+        "cardCount": 720,
+        "isPrimary": false,
+        "icon": "img/sets/psal.svg",
+        "commonCount": 502,
+        "rareCount": 60,
+        "uncommonCount": 158
+    },
     "pscg": {
         "code": "pscg",
         "fullName": "Scourge Promos",
@@ -4419,6 +4606,14 @@
         "isPrimary": false,
         "icon": "img/sets/psdc.svg",
         "mythicCount": 5
+    },
+    "psdg": {
+        "code": "psdg",
+        "fullName": "Sega Dreamcast Cards",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/psdg.svg",
+        "rareCount": 10
     },
     "pshm": {
         "code": "pshm",
@@ -4529,6 +4724,14 @@
         "icon": "img/sets/psus.svg",
         "rareCount": 18
     },
+    "psvc": {
+        "code": "psvc",
+        "fullName": "Summer Vacation Promos 2022",
+        "cardCount": 3,
+        "isPrimary": false,
+        "icon": "img/sets/psvc.svg",
+        "rareCount": 3
+    },
     "ptc": {
         "code": "ptc",
         "fullName": "Pro Tour Collector Set",
@@ -4596,6 +4799,15 @@
         "icon": "img/sets/ptmp.svg",
         "rareCount": 1
     },
+    "ptor": {
+        "code": "ptor",
+        "fullName": "Torment Promos",
+        "cardCount": 3,
+        "isPrimary": false,
+        "block": "Odyssey",
+        "icon": "img/sets/ptor.svg",
+        "rareCount": 3
+    },
     "ptsp": {
         "code": "ptsp",
         "fullName": "Time Spiral Promos",
@@ -4642,11 +4854,12 @@
     "purl": {
         "code": "purl",
         "fullName": "URL/Convention Promos",
-        "cardCount": 7,
+        "cardCount": 9,
         "isPrimary": false,
         "icon": "img/sets/purl.svg",
         "commonCount": 1,
-        "rareCount": 6
+        "rareCount": 7,
+        "uncommonCount": 1
     },
     "pusg": {
         "code": "pusg",
@@ -4702,21 +4915,39 @@
     "pw22": {
         "code": "pw22",
         "fullName": "Wizards Play Network 2022",
-        "cardCount": 4,
+        "cardCount": 6,
         "isPrimary": false,
         "icon": "img/sets/pw22.svg",
         "mythicCount": 1,
-        "rareCount": 3
+        "rareCount": 5
+    },
+    "pw23": {
+        "code": "pw23",
+        "fullName": "Wizards Play Network 2023",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/pw23.svg",
+        "rareCount": 1
     },
     "pwar": {
         "code": "pwar",
         "fullName": "War of the Spark Promos",
-        "cardCount": 139,
+        "cardCount": 175,
         "isPrimary": false,
         "icon": "img/sets/pwar.svg",
-        "mythicCount": 21,
-        "rareCount": 94,
-        "uncommonCount": 24
+        "mythicCount": 24,
+        "rareCount": 107,
+        "uncommonCount": 44
+    },
+    "pwcs": {
+        "code": "pwcs",
+        "fullName": "Planeswalker Championship Promos",
+        "cardCount": 23,
+        "isPrimary": false,
+        "icon": "img/sets/pwcs.svg",
+        "mythicCount": 8,
+        "rareCount": 8,
+        "uncommonCount": 7
     },
     "pwor": {
         "code": "pwor",
@@ -4738,10 +4969,11 @@
     "pwwk": {
         "code": "pwwk",
         "fullName": "Worldwake Promos",
-        "cardCount": 3,
+        "cardCount": 4,
         "isPrimary": false,
         "block": "Zendikar",
         "icon": "img/sets/pwwk.svg",
+        "commonCount": 1,
         "mythicCount": 1,
         "rareCount": 2
     },
@@ -4826,6 +5058,24 @@
         "commonCount": 130,
         "rareCount": 88,
         "uncommonCount": 88
+    },
+    "ren": {
+        "code": "ren",
+        "fullName": "Renaissance",
+        "cardCount": 122,
+        "isPrimary": true,
+        "icon": "img/sets/ren.svg",
+        "commonCount": 48,
+        "uncommonCount": 74
+    },
+    "rin": {
+        "code": "rin",
+        "fullName": "Rinascimento",
+        "cardCount": 69,
+        "isPrimary": true,
+        "icon": "img/sets/rin.svg",
+        "commonCount": 34,
+        "uncommonCount": 35
     },
     "rix": {
         "code": "rix",
@@ -4989,12 +5239,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 877,
+        "cardCount": 903,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
-        "commonCount": 45,
-        "mythicCount": 148,
-        "rareCount": 664,
+        "commonCount": 46,
+        "mythicCount": 154,
+        "rareCount": 683,
         "uncommonCount": 20
     },
     "slp": {
@@ -5035,12 +5285,12 @@
     "snc": {
         "code": "snc",
         "fullName": "Streets of New Capenna",
-        "cardCount": 502,
+        "cardCount": 513,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 55,
-        "rareCount": 152,
+        "mythicCount": 56,
+        "rareCount": 162,
         "uncommonCount": 127
     },
     "sneo": {
@@ -5124,12 +5374,12 @@
     "sta": {
         "code": "sta",
         "fullName": "Strixhaven Mystical Archive",
-        "cardCount": 63,
+        "cardCount": 126,
         "isPrimary": false,
         "icon": "img/sets/sta.svg",
-        "mythicCount": 15,
-        "rareCount": 30,
-        "uncommonCount": 18
+        "mythicCount": 30,
+        "rareCount": 60,
+        "uncommonCount": 36
     },
     "sth": {
         "code": "sth",
@@ -5561,13 +5811,13 @@
     "usg": {
         "code": "usg",
         "fullName": "Urza's Saga",
-        "cardCount": 350,
+        "cardCount": 356,
         "isPrimary": true,
         "block": "Urza",
         "icon": "img/sets/usg.svg",
-        "commonCount": 130,
+        "commonCount": 133,
         "rareCount": 110,
-        "uncommonCount": 110
+        "uncommonCount": 113
     },
     "ust": {
         "code": "ust",
@@ -5722,14 +5972,14 @@
     "war": {
         "code": "war",
         "fullName": "War of the Spark",
-        "cardCount": 276,
+        "cardCount": 312,
         "isPrimary": true,
         "block": "Guilds of Ravnica",
         "icon": "img/sets/war.svg",
         "commonCount": 120,
-        "mythicCount": 18,
-        "rareCount": 56,
-        "uncommonCount": 82
+        "mythicCount": 21,
+        "rareCount": 69,
+        "uncommonCount": 102
     },
     "wc00": {
         "code": "wc00",
@@ -5978,12 +6228,12 @@
     "planeshifted_snc": {
         "code": "planeshifted_snc",
         "fullName": "Planeshifted New Capenna",
-        "cardCount": 502,
+        "cardCount": 513,
         "isPrimary": true,
         "icon": "img/sets/snc.svg",
         "commonCount": 168,
-        "mythicCount": 55,
-        "rareCount": 152,
+        "mythicCount": 56,
+        "rareCount": 162,
         "uncommonCount": 127
     },
     "sir0": {
