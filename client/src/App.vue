@@ -1992,8 +1992,18 @@
 							v-bind:class="{ disabled: usePredeterminedBoosters || useCustomCardList }"
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
-								content:
-									'<p>Lets you customize the exact content of your boosters.</p><p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>',
+								content: `<p>Lets you customize the exact content of your boosters.</p>
+									<p><strong>Bonus</strong>: Controls the number of cards from a set-specific bonus sheet, they generally replace commons (and thus do not increase booster size). Affected sets: 
+										<ul>
+											<li>March of the Machine (Multiverse Legends)</li> 
+											<li>Shadows over Innistrad Remastered (Shadow of the Past)</li> 
+											<li>The Brothers' War (Retro Artifact - These do NOT replace commons)</li> 
+											<li>Strixhaven (Mystical Archives)</li> 
+											<li>Timespiral Remastered (Timeshifted - These do NOT replace commons)</li> 
+											<li>Modern Horizons 2 (New-to-Modern - These do NOT replace commons)</li> 
+										</ul>
+									</p>
+									<p>Notes:<ul><li>Zero is a valid value (useful for Pauper or Artisan for example).</li><li>A land slot will be automatically added for some sets.</li><li>Unused when drawing from a custom card list: See the advanced card list syntax to mimic it.</li></ul></p>`,
 								html: true,
 							}"
 						>
@@ -2002,8 +2012,8 @@
 								<label for="edit-booster-content">Edit Booster Content</label>
 							</div>
 							<template v-if="useBoosterContent">
-								<div class="line" v-for="r in ['common', 'uncommon', 'rare']" :key="r">
-									<label :for="'booster-content-' + r" class="capitalized">{{ r }}s</label>
+								<div class="line" v-for="r in ['common', 'uncommon', 'rare', 'bonus']" :key="r">
+									<label :for="'booster-content-' + r" class="capitalized">{{ r }}</label>
 									<div class="right">
 										<input
 											class="small-number-input"

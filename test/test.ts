@@ -196,7 +196,7 @@ describe("Inter client communication", function () {
 
 		// Session settings
 		it("Clients should receive the updated boosterContent.", function (done) {
-			const newBoosterContent = { common: 2, uncommon: 58, rare: 36 };
+			const newBoosterContent = { common: 2, uncommon: 58, rare: 36, bonus: 1 };
 			clients[nonOwnerIdx].once("sessionOptions", (data) => {
 				expect(data.boosterContent).to.eql(newBoosterContent);
 				done();

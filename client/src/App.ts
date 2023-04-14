@@ -256,6 +256,7 @@ export default defineComponent({
 				common: 10,
 				uncommon: 3,
 				rare: 1,
+				bonus: 1,
 			},
 			usePredeterminedBoosters: false,
 			colorBalance: true,
@@ -1217,6 +1218,7 @@ export default defineComponent({
 				common: 10,
 				uncommon: 3,
 				rare: 1,
+				bonus: 1,
 			};
 			this.usePredeterminedBoosters = false;
 			this.colorBalance = true;

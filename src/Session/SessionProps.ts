@@ -44,7 +44,7 @@ export const SessionsSettingsProps: { [propName: string]: (val: any) => boolean 
 	boosterContent(val: any) {
 		// Validate input (a value for each rarity and at least one card)
 		if (!isObject(val)) return false;
-		if (!["common", "uncommon", "rare"].every((r) => r in val)) return false;
+		if (!["common", "uncommon", "rare", "bonus"].every((r) => r in val)) return false;
 		if (Object.values(val).some((i: any) => !Number.isInteger(i) || i < 0)) return false;
 		if (Object.values(val).reduce((acc, val) => acc + val) <= 0) return false;
 		return true;

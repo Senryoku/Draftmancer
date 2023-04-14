@@ -331,4 +331,58 @@ describe("Set Specific Booster Rules", function () {
 			if (Math.floor(idx / clients.length) === 1) validateWARBooster(boosters[idx]);
 			else validateDOMBooster(boosters[idx]);
 	});
+
+	it("common session settings for non-default bonus booster content tests.", () => {
+		let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+		clients[ownerIdx].emit("ignoreCollections", true);
+		clients[ownerIdx].emit("setCustomBoosters", ["", "", ""]);
+		clients[ownerIdx].emit("setUseBoosterContent", true);
+	});
+
+	const bonusSets = [
+		{ code: "stx", bonus: "sta" },
+		{ code: "bro", bonus: "brr" },
+		{ code: "sir", bonus: "sis" },
+		{ code: "mom", bonus: "mul" },
+	];
+	for (const s of bonusSets) {
+		for (let i = 0; i < 4; ++i)
+			it(`Non-default bonus booster content (${i}) for set ${s.code}.`, async () => {
+				let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+				clients[ownerIdx].emit("setRestriction", [s.code]);
+				clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
+				clients[ownerIdx].emit("startDraft", ackNoError);
+				const boosters = await collectBoosters();
+				for (let idx = 0; idx < boosters.length; ++idx)
+					expect(boosters[idx].filter((card) => card.set === s.bonus)).to.have.length(i);
+			});
+	}
+
+	for (let i = 0; i < 4; ++i)
+		it(`Non-default bonus booster content (${i}) for set tsr.`, async () => {
+			let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			clients[ownerIdx].emit("setRestriction", ["tsr"]);
+			clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
+			clients[ownerIdx].emit("startDraft", ackNoError);
+			const boosters = await collectBoosters();
+			for (let idx = 0; idx < boosters.length; ++idx)
+				expect(boosters[idx].filter((card) => card.rarity === "special")).to.have.length(i);
+		});
+	for (let i = 0; i < 4; ++i)
+		it(`Non-default bonus booster content (${i}) for set mh2.`, async () => {
+			let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
+			clients[ownerIdx].emit("setRestriction", ["mh2"]);
+			clients[ownerIdx].emit("setBoosterContent", { common: 10, uncommon: 3, rare: 1, bonus: i });
+			clients[ownerIdx].emit("startDraft", ackNoError);
+			const boosters = await collectBoosters();
+			for (let idx = 0; idx < boosters.length; ++idx)
+				expect(
+					boosters[idx].filter(
+						(card) =>
+							parseInt(card.collector_number) >= 261 &&
+							parseInt(card.collector_number) <= 303 &&
+							!card.foil
+					)
+				).to.have.length(i);
+		});
 });

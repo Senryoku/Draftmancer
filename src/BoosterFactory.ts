@@ -34,6 +34,7 @@ export const DefaultBoosterTargets: { [rarity: string]: number } = {
 	common: 10,
 	uncommon: 3,
 	rare: 1,
+	bonus: 1,
 };
 
 function isEmpty(slotedCardPool: SlotedCardPool): boolean {
@@ -508,8 +509,10 @@ class TSRBoosterFactory extends BoosterFactory {
 	generateBooster(targets: Targets) {
 		const booster = super.generateBooster(targets);
 		if (isMessageError(booster)) return booster;
-		const timeshifted = pickCard(this.cardPool["special"], []);
-		booster.push(timeshifted);
+		for (let i = 0; i < targets.bonus; ++i) {
+			const timeshifted = pickCard(this.cardPool["special"], []);
+			booster.push(timeshifted);
+		}
 		return booster;
 	}
 }
@@ -547,6 +550,7 @@ class STXBoosterFactory extends BoosterFactory {
 	}
 
 	generateBooster(targets: Targets) {
+		const updatedTargets = Object.assign({}, targets);
 		const mythicPromotion = this.options?.mythicPromotion ?? true;
 		const allowRares = targets["rare"] > 0; // Avoid rare & mythic lessons/mystical archives
 
@@ -565,29 +569,30 @@ class STXBoosterFactory extends BoosterFactory {
 
 		const pickedLesson = pickCard(this.lessonsByRarity[pickedRarity], []);
 
-		const updatedTargets = Object.assign({}, targets);
-		if (updatedTargets["common"] > 0) --updatedTargets["common"];
+		const mysticalArchives: UniqueCard[] = [];
+		for (let i = 0; i < targets.bonus; ++i) {
+			if (updatedTargets["common"] > 0) --updatedTargets["common"];
+			const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
+			const archiveRarityRoll = random.real(0, 1);
+			const archiveRarity = allowRares
+				? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
+					? "mythic"
+					: archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
+					? "rare"
+					: "uncommon"
+				: "uncommon";
+
+			if (archiveCounts[archiveRarity] <= 0)
+				return new MessageError("Error generating boosters", `Not enough Mystical Archive cards.`);
+
+			mysticalArchives.push(pickCard(this.mysticalArchiveByRarity[archiveRarity], []));
+		}
 
 		let booster = super.generateBooster(updatedTargets);
 		if (isMessageError(booster)) return booster;
 		booster.push(pickedLesson);
 
-		// Mystical Archive
-		const archiveCounts = countBySlot(this.mysticalArchiveByRarity);
-		const archiveRarityRoll = random.real(0, 1);
-		const archiveRarity = allowRares
-			? mythicPromotion && archiveCounts["mythic"] > 0 && archiveRarityRoll < 0.066
-				? "mythic"
-				: archiveCounts["rare"] > 0 && archiveRarityRoll < 0.066 + 0.264
-				? "rare"
-				: "uncommon"
-			: "uncommon";
-
-		if (archiveCounts[archiveRarity] <= 0)
-			return new MessageError("Error generating boosters", `Not enough Mystical Archive cards.`);
-
-		const archive = pickCard(this.mysticalArchiveByRarity[archiveRarity], []);
-		booster.push(archive);
+		booster.push(...mysticalArchives);
 
 		return booster;
 	}
@@ -616,14 +621,17 @@ class MH2BoosterFactory extends BoosterFactory {
 		if (Object.values(newToModernCounts).every((c) => c === 0)) {
 			return super.generateBooster(targets);
 		} else {
-			// Roll for New-to-Modern rarity
-			const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, this.options);
-			const pickedCard = pickCard(this.newToModern[pickedRarity], []);
+			const newToModern: UniqueCard[] = [];
+			for (let i = 0; i < targets.bonus; ++i) {
+				// Roll for New-to-Modern rarity
+				const pickedRarity = rollSpecialCardRarity(newToModernCounts, targets, this.options);
+				newToModern.push(pickCard(this.newToModern[pickedRarity], []));
+			}
 
 			const booster = super.generateBooster(targets);
 			if (isMessageError(booster)) return booster;
 			// Insert the New-to-Modern card in the appropriate slot. FIXME: Currently unknown
-			booster.unshift(pickedCard);
+			booster.unshift(...newToModern);
 			return booster;
 		}
 	}
@@ -1122,7 +1130,8 @@ class UNFBoosterFactory extends BoosterFactory {
 	}
 }
 
-/* 1 Rare or mythic rare
+/* The Brothers' War
+ * 1 Rare or mythic rare
  * 1 Retro artifact or retro schematic card ("It's an uncommon approximately 66% of the time, a rare ~27% of the time, and a mythic rare ~7% of the time")
  * 3 Non-foil uncommons
  * 10 Non-foil commons, unless one is replaced by a traditional foil card of any rarity (33%)
@@ -1154,24 +1163,27 @@ class BROBoosterFactory extends BoosterFactory {
 		if (isEmpty(this.retroArtifacts)) {
 			return super.generateBooster(targets);
 		} else {
-			const retroCardsCounts = countBySlot(this.retroArtifacts);
-			const retroRarityRoll = random.real(0, 1);
-			const pickedRarity =
-				targets["rare"] > 0
-					? this.options.mythicPromotion &&
-					  retroCardsCounts["mythic"] > 0 &&
-					  retroRarityRoll < this.RetroMythicChance
-						? "mythic"
-						: retroCardsCounts["rare"] > 0 &&
-						  retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
-						? "rare"
-						: "uncommon"
-					: "uncommon";
-			const retroArtifact = pickCard(this.retroArtifacts[pickedRarity], []);
+			const retroArtifacts: UniqueCard[] = [];
+			for (let i = 0; i < targets.bonus; ++i) {
+				const retroCardsCounts = countBySlot(this.retroArtifacts);
+				const retroRarityRoll = random.real(0, 1);
+				const pickedRarity =
+					targets["rare"] > 0
+						? this.options.mythicPromotion &&
+						  retroCardsCounts["mythic"] > 0 &&
+						  retroRarityRoll < this.RetroMythicChance
+							? "mythic"
+							: retroCardsCounts["rare"] > 0 &&
+							  retroRarityRoll < this.RetroMythicChance + this.RetroRareChance
+							? "rare"
+							: "uncommon"
+						: "uncommon";
+				retroArtifacts.push(pickCard(this.retroArtifacts[pickedRarity], []));
+			}
 
 			const booster = super.generateBooster(targets);
 			if (isMessageError(booster)) return booster;
-			if (retroArtifact) booster.unshift(retroArtifact);
+			booster.unshift(...retroArtifacts);
 			return booster;
 		}
 	}
@@ -1285,16 +1297,18 @@ class SIRBoosterFactory extends BoosterFactory {
 	generateBooster(targets: Targets) {
 		const updatedTargets = Object.assign({}, targets);
 
-		// FIXME: No idea if the bonus sheet card actually replaces a common or not, but it's simpler for now (keeps the cards count to 14 without land slot).
-		updatedTargets.common = Math.max(0, updatedTargets.common - 1);
-
-		const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.bonusSheet), updatedTargets, this.options);
+		const bonusCards: UniqueCard[] = [];
+		for (let i = 0; i < targets.bonus; ++i) {
+			// FIXME: No idea if the bonus sheet card actually replaces a common or not, but it's simpler for now (keeps the cards count to 14 without land slot).
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+			const bonusCardRarity = rollSpecialCardRarity(countBySlot(this.bonusSheet), updatedTargets, this.options);
+			bonusCards.push(pickCard(this.bonusSheet[bonusCardRarity]));
+		}
 
 		const booster = super.generateBooster(updatedTargets);
 		if (isMessageError(booster)) return booster;
 
-		const bonusCard = pickCard(this.bonusSheet[bonusCardRarity]);
-		booster.unshift(bonusCard);
+		booster.unshift(...bonusCards);
 
 		return booster;
 	}
@@ -1379,20 +1393,24 @@ class MOMBoosterFactory extends BoosterFactory {
 			return super.generateBooster(targets);
 		} else {
 			const updatedTargets = Object.assign({}, targets);
-			updatedTargets.common = Math.max(0, updatedTargets.common - 2);
+			updatedTargets.common = Math.max(0, updatedTargets.common - 1);
 
-			const mulCounts = countBySlot(this.multiverseLegend);
-			if (mulCounts.uncommon === 0 && mulCounts.rare === 0 && mulCounts.mythic === 0)
-				return new MessageError("Not enough Multiverse Legends cards.");
-			// "Roughly one third of the time you receive a non-foil Multiverse Legends card, it will be a rare or mythic rare."
-			const mulRarityRoll = random.real(0, 1);
-			const mulRarity =
-				this.options?.mythicPromotion && mulCounts.mythic > 0 && mulRarityRoll <= 1.0 / 15.0
-					? "mythic"
-					: mulCounts.rare > 0 && mulRarityRoll <= 5.0 / 15.0
-					? "rare"
-					: "uncommon";
-			const mulCard = pickCard(this.multiverseLegend[mulRarity]);
+			const mulCards: UniqueCard[] = [];
+			for (let i = 0; i < targets.bonus; ++i) {
+				updatedTargets.common = Math.max(0, updatedTargets.common - 1);
+				const mulCounts = countBySlot(this.multiverseLegend);
+				if (mulCounts.uncommon === 0 && mulCounts.rare === 0 && mulCounts.mythic === 0)
+					return new MessageError("Not enough Multiverse Legends cards.");
+				// "Roughly one third of the time you receive a non-foil Multiverse Legends card, it will be a rare or mythic rare."
+				const mulRarityRoll = random.real(0, 1);
+				const mulRarity =
+					this.options?.mythicPromotion && mulCounts.mythic > 0 && mulRarityRoll <= 1.0 / 15.0
+						? "mythic"
+						: mulCounts.rare > 0 && mulRarityRoll <= 5.0 / 15.0
+						? "rare"
+						: "uncommon";
+				mulCards.push(pickCard(this.multiverseLegend[mulRarity]));
+			}
 
 			let battleRarity = "uncommon";
 			let dfcRarity =
@@ -1438,7 +1456,7 @@ class MOMBoosterFactory extends BoosterFactory {
 			// Insert special slots right after the rare(s).
 			booster.splice(updatedTargets["rare"], 0, ...insertedCards);
 			// We'll always have the mul card in first for clarity.
-			booster.unshift(mulCard);
+			booster.unshift(...mulCards);
 			return booster;
 		}
 	}
