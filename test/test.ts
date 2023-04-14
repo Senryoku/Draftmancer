@@ -440,7 +440,20 @@ describe("Single Draft (Two Players)", function () {
 					const s = state as ReturnType<DraftState["syncData"]>;
 					const clientState = clientStates[getUID(client)];
 					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
-						if (s.pickNumber === 0) boosterValidation?.(s.booster);
+						if (s.pickNumber === 0) {
+							expect(
+								s.booster.every((card) => card !== undefined),
+								"Booster should not hold any undefined value."
+							).to.be.true;
+							expect(
+								s.booster.every((card) => card.image_uris["en"] !== undefined),
+								`All cards in booster should have a valid image.\n${s.booster
+									.filter((card) => card.image_uris["en"] === undefined)
+									.map((card) => `${card.name} (${card.id})`)
+									.join("\n")}`
+							).to.be.true;
+							boosterValidation?.(s.booster);
+						}
 						const choice = Math.floor(Math.random() * s.booster.length);
 						clientState.pickedCards.push(s.booster[choice]);
 						clientState.state = s;
