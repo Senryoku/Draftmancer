@@ -521,7 +521,7 @@ export class Session implements IIndexable {
 				session: this,
 			};
 
-			let defaultFactory = null;
+			let defaultFactory: IBoosterFactory | null = null;
 
 			const getBoosterFactory = function (
 				set: string | null,
@@ -543,6 +543,17 @@ export class Session implements IIndexable {
 				BoosterFactoryOptions.mythicPromotion &&
 				!this.maxDuplicates &&
 				this.unrestrictedCardPool();
+			// Prefer collation from taw/magic-sealed-data for these sets when possible
+			const setsWithPreferredPaperFactory = [
+				"dbl", // Our implementation uses cards from mid and vow, not dbl (which might be desirable... but it's less accurate)
+			];
+			const usePaperBoosterFactory = (set: string) => {
+				return (
+					acceptPaperBoosterFactories &&
+					!(set in SetSpecificFactories && !setsWithPreferredPaperFactory.includes(set)) && // Prefer our implementation if available, barring some exceptions.
+					isPaperBoosterFactoryAvailable(set)
+				);
+			};
 			const isPaperBoosterFactoryAvailable = (set: string) => {
 				const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
 				return (
@@ -571,11 +582,7 @@ export class Session implements IIndexable {
 			// If the default rule will be used, initialize it
 			if (!options?.useCustomBoosters || customBoosters.some((v: string) => v === "")) {
 				// Use PaperBoosterFactory if possible (avoid computing cardPoolByRarity in this case)
-				if (
-					acceptPaperBoosterFactories &&
-					this.setRestriction.length === 1 &&
-					isPaperBoosterFactoryAvailable(this.setRestriction[0])
-				) {
+				if (this.setRestriction.length === 1 && usePaperBoosterFactory(this.setRestriction[0])) {
 					defaultFactory = getPaperBoosterFactory(this.setRestriction[0]);
 				} else {
 					const localCollection = this.cardPoolByRarity();
@@ -590,7 +597,7 @@ export class Session implements IIndexable {
 					);
 					// Make sure we have enough cards
 					for (const slot of ["common", "uncommon", "rare"]) {
-						const card_count = countCards(defaultFactory.cardPool[slot]);
+						const card_count = countCards((defaultFactory as BoosterFactory).cardPool[slot]);
 						const card_target = targets[slot] * boosterQuantity;
 						if (card_count < card_target) {
 							const msg = `Not enough cards (${card_count}/${card_target} ${slot}s) in collection.`;
@@ -629,10 +636,10 @@ export class Session implements IIndexable {
 				if (
 					addLandSlot &&
 					defaultFactory &&
-					!defaultFactory.landSlot &&
+					!(defaultFactory as BoosterFactory).landSlot &&
 					!(this.setRestriction.length === 1 && irregularSets.includes(this.setRestriction[0]))
 				)
-					defaultFactory.landSlot =
+					(defaultFactory as BoosterFactory).landSlot =
 						this.setRestriction.length === 0 || !BasicLandSlots[this.setRestriction[0]]
 							? defaultBasics
 							: BasicLandSlots[this.setRestriction[0]];
@@ -658,9 +665,8 @@ export class Session implements IIndexable {
 						if (!usedSets[boosterSet]) {
 							// Use the corresponding PaperBoosterFactories if possible (is available and of the excepted size when addLandSlot is needed)
 							if (
-								acceptPaperBoosterFactories &&
-								isPaperBoosterFactoryAvailable(boosterSet) &&
-								(!addLandSlot || PaperBoosterSizes[boosterSet] === 15)
+								(!addLandSlot || PaperBoosterSizes[boosterSet] === 15) &&
+								usePaperBoosterFactory(boosterSet)
 							) {
 								usedSets[boosterSet] = getPaperBoosterFactory(boosterSet);
 							} else {

@@ -616,17 +616,17 @@ describe("Single Draft (Two Players)", function () {
 	describe("Discarding the 8 remaining cards of each pack", function () {
 		connect();
 		const discardRemainingCardsAt = 8;
-		const cardsPerPack = 15; // Drafting VOW to make sure we have 15 cards per pack
+		const cardsPerPack = 15; // Drafting BRO to make sure we have 15 cards per pack
 		it("Clients should receive the updated setRestriction status.", function (done) {
 			let ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			let nonOwnerIdx = 1 - ownerIdx;
 			clients[nonOwnerIdx].once("setRestriction", function (setRestriction) {
 				expect(setRestriction).to.have.lengthOf(1);
-				expect(setRestriction[0]).to.be.equal("vow");
+				expect(setRestriction[0]).to.be.equal("bro");
 				done();
 			});
 			clients[ownerIdx].emit("ignoreCollections", true);
-			clients[ownerIdx].emit("setRestriction", ["vow"]);
+			clients[ownerIdx].emit("setRestriction", ["bro"]);
 		});
 		it("Clients should receive the updated discardRemainingCardsAt status.", function (done) {
 			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
