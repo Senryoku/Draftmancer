@@ -6236,6 +6236,28 @@
         "rareCount": 162,
         "uncommonCount": 127
     },
+    "mb1_convention_2019": {
+        "code": "mb1_convention_2019",
+        "fullName": "Mystery Booster Convention 2019",
+        "cardCount": 1697,
+        "isPrimary": true,
+        "icon": "img/sets/mb1.svg",
+        "commonCount": 1060,
+        "mythicCount": 30,
+        "rareCount": 154,
+        "uncommonCount": 453
+    },
+    "mb1_convention_2021": {
+        "code": "mb1_convention_2021",
+        "fullName": "Mystery Booster Convention 2021",
+        "cardCount": 1697,
+        "isPrimary": true,
+        "icon": "img/sets/mb1.svg",
+        "commonCount": 1060,
+        "mythicCount": 30,
+        "rareCount": 154,
+        "uncommonCount": 453
+    },
     "sir0": {
         "code": "sir0",
         "fullName": "SIR: Creature Type Terror!",

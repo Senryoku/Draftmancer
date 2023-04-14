@@ -1604,8 +1604,12 @@ export const PaperBoosterSizes: {
 } = {};
 for (const s of PaperBoosterData as any[]) {
 	const set: SetInfo = s as SetInfo;
-	if (!Constants.PrimarySets.includes(set.code) && !set.code.includes("-arena")) {
-		//console.log( `PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.` );
+	if (
+		!Constants.PrimarySets.includes(set.code) &&
+		!set.code.includes("-arena") &&
+		!["cmb1", "cmb2"].includes(set.code)
+	) {
+		// console.log(`PaperBoosterFactories: Found '${set.code}' collation data but set is not in PrimarySets, skippink it.`);
 		continue;
 	}
 

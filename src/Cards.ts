@@ -116,6 +116,9 @@ BoosterCardsBySet["sir0"] = BoosterCardsBySet["sir"];
 BoosterCardsBySet["sir1"] = BoosterCardsBySet["sir"];
 BoosterCardsBySet["sir2"] = BoosterCardsBySet["sir"];
 BoosterCardsBySet["sir3"] = BoosterCardsBySet["sir"];
+// Mystery boosters convention editions with playtest cards
+BoosterCardsBySet["mb1_convention_2019"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb1"]);
+BoosterCardsBySet["mb1_convention_2021"] = BoosterCardsBySet["mb1"].concat(CardsBySet["cmb2"]);
 
 export const MTGACardIDs = [...Cards.keys()].filter((cid) => !!getCard(cid).arena_id);
 

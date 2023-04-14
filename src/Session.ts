@@ -556,12 +556,16 @@ export class Session implements IIndexable {
 			};
 			const isPaperBoosterFactoryAvailable = (set: string) => {
 				const excludedSets = ["mh2"]; // Workaround for sets failing our tests (we already have a working implementation anyway, and I don't want to debug it honestly.)
+				if (["mb1_convention_2019", "mb1_convention_2021"].includes(set)) return true;
 				return (
 					(set in PaperBoosterFactories || `${set}-arena` in PaperBoosterFactories) &&
 					!excludedSets.includes(set)
 				);
 			};
 			const getPaperBoosterFactory = (set: string) => {
+				if (set === "mb1_convention_2019") return PaperBoosterFactories["cmb1"](BoosterFactoryOptions);
+				if (set === "mb1_convention_2021") return PaperBoosterFactories["cmb2"](BoosterFactoryOptions);
+
 				// FIXME: Collation data has arena/paper variants, but isn't perfect right now, for example:
 				//   - Paper IKO has promo versions of the cards that are not available on Arena (as separate cards at least, and with proper collector number), preventing to always rely on the paper collation by default.
 				//   - Arena ZNR doesn't have the MDFC requirement properly implemented, preventing to systematically switch to arena collation when available.

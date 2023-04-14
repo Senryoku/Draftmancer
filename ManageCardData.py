@@ -832,6 +832,21 @@ setinfos["planeshifted_snc"].update({"code": "planeshifted_snc",
                                      "isPrimary": True,
                                      })
 
+setinfos["mb1_convention_2019"] = {}
+setinfos["mb1_convention_2019"].update(setinfos["mb1"])
+setinfos["mb1_convention_2019"].update({"code": "mb1_convention_2019",
+                                     "fullName": "Mystery Booster Convention 2019",
+                                     "isPrimary": True,
+                                     })
+PrimarySets.append("mb1_convention_2019")
+setinfos["mb1_convention_2021"] = {}
+setinfos["mb1_convention_2021"].update(setinfos["mb1"])
+setinfos["mb1_convention_2021"].update({"code": "mb1_convention_2021",
+                                     "fullName": "Mystery Booster Convention 2021",
+                                     "isPrimary": True,
+                                     })
+PrimarySets.append("mb1_convention_2021")
+
 # Create fake primary sets for each version of the Shadows over Innistrad Remastered bonus sheet, so users can choose rather than rely on the auto rotation.
 with open("src/data/shadow_of_the_past.json", "r") as bonusSheetsFile:
     bonusSheets = json.loads(bonusSheetsFile.read())

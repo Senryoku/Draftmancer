@@ -549,6 +549,8 @@ describe("Single Draft (Two Players)", function () {
 							c.set === "sis" ||
 							(set === "ydmu" && c.set === "dmu") ||
 							(set === "planeshifted_snc" && c.set === "snc") ||
+							(set === "mb1_convention_2019" && ["mb1", "cmb1"].includes(c.set)) ||
+							(set === "mb1_convention_2021" && ["mb1", "cmb2"].includes(c.set)) ||
 							(set === "unf" && c.set === "sunf") ||
 							(set === "con" && c.set === "ala") ||
 							(set === "arb" && c.set === "ala") ||
