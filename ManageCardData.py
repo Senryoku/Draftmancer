@@ -378,6 +378,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         selection["cmc"] = cmc
         selection["colors"] = colors
 
+        if c['set'] == 'war':
+            if 'promo_types' in c and 'jpwalker' in c['promo_types']:
+                selection['in_booster'] = False
+
         if c['set'] == 'akr' or c['set'] == 'klr':
             selection['in_booster'] = c['booster'] and not c['type_line'].startswith("Basic")
         elif not c['booster'] or c['type_line'].startswith("Basic"):
