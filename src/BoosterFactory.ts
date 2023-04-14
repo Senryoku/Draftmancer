@@ -1385,11 +1385,13 @@ class MOMBoosterFactory extends BoosterFactory {
 			if (mulCounts.uncommon === 0 && mulCounts.rare === 0 && mulCounts.mythic === 0)
 				return new MessageError("Not enough Multiverse Legends cards.");
 			// "Roughly one third of the time you receive a non-foil Multiverse Legends card, it will be a rare or mythic rare."
-			const mullRarityRoll = random.real(0, 1);
-			let mulRarity = "uncommon";
-			if (mullRarityRoll <= (1.0 / 3.0) * mythicRate && this.options?.mythicPromotion && mulCounts.mythic > 0)
-				mulRarity = "mythic";
-			else if (mullRarityRoll <= 1.0 / 3.0 && mulCounts.rare > 0) mulRarity = "rare";
+			const mulRarityRoll = random.real(0, 1);
+			const mulRarity =
+				this.options?.mythicPromotion && mulCounts.mythic > 0 && mulRarityRoll <= 1.0 / 15.0
+					? "mythic"
+					: mulCounts.rare > 0 && mulRarityRoll <= 5.0 / 15.0
+					? "rare"
+					: "uncommon";
 			const mulCard = pickCard(this.multiverseLegend[mulRarity]);
 
 			let battleRarity = "uncommon";
