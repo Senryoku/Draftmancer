@@ -530,22 +530,26 @@ class STXBoosterFactory extends BoosterFactory {
 		super(filteredCardPool, landSlot, options);
 		this.lessonsByRarity = lessons;
 
+		this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
 		// Filter STA cards according to session collections
 		if (options.session && !options.session.unrestrictedCardPool()) {
 			const STACards: CardPool = options.session.restrictedCollection(["sta"]);
-			this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
-			for (const cid of STACards.keys())
-				this.mysticalArchiveByRarity[getCard(cid).rarity].set(
-					cid,
-					Math.min(options.maxDuplicates?.[getCard(cid).rarity] ?? 99, STACards.get(cid) as number)
-				);
+			for (const cid of STACards.keys()) {
+				const card = getCard(cid);
+				// Remove Japanese versions
+				if (parseInt(card.collector_number) <= 63)
+					this.mysticalArchiveByRarity[card.rarity].set(
+						cid,
+						Math.min(options.maxDuplicates?.[card.rarity] ?? 99, STACards.get(cid) as number)
+					);
+			}
 		} else {
-			this.mysticalArchiveByRarity = { uncommon: new Map(), rare: new Map(), mythic: new Map() };
-			for (const cid of BoosterCardsBySet["sta"])
-				this.mysticalArchiveByRarity[getCard(cid).rarity].set(
-					cid,
-					options.maxDuplicates?.[getCard(cid).rarity] ?? 99
-				);
+			for (const cid of BoosterCardsBySet["sta"]) {
+				const card = getCard(cid);
+				// Remove Japanese versions
+				if (parseInt(card.collector_number) <= 63)
+					this.mysticalArchiveByRarity[card.rarity].set(cid, options.maxDuplicates?.[card.rarity] ?? 99);
+			}
 		}
 	}
 
