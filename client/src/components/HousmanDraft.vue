@@ -255,13 +255,14 @@ const selectionIsValid = computed(() => {
 	position: absolute;
 	left: 0.2em;
 	top: 50%;
-	transform: translateY(-50%);
 	font-size: 2em;
 	height: 100%;
-	writing-mode: sideways-lr;
 	color: #666;
 	text-align: center;
 	font-variant-caps: small-caps;
+
+	writing-mode: vertical-rl;
+	transform: translateY(-50%) rotate(-180deg);
 }
 
 .revealed-card-container,
@@ -354,10 +355,12 @@ const selectionIsValid = computed(() => {
 .last-picks-title {
 	font-variant: small-caps;
 	font-size: 1.5em;
-	writing-mode: sideways-lr;
 	color: #666;
 	text-align: center;
 	font-variant-caps: small-caps;
+
+	writing-mode: vertical-rl;
+	transform: rotate(-180deg);
 }
 
 .pick-remainder {
@@ -368,11 +371,14 @@ const selectionIsValid = computed(() => {
 
 .pick-remainder .name {
 	text-align: center;
-	writing-mode: sideways-lr;
 
 	max-height: calc(0.8 * 282px * 0.45 * var(--card-scale));
-	width: 1em;
+	width: 1.2em;
 	overflow-y: hidden;
+	overflow-x: hidden;
+
+	writing-mode: vertical-rl;
+	transform: rotate(-180deg);
 }
 
 .pick-remainder .cards {
