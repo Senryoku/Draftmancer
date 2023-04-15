@@ -985,7 +985,6 @@ export class Session implements IIndexable {
 		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
-			boostersPerPlayer: Math.ceil(wantedCards / cardsPerBooster / this.users.size),
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 

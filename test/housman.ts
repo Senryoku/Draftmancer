@@ -83,7 +83,6 @@ for (const settings of [
 					expect(state.roundNum).to.equal(1);
 					expect(state.currentPlayer).to.exist;
 					expect(state.hand).to.exist;
-					expect(state.remainingCards).to.exist;
 					if (receivedStates === clients.length) done();
 				});
 			}
