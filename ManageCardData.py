@@ -486,9 +486,15 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
                 del NonProcessedCards[key]
             addCard(c)
 
-    # Add cards with no English translation
-    for c in NonProcessedCards.values():
-        addCard(c)
+    # Handle cards with no English translation
+    print(f"{len(NonProcessedCards)} cards with no English translation.")
+    for key, c in NonProcessedCards.items():
+        if c['set'] == "khm" or c['set'] == "neo" or c['set'] == "one":
+            print(f" -> Non-english card: {c['name']} ({c['set']}), {c['lang']} {c['booster']}")
+            #c['image_uris'][c['lang']] = Translations[key]['image_uris'][c['lang']]
+            #c['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
+            Translations[key]['image_uris']['en'] = Translations[key]['image_uris'][c['lang']]
+            addCard(c)
 
     MTGACards = {}
     for cid in list(cards):
