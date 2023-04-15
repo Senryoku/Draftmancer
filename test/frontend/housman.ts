@@ -2,50 +2,77 @@ import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
 import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
-import { Page } from "puppeteer";
+import { ElementHandle, Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
 async function pickHousman(page: Page) {
+	await new Promise((r) => setTimeout(r, 10));
 	const drafting = await page.$$("#draft-in-progress");
 	if (drafting.length === 0) return true;
 
-	let next = await page.waitForXPath("//span[contains(., 'Your turn')] | //span[contains(., 'Waiting for')]");
-	let text = await page.evaluate((next) => (next as HTMLElement).innerText, next);
+	let next = await page.$$("xpath///span[contains(., 'Your turn')] | //span[contains(., 'Waiting for')]");
+	if (next.length === 0) return false;
+	let text = await next[0].evaluate((el) => (el as HTMLElement).innerText);
 	if (text.includes("Waiting for")) return false;
 
 	const revealedChoices = await page.$$(".housman-revealed-cards .card");
 	if (revealedChoices.length === 0) return false;
 	const revealedChoice = getRandom(revealedChoices);
-	revealedChoice.click();
+	await revealedChoice.click();
 	const handChoices = await page.$$(".housman-hand .card");
 	if (handChoices.length === 0) return false;
 	const handChoice = getRandom(handChoices);
-	handChoice.click();
+	await handChoice.click();
 
-	(await page.$(".housman-confirm"))!.click();
+	await (await page.$(".housman-confirm"))!.click();
 
 	return false;
 }
 
-describe.only("Housman Draft", function () {
+let sessionLink: string;
+
+function launch(
+	handSize: number = 5,
+	revealedCardsCount: number = 9,
+	exchangeCount: number = 3,
+	roundCount: number = 9
+) {
+	it(`Launch Housman Draft`, async function () {
+		sessionLink = await getSessionLink(pages[0]);
+
+		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Housman')]");
+
+		const replaceInput = <T>(val: string) => {
+			return async (e: ElementHandle<Element> | null) => {
+				await e?.click({ clickCount: 3 });
+				await e?.press("Backspace");
+				await e?.type(val);
+			};
+		};
+
+		await replaceInput(handSize.toString())(await pages[0].$("#hand-input"));
+		await replaceInput(revealedCardsCount.toString())(await pages[0].$("#revealed-input"));
+		await replaceInput(exchangeCount.toString())(await pages[0].$("#exchanges-input"));
+		await replaceInput(roundCount.toString())(await pages[0].$("#rounds-input"));
+		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Housman Draft')]");
+
+		await Promise.all([
+			...pages.map((page) =>
+				page.waitForXPath("//*[contains(., 'Draft Started!')]", {
+					hidden: true,
+				})
+			),
+		]);
+	});
+}
+
+describe("Housman Draft", function () {
 	describe("Housman Draft - Simple", function () {
 		this.timeout(20000);
 		setupBrowsers(2);
 
-		it(`Launch Housman Draft`, async function () {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Housman')]");
-			// FIXME: Update when the settings modal is implemented
-			// await waitAndClickXpath(pages[0], "//button[contains(., 'Start Housman Draft')]");
-
-			await Promise.all([
-				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started!')]", {
-						hidden: true,
-					})
-				),
-			]);
-		});
+		launch();
 
 		it(`Pick until done.`, async function () {
 			this.timeout(100000);
@@ -56,23 +83,35 @@ describe.only("Housman Draft", function () {
 		});
 	});
 
+	for (const settings of [
+		{
+			handSize: 6,
+			revealedCardsCount: 8,
+			exchangeCount: 2,
+			roundCount: 8,
+		},
+	]) {
+		describe(`Housman Draft - Settings ${JSON.stringify(settings)}`, function () {
+			this.timeout(20000);
+			setupBrowsers(2);
+
+			launch(settings.handSize, settings.revealedCardsCount, settings.exchangeCount, settings.roundCount);
+
+			it(`Pick until done.`, async function () {
+				this.timeout(100000);
+				let done = false;
+				while (!done) {
+					done = (await pickHousman(pages[0])) || (await pickHousman(pages[1]));
+				}
+			});
+		});
+	}
+
 	describe("Housman Draft - 4 Players", function () {
 		this.timeout(20000);
 		setupBrowsers(4);
 
-		it(`Launch Housman Draft`, async function () {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Housman')]");
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Housman Draft')]");
-
-			await Promise.all([
-				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started')]", {
-						hidden: true,
-					})
-				),
-			]);
-		});
+		launch();
 
 		it(`Pick until done.`, async function () {
 			this.timeout(100000);
@@ -85,24 +124,10 @@ describe.only("Housman Draft", function () {
 	});
 
 	describe("Housman Draft - With disconnects", function () {
-		let sessionLink: string;
 		this.timeout(20000);
 		setupBrowsers(2);
 
-		it(`Launch Housman Draft`, async function () {
-			sessionLink = await getSessionLink(pages[0]);
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Housman')]");
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Housman Draft')]");
-
-			await Promise.all([
-				...pages.map((page) =>
-					page.waitForXPath("//*[contains(., 'Draft Started')]", {
-						hidden: true,
-					})
-				),
-			]);
-		});
+		launch();
 
 		it(`Couple of picks.`, async function () {
 			await Promise.all(pages.map(pickHousman));

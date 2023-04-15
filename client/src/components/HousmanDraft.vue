@@ -137,10 +137,13 @@ onMounted(() => {
 		console.log("housmanDraftSync", state);
 		clearDelayedStateUpdate();
 		inTransition.value = true;
-		delayedStateUpdate.value = setTimeout(() => {
-			inTransition.value = false;
-			emit("update:state", state);
-		}, 2000);
+		delayedStateUpdate.value = setTimeout(
+			() => {
+				inTransition.value = false;
+				emit("update:state", state);
+			},
+			navigator.webdriver ? 10 : 2000
+		);
 	});
 	props.socket.on("housmanDraftExchange", (index, card, currentPlayer, exchangeNum) => {
 		console.log("housmanDraftExchange", index, card, currentPlayer, exchangeNum);
@@ -155,11 +158,14 @@ onMounted(() => {
 		inTransition.value = true;
 		// Let the animation run before updating current player
 		clearDelayedStateUpdate();
-		delayedStateUpdate.value = setTimeout(() => {
-			inTransition.value = false;
-			props.state.currentPlayer = currentPlayer;
-			props.state.exchangeNum = exchangeNum;
-		}, 1000);
+		delayedStateUpdate.value = setTimeout(
+			() => {
+				inTransition.value = false;
+				props.state.currentPlayer = currentPlayer;
+				props.state.exchangeNum = exchangeNum;
+			},
+			navigator.webdriver ? 10 : 1000
+		);
 	});
 	props.socket.on("housmanDraftRoundEnd", (pickedCards) => {
 		console.log("housmanDraftRoundEnd", pickedCards);

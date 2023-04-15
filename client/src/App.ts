@@ -62,6 +62,7 @@ import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
+import HousmanDialog from "./components/HousmanDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
@@ -1710,11 +1711,38 @@ export default defineComponent({
 		startHousmanDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			// TODO: Modal with settings.
+			const start = (handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) => {
+				this.socket.emit(
+					"startHousmanDraft",
+					handSize,
+					revealedCardsCount,
+					exchangeCount,
+					roundCount,
+					(answer: SocketAck) => {
+						if (answer.code !== 0) Alert.fire(answer.error!);
+					}
+				);
+			};
 
-			this.socket.emit("startHousmanDraft", 5, 9, 3, 9, (answer: SocketAck) => {
-				if (answer.code !== 0) Alert.fire(answer.error!);
+			// TODO: Modal with settings.
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "housman-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(HousmanDialog, {
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart(handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) {
+					self.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount);
+					instance.unmount();
+				},
 			});
+			installFontAwesome(instance);
+			instance.mount("#housman-dialog");
 		},
 		startGridDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
