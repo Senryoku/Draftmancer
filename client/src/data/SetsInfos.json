@@ -2412,10 +2412,10 @@
     "mat": {
         "code": "mat",
         "fullName": "March of the Machine: The Aftermath",
-        "cardCount": 2,
+        "cardCount": 6,
         "isPrimary": true,
         "icon": "img/sets/mat.svg",
-        "rareCount": 2
+        "rareCount": 6
     },
     "mb1": {
         "code": "mb1",
@@ -2622,11 +2622,11 @@
     "mom": {
         "code": "mom",
         "fullName": "March of the Machine",
-        "cardCount": 383,
+        "cardCount": 387,
         "isPrimary": true,
         "icon": "img/sets/mom.svg",
         "commonCount": 136,
-        "mythicCount": 36,
+        "mythicCount": 40,
         "rareCount": 121,
         "uncommonCount": 90
     },
@@ -2682,12 +2682,12 @@
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 159,
+        "cardCount": 195,
         "isPrimary": false,
         "icon": "img/sets/mul.svg",
-        "mythicCount": 40,
-        "rareCount": 74,
-        "uncommonCount": 45
+        "mythicCount": 45,
+        "rareCount": 90,
+        "uncommonCount": 60
     },
     "ncc": {
         "code": "ncc",
@@ -4668,11 +4668,11 @@
     "pvow": {
         "code": "pvow",
         "fullName": "Innistrad: Crimson Vow Promos",
-        "cardCount": 108,
+        "cardCount": 109,
         "isPrimary": false,
         "icon": "img/sets/pvow.svg",
         "mythicCount": 26,
-        "rareCount": 82
+        "rareCount": 83
     },
     "pw11": {
         "code": "pw11",
@@ -4930,11 +4930,11 @@
     "sch": {
         "code": "sch",
         "fullName": "Store Championships",
-        "cardCount": 9,
+        "cardCount": 12,
         "isPrimary": false,
         "icon": "img/sets/sch.svg",
-        "mythicCount": 1,
-        "rareCount": 8
+        "mythicCount": 2,
+        "rareCount": 10
     },
     "shm": {
         "code": "shm",
