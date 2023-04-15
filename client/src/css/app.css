@@ -141,7 +141,7 @@ select.swal2-input option {
 }
 
 #main-container button.blue:disabled {
-	color:rgb(139, 139, 139);
+	color: rgb(139, 139, 139);
 	background-color: rgb(0, 36, 83);
 }
 
@@ -1219,6 +1219,10 @@ ul.player-list {
 	-webkit-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 	-moz-box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
 	box-shadow: 0px 0px 20px 1px rgb(161, 0, 3);
+}
+
+.card:hover {
+	z-index: 10;
 }
 
 .card-column {

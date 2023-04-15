@@ -87,10 +87,6 @@ export default defineComponent({
 	height: calc(282px * var(--booster-card-scale));
 }
 
-.card:hover {
-	z-index: 10;
-}
-
 .missing-warning {
 	position: absolute;
 	left: -0.5em;
