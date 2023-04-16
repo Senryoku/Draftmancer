@@ -141,6 +141,7 @@ onMounted(() => {
 			() => {
 				inTransition.value = false;
 				emit("update:state", state);
+				if (state.currentPlayer === props.userID) emit("notifyTurn");
 			},
 			navigator.webdriver ? 10 : 2000
 		);
