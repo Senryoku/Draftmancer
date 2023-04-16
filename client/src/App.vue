@@ -1993,7 +1993,7 @@
 							v-tooltip.left="{
 								popperClass: 'option-tooltip',
 								content: `<p>Lets you customize the exact content of your boosters.</p>
-									<p><strong>Bonus</strong>: Controls the number of cards from a set-specific bonus sheet, they generally replace commons (and thus do not increase booster size). Affected sets: 
+									<p><strong>Bonus</strong>: Controls the number of cards from a set-specific bonus sheet, they generally replace commons (and thus do not increase booster size). This setting only affect the following sets: 
 										<ul>
 											<li>March of the Machine (Multiverse Legends)</li> 
 											<li>Shadows over Innistrad Remastered (Shadow of the Past)</li> 

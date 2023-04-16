@@ -1,7 +1,11 @@
 [
 	{
 		"date": "17/04/2023",
-		"notes": ["New game mode: Housman Draft."]
+		"notes": [
+			"New game mode: Housman Draft.",
+			"New setting 'bonus' in booster content.",
+			"Support for Mystery Booster convention editions."
+		]
 	},
 	{
 		"date": "10/04/2023",
