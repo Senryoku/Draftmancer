@@ -29,6 +29,7 @@ body {
 	}
 }
 
+.link,
 a,
 a:visited {
 	color: #518ae6;
@@ -36,6 +37,7 @@ a:visited {
 	cursor: pointer;
 }
 
+.link:hover,
 a:hover {
 	color: #72a7ff;
 }

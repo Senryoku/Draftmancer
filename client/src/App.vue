@@ -1578,16 +1578,16 @@
 						<div class="welcome-section welcome-alt">
 							<div style="display: flex; justify-content: space-between">
 								<div>
-									<a @click="displayedModal = 'gettingStarted'">
+									<span class="link" @click="displayedModal = 'gettingStarted'">
 										<font-awesome-icon icon="fa-solid fa-rocket"></font-awesome-icon> Get Started
-									</a>
+									</span>
 									guide
 								</div>
 								<div>
-									<a @click="displayedModal = 'help'">
+									<span class="link" @click="displayedModal = 'help'">
 										<font-awesome-icon icon="fa-solid fa-info-circle"></font-awesome-icon> FAQ /
 										Settings Description
-									</a>
+									</span>
 								</div>
 							</div>
 							<br />
@@ -2583,17 +2583,17 @@
 		<CardPopup :language="language" ref="cardPopup" />
 		<footer>
 			<span @click="displayedModal = 'About'" class="clickable">
-				<a>About</a>
+				<span class="link">About</span>
 			</span>
 			<span>
 				Made by
 				<a href="http://senryoku.github.io/" target="_blank" rel="noopener nofollow">Senryoku</a>
 			</span>
 			<span>
-				<a @click="displayedModal = 'donation'">
+				<span class="link" @click="displayedModal = 'donation'">
 					Buy me a Coffee
 					<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true"></font-awesome-icon>
-				</a>
+				</span>
 			</span>
 			<span>
 				<a href="mailto:dev@draftmancer.com" title="Email">
