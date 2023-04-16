@@ -80,7 +80,7 @@ for (const settings of [
 					receivedStates += 1;
 					states[(c as any).query.userID] = state;
 					expect(state.exchangeNum).to.equal(0);
-					expect(state.roundNum).to.equal(1);
+					expect(state.roundNum).to.equal(0);
 					expect(state.currentPlayer).to.exist;
 					expect(state.hand).to.exist;
 					if (receivedStates === clients.length) done();
