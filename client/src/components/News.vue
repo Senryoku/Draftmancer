@@ -21,6 +21,11 @@
 					<img src="img/sets/mb1.svg" class="set-icon" style="--invertedness: 100%" /> Mystery Booster
 					convention editions and their playtest cards.
 				</li>
+				<li>
+					MTGADraft.tk now redirects to <a href="https://draftmancer.com">Draftmancer.com</a>. This means that
+					your Game Logs and settings will be reset if you were still using the old domain. It's not an easy
+					process, but they are still recoverable if you really need them (ask for help on Discord).
+				</li>
 			</ul>
 		</div>
 		<div class="news">
@@ -48,12 +53,12 @@
 			<p>
 				Quick reminder that maintaining this application and keeping up with WotC release schedule requires
 				time. If you use Draftmancer regularly, please consider donating a few bucks via
-				<a href="https://github.com/sponsors/Senryoku" target="_blank"
-					><font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> Github Sponsor</a
-				>
+				<a href="https://github.com/sponsors/Senryoku" target="_blank">
+					<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> Github Sponsor
+				</a>
 				or
-				<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank"
-					><font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal</a
+				<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank">
+					<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
 				>.<br />Thank you! — Sen
 			</p>
 		</div>
