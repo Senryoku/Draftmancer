@@ -617,8 +617,6 @@ export default defineComponent({
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -660,8 +658,6 @@ export default defineComponent({
 				this.clearState();
 				this.drafting = true;
 				this.winchesterDraftState = data.state;
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -689,8 +685,6 @@ export default defineComponent({
 			this.socket.on("rejoinHousmanDraft", (data) => {
 				this.clearState();
 				this.drafting = true;
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.draftingState = DraftState.HousmanDraft;
 				this.housmanDraftState = data.state;
 				this.$nextTick(() => {
@@ -748,8 +742,6 @@ export default defineComponent({
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -796,8 +788,6 @@ export default defineComponent({
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -843,8 +833,6 @@ export default defineComponent({
 				this.clearState();
 				this.drafting = true;
 				this.draftingState = DraftState.RotisserieDraft;
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -893,8 +881,6 @@ export default defineComponent({
 
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -1009,9 +995,6 @@ export default defineComponent({
 			this.socket.on("rejoinDraft", (data) => {
 				this.drafting = true;
 				this.clearState();
-				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
@@ -1165,9 +1148,6 @@ export default defineComponent({
 				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
 				if (cards.length === 0) return;
 				this.clearState();
-				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					this.addToDeck(cards);
