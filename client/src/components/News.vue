@@ -22,9 +22,12 @@
 					convention editions and their playtest cards.
 				</li>
 				<li>
-					MTGADraft.tk now redirects to <a href="https://draftmancer.com">Draftmancer.com</a>. This means that
-					your Game Logs and settings will be reset if you were still using the old domain. It's not an easy
-					process, but they are still recoverable if you really need them (ask for help on Discord).
+					MTGADraft.tk will soon redirect to <a href="https://draftmancer.com">Draftmancer.com</a>. This means
+					that your Game Logs and settings will be reset if you are still using the old domain.
+					<strong>
+						Backup your logs and switch to <a href="https://draftmancer.com">Draftmancer.com</a> now to
+						avoid losing them!
+					</strong>
 				</li>
 			</ul>
 		</div>
