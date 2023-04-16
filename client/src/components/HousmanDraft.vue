@@ -135,7 +135,6 @@ const clearDelayedStateUpdate = () => {
 
 onMounted(() => {
 	props.socket.on("housmanDraftSync", (state) => {
-		console.log("housmanDraftSync", state);
 		clearDelayedStateUpdate();
 		inTransition.value = true;
 		delayedStateUpdate.value = setTimeout(
@@ -147,7 +146,6 @@ onMounted(() => {
 		);
 	});
 	props.socket.on("housmanDraftExchange", (index, card, currentPlayer, exchangeNum) => {
-		console.log("housmanDraftExchange", index, card, currentPlayer, exchangeNum);
 		props.state.lastPicks.unshift({
 			userID: props.state.currentPlayer,
 			round: props.state.roundNum,
@@ -170,11 +168,9 @@ onMounted(() => {
 		);
 	});
 	props.socket.on("housmanDraftRoundEnd", (pickedCards) => {
-		console.log("housmanDraftRoundEnd", pickedCards);
 		emit("addToDeck", pickedCards);
 	});
 	props.socket.on("housmanDraftEnd", () => {
-		console.log("housmanDraftEnd");
 		emit("end");
 	});
 });
