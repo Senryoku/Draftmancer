@@ -1046,6 +1046,7 @@
 					:userID="userID"
 					:sessionUsers="userByID"
 					v-model:state="housmanDraftState"
+					@notifyTurn="notifyTurn"
 					@addToDeck="addToDeck"
 					@end="housmanDraftEnd"
 				/>

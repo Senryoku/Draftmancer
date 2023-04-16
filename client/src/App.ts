@@ -583,11 +583,7 @@ export default defineComponent({
 			});
 			this.socket.on("winstonDraftNextRound", (currentPlayer) => {
 				if (this.userID === currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
+					this.notifyTurn();
 					this.draftingState = DraftState.WinstonPicking;
 				} else {
 					this.draftingState = DraftState.WinstonWaiting;
@@ -722,11 +718,7 @@ export default defineComponent({
 				const doNextRound = () => {
 					this.setGridDraftState(state);
 					if (this.userID === state.currentPlayer) {
-						this.playSound("next");
-						fireToast("success", "Your turn!");
-						this.pushNotification("Your turn!", {
-							body: `This is your turn to pick.`,
-						});
+						this.notifyTurn();
 						this.draftingState = DraftState.GridPicking;
 					} else {
 						this.draftingState = DraftState.GridWaiting;
@@ -785,11 +777,7 @@ export default defineComponent({
 			this.socket.on("rochesterDraftNextRound", (state) => {
 				this.setRochesterDraftState(state);
 				if (this.userID === state.currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
+					this.notifyTurn();
 					this.draftingState = DraftState.RochesterPicking;
 					this.selectedCards = [];
 				} else {
@@ -842,13 +830,7 @@ export default defineComponent({
 				if (!card) return;
 				card.owner = newOwnerID;
 
-				if (this.userID === this.rotisserieDraftState.currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
-				}
+				if (this.userID === this.rotisserieDraftState.currentPlayer) this.notifyTurn();
 			});
 			this.socket.on("rotisserieDraftEnd", () => {
 				this.drafting = false;
@@ -1589,6 +1571,13 @@ export default defineComponent({
 			}
 			this.pickCard();
 		},
+		notifyTurn() {
+			this.playSound("next");
+			fireToast("info", "Your turn!");
+			this.pushNotification("Your turn!", {
+				body: `This is your turn to pick.`,
+			});
+		},
 		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
 		},
@@ -1885,11 +1874,7 @@ export default defineComponent({
 		},
 		onMinesweeperStateUpdate() {
 			if (this.userID === this.minesweeperDraftState!.currentPlayer) {
-				this.playSound("next");
-				fireToast("info", "Your turn! Pick a card.");
-				this.pushNotification("Your turn!", {
-					body: `This is your turn to pick.`,
-				});
+				this.notifyTurn();
 			}
 		},
 		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.

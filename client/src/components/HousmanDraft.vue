@@ -120,6 +120,7 @@ const cardScale = ref(1.0);
 
 const emit = defineEmits<{
 	(e: "update:state", state: HousmanDraftSyncData): void;
+	(e: "notifyTurn"): void;
 	(e: "addToDeck", cards: UniqueCard[]): void;
 	(e: "end"): void;
 }>();
@@ -163,6 +164,7 @@ onMounted(() => {
 				inTransition.value = false;
 				props.state.currentPlayer = currentPlayer;
 				props.state.exchangeNum = exchangeNum;
+				if (props.state.currentPlayer === props.userID) emit("notifyTurn");
 			},
 			navigator.webdriver ? 10 : 1000
 		);
