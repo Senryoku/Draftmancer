@@ -290,3 +290,9 @@ export async function pickCard(page: Page): Promise<PickResult> {
 	await waitAndClickSelector(page, 'input[value="Confirm Pick"]');
 	return PickResult.Picked;
 }
+
+export function expectNCardsInDeck(n: number) {
+	it(`Each player should have ${n} cards.`, async function () {
+		await Promise.all([...pages.map(async (page) => expect((await page.$$(".deck .card")).length).to.equal(n))]);
+	});
+}

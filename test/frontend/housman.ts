@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { getSessionLink, pages, setupBrowsers, waitAndClickXpath, expectNCardsInDeck } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
@@ -81,6 +81,8 @@ describe("Housman Draft", function () {
 				done = (await pickHousman(pages[0])) || (await pickHousman(pages[1]));
 			}
 		});
+
+		expectNCardsInDeck(45);
 	});
 
 	for (const settings of [
@@ -104,6 +106,8 @@ describe("Housman Draft", function () {
 					done = (await pickHousman(pages[0])) || (await pickHousman(pages[1]));
 				}
 			});
+
+			expectNCardsInDeck(settings.handSize * settings.roundCount);
 		});
 	}
 
@@ -119,8 +123,9 @@ describe("Housman Draft", function () {
 			while (!done) {
 				done = (await Promise.all(pages.map(async (p) => await pickHousman(p)))).some((v) => v);
 			}
-			await new Promise((r) => setTimeout(r, 10000));
 		});
+
+		expectNCardsInDeck(45);
 	});
 
 	describe("Housman Draft - With disconnects", function () {
@@ -191,5 +196,7 @@ describe("Housman Draft", function () {
 				done = (await pickHousman(pages[0])) || (await pickHousman(pages[1]));
 			}
 		});
+
+		expectNCardsInDeck(45);
 	});
 });
