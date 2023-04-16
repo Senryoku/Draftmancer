@@ -1,7 +1,7 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
-			<em>April 17, 2023</em>
+			<em>April 16, 2023</em>
 			<ul>
 				<li>
 					New game mode: <strong>Housman Draft</strong>!
