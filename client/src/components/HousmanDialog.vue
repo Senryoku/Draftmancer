@@ -108,7 +108,7 @@ const start = () => emit("start", handSize.value, revealedCardsCount.value, exch
 <style scoped>
 .housman-dialog {
 	text-align: center;
-	width: min(60em, 100vw);
+	width: min(60em, 90vw);
 }
 
 .housman-dialog-settings {

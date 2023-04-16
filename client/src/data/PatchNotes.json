@@ -1,5 +1,13 @@
 [
 	{
+		"date": "17/04/2023",
+		"notes": ["New game mode: Housman Draft."]
+	},
+	{
+		"date": "10/04/2023",
+		"notes": ["MTGADraft renamed to Draftmancer"]
+	},
+	{
 		"date": "05/04/2023",
 		"notes": ["March of the Machine preliminary support"]
 	},
