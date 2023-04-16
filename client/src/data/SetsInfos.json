@@ -1463,6 +1463,22 @@
         "icon": "img/sets/f17.svg",
         "rareCount": 9
     },
+    "fbro": {
+        "code": "fbro",
+        "fullName": "The Brothers' War Jumpstart Front Cards",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/fbro.svg",
+        "commonCount": 5
+    },
+    "fdmu": {
+        "code": "fdmu",
+        "fullName": "Dominaria United Jumpstart Front Cards",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/fdmu.svg",
+        "commonCount": 10
+    },
     "fem": {
         "code": "fem",
         "fullName": "Fallen Empires",
@@ -4905,6 +4921,14 @@
         "rareCount": 36,
         "uncommonCount": 55
     },
+    "sbro": {
+        "code": "sbro",
+        "fullName": "The Brothers' War Substitute Cards",
+        "cardCount": 1,
+        "isPrimary": false,
+        "icon": "img/sets/sbro.svg",
+        "commonCount": 1
+    },
     "scd": {
         "code": "scd",
         "fullName": "Starter Commander Decks",
@@ -4989,12 +5013,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 877,
+        "cardCount": 878,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
         "mythicCount": 148,
-        "rareCount": 664,
+        "rareCount": 665,
         "uncommonCount": 20
     },
     "slp": {
