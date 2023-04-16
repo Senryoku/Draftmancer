@@ -1,6 +1,15 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>April 17, 2023</em>
+			<p>New game mode: <strong>Housman Draft</strong>!</p>
+			<p>
+				Draft variant suited for 2-4 players. Players take turns exchanging a card from a five cards hand with
+				one of nine revealed cards. After three exchanges, players add their hand to their deck and the
+				remaining face up cards are discarded. Repeat for nine rounds.
+			</p>
+		</div>
+		<div class="news">
 			<em>April 10, 2023</em>
 			<p>MTGADraft.tk becomes <strong>Draftmancer.com</strong>!</p>
 			<p>

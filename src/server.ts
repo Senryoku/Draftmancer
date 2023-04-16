@@ -360,6 +360,19 @@ function winchesterDraftPick(
 	ack?.(r);
 }
 
+function housmanDraftPick(
+	userID: UserID,
+	sessionID: SessionID,
+	handIndex: number,
+	revealedCardsIndex: number,
+	ack: (result: SocketAck) => void
+) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "housman", ack)) return;
+
+	const r = Sessions[sessionID].housmanDraftPick(handIndex, revealedCardsIndex);
+	ack?.(r);
+}
+
 function minesweeperDraftPick(
 	userID: UserID,
 	sessionID: SessionID,
@@ -506,6 +519,27 @@ function startWinchesterDraft(
 	const sess = Sessions[sessionID];
 	const localBoosterPerPlayer = !isNumber(boosterPerPlayer) ? parseInt(boosterPerPlayer as string) : boosterPerPlayer;
 	const r = sess.startWinchesterDraft(localBoosterPerPlayer ? localBoosterPerPlayer : 6);
+	if (!isSocketError(r)) startPublicSession(sess);
+	ack(r);
+}
+
+function startHousmanDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	handSize: unknown,
+	revealedCardsCount: unknown,
+	exchangeCount: unknown,
+	roundCount: unknown,
+	ack: (s: SocketAck) => void
+) {
+	const sess = Sessions[sessionID];
+	const _handSize = !isNumber(handSize) ? parseInt(handSize as string) : handSize;
+	const _revealedCardsCount = !isNumber(revealedCardsCount)
+		? parseInt(revealedCardsCount as string)
+		: revealedCardsCount;
+	const _exchangeCount = !isNumber(exchangeCount) ? parseInt(exchangeCount as string) : exchangeCount;
+	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
+	const r = sess.startHousmanDraft(_handSize, _revealedCardsCount, _exchangeCount, _roundCount);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -1285,6 +1319,7 @@ io.on("connection", async function (socket) {
 	socket.on("winstonDraftTakePile", prepareSocketCallback(winstonDraftTakePile));
 	socket.on("winstonDraftSkipPile", prepareSocketCallback(winstonDraftSkipPile));
 	socket.on("winchesterDraftPick", prepareSocketCallback(winchesterDraftPick));
+	socket.on("housmanDraftPick", prepareSocketCallback(housmanDraftPick));
 	socket.on("minesweeperDraftPick", prepareSocketCallback(minesweeperDraftPick));
 	socket.on("teamSealedPick", prepareSocketCallback(teamSealedPick));
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
@@ -1302,6 +1337,7 @@ io.on("connection", async function (socket) {
 	socket.on("startRotisserieDraft", prepareSocketCallback(startRotisserieDraft, true));
 	socket.on("startWinstonDraft", prepareSocketCallback(startWinstonDraft, true));
 	socket.on("startWinchesterDraft", prepareSocketCallback(startWinchesterDraft, true));
+	socket.on("startHousmanDraft", prepareSocketCallback(startHousmanDraft, true));
 	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
 	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
 	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));

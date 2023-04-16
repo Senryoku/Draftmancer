@@ -25,6 +25,7 @@ import type { JHHBooster } from "@/JumpstartHistoricHorizons";
 import type { CustomCardList } from "@/CustomCardList";
 import type SessionsSettingsProps from "@/Session/SessionProps";
 import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
+import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
 import { CardColor } from "../../src/CardTypes";
@@ -61,6 +62,7 @@ import ExportDropdown from "./components/ExportDropdown.vue";
 import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
+import HousmanDialog from "./components/HousmanDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
@@ -82,6 +84,7 @@ enum DraftState {
 	WinstonWaiting = "WinstonWaiting",
 	WinchesterPicking = "WinchesterPicking",
 	WinchesterWaiting = "WinchesterWaiting",
+	HousmanDraft = "HousmanDraft",
 	GridPicking = "GridPicking",
 	GridWaiting = "GridWaiting",
 	RochesterPicking = "RochesterPicking",
@@ -168,6 +171,7 @@ export default defineComponent({
 		GettingStarted: defineAsyncComponent(() => import("./components/GettingStarted.vue")),
 		GridDraft: defineAsyncComponent(() => import("./components/GridDraft.vue")),
 		HelpModal: defineAsyncComponent(() => import("./components/HelpModal.vue")),
+		HousmanDraft: defineAsyncComponent(() => import("./components/HousmanDraft.vue")),
 		LandControl: defineAsyncComponent(() => import("./components/LandControl.vue")),
 		MinesweeperDraft: defineAsyncComponent(() => import("./components/MinesweeperDraft.vue")),
 		Modal,
@@ -294,6 +298,7 @@ export default defineComponent({
 			minesweeperDraftState: null as MinesweeperSyncData | null,
 			teamSealedState: null as TeamSealedSyncData | null,
 			winchesterDraftState: null as WinchesterDraftSyncData | null,
+			housmanDraftState: null as HousmanDraftSyncData | null,
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -578,11 +583,7 @@ export default defineComponent({
 			});
 			this.socket.on("winstonDraftNextRound", (currentPlayer) => {
 				if (this.userID === currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
+					this.notifyTurn();
 					this.draftingState = DraftState.WinstonPicking;
 				} else {
 					this.draftingState = DraftState.WinstonWaiting;
@@ -616,8 +617,6 @@ export default defineComponent({
 
 				this.setWinstonDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -659,8 +658,6 @@ export default defineComponent({
 				this.clearState();
 				this.drafting = true;
 				this.winchesterDraftState = data.state;
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -680,6 +677,30 @@ export default defineComponent({
 				});
 			});
 
+			this.socket.on("startHousmanDraft", (state) => {
+				startDraftSetup("Housman draft");
+				this.housmanDraftState = state;
+				this.draftingState = DraftState.HousmanDraft;
+			});
+			this.socket.on("rejoinHousmanDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.draftingState = DraftState.HousmanDraft;
+				this.housmanDraftState = data.state;
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Housman draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
 			// Grid Draft
 			this.socket.on("startGridDraft", (state) => {
 				startDraftSetup("Grid draft");
@@ -691,11 +712,7 @@ export default defineComponent({
 				const doNextRound = () => {
 					this.setGridDraftState(state);
 					if (this.userID === state.currentPlayer) {
-						this.playSound("next");
-						fireToast("success", "Your turn!");
-						this.pushNotification("Your turn!", {
-							body: `This is your turn to pick.`,
-						});
+						this.notifyTurn();
 						this.draftingState = DraftState.GridPicking;
 					} else {
 						this.draftingState = DraftState.GridWaiting;
@@ -725,8 +742,6 @@ export default defineComponent({
 
 				this.setGridDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -754,11 +769,7 @@ export default defineComponent({
 			this.socket.on("rochesterDraftNextRound", (state) => {
 				this.setRochesterDraftState(state);
 				if (this.userID === state.currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
+					this.notifyTurn();
 					this.draftingState = DraftState.RochesterPicking;
 					this.selectedCards = [];
 				} else {
@@ -777,8 +788,6 @@ export default defineComponent({
 
 				this.setRochesterDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -811,13 +820,7 @@ export default defineComponent({
 				if (!card) return;
 				card.owner = newOwnerID;
 
-				if (this.userID === this.rotisserieDraftState.currentPlayer) {
-					this.playSound("next");
-					fireToast("success", "Your turn!");
-					this.pushNotification("Your turn!", {
-						body: `This is your turn to pick.`,
-					});
-				}
+				if (this.userID === this.rotisserieDraftState.currentPlayer) this.notifyTurn();
 			});
 			this.socket.on("rotisserieDraftEnd", () => {
 				this.drafting = false;
@@ -830,8 +833,6 @@ export default defineComponent({
 				this.clearState();
 				this.drafting = true;
 				this.draftingState = DraftState.RotisserieDraft;
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -880,8 +881,6 @@ export default defineComponent({
 
 				this.setMinesweeperDraftState(data.state);
 				this.clearState();
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
 					for (let c of data.pickedCards.side) this.addToSideboard(c);
@@ -996,9 +995,6 @@ export default defineComponent({
 			this.socket.on("rejoinDraft", (data) => {
 				this.drafting = true;
 				this.clearState();
-				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					for (let c of data.pickedCards.main) this.addToDeck(c);
@@ -1152,9 +1148,6 @@ export default defineComponent({
 				const cards = data.reduce((acc, val) => acc.concat(val), []); // Flatten if necessary
 				if (cards.length === 0) return;
 				this.clearState();
-				// Avoid duplicate keys by clearing card pools (e.g. on server restart)
-				this.deckDisplay?.sync();
-				this.sideboardDisplay?.sync();
 				// Let vue react to changes to card pools
 				this.$nextTick(() => {
 					this.addToDeck(cards);
@@ -1558,6 +1551,13 @@ export default defineComponent({
 			}
 			this.pickCard();
 		},
+		notifyTurn() {
+			this.playSound("next");
+			fireToast("info", "Your turn!");
+			this.pushNotification("Your turn!", {
+				body: `This is your turn to pick.`,
+			});
+		},
 		setWinstonDraftState(state: WinstonDraftSyncData) {
 			this.winstonDraftState = state;
 		},
@@ -1656,6 +1656,12 @@ export default defineComponent({
 				else console.error(answer);
 			});
 		},
+		housmanDraftEnd() {
+			this.drafting = false;
+			this.housmanDraftState = null;
+			this.draftingState = DraftState.Brewing;
+			fireToast("success", "Done drafting!");
+		},
 		setGridDraftState(state: GridDraftSyncData) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
@@ -1670,6 +1676,42 @@ export default defineComponent({
 				++idx;
 			}
 			this.gridDraftState.booster = booster;
+		},
+		startHousmanDraft: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			const start = (handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) => {
+				this.socket.emit(
+					"startHousmanDraft",
+					handSize,
+					revealedCardsCount,
+					exchangeCount,
+					roundCount,
+					(answer: SocketAck) => {
+						if (answer.code !== 0) Alert.fire(answer.error!);
+					}
+				);
+			};
+
+			// TODO: Modal with settings.
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "housman-dialog";
+			this.$el.appendChild(el);
+			let instance = createApp(HousmanDialog, {
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart(handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) {
+					self.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount);
+					instance.unmount();
+				},
+			});
+			installFontAwesome(instance);
+			instance.mount("#housman-dialog");
 		},
 		startGridDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -1812,11 +1854,7 @@ export default defineComponent({
 		},
 		onMinesweeperStateUpdate() {
 			if (this.userID === this.minesweeperDraftState!.currentPlayer) {
-				this.playSound("next");
-				fireToast("info", "Your turn! Pick a card.");
-				this.pushNotification("Your turn!", {
-					body: `This is your turn to pick.`,
-				});
+				this.notifyTurn();
 			}
 		},
 		// This is just a shortcut to set burnedCardsPerTurn and boostersPerPlayers to suitable values.
@@ -3119,6 +3157,8 @@ export default defineComponent({
 			if (this.rochesterDraftState) return "Rochester Draft";
 			if (this.rotisserieDraftState) return "Rotisserie Draft";
 			if (this.winstonDraftState) return "Winston Draft";
+			if (this.winchesterDraftState) return "Winchester Draft";
+			if (this.housmanDraftState) return "Housman Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.useCustomCardList) return "Cube Draft";
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";
@@ -3193,6 +3233,7 @@ export default defineComponent({
 		currentPlayer(): UserID | null {
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
 			if (this.winchesterDraftState) return this.winchesterDraftState.currentPlayer;
+			if (this.housmanDraftState) return this.housmanDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
 			if (this.rochesterDraftState) return this.rochesterDraftState.currentPlayer;

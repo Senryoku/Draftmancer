@@ -414,6 +414,9 @@
 								>
 									<button @click="startWinchesterDraft()">Winchester</button>
 								</div>
+								<div v-tooltip.left="'Starts a Housman Draft.'">
+									<button @click="startHousmanDraft()">Housman</button>
+								</div>
 								<div
 									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for two or three players.'
@@ -762,36 +765,18 @@
 											@click="removePlayer(user.userID)"
 										></font-awesome-icon>
 									</template>
-									<template
-										v-if="
-											winstonDraftState ||
-											winchesterDraftState ||
-											gridDraftState ||
-											rotisserieDraftState ||
-											rochesterDraftState ||
-											minesweeperDraftState
-										"
-									>
+									<font-awesome-icon
+										v-if="user.isDisconnected"
+										icon="fa-solid fa-times"
+										class="red"
+										v-tooltip="user.userName + ' is disconnected.'"
+									></font-awesome-icon>
+									<template v-if="!user.isDisconnected && currentPlayer !== null">
 										<font-awesome-icon
-											v-if="user.userID in disconnectedUsers"
-											icon="fa-solid fa-times"
-											class="red"
-											v-tooltip="user.userName + ' is disconnected.'"
-										></font-awesome-icon>
-										<font-awesome-icon
-											v-else
 											v-show="user.userID === currentPlayer"
 											icon="fa-solid fa-spinner"
 											spin
 											v-tooltip="user.userName + ' is thinking...'"
-										></font-awesome-icon>
-									</template>
-									<template v-else>
-										<font-awesome-icon
-											v-if="user.isDisconnected"
-											icon="fa-solid fa-times"
-											class="red"
-											v-tooltip="user.userName + ' is disconnected.'"
 										></font-awesome-icon>
 									</template>
 								</template>
@@ -1052,6 +1037,19 @@
 					:winchesterDraftState="winchesterDraftState"
 					@pick="winchesterDraftPick"
 				/>
+				<housman-draft
+					v-if="draftingState === DraftState.HousmanDraft && housmanDraftState"
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:socket="socket"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					v-model:state="housmanDraftState"
+					@notifyTurn="notifyTurn"
+					@addToDeck="addToDeck"
+					@end="housmanDraftEnd"
+				/>
 				<!-- Grid Draft -->
 				<div
 					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
@@ -1251,6 +1249,8 @@
 							<div
 								v-if="
 									winstonDraftState ||
+									winchesterDraftState ||
+									housmanDraftState ||
 									gridDraftState ||
 									rochesterDraftState ||
 									rotisserieDraftState ||

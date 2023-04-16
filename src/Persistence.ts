@@ -35,6 +35,7 @@ import { IIndexable } from "./Types.js";
 import { RotisserieDraftState } from "./RotisserieDraft.js";
 import { DraftLog, DraftPick } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
+import { HousmanDraftState } from "./HousmanDraft.js";
 
 const PersistenceStoreURL = process.env.PERSISTENCE_STORE_URL ?? "http://localhost:3008";
 const PersistenceKey = process.env.PERSISTENCE_KEY ?? "1234";
@@ -113,6 +114,10 @@ export function restoreSession(s: any, owner: UserID) {
 		switch (s.draftState.type) {
 			case "draft": {
 				r.draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
+				break;
+			}
+			case "housman": {
+				r.draftState = new HousmanDraftState([], []);
 				break;
 			}
 			case "winston": {
