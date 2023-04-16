@@ -250,6 +250,7 @@ const selectionIsValid = computed(() => {
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
+	align-content: center;
 	gap: 8px;
 	position: relative;
 	flex-grow: 1;
