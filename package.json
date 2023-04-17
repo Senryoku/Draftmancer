@@ -9,7 +9,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "node --experimental-json-modules .",
-		"start-dev": "nodemon --experimental-json-modules --watch dist/src .",
+		"start-dev": "nodemon --signal SIGINT --experimental-json-modules --watch dist/src .",
 		"build": "concurrently \"tsc\" \"npx webpack --config client/webpack.config.cjs --mode=production\"",
 		"build-ts": "tsc",
 		"build-ts-dev": "tsc --watch",

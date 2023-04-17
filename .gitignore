@@ -68,6 +68,7 @@ data/scryfall-all-cards.json
 data/BulkArena.json
 Makefile
 client/dist/*
+tmp
 
 # Ignore built ts files
 dist/**/*
