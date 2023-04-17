@@ -90,7 +90,7 @@
 		"eslint-config-prettier": "^8.8.0",
 		"eslint-plugin-vue": "^9.10.0",
 		"file-loader": "^6.2.0",
-		"html-webpack-plugin": "^5.5.0",
+		"html-webpack-plugin": "^5.5.1",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.1.2",
 		"mocha": "^10.2.0",
