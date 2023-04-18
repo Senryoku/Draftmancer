@@ -89,7 +89,7 @@ export default defineComponent({
 	max-height: 90vh;
 }
 
-@media (orientation: portrait) and (max-device-width: 500px) {
+@media (orientation: portrait) and (max-width: 500px) {
 	.modal-container {
 		max-width: 100%;
 		padding: 1em 0;

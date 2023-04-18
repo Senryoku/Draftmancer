@@ -730,7 +730,7 @@ select.swal2-input option {
 	width: 12em;
 }
 
-@media (max-device-width: 1400px) {
+@media (max-width: 1400px) {
 	#user-name,
 	#session-id {
 		width: 10em;
@@ -741,7 +741,7 @@ select.swal2-input option {
 	}
 }
 
-@media (orientation: portrait) and (max-device-width: 500px) {
+@media (orientation: portrait) and (max-width: 500px) {
 	#limited-controls,
 	#view-controls {
 		justify-content: space-around;
