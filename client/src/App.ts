@@ -34,6 +34,8 @@ import io, { Socket } from "socket.io-client";
 import { toRaw, defineComponent, defineAsyncComponent } from "vue";
 import { Sortable } from "sortablejs-vue3";
 import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertResult } from "sweetalert2";
+import { SortableEvent } from "sortablejs";
+import { createCommonApp } from "./appCommon";
 
 import SetsInfos, { SetInfo } from "./SetInfos";
 import {
@@ -68,9 +70,6 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
-import { createApp } from "vue";
-import { MoveEvent, SortableEvent } from "sortablejs";
-import { installFontAwesome } from "./install-fontawesome";
 const img = new Image();
 img.src = CardBack;
 
@@ -598,9 +597,8 @@ export default defineComponent({
 			this.socket.on("winstonDraftRandomCard", (c) => {
 				this.addToDeck(c);
 				// Instantiate a card component to display in Swal (yep, I know.)
-				const cardView = createApp(CardComponent, { card: c });
+				const cardView = createCommonApp(CardComponent, { card: c });
 				const el = document.createElement("div");
-				installFontAwesome(cardView);
 				cardView.mount(el);
 				Alert.fire({
 					position: "center",
@@ -1698,7 +1696,7 @@ export default defineComponent({
 			const el = document.createElement("div");
 			el.id = "housman-dialog";
 			this.$el.appendChild(el);
-			let instance = createApp(HousmanDialog, {
+			let instance = createCommonApp(HousmanDialog, {
 				unmounted() {
 					self.$el.removeChild(el);
 				},
@@ -1710,7 +1708,6 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
-			installFontAwesome(instance);
 			instance.mount("#housman-dialog");
 		},
 		startGridDraft: async function () {
@@ -1804,7 +1801,7 @@ export default defineComponent({
 			const el = document.createElement("div");
 			el.id = "rotisserie-draft-dialog";
 			this.$el.appendChild(el);
-			let instance = createApp(RotisserieDraftDialog, {
+			let instance = createCommonApp(RotisserieDraftDialog, {
 				defaultBoostersPerPlayer: this.boostersPerPlayer,
 				unmounted() {
 					self.$el.removeChild(el);
@@ -1821,7 +1818,6 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
-			installFontAwesome(instance);
 			instance.mount("#rotisserie-draft-dialog");
 		},
 		rotisserieDraftPick(
@@ -2577,7 +2573,7 @@ export default defineComponent({
 			const el = document.createElement("div");
 			el.id = "sealed-dialog";
 			this.$el.appendChild(el);
-			let instance = createApp(SealedDialog, {
+			let instance = createCommonApp(SealedDialog, {
 				users: this.sessionUsers,
 				teamSealed: teamSealed,
 				unmounted() {
@@ -2596,7 +2592,6 @@ export default defineComponent({
 					instance.unmount();
 				},
 			});
-			installFontAwesome(instance);
 			instance.mount("#sealed-dialog");
 		},
 		deckWarning<T extends any[]>(call: (...args: T) => void, ...options: T) {
