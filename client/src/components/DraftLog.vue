@@ -143,6 +143,16 @@
 							:language="language"
 							:type="draftlog.type"
 						></draft-log-pick>
+						<card-pool
+							v-if="selectedLogCardsUpToPick.length > 0"
+							:cards="selectedLogCardsUpToPick"
+							:language="language"
+							:readOnly="true"
+							:group="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
+							:key="`cardPool-${selectedUser.userID}-pack-${displayOptions.pack}-pick-${displayOptions.pick}`"
+						>
+							<template v-slot:title>Cards ({{ selectedLogCardsUpToPick.length }})</template>
+						</card-pool>
 					</template>
 					<template v-else><div class="log-container">No picks.</div></template>
 				</template>
@@ -219,7 +229,7 @@ import Decklist from "./Decklist.vue";
 import DraftLogPick from "./DraftLogPick.vue";
 import DraftLogPicksSummary from "./DraftLogPicksSummary.vue";
 import ExportDropdown from "./ExportDropdown.vue";
-import { CardColor, CardID } from "@/CardTypes";
+import { CardColor, CardID, UniqueCard } from "@/CardTypes";
 import { Language } from "@/Types";
 
 export type PickDetails = {
@@ -235,6 +245,8 @@ type PlayerSummary = {
 	hasDeck: boolean;
 	colors: CardColor[];
 };
+
+let uniqueID = 0;
 
 export default defineComponent({
 	name: "DraftLog",
@@ -377,8 +389,33 @@ export default defineComponent({
 		selectedUser(): DraftLogUserData {
 			return this.draftlog.users[this.displayOptions.detailsUserID!];
 		},
-		selectedLogCards() {
-			let uniqueID = 0;
+		selectedLogCardsUpToPick(): UniqueCard[] {
+			switch (this.type) {
+				default:
+					return [];
+				case "Draft": {
+					const cards: UniqueCard[] = [];
+					const add = (pick: DraftPick) => {
+						for (const index of pick.pick)
+							cards.push(
+								Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[pick.booster[index]])
+							);
+					};
+					// Previous packs
+					for (let pack = 0; pack < Math.min(this.picksPerPack.length, this.displayOptions.pack); ++pack)
+						for (const pick of this.picksPerPack[pack]) add(pick.data as DraftPick);
+					// Current pack
+					for (
+						let pick = 0;
+						pick < Math.min(this.picksPerPack[this.displayOptions.pack].length, this.displayOptions.pick);
+						++pick
+					)
+						add(this.picksPerPack[this.displayOptions.pack][pick].data as DraftPick);
+					return cards;
+				}
+			}
+		},
+		selectedLogCards(): UniqueCard[] {
 			return this.selectedUser.cards.map((cid: CardID) =>
 				Object.assign({ uniqueID: ++uniqueID }, this.draftlog.carddata[cid])
 			);
