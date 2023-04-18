@@ -55,7 +55,7 @@
 				</div>
 			</transition>
 		</div>
-		<div class="container" style="display: flex; gap: 1em">
+		<div class="container hand-and-last-exchanges">
 			<transition name="hand-cards" mode="out-in">
 				<div class="housman-hand card-container" :key="`hand-cards-${state.roundNum}`">
 					<div class="zone-name">Your Hand</div>
@@ -233,7 +233,7 @@ const selectionIsValid = computed(() => {
 	grid-template-columns: 1fr 1fr auto 1fr 1fr;
 	margin: 0 2em;
 	align-items: center;
-	height: 2em;
+	min-height: 2em;
 }
 
 .housman-draft-controls span:nth-child(3) {
@@ -274,6 +274,11 @@ const selectionIsValid = computed(() => {
 .revealed-card-container,
 .hand-card-container {
 	position: relative;
+}
+
+.hand-and-last-exchanges {
+	display: flex;
+	gap: 1em;
 }
 
 .hand-cards-enter-active,
@@ -404,6 +409,16 @@ const selectionIsValid = computed(() => {
 
 .vertical-queue-leave-to {
 	z-index: inherit !important; /* Allow leaving picks to stay in front of the container background */
+}
+
+@media (max-width: 800px) {
+	.hand-and-last-exchanges {
+		flex-direction: column;
+	}
+
+	.last-picks {
+		flex-direction: row !important;
+	}
 }
 </style>
 

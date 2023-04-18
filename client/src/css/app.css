@@ -1150,6 +1150,16 @@ ul.player-list {
 	font-size: 28px;
 }
 
+@media (max-width: 700px) {
+	.section-title {
+		flex-wrap: wrap;
+	}
+
+	#booster-controls {
+		flex-direction: column;
+	}
+}
+
 .controls {
 	display: flex;
 	flex-wrap: wrap;

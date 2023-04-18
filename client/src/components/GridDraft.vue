@@ -107,6 +107,8 @@ export default defineComponent({
 .card-grid {
 	display: grid;
 
+	--cell-size: min(300px, calc((100vw - 5em) / 3));
+
 	grid-template-areas:
 		"empty      pick-col-0  pick-col-1  pick-col-2"
 		"pick-row-0 card-slot-0 card-slot-1 card-slot-2"
@@ -116,10 +118,15 @@ export default defineComponent({
 	align-items: center;
 	justify-items: center;
 	justify-content: center;
-	grid-template-columns: 3em 300px 300px 300px;
-	grid-template-rows: 4em 300px 300px 300px;
+	grid-template-columns: 3em var(--cell-size) var(--cell-size) var(--cell-size);
+	grid-template-rows: 4em var(--cell-size) var(--cell-size) var(--cell-size);
 
 	--animation-duration: 2.5s;
+}
+
+.card {
+	width: min(200px, calc(200 / 282 * var(--cell-size)));
+	height: min(282px, var(--cell-size));
 }
 
 .last-picks {

@@ -907,7 +907,7 @@
 						:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
 					>
 						<div id="booster-controls" class="section-title">
-							<h2 style="white-space: nowrap">Your Booster ({{ booster.length }})</h2>
+							<h2>Your Booster ({{ booster.length }})</h2>
 							<div class="controls" style="flex-grow: 2">
 								<span>Pack #{{ boosterNumber + 1 }}, Pick #{{ pickNumber + 1 }}</span>
 								<span v-show="pickTimer >= 0" :class="{ redbg: pickTimer <= 10 }" id="chrono">
