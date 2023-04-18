@@ -43,3 +43,4 @@ See cubeformat.html
 
 -   Card data and images provided by [Scryfall](https://scryfall.com/)
 -   Data used for automatic collation from https://github.com/taw/magic-sealed-data ; Used https://www.lethe.xyz/mtg/collation/ as reference for manual implementations.
+-   Bots from https://github.com/CubeArtisan/mtgml
