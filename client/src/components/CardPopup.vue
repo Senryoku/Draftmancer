@@ -5,6 +5,7 @@
 			:class="{ left: position === 'left', right: position === 'right' }"
 			v-if="card"
 			v-show="display"
+			@pointerdown="close"
 		>
 			<div class="carousel">
 				<div
@@ -273,7 +274,6 @@ export default defineComponent({
 	top: 15vh;
 	height: var(--image-height);
 	z-index: 1040;
-	pointer-events: none;
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
 
@@ -309,6 +309,7 @@ export default defineComponent({
 	position: relative;
 	width: 50vw;
 	height: var(--image-height);
+	pointer-events: none;
 }
 
 .carousel > .carousel-item {
