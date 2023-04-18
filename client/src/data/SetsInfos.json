@@ -2627,10 +2627,10 @@
     "moc": {
         "code": "moc",
         "fullName": "March of the Machine Commander",
-        "cardCount": 450,
+        "cardCount": 400,
         "isPrimary": false,
         "icon": "img/sets/moc.svg",
-        "commonCount": 94,
+        "commonCount": 44,
         "mythicCount": 50,
         "rareCount": 217,
         "uncommonCount": 89
@@ -2958,10 +2958,10 @@
     "p10e": {
         "code": "p10e",
         "fullName": "Tenth Edition Promos",
-        "cardCount": 1,
+        "cardCount": 3,
         "isPrimary": false,
         "icon": "img/sets/p10e.svg",
-        "rareCount": 1
+        "rareCount": 3
     },
     "p11": {
         "code": "p11",
@@ -4073,11 +4073,11 @@
     "pmh2": {
         "code": "pmh2",
         "fullName": "Modern Horizons 2 Promos",
-        "cardCount": 102,
+        "cardCount": 80,
         "isPrimary": false,
         "icon": "img/sets/pmh2.svg",
-        "mythicCount": 24,
-        "rareCount": 78
+        "mythicCount": 20,
+        "rareCount": 60
     },
     "pmid": {
         "code": "pmid",
@@ -4528,14 +4528,6 @@
         "icon": "img/sets/pstx.svg",
         "mythicCount": 37,
         "rareCount": 127
-    },
-    "psum": {
-        "code": "psum",
-        "fullName": "Summer of Magic",
-        "cardCount": 2,
-        "isPrimary": false,
-        "icon": "img/sets/psum.svg",
-        "rareCount": 2
     },
     "psus": {
         "code": "psus",
