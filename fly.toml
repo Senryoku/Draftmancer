@@ -14,6 +14,11 @@ processes = []
   NODE_ENV = "production"
   NODE_OPTIONS = "--max-old-space-size=400"
   PORT = "8080"
+  PERSISTENCE_LOCAL_PATH="/persistence/"
+
+[mounts]
+  source="mtgadraft_data"
+  destination="/persistence"
 
 [experimental]
   allowed_public_ports = []
