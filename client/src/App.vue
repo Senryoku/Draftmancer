@@ -503,36 +503,35 @@
 					Settings
 				</button>
 			</div>
-			<template v-if="drafting">
+			<div v-if="drafting" class="controls-drafting-mask">
 				<div id="url-remainder">Draftmancer.com</div>
 				<div id="draft-in-progress">
 					{{ gameModeName }}
 				</div>
-				<div
-					v-if="sessionOwner === userID"
-					style="position: absolute; right: 1em; top: 50%; transform: translateY(-50%); z-index: 11"
-				>
-					<button class="stop" @click="stopDraft">
-						<font-awesome-icon icon="fa-solid fa-stop"></font-awesome-icon> Stop
-					</button>
-					<button
-						v-if="maxTimer > 0 && !draftPaused"
-						class="stop"
-						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
-						@click="pauseDraft"
-					>
-						<font-awesome-icon icon="fa-solid fa-pause"></font-awesome-icon> Pause
-					</button>
-					<button
-						v-else-if="maxTimer > 0 && draftPaused"
-						class="confirm"
-						:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
-						@click="resumeDraft"
-					>
-						<font-awesome-icon icon="fa-solid fa-play"></font-awesome-icon> Resume
-					</button>
+				<div id="draft-controls">
+					<template v-if="sessionOwner === userID">
+						<button class="stop" @click="stopDraft">
+							<font-awesome-icon icon="fa-solid fa-stop"></font-awesome-icon> Stop
+						</button>
+						<button
+							v-if="maxTimer > 0 && !draftPaused"
+							class="stop"
+							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
+							@click="pauseDraft"
+						>
+							<font-awesome-icon icon="fa-solid fa-pause"></font-awesome-icon> Pause
+						</button>
+						<button
+							v-else-if="maxTimer > 0 && draftPaused"
+							class="confirm"
+							:class="{ 'opaque-disabled': waitingForDisconnectedUsers }"
+							@click="resumeDraft"
+						>
+							<font-awesome-icon icon="fa-solid fa-play"></font-awesome-icon> Resume
+						</button>
+					</template>
 				</div>
-			</template>
+			</div>
 		</div>
 
 		<!-- Session Players -->
