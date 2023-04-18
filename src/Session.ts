@@ -819,9 +819,7 @@ export class Session implements IIndexable {
 
 	endWinstonDraft() {
 		logSession("WinstonDraft", this);
-		if (this.draftLog)
-			for (const uid of this.users)
-				this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
+		this.finalizeLogs();
 		this.sendLogs();
 		for (const user of this.users) Connections[user].socket.emit("winstonDraftEnd");
 		this.cleanDraftState();
@@ -927,9 +925,7 @@ export class Session implements IIndexable {
 
 	endWinchesterDraft() {
 		logSession("WinchesterDraft", this);
-		if (this.draftLog)
-			for (const uid of this.users)
-				this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
+		this.finalizeLogs();
 		this.sendLogs();
 		for (const user of this.users) Connections[user].socket.emit("winchesterDraftEnd");
 		this.cleanDraftState();
@@ -1125,11 +1121,8 @@ export class Session implements IIndexable {
 
 	endGridDraft() {
 		logSession("GridDraft", this);
-		if (this.draftLog) {
-			for (const uid of this.users)
-				this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
-			this.sendLogs();
-		}
+		this.finalizeLogs();
+		this.sendLogs();
 		for (const user of this.users) Connections[user].socket.emit("gridDraftEnd");
 		this.cleanDraftState();
 	}
@@ -1234,10 +1227,8 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!this.drafting || !s || !(s instanceof RochesterDraftState)) return;
 		logSession("RochesterDraft", this);
-		for (const uid of this.users) {
-			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
-			Connections[uid].socket.emit("rochesterDraftEnd");
-		}
+		for (const uid of this.users) Connections[uid].socket.emit("rochesterDraftEnd");
+		this.finalizeLogs();
 		this.sendLogs();
 		this.cleanDraftState();
 	}
@@ -1355,10 +1346,8 @@ export class Session implements IIndexable {
 			return new SocketError("No active Rotisserie Draft in this session.");
 
 		logSession("RotisserieDraft", this);
-		for (const uid of this.users) {
-			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
-			Connections[uid].socket.emit("rotisserieDraftEnd");
-		}
+		for (const uid of this.users) Connections[uid].socket.emit("rotisserieDraftEnd");
+		this.finalizeLogs();
 		this.sendLogs();
 		this.cleanDraftState();
 		return new SocketAck();
@@ -1507,10 +1496,8 @@ export class Session implements IIndexable {
 		const s = this.draftState as MinesweeperDraftState;
 		if (!this.drafting || !s || !(s instanceof MinesweeperDraftState)) return;
 		logSession("MinesweeperDraft", this);
-		for (const uid of this.users) {
-			if (this.draftLog) this.draftLog.users[uid].cards = getPickedCardIds(Connections[uid].pickedCards);
-			Connections[uid].socket.emit("minesweeperDraftEnd", options);
-		}
+		for (const uid of this.users) Connections[uid].socket.emit("minesweeperDraftEnd", options);
+		this.finalizeLogs();
 		this.sendLogs();
 		this.cleanDraftState();
 	}
@@ -2016,18 +2003,11 @@ export class Session implements IIndexable {
 		// Allow other callbacks (like distributeBoosters) to finish before proceeding (actually an issue in tests).
 		process.nextTick(() => {
 			if (this.draftLog) {
-				for (const userID in s.players) {
-					if (s.players[userID].isBot) {
+				// Bots are not handled by finalizeLogs()
+				for (const userID in s.players)
+					if (s.players[userID].isBot)
 						this.draftLog.users[userID].cards = s.players[userID].botInstance.cards.map((c: Card) => c.id);
-					} else {
-						this.draftLog.users[userID].cards = getPickedCardIds(
-							// Has this user been replaced by a bot?
-							(this.isDisconnected(userID) ? this.disconnectedUsers[userID] : Connections[userID])
-								.pickedCards
-						);
-					}
-				}
-
+				this.finalizeLogs();
 				this.sendLogs();
 			}
 			logSession("Draft", this);
@@ -2152,6 +2132,20 @@ export class Session implements IIndexable {
 			}
 		}
 		return strippedLog;
+	}
+
+	// Makes sure DraftLog's cards and decklists are up-to-date for each player
+	finalizeLogs() {
+		if (this.draftLog)
+			for (const uid in this.draftLog.users) {
+				if (!this.draftLog.users[uid].isBot) {
+					this.draftLog.users[uid].cards = getPickedCardIds(
+						// Has this user been replaced by a bot?
+						(this.isDisconnected(uid) ? this.disconnectedUsers[uid] : Connections[uid]).pickedCards
+					);
+					this.updateDecklistInLog(uid);
+				}
+			}
 	}
 
 	// Sends the current draft log to all users according to the specified recipient(s).
@@ -2721,14 +2715,20 @@ export class Session implements IIndexable {
 		this.updateDecklist(userID);
 	}
 
-	updateDecklist(userID: UserID) {
-		if (!this.draftLog?.users[userID]) return;
+	updateDecklistInLog(userID: UserID) {
+		if (!this.draftLog?.users[userID] || !Connections[userID]) return;
 		if (!this.draftLog.users[userID].decklist) this.draftLog.users[userID].decklist = { main: [], side: [] };
 		(this.draftLog.users[userID].decklist as DeckList).main = Connections[userID].pickedCards.main.map((c) => c.id);
 		(this.draftLog.users[userID].decklist as DeckList).side = Connections[userID].pickedCards.side.map((c) => c.id);
 		this.draftLog.users[userID].decklist = computeHashes(this.draftLog.users[userID].decklist as DeckList, {
 			getCard: this.getCustomGetCardFunction(),
 		});
+	}
+
+	updateDecklist(userID: UserID) {
+		if (!this.draftLog?.users[userID]) return;
+		this.updateDecklistInLog(userID);
+
 		// Update clients
 		const shareData = {
 			sessionID: this.id,
