@@ -402,7 +402,7 @@ export default defineComponent({
 			// Returns the column bellow the mouse, or directly to the left (or the first if we're completely to the left).
 			const finalColumnIndex = Math.max(0, Math.min(this.rows[rowIdx].length - 1, colIdx - 1));
 			return this.rows[rowIdx][finalColumnIndex];
-
+			/*
 			// This was creating new column if cards were dropped outside of existing columns,
 			// but I'm not sure this is good idea. Disabled for now.
 
@@ -415,6 +415,7 @@ export default defineComponent({
 				this.saveOptions(); // Update cached columnCount
 				return this.rows[rowIdx][colIdx];
 			}
+			*/
 		},
 		toggleTwoRowsLayout() {
 			if (this.options.layout === "TwoRows") {
