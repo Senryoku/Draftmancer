@@ -3136,6 +3136,15 @@ export default defineComponent({
 				(this.$refs.fixedDeckContainer as HTMLElement).style.height = "auto";
 			}
 		},
+		updateURLQuery(): void {
+			if (this.sessionID) {
+				history.replaceState(
+					{ sessionID: this.sessionID },
+					`Draftmancer Session ${this.sessionID}`,
+					`?session=${encodeURIComponent(this.sessionID)}`
+				);
+			}
+		},
 	},
 	computed: {
 		deckDisplay(): typeof CardPool | null {
@@ -3325,6 +3334,7 @@ export default defineComponent({
 	async mounted() {
 		try {
 			this.initializeSocket();
+			this.updateURLQuery();
 
 			// Initialized only now so it's correctly sync with the server.
 			this.useCollection = initialSettings.useCollection;
@@ -3389,11 +3399,7 @@ export default defineComponent({
 				this.socket.io.opts.query!.sessionID = this.sessionID;
 				this.socket.emit("setSession", this.sessionID, sessionSettings);
 			}
-			history.replaceState(
-				{ sessionID: this.sessionID },
-				`Draftmancer Session ${this.sessionID}`,
-				`?session=${encodeURIComponent(this.sessionID)}`
-			);
+			this.updateURLQuery();
 			if (this.sessionID) setCookie("sessionID", this.sessionID);
 		},
 		userName() {
