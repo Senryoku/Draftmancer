@@ -15,7 +15,7 @@ processes = []
   NODE_OPTIONS = "--max-old-space-size=440"
   PORT = "8080"
   PERSISTENCE_LOCAL_PATH="/persistence/"
-  SWAP = "true"
+#  SWAP = "true"
 
 [mounts]
   source="mtgadraft_data"
