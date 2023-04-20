@@ -12,7 +12,7 @@ processes = []
 
 [env]
   NODE_ENV = "production"
-  NODE_OPTIONS = "--max-old-space-size=400"
+  NODE_OPTIONS = "--max-old-space-size=440"
   PORT = "8080"
   PERSISTENCE_LOCAL_PATH="/persistence/"
   SWAP = "true"
