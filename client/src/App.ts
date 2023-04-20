@@ -3323,7 +3323,7 @@ export default defineComponent({
 		pageTitle(): string {
 			if (this.sessionUsers.length < 2)
 				return `Draftmancer ${
-					this.titleNotification ? this.titleNotification.message : "- Multi-Player Draft Simulator"
+					this.titleNotification ? this.titleNotification.message : "- Multiplayer MTG Limited Simulator"
 				}`;
 			else
 				return `Draftmancer (${this.sessionUsers.length}/${this.maxPlayers}) ${
