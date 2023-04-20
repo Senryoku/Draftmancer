@@ -21,4 +21,4 @@ COPY --from=builder /app /app
 WORKDIR /app
 ENV NODE_ENV production
 
-CMD [ "npm", "run", "start" ]
+CMD [ "node", "--experimental-json-modules", "." ]
