@@ -277,6 +277,15 @@ export default defineComponent({
 	filter: drop-shadow(0 0 0.5vw #000000);
 }
 
+@media (hover: hover) {
+	.card-popup {
+		/* Necessary when popup overlaps with the element that triggered it:
+		 * Allowing these events would trigger a mouseout on the origin element and cause the popup to disappear.
+		 */
+		pointer-events: none;
+	}
+}
+
 .card-popup.right {
 	right: 3.5vw;
 	direction: rtl;
