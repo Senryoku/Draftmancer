@@ -38,6 +38,7 @@ import { RotisserieDraftState } from "./RotisserieDraft.js";
 import { DraftLog, DraftPick } from "./DraftLog";
 import { WinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState } from "./HousmanDraft.js";
+import { SolomonDraftState } from "./SolomonDraft.js";
 
 const PersistenceLocalPath = process.env.PERSISTENCE_LOCAL_PATH;
 const LocalPersitenceDirectory = "tmp";
@@ -170,51 +171,67 @@ export function restoreSession(s: any, owner: UserID) {
 	if (s.draftState) {
 		switch (s.draftState.type) {
 			case "draft": {
-				r.draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
-				break;
+				const draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
+				copyProps(s.draftState, draftState);
+				for (const userID in s.players)
+					draftState.players[userID].botInstance = restoreBot(s.players[userID].botInstance) as IBot;
+				r.draftState = draftState;
+				return r;
 			}
 			case "housman": {
 				r.draftState = new HousmanDraftState([], []);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "winston": {
 				r.draftState = new WinstonDraftState([], []);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "winchester": {
 				r.draftState = new WinchesterDraftState([], []);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "grid": {
 				r.draftState = new GridDraftState([], []);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "rochester": {
 				r.draftState = new RochesterDraftState([], []);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "rotisserie": {
 				r.draftState = new RotisserieDraftState([], [], 0);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "minesweeper": {
 				r.draftState = new MinesweeperDraftState([], [], 0, 0, 0);
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
 			case "teamSealed": {
 				r.draftState = new TeamSealedState();
-				break;
+				copyProps(s.draftState, r.draftState);
+				return r;
 			}
-		}
-		if (!r.draftState) {
-			console.error(`[Persistence::restoreSession] Error: Unsupported draft state type "${s.draftState.type}".`);
-			r.drafting = false;
-			return r;
-		}
-		copyProps(s.draftState, r.draftState);
-		if (r.draftState instanceof DraftState) {
-			for (const userID in r.draftState.players)
-				r.draftState.players[userID].botInstance = restoreBot(r.draftState.players[userID].botInstance) as IBot;
+			case "solomon": {
+				r.draftState = SolomonDraftState.deserialize(s.draftState);
+				if (!r.draftState) {
+					console.error(`[Persistence::restoreSession] Error: Invalid solomon draft state.`, s.draftState);
+					r.drafting = false;
+				}
+				return r;
+			}
+			default: {
+				console.error(
+					`[Persistence::restoreSession] Error: Unsupported draft state type "${s.draftState.type}".`
+				);
+				r.drafting = false;
+			}
 		}
 	}
 

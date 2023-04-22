@@ -17,6 +17,7 @@ import { JHHBooster } from "./JumpstartHistoricHorizons";
 import { RotisserieDraftStartOptions, RotisserieDraftSyncData } from "./RotisserieDraft";
 import { WinchesterDraftSyncData } from "./WinchesterDraft";
 import { HousmanDraftSyncData } from "./HousmanDraft";
+import { SolomonDraftSyncData } from "./SolomonDraft";
 
 export type LoaderOptions = { title: string };
 
@@ -149,6 +150,16 @@ export interface ServerToClientEvents {
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
 	}) => void;
 
+	startSolomonDraft: (syncData: SolomonDraftSyncData) => void;
+	solomonDraftState: (syncData: SolomonDraftSyncData) => void;
+	solomonDraftUpdatePiles: (piles: [UniqueCardID[], UniqueCardID[]]) => void;
+	solomonDraftPicked: (pileIdx: 0 | 1) => void;
+	solomonDraftEnd: () => void;
+	rejoinSolomonDraft: (data: {
+		state: SolomonDraftSyncData;
+		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };
+	}) => void;
+
 	startTeamSealed: (data: {
 		state: {
 			cards: (UniqueCard & {
@@ -216,6 +227,9 @@ export interface ClientToServerEvents {
 	winchesterDraftPick: (pickedColumn: number, ack: (result: SocketAck) => void) => void;
 	housmanDraftPick: (handIndex: number, revealedCardsIndex: number, ack: (result: SocketAck) => void) => void;
 	minesweeperDraftPick: (row: number, col: number, ack: (result: SocketAck) => void) => void;
+	solomonDraftOrganize: (piles: [UniqueCardID[], UniqueCardID[]], ack: (result: SocketAck) => void) => void;
+	solomonDraftConfirmPiles: (ack: (result: SocketAck) => void) => void;
+	solomonDraftPick: (pile: 0 | 1, ack: (result: SocketAck) => void) => void;
 	teamSealedPick: (uniqueCardID: UniqueCardID, ack: (result: SocketAck) => void) => void;
 	updateBracket: (results: Array<[number, number]>) => void;
 	updateDeckLands: (lands: DeckBasicLands) => void;
@@ -248,6 +262,7 @@ export interface ClientToServerEvents {
 		revealBorders: boolean,
 		ack: (result: SocketAck) => void
 	) => void;
+	startSolomonDraft: (cardCount: number, roundCount: number, ack: (s: SocketAck) => void) => void;
 	startTeamSealed: (
 		boostersPerTeam: number,
 		customBoosters: Array<string>,

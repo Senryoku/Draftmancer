@@ -55,6 +55,7 @@ import { isRotisserieDraftState, RotisserieDraftStartOptions, RotisserieDraftSta
 import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
+import { SolomonDraftState } from "./SolomonDraft.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1502,6 +1503,121 @@ export class Session implements IIndexable {
 		this.cleanDraftState();
 	}
 
+	startSolomonDraft(cardCount: number = 8, roundCount: number = 10): SocketAck {
+		if (this.drafting) return new SocketError("Already drafting.");
+		if (this.users.size !== 2)
+			return new SocketError(
+				"Invalid number of players",
+				`Solomon Draft can only be played with exactly 2 players. Bots are not supported!`
+			);
+		if (!this.ownerIsPlayer)
+			return new SocketError(
+				"Spectator mode isn't supported",
+				`Spectator mode is not support for Solomon Draft. 'Spectate as Session Owner' must be disabled.`
+			);
+		if (this.randomizeSeatingOrder) this.randomizeSeating();
+
+		const wantedCards = cardCount * roundCount;
+		const cardsPerBooster = this.useCustomCardList ? this.cardsPerBooster : 14; // FIXME: This is only an approximation...
+		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
+			useCustomBoosters: true,
+			playerCount: this.users.size,
+		});
+		if (isMessageError(boosters)) return new SocketAck(boosters);
+
+		const cardPool = boosters.flat();
+
+		while (cardPool.length < wantedCards) {
+			const booster = this.generateBoosters(1);
+			if (isMessageError(booster)) return new SocketAck(booster);
+			if (!booster[0] || booster[0].length === 0)
+				return new SocketError("Internal Error: Couldn't generate enough boosters.");
+			boosters.push(booster[0]);
+			cardPool.push(...booster[0]);
+		}
+
+		this.drafting = true;
+		this.disconnectedUsers = {};
+		const playerIds = this.getSortedHumanPlayersIDs();
+		this.draftState = new SolomonDraftState([playerIds[0], playerIds[1]], cardPool, cardCount, roundCount);
+		//const playerData = this.getSortedHumanPlayerData();
+		const syncData = (this.draftState as SolomonDraftState).syncData();
+		for (const uid of this.users) {
+			Connections[uid].pickedCards = { main: [], side: [] };
+			/*
+			Connections[uid].socket.emit("sessionOptions", {
+				virtualPlayersData: playerData,
+			});
+			*/
+			Connections[uid].socket.emit("startSolomonDraft", syncData);
+		}
+
+		this.initLogs("Solomon Draft", boosters);
+		return new SocketAck();
+	}
+
+	solomonDraftOrganize(piles: [UniqueCardID[], UniqueCardID[]]): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
+
+		const r = s.reorganize(piles);
+		if (isMessageError(r)) return new SocketAck(r);
+
+		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftUpdatePiles", piles);
+
+		return new SocketAck();
+	}
+
+	solomonDraftConfirmPiles(): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
+
+		const r = s.confirmPiles();
+		if (isMessageError(r)) return new SocketAck(r);
+
+		const syncData = s.syncData();
+		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftState", syncData);
+
+		return new SocketAck();
+	}
+
+	solomonDraftPick(pileIdx: 0 | 1): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
+
+		const r = s.pick(pileIdx);
+		if (isMessageError(r)) return new SocketAck(r);
+
+		for (const uid of s.players) {
+			Connections[uid]?.pickedCards.main.push(...r[uid]);
+			Connections[uid]?.socket.emit("solomonDraftPicked", pileIdx);
+		}
+
+		if (s.done()) return this.endSolomonDraft();
+
+		const syncData = s.syncData();
+		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftState", syncData);
+
+		return new SocketAck();
+	}
+
+	endSolomonDraft(): SocketAck {
+		const s = this.draftState;
+		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
+			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
+
+		logSession("SolomonDraft", this);
+		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftEnd");
+		this.finalizeLogs();
+		this.sendLogs();
+		this.cleanDraftState();
+
+		return new SocketAck();
+	}
+
 	///////////////////// Traditional Draft Methods //////////////////////
 	async startDraft(): Promise<SocketAck> {
 		if (this.drafting) return new SocketError("Already drafting.");
@@ -2050,6 +2166,12 @@ export class Session implements IIndexable {
 				this.endTeamSealed();
 				break;
 			}
+			case "solomon":
+				this.endSolomonDraft();
+				break;
+			default: {
+				console.error("Session.stopDraft: Unhandled draft type: " + this.draftState.type);
+			}
 		}
 	}
 
@@ -2437,6 +2559,7 @@ export class Session implements IIndexable {
 				rotisserie: "rejoinRotisserieDraft",
 				minesweeper: "rejoinMinesweeperDraft",
 				teamSealed: "rejoinTeamSealed",
+				solomon: "rejoinSolomonDraft",
 			};
 			if (!(this.draftState.type in EventNames)) {
 				console.error(`Unknown draft state type: ${this.draftState.type}`);

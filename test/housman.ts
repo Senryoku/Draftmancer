@@ -63,7 +63,7 @@ for (const settings of [
 			waitForClientDisconnects(done);
 		});
 
-		it("2 clients with different userID should be connected.", function (done) {
+		it(`${clients.length} clients with different userID should be connected.`, function (done) {
 			expect(Object.keys(Connections).length).to.equal(clients.length);
 			done();
 		});
