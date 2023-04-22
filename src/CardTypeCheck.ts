@@ -1,4 +1,4 @@
-import { Card, UniqueCard } from "./CardTypes";
+import { Card, CardBack, UniqueCard } from "./CardTypes";
 import {
 	hasOptionalProperty,
 	hasProperty,
@@ -10,12 +10,23 @@ import {
 	isNumber,
 } from "./TypeChecks.js";
 
+export function isCardBack(obj: unknown): obj is CardBack {
+	return (
+		isObject(obj) &&
+		hasProperty("name", isString)(obj) &&
+		hasProperty("type", isString)(obj) &&
+		hasProperty("subtypes", isArrayOf(isString))(obj) &&
+		hasProperty("printed_names", isRecord(isString, isString))(obj) &&
+		hasProperty("image_uris", isRecord(isString, isString))(obj)
+	);
+}
+
 export function isCard(obj: unknown): obj is Card {
 	return (
 		isObject(obj) &&
 		hasProperty("id", isString)(obj) &&
-		hasOptionalProperty("arena_id", isString)(obj) &&
-		hasProperty("name", isString)(obj) &&
+		hasOptionalProperty("arena_id", isNumber)(obj) &&
+		hasProperty("oracle_id", isString)(obj) &&
 		hasProperty("name", isString)(obj) &&
 		hasProperty("mana_cost", isString)(obj) &&
 		hasProperty("cmc", isNumber)(obj) &&
@@ -30,7 +41,7 @@ export function isCard(obj: unknown): obj is Card {
 		hasOptionalProperty("layout", isString)(obj) &&
 		hasProperty("printed_names", isRecord(isString, isString))(obj) &&
 		hasProperty("image_uris", isRecord(isString, isString))(obj) &&
-		hasOptionalProperty("back", isBoolean)(obj)
+		hasOptionalProperty("back", isCardBack)(obj)
 	);
 }
 
