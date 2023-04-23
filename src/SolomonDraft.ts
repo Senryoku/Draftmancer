@@ -1,4 +1,3 @@
-import { uint53Full } from "random-js";
 import { isUniqueCard } from "./CardTypeCheck.js";
 import { UniqueCard, UniqueCardID } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
@@ -6,6 +5,8 @@ import { UserID } from "./IDTypes.js";
 import { MessageError } from "./Message.js";
 import { hasProperty, isArrayOf, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
 import { shuffleArray } from "./utils.js";
+
+export type SolomonDraftStep = "dividing" | "picking";
 
 export class SolomonDraftState extends IDraftState implements TurnBased {
 	// Settings
@@ -15,7 +16,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	// State
 	cardPool: UniqueCard[] = [];
 	roundNum = -1; // [0, roundCount[ Will be immediately incremented.
-	step: SolomonDraftState.Step = SolomonDraftState.Step.Dividing;
+	step: SolomonDraftStep = "dividing";
 	piles: [UniqueCard[], UniqueCard[]] = [[], []];
 	lastPicks: {
 		round: number;
@@ -39,7 +40,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 		++this.roundNum;
 		if (this.done()) return true;
 		this.piles = [this.cardPool.splice(0, this.cardCount), []];
-		this.step = SolomonDraftState.Step.Dividing;
+		this.step = "dividing";
 		return false;
 	}
 
@@ -48,9 +49,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	}
 
 	currentPlayer(): UserID {
-		return this.players[
-			((this.roundNum % 2) + this.step === SolomonDraftState.Step.Picking ? 1 : 0) % this.players.length
-		];
+		return this.players[((this.roundNum % 2) + this.step === "picking" ? 1 : 0) % this.players.length];
 	}
 
 	dividingPlayer(): UserID {
@@ -61,7 +60,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	}
 
 	reorganize(piles: [UniqueCardID[], UniqueCardID[]]): MessageError | undefined {
-		if (this.step !== SolomonDraftState.Step.Dividing) return new MessageError("Not in Dividing step.");
+		if (this.step !== "dividing") return new MessageError("Not in Dividing step.");
 		if (piles[0].length + piles[1].length !== this.cardCount) return new MessageError("Not enough cards in piles.");
 
 		const cards = this.piles[0].concat(this.piles[1]);
@@ -71,20 +70,20 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 			return new MessageError("Invalid unique card ids.");
 
 		this.piles = [
-			cards.filter((card) => piles[0].includes(card.uniqueID)),
-			cards.filter((card) => piles[1].includes(card.uniqueID)),
+			piles[0].map((uid) => cards.find((card) => card.uniqueID === uid)!),
+			piles[1].map((uid) => cards.find((card) => card.uniqueID === uid)!),
 		];
 		return;
 	}
 
 	confirmPiles(): MessageError | undefined {
-		if (this.step !== SolomonDraftState.Step.Dividing) return new MessageError("Not in Dividing step.");
-		this.step = SolomonDraftState.Step.Picking;
+		if (this.step !== "dividing") return new MessageError("Not in Dividing step.");
+		this.step = "picking";
 		return;
 	}
 
 	pick(pileIdx: 0 | 1) {
-		if (this.step !== SolomonDraftState.Step.Picking) return new MessageError("Not in Picking step.");
+		if (this.step !== "picking") return new MessageError("Not in Picking step.");
 		const r: { [uid: UserID]: UniqueCard[] } = {};
 		r[this.pickingPlayer()] = this.piles[pileIdx];
 		r[this.dividingPlayer()] = this.piles[(pileIdx + 1) % 2];
@@ -124,7 +123,13 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 		if (!hasProperty("cardCount", isNumber)(data)) return;
 		if (!hasProperty("roundCount", isNumber)(data)) return;
 		if (!hasProperty("roundNum", isNumber)(data)) return;
-		if (!hasProperty("step", isSomeEnum(SolomonDraftState.Step))(data)) return;
+		if (
+			!hasProperty(
+				"step",
+				(x: unknown): x is SolomonDraftStep => isString(x) && (x === "dividing" || x === "picking")
+			)(data)
+		)
+			return;
 		if (
 			!hasProperty(
 				"piles",
@@ -161,13 +166,6 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 		s.piles = data.piles;
 		s.lastPicks = data.lastPicks;
 		return s;
-	}
-}
-
-export namespace SolomonDraftState {
-	export enum Step {
-		Dividing = "dividing",
-		Picking = "picking",
 	}
 }
 

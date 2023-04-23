@@ -12,7 +12,7 @@ import {
 	waitForClientDisconnects,
 	ackNoError,
 } from "./src/common.js";
-import { SolomonDraftState, SolomonDraftSyncData } from "../src/SolomonDraft.js";
+import { SolomonDraftSyncData, SolomonDraftStep } from "../src/SolomonDraft.js";
 import { random, shuffleArray } from "../src/utils.js";
 import { UniqueCardID } from "../src/CardTypes";
 import { SocketAck, ackError } from "../src/Message";
@@ -85,7 +85,7 @@ for (const settings of [
 					expect(state.roundCount).to.equal(settings.roundCount);
 					expect(state.roundNum).to.equal(0);
 					expect(state.piles).to.be.of.length(2);
-					expect(state.step).to.equal(SolomonDraftState.Step.Dividing);
+					expect(state.step).to.equal("dividing");
 					expect(state.currentPlayer).to.exist;
 					if (receivedStates === clients.length) done();
 				});
@@ -115,7 +115,7 @@ for (const settings of [
 
 		function divisingStep() {
 			it("Current player randomly reorganize piles", (done) => {
-				expect(getState().step).to.be.eql(SolomonDraftState.Step.Dividing);
+				expect(getState().step).to.be.eql("dividing");
 				let updateReceived = 0;
 				for (let c = 0; c < clients.length; ++c) {
 					clients[c].once("solomonDraftUpdatePiles", (piles) => {
@@ -129,11 +129,11 @@ for (const settings of [
 				const sendPiles = randomlyReorganize();
 			});
 			it("Current player confirm piles.", function (done) {
-				expect(getState().step).to.be.eql(SolomonDraftState.Step.Dividing);
+				expect(getState().step).to.be.eql("dividing");
 				let updateReceived = 0;
 				clients.forEach((c) =>
 					c.once("solomonDraftState", (state) => {
-						expect(state.step).to.be.eql(SolomonDraftState.Step.Picking);
+						expect(state.step).to.be.eql("picking");
 						states[(c as any).query.userID] = state;
 						++updateReceived;
 						if (updateReceived === clients.length) done();
@@ -146,11 +146,11 @@ for (const settings of [
 
 		function pickingStep() {
 			it("Current player picks randomly.", function (done) {
-				expect(getState().step).to.be.eql(SolomonDraftState.Step.Picking);
+				expect(getState().step).to.be.eql("picking");
 				let pickReceived = 0;
 				for (let c = 0; c < clients.length; ++c) {
 					clients[c].once("solomonDraftState", (state) => {
-						expect(state.step).to.be.eql(SolomonDraftState.Step.Dividing);
+						expect(state.step).to.be.eql("dividing");
 						states[(clients[c] as any).query.userID] = state;
 					});
 					clients[c].once("solomonDraftPicked", (pileIdx) => {
@@ -171,7 +171,7 @@ for (const settings of [
 		oneRound();
 
 		it("should not be able to pick when is the divising step.", function (done) {
-			expect(getState().step).to.equal(SolomonDraftState.Step.Dividing);
+			expect(getState().step).to.equal("dividing");
 			getCurrentPlayer().emit("solomonDraftPick", 0, (r: SocketAck) => {
 				expect(r.code !== 0);
 				done();
@@ -181,7 +181,7 @@ for (const settings of [
 		divisingStep();
 
 		it("should not be able to reorganize when is the picking step.", function (done) {
-			expect(getState().step).to.equal(SolomonDraftState.Step.Picking);
+			expect(getState().step).to.equal("picking");
 			const ids = getState()
 				.piles.flat()
 				.map((card) => card.uniqueID);
@@ -195,7 +195,7 @@ for (const settings of [
 		});
 
 		it("should not be able to confirm piles when is the picking step.", function (done) {
-			expect(getState().step).to.equal(SolomonDraftState.Step.Picking);
+			expect(getState().step).to.equal("picking");
 			getCurrentPlayer().emit("solomonDraftConfirmPiles", (r: SocketAck) => {
 				expect(r.code !== 0);
 				done();
@@ -276,7 +276,7 @@ for (const settings of [
 			const c = clients[0];
 
 			const round = () => {
-				if (states[(c as any).query.userID].step === SolomonDraftState.Step.Dividing) {
+				if (states[(c as any).query.userID].step === "dividing") {
 					randomlyReorganize();
 					confirmPiles();
 				} else {
