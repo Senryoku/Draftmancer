@@ -12,10 +12,96 @@ import {
 	waitForClientDisconnects,
 	ackNoError,
 } from "./src/common.js";
-import { SolomonDraftSyncData, SolomonDraftStep } from "../src/SolomonDraft.js";
+import { SolomonDraftSyncData, SolomonDraftState } from "../src/SolomonDraft.js";
 import { random, shuffleArray } from "../src/utils.js";
 import { UniqueCardID } from "../src/CardTypes";
-import { SocketAck, ackError } from "../src/Message";
+import { SocketAck, isMessageError } from "../src/Message.js";
+import { getUnique } from "../src/Cards.js";
+
+describe.only("SolomonDraftState", function () {
+	const randomCard = "fcd63377-4a2a-4f9d-ba32-ba3f1faf2ce0";
+	const cardPool = [];
+	const cardCount = 8;
+	const roundCount = 10;
+	for (let i = 0; i < cardCount * roundCount; ++i) cardPool.push(getUnique(randomCard));
+	const state = new SolomonDraftState(["0", "1"], cardPool, cardCount, roundCount);
+
+	const reorganize = () => {
+		const syncData = state.syncData();
+		expect(syncData.step).to.eql("dividing");
+		expect(
+			isMessageError(
+				state.reorganize([syncData.piles[1].map((c) => c.uniqueID), syncData.piles[0].map((c) => c.uniqueID)])
+			)
+		).to.be.false;
+		expect(isMessageError(state.confirmPiles())).to.be.false;
+	};
+
+	const pick = () => {
+		const syncData = state.syncData();
+		expect(syncData.step).to.eql("picking");
+		expect(isMessageError(state.pick(random.integer(0, 1) as 0 | 1))).to.be.false;
+	};
+
+	it("should start with player 0 dividing.", function () {
+		expect(state.currentPlayer(), "Player 0 turn").to.eql("0");
+		expect(state.step).to.eql("dividing");
+
+		const syncData = state.syncData();
+		expect(syncData.currentPlayer, "Player 0 turn").to.eql("0");
+		expect(syncData.roundNum, "Round 0").to.eql(0);
+		expect(syncData.step).to.eql("dividing");
+		expect(syncData.piles[0].length + syncData.piles[1].length).to.eql(cardCount);
+	});
+
+	it("should not allow picking during dividing step.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 0").to.eql(0);
+		expect(syncData.currentPlayer, "Player 0 turn").to.eql("0");
+		expect(isMessageError(state.pick(0))).to.be.true;
+	});
+
+	it("should allow player 0 to reorganize and confirm piles.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 0").to.eql(0);
+		expect(syncData.currentPlayer, "Player 0 turn").to.eql("0");
+		reorganize();
+	});
+
+	it("should not allow dividing during picking step.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 0").to.eql(0);
+		expect(syncData.step).to.eql("picking");
+		expect(syncData.currentPlayer, "Player 1 turn").to.eql("1");
+		expect(
+			isMessageError(
+				state.reorganize([syncData.piles[1].map((c) => c.uniqueID), syncData.piles[0].map((c) => c.uniqueID)])
+			)
+		).to.be.true;
+		expect(isMessageError(state.confirmPiles())).to.be.true;
+	});
+
+	it("should allow player 1 to pick a pile.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 0").to.eql(0);
+		expect(syncData.currentPlayer, "Player 1 turn").to.eql("1");
+		pick();
+	});
+
+	it("should allow player 1 to reorganize and confirm piles.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 1").to.eql(1);
+		expect(syncData.currentPlayer, "Player 1 turn").to.eql("1");
+		reorganize();
+	});
+
+	it("should allow player 0 to pick a pile.", function () {
+		const syncData = state.syncData();
+		expect(syncData.roundNum, "Round 1").to.eql(1);
+		expect(syncData.currentPlayer, "Player 0 turn").to.eql("0");
+		pick();
+	});
+});
 
 for (const settings of [
 	{ cardCount: 8, roundCount: 10 },

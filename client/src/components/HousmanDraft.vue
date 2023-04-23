@@ -266,6 +266,7 @@ const selectionIsValid = computed(() => {
 	color: #666;
 	text-align: center;
 	font-variant-caps: small-caps;
+	user-select: none;
 
 	writing-mode: vertical-rl;
 	transform: translateY(-50%) rotate(-180deg);

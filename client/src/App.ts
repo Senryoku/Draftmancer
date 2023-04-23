@@ -65,11 +65,13 @@ import Modal from "./components/Modal.vue";
 import SetSelect from "./components/SetSelect.vue";
 import SealedDialog from "./components/SealedDialog.vue";
 import HousmanDialog from "./components/HousmanDialog.vue";
+import SolomonDialog from "./components/SolomonDialog.vue";
 import ScaleSlider from "./components/ScaleSlider.vue";
 import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
+import { SolomonDraftSyncData } from "@/SolomonDraft";
 const img = new Image();
 img.src = CardBack;
 
@@ -84,6 +86,7 @@ enum DraftState {
 	WinchesterPicking = "WinchesterPicking",
 	WinchesterWaiting = "WinchesterWaiting",
 	HousmanDraft = "HousmanDraft",
+	SolomonDraft = "SolomonDraft",
 	GridPicking = "GridPicking",
 	GridWaiting = "GridWaiting",
 	RochesterPicking = "RochesterPicking",
@@ -181,6 +184,7 @@ export default defineComponent({
 		ScaleSlider,
 		SetRestrictionComponent: defineAsyncComponent(() => import("./components/SetRestriction.vue")),
 		SetSelect,
+		SolomonDraft: defineAsyncComponent(() => import("./components/SolomonDraft.vue")),
 		Sortable,
 		SponsorModal: defineAsyncComponent(() => import("./components/SponsorModal.vue")),
 		TeamSealed: defineAsyncComponent(() => import("./components/TeamSealed.vue")),
@@ -298,6 +302,7 @@ export default defineComponent({
 			teamSealedState: null as TeamSealedSyncData | null,
 			winchesterDraftState: null as WinchesterDraftSyncData | null,
 			housmanDraftState: null as HousmanDraftSyncData | null,
+			solomonDraftState: null as SolomonDraftSyncData | null,
 			draftPaused: false,
 
 			publicSessions: [] as {
@@ -693,6 +698,30 @@ export default defineComponent({
 						position: "center",
 						icon: "success",
 						title: "Reconnected to the Housman draft!",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+				});
+			});
+
+			this.socket.on("startSolomonDraft", (state) => {
+				startDraftSetup("Solomon draft");
+				this.solomonDraftState = state;
+				this.draftingState = DraftState.SolomonDraft;
+			});
+			this.socket.on("rejoinSolomonDraft", (data) => {
+				this.clearState();
+				this.drafting = true;
+				this.draftingState = DraftState.SolomonDraft;
+				this.solomonDraftState = data.state;
+				this.$nextTick(() => {
+					for (let c of data.pickedCards.main) this.addToDeck(c);
+					for (let c of data.pickedCards.side) this.addToSideboard(c);
+
+					Alert.fire({
+						position: "center",
+						icon: "success",
+						title: "Reconnected to the Solomon draft!",
 						showConfirmButton: false,
 						timer: 1500,
 					});
@@ -1654,12 +1683,6 @@ export default defineComponent({
 				else console.error(answer);
 			});
 		},
-		housmanDraftEnd() {
-			this.drafting = false;
-			this.housmanDraftState = null;
-			this.draftingState = DraftState.Brewing;
-			fireToast("success", "Done drafting!");
-		},
 		setGridDraftState(state: GridDraftSyncData) {
 			const prevBooster = this.gridDraftState ? this.gridDraftState.booster : null;
 			this.gridDraftState = state;
@@ -1691,7 +1714,6 @@ export default defineComponent({
 				);
 			};
 
-			// TODO: Modal with settings.
 			const self = this;
 			const el = document.createElement("div");
 			el.id = "housman-dialog";
@@ -1709,6 +1731,45 @@ export default defineComponent({
 				},
 			});
 			instance.mount("#housman-dialog");
+		},
+		housmanDraftEnd() {
+			this.drafting = false;
+			this.housmanDraftState = null;
+			this.draftingState = DraftState.Brewing;
+			fireToast("success", "Done drafting!");
+		},
+		startSolomonDraft: async function () {
+			if (this.userID !== this.sessionOwner || this.drafting) return;
+
+			const start = (cardCount: number, roundCount: number) => {
+				this.socket.emit("startSolomonDraft", cardCount, roundCount, (answer: SocketAck) => {
+					if (answer.code !== 0) Alert.fire(answer.error!);
+				});
+			};
+
+			const self = this;
+			const el = document.createElement("div");
+			el.id = "solomon-dialog";
+			this.$el.appendChild(el);
+			let instance = createCommonApp(SolomonDialog, {
+				unmounted() {
+					self.$el.removeChild(el);
+				},
+				onCancel() {
+					instance.unmount();
+				},
+				onStart(cardCount: number, roundCount: number) {
+					self.deckWarning(start, cardCount, roundCount);
+					instance.unmount();
+				},
+			});
+			instance.mount("#solomon-dialog");
+		},
+		solomonDraftEnd() {
+			this.drafting = false;
+			this.solomonDraftState = null;
+			this.draftingState = DraftState.Brewing;
+			fireToast("success", "Done drafting!");
 		},
 		startGridDraft: async function () {
 			if (this.userID != this.sessionOwner || this.drafting) return;
@@ -3163,6 +3224,7 @@ export default defineComponent({
 			if (this.winstonDraftState) return "Winston Draft";
 			if (this.winchesterDraftState) return "Winchester Draft";
 			if (this.housmanDraftState) return "Housman Draft";
+			if (this.solomonDraftState) return "Solomon Draft";
 			if (this.gridDraftState) return "Grid Draft";
 			if (this.useCustomCardList) return "Cube Draft";
 			if (this.burnedCardsPerRound > 0) return "Glimpse Draft";

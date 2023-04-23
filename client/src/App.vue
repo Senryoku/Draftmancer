@@ -417,6 +417,9 @@
 								<div v-tooltip.left="'Starts a Housman Draft.'">
 									<button @click="startHousmanDraft()">Housman</button>
 								</div>
+								<div v-tooltip.left="'Starts a Solomon Draft.'">
+									<button @click="startSolomonDraft()">Solomon</button>
+								</div>
 								<div
 									v-tooltip.left="
 										'Starts a Grid Draft. This is a draft variant for two or three players.'
@@ -1048,6 +1051,19 @@
 					@notifyTurn="notifyTurn"
 					@addToDeck="addToDeck"
 					@end="housmanDraftEnd"
+				/>
+				<solomon-draft
+					v-if="draftingState === DraftState.SolomonDraft && solomonDraftState"
+					class="container"
+					:class="{ disabled: waitingForDisconnectedUsers || draftPaused }"
+					:socket="socket"
+					:language="language"
+					:userID="userID"
+					:sessionUsers="userByID"
+					v-model:state="solomonDraftState"
+					@notifyTurn="notifyTurn"
+					@addToDeck="addToDeck"
+					@end="solomonDraftEnd"
 				/>
 				<!-- Grid Draft -->
 				<div

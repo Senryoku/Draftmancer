@@ -39,7 +39,8 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	nextRound(): boolean {
 		++this.roundNum;
 		if (this.done()) return true;
-		this.piles = [this.cardPool.splice(0, this.cardCount), []];
+		const cards = this.cardPool.splice(0, this.cardCount);
+		this.piles = [cards.splice(0, Math.ceil(cards.length / 2)), cards];
 		this.step = "dividing";
 		return false;
 	}
@@ -49,7 +50,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	}
 
 	currentPlayer(): UserID {
-		return this.players[((this.roundNum % 2) + this.step === "picking" ? 1 : 0) % this.players.length];
+		return this.players[((this.roundNum % 2) + (this.step === "picking" ? 1 : 0)) % this.players.length];
 	}
 
 	dividingPlayer(): UserID {
@@ -92,7 +93,6 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 			round: this.roundNum,
 			picks: [r[this.players[0]], r[this.players[1]]],
 		});
-
 		this.nextRound();
 		return r;
 	}
