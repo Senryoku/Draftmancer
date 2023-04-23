@@ -36,7 +36,7 @@
 			<span><scale-slider v-model.number="cardScale" /></span>
 		</div>
 		<transition name="solomon-piles" mode="out-in">
-			<div class="container" :key="state.roundNum">
+			<div class="solomon-piles" :key="state.roundNum">
 				<div
 					class="solomon-pile card-container"
 					v-for="(pile, idx) in state.piles"
@@ -50,6 +50,7 @@
 						<Sortable
 							:key="`pile_${idx}_${pile.map((c) => c.uniqueID).join('-')}`"
 							class="solomon-pile-inner sortable-pile"
+							:style="`grid-area: pile-${idx}`"
 							:list="pile"
 							item-key="uniqueID"
 							:options="{ group: 'solomon-piles', animation: 200 }"
@@ -230,6 +231,7 @@ const pickPile = (idx: 0 | 1) => {
 	margin: 0 2em;
 	align-items: center;
 	min-height: 2em;
+	grid-area: control;
 }
 
 .solomon-draft-controls span:nth-child(2) {
@@ -238,6 +240,30 @@ const pickPile = (idx: 0 | 1) => {
 
 .solomon-draft-controls span:nth-child(3) {
 	justify-self: end;
+}
+
+.solomon-draft {
+	display: grid;
+	gap: 1em;
+	grid-template-columns: auto auto;
+	grid-template-areas:
+		"control control"
+		"piles last-picks"
+		"piles last-picks";
+}
+
+.solomon-piles {
+	grid-area: piles;
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+}
+
+@media (max-width: 1368px) {
+	.solomon-draft {
+		grid-template-columns: auto;
+		grid-template-areas: "control" "piles" "last-picks";
+	}
 }
 
 .solomon-piles-enter-active,
@@ -310,6 +336,7 @@ const pickPile = (idx: 0 | 1) => {
 .last-picks-container {
 	display: flex;
 	flex-wrap: nowrap;
+	grid-area: last-picks;
 }
 
 .last-picks {

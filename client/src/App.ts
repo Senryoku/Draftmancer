@@ -3300,6 +3300,7 @@ export default defineComponent({
 			if (this.winstonDraftState) return this.winstonDraftState.currentPlayer;
 			if (this.winchesterDraftState) return this.winchesterDraftState.currentPlayer;
 			if (this.housmanDraftState) return this.housmanDraftState.currentPlayer;
+			if (this.solomonDraftState) return this.solomonDraftState.currentPlayer;
 			if (this.gridDraftState) return this.gridDraftState.currentPlayer;
 			if (this.rotisserieDraftState) return this.rotisserieDraftState.currentPlayer;
 			if (this.rochesterDraftState) return this.rochesterDraftState.currentPlayer;
