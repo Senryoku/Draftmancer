@@ -48,8 +48,8 @@
 					<div class="zone-name">Pile {{ idx + 1 }}</div>
 					<template v-if="state.step === 'dividing' && isCurrentPlayer">
 						<Sortable
-							:key="`pile_${idx}`"
-							class="solomon-pile-inner"
+							:key="`pile_${idx}_${pile.map((c) => c.uniqueID).join('-')}`"
+							class="solomon-pile-inner sortable-pile"
 							:list="pile"
 							item-key="uniqueID"
 							:options="{ group: 'solomon-piles', animation: 200 }"
@@ -240,8 +240,23 @@ const pickPile = (idx: 0 | 1) => {
 	justify-self: end;
 }
 
+.solomon-piles-enter-active,
+.solomon-piles-leave-active {
+	will-change: transform opacity;
+	transition: all 0.25s ease;
+}
+
+.solomon-piles-enter-from,
+.solomon-piles-leave-to {
+	opacity: 0;
+}
+
 .solomon-pile {
 	position: relative;
+}
+
+.sortable-pile .card {
+	cursor: grab;
 }
 
 .solomon-pile-inner {
