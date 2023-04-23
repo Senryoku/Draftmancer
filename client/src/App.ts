@@ -960,7 +960,7 @@ export default defineComponent({
 				if (this.draftingState === DraftState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
-						this.draftLogLiveComponent?.registerPlayerSelectEvents();
+						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
 			});
@@ -1101,7 +1101,7 @@ export default defineComponent({
 				if (this.draftingState === DraftState.Watching) {
 					// As player list will be reverting to its non-drafting state, click events used to select player have to be re-registered.
 					this.$nextTick(() => {
-						this.draftLogLiveComponent?.registerPlayerSelectEvents();
+						this.draftLogLiveComponentRef?.registerPlayerSelectEvents();
 					});
 				} else this.draftingState = DraftState.Brewing;
 			});
@@ -1165,7 +1165,7 @@ export default defineComponent({
 						.map((s) => (s.printed_names[this.language] ? s.printed_names[this.language] : s.name))
 						.join(", ")}!`
 				);
-				this.draftLogLiveComponent?.newPick(data);
+				this.draftLogLiveComponentRef?.newPick(data);
 			});
 
 			this.socket.on("selectJumpstartPacks", this.selectJumpstartPacks);
@@ -3214,7 +3214,7 @@ export default defineComponent({
 		sideboardDisplay(): typeof CardPool | null {
 			return this.$refs.sideboardDisplay as typeof CardPool | null;
 		},
-		draftLogLiveComponent(): typeof DraftLogLiveComponent | null {
+		draftLogLiveComponentRef(): typeof DraftLogLiveComponent | null {
 			return this.$refs.draftloglive as typeof DraftLogLiveComponent | null;
 		},
 		gameModeName(): string {

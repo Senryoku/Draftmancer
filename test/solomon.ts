@@ -18,7 +18,7 @@ import { UniqueCardID } from "../src/CardTypes";
 import { SocketAck, isMessageError } from "../src/Message.js";
 import { getUnique } from "../src/Cards.js";
 
-describe.only("SolomonDraftState", function () {
+describe("SolomonDraftState", function () {
 	const randomCard = "fcd63377-4a2a-4f9d-ba32-ba3f1faf2ce0";
 	const cardPool = [];
 	const cardCount = 8;

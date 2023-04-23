@@ -892,13 +892,13 @@
 							v-if="draftLogLive && draftLogLive.sessionID === sessionID"
 							class="draft-watching-live-log"
 						>
-							<draft-log-live-component
+							<DraftLogLiveComponent
 								:draftlog="draftLogLive"
 								:show="['owner', 'delayed', 'everyone'].includes(draftLogRecipients)"
 								:language="language"
 								:key="draftLogLive.time"
 								ref="draftloglive"
-							></draft-log-live-component>
+							></DraftLogLiveComponent>
 						</div>
 					</div>
 					<div
