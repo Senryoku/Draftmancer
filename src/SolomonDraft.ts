@@ -1,3 +1,4 @@
+import { init } from "mixpanel";
 import { isUniqueCard } from "./CardTypeCheck.js";
 import { UniqueCard, UniqueCardID } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
@@ -23,15 +24,20 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 		picks: [UniqueCard[], UniqueCard[]];
 	}[] = [];
 
-	constructor(players: [UserID, UserID], cardPool: UniqueCard[], cardCount: number = 8, roundCount: number = 10) {
+	constructor(players: [UserID, UserID], cardCount: number = 8, roundCount: number = 10) {
 		super("solomon");
 		this.players = players;
 		this.cardCount = cardCount;
 		this.roundCount = roundCount;
+	}
+
+	init(cardPool: UniqueCard[]) {
+		if (cardPool.length < this.cardCount * this.roundCount) throw new Error("Not enough cards");
 		this.cardPool = cardPool;
 		shuffleArray(this.cardPool);
 		// Truncate card pool
-		if (this.cardPool.length > cardCount * roundCount) this.cardPool.length = cardCount * roundCount;
+		if (this.cardPool.length > this.cardCount * this.roundCount)
+			this.cardPool.length = this.cardCount * this.roundCount;
 		this.nextRound();
 	}
 
@@ -46,7 +52,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 	}
 
 	done(): boolean {
-		return this.roundNum >= this.roundCount || this.cardPool.length < this.cardCount;
+		return this.roundNum >= this.roundCount;
 	}
 
 	currentPlayer(): UserID {
@@ -159,8 +165,11 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 			)(data)
 		)
 			return;
+		if (data.piles[0].length + data.piles[1].length !== data.cardCount) return;
+		if (data.cardPool.length < data.cardCount * (data.roundCount - data.roundNum - 1)) return;
 
-		const s = new SolomonDraftState(data.players, data.cardPool, data.cardCount, data.roundCount);
+		const s = new SolomonDraftState(data.players, data.cardCount, data.roundCount);
+		s.cardPool = data.cardPool;
 		s.roundNum = data.roundNum;
 		s.step = data.step;
 		s.piles = data.piles;

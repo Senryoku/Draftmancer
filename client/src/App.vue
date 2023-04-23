@@ -418,7 +418,7 @@
 									<button @click="startHousmanDraft()">Housman</button>
 								</div>
 								<div v-tooltip.left="'Starts a Solomon Draft.'">
-									<button @click="startSolomonDraft()">Solomon</button>
+									<button @click="startSolomonDraft()">Solomon (2p.)</button>
 								</div>
 								<div
 									v-tooltip.left="

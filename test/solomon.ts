@@ -24,7 +24,8 @@ describe.only("SolomonDraftState", function () {
 	const cardCount = 8;
 	const roundCount = 10;
 	for (let i = 0; i < cardCount * roundCount; ++i) cardPool.push(getUnique(randomCard));
-	const state = new SolomonDraftState(["0", "1"], cardPool, cardCount, roundCount);
+	const state = new SolomonDraftState(["0", "1"], cardCount, roundCount);
+	state.init(cardPool);
 
 	const reorganize = () => {
 		const syncData = state.syncData();

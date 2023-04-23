@@ -1526,7 +1526,6 @@ export class Session implements IIndexable {
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		const cardPool = boosters.flat();
-
 		while (cardPool.length < wantedCards) {
 			const booster = this.generateBoosters(1);
 			if (isMessageError(booster)) return new SocketAck(booster);
@@ -1539,9 +1538,10 @@ export class Session implements IIndexable {
 		this.drafting = true;
 		this.disconnectedUsers = {};
 		const playerIds = this.getSortedHumanPlayersIDs();
-		this.draftState = new SolomonDraftState([playerIds[0], playerIds[1]], cardPool, cardCount, roundCount);
+		const s = (this.draftState = new SolomonDraftState([playerIds[0], playerIds[1]], cardCount, roundCount));
+		s.init(cardPool);
 		//const playerData = this.getSortedHumanPlayerData();
-		const syncData = (this.draftState as SolomonDraftState).syncData();
+		const syncData = s.syncData();
 		for (const uid of this.users) {
 			Connections[uid].pickedCards = { main: [], side: [] };
 			/*
