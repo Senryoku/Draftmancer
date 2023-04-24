@@ -1610,3 +1610,17 @@ See: https://stackoverflow.com/questions/52937708/why-does-applying-a-css-filter
 .fixed-deck-and-sideboard-container .deck-container {
 	margin-top: 0.25em;
 }
+
+.v-popper--theme-dropdown .v-popper__inner {
+	background: #404040;
+	color: #ddd;
+	border-color: #606060;
+}
+
+.v-popper--theme-dropdown .v-popper__arrow-inner {
+	border-color: #404040;
+}
+
+.v-popper--theme-dropdown.v-popper__popper {
+	z-index: 1010;
+}

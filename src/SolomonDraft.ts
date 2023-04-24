@@ -105,6 +105,7 @@ export class SolomonDraftState extends IDraftState implements TurnBased {
 
 	syncData() {
 		return {
+			players: this.players,
 			roundCount: this.roundCount,
 			roundNum: this.roundNum,
 			step: this.step,

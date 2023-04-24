@@ -2,11 +2,11 @@
 	<div class="solomon-draft" :style="`--card-scale: ${cardScale}`">
 		<div class="solomon-draft-controls">
 			<template v-if="userID === state.currentPlayer">
-				<span
-					>Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Your turn
-					{{ state.step === "dividing" ? "to reorder piles!" : "to pick a pile!" }}</span
-				>
-				<span>
+				<div>
+					Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Your turn
+					{{ state.step === "dividing" ? "to reorder piles!" : "to pick a pile!" }}
+				</div>
+				<div>
 					<template v-if="!inTransition">
 						<button v-if="state.step === 'dividing'" @click="confirmPiles" class="blue solomon-confirm">
 							Confirm
@@ -20,20 +20,44 @@
 							Confirm
 						</button>
 					</template>
-				</span>
+				</div>
 			</template>
 			<template v-else>
-				<span>
+				<div>
 					Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Waiting for
 					{{
 						state.currentPlayer in sessionUsers
 							? sessionUsers[state.currentPlayer].userName
 							: "(Disconnected)"
 					}}...
-				</span>
-				<span></span>
+				</div>
+				<div></div>
 			</template>
-			<span><scale-slider v-model.number="cardScale" /></span>
+			<div>
+				<scale-slider v-model.number="cardScale" />
+				<VDropdown placement="left-start">
+					<FontAwesomeIcon icon="fa-solid fa-clock-rotate-left" size="xl" class="clickable"></FontAwesomeIcon>
+					<template #popper>
+						<div class="last-picks-container">
+							<div class="last-picks">
+								<div v-for="round in state.lastPicks" :key="round.round">
+									<h2>Round {{ round.round + 1 }}</h2>
+									<div style="display: flex; gap: 1em">
+										<div v-for="(p, idx) in round.picks">
+											<div style="text-align: center">
+												{{ sessionUsers[state.players[idx]]?.userName ?? "Disconnected" }}
+											</div>
+											<div class="card-column" style="width: 200px">
+												<card v-for="card in p" :card="card" :language="language" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</template>
+				</VDropdown>
+			</div>
 		</div>
 		<transition name="solomon-piles" mode="out-in">
 			<div class="solomon-piles" :key="state.roundNum">
@@ -41,7 +65,10 @@
 					class="solomon-pile card-container"
 					v-for="(pile, idx) in state.piles"
 					:key="`pile-${idx}`"
-					:class="{ clickable: isCurrentPlayer && state.step === 'picking', selected: idx === selectedPile }"
+					:class="{
+						clickable: isCurrentPlayer && state.step === 'picking',
+						'selected-pile': idx === selectedPile,
+					}"
 					@dblclick="pickPile(idx as 0 | 1)"
 					@click="selectPile(idx as 0 | 1)"
 				>
@@ -75,10 +102,6 @@
 				</div>
 			</div>
 		</transition>
-		<div class="last-picks-container card-container">
-			<span class="last-picks-title">Last Picks</span>
-			<transition-group tag="div" name="vertical-queue" class="vertical-queue last-picks"></transition-group>
-		</div>
 	</div>
 </template>
 
@@ -97,6 +120,7 @@ import { UniqueCard, UniqueCardID } from "@/CardTypes";
 import { sortableUpdate } from "../helper";
 import { Sortable } from "sortablejs-vue3";
 import { SortableEvent } from "sortablejs";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{
 	userID: UserID;
@@ -155,7 +179,7 @@ onMounted(() => {
 			],
 		});
 		if (props.state.lastPicks.length > 2) props.state.lastPicks.pop();
-		emit("addToDeck", props.state.piles[isCurrentPlayer ? pileIdx : (pileIdx + 1) % 2]);
+		emit("addToDeck", props.state.piles[isCurrentPlayer.value ? pileIdx : (pileIdx + 1) % 2]);
 	});
 	props.socket.on("solomonDraftEnd", () => {
 		emit("end");
@@ -190,8 +214,6 @@ const moveCard = (uid: UniqueCardID, from: 0 | 1) => {
 	updatePiles();
 };
 
-const removeFromPile = (evt: SortableEvent, pile: UniqueCard[]) => {};
-
 const updatePiles = () => {
 	const piles = props.state.piles.map((arr) => arr.map((card) => card.uniqueID));
 	props.socket.emit("solomonDraftOrganize", piles as [UniqueCardID[], UniqueCardID[]], (anwser) => {
@@ -206,12 +228,12 @@ const confirmPiles = () => {
 };
 
 const selectPile = (idx: 0 | 1) => {
-	if (!isCurrentPlayer || props.state.step !== "picking") return;
+	if (!isCurrentPlayer.value || props.state.step !== "picking") return;
 	selectedPile.value = idx;
 };
 
 const pickPile = (idx: 0 | 1) => {
-	if (!isCurrentPlayer || props.state.step !== "picking" || selectedPile.value === null) return;
+	if (!isCurrentPlayer.value || props.state.step !== "picking" || selectedPile.value === null) return;
 	props.socket.emit("solomonDraftPick", idx, (anwser) => {
 		if (anwser.code !== 0 && anwser.error) Alert.fire(anwser.error);
 	});
@@ -220,11 +242,6 @@ const pickPile = (idx: 0 | 1) => {
 </script>
 
 <style scoped>
-.card {
-	width: calc(200px * var(--card-scale));
-	height: calc(282px * var(--card-scale));
-}
-
 .solomon-draft-controls {
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
@@ -234,22 +251,20 @@ const pickPile = (idx: 0 | 1) => {
 	grid-area: control;
 }
 
-.solomon-draft-controls span:nth-child(2) {
+.solomon-draft-controls > *:nth-child(2) {
 	justify-self: center;
 }
 
-.solomon-draft-controls span:nth-child(3) {
+.solomon-draft-controls > *:nth-child(3) {
 	justify-self: end;
+	display: flex;
+	gap: 1em;
 }
 
 .solomon-draft {
-	display: grid;
-	gap: 1em;
-	grid-template-columns: auto auto;
-	grid-template-areas:
-		"control control"
-		"piles last-picks"
-		"piles last-picks";
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
 }
 
 .solomon-piles {
@@ -257,6 +272,11 @@ const pickPile = (idx: 0 | 1) => {
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
+}
+
+.solomon-piles .card {
+	width: calc(200px * var(--card-scale));
+	height: calc(282px * var(--card-scale));
 }
 
 @media (max-width: 1368px) {
@@ -283,6 +303,10 @@ const pickPile = (idx: 0 | 1) => {
 
 .sortable-pile .card {
 	cursor: grab;
+}
+
+.solomon-pile.selected-pile {
+	box-shadow: 0 0 4px white;
 }
 
 .solomon-pile-inner {
@@ -334,84 +358,19 @@ const pickPile = (idx: 0 | 1) => {
 }
 
 .last-picks-container {
-	display: flex;
-	flex-wrap: nowrap;
-	grid-area: last-picks;
+	max-height: 80vh;
+	overflow-y: scroll;
+	padding: 1em;
 }
-
 .last-picks {
 	display: flex;
+	flex-direction: column-reverse;
 	align-items: center;
-	flex-direction: column;
 	justify-content: center;
 	position: relative;
 	gap: 0.4em;
-
-	min-width: calc(2em + 2 * 200px * 0.45 * var(--card-scale));
 }
-
-.last-picks .card {
-	width: calc(200px * 0.45 * var(--card-scale));
-	height: calc(282px * 0.45 * var(--card-scale));
-}
-
-.last-picks-title {
-	font-variant: small-caps;
-	font-size: 1.5em;
-	color: #666;
-	text-align: center;
-	font-variant-caps: small-caps;
-
-	writing-mode: vertical-rl;
-	transform: rotate(-180deg);
-}
-
-.pick-remainder {
-	display: flex !important;
-	align-items: center;
-	gap: 0.2em;
-}
-
-.pick-remainder .name {
-	text-align: center;
-
-	max-height: calc(0.8 * 282px * 0.45 * var(--card-scale));
-	width: 1.2em;
-	overflow-y: hidden;
-	overflow-x: hidden;
-
-	writing-mode: vertical-rl;
-	transform: rotate(-180deg);
-}
-
-.pick-remainder .cards {
-	position: relative;
-	display: flex;
-	flex-wrap: nowrap;
-	gap: 0.2em;
-}
-
-.swap-icon {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	filter: drop-shadow(0 0 1px black);
-}
-
-.vertical-queue-leave-to {
-	z-index: inherit !important; /* Allow leaving picks to stay in front of the container background */
-}
-
-@media (max-width: 800px) {
-	.hand-and-last-exchanges {
-		flex-direction: column;
-	}
-
-	.last-picks {
-		flex-direction: row !important;
-	}
+.last-picks h2 {
+	margin: 0.25em;
 }
 </style>
-
-<style src="../css/vertical-queue.css" scoped />

@@ -18,8 +18,15 @@ function installCommonFeatures(app: App<Element>) {
 	app.use(FloatingVue, {
 		placement: "bottom-start",
 		boundariesElement: "window",
-		delay: 250,
 		distance: 8,
+		themes: {
+			tooltip: {
+				delay: 250,
+			},
+			dropdown: {
+				delay: 0,
+			},
+		},
 	});
 	installFontAwesome(app);
 }
