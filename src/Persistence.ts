@@ -173,8 +173,18 @@ export function restoreSession(s: any, owner: UserID) {
 			case "draft": {
 				const draftState = new DraftState([], [], { botCount: 0, simpleBots: false });
 				copyProps(s.draftState, draftState);
-				for (const userID in s.players)
-					draftState.players[userID].botInstance = restoreBot(s.players[userID].botInstance) as IBot;
+				for (const userID in s.draftState.players) {
+					const bot = restoreBot(s.draftState.players[userID].botInstance);
+					if (!bot) {
+						console.error(
+							"restoreSession Error: Could not restore bot.",
+							s.draftState.players[userID].botInstance
+						);
+						r.drafting = false;
+						return r;
+					}
+					draftState.players[userID].botInstance = bot;
+				}
 				r.draftState = draftState;
 				return r;
 			}

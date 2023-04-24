@@ -114,15 +114,15 @@ for (const settings of [
 		let sessionID = "sessionID";
 		let ownerIdx: number;
 		let nonOwnerIdx: number;
-		let states: Record<string, SolomonDraftSyncData> = {};
+		let state: SolomonDraftSyncData | null;
 
 		// Get the current draft state, it should be the same for both players.
 		function getState() {
-			return Object.values(states).at(0)!;
+			return state!;
 		}
 
 		const getCurrentPlayer = () => {
-			const currentPlayerID = states[(clients[ownerIdx] as any).query.userID].currentPlayer;
+			const currentPlayerID = getState().currentPlayer;
 			const currentPlayerIdx = clients.findIndex((c) => (c as any).query.userID === currentPlayerID);
 			return clients[currentPlayerIdx];
 		};
@@ -166,14 +166,14 @@ for (const settings of [
 			nonOwnerIdx = (ownerIdx + 1) % clients.length;
 			let receivedStates = 0;
 			for (const c of clients) {
-				c.once("startSolomonDraft", function (state) {
+				c.once("startSolomonDraft", function (s) {
 					receivedStates += 1;
-					states[(c as any).query.userID] = state;
-					expect(state.roundCount).to.equal(settings.roundCount);
-					expect(state.roundNum).to.equal(0);
-					expect(state.piles).to.be.of.length(2);
-					expect(state.step).to.equal("dividing");
-					expect(state.currentPlayer).to.exist;
+					state = s;
+					expect(s.roundCount).to.equal(settings.roundCount);
+					expect(s.roundNum).to.equal(0);
+					expect(s.piles).to.be.of.length(2);
+					expect(s.step).to.equal("dividing");
+					expect(s.currentPlayer).to.exist;
 					if (receivedStates === clients.length) done();
 				});
 			}
@@ -181,6 +181,7 @@ for (const settings of [
 		});
 
 		function randomlyReorganize() {
+			expect(getState().step).to.be.eql("dividing");
 			const ids = getState()
 				.piles.flat()
 				.map((card) => card.uniqueID);
@@ -192,10 +193,12 @@ for (const settings of [
 		}
 
 		function confirmPiles() {
+			expect(getState().step).to.be.eql("dividing");
 			getCurrentPlayer().emit("solomonDraftConfirmPiles", ackNoError);
 		}
 
 		function randomPick() {
+			expect(getState().step).to.be.eql("picking");
 			const randomIdx = random.integer(0, 1) as 0 | 1;
 			getCurrentPlayer().emit("solomonDraftPick", randomIdx, ackNoError);
 		}
@@ -219,9 +222,9 @@ for (const settings of [
 				expect(getState().step).to.be.eql("dividing");
 				let updateReceived = 0;
 				clients.forEach((c) =>
-					c.once("solomonDraftState", (state) => {
-						expect(state.step).to.be.eql("picking");
-						states[(c as any).query.userID] = state;
+					c.once("solomonDraftState", (s) => {
+						expect(s.step).to.be.eql("picking");
+						state = s;
 						++updateReceived;
 						if (updateReceived === clients.length) done();
 					})
@@ -236,9 +239,9 @@ for (const settings of [
 				expect(getState().step).to.be.eql("picking");
 				let pickReceived = 0;
 				for (let c = 0; c < clients.length; ++c) {
-					clients[c].once("solomonDraftState", (state) => {
-						expect(state.step).to.be.eql("dividing");
-						states[(clients[c] as any).query.userID] = state;
+					clients[c].once("solomonDraftState", (s) => {
+						expect(s.step).to.be.eql("dividing");
+						state = s;
 					});
 					clients[c].once("solomonDraftPicked", (pileIdx) => {
 						expect(pileIdx, "pileIdx should be 0 or 1").to.be.oneOf([0, 1]);
@@ -302,7 +305,7 @@ for (const settings of [
 			clients[nonOwnerIdx].once("rejoinSolomonDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				states[(clients[nonOwnerIdx] as any).query.userID] = data.state;
+				state = data.state;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -340,7 +343,7 @@ for (const settings of [
 			clients[ownerIdx].once("rejoinSolomonDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				states[(clients[ownerIdx] as any).query.userID] = data.state;
+				state = data.state;
 				done();
 			});
 			clients[ownerIdx].connect();
@@ -350,7 +353,7 @@ for (const settings of [
 			clients[nonOwnerIdx].once("rejoinSolomonDraft", function (data) {
 				expect(data.pickedCards).to.exist;
 				expect(data.state).to.exist;
-				states[(clients[nonOwnerIdx] as any).query.userID] = data.state;
+				state = data.state;
 				done();
 			});
 			clients[nonOwnerIdx].connect();
@@ -363,7 +366,7 @@ for (const settings of [
 			const c = clients[0];
 
 			const round = () => {
-				if (states[(c as any).query.userID].step === "dividing") {
+				if (getState().step === "dividing") {
 					randomlyReorganize();
 					confirmPiles();
 				} else {
@@ -371,8 +374,8 @@ for (const settings of [
 				}
 			};
 
-			c.on("solomonDraftState", function (state) {
-				states[(c as any).query.userID] = state;
+			c.on("solomonDraftState", function (s) {
+				state = s;
 				round();
 			});
 			c.once("solomonDraftEnd", function () {
