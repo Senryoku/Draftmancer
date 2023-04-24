@@ -978,7 +978,9 @@ export class Session implements IIndexable {
 
 		const cardsPerRound = handSize * this.users.size + revealedCardsCount;
 		const wantedCards = cardsPerRound * roundCount;
-		const cardsPerBooster = this.useCustomCardList ? this.cardsPerBooster : 14; // FIXME: This is only an approximation...
+		const cardsPerBooster = this.useCustomCardList
+			? this.cardsPerBooster
+			: Object.values(this.getBoosterContent()).reduce((a, b) => a + b, 0);
 		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
@@ -1518,7 +1520,9 @@ export class Session implements IIndexable {
 		if (this.randomizeSeatingOrder) this.randomizeSeating();
 
 		const wantedCards = cardCount * roundCount;
-		const cardsPerBooster = this.useCustomCardList ? this.cardsPerBooster : 14; // FIXME: This is only an approximation...
+		const cardsPerBooster = this.useCustomCardList
+			? this.cardsPerBooster
+			: Object.values(this.getBoosterContent()).reduce((a, b) => a + b, 0);
 		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
