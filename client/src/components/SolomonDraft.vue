@@ -3,11 +3,11 @@
 		<div class="solomon-draft-controls">
 			<template v-if="!inTransition">
 				<template v-if="userID === state.currentPlayer">
-					<div>
+					<div style="grid-area: info">
 						Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Your turn
 						{{ state.step === "dividing" ? "to reorder piles!" : "to pick a pile!" }}
 					</div>
-					<div>
+					<div style="grid-area: confirm">
 						<template v-if="!inTransition">
 							<button v-if="state.step === 'dividing'" @click="confirmPiles" class="blue solomon-confirm">
 								Confirm
@@ -24,7 +24,7 @@
 					</div>
 				</template>
 				<template v-else>
-					<div>
+					<div style="grid-area: info">
 						Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Waiting for
 						{{
 							state.currentPlayer in sessionUsers
@@ -32,20 +32,21 @@
 								: "(Disconnected)"
 						}}...
 					</div>
-					<div></div>
+					<div style="grid-area: confirm"></div>
 				</template>
 			</template>
 			<template v-else>
-				<div>Picked pile #{{ lastSelectedPile! + 1 }}!</div>
-				<div></div>
+				<div style="grid-area: info">Picked pile #{{ lastSelectedPile! + 1 }}!</div>
+				<div style="grid-area: confirm"></div>
 			</template>
-			<div>
+			<div style="grid-area: settings">
 				<scale-slider v-model.number="cardScale" />
 				<VDropdown placement="left-start">
 					<FontAwesomeIcon icon="fa-solid fa-clock-rotate-left" size="xl" class="clickable"></FontAwesomeIcon>
 					<template #popper>
 						<div class="last-picks-container">
 							<div class="last-picks">
+								<div v-if="state.lastPicks.length === 0">No picks yet.</div>
 								<div v-for="round in state.lastPicks" :key="round.round">
 									<h2>Round {{ round.round + 1 }}</h2>
 									<div style="display: flex; gap: 1em">
@@ -249,10 +250,19 @@ const pickPile = (idx: 0 | 1) => {
 .solomon-draft-controls {
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
+	grid-template-areas: "info confirm settings";
 	margin: 0 2em;
 	align-items: center;
 	min-height: 2em;
 	grid-area: control;
+}
+
+@media (max-width: 800px) {
+	.solomon-draft-controls {
+		grid-template-columns: auto;
+		grid-template-rows: 1fr 1fr;
+		grid-template-areas: "info info" "confirm settings";
+	}
 }
 
 #main-container .solomon-draft-controls button {
@@ -285,13 +295,6 @@ const pickPile = (idx: 0 | 1) => {
 .solomon-piles .card {
 	width: calc(200px * var(--card-scale));
 	height: calc(282px * var(--card-scale));
-}
-
-@media (max-width: 1368px) {
-	.solomon-draft {
-		grid-template-columns: auto;
-		grid-template-areas: "control" "piles" "last-picks";
-	}
 }
 
 .solomon-piles-enter-active,
