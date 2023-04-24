@@ -5,9 +5,12 @@
 		</template>
 		<template v-slot:body>
 			<div class="solomon-dialog">
-				<p>Solomon Draft is a draft variant for two players.</p>
+				<p>Solomon Draft is a draft variant for two players that will appeal to 'Fact or Fiction' enjoyers!</p>
 				<p>
-					<strong>{{ cardCount }}</strong> cards and <strong>{{ roundCount }}</strong> rounds.
+					In this game mode, a player splits an <strong>{{ cardCount }}</strong
+					>-card pack into two face-up piles, with no restrictions on the size of each pile. The second player
+					then selects one of the two piles to add to their deck, while the player who made the split keeps
+					the remaining pile.
 				</p>
 				<div class="solomon-dialog-settings">
 					<div>
