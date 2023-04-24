@@ -154,7 +154,7 @@ export interface ServerToClientEvents {
 	solomonDraftState: (syncData: SolomonDraftSyncData) => void;
 	solomonDraftUpdatePiles: (piles: [UniqueCardID[], UniqueCardID[]]) => void;
 	solomonDraftPicked: (pileIdx: 0 | 1) => void;
-	solomonDraftEnd: () => void;
+	solomonDraftEnd: (immediate?: boolean) => void;
 	rejoinSolomonDraft: (data: {
 		state: SolomonDraftSyncData;
 		pickedCards: { main: UniqueCard[]; side: UniqueCard[] };

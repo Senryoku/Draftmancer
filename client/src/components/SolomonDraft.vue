@@ -1,36 +1,42 @@
 <template>
 	<div class="solomon-draft" :style="`--card-scale: ${cardScale}`">
 		<div class="solomon-draft-controls">
-			<template v-if="userID === state.currentPlayer">
-				<div>
-					Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Your turn
-					{{ state.step === "dividing" ? "to reorder piles!" : "to pick a pile!" }}
-				</div>
-				<div>
-					<template v-if="!inTransition">
-						<button v-if="state.step === 'dividing'" @click="confirmPiles" class="blue solomon-confirm">
-							Confirm
-						</button>
-						<button
-							v-if="state.step === 'picking'"
-							:disabled="selectedPile === null"
-							@click="pickPile(selectedPile!)"
-							class="blue solomon-confirm"
-						>
-							Confirm
-						</button>
-					</template>
-				</div>
+			<template v-if="!inTransition">
+				<template v-if="userID === state.currentPlayer">
+					<div>
+						Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Your turn
+						{{ state.step === "dividing" ? "to reorder piles!" : "to pick a pile!" }}
+					</div>
+					<div>
+						<template v-if="!inTransition">
+							<button v-if="state.step === 'dividing'" @click="confirmPiles" class="blue solomon-confirm">
+								Confirm
+							</button>
+							<button
+								v-if="state.step === 'picking'"
+								:disabled="selectedPile === null"
+								@click="pickPile(selectedPile!)"
+								class="blue solomon-confirm"
+							>
+								Confirm
+							</button>
+						</template>
+					</div>
+				</template>
+				<template v-else>
+					<div>
+						Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Waiting for
+						{{
+							state.currentPlayer in sessionUsers
+								? sessionUsers[state.currentPlayer].userName
+								: "(Disconnected)"
+						}}...
+					</div>
+					<div></div>
+				</template>
 			</template>
 			<template v-else>
-				<div>
-					Round #{{ state.roundNum + 1 }}/{{ state.roundCount }} - Waiting for
-					{{
-						state.currentPlayer in sessionUsers
-							? sessionUsers[state.currentPlayer].userName
-							: "(Disconnected)"
-					}}...
-				</div>
+				<div>Picked pile #{{ lastSelectedPile! + 1 }}!</div>
 				<div></div>
 			</template>
 			<div>
@@ -59,7 +65,14 @@
 				</VDropdown>
 			</div>
 		</div>
-		<transition name="solomon-piles" mode="out-in">
+		<transition
+			name="solomon-piles"
+			mode="out-in"
+			@before-leave="inTransition = true"
+			@after-leave="inTransition = false"
+			@before-enter="inTransition = true"
+			@after-enter="inTransition = false"
+		>
 			<div class="solomon-piles" :key="state.roundNum">
 				<div
 					class="solomon-pile card-container"
@@ -68,6 +81,7 @@
 					:class="{
 						clickable: isCurrentPlayer && state.step === 'picking',
 						'selected-pile': idx === selectedPile,
+						'last-selected-pile': idx === lastSelectedPile,
 					}"
 					@dblclick="pickPile(idx as 0 | 1)"
 					@click="selectPile(idx as 0 | 1)"
@@ -131,6 +145,7 @@ const props = defineProps<{
 }>();
 
 const selectedPile = ref(null as 0 | 1 | null);
+const lastSelectedPile = ref(null as 0 | 1 | null); // For animation purposes only
 const inTransition = ref(false);
 const cardScale = ref(1.0);
 
@@ -141,26 +156,10 @@ const emit = defineEmits<{
 	(e: "end"): void;
 }>();
 
-const delayedStateUpdate = ref(null as ReturnType<typeof setTimeout> | null);
-const clearDelayedStateUpdate = () => {
-	if (delayedStateUpdate.value) {
-		clearTimeout(delayedStateUpdate.value);
-		delayedStateUpdate.value = null;
-	}
-};
-
 onMounted(() => {
 	props.socket.on("solomonDraftState", (state) => {
-		clearDelayedStateUpdate();
-		inTransition.value = true;
-		delayedStateUpdate.value = setTimeout(
-			() => {
-				inTransition.value = false;
-				emit("update:state", state);
-				if (state.currentPlayer === props.userID) emit("notifyTurn");
-			},
-			navigator.webdriver ? 1 : state.roundCount !== props.state.roundCount ? 2000 : 1
-		);
+		emit("update:state", state);
+		if (state.currentPlayer === props.userID) emit("notifyTurn");
 	});
 	props.socket.on("solomonDraftUpdatePiles", (piles) => {
 		const cards = props.state.piles[0].concat(props.state.piles[1]);
@@ -170,6 +169,7 @@ onMounted(() => {
 		];
 	});
 	props.socket.on("solomonDraftPicked", (pileIdx) => {
+		lastSelectedPile.value = pileIdx;
 		const playerIdx = props.state.currentPlayer === Object.values(props.sessionUsers)[0].userID ? 0 : 1;
 		props.state.lastPicks.unshift({
 			round: props.state.roundNum,
@@ -181,8 +181,11 @@ onMounted(() => {
 		if (props.state.lastPicks.length > 2) props.state.lastPicks.pop();
 		emit("addToDeck", props.state.piles[isCurrentPlayer.value ? pileIdx : (pileIdx + 1) % 2]);
 	});
-	props.socket.on("solomonDraftEnd", () => {
-		emit("end");
+	props.socket.on("solomonDraftEnd", (immediate) => {
+		// Delay for animation purposes
+		const delay = immediate || navigator.webdriver ? 1 : 2000;
+		if (!immediate) ++props.state.roundNum; // Triggers animation
+		setTimeout(() => emit("end"), delay);
 	});
 });
 
@@ -228,12 +231,13 @@ const confirmPiles = () => {
 };
 
 const selectPile = (idx: 0 | 1) => {
-	if (!isCurrentPlayer.value || props.state.step !== "picking") return;
+	if (inTransition.value || !isCurrentPlayer.value || props.state.step !== "picking") return;
 	selectedPile.value = idx;
 };
 
 const pickPile = (idx: 0 | 1) => {
-	if (!isCurrentPlayer.value || props.state.step !== "picking" || selectedPile.value === null) return;
+	if (inTransition.value || !isCurrentPlayer.value || props.state.step !== "picking" || selectedPile.value === null)
+		return;
 	props.socket.emit("solomonDraftPick", idx, (anwser) => {
 		if (anwser.code !== 0 && anwser.error) Alert.fire(anwser.error);
 	});
@@ -249,6 +253,10 @@ const pickPile = (idx: 0 | 1) => {
 	align-items: center;
 	min-height: 2em;
 	grid-area: control;
+}
+
+#main-container .solomon-draft-controls button {
+	margin: 0;
 }
 
 .solomon-draft-controls > *:nth-child(2) {
@@ -289,12 +297,70 @@ const pickPile = (idx: 0 | 1) => {
 .solomon-piles-enter-active,
 .solomon-piles-leave-active {
 	will-change: transform opacity;
-	transition: all 0.25s ease;
 }
 
-.solomon-piles-enter-from,
-.solomon-piles-leave-to {
+.solomon-piles-enter-active,
+.solomon-piles-enter-active .solomon-pile {
+	transition: all 0.5s ease;
+}
+
+.solomon-piles-leave-active,
+.solomon-piles-leave-active .solomon-pile {
+	transition: all 2s ease;
+}
+
+.solomon-piles-enter-from {
 	opacity: 0;
+}
+
+.solomon-piles-leave-active .solomon-pile {
+	transition: all 2s cubic-bezier(0.7, 0, 1, 0.3);
+}
+
+.solomon-piles-leave-to .solomon-pile {
+	opacity: 0;
+}
+
+.solomon-piles-leave-active .solomon-pile.last-selected-pile {
+	animation: pile-selected 2s ease-in;
+}
+
+@keyframes pile-selected {
+	0% {
+		opacity: 1;
+	}
+	3% {
+		box-shadow: 0 0 40px 12px rgba(255, 255, 255, 1);
+		transform: scale(1.05);
+		opacity: 1;
+	}
+	6% {
+		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
+		transform: scale(1);
+		opacity: 1;
+	}
+	45% {
+		box-shadow: 0 0 25px 6px rgba(255, 255, 255, 0.8);
+		transform: scale(1);
+		opacity: 1;
+	}
+	85% {
+		box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.6);
+		transform: scale(1);
+		opacity: 1;
+	}
+	90% {
+		transform: scale(1.025);
+		opacity: 1;
+	}
+	95% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(0);
+		opacity: 0;
+	}
 }
 
 .solomon-pile {
@@ -306,7 +372,7 @@ const pickPile = (idx: 0 | 1) => {
 }
 
 .solomon-pile.selected-pile {
-	box-shadow: 0 0 4px white;
+	box-shadow: 0 0 5px 1px white;
 }
 
 .solomon-pile-inner {

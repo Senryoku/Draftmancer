@@ -1604,13 +1604,13 @@ export class Session implements IIndexable {
 		return new SocketAck();
 	}
 
-	endSolomonDraft(): SocketAck {
+	endSolomonDraft(immediate?: boolean): SocketAck {
 		const s = this.draftState;
 		if (!this.drafting || !s || !(s instanceof SolomonDraftState))
 			return new SocketError("Not Playing", "There's no Solomon Draft running on this session.");
 
 		logSession("SolomonDraft", this);
-		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftEnd");
+		for (const uid of s.players) Connections[uid]?.socket.emit("solomonDraftEnd", immediate);
 		this.finalizeLogs();
 		this.sendLogs();
 		this.cleanDraftState();
@@ -2167,7 +2167,7 @@ export class Session implements IIndexable {
 				break;
 			}
 			case "solomon":
-				this.endSolomonDraft();
+				this.endSolomonDraft(true);
 				break;
 			default: {
 				console.error("Session.stopDraft: Unhandled draft type: " + this.draftState.type);
