@@ -1531,7 +1531,7 @@ interface SetInfo {
 	boosters: BoosterInfo[];
 	sheets: { [slot: string]: SheetInfo };
 	// computed
-	colorBalancedSheets?: { [sheet: string]: { [subsheet: string]: { cards: CardInfo[]; total_weight: number } } };
+	colorBalancedSheets: { [sheet: string]: { [subsheet: string]: { cards: CardInfo[]; total_weight: number } } };
 }
 
 function weightedRandomPick(
@@ -1578,7 +1578,7 @@ export class PaperBoosterFactory implements IBoosterFactory {
 		// Pick cards from each sheet, color balancing if necessary
 		for (const sheetName in boosterContent.sheets) {
 			if (this.set.sheets[sheetName].balance_colors) {
-				const sheet = this.set.colorBalancedSheets?.[sheetName];
+				const sheet = this.set.colorBalancedSheets[sheetName];
 				if (!sheet) {
 					console.error(
 						`PaperBoosterFactory::generateBooster(): ${sheetName} marked with balance_colors = true but corresponding colorBalancedSheets not initialized.`
@@ -1626,8 +1626,8 @@ export const PaperBoosterFactories: {
 export const PaperBoosterSizes: {
 	[set: string]: number;
 } = {};
-for (const s of PaperBoosterData as any[]) {
-	const set: SetInfo = s as SetInfo;
+for (const s of PaperBoosterData) {
+	const set: SetInfo = { ...s, colorBalancedSheets: {} } as unknown as SetInfo; // We'll add the missing properties ('id' in card).
 	if (
 		!Constants.PrimarySets.includes(set.code) &&
 		!set.code.includes("-arena") &&
@@ -1637,7 +1637,6 @@ for (const s of PaperBoosterData as any[]) {
 		continue;
 	}
 
-	set.colorBalancedSheets = {};
 	for (const sheetName in set.sheets) {
 		for (const card of set.sheets[sheetName].cards) {
 			let num = card.number;

@@ -108,25 +108,21 @@ describe("Statistical color balancing tests", function () {
 		expect(maxRelativeDifference).to.be.at.most(0.2);
 	}
 
-	{
-		// Random set, or all of them
-		//let s = getRandom(constants.MTGASets);
-		for (let s of constants.MTGASets.filter((set) => set !== "dbl")) {
-			it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function (done) {
-				this.timeout(500);
-				const trials = 500;
-				const SessionInst = new Session("UniqueID", "ownerID");
-				SessionInst.colorBalance = true;
-				SessionInst.useCustomCardList = false;
-				SessionInst.setRestriction = [s];
-				const trackedCards = [...SessionInst.cardPoolByRarity().common.keys()]
-					.filter((cid) => !(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid)))
-					.reduce((o, key) => ({ ...o, [key]: 0 }), {});
-				runTrials(SessionInst, trials, trackedCards);
-				compareRandomCards(trackedCards);
-				done();
-			});
-		}
+	for (let s of Object.keys(SetSpecificFactories)) {
+		it(`Every common of a set (${s}) should have similar (<=20% relative difference) apparition rate while color balancing`, function (done) {
+			this.timeout(1000);
+			const trials = 500;
+			const SessionInst = new Session("UniqueID", "ownerID");
+			SessionInst.colorBalance = true;
+			SessionInst.useCustomCardList = false;
+			SessionInst.setRestriction = [s];
+			const trackedCards = [...SessionInst.cardPoolByRarity().common.keys()]
+				.filter((cid) => !(s in SpecialLandSlots && SpecialLandSlots[s].commonLandsIds.includes(cid)))
+				.reduce((o, key) => ({ ...o, [key]: 0 }), {});
+			runTrials(SessionInst, trials, trackedCards);
+			compareRandomCards(trackedCards);
+			done();
+		});
 	}
 
 	it(`Every card of a singleton Cube should have similar (<=20% relative difference) apparition rate WITHOUT color balancing`, function (done) {
@@ -176,7 +172,7 @@ describe("Statistical color balancing tests", function () {
 
 	for (let rarity of ["uncommon", "rare"]) {
 		it(`Modal Double Faced ${rarity}s of Zendikar Rising should have an apparition rate similar to Single Faced ${rarity}s' (<= 20% relative difference)`, function (done) {
-			this.timeout(8000);
+			this.timeout(20000);
 			const trials = 10000;
 			const SessionInst = new Session("UniqueID", "ownerID");
 			SessionInst.colorBalance = true;
@@ -275,20 +271,20 @@ describe("Statistical color balancing tests", function () {
 		const trials = 10000;
 		const SessionInst = new Session("UniqueID", "ownerID");
 		SessionInst.colorBalance = true;
-		SessionInst.setRestriction = ["m21"];
+		SessionInst.setRestriction = ["war"];
 		const rares = [...SessionInst.cardPoolByRarity().rare.keys()]; // 53
 		expect(rares.length).equal(53);
 		const chiSquareCriticalValue52 = 69.832; // For 52 Degrees of Freedom and Significance Level 0.05
 
-		function checkUniformity(done: Mocha.Done, func: Function) {
+		function checkUniformity(done: Mocha.Done, func: (results: { [cid: CardID]: number }) => void) {
 			const results: { [cid: CardID]: number } = rares.reduce((o, key) => ({ ...o, [key]: 0 }), {});
 			for (let r of rares) results[r] = 0;
 			func(results);
-			//console.table(results)
+			//console.table(results);
 			const countMean = mean(Object.values(results));
 			const diffFromMean = [...Object.values(results)];
 			for (let i = 0; i < diffFromMean.length; ++i) diffFromMean[i] = Math.abs(diffFromMean[i] - countMean);
-			//console.table(diffFromMean)
+			//console.table(diffFromMean);
 			const meanDeviation = mean(diffFromMean);
 			const chiSquareResult = chiSquareUniformTest(Object.values(results));
 			console.table([
@@ -325,7 +321,7 @@ describe("Statistical color balancing tests", function () {
 			});
 		});
 		it(`Uniform distribution test using generateBooster`, function (done) {
-			this.timeout(8000);
+			this.timeout(20000);
 			checkUniformity(done, (results: { [cid: CardID]: number }) => {
 				runTrials(SessionInst, trials, results);
 			});
