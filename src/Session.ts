@@ -1363,18 +1363,17 @@ export class Session implements IIndexable {
 		if (!this.drafting || !s || !isRotisserieDraftState(s))
 			return new SocketError("No Rotisserie Draft in progress in this session.");
 
-		const card = s.cards.find((c) => c.uniqueID === uniqueID);
-		if (!card) return new SocketError("Invalid Card", "Card not found.");
-		if (card.owner !== null) return new SocketError("Invalid Card", "Card already picked.");
-		card.owner = s.currentPlayer();
-		Connections[s.currentPlayer()].pickedCards.main.push(card);
+		const card = s.pick(uniqueID);
+		if (isSocketError(card)) return card;
+
+		Connections[card.owner].pickedCards.main.push(card);
 
 		this.draftLog?.users[card.owner].picks.push({
 			pick: [0],
 			booster: [card.id],
 		});
 
-		if (s.advance()) {
+		if (s.done()) {
 			this.endRotisserieDraft();
 		} else {
 			for (const user of this.users)

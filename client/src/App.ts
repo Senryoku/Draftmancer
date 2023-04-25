@@ -847,6 +847,10 @@ export default defineComponent({
 				if (!card) return;
 				card.owner = newOwnerID;
 
+				if (!this.rotisserieDraftState.lastPicks) this.rotisserieDraftState.lastPicks = []; // FIXME: Here for backward compatibility. Will soon be safely removable.
+				this.rotisserieDraftState.lastPicks.push(uniqueCardID);
+				if (this.rotisserieDraftState.lastPicks.length > 8) this.rotisserieDraftState.lastPicks.shift();
+
 				if (this.userID === this.rotisserieDraftState.currentPlayer) this.notifyTurn();
 			});
 			this.socket.on("rotisserieDraftEnd", () => {

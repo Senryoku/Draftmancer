@@ -42,7 +42,11 @@
 			<div style="grid-area: settings">
 				<scale-slider v-model.number="cardScale" />
 				<VDropdown placement="left-start">
-					<FontAwesomeIcon icon="fa-solid fa-clock-rotate-left" size="xl" class="clickable"></FontAwesomeIcon>
+					<font-awesome-icon
+						icon="fa-solid fa-clock-rotate-left"
+						size="xl"
+						class="clickable"
+					></font-awesome-icon>
 					<template #popper>
 						<div class="last-picks-container">
 							<div class="last-picks">
@@ -135,7 +139,6 @@ import { UniqueCard, UniqueCardID } from "@/CardTypes";
 import { sortableUpdate } from "../helper";
 import { Sortable } from "sortablejs-vue3";
 import { SortableEvent } from "sortablejs";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const props = defineProps<{
 	userID: UserID;

@@ -11,6 +11,26 @@
 			:readOnly="true"
 		>
 			<template v-slot:controls>
+				<VDropdown placement="right-start">
+					<font-awesome-icon
+						icon="fa-solid fa-clock-rotate-left"
+						size="xl"
+						class="clickable"
+					></font-awesome-icon>
+					<template #popper>
+						<div class="last-picks-container">
+							<div class="last-picks">
+								<div v-if="!state.lastPicks || state.lastPicks.length === 0">No picks yet.</div>
+								<div v-for="card in lastPicks" :key="card.uniqueID">
+									<h2>
+										{{ users.find((u) => u.userID === card.owner)?.userName ?? "Disconnected" }}
+									</h2>
+									<card :card="card" :language="language" />
+								</div>
+							</div>
+						</div>
+					</template>
+				</VDropdown>
 				<div v-if="userID === state.currentPlayer">Your turn! Pick a card:</div>
 				<div v-else>Waiting for {{ currentPlayerName }} to pick a card...</div>
 				<button v-if="userID === state.currentPlayer" @click="onConfirmPick" :disabled="selectedCard === null">
@@ -28,10 +48,11 @@ import { UserData } from "@/Session/SessionTypes";
 import { RotisserieDraftSyncData, RotisserieDraftCard } from "@/RotisserieDraft";
 import { Language } from "@/Types";
 import CardPool from "./CardPool.vue";
+import Card from "./Card.vue";
 import { UserID } from "@/IDTypes";
 
 export default defineComponent({
-	components: { CardPool },
+	components: { Card, CardPool },
 	data() {
 		return { selectedCard: null as UniqueCardID | null };
 	},
@@ -51,6 +72,10 @@ export default defineComponent({
 		},
 		currentPlayerName() {
 			return this.users.find((u) => u.userID === this.state.currentPlayer)?.userName ?? "(Disconnected)";
+		},
+		lastPicks() {
+			if (!this.state.lastPicks) return [];
+			return this.state.lastPicks.map((uid) => this.state.cards.find((c) => c.uniqueID === uid)!);
 		},
 	},
 	methods: {
@@ -137,6 +162,23 @@ export default defineComponent({
 	100% {
 		transform: translateX(-2px) translateY(-50%);
 	}
+}
+
+.last-picks-container {
+	max-height: 80vh;
+	overflow-y: scroll;
+	padding: 0 2em 2em 2em;
+}
+.last-picks {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	gap: 0.4em;
+}
+.last-picks h2 {
+	margin: 0.25em;
 }
 </style>
 

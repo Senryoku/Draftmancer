@@ -1,6 +1,7 @@
-import { UniqueCard } from "./CardTypes.js";
+import { UniqueCard, UniqueCardID } from "./CardTypes.js";
 import { IDraftState, TurnBased } from "./IDraftState.js";
 import { UserID } from "./IDTypes";
+import { SocketError } from "./Message.js";
 
 export type RotisserieDraftStartOptions = {
 	singleton?: { cardsPerPlayer: number; exactCardCount: boolean };
@@ -12,11 +13,12 @@ export class RotisserieDraftCard extends UniqueCard {
 }
 
 export class RotisserieDraftState extends IDraftState implements TurnBased {
-	players: UserID[];
-	cards: RotisserieDraftCard[];
-	pickNumber = 0;
+	readonly players: UserID[];
+	readonly cards: RotisserieDraftCard[];
+	readonly cardsPerPlayer: number;
 
-	cardsPerPlayer: number;
+	pickNumber = 0;
+	lastPicks?: UniqueCardID[] = []; // FIXME: Made optional for backward compatibility, this will should be removed soon (along with the associated null checks).
 
 	constructor(players: UserID[], cards: UniqueCard[], cardsPerPlayer: number) {
 		super("rotisserie");
@@ -32,6 +34,7 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 			cards: this.cards,
 			pickNumber: this.pickNumber,
 			currentPlayer: this.currentPlayer(),
+			lastPicks: this.lastPicks,
 		};
 	}
 
@@ -41,9 +44,23 @@ export class RotisserieDraftState extends IDraftState implements TurnBased {
 		return this.players[this.players.length - 1 - (idx - this.players.length)];
 	}
 
-	// Returns true when the last card has been picked
-	advance(): boolean {
+	pick(uniqueID: UniqueCardID): (UniqueCard & { owner: UserID }) | SocketError {
+		const card = this.cards.find((c) => c.uniqueID === uniqueID);
+		if (!card) return new SocketError("Invalid Card", "Card not found.");
+		if (card.owner !== null) return new SocketError("Invalid Card", "Card already picked.");
+		card.owner = this.currentPlayer();
+
 		++this.pickNumber;
+
+		if (!this.lastPicks) this.lastPicks = []; // FIXME: Here for backward compatibility. Will soon be safely removable.
+		this.lastPicks.push(card.uniqueID);
+		if (this.lastPicks.length > 8) this.lastPicks.shift();
+
+		return card as UniqueCard & { owner: UserID };
+	}
+
+	// Returns true when the last card has been picked
+	done(): boolean {
 		return this.pickNumber >= Math.min(this.players.length * this.cardsPerPlayer, this.cards.length);
 	}
 }
