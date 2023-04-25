@@ -20,7 +20,7 @@ jobs:
         steps:
             - uses: actions/checkout@v3
               with:
-                  lfs: 'true'
+                  lfs: "true"
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
@@ -29,5 +29,7 @@ jobs:
             - run: npm ci
             - run: npm run build --if-present
             - run: npm test
+            - run: npm run client-type-check
             - run: npm run fronttest-headless
+              timeout-minutes: 30
               continue-on-error: true
