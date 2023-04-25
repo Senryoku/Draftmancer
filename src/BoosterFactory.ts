@@ -937,7 +937,7 @@ class M2X2BoosterFactory extends BoosterFactory {
 				minRarity: "common",
 				mythicPromotion,
 			});
-			booster.unshift(pickCard(this.cardPool[pickedRarity], [], { foil: true }));
+			booster.unshift(pickCard(this.cardPool[pickedRarity], booster, { foil: true }));
 		}
 
 		return booster;
@@ -1122,7 +1122,7 @@ class UNFBoosterFactory extends BoosterFactory {
 					updatedTargets,
 					this.options
 				);
-				const attraction = pickCard(this.attractions[attractionRarity]);
+				const attraction = pickCard(this.attractions[attractionRarity], booster);
 				booster.unshift(attraction);
 			}
 
