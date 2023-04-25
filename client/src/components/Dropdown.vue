@@ -1,6 +1,6 @@
 <template>
 	<span class="dropdown-container" @mouseenter="updateHeight" :class="{ 'forced-open': forcedOpen }">
-		<div class="handle" @touchstart="toggleKeepOpen"><slot name="handle"></slot></div>
+		<div class="handle" @pointerdown="toggleKeepOpen"><slot name="handle"></slot></div>
 		<div class="dropdown">
 			<div class="content" ref="content">
 				<slot name="dropdown"></slot>
@@ -38,11 +38,11 @@ export default defineComponent({
 			if (this.forcedOpen === open) return;
 			this.forcedOpen = open;
 			if (this.forcedOpen) {
-				this.$el.addEventListener("touchstart", this.stopPropagation);
-				document.addEventListener("touchstart", this.onOutsideClick, { once: true });
+				this.$el.addEventListener("pointerdown", this.stopPropagation);
+				document.addEventListener("pointerdown", this.onOutsideClick, { once: true });
 			} else {
-				this.$el.removeEventListener("touchstart", this.stopPropagation);
-				document.removeEventListener("touchstart", this.onOutsideClick);
+				this.$el.removeEventListener("pointerdown", this.stopPropagation);
+				document.removeEventListener("pointerdown", this.onOutsideClick);
 			}
 			this.updateHeight();
 		},
@@ -102,19 +102,17 @@ export default defineComponent({
 	transition: transform 0.2s ease;
 }
 
-.forced-open .handle::after,
-.dropdown-container:active .handle::after {
+.forced-open .handle::after {
 	transform: rotate(180deg);
 }
 
-.forced-open .dropdown,
-.dropdown-container:active .dropdown {
+.forced-open .dropdown {
 	max-height: var(--unrolled-height);
 	box-shadow: 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 	z-index: 1;
 }
 
-@media (hover: hover) {
+@media (any-hover: hover) {
 	.dropdown-container:hover .handle::after {
 		transform: rotate(180deg);
 	}
