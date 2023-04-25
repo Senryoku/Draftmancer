@@ -1338,7 +1338,9 @@ export class Session implements IIndexable {
 			Connections[user].socket.emit("startRotisserieDraft", this.draftState.syncData(user));
 		}
 
-		this.initLogs("Rotisserie Draft", []);
+		const log = this.initLogs("Rotisserie Draft", []);
+		const getCardFunc = this.getCustomGetCardFunction();
+		for (const card of cards) log.carddata[card.id] = getCardFunc(card.id);
 
 		return new SocketAck();
 	}
