@@ -37,7 +37,7 @@ import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
-import { isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
+import { isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -387,6 +387,24 @@ function minesweeperDraftPick(
 	ack?.(r);
 }
 
+function solomonDraftOrganize(userID: UserID, sessionID: SessionID, piles: unknown, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "solomon", ack)) return;
+	if (!((x): x is [UniqueCardID[], UniqueCardID[]] => isArrayOf(isArrayOf(isNumber))(x) && x.length === 2)(piles))
+		return ack?.(new SocketError("Invalid piles."));
+	ack?.(Sessions[sessionID].solomonDraftOrganize(piles));
+}
+
+function solomonDraftConfirmPiles(userID: UserID, sessionID: SessionID, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "solomon", ack)) return;
+	ack?.(Sessions[sessionID].solomonDraftConfirmPiles());
+}
+
+function solomonDraftPick(userID: UserID, sessionID: SessionID, pileIdx: unknown, ack: (result: SocketAck) => void) {
+	if (!checkDraftAction(userID, Sessions[sessionID], "solomon", ack)) return;
+	if (!isNumber(pileIdx) || (pileIdx !== 0 && pileIdx !== 1)) return ack?.(new SocketError("Invalid pile index."));
+	ack?.(Sessions[sessionID].solomonDraftPick(pileIdx));
+}
+
 function teamSealedPick(
 	userID: UserID,
 	sessionID: SessionID,
@@ -585,6 +603,20 @@ function startMinesweeperDraft(
 
 	startPublicSession(sess);
 	ack?.(new SocketAck());
+}
+
+function startSolomonDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	cardCount: unknown,
+	roundCount: unknown,
+	ack: (s: SocketAck) => void
+) {
+	const _cardCount = !isNumber(cardCount) ? parseInt(cardCount as string) : cardCount;
+	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
+	const r = Sessions[sessionID].startSolomonDraft(_cardCount, _roundCount);
+	if (!isSocketError(r)) startPublicSession(Sessions[sessionID]);
+	ack(r);
 }
 
 function startTeamSealed(
@@ -1321,6 +1353,9 @@ io.on("connection", async function (socket) {
 	socket.on("winchesterDraftPick", prepareSocketCallback(winchesterDraftPick));
 	socket.on("housmanDraftPick", prepareSocketCallback(housmanDraftPick));
 	socket.on("minesweeperDraftPick", prepareSocketCallback(minesweeperDraftPick));
+	socket.on("solomonDraftOrganize", prepareSocketCallback(solomonDraftOrganize));
+	socket.on("solomonDraftConfirmPiles", prepareSocketCallback(solomonDraftConfirmPiles));
+	socket.on("solomonDraftPick", prepareSocketCallback(solomonDraftPick));
 	socket.on("teamSealedPick", prepareSocketCallback(teamSealedPick));
 	socket.on("updateBracket", prepareSocketCallback(updateBracket));
 	socket.on("updateDeckLands", prepareSocketCallback(updateDeckLands));
@@ -1339,6 +1374,7 @@ io.on("connection", async function (socket) {
 	socket.on("startWinchesterDraft", prepareSocketCallback(startWinchesterDraft, true));
 	socket.on("startHousmanDraft", prepareSocketCallback(startHousmanDraft, true));
 	socket.on("startMinesweeperDraft", prepareSocketCallback(startMinesweeperDraft, true));
+	socket.on("startSolomonDraft", prepareSocketCallback(startSolomonDraft, true));
 	socket.on("startTeamSealed", prepareSocketCallback(startTeamSealed, true));
 	socket.on("distributeJumpstart", prepareSocketCallback(distributeJumpstart, true));
 	socket.on("distributeSealed", prepareSocketCallback(distributeSealed, true));

@@ -24,3 +24,21 @@ export const isArrayOf =
 	<E extends Guard>(isE: E) =>
 	(x: unknown): x is GuardReturnType<E>[] =>
 		Array.isArray(x) && !x.some((e) => !isE(e));
+
+export const hasProperty =
+	<Prop extends PropertyKey, E extends Guard>(key: Prop, isE: E) =>
+	(x: object): x is Record<Prop, GuardReturnType<E>> =>
+		key in x && isE(x[key as keyof typeof x]);
+
+export const hasOptionalProperty =
+	<Prop extends PropertyKey, E extends Guard>(key: Prop, isE: E) =>
+	(x: object): x is Record<Prop, GuardReturnType<E>> =>
+		!(key in x) || isE(x[key as keyof typeof x]);
+
+type EnumValueType = string | number | symbol;
+type EnumType = { [key in EnumValueType]: EnumValueType };
+
+export const isSomeEnum =
+	<T extends EnumType>(e: T) =>
+	(token: any): token is T[keyof T] =>
+		Object.values(e).includes(token as T[keyof T]);

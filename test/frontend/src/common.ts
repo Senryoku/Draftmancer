@@ -291,8 +291,25 @@ export async function pickCard(page: Page): Promise<PickResult> {
 	return PickResult.Picked;
 }
 
+export function replaceInput(val: string) {
+	return async (e: ElementHandle<Element> | null) => {
+		expect(e).to.exist;
+		await e?.click({ clickCount: 3 });
+		await e?.press("Backspace");
+		await e?.type(val);
+	};
+}
+
 export function expectNCardsInDeck(n: number) {
 	it(`Each player should have ${n} cards.`, async function () {
 		await Promise.all([...pages.map(async (page) => expect((await page.$$(".deck .card")).length).to.equal(n))]);
+	});
+}
+
+export function expectNCardsInTotal(n: number) {
+	it(`Player should have ${n} cards in total.`, async function () {
+		const decks = await Promise.all(pages.map(async (page) => (await page.$$(".deck .card")).length));
+		const total = decks.reduce((a, b) => a + b, 0);
+		expect(total, `Expected ${n} cards, got ${total}. Deck sizes: ${decks}.`).to.equal(n);
 	});
 }
