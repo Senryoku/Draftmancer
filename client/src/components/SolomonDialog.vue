@@ -14,10 +14,10 @@
 				</p>
 				<div class="solomon-dialog-settings">
 					<div>
-						<div><label for="hand-input">Card Count</label></div>
+						<div><label for="card-input">Card Count</label></div>
 						<div>
 							<input
-								id="hand-input"
+								id="card-input"
 								type="number"
 								min="1"
 								max="24"
