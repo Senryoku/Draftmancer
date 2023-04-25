@@ -74,6 +74,16 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 				2
 			)}</pre>`,
 		});
+	if (!Object.keys(inputCard["image_uris"]).includes("en")) {
+		return ackError({
+			title: `Invalid Property`,
+			html: `Invalid mandatory property 'image_uris' in custom card: Missing 'en' property. <pre>${JSON.stringify(
+				inputCard,
+				null,
+				2
+			)}</pre>`,
+		});
+	}
 	if ("colors" in inputCard) {
 		if (!Array.isArray(inputCard.colors) || inputCard.colors.some((c: CardColor) => !"WUBRG".includes(c))) {
 			return ackError({
