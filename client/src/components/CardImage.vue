@@ -83,18 +83,18 @@
 			</clazy-load>
 
 			<template v-if="cardAdditionalData && displayCardText">
-				<template v-if="cardAdditionalData.status === 'ready'">
+				<template v-if="cardAdditionalData.status === 'pending'">
+					<div class="alt-card-text pending-alt-card-text">
+						<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
+					</div>
+				</template>
+				<template v-else>
 					<CardText class="flip-front alt-card-text" :card="cardFrontAdditionalData" />
 					<CardText
 						class="flip-back alt-card-text"
 						v-if="hasBack && cardBackAdditionalData"
 						:card="cardBackAdditionalData"
 					/>
-				</template>
-				<template v-else>
-					<div class="alt-card-text pending-alt-card-text">
-						<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
-					</div>
 				</template>
 			</template>
 		</div>
@@ -130,7 +130,7 @@ import CardPlaceholder from "./CardPlaceholder.vue";
 import ClazyLoad from "./../vue-clazy-load.vue";
 import { defineComponent, PropType } from "vue";
 import { Language } from "@/Types";
-import { Card } from "@/CardTypes";
+import { Card, CardFace } from "@/CardTypes";
 import { ScryfallCard, isReady, ScryfallCardFace, CardCacheEntry } from "../vueCardCache";
 
 export default defineComponent({
@@ -159,17 +159,20 @@ export default defineComponent({
 		},
 		cardAdditionalData() {
 			if (!this.displayCardText) return false; // Don't send the requests automatically
+			if (this.card.is_custom) return { ...this.card, status: "custom" } as Card & { status: "custom" };
 			return this.$cardCache.get(this.card.id);
 		},
-		cardFrontAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | undefined {
+		cardFrontAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined {
 			const data = this.cardAdditionalData;
 			if (!data) return undefined;
+			if (data.status === "custom") return data;
 			if (isReady(data) && data.card_faces) return data.card_faces[0];
 			else return data;
 		},
-		cardBackAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | undefined {
+		cardBackAdditionalData(): CardCacheEntry | ScryfallCard | ScryfallCardFace | CardFace | undefined {
 			const data = this.cardAdditionalData;
 			if (!data) return undefined;
+			if (data.status === "custom") return data.back;
 			if (isReady(data) && data.card_faces) return data.card_faces[1];
 			else return undefined;
 		},

@@ -1,12 +1,12 @@
 <template>
 	<div class="card-text-container">
-		<template v-if="faces.length === 0">
+		<template v-if="!face">
 			<div>
 				<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
 			</div>
 		</template>
 		<template v-else>
-			<div class="card-text" v-for="(face, idx) in faces" :key="idx">
+			<div class="card-text">
 				<div class="card-top-line" v-if="face.name">
 					<div class="card-top-line-inner">
 						<div class="card-name font-size-fit">{{ face.name }}</div>
@@ -36,6 +36,7 @@
 import { ScryfallCard, isScryfallCard, ScryfallCardFace, CardCacheEntry, isScryfallCardFace } from "../vueCardCache";
 import { defineComponent, PropType } from "vue";
 import { replaceManaSymbols } from "../ManaSymbols";
+import { Card, CardFace } from "@/CardTypes";
 
 function checkOverflow(el: HTMLElement) {
 	const curOverflow = el.style.overflow;
@@ -49,7 +50,7 @@ function checkOverflow(el: HTMLElement) {
 export default defineComponent({
 	name: "CardText",
 	props: {
-		card: { type: Object as PropType<ScryfallCard | ScryfallCardFace | CardCacheEntry> },
+		card: { type: Object as PropType<ScryfallCard | ScryfallCardFace | CardCacheEntry | CardFace | Card> },
 		fixedLayout: { type: Boolean, default: false },
 	},
 	mounted() {
@@ -90,23 +91,27 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		front() {
+		face() {
+			if (!this.card) return undefined;
 			if (isScryfallCard(this.card)) {
 				if (!this.card?.card_faces || this.card?.card_faces?.length <= 1) return this.card;
 				return this.card.card_faces[0];
-			} else return this.card;
-		},
-		back() {
-			if (isScryfallCard(this.card)) {
-				if (!this.card?.card_faces || this.card?.card_faces?.length <= 1 || !this.fixedLayout) return null;
-				return this.card.card_faces[1];
-			} else return this.card;
-		},
-		faces() {
-			return [this.front, this.back].filter((f) => isScryfallCard(f) || isScryfallCardFace(f)) as (
-				| ScryfallCard
-				| ScryfallCardFace
-			)[];
+			} else if (isScryfallCardFace(this.card)) {
+				return this.card;
+			}
+			const r: Record<string, any> = {};
+			if ("name" in this.card) r.name = this.card.name;
+			if ("mana_cost" in this.card) r.mana_cost = this.card.mana_cost;
+			if ("type" in this.card) {
+				r.type_line = this.card.type;
+				if ("subtypes" in this.card && this.card.subtypes.length > 0)
+					r.type_line += " \u2013 " + this.card.subtypes;
+			}
+			if ("oracle_text" in this.card) r.oracle_text = this.card.oracle_text;
+			if ("power" in this.card) r.power = this.card.power;
+			if ("toughness" in this.card) r.toughness = this.card.toughness;
+			if ("loyalty" in this.card) r.loyalty = this.card.loyalty;
+			return r;
 		},
 	},
 	watch: {

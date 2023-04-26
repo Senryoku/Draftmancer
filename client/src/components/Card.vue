@@ -49,9 +49,6 @@ export default defineComponent({
 			if (this.card.foil) classes.push("foil");
 			return classes;
 		},
-		additionalData() {
-			return this.$cardCache.get(this.card.id);
-		},
 	},
 	methods: {
 		toggleZoom(e: Event) {
