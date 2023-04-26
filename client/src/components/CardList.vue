@@ -84,8 +84,8 @@ export default defineComponent({
 			return !this.cardlist.layouts;
 		},
 		rows() {
-			if (!this.defaultLayout || !this.cards || !this.cards["default"]) return [];
-			return this.rowsByColor(this.cards["default"]);
+			if (!this.defaultLayout || !this.cards || !this.cards[Object.keys(this.cardlist.slots)[0]]) return [];
+			return this.rowsByColor(this.cards[Object.keys(this.cardlist.slots)[0]]);
 		},
 		rowsBySlot() {
 			if (this.defaultLayout || !this.cards) return {};
@@ -172,27 +172,31 @@ export default defineComponent({
 					else tofetch[slot].push(cid);
 				}
 			}
-			const response = await fetch("/getCards", {
-				method: "POST",
-				mode: "cors",
-				cache: "no-cache",
-				credentials: "same-origin",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				redirect: "follow",
-				referrerPolicy: "no-referrer",
-				body: JSON.stringify(tofetch),
-			});
-			if (response.status === 200) {
-				const json = await response.json();
-				for (let slot in json) {
-					for (let card of json[slot]) {
-						cards[slot].push(card);
-						card.count = this.cardlist.slots[slot][card.id];
+
+			if (!isEmpty(tofetch)) {
+				const response = await fetch("/getCards", {
+					method: "POST",
+					mode: "cors",
+					cache: "no-cache",
+					credentials: "same-origin",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					redirect: "follow",
+					referrerPolicy: "no-referrer",
+					body: JSON.stringify(tofetch),
+				});
+				if (response.status === 200) {
+					const json = await response.json();
+					for (let slot in json) {
+						for (let card of json[slot]) {
+							cards[slot].push(card);
+							card.count = this.cardlist.slots[slot][card.id];
+						}
 					}
 				}
 			}
+
 			this.cards = cards;
 		},
 	},

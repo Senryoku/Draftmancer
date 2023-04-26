@@ -15,6 +15,13 @@ type KeyGuard = Guard<string | number | symbol>;
 
 type GuardReturnType<T extends Guard> = T extends Guard<infer U> ? U : never;
 
+type GuardArrayReturnType<T extends Guard[]> = T extends Guard<infer U>[] ? U : never;
+
+export const isUnion =
+	<G extends Guard[]>(...guards: G) =>
+	(x: unknown): x is GuardArrayReturnType<G> =>
+		guards.some((f) => f(x));
+
 export const isRecord =
 	<K extends KeyGuard, V extends Guard>(isK: K, isV: V) =>
 	(x: unknown): x is Record<GuardReturnType<K>, GuardReturnType<V>> =>
@@ -28,12 +35,12 @@ export const isArrayOf =
 export const hasProperty =
 	<Prop extends PropertyKey, E extends Guard>(key: Prop, isE: E) =>
 	(x: object): x is Record<Prop, GuardReturnType<E>> =>
-		key in x && isE(x[key as keyof typeof x]);
+		Object.hasOwn(x, key) && isE(x[key as keyof typeof x]);
 
 export const hasOptionalProperty =
 	<Prop extends PropertyKey, E extends Guard>(key: Prop, isE: E) =>
 	(x: object): x is Record<Prop, GuardReturnType<E>> =>
-		!(key in x) || isE(x[key as keyof typeof x]);
+		!Object.hasOwn(x, key) || x[key as keyof typeof x] === undefined || isE(x[key as keyof typeof x]);
 
 type EnumValueType = string | number | symbol;
 type EnumType = { [key in EnumValueType]: EnumValueType };

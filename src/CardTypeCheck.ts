@@ -1,4 +1,4 @@
-import { Card, CardBack, UniqueCard } from "./CardTypes";
+import { Card, CardFace, UniqueCard } from "./CardTypes";
 import {
 	hasOptionalProperty,
 	hasProperty,
@@ -8,9 +8,10 @@ import {
 	isRecord,
 	isString,
 	isNumber,
+	isUnion,
 } from "./TypeChecks.js";
 
-export function isCardBack(obj: unknown): obj is CardBack {
+export function isCardFace(obj: unknown): obj is CardFace {
 	return (
 		isObject(obj) &&
 		hasProperty("name", isString)(obj) &&
@@ -41,7 +42,9 @@ export function isCard(obj: unknown): obj is Card {
 		hasOptionalProperty("layout", isString)(obj) &&
 		hasProperty("printed_names", isRecord(isString, isString))(obj) &&
 		hasProperty("image_uris", isRecord(isString, isString))(obj) &&
-		hasOptionalProperty("back", isCardBack)(obj)
+		hasOptionalProperty("back", isCardFace)(obj) &&
+		hasOptionalProperty("is_custom", isBoolean)(obj) &&
+		hasOptionalProperty("related_cards", isArrayOf(isUnion(isString, isCardFace)))(obj)
 	);
 }
 

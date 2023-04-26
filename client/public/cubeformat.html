@@ -401,7 +401,15 @@ Card Name 6
 <note>... Standard Card List ...</note></pre>
 				Full Card specification ('?' denotes an optional field):
 				<pre>
-{
+CardFace {
+	name: string;
+	image_uris: { [lang: string]: URL };
+	type: string;
+	printed_names?: { [lang: string]: string };
+	subtypes?: Array&lt;string&gl;;
+}
+
+CustomCard {
 	name: string,
 	mana_cost: string,
 	type: string,
@@ -414,15 +422,9 @@ Card Name 6
 	subtypes?: Array&lt;string&gt; = [];
 	rating?: number = 0;
 	layout?: string;
-	back?: {
-		name: string;
-		image_uris: { [lang: string]: URL };
-		type: string;
-		printed_names?: { [lang: string]: string };
-		subtypes?: Array&lt;string&gl;;
-	};
-}</pre
-				>
+	back?: CardFace;
+	related_cards?: Array&lt;CardID | CardFace&gt;; <comment>// You can use this field to display some related cards when right clicking on the card. CardID can be the name of another custom card, or a Scryfall ID.</comment>
+}</pre>
 				The mana cost field follows
 				<a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a>
 				(e.g. "{5}{G}{G}""). The image_uris and printed_names fields are objects with the language as key and the localized image URL or name as value (see previous

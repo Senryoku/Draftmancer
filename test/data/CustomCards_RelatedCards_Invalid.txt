@@ -1,0 +1,26 @@
+[CustomCards]
+[
+	{
+		"name": "Aedryd, Spectral Liege",
+		"rarity": "uncommon",
+		"mana_cost": "3WW",
+		"type": "Legendary Creature",
+		"subtypes": ["Spirit", "Knight"],
+		"image_uris": {
+			"en": "http://mse-modern.com/msem2/images/SWR/1.jpg"
+		},
+		"related_cards": [
+			"Alleviate",
+			{
+				"name": "Amelle, Revered Liturgist",
+				"type": "Legendary Creature",
+				"subtypes": ["Human", "Cleric"],
+				"image_uris": {
+					"en": "http://mse-modern.com/msem2/images/SWR/3.jpg"
+				}
+			}
+		]
+	}
+]
+[DefaultSlot]
+Aedryd, Spectral Liege

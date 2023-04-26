@@ -55,15 +55,7 @@
 						:class="{ 'carousel-selected': currentPart === 0 }"
 					></font-awesome-icon>
 					<template v-for="(part, idx) in relatedCards">
-						<template v-if="part.status === 'ready'"
-							><font-awesome-icon
-								icon="fa-solid fa-square"
-								size="sm"
-								:key="part.id"
-								:class="{ 'carousel-selected': currentPart === idx + 1 }"
-							></font-awesome-icon
-						></template>
-						<template v-else>
+						<template v-if="part.status === 'pending'">
 							<font-awesome-icon
 								icon="fa-solid fa-spinner"
 								spin
@@ -71,11 +63,19 @@
 								:key="part.id"
 							></font-awesome-icon>
 						</template>
+						<template v-else>
+							<font-awesome-icon
+								icon="fa-solid fa-square"
+								size="sm"
+								:key="part.id"
+								:class="{ 'carousel-selected': currentPart === idx + 1 }"
+							></font-awesome-icon>
+						</template>
 					</template>
 					<font-awesome-icon icon="fa-solid fa-angle-down" v-if="relatedCards.length > 0"></font-awesome-icon>
 					<div class="alt-hint" :style="displayCardText ? 'color: white' : ''">⎇ Alt</div>
 				</div>
-				<div v-if="hasPendingData(card.id)" class="all-parts">
+				<div v-if="hasPendingData()" class="all-parts">
 					<font-awesome-icon icon="fas fa-spinner" spin></font-awesome-icon>
 				</div>
 			</div>
@@ -90,7 +90,8 @@ import axios from "axios";
 
 import CardText from "./CardText.vue";
 import CardImage from "./CardImage.vue";
-import { Card, CardID } from "@/CardTypes";
+import { isString } from "../../../src/TypeChecks";
+import { Card, CardFace, CardID } from "@/CardTypes";
 import { ScryfallCard, isReady, CardCacheEntry } from "../vueCardCache";
 
 const scrollCooldown = 100; // ms
@@ -99,6 +100,7 @@ export default defineComponent({
 	components: { CardImage, CardText },
 	props: {
 		language: { type: String as PropType<Language>, required: true },
+		customCards: { type: Object as PropType<Record<string, Card>> },
 	},
 	data() {
 		return {
@@ -117,34 +119,36 @@ export default defineComponent({
 				this.position = event.clientX < window.innerWidth / 2 ? "right" : "left";
 				this.card = card;
 				this.currentPart = 0;
-				let promise = this.$cardCache.request(card.id);
-				// Also request associated spellbook if necessary
-				promise?.then(() => {
-					const cardData = this.$cardCache.get(card.id) as ScryfallCard;
-					if (!(card.name in this.spellbooks)) {
-						const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
-							cardData.name
-						)}%22&unique=cards`;
-						axios
-							.get(url)
-							.then((response) => {
-								if (response.status === 200 && response.data?.data?.length > 0) {
-									this.spellbooks[cardData.name] = new Set();
-									for (const card of response.data.data) {
-										card.status = "ready";
-										this.$cardCache.add(card);
-										this.spellbooks[cardData.name].add(card.id);
+				if (!this.card.is_custom) {
+					let promise = this.$cardCache.request(card.id);
+					// Also request associated spellbook if necessary
+					promise?.then(() => {
+						const cardData = this.$cardCache.get(card.id) as ScryfallCard;
+						if (!(card.name in this.spellbooks)) {
+							const url = `https://api.scryfall.com/cards/search?q=spellbook%3A%22${encodeURI(
+								cardData.name
+							)}%22&unique=cards`;
+							axios
+								.get(url)
+								.then((response) => {
+									if (response.status === 200 && response.data?.data?.length > 0) {
+										this.spellbooks[cardData.name] = new Set();
+										for (const card of response.data.data) {
+											card.status = "ready";
+											this.$cardCache.add(card);
+											this.spellbooks[cardData.name].add(card.id);
+										}
 									}
-								}
-							})
-							.catch((error) => {
-								// There's no spellbook for this card, add an empty set so we don't request it again and return without error
-								if (error.response?.status === 404) {
-									this.spellbooks[cardData.name] = new Set();
-								} else console.error("Error fetching spellbook:", error);
-							});
-					}
-				});
+								})
+								.catch((error) => {
+									// There's no spellbook for this card, add an empty set so we don't request it again and return without error
+									if (error.response?.status === 404) {
+										this.spellbooks[cardData.name] = new Set();
+									} else console.error("Error fetching spellbook:", error);
+								});
+						}
+					});
+				}
 
 				document.addEventListener("wheel", this.mouseWheel, { passive: false });
 				document.addEventListener("keydown", this.keyDown, { capture: true });
@@ -162,11 +166,9 @@ export default defineComponent({
 			this.displayCardText = false;
 			this.cleanupEventHandlers();
 		},
-		hasPendingData(cardID: CardID) {
-			return this.$cardCache.get(cardID)?.status === "pending";
-		},
-		additionalData(cardID: CardID) {
-			return this.$cardCache.get(cardID);
+		hasPendingData() {
+			if (!this.card || this.card?.is_custom) return false;
+			return this.$cardCache.get(this.card.id)?.status === "pending";
 		},
 		nextPart() {
 			if (this.relatedCards.length === 0) return;
@@ -236,6 +238,7 @@ export default defineComponent({
 		relatedCardImage(index: number) {
 			if (this.relatedCards.length <= index) return undefined;
 			const card = this.relatedCards[index];
+			if (card.status === "custom") return card.image_uris["en"]!;
 			if (!isReady(card)) return undefined;
 			return card.image_uris
 				? card.image_uris.border_crop
@@ -245,21 +248,30 @@ export default defineComponent({
 		},
 	},
 	computed: {
-		cardAdditionalData() {
-			return this.$cardCache.get(this.card!.id);
-		},
 		relatedCards() {
 			let r: CardCacheEntry[] = [];
 			if (!this.card) return r;
-			const c = this.$cardCache.get(this.card.id);
-			if (!isReady(c)) return r;
+			if (this.card.is_custom) {
+				if (this.customCards !== undefined && this.card.related_cards)
+					return [
+						...this.card.related_cards.map((c) => {
+							if (isString(c)) {
+								if (this.customCards![c]) return { status: "custom", ...this.customCards![c] };
+								else return this.$cardCache.get(c);
+							} else return { status: "custom", ...c };
+						}),
+					] as (({ status: "custom"; id: string } & CardFace) | CardCacheEntry)[];
+			} else {
+				const c = this.$cardCache.get(this.card.id);
+				if (!isReady(c)) return r;
 
-			if (c.all_parts?.length > 0)
-				for (let card of c.all_parts) {
-					if (card.id !== this.card.id) r.push(this.$cardCache.get(card.id));
-				}
-			if (this.spellbooks[this.card?.name]?.size > 0)
-				for (const cid of this.spellbooks[this.card.name]) r.push(this.$cardCache.get(cid));
+				if (c.all_parts?.length > 0)
+					for (let card of c.all_parts) {
+						if (card.id !== this.card.id) r.push(this.$cardCache.get(card.id));
+					}
+				if (this.spellbooks[this.card?.name]?.size > 0)
+					for (const cid of this.spellbooks[this.card.name]) r.push(this.$cardCache.get(cid));
+			}
 			return r;
 		},
 	},

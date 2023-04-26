@@ -1,6 +1,6 @@
 import { validateCustomCard } from "./CustomCards.js";
 import { Card, CardID } from "./CardTypes.js";
-import { CardsByName, CardVersionsByName, getCard } from "./Cards.js";
+import { CardsByName, CardVersionsByName, getCard, isValidCardID } from "./Cards.js";
 import { CCLSettings, CustomCardList, PackLayout } from "./CustomCardList.js";
 import { escapeHTML } from "./utils.js";
 import { ackError, isSocketError, SocketError } from "./Message.js";
@@ -98,11 +98,12 @@ export function parseLine(
 
 function findNthLine(str: string, n: number): number {
 	let index = 0;
-	for (let i = 0; i < n - 1; i++) {
-		index = str.indexOf("\n", index + 1);
+	for (let i = 0; i < n; i++) {
+		index = str.indexOf("\n", index);
 		if (index === -1) return -1;
+		++index; // Skip \n
 	}
-	return index + 1;
+	return index;
 }
 
 // Find 'closing' (e.g. ')', ']', '}'...) character in str matching the 'opening' character (e.g. '(', '[', '{'...) found at str[start] and returns its index.
@@ -342,9 +343,22 @@ function parseCustomCards(lines: string[], startIdx: number, txtcardlist: string
 	}
 
 	const customCards: Card[] = [];
+	const customCardsKeys: CardID[] = [];
 	for (const c of parsedCustomCards) {
 		const cardOrError = validateCustomCard(c);
 		if (isSocketError(cardOrError)) return cardOrError;
+		customCardsKeys.push(cardOrError.id);
+		// Validate related card references.
+		if (c.related_cards) {
+			for (const rc of c.related_cards) {
+				if (isString(rc) && !customCardsKeys.includes(rc) && !isValidCardID(rc)) {
+					return ackError({
+						title: `[CustomCards]`,
+						text: `'${rc}', referenced in '${c.name}' related cards, is not a valid custom card. Make sure it is defined first.`,
+					});
+				}
+			}
+		}
 		customCards.push(cardOrError);
 	}
 	return {

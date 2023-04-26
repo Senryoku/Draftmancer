@@ -10,11 +10,11 @@
 <script lang="ts">
 import { isScryfallCard, ScryfallCard, ScryfallCardFace, isScryfallCardFace } from "../vueCardCache";
 import { defineComponent, PropType } from "vue";
-import { Card, CardBack } from "@/CardTypes";
+import { Card, CardFace } from "@/CardTypes";
 
 export default defineComponent({
 	name: "CardPlaceholder",
-	props: { card: { type: Object as PropType<Card | CardBack | ScryfallCard | ScryfallCardFace> } },
+	props: { card: { type: Object as PropType<Card | CardFace | ScryfallCard | ScryfallCardFace> } },
 	computed: {
 		typeLine() {
 			if (!this.card) return undefined;

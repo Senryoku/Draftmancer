@@ -1,25 +1,26 @@
 import parseCost from "./parseCost.js";
 import { escapeHTML } from "./utils.js";
-import { Card, CardColor } from "./CardTypes.js";
-import { ackError, isMessageError, SocketAck, SocketError } from "./Message.js";
+import { Card, CardColor, CardFace } from "./CardTypes.js";
+import { ackError, isMessageError, isSocketError, SocketAck, SocketError } from "./Message.js";
+import { isCard, isCardFace } from "./CardTypeCheck.js";
+import { hasProperty, isArrayOf, isObject, isRecord, isString, isUnion } from "./TypeChecks.js";
+
+function errorWithJSON(title: string, msg: string, json: any) {
+	return ackError({
+		title: title,
+		html: `${msg}: <pre>${escapeHTML(JSON.stringify(json, null, 2))}</pre>`,
+	});
+}
 
 function checkProperty(card: any, prop: string) {
 	if (!(prop in card))
-		return ackError({
-			title: `Missing Card Property`,
-			html: `Missing mandatory property '${prop}' in custom card: <pre>${escapeHTML(
-				JSON.stringify(card, null, 2)
-			)}</pre>`,
-		});
+		return errorWithJSON(`Missing Card Property`, `Missing mandatory property '${prop}' in custom card`, card);
 	return null;
 }
 
 function checkPropertyType(card: any, prop: string, type: string) {
 	if (typeof card[prop] !== type)
-		return ackError({
-			title: `Invalid Card Property`,
-			html: `Property '${prop}' should be of type '${type}': <pre>${JSON.stringify(card, null, 2)}</pre>`,
-		});
+		return errorWithJSON(`Invalid Card Property`, `Property '${prop}' should be of type '${type}'`, card);
 	return null;
 }
 
@@ -29,23 +30,35 @@ function checkPropertyTypeOrUndefined(card: any, prop: string, type: string) {
 }
 
 function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
-	if (prop in card && !Array.isArray(card.subtypes)) {
-		return ackError({
-			title: `Invalid Property`,
-			html: `Invalid property 'subtypes' in custom card, must be an Array. <pre>${JSON.stringify(
-				card,
-				null,
-				2
-			)}</pre>`,
-		});
-	}
+	if (prop in card && !Array.isArray(card.subtypes))
+		return errorWithJSON(`Invalid Property`, `Invalid property 'subtypes' in custom card, must be an Array`, card);
 	return null;
 }
 
 let CustomCardAutoCollectorNumber = 0;
 
+export function validateCustomCardFace(face: unknown): SocketError | CardFace {
+	if (!isObject(face)) return errorWithJSON(`Invalid Face`, `Should be an object`, face);
+	if (!hasProperty("name", isString)(face))
+		return errorWithJSON(`Invalid Name`, `Face property 'name' should be a string`, face);
+	if (!hasProperty("type", isString)(face))
+		return errorWithJSON(`Invalid Type`, `Face property 'type' should be a string`, face);
+	if (!hasProperty("image_uris", isRecord(isString, isString))(face))
+		return errorWithJSON(`Invalid Images`, `Face property 'image_uris' should be a Record<string, string>`, face);
+	const printed_names = hasProperty("printed_names", isRecord(isString, isString))(face)
+		? face.printed_names
+		: { en: face.name };
+	const subtypes = hasProperty("subtypes", isArrayOf(isString))(face) ? face.subtypes : [];
+	return {
+		name: face.name,
+		type: face.type,
+		image_uris: face.image_uris,
+		printed_names: printed_names,
+		subtypes: subtypes,
+	};
+}
+
 export function validateCustomCard(inputCard: any): SocketError | Card {
-	const card = new Card();
 	// Check mandatory fields
 	const missing =
 		checkProperty(inputCard, "name") ??
@@ -112,6 +125,8 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 
 	// Create the final Card object,
 	// Assign default value to missing optional fields
+	const card = new Card();
+	card.is_custom = true;
 	card.name = card.id = card.oracle_id = inputCard.name;
 	const ret = parseCost(inputCard.mana_cost);
 	if (isMessageError(ret)) return new SocketAck(ret);
@@ -130,21 +145,40 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.image_uris = inputCard.image_uris;
 
 	if ("back" in inputCard) {
-		const missing =
-			checkProperty(inputCard.back, "name") ??
-			checkProperty(inputCard.back, "type") ??
-			checkProperty(inputCard.back, "image_uris");
-		if (missing) return missing;
-		const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard.back, "subtypes");
-		if (arrayCheck) return arrayCheck;
-		card.back = {
-			name: inputCard.back.name,
-			type: inputCard.back.type,
-			image_uris: inputCard.back.image_uris,
-			printed_names: inputCard.back.printed_names ?? { en: inputCard.back.name },
-			subtypes: inputCard.back.subtypes ?? [],
-		};
+		const ret = validateCustomCardFace(inputCard.back);
+		if (isSocketError(ret)) return ret;
+		card.back = ret;
 	}
 
+	if ("related_cards" in inputCard) {
+		const arrayCheck = checkPropertyIsArrayOrUndefined(inputCard, "related_cards");
+		if (arrayCheck) return arrayCheck;
+		card.related_cards = [];
+		for (const entry of inputCard.related_cards) {
+			if (isString(entry)) {
+				card.related_cards.push(entry);
+			} else if (isObject(entry)) {
+				const ret = validateCustomCardFace(entry);
+				if (isSocketError(ret)) return ret;
+				card.related_cards.push(ret);
+			} else
+				return ackError({
+					title: `Invalid Property`,
+					html: `Invalid entry in 'related_cards' of custom card, must be a string or an object. <pre>${JSON.stringify(
+						inputCard,
+						null,
+						2
+					)}</pre>`,
+				});
+		}
+	}
+
+	if (!isCard(card)) {
+		console.error("Error: Invalid Custom Card after validation: ", card);
+		return ackError({
+			title: `Invalid Card`,
+			html: `Unknown error in custom card: <pre>${escapeHTML(JSON.stringify(inputCard, null, 2))}</pre>`,
+		});
+	}
 	return card;
 }

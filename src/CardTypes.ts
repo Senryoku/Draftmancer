@@ -11,7 +11,7 @@ export enum CardColor {
 	G = "G",
 }
 
-export type CardBack = {
+export type CardFace = {
 	name: string;
 	printed_names: { [lang: string]: string };
 	image_uris: { [lang: string]: string };
@@ -39,7 +39,9 @@ export class Card {
 	layout?: string;
 	printed_names: { [lang: string]: string } = {};
 	image_uris: { [lang: string]: string } = {};
-	back?: CardBack;
+	back?: CardFace;
+	related_cards?: Array<CardID | CardFace>;
+	is_custom?: boolean;
 }
 
 export type DeckBasicLands = { [key in CardColor]: number };

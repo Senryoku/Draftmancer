@@ -50,6 +50,10 @@ export function getCard(cid: CardID): Card {
 	return card;
 }
 
+export function isValidCardID(cid: CardID): boolean {
+	return Cards.has(cid);
+}
+
 export function getUnique(cid: CardID, options: { foil?: boolean; getCard?: (cid: CardID) => Card } = {}) {
 	const uc: UniqueCard = Object.assign(
 		{ uniqueID: getNextCardID() },

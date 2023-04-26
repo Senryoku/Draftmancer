@@ -2595,7 +2595,7 @@
 				<sponsor-modal />
 			</template>
 		</modal>
-		<CardPopup :language="language" ref="cardPopup" />
+		<CardPopup :language="language" :customCards="customCardList?.customCards" ref="cardPopup" />
 		<footer>
 			<span @click="displayedModal = 'About'" class="clickable">
 				<span class="link">About</span>
