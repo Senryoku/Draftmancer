@@ -25,13 +25,13 @@ function checkPropertyType(card: any, prop: string, type: string) {
 }
 
 function checkPropertyTypeOrUndefined(card: any, prop: string, type: string) {
-	if (!("prop" in card)) return null;
+	if (!Object.hasOwn(card, prop)) return null;
 	return checkPropertyType(card, prop, type);
 }
 
 function checkPropertyIsArrayOrUndefined(card: any, prop: string) {
-	if (prop in card && !Array.isArray(card.subtypes))
-		return errorWithJSON(`Invalid Property`, `Invalid property 'subtypes' in custom card, must be an Array`, card);
+	if (Object.hasOwn(card, prop) && !Array.isArray(card[prop]))
+		return errorWithJSON(`Invalid Property`, `Invalid property '${prop}' in custom card, must be an Array`, card);
 	return null;
 }
 
