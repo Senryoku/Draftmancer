@@ -1518,6 +1518,14 @@
         "rareCount": 52,
         "uncommonCount": 39
     },
+    "fmom": {
+        "code": "fmom",
+        "fullName": "March of the Machine Jumpstart Front Cards",
+        "cardCount": 5,
+        "isPrimary": false,
+        "icon": "img/sets/fmom.svg",
+        "commonCount": 5
+    },
     "fnm": {
         "code": "fnm",
         "fullName": "Friday Night Magic 2000",
@@ -2698,12 +2706,12 @@
     "mul": {
         "code": "mul",
         "fullName": "Multiverse Legends",
-        "cardCount": 195,
+        "cardCount": 260,
         "isPrimary": false,
         "icon": "img/sets/mul.svg",
-        "mythicCount": 45,
-        "rareCount": 90,
-        "uncommonCount": 60
+        "mythicCount": 60,
+        "rareCount": 120,
+        "uncommonCount": 80
     },
     "ncc": {
         "code": "ncc",
@@ -4315,11 +4323,11 @@
         "cardCount": 3054,
         "isPrimary": false,
         "icon": "img/sets/prm.svg",
-        "bonusCount": 1,
-        "commonCount": 396,
-        "mythicCount": 370,
-        "rareCount": 1784,
-        "uncommonCount": 503
+        "commonCount": 392,
+        "mythicCount": 373,
+        "rareCount": 1787,
+        "specialCount": 1,
+        "uncommonCount": 501
     },
     "prna": {
         "code": "prna",
@@ -5005,12 +5013,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 878,
+        "cardCount": 908,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
-        "mythicCount": 148,
-        "rareCount": 665,
+        "mythicCount": 156,
+        "rareCount": 687,
         "uncommonCount": 20
     },
     "slp": {
