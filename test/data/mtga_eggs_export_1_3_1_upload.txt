@@ -1073,7 +1073,7 @@
 		{
 			"name": "Furnace Bolt",
 			"rarity": "uncommon",
-			"mana_cost": "H{R}",
+			"mana_cost": "P{R}",
 			"type": "Instant",
 			"image_uris": {
 				"en": "https://i.ibb.co/GdV34p0/Furnace-Bolt.png"

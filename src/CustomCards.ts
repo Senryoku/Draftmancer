@@ -130,7 +130,8 @@ export function validateCustomCard(inputCard: any): SocketError | Card {
 	card.name = card.id = card.oracle_id = inputCard.name;
 	const ret = parseCost(inputCard.mana_cost);
 	if (isMessageError(ret)) return new SocketAck(ret);
-	const { cmc, colors } = ret;
+	const { cmc, colors, normalizedCost } = ret;
+	card.mana_cost = normalizedCost;
 	card.cmc = cmc;
 	card.colors = inputCard.colors ?? colors;
 	card.set = inputCard.set ?? "custom";
