@@ -75,3 +75,7 @@ export class DraftState extends IDraftState {
 		};
 	}
 }
+
+export function isDraftState(obj: IDraftState): obj is DraftState {
+	return obj instanceof DraftState;
+}

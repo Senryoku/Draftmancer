@@ -43,10 +43,10 @@ import { MinesweeperDraftState } from "./MinesweeperDraft.js";
 import { assert } from "console";
 import { TeamSealedState } from "./TeamSealed.js";
 import { GridDraftState, isGridDraftState } from "./GridDraft.js";
-import { DraftState } from "./DraftState.js";
+import { DraftState, isDraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
-import { LoaderOptions, ServerToClientEvents } from "./SocketType";
+import { ServerToClientEvents } from "./SocketType";
 import Constants from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
@@ -1849,12 +1849,18 @@ export class Session implements IIndexable {
 
 	// Restart a pick chain if necessary
 	startBotPickChain(userID: UserID) {
-		const s = this.draftState as DraftState;
-		if (s && !s.players[userID].botPickInFlight && s.players[userID].boosters.length > 0) {
+		const s = this.draftState;
+		if (!s || !isDraftState(s)) return;
+		if (!s.players[userID]) {
+			console.error(`Session.startBotPickChain Error: Invalid userID '${userID})'. draftState:`);
+			console.error(s);
+			return;
+		}
+		if (!s.players[userID].botPickInFlight && s.players[userID].boosters.length > 0) {
 			s.players[userID].botPickInFlight = true;
 			this.doBotPick(userID).catch((error) => {
 				console.error(
-					`Session.startBotPickChain (sessionID: ${this.id}, nextUserID: ${userID}): doBotPick errored:`
+					`Session.startBotPickChain (sessionID: ${this.id}, userID: ${userID}): doBotPick errored:`
 				);
 				console.error(error);
 				console.error("Associated Player:", s.players[userID]);
@@ -1862,17 +1868,22 @@ export class Session implements IIndexable {
 		} // else: This bot is already picking, do nothing.
 	}
 
-	// To ensure a single call to doBotPick is in flight at any time,
-	// doBotPick should always recursively call itself, or set isBotWaiting to true.
+	// To ensure a single call to doBotPick is in flight at any time, they are guarded by the botPickInFlight flag.
+	// doBotPick will recursively call itself until there's no booster available. Chain can be restarted by neighbouring calls (see passBooster).
 	async doBotPick(userID: UserID): Promise<void> {
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!s || !isDraftState(s)) return;
 
 		assert(s.players[userID].botPickInFlight, "Error: Call to doBotPick with botPickInFlight not set to true.");
 		assert(s.players[userID].boosters.length > 0, "Error: Call to doBotPick with no boosters.");
 
 		// Since this runs asynchronously, there's multiple points were we should make sure the session state is still valid (mostly that the draft has not been prematurely stopped) before continuing.
 		const shouldStop = () => {
-			const state = this.draftState as DraftState;
+			const state = this.draftState;
+			if (!state || !isDraftState(state)) {
+				s.players[userID].botPickInFlight = false;
+				return true;
+			}
 			// Draft may have been manually terminated by the owner.
 			if (!state?.players) {
 				s.players[userID].botPickInFlight = false;
@@ -1954,11 +1965,9 @@ export class Session implements IIndexable {
 		const booster = s.players[userID].boosters.splice(0, 1)[0];
 		++s.players[userID].pickNumber;
 
-		const pickedCards = pickedIndices.map((idx) => booster[idx]);
-
 		// We're actually picking on behalf of a disconnected player
 		if (!s.players[userID].isBot && this.isDisconnected(userID))
-			this.disconnectedUsers[userID].pickedCards.main.push(...pickedCards);
+			this.disconnectedUsers[userID].pickedCards.main.push(...pickedIndices.map((idx) => booster[idx]));
 
 		const pickData: DraftPick = {
 			pick: pickedIndices,

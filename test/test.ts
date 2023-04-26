@@ -325,6 +325,107 @@ describe("Sets content", function () {
 	}
 });
 
+describe("Single Player Draft", function () {
+	let client: Socket<ServerToClientEvents, ClientToServerEvents>;
+	let state: ReturnType<DraftState["syncData"]> = { booster: [], boosterCount: 0, boosterNumber: 0, pickNumber: 0 };
+
+	beforeEach(function (done) {
+		disableLogs();
+		done();
+	});
+
+	afterEach(function (done) {
+		enableLogs(this.currentTest!.state == "failed");
+		done();
+	});
+
+	it("Client connects.", function (done) {
+		const sessionID = uuidv1();
+		client = makeClients(
+			[
+				{
+					userID: "id1",
+					sessionID: sessionID,
+					userName: "Client1",
+				},
+			],
+			() => {
+				expect(Connections).to.have.property("id1");
+				expect(Object.keys(Connections).length).to.equal(1);
+				done();
+			}
+		)[0];
+	});
+
+	it("Set bot count.", function (done) {
+		client.emit("setBots", 7);
+		done();
+	});
+
+	it("Start Draft", function (done) {
+		client.once("draftState", (state) => {
+			const s = state as ReturnType<DraftState["syncData"]>;
+			expect(s.booster).to.exist;
+			state = s;
+			done();
+		});
+
+		client.emit("startDraft", ackNoError);
+	});
+
+	it("Pick until draft ends.", (done) => {
+		client.once("endDraft", function () {
+			client.removeListener("draftState");
+			done();
+		});
+		client.on("draftState", function (_s) {
+			const s = _s as ReturnType<DraftState["syncData"]>;
+			if (s.pickNumber !== state.pickNumber && s.boosterCount > 0) {
+				state = s;
+				client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+			}
+		});
+		client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+	});
+
+	it("Start Draft and immediatly disconnects.", function (done) {
+		client.once("draftState", (state) => {
+			const s = state as ReturnType<DraftState["syncData"]>;
+			expect(s.booster).to.exist;
+			state = s;
+			client.disconnect();
+			done();
+		});
+
+		client.emit("startDraft", ackNoError);
+	});
+
+	it("Reconnects, draft restarts.", function (done) {
+		client.once("resumeOnReconnection", () => done());
+		client.connect();
+	});
+
+	it("Pick until draft ends.", (done) => {
+		client.once("endDraft", () => {
+			client.removeListener("draftState");
+			done();
+		});
+		client.on("draftState", (_s) => {
+			const s = _s as ReturnType<DraftState["syncData"]>;
+			if (s.pickNumber !== state.pickNumber && s.boosterCount > 0) {
+				state = s;
+				client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+			}
+		});
+		client.emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+	});
+
+	it("Client should disconnect.", function (done) {
+		client.disconnect();
+		waitForClientDisconnects(() => done());
+	});
+});
+
 describe("Single Draft (Two Players)", function () {
 	let clients: ReturnType<typeof makeClients> = [];
 	let sessionID = "sessionID";
@@ -769,6 +870,173 @@ describe("Single Draft (Two Players)", function () {
 
 		endDraft();
 		expectCardCount(3 * latestSetCardPerBooster);
+		disconnect();
+	});
+
+	describe("With Disconnect and replacing with bots", function () {
+		connect();
+		startDraft();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			clients[ownerIdx].once("resumeOnReconnection", function () {
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		singlePick();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", function () {
+				waitForSocket(clients[nonOwnerIdx], done);
+			});
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner is replaced by a bot.", function (done) {
+			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+		});
+
+		const ownerPick = () => {
+			it("Owner pick alone.", (done) => {
+				clients[ownerIdx].on("draftState", function (state) {
+					const s = state as ReturnType<DraftState["syncData"]>;
+					const clientState = clientStates[getUID(clients[ownerIdx])];
+					if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
+						expect(s.booster.length).to.equal(clientState.state.booster.length - 1);
+						clientState.state = s;
+						clients[ownerIdx].removeListener("draftState");
+						done();
+					}
+				});
+				clientStates[getUID(clients[ownerIdx])].pickedCards.push(
+					clientStates[getUID(clients[ownerIdx])].state.booster[0]
+				);
+				clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+			});
+		};
+		ownerPick();
+		ownerPick();
+		ownerPick();
+
+		it("Non-owner reconnects and receives an appropriate event, bot picked 3 cards for them.", function (done) {
+			clients[nonOwnerIdx].once("rejoinDraft", function (data) {
+				expect(data.pickedCards.main.length).to.equal(5);
+				expect(data.pickedCards.side.length).to.equal(0);
+				clientStates[getUID(clients[nonOwnerIdx])].pickedCards = data.pickedCards.main;
+				clientStates[getUID(clients[nonOwnerIdx])].state = {
+					booster: data.booster ?? [],
+					boosterCount: data.boosterCount,
+					boosterNumber: data.boosterNumber,
+					pickNumber: data.pickNumber,
+				};
+				done();
+			});
+			clients[nonOwnerIdx].connect();
+		});
+
+		it("Owner pick, non-owner should receive a new booster.", (done) => {
+			let receivedBoosters = 0;
+			for (let client of clients) {
+				client.once("draftState", function (state) {
+					const clientState = clientStates[getUID(client)];
+					++receivedBoosters;
+					clientState.state = state as ReturnType<DraftState["syncData"]>;
+					if (receivedBoosters === clients.length) done();
+				});
+			}
+			clientStates[getUID(clients[ownerIdx])].pickedCards.push(
+				clientStates[getUID(clients[ownerIdx])].state.booster[0]
+			);
+			clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+		});
+
+		endDraft();
+		expectCardCount(3 * latestSetCardPerBooster);
+		disconnect();
+	});
+
+	describe("With Disconnect, 3 players, replacing with bots and no reconnect.", function () {
+		connect();
+		it("3 clients with different userIDs should be connected.", function (done) {
+			let idx = clients.push(
+				connectClient({
+					userID: "id3",
+					sessionID: sessionID,
+					userName: "Client3",
+				})
+			);
+
+			clients[idx - 1].on("connect", function () {
+				expect(Object.keys(Connections).length).to.equal(3);
+				done();
+			});
+		});
+		startDraft();
+
+		singlePick();
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", () => waitForSocket(clients[nonOwnerIdx], done));
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owner reconnects, draft restarts.", function (done) {
+			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[nonOwnerIdx].connect();
+		});
+
+		singlePick();
+		singlePick();
+
+		it("Third player disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", () => waitForSocket(clients[2], done));
+			clients[2].disconnect();
+		});
+
+		it("Non-owner disconnects, Owner receives updated user infos.", function (done) {
+			clients[ownerIdx].once("userDisconnected", () => waitForSocket(clients[nonOwnerIdx], done));
+			clients[nonOwnerIdx].disconnect();
+		});
+
+		it("Non-owners are replaced by bots.", function (done) {
+			clients[ownerIdx].once("resumeOnReconnection", () => done());
+			clients[ownerIdx].emit("replaceDisconnectedPlayers");
+		});
+
+		it("Owner ends the draft alone.", (done) => {
+			clients[ownerIdx].once("endDraft", function () {
+				clients[ownerIdx].removeListener("draftState");
+				expect(clientStates[getUID(clients[ownerIdx])].pickedCards.length).to.equal(
+					3 * latestSetCardPerBooster
+				);
+				done();
+			});
+			clients[ownerIdx].on("draftState", function (state) {
+				const s = state as ReturnType<DraftState["syncData"]>;
+				const clientState = clientStates[getUID(clients[ownerIdx])];
+				if (s.pickNumber !== clientState.state.pickNumber && s.boosterCount > 0) {
+					clientState.state = s;
+					clientStates[getUID(clients[ownerIdx])].pickedCards.push(
+						clientStates[getUID(clients[ownerIdx])].state.booster[0]
+					);
+					clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+				}
+			});
+			clientStates[getUID(clients[ownerIdx])].pickedCards.push(
+				clientStates[getUID(clients[ownerIdx])].state.booster[0]
+			);
+			clients[ownerIdx].emit("pickCard", { pickedCards: [0], burnedCards: [] }, ackNoError);
+		});
+
 		disconnect();
 	});
 
