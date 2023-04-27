@@ -14,6 +14,7 @@ export type PackLayout = {
 export type LayoutName = string;
 
 export type CCLSettings = {
+	name?: string;
 	withReplacement?: boolean;
 	predeterminedLayouts?: { name: LayoutName; weight: number }[][];
 	layoutWithReplacement?: boolean;

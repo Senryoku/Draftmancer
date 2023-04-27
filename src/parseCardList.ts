@@ -177,6 +177,16 @@ function parseSettings(
 	}
 	const settings: CCLSettings = {};
 
+	if ("name" in parsedSettings) {
+		if (!isString(parsedSettings.name)) {
+			return ackError({
+				title: `[Settings]`,
+				text: `'name' must be a string.`,
+			});
+		}
+		settings.name = parsedSettings.name;
+	}
+
 	if ("layouts" in parsedSettings) {
 		const layouts: Record<string, PackLayout> = {};
 
@@ -439,6 +449,7 @@ export function parseCardList(
 					const settingsOrError = parseSettings(lines, lineIdx, txtcardlist, cardList);
 					if (isSocketError(settingsOrError)) return settingsOrError;
 					cardList.settings = settingsOrError.settings;
+					if (settingsOrError.settings.name) cardList.name = settingsOrError.settings.name;
 					lineIdx += settingsOrError.advance;
 				} else if (lowerCaseHeader === "customcards") {
 					const cardsOrError = parseCustomCards(lines, lineIdx, txtcardlist);

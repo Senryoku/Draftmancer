@@ -78,6 +78,13 @@
 			pre note {
 				color: #999999;
 			}
+
+			code {
+				font-size: large;
+				background: #333;
+				padding: 1px 4px;
+				border-radius: 2px;
+			}
 		</style>
 	</head>
 	<body>
@@ -198,8 +205,8 @@ Card Name 6
 				>
 				<p>Here are the possible settings with their description:</p>
 				<pre>
-					<code>
 {
+	name: string,                       <comment>// The name of your cube. </comment>
 	withReplacement: boolean,           <comment>// Specify the default value of the "withReplacement" session setting (can still be overridden). </comment>
 
 	layouts: Record&lt;string, PackLayout&gt; <comment>// See below</comment>
@@ -216,8 +223,7 @@ Card Name 6
 	<comment>// Specify if the layouts are randomly picked with or without replacement (default: true). Ignored if predeterminedLayouts is specified.</comment>
 	layoutWithReplacement: boolean,     
 }
-					</code>
-				</pre>
+</pre>
 			</section>
 			<section>
 				<h2 id="layouts">Pack Layouts</h2>
@@ -294,6 +300,7 @@ Card Name 6
 				<pre>
 [Settings]
 {
+	"name": "Dominaria United",
 	"withReplacement": true,
 	"layouts": {
 		"Rare": {
@@ -427,7 +434,7 @@ CustomCard {
 }</pre>
 				The mana cost field follows
 				<a href="https://scryfall.com/docs/api/card-symbols/all" target="_blank">Scryfall Symbology</a>
-				(e.g. "{5}{G}{G}""). The image_uris and printed_names fields are objects with the language as key and the localized image URL or name as value (see previous
+				(e.g. "{5}{G}{G}"). The image_uris and printed_names fields are objects with the language as key and the localized image URL or name as value (see previous
 				example).
 			</section>
 		</div>

@@ -1,5 +1,6 @@
 [Settings]
 {
+	"name": "Settings Test",
 	"withReplacement": false,
 	"layoutWithReplacement" : true,
 	"predeterminedLayouts": ["Normal", "Normal", "Lucky"],
