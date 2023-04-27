@@ -52,6 +52,7 @@ import { getCookie, setCookie } from "./cookies";
 import { ButtonColor, Alert, fireToast } from "./alerts";
 import parseCSV from "./parseCSV";
 
+import LoadingComponent from "./components/LoadingComponent.vue";
 import News from "./components/News.vue";
 import BoosterCard from "./components/BoosterCard.vue";
 import CardComponent from "./components/Card.vue";
@@ -161,7 +162,10 @@ export default defineComponent({
 		CardPool,
 		CardPopup,
 		CardStats: defineAsyncComponent(() => import("./components/CardStats.vue")),
-		CollectionComponent: defineAsyncComponent(() => import("./components/Collection.vue")),
+		CollectionComponent: defineAsyncComponent({
+			loader: () => import("./components/Collection.vue"),
+			loadingComponent: LoadingComponent,
+		}),
 		CollectionImportHelp: defineAsyncComponent(() => import("./components/CollectionImportHelp.vue")),
 		DelayedInput,
 		DraftLog: defineAsyncComponent(() => import("./components/DraftLog.vue")),
