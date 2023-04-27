@@ -497,6 +497,7 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             addCard(c)
 
     MTGACards = {}
+    MTGACardsAlternates = {}
     for cid in list(cards):
         c = cards[cid]
         if 'name' in c:
@@ -507,6 +508,15 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             del cards[cid]
         if 'arena_id' in c:
             MTGACards[c['arena_id']] = c
+            if c['name'] not in MTGACardsAlternates:
+                MTGACardsAlternates[c['name']] = []
+            MTGACardsAlternates[c['name']].append(c['arena_id'])
+
+    with open("client/src/data/MTGACards.json", 'w', encoding="utf8") as outfile:
+        json.dump(MTGACards, outfile, ensure_ascii=False, indent=4)
+    with open("client/src/data/MTGAAlternates.json", 'w', encoding="utf8") as outfile:
+        json.dump(MTGACardsAlternates, outfile, ensure_ascii=False, indent=4)
+    
 
     # Select the "best" (most recent, non special) printing of each card
     def selectCard(a, b):
@@ -551,9 +561,6 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
 
     with open("data/CardsByName.json", 'w', encoding="utf8") as outfile:
         json.dump(cardsByName, outfile, ensure_ascii=False, indent=4)
-
-    with open("client/src/data/MTGACards.json", 'w', encoding="utf8") as outfile:
-        json.dump(MTGACards, outfile, ensure_ascii=False, indent=4)
 
 cards = {}
 DBFiles = glob.glob("data/MTGCards.*.json")

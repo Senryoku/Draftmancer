@@ -1,6 +1,6 @@
 import Constants from "../../src/Constants";
 
-import J21MTGACollectorNumber from "../../data/J21MTGACollectorNumbers.json";
+import J21MTGACollectorNumber from "../../data/J21MTGACollectorNumbers.json" assert { type: "json" };
 import { Card, CardColor } from "@/CardTypes";
 import { Language, SetCode } from "@/Types";
 

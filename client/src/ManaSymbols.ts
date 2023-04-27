@@ -1,4 +1,4 @@
-import ManaSymbolsList from "../../data/symbology.json";
+import ManaSymbolsList from "../../data/symbology.json" assert { type: "json" };
 
 const ManaRegex = /{([^}]+)}/g;
 

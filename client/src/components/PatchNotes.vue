@@ -12,7 +12,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 
-import PatchNotes from "../data/PatchNotes.json";
+import PatchNotes from "../data/PatchNotes.json" assert { type: "json" };
 
 export default defineComponent({
 	name: "PatchNotes",

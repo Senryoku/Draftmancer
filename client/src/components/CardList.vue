@@ -40,11 +40,12 @@
 							:checkcollection="checkCollection"
 							:collection="collection"
 							:language="language"
-						></card-list-column></div
-				></template>
-				<template v-else
-					>(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)</template
-				>
+						></card-list-column>
+					</div>
+				</template>
+				<template v-else>
+					(<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon> Loading...)
+				</template>
 			</div>
 		</template>
 	</div>

@@ -13,6 +13,7 @@ module.exports = {
 		publicPath: "/",
 		clean: true,
 	},
+	devtool: "source-map",
 	resolve: {
 		extensions: [".ts", ".tsx", ".js"],
 	},
