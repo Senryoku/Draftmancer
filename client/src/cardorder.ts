@@ -108,11 +108,9 @@ const Comparators: { [name: string]: ComparatorType } = {
 			Comparators.name,
 			Comparators.id,
 		];
-		for (let comparitor of arenaComparators) {
-			let result = comparitor(lhs, rhs);
-			if (result != 0) {
-				return result;
-			}
+		for (const comparator of arenaComparators) {
+			const result = comparator(lhs, rhs);
+			if (result !== 0) return result;
 		}
 		return 0;
 	},
