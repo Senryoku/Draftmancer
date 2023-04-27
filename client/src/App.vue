@@ -275,31 +275,34 @@
 					<strong id="card-pool-label">Card Pool: </strong>
 					<span v-if="useCustomCardList && customCardList">
 						{{ customCardList!.name ? customCardList!.name : "Custom Card List" }}
-						(<span style="display: inline-flex; gap: 0.3em; vertical-align: middle">
-							<template v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
+						<span style="display: inline-flex; gap: 0.25em; align-items: center; vertical-align: middle">
+							<div v-if="customCardList!.slots && Object.keys(customCardList!.slots).length > 0">
 								<font-awesome-icon
+									style="padding: 0.25em"
 									icon="fa-solid fa-file-alt"
 									class="clickable blue"
 									@click="displayedModal = 'cardList'"
 									v-tooltip="'Review the card list'"
 								></font-awesome-icon>
-							</template>
-							<template v-else>No list loaded</template>
-							<font-awesome-icon
-								icon="fa-solid fa-file-upload"
-								class="clickable"
-								onclick="document.querySelector('#card-list-input-main').click()"
-								v-tooltip="'Upload a Custom Card List'"
-								v-if="sessionOwner === userID"
-							></font-awesome-icon>
-							<font-awesome-icon
-								icon="fa-solid fa-times"
-								class="clickable brightred"
-								@click="useCustomCardList = false"
-								v-tooltip="'Return to official sets.'"
-								v-if="sessionOwner === userID"
-							></font-awesome-icon></span
-						>)
+							</div>
+							<div v-else>No list loaded</div>
+							<div class="clickable" onclick="document.querySelector('#card-list-input-main').click()">
+								<font-awesome-icon
+									style="padding: 0.25em"
+									icon="fa-solid fa-file-upload"
+									v-tooltip="'Upload a Custom Card List'"
+									v-if="sessionOwner === userID"
+								></font-awesome-icon>
+							</div>
+							<div @click="useCustomCardList = false" class="clickable brightred">
+								<font-awesome-icon
+									style="padding: 0.25em"
+									icon="fa-solid fa-times"
+									v-tooltip="'Return to official sets.'"
+									v-if="sessionOwner === userID"
+								></font-awesome-icon>
+							</div>
+						</span>
 					</span>
 					<span v-else :class="{ disabled: sessionOwner != userID }">
 						<div class="inline">
