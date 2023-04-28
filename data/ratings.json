@@ -3475,7 +3475,7 @@
   "Sigarda&#x27;s Imprisonment": 3.0,
   "Sigarda&#x27;s Summons": 1.75,
   "Supernatural Rescue": 1.0,
-  "Thalia, Guardian of Thraben": 3.0,
+  "Thalia, Guardian of Thraben": 3.5,
   "Traveling Minister": 1.5,
   "Twinblade Geist": 3.0,
   "Unholy Officiant": 2.0,
@@ -5424,5 +5424,6 @@
   "Vorinclex, Voice of Hunger": 0.0,
   "Yedora, Grave Gardener": 3.5,
   "Yorion, Sky Nomad": 5.0,
-  "Zirda, the Dawnwaker": 3.0
+  "Zirda, the Dawnwaker": 3.0,
+  "Gift of Compleation": 3.0
 }
