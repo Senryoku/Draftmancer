@@ -1,7 +1,12 @@
 [
 	{
-		"date": "24/04/2023",
-		"notes": ["New game mode: Solomon Draft."]
+		"date": "28/04/2023",
+		"notes": [
+			"New game mode: Solomon Draft.",
+			"Added a pick history for Rotisserie Drafts.",
+			"Updated custom card support.",
+			"Various tweaks and fixes."
+		]
 	},
 	{
 		"date": "16/04/2023",
