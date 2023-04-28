@@ -278,13 +278,13 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 async function pickCard(
 	userID: UserID,
 	sessionID: SessionID,
-	data: { pickedCards: Array<number>; burnedCards: Array<number> },
+	data: { pickedCards: Array<number>; burnedCards: Array<number>; special?: { useCogworkLibrarian?: boolean } },
 	ack: (result: SocketAck) => void
 ) {
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	try {
-		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards);
+		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards, data.special);
 		ack?.(r);
 	} catch (err) {
 		ack?.(new SocketError("Internal server error."));

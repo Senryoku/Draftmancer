@@ -56,6 +56,7 @@ import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
+import { CogworkLibrarianOracleID } from "./Conspiracy.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1749,7 +1750,12 @@ export class Session implements IIndexable {
 		);
 	}
 
-	async pickCard(userID: UserID, pickedCards: Array<number>, burnedCards: Array<number>) {
+	async pickCard(
+		userID: UserID,
+		pickedCards: Array<number>,
+		burnedCards: Array<number>,
+		special?: { useCogworkLibrarian?: boolean }
+	) {
 		if (!this.drafting || this.draftState?.type !== "draft")
 			return new SocketError("This session is not drafting.");
 
@@ -1767,10 +1773,38 @@ export class Session implements IIndexable {
 
 		let booster = s.players[userID].boosters[0];
 
-		const picksThisRound = Math.min(
+		let picksThisRound = Math.min(
 			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
 			booster.length
 		);
+
+		// Conspiracy draft matter cards
+		if (special) {
+			// Draft Cogwork Librarian face up.
+			// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
+			if (special.useCogworkLibrarian) {
+				if (picksThisRound >= booster.length)
+					reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
+				if (pickedCards.length !== picksThisRound + 1) reportError("Missing Cogwork Librarian pick.");
+
+				let cogworkLibrarian: UniqueCard;
+				let index = Connections[userID].pickedCards.main.findIndex(
+					(c) => c.oracle_id === CogworkLibrarianOracleID
+				);
+				if (index >= 0) {
+					cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
+				} else {
+					// Search in sideboard
+					index = Connections[userID].pickedCards.side.findIndex(
+						(c) => c.oracle_id === CogworkLibrarianOracleID
+					);
+					if (index < 0) return reportError("You don't have a Cogwork Librarian.");
+					cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
+				}
+				picksThisRound += 1; // Allow an additional pick.
+				booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it doesn't change indexes of other cards.
+			}
+		}
 
 		if (!pickedCards || pickedCards.length !== picksThisRound)
 			return reportError(

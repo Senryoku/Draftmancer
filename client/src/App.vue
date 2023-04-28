@@ -942,6 +942,14 @@
 											}}/{{ cardsToBurnThisRound }}).
 										</span>
 									</span>
+									<span v-if="hasCogworkLibrarian">
+										<input
+											type="checkbox"
+											v-model="useCogworkLibrarian"
+											id="use-cogwork-librarian"
+										/>
+										<label for="use-cogwork-librarian">Use Cogwork Librarian</label>
+									</span>
 								</template>
 								<template v-else>
 									<font-awesome-icon icon="fa-solid fa-spinner" spin></font-awesome-icon>
