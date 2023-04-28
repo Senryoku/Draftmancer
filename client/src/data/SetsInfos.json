@@ -3024,6 +3024,14 @@
         "mythicCount": 1,
         "rareCount": 25
     },
+    "p30h": {
+        "code": "p30h",
+        "fullName": "30th Anniversary History Promos",
+        "cardCount": 10,
+        "isPrimary": false,
+        "icon": "img/sets/p30h.svg",
+        "rareCount": 10
+    },
     "p5dn": {
         "code": "p5dn",
         "fullName": "Fifth Dawn Promos",
@@ -4114,6 +4122,15 @@
         "icon": "img/sets/pmoa.svg",
         "rareCount": 85
     },
+    "pmom": {
+        "code": "pmom",
+        "fullName": "March of the Machine Promos",
+        "cardCount": 134,
+        "isPrimary": false,
+        "icon": "img/sets/pmom.svg",
+        "mythicCount": 30,
+        "rareCount": 104
+    },
     "pmor": {
         "code": "pmor",
         "fullName": "Morningtide Promos",
@@ -5013,12 +5030,12 @@
     "sld": {
         "code": "sld",
         "fullName": "Secret Lair Drop",
-        "cardCount": 908,
+        "cardCount": 913,
         "isPrimary": false,
         "icon": "img/sets/sld.svg",
         "commonCount": 45,
         "mythicCount": 156,
-        "rareCount": 687,
+        "rareCount": 692,
         "uncommonCount": 20
     },
     "slp": {
