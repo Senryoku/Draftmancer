@@ -32,12 +32,11 @@ export async function waitAndClickXpath(page: Page, xpath: string) {
 }
 
 export async function waitAndClickSelector(page: Page, selector: string) {
-	await page.waitForSelector(selector, {
+	const element = await page.waitForSelector(selector, {
 		visible: true,
 	});
-	const [element] = await page.$$(selector);
 	expect(element).to.exist;
-	await element.click();
+	await element?.asElement().click();
 }
 
 export function disableAnimations(page: Page) {
