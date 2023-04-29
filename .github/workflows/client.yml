@@ -28,5 +28,7 @@ jobs:
             - run: npm run fronttest-headless-bail
             - uses: actions/upload-artifact@v3
               with:
-                name: screenshots
-                path: *.png
+                  name: screenshots
+                  path: |
+                      grid-hovered.png
+                      grid-clicked.png
