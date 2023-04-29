@@ -1512,7 +1512,7 @@
 								@drop="dropBoosterCard($event, { toSideboard: true })"
 							>
 								<Sortable
-									:key="`collapsed-sideboard-col-${sideboard.length}`"
+									:key="`collapsed-sideboard-col-${sideboard.map((c) => c.uniqueID).join('-')}`"
 									class="card-column drag-column"
 									:list="sideboard"
 									item-key="uniqueID"

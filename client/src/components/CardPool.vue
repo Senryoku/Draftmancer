@@ -135,7 +135,7 @@
 				</div>
 				<Sortable
 					v-for="(column, colIdx) in row"
-					:key="`col_${colIdx}_${column.length}`"
+					:key="`col_${colIdx}_${column.map((c) => c.uniqueID).join('_')}`"
 					class="card-column drag-column"
 					:list="column"
 					item-key="uniqueID"
