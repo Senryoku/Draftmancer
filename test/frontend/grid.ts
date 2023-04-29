@@ -47,8 +47,14 @@ describe("Grid Draft", () => {
 		it(`Launch Draft`, async () => {
 			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
 			console.error("Hovered");
+			await pages[0].screenshot({
+				path: `${process.env.GITHUB_WORKSPACE}/grid-hovered.png`,
+			});
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
 			console.error("Clicked");
+			await pages[0].screenshot({
+				path: `${process.env.GITHUB_WORKSPACE}/grid-clicked.png`,
+			});
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
 			console.error("Confirmed");
 
