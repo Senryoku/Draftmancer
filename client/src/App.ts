@@ -1749,8 +1749,8 @@ export default defineComponent({
 		startSolomonDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const start = (cardCount: number, roundCount: number) => {
-				this.socket.emit("startSolomonDraft", cardCount, roundCount, (answer: SocketAck) => {
+			const start = (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
+				this.socket.emit("startSolomonDraft", cardCount, roundCount, removeBasicLands, (answer: SocketAck) => {
 					if (answer.code !== 0) Alert.fire(answer.error!);
 				});
 			};
@@ -1766,8 +1766,8 @@ export default defineComponent({
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(cardCount: number, roundCount: number) {
-					self.deckWarning(start, cardCount, roundCount);
+				onStart(cardCount: number, roundCount: number, removeBasicLands: boolean) {
+					self.deckWarning(start, cardCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});

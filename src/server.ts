@@ -610,11 +610,13 @@ function startSolomonDraft(
 	sessionID: SessionID,
 	cardCount: unknown,
 	roundCount: unknown,
+	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const _cardCount = !isNumber(cardCount) ? parseInt(cardCount as string) : cardCount;
 	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
-	const r = Sessions[sessionID].startSolomonDraft(_cardCount, _roundCount);
+	const _removeBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : false;
+	const r = Sessions[sessionID].startSolomonDraft(_cardCount, _roundCount, _removeBasicLands);
 	if (!isSocketError(r)) startPublicSession(Sessions[sessionID]);
 	ack(r);
 }

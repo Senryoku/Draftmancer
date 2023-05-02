@@ -47,7 +47,7 @@ import { DraftState, isDraftState } from "./DraftState.js";
 import { RochesterDraftState } from "./RochesterDraft.js";
 import { WinstonDraftState } from "./WinstonDraft.js";
 import { ServerToClientEvents } from "./SocketType";
-import Constants from "./Constants.js";
+import Constants, { BasicLandNames } from "./Constants.js";
 import { SessionsSettingsProps } from "./Session/SessionProps.js";
 import { DistributionMode, DraftLogRecipients, DisconnectedUser, UsersData } from "./Session/SessionTypes.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -478,6 +478,7 @@ export class Session implements IIndexable {
 			playerCount?: number;
 			targets?: { [rarity: string]: number };
 			cardsPerBooster?: number;
+			removeBasicLands?: boolean;
 			customBoosters?: SetCode[];
 			cardsPerPlayer?: number;
 		} = {}
@@ -623,8 +624,13 @@ export class Session implements IIndexable {
 			if (!boosterSpecificRules) {
 				if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
 				for (let i = 0; i < boosterQuantity; ++i) {
-					const booster = defaultFactory.generateBooster(targets);
+					let booster = defaultFactory.generateBooster(targets);
 					if (isMessageError(booster)) return booster;
+
+					if (options?.removeBasicLands) {
+						booster = this.removeBasicLands(booster);
+					}
+
 					boosters.push(booster);
 				}
 				return boosters;
@@ -747,6 +753,11 @@ export class Session implements IIndexable {
 			}
 		}
 		return new MessageError("Internal Error");
+	}
+
+	// @return array of cards with the 5 original basic lands removed (does not remove Wastes, Basic Snow Lands, etc)
+	removeBasicLands(cards: UniqueCard[]): UniqueCard[] {
+		return cards.filter((card) => !BasicLandNames.includes(card.name));
 	}
 
 	notifyUserChange() {
@@ -1506,7 +1517,7 @@ export class Session implements IIndexable {
 		this.cleanDraftState();
 	}
 
-	startSolomonDraft(cardCount: number = 8, roundCount: number = 10): SocketAck {
+	startSolomonDraft(cardCount: number = 8, roundCount: number = 10, removeBasicLands: boolean = true): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size !== 2)
 			return new SocketError(
@@ -1527,12 +1538,13 @@ export class Session implements IIndexable {
 		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
+			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		const cardPool = boosters.flat();
 		while (cardPool.length < wantedCards) {
-			const booster = this.generateBoosters(1);
+			const booster = this.generateBoosters(1, { removeBasicLands: removeBasicLands });
 			if (isMessageError(booster)) return new SocketAck(booster);
 			if (!booster[0] || booster[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");

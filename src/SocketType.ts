@@ -262,7 +262,12 @@ export interface ClientToServerEvents {
 		revealBorders: boolean,
 		ack: (result: SocketAck) => void
 	) => void;
-	startSolomonDraft: (cardCount: number, roundCount: number, ack: (s: SocketAck) => void) => void;
+	startSolomonDraft: (
+		cardCount: number,
+		roundCount: number,
+		removeBasicLands: boolean,
+		ack: (s: SocketAck) => void
+	) => void;
 	startTeamSealed: (
 		boostersPerTeam: number,
 		customBoosters: Array<string>,

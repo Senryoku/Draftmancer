@@ -105,9 +105,12 @@ describe("SolomonDraftState", function () {
 });
 
 for (const settings of [
-	{ cardCount: 8, roundCount: 10 },
-	{ cardCount: 9, roundCount: 9 },
-	{ cardCount: 7, roundCount: 11 },
+	{ cardCount: 8, roundCount: 10, removeBasicLands: true },
+	{ cardCount: 8, roundCount: 10, removeBasicLands: false },
+	{ cardCount: 9, roundCount: 9, removeBasicLands: true },
+	{ cardCount: 9, roundCount: 9, removeBasicLands: false },
+	{ cardCount: 7, roundCount: 11, removeBasicLands: true },
+	{ cardCount: 7, roundCount: 11, removeBasicLands: false },
 ])
 	describe(`Solomon Draft: ${JSON.stringify(settings)}`, function () {
 		let clients: ReturnType<typeof makeClients> = [];
@@ -177,7 +180,13 @@ for (const settings of [
 					if (receivedStates === clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startSolomonDraft", settings.cardCount, settings.roundCount, ackNoError);
+			clients[ownerIdx].emit(
+				"startSolomonDraft",
+				settings.cardCount,
+				settings.roundCount,
+				settings.removeBasicLands,
+				ackNoError
+			);
 		});
 
 		function randomlyReorganize() {

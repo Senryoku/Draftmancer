@@ -20,4 +20,6 @@ const Constants = _constants as {
 	PrimarySets: SetCode[];
 };
 
+export const BasicLandNames = [...new Map(Object.entries(Constants.BasicLandNames["en"])).values()];
+
 export default Constants;
