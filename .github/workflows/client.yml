@@ -24,13 +24,12 @@ jobs:
             - run: npm ci
             - run: npm run build-ts
             - run: npm run client-type-check
-            - run: npx webpack --config client/webpack.config.cjs --mode=development # Build in development mode for the test selectors.
-            - run: npm run fronttest-headless-bail
+            - run: npx webpack --config client/webpack.config.cjs --mode=production
+            - run: mkdir screenshots
+            - run: npm run fronttest-headless
               timeout-minutes: 30
               continue-on-error: true
             - uses: actions/upload-artifact@v3
               with:
                   name: screenshots
-                  path: |
-                      grid-hovered.png
-                      grid-clicked.png
+                  path: screenshots/*.png

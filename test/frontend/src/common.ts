@@ -22,7 +22,7 @@ afterEach(async function () {
 	enableLogs(this.currentTest!.state === "failed");
 	if (this.currentTest!.state === "failed") {
 		await pages[0].screenshot({
-			path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/${this.currentTest!.fullTitle}_failed.png`,
+			path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/screenshots/${this.currentTest!.fullTitle}_failed.png`,
 		});
 	}
 });
