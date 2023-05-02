@@ -8,6 +8,7 @@ import {
 	waitAndClickXpath,
 	expectNCardsInTotal,
 	replaceInput,
+	launchMode,
 } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
@@ -46,9 +47,7 @@ function launch(cardCount: number = 8, roundCount: number = 10) {
 	it(`Launch Solomon Draft`, async function () {
 		sessionLink = await getSessionLink(pages[0]);
 
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Solomon')]");
-
+		await launchMode("Solomon");
 		await replaceInput(cardCount.toString())(await pages[0].$("#card-input"));
 		await replaceInput(roundCount.toString())(await pages[0].$("#rounds-input"));
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Solomon Draft')]");

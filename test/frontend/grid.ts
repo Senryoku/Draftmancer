@@ -85,8 +85,7 @@ describe("Grid Draft", () => {
 		setupBrowsers(2);
 
 		it(`Launch Draft`, async () => {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
+			await launchMode("Grid");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
 
 			let promises = [];

@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages } from "./src/common.js";
+import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, launchMode } from "./src/common.js";
 
 async function pickCard(page: Page) {
 	let next = await page.waitForXPath("//div[contains(., 'Done drafting!')] | //div[contains(., 'Pick a card')]");
@@ -21,8 +21,7 @@ describe("Rotisserie Draft - Singleton", function () {
 	setupBrowsers(4);
 
 	it(`Launch Draft`, async function () {
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Rotisserie')]");
+		await launchMode("Rotisserie");
 		await waitAndClickSelector(pages[0], "button.confirm");
 
 		await Promise.all(
@@ -59,8 +58,7 @@ describe("Rotisserie Draft - Standard", function () {
 	setupBrowsers(6);
 
 	it(`Launch Draft`, async function () {
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Rotisserie')]");
+		await launchMode("Rotisserie");
 		await pages[0].select("select.swal2-input", "standard");
 		await waitAndClickSelector(pages[0], "button.confirm");
 

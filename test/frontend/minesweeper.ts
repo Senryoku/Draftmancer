@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { dismissToast, pages, PickResult, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { dismissToast, launchMode, pages, PickResult, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { Page } from "puppeteer";
 
 async function pickMinesweeper(page: Page): Promise<PickResult> {
@@ -35,8 +35,7 @@ describe("Minesweeper Draft", function () {
 	});
 
 	it(`Launch Minesweeper Draft`, async function () {
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Minesweeper')]");
+		await launchMode("Minesweeper");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Minesweeper Draft')]");
 
 		for (let i = 0; i < pages.length; ++i)
