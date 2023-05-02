@@ -1,7 +1,7 @@
 import { Page } from "puppeteer";
 import chai from "chai";
 const expect = chai.expect;
-import { pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 
 async function pickCard(page: Page, random = false) {
 	let next = await page.waitForXPath("//div[contains(., 'Team Sealed stopped!')] | //span[contains(., 'Card Pool')]");
@@ -27,8 +27,7 @@ describe("Front End - Team Sealed", function () {
 	setupBrowsers(6);
 
 	it(`Launch Draft`, async function () {
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Team Sealed')]");
+		await launchMode("Team Sealed");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Distribute Boosters')]");
 
 		await Promise.all(

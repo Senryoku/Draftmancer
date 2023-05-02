@@ -1,6 +1,13 @@
 import chai from "chai";
 const expect = chai.expect;
-import { waitAndClickSelector, waitAndClickXpath, setupBrowsers, pages, replaceInput } from "../src/common.js";
+import {
+	waitAndClickSelector,
+	waitAndClickXpath,
+	setupBrowsers,
+	pages,
+	replaceInput,
+	launchMode,
+} from "../src/common.js";
 import { getRandom, random } from "../../../src/utils.js";
 
 // Not part of the test suite.
@@ -25,8 +32,7 @@ describe("Drag and Drop", () => {
 				)
 				.on("pageerror", ({ message }) => console.log(message));
 
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Sealed')]");
+			await launchMode("Sealed");
 			await replaceInput("1")(await pages[0].$("#input-boostersPerPlayer"));
 			await waitAndClickSelector(pages[0], "button.confirm");
 

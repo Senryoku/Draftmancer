@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { getSessionLink, launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { ElementHandle, Page } from "puppeteer";
 
 async function pickWinston(page: Page, forceDepth?: number) {
@@ -45,8 +45,7 @@ describe("Winston Draft", function () {
 	setupBrowsers(2);
 
 	it(`Launch Winston Draft`, async function () {
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await launchMode("Winston");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
 
 		await Promise.all(
@@ -100,8 +99,7 @@ describe("Winston Draft with disconnects", function () {
 
 	it(`Launch Winston Draft`, async function () {
 		sessionLink = await getSessionLink(pages[0]);
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Winston')]");
+		await launchMode("Winston");
 		await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winston Draft')]");
 
 		await Promise.all(

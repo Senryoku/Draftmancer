@@ -1,7 +1,7 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 const expect = chai.expect;
-import { getSessionLink, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
+import { getSessionLink, launchMode, pages, setupBrowsers, waitAndClickXpath } from "./src/common.js";
 import { Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
 
@@ -26,8 +26,7 @@ describe("Winchester Draft", function () {
 		setupBrowsers(2);
 
 		it(`Launch Winchester Draft`, async function () {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Winchester')]");
+			await launchMode("Winchester");
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winchester Draft')]");
 
 			await Promise.all([
@@ -58,8 +57,7 @@ describe("Winchester Draft", function () {
 		setupBrowsers(4);
 
 		it(`Launch Winchester Draft`, async function () {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Winchester')]");
+			await launchMode("Winchester");
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winchester Draft')]");
 
 			await Promise.all([
@@ -93,8 +91,7 @@ describe("Winchester Draft", function () {
 
 		it(`Launch Winchester Draft`, async function () {
 			sessionLink = await getSessionLink(pages[0]);
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Winchester')]");
+			await launchMode("Winchester");
 			await waitAndClickXpath(pages[0], "//button[contains(., 'Start Winchester Draft')]");
 
 			await Promise.all([
