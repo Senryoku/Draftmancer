@@ -18,9 +18,13 @@ beforeEach(function (done) {
 	done();
 });
 
-afterEach(function (done) {
-	enableLogs(this.currentTest!.state == "failed");
-	done();
+afterEach(async function () {
+	enableLogs(this.currentTest!.state === "failed");
+	if (this.currentTest!.state === "failed") {
+		await pages[0].screenshot({
+			path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/${this.currentTest!.fullTitle}_failed.png`,
+		});
+	}
 });
 
 export async function waitAndClickXpath(page: Page, xpath: string) {
@@ -311,4 +315,9 @@ export function expectNCardsInTotal(n: number) {
 		const total = decks.reduce((a, b) => a + b, 0);
 		expect(total, `Expected ${n} cards, got ${total}. Deck sizes: ${decks}.`).to.equal(n);
 	});
+}
+
+export async function launchMode(mode: string) {
+	await waitAndClickSelector(pages[0], ".handle");
+	await waitAndClickXpath(pages[0], `//button[contains(., '${mode}')]`);
 }
