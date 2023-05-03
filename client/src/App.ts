@@ -28,7 +28,7 @@ import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
-import { CardColor } from "../../src/CardTypes";
+import { CardColor, UsableDraftEffect } from "../../src/CardTypes";
 import { CogworkLibrarianOracleID } from "../../src/Conspiracy";
 
 import io, { Socket } from "socket.io-client";
@@ -1516,17 +1516,25 @@ export default defineComponent({
 					);
 					this.draftingState = DraftState.RochesterWaiting;
 				} else {
-					let special;
+					let draftEffect;
 					if (this.hasCogworkLibrarian && this.useCogworkLibrarian) {
-						special = { useCogworkLibrarian: true };
+						draftEffect = {
+							effect: UsableDraftEffect.CogworkLibrarian,
+							cardID: this.deck.find((c) => c.oracle_id === CogworkLibrarianOracleID)?.uniqueID ?? 0,
+						};
 						onSuccess.push(() => {
 							let index = this.deck.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
-							if (index >= 0) this.deck.splice(index, 1);
-							else {
+							if (index >= 0) {
+								this.deckDisplay?.remCard(this.deck[index]);
+								this.deck.splice(index, 1);
+							} else {
 								index = this.sideboard.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
-								if (index >= 0) this.sideboard.splice(index, 1);
-								else fireToast("error", "Could not find your Cogwork Librarian...");
+								if (index >= 0) {
+									this.sideboardDisplay?.remCard(this.sideboard[index]);
+									this.sideboard.splice(index, 1);
+								} else fireToast("error", "Could not find your Cogwork Librarian...");
 							}
+
 							this.useCogworkLibrarian = false;
 						});
 					}
@@ -1536,7 +1544,7 @@ export default defineComponent({
 						{
 							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
-							special,
+							draftEffect,
 						},
 						ack
 					);

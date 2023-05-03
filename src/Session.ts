@@ -12,6 +12,8 @@ import {
 	UniqueCardID,
 	DeckBasicLands,
 	DeckList,
+	OnPickDraftEffect,
+	UsableDraftEffect,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
@@ -56,7 +58,7 @@ import { parseLine } from "./parseCardList.js";
 import { WinchesterDraftState, isWinchesterDraftState } from "./WinchesterDraft.js";
 import { HousmanDraftState, isHousmanDraftState } from "./HousmanDraft.js";
 import { SolomonDraftState } from "./SolomonDraft.js";
-import { CogworkLibrarianOracleID } from "./Conspiracy.js";
+import { isSomeEnum } from "./TypeChecks.js";
 
 export class Session implements IIndexable {
 	id: SessionID;
@@ -1721,11 +1723,7 @@ export class Session implements IIndexable {
 			this.checkDraftRoundEnd();
 		} else {
 			// Re-insert the booster back for the next player
-			const playerIds = Object.keys(s.players);
-			let idx = playerIds.indexOf(userID);
-			idx += s.boosterNumber % 2 ? -1 : 1;
-			idx = negMod(idx, playerIds.length);
-			const nextUserID = playerIds[idx];
+			const nextUserID = s.nextPlayer(userID);
 			s.players[nextUserID].boosters.push(booster);
 
 			// Synchronize concerned users
@@ -1754,24 +1752,20 @@ export class Session implements IIndexable {
 		userID: UserID,
 		pickedCards: Array<number>,
 		burnedCards: Array<number>,
-		special?: { useCogworkLibrarian?: boolean }
+		draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID }
 	) {
-		if (!this.drafting || this.draftState?.type !== "draft")
-			return new SocketError("This session is not drafting.");
-
-		const s = this.draftState as DraftState;
+		const s = this.draftState;
+		if (!this.drafting || !s || !isDraftState(s)) return new SocketError("This session is not drafting.");
 
 		const reportError = (err: string) => {
 			console.error(err);
 			return new SocketError(err);
 		};
 
-		// Checks
-
 		if (s.players[userID].boosters.length === 0)
 			return reportError(`You already picked! Wait for the other players.`);
 
-		let booster = s.players[userID].boosters[0];
+		const booster = s.players[userID].boosters[0];
 
 		let picksThisRound = Math.min(
 			this.doubleMastersMode && s.players[userID].pickNumber > 0 ? 1 : this.pickedCardsPerRound,
@@ -1779,30 +1773,45 @@ export class Session implements IIndexable {
 		);
 
 		// Conspiracy draft matter cards
-		if (special) {
+		const applyDraftEffects: (() => void)[] = []; // Delay effects after we're sure the pick is valid.
+		if (draftEffect) {
 			// Draft Cogwork Librarian face up.
 			// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
-			if (special.useCogworkLibrarian) {
-				if (picksThisRound >= booster.length)
-					return reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
-				if (pickedCards.length !== picksThisRound + 1) return reportError("Missing Cogwork Librarian pick.");
+			switch (draftEffect.effect) {
+				case UsableDraftEffect.CogworkLibrarian: {
+					if (picksThisRound >= booster.length)
+						return reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
+					if (pickedCards.length !== picksThisRound + 1)
+						return reportError("Missing Cogwork Librarian pick.");
 
-				let cogworkLibrarian: UniqueCard;
-				let index = Connections[userID].pickedCards.main.findIndex(
-					(c) => c.oracle_id === CogworkLibrarianOracleID
-				);
-				if (index >= 0) {
-					cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
-				} else {
-					// Search in sideboard
-					index = Connections[userID].pickedCards.side.findIndex(
-						(c) => c.oracle_id === CogworkLibrarianOracleID
+					let index = Connections[userID].pickedCards.main.findIndex(
+						(c) => c.uniqueID === draftEffect.cardID
 					);
-					if (index < 0) return reportError("You don't have a Cogwork Librarian.");
-					cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
+					if (index >= 0) {
+						if (!Connections[userID].pickedCards.main[index].draft_effects?.includes(draftEffect.effect))
+							return reportError("Invalid card.");
+						applyDraftEffects.push(() => {
+							const cogworkLibrarian = Connections[userID].pickedCards.main.splice(index, 1)[0];
+							booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it doesn't change indexes of other cards.
+						});
+					} else {
+						// Search in sideboard
+						index = Connections[userID].pickedCards.side.findIndex(
+							(c) => c.uniqueID === draftEffect.cardID
+						);
+						if (index < 0) return reportError("You don't have a Cogwork Librarian.");
+						if (!Connections[userID].pickedCards.side[index].draft_effects?.includes(draftEffect.effect))
+							return reportError("Invalid card.");
+						applyDraftEffects.push(() => {
+							const cogworkLibrarian = Connections[userID].pickedCards.side.splice(index, 1)[0];
+							booster.push(cogworkLibrarian);
+						});
+					}
+					picksThisRound += 1; // Allow an additional pick.
+					break;
 				}
-				picksThisRound += 1; // Allow an additional pick.
-				booster.push(cogworkLibrarian); // Pushing the cogwork librarian at the end right away should be safe as it doesn't change indexes of other cards.
+				default:
+					return reportError(`Unimplemented draft effect: ${draftEffect.effect}.`);
 			}
 		}
 
@@ -1833,8 +1842,11 @@ export class Session implements IIndexable {
 			);
 
 		// Request is valid, actually extract the booster and proceed
+
+		for (const effect of applyDraftEffects) effect();
+
 		this.stopCountdown(userID);
-		booster = s.players[userID].boosters.splice(0, 1)[0];
+		s.players[userID].boosters.splice(0, 1); // Remove booster from queue
 
 		for (const idx of pickedCards) {
 			Connections[userID].pickedCards.main.push(booster[idx]);
@@ -1864,6 +1876,47 @@ export class Session implements IIndexable {
 				userName: Connections[userID].userName,
 				cards: pickedCards.map((idx) => booster[idx]),
 			});
+		}
+
+		for (const card of pickedCards.map((idx) => booster[idx])) {
+			if (card.draft_effects) {
+				let notify = false;
+				for (const effect of card.draft_effects) {
+					switch (effect) {
+						case OnPickDraftEffect.FaceUp:
+							if (!card.state) card.state = {};
+							card.state.faceUp = true;
+						// Intended fallthrough
+						case OnPickDraftEffect.Reveal:
+							notify = true;
+							break;
+						case OnPickDraftEffect.NotePassingPlayer:
+							if (!card.state) card.state = {};
+							const pid = s.previousPlayer(userID);
+							card.state.passingPlayer = s.players[pid].isBot
+								? s.players[pid].botInstance.name
+								: Connections[pid]?.userName ?? pid;
+							break;
+						case OnPickDraftEffect.NoteDraftedCards:
+							if (!card.state) card.state = {};
+							card.state.cardsDraftedThisRound = s.players[userID].pickNumber + 1;
+							break;
+						default:
+							if (isSomeEnum(OnPickDraftEffect)(effect))
+								console.info("Unimplemented on pick draft effect: " + effect);
+					}
+				}
+				if (notify) {
+					this.forUsers((uid) => {
+						let msg = `${Connections[userID].userName} picked ${card.name}!`;
+						if (card.state) {
+							if (card.state.passingPlayer) msg += ` (Passing Player: ${card.state.passingPlayer})`;
+							if (card.state.cardsDraftedThisRound) msg += ` (X=${card.state.cardsDraftedThisRound})`;
+						}
+						Connections[uid]?.socket?.emit("message", new Message(msg));
+					});
+				}
+			}
 		}
 
 		for (const idx of cardsToRemove) booster.splice(idx, 1);
