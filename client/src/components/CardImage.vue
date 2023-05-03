@@ -237,12 +237,12 @@ img {
 
 .flip-icon {
 	transition: transform 0.2s;
-	transform: rotateX(45deg) rotateY(-10deg);
+	transform: rotateX(45deg) skewX(-10deg);
 	color: white;
 }
 
 .flip-button:hover .flip-icon {
-	transform: rotateX(45deg) rotateY(-10deg) rotateZ(180deg);
+	transform: rotateX(45deg) skewX(-10deg) rotateZ(180deg);
 }
 
 .flip-container {
