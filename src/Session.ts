@@ -478,7 +478,6 @@ export class Session implements IIndexable {
 			playerCount?: number;
 			targets?: { [rarity: string]: number };
 			cardsPerBooster?: number;
-			removeBasicLands?: boolean;
 			customBoosters?: SetCode[];
 			cardsPerPlayer?: number;
 		} = {}
@@ -624,13 +623,8 @@ export class Session implements IIndexable {
 			if (!boosterSpecificRules) {
 				if (!defaultFactory) return new MessageError("Internal Error", "No default booster factory.");
 				for (let i = 0; i < boosterQuantity; ++i) {
-					let booster = defaultFactory.generateBooster(targets);
+					const booster = defaultFactory.generateBooster(targets);
 					if (isMessageError(booster)) return booster;
-
-					if (options?.removeBasicLands) {
-						booster = this.removeBasicLands(booster);
-					}
-
 					boosters.push(booster);
 				}
 				return boosters;
@@ -810,12 +804,12 @@ export class Session implements IIndexable {
 				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterCount, {
+		let boosters = this.generateBoosters(boosterCount, {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
-			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
+		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
@@ -916,12 +910,12 @@ export class Session implements IIndexable {
 				`Winchester Draft can only be played with at least 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterPerPlayer * this.users.size, {
+		let boosters = this.generateBoosters(boosterPerPlayer * this.users.size, {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
-			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
+		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
 
 		this.drafting = true;
 		this.disconnectedUsers = {};
@@ -998,22 +992,23 @@ export class Session implements IIndexable {
 		const cardsPerBooster = this.useCustomCardList
 			? this.cardsPerBooster
 			: Object.values(this.getBoosterContent()).reduce((a, b) => a + b, 0);
-		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
+		let boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
-			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
+		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
 
 		const cardPool = boosters.flat();
 
 		while (cardPool.length < wantedCards) {
-			const booster = this.generateBoosters(1, { removeBasicLands: removeBasicLands });
-			if (isMessageError(booster)) return new SocketAck(booster);
-			if (!booster[0] || booster[0].length === 0)
+			let boosterOrError = this.generateBoosters(1);
+			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
+			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
-			boosters.push(booster[0]);
-			cardPool.push(...booster[0]);
+			const booster = removeBasicLands ? this.removeBasicLands(boosterOrError[0]) : boosterOrError[0];
+			boosters.push(booster);
+			cardPool.push(...booster);
 		}
 
 		this.drafting = true;
@@ -1542,21 +1537,22 @@ export class Session implements IIndexable {
 		const cardsPerBooster = this.useCustomCardList
 			? this.cardsPerBooster
 			: Object.values(this.getBoosterContent()).reduce((a, b) => a + b, 0);
-		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
+		let boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
-			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
+		if (removeBasicLands) boosters = boosters.map(this.removeBasicLands);
 
 		const cardPool = boosters.flat();
 		while (cardPool.length < wantedCards) {
-			const booster = this.generateBoosters(1, { removeBasicLands: removeBasicLands });
-			if (isMessageError(booster)) return new SocketAck(booster);
-			if (!booster[0] || booster[0].length === 0)
+			const boosterOrError = this.generateBoosters(1);
+			if (isMessageError(boosterOrError)) return new SocketAck(boosterOrError);
+			if (boosterOrError.length === 0 || boosterOrError[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
-			boosters.push(booster[0]);
-			cardPool.push(...booster[0]);
+			const booster = removeBasicLands ? this.removeBasicLands(boosterOrError[0]) : boosterOrError[0];
+			boosters.push(booster);
+			cardPool.push(...booster);
 		}
 
 		this.drafting = true;
