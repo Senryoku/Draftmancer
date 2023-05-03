@@ -242,7 +242,7 @@ export interface ClientToServerEvents {
 	stopDraft: () => void;
 	pauseDraft: () => void;
 	resumeDraft: () => void;
-	startGridDraft: (boosterCount: number, removeBasicLands: boolean, ack: (result: SocketAck) => void) => void;
+	startGridDraft: (boosterCount: number, ack: (result: SocketAck) => void) => void;
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
 	startWinstonDraft: (boosterCount: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;

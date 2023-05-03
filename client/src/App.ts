@@ -1823,7 +1823,7 @@ export default defineComponent({
 
 			if (boosterCount) {
 				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startGridDraft", parseInt(boosterCount), true, (answer) => {
+				this.socket.emit("startGridDraft", parseInt(boosterCount), (answer) => {
 					if (answer.code !== 0 && answer.error) Alert.fire(answer.error);
 				});
 			}

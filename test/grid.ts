@@ -62,7 +62,7 @@ describe("Grid Draft", function () {
 		done();
 	});
 
-	const startDraft = (boosterCount: number = 18, removeBasicLands: boolean = true) => {
+	const startDraft = (boosterCount: number = 18) => {
 		it("When session owner launch Grid draft, everyone should receive a startGridDraft event", function (done) {
 			ownerIdx = clients.findIndex((c) => (c as any).query.userID == Sessions[sessionID].owner);
 			nonOwnerIdx = 1 - ownerIdx;
@@ -73,7 +73,7 @@ describe("Grid Draft", function () {
 					if (connectedClients === clients.length) done();
 				});
 			}
-			clients[ownerIdx].emit("startGridDraft", boosterCount, removeBasicLands, ackNoError);
+			clients[ownerIdx].emit("startGridDraft", boosterCount, ackNoError);
 		});
 	};
 

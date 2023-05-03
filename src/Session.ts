@@ -1095,7 +1095,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount: number, removeBasicLands: boolean): SocketAck {
+	startGridDraft(boosterCount: number): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size !== 2 && this.users.size !== 3)
 			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 or 3 players.");
@@ -1113,7 +1113,6 @@ export class Session implements IIndexable {
 			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
 			cardsPerBooster: cardsPerBooster,
 			useCustomBoosters: true,
-			removeBasicLands: removeBasicLands,
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) {
