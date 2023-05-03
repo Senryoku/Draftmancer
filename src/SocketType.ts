@@ -1,5 +1,5 @@
 import { GridDraftSyncData } from "./GridDraft";
-import { WinstonDraftState, WinstonDraftSyncData } from "./WinstonDraft";
+import { WinstonDraftSyncData } from "./WinstonDraft";
 import { SessionID, UserID } from "./IDTypes";
 import { Message, SocketAck } from "./Message";
 import { DistributionMode, DraftLogRecipients, ReadyState, UsersData } from "./Session/SessionTypes";
@@ -245,13 +245,14 @@ export interface ClientToServerEvents {
 	startGridDraft: (boosterCount: number, ack: (result: SocketAck) => void) => void;
 	startRochesterDraft: (ack: (s: SocketAck) => void) => void;
 	startRotisserieDraft: (options: RotisserieDraftStartOptions, ack: (s: SocketAck) => void) => void;
-	startWinstonDraft: (boosterCount: number, ack: (s: SocketAck) => void) => void;
-	startWinchesterDraft: (boosterPerPlayer: number, ack: (s: SocketAck) => void) => void;
+	startWinstonDraft: (boosterCount: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;
+	startWinchesterDraft: (boosterPerPlayer: number, removeBasicLands: boolean, ack: (s: SocketAck) => void) => void;
 	startHousmanDraft: (
 		handSize: number,
 		revealedCardsCount: number,
 		exchangeCount: number,
 		roundCount: number,
+		removeBasicLands: boolean,
 		ack: (s: SocketAck) => void
 	) => void;
 	startMinesweeperDraft: (
@@ -262,7 +263,12 @@ export interface ClientToServerEvents {
 		revealBorders: boolean,
 		ack: (result: SocketAck) => void
 	) => void;
-	startSolomonDraft: (cardCount: number, roundCount: number, ack: (s: SocketAck) => void) => void;
+	startSolomonDraft: (
+		cardCount: number,
+		roundCount: number,
+		removeBasicLands: boolean,
+		ack: (s: SocketAck) => void
+	) => void;
 	startTeamSealed: (
 		boostersPerTeam: number,
 		customBoosters: Array<string>,

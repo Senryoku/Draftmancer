@@ -85,7 +85,7 @@ describe("Winchester Draft", function () {
 				if (receivedStates === clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("startWinchesterDraft", 6, ackNoError);
+		clients[ownerIdx].emit("startWinchesterDraft", 6, true, ackNoError);
 	});
 
 	function randomPick(socket: ReturnType<typeof makeClients>[0], state: WinchesterDraftSyncData) {
@@ -338,7 +338,7 @@ describe("Winchester Draft - 4 Players", function () {
 				if (receivedStates === clients.length) done();
 			});
 		}
-		clients[ownerIdx].emit("startWinchesterDraft", 6, ackNoError);
+		clients[ownerIdx].emit("startWinchesterDraft", 6, true, ackNoError);
 	});
 
 	function randomPick(socket: ReturnType<typeof makeClients>[0], state: WinchesterDraftSyncData) {

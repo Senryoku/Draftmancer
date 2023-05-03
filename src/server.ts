@@ -22,16 +22,7 @@ import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPo
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
-import {
-	CardPool,
-	CardID,
-	Card,
-	UniqueCardID,
-	DeckBasicLands,
-	UniqueCard,
-	PlainCollection,
-	ArenaID,
-} from "./CardTypes.js";
+import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, PlainCollection, ArenaID } from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
@@ -520,10 +511,17 @@ function startRotisserieDraft(
 	ack(ret);
 }
 
-function startWinstonDraft(userID: UserID, sessionID: SessionID, boosterCount: unknown, ack: (s: SocketAck) => void) {
+function startWinstonDraft(
+	userID: UserID,
+	sessionID: SessionID,
+	boosterCount: unknown,
+	removeBasicLands: unknown,
+	ack: (s: SocketAck) => void
+) {
 	const sess = Sessions[sessionID];
 	const localBoosterCount = !isNumber(boosterCount) ? parseInt(boosterCount as string) : boosterCount;
-	const r = sess.startWinstonDraft(localBoosterCount ? localBoosterCount : 6);
+	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
+	const r = sess.startWinstonDraft(localBoosterCount || 6, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -532,11 +530,13 @@ function startWinchesterDraft(
 	userID: UserID,
 	sessionID: SessionID,
 	boosterPerPlayer: unknown,
+	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
 	const localBoosterPerPlayer = !isNumber(boosterPerPlayer) ? parseInt(boosterPerPlayer as string) : boosterPerPlayer;
-	const r = sess.startWinchesterDraft(localBoosterPerPlayer ? localBoosterPerPlayer : 6);
+	const localRemoveBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
+	const r = sess.startWinchesterDraft(localBoosterPerPlayer || 6, localRemoveBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -548,6 +548,7 @@ function startHousmanDraft(
 	revealedCardsCount: unknown,
 	exchangeCount: unknown,
 	roundCount: unknown,
+	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const sess = Sessions[sessionID];
@@ -557,7 +558,8 @@ function startHousmanDraft(
 		: revealedCardsCount;
 	const _exchangeCount = !isNumber(exchangeCount) ? parseInt(exchangeCount as string) : exchangeCount;
 	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
-	const r = sess.startHousmanDraft(_handSize, _revealedCardsCount, _exchangeCount, _roundCount);
+	const _removeBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
+	const r = sess.startHousmanDraft(_handSize, _revealedCardsCount, _exchangeCount, _roundCount, _removeBasicLands);
 	if (!isSocketError(r)) startPublicSession(sess);
 	ack(r);
 }
@@ -610,11 +612,13 @@ function startSolomonDraft(
 	sessionID: SessionID,
 	cardCount: unknown,
 	roundCount: unknown,
+	removeBasicLands: unknown,
 	ack: (s: SocketAck) => void
 ) {
 	const _cardCount = !isNumber(cardCount) ? parseInt(cardCount as string) : cardCount;
 	const _roundCount = !isNumber(roundCount) ? parseInt(roundCount as string) : roundCount;
-	const r = Sessions[sessionID].startSolomonDraft(_cardCount, _roundCount);
+	const _removeBasicLands = isBoolean(removeBasicLands) ? removeBasicLands : true;
+	const r = Sessions[sessionID].startSolomonDraft(_cardCount, _roundCount, _removeBasicLands);
 	if (!isSocketError(r)) startPublicSession(Sessions[sessionID]);
 	ack(r);
 }

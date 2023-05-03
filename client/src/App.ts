@@ -1627,7 +1627,7 @@ export default defineComponent({
 
 			if (boosterCount) {
 				if (typeof boosterCount !== "number") boosterCount = parseInt(boosterCount);
-				this.socket.emit("startWinstonDraft", boosterCount, (answer: SocketAck) => {
+				this.socket.emit("startWinstonDraft", boosterCount, true, (answer: SocketAck) => {
 					if (answer.code !== 0) Alert.fire(answer.error!);
 				});
 			}
@@ -1678,7 +1678,7 @@ export default defineComponent({
 
 			if (boosterPerPlayer) {
 				if (typeof boosterPerPlayer !== "number") boosterPerPlayer = parseInt(boosterPerPlayer);
-				this.socket.emit("startWinchesterDraft", boosterPerPlayer, (answer: SocketAck) => {
+				this.socket.emit("startWinchesterDraft", boosterPerPlayer, true, (answer: SocketAck) => {
 					if (answer.code !== 0) Alert.fire(answer.error!);
 				});
 			}
@@ -1709,13 +1709,20 @@ export default defineComponent({
 		startHousmanDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const start = (handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) => {
+			const start = (
+				handSize: number,
+				revealedCardsCount: number,
+				exchangeCount: number,
+				roundCount: number,
+				removeBasicLands: boolean
+			) => {
 				this.socket.emit(
 					"startHousmanDraft",
 					handSize,
 					revealedCardsCount,
 					exchangeCount,
 					roundCount,
+					removeBasicLands,
 					(answer: SocketAck) => {
 						if (answer.code !== 0) Alert.fire(answer.error!);
 					}
@@ -1733,8 +1740,14 @@ export default defineComponent({
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number) {
-					self.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount);
+				onStart(
+					handSize: number,
+					revealedCardsCount: number,
+					exchangeCount: number,
+					roundCount: number,
+					removeBasicLands: boolean
+				) {
+					self.deckWarning(start, handSize, revealedCardsCount, exchangeCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});
@@ -1749,8 +1762,8 @@ export default defineComponent({
 		startSolomonDraft: async function () {
 			if (this.userID !== this.sessionOwner || this.drafting) return;
 
-			const start = (cardCount: number, roundCount: number) => {
-				this.socket.emit("startSolomonDraft", cardCount, roundCount, (answer: SocketAck) => {
+			const start = (cardCount: number, roundCount: number, removeBasicLands: boolean) => {
+				this.socket.emit("startSolomonDraft", cardCount, roundCount, removeBasicLands, (answer: SocketAck) => {
 					if (answer.code !== 0) Alert.fire(answer.error!);
 				});
 			};
@@ -1766,8 +1779,8 @@ export default defineComponent({
 				onCancel() {
 					instance.unmount();
 				},
-				onStart(cardCount: number, roundCount: number) {
-					self.deckWarning(start, cardCount, roundCount);
+				onStart(cardCount: number, roundCount: number, removeBasicLands: boolean) {
+					self.deckWarning(start, cardCount, roundCount, removeBasicLands);
 					instance.unmount();
 				},
 			});

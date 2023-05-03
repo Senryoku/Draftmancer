@@ -43,6 +43,17 @@
 							/>
 						</div>
 					</div>
+					<div>
+						<div>
+							<label for="remove-basic-lands-input"> Remove Basic Lands? </label>
+						</div>
+						<input
+							type="checkbox"
+							id="remove-basic-lands-input"
+							class="swal2-input"
+							v-model.number="removeBasicLands"
+						/>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -61,14 +72,15 @@ import Modal from "./Modal.vue";
 
 const cardCount = ref(8);
 const roundCount = ref(10);
+const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
 	(e: "cancel"): void;
-	(e: "start", cardCount: number, roundCount: number): void;
+	(e: "start", cardCount: number, roundCount: number, removeBasicLands: boolean): void;
 }>();
 
 const cancel = () => emit("cancel");
-const start = () => emit("start", cardCount.value, roundCount.value);
+const start = () => emit("start", cardCount.value, roundCount.value, removeBasicLands.value);
 </script>
 
 <style scoped>
