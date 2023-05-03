@@ -72,6 +72,9 @@ AKRCards = {}
 KLRCards = {}
 J21MTGACollectorNumbers = {}
 
+# Links oracle_ids to draft effects
+DraftEffects = {'19047c4b-0106-455d-ab71-68cabfae7404': ['FaceUp', 'AgentOfAcquisitions'], '70ff487d-96b3-4322-9975-59bf3c6b517f': ['FaceUp', 'RemoveDraftCard', 'AnimusOfPredation'], '6ca0078f-d6b5-4643-b801-e7a98706f21c': ['FaceUp', 'ArchdemonOfPaliano'], 'bb6bda0d-ddb8-47fa-be07-bbcd73a52830': ['FaceUp', 'CanalDredger'], 'f10898a5-87ec-4a30-a383-9f9bcba3e4d0': ['FaceUp', 'RemoveDraftCard', 'CogworkGrinder'], 'ec0d964e-ca2c-4252-8551-cf1916576653': ['FaceUp', 'CogworkLibrarian'], '1269f7dc-a5d6-48e9-8887-b581ce38c204': ['FaceUp'], '5e8c6894-c9ad-4a50-af13-c2d95395c71e': ['FaceUp'], '8fedb2c2-fb13-4af1-b85e-714832562da7': ['FaceUp', 'LeovoldsOperative'], '96d88811-d0d8-4c64-b7f2-8304d81c8cfa': ['FaceUp', 'NoteCreatureName'], '6dd3be81-b6dc-42ee-9e0a-2e39e3f4e793': ['FaceUp', 'NoteCreatureTypes'], 'dc90b4aa-ba5e-4188-939d-b3920bd9ab0d': ['FaceUp', 'NoteCardName'], 'e40daee2-f9e6-489f-b3dd-274e5a6b8604': ['FaceUp'], '80ea63fd-691a-45ba-a4bf-862e5ec2922d': ['Reveal', 'AetherSearcher'], 'adfd33cb-086c-48f4-b443-ba971ff43684': ['Reveal', 'CogworkSpy'], 'c60ba5e9-dbfa-441b-a96f-9cc7fdfd2d76': ['Reveal', 'CogworkTracker'], 'abd78909-72dc-4d36-8990-39995fd071da': ['Reveal', 'NoteDraftedCards'], '8ddbb63c-7f52-431b-bb82-e020b1c3749a': ['Reveal', 'NoteDraftedCards'], '19a3c505-b180-47cc-bef3-9e807a8a4a3d': ['Reveal', 'LoreSeeker'], '412fbf73-a471-42ad-83fe-14f19e4e9595': ['Reveal', 'NoteDraftedCards'], 'cf682012-de36-4ab4-ad94-c3c0fd7bce3f': ['Reveal'], '6ea507d3-2b8d-4f08-824c-0de0ae214da5': ['Reveal', 'NoteDraftedCards'], 'db8e3c05-12d6-41f6-8cc7-e64c863fca58': ['Reveal'], 'd5fc017a-7517-4737-ad5b-cc45f1e139ea': ['Reveal']}
+
 LangCodes = ["enUS", "frFR", "deDE", "itIT", "esES", "ptBR", "ruRU", "jaJP", "koKR", "zhCN", "zhTW"]
 MTGALocalization = {key: {} for key in LangCodes}
 for path in MTGACardDBFiles:
@@ -377,6 +380,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
         cmc, colors = parseCost(selection["mana_cost"])
         selection["cmc"] = cmc
         selection["colors"] = colors
+
+        # Conspiracy Draft Effects
+        if c['oracle_id'] in DraftEffects:
+            selection['draft_effects'] = DraftEffects[c['oracle_id']]
 
         if c['set'] == 'war':
             if 'promo_types' in c and 'jpwalker' in c['promo_types']:

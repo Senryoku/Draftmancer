@@ -11,6 +11,23 @@ export enum CardColor {
 	G = "G",
 }
 
+// Draft effect activated immediatly when the card is picked.
+export enum OnPickDraftEffect {
+	FaceUp = "FaceUp",
+	Reveal = "Reveal",
+	NotePassingPlayer = "NotePassingPlayer",
+	NoteDraftedCards = "NoteDraftedCards",
+}
+
+// Draft effect that can be activated after the card has been picked (generally while picking another card later).
+export enum UsableDraftEffect {
+	RemoveDraftCard = "RemoveDraftCard",
+	CogworkLibrarian = "CogworkLibrarian",
+	AgentOfAcquisitions = "AgentOfAcquisitions",
+}
+
+export type DraftEffect = OnPickDraftEffect | UsableDraftEffect;
+
 export type CardFace = {
 	name: string;
 	printed_names: { [lang: string]: string };
@@ -41,6 +58,7 @@ export class Card {
 	image_uris: { [lang: string]: string } = {};
 	back?: CardFace;
 	related_cards?: Array<CardID | CardFace>;
+	draft_effects?: Array<DraftEffect>;
 	is_custom?: boolean;
 }
 
@@ -68,6 +86,12 @@ export function toUnique(card: Card): UniqueCard {
 export class UniqueCard extends Card {
 	uniqueID: UniqueCardID = 0;
 	foil?: boolean = false;
+	state?: {
+		faceUp?: boolean;
+		cardsDraftedThisRound?: number;
+		passingPlayer?: string;
+		removedCards?: UniqueCard[];
+	};
 }
 
 // JSON can't use numbers as keys, we have to use a string and not ArenaID here.

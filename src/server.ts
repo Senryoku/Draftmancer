@@ -22,13 +22,22 @@ import { InactiveConnections, InactiveSessions, dumpError, restoreSession, getPo
 import { Connection, Connections } from "./Connection.js";
 import { DistributionMode, DraftLogRecipients, ReadyState } from "./Session/SessionTypes";
 import { Session, Sessions, getPublicSessionData } from "./Session.js";
-import { CardPool, CardID, Card, UniqueCardID, DeckBasicLands, PlainCollection, ArenaID } from "./CardTypes.js";
+import {
+	CardPool,
+	CardID,
+	Card,
+	UniqueCardID,
+	DeckBasicLands,
+	PlainCollection,
+	ArenaID,
+	UsableDraftEffect,
+} from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
 import { SessionID, UserID } from "./IDTypes.js";
 import { CustomCardList } from "./CustomCardList.js";
 import { DraftLog } from "./DraftLog.js";
-import { isArrayOf, isBoolean, isNumber, isObject, isString } from "./TypeChecks.js";
+import { hasProperty, isArrayOf, isBoolean, isNumber, isObject, isSomeEnum, isString } from "./TypeChecks.js";
 import { instanceOfTurnBased } from "./IDraftState.js";
 import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData } from "./SocketType.js";
 import { IIndexable, SetCode } from "./Types.js";
@@ -269,13 +278,22 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 async function pickCard(
 	userID: UserID,
 	sessionID: SessionID,
-	data: { pickedCards: Array<number>; burnedCards: Array<number>; special?: { useCogworkLibrarian?: boolean } },
+	data: { pickedCards: Array<number>; burnedCards: Array<number>; draftEffect?: unknown },
 	ack: (result: SocketAck) => void
 ) {
+	let draftEffect: { effect: UsableDraftEffect; cardID: UniqueCardID } | undefined;
+	if (data.draftEffect) {
+		if (!isObject(data.draftEffect)) return ack?.(new SocketError("draftEffect must be an object."));
+		if (!hasProperty("effect", isSomeEnum(UsableDraftEffect))(data.draftEffect))
+			return ack?.(new SocketError("draftEffect.effect must be a valid DraftEffect."));
+		if (!hasProperty("cardID", isNumber)(data.draftEffect))
+			return ack?.(new SocketError("draftEffect.cardID must be a valid UniqueCardID."));
+		draftEffect = data.draftEffect;
+	}
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	try {
-		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards, data.special);
+		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards, draftEffect);
 		ack?.(r);
 	} catch (err) {
 		ack?.(new SocketError("Internal server error."));

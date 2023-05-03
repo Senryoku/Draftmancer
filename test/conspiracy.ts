@@ -4,7 +4,7 @@ import chai from "chai";
 const expect = chai.expect;
 import { Sessions } from "../src/Session.js";
 import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoError } from "./src/common.js";
-import { UniqueCard } from "../src/CardTypes.js";
+import { UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
 describe("Conspiracy Draft Matters Cards", () => {
@@ -17,6 +17,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 		boosterNumber: number;
 		pickNumber: number;
 	}[] = [];
+	let cogworkLibrarians: UniqueCardID[] = [0, 0];
 
 	beforeEach(function (done) {
 		disableLogs();
@@ -88,7 +89,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0, 1],
 						burnedCards: [],
-						special: { useCogworkLibrarian: true },
+						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: 5457 },
 					},
 					(err) => {
 						expect(err.code).not.to.equal(0);
@@ -103,16 +104,29 @@ describe("Conspiracy Draft Matters Cards", () => {
 			for (const s of states)
 				expect(s.booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
 			let eventReceived = 0;
+			let messageReceived = 0;
+			const checkDone = () => {
+				if (messageReceived === clients.length * clients.length && eventReceived === clients.length) {
+					for (const c of clients) c.off("message");
+					done();
+				}
+			};
 			for (let i = 0; i < clients.length; ++i) {
+				clients[i].on("message", (msg) => {
+					++messageReceived;
+					checkDone();
+				});
 				clients[i].once("draftState", (state) => {
 					++eventReceived;
 					states[i] = state as any;
-					if (eventReceived === clients.length) done();
+					checkDone();
 				});
+				const idx = states[i].booster.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID);
+				cogworkLibrarians[i] = states[i].booster[idx].uniqueID;
 				clients[i].emit(
 					"pickCard",
 					{
-						pickedCards: [states[i].booster.findIndex((c) => c.oracle_id === CogworkLibrarianOracleID)],
+						pickedCards: [idx],
 						burnedCards: [],
 					},
 					ackNoError
@@ -128,7 +142,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0],
 						burnedCards: [],
-						special: { useCogworkLibrarian: true },
+						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] },
 					},
 					(err) => {
 						expect(err.code).not.to.equal(0);
@@ -152,7 +166,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 					{
 						pickedCards: [0, 1],
 						burnedCards: [],
-						special: { useCogworkLibrarian: true },
+						draftEffect: { effect: UsableDraftEffect.CogworkLibrarian, cardID: cogworkLibrarians[i] },
 					},
 					ackNoError
 				);
@@ -160,8 +174,12 @@ describe("Conspiracy Draft Matters Cards", () => {
 		});
 
 		it("Cogwork Librarians should be back in the boosters", (done) => {
-			for (const s of states)
-				expect(s.booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
+			for (let i = 0; i < states.length; ++i) {
+				expect(states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)).to.have.length(1);
+				expect(states[i].booster.filter((c) => c.oracle_id === CogworkLibrarianOracleID)[0].uniqueID).to.eql(
+					cogworkLibrarians[(i + 1) % 2]
+				);
+			}
 
 			done();
 		});

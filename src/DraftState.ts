@@ -1,5 +1,5 @@
 import { v1 as uuidv1 } from "uuid";
-import { Options } from "./utils.js";
+import { negMod } from "./utils.js";
 import { IBot, SimpleBot, Bot, MTGDraftBotParameters } from "./Bot.js";
 import { UniqueCard } from "./CardTypes.js";
 import { Connections } from "./Connection.js";
@@ -64,6 +64,22 @@ export class DraftState extends IDraftState {
 				timer: 0,
 			};
 		}
+	}
+
+	previousPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID);
+		idx += this.boosterNumber % 2 ? 1 : -1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
+	}
+
+	nextPlayer(userID: UserID) {
+		const playerIds = Object.keys(this.players);
+		let idx = playerIds.indexOf(userID);
+		idx += this.boosterNumber % 2 ? -1 : 1;
+		idx = negMod(idx, playerIds.length);
+		return playerIds[idx];
 	}
 
 	syncData(userID: UserID) {
