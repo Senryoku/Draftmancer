@@ -33,6 +33,7 @@ import {
 	ArenaID,
 	DraftEffect,
 	UsableDraftEffect,
+	OptionalOnPickDraftEffect,
 } from "./CardTypes.js";
 import { MTGACards, getUnique, getCard } from "./Cards.js";
 import { parseLine, parseCardList, XMageToArena } from "./parseCardList.js";
@@ -280,22 +281,45 @@ function setReady(userID: UserID, sessionID: SessionID, readyState: ReadyState) 
 async function pickCard(
 	userID: UserID,
 	sessionID: SessionID,
-	data: { pickedCards: Array<number>; burnedCards: Array<number>; draftEffect?: unknown },
+	data: {
+		pickedCards: Array<number>;
+		burnedCards: Array<number>;
+		draftEffect?: unknown;
+		optionalOnPickDraftEffect?: unknown;
+	},
 	ack: (result: SocketAck) => void
 ) {
 	let draftEffect: { effect: UsableDraftEffect; cardID: UniqueCardID } | undefined;
 	if (data.draftEffect) {
 		if (!isObject(data.draftEffect)) return ack?.(new SocketError("draftEffect must be an object."));
 		if (!hasProperty("effect", isSomeEnum(UsableDraftEffect))(data.draftEffect))
-			return ack?.(new SocketError("draftEffect.effect must be a valid DraftEffect."));
+			return ack?.(new SocketError("draftEffect.effect must be a valid UsableDraftEffect."));
 		if (!hasProperty("cardID", isNumber)(data.draftEffect))
 			return ack?.(new SocketError("draftEffect.cardID must be a valid UniqueCardID."));
 		draftEffect = data.draftEffect;
 	}
+	let optionalOnPickDraftEffect: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID } | undefined;
+	if (data.optionalOnPickDraftEffect) {
+		if (!isObject(data.optionalOnPickDraftEffect))
+			return ack?.(new SocketError("optionalOnPickDraftEffect must be an object."));
+		if (!hasProperty("effect", isSomeEnum(OptionalOnPickDraftEffect))(data.optionalOnPickDraftEffect))
+			return ack?.(
+				new SocketError("optionalOnPickDraftEffect.effect must be a valid OptionalOnPickDraftEffect.")
+			);
+		if (!hasProperty("cardID", isNumber)(data.optionalOnPickDraftEffect))
+			return ack?.(new SocketError("optionalOnPickDraftEffect.cardID must be a valid UniqueCardID."));
+		optionalOnPickDraftEffect = data.optionalOnPickDraftEffect;
+	}
 	// Removes picked card from corresponding booster and notify other players.
 	// Moves to next round when each player have picked a card.
 	try {
-		const r = await Sessions[sessionID].pickCard(userID, data.pickedCards, data.burnedCards, draftEffect);
+		const r = await Sessions[sessionID].pickCard(
+			userID,
+			data.pickedCards,
+			data.burnedCards,
+			draftEffect,
+			optionalOnPickDraftEffect
+		);
 		ack?.(r);
 	} catch (err) {
 		ack?.(new SocketError("Internal server error."));
