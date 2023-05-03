@@ -18,9 +18,16 @@ beforeEach(function (done) {
 	done();
 });
 
-afterEach(function (done) {
-	enableLogs(this.currentTest!.state == "failed");
-	done();
+afterEach(async function () {
+	enableLogs(this.currentTest!.state === "failed");
+	if (this.currentTest!.state === "failed") {
+		await pages[0].screenshot({
+			path: `${process.env.GITHUB_WORKSPACE ?? "tmp"}/screenshots/${this.currentTest!.fullTitle().replace(
+				/\W/g,
+				"_"
+			)}_failed.png`,
+		});
+	}
 });
 
 export async function waitAndClickXpath(page: Page, xpath: string) {
@@ -32,12 +39,11 @@ export async function waitAndClickXpath(page: Page, xpath: string) {
 }
 
 export async function waitAndClickSelector(page: Page, selector: string) {
-	await page.waitForSelector(selector, {
+	const element = await page.waitForSelector(selector, {
 		visible: true,
 	});
-	const [element] = await page.$$(selector);
 	expect(element).to.exist;
-	await element.click();
+	await element!.asElement().click();
 }
 
 export function disableAnimations(page: Page) {
@@ -312,4 +318,9 @@ export function expectNCardsInTotal(n: number) {
 		const total = decks.reduce((a, b) => a + b, 0);
 		expect(total, `Expected ${n} cards, got ${total}. Deck sizes: ${decks}.`).to.equal(n);
 	});
+}
+
+export async function launchMode(mode: string) {
+	await waitAndClickSelector(pages[0], ".handle");
+	await waitAndClickXpath(pages[0], `//button[contains(., '${mode}')]`);
 }

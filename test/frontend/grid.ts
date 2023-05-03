@@ -9,6 +9,7 @@ import {
 	join,
 	setupBrowsers,
 	pages,
+	launchMode,
 } from "./src/common.js";
 import { getRandom } from "../../src/utils.js";
 
@@ -45,12 +46,8 @@ describe("Grid Draft", () => {
 		setupBrowsers(2);
 
 		it(`Launch Draft`, async () => {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			console.error("Hovered");
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
-			console.error("Clicked");
+			await launchMode("Grid");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
-			console.error("Confirmed");
 
 			await Promise.all(
 				pages.map((page) => page.waitForXPath("//h2[contains(., 'Grid Draft')]", { timeout: 3000 }))
@@ -88,8 +85,7 @@ describe("Grid Draft", () => {
 		setupBrowsers(2);
 
 		it(`Launch Draft`, async () => {
-			await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-			await waitAndClickXpath(pages[0], "//button[contains(., 'Grid')]");
+			await launchMode("Grid");
 			await waitAndClickSelector(pages[0], "button.swal2-confirm");
 
 			let promises = [];

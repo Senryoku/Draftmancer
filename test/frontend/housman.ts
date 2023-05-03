@@ -8,6 +8,7 @@ import {
 	waitAndClickXpath,
 	expectNCardsInDeck,
 	replaceInput,
+	launchMode,
 } from "./src/common.js";
 import { Page } from "puppeteer";
 import { getRandom } from "../../src/utils.js";
@@ -47,8 +48,7 @@ function launch(
 	it(`Launch Housman Draft`, async function () {
 		sessionLink = await getSessionLink(pages[0]);
 
-		await pages[0].hover(".handle"); // Hover over "Other Game Modes"
-		await waitAndClickXpath(pages[0], "//button[contains(., 'Housman')]");
+		await launchMode("Housman");
 
 		await replaceInput(handSize.toString())(await pages[0].$("#hand-input"));
 		await replaceInput(revealedCardsCount.toString())(await pages[0].$("#revealed-input"));
