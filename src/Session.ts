@@ -1907,13 +1907,15 @@ export class Session implements IIndexable {
 					}
 				}
 				if (notify) {
+					let str = `${Connections[userID].userName} picked ${card.name}!`;
+					if (card.state) {
+						if (card.state.passingPlayer) str += ` (Passing Player: ${card.state.passingPlayer})`;
+						if (card.state.cardsDraftedThisRound) str += ` (X=${card.state.cardsDraftedThisRound})`;
+					}
+					const msg = new Message(str);
+					msg.toast = true;
 					this.forUsers((uid) => {
-						let msg = `${Connections[userID].userName} picked ${card.name}!`;
-						if (card.state) {
-							if (card.state.passingPlayer) msg += ` (Passing Player: ${card.state.passingPlayer})`;
-							if (card.state.cardsDraftedThisRound) msg += ` (X=${card.state.cardsDraftedThisRound})`;
-						}
-						Connections[uid]?.socket?.emit("message", new Message(msg));
+						if (uid !== userID) Connections[uid]?.socket?.emit("message", msg);
 					});
 				}
 			}
