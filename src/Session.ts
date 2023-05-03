@@ -14,6 +14,7 @@ import {
 	DeckList,
 	OnPickDraftEffect,
 	UsableDraftEffect,
+	OptionalOnPickDraftEffect,
 } from "./CardTypes.js";
 import { Cards, getUnique, BoosterCardsBySet, CardsBySet, MTGACardIDs, getCard } from "./Cards.js";
 import { IBot, fallbackToSimpleBots, isBot, MTGDraftBotParameters, MTGDraftBotsSetSpecializedModels } from "./Bot.js";
@@ -1716,7 +1717,8 @@ export class Session implements IIndexable {
 		userID: UserID,
 		pickedCards: Array<number>,
 		burnedCards: Array<number>,
-		draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID }
+		draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID },
+		optionalOnPickDraftEffect?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID }
 	) {
 		const s = this.draftState;
 		if (!this.drafting || !isDraftState(s)) return new SocketError("This session is not drafting.");
@@ -1778,6 +1780,31 @@ export class Session implements IIndexable {
 					return reportError(`Unimplemented draft effect: ${draftEffect.effect}.`);
 			}
 		}
+		if (optionalOnPickDraftEffect) {
+			switch (optionalOnPickDraftEffect.effect) {
+				case OptionalOnPickDraftEffect.LoreSeeker: {
+					const index = booster.findIndex((c) => c.uniqueID === optionalOnPickDraftEffect.cardID);
+					if (index < 0 || !booster[index].draft_effects?.includes(OptionalOnPickDraftEffect.LoreSeeker))
+						return reportError("Invalid draft effect card.");
+					if (!pickedCards.includes(index))
+						return reportError("You must pick Lore Seeker to use its effect.");
+					const additionalBooster = this.generateBoosters(1, {
+						useCustomBoosters: true,
+					});
+					if (isMessageError(additionalBooster)) {
+						const msg = new MessageError(
+							"Could not generate additional booster, Lore Seeker effect ignored.",
+							`Original Error: ${additionalBooster.title} ${additionalBooster.text}`
+						);
+						Connections[userID].socket?.emit("message", msg);
+					} else {
+						applyDraftEffects.push(() => {
+							s.players[userID].boosters.unshift(additionalBooster[0]);
+						});
+					}
+				}
+			}
+		}
 
 		if (!pickedCards || pickedCards.length !== picksThisRound)
 			return reportError(
@@ -1807,10 +1834,10 @@ export class Session implements IIndexable {
 
 		// Request is valid, actually extract the booster and proceed
 
-		for (const effect of applyDraftEffects) effect();
-
 		this.stopCountdown(userID);
 		s.players[userID].boosters.splice(0, 1); // Remove booster from queue
+
+		for (const effect of applyDraftEffects) effect();
 
 		for (const idx of pickedCards) {
 			Connections[userID].pickedCards.main.push(booster[idx]);

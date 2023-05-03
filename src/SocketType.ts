@@ -15,6 +15,7 @@ import {
 	PlainCollection,
 	UniqueCard,
 	UniqueCardID,
+	OptionalOnPickDraftEffect,
 } from "./CardTypes";
 import { RochesterDraftSyncData } from "./RochesterDraft";
 import { MinesweeperSyncData, MinesweeperSyncDataDiff } from "./MinesweeperDraftTypes";
@@ -229,6 +230,7 @@ export interface ClientToServerEvents {
 			pickedCards: Array<number>;
 			burnedCards: Array<number>;
 			draftEffect?: { effect: UsableDraftEffect; cardID: UniqueCardID };
+			optionalOnPickDraftEffect?: { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID };
 		},
 		ack: (result: SocketAck) => void
 	) => void;

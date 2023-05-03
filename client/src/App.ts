@@ -28,7 +28,7 @@ import { MinesweeperSyncData } from "@/MinesweeperDraftTypes";
 import { HousmanDraftSyncData } from "@/HousmanDraft";
 import { minesweeperApplyDiff } from "../../src/MinesweeperDraftTypes";
 import Constants, { CubeDescription } from "../../src/Constants";
-import { CardColor, UsableDraftEffect } from "../../src/CardTypes";
+import { CardColor, OptionalOnPickDraftEffect, UsableDraftEffect } from "../../src/CardTypes";
 import { CogworkLibrarianOracleID } from "../../src/Conspiracy";
 
 import io, { Socket } from "socket.io-client";
@@ -74,6 +74,7 @@ import RotisserieDraftDialog from "./components/RotisserieDraftDialog.vue";
 // Preload Carback
 import CardBack from /* webpackPrefetch: true */ "./assets/img/cardback.webp";
 import { SolomonDraftSyncData } from "@/SolomonDraft";
+import { isSomeEnum } from "../../src/TypeChecks";
 const img = new Image();
 img.src = CardBack;
 
@@ -356,6 +357,9 @@ export default defineComponent({
 			selectedCards: [] as UniqueCard[],
 			burningCards: [] as UniqueCard[],
 			useCogworkLibrarian: false, // If true, next pick will exchange a Cogwork Librarian from the player's card pool for a additional pick.
+			selectedDraftPickEffect: undefined as
+				| undefined
+				| { effect: OptionalOnPickDraftEffect; cardID: UniqueCardID },
 			// Brewing (deck and sideboard should not be modified directly, have to
 			// stay in sync with their CardPool display)
 			deck: [] as UniqueCard[],
@@ -1538,6 +1542,13 @@ export default defineComponent({
 							this.useCogworkLibrarian = false;
 						});
 					}
+					let optionalOnPickDraftEffect;
+					if (this.selectedDraftPickEffect) {
+						optionalOnPickDraftEffect = this.selectedDraftPickEffect;
+						onSuccess.push(() => {
+							this.selectedDraftPickEffect = undefined;
+						});
+					}
 
 					this.socket.emit(
 						"pickCard",
@@ -1545,6 +1556,7 @@ export default defineComponent({
 							pickedCards: this.selectedCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							burnedCards: this.burningCards.map((c) => this.booster.findIndex((c2) => c === c2)),
 							draftEffect,
+							optionalOnPickDraftEffect,
 						},
 						ack
 					);
@@ -3372,6 +3384,33 @@ export default defineComponent({
 				this.sideboard.some((c) => c.oracle_id === CogworkLibrarianOracleID)
 			);
 		},
+		availableOptionalDraftEffects(): {
+			effect: OptionalOnPickDraftEffect;
+			cardID: UniqueCardID;
+		}[] {
+			const r = [];
+			for (const card of this.selectedCards.filter((c) => c.draft_effects !== undefined))
+				for (const effect of card.draft_effects!.filter((e) => isSomeEnum(OptionalOnPickDraftEffect)(e)))
+					r.push({
+						effect: effect as OptionalOnPickDraftEffect,
+						cardID: card.uniqueID,
+					});
+			return r;
+		},
+		availableDraftEffects(): {
+			effect: UsableDraftEffect;
+			cardID: UniqueCardID;
+		}[] {
+			const r = [];
+			for (const arr of [this.deck, this.sideboard])
+				for (const card of arr.filter((c) => c.draft_effects !== undefined))
+					for (const effect of card.draft_effects!.filter((e) => isSomeEnum(UsableDraftEffect)(e)))
+						r.push({
+							effect: effect as UsableDraftEffect,
+							cardID: card.uniqueID,
+						});
+			return r;
+		},
 		colorsInDeck(): ReturnType<typeof this.colorsInCardPool> {
 			return this.colorsInCardPool(this.deck);
 		},
@@ -3580,6 +3619,11 @@ export default defineComponent({
 				while (this.selectedCards.length > 0 && this.selectedCards.length > this.cardsToPick)
 					this.selectedCards.shift();
 			}
+		},
+		availableOptionalDraftEffects() {
+			if (this.availableOptionalDraftEffects.length > 0)
+				this.selectedDraftPickEffect = this.availableOptionalDraftEffects[0];
+			else this.selectedDraftPickEffect = undefined;
 		},
 		autoLand() {
 			this.updateAutoLands();

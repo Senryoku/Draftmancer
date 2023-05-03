@@ -943,6 +943,15 @@
 											}}/{{ cardsToBurnThisRound }}).
 										</span>
 									</span>
+									<span v-if="availableOptionalDraftEffects.length > 0">
+										<label for="pick-effect">Pick Effect:</label>
+										<select id="pick-effect" v-model="selectedDraftPickEffect">
+											<option v-for="v in availableOptionalDraftEffects" :value="v">
+												{{ v.effect }}
+											</option>
+											<option :value="undefined">Do not use</option>
+										</select>
+									</span>
 									<span v-if="hasCogworkLibrarian">
 										<input
 											type="checkbox"

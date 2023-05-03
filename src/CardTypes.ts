@@ -11,12 +11,17 @@ export enum CardColor {
 	G = "G",
 }
 
-// Draft effect activated immediatly when the card is picked.
+// Draft effects activated immediatly when the card is picked.
 export enum OnPickDraftEffect {
 	FaceUp = "FaceUp",
 	Reveal = "Reveal",
 	NotePassingPlayer = "NotePassingPlayer",
 	NoteDraftedCards = "NoteDraftedCards",
+}
+
+// Same thing, but a may ability.
+export enum OptionalOnPickDraftEffect {
+	LoreSeeker = "LoreSeeker",
 }
 
 // Draft effect that can be activated after the card has been picked (generally while picking another card later).
@@ -26,7 +31,7 @@ export enum UsableDraftEffect {
 	AgentOfAcquisitions = "AgentOfAcquisitions",
 }
 
-export type DraftEffect = OnPickDraftEffect | UsableDraftEffect;
+export type DraftEffect = OnPickDraftEffect | OptionalOnPickDraftEffect | UsableDraftEffect;
 
 export type CardFace = {
 	name: string;
