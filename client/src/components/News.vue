@@ -36,7 +36,7 @@
 				</li>
 				<li>
 					Added support for
-					<img src="img/sets/mb1.svg" class="set-icon" style="--invertedness: 100%" /> Mystery Booster
+					<img src="img/sets/mb1.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Mystery Booster
 					convention editions and their playtest cards.
 				</li>
 			</ul>
