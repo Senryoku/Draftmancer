@@ -1746,8 +1746,8 @@ export class Session implements IIndexable {
 			// As you draft a card, you may draft an additional card from that booster pack. If you do, put Cogwork Librarian into that booster pack.
 			if (special.useCogworkLibrarian) {
 				if (picksThisRound >= booster.length)
-					reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
-				if (pickedCards.length !== picksThisRound + 1) reportError("Missing Cogwork Librarian pick.");
+					return reportError("You can't use a Cogwork Librarian on this booster: Not enough cards.");
+				if (pickedCards.length !== picksThisRound + 1) return reportError("Missing Cogwork Librarian pick.");
 
 				let cogworkLibrarian: UniqueCard;
 				let index = Connections[userID].pickedCards.main.findIndex(
