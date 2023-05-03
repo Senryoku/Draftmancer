@@ -91,7 +91,7 @@ describe("Winston Draft", function () {
 			})();
 			++index;
 		}
-		clients[ownerIdx].emit("startWinstonDraft", 6, ackNoError);
+		clients[ownerIdx].emit("startWinstonDraft", 6, true, ackNoError);
 	});
 
 	it("Non-owner disconnects, owner receives updated user infos.", function (done) {
@@ -147,7 +147,7 @@ describe("Winston Draft", function () {
 			})();
 			++index;
 		}
-		clients[ownerIdx].emit("startWinstonDraft", 6, ackNoError);
+		clients[ownerIdx].emit("startWinstonDraft", 6, true, ackNoError);
 	});
 
 	it("Taking first pile.", function (done) {

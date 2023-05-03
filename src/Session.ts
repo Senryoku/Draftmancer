@@ -802,7 +802,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Winston Draft //////////////////////
-	startWinstonDraft(boosterCount: number): SocketAck {
+	startWinstonDraft(boosterCount: number, removeBasicLands: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size !== 2)
 			return new SocketError(
@@ -810,7 +810,11 @@ export class Session implements IIndexable {
 				`Winston Draft can only be played with exactly 2 players. Bots are not supported!`
 			);
 
-		const boosters = this.generateBoosters(boosterCount, { useCustomBoosters: true, playerCount: this.users.size });
+		const boosters = this.generateBoosters(boosterCount, {
+			useCustomBoosters: true,
+			playerCount: this.users.size,
+			removeBasicLands: removeBasicLands,
+		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		this.drafting = true;
@@ -904,7 +908,7 @@ export class Session implements IIndexable {
 	}
 	///////////////////// Winston Draft End //////////////////////
 
-	startWinchesterDraft(boosterPerPlayer: number): SocketAck {
+	startWinchesterDraft(boosterPerPlayer: number, removeBasicLands: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2)
 			return new SocketError(
@@ -915,6 +919,7 @@ export class Session implements IIndexable {
 		const boosters = this.generateBoosters(boosterPerPlayer * this.users.size, {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
+			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
@@ -973,7 +978,8 @@ export class Session implements IIndexable {
 		handSize: number = 5,
 		revealedCardsCount: number = 9,
 		exchangeCount: number = 3,
-		roundCount: number = 9
+		roundCount: number = 9,
+		removeBasicLands: boolean = true
 	): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size < 2)
@@ -995,13 +1001,14 @@ export class Session implements IIndexable {
 		const boosters = this.generateBoosters(Math.ceil(wantedCards / cardsPerBooster), {
 			useCustomBoosters: true,
 			playerCount: this.users.size,
+			removeBasicLands: removeBasicLands,
 		});
 		if (isMessageError(boosters)) return new SocketAck(boosters);
 
 		const cardPool = boosters.flat();
 
 		while (cardPool.length < wantedCards) {
-			const booster = this.generateBoosters(1);
+			const booster = this.generateBoosters(1, { removeBasicLands: removeBasicLands });
 			if (isMessageError(booster)) return new SocketAck(booster);
 			if (!booster[0] || booster[0].length === 0)
 				return new SocketError("Internal Error: Couldn't generate enough boosters.");
@@ -1088,7 +1095,7 @@ export class Session implements IIndexable {
 	}
 
 	///////////////////// Grid Draft //////////////////////
-	startGridDraft(boosterCount: number): SocketAck {
+	startGridDraft(boosterCount: number, removeBasicLands: boolean): SocketAck {
 		if (this.drafting) return new SocketError("Already drafting.");
 		if (this.users.size !== 2 && this.users.size !== 3)
 			return new SocketError("Invalid Number of Players", "Grid draft is only available for 2 or 3 players.");
@@ -1106,6 +1113,7 @@ export class Session implements IIndexable {
 			targets: targetCardsPerBooster === cardsPerBooster ? this.getBoosterContent() : defaultTargets,
 			cardsPerBooster: cardsPerBooster,
 			useCustomBoosters: true,
+			removeBasicLands: removeBasicLands,
 			playerCount: this.users.size,
 		});
 		if (isMessageError(boosters)) {

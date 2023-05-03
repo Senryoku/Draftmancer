@@ -75,6 +75,17 @@
 							/>
 						</div>
 					</div>
+					<div>
+						<div>
+							<label for="remove-basic-lands-input"> Remove Basic Lands? </label>
+						</div>
+						<input
+							type="checkbox"
+							id="remove-basic-lands-input"
+							class="swal2-input"
+							v-model.number="removeBasicLands"
+						/>
+					</div>
 				</div>
 			</div>
 		</template>
@@ -95,14 +106,30 @@ const handSize = ref(5);
 const revealedCardsCount = ref(9);
 const exchangeCount = ref(3);
 const roundCount = ref(9);
+const removeBasicLands = ref(true);
 
 const emit = defineEmits<{
 	(e: "cancel"): void;
-	(e: "start", handSize: number, revealedCardsCount: number, exchangeCount: number, roundCount: number): void;
+	(
+		e: "start",
+		handSize: number,
+		revealedCardsCount: number,
+		exchangeCount: number,
+		roundCount: number,
+		removeBasicLands: boolean
+	): void;
 }>();
 
 const cancel = () => emit("cancel");
-const start = () => emit("start", handSize.value, revealedCardsCount.value, exchangeCount.value, roundCount.value);
+const start = () =>
+	emit(
+		"start",
+		handSize.value,
+		revealedCardsCount.value,
+		exchangeCount.value,
+		roundCount.value,
+		removeBasicLands.value
+	);
 </script>
 
 <style scoped>
