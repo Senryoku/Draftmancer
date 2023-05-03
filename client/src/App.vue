@@ -159,6 +159,7 @@
 							}</strong><br /><small>Note: Bot recommendations can be disabled by the session owner.</small>`,
 							html: true,
 						}"
+						alt="Bot Recommendations Button"
 					>
 						<img src="./assets/img/bot-score.svg" />
 					</div>
@@ -1645,10 +1646,10 @@
 						<div class="welcome-section welcome-alt">
 							<ul style="display: flex; flex-wrap: wrap; justify-content: space-around">
 								<li>
-									<a @click="displayedModal = 'importdeck'"
-										><font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon> Card
-										List Importer</a
-									>
+									<span @click="displayedModal = 'importdeck'" class="link">
+										<font-awesome-icon icon="fa-solid fa-file-export"></font-awesome-icon> Card List
+										Importer
+									</span>
 								</li>
 								<li
 									v-tooltip="

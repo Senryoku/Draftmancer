@@ -31,26 +31,31 @@
 		>
 			<font-awesome-layers>
 				<font-awesome-icon
-					icon="fa-solid fa-sync"
+					icon="fa-solid fa-arrow-rotate-right"
 					class="split-icon"
 					transform="grow-2"
 					size="lg"
 					style="color: black"
 				></font-awesome-icon>
-				<font-awesome-icon icon="fa-solid fa-sync" class="split-icon" size="lg"></font-awesome-icon>
+				<font-awesome-icon
+					icon="fa-solid fa-arrow-rotate-right"
+					class="split-icon"
+					size="lg"
+				></font-awesome-icon>
 			</font-awesome-layers>
 		</div>
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
 			<font-awesome-layers>
 				<font-awesome-icon
-					icon="fa-solid fa-sync"
+					icon="fa-solid fa-arrow-rotate-left"
 					class="split-left-icon"
 					transform="grow-2"
 					size="lg"
 					style="color: black"
 				>
 				</font-awesome-icon>
-				<font-awesome-icon icon="fa-solid fa-sync" class="split-left-icon" size="lg"> </font-awesome-icon>
+				<font-awesome-icon icon="fa-solid fa-arrow-rotate-left" class="split-left-icon" size="lg">
+				</font-awesome-icon>
 			</font-awesome-layers>
 		</div>
 		<div :class="{ 'flip-container': hasBack }">
@@ -226,16 +231,18 @@ img {
 	padding: 0.5em;
 }
 
+.flip-button .fa-layers {
+	perspective: 4em;
+}
+
 .flip-icon {
-	transition: transform 0.2s, text-shadow 0.2s;
+	transition: transform 0.2s;
 	transform: rotateX(45deg) skewX(-10deg);
 	color: white;
-	text-shadow: 0 0 4px black, 0 4px 0 black;
 }
 
 .flip-button:hover .flip-icon {
 	transform: rotateX(45deg) skewX(-10deg) rotateZ(180deg);
-	text-shadow: 0 0 4px black, 0 -4px 0 black;
 }
 
 .flip-container {
@@ -290,16 +297,12 @@ img {
 	color: white;
 }
 
-.split-left-icon {
-	transform: scaleX(-1);
-}
-
 .split-button:hover .split-icon {
 	transform: rotateZ(90deg);
 }
 
 .split-left-button:hover .split-left-icon {
-	transform: rotateZ(-89.999deg) scaleX(-1);
+	transform: rotateZ(-89.999deg);
 }
 
 .split-button ~ div .front-image,

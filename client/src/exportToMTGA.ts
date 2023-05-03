@@ -8,6 +8,15 @@ const MTGASetConversions: { [key: string]: string } = {
 	DOM: "DAR", // DOM is called DAR in MTGA
 	CON: "CONF", // CON is called CONF in MTGA
 	AJMP: "JMP", // AJMP is a Scryfall only set containing cards from Jumpstart modified for Arena
+	YMID: "Y22",
+	YVOW: "Y22",
+	YNEO: "Y22",
+	YSNC: "Y22",
+	YDMU: "Y23",
+	YBRO: "Y23",
+	YONE: "Y23",
+	YMOM: "Y23",
+	YMAT: "Y23",
 };
 
 export function fixSetCode(set: SetCode) {
