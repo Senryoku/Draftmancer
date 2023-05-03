@@ -525,10 +525,17 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             return b
         if b['set'] == 'j21' and int(b['collector_number']) >= 777:
             return a
+        # Vintage Masters: Not importable in Arena.
+        if a['set'] == 'vma' and b['set'] != 'vma':
+            return b
+        if a['set'] != 'vma' and b['set'] == 'vma':
+            return a
+        # Only one of them is marked as a Primary card in Arena
         if (a['name'], a['collector_number'], a['set'].lower()) in CardsCollectorNumberAndSet and (b['name'], b['collector_number'], b['set'].lower()) not in CardsCollectorNumberAndSet:
             return a
         if (a['name'], a['collector_number'], a['set'].lower()) not in CardsCollectorNumberAndSet and (b['name'], b['collector_number'], b['set'].lower()) in CardsCollectorNumberAndSet:
             return b
+        # Prefer a card with an Arena ID
         if 'arena_id' in a and 'arena_id' not in b:
             return a
         if 'arena_id' not in a and 'arena_id' in b:
