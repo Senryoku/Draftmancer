@@ -67,7 +67,7 @@ MTGADataFolder = f"{MTGAFolder}MTGA_Data\\Downloads\\Raw\\"
 MTGACardDBFiles = glob.glob(f"{MTGADataFolder}Raw_CardDatabase_*.mtga")
 
 CardsCollectorNumberAndSet = {}
-CardNameToArenaID = {}
+CardNameToArenaIDForJumpstart = {}
 AKRCards = {}
 KLRCards = {}
 J21MTGACollectorNumbers = {}
@@ -114,13 +114,13 @@ for path in MTGACardDBFiles:
                     fixed_name, collectorNumber, 'ajmp')] = o['GrpId']
 
             # From Jumpstart: Prioritizing cards from JMP and M21
-            if fixed_name not in CardNameToArenaID or setCode in ['jmp', 'm21']:
-                CardNameToArenaID[fixed_name] = o['GrpId']
+            if fixed_name not in CardNameToArenaIDForJumpstart or setCode in ['jmp', 'm21']:
+                CardNameToArenaIDForJumpstart[fixed_name] = o['GrpId']
 
             if "IsRebalanced" in o and o["IsRebalanced"]:
                 CardsCollectorNumberAndSet[(
                     "A-"+fixed_name, "A-"+collectorNumber, setCode)] = o['GrpId']
-                CardNameToArenaID["A-"+fixed_name] = o['GrpId']
+                CardNameToArenaIDForJumpstart["A-"+fixed_name] = o['GrpId']
             # FIXME: J21 collector number differs between Scryfall and MTGA, record them to translate when exporting
             #        (Also for secondary cards as there's some created cards in this set.)
             if setCode == 'j21':
@@ -525,6 +525,10 @@ if not os.path.isfile(FirstFinalDataPath) or ForceCache or FetchSet:
             return b
         if b['set'] == 'j21' and int(b['collector_number']) >= 777:
             return a
+        if (a['name'], a['collector_number'], a['set'].lower()) in CardsCollectorNumberAndSet and (b['name'], b['collector_number'], b['set'].lower()) not in CardsCollectorNumberAndSet:
+            return a
+        if (a['name'], a['collector_number'], a['set'].lower()) not in CardsCollectorNumberAndSet and (b['name'], b['collector_number'], b['set'].lower()) in CardsCollectorNumberAndSet:
+            return b
         if 'arena_id' in a and 'arena_id' not in b:
             return a
         if 'arena_id' not in a and 'arena_id' in b:
@@ -602,10 +606,10 @@ if not os.path.isfile(JumpstartBoostersDist) or ForceJumpstart:
                     name = m.group(2)
                     if name in swaps:
                         name = swaps[name]
-                    if name in CardNameToArenaID:
+                    if name in CardNameToArenaIDForJumpstart:
                         cid = None
                         for c in cards:
-                            if 'arena_id' in cards[c] and cards[c]['arena_id'] == CardNameToArenaID[name]:
+                            if 'arena_id' in cards[c] and cards[c]['arena_id'] == CardNameToArenaIDForJumpstart[name]:
                                 cid = cards[c]['id']
                                 break
                         # Some cards are labeled as JMP in Arena but not on Scryfall (Swaped cards). We can search for an alternative version.
