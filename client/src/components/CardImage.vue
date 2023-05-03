@@ -29,34 +29,10 @@
 			class="split-button"
 			:class="{ 'battle-button': card.type.includes('Battle') }"
 		>
-			<font-awesome-layers>
-				<font-awesome-icon
-					icon="fa-solid fa-arrow-rotate-right"
-					class="split-icon"
-					transform="grow-2"
-					size="lg"
-					style="color: black"
-				></font-awesome-icon>
-				<font-awesome-icon
-					icon="fa-solid fa-arrow-rotate-right"
-					class="split-icon"
-					size="lg"
-				></font-awesome-icon>
-			</font-awesome-layers>
+			<img src="../assets/img/tap-icon.svg" class="split-icon" />
 		</div>
 		<div v-if="card.layout === 'split-left'" class="split-left-button">
-			<font-awesome-layers>
-				<font-awesome-icon
-					icon="fa-solid fa-arrow-rotate-left"
-					class="split-left-icon"
-					transform="grow-2"
-					size="lg"
-					style="color: black"
-				>
-				</font-awesome-icon>
-				<font-awesome-icon icon="fa-solid fa-arrow-rotate-left" class="split-left-icon" size="lg">
-				</font-awesome-icon>
-			</font-awesome-layers>
+			<img src="../assets/img/tap-icon.svg" class="split-left-icon" />
 		</div>
 		<div :class="{ 'flip-container': hasBack }">
 			<clazy-load
@@ -221,7 +197,7 @@ img {
 }
 
 .battle-button {
-	right: 1.8em;
+	right: 1.4em;
 }
 
 .booster .flip-button,
@@ -294,6 +270,7 @@ img {
 .split-icon,
 .split-left-icon {
 	transition: transform 0.2s, text-shadow 0.2s;
+	width: 1em;
 	color: white;
 }
 
@@ -301,8 +278,12 @@ img {
 	transform: rotateZ(90deg);
 }
 
+.split-left-icon {
+	transform: scaleX(-1);
+}
+
 .split-left-button:hover .split-left-icon {
-	transform: rotateZ(-89.999deg);
+	transform: rotateZ(-89.999deg) scaleX(-1);
 }
 
 .split-button ~ div .front-image,
