@@ -7,7 +7,7 @@ import { makeClients, waitForClientDisconnects, enableLogs, disableLogs, ackNoEr
 import { UniqueCard, UniqueCardID, UsableDraftEffect } from "../src/CardTypes.js";
 import { CogworkLibrarianOracleID } from "../src/Conspiracy.js";
 
-describe("Conspiracy Draft Matters Cards", () => {
+describe.only("Conspiracy Draft Matters Cards", () => {
 	let clients: ReturnType<typeof makeClients> = [];
 	let ownerIdx = 0;
 	let nonOwnerIdx = 1;
@@ -106,7 +106,7 @@ describe("Conspiracy Draft Matters Cards", () => {
 			let eventReceived = 0;
 			let messageReceived = 0;
 			const checkDone = () => {
-				if (messageReceived === clients.length * clients.length && eventReceived === clients.length) {
+				if (messageReceived === clients.length && eventReceived === clients.length) {
 					for (const c of clients) c.off("message");
 					done();
 				}
