@@ -1815,8 +1815,9 @@ export class Session implements IIndexable {
 		const s = this.draftState;
 		if (!s || !isDraftState(s)) return;
 		if (!s.players[userID]) {
-			console.error(`Session.startBotPickChain Error: Invalid userID '${userID})'. draftState:`);
-			console.error(s);
+			console.error(`Session.startBotPickChain Error: Invalid userID '${userID}'. Valid players:`, s.players);
+			console.error(`Session owner: ${this.owner}, users: `, this.users);
+			console.trace();
 			return;
 		}
 		if (!s.players[userID].botPickInFlight && s.players[userID].boosters.length > 0) {
@@ -1852,7 +1853,7 @@ export class Session implements IIndexable {
 				s.players[userID].botPickInFlight = false;
 				return true;
 			}
-			// An attempt at avoiding promises outliving the session (this all players disconnect for example).
+			// An attempt at avoiding promises outliving the session (all players disconnect for example).
 			if (!state?.players[userID]?.botPickInFlight) return true;
 			// Player may have reconnected
 			if (!state?.players[userID].isBot && !this.isDisconnected(userID)) {
