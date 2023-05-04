@@ -1,4 +1,4 @@
-import { v1 as uuidv1 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { SessionID, UserID } from "../IDTypes";
 import { SetCode } from "../Types";
 
@@ -14,9 +14,9 @@ let ManagedSessions: SessionID[] = []; // Only used for statistics, I should pro
 const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
 
 function launchSession(setCode: QueueID, users: UserID[]) {
-	let sessionID = `QuickDraft_${setCode.toUpperCase()}_${uuidv1()}`;
+	let sessionID = `QuickDraft-${setCode.toUpperCase()}-${uuidv4()}`;
 	// FIXME: this is a hack
-	while (sessionID in Sessions) sessionID = `QuickDraft_${setCode.toUpperCase()}_${uuidv1()}`;
+	while (sessionID in Sessions) sessionID = `QuickDraft-${setCode.toUpperCase()}-${uuidv4()}`;
 
 	const session = new Session(sessionID, undefined);
 
