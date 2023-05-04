@@ -1,3 +1,4 @@
+import { v1 as uuidv1 } from "uuid";
 import { SessionID, UserID } from "../IDTypes";
 import { SetCode } from "../Types";
 
@@ -9,15 +10,13 @@ import { ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketDa
 
 type QueueID = SetCode;
 
-const ManagedSessions: SessionID[] = [];
+let ManagedSessions: SessionID[] = []; // Only used for statistics, I should probably get rid of it.
 const PlayerQueues: Map<QueueID, UserID[]> = new Map<QueueID, UserID[]>();
 
-let sessionUniqueID = 0;
-
-function launchSession(settings: QueueID, users: UserID[]) {
-	let sessionID = `__Managed_Session_${sessionUniqueID++}`;
+function launchSession(setCode: QueueID, users: UserID[]) {
+	let sessionID = `QuickDraft_${setCode.toUpperCase()}_${uuidv1()}`;
 	// FIXME: this is a hack
-	while (sessionID in Sessions) sessionID = `__Managed_Session_${sessionUniqueID++}`;
+	while (sessionID in Sessions) sessionID = `QuickDraft_${setCode.toUpperCase()}_${uuidv1()}`;
 
 	const session = new Session(sessionID, undefined);
 
@@ -29,7 +28,7 @@ function launchSession(settings: QueueID, users: UserID[]) {
 	}
 	////////////////////////////////////////////////////
 
-	session.setRestriction = [settings];
+	session.setRestriction = [setCode];
 	for (const uid of users) {
 		session.addUser(uid);
 		Connections[uid].socket.emit("setSession", sessionID);
@@ -100,20 +99,21 @@ export function unregisterPlayer(userID: UserID, settings?: QueueID): SocketAck 
 
 export function getQueueStatus() {
 	const queues: Record<SetCode, { set: string; inQueue: number; playing: number }> = {};
+
+	ManagedSessions = ManagedSessions.filter((sid) => sid in Sessions);
+
 	for (const [k, v] of PlayerQueues.entries()) {
 		queues[k] = {
 			set: k,
 			inQueue: v.length,
-			playing: ManagedSessions.filter((sid) => sid in Sessions && Sessions[sid].setRestriction[0] === k)
+			playing: ManagedSessions.filter((sid) => Sessions[sid].setRestriction[0] === k)
 				.map((sid) => Sessions[sid].users.size)
 				.reduce((a, b) => a + b, 0),
 		};
 	}
 
 	return {
-		playing: ManagedSessions.filter((sid) => sid in Sessions)
-			.map((sid) => Sessions[sid].users.size)
-			.reduce((a, b) => a + b, 0),
+		playing: ManagedSessions.map((sid) => Sessions[sid].users.size).reduce((a, b) => a + b, 0),
 		queues,
 	};
 }

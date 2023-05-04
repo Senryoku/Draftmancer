@@ -1583,7 +1583,7 @@ function removeUserFromSession(userID: UserID) {
 			if (sess.users.size === 0 && (sess.ownerIsPlayer || !(sess.owner && sess.owner in Connections))) {
 				// If a game was going, we'll keep the session around for a while in case a player reconnects
 				// (mostly useful in case of disconnection during a single player game)
-				if (sess.drafting) {
+				if (sess.drafting && !sess.managed) {
 					InactiveSessions[sessionID] = getPoDSession(sess);
 					// Keep Rotisserie Draft around since they're typically played over long period of time.
 					if (!isRotisserieDraftState(sess.draftState))
