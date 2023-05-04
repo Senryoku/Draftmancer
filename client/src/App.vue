@@ -1620,22 +1620,26 @@
 					</div>
 					<div class="container" style="grid-area: Support">
 						<div class="section-title">
-							<h2>Sponsor</h2>
+							<h2>
+								<font-awesome-icon icon="fa-solid fa-mug-hot" aria-hidden="true"></font-awesome-icon>
+								Buy me a Coffee
+							</h2>
 						</div>
-						<div class="welcome-section welcome-alt" style="display: flex; gap: 0.5em">
-							<iframe
-								src="https://github.com/sponsors/Senryoku/button"
-								title="Sponsor Senryoku"
-								height="35"
-								width="116"
-								style="border: 0; margin: 0.25em"
-							></iframe>
+						<div class="welcome-section welcome-alt">
 							<div>
-								Support Draftmancer on
+								Hello there!<br />
+								I hope you're enjoying using Draftmancer!<br />
+								If you find it useful, please consider supporting it by becoming a
 								<a href="https://github.com/sponsors/Senryoku" target="_blank">
 									<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon> GitHub Sponsor
 								</a>
-								to make sure it stays online and updated.
+								or donating through
+								<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank">
+									<font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal </a
+								>.<br />
+								Your support will help keep the project online, updated, and will motivate me to add new
+								features.<br />
+								Thank you! — Sen
 							</div>
 						</div>
 					</div>

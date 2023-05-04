@@ -3,17 +3,18 @@
 		<div style="max-width: 50vw">
 			<p>Hello there!</p>
 			<p>
-				If you're here I guess you've been enjoing the site! I plan on continuously maintaining it by adding
-				support for new cards appearing on MTGA and improving it, both with your and my ideas. If that sounds
-				like a good use of my time and you want to help me cover potential hosting cost and keep me motivated
-				and caffeinated, you can donate here via
+				If you're here I guess you've been enjoing the site! I'm committed to continuously improving the site by
+				adding support for new cards and draft formats as they come out, and generally improving the user
+				experience. If you think this is a valuable use of my time and want to support the site, please consider
+				making a donation to help cover hosting costs and keep me motivated and caffeinated through
 				<a href="https://github.com/sponsors/Senryoku" target="_blank">
 					<font-awesome-icon icon="fa-brands fa-github"></font-awesome-icon>
 					<em>GitHub Sponsor</em>
 				</a>
 				or
-				<em><font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal</em>
-				:
+				<a href="https://www.paypal.com/donate/?hosted_button_id=6L2CUS6DH82DL" target="_blank">
+					<em><font-awesome-icon icon="fa-brands fa-paypal"></font-awesome-icon> PayPal</em></a
+				>:
 			</p>
 			<div style="display: flex; justify-content: center">
 				<iframe
