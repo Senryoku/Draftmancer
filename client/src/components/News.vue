@@ -1,6 +1,17 @@
 <template>
 	<div class="welcome-section">
 		<div class="news">
+			<em>May 04, 2023</em>
+			<ul>
+				<li>
+					<img src="img/sets/mat.svg" class="set-icon" style="--invertedness: 100%" alt="" /> March of the
+					Machine: The Aftermath cards.
+				</li>
+				<li>Option to remove basics in Solomon and Housman drafts. Thanks NerdyNathan for his contribution!</li>
+				<li>Various tweaks and fixes.</li>
+			</ul>
+		</div>
+		<div class="news">
 			<em>April 28, 2023</em>
 			<ul>
 				<li>
@@ -16,29 +27,6 @@
 					</ul>
 				</li>
 				<li>Various tweaks and fixes.</li>
-			</ul>
-		</div>
-		<div class="news">
-			<em>April 16, 2023</em>
-			<ul>
-				<li>
-					New game mode: <strong>Housman Draft</strong>!
-					<p>
-						Draft variant suited for 2-4 players. Players take turns exchanging a card from a five cards
-						hand with one of nine revealed cards. After three exchanges, players add their hand to their
-						deck and the remaining face up cards are discarded. Repeat for nine rounds.
-					</p>
-				</li>
-				<li>
-					New setting 'bonus' in booster content: Controls the amount of cards from 'bonus sheets' in boosters
-					(like Multiverse Legends cards in March of the Machines). Exact behavior can be a bit convoluted,
-					refer to the setting tooltip for more information.
-				</li>
-				<li>
-					Added support for
-					<img src="img/sets/mb1.svg" class="set-icon" style="--invertedness: 100%" alt="" /> Mystery Booster
-					convention editions and their playtest cards.
-				</li>
 			</ul>
 		</div>
 	</div>

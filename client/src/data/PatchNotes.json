@@ -1,5 +1,13 @@
 [
 	{
+		"date": "04/05/2023",
+		"notes": [
+			"March of the Machine: The Aftermath cards support.",
+			"Option to remove basics in Solomon and Housman drafts (Thanks NerdyNathan for his contribution!).",
+			"Various tweaks and fixes."
+		]
+	},
+	{
 		"date": "28/04/2023",
 		"notes": [
 			"New game mode: Solomon Draft.",
