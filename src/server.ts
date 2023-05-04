@@ -1823,14 +1823,14 @@ app.get("/getSessions/:key", requireAPIKey, (req, res) => {
 	return returnCircularJSON(res, localSess);
 });
 
+app.get("/api/getQuickDraftStatus", (req, res) => {
+	return res.json(getQueueStatus());
+});
+
 Promise.all([InactiveConnections, InactiveSessions]).then(() => {
 	httpServer.listen(port, () => {
 		console.log(`Listening on port ${port} (ready in ${process.uptime().toFixed(2)}s)`);
 	});
-});
-
-app.get("/api/getQuickDraftStatus", (req, res) => {
-	return res.json(getQueueStatus());
 });
 
 export default {};
